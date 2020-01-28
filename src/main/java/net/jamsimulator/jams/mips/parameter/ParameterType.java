@@ -1,21 +1,23 @@
 package net.jamsimulator.jams.mips.parameter;
 
-import net.jamemulator.jams.mips.parameter.matcher.*;
 import net.jamsimulator.jams.mips.parameter.matcher.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Represents a parameter type. A parameter may be a register, a number, a label or a combination.
  */
 public enum ParameterType {
 
-	REGISTER("$t1", new ParameterMatcherRegister()),
-	FLOAT_REGISTER("$f1", new ParameterMatcherFloatRegister()),
-	EVEN_FLOAT_REGISTER("$f2", new ParameterMatcherEvenFloatRegister()),
+	//SORTED BY PRIORITY
 	COPROCESSOR_0_REGISTER("$8", new ParameterMatcherCoprocessor0Register()),
+	REGISTER("$t1", new ParameterMatcherRegister()),
+	EVEN_FLOAT_REGISTER("$f2", new ParameterMatcherEvenFloatRegister()),
+	FLOAT_REGISTER("$f1", new ParameterMatcherFloatRegister()),
 	UNSIGNED_5_BIT("5", new ParameterMatcherUnsigned5Bit()),
 	SIGNED_16_BIT("-16000", new ParameterMatcherSigned16Bit()),
 	UNSIGNED_16_BIT("16000", new ParameterMatcherUnsigned16Bit()),
@@ -65,5 +67,15 @@ public enum ParameterType {
 	 */
 	public static Optional<ParameterType> getParameterMatch(String parameter) {
 		return Arrays.stream(values()).filter(target -> target.match(parameter)).findFirst();
+	}
+
+	/**
+	 * Returns an mutable list with all the parameter types that are compatible with the given parameter.
+	 *
+	 * @param parameter the given parameter.
+	 * @return the mutable list.
+	 */
+	public static List<ParameterType> getCompatibleParameterTypes(String parameter) {
+		return Arrays.stream(values()).filter(target -> target.match(parameter)).collect(Collectors.toList());
 	}
 }

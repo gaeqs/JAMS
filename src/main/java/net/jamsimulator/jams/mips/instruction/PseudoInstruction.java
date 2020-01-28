@@ -7,31 +7,23 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents a basic instruction. Basic instructions are {@link Instruction}s that have
- * a direct translation to MIPS machine code.
+ * Represents a pseudo-instruction. Pseudo-instructions are MIPS instructions that are separated into several
+ * {@link BasicInstruction} in compile time. Pseudo-instructions don't have a direct translation into machine code.
  */
-public class BasicInstruction implements Instruction {
+public class PseudoInstruction implements Instruction {
 
 	private String name;
 	private String mnemonic;
-	private int operationCode;
 	private ParameterType[] parameters;
+	private BasicInstruction[] basicInstructions;
 
-	/**
-	 * Creates a basic instruction using a name, a mnemonic, a parameter types array and an operation code.
-	 *
-	 * @param name          the name.
-	 * @param mnemonic      the mnemonic.
-	 * @param parameters    the parameter types.
-	 * @param operationCode the operation code.
-	 */
-	public BasicInstruction(String name, String mnemonic, ParameterType[] parameters, int operationCode) {
+
+	public PseudoInstruction(String name, String mnemonic, ParameterType[] parameters, BasicInstruction[] basicInstructions) {
 		this.name = name;
 		this.mnemonic = mnemonic;
 		this.parameters = parameters;
-		this.operationCode = operationCode;
+		this.basicInstructions = basicInstructions;
 	}
-
 
 	@Override
 	public String getName() {
@@ -65,28 +57,20 @@ public class BasicInstruction implements Instruction {
 	}
 
 	/**
-	 * Returns the operation code of the instruction. This operation code is used to search
-	 * the instruction based on an instruction code.
+	 * Returns a list with the basic instructions of this pseudo-instructions.
 	 *
-	 * @return the operation code.
+	 * @return the basic instructions.
 	 */
-	public int getOperationCode() {
-		return operationCode;
+	public BasicInstruction[] getBasicInstructions() {
+		return Arrays.copyOf(basicInstructions, basicInstructions.length);
 	}
 
-	public boolean match(int operationCode) {
-		return match(operationCode, 0);
-	}
-
-	public boolean match(int operationCode, int functionCode) {
-		return operationCode == this.operationCode;
-	}
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		BasicInstruction that = (BasicInstruction) o;
+		PseudoInstruction that = (PseudoInstruction) o;
 		return mnemonic.equals(that.mnemonic) &&
 				Arrays.equals(parameters, that.parameters);
 	}

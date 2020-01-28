@@ -2,6 +2,8 @@ package net.jamsimulator.jams.mips.instruction;
 
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
+import java.util.List;
+
 /**
  * Represents a MIPS instruction. This instruction is used in compile time to compile a program.
  * Plugins may add more instructions to the simulator.
@@ -58,5 +60,23 @@ public interface Instruction {
 	 * @return the parameter types of the instruction.
 	 */
 	ParameterType[] getParameters();
+
+	/**
+	 * Returns whether the instruction matches the given mnemonic and parameter types.
+	 *
+	 * @param mnemonic   the given mnemonic.
+	 * @param parameters the given parameter types.
+	 * @return whether the instruction matches the given mnemonic and parameter types.
+	 */
+	boolean match(String mnemonic, ParameterType[] parameters);
+
+	/**
+	 * Returns whether the instruction matches the given mnemonic and a combination of the given parameter types.
+	 *
+	 * @param mnemonic   the given mnemonic.
+	 * @param parameters the given possible parameter types.
+	 * @return whether the instruction matches the given mnemonic and parameter types.
+	 */
+	boolean match(String mnemonic, List<ParameterType>[] parameters);
 
 }
