@@ -1,6 +1,6 @@
-package net.jamemulator.jams.mips.instruction;
+package net.jamsimulator.jams.mips.instruction;
 
-import net.jamemulator.jams.mips.parameter.ParameterType;
+import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 import java.util.Arrays;
 

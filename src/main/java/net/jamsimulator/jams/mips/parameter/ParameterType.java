@@ -1,6 +1,7 @@
-package net.jamemulator.jams.mips.parameter;
+package net.jamsimulator.jams.mips.parameter;
 
 import net.jamemulator.jams.mips.parameter.matcher.*;
+import net.jamsimulator.jams.mips.parameter.matcher.*;
 
 import java.util.Arrays;
 import java.util.Optional;

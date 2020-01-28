@@ -1,4 +1,4 @@
-package net.jamemulator.jams;
+package net.jamsimulator.jams;
 
 public class Jams {
 

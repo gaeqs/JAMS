@@ -1,10 +1,10 @@
-package net.jamemulator.jams.mips.parameter.matcher;
+package net.jamsimulator.jams.mips.parameter.matcher;
 
-import net.jamemulator.jams.mips.parameter.ParameterType;
+import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 import java.util.function.Predicate;
 
-public class ParameterMatcherSigned16BitRegisterShift implements Predicate<String> {
+public class ParameterMatcherSigned32BitRegisterShift implements Predicate<String> {
 
 	@Override
 	public boolean test(String s) {
@@ -15,6 +15,6 @@ public class ParameterMatcherSigned16BitRegisterShift implements Predicate<Strin
 		//If the register is not valid, return false.
 		if (!ParameterType.REGISTER.match(register)) return false;
 		//Checks the number
-		return ParameterType.SIGNED_16_BIT.match(s.substring(0, parenthesisIndex));
+		return ParameterType.SIGNED_32_BIT.match(s.substring(0, parenthesisIndex));
 	}
 }

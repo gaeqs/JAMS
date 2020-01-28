@@ -1,4 +1,4 @@
-package net.jamemulator.jams.mips.instruction;
+package net.jamsimulator.jams.mips.instruction;
 
 public abstract class CompiledInstruction {
 

@@ -1,6 +1,6 @@
-package net.jamemulator.jams.mips.parameter.matcher;
+package net.jamsimulator.jams.mips.parameter.matcher;
 
-import net.jamemulator.jams.mips.parameter.ParameterType;
+import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 import java.util.function.Predicate;
 

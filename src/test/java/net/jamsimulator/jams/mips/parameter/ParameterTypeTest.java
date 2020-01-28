@@ -1,4 +1,4 @@
-package net.jamemulator.jams.mips.parameter;
+package net.jamsimulator.jams.mips.parameter;
 
 import org.junit.jupiter.api.Test;
 

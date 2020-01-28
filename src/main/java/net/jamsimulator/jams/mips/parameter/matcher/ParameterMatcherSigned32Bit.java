@@ -1,4 +1,4 @@
-package net.jamemulator.jams.mips.parameter.matcher;
+package net.jamsimulator.jams.mips.parameter.matcher;
 
 import java.util.function.Predicate;
 
