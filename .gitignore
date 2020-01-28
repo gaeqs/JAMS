@@ -1,0 +1,10 @@
+# Project exclude paths
+/target/
+.idea/.gitignore
+.idea/codeStyles/
+.idea/compiler.xml
+.idea/misc.xml
+.idea/rSettings.xml
+.idea/uiDesigner.xml
+.idea/vcs.xml
+src/
