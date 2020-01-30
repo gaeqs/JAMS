@@ -1,6 +1,6 @@
 package net.jamsimulator.jams;
 
-import net.jamsimulator.jams.manager.InstructionManager;
+import net.jamsimulator.jams.mips.instruction.manager.InstructionManager;
 
 public class Jams {
 

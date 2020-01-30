@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.memory;
+package net.jamsimulator.jams.mips.memory;
 
 import org.junit.jupiter.api.Test;
 

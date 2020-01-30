@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.mips.instruction.manager;
 
 import net.jamsimulator.jams.mips.instruction.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.Instruction;

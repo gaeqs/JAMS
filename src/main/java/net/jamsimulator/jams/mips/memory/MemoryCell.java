@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.memory;
+package net.jamsimulator.jams.mips.memory;
 
 /**
  * Represents a memory cell. A memory cell is a part of a {@link MemorySection} with a defined
