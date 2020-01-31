@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RegistersTest {
 
-	static Registers registers = new Registers();
+	static Registers registers = new MIPS32Registers();
 
 	@Test
 	void getProgramCounter() {
