@@ -11,8 +11,8 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 public abstract class CompiledRInstruction extends CompiledInstruction {
 
 	public static final int FUNCTION_CODE_MASK = 0X3F;
-	public static final int SHAMT_SHIFT = 6;
-	public static final int SHAMT_MASK = 0x1F;
+	public static final int SHIFT_AMOUNT_SHIFT = 6;
+	public static final int SHIFT_AMOUNT_MASK = 0x1F;
 	public static final int DESTINATION_REGISTER_SHIFT = 11;
 	public static final int DESTINATION_REGISTER_MASK = 0x1F;
 	public static final int TARGET_REGISTER_SHIFT = 16;
@@ -34,20 +34,20 @@ public abstract class CompiledRInstruction extends CompiledInstruction {
 
 	/**
 	 * Creates a compiled I instruction using an operation code, a source register, a target register, a destination register,
-	 * a shamt 5-bit immediate, a function code, an origin {@link Instruction} and an origin {@link BasicInstruction}.
+	 * a shift amount 5-bit immediate, a function code, an origin {@link Instruction} and an origin {@link BasicInstruction}.
 	 *
 	 * @param operationCode       the operation code.
 	 * @param sourceRegister      the source register.
 	 * @param targetRegister      the target register.
 	 * @param destinationRegister the destination register.
-	 * @param shamt               the shamt immediate value.
+	 * @param shiftAmount         the shift amount immediate value.
 	 * @param functionCode        the function code.
 	 * @param origin              the origin instruction.
 	 * @param basicOrigin         the origin basic instruction.
 	 */
 	public CompiledRInstruction(int operationCode, int sourceRegister, int targetRegister, int destinationRegister,
-								int shamt, int functionCode, Instruction origin, BasicInstruction basicOrigin) {
-		super(calculateValue(operationCode, sourceRegister, targetRegister, destinationRegister, shamt, functionCode),
+								int shiftAmount, int functionCode, Instruction origin, BasicInstruction basicOrigin) {
+		super(calculateValue(operationCode, sourceRegister, targetRegister, destinationRegister, shiftAmount, functionCode),
 				origin, basicOrigin);
 	}
 
@@ -61,12 +61,12 @@ public abstract class CompiledRInstruction extends CompiledInstruction {
 	}
 
 	/**
-	 * Returns the shamt immediate of the instruction.
+	 * Returns the shift amount immediate of the instruction.
 	 *
-	 * @return the shamt immediate.
+	 * @return the shift amount immediate.
 	 */
-	public int getShamt() {
-		return value >>> SHAMT_SHIFT & SHAMT_MASK;
+	public int getShiftAmount() {
+		return value >>> SHIFT_AMOUNT_SHIFT & SHIFT_AMOUNT_MASK;
 	}
 
 	/**
@@ -97,12 +97,12 @@ public abstract class CompiledRInstruction extends CompiledInstruction {
 	}
 
 	static int calculateValue(int operationCode, int sourceRegister, int targetRegister, int destinationRegister,
-							  int shamt, int functionCode) {
+							  int shiftAmount, int functionCode) {
 		int value = operationCode << CompiledInstruction.OPERATION_CODE_SHIFT;
 		value += (sourceRegister & SOURCE_REGISTER_MASK) << SOURCE_REGISTER_SHIFT;
 		value += (targetRegister & TARGET_REGISTER_MASK) << TARGET_REGISTER_SHIFT;
 		value += (destinationRegister & DESTINATION_REGISTER_MASK) << DESTINATION_REGISTER_SHIFT;
-		value += (shamt & SHAMT_MASK) << SHAMT_SHIFT;
+		value += (shiftAmount & SHIFT_AMOUNT_MASK) << SHIFT_AMOUNT_SHIFT;
 		value += functionCode & FUNCTION_CODE_MASK;
 		return value;
 	}

@@ -34,7 +34,7 @@ class CompiledRInstructionTest {
 
 	@Test
 	void getShamt() {
-		assertEquals(0, instruction.getShamt(), "Bad shamt.");
+		assertEquals(0, instruction.getShiftAmount(), "Bad shamt.");
 	}
 
 	@Test

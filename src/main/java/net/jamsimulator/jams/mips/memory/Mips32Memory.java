@@ -1,6 +1,10 @@
 package net.jamsimulator.jams.mips.memory;
 
-public class Mips32Memory extends Memory {
+/**
+ * Represents a MIPS32 memory managed by a {@link SimpleMemory}.
+ * This memory has all the sections a MIPS memory would have.
+ */
+public class Mips32Memory extends SimpleMemory {
 
 	public Mips32Memory() {
 		super(false,
