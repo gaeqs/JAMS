@@ -5,11 +5,16 @@ import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Mips32Memory;
+import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.register.MIPS32RegisterSet;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.RegisterSet;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import org.junit.jupiter.api.Test;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -28,9 +33,17 @@ class GeneralInstructionTests {
 		t0.setValue(3);
 		t1.setValue(20);
 
-		CompiledInstruction instruction = new InstructionAdd().compileBasic(new Object[]
+		List<ParameterType>[] list = new List[]{Collections.singletonList(ParameterType.REGISTER),
+				Collections.singletonList(ParameterType.REGISTER),
+				Collections.singletonList(ParameterType.REGISTER)};
+
+		Optional<Instruction> optional = simulation.getInstructionSet().getBestCompatibleInstruction("add", list);
+
+		if (!optional.isPresent()) fail("Instruction not found.");
+		CompiledInstruction[] instructions = optional.get().compile(new Object[]
 				{t2.getIdentifier(), t1.getIdentifier(), t0.getIdentifier()});
-		instruction.execute(simulation);
+		if (instructions.length != 1) fail("Incorrect instruction.");
+		instructions[0].execute(simulation);
 		assertEquals(23, t2.getValue(), "Bad add instruction result.");
 
 	}
