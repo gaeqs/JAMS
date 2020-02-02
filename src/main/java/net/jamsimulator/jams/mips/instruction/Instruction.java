@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.instruction;
 
+import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 import java.util.List;
@@ -78,5 +79,13 @@ public interface Instruction {
 	 * @return whether the instruction matches the given mnemonic and parameter types.
 	 */
 	boolean match(String mnemonic, List<ParameterType>[] parameters);
+
+	/**
+	 * Compiles the instruction using the given parameters.
+	 *
+	 * @param parameters the parameters.
+	 * @return a {@link CompiledInstruction} array.
+	 */
+	CompiledInstruction[] compile(Object[] parameters);
 
 }

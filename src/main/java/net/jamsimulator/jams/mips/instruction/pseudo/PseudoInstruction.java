@@ -1,5 +1,6 @@
-package net.jamsimulator.jams.mips.instruction;
+package net.jamsimulator.jams.mips.instruction.pseudo;
 
+import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
@@ -11,19 +12,17 @@ import java.util.Objects;
  * Represents a pseudo-instruction. Pseudo-instructions are MIPS instructions that are separated into several
  * {@link BasicInstruction} in compile time. Pseudo-instructions don't have a direct translation into machine code.
  */
-public class PseudoInstruction implements Instruction {
+public abstract class PseudoInstruction implements Instruction {
 
 	private String name;
 	private String mnemonic;
 	private ParameterType[] parameters;
-	private BasicInstruction[] basicInstructions;
 
 
-	public PseudoInstruction(String name, String mnemonic, ParameterType[] parameters, BasicInstruction[] basicInstructions) {
+	public PseudoInstruction(String name, String mnemonic, ParameterType[] parameters) {
 		this.name = name;
 		this.mnemonic = mnemonic;
 		this.parameters = parameters;
-		this.basicInstructions = basicInstructions;
 	}
 
 	@Override
@@ -56,16 +55,6 @@ public class PseudoInstruction implements Instruction {
 		}
 		return true;
 	}
-
-	/**
-	 * Returns a list with the basic instructions of this pseudo-instructions.
-	 *
-	 * @return the basic instructions.
-	 */
-	public BasicInstruction[] getBasicInstructions() {
-		return Arrays.copyOf(basicInstructions, basicInstructions.length);
-	}
-
 
 	@Override
 	public boolean equals(Object o) {

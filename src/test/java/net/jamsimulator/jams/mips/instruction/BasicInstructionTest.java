@@ -1,6 +1,6 @@
 package net.jamsimulator.jams.mips.instruction;
 
-import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAdd;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,18 +13,17 @@ class BasicInstructionTest {
 
 	@BeforeAll
 	static void setUp() {
-		instruction = new BasicInstruction("Addition", "add",
-				new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER}, 0);
+		instruction = new InstructionAdd();
 	}
 
 	@Test
 	void getName() {
-		assertEquals("Addition", instruction.getName(), "Bad name.");
+		assertEquals(InstructionAdd.NAME, instruction.getName(), "Bad name.");
 	}
 
 	@Test
 	void getMnemonic() {
-		assertEquals("add", instruction.getMnemonic(), "Bad mnemonic.");
+		assertEquals(InstructionAdd.MNEMONIC, instruction.getMnemonic(), "Bad mnemonic.");
 	}
 
 	@Test

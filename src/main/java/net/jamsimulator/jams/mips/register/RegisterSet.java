@@ -74,6 +74,16 @@ public class RegisterSet {
 	}
 
 	/**
+	 * Get the general {@link Register} whose identifier matches the given int, if present.
+	 *
+	 * @param identifier the identifier.
+	 * @return the {@link Register}, if present.
+	 */
+	public Optional<Register> getRegister(int identifier) {
+		return registers.stream().filter(target -> target.getIdentifier() == identifier).findFirst();
+	}
+
+	/**
 	 * Get the coprocessor 0 {@link Register} whose name matches the given string, if present.
 	 *
 	 * @param name the name.
@@ -83,6 +93,18 @@ public class RegisterSet {
 		return coprocessor0Registers.stream().filter(target -> target.hasName(name)).findFirst();
 	}
 
+
+	/**
+	 * Get the coprocessor 0 {@link Register} whose identifier matches the given int, if present.
+	 *
+	 * @param identifier the identifier.
+	 * @return the {@link Register}, if present.
+	 */
+	public Optional<Register> getCoprocessor0Register(int identifier) {
+		return coprocessor0Registers.stream().filter(target -> target.getIdentifier() == identifier).findFirst();
+	}
+
+
 	/**
 	 * Get the coprocessor 1 {@link Register} whose name matches the given string, if present.
 	 *
@@ -91,6 +113,16 @@ public class RegisterSet {
 	 */
 	public Optional<Register> getCoprocessor1Register(String name) {
 		return coprocessor1Registers.stream().filter(target -> target.hasName(name)).findFirst();
+	}
+
+	/**
+	 * Get the coprocessor 1 {@link Register} whose identifier matches the given int, if present.
+	 *
+	 * @param identifier the identifier.
+	 * @return the {@link Register}, if present.
+	 */
+	public Optional<Register> getCoprocessor1Register(int identifier) {
+		return coprocessor1Registers.stream().filter(target -> target.getIdentifier() == identifier).findFirst();
 	}
 
 	protected void loadEssentialRegisters() {

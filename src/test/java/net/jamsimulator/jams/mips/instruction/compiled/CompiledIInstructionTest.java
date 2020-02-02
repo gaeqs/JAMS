@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.instruction.compiled;
 
+import net.jamsimulator.jams.mips.simulation.Simulation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -13,8 +14,10 @@ class CompiledIInstructionTest {
 	static void initialize() {
 		//addi $9, $10, -100
 		instruction = new CompiledI16Instruction(8, 10, 9, Short.toUnsignedInt((short) -100), null, null) {
+
 			@Override
-			public void execute() {
+			public void execute(Simulation simulation) {
+
 			}
 		};
 	}

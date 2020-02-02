@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.instruction.compiled;
 
+import net.jamsimulator.jams.mips.simulation.Simulation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -15,8 +16,7 @@ class CompiledInstructionTest {
 		instruction = new CompiledRInstruction(0, 10, 11, 9,
 				0, 0x20, null, null) {
 			@Override
-			public void execute() {
-
+			public void execute(Simulation simulation) {
 
 			}
 		};

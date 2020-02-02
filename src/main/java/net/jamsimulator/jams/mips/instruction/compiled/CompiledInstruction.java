@@ -1,7 +1,10 @@
 package net.jamsimulator.jams.mips.instruction.compiled;
 
-import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.exception.RuntimeInstructionException;
+import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
+import net.jamsimulator.jams.mips.simulation.Simulation;
 
 /**
  * Represents a compiled instruction.
@@ -33,7 +36,7 @@ public abstract class CompiledInstruction {
 	 * Returns the original {@link Instruction} of the compiled instruction.
 	 * <p>
 	 * Several compiled instructions may have the same {@link Instruction}, is this was
-	 * a {@link net.jamsimulator.jams.mips.instruction.PseudoInstruction}.
+	 * a {@link PseudoInstruction}.
 	 *
 	 * @return the original {@link Instruction}.
 	 */
@@ -64,5 +67,25 @@ public abstract class CompiledInstruction {
 	/**
 	 * Executes the instruction.
 	 */
-	public abstract void execute();
+	public abstract void execute(Simulation simulation);
+
+	/**
+	 * Throws a {@link RuntimeInstructionException} with the given message.
+	 *
+	 * @param message the message.
+	 */
+	protected void error(String message) {
+		throw new RuntimeInstructionException(message);
+	}
+
+
+	/**
+	 * Throws a {@link RuntimeInstructionException} with the given message.
+	 *
+	 * @param message the message.
+	 * @param ex      the cause.
+	 */
+	protected void error(String message, Exception ex) {
+		throw new RuntimeInstructionException(message, ex);
+	}
 }

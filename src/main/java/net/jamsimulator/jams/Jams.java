@@ -8,7 +8,7 @@ public class Jams {
 
 	//JAMS main method.
 	public static void main(String[] args) {
-		defaultInstructionSet = new InstructionSet(true, true);
+		defaultInstructionSet = new InstructionSet(true, true, true);
 	}
 
 

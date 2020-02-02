@@ -7,7 +7,7 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
  * of the instruction, allowing the simulator to find this instruction based on
  * a FMT.
  */
-public class RFPUBasicInstruction extends RBasicInstruction {
+public abstract class RFPUBasicInstruction extends RBasicInstruction {
 
 	private int fmtCode;
 

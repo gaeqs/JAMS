@@ -1,11 +1,11 @@
 package net.jamsimulator.jams.mips.instruction.set;
 
 import net.jamsimulator.jams.mips.instruction.Instruction;
-import net.jamsimulator.jams.mips.instruction.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledRInstruction;
+import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -31,10 +31,13 @@ public class InstructionSet {
 
 	private Set<Instruction> instructions;
 
-	public InstructionSet(boolean loadDefaults, boolean loadPluginInstructions) {
+	public InstructionSet(boolean loadDefaultBasics, boolean loadDefaultPseudo, boolean loadPluginInstructions) {
 		instructions = new HashSet<>();
-		if (loadDefaults) {
-			//TODO load defaults.
+		if (loadDefaultBasics) {
+			instructions.addAll(DefaultInstructions.basicInstructions);
+		}
+		if (loadDefaultPseudo) {
+			instructions.addAll(DefaultInstructions.pseudoInstructions);
 		}
 		if (loadPluginInstructions) {
 			//TOdo plugins

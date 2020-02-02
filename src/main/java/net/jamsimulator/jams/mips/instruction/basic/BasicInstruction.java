@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.mips.instruction.basic;
 
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 import java.util.Arrays;
@@ -11,7 +12,7 @@ import java.util.Objects;
  * Represents a basic instruction. Basic instructions are {@link Instruction}s that have
  * a direct translation to MIPS machine code.
  */
-public class BasicInstruction implements Instruction {
+public abstract class BasicInstruction implements Instruction {
 
 	private String name;
 	private String mnemonic;
@@ -65,6 +66,12 @@ public class BasicInstruction implements Instruction {
 		return true;
 	}
 
+
+	@Override
+	public CompiledInstruction[] compile(Object[] parameters) {
+		return new CompiledInstruction[]{compileBasic(parameters)};
+	}
+
 	/**
 	 * Returns the operation code of the instruction. This operation code is used to search
 	 * the instruction based on an instruction code.
@@ -111,6 +118,14 @@ public class BasicInstruction implements Instruction {
 	public boolean match(int operationCode, int functionCode, int fmtSub) {
 		return operationCode == this.operationCode;
 	}
+
+	/**
+	 * Compiles the basic instruction using the given parameters.
+	 *
+	 * @param parameters the parameters.
+	 * @return the {@link CompiledInstruction}.
+	 */
+	public abstract CompiledInstruction compileBasic(Object[] parameters);
 
 	@Override
 	public boolean equals(Object o) {

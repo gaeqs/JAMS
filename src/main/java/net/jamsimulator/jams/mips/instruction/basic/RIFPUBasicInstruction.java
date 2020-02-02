@@ -7,7 +7,7 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
  * of the instruction, allowing the simulator to find this instruction based on
  * a subcode.
  */
-public class RIFPUBasicInstruction extends RBasicInstruction {
+public abstract class RIFPUBasicInstruction extends RBasicInstruction {
 
 	private int subcode;
 
