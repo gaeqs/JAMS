@@ -7,30 +7,30 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class RegistersTest {
+class RegisterSetTest {
 
-	static Registers registers = new MIPS32Registers();
+	static RegisterSet registerSet = new MIPS32RegisterSet();
 
 	@Test
 	void getProgramCounter() {
-		assertEquals(0x00400000, registers.getProgramCounter().getValue(), "Bad program counter.");
+		assertEquals(0x00400000, registerSet.getProgramCounter().getValue(), "Bad program counter.");
 	}
 
 	@Test
 	void getHighRegister() {
-		registers.getHighRegister().setValue(3000);
-		assertEquals(3000, registers.getHighRegister().getValue(), "Bad high register value.");
+		registerSet.getHighRegister().setValue(3000);
+		assertEquals(3000, registerSet.getHighRegister().getValue(), "Bad high register value.");
 	}
 
 	@Test
 	void getLowRegister() {
-		registers.getLowRegister().setValue(3000);
-		assertEquals(3000, registers.getLowRegister().getValue(), "Bad low register value.");
+		registerSet.getLowRegister().setValue(3000);
+		assertEquals(3000, registerSet.getLowRegister().getValue(), "Bad low register value.");
 	}
 
 	@Test
 	void getRegister() {
-		Optional<Register> optional = registers.getRegister("t7");
+		Optional<Register> optional = registerSet.getRegister("t7");
 		assertTrue(optional.isPresent(), "Register not found.");
 		Register register = optional.get();
 		register.setValue(20);
@@ -39,7 +39,7 @@ class RegistersTest {
 
 	@Test
 	void getCoprocessor0Register() {
-		Optional<Register> optional = registers.getCoprocessor0Register("12");
+		Optional<Register> optional = registerSet.getCoprocessor0Register("12");
 		assertTrue(optional.isPresent(), "Register not found.");
 		Register register = optional.get();
 		register.setValue(20);
@@ -48,7 +48,7 @@ class RegistersTest {
 
 	@Test
 	void getCoprocessor1Register() {
-		Optional<Register> optional = registers.getCoprocessor1Register("f9");
+		Optional<Register> optional = registerSet.getCoprocessor1Register("f9");
 		assertTrue(optional.isPresent(), "Register not found.");
 		Register register = optional.get();
 		register.setValue(20);

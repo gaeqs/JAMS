@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.mips.instruction.manager;
+package net.jamsimulator.jams.mips.instruction.set;
 
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.PseudoInstruction;
@@ -13,25 +13,25 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Represents an instruction manager. An instruction manager stores a collection of instruction and it's
+ * Represents an instruction set. An instruction set stores a collection of instruction and it's
  * used in compile time to parse the code into {@link CompiledInstruction}s.
  * <p>
- * There may be several InstructionManager instances in the same runtime. The default one is located
+ * There may be several {@link InstructionSet} instances in the same runtime. The default one is located
  * inside the main class {@link net.jamsimulator.jams.Jams}.
  * <p>
  * Two {@link BasicInstruction} with the same operation code and function code (if present)
- * inside the same instruction manager will produce an <b>unpredictable</b> behavior.
+ * inside the same instruction set will produce an <b>unpredictable</b> behavior.
  *
  * @see Instruction
  * @see BasicInstruction
  */
-public class InstructionManager {
+public class InstructionSet {
 
 	private static final CompatibleInstructionComparator COMPARATOR = new CompatibleInstructionComparator();
 
 	private Set<Instruction> instructions;
 
-	public InstructionManager(boolean loadDefaults, boolean loadPluginInstructions) {
+	public InstructionSet(boolean loadDefaults, boolean loadPluginInstructions) {
 		instructions = new HashSet<>();
 		if (loadDefaults) {
 			//TODO load defaults.
@@ -121,12 +121,12 @@ public class InstructionManager {
 
 
 	/**
-	 * Registers an instruction to the instruction manager. If an instruction with the same
-	 * mnemonic and parameters is registered in this instruction manager the given instruction
+	 * Registers an instruction to the instruction set. If an instruction with the same
+	 * mnemonic and parameters is registered in this instruction set the given instruction
 	 * will not be added and the method will return {@code false}.
 	 * <p>
 	 * Remember that two {@link BasicInstruction} with the same operation code and function code (if present)
-	 * inside the same instruction manager will produce an <b>unpredictable</b> behavior.
+	 * inside the same instruction set will produce an <b>unpredictable</b> behavior.
 	 * <p>
 	 * If you're not sure whether an instruction with the same operation and instruction codes
 	 * you can use {@link #getInstructionByInstructionCode(int)} and

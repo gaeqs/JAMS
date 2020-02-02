@@ -5,12 +5,12 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Represents a {@link Register}s' collection. An instance of this class stores all
+ * Represents a {@link Register} set. An instance of this class stores all
  * {@link Register}s used by a {@link net.jamsimulator.jams.mips.simulation.Simulation}.
  * <p>
  * Registers ProgramCounter, HighRegister and LowRegister are always present.
  */
-public class Registers {
+public class RegisterSet {
 
 	protected Set<Register> registers;
 	protected Set<Register> coprocessor0Registers;
@@ -19,7 +19,7 @@ public class Registers {
 	protected Register programCounter, highRegister, lowRegister;
 
 	/**
-	 * Creates a new Registers using the general registers, the coprocessor 0 registers and the coprocessor 1 registers.
+	 * Creates a new Register set using the general registers, the coprocessor 0 registers and the coprocessor 1 registers.
 	 * If any of the {@link Set}s is null, the method will create a {@link HashSet} for the parameter.
 	 * <p>
 	 * Remember: ProgramCounter, High and Low registers are automatically created.
@@ -28,7 +28,7 @@ public class Registers {
 	 * @param coprocessor0Registers the coprocessor 0 registers.
 	 * @param coprocessor1Registers the coprocessor 1 registers.
 	 */
-	public Registers(Set<Register> registers, Set<Register> coprocessor0Registers, Set<Register> coprocessor1Registers) {
+	public RegisterSet(Set<Register> registers, Set<Register> coprocessor0Registers, Set<Register> coprocessor1Registers) {
 		this.registers = registers == null ? new HashSet<>() : registers;
 		this.coprocessor0Registers = coprocessor0Registers == null ? new HashSet<>() : coprocessor0Registers;
 		this.coprocessor1Registers = coprocessor1Registers == null ? new HashSet<>() : coprocessor1Registers;
@@ -94,8 +94,8 @@ public class Registers {
 	}
 
 	protected void loadEssentialRegisters() {
-		programCounter = new Register(0x00400000, true, "pc");
-		highRegister = new Register("hi");
-		lowRegister = new Register("lo");
+		programCounter = new Register(-1, 0x00400000, true, "pc");
+		highRegister = new Register(-1, "hi");
+		lowRegister = new Register(-1, "lo");
 	}
 }

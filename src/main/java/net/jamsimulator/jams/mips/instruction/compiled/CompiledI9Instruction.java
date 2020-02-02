@@ -60,7 +60,7 @@ public abstract class CompiledI9Instruction extends CompiledInstruction {
 	 * @return the unsigned 9-bit immediate.
 	 */
 	public int getOffset() {
-		return value & OFFSET_SHIFT;
+		return value << OFFSET_SHIFT & OFFSET_MASK;
 	}
 
 	/**

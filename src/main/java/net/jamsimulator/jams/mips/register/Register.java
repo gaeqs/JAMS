@@ -15,13 +15,15 @@ import java.util.Set;
  */
 public class Register {
 
+	private int identifier;
 	private Set<String> names;
 	private int value;
 	private boolean modifiable;
 	private int defaultValue;
 
-	public Register(String... names) {
+	public Register(int identifier, String... names) {
 		Validate.isTrue(names.length > 0, "A register must have at least one name!");
+		this.identifier = identifier;
 		this.names = new HashSet<>();
 		this.names.addAll(Arrays.asList(names));
 		this.value = defaultValue = 0;
@@ -29,12 +31,17 @@ public class Register {
 	}
 
 
-	public Register(int value, boolean modifiable, String... names) {
+	public Register(int identifier, int value, boolean modifiable, String... names) {
 		Validate.isTrue(names.length > 0, "A register must have at least one name!");
+		this.identifier = identifier;
 		this.names = new HashSet<>();
 		this.names.addAll(Arrays.asList(names));
 		this.value = defaultValue = value;
 		this.modifiable = modifiable;
+	}
+
+	public int getIdentifier() {
+		return identifier;
 	}
 
 	public Set<String> getNames() {

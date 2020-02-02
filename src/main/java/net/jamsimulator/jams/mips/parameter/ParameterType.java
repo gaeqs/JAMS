@@ -1,11 +1,12 @@
 package net.jamsimulator.jams.mips.parameter;
 
-import net.jamsimulator.jams.mips.parameter.matcher.*;
+import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
+import net.jamsimulator.jams.mips.parameter.parse.matcher.*;
+import net.jamsimulator.jams.mips.register.RegisterSet;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -33,9 +34,9 @@ public enum ParameterType {
 
 
 	private String example;
-	private Predicate<String> matcher;
+	private ParameterMatcher matcher;
 
-	ParameterType(String example, Predicate<String> matcher) {
+	ParameterType(String example, ParameterMatcher matcher) {
 		this.example = example;
 		this.matcher = matcher;
 	}
@@ -53,10 +54,23 @@ public enum ParameterType {
 	 * Returns whether the given parameter matches this parameter type.
 	 *
 	 * @param parameter the given parameter, as a {@link String}.
+	 * @param set       the available registers.
 	 * @return whether the given parameter matches this parameter type.
 	 */
-	public boolean match(String parameter) {
-		return matcher.test(parameter);
+	public boolean match(String parameter, RegisterSet set) {
+		return matcher.match(parameter, set);
+	}
+
+	/**
+	 * Parses the given parameter.
+	 *
+	 * @param parameter the given parameter, as a {@link String}.
+	 * @param set       the available registers.
+	 * @return the {@link ParameterParseResult}.
+	 * @throws net.jamsimulator.jams.mips.parameter.parse.exception.ParameterParseException whether the parse goes wrong.
+	 */
+	public ParameterParseResult parse(String parameter, RegisterSet set) {
+		return matcher.parse(parameter, set);
 	}
 
 	/**
@@ -65,8 +79,8 @@ public enum ParameterType {
 	 * @param parameter the given parameter, as a {@link String}.
 	 * @return the best parameter type, if present.
 	 */
-	public static Optional<ParameterType> getParameterMatch(String parameter) {
-		return Arrays.stream(values()).filter(target -> target.match(parameter)).findFirst();
+	public static Optional<ParameterType> getParameterMatch(String parameter, RegisterSet set) {
+		return Arrays.stream(values()).filter(target -> target.match(parameter, set)).findFirst();
 	}
 
 	/**
@@ -75,7 +89,7 @@ public enum ParameterType {
 	 * @param parameter the given parameter.
 	 * @return the mutable list.
 	 */
-	public static List<ParameterType> getCompatibleParameterTypes(String parameter) {
-		return Arrays.stream(values()).filter(target -> target.match(parameter)).collect(Collectors.toList());
+	public static List<ParameterType> getCompatibleParameterTypes(String parameter, RegisterSet set) {
+		return Arrays.stream(values()).filter(target -> target.match(parameter, set)).collect(Collectors.toList());
 	}
 }

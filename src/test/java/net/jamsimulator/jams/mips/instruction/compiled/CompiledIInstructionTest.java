@@ -7,12 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CompiledIInstructionTest {
 
-	static CompiledIInstruction instruction;
+	static CompiledI16Instruction instruction;
 
 	@BeforeAll
 	static void initialize() {
 		//addi $9, $10, -100
-		instruction = new CompiledIInstruction(8, 10, 9, Short.toUnsignedInt((short) -100), null, null) {
+		instruction = new CompiledI16Instruction(8, 10, 9, Short.toUnsignedInt((short) -100), null, null) {
 			@Override
 			public void execute() {
 			}

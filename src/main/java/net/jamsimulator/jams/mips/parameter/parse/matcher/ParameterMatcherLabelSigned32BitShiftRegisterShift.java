@@ -1,0 +1,31 @@
+package net.jamsimulator.jams.mips.parameter.parse.matcher;
+
+import net.jamsimulator.jams.mips.parameter.ParameterType;
+import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
+import net.jamsimulator.jams.mips.parameter.parse.exception.ParameterParseException;
+import net.jamsimulator.jams.mips.register.RegisterSet;
+
+import java.util.function.Predicate;
+
+public class ParameterMatcherLabelSigned32BitShiftRegisterShift implements ParameterMatcher {
+
+	@Override
+	public ParameterParseResult parse(String value, RegisterSet registerSet) {
+		int plusIndex = value.indexOf('+');
+		if (plusIndex == -1) throw new ParameterParseException("Bad parameter format: " + value + ".");
+		//Checks the label and the number
+		String label = value.substring(0, plusIndex);
+		ParameterParseResult result = ParameterType.LABEL.parse(label, registerSet);
+		return result.and(ParameterType.SIGNED_32_BIT_REGISTER_SHIFT.parse(value.substring(plusIndex + 1), registerSet));
+	}
+
+	@Override
+	public boolean match(String value, RegisterSet registerSet) {
+		int plusIndex = value.indexOf('+');
+		if (plusIndex == -1) return false;
+		//Checks the label and the number
+		String label = value.substring(0, plusIndex);
+		return ParameterType.LABEL.match(label, registerSet) && ParameterType.SIGNED_32_BIT_REGISTER_SHIFT
+				.match(value.substring(plusIndex + 1), registerSet);
+	}
+}

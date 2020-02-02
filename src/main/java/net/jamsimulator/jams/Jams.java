@@ -1,24 +1,24 @@
 package net.jamsimulator.jams;
 
-import net.jamsimulator.jams.mips.instruction.manager.InstructionManager;
+import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 
 public class Jams {
 
-	private static InstructionManager defaultInstructionManager;
+	private static InstructionSet defaultInstructionSet;
 
 	//JAMS main method.
 	public static void main(String[] args) {
-		defaultInstructionManager = new InstructionManager(true, true);
+		defaultInstructionSet = new InstructionSet(true, true);
 	}
 
 
 	/**
-	 * Returns the default {@link InstructionManager}.
+	 * Returns the default {@link InstructionSet}.
 	 *
-	 * @return the default {@link InstructionManager}.
-	 * @see InstructionManager
+	 * @return the default {@link InstructionSet}.
+	 * @see InstructionSet
 	 */
-	public static InstructionManager getDefaultInstructionManager() {
-		return defaultInstructionManager;
+	public static InstructionSet getDefaultInstructionSet() {
+		return defaultInstructionSet;
 	}
 }
