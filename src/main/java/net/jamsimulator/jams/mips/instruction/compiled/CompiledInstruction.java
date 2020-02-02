@@ -1,6 +1,6 @@
 package net.jamsimulator.jams.mips.instruction.compiled;
 
-import net.jamsimulator.jams.mips.instruction.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 
 /**

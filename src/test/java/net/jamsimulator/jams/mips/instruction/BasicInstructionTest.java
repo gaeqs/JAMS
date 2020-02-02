@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.instruction;
 
+import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

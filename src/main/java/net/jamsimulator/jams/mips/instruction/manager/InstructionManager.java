@@ -1,9 +1,10 @@
 package net.jamsimulator.jams.mips.instruction.manager;
 
-import net.jamsimulator.jams.mips.instruction.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.PseudoInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
+import net.jamsimulator.jams.mips.instruction.compiled.CompiledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledRInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.utils.Validate;
@@ -84,7 +85,8 @@ public class InstructionManager {
 	public Optional<BasicInstruction> getInstructionByInstructionCode(int instructionCode) {
 		int operationCode = instructionCode >>> CompiledInstruction.OPERATION_CODE_SHIFT;
 		int functionCode = instructionCode & CompiledRInstruction.FUNCTION_CODE_MASK;
-		return getInstructionByOperationAndFunctionCode(operationCode, functionCode);
+		int fmtSub = instructionCode >> CompiledRFPUInstruction.FMT_SHIFT & CompiledRFPUInstruction.FMT_MASK;
+		return getInstructionByOperationAndFunctionCode(operationCode, functionCode, fmtSub);
 	}
 
 	/**
@@ -102,18 +104,19 @@ public class InstructionManager {
 	}
 
 	/**
-	 * Returns the first {@link BasicInstruction} that matches the given operation code and, if the instruction has function
-	 * code, the given function code. If the instruction doesn't have an function code the given one will be
+	 * Returns the first {@link BasicInstruction} that matches the given operation code, the given function code (if found) and
+	 * the given fmt or subcode (if found). If the instruction doesn't have an function code the given one will be
 	 * ignored.
 	 *
 	 * @param operationCode the given operation code.
 	 * @param functionCode  the given function code.
+	 * @param fmtSub        the given ftm or subcode.
 	 * @return the {@link BasicInstruction}, if present.
 	 */
-	public Optional<BasicInstruction> getInstructionByOperationAndFunctionCode(int operationCode, int functionCode) {
+	public Optional<BasicInstruction> getInstructionByOperationAndFunctionCode(int operationCode, int functionCode, int fmtSub) {
 		return instructions.stream().filter(target -> target instanceof BasicInstruction)
 				.map(target -> (BasicInstruction) target)
-				.filter(target -> target.match(operationCode, functionCode)).findFirst();
+				.filter(target -> target.match(operationCode, functionCode, fmtSub)).findFirst();
 	}
 
 
@@ -127,7 +130,7 @@ public class InstructionManager {
 	 * <p>
 	 * If you're not sure whether an instruction with the same operation and instruction codes
 	 * you can use {@link #getInstructionByInstructionCode(int)} and
-	 * {@link #getInstructionByOperationAndFunctionCode(int, int)}
+	 * {@link #getInstructionByOperationAndFunctionCode(int, int, int)}
 	 *
 	 * @param instruction the instruction to register.
 	 * @return whether the instruction was registered.

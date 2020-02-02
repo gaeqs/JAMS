@@ -1,10 +1,10 @@
 package net.jamsimulator.jams.mips.instruction.compiled;
 
-import net.jamsimulator.jams.mips.instruction.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 
 /**
- * Represents a compiled J-Instruction. A J-Instruction is composed of a 26-bit address and an operation code.
+ * Represents a compiled J-Type instruction. A J-Type intruction is composed of a 26-bit address and an operation code.
  */
 public abstract class CompiledJInstruction extends CompiledInstruction {
 
@@ -13,7 +13,7 @@ public abstract class CompiledJInstruction extends CompiledInstruction {
 	public static final int PC_MASK = 0xF0000000;
 
 	/**
-	 * Creates a compiled I instruction using an instruction code, an origin {@link Instruction} and an origin {@link BasicInstruction}.
+	 * Creates a compiled J-Type instruction using an instruction code, an origin {@link Instruction} and an origin {@link BasicInstruction}.
 	 *
 	 * @param value       the value of the instruction.
 	 * @param origin      the origin instruction.
@@ -24,10 +24,10 @@ public abstract class CompiledJInstruction extends CompiledInstruction {
 	}
 
 	/**
-	 * Creates a compiled I instruction using an operation code, an address, an origin {@link Instruction} and an origin {@link BasicInstruction}.
+	 * Creates a compiled J-Type instruction using an operation code, an address, an origin {@link Instruction} and an origin {@link BasicInstruction}.
 	 *
 	 * @param operationCode the operation code of the instruction.
-	 * @param address       the address of the instruction.
+	 * @param address       the byte-level address of the instruction.
 	 * @param origin        the origin instruction.
 	 * @param basicOrigin   the origin basic instruction.
 	 */

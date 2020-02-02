@@ -1,34 +1,36 @@
 package net.jamsimulator.jams.mips.instruction.compiled;
 
-import net.jamsimulator.jams.mips.instruction.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 
 /**
- * Represents a compiled I-Instruction. An I-Instruction is composed of an 16-bit immediate,
- * * one source register, one target register and one operation code.
+ * Represents a compiled I-Type Imm11 instruction. An I-Type Imm11 instruction is composed of an 11-bit immediate,
+ * one destination register, two source registers (source and target) and one operation code.
  */
-public abstract class CompiledIInstruction extends CompiledInstruction {
+public abstract class CompiledI11Instruction extends CompiledInstruction {
 
-	public static final int IMMEDIATE_MASK = 0xFFFF;
+	public static final int IMMEDIATE_MASK = 0x7FF;
+	public static final int DESTINATION_REGISTER_SHIFT = 11;
+	public static final int DESTINATION_REGISTER_MASK = 0x1F;
 	public static final int TARGET_REGISTER_SHIFT = 16;
 	public static final int TARGET_REGISTER_MASK = 0x1F;
 	public static final int SOURCE_REGISTER_SHIFT = 21;
 	public static final int SOURCE_REGISTER_MASK = 0x1F;
 
 	/**
-	 * Creates a compiled I instruction using an instruction code, an origin {@link Instruction} and an origin {@link BasicInstruction}.
+	 * Creates a compiled I-Type Imm11 instruction using an instruction code, an origin {@link Instruction} and an origin {@link BasicInstruction}.
 	 *
 	 * @param value       the value of the instruction.
 	 * @param origin      the origin instruction.
 	 * @param basicOrigin the origin basic instruction.
 	 */
-	public CompiledIInstruction(int value, Instruction origin, BasicInstruction basicOrigin) {
+	public CompiledI11Instruction(int value, Instruction origin, BasicInstruction basicOrigin) {
 		super(value, origin, basicOrigin);
 	}
 
 	/**
-	 * Creates a compiled I instruction using an operation code, a source register, a target register, an immediate,
-	 * an origin {@link Instruction} and an origin {@link BasicInstruction}.
+	 * Creates a compiled I-Type Imm11 instruction using an operation code, a source register, a target register, a destination register,
+	 * an immediate, an origin {@link Instruction} and an origin {@link BasicInstruction}.
 	 *
 	 * @param operationCode  the operation code.
 	 * @param sourceRegister the source register .
@@ -37,25 +39,26 @@ public abstract class CompiledIInstruction extends CompiledInstruction {
 	 * @param origin         the origin instruction.
 	 * @param basicOrigin    the origin basic instruction.
 	 */
-	public CompiledIInstruction(int operationCode, int sourceRegister, int targetRegister, int immediate, Instruction origin, BasicInstruction basicOrigin) {
-		super(calculateValue(operationCode, sourceRegister, targetRegister, immediate), origin, basicOrigin);
+	public CompiledI11Instruction(int operationCode, int sourceRegister, int targetRegister, int destinationRegister,
+								  int immediate, Instruction origin, BasicInstruction basicOrigin) {
+		super(calculateValue(operationCode, sourceRegister, targetRegister, destinationRegister, immediate), origin, basicOrigin);
 	}
 
 	/**
-	 * Returns the immediate value of the instruction as an unsigned 16-bit number.
+	 * Returns the immediate value of the instruction as an unsigned 11-bit number.
 	 * For a signed version of this value see {@link #getImmediateAsSigned()}.
 	 *
-	 * @return the unsigned 16-bit immediate.
+	 * @return the unsigned 11-bit immediate.
 	 */
 	public int getImmediate() {
 		return value & IMMEDIATE_MASK;
 	}
 
 	/**
-	 * Returns the immediate value of the instruction as a signed 16-bit number.
+	 * Returns the immediate value of the instruction as a signed 11-bit number.
 	 * For a unsigned version of this value see {@link #getImmediate()}.
 	 *
-	 * @return the signed 16-bit immediate.
+	 * @return the signed 11-bit immediate.
 	 */
 	public int getImmediateAsSigned() {
 		return (short) getImmediate();
@@ -80,10 +83,11 @@ public abstract class CompiledIInstruction extends CompiledInstruction {
 	}
 
 
-	static int calculateValue(int operationCode, int sourceRegister, int targetRegister, int immediate) {
+	static int calculateValue(int operationCode, int sourceRegister, int targetRegister, int destinationRegister, int immediate) {
 		int value = operationCode << CompiledInstruction.OPERATION_CODE_SHIFT;
 		value += (sourceRegister & SOURCE_REGISTER_MASK) << SOURCE_REGISTER_SHIFT;
 		value += (targetRegister & TARGET_REGISTER_MASK) << TARGET_REGISTER_SHIFT;
+		value += (destinationRegister & DESTINATION_REGISTER_MASK) << DESTINATION_REGISTER_SHIFT;
 		value += immediate & IMMEDIATE_MASK;
 		return value;
 	}

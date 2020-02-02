@@ -1,11 +1,11 @@
-package net.jamsimulator.jams.mips.instruction;
+package net.jamsimulator.jams.mips.instruction.basic;
 
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
  * Represents a R-Type basic instruction. This subclass adds the function code
  * of the instruction, allowing the simulator to find this instruction based on
- * a instruction code.
+ * an instruction code.
  */
 public class RBasicInstruction extends BasicInstruction {
 
@@ -27,7 +27,7 @@ public class RBasicInstruction extends BasicInstruction {
 	}
 
 	@Override
-	public boolean match(int operationCode, int functionCode) {
+	public boolean match(int operationCode, int functionCode, int fmtSub) {
 		return super.match(operationCode, functionCode) && functionCode == this.functionCode;
 	}
 

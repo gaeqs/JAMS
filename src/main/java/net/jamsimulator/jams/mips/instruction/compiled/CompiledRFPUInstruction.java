@@ -4,50 +4,50 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 
 /**
- * Represents a compiled R-Type instruction. A R-Type instruction is composed of a function code,
- * a "shamt" (unsigned 5-bit immediate), two source registers (source and target), one destination register
+ * Represents a compiled R-Type FPU instruction. A R-Type FPU instruction is composed of a function code,
+ * two source registers (source and target), one destination register, one operand type format specifier (FMT)
  * and one operation code.
  */
-public abstract class CompiledRInstruction extends CompiledInstruction {
+public abstract class CompiledRFPUInstruction extends CompiledInstruction {
 
 	public static final int FUNCTION_CODE_MASK = 0X3F;
-	public static final int SHIFT_AMOUNT_SHIFT = 6;
-	public static final int SHIFT_AMOUNT_MASK = 0x1F;
-	public static final int DESTINATION_REGISTER_SHIFT = 11;
+	public static final int DESTINATION_REGISTER_SHIFT = 6;
 	public static final int DESTINATION_REGISTER_MASK = 0x1F;
+	public static final int SOURCE_REGISTER_SHIFT = 11;
+	public static final int SOURCE_REGISTER_MASK = 0x1F;
 	public static final int TARGET_REGISTER_SHIFT = 16;
 	public static final int TARGET_REGISTER_MASK = 0x1F;
-	public static final int SOURCE_REGISTER_SHIFT = 21;
-	public static final int SOURCE_REGISTER_MASK = 0x1F;
+	public static final int FMT_SHIFT = 21;
+	public static final int FMT_MASK = 0x1F;
 
 	/**
-	 * Creates a compiled R-Type instruction using an instruction code, an origin {@link Instruction} and an origin {@link BasicInstruction}.
+	 * Creates a compiled I instruction using an instruction code, an origin {@link Instruction} and an origin {@link BasicInstruction}.
 	 *
 	 * @param value       the value of the instruction.
 	 * @param origin      the origin instruction.
 	 * @param basicOrigin the origin basic instruction.
 	 */
-	public CompiledRInstruction(int value, Instruction origin, BasicInstruction basicOrigin) {
+	public CompiledRFPUInstruction(int value, Instruction origin, BasicInstruction basicOrigin) {
 		super(value, origin, basicOrigin);
 	}
 
 
 	/**
-	 * Creates a compiled R-Type instruction using an operation code, a source register, a target register, a destination register,
+	 * Creates a compiled I instruction using an operation code, a source register, a target register, a destination register,
 	 * a shift amount 5-bit immediate, a function code, an origin {@link Instruction} and an origin {@link BasicInstruction}.
 	 *
 	 * @param operationCode       the operation code.
-	 * @param sourceRegister      the source register.
+	 * @param fmt                 the operand type format specifier.
 	 * @param targetRegister      the target register.
+	 * @param sourceRegister      the source register.
 	 * @param destinationRegister the destination register.
-	 * @param shiftAmount         the shift amount immediate value.
 	 * @param functionCode        the function code.
 	 * @param origin              the origin instruction.
 	 * @param basicOrigin         the origin basic instruction.
 	 */
-	public CompiledRInstruction(int operationCode, int sourceRegister, int targetRegister, int destinationRegister,
-								int shiftAmount, int functionCode, Instruction origin, BasicInstruction basicOrigin) {
-		super(calculateValue(operationCode, sourceRegister, targetRegister, destinationRegister, shiftAmount, functionCode),
+	public CompiledRFPUInstruction(int operationCode, int fmt, int targetRegister, int sourceRegister, int destinationRegister,
+								   int functionCode, Instruction origin, BasicInstruction basicOrigin) {
+		super(calculateValue(operationCode, fmt, targetRegister, sourceRegister, destinationRegister, functionCode),
 				origin, basicOrigin);
 	}
 
@@ -65,8 +65,8 @@ public abstract class CompiledRInstruction extends CompiledInstruction {
 	 *
 	 * @return the shift amount immediate.
 	 */
-	public int getShiftAmount() {
-		return value >>> SHIFT_AMOUNT_SHIFT & SHIFT_AMOUNT_MASK;
+	public int getFMT() {
+		return value >>> FMT_SHIFT & FMT_MASK;
 	}
 
 	/**
@@ -96,13 +96,13 @@ public abstract class CompiledRInstruction extends CompiledInstruction {
 		return value >> SOURCE_REGISTER_SHIFT & SOURCE_REGISTER_MASK;
 	}
 
-	static int calculateValue(int operationCode, int sourceRegister, int targetRegister, int destinationRegister,
-							  int shiftAmount, int functionCode) {
+	static int calculateValue(int operationCode, int fmt, int targetRegister, int sourceRegister,
+							  int destinationRegister, int functionCode) {
 		int value = operationCode << CompiledInstruction.OPERATION_CODE_SHIFT;
-		value += (sourceRegister & SOURCE_REGISTER_MASK) << SOURCE_REGISTER_SHIFT;
+		value += (fmt & FMT_MASK) << FMT_SHIFT;
 		value += (targetRegister & TARGET_REGISTER_MASK) << TARGET_REGISTER_SHIFT;
+		value += (sourceRegister & SOURCE_REGISTER_MASK) << SOURCE_REGISTER_SHIFT;
 		value += (destinationRegister & DESTINATION_REGISTER_MASK) << DESTINATION_REGISTER_SHIFT;
-		value += (shiftAmount & SHIFT_AMOUNT_MASK) << SHIFT_AMOUNT_SHIFT;
 		value += functionCode & FUNCTION_CODE_MASK;
 		return value;
 	}
