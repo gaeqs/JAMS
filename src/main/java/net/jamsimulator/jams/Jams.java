@@ -1,13 +1,16 @@
 package net.jamsimulator.jams;
 
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import org.json.simple.parser.ParseException;
+
+import java.io.IOException;
 
 public class Jams {
 
 	private static InstructionSet defaultInstructionSet;
 
 	//JAMS main method.
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException, ParseException {
 		defaultInstructionSet = new InstructionSet(true, true, true);
 	}
 

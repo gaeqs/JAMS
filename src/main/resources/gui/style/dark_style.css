@@ -1,0 +1,402 @@
+* {
+    -theme-foreground: #ececec;
+    -theme-foreground-darker: derive(-theme-foreground, -20%);
+    -theme-foreground-lighter: #FFFFFF;
+    -theme-background: derive(-theme-foreground, -75%);
+    -theme-background-darker: derive(-theme-foreground, -85%);
+    -theme-background-focused: derive(-theme-background, 20%);
+    -theme-background-pressed: derive(-theme-background, 40%);
+    -theme-background-text-area: derive(-theme-background, -30%);
+}
+
+
+/*REMOVE FOCUS INDICATOR (BLUE BORDER)*/
+.focus-indicator {
+    -fx-border-color: transparent;
+}
+
+/*LABEL*/
+.label {
+    -fx-text-fill: -theme-foreground;
+}
+
+/*TEXT AREA*/
+.text-area {
+    -fx-background-color: -theme-background-text-area;
+    -fx-text-fill: -theme-foreground;
+    -fx-background-radius: 0;
+}
+
+.text-area .content {
+    -fx-background-color: -theme-background-text-area;
+    -fx-background-radius: 0;
+
+}
+
+/*TEXT FIELD*/
+.text-field {
+    -fx-background-color: -theme-background-text-area;
+    -fx-text-fill: -theme-foreground;
+    -fx-background-radius: 0;
+    -fx-border-color: -theme-background-focused;
+}
+
+/*PANE*/
+AnchorPane {
+    -fx-background-color: -theme-background;
+}
+
+.tab-pane .tab-header-area {
+    -fx-padding: 0;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: -theme-background;
+}
+
+.tab-pane .tab-down-button {
+    -fx-background-color: -theme-background;
+}
+
+.tab-pane .tab-header-area .tab {
+    -fx-background-radius: 0;
+    -fx-background-color: -theme-background;
+    -fx-border-color: transparent;
+}
+
+.tab-pane .tab-header-area .tab:selected {
+    -fx-background-color: -theme-background-focused;
+}
+
+
+.tab-pane .tab-header-area .tab:showing {
+    -fx-background-color: -theme-background-focused;
+}
+
+.tab-pane .tab-header-area .tab .tab-label {
+    -fx-text-fill: -theme-foreground;
+}
+
+
+.tab-pane .headers-region {
+    -fx-background-color: -theme-background;
+}
+
+/*split*/
+.split-pane {
+    -fx-padding: 0px;
+    -fx-background-color: -theme-background;
+}
+
+.split-pane .split-pane-divider {
+    -fx-background-color: -theme-background-darker;
+    -fx-padding: 2px;
+}
+
+/*BUTTON*/
+.button {
+    -fx-background-color: -theme-background;
+    -fx-border-color: -theme-background-focused;
+    -fx-background-radius: 0;
+    -fx-text-fill: -theme-foreground;
+}
+
+.button:hover {
+    -fx-background-color: -theme-background-focused;
+    -fx-border-color: -theme-background-focused;
+    -fx-background-radius: 0;
+    -fx-text-fill: -theme-foreground;
+}
+
+.button:pressed {
+    -fx-background-color: -theme-background-pressed;
+    -fx-border-color: -theme-background-pressed;
+    -fx-background-radius: 0;
+    -fx-text-fill: -theme-foreground;
+}
+
+/*BUTTON*/
+.button {
+    -fx-background-color: -theme-background;
+    -fx-border-color: -theme-background-focused;
+    -fx-background-radius: 0;
+    -fx-text-fill: -theme-foreground;
+}
+
+.button:hover {
+    -fx-background-color: -theme-background-focused;
+    -fx-border-color: -theme-background-focused;
+    -fx-background-radius: 0;
+    -fx-text-fill: -theme-foreground;
+}
+
+.button:pressed {
+    -fx-background-color: -theme-background-pressed;
+    -fx-border-color: -theme-background-pressed;
+    -fx-background-radius: 0;
+    -fx-text-fill: -theme-foreground;
+}
+
+.menu-button {
+    -fx-background-color: -theme-background;
+    -fx-border-color: -theme-background-focused;
+    -fx-background-radius: 0;
+    -fx-text-fill: -theme-foreground;
+}
+
+.menu-button:hover {
+    -fx-background-color: -theme-background-focused;
+    -fx-border-color: -theme-background-focused;
+    -fx-background-radius: 0;
+    -fx-text-fill: -theme-foreground;
+}
+
+.toggle-button {
+    -fx-background-color: -theme-background;
+    -fx-border-color: -theme-background-focused;
+    -fx-background-radius: 0;
+    -fx-text-fill: -theme-foreground;
+}
+
+.toggle-button:hover {
+    -fx-background-color: -theme-background-focused;
+    -fx-border-color: -theme-background-focused;
+    -fx-background-radius: 0;
+    -fx-text-fill: -theme-foreground;
+}
+
+.toggle-button:selected {
+    -fx-background-color: -theme-background-pressed;
+    -fx-border-color: -theme-background-pressed;
+    -fx-background-radius: 0;
+    -fx-text-fill: -theme-foreground;
+}
+
+/*RADIO BUTTON*/
+.radio-button {
+    -fx-text-fill: -theme-foreground;
+}
+
+.radio-button .radio {
+    -fx-background-color: -theme-background-darker;
+}
+
+.radio-button:selected .dot {
+    -fx-background-color: -theme-foreground;
+}
+
+/*CHECK BOX*/
+.check-box {
+    -fx-text-fill: -theme-foreground;
+}
+
+.check-box .box {
+    -fx-background-color: -theme-background-darker;
+}
+
+/*PROGRESS BAR*/
+.progress-bar .track {
+    -fx-background-color: -theme-background-darker;
+}
+
+.progress-bar .bar {
+    -fx-background-color: -theme-background-pressed;
+}
+
+/*CHOICE BOX */
+.choice-box {
+    -fx-background-color: -theme-background;
+    -fx-border-color: -theme-background-focused;
+}
+
+/* COMBO BOX */
+.combo-box-base {
+    -fx-background-color: -theme-background;
+    -fx-border-color: -theme-background-focused;
+}
+
+.combo-box-base .list-cell {
+    -fx-text-fill: -theme-foreground;
+    -fx-background-color: -theme-background;
+}
+
+.combo-box-base .combo-box-popup .list-view {
+    -fx-background-color: -theme-background;
+}
+
+/*LIST VIEW*/
+
+.list-view {
+    -fx-background-color: -theme-background;
+}
+
+.list-view .list-cell:even {
+    -fx-text-fill: -theme-foreground;
+    -fx-background-color: -theme-background-focused;
+}
+
+.list-view .list-cell:odd {
+    -fx-text-fill: -theme-foreground;
+    -fx-background-color: -theme-background-pressed;
+}
+
+/*TABLE VIEW*/
+.table-view {
+    -fx-background-color: -theme-background;
+}
+
+.table-view .filler {
+    -fx-background-color: -theme-background-darker;
+}
+
+.table-view .column-header {
+    -fx-background-color: -theme-background-darker;
+}
+
+.table-view .table-row-cell:even {
+    -fx-text-fill: -theme-foreground;
+    -fx-background-color: -theme-background-focused;
+}
+
+.table-view .table-row-cell:odd {
+    -fx-text-fill: -theme-foreground;
+    -fx-background-color: -theme-background-pressed;
+}
+
+.table-view .column-drag-header {
+    -fx-background-color: -theme-background-darker;
+}
+
+.table-view .table-row-cell {
+    -fx-table-cell-border-color: -theme-background;
+}
+
+/*TREE TABLE VIEW*/
+.tree-table-view {
+    -fx-background-color: -theme-background;
+}
+
+.tree-table-view .filler {
+    -fx-background-color: -theme-background-darker;
+}
+
+.tree-table-view .column-header {
+    -fx-background-color: -theme-background-darker;
+}
+
+.tree-table-view .table-row-cell:even {
+    -fx-text-fill: -theme-foreground;
+    -fx-background-color: -theme-background-focused;
+}
+
+.tree-table-view .table-row-cell:odd {
+    -fx-text-fill: -theme-foreground;
+    -fx-background-color: -theme-background-pressed;
+}
+
+.tree-table-view .column-drag-header {
+    -fx-background-color: -theme-background-darker;
+}
+
+.tree-table-view .table-row-cell {
+    -fx-table-cell-border-color: -theme-background;
+}
+
+/*TREE VIEW*/
+.tree-view {
+    -fx-background-color: -theme-background;
+    -fx-text-fill: -theme-foreground;
+}
+
+/*PAGINATION*/
+.pagination .pagination-control .number-button {
+    -fx-text-fill: -theme-foreground;
+    -fx-background-color: -theme-background-darker;
+}
+
+/*MENU BAR*/
+.menu-bar {
+    -fx-background-color: -theme-background-darker;
+    -fx-padding: 0;
+}
+
+.menu:hover {
+    -fx-background-color: -theme-background-focused;
+}
+
+.menu:showing {
+    -fx-background-color: -theme-background-focused;
+}
+
+.menu-item {
+    -fx-background-color: -theme-background-darker;
+    -fx-padding: 7px;
+}
+
+.menu {
+    -fx-border-color: -theme-background-darker;
+    -fx-background-radius: 0;
+    -fx-text-fill: -theme-foreground;
+    -fx-background-color: -theme-background-darker;
+}
+
+.menu-item:focused {
+    -fx-background-color: -theme-background-focused;
+}
+
+.context-menu {
+    -fx-background-color: -theme-background;
+    -fx-padding: 0px;
+}
+
+/*SEPARATOR*/
+.separator {
+    -fx-background-color: -theme-background-darker;
+}
+
+.separator .line {
+    -fx-border-color: -theme-background-darker;
+}
+
+/*SLIDER*/
+.slider * {
+    -fx-background-color: -theme-background-darker;
+}
+
+.slider .thumb {
+    -fx-background-color: -theme-background-focused;
+}
+
+/*PANE MENU*/
+.pane-menu {
+    -fx-background-color: -theme-background;
+    -fx-border-color: -theme-background-darker;
+    -fx-border-width: 10px;
+}
+
+.left-pane-menu {
+    -fx-border-width: 0 1 0 0;
+}
+
+.right-pane-menu {
+    -fx-border-width: 0 0 0 1;
+}
+
+/*PANE MENU BUTTON*/
+.pane-menu-button {
+    -fx-border-width: 0;
+    -fx-label-padding: -200;
+}
+
+.pane-menu-button:selected {
+    -fx-background-color: -theme-background-darker;
+}
+
+.pane-menu-button .text {
+    -fx-rotate: -90;
+}
+
+/*PROJECT MENU*/
+.project-menu {
+    -fx-background-color: -theme-background-darker;
+}
