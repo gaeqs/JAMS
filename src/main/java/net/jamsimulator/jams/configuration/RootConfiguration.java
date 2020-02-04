@@ -3,10 +3,7 @@ package net.jamsimulator.jams.configuration;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +25,29 @@ public class RootConfiguration extends Configuration {
 	public RootConfiguration(File json) throws IOException, ParseException {
 		super(null, loadJSON(json), null);
 		root = this;
-		this.file = json;
+		file = json;
+	}
+
+	/**
+	 * Creates a root configuration using a {@link Reader} that contains a JSON string.
+	 *
+	 * @param reader the reader.
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public RootConfiguration(Reader reader) throws IOException, ParseException {
+		super(null, loadJSON(reader), null);
+		root = this;
+		file = null;
+	}
+
+	/**
+	 * Sets the default save file.
+	 *
+	 * @param file the default save file.
+	 */
+	public void setFile(File file) {
+		this.file = file;
 	}
 
 	/**
@@ -37,13 +56,20 @@ public class RootConfiguration extends Configuration {
 	 * @throws IOException
 	 */
 	public void save() throws IOException {
-		save(file);
+		if (file != null)
+			save(file);
 	}
 
 
 	private static Map<String, Object> loadJSON(File file) throws IOException, ParseException {
 		BufferedReader reader = new BufferedReader(new FileReader(file));
+		Map<String, Object> map = loadJSON(reader);
+		reader.close();
+		return map;
+	}
 
+	private static Map<String, Object> loadJSON(Reader r) throws IOException, ParseException {
+		BufferedReader reader = new BufferedReader(r);
 		//Loads the string first. This allows us to check if the file is empty.
 		StringBuilder builder = new StringBuilder();
 		boolean first = true;
@@ -59,7 +85,6 @@ public class RootConfiguration extends Configuration {
 		if (string.isEmpty()) return new HashMap<>();
 
 		Map<String, Object> map = (Map<String, Object>) new JSONParser().parse(string);
-		reader.close();
 		return map;
 	}
 }
