@@ -24,4 +24,9 @@ public class InstructionAdd extends RBasicInstruction {
 		return new CompiledInstructionAdd((int) parameters[1], (int) parameters[2],
 				(int) parameters[0], this, this);
 	}
+
+	@Override
+	public CompiledInstruction compileFromCode(int instructionCode) {
+		return new CompiledInstructionAdd(instructionCode, this, this);
+	}
 }

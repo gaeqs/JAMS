@@ -127,6 +127,14 @@ public abstract class BasicInstruction implements Instruction {
 	 */
 	public abstract CompiledInstruction compileBasic(Object[] parameters);
 
+	/**
+	 * Compiles the basic instruction using the given instruction code.
+	 *
+	 * @param instructionCode the instruction code.
+	 * @return the {@link CompiledInstruction}.
+	 */
+	public abstract CompiledInstruction compileFromCode(int instructionCode);
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

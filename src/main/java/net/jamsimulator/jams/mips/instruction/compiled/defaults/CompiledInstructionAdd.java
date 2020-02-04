@@ -19,6 +19,10 @@ public class CompiledInstructionAdd extends CompiledRInstruction {
 		super(OPERATION_CODE, sourceRegister, targetRegister, destinationRegister, 0, FUNCTION_CODE, origin, basicOrigin);
 	}
 
+	public CompiledInstructionAdd(int instructionCode, Instruction origin, BasicInstruction basicOrigin) {
+		super(instructionCode, origin, basicOrigin);
+	}
+
 	@Override
 	public void execute(Simulation simulation) {
 		RegisterSet set = simulation.getRegisterSet();
