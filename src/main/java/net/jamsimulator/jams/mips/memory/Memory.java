@@ -1,11 +1,11 @@
 package net.jamsimulator.jams.mips.memory;
 
-import java.util.Optional;
+import net.jamsimulator.jams.event.EventCaller;
 
 /**
  * Represents a memory from a simulator.
  */
-public interface Memory {
+public interface Memory extends EventCaller {
 
 	/**
 	 * Returns whether this memory is big endian.

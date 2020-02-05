@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.memory;
 
+import net.jamsimulator.jams.event.SimpleEventCaller;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.*;
@@ -10,10 +11,11 @@ import java.util.*;
  * <p>
  * Once created you cannot add or remove {@link MemorySection}s.
  *
+ * @see net.jamsimulator.jams.event.EventCaller
  * @see MemorySection
  * @see MemoryCell
  */
-public class SimpleMemory implements Memory {
+public class SimpleMemory extends SimpleEventCaller implements Memory {
 
 
 	private Map<String, MemorySection> sections;

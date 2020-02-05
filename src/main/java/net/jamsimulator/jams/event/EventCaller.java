@@ -1,7 +1,6 @@
 package net.jamsimulator.jams.event;
 
 import java.lang.reflect.Method;
-import java.util.TreeSet;
 
 /**
  * Represents an event caller. An event caller allows to send
@@ -12,20 +11,7 @@ import java.util.TreeSet;
  * <p>
  * {@link Listener}s listening a superclass of the {@link Event} will also be called.
  */
-public class EventCaller {
-
-	private TreeSet<ListenerMethod> registeredListeners;
-
-	/**
-	 * Creates a event caller.
-	 */
-	public EventCaller() {
-		registeredListeners = new TreeSet<>(((o1, o2) -> {
-			int val = o2.getListener().priority() - o1.getListener().priority();
-			//Avoids override. Listeners registered first have priority.
-			return val == 0 ? -1 : val;
-		}));
-	}
+public interface EventCaller {
 
 	/**
 	 * Registers a listener of an instance. A listener is a non-static method with
@@ -34,52 +20,41 @@ public class EventCaller {
 	 *
 	 * @param instance the instance.
 	 * @param method   the listener.
-	 * @return true whether the listener has been register.
+	 * @return true whether the listener was registered.
 	 */
-	public boolean registerListener(Object instance, Method method) {
-		if (!method.trySetAccessible()) return false;
-		if (method.getParameterCount() != 1) return false;
-		Class<?> clazz = method.getParameters()[0].getType();
-		if (!Event.class.isAssignableFrom(clazz)) return false;
-		Class<? extends Event> type = (Class<? extends Event>) clazz;
-
-		Listener[] annotations = method.getAnnotationsByType(Listener.class);
-		if (annotations.length != 1) return false;
-		Listener annotation = annotations[0];
-
-		ListenerMethod listenerMethod = new ListenerMethod(instance, method, type, annotation);
-		registeredListeners.add(listenerMethod);
-		return true;
-	}
+	boolean registerListener(Object instance, Method method);
 
 	/**
-	 * Registers all listener of an instance. See {@link #registerListener(Object, Method)} for
+	 * Registers all listeners of an instance. See {@link #registerListener(Object, Method)} for
 	 * more information.
 	 *
 	 * @param instance the instance.
-	 * @return the amount of listeners registered.
+	 * @return the amount of registered listeners.
 	 * @see #registerListener(Object, Method)
 	 */
-	public int registerListeners(Object instance) {
-		int amount = 0;
-		for (Method declaredMethod : instance.getClass().getDeclaredMethods()) {
-			if (registerListener(instance, declaredMethod))
-				amount++;
-		}
-		return amount;
-	}
+	int registerListeners(Object instance);
+
+	/**
+	 * Unregisters a listener of an instance.
+	 *
+	 * @param instance the instance.
+	 * @param method   the listener.
+	 * @return whether the listener was unregistered.
+	 */
+	boolean unregisterListener(Object instance, Method method);
+
+	/**
+	 * Unregisters all listeners of an instance.
+	 *
+	 * @param instance the instance.
+	 * @return the amount of unregistered listeners.
+	 */
+	int unregisterListeners(Object instance);
 
 	/**
 	 * Calls all listeners compatible with the given event.
 	 *
 	 * @param event the event.
 	 */
-	public void callEvent(Event event) {
-		//Sets the caller.
-		event.setCaller(this);
-		//For all listeners: filter and send.
-		registeredListeners.stream().filter(target -> target.getEvent().isAssignableFrom(event.getClass()))
-				.forEach(target -> target.call(event));
-	}
-
+	void callEvent(Event event);
 }

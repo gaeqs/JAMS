@@ -10,7 +10,7 @@ class EventGeneratorTest {
 
 	@Test
 	void test() {
-		EventCaller caller = new EventCaller();
+		SimpleEventCaller caller = new SimpleEventCaller();
 		caller.registerListeners(new TestListener());
 
 		TestEvent testEvent = new TestEvent(caller, 5);
@@ -46,7 +46,7 @@ class EventGeneratorTest {
 
 		private int value;
 
-		public TestEvent(EventCaller generator, int value) {
+		public TestEvent(SimpleEventCaller generator, int value) {
 			super(generator);
 			this.value = value;
 		}
