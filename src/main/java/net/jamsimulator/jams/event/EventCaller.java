@@ -75,6 +75,9 @@ public class EventCaller {
 	 * @param event the event.
 	 */
 	public void callEvent(Event event) {
+		//Sets the caller.
+		event.setCaller(this);
+		//For all listeners: filter and send.
 		registeredListeners.stream().filter(target -> target.getEvent().isAssignableFrom(event.getClass()))
 				.forEach(target -> target.call(event));
 	}

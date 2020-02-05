@@ -16,14 +16,6 @@ class ListenerMethod {
 		this.listener = listener;
 	}
 
-	Object getInstance() {
-		return instance;
-	}
-
-	Method getMethod() {
-		return method;
-	}
-
 	Class<? extends Event> getEvent() {
 		return event;
 	}
