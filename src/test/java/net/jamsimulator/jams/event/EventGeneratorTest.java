@@ -13,7 +13,7 @@ class EventGeneratorTest {
 		SimpleEventCaller caller = new SimpleEventCaller();
 		caller.registerListeners(new TestListener());
 
-		TestEvent testEvent = new TestEvent(caller, 5);
+		TestEvent testEvent = new TestEvent(5);
 		caller.callEvent(testEvent);
 
 		assertTrue(received0, "Listeners not called.");
@@ -46,8 +46,7 @@ class EventGeneratorTest {
 
 		private int value;
 
-		public TestEvent(SimpleEventCaller generator, int value) {
-			super(generator);
+		public TestEvent(int value) {
 			this.value = value;
 		}
 
