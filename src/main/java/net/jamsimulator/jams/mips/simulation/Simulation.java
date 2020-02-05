@@ -1,7 +1,9 @@
 package net.jamsimulator.jams.mips.simulation;
 
+import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
+import net.jamsimulator.jams.mips.memory.event.ByteGetEvent;
 import net.jamsimulator.jams.mips.register.RegisterSet;
 
 public class Simulation {
@@ -15,17 +17,23 @@ public class Simulation {
 		this.instructionSet = instructionSet;
 		this.registerSet = registerSet;
 		this.memory = memory;
+		memory.registerListeners(this);
 	}
 
 	public InstructionSet getInstructionSet() {
-        return instructionSet;
-    }
+		return instructionSet;
+	}
 
-    public RegisterSet getRegisterSet() {
-        return registerSet;
-    }
+	public RegisterSet getRegisterSet() {
+		return registerSet;
+	}
 
-    public Memory getMemory() {
-        return memory;
-    }
+	public Memory getMemory() {
+		return memory;
+	}
+
+	@Listener
+	private void byteGetEvent(ByteGetEvent.After event) {
+		System.out.println(event.getValue());
+	}
 }

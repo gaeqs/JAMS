@@ -1,6 +1,10 @@
 package net.jamsimulator.jams.mips.memory;
 
 import net.jamsimulator.jams.event.SimpleEventCaller;
+import net.jamsimulator.jams.mips.memory.event.ByteGetEvent;
+import net.jamsimulator.jams.mips.memory.event.ByteSetEvent;
+import net.jamsimulator.jams.mips.memory.event.WordGetEvent;
+import net.jamsimulator.jams.mips.memory.event.WordSetEvent;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.*;
@@ -71,21 +75,71 @@ public class SimpleMemory extends SimpleEventCaller implements Memory {
 	}
 
 	public byte getByte(int address) {
-		return getSectionOrThrowException(address).getByte(address);
+		//Invokes the before event.
+		ByteGetEvent.Before before = callEvent(new ByteGetEvent.Before(this, address));
+
+		//Refresh data.
+		address = before.getAddress();
+
+		//Gets the section and the byte.
+		MemorySection section = getSectionOrThrowException(address);
+		byte b = section.getByte(address);
+
+		//Invokes the after event.
+		return callEvent(new ByteGetEvent.After(this, section, address, b)).getValue();
 	}
 
 	public void setByte(int address, byte b) {
-		getSectionOrThrowException(address).setByte(address, b);
+		//Invokes the before event.
+		ByteSetEvent.Before before = callEvent(new ByteSetEvent.Before(this, address, b));
+		if (before.isCancelled()) return;
+
+		//Refresh data.
+		address = before.getAddress();
+		b = before.getValue();
+
+		//Gets the section and sets the byte.
+		MemorySection section = getSectionOrThrowException(address);
+		section.setByte(address, b);
+
+		//Invokes the after event.
+		callEvent(new ByteSetEvent.After(this, section, address, b));
 	}
 
 	public int getWord(int address) {
+		//Invokes the before event.
+		WordGetEvent.Before before = callEvent(new WordGetEvent.Before(this, address));
+
+		//Refresh data.
+		address = before.getAddress();
+
 		if (address % 4 != 0) throw new IllegalArgumentException("Address " + address + " is not aligned.");
-		return getSectionOrThrowException(address).getWord(address, bigEndian);
+
+		//Gets the section and the word.
+		MemorySection section = getSectionOrThrowException(address);
+		int word = section.getWord(address, bigEndian);
+
+		//Invokes the after event.
+		return callEvent(new WordGetEvent.After(this, section, address, word)).getValue();
 	}
 
 	public void setWord(int address, int word) {
+		//Invokes the before event.
+		WordSetEvent.Before before = callEvent(new WordSetEvent.Before(this, address, word));
+		if (before.isCancelled()) return;
+
+		//Refresh data.
+		address = before.getAddress();
+		word = before.getValue();
+
 		if (address % 4 != 0) throw new IllegalArgumentException("Address " + address + " is not aligned.");
-		getSectionOrThrowException(address).setWord(address, word, bigEndian);
+
+		//Gets the section and sets the word.
+		MemorySection section = getSectionOrThrowException(address);
+		section.setWord(address, word, bigEndian);
+
+		//Invokes the after event.
+		callEvent(new WordSetEvent.After(this, section, address, word));
 	}
 
 

@@ -45,7 +45,6 @@ class GeneralInstructionTests {
 		if (instructions.length != 1) fail("Incorrect instruction.");
 		instructions[0].execute(simulation);
 		assertEquals(23, t2.getValue(), "Bad add instruction result.");
-
 	}
 
 	@Test

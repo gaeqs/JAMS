@@ -67,12 +67,18 @@ public class SimpleEventCaller implements EventCaller {
 		return amount;
 	}
 
-	public void callEvent(Event event) {
+	public <T extends Event> T callEvent(T event) {
 		//Sets the caller.
 		event.setCaller(this);
 		//For all listeners: filter and send.
 		registeredListeners.stream().filter(target -> target.getEvent().isAssignableFrom(event.getClass()))
-				.forEach(target -> target.call(event));
+				.forEach(target -> {
+					if (target.getListener().ignoreCancelled() ||
+							!(event instanceof Cancellable) ||
+							!((Cancellable) event).isCancelled())
+						target.call(event);
+				});
+		return event;
 	}
 
 }

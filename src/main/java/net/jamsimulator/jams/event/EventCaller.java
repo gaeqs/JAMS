@@ -52,9 +52,10 @@ public interface EventCaller {
 	int unregisterListeners(Object instance);
 
 	/**
-	 * Calls all listeners compatible with the given event.
+	 * Calls all listeners compatible with the given {@link Event}.
 	 *
-	 * @param event the event.
+	 * @param event the {@link Event}.
+	 * @return the {@link Event}.
 	 */
-	void callEvent(Event event);
+	<T extends Event> T callEvent(T event);
 }
