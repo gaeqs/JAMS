@@ -33,7 +33,8 @@ public class Compiler {
 	private boolean compiled;
 
 	public Compiler(DirectiveSet directiveSet, InstructionSet instructionSet,
-					List<List<String>> files, RegisterSet registerSet, Memory memory) {
+					List<List<String>> files, RegisterSet registerSet, Memory memory,
+					int firstTextAddress, int firstDataAddress, int firstKernelTextAddress, int firstKernelDataAddress) {
 		Validate.notNull(directiveSet, "The directive set cannot be null!");
 		Validate.notNull(instructionSet, "The instruction set cannot be null!");
 		Validate.notNull(files, "The raw code cannot be null!");
@@ -48,14 +49,14 @@ public class Compiler {
 		this.globalLabels = new HashMap<>();
 		this.files = new ArrayList<>();
 		files.forEach(target -> this.files.add(new CompilingFile(target)));
+
+		this.compilerData = new CompilerData(firstTextAddress, firstDataAddress, firstKernelTextAddress, firstKernelDataAddress);
+
 		this.compiled = false;
 	}
 
-	public void initialize(int firstTextAddress, int firstDataAddress, int firstKernelTextAddress, int firstKernelDataAddress) {
-		compilerData = new CompilerData(firstTextAddress, firstDataAddress, firstKernelTextAddress, firstKernelDataAddress);
-	}
-
-	public void compile() {
+	public Simulation compile() {
+		if (compiled) throw new IllegalStateException("A compiler can only compile once!");
 		if (compilerData == null) throw new CompilerException("Compiler not initialized.");
 		for (CompilingFile file : files) {
 			currentCompilingFile = file;
@@ -69,10 +70,7 @@ public class Compiler {
 			}
 		}
 		compiled = true;
-	}
 
-	public Simulation createSimulation() {
-		if (!compiled) throw new IllegalStateException("Program is not compiled.");
 		Simulation simulation = new Simulation(instructionSet, registerSet, memory);
 		simulation.getRegisterSet().getProgramCounter().setValue(compilerData.getFirstText());
 		return simulation;
@@ -98,6 +96,10 @@ public class Compiler {
 		return globalLabels;
 	}
 
+	public boolean isCompiled() {
+		return compiled;
+	}
+
 	public void setAsGlobalLabel(int executingLine, String label) {
 		if (convertToGlobalLabel.contains(label)) return;
 		convertToGlobalLabel.add(label);
@@ -118,6 +120,8 @@ public class Compiler {
 		String line;
 		List<String> parts;
 		String first;
+		String label;
+		int labelAddress;
 		for (int lineNumber = 0; lineNumber < file.rawCode.size(); lineNumber++) {
 			line = file.rawCode.get(lineNumber);
 			parts = sanityLine(file, line);
@@ -127,12 +131,8 @@ public class Compiler {
 			first = parts.get(0);
 			if (first.contains(":")) {
 				parts.remove(0);
-				int index = first.indexOf(':');
-				if (index != first.length() - 1) {
-					parts.add(0, first.substring(index + 1));
-				}
-				checkLabel(lineNumber, file, first.substring(0, index));
-			}
+				label = first;
+			} else label = null;
 
 			//If empty, continue
 			if (parts.isEmpty()) continue;
@@ -142,19 +142,31 @@ public class Compiler {
 
 			//If starts with ".", then compile directive
 			if (first.startsWith(".")) {
-				executeDirective(lineNumber, first.substring(1), parts);
+				labelAddress = executeDirective(lineNumber, first.substring(1), parts);
 			}
 			//Else compile instruction
 			else {
+				//Align data and label
+				compilerData.align(2);
+				labelAddress = compilerData.getCurrent();
 				compileInstruction(lineNumber, file, first, parts);
+			}
+
+			if (label != null) {
+				int index = first.indexOf(':');
+				if (index != first.length() - 1) {
+					parts.add(0, first.substring(index + 1));
+				}
+				checkLabel(lineNumber, file, first.substring(0, index), labelAddress);
 			}
 		}
 	}
 
-	private void executeDirective(int line, String name, List<String> parameters) {
+	private int executeDirective(int line, String name, List<String> parameters) {
 		Optional<Directive> optional = directiveSet.getDirective(name);
 		if (!optional.isPresent()) throw new CompilerException(line, "Directive " + name + " not found!");
-		optional.get().execute(line, parameters.toArray(new String[0]), this);
+		int start = optional.get().execute(line, parameters.toArray(new String[0]), this);
+		return start == -1 ? compilerData.getCurrent() : start;
 	}
 
 	private void compileInstruction(int line, CompilingFile file, String mnemonic, List<String> parameters) {
@@ -177,7 +189,7 @@ public class Compiler {
 	}
 
 
-	private void checkLabel(int line, CompilingFile file, String name) {
+	private void checkLabel(int line, CompilingFile file, String name, int address) {
 		if (!LabelUtils.isLabelLegal(name))
 			throw new CompilerException(line, "Label " + name + " contains illegal characters.");
 
@@ -189,21 +201,21 @@ public class Compiler {
 				if (otherFile.labels.containsKey(name))
 					throw new CompilerException(line, "Global label " + name + " already defined as a local label.");
 			}
-			globalLabels.put(name, compilerData.getCurrent());
+			globalLabels.put(name, address);
 		} else {
 			if (file.labels.containsKey(name))
 				throw new CompilerException(line, "Label " + name + " already defined.");
-			file.labels.put(name, compilerData.getCurrent());
+			file.labels.put(name, address);
 		}
 	}
 
 	private List<String> sanityLine(CompilingFile file, String line) {
-		line = line.trim();
+		line = StringUtils.removeComments(line).trim();
 		for (Map.Entry<String, String> entry : file.equivalents.entrySet()) {
 			line = line.replace(entry.getKey(), entry.getValue());
 		}
 		if (line.isBlank()) return null;
-		List<String> parts = StringUtils.multiSplit(line, " ", ",");
+		List<String> parts = StringUtils.multiSplitIgnoreInsideString(line, " ", ",");
 		parts.removeIf(String::isBlank);
 		return parts;
 	}

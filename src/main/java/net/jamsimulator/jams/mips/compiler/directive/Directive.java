@@ -15,6 +15,6 @@ public abstract class Directive {
 		return name;
 	}
 
-	public abstract void execute(int line, String[] parameters, Compiler compiler);
+	public abstract int execute(int line, String[] parameters, Compiler compiler);
 
 }

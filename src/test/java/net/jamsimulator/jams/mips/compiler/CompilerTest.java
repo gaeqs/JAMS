@@ -20,20 +20,26 @@ class CompilerTest {
 		List<String> program = new ArrayList<>();
 		files.add(program);
 
+		program.add(".data");
+		program.add(".byte 5 9 6 2");
 		program.add(".text");
-		program.add("add $s1, $s2, $s0");
+		program.add("add $s1, $s2, $s0#ADDS");
 
 		Compiler compiler = new Compiler(
 				new DirectiveSet(true, true),
 				new InstructionSet(true, true, true),
-				files, new MIPS32RegisterSet(), new Mips32Memory());
+				files, new MIPS32RegisterSet(), new Mips32Memory(),
+				Mips32Memory.TEXT, Mips32Memory.DATA, Mips32Memory.KERNEL_TEXT, Mips32Memory.KERNEL_DATA);
 
-		compiler.initialize(Mips32Memory.TEXT, Mips32Memory.DATA, Mips32Memory.KERNEL_TEXT, Mips32Memory.KERNEL_DATA);
-		compiler.compile();
-		Simulation simulation = compiler.createSimulation();
+		Simulation simulation = compiler.compile();
 
 		//Check add
 		assertEquals(0x02508820, simulation.getMemory().getWord(simulation.getRegisterSet().getProgramCounter().getValue()));
+
+		byte[] values = {(byte) 5, (byte) 9, (byte) 6, (byte) 2};
+		for (int i = 0; i < 4; i++) {
+			assertEquals(values[i], simulation.getMemory().getByte(Mips32Memory.DATA + i), "Incorrect data.");
+		}
 	}
 
 }
