@@ -125,6 +125,26 @@ public class RegisterSet {
 		return coprocessor1Registers.stream().filter(target -> target.getIdentifier() == identifier).findFirst();
 	}
 
+	/**
+	 * Creates a copy of this register set.
+	 *
+	 * @return the copy.
+	 */
+	public RegisterSet copy() {
+		Set<Register> newRegisters = new HashSet<>();
+		Set<Register> newCop0Registers = new HashSet<>();
+		Set<Register> newCop1Registers = new HashSet<>();
+		registers.forEach(target -> newRegisters.add(target.copy()));
+		coprocessor0Registers.forEach(target -> newCop0Registers.add(target.copy()));
+		coprocessor1Registers.forEach(target -> newCop1Registers.add(target.copy()));
+
+		RegisterSet set = new RegisterSet(newRegisters, newCop0Registers, newCop1Registers);
+		set.programCounter.setValue(programCounter.getValue());
+		set.highRegister.setValue(highRegister.getValue());
+		set.lowRegister.setValue(lowRegister.getValue());
+		return set;
+	}
+
 	protected void loadEssentialRegisters() {
 		programCounter = new Register(-1, 0x00400000, true, "pc");
 		highRegister = new Register(-1, "hi");

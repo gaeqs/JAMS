@@ -21,6 +21,12 @@ public class Register {
 	private boolean modifiable;
 	private int defaultValue;
 
+	/**
+	 * Creates a register using a identifier and a list of names.
+	 *
+	 * @param identifier the identifies.
+	 * @param names      the names.
+	 */
 	public Register(int identifier, String... names) {
 		Validate.isTrue(names.length > 0, "A register must have at least one name!");
 		this.identifier = identifier;
@@ -30,7 +36,15 @@ public class Register {
 		this.modifiable = true;
 	}
 
-
+	/**
+	 * Creates a register using a identifier, a value and a list of names. If the boolean
+	 * 'modifiable' is false this register will be read-only.
+	 *
+	 * @param identifier the identifier.
+	 * @param value      the value.
+	 * @param modifiable whether this register is modifiable.
+	 * @param names      the names.
+	 */
 	public Register(int identifier, int value, boolean modifiable, String... names) {
 		Validate.isTrue(names.length > 0, "A register must have at least one name!");
 		this.identifier = identifier;
@@ -40,32 +54,80 @@ public class Register {
 		this.modifiable = modifiable;
 	}
 
+	/**
+	 * Returns the identifier of the register.
+	 *
+	 * @return the identifier.
+	 */
 	public int getIdentifier() {
 		return identifier;
 	}
 
+	/**
+	 * Returns a immutable {@link Set} with all this register's names.
+	 *
+	 * @return the {@link Set}.
+	 */
 	public Set<String> getNames() {
 		return new HashSet<>(names);
 	}
 
+	/**
+	 * Returns whether this register matches the given name.
+	 *
+	 * @param name the name
+	 * @return whether this register matches the given name.
+	 */
 	public boolean hasName(String name) {
 		return names.contains(name);
 	}
 
+	/**
+	 * Returns the value stored in this register.
+	 *
+	 * @return the value.
+	 */
 	public int getValue() {
 		return value;
 	}
 
+	/**
+	 * Sets the value stored in the register.
+	 * If this register is not modifiable this method will do nothing.
+	 *
+	 * @param value the value.
+	 * @see #isModifiable()
+	 */
 	public void setValue(int value) {
 		if (!modifiable) return;
 		this.value = value;
 	}
 
+	/**
+	 * Returns whether this register is modifiable.
+	 *
+	 * @return whether this register is modifiable.
+	 */
 	public boolean isModifiable() {
 		return modifiable;
 	}
 
+	/**
+	 * Sets this register's value to its initial state.
+	 */
 	public void reset() {
 		value = defaultValue;
+	}
+
+	/**
+	 * Creates a copy of the register.
+	 *
+	 * @return the copy.
+	 */
+	public Register copy() {
+		Register register = new Register(identifier, value, modifiable);
+		register.defaultValue = defaultValue;
+		register.names.addAll(names);
+		return register;
 	}
 }
