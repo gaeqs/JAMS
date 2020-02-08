@@ -60,4 +60,11 @@ public interface Memory extends EventCaller {
 	 * @throws IndexOutOfBoundsException if no section contains the address.
 	 */
 	void setWord(int address, int word);
+
+	/**
+	 * Creates a deep copy of the memory.
+	 *
+	 * @return the copy.
+	 */
+	Memory copy();
 }

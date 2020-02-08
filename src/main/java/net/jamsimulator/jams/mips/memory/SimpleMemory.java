@@ -22,8 +22,8 @@ import java.util.*;
 public class SimpleMemory extends SimpleEventCaller implements Memory {
 
 
-	private Map<String, MemorySection> sections;
-	private boolean bigEndian;
+	protected Map<String, MemorySection> sections;
+	protected boolean bigEndian;
 
 	/**
 	 * Creates a simple memory using a list of {@link MemorySection}s and a boolean representing whether
@@ -55,6 +55,13 @@ public class SimpleMemory extends SimpleEventCaller implements Memory {
 		for (MemorySection section : sections) {
 			this.sections.put(section.getName(), section);
 		}
+	}
+
+	protected SimpleMemory(Map<String, MemorySection> sections, boolean bigEndian) {
+		Validate.notNull(sections, "There must be at least one memory section!");
+		Validate.isTrue(!sections.isEmpty(), "There must be at least one memory section!");
+		this.sections = sections;
+		this.bigEndian = bigEndian;
 	}
 
 	/**
@@ -140,6 +147,13 @@ public class SimpleMemory extends SimpleEventCaller implements Memory {
 
 		//Invokes the after event.
 		callEvent(new WordSetEvent.After(this, section, address, word));
+	}
+
+	@Override
+	public Memory copy() {
+		HashMap<String, MemorySection> sections = new HashMap<>();
+		this.sections.forEach((name, section) -> sections.put(name, section.copy()));
+		return new SimpleMemory(sections, bigEndian);
 	}
 
 

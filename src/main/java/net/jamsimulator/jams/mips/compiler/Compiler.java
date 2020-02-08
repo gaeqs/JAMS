@@ -16,6 +16,12 @@ import net.jamsimulator.jams.utils.Validate;
 
 import java.util.*;
 
+/**
+ * Represents a compiler. A compile transforms a list of files into a {@link Simulation}.
+ * To create a simulation you must use the method {@link #compile()} before.
+ * <p>
+ * Each created {@link Simulation} will have a copy of this compiler's memory and registers.
+ */
 public class Compiler {
 
 	private DirectiveSet directiveSet;
