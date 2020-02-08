@@ -72,6 +72,9 @@ public class InstructionSet {
 	 * @return the best {@link Instruction}, if present.
 	 */
 	public Optional<Instruction> getBestCompatibleInstruction(String mnemonic, List<ParameterType>[] parameters) {
+		Validate.notNull(mnemonic, "Mnemonic cannot be null!");
+		Validate.notNull(parameters, "Parameters cannot be null!");
+		Validate.hasNoNulls(parameters, "Parameters cannot have null lists!");
 		List<Instruction> compatibleInstructions = instructions.stream()
 				.filter(target -> target.match(mnemonic, parameters)).collect(Collectors.toList());
 		if (compatibleInstructions.isEmpty()) return Optional.empty();

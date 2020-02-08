@@ -2,6 +2,7 @@ package net.jamsimulator.jams.mips.instruction;
 
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
+import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 import java.util.List;
 
@@ -86,6 +87,6 @@ public interface Instruction {
 	 * @param parameters the parameters.
 	 * @return a {@link CompiledInstruction} array.
 	 */
-	CompiledInstruction[] compile(Object[] parameters);
+	CompiledInstruction[] compile(ParameterParseResult[] parameters);
 
 }

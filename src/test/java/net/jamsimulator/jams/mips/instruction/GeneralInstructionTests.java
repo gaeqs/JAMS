@@ -6,6 +6,7 @@ import net.jamsimulator.jams.mips.instruction.exception.RuntimeInstructionExcept
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Mips32Memory;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
+import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.MIPS32RegisterSet;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.RegisterSet;
@@ -40,8 +41,14 @@ class GeneralInstructionTests {
 		Optional<Instruction> optional = simulation.getInstructionSet().getBestCompatibleInstruction("add", list);
 
 		if (!optional.isPresent()) fail("Instruction not found.");
-		CompiledInstruction[] instructions = optional.get().compile(new Object[]
-				{t2.getIdentifier(), t1.getIdentifier(), t0.getIdentifier()});
+
+		ParameterParseResult[] parameters = new ParameterParseResult[]{
+				new ParameterParseResult("", t2.getIdentifier(), 0, false, true, false),
+				new ParameterParseResult("", t1.getIdentifier(), 0, false, true, false),
+				new ParameterParseResult("", t0.getIdentifier(), 0, false, true, false),
+		};
+
+		CompiledInstruction[] instructions = optional.get().compile(parameters);
 		if (instructions.length != 1) fail("Incorrect instruction.");
 		instructions[0].execute(simulation);
 		assertEquals(23, t2.getValue(), "Bad add instruction result.");
@@ -56,8 +63,13 @@ class GeneralInstructionTests {
 		t0.setValue(Integer.MAX_VALUE);
 		t1.setValue(20);
 
-		CompiledInstruction instruction = new InstructionAdd().compileBasic(new Object[]
-				{t2.getIdentifier(), t1.getIdentifier(), t0.getIdentifier()});
+		ParameterParseResult[] parameters = new ParameterParseResult[]{
+				new ParameterParseResult("", t2.getIdentifier(), 0, false, true, false),
+				new ParameterParseResult("", t1.getIdentifier(), 0, false, true, false),
+				new ParameterParseResult("", t0.getIdentifier(), 0, false, true, false),
+		};
+
+		CompiledInstruction instruction = new InstructionAdd().compileBasic(parameters);
 
 		try {
 			instruction.execute(simulation);

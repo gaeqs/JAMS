@@ -14,10 +14,11 @@ public class ParameterParseResult {
 	private String label;
 	private int register;
 	private int immediate;
+	private int labelValue;
 
 	private boolean hasLabel, hasRegister, hasImmediate;
 
-	private ParameterParseResult(String label, int register, int immediate, boolean hasLabel, boolean hasRegister, boolean hasImmediate) {
+	public ParameterParseResult(String label, int register, int immediate, boolean hasLabel, boolean hasRegister, boolean hasImmediate) {
 		if (!hasLabel && !hasRegister && !hasImmediate)
 			throw new BadParameterParseResultException("Result has no label, register or result.");
 		this.label = label;
@@ -50,6 +51,10 @@ public class ParameterParseResult {
 
 	public boolean isHasImmediate() {
 		return hasImmediate;
+	}
+
+	public void setLabelValue(int labelValue) {
+		this.labelValue = labelValue;
 	}
 
 	/**

@@ -56,6 +56,15 @@ public abstract class PseudoInstruction implements Instruction {
 		return true;
 	}
 
+	/**
+	 * Returns the amount of {@link net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction}s the
+	 * pseudo-instruction will compile at if the given non-compiled parameters are given to it.
+	 *
+	 * @param parameters the non-compiled parameters.
+	 * @return the amount.
+	 */
+	public abstract int getInstructionAmount(String[] parameters);
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

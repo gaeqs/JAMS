@@ -4,6 +4,7 @@ import net.jamsimulator.jams.mips.instruction.basic.RBasicInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionAdd;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
+import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class InstructionAdd extends RBasicInstruction {
 
@@ -20,9 +21,10 @@ public class InstructionAdd extends RBasicInstruction {
 	}
 
 	@Override
-	public CompiledInstruction compileBasic(Object[] parameters) {
-		return new CompiledInstructionAdd((int) parameters[1], (int) parameters[2],
-				(int) parameters[0], this, this);
+	public CompiledInstruction compileBasic(ParameterParseResult[] parameters) {
+		return new CompiledInstructionAdd(parameters[1].getRegister(),
+				parameters[2].getRegister(),
+				parameters[0].getRegister(), this, this);
 	}
 
 	@Override

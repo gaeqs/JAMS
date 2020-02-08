@@ -3,6 +3,7 @@ package net.jamsimulator.jams.mips.instruction.basic;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
+import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 import java.util.Arrays;
 import java.util.List;
@@ -68,7 +69,7 @@ public abstract class BasicInstruction implements Instruction {
 
 
 	@Override
-	public CompiledInstruction[] compile(Object[] parameters) {
+	public CompiledInstruction[] compile(ParameterParseResult[] parameters) {
 		return new CompiledInstruction[]{compileBasic(parameters)};
 	}
 
@@ -125,7 +126,7 @@ public abstract class BasicInstruction implements Instruction {
 	 * @param parameters the parameters.
 	 * @return the {@link CompiledInstruction}.
 	 */
-	public abstract CompiledInstruction compileBasic(Object[] parameters);
+	public abstract CompiledInstruction compileBasic(ParameterParseResult[] parameters);
 
 	/**
 	 * Compiles the basic instruction using the given instruction code.
