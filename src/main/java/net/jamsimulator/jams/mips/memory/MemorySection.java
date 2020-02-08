@@ -189,7 +189,7 @@ public class MemorySection {
 	public MemorySection copy() {
 		MemorySection section = new MemorySection(name, firstAddress, length, cellSize);
 		for (int i = 0; i < cells.length; i++) {
-			section.cells[i] = cells[i].copy();
+			section.cells[i] = cells[i] == null ? null : cells[i].copy();
 		}
 		return section;
 	}

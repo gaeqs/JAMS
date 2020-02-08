@@ -61,7 +61,7 @@ public class Compiler {
 		this.compiled = false;
 	}
 
-	public Simulation compile() {
+	public void compile() {
 		if (compiled) throw new IllegalStateException("A compiler can only compile once!");
 		if (compilerData == null) throw new CompilerException("Compiler not initialized.");
 		for (CompilingFile file : files) {
@@ -76,11 +76,15 @@ public class Compiler {
 			}
 		}
 		compiled = true;
+	}
 
-		Simulation simulation = new Simulation(instructionSet, registerSet, memory);
+	public Simulation createSimulation() {
+		if (!compiled) throw new IllegalStateException("The program is still not compiled!");
+		Simulation simulation = new Simulation(instructionSet, registerSet.copy(), memory.copy());
 		simulation.getRegisterSet().getProgramCounter().setValue(compilerData.getFirstText());
 		return simulation;
 	}
+
 
 	public RegisterSet getRegisterSet() {
 		return registerSet;

@@ -31,7 +31,8 @@ class CompilerTest {
 				files, new MIPS32RegisterSet(), new Mips32Memory(),
 				Mips32Memory.TEXT, Mips32Memory.DATA, Mips32Memory.KERNEL_TEXT, Mips32Memory.KERNEL_DATA);
 
-		Simulation simulation = compiler.compile();
+		compiler.compile();
+		Simulation simulation = compiler.createSimulation();
 
 		//Check add
 		assertEquals(0x02508820, simulation.getMemory().getWord(simulation.getRegisterSet().getProgramCounter().getValue()));

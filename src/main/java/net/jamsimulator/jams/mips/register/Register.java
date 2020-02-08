@@ -3,6 +3,7 @@ package net.jamsimulator.jams.mips.register;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,6 +38,21 @@ public class Register {
 	}
 
 	/**
+	 * Creates a register using a identifier and a list of names.
+	 *
+	 * @param identifier the identifies.
+	 * @param names      the names.
+	 */
+	public Register(int identifier, Collection<String> names) {
+		Validate.isTrue(names.size() > 0, "A register must have at least one name!");
+		this.identifier = identifier;
+		this.names = new HashSet<>();
+		this.names.addAll(names);
+		this.value = defaultValue = 0;
+		this.modifiable = true;
+	}
+
+	/**
 	 * Creates a register using a identifier, a value and a list of names. If the boolean
 	 * 'modifiable' is false this register will be read-only.
 	 *
@@ -53,6 +69,25 @@ public class Register {
 		this.value = defaultValue = value;
 		this.modifiable = modifiable;
 	}
+
+	/**
+	 * Creates a register using a identifier, a value and a list of names. If the boolean
+	 * 'modifiable' is false this register will be read-only.
+	 *
+	 * @param identifier the identifier.
+	 * @param value      the value.
+	 * @param modifiable whether this register is modifiable.
+	 * @param names      the names.
+	 */
+	public Register(int identifier, int value, boolean modifiable, Collection<String> names) {
+		Validate.isTrue(names.size() > 0, "A register must have at least one name!");
+		this.identifier = identifier;
+		this.names = new HashSet<>();
+		this.names.addAll(names);
+		this.value = defaultValue = value;
+		this.modifiable = modifiable;
+	}
+
 
 	/**
 	 * Returns the identifier of the register.
@@ -125,9 +160,8 @@ public class Register {
 	 * @return the copy.
 	 */
 	public Register copy() {
-		Register register = new Register(identifier, value, modifiable);
+		Register register = new Register(identifier, value, modifiable, names);
 		register.defaultValue = defaultValue;
-		register.names.addAll(names);
 		return register;
 	}
 }
