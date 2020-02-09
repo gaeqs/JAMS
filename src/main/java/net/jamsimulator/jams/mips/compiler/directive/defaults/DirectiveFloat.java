@@ -8,11 +8,11 @@ import net.jamsimulator.jams.utils.NumericUtils;
 
 import java.nio.ByteBuffer;
 
-public class DirectiveDouble extends Directive {
+public class DirectiveFloat extends Directive {
 
-	public static final String NAME = "double";
+	public static final String NAME = "float";
 
-	public DirectiveDouble() {
+	public DirectiveFloat() {
 		super(NAME);
 	}
 
@@ -22,26 +22,26 @@ public class DirectiveDouble extends Directive {
 			throw new CompilerException(lineNumber, "." + NAME + " must have at least one parameter.");
 
 		for (String parameter : parameters) {
-			if (!NumericUtils.isDouble(parameter))
-				throw new CompilerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a double.");
+			if (!NumericUtils.isFloat(parameter))
+				throw new CompilerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a float.");
 		}
 
 		CompilerData data = compiler.getCompilerData();
-		data.align(3);
+		data.align(2);
 		int start = data.getCurrent();
 		for (String parameter : parameters) {
-			for (byte b : toByteArray(Double.parseDouble(parameter))) {
+			for (byte b : toByteArray(Float.parseFloat(parameter))) {
 				compiler.getMemory().setByte(data.getCurrent(), b);
-				data.addCurrent(8);
+				data.addCurrent(4);
 			}
 		}
 		return start;
 	}
 
 
-	public static byte[] toByteArray(double value) {
-		byte[] bytes = new byte[8];
-		ByteBuffer.wrap(bytes).putDouble(value);
+	public static byte[] toByteArray(float value) {
+		byte[] bytes = new byte[4];
+		ByteBuffer.wrap(bytes).putFloat(value);
 		return bytes;
 	}
 
