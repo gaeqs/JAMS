@@ -6,11 +6,13 @@ import net.jamsimulator.jams.mips.compiler.directive.Directive;
 import net.jamsimulator.jams.mips.compiler.exception.CompilerException;
 import net.jamsimulator.jams.utils.NumericUtils;
 
-public class DirectiveByte extends Directive {
+import java.nio.ByteBuffer;
 
-	public static final String NAME = "byte";
+public class DirectiveDouble extends Directive {
 
-	public DirectiveByte() {
+	public static final String NAME = "double";
+
+	public DirectiveDouble() {
 		super(NAME);
 	}
 
@@ -20,17 +22,27 @@ public class DirectiveByte extends Directive {
 			throw new CompilerException(lineNumber, "." + NAME + " must have at least one parameter.");
 
 		for (String parameter : parameters) {
-			if (!NumericUtils.isByte(parameter))
-				throw new CompilerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a signed byte.");
+			if (!NumericUtils.isDouble(parameter))
+				throw new CompilerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a double.");
 		}
 
 		CompilerData data = compiler.getCompilerData();
-		data.align(0);
+		data.align(3);
 		int start = data.getCurrent();
 		for (String parameter : parameters) {
-			compiler.getMemory().setByte(data.getCurrent(), Byte.parseByte(parameter));
-			data.addCurrent(1);
+			for (byte b : toByteArray(Double.parseDouble(parameter))) {
+				compiler.getMemory().setByte(data.getCurrent(), b);
+				data.addCurrent(1);
+			}
 		}
 		return start;
 	}
+
+
+	public static byte[] toByteArray(double value) {
+		byte[] bytes = new byte[8];
+		ByteBuffer.wrap(bytes).putDouble(value);
+		return bytes;
+	}
+
 }

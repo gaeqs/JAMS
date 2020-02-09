@@ -16,13 +16,13 @@ public class DirectiveAscii extends Directive {
 	}
 
 	@Override
-	public int execute(int line, String[] parameters, Compiler compiler) {
+	public int execute(int lineNumber, String line, String[] parameters, Compiler compiler) {
 		if (parameters.length != 1)
-			throw new CompilerException(line, "." + NAME + " must have one string parameter.");
+			throw new CompilerException(lineNumber, "." + NAME + " must have one string parameter.");
 
 		String s = parameters[0];
 		if (!s.startsWith("\"") && !s.endsWith("\""))
-			throw new CompilerException(line, "." + NAME + " parameter '" + s + "' is not a string.");
+			throw new CompilerException(lineNumber, "." + NAME + " parameter '" + s + "' is not a string.");
 
 		CompilerData data = compiler.getCompilerData();
 		data.align(0);

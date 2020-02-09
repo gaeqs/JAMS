@@ -16,6 +16,9 @@ class DefaultDirectives {
 		directives.add(new DirectiveAsciiz());
 		directives.add(new DirectiveByte());
 		directives.add(new DirectiveData());
+		directives.add(new DirectiveDouble());
+		directives.add(new DirectiveEqv());
+		directives.add(new DirectiveExtern());
 		directives.add(new DirectiveText());
 	}
 

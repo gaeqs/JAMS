@@ -5,6 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents a list of instructions that are currently being compiled.
+ * <p>
+ * Local labels and equivalents are stored here.
+ */
 public class CompilingFile {
 
 	List<String> rawCode;

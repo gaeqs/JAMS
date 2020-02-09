@@ -22,24 +22,29 @@ class CompilerTest {
 
 		program.add(".data");
 		program.add(".byte 5 9 6 2");
+		program.add(".extern global 8");
 		program.add(".text");
-		program.add("add $s1, $s2, $s0#ADDS");
+		program.add(".eqv ONETWOZERO $s1, $s2, $s0");
+		program.add("add ONETWOZERO#ADDS");
 
-		Compiler compiler = new Compiler(
+		Compiler compiler = new MIPS32Compiler(
 				new DirectiveSet(true, true),
 				new InstructionSet(true, true, true),
-				files, new MIPS32RegisterSet(), new Mips32Memory(),
-				Mips32Memory.TEXT, Mips32Memory.DATA, Mips32Memory.KERNEL_TEXT, Mips32Memory.KERNEL_DATA);
-
+				new MIPS32RegisterSet(), new Mips32Memory(),
+				Mips32Memory.TEXT, Mips32Memory.STATIC_DATA, Mips32Memory.KERNEL_TEXT, Mips32Memory.KERNEL_DATA,
+				Mips32Memory.EXTERN);
+		compiler.setData(files);
 		compiler.compile();
 		Simulation simulation = compiler.createSimulation();
+
+		System.out.println(compiler.getCompilerData().getCurrentExtern() - Mips32Memory.DATA);
 
 		//Check add
 		assertEquals(0x02508820, simulation.getMemory().getWord(simulation.getRegisterSet().getProgramCounter().getValue()));
 
 		byte[] values = {(byte) 5, (byte) 9, (byte) 6, (byte) 2};
 		for (int i = 0; i < 4; i++) {
-			assertEquals(values[i], simulation.getMemory().getByte(Mips32Memory.DATA + i), "Incorrect data.");
+			assertEquals(values[i], simulation.getMemory().getByte(Mips32Memory.STATIC_DATA + i), "Incorrect data.");
 		}
 	}
 

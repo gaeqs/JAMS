@@ -14,12 +14,12 @@ public class DirectiveAlign extends Directive {
 	}
 
 	@Override
-	public int execute(int line, String[] parameters, Compiler compiler) {
+	public int execute(int lineNumber, String line, String[] parameters, Compiler compiler) {
 		if (parameters.length != 1 || !NumericUtils.isInteger(parameters[0]))
-			throw new CompilerException(line, "." + NAME + " must have a numeric parameter.");
+			throw new CompilerException(lineNumber, "." + NAME + " must have a numeric parameter.");
 		int exp = Integer.parseInt(parameters[0]);
 		if (exp < 0 || exp > 3)
-			throw new CompilerException(line, "." + NAME + " parameter must be inside the range [0, 3].");
+			throw new CompilerException(lineNumber, "." + NAME + " parameter must be inside the range [0, 3].");
 		compiler.getCompilerData().setNextForcedAlignment(exp);
 		return -1;
 	}

@@ -2,6 +2,9 @@ package net.jamsimulator.jams.mips.compiler;
 
 import net.jamsimulator.jams.mips.compiler.exception.CompilerException;
 
+/**
+ * Contains all the data required by the compiler.
+ */
 public class CompilerData {
 
 	SelectedMemorySegment selected;
@@ -10,21 +13,25 @@ public class CompilerData {
 	int firstData;
 	int firstKText;
 	int firstKData;
+	int firstExtern;
 	int currentText;
 	int currentData;
 	int currentKText;
 	int currentKData;
+	int currentExtern;
 	int nextForcedAlignment;
 
-	public CompilerData(int currentText, int currentData, int currentKText, int currentKData) {
+	public CompilerData(int currentText, int currentData, int currentKText, int currentKData, int currentExtern) {
 		this.firstText = currentText;
 		this.firstData = currentData;
 		this.firstKText = currentKText;
 		this.firstKData = currentKData;
+		this.firstExtern = currentExtern;
 		this.currentText = currentText;
 		this.currentData = currentData;
 		this.currentKText = currentKText;
 		this.currentKData = currentKData;
+		this.currentExtern = currentExtern;
 		selected = SelectedMemorySegment.TEXT;
 		nextForcedAlignment = -1;
 	}
@@ -53,6 +60,10 @@ public class CompilerData {
 		return firstKData;
 	}
 
+	public int getFirstExtern() {
+		return firstExtern;
+	}
+
 	public int getCurrentText() {
 		return currentText;
 	}
@@ -67,6 +78,10 @@ public class CompilerData {
 
 	public int getCurrentKData() {
 		return currentKData;
+	}
+
+	public int getCurrentExtern() {
+		return currentExtern;
 	}
 
 	public boolean isNextAlignmentForced() {
@@ -107,6 +122,8 @@ public class CompilerData {
 				return currentKText;
 			case KERNEL_DATA:
 				return currentKData;
+			case EXTERN:
+				return currentExtern;
 		}
 		throw new CompilerException("Selected section not defined.");
 	}
@@ -124,6 +141,9 @@ public class CompilerData {
 				break;
 			case KERNEL_DATA:
 				currentKData += add;
+				break;
+			case EXTERN:
+				currentExtern += add;
 				break;
 			default:
 				throw new CompilerException("Selected section not defined.");

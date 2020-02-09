@@ -8,6 +8,10 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 import java.util.List;
 
+/**
+ * Represents a instruction snapshot. Because labels may be below instructions
+ * they cannot be compiled on the first scan. They must be stored in a snapshot.
+ */
 public class InstructionSnapshot {
 
 	public Instruction instruction;

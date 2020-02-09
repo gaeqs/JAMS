@@ -1,5 +1,8 @@
 package net.jamsimulator.jams.mips.compiler.exception;
 
+/**
+ * Represents a compiler exception.
+ */
 public class CompilerException extends RuntimeException {
 
 	public CompilerException() {
