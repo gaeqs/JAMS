@@ -29,8 +29,8 @@ public abstract class RIFPUBasicInstruction extends RBasicInstruction {
 	}
 
 	@Override
-	public boolean match(int operationCode, int functionCode, int fmtSub) {
-		return super.match(operationCode, functionCode) && fmtSub == this.subcode;
+	public boolean match(int operationCode, int functionCode, int fmtSub, int pcRel) {
+		return super.match(operationCode, functionCode, fmtSub, pcRel) && fmtSub == this.subcode;
 	}
 
 	/**

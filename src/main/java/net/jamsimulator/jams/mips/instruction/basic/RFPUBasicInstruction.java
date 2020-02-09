@@ -29,8 +29,8 @@ public abstract class RFPUBasicInstruction extends RBasicInstruction {
 	}
 
 	@Override
-	public boolean match(int operationCode, int functionCode, int fmtSub) {
-		return super.match(operationCode, functionCode) && fmtSub == this.fmtCode;
+	public boolean match(int operationCode, int functionCode, int fmtSub, int pcRel) {
+		return super.match(operationCode, functionCode, fmtSub, pcRel) && fmtSub == this.fmtCode;
 	}
 
 	/**

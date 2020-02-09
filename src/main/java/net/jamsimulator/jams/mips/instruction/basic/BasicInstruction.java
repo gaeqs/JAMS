@@ -104,7 +104,7 @@ public abstract class BasicInstruction implements Instruction {
 	 * @return whether this instruction matches.
 	 */
 	public boolean match(int operationCode, int functionCode) {
-		return match(operationCode, functionCode, 0);
+		return match(operationCode, functionCode, 0, 0);
 	}
 
 	/**
@@ -116,7 +116,7 @@ public abstract class BasicInstruction implements Instruction {
 	 * @param fmtSub        the fmt or the function code.
 	 * @return whether this instruction matches.
 	 */
-	public boolean match(int operationCode, int functionCode, int fmtSub) {
+	public boolean match(int operationCode, int functionCode, int fmtSub, int pcRel) {
 		return operationCode == this.operationCode;
 	}
 

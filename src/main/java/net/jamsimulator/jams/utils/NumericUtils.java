@@ -56,4 +56,17 @@ public class NumericUtils {
 			return false;
 		}
 	}
+
+
+	public static double intsToDouble(int low, int high) {
+		return Double.longBitsToDouble((((long) high) << 32) + low);
+	}
+
+	public static int[] doubleToInts(double d) {
+		int[] array = new int[2];
+		long l = Double.doubleToLongBits(d);
+		array[0] = (int) l;
+		array[1] = (int) (l >> 32);
+		return array;
+	}
 }

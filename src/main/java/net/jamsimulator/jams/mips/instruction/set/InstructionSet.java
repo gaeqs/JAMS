@@ -3,6 +3,7 @@ package net.jamsimulator.jams.mips.instruction.set;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
+import net.jamsimulator.jams.mips.instruction.compiled.CompiledPCRELInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledRInstruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
@@ -92,7 +93,8 @@ public class InstructionSet {
 		int operationCode = instructionCode >>> CompiledInstruction.OPERATION_CODE_SHIFT;
 		int functionCode = instructionCode & CompiledRInstruction.FUNCTION_CODE_MASK;
 		int fmtSub = instructionCode >> CompiledRFPUInstruction.FMT_SHIFT & CompiledRFPUInstruction.FMT_MASK;
-		return getInstructionByOperationAndFunctionCode(operationCode, functionCode, fmtSub);
+		int pcRel = instructionCode >> CompiledPCRELInstruction.PCREL_SHIFT & CompiledPCRELInstruction.PCREL_MASK;
+		return getInstructionByOperationAndFunctionCode(operationCode, functionCode, fmtSub, pcRel);
 	}
 
 	/**
@@ -119,10 +121,10 @@ public class InstructionSet {
 	 * @param fmtSub        the given ftm or subcode.
 	 * @return the {@link BasicInstruction}, if present.
 	 */
-	public Optional<BasicInstruction> getInstructionByOperationAndFunctionCode(int operationCode, int functionCode, int fmtSub) {
+	public Optional<BasicInstruction> getInstructionByOperationAndFunctionCode(int operationCode, int functionCode, int fmtSub, int pcRel) {
 		return instructions.stream().filter(target -> target instanceof BasicInstruction)
 				.map(target -> (BasicInstruction) target)
-				.filter(target -> target.match(operationCode, functionCode, fmtSub)).findFirst();
+				.filter(target -> target.match(operationCode, functionCode, fmtSub, pcRel)).findFirst();
 	}
 
 
@@ -136,7 +138,7 @@ public class InstructionSet {
 	 * <p>
 	 * If you're not sure whether an instruction with the same operation and instruction codes
 	 * you can use {@link #getInstructionByInstructionCode(int)} and
-	 * {@link #getInstructionByOperationAndFunctionCode(int, int, int)}
+	 * {@link #getInstructionByOperationAndFunctionCode(int, int, int, int)}
 	 *
 	 * @param instruction the instruction to register.
 	 * @return whether the instruction was registered.
