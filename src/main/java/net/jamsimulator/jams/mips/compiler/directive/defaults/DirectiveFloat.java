@@ -6,8 +6,6 @@ import net.jamsimulator.jams.mips.compiler.directive.Directive;
 import net.jamsimulator.jams.mips.compiler.exception.CompilerException;
 import net.jamsimulator.jams.utils.NumericUtils;
 
-import java.nio.ByteBuffer;
-
 public class DirectiveFloat extends Directive {
 
 	public static final String NAME = "float";
@@ -30,19 +28,9 @@ public class DirectiveFloat extends Directive {
 		data.align(2);
 		int start = data.getCurrent();
 		for (String parameter : parameters) {
-			for (byte b : toByteArray(Float.parseFloat(parameter))) {
-				compiler.getMemory().setByte(data.getCurrent(), b);
-				data.addCurrent(4);
-			}
+			compiler.getMemory().setWord(data.getCurrent(), Float.floatToIntBits(Float.parseFloat(parameter)));
+			data.addCurrent(4);
 		}
 		return start;
 	}
-
-
-	public static byte[] toByteArray(float value) {
-		byte[] bytes = new byte[4];
-		ByteBuffer.wrap(bytes).putFloat(value);
-		return bytes;
-	}
-
 }

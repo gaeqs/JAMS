@@ -6,8 +6,6 @@ import net.jamsimulator.jams.mips.compiler.directive.Directive;
 import net.jamsimulator.jams.mips.compiler.exception.CompilerException;
 import net.jamsimulator.jams.utils.NumericUtils;
 
-import java.nio.ByteBuffer;
-
 public class DirectiveDouble extends Directive {
 
 	public static final String NAME = "double";
@@ -30,19 +28,15 @@ public class DirectiveDouble extends Directive {
 		data.align(3);
 		int start = data.getCurrent();
 		for (String parameter : parameters) {
-			for (byte b : toByteArray(Double.parseDouble(parameter))) {
-				compiler.getMemory().setByte(data.getCurrent(), b);
-				data.addCurrent(8);
-			}
+			long l = Double.doubleToLongBits(Long.parseLong(parameter));
+
+			int low = (int) l;
+			int high = (int) (l >> 32);
+
+			compiler.getMemory().setWord(data.getCurrent(), low);
+			compiler.getMemory().setWord(data.getCurrent() + 4, high);
+			data.addCurrent(8);
 		}
 		return start;
 	}
-
-
-	public static byte[] toByteArray(double value) {
-		byte[] bytes = new byte[8];
-		ByteBuffer.wrap(bytes).putDouble(value);
-		return bytes;
-	}
-
 }
