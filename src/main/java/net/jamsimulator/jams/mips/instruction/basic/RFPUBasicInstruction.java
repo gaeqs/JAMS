@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.instruction.basic;
 
+import net.jamsimulator.jams.mips.instruction.compiled.CompiledRFPUInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
@@ -29,8 +30,9 @@ public abstract class RFPUBasicInstruction extends RBasicInstruction {
 	}
 
 	@Override
-	public boolean match(int operationCode, int functionCode, int fmtSub, int pcRel) {
-		return super.match(operationCode, functionCode, fmtSub, pcRel) && fmtSub == this.fmtCode;
+	public boolean match(int instructionCode) {
+		return super.match(instructionCode) &&
+				((instructionCode >> CompiledRFPUInstruction.FMT_SHIFT) & CompiledRFPUInstruction.FMT_MASK) == fmtCode;
 	}
 
 	/**

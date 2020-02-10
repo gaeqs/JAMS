@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.instruction.basic;
 
+import net.jamsimulator.jams.mips.instruction.compiled.CompiledRInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
@@ -27,8 +28,9 @@ public abstract class RBasicInstruction extends BasicInstruction {
 	}
 
 	@Override
-	public boolean match(int operationCode, int functionCode, int fmtSub, int pcRel) {
-		return super.match(operationCode, functionCode, fmtSub, pcRel) && functionCode == this.functionCode;
+	public boolean match(int instructionCode) {
+		return super.match(instructionCode) &&
+				(instructionCode & CompiledRInstruction.FUNCTION_CODE_MASK) == functionCode;
 	}
 
 	/**

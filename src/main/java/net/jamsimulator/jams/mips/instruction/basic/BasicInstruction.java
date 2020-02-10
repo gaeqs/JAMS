@@ -84,40 +84,13 @@ public abstract class BasicInstruction implements Instruction {
 	}
 
 	/**
-	 * Returns whether this instruction matches the given operation code.
-	 * If the instruction has an instruction code, it must match the value 0.
-	 * If the instruction has a fmt of a subcode, it myst match the value 0.
+	 * Returns whether this instruction matches the given instruction code.
 	 *
-	 * @param operationCode the operation code.
+	 * @param instructionCode the instruction code.
 	 * @return whether this instruction matches.
 	 */
-	public boolean match(int operationCode) {
-		return match(operationCode, 0);
-	}
-
-	/**
-	 * Returns whether this instruction matches the given operation code and the given function code.
-	 * If the instruction has a fmt of a subcode, it myst match the value 0.
-	 *
-	 * @param operationCode the operation code.
-	 * @param functionCode  the function code.
-	 * @return whether this instruction matches.
-	 */
-	public boolean match(int operationCode, int functionCode) {
-		return match(operationCode, functionCode, 0, 0);
-	}
-
-	/**
-	 * Returns whether this instruction matches the given operation code, the given function code
-	 * and the given fmt or subcode.
-	 *
-	 * @param operationCode the operation code.
-	 * @param functionCode  the function code.
-	 * @param fmtSub        the fmt or the function code.
-	 * @return whether this instruction matches.
-	 */
-	public boolean match(int operationCode, int functionCode, int fmtSub, int pcRel) {
-		return operationCode == this.operationCode;
+	public boolean match(int instructionCode) {
+		return (instructionCode >> CompiledInstruction.OPERATION_CODE_SHIFT) == operationCode;
 	}
 
 	/**

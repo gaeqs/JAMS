@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.instruction.basic;
 
+import net.jamsimulator.jams.mips.instruction.compiled.CompiledPCRELInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
@@ -27,8 +28,9 @@ public abstract class PCRELBasicInstruction extends BasicInstruction {
 	}
 
 	@Override
-	public boolean match(int operationCode, int functionCode, int fmtSub, int pcRel) {
-		return super.match(operationCode, functionCode, fmtSub, pcRel) && pcRel == this.pcRelFunction;
+	public boolean match(int instructionCode) {
+		return super.match(instructionCode) &&
+				((instructionCode >> CompiledPCRELInstruction.PCREL_SHIFT) & CompiledPCRELInstruction.PCREL_MASK) == pcRelFunction;
 	}
 
 	/**

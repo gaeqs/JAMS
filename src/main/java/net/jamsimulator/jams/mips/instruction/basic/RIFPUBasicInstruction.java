@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.instruction.basic;
 
+import net.jamsimulator.jams.mips.instruction.compiled.CompiledRIFPUInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
@@ -28,9 +29,11 @@ public abstract class RIFPUBasicInstruction extends RBasicInstruction {
 		this.subcode = subcode;
 	}
 
+
 	@Override
-	public boolean match(int operationCode, int functionCode, int fmtSub, int pcRel) {
-		return super.match(operationCode, functionCode, fmtSub, pcRel) && fmtSub == this.subcode;
+	public boolean match(int instructionCode) {
+		return super.match(instructionCode) &&
+				((instructionCode >> CompiledRIFPUInstruction.SUBCODE_SHIFT) & CompiledRIFPUInstruction.SUBCODE_MASK) == subcode;
 	}
 
 	/**

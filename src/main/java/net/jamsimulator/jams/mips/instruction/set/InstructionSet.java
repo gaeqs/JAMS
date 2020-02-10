@@ -3,9 +3,6 @@ package net.jamsimulator.jams.mips.instruction.set;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledPCRELInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledRFPUInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledRInstruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.utils.Validate;
@@ -90,11 +87,8 @@ public class InstructionSet {
 	 * @return the {@link BasicInstruction}, if present.
 	 */
 	public Optional<BasicInstruction> getInstructionByInstructionCode(int instructionCode) {
-		int operationCode = instructionCode >>> CompiledInstruction.OPERATION_CODE_SHIFT;
-		int functionCode = instructionCode & CompiledRInstruction.FUNCTION_CODE_MASK;
-		int fmtSub = instructionCode >> CompiledRFPUInstruction.FMT_SHIFT & CompiledRFPUInstruction.FMT_MASK;
-		int pcRel = instructionCode >> CompiledPCRELInstruction.PCREL_SHIFT & CompiledPCRELInstruction.PCREL_MASK;
-		return getInstructionByOperationAndFunctionCode(operationCode, functionCode, fmtSub, pcRel);
+		return instructions.stream().filter(target -> target instanceof BasicInstruction)
+				.map(target -> (BasicInstruction) target).filter(target -> target.match(instructionCode)).findFirst();
 	}
 
 	/**
@@ -111,22 +105,6 @@ public class InstructionSet {
 				.filter(target -> target.match(operationCode)).findFirst();
 	}
 
-	/**
-	 * Returns the first {@link BasicInstruction} that matches the given operation code, the given function code (if found) and
-	 * the given fmt or subcode (if found). If the instruction doesn't have an function code the given one will be
-	 * ignored.
-	 *
-	 * @param operationCode the given operation code.
-	 * @param functionCode  the given function code.
-	 * @param fmtSub        the given ftm or subcode.
-	 * @return the {@link BasicInstruction}, if present.
-	 */
-	public Optional<BasicInstruction> getInstructionByOperationAndFunctionCode(int operationCode, int functionCode, int fmtSub, int pcRel) {
-		return instructions.stream().filter(target -> target instanceof BasicInstruction)
-				.map(target -> (BasicInstruction) target)
-				.filter(target -> target.match(operationCode, functionCode, fmtSub, pcRel)).findFirst();
-	}
-
 
 	/**
 	 * Registers an instruction to the instruction set. If an instruction with the same
@@ -137,8 +115,7 @@ public class InstructionSet {
 	 * inside the same instruction set will produce an <b>unpredictable</b> behavior.
 	 * <p>
 	 * If you're not sure whether an instruction with the same operation and instruction codes
-	 * you can use {@link #getInstructionByInstructionCode(int)} and
-	 * {@link #getInstructionByOperationAndFunctionCode(int, int, int, int)}
+	 * you can use {@link #getInstructionByInstructionCode(int)}.
 	 *
 	 * @param instruction the instruction to register.
 	 * @return whether the instruction was registered.
