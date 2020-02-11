@@ -31,7 +31,7 @@ public class PseudoInstructionBeqRRL extends PseudoInstruction {
 
 	@Override
 	public CompiledInstruction[] compile(InstructionSet set, int address, ParameterParseResult[] parameters) {
-		int offset = address - parameters[2].getLabelValue() - 4;
+		int offset = parameters[2].getLabelValue() - address - 4;
 		offset >>= 2;
 
 		Instruction beq = set.getInstruction(MNEMONIC, BASIC_PARAMETER_TYPES).orElse(null);

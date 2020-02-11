@@ -32,7 +32,7 @@ public class PseudoInstructionBL extends PseudoInstruction {
 
 	@Override
 	public CompiledInstruction[] compile(InstructionSet set, int address, ParameterParseResult[] parameters) {
-		int offset = address - parameters[0].getLabelValue() - 4;
+		int offset = parameters[0].getLabelValue() - address - 4;
 		offset >>= 2;
 
 		Instruction beq = set.getInstruction(InstructionBeq.MNEMONIC, BASIC_PARAMETER_TYPES).orElse(null);

@@ -46,6 +46,10 @@ public class Simulation {
 	}
 
 	public void executeNextInstruction() {
+		executeNextInstruction(false);
+	}
+
+	public void executeNextInstruction(boolean verbose) {
 		int pc = registerSet.getProgramCounter().getValue();
 
 		//Fetch and Decode
@@ -55,7 +59,16 @@ public class Simulation {
 		if (instruction == null)
 			throw new InstructionNotFoundException("Couldn't decode instruction " + memory.getWord(pc) + ".");
 
+		if (verbose)
+			System.out.println(addZeros(Integer.toBinaryString(instruction.getOperationCode()), 6) +
+					" (" + instruction.getBasicOrigin().getMnemonic() + ")" +
+					" \t- 0x" + addZeros(Integer.toHexString(instruction.getCode()), 8));
+
 		//Execute, Memory and Write
 		instruction.execute(this);
+	}
+
+	private String addZeros(String s, int to) {
+		return "0".repeat(Math.max(0, to - s.length())) + s;
 	}
 }

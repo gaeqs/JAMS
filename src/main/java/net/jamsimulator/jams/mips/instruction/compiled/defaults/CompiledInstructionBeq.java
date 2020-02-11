@@ -29,8 +29,9 @@ public class CompiledInstructionBeq extends CompiledI16Instruction {
 		if (!rt.isPresent()) error("Target register not found.");
 
 		if (rs.get().getValue() != rt.get().getValue()) return;
+
 		Register pc = set.getProgramCounter();
-		pc.setValue(pc.getValue() + getImmediateAsSigned() << 2);
+		pc.setValue(pc.getValue() + (getImmediateAsSigned() << 2));
 
 	}
 }

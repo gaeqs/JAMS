@@ -174,11 +174,24 @@ public class MIPS32Compiler implements Compiler {
 			first = parts.get(0);
 			if (first.contains(":")) {
 				parts.remove(0);
-				label = first;
+
+				int index = first.indexOf(':');
+				if (index != first.length() - 1) {
+					parts.add(0, first.substring(index + 1));
+				}
+				label = first.substring(0, index);
+
 			} else label = null;
 
-			//If empty, continue
-			if (parts.isEmpty()) continue;
+			//If empty, parse the label or move it to the next line, and continue
+			if (parts.isEmpty()) {
+				if (file.rawCode.size() == lineNumber + 1) {
+					checkLabel(lineNumber, file, label, compilerData.getCurrent());
+				} else {
+					file.rawCode.set(lineNumber + 1, label + ":" + file.rawCode.get(lineNumber + 1));
+				}
+				continue;
+			}
 
 			first = parts.get(0);
 			parts.remove(0);
@@ -196,11 +209,7 @@ public class MIPS32Compiler implements Compiler {
 			}
 
 			if (label != null) {
-				int index = first.indexOf(':');
-				if (index != first.length() - 1) {
-					parts.add(0, first.substring(index + 1));
-				}
-				checkLabel(lineNumber, file, first.substring(0, index), labelAddress);
+				checkLabel(lineNumber, file, label, labelAddress);
 			}
 		}
 	}

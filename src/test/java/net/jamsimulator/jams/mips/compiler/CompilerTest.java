@@ -4,6 +4,7 @@ import net.jamsimulator.jams.mips.compiler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Mips32Memory;
 import net.jamsimulator.jams.mips.register.MIPS32RegisterSet;
+import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +27,16 @@ class CompilerTest {
 		program.add(".text");
 		program.add(".eqv ONETWOZERO $s1, $s2, $s0");
 		program.add("add ONETWOZERO#ADDS");
+		program.add("addi $t0, $zero, 5");
+		program.add("addi $t1, $zero, 0");
+		program.add("loop: beq $t0, $t1, end");
+		program.add("addi $t1, $t1, 1");
+		program.add("b loop");
+
+
+
+
+		program.add("end: addi $t0, $zero, -1");
 
 		Compiler compiler = new MIPS32Compiler(
 				new DirectiveSet(true, true),
@@ -37,10 +48,19 @@ class CompilerTest {
 		compiler.compile();
 		Simulation simulation = compiler.createSimulation();
 
-		System.out.println(compiler.getCompilerData().getCurrentExtern() - Mips32Memory.DATA);
+		assertEquals(0x02508820, simulation.getMemory().getWord(simulation.getRegisterSet().getProgramCounter().getValue()));
+
+		System.out.println("Extern next address: " + (compiler.getCompilerData().getCurrentExtern() - Mips32Memory.DATA));
+
+		System.out.println("Starting simulation");
+		Register pc = simulation.getRegisterSet().getProgramCounter();
+		while (pc.getValue() < compiler.getCompilerData().getCurrentText()) {
+			simulation.executeNextInstruction(true);
+		}
+		System.out.println("Simulation end");
+		System.out.println("$t1: "+ simulation.getRegisterSet().getRegister("t1").get().getValue());
 
 		//Check add
-		assertEquals(0x02508820, simulation.getMemory().getWord(simulation.getRegisterSet().getProgramCounter().getValue()));
 
 		byte[] values = {(byte) 5, (byte) 9, (byte) 6, (byte) 2};
 		for (int i = 0; i < 4; i++) {
