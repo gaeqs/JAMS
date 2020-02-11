@@ -4,9 +4,9 @@ import net.jamsimulator.jams.mips.instruction.compiled.CompiledPCREL16Instructio
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
- * Represents a R-Type basic instruction. This subclass adds the function code
+ * Represents a PRCEL-16-Type basic instruction. This subclass adds the pcrel code
  * of the instruction, allowing the simulator to find this instruction based on
- * an instruction code.
+ * a pc relative code.
  */
 public abstract class BasicPCREL16Instruction extends BasicInstruction {
 

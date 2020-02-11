@@ -59,10 +59,13 @@ public class Simulation {
 		if (instruction == null)
 			throw new InstructionNotFoundException("Couldn't decode instruction " + memory.getWord(pc) + ".");
 
-		if (verbose)
-			System.out.println(addZeros(Integer.toBinaryString(instruction.getOperationCode()), 6) +
-					" (" + instruction.getBasicOrigin().getMnemonic() + ")" +
-					" \t- 0x" + addZeros(Integer.toHexString(instruction.getCode()), 8));
+		if (verbose) {
+			String address = "0x" + addZeros(Integer.toHexString(pc), 8);
+			String opCode = addZeros(Integer.toBinaryString(instruction.getOperationCode()), 6);
+			String mnemonic = instruction.getBasicOrigin().getMnemonic();
+			String code = "0x" + addZeros(Integer.toHexString(instruction.getCode()), 8);
+			System.out.println(address + "\t" + opCode + "\t" + mnemonic + " \t" + code);
+		}
 
 		//Execute, Memory and Write
 		instruction.execute(this);

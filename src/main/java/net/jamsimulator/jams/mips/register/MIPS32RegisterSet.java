@@ -29,13 +29,14 @@ public class MIPS32RegisterSet extends RegisterSet {
 		for (int i = 0; i < 8; i++)
 			registers.add(new Register(id, "s" + i, String.valueOf(id++)));
 		registers.add(new Register(id, "t8", String.valueOf(id++)));
-		registers.add(new Register(id, "t8", String.valueOf(id++)));
+		registers.add(new Register(id, "t9", String.valueOf(id++)));
 
 		registers.add(new Register(id, "k0", String.valueOf(id++)));
 		registers.add(new Register(id, "k1", String.valueOf(id++)));
 
 		registers.add(new Register(id, 0x10008000, true, "gp", String.valueOf(id++)));
 		registers.add(new Register(id, 0x7fffeffc, true, "sp", String.valueOf(id++)));
+		registers.add(new Register(id, 0, true, "fp", String.valueOf(id++)));
 		registers.add(new Register(id, "ra", String.valueOf(id)));
 	}
 

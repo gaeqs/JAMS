@@ -3,25 +3,22 @@ package net.jamsimulator.jams.mips.instruction.pseudo.defaults;
 import net.jamsimulator.jams.mips.compiler.exception.CompilerException;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
-import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionBeq;
+import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionBal;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
-public class PseudoInstructionBL extends PseudoInstruction {
+public class PseudoInstructionBalL extends PseudoInstruction {
 
-	public static final String NAME = "Unconditional branch";
-	public static final String MNEMONIC = "b";
+	public static final String NAME = InstructionBal.NAME;
+	public static final String MNEMONIC = InstructionBal.MNEMONIC;
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.LABEL};
+	private static final ParameterType[] BASIC_PARAMETER_TYPES = new ParameterType[]{ParameterType.SIGNED_16_BIT};
 
-	private static final ParameterType[] BASIC_PARAMETER_TYPES =
-			new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
-	private static final ParameterParseResult ZERO = ParameterParseResult.builder().register(0).build();
-
-	public PseudoInstructionBL() {
+	public PseudoInstructionBalL() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES);
 	}
 
@@ -35,14 +32,14 @@ public class PseudoInstructionBL extends PseudoInstruction {
 		int offset = parameters[0].getLabelValue() - address - 4;
 		offset >>= 2;
 
-		Instruction beq = set.getInstruction(InstructionBeq.MNEMONIC, BASIC_PARAMETER_TYPES).orElse(null);
-		if (!(beq instanceof BasicInstruction))
-			throw new CompilerException("Basic instruction '" + InstructionBeq.MNEMONIC + "' not found.");
+		Instruction bal = set.getInstruction(InstructionBal.MNEMONIC, BASIC_PARAMETER_TYPES).orElse(null);
+		if (!(bal instanceof BasicInstruction))
+			throw new CompilerException("Basic instruction '" + InstructionBal.MNEMONIC + "' not found.");
 
 		ParameterParseResult[] newParameters = new ParameterParseResult[]{
-				ZERO, ZERO, ParameterParseResult.builder().immediate(offset).build()
+				ParameterParseResult.builder().immediate(offset).build()
 		};
 
-		return new CompiledInstruction[]{((BasicInstruction) beq).compileBasic(newParameters, this)};
+		return new CompiledInstruction[]{((BasicInstruction) bal).compileBasic(newParameters, this)};
 	}
 }

@@ -31,11 +31,7 @@ class CompilerTest {
 		program.add("addi $t1, $zero, 0");
 		program.add("loop: beq $t0, $t1, end");
 		program.add("addi $t1, $t1, 1");
-		program.add("b loop");
-
-
-
-
+		program.add("bal -3");
 		program.add("end: addi $t0, $zero, -1");
 
 		Compiler compiler = new MIPS32Compiler(
@@ -59,6 +55,7 @@ class CompilerTest {
 		}
 		System.out.println("Simulation end");
 		System.out.println("$t1: "+ simulation.getRegisterSet().getRegister("t1").get().getValue());
+		System.out.println("$ra: 0x"+ Integer.toHexString(simulation.getRegisterSet().getRegister("ra").get().getValue()));
 
 		//Check add
 

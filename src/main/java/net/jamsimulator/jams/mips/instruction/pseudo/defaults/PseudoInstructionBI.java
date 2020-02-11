@@ -22,7 +22,7 @@ public class PseudoInstructionBI extends PseudoInstruction {
 	private static final ParameterParseResult ZERO = ParameterParseResult.builder().register(0).build();
 
 	public PseudoInstructionBI() {
-		super(InstructionBeq.NAME, InstructionBeq.MNEMONIC, PARAMETER_TYPES);
+		super(NAME, MNEMONIC, PARAMETER_TYPES);
 	}
 
 	@Override
