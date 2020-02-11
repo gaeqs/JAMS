@@ -8,7 +8,7 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
  * of the instruction, allowing the simulator to find this instruction based on
  * a FMT.
  */
-public abstract class RFPUBasicInstruction extends RBasicInstruction {
+public abstract class BasicRFPUInstruction extends BasicRInstruction {
 
 	private int fmtCode;
 
@@ -23,7 +23,7 @@ public abstract class RFPUBasicInstruction extends RBasicInstruction {
 	 * @param functionCode  the function code.
 	 * @param fmtCode       the operand type format specifier.
 	 */
-	public RFPUBasicInstruction(String name, String mnemonic, ParameterType[] parameters, int operationCode,
+	public BasicRFPUInstruction(String name, String mnemonic, ParameterType[] parameters, int operationCode,
 								int functionCode, int fmtCode) {
 		super(name, mnemonic, parameters, operationCode, functionCode);
 		this.fmtCode = fmtCode;

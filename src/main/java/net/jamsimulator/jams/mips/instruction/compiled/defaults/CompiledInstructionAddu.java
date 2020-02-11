@@ -2,6 +2,7 @@ package net.jamsimulator.jams.mips.instruction.compiled.defaults;
 
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAddu;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledRInstruction;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.RegisterSet;
@@ -11,12 +12,10 @@ import java.util.Optional;
 
 public class CompiledInstructionAddu extends CompiledRInstruction {
 
-	public static final int OPERATION_CODE = 0;
-	public static final int FUNCTION_CODE = 0b100001;
-
 	public CompiledInstructionAddu(int sourceRegister, int targetRegister, int destinationRegister,
 								   Instruction origin, BasicInstruction basicOrigin) {
-		super(OPERATION_CODE, sourceRegister, targetRegister, destinationRegister, 0, FUNCTION_CODE, origin, basicOrigin);
+		super(InstructionAddu.OPERATION_CODE, sourceRegister, targetRegister, destinationRegister, 0,
+				InstructionAddu.FUNCTION_CODE, origin, basicOrigin);
 	}
 
 	public CompiledInstructionAddu(int instructionCode, Instruction origin, BasicInstruction basicOrigin) {

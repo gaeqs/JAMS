@@ -2,6 +2,7 @@ package net.jamsimulator.jams.mips.instruction.compiled.defaults;
 
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAddiu;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledI16Instruction;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.RegisterSet;
@@ -11,10 +12,8 @@ import java.util.Optional;
 
 public class CompiledInstructionAddiu extends CompiledI16Instruction {
 
-	public static final int OPERATION_CODE = 0b001001;
-
 	public CompiledInstructionAddiu(int sourceRegister, int targetRegister, int immediate, Instruction origin, BasicInstruction basicOrigin) {
-		super(OPERATION_CODE, sourceRegister, targetRegister, immediate, origin, basicOrigin);
+		super(InstructionAddiu.OPERATION_CODE, sourceRegister, targetRegister, immediate, origin, basicOrigin);
 	}
 
 	public CompiledInstructionAddiu(int instructionCode, Instruction origin, BasicInstruction basicOrigin) {

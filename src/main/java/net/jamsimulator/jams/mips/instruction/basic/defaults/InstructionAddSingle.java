@@ -1,13 +1,12 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
-import net.jamsimulator.jams.mips.instruction.basic.RFPUBasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionAddDouble;
 import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionAddSingle;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
-public class InstructionAddSingle extends RFPUBasicInstruction {
+public class InstructionAddSingle extends BasicRFPUInstruction {
 
 	public static final String NAME = "Addition (single)";
 	public static final String MNEMONIC = "add.s";

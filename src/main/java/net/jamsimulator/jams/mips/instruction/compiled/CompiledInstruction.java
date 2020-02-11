@@ -15,7 +15,7 @@ public abstract class CompiledInstruction {
 
 	protected int value;
 	protected Instruction origin;
-	private BasicInstruction basicOrigin;
+	protected BasicInstruction basicOrigin;
 
 	CompiledInstruction(int code, Instruction origin, BasicInstruction basicOrigin) {
 		this.value = code;

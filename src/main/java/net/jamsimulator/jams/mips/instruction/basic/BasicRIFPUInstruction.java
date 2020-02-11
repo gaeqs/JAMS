@@ -8,7 +8,7 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
  * of the instruction, allowing the simulator to find this instruction based on
  * a subcode.
  */
-public abstract class RIFPUBasicInstruction extends RBasicInstruction {
+public abstract class BasicRIFPUInstruction extends BasicRInstruction {
 
 	private int subcode;
 
@@ -23,7 +23,7 @@ public abstract class RIFPUBasicInstruction extends RBasicInstruction {
 	 * @param functionCode  the function code.
 	 * @param subcode       the subcode.
 	 */
-	public RIFPUBasicInstruction(String name, String mnemonic, ParameterType[] parameters, int operationCode,
+	public BasicRIFPUInstruction(String name, String mnemonic, ParameterType[] parameters, int operationCode,
 								 int functionCode, int subcode) {
 		super(name, mnemonic, parameters, operationCode, functionCode);
 		this.subcode = subcode;

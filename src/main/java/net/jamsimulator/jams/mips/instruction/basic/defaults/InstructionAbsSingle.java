@@ -1,13 +1,12 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
-import net.jamsimulator.jams.mips.instruction.basic.RFPUBasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionAbsDouble;
 import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionAbsSingle;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
-public class InstructionAbsSingle extends RFPUBasicInstruction {
+public class InstructionAbsSingle extends BasicRFPUInstruction {
 
 	public static final String NAME = "Absolute (single)";
 	public static final String MNEMONIC = "abs.s";

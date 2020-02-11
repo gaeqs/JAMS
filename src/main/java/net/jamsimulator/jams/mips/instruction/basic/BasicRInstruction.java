@@ -1,6 +1,6 @@
 package net.jamsimulator.jams.mips.instruction.basic;
 
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledPCRELInstruction;
+import net.jamsimulator.jams.mips.instruction.compiled.CompiledRInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
@@ -8,9 +8,9 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
  * of the instruction, allowing the simulator to find this instruction based on
  * an instruction code.
  */
-public abstract class PCRELBasicInstruction extends BasicInstruction {
+public abstract class BasicRInstruction extends BasicInstruction {
 
-	private int pcRelFunction;
+	private int functionCode;
 
 	/**
 	 * Creates a basic instruction using a name, a mnemonic, a parameter types array and an operation code.
@@ -19,26 +19,26 @@ public abstract class PCRELBasicInstruction extends BasicInstruction {
 	 * @param mnemonic      the mnemonic.
 	 * @param parameters    the parameter types.
 	 * @param operationCode the operation code.
-	 * @param pcRelFunction the pc relative function code.
+	 * @param functionCode  the function code.
 	 */
-	public PCRELBasicInstruction(String name, String mnemonic, ParameterType[] parameters, int operationCode,
-								 int pcRelFunction) {
+	public BasicRInstruction(String name, String mnemonic, ParameterType[] parameters, int operationCode,
+							 int functionCode) {
 		super(name, mnemonic, parameters, operationCode);
-		this.pcRelFunction = pcRelFunction;
+		this.functionCode = functionCode;
 	}
 
 	@Override
 	public boolean match(int instructionCode) {
 		return super.match(instructionCode) &&
-				((instructionCode >> CompiledPCRELInstruction.PCREL_SHIFT) & CompiledPCRELInstruction.PCREL_MASK) == pcRelFunction;
+				(instructionCode & CompiledRInstruction.FUNCTION_CODE_MASK) == functionCode;
 	}
 
 	/**
-	 * Returns the pc relative function code of the instruction.
+	 * Returns the function code of the instruction.
 	 *
-	 * @return the pc relative function code.
+	 * @return the function code.
 	 */
-	public int getPcRelFunction() {
-		return pcRelFunction;
+	public int getFunctionCode() {
+		return functionCode;
 	}
 }

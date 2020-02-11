@@ -2,6 +2,7 @@ package net.jamsimulator.jams.mips.instruction.compiled.defaults;
 
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAddDouble;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledRFPUInstruction;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.RegisterSet;
@@ -12,12 +13,9 @@ import java.util.Optional;
 
 public class CompiledInstructionAddDouble extends CompiledRFPUInstruction {
 
-	public static final int OPERATION_CODE = 0b010001;
-	public static final int FMT = 0b10001;
-	public static final int FUNCTION_CODE = 0b000000;
-
 	public CompiledInstructionAddDouble(int targetRegister, int sourceRegister, int destinationRegister, Instruction origin, BasicInstruction basicOrigin) {
-		super(OPERATION_CODE, FMT, targetRegister, sourceRegister, destinationRegister, FUNCTION_CODE, origin, basicOrigin);
+		super(InstructionAddDouble.OPERATION_CODE, InstructionAddDouble.FMT, targetRegister, sourceRegister, destinationRegister,
+				InstructionAddDouble.FUNCTION_CODE, origin, basicOrigin);
 	}
 
 	public CompiledInstructionAddDouble(int instructionCode, Instruction origin, BasicInstruction basicOrigin) {

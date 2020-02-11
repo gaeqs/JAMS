@@ -1,13 +1,12 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
-import net.jamsimulator.jams.mips.instruction.basic.RBasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionAdd;
 import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionAddu;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
-public class InstructionAddu extends RBasicInstruction {
+public class InstructionAddu extends BasicRInstruction {
 
 	public static final String NAME = "Addition without overflow";
 	public static final String MNEMONIC = "addu";
