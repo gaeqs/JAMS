@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.mips.instruction;
 
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
+import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
@@ -84,9 +85,11 @@ public interface Instruction {
 	/**
 	 * Compiles the instruction using the given parameters.
 	 *
+	 * @param set        the instruction set used by the compiler. This is used by pseodu-instruction to get their basic instructions.
+	 * @param address    the address where this instruction is stored. This is used by pseudo-instructions.
 	 * @param parameters the parameters.
 	 * @return a {@link CompiledInstruction} array.
 	 */
-	CompiledInstruction[] compile(ParameterParseResult[] parameters);
+	CompiledInstruction[] compile(InstructionSet set, int address, ParameterParseResult[] parameters);
 
 }

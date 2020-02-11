@@ -11,6 +11,10 @@ import net.jamsimulator.jams.mips.parameter.parse.exception.BadParameterParseRes
  */
 public class ParameterParseResult {
 
+	public static ParameterParseResult.Builder builder () {
+		return new ParameterParseResult.Builder();
+	}
+
 	private String label;
 	private int register;
 	private int immediate;
@@ -18,7 +22,7 @@ public class ParameterParseResult {
 
 	private boolean hasLabel, hasRegister, hasImmediate;
 
-	public ParameterParseResult(String label, int register, int immediate, boolean hasLabel, boolean hasRegister, boolean hasImmediate) {
+	ParameterParseResult(String label, int register, int immediate, boolean hasLabel, boolean hasRegister, boolean hasImmediate) {
 		if (!hasLabel && !hasRegister && !hasImmediate)
 			throw new BadParameterParseResultException("Result has no label, register or result.");
 		this.label = label;
@@ -51,6 +55,10 @@ public class ParameterParseResult {
 
 	public boolean isHasImmediate() {
 		return hasImmediate;
+	}
+
+	public int getLabelValue() {
+		return labelValue;
 	}
 
 	public void setLabelValue(int labelValue) {

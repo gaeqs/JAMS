@@ -42,7 +42,7 @@ public class InstructionSnapshot {
 			compiledParameters[index++] = result;
 		}
 
-		CompiledInstruction[] compiledInstructions = instruction.compile(compiledParameters);
+		CompiledInstruction[] compiledInstructions = instruction.compile(compiler.getInstructionSet(), address, compiledParameters);
 
 		//Add instructions to memory
 		int relativeAddress = address;

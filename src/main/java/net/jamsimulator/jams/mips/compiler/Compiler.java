@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.compiler;
 
+import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.RegisterSet;
 import net.jamsimulator.jams.mips.simulation.Simulation;
@@ -50,6 +51,14 @@ public interface Compiler {
 	 * @see #compile()
 	 */
 	boolean isCompiled();
+
+
+	/**
+	 * Returns this simulation's {@link InstructionSet}.
+	 *
+	 * @return the {@link InstructionSet}.
+	 */
+	InstructionSet getInstructionSet();
 
 	/**
 	 * Returns this simulation's {@link RegisterSet}.

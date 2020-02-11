@@ -43,12 +43,12 @@ class GeneralInstructionTests {
 		if (!optional.isPresent()) fail("Instruction not found.");
 
 		ParameterParseResult[] parameters = new ParameterParseResult[]{
-				new ParameterParseResult("", t2.getIdentifier(), 0, false, true, false),
-				new ParameterParseResult("", t1.getIdentifier(), 0, false, true, false),
-				new ParameterParseResult("", t0.getIdentifier(), 0, false, true, false),
+				ParameterParseResult.builder().register(t2.getIdentifier()).build(),
+				ParameterParseResult.builder().register(t1.getIdentifier()).build(),
+				ParameterParseResult.builder().register(t0.getIdentifier()).build()
 		};
 
-		CompiledInstruction[] instructions = optional.get().compile(parameters);
+		CompiledInstruction[] instructions = optional.get().compile(null, 0, parameters);
 		if (instructions.length != 1) fail("Incorrect instruction.");
 		instructions[0].execute(simulation);
 		assertEquals(23, t2.getValue(), "Bad add instruction result.");
@@ -64,9 +64,9 @@ class GeneralInstructionTests {
 		t1.setValue(20);
 
 		ParameterParseResult[] parameters = new ParameterParseResult[]{
-				new ParameterParseResult("", t2.getIdentifier(), 0, false, true, false),
-				new ParameterParseResult("", t1.getIdentifier(), 0, false, true, false),
-				new ParameterParseResult("", t0.getIdentifier(), 0, false, true, false),
+				ParameterParseResult.builder().register(t2.getIdentifier()).build(),
+				ParameterParseResult.builder().register(t1.getIdentifier()).build(),
+				ParameterParseResult.builder().register(t0.getIdentifier()).build()
 		};
 
 		CompiledInstruction instruction = new InstructionAdd().compileBasic(parameters);

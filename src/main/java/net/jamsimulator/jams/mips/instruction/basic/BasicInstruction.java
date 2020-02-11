@@ -2,6 +2,7 @@ package net.jamsimulator.jams.mips.instruction.basic;
 
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
+import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
@@ -58,7 +59,7 @@ public abstract class BasicInstruction implements Instruction {
 
 	@Override
 	public boolean match(String mnemonic, List<ParameterType>[] parameters) {
-		if(!this.mnemonic.equals(mnemonic)) return false;
+		if (!this.mnemonic.equals(mnemonic)) return false;
 		if (parameters.length != this.parameters.length) return false;
 		int i = 0;
 		for (List<ParameterType> possibilities : parameters) {
@@ -70,7 +71,7 @@ public abstract class BasicInstruction implements Instruction {
 
 
 	@Override
-	public CompiledInstruction[] compile(ParameterParseResult[] parameters) {
+	public CompiledInstruction[] compile(InstructionSet set, int address, ParameterParseResult[] parameters) {
 		return new CompiledInstruction[]{compileBasic(parameters)};
 	}
 
@@ -100,7 +101,18 @@ public abstract class BasicInstruction implements Instruction {
 	 * @param parameters the parameters.
 	 * @return the {@link CompiledInstruction}.
 	 */
-	public abstract CompiledInstruction compileBasic(ParameterParseResult[] parameters);
+	public final CompiledInstruction compileBasic(ParameterParseResult[] parameters) {
+		return compileBasic(parameters, this);
+	}
+
+	/**
+	 * Compiles the basic instruction using the given parameters.
+	 *
+	 * @param parameters the parameters.
+	 * @param origin     the origin instruction. This may be a pseudo-instruction or this basic instruction.
+	 * @return the {@link CompiledInstruction}.
+	 */
+	public abstract CompiledInstruction compileBasic(ParameterParseResult[] parameters, Instruction origin);
 
 	/**
 	 * Compiles the basic instruction using the given instruction code.

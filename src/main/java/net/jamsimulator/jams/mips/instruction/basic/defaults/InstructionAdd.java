@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionAdd;
@@ -21,10 +22,10 @@ public class InstructionAdd extends BasicRInstruction {
 	}
 
 	@Override
-	public CompiledInstruction compileBasic(ParameterParseResult[] parameters) {
+	public CompiledInstruction compileBasic(ParameterParseResult[] parameters, Instruction origin) {
 		return new CompiledInstructionAdd(parameters[1].getRegister(),
 				parameters[2].getRegister(),
-				parameters[0].getRegister(), this, this);
+				parameters[0].getRegister(), origin, this);
 	}
 
 	@Override

@@ -122,6 +122,11 @@ public class MIPS32Compiler implements Compiler {
 	}
 
 	@Override
+	public InstructionSet getInstructionSet() {
+		return instructionSet;
+	}
+
+	@Override
 	public void setAsGlobalLabel(int executingLine, String label) {
 		if (convertToGlobalLabel.contains(label)) return;
 		convertToGlobalLabel.add(label);

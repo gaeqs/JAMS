@@ -3,6 +3,9 @@ package net.jamsimulator.jams.mips.instruction.set;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.*;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
+import net.jamsimulator.jams.mips.instruction.pseudo.defaults.PseudoInstructionBI;
+import net.jamsimulator.jams.mips.instruction.pseudo.defaults.PseudoInstructionBL;
+import net.jamsimulator.jams.mips.instruction.pseudo.defaults.PseudoInstructionBeqRRL;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,6 +31,14 @@ class DefaultInstructions {
 		basicInstructions.add(new InstructionAndi());
 		basicInstructions.add(new InstructionAui());
 		basicInstructions.add(new InstructionAuipc());
+
+		basicInstructions.add(new InstructionBeq());
+
+
+		//PSEUDO
+		pseudoInstructions.add(new PseudoInstructionBI());
+		pseudoInstructions.add(new PseudoInstructionBL());
+		pseudoInstructions.add(new PseudoInstructionBeqRRL());
 	}
 
 }

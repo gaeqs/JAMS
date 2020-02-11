@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionAbsDouble;
@@ -22,8 +23,8 @@ public class InstructionAbsDouble extends BasicRFPUInstruction {
 	}
 
 	@Override
-	public CompiledInstruction compileBasic(ParameterParseResult[] parameters) {
-		return new CompiledInstructionAbsDouble(parameters[1].getRegister(), parameters[0].getRegister(), this, this);
+	public CompiledInstruction compileBasic(ParameterParseResult[] parameters, Instruction origin) {
+		return new CompiledInstructionAbsDouble(parameters[1].getRegister(), parameters[0].getRegister(), origin, this);
 	}
 
 	@Override

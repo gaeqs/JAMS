@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicPCREL16Instruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionAddiupc;
@@ -22,8 +23,8 @@ public class InstructionAluipc extends BasicPCREL16Instruction {
 	}
 
 	@Override
-	public CompiledInstruction compileBasic(ParameterParseResult[] parameters) {
-		return new CompiledInstructionAluipc(parameters[0].getRegister(), parameters[1].getImmediate(), this, this);
+	public CompiledInstruction compileBasic(ParameterParseResult[] parameters, Instruction origin) {
+		return new CompiledInstructionAluipc(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
 	}
 
 	@Override

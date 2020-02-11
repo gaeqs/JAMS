@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionAddiu;
@@ -20,9 +21,9 @@ public class InstructionAddiu extends BasicInstruction {
 	}
 
 	@Override
-	public CompiledInstruction compileBasic(ParameterParseResult[] parameters) {
+	public CompiledInstruction compileBasic(ParameterParseResult[] parameters, Instruction origin) {
 		return new CompiledInstructionAddiu(parameters[1].getRegister(), parameters[0].getRegister(),
-				parameters[2].getImmediate(), this, this);
+				parameters[2].getImmediate(), origin, this);
 	}
 
 	@Override

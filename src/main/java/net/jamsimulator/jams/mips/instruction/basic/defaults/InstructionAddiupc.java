@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicPCREL19Instruction;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
 import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionAddiupc;
@@ -21,8 +22,8 @@ public class InstructionAddiupc extends BasicPCREL19Instruction {
 	}
 
 	@Override
-	public CompiledInstruction compileBasic(ParameterParseResult[] parameters) {
-		return new CompiledInstructionAddiupc(parameters[0].getRegister(), parameters[1].getImmediate(), this, this);
+	public CompiledInstruction compileBasic(ParameterParseResult[] parameters, Instruction origin) {
+		return new CompiledInstructionAddiupc(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
 	}
 
 	@Override
