@@ -3,14 +3,14 @@ package net.jamsimulator.jams.mips.instruction.compiled.defaults;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAluipc;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledPCREL19Instruction;
+import net.jamsimulator.jams.mips.instruction.compiled.CompiledPCREL16Instruction;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.RegisterSet;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
 import java.util.Optional;
 
-public class CompiledInstructionAluipc extends CompiledPCREL19Instruction {
+public class CompiledInstructionAluipc extends CompiledPCREL16Instruction {
 
 	public CompiledInstructionAluipc(int sourceRegister, int immediate, Instruction origin, BasicInstruction basicOrigin) {
 		super(InstructionAluipc.OPERATION_CODE, sourceRegister, InstructionAluipc.PCREL_CODE, immediate, origin, basicOrigin);
@@ -26,7 +26,7 @@ public class CompiledInstructionAluipc extends CompiledPCREL19Instruction {
 		Optional<Register> rs = set.getRegister(getSourceRegister());
 		if (!rs.isPresent()) error("Source register not found.");
 
-		int result = ~0x0FFFF & (set.getProgramCounter().getValue() + (getImmediateAsSigned() << 16));
+		int result = ~0x0FFFF & (set.getProgramCounter().getValue() + (getImmediate() << 16));
 		rs.get().setValue(result);
 	}
 }
