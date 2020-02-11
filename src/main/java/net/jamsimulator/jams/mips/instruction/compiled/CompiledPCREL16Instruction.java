@@ -7,11 +7,11 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
  * Represents a compiled PCREL instruction. An PCREL instruction is composed of an 19-bit immediate,
  * one PCREL function code one source register and one operation code.
  */
-public abstract class CompiledPCRELInstruction extends CompiledInstruction {
+public abstract class CompiledPCREL16Instruction extends CompiledInstruction {
 
-	public static final int IMMEDIATE_MASK = 0x7FFFF;
-	public static final int PCREL_SHIFT = 19;
-	public static final int PCREL_MASK = 0x3;
+	public static final int IMMEDIATE_MASK = 0xFFFF;
+	public static final int PCREL_SHIFT = 16;
+	public static final int PCREL_MASK = 0x1F;
 	public static final int SOURCE_REGISTER_SHIFT = 21;
 	public static final int SOURCE_REGISTER_MASK = 0x1F;
 
@@ -22,7 +22,7 @@ public abstract class CompiledPCRELInstruction extends CompiledInstruction {
 	 * @param origin      the origin instruction.
 	 * @param basicOrigin the origin basic instruction.
 	 */
-	public CompiledPCRELInstruction(int value, Instruction origin, BasicInstruction basicOrigin) {
+	public CompiledPCREL16Instruction(int value, Instruction origin, BasicInstruction basicOrigin) {
 		super(value, origin, basicOrigin);
 	}
 
@@ -37,7 +37,7 @@ public abstract class CompiledPCRELInstruction extends CompiledInstruction {
 	 * @param origin         the origin instruction.
 	 * @param basicOrigin    the origin basic instruction.
 	 */
-	public CompiledPCRELInstruction(int operationCode, int sourceRegister, int pcrel, int immediate, Instruction origin, BasicInstruction basicOrigin) {
+	public CompiledPCREL16Instruction(int operationCode, int sourceRegister, int pcrel, int immediate, Instruction origin, BasicInstruction basicOrigin) {
 		super(calculateValue(operationCode, sourceRegister, pcrel, immediate), origin, basicOrigin);
 	}
 
@@ -59,9 +59,7 @@ public abstract class CompiledPCRELInstruction extends CompiledInstruction {
 	 * @return the signed 16-bit immediate.
 	 */
 	public int getImmediateAsSigned() {
-		int i = getImmediate();
-		int shift = 32 - 2 - PCREL_SHIFT;
-		return ((i << shift) >> shift);
+		return (short) getImmediate();
 	}
 
 	/**

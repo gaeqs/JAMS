@@ -53,7 +53,11 @@ public abstract class CompiledI26Instruction extends CompiledInstruction {
 	 * @return the signed 26-bit immediate.
 	 */
 	public int getImmediateAsSigned() {
-		return (short) getImmediate();
+		final int SHIFT = 32 - 26;
+		int immediate = getImmediate();
+		immediate <<= SHIFT;
+		immediate >>= SHIFT;
+		return immediate;
 	}
 
 

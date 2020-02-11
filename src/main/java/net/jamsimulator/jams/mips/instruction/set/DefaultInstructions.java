@@ -22,6 +22,8 @@ class DefaultInstructions {
 		basicInstructions.add(new InstructionAddiu());
 		basicInstructions.add(new InstructionAddiupc());
 		basicInstructions.add(new InstructionAddu());
+		basicInstructions.add(new InstructionAlign());
+		basicInstructions.add(new InstructionAluipc());
 	}
 
 }

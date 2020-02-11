@@ -56,7 +56,11 @@ public abstract class CompiledI21Instruction extends CompiledInstruction {
 	 * @return the signed 21-bit immediate.
 	 */
 	public int getImmediateAsSigned() {
-		return (short) getImmediate();
+		final int SHIFT = 32 - 21;
+		int immediate = getImmediate();
+		immediate <<= SHIFT;
+		immediate >>= SHIFT;
+		return immediate;
 	}
 
 	/**
