@@ -19,7 +19,6 @@ class DefaultInstructions {
 		basicInstructions.add(new InstructionAdd());
 		basicInstructions.add(new InstructionAddDouble());
 		basicInstructions.add(new InstructionAddSingle());
-		basicInstructions.add(new InstructionAddi());
 		basicInstructions.add(new InstructionAddiu());
 		basicInstructions.add(new InstructionAddiupc());
 		basicInstructions.add(new InstructionAddu());

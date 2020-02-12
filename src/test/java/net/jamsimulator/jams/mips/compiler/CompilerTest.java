@@ -27,12 +27,12 @@ class CompilerTest {
 		program.add(".text");
 		program.add(".eqv ONETWOZERO $s1, $s2, $s0");
 		program.add("add ONETWOZERO#ADDS");
-		program.add("addi $t0, $zero, 5");
-		program.add("addi $t1, $zero, 0");
+		program.add("addiu $t0, $zero, 5");
+		program.add("addiu $t1, $zero, 0");
 		program.add("loop: beq $t0, $t1, end");
-		program.add("addi $t1, $t1, 1");
+		program.add("addiu $t1, $t1, 1");
 		program.add("bgez $s5, loop");
-		program.add("end: addi $t0, $zero, -1");
+		program.add("end: addiu $t0, $zero, -1");
 
 		Compiler compiler = new MIPS32Compiler(
 				new DirectiveSet(true, true),
