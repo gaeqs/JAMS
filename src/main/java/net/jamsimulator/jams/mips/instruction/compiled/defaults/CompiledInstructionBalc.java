@@ -2,21 +2,21 @@ package net.jamsimulator.jams.mips.instruction.compiled.defaults;
 
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
-import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionBal;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledRIInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionBalc;
+import net.jamsimulator.jams.mips.instruction.compiled.CompiledI26Instruction;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.RegisterSet;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
 import java.util.Optional;
 
-public class CompiledInstructionBal extends CompiledRIInstruction {
+public class CompiledInstructionBalc extends CompiledI26Instruction {
 
-	public CompiledInstructionBal(Instruction origin, BasicInstruction basicOrigin, int offset) {
-		super(InstructionBal.OPERATION_CODE, 0, InstructionBal.FUNCTION_CODE, offset, origin, basicOrigin);
+	public CompiledInstructionBalc(Instruction origin, BasicInstruction basicOrigin, int offset) {
+		super(InstructionBalc.OPERATION_CODE, offset, origin, basicOrigin);
 	}
 
-	public CompiledInstructionBal(int instructionCode, Instruction origin, BasicInstruction basicOrigin) {
+	public CompiledInstructionBalc(int instructionCode, Instruction origin, BasicInstruction basicOrigin) {
 		super(instructionCode, origin, basicOrigin);
 	}
 

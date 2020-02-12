@@ -56,8 +56,11 @@ public class Simulation {
 		registerSet.getProgramCounter().setValue(pc + 4);
 		CompiledInstruction instruction = getInstruction(pc);
 
-		if (instruction == null)
-			throw new InstructionNotFoundException("Couldn't decode instruction " + memory.getWord(pc) + ".");
+		if (instruction == null) {
+			int code = memory.getWord(pc);
+			throw new InstructionNotFoundException("Couldn't decode instruction 0x" +
+					addZeros(Integer.toHexString(code), 8) + ". (" + addZeros(Integer.toBinaryString(code), 32) + ")");
+		}
 
 		if (verbose) {
 			String address = "0x" + addZeros(Integer.toHexString(pc), 8);

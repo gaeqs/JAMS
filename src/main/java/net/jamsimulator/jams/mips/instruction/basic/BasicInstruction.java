@@ -59,7 +59,7 @@ public abstract class BasicInstruction implements Instruction {
 
 	@Override
 	public boolean match(String mnemonic, List<ParameterType>[] parameters) {
-		if (!this.mnemonic.equals(mnemonic)) return false;
+		if (!this.mnemonic.equalsIgnoreCase(mnemonic)) return false;
 		if (parameters.length != this.parameters.length) return false;
 		int i = 0;
 		for (List<ParameterType> possibilities : parameters) {
@@ -92,7 +92,7 @@ public abstract class BasicInstruction implements Instruction {
 	 * @return whether this instruction matches.
 	 */
 	public boolean match(int instructionCode) {
-		return (instructionCode >> CompiledInstruction.OPERATION_CODE_SHIFT) == operationCode;
+		return (instructionCode >>> CompiledInstruction.OPERATION_CODE_SHIFT) == operationCode;
 	}
 
 	/**

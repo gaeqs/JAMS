@@ -12,8 +12,8 @@ import java.util.Optional;
 
 public class CompiledInstructionBeq extends CompiledI16Instruction {
 
-	public CompiledInstructionBeq(int sourceRegister, int targetRegister, int immediate, Instruction origin, BasicInstruction basicOrigin) {
-		super(InstructionBeq.OPERATION_CODE, sourceRegister, targetRegister, immediate, origin, basicOrigin);
+	public CompiledInstructionBeq(int sourceRegister, int targetRegister, int offset, Instruction origin, BasicInstruction basicOrigin) {
+		super(InstructionBeq.OPERATION_CODE, sourceRegister, targetRegister, offset, origin, basicOrigin);
 	}
 
 	public CompiledInstructionBeq(int instructionCode, Instruction origin, BasicInstruction basicOrigin) {
