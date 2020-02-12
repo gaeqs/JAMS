@@ -1,14 +1,14 @@
 package net.jamsimulator.jams.mips.instruction.basic;
 
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledRIFPUInstruction;
+import net.jamsimulator.jams.mips.instruction.compiled.CompiledIFPUInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
- * Represents a RI-Type FPU basic instruction. This subclass adds the subcode
+ * Represents a I-Type FPU basic instruction. This subclass adds the subcode
  * of the instruction, allowing the simulator to find this instruction based on
  * a subcode.
  */
-public abstract class BasicRIFPUInstruction extends BasicInstruction {
+public abstract class BasicIFPUInstruction extends BasicInstruction {
 
 	private int subcode;
 
@@ -22,7 +22,7 @@ public abstract class BasicRIFPUInstruction extends BasicInstruction {
 	 * @param operationCode the operation code.
 	 * @param subcode       the subcode.
 	 */
-	public BasicRIFPUInstruction(String name, String mnemonic, ParameterType[] parameters, int operationCode, int subcode) {
+	public BasicIFPUInstruction(String name, String mnemonic, ParameterType[] parameters, int operationCode, int subcode) {
 		super(name, mnemonic, parameters, operationCode);
 		this.subcode = subcode;
 	}
@@ -31,7 +31,7 @@ public abstract class BasicRIFPUInstruction extends BasicInstruction {
 	@Override
 	public boolean match(int instructionCode) {
 		return super.match(instructionCode) &&
-				((instructionCode >> CompiledRIFPUInstruction.SUBCODE_SHIFT) & CompiledRIFPUInstruction.SUBCODE_MASK) == subcode;
+				((instructionCode >> CompiledIFPUInstruction.BASE_REGISTER_SHIFT) & CompiledIFPUInstruction.BASE_REGISTER_MASK) == subcode;
 	}
 
 	/**
