@@ -35,6 +35,12 @@ class DefaultInstructions {
 		basicInstructions.add(new InstructionBc1nez());
 		basicInstructions.add(new InstructionBeq());
 		basicInstructions.add(new InstructionBgez());
+		basicInstructions.add(new InstructionBlezalc());
+		basicInstructions.add(new InstructionBgezalc());
+		basicInstructions.add(new InstructionBgtzalc());
+		basicInstructions.add(new InstructionBltzalc());
+		basicInstructions.add(new InstructionBeqzalc());
+		basicInstructions.add(new InstructionBnezalc());
 
 		//PSEUDO
 		pseudoInstructions.add(new PseudoInstructionBI());
@@ -46,6 +52,12 @@ class DefaultInstructions {
 		pseudoInstructions.add(new PseudoInstructionBc1nezL());
 		pseudoInstructions.add(new PseudoInstructionBeqRRL());
 		pseudoInstructions.add(new PseudoInstructionBgezRL());
+		pseudoInstructions.add(new PseudoInstructionBeqzalcRL());
+		pseudoInstructions.add(new PseudoInstructionBgezalcRL());
+		pseudoInstructions.add(new PseudoInstructionBgtzalcRL());
+		pseudoInstructions.add(new PseudoInstructionBlezalcRL());
+		pseudoInstructions.add(new PseudoInstructionBltzalcRL());
+		pseudoInstructions.add(new PseudoInstructionBnezalcRL());
 	}
 
 }
