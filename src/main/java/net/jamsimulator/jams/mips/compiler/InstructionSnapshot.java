@@ -42,13 +42,17 @@ public class InstructionSnapshot {
 			compiledParameters[index++] = result;
 		}
 
-		CompiledInstruction[] compiledInstructions = instruction.compile(compiler.getInstructionSet(), address, compiledParameters);
+		try {
+			CompiledInstruction[] compiledInstructions = instruction.compile(compiler.getInstructionSet(), address, compiledParameters);
 
-		//Add instructions to memory
-		int relativeAddress = address;
-		for (CompiledInstruction compiledInstruction : compiledInstructions) {
-			compiler.getMemory().setWord(relativeAddress, compiledInstruction.getCode());
-			relativeAddress += 4;
+			//Add instructions to memory
+			int relativeAddress = address;
+			for (CompiledInstruction compiledInstruction : compiledInstructions) {
+				compiler.getMemory().setWord(relativeAddress, compiledInstruction.getCode());
+				relativeAddress += 4;
+			}
+		} catch (CompilerException ex) {
+			throw new CompilerException(line, "Error while compiling instruction.", ex);
 		}
 
 	}

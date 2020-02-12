@@ -232,7 +232,8 @@ public class MIPS32Compiler implements Compiler {
 		}
 		Optional<Instruction> optional = instructionSet.getBestCompatibleInstruction(mnemonic, types);
 		if (!optional.isPresent())
-			throw new CompilerException(line, "Instruction " + mnemonic + " with the given parameters not found.");
+			throw new CompilerException(line, "Instruction " + mnemonic + " with the given parameters not found.\n"
+			+ Arrays.toString(types));
 		Instruction instruction = optional.get();
 
 		file.snapshots.add(new InstructionSnapshot(instruction, parameters, line, compilerData.getCurrent()));

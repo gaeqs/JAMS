@@ -34,9 +34,8 @@ class DefaultInstructions {
 		basicInstructions.add(new InstructionBc());
 		basicInstructions.add(new InstructionBc1eqz());
 		basicInstructions.add(new InstructionBc1nez());
-
 		basicInstructions.add(new InstructionBeq());
-
+		basicInstructions.add(new InstructionBgez());
 
 		//PSEUDO
 		pseudoInstructions.add(new PseudoInstructionBI());
@@ -46,8 +45,8 @@ class DefaultInstructions {
 		pseudoInstructions.add(new PseudoInstructionBcL());
 		pseudoInstructions.add(new PseudoInstructionBc1eqzL());
 		pseudoInstructions.add(new PseudoInstructionBc1nezL());
-
 		pseudoInstructions.add(new PseudoInstructionBeqRRL());
+		pseudoInstructions.add(new PseudoInstructionBgezRL());
 	}
 
 }
