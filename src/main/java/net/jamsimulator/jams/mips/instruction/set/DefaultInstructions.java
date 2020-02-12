@@ -31,6 +31,7 @@ class DefaultInstructions {
 		basicInstructions.add(new InstructionAuipc());
 		basicInstructions.add(new InstructionBal());
 		basicInstructions.add(new InstructionBalc());
+		basicInstructions.add(new InstructionBc());
 
 		basicInstructions.add(new InstructionBeq());
 
@@ -40,6 +41,7 @@ class DefaultInstructions {
 		pseudoInstructions.add(new PseudoInstructionBL());
 		pseudoInstructions.add(new PseudoInstructionBalL());
 		pseudoInstructions.add(new PseudoInstructionBalcL());
+		pseudoInstructions.add(new PseudoInstructionBcL());
 
 		pseudoInstructions.add(new PseudoInstructionBeqRRL());
 	}
