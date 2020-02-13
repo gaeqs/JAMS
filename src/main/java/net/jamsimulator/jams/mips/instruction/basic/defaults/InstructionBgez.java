@@ -21,7 +21,7 @@ public class InstructionBgez extends BasicRIInstruction {
 	}
 
 	@Override
-	public CompiledInstruction compileBasic(ParameterParseResult[] parameters, Instruction origin) {
+	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
 		return new CompiledInstructionBgez(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
 	}
 

@@ -22,7 +22,7 @@ public class InstructionAddiupc extends BasicPCREL19Instruction {
 	}
 
 	@Override
-	public CompiledInstruction compileBasic(ParameterParseResult[] parameters, Instruction origin) {
+	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
 		return new CompiledInstructionAddiupc(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
 	}
 

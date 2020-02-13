@@ -48,7 +48,7 @@ class GeneralInstructionTests {
 				ParameterParseResult.builder().register(t0.getIdentifier()).build()
 		};
 
-		CompiledInstruction[] instructions = optional.get().compile(null, 0, parameters);
+		CompiledInstruction[] instructions = optional.get().assemble(null, 0, parameters);
 		if (instructions.length != 1) fail("Incorrect instruction.");
 		instructions[0].execute(simulation);
 		assertEquals(23, t2.getValue(), "Bad add instruction result.");
@@ -69,7 +69,7 @@ class GeneralInstructionTests {
 				ParameterParseResult.builder().register(t0.getIdentifier()).build()
 		};
 
-		CompiledInstruction instruction = new InstructionAdd().compileBasic(parameters);
+		CompiledInstruction instruction = new InstructionAdd().assembleBasic(parameters);
 
 		try {
 			instruction.execute(simulation);

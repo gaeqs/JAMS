@@ -28,7 +28,7 @@ public class PseudoInstructionBc1nezL extends PseudoInstruction {
 	}
 
 	@Override
-	public CompiledInstruction[] compile(InstructionSet set, int address, ParameterParseResult[] parameters) {
+	public CompiledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
 		int offset = parameters[1].getLabelValue() - address - 4;
 		offset >>= 2;
 
@@ -41,6 +41,6 @@ public class PseudoInstructionBc1nezL extends PseudoInstruction {
 				ParameterParseResult.builder().immediate(offset).build()
 		};
 
-		return new CompiledInstruction[]{((BasicInstruction) basic).compileBasic(newParameters, this)};
+		return new CompiledInstruction[]{((BasicInstruction) basic).assembleBasic(newParameters, this)};
 	}
 }

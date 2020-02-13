@@ -22,7 +22,7 @@ public class InstructionBal extends BasicRIInstruction {
 	}
 
 	@Override
-	public CompiledInstruction compileBasic(ParameterParseResult[] parameters, Instruction origin) {
+	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
 		return new CompiledInstructionBal(origin, this, parameters[0].getImmediate());
 	}
 

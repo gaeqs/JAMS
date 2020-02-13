@@ -23,7 +23,7 @@ public class InstructionAluipc extends BasicPCREL16Instruction {
 	}
 
 	@Override
-	public CompiledInstruction compileBasic(ParameterParseResult[] parameters, Instruction origin) {
+	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
 		return new CompiledInstructionAluipc(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
 	}
 

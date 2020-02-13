@@ -21,7 +21,7 @@ public class InstructionBgtzalc extends BasicInstruction {
 	}
 
 	@Override
-	public CompiledInstruction compileBasic(ParameterParseResult[] parameters, Instruction origin) {
+	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
 		return new CompiledInstructionBgtzalc(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
 	}
 

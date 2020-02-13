@@ -3,22 +3,26 @@ package net.jamsimulator.jams.mips.instruction.pseudo.defaults;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
-import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionBeqzalc;
+import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAui;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
-public class PseudoInstructionBeqzalcRL extends PseudoInstruction {
+public class PseudoInstructionLuiRI extends PseudoInstruction {
 
-	public static final String NAME = InstructionBeqzalc.NAME;
-	public static final String MNEMONIC = InstructionBeqzalc.MNEMONIC;
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.LABEL};
-	private static final ParameterType[] BASIC_PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
+	public static final String NAME = "Load upper immediate";
+	public static final String MNEMONIC = "lui";
 
-	public PseudoInstructionBeqzalcRL() {
+	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
+
+	private static final ParameterType[] BASIC_PARAMETER_TYPES =
+			new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
+	private static final ParameterParseResult ZERO = ParameterParseResult.builder().register(0).build();
+
+	public PseudoInstructionLuiRI() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES);
 	}
 
@@ -29,16 +33,12 @@ public class PseudoInstructionBeqzalcRL extends PseudoInstruction {
 
 	@Override
 	public CompiledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
-		int offset = parameters[1].getLabelValue() - address - 4;
-		offset >>= 2;
-
-		Instruction basic = set.getInstruction(MNEMONIC, BASIC_PARAMETER_TYPES).orElse(null);
+		Instruction basic = set.getInstruction(InstructionAui.MNEMONIC, BASIC_PARAMETER_TYPES).orElse(null);
 		if (!(basic instanceof BasicInstruction))
-			throw new AssemblerException("Basic instruction '" + InstructionBeqzalc.MNEMONIC + "' not found.");
+			throw new AssemblerException("Basic instruction '" + InstructionAui.MNEMONIC + "' not found.");
 
 		ParameterParseResult[] newParameters = new ParameterParseResult[]{
-				parameters[0],
-				ParameterParseResult.builder().immediate(offset).build()
+				parameters[0], ZERO, parameters[1]
 		};
 
 		return new CompiledInstruction[]{((BasicInstruction) basic).assembleBasic(newParameters, this)};

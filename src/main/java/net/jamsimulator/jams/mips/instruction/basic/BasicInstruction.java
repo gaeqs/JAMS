@@ -71,8 +71,8 @@ public abstract class BasicInstruction implements Instruction {
 
 
 	@Override
-	public CompiledInstruction[] compile(InstructionSet set, int address, ParameterParseResult[] parameters) {
-		return new CompiledInstruction[]{compileBasic(parameters)};
+	public CompiledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
+		return new CompiledInstruction[]{assembleBasic(parameters)};
 	}
 
 	/**
@@ -101,8 +101,8 @@ public abstract class BasicInstruction implements Instruction {
 	 * @param parameters the parameters.
 	 * @return the {@link CompiledInstruction}.
 	 */
-	public final CompiledInstruction compileBasic(ParameterParseResult[] parameters) {
-		return compileBasic(parameters, this);
+	public final CompiledInstruction assembleBasic(ParameterParseResult[] parameters) {
+		return assembleBasic(parameters, this);
 	}
 
 	/**
@@ -112,7 +112,7 @@ public abstract class BasicInstruction implements Instruction {
 	 * @param origin     the origin instruction. This may be a pseudo-instruction or this basic instruction.
 	 * @return the {@link CompiledInstruction}.
 	 */
-	public abstract CompiledInstruction compileBasic(ParameterParseResult[] parameters, Instruction origin);
+	public abstract CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin);
 
 	/**
 	 * Compiles the basic instruction using the given instruction code.

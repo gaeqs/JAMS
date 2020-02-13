@@ -23,7 +23,7 @@ public class InstructionAddDouble extends BasicRFPUInstruction {
 	}
 
 	@Override
-	public CompiledInstruction compileBasic(ParameterParseResult[] parameters, Instruction origin) {
+	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
 		return new CompiledInstructionAddDouble(parameters[2].getRegister(), parameters[1].getRegister(),
 				parameters[0].getRegister(), origin, this);
 	}

@@ -90,6 +90,6 @@ public interface Instruction {
 	 * @param parameters the parameters.
 	 * @return a {@link CompiledInstruction} array.
 	 */
-	CompiledInstruction[] compile(InstructionSet set, int address, ParameterParseResult[] parameters);
+	CompiledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters);
 
 }

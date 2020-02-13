@@ -43,7 +43,7 @@ public class InstructionSnapshot {
 		}
 
 		try {
-			CompiledInstruction[] compiledInstructions = instruction.compile(assembler.getInstructionSet(), address, compiledParameters);
+			CompiledInstruction[] compiledInstructions = instruction.assemble(assembler.getInstructionSet(), address, compiledParameters);
 
 			//Add instructions to memory
 			int relativeAddress = address;

@@ -21,7 +21,7 @@ public class InstructionBalc extends BasicInstruction {
 	}
 
 	@Override
-	public CompiledInstruction compileBasic(ParameterParseResult[] parameters, Instruction origin) {
+	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
 		return new CompiledInstructionBalc(origin, this, parameters[0].getImmediate());
 	}
 

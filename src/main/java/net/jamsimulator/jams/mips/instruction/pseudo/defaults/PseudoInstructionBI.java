@@ -31,16 +31,15 @@ public class PseudoInstructionBI extends PseudoInstruction {
 	}
 
 	@Override
-	public CompiledInstruction[] compile(InstructionSet set, int address, ParameterParseResult[] parameters) {
-		int offset = parameters[0].getImmediate();
+	public CompiledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
 		Instruction beq = set.getInstruction(InstructionBeq.MNEMONIC, BASIC_PARAMETER_TYPES).orElse(null);
 		if (!(beq instanceof BasicInstruction))
 			throw new AssemblerException("Basic instruction '" + InstructionBeq.MNEMONIC + "' not found.");
 
 		ParameterParseResult[] newParameters = new ParameterParseResult[]{
-				ZERO, ZERO, ParameterParseResult.builder().immediate(offset).build()
+				ZERO, ZERO, parameters[0]
 		};
 
-		return new CompiledInstruction[]{((BasicInstruction) beq).compileBasic(newParameters, this)};
+		return new CompiledInstruction[]{((BasicInstruction) beq).assembleBasic(newParameters, this)};
 	}
 }

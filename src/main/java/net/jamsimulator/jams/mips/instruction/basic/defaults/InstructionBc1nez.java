@@ -23,7 +23,7 @@ public class InstructionBc1nez extends BasicIFPUInstruction {
 	}
 
 	@Override
-	public CompiledInstruction compileBasic(ParameterParseResult[] parameters, Instruction origin) {
+	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
 		return new CompiledInstructionBc1nez(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
 	}
 

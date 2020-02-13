@@ -23,7 +23,7 @@ public class InstructionAbsSingle extends BasicRFPUInstruction {
 	}
 
 	@Override
-	public CompiledInstruction compileBasic(ParameterParseResult[] parameters, Instruction origin) {
+	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
 		return new CompiledInstructionAbsSingle(parameters[1].getRegister(), parameters[0].getRegister(), origin, this);
 	}
 

@@ -49,6 +49,8 @@ class DefaultInstructions {
 		basicInstructions.add(new InstructionDivSingle());
 		basicInstructions.add(new InstructionDivDouble());
 
+		basicInstructions.add(new InstructionLw());
+
 		basicInstructions.add(new InstructionMuh());
 		basicInstructions.add(new InstructionMuhu());
 		basicInstructions.add(new InstructionMul());
@@ -59,6 +61,8 @@ class DefaultInstructions {
 		basicInstructions.add(new InstructionSub());
 		basicInstructions.add(new InstructionSubSingle());
 		basicInstructions.add(new InstructionSubDouble());
+
+		basicInstructions.add(new InstructionSw());
 
 		//PSEUDO
 		pseudoInstructions.add(new PseudoInstructionBI());
@@ -76,6 +80,11 @@ class DefaultInstructions {
 		pseudoInstructions.add(new PseudoInstructionBlezalcRL());
 		pseudoInstructions.add(new PseudoInstructionBltzalcRL());
 		pseudoInstructions.add(new PseudoInstructionBnezalcRL());
+
+		pseudoInstructions.add(new PseudoInstructionLuiRI());
+		pseudoInstructions.add(new PseudoInstructionLwRL());
+
+		pseudoInstructions.add(new PseudoInstructionSwRL());
 	}
 
 }

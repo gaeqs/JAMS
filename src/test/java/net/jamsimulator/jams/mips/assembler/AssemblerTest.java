@@ -24,16 +24,20 @@ class AssemblerTest {
 		program.add(".data");
 		program.add(".byte 5 9 6 2");
 		program.add(".extern global 8");
+		program.add("sum: .word 10");
 		program.add(".text");
 		program.add(".eqv ONETWOZERO $s1, $s2, $s0");
 		program.add("add ONETWOZERO#ADDS");
-		program.add("addiu $t0, $zero, 5");
-		program.add("addiu $t1, $zero, 0");
+		program.add("lw $t0, sum");
+		//program.add("addiu $t0, $zero, 5");
+		program.add("add $t1, $zero, $zero");
 		program.add("loop: beq $t0, $t1, end");
 		program.add("addiu $t1, $t1, 1");
 		program.add("b loop");
 		program.add("end: addiu $t2, $zero, 3");
 		program.add("mul $t1, $t1, $t2");
+		program.add("sw $t1, sum");
+		program.add("lw $t1, sum");
 
 		Assembler assembler = new MIPS32Assembler(
 				new DirectiveSet(true, true),

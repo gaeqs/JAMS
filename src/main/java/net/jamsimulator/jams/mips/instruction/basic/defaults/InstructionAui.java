@@ -21,7 +21,7 @@ public class InstructionAui extends BasicInstruction {
 	}
 
 	@Override
-	public CompiledInstruction compileBasic(ParameterParseResult[] parameters, Instruction origin) {
+	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
 		return new CompiledInstructionAui(parameters[1].getRegister(), parameters[0].getRegister(),
 				parameters[2].getImmediate(), origin, this);
 	}
