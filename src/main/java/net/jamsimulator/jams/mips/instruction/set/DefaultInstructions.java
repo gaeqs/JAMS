@@ -49,6 +49,13 @@ class DefaultInstructions {
 		basicInstructions.add(new InstructionDivSingle());
 		basicInstructions.add(new InstructionDivDouble());
 
+		basicInstructions.add(new InstructionMuh());
+		basicInstructions.add(new InstructionMuhu());
+		basicInstructions.add(new InstructionMul());
+		basicInstructions.add(new InstructionMulu());
+		basicInstructions.add(new InstructionMulSingle());
+		basicInstructions.add(new InstructionMulDouble());
+
 		basicInstructions.add(new InstructionSub());
 		basicInstructions.add(new InstructionSubSingle());
 		basicInstructions.add(new InstructionSubDouble());

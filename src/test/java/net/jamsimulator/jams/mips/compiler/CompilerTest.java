@@ -33,7 +33,7 @@ class CompilerTest {
 		program.add("addiu $t1, $t1, 1");
 		program.add("b loop");
 		program.add("end: addiu $t2, $zero, 3");
-		program.add("div $t1, $t1, $t2");
+		program.add("mul $t1, $t1, $t2");
 
 		Compiler compiler = new MIPS32Compiler(
 				new DirectiveSet(true, true),
