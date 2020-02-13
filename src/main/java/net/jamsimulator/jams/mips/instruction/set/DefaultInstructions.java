@@ -42,6 +42,8 @@ class DefaultInstructions {
 		basicInstructions.add(new InstructionBeqzalc());
 		basicInstructions.add(new InstructionBnezalc());
 
+		basicInstructions.add(new InstructionSub());
+
 		//PSEUDO
 		pseudoInstructions.add(new PseudoInstructionBI());
 		pseudoInstructions.add(new PseudoInstructionBL());
