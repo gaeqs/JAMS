@@ -26,6 +26,7 @@ public abstract class BasicRSOPInstruction extends BasicInstruction {
 								int functionCode, int sopCode) {
 		super(name, mnemonic, parameters, operationCode);
 		this.functionCode = functionCode;
+		this.sopCode = sopCode;
 	}
 
 	@Override
