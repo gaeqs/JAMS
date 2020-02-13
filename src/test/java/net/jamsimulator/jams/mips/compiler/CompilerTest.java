@@ -31,8 +31,9 @@ class CompilerTest {
 		program.add("addiu $t1, $zero, 0");
 		program.add("loop: beq $t0, $t1, end");
 		program.add("addiu $t1, $t1, 1");
-		program.add("bgez $s5, loop");
-		program.add("end: addiu $t0, $zero, -1");
+		program.add("b loop");
+		program.add("end: addiu $t2, $zero, 3");
+		program.add("mod $t1, $t1, $t2");
 
 		Compiler compiler = new MIPS32Compiler(
 				new DirectiveSet(true, true),
