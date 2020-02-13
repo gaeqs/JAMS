@@ -2,7 +2,7 @@
 /target/
 .idea/.gitignore
 .idea/codeStyles/
-.idea/compiler.xml
+.idea/assembler.xml
 .idea/misc.xml
 .idea/rSettings.xml
 .idea/uiDesigner.xml

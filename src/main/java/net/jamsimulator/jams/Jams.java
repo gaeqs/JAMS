@@ -1,6 +1,6 @@
 package net.jamsimulator.jams;
 
-import net.jamsimulator.jams.mips.compiler.directive.set.DirectiveSet;
+import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import org.json.simple.parser.ParseException;
 

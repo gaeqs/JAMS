@@ -1,6 +1,6 @@
 package net.jamsimulator.jams.mips.instruction.pseudo.defaults;
 
-import net.jamsimulator.jams.mips.compiler.exception.CompilerException;
+import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionBc1eqz;
@@ -34,7 +34,7 @@ public class PseudoInstructionBc1eqzL extends PseudoInstruction {
 
 		Instruction basic = set.getInstruction(InstructionBc1eqz.MNEMONIC, BASIC_PARAMETER_TYPES).orElse(null);
 		if (!(basic instanceof BasicInstruction))
-			throw new CompilerException("Basic instruction '" + InstructionBc1eqz.MNEMONIC + "' not found.");
+			throw new AssemblerException("Basic instruction '" + InstructionBc1eqz.MNEMONIC + "' not found.");
 
 		ParameterParseResult[] newParameters = new ParameterParseResult[]{
 				parameters[0],

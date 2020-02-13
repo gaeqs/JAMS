@@ -13,7 +13,7 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <artifactId>maven-assembler-plugin</artifactId>
                 <configuration>
                     <source>13</source>
                     <target>13</target>
