@@ -46,8 +46,12 @@ class DefaultInstructions {
 		basicInstructions.add(new InstructionMod());
 		basicInstructions.add(new InstructionDivu());
 		basicInstructions.add(new InstructionModu());
+		basicInstructions.add(new InstructionDivSingle());
+		basicInstructions.add(new InstructionDivDouble());
 
 		basicInstructions.add(new InstructionSub());
+		basicInstructions.add(new InstructionSubSingle());
+		basicInstructions.add(new InstructionSubDouble());
 
 		//PSEUDO
 		pseudoInstructions.add(new PseudoInstructionBI());

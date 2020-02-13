@@ -17,18 +17,6 @@ class RegisterSetTest {
 	}
 
 	@Test
-	void getHighRegister() {
-		registerSet.getHighRegister().setValue(3000);
-		assertEquals(3000, registerSet.getHighRegister().getValue(), "Bad high register value.");
-	}
-
-	@Test
-	void getLowRegister() {
-		registerSet.getLowRegister().setValue(3000);
-		assertEquals(3000, registerSet.getLowRegister().getValue(), "Bad low register value.");
-	}
-
-	@Test
 	void getRegister() {
 		Optional<Register> optional = registerSet.getRegister("t7");
 		assertTrue(optional.isPresent(), "Register not found.");

@@ -16,7 +16,7 @@ public class RegisterSet {
 	protected Set<Register> coprocessor0Registers;
 	protected Set<Register> coprocessor1Registers;
 
-	protected Register programCounter, highRegister, lowRegister;
+	protected Register programCounter;
 
 	/**
 	 * Creates a new Register set using the general registers, the coprocessor 0 registers and the coprocessor 1 registers.
@@ -43,24 +43,6 @@ public class RegisterSet {
 	 */
 	public Register getProgramCounter() {
 		return programCounter;
-	}
-
-	/**
-	 * Returns the program high {@link Register}.
-	 *
-	 * @return the high {@link Register}.
-	 */
-	public Register getHighRegister() {
-		return highRegister;
-	}
-
-	/**
-	 * Returns the program low {@link Register}.
-	 *
-	 * @return the low {@link Register}.
-	 */
-	public Register getLowRegister() {
-		return lowRegister;
 	}
 
 	/**
@@ -140,14 +122,10 @@ public class RegisterSet {
 
 		RegisterSet set = new RegisterSet(newRegisters, newCop0Registers, newCop1Registers);
 		set.programCounter.setValue(programCounter.getValue());
-		set.highRegister.setValue(highRegister.getValue());
-		set.lowRegister.setValue(lowRegister.getValue());
 		return set;
 	}
 
 	protected void loadEssentialRegisters() {
 		programCounter = new Register(-1, 0x00400000, true, "pc");
-		highRegister = new Register(-1, "hi");
-		lowRegister = new Register(-1, "lo");
 	}
 }
