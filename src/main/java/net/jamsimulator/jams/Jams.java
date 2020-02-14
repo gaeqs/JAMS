@@ -1,5 +1,6 @@
 package net.jamsimulator.jams;
 
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import org.json.simple.parser.ParseException;
@@ -15,6 +16,7 @@ public class Jams {
 	public static void main(String[] args) throws IOException, ParseException {
 		defaultInstructionSet = new InstructionSet(true, true, true);
 		defaultDirectiveSet = new DirectiveSet(true, true);
+		JamsApplication.launch(JamsApplication.class, args);
 	}
 
 
