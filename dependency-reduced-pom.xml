@@ -9,8 +9,8 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>13</source>
-          <target>13</target>
+          <source>8</source>
+          <target>8</target>
         </configuration>
       </plugin>
       <plugin>
@@ -54,7 +54,7 @@
                   <executable>chmod</executable>
                   <arguments>
                     <argument>775</argument>
-                    <argument>target/JAMS-1.0-SNAPSHOT.jar</argument>
+                    <argument>target/${artifactId}-${version}.jar</argument>
                   </arguments>
                 </configuration>
               </execution>
