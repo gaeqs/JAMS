@@ -9,19 +9,48 @@ import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Objects;
 
+/**
+ * Represents an assembler builder. Assembler builders are used to create several {@link Assembler}
+ * using the given parameters.
+ * <p>
+ * If a plugin want to add a custom assembler to JAMS, it should create a child of this class and register
+ * it on the {@link net.jamsimulator.jams.manager.AssemblerBuilderManager}.
+ */
 public abstract class AssemblerBuilder {
 
 	private String name;
 
+	/**
+	 * Creates an assembler builder using a name.
+	 * This name must be unique for each assembler builder.
+	 *
+	 * @param name the name.
+	 */
 	public AssemblerBuilder(String name) {
 		Validate.notNull(name, "Name cannot be null!");
 		this.name = name;
 	}
 
+	/**
+	 * Returns the name of this assembler builder.
+	 * This name must be unique for each assembler builder.
+	 *
+	 * @return the name of this assembler builder.
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Creates an {@link Assembler} using a {@link DirectiveSet}, an {@link InstructionSet}, a {@link RegisterSet}
+	 * and a {@link Memory}.
+	 *
+	 * @param directiveSet   the directive set.
+	 * @param instructionSet the instruction set.
+	 * @param registerSet    the register set.
+	 * @param memory         the memory.
+	 * @return the new {@link Assembler}.
+	 */
 	public abstract Assembler createAssembler(DirectiveSet directiveSet, InstructionSet instructionSet, RegisterSet registerSet, Memory memory);
 
 	@Override

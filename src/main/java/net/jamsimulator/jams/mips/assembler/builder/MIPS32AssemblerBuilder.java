@@ -10,6 +10,10 @@ public class MIPS32AssemblerBuilder extends AssemblerBuilder {
 
 	public static final String NAME = "MIPS32";
 
+
+	/**
+	 * Creates a MIPS32 builder.
+	 */
 	public MIPS32AssemblerBuilder() {
 		super(NAME);
 	}
