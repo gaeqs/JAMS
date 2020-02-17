@@ -1,7 +1,6 @@
 package net.jamsimulator.jams.gui.main;
 
 import javafx.event.Event;
-import javafx.geometry.Insets;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Tab;
@@ -47,7 +46,7 @@ public class JamsMainAnchorPane extends AnchorPane {
 		testTab.setClosable(true);
 		testTab.setContent(new AnchorPane());
 
-		FolderProject project = new FolderProject("TEST", new File(System.getProperty("user.home")),
+		FolderProject project = new FolderProject("TEST", new File(System.getProperty("user.home") + "/JAMSProject"),
 				Jams.getAssemblerBuilderManager().get("MIPS32").get(),
 				Jams.getMemoryBuilderManager().get("MIPS32").get(),
 				new DirectiveSet(true, true),

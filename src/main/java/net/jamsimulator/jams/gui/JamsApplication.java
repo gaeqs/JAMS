@@ -14,6 +14,7 @@ public class JamsApplication extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
+		primaryStage.setTitle("JAMS (Just Another MIPS Simulator)");
 		AnchorPane pane = new JamsMainAnchorPane();
 
 		pane.getStylesheets().add("gui/style/dark_style.css");

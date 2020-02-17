@@ -1,8 +1,8 @@
 package net.jamsimulator.jams.gui.project;
 
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.project.FolderProject;
 
 public class FolderProjectStructurePane extends SplitPane {
@@ -12,8 +12,9 @@ public class FolderProjectStructurePane extends SplitPane {
 	public FolderProjectStructurePane(FolderProjectTab folderProjectTab) {
 		this.folderProjectTab = folderProjectTab;
 
-		AnchorPane first = new AnchorPane();
-		getItems().add(first);
+		FolderProjectFolderExplorer explorer = new FolderProjectFolderExplorer(getProject().getFolder());
+		ScrollPane scrollPane = new ScrollPane(explorer);
+		getItems().add(scrollPane);
 
 		TextArea area = new TextArea();
 		getItems().add(area);
@@ -25,7 +26,7 @@ public class FolderProjectStructurePane extends SplitPane {
 		return folderProjectTab;
 	}
 
-	public FolderProject getProject () {
+	public FolderProject getProject() {
 		return folderProjectTab.getProject();
 	}
 }
