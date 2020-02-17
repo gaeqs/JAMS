@@ -67,6 +67,7 @@ AnchorPane {
     -fx-background-radius: 0;
     -fx-background-color: -theme-background;
     -fx-border-color: transparent;
+    -fx-padding: 2 4 2 4;
 }
 
 .tab-pane .tab-header-area .tab:selected {
@@ -230,7 +231,6 @@ AnchorPane {
 }
 
 /*LIST VIEW*/
-
 .list-view {
     -fx-background-color: -theme-background;
 }
@@ -335,7 +335,7 @@ AnchorPane {
 
 .menu-item {
     -fx-background-color: -theme-background-darker;
-    -fx-padding: 7px;
+    -fx-padding: 1 5 1 5;
 }
 
 .menu {
@@ -343,6 +343,11 @@ AnchorPane {
     -fx-background-radius: 0;
     -fx-text-fill: -theme-foreground;
     -fx-background-color: -theme-background-darker;
+    -fx-padding: 1 5 1 5;
+}
+
+.menu .label {
+    -fx-font-size: 12;
 }
 
 .menu-item:focused {

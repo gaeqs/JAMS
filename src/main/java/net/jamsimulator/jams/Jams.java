@@ -62,7 +62,7 @@ public class Jams {
 	 *
 	 * @return the {@link MemoryBuilderManager}.
 	 */
-	public static MemoryBuilderManager getMemryBuilderManager() {
+	public static MemoryBuilderManager getMemoryBuilderManager() {
 		return memoryBuilderManager;
 	}
 }

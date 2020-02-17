@@ -266,7 +266,7 @@ public class MIPS32Assembler implements Assembler {
 			line = line.replace(entry.getKey(), entry.getValue());
 		}
 		if (line.isEmpty()) return null;
-		List<String> parts = StringUtils.multiSplitIgnoreInsideString(line, " ", ",");
+		List<String> parts = StringUtils.multiSplitIgnoreInsideString(line, " ", ",", "\t");
 		parts.removeIf(String::isEmpty);
 		return parts;
 	}
