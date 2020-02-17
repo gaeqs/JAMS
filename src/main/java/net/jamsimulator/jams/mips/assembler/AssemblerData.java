@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
+import net.jamsimulator.jams.mips.memory.Memory;
 
 /**
  * Contains all the data required by the assembler.
@@ -20,6 +21,12 @@ public class AssemblerData {
 	int currentKData;
 	int currentExtern;
 	int nextForcedAlignment;
+
+
+	public AssemblerData(Memory memory) {
+		this(memory.getFirstTextAddress(), memory.getFirstDataAddress(), memory.getFirstKernelTextAddress(),
+				memory.getFirstKernelDataAddress(), memory.getFirstExternalAddress());
+	}
 
 	public AssemblerData(int currentText, int currentData, int currentKText, int currentKData, int currentExtern) {
 		this.firstText = currentText;

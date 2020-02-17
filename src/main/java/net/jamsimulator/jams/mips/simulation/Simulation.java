@@ -75,6 +75,13 @@ public class Simulation {
 	}
 
 	private String addZeros(String s, int to) {
-		return "0".repeat(Math.max(0, to - s.length())) + s;
+		StringBuilder builder = new StringBuilder();
+		int max = Math.max(0, to - s.length());
+
+		for (int i = 0; i < max; i++) {
+			builder.append("0");
+		}
+
+		return builder + s;
 	}
 }

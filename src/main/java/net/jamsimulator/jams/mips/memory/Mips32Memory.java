@@ -17,13 +17,15 @@ public class Mips32Memory extends SimpleMemory {
 	public static final int MEMORY_MAPPED_IO = 0xFFFF0000;
 	public static final int KERNEL_RESERVED_2 = 0xFFFF0000 + 10;
 
-	public static final int EXTERN = DATA;
+	public static final int EXTERNAL = DATA;
 	public static final int STATIC_DATA = 0x10010000;
 	public static final int HEAP = 0x10010000;
 
 
 	public Mips32Memory() {
 		super(false,
+				Mips32Memory.TEXT, Mips32Memory.STATIC_DATA, Mips32Memory.KERNEL_TEXT,
+				Mips32Memory.KERNEL_DATA, Mips32Memory.EXTERNAL,
 				new MemorySection("Kernel reserved 1", KERNEL_RESERVED_1, TEXT),
 				new MemorySection("Text", TEXT, DATA - TEXT),
 				new MemorySection("Data", DATA, 0x70000000),
@@ -34,7 +36,8 @@ public class Mips32Memory extends SimpleMemory {
 	}
 
 	private Mips32Memory(Map<String, MemorySection> sections, boolean bigEndian) {
-		super(sections, bigEndian);
+		super(sections, bigEndian, Mips32Memory.TEXT, Mips32Memory.STATIC_DATA, Mips32Memory.KERNEL_TEXT,
+				Mips32Memory.KERNEL_DATA, Mips32Memory.EXTERNAL);
 	}
 
 

@@ -61,6 +61,43 @@ public interface Memory extends EventCaller {
 	 */
 	void setWord(int address, int word);
 
+
+	/**
+	 * Returns the first text address assemblers should use.
+	 *
+	 * @return the first text address.
+	 */
+	int getFirstTextAddress();
+
+	/**
+	 * Returns the first data address assemblers should use.
+	 *
+	 * @return the first data address.
+	 */
+	int getFirstDataAddress();
+
+	/**
+	 * Returns the first kernel text address assemblers should use.
+	 *
+	 * @return the first kernel text address.
+	 */
+	int getFirstKernelTextAddress();
+
+
+	/**
+	 * Returns the first kernel data address assemblers should use.
+	 *
+	 * @return the first kernel data address.
+	 */
+	int getFirstKernelDataAddress();
+
+	/**
+	 * Returns the external address assemblers should use.
+	 *
+	 * @return the external kernel data address.
+	 */
+	int getFirstExternalAddress();
+
 	/**
 	 * Creates a deep copy of the memory.
 	 *

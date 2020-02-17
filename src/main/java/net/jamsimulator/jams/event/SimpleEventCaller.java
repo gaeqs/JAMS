@@ -28,7 +28,7 @@ public class SimpleEventCaller implements EventCaller {
 	}
 
 	public boolean registerListener(Object instance, Method method) {
-		if (!method.trySetAccessible()) return false;
+		if (!method.isAccessible()) return false;
 		if (method.getParameterCount() != 1) return false;
 		Class<?> clazz = method.getParameters()[0].getType();
 		if (!Event.class.isAssignableFrom(clazz)) return false;

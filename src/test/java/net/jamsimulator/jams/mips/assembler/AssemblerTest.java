@@ -42,9 +42,7 @@ class AssemblerTest {
 		Assembler assembler = new MIPS32Assembler(
 				new DirectiveSet(true, true),
 				new InstructionSet(true, true, true),
-				new MIPS32RegisterSet(), new Mips32Memory(),
-				Mips32Memory.TEXT, Mips32Memory.STATIC_DATA, Mips32Memory.KERNEL_TEXT, Mips32Memory.KERNEL_DATA,
-				Mips32Memory.EXTERN);
+				new MIPS32RegisterSet(), new Mips32Memory());
 		assembler.setData(files);
 		assembler.compile();
 		Simulation simulation = assembler.createSimulation();

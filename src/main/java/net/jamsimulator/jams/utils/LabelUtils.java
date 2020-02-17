@@ -1,10 +1,11 @@
 package net.jamsimulator.jams.utils;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class LabelUtils {
 
-	private static List<String> illegalCharacters = List.of(",", "/", "\\", ";", "!", "|", "\"", "@",
+	private static List<String> illegalCharacters = Arrays.asList(",", "/", "\\", ";", "!", "|", "\"", "@",
 			"·", "#", "~", "½", "&", "¬", "(", ")", "[", "]", "{", "}", "=", "'", "=", "?", "¿", "^", "*",
 			"+", "´", "¨");
 

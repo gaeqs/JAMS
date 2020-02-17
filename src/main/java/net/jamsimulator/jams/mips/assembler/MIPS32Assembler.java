@@ -35,9 +35,7 @@ public class MIPS32Assembler implements Assembler {
 	private AssemblingFile currentAssemblingFile;
 	private boolean compiled;
 
-	public MIPS32Assembler(DirectiveSet directiveSet, InstructionSet instructionSet, RegisterSet registerSet, Memory memory,
-						   int firstTextAddress, int firstDataAddress, int firstKernelTextAddress, int firstKernelDataAddress,
-						   int firstExternAddress) {
+	public MIPS32Assembler(DirectiveSet directiveSet, InstructionSet instructionSet, RegisterSet registerSet, Memory memory) {
 		Validate.notNull(directiveSet, "The directive set cannot be null!");
 		Validate.notNull(instructionSet, "The instruction set cannot be null!");
 
@@ -52,7 +50,7 @@ public class MIPS32Assembler implements Assembler {
 		this.globalLabels = new HashMap<>();
 		this.files = new ArrayList<>();
 
-		this.assemblerData = new AssemblerData(firstTextAddress, firstDataAddress, firstKernelTextAddress, firstKernelDataAddress, firstExternAddress);
+		this.assemblerData = new AssemblerData(memory);
 
 		this.compiled = false;
 	}
