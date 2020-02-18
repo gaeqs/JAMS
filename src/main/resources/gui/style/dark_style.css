@@ -95,8 +95,8 @@ AnchorPane {
 }
 
 .split-pane .split-pane-divider {
-    -fx-background-color: -theme-background-darker;
-    -fx-padding: 2px;
+    -fx-background-color: -theme-background;
+    -fx-padding: 1px;
 }
 
 /*scroll pane*/
