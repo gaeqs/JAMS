@@ -20,6 +20,7 @@ public class FolderProjectStructurePane extends SplitPane {
 		getItems().add(area);
 
 
+		setDividerPosition(0, 0.1);
 	}
 
 	public FolderProjectTab getFolderProjectTab() {
