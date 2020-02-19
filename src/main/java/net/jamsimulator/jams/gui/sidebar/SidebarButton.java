@@ -1,27 +1,52 @@
 package net.jamsimulator.jams.gui.sidebar;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
-import javafx.scene.control.Button;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
 import net.jamsimulator.jams.gui.project.FolderProjectStructurePane;
 
 
-public class SidebarButton extends Button {
+public class SidebarButton extends ToggleButton {
 
+	private Sidebar sidebar;
 
-	public SidebarButton(String name, boolean left, EventHandler<ActionEvent> action) {
+	private String name;
+	private Node node;
+
+	public SidebarButton(Sidebar sidebar, String name, Node node, boolean left) {
+		this.sidebar = sidebar;
+
+		this.name = name;
+		this.node = node;
+
 		getStyleClass().addAll("sidebar-button",
 				left ? "sidebar-button-left" : "sidebar-button-right");
-		setOnAction(action);
 
 		Label label = new Label(name);
-
 		Group group = new Group(label);
 
 		setGraphic(group);
-
 		setPrefWidth(FolderProjectStructurePane.SIDEBAR_WIDTH);
+
+		selectedProperty().addListener((obs, old, val) -> {
+			if (old == val) return;
+			if (val) {
+				sidebar.select(this);
+			}
+		});
+
+	}
+
+	public Sidebar getSidebar() {
+		return sidebar;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Node getNode() {
+		return node;
 	}
 }

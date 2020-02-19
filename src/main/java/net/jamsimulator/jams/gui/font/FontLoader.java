@@ -33,6 +33,7 @@ public class FontLoader {
 	private static void load(String path) throws IOException {
 		InputStream in = Jams.class.getResourceAsStream(path);
 		Font.loadFont(in, 12);
+
 		in.close();
 	}
 

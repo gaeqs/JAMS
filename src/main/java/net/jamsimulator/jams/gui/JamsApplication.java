@@ -26,8 +26,8 @@ public class JamsApplication extends Application {
 		Scene scene = new Scene(pane);
 
 		primaryStage.setScene(scene);
-		primaryStage.setMinWidth(WIDTH);
-		primaryStage.setMinHeight(HEIGHT);
+		primaryStage.setWidth(WIDTH);
+		primaryStage.setHeight(HEIGHT);
 
 		Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
 
