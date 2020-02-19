@@ -2,12 +2,9 @@ package net.jamsimulator.jams.gui.sidebar;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.text.Font;
-import net.jamsimulator.jams.gui.font.FontLoader;
 import net.jamsimulator.jams.gui.project.FolderProjectStructurePane;
 
 
