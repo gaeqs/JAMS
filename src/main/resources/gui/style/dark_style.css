@@ -478,6 +478,7 @@ AnchorPane {
 /*SIDEBAR:BUTTON*/
 .sidebar-button {
     -fx-border-width: 0;
+    -fx-padding:  10 0 10 0;
 }
 
 .sidebar-button:selected {
