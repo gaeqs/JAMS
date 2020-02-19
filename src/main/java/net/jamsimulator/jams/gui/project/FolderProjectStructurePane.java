@@ -13,7 +13,7 @@ import net.jamsimulator.jams.utils.AnchorUtils;
 
 public class FolderProjectStructurePane extends AnchorPane {
 
-	public static final int SIDEBAR_WIDTH = 22;
+	public static final int SIDEBAR_WIDTH = 25;
 
 	private FolderProjectTab folderProjectTab;
 	private SplitPane centerSplitPane;
