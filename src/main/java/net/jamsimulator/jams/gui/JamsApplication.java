@@ -6,16 +6,20 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import net.jamsimulator.jams.gui.main.JamsMainAnchorPane;
+import net.jamsimulator.jams.gui.font.FontLoader;
+import net.jamsimulator.jams.gui.main.MainAnchorPane;
 
 public class JamsApplication extends Application {
 
 	private static final int WIDTH = 1200, HEIGHT = 800;
+	private static Stage stage;
 
 	@Override
 	public void start(Stage primaryStage) {
+		stage = primaryStage;
+		FontLoader.load();
 		primaryStage.setTitle("JAMS (Just Another MIPS Simulator)");
-		AnchorPane pane = new JamsMainAnchorPane();
+		AnchorPane pane = new MainAnchorPane();
 
 		pane.getStylesheets().add("gui/style/dark_style.css");
 
@@ -34,6 +38,10 @@ public class JamsApplication extends Application {
 		primaryStage.setY(y);
 
 		primaryStage.show();
+	}
+
+	public static Stage getStage() {
+		return stage;
 	}
 
 	public static void start(String[] args) {

@@ -23,7 +23,6 @@
 /*LABEL*/
 .label {
     -fx-text-fill: -theme-foreground;
-    -fx-font-family: 'JetBrains-Mono';
 }
 
 /*TEXT AREA*/
@@ -413,11 +412,6 @@ AnchorPane {
     -fx-background-color: -theme-background-focused;
 }
 
-.menu-item {
-    -fx-background-color: -theme-background-darker;
-    -fx-padding: 1 5 1 5;
-}
-
 .menu {
     -fx-border-color: -theme-background-darker;
     -fx-background-radius: 0;
@@ -427,7 +421,16 @@ AnchorPane {
 }
 
 .menu .label {
-    -fx-font-size: 12;
+    -fx-font-size: 13;
+}
+
+.menu-item {
+    -fx-background-color: -theme-background-darker;
+    -fx-padding: 2 5 2 5;
+}
+
+.menu-item .label {
+    -fx-font-size: 14;
 }
 
 .menu-item:focused {
@@ -457,34 +460,39 @@ AnchorPane {
     -fx-background-color: -theme-background-focused;
 }
 
-/*PANE MENU*/
-.pane-menu {
+/*SIDEBAR*/
+.sidebar {
     -fx-background-color: -theme-background;
     -fx-border-color: -theme-background-darker;
     -fx-border-width: 10px;
 }
 
-.left-pane-menu {
+.sidebar-left {
     -fx-border-width: 0 1 0 0;
 }
 
-.right-pane-menu {
+.sidebar-right {
     -fx-border-width: 0 0 0 1;
 }
 
-/*PANE MENU BUTTON*/
-.pane-menu-button {
+/*SIDEBAR:BUTTON*/
+.sidebar-button {
     -fx-border-width: 0;
-    -fx-label-padding: -200;
 }
 
-.pane-menu-button:selected {
+.sidebar-button:selected {
     -fx-background-color: -theme-background-darker;
 }
 
-.pane-menu-button .text {
+
+.sidebar-button-right .label {
+    -fx-rotate: 90;
+}
+
+.sidebar-button-left .label {
     -fx-rotate: -90;
 }
+
 
 /*PROJECT MENU*/
 .project-menu {
