@@ -99,16 +99,19 @@ AnchorPane {
     -fx-background-color: -theme-background;
 }
 
-.split-pane .split-pane-divider {
-    -fx-background-color: -theme-background;
-    -fx-padding: 1px;
+.split-pane:horizontal .split-pane-divider {
+    -fx-background-color:  -theme-background-darker;
+    -fx-padding: 0 2 0 0;
+}
+
+.split-pane:vertical .split-pane-divider {
+    -fx-background-color:  -theme-background-darker;
+    -fx-padding: 0 2 0 0;
 }
 
 /*scroll pane*/
 
 .scroll-pane {
-    -fx-border-width: 1px, 1px, 1px, 1px;
-    -fx-border-color: -theme-background-darker;
     -fx-background-color: -theme-background;
 }
 

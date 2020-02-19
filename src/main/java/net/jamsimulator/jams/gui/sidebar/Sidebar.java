@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.sidebar;
 
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 
@@ -15,6 +16,8 @@ public class Sidebar extends VBox {
 		this.top = top;
 		this.sidePane = sidePane;
 		getStyleClass().addAll("sidebar", left ? "sidebar-left" : "sidebar-right");
+
+		if (!top) setAlignment(Pos.BOTTOM_LEFT);
 	}
 
 	public SidePane getSidePane() {
@@ -44,6 +47,9 @@ public class Sidebar extends VBox {
 		return true;
 	}
 
+	Node getSelected() {
+		return top ? sidePane.getTop() : sidePane.getBottom();
+	}
 
 	void deselectExcept(SidebarButton except) {
 		for (Node child : getChildren()) {
@@ -54,11 +60,11 @@ public class Sidebar extends VBox {
 	}
 
 	void select(SidebarButton button) {
-		deselectExcept(button);
+		if (button != null) deselectExcept(button);
 		if (top) {
-			sidePane.setTop(button.getNode());
+			sidePane.setTop(button == null ? null : button.getNode());
 		} else {
-			sidePane.setBottom(button.getNode());
+			sidePane.setBottom(button == null ? null : button.getNode());
 		}
 	}
 }

@@ -33,7 +33,10 @@ public class SidebarButton extends ToggleButton {
 			if (old == val) return;
 			if (val) {
 				sidebar.select(this);
+			} else if (sidebar.getSelected() == node) {
+				sidebar.select(null);
 			}
+
 		});
 
 	}

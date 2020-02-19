@@ -19,6 +19,7 @@ public class FolderProjectTab extends Tab {
 
 		AnchorPane pane = new AnchorPane();
 
+		//Black line separator
 		Separator separator = new Separator(Orientation.HORIZONTAL);
 		AnchorUtils.setAnchor(separator, 0, -1, 0, 0);
 		pane.getChildren().add(separator);
