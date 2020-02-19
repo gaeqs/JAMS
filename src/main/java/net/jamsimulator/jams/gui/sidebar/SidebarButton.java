@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import net.jamsimulator.jams.gui.font.FontLoader;
+import net.jamsimulator.jams.gui.project.FolderProjectStructurePane;
 
 
 public class SidebarButton extends Button {
@@ -20,9 +21,10 @@ public class SidebarButton extends Button {
 
 		Label label = new Label(name);
 
-		label.setPadding(new Insets(2, 0, 2, 0));
 		Group group = new Group(label);
 
 		setGraphic(group);
+
+		setPrefWidth(FolderProjectStructurePane.SIDEBAR_WIDTH);
 	}
 }
