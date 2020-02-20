@@ -9,6 +9,10 @@ import net.jamsimulator.jams.gui.sidebar.event.SidebarChangeNodeEvent;
 
 import java.lang.reflect.Method;
 
+/**
+ * Represents a pane at the side of a window. This pane is handled by one or two {@link Sidebar}s
+ * that uses it as a holder for their {@link SidePaneNode}s.
+ */
 public class SidePane extends SplitPane implements EventBroadcast {
 
 	private SidePaneNode top, bottom;
@@ -20,6 +24,12 @@ public class SidePane extends SplitPane implements EventBroadcast {
 
 	private double dividerPosition, splitPaneDividerPosition;
 
+	/**
+	 * Creates the side pane.
+	 *
+	 * @param parent the parent pane.
+	 * @param left   whether the side pane should be placed at the right or left side.
+	 */
 	public SidePane(SplitPane parent, boolean left) {
 		this.parent = parent;
 		this.left = left;
@@ -35,24 +45,41 @@ public class SidePane extends SplitPane implements EventBroadcast {
 		setOrientation(Orientation.VERTICAL);
 	}
 
+	/**
+	 * Returns the top {@link SidePaneNode} or null.
+	 *
+	 * @return the top {@link SidePaneNode} or null.
+	 */
 	public SidePaneNode getTop() {
 		return top;
 	}
 
+	/**
+	 * Returns the bottom {@link SidePaneNode} or null.
+	 *
+	 * @return the bottom {@link SidePaneNode} or null.
+	 */
+	public SidePaneNode getBottom() {
+		return bottom;
+	}
+
+	/**
+	 * Sets the given {@link SidePaneNode} into the top cell of this side pane.
+	 *
+	 * @param top the {@link SidePaneNode}.
+	 */
 	void setTop(SidePaneNode top) {
+		callEvent(new SidebarChangeNodeEvent(this, true, this.top, top));
+
 		if (this.top != null) {
-			if (bottom != null) dividerPosition = getDividerPositions()[0];
+			if (bottom != null) storeDividerPosition();
 			getItems().remove(this.top);
 		}
-
-		callEvent(new SidebarChangeNodeEvent(this, true, this.top, top));
 
 		this.top = top;
 
 		if (getItems().isEmpty() && top != null) {
-			parent.getItems().add(left ? 0 : parent.getItems().size(), this);
-			parent.setDividerPosition(left ? 0 : parent.getItems().size() - 2,
-					splitPaneDividerPosition);
+			addToParent();
 		}
 
 		if (top != null) {
@@ -60,43 +87,76 @@ public class SidePane extends SplitPane implements EventBroadcast {
 			if (bottom != null) setDividerPosition(0, dividerPosition);
 		}
 
-		if (getItems().isEmpty()) {
-			splitPaneDividerPosition = parent.getDividerPositions()
-					[left ? 0 : parent.getItems().size() - 2];
-			parent.getItems().remove(this);
-		}
+		removeFromParentIfEmpty();
 	}
 
-	public SidePaneNode getBottom() {
-		return bottom;
-	}
-
-	public void setBottom(SidePaneNode bottom) {
-		if (this.bottom != null) {
-			if (top != null) dividerPosition = getDividerPositions()[0];
-			getItems().remove(this.bottom);
-		}
-		this.bottom = bottom;
-
+	/**
+	 * Sets the given {@link SidePaneNode} into the bottom cell of this side pane.
+	 *
+	 * @param bottom the {@link SidePaneNode}.
+	 */
+	void setBottom(SidePaneNode bottom) {
 		callEvent(new SidebarChangeNodeEvent(this, false, this.bottom, bottom));
 
+		if (this.bottom != null) {
+			if (top != null) storeDividerPosition();
+			getItems().remove(this.bottom);
+		}
+
+		this.bottom = bottom;
+
 		if (getItems().isEmpty() && bottom != null) {
-			parent.getItems().add(left ? 0 : parent.getItems().size(), this);
-			parent.setDividerPosition(left ? 0 : parent.getItems().size() - 2,
-					splitPaneDividerPosition);
+			addToParent();
 		}
 
 		if (bottom != null) {
 			getItems().add(top == null ? 0 : 1, bottom);
 			if (top != null) setDividerPosition(0, dividerPosition);
 		}
+		removeFromParentIfEmpty();
+	}
 
+	/**
+	 * Saves the divider position.
+	 */
+	private void storeDividerPosition() {
+		dividerPosition = getDividerPositions()[0];
+	}
 
+	/**
+	 * Adds this side pane into the split pane.
+	 */
+	private void addToParent() {
+		parent.getItems().add(left ? 0 : parent.getItems().size(), this);
+		parent.setDividerPosition(getSplitPaneDividerIndex(), splitPaneDividerPosition);
+	}
+
+	/**
+	 * Removes this side pane from the split pane if this side pane is empty.
+	 */
+	private void removeFromParentIfEmpty() {
 		if (getItems().isEmpty()) {
-			splitPaneDividerPosition = parent.getDividerPositions()
-					[left ? 0 : parent.getItems().size() - 2];
+			splitPaneDividerPosition = parent.getDividerPositions()[getSplitPaneDividerIndex()];
 			parent.getItems().remove(this);
 		}
+	}
+
+	/**
+	 * Returns the index of this side pane inside the parent.
+	 *
+	 * @return the index.
+	 */
+	private int getPaneIndex() {
+		return left ? 0 : parent.getItems().size();
+	}
+
+	/**
+	 * Returns the divider index of this pane inside the parent.
+	 *
+	 * @return the index.
+	 */
+	private int getSplitPaneDividerIndex() {
+		return left ? 0 : parent.getItems().size() - 2;
 	}
 
 	//region EVENTS

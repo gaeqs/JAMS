@@ -57,4 +57,11 @@ public class MainAnchorPane extends AnchorPane {
 		//endregion
 	}
 
+	public MenuBar getTopMenuBar() {
+		return topMenuBar;
+	}
+
+	public TabPane getProjectsTabPane() {
+		return projectsTabPane;
+	}
 }
