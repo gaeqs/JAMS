@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.mips.memory;
 
-import net.jamsimulator.jams.event.SimpleEventCaller;
+import net.jamsimulator.jams.event.EventBroadcast;
+import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.memory.event.ByteGetEvent;
 import net.jamsimulator.jams.mips.memory.event.ByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.WordGetEvent;
@@ -15,11 +16,11 @@ import java.util.*;
  * <p>
  * Once created you cannot add or remove {@link MemorySection}s.
  *
- * @see net.jamsimulator.jams.event.EventCaller
+ * @see EventBroadcast
  * @see MemorySection
  * @see MemoryCell
  */
-public class SimpleMemory extends SimpleEventCaller implements Memory {
+public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 
 	protected Map<String, MemorySection> sections;

@@ -1,6 +1,5 @@
 package net.jamsimulator.jams.gui.main;
 
-import javafx.event.Event;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -14,7 +13,10 @@ import net.jamsimulator.jams.utils.AnchorUtils;
 
 import java.io.File;
 
-
+/**
+ * This is the main pane of JAMS's main window.
+ * It contains the top {@link MenuBar} and the projects {@link TabPane}.o
+ */
 public class MainAnchorPane extends AnchorPane {
 
 	private MenuBar topMenuBar;
@@ -38,10 +40,10 @@ public class MainAnchorPane extends AnchorPane {
 		getChildren().add(projectsTabPane);
 		AnchorUtils.setAnchor(projectsTabPane, 22, 0, 0, 0);
 
+		//region DEBUG. GENERATES EMPTY PROJECT
 		String folder = System.getProperty("user.home") + File.separator + "JAMSProject";
 		File file = new File(folder);
 		if (!file.exists()) file.mkdirs();
-		System.out.println(file.getAbsolutePath());
 
 		FolderProject project = new FolderProject("TEST", file,
 				Jams.getAssemblerBuilderManager().get("MIPS32").get(),
@@ -49,12 +51,10 @@ public class MainAnchorPane extends AnchorPane {
 				new DirectiveSet(true, true),
 				new InstructionSet(true, true, true));
 
-		Tab two = new FolderProjectTab(project);
-		two.setClosable(true);
-
-		two.setOnCloseRequest(Event::consume);
-
-		projectsTabPane.getTabs().add(two);
+		Tab tab = new FolderProjectTab(project);
+		tab.setClosable(true);
+		projectsTabPane.getTabs().add(tab);
+		//endregion
 	}
 
 }

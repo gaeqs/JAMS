@@ -4,7 +4,9 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
+import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.project.FolderProject;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
@@ -32,7 +34,7 @@ public class FolderProjectTab extends Tab {
 		tab.setClosable(false);
 		projectTabPane.getTabs().add(tab);
 
-		FolderProjectStructurePane structurePane = new FolderProjectStructurePane(this);
+		WorkingPane structurePane = new WorkingPane(this, new TextArea());
 		tab.setContent(structurePane);
 
 		setContent(pane);

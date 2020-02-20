@@ -2,16 +2,12 @@
     -theme-foreground: #ececec;
     -theme-foreground-darker: derive(-theme-foreground, -20%);
     -theme-foreground-lighter: #FFFFFF;
-    -theme-background: derive(-theme-foreground, -75%);
+    -theme-background: derive(-theme-foreground, -70%);
     -theme-background-darker: derive(-theme-foreground, -85%);
     -theme-background-focused: derive(-theme-background, 20%);
     -theme-background-pressed: derive(-theme-background, 40%);
     -theme-background-text-area: derive(-theme-background, -30%);
-}
-
-@font-face {
-    font-family: JetBrains-Mono;
-    src: url('gui/font/JetBrainsMono-Regular.ttf');
+    -theme-title: #444455;
 }
 
 
@@ -100,13 +96,13 @@ AnchorPane {
 }
 
 .split-pane:horizontal .split-pane-divider {
-    -fx-background-color:  -theme-background-darker;
+    -fx-background-color: -theme-background-darker;
     -fx-padding: 0 2 0 0;
 }
 
 .split-pane:vertical .split-pane-divider {
-    -fx-background-color:  -theme-background-darker;
-    -fx-padding: 0 2 0 0;
+    -fx-background-color: -theme-background-darker;
+    -fx-padding: 0 1 0 0;
 }
 
 /*scroll pane*/
@@ -467,7 +463,6 @@ AnchorPane {
 .sidebar {
     -fx-background-color: -theme-background;
     -fx-border-color: -theme-background-darker;
-    -fx-border-width: 10px;
 }
 
 .sidebar-left {
@@ -481,7 +476,7 @@ AnchorPane {
 /*SIDEBAR:BUTTON*/
 .sidebar-button {
     -fx-border-width: 0;
-    -fx-padding:  10 0 10 0;
+    -fx-padding: 10 0 10 0;
 }
 
 .sidebar-button:selected {
@@ -506,4 +501,18 @@ AnchorPane {
 /*FOLDER EXPLORER*/
 .folder-explorer-file .label {
     -fx-font-size: 15;
+}
+
+/*SIDE PANE NODE HEADER*/
+.side-pane-node-header {
+    -fx-background-color: -theme-background;
+    -fx-border-color: -theme-background-darker;
+    -fx-border-width: 0 0 1 0;
+}
+
+.side-pane-node-header:hover,
+.side-pane-node-header:pressed {
+    -fx-background-color: -theme-title;
+    -fx-border-color: -theme-background-darker;
+    -fx-border-width: 0 0 1 0;
 }

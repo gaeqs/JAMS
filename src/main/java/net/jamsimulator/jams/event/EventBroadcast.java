@@ -3,15 +3,15 @@ package net.jamsimulator.jams.event;
 import java.lang.reflect.Method;
 
 /**
- * Represents an event caller. An event caller allows to send
- * events to all the registered {@link Listener} the caller has.
+ * Represents an event broadcast. An event broadcast allows to send
+ * events to all the registered {@link Listener} the broadcast has.
  * <p>
  * To register a listener use {@link #registerListener(Object, Method)} or {@link #registerListeners(Object)}.
  * To send an {@link Event} use {@link #callEvent(Event)}.
  * <p>
  * {@link Listener}s listening a superclass of the {@link Event} will also be called.
  */
-public interface EventCaller {
+public interface EventBroadcast {
 
 	/**
 	 * Registers a listener of an instance. A listener is a non-static method with

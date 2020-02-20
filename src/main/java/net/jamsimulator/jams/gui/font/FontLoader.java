@@ -6,10 +6,19 @@ import net.jamsimulator.jams.Jams;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Loads the fonts bundled with JAMS.
+ */
 public class FontLoader {
 
+	/**
+	 * The JetBrains Mono font name.
+	 */
 	public static final String JETBRAINS_MONO = "JetBrains Mono";
 
+	/**
+	 * Loads the fonts.
+	 */
 	public static void load() {
 		loadDefaults();
 	}
@@ -33,7 +42,6 @@ public class FontLoader {
 	private static void load(String path) throws IOException {
 		InputStream in = Jams.class.getResourceAsStream(path);
 		Font.loadFont(in, 12);
-
 		in.close();
 	}
 

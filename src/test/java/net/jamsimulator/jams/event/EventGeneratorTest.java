@@ -10,7 +10,7 @@ class EventGeneratorTest {
 
 	@Test
 	void test() {
-		SimpleEventCaller caller = new SimpleEventCaller();
+		SimpleEventBroadcast caller = new SimpleEventBroadcast();
 		caller.registerListeners(new TestListener());
 
 		TestEvent testEvent = new TestEvent(5);

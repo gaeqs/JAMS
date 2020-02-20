@@ -4,7 +4,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
-import net.jamsimulator.jams.gui.project.FolderProjectStructurePane;
+import net.jamsimulator.jams.gui.main.WorkingPane;
 
 
 public class SidebarButton extends ToggleButton {
@@ -12,9 +12,9 @@ public class SidebarButton extends ToggleButton {
 	private Sidebar sidebar;
 
 	private String name;
-	private Node node;
+	private SidePaneNode node;
 
-	public SidebarButton(Sidebar sidebar, String name, Node node, boolean left) {
+	public SidebarButton(Sidebar sidebar, String name, SidePaneNode node, boolean left) {
 		this.sidebar = sidebar;
 
 		this.name = name;
@@ -27,7 +27,7 @@ public class SidebarButton extends ToggleButton {
 		Group group = new Group(label);
 
 		setGraphic(group);
-		setPrefWidth(FolderProjectStructurePane.SIDEBAR_WIDTH);
+		setPrefWidth(WorkingPane.SIDEBAR_WIDTH);
 
 		selectedProperty().addListener((obs, old, val) -> {
 			if (old == val) return;
@@ -49,7 +49,7 @@ public class SidebarButton extends ToggleButton {
 		return name;
 	}
 
-	public Node getNode() {
+	public SidePaneNode getNode() {
 		return node;
 	}
 }

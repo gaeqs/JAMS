@@ -40,7 +40,8 @@ public class Sidebar extends VBox {
 
 	public boolean addNode(String name, Node node) {
 		if (containsNode(name)) return false;
-		SidebarButton button = new SidebarButton(this, name, node, left);
+		SidePaneNode sidePaneNode = new SidePaneNode(sidePane, node, name, top);
+		SidebarButton button = new SidebarButton(this, name, sidePaneNode, left);
 
 		getChildren().add(button);
 
