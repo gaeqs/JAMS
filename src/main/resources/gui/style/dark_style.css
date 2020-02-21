@@ -473,7 +473,7 @@ AnchorPane {
     -fx-border-width: 0 0 0 1;
 }
 
-/*SIDEBAR:BUTTON*/
+/*SIDEBAR BUTTON*/
 .sidebar-button {
     -fx-border-width: 0;
     -fx-padding: 10 0 10 0;
@@ -492,6 +492,19 @@ AnchorPane {
     -fx-rotate: -90;
 }
 
+/*SIDE PANE NODE HEADER*/
+.side-pane-node-header {
+    -fx-background-color: -theme-background;
+    -fx-border-color: -theme-background-darker;
+    -fx-border-width: 0 0 1 0;
+}
+
+.side-pane-node-header:hover,
+.side-pane-node-header:pressed {
+    -fx-background-color: -theme-title;
+    -fx-border-color: -theme-background-darker;
+    -fx-border-width: 0 0 1 0;
+}
 
 /*PROJECT MENU*/
 .project-menu {
@@ -503,15 +516,32 @@ AnchorPane {
     -fx-font-size: 15;
 }
 
-/*SIDE PANE NODE HEADER*/
-.side-pane-node-header {
+/*BOTTOM BAR*/
+.bottom-bar {
+    -fx-background-color: -theme-background;
+    -fx-border-color: -theme-background-darker;
+    -fx-border-width: 1 0 0 0;
+}
+
+/*BOTTOM BAR BUTTON*/
+.bottom-bar-button {
+    -fx-border-width: 0;
+    -fx-padding: 0 10 0 10;
+}
+
+.bottom-bar-button:selected {
+    -fx-background-color: -theme-background-darker;
+}
+
+/*BOTTOM PANE NODE HEADER*/
+.bottom-pane-node-header {
     -fx-background-color: -theme-background;
     -fx-border-color: -theme-background-darker;
     -fx-border-width: 0 0 1 0;
 }
 
-.side-pane-node-header:hover,
-.side-pane-node-header:pressed {
+.bottom-pane-node-header:hover,
+.bottom-pane-node-header:pressed {
     -fx-background-color: -theme-title;
     -fx-border-color: -theme-background-darker;
     -fx-border-width: 0 0 1 0;

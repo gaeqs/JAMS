@@ -4,10 +4,10 @@ import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import net.jamsimulator.jams.gui.bottombar.BottomBar;
 import net.jamsimulator.jams.gui.sidebar.SidePane;
 import net.jamsimulator.jams.gui.sidebar.Sidebar;
 import net.jamsimulator.jams.gui.sidebar.SidebarFillRegion;
@@ -22,10 +22,12 @@ import net.jamsimulator.jams.utils.AnchorUtils;
 public class WorkingPane extends AnchorPane {
 
 	public static final int SIDEBAR_WIDTH = 25;
+	public static final int BOTTOM_BAR_HEIGHT = 25;
 
 	private Tab parent;
 
-	private SplitPane workingPane;
+	private SplitPane horizontalSplitPane;
+	private SplitPane verticalSplitPane;
 	private Node center;
 	private SidePane leftPane, rightPane;
 	private Sidebar topLeftSidebar, bottomLeftSidebar,
@@ -40,68 +42,23 @@ public class WorkingPane extends AnchorPane {
 		AnchorUtils.setAnchor(separator, 0, -1, 0, 0);
 		getChildren().add(separator);
 
-		//Working slit pane.
-		workingPane = new SplitPane();
-		getChildren().add(workingPane);
-		AnchorUtils.setAnchor(workingPane, 1, 0, SIDEBAR_WIDTH, SIDEBAR_WIDTH);
+		//Slit panes.
+
+		verticalSplitPane = new SplitPane();
+		getChildren().add(verticalSplitPane);
+		AnchorUtils.setAnchor(verticalSplitPane, 1, BOTTOM_BAR_HEIGHT, SIDEBAR_WIDTH, SIDEBAR_WIDTH);
+		verticalSplitPane.setOrientation(Orientation.VERTICAL);
+
+		horizontalSplitPane = new SplitPane();
+		verticalSplitPane.getItems().add(horizontalSplitPane);
 
 		//Center pane
 		if (center == null) center = new AnchorPane();
-		workingPane.getItems().add(center);
+		horizontalSplitPane.getItems().add(center);
 
 
-		//Side panes
-		leftPane = new SidePane(workingPane, true);
-		rightPane = new SidePane(workingPane, false);
-
-		//Sidebars
-
-		VBox leftSidebarHolder = new VBox();
-		VBox rightSidebarHolder = new VBox();
-		AnchorUtils.setAnchor(leftSidebarHolder, 1, 0, 0, -1);
-		AnchorUtils.setAnchor(rightSidebarHolder, 1, 0, -1, 0);
-
-		topLeftSidebar = loadSidebar(true, true);
-		bottomLeftSidebar = loadSidebar(true, false);
-		topRightSidebar = loadSidebar(false, true);
-		bottomRightSidebar = loadSidebar(false, false);
-
-		Region leftFill = new SidebarFillRegion(true, leftSidebarHolder, topLeftSidebar, bottomLeftSidebar);
-		Region rightFill = new SidebarFillRegion(false, rightSidebarHolder, topRightSidebar, bottomRightSidebar);
-
-		leftSidebarHolder.getChildren().addAll(topLeftSidebar, leftFill, bottomLeftSidebar);
-		rightSidebarHolder.getChildren().addAll(topRightSidebar, rightFill, bottomRightSidebar);
-		getChildren().addAll(leftSidebarHolder, rightSidebarHolder);
-
-		topLeftSidebar.addNode("TEST1", new AnchorPane());
-		topRightSidebar.addNode("TEST2", new ScrollPane(new ImageView(
-				"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Strawberry_jam_on_a_dish.JPG/" +
-						"1280px-Strawberry_jam_on_a_dish.JPG")));
-		bottomLeftSidebar.addNode("TEST3", new AnchorPane(new Label("TEST!")));
-		bottomRightSidebar.addNode("TEST4 LONG NAME AAAAAAAAAAAAAAAAAAAAAAA", new TextArea());
-
-
-		topLeftSidebar.addNode("TEST5", new AnchorPane());
-		bottomLeftSidebar.addNode("TEST6", new AnchorPane());
-		topRightSidebar.addNode("TEST7", new AnchorPane());
-		bottomRightSidebar.addNode("TEST8", new AnchorPane());
-
-
-		//Rescaling AnchorPane inside a tab. Thanks JavaFX for the bug.
-		//For this workaround to work this AnchorPane must be inside another AnchorPane.
-		Platform.runLater(() -> {
-			getScene().heightProperty().addListener((obs, old, val) -> {
-				double height = val.doubleValue() - getLocalToSceneTransform().getTy();
-				setPrefHeight(height);
-				setMinHeight(height);
-			});
-
-			getScene().widthProperty().addListener((obs, old, val) -> {
-				double width = val.doubleValue() - getLocalToSceneTransform().getTx();
-				setPrefWidth(width);
-				setMinWidth(width);
-			});
-		});
+		loadSidebars();
+		loadResizeEvents();
 	}
 
 
@@ -177,12 +134,69 @@ public class WorkingPane extends AnchorPane {
 		return bottomRightSidebar;
 	}
 
+
+	private void loadSidebars() {
+		//Side panes
+		leftPane = new SidePane(horizontalSplitPane, true);
+		rightPane = new SidePane(horizontalSplitPane, false);
+
+		//Sidebars
+
+		VBox leftSidebarHolder = new VBox();
+		VBox rightSidebarHolder = new VBox();
+		AnchorUtils.setAnchor(leftSidebarHolder, 1, BOTTOM_BAR_HEIGHT, 0, -1);
+		AnchorUtils.setAnchor(rightSidebarHolder, 1, BOTTOM_BAR_HEIGHT, -1, 0);
+
+		topLeftSidebar = loadSidebar(true, true);
+		bottomLeftSidebar = loadSidebar(true, false);
+		topRightSidebar = loadSidebar(false, true);
+		bottomRightSidebar = loadSidebar(false, false);
+
+		Region leftFill = new SidebarFillRegion(true, leftSidebarHolder, topLeftSidebar, bottomLeftSidebar);
+		Region rightFill = new SidebarFillRegion(false, rightSidebarHolder, topRightSidebar, bottomRightSidebar);
+
+		leftSidebarHolder.getChildren().addAll(topLeftSidebar, leftFill, bottomLeftSidebar);
+		rightSidebarHolder.getChildren().addAll(topRightSidebar, rightFill, bottomRightSidebar);
+		getChildren().addAll(leftSidebarHolder, rightSidebarHolder);
+
+		//Bottom panes
+		BottomBar bar = new BottomBar(verticalSplitPane);
+		AnchorUtils.setAnchor(bar, -1, 0, SIDEBAR_WIDTH, SIDEBAR_WIDTH);
+		bar.setPrefHeight(BOTTOM_BAR_HEIGHT);
+		bar.setMaxHeight(BOTTOM_BAR_HEIGHT);
+		getChildren().addAll(bar);
+
+		bar.addNode("TEST", new TextArea());
+		bar.addNode("TEST6", new TextArea());
+		topLeftSidebar.addNode("TEST2", new TextArea());
+		topRightSidebar.addNode("TEST3", new AnchorPane());
+		bottomLeftSidebar.addNode("TEST4", new AnchorPane());
+		bottomRightSidebar.addNode("TEST5", new AnchorPane());
+	}
+
 	private Sidebar loadSidebar(boolean left, boolean top) {
 		Sidebar sidebar = new Sidebar(left, top, left ? leftPane : rightPane);
 
 		sidebar.setPrefWidth(SIDEBAR_WIDTH);
 		sidebar.setMaxWidth(SIDEBAR_WIDTH);
 		return sidebar;
+	}
+
+	private void loadResizeEvents() {
+		//Rescaling AnchorPane inside a tab. Thanks JavaFX for the bug.
+		Platform.runLater(() -> {
+			getScene().heightProperty().addListener((obs, old, val) -> {
+				double height = val.doubleValue() - getLocalToSceneTransform().getTy();
+				setPrefHeight(height);
+				setMinHeight(height);
+			});
+
+			getScene().widthProperty().addListener((obs, old, val) -> {
+				double width = val.doubleValue() - getLocalToSceneTransform().getTx();
+				setPrefWidth(width);
+				setMinWidth(width);
+			});
+		});
 	}
 
 }

@@ -40,7 +40,7 @@ public class SidePane extends SplitPane implements EventBroadcast {
 		bottom = null;
 
 		dividerPosition = 0.5;
-		splitPaneDividerPosition = 0.2;
+		splitPaneDividerPosition = left ? 0.2 : 0.8;
 
 		setOrientation(Orientation.VERTICAL);
 	}

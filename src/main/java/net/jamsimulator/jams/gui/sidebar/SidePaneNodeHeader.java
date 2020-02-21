@@ -7,7 +7,14 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.sidebar.event.SidebarChangeNodeEvent;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
-
+/**
+ * Represents the header of a {@link SidePaneNode}. This header contains
+ * information and options about the wrapped {@link javafx.scene.Node} of the {@link SidePaneNode}.
+ * <p>
+ * This header also allows to resize the {@link javafx.scene.Node}.
+ *
+ * @see SidePaneNode
+ */
 public class SidePaneNodeHeader extends AnchorPane {
 
 	public static final int HEIGHT = 25;
@@ -23,6 +30,13 @@ public class SidePaneNodeHeader extends AnchorPane {
 
 	private double relativeDragPosition;
 
+	/**
+	 * Creates the header.
+	 *
+	 * @param sidePane the {@link SidePane} that handles the wrapped {@link javafx.scene.Node}.
+	 * @param name     the name of the {@link javafx.scene.Node}.
+	 * @param top      whether the {@link Sidebar} containing the {@link javafx.scene.Node} is a top {@link Sidebar}.
+	 */
 	public SidePaneNodeHeader(SidePane sidePane, String name, boolean top) {
 		this.sidePane = sidePane;
 		this.name = name;
@@ -44,14 +58,29 @@ public class SidePaneNodeHeader extends AnchorPane {
 		registerFXEvents();
 	}
 
+	/**
+	 * Returns the name of the header.
+	 *
+	 * @return the name.
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Returns the {@link Label} that has the name of the header.
+	 *
+	 * @return the {@link Label}.
+	 */
 	public Label getLabel() {
 		return label;
 	}
 
+	/**
+	 * Returns whether the {@link Sidebar} containing the {@link javafx.scene.Node} is a top {@link Sidebar}.
+	 *
+	 * @return whether the {@link Sidebar} containing the {@link javafx.scene.Node} is a top {@link Sidebar}.
+	 */
 	public boolean isTop() {
 		return top;
 	}
@@ -68,7 +97,7 @@ public class SidePaneNodeHeader extends AnchorPane {
 	}
 
 	private void registerFXEvents() {
-		if(top) return;
+		if (top) return;
 		setOnMousePressed(event -> relativeDragPosition = event.getY());
 		setOnMouseDragged(event -> {
 			if (getCursor() == TOP_NULL_CURSOR) return;

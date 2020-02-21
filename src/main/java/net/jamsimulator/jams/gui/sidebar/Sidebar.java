@@ -120,7 +120,7 @@ public class Sidebar extends VBox {
 	/**
 	 * Selects the given button, adding its {@link SidePaneNode} into the handled {@link SidePane}.
 	 *
-	 * @param button thoe button.
+	 * @param button the button.
 	 */
 	void select(SidebarButton button) {
 		if (button != null) deselectExcept(button);

@@ -12,6 +12,7 @@ import net.jamsimulator.jams.gui.main.MainAnchorPane;
 public class JamsApplication extends Application {
 
 	private static final int WIDTH = 1200, HEIGHT = 800;
+	private static final int MIN_WIDTH = 20, MIN_HEIGHT = 20;
 	private static Stage stage;
 
 	@Override
@@ -28,6 +29,9 @@ public class JamsApplication extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.setWidth(WIDTH);
 		primaryStage.setHeight(HEIGHT);
+
+		primaryStage.setMinWidth(MIN_WIDTH);
+		primaryStage.setMinHeight(MIN_HEIGHT);
 
 		Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
 
