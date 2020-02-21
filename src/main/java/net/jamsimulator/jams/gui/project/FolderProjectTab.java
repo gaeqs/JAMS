@@ -44,7 +44,8 @@ public class FolderProjectTab extends Tab {
 		projectTabPane.getTabs().add(tab);
 
 		WorkingPane structurePane = new WorkingPane(this, new TextArea());
-		tab.setContent(structurePane);
+		AnchorUtils.setAnchor(structurePane, 0, -1, 0, 0);
+		tab.setContent(new AnchorPane(structurePane));
 
 		setContent(pane);
 	}

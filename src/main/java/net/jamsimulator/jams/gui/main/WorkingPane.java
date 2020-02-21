@@ -1,13 +1,16 @@
 package net.jamsimulator.jams.gui.main;
 
+import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import net.jamsimulator.jams.gui.sidebar.BottomSidebar;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.sidebar.SidePane;
 import net.jamsimulator.jams.gui.sidebar.Sidebar;
+import net.jamsimulator.jams.gui.sidebar.SidebarFillRegion;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
 /**
@@ -18,162 +21,166 @@ import net.jamsimulator.jams.utils.AnchorUtils;
  */
 public class WorkingPane extends AnchorPane {
 
-    public static final int SIDEBAR_WIDTH = 25;
+	public static final int SIDEBAR_WIDTH = 25;
 
-    private Tab parent;
+	private Tab parent;
 
-    private SplitPane workingPane;
-    private Node center;
-    private SidePane leftPane, rightPane;
-    private Sidebar topLeftSidebar, bottomLeftSidebar,
-            topRightSidebar, bottomRightSidebar;
+	private SplitPane workingPane;
+	private Node center;
+	private SidePane leftPane, rightPane;
+	private Sidebar topLeftSidebar, bottomLeftSidebar,
+			topRightSidebar, bottomRightSidebar;
 
-    public WorkingPane(Tab parent, Node center) {
-        this.parent = parent;
-        this.center = center;
+	public WorkingPane(Tab parent, Node center) {
+		this.parent = parent;
+		this.center = center;
 
-        //Black line separator
-        Separator separator = new Separator(Orientation.HORIZONTAL);
-        AnchorUtils.setAnchor(separator, 0, -1, 0, 0);
-        getChildren().add(separator);
+		//Black line separator
+		Separator separator = new Separator(Orientation.HORIZONTAL);
+		AnchorUtils.setAnchor(separator, 0, -1, 0, 0);
+		getChildren().add(separator);
 
-        //Working slit pane.
-        workingPane = new SplitPane();
-        getChildren().add(workingPane);
-        AnchorUtils.setAnchor(workingPane, 1, 0, SIDEBAR_WIDTH, SIDEBAR_WIDTH);
+		//Working slit pane.
+		workingPane = new SplitPane();
+		getChildren().add(workingPane);
+		AnchorUtils.setAnchor(workingPane, 1, 0, SIDEBAR_WIDTH, SIDEBAR_WIDTH);
 
-        //Center pane
-        if (center == null) center = new AnchorPane();
-        workingPane.getItems().add(center);
+		//Center pane
+		if (center == null) center = new AnchorPane();
+		workingPane.getItems().add(center);
 
 
-        //Side panes
-        leftPane = new SidePane(workingPane, true);
-        rightPane = new SidePane(workingPane, false);
+		//Side panes
+		leftPane = new SidePane(workingPane, true);
+		rightPane = new SidePane(workingPane, false);
 
-        //Sidebars
-        topLeftSidebar = loadTopSidebar(true);
-        bottomLeftSidebar = loadBottomSidebar(true, topLeftSidebar);
-        topRightSidebar = loadTopSidebar(false);
-        bottomRightSidebar = loadBottomSidebar(false, topRightSidebar);
+		//Sidebars
 
-        topLeftSidebar.addNode("TEST1", new AnchorPane());
-        topRightSidebar.addNode("TEST2", new ScrollPane(new ImageView(
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Strawberry_jam_on_a_dish.JPG/" +
-                        "1280px-Strawberry_jam_on_a_dish.JPG")));
-        bottomLeftSidebar.addNode("TEST3", new AnchorPane(new Label("TEST!")));
-        bottomRightSidebar.addNode("TEST4 LONG NAME AAAAAAAAAAAAAAAAAAAAAAA", new TextArea());
+		VBox leftSidebarHolder = new VBox();
+		VBox rightSidebarHolder = new VBox();
+		AnchorUtils.setAnchor(leftSidebarHolder, 1, 0, 0, -1);
+		AnchorUtils.setAnchor(rightSidebarHolder, 1, 0, -1, 0);
 
-        topLeftSidebar.addNode("TEST5", new AnchorPane());
-        bottomLeftSidebar.addNode("TEST6", new AnchorPane());
-        topRightSidebar.addNode("TEST7", new AnchorPane());
-        bottomRightSidebar.addNode("TEST8", new AnchorPane());
+		topLeftSidebar = loadSidebar(true, true);
+		bottomLeftSidebar = loadSidebar(true, false);
+		topRightSidebar = loadSidebar(false, true);
+		bottomRightSidebar = loadSidebar(false, false);
 
-        //test2.setOnMouseDragged(event -> {
-        //	double absolute = event.getSceneY();
-        //	double min = leftPane.getLocalToSceneTransform().getTy();
-        //	double max = min + leftPane.getHeight();
-        //	double relative = (absolute - min) / (max - min);
-        //	leftPane.setDividerPosition(0, relative);
-        //});
-    }
+		Region leftFill = new SidebarFillRegion(true, leftSidebarHolder, topLeftSidebar, bottomLeftSidebar);
+		Region rightFill = new SidebarFillRegion(false, rightSidebarHolder, topRightSidebar, bottomRightSidebar);
 
-    /**
-     * Returns the {@link Tab} that contains this pane, or null.
-     *
-     * @return the {@link Tab} or null.
-     */
-    public Tab getParentTab() {
-        return parent;
-    }
+		leftSidebarHolder.getChildren().addAll(topLeftSidebar, leftFill, bottomLeftSidebar);
+		rightSidebarHolder.getChildren().addAll(topRightSidebar, rightFill, bottomRightSidebar);
+		getChildren().addAll(leftSidebarHolder, rightSidebarHolder);
 
-    /**
-     * Returns the central node.
-     *
-     * @return the central node.
-     */
-    public Node getCenter() {
-        return center;
-    }
+		topLeftSidebar.addNode("TEST1", new AnchorPane());
+		topRightSidebar.addNode("TEST2", new ScrollPane(new ImageView(
+				"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Strawberry_jam_on_a_dish.JPG/" +
+						"1280px-Strawberry_jam_on_a_dish.JPG")));
+		bottomLeftSidebar.addNode("TEST3", new AnchorPane(new Label("TEST!")));
+		bottomRightSidebar.addNode("TEST4 LONG NAME AAAAAAAAAAAAAAAAAAAAAAA", new TextArea());
 
-    /**
-     * Returns the left {@link SidePane}.
-     *
-     * @return the left {@link SidePane}.
-     */
-    public SidePane getLeftPane() {
-        return leftPane;
-    }
 
-    /**
-     * Returns the right {@link SidePane}.
-     *
-     * @return the right {@link SidePane}.
-     */
-    public SidePane getRightPane() {
-        return rightPane;
-    }
+		topLeftSidebar.addNode("TEST5", new AnchorPane());
+		bottomLeftSidebar.addNode("TEST6", new AnchorPane());
+		topRightSidebar.addNode("TEST7", new AnchorPane());
+		bottomRightSidebar.addNode("TEST8", new AnchorPane());
 
-    /**
-     * Returns the top left {@link Sidebar}.
-     *
-     * @return the top left {@link Sidebar}.
-     */
-    public Sidebar getTopLeftSidebar() {
-        return topLeftSidebar;
-    }
 
-    /**
-     * Returns the bottom left {@link Sidebar}.
-     *
-     * @return the bottom left {@link Sidebar}.
-     */
-    public Sidebar getBottomLeftSidebar() {
-        return bottomLeftSidebar;
-    }
+		//Rescaling AnchorPane inside a tab. Thanks JavaFX for the bug.
+		//For this workaround to work this AnchorPane must be inside another AnchorPane.
+		Platform.runLater(() -> {
+			double initHeight = getScene().getHeight() - getLocalToSceneTransform().getTy();
+			setPrefHeight(initHeight);
+			setMinHeight(initHeight);
 
-    /**
-     * Returns the top right {@link Sidebar}.
-     *
-     * @return the top right {@link Sidebar}.
-     */
-    public Sidebar getTopRightSidebar() {
-        return topRightSidebar;
-    }
+			getScene().heightProperty().addListener((obs, old, val) -> {
+				double height = val.doubleValue() - getLocalToSceneTransform().getTy();
+				setPrefHeight(height);
+				setMinHeight(height);
+			});
+		});
+	}
 
-    /**
-     * Returns the bottom right {@link Sidebar}.
-     *
-     * @return the bottom right {@link Sidebar}.
-     */
-    public Sidebar getBottomRightSidebar() {
-        return bottomRightSidebar;
-    }
 
-    private Sidebar loadTopSidebar(boolean left) {
-        Sidebar sidebar = new Sidebar(left, true, left ? leftPane : rightPane);
-        if (left) {
-            AnchorUtils.setAnchor(sidebar, 1, -1, 0, -1);
-        } else {
-            AnchorUtils.setAnchor(sidebar, 1, -1, -1, 0);
-        }
-        sidebar.setPrefWidth(SIDEBAR_WIDTH);
-        sidebar.setMaxWidth(SIDEBAR_WIDTH);
-        getChildren().add(sidebar);
-        return sidebar;
-    }
+	/**
+	 * Returns the {@link Tab} that contains this pane, or null.
+	 *
+	 * @return the {@link Tab} or null.
+	 */
+	public Tab getParentTab() {
+		return parent;
+	}
 
-    private Sidebar loadBottomSidebar(boolean left, Sidebar top) {
-        BottomSidebar sidebar = new BottomSidebar(left, left ? leftPane : rightPane, top);
-        if (left) {
-            AnchorUtils.setAnchor(sidebar, 0, 0, 0, -1);
-        } else {
-            AnchorUtils.setAnchor(sidebar, 0, 0, -1, 0);
-        }
-        sidebar.setPrefWidth(SIDEBAR_WIDTH);
-        sidebar.setMaxWidth(SIDEBAR_WIDTH);
-        getChildren().add(sidebar);
-        sidebar.refreshHeight();
-        return sidebar;
-    }
+	/**
+	 * Returns the central node.
+	 *
+	 * @return the central node.
+	 */
+	public Node getCenter() {
+		return center;
+	}
+
+	/**
+	 * Returns the left {@link SidePane}.
+	 *
+	 * @return the left {@link SidePane}.
+	 */
+	public SidePane getLeftPane() {
+		return leftPane;
+	}
+
+	/**
+	 * Returns the right {@link SidePane}.
+	 *
+	 * @return the right {@link SidePane}.
+	 */
+	public SidePane getRightPane() {
+		return rightPane;
+	}
+
+	/**
+	 * Returns the top left {@link Sidebar}.
+	 *
+	 * @return the top left {@link Sidebar}.
+	 */
+	public Sidebar getTopLeftSidebar() {
+		return topLeftSidebar;
+	}
+
+	/**
+	 * Returns the bottom left {@link Sidebar}.
+	 *
+	 * @return the bottom left {@link Sidebar}.
+	 */
+	public Sidebar getBottomLeftSidebar() {
+		return bottomLeftSidebar;
+	}
+
+	/**
+	 * Returns the top right {@link Sidebar}.
+	 *
+	 * @return the top right {@link Sidebar}.
+	 */
+	public Sidebar getTopRightSidebar() {
+		return topRightSidebar;
+	}
+
+	/**
+	 * Returns the bottom right {@link Sidebar}.
+	 *
+	 * @return the bottom right {@link Sidebar}.
+	 */
+	public Sidebar getBottomRightSidebar() {
+		return bottomRightSidebar;
+	}
+
+	private Sidebar loadSidebar(boolean left, boolean top) {
+		Sidebar sidebar = new Sidebar(left, top, left ? leftPane : rightPane);
+
+		sidebar.setPrefWidth(SIDEBAR_WIDTH);
+		sidebar.setMaxWidth(SIDEBAR_WIDTH);
+		return sidebar;
+	}
+
 }
