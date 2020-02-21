@@ -90,14 +90,16 @@ public class WorkingPane extends AnchorPane {
 		//Rescaling AnchorPane inside a tab. Thanks JavaFX for the bug.
 		//For this workaround to work this AnchorPane must be inside another AnchorPane.
 		Platform.runLater(() -> {
-			double initHeight = getScene().getHeight() - getLocalToSceneTransform().getTy();
-			setPrefHeight(initHeight);
-			setMinHeight(initHeight);
-
 			getScene().heightProperty().addListener((obs, old, val) -> {
 				double height = val.doubleValue() - getLocalToSceneTransform().getTy();
 				setPrefHeight(height);
 				setMinHeight(height);
+			});
+
+			getScene().widthProperty().addListener((obs, old, val) -> {
+				double width = val.doubleValue() - getLocalToSceneTransform().getTx();
+				setPrefWidth(width);
+				setMinWidth(width);
 			});
 		});
 	}
