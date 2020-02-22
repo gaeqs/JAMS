@@ -30,7 +30,6 @@ public class SidebarButton extends ToggleButton {
 	 */
 	public SidebarButton(Sidebar sidebar, String name, SidePaneNode node, boolean left) {
 		this.sidebar = sidebar;
-
 		this.name = name;
 		this.node = node;
 
@@ -43,7 +42,7 @@ public class SidebarButton extends ToggleButton {
 		ImageView imageView = new ImageView(new Image("gui/icon/project.png",
 				WorkingPane.SIDEBAR_WIDTH, WorkingPane.SIDEBAR_WIDTH, true, false));
 
-		VBox vBox = new VBox(group, imageView);
+		VBox vBox = left ? new VBox(group, imageView) : new VBox(imageView, group);
 		vBox.setSpacing(2);
 		vBox.setAlignment(Pos.CENTER);
 
@@ -57,9 +56,7 @@ public class SidebarButton extends ToggleButton {
 			} else if (sidebar.getSelected() == node) {
 				sidebar.select(null);
 			}
-
 		});
-
 	}
 
 	/**
