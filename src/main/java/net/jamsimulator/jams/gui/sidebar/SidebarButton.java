@@ -1,8 +1,12 @@
 package net.jamsimulator.jams.gui.sidebar;
 
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 
 
@@ -36,7 +40,14 @@ public class SidebarButton extends ToggleButton {
 		Label label = new Label(name);
 		Group group = new Group(label);
 
-		setGraphic(group);
+		ImageView imageView = new ImageView(new Image("gui/icon/project.png",
+				WorkingPane.SIDEBAR_WIDTH, WorkingPane.SIDEBAR_WIDTH, true, false));
+
+		VBox vBox = new VBox(group, imageView);
+		vBox.setSpacing(2);
+		vBox.setAlignment(Pos.CENTER);
+
+		setGraphic(vBox);
 		setPrefWidth(WorkingPane.SIDEBAR_WIDTH);
 
 		selectedProperty().addListener((obs, old, val) -> {
@@ -71,6 +82,7 @@ public class SidebarButton extends ToggleButton {
 
 	/**
 	 * Returns the {@link SidePaneNode} handled by this button.
+	 *
 	 * @return the {@link SidePaneNode}.
 	 */
 	public SidePaneNode getNode() {

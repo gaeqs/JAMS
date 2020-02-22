@@ -1,13 +1,13 @@
 * {
-    -theme-foreground: #ececec;
+    -theme-foreground: #ECECEC;
     -theme-foreground-darker: derive(-theme-foreground, -20%);
     -theme-foreground-lighter: #FFFFFF;
-    -theme-background: derive(-theme-foreground, -70%);
+    -theme-background: #3C3F41;
     -theme-background-darker: derive(-theme-foreground, -85%);
     -theme-background-focused: derive(-theme-background, 20%);
     -theme-background-pressed: derive(-theme-background, 40%);
     -theme-background-text-area: derive(-theme-background, -30%);
-    -theme-title: #444455;
+    -theme-header: #3B4754;
 }
 
 
@@ -25,13 +25,15 @@
 .text-area {
     -fx-background-color: -theme-background-text-area;
     -fx-text-fill: -theme-foreground;
-    -fx-background-radius: 0;
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: -theme-background-text-area;
 }
 
 .text-area .content {
     -fx-background-color: -theme-background-text-area;
     -fx-background-radius: 0;
-
 }
 
 /*TEXT FIELD*/
@@ -501,7 +503,7 @@ AnchorPane {
 
 .side-pane-node-header:hover,
 .side-pane-node-header:pressed {
-    -fx-background-color: -theme-title;
+    -fx-background-color: -theme-header;
     -fx-border-color: -theme-background-darker;
     -fx-border-width: 0 0 1 0;
 }
@@ -542,7 +544,7 @@ AnchorPane {
 
 .bottom-pane-node-header:hover,
 .bottom-pane-node-header:pressed {
-    -fx-background-color: -theme-title;
+    -fx-background-color: -theme-header;
     -fx-border-color: -theme-background-darker;
     -fx-border-width: 0 0 1 0;
 }
