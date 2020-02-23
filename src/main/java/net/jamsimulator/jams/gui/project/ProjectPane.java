@@ -15,6 +15,7 @@ import net.jamsimulator.jams.project.Project;
 public class ProjectPane extends WorkingPane {
 
 	private Project project;
+	private ExplorerPane explorer;
 
 	public ProjectPane(Tab parent, Project project) {
 		super(parent, new TextArea());
@@ -26,6 +27,12 @@ public class ProjectPane extends WorkingPane {
 	private void loadSidebarModules() {
 		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
 				Icons.SIDEBAR_EXPLORER_PATH, SidebarButton.IMAGE_SIZE, SidebarButton.IMAGE_SIZE).orElse(null);
-		topLeftSidebar.addNode("Explorer", new ExplorerPane(project.getFolder()), explorerIcon);
+		explorer = new ExplorerPane(project.getFolder());
+		topLeftSidebar.addNode("Explorer", explorer, explorerIcon);
+
+		JamsApplication.getStage().onCloseRequestProperty().addListener(event -> {
+			System.out.println("TEST");
+			explorer.kill();
+		});
 	}
 }

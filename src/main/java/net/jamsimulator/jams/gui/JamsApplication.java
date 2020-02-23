@@ -16,6 +16,7 @@ public class JamsApplication extends Application {
 	private static final int WIDTH = 1200, HEIGHT = 800;
 	private static final int MIN_WIDTH = 20, MIN_HEIGHT = 20;
 	private static Stage stage;
+	private static Scene scene;
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -26,7 +27,7 @@ public class JamsApplication extends Application {
 
 		pane.getStylesheets().add("gui/style/dark_style.css");
 
-		Scene scene = new Scene(pane);
+		scene = new Scene(pane);
 
 		primaryStage.setScene(scene);
 		primaryStage.setWidth(WIDTH);
@@ -48,6 +49,10 @@ public class JamsApplication extends Application {
 
 	public static Stage getStage() {
 		return stage;
+	}
+
+	public static Scene getScene() {
+		return scene;
 	}
 
 	public static void start(String[] args) {

@@ -1,10 +1,13 @@
 package net.jamsimulator.jams.gui.project;
 
-import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
+
+import static java.nio.file.StandardWatchEventKinds.*;
 
 /**
  * Represents a file explorer.
@@ -14,6 +17,10 @@ import java.io.File;
 public class ExplorerPane extends VBox {
 
 	private File mainFolder;
+
+	//EXPLORER WATCHER
+	private WatchService watchService;
+	private boolean runnning;
 
 	/**
 	 * Creates an explorer using the main folder.
@@ -27,6 +34,7 @@ public class ExplorerPane extends VBox {
 		Validate.isTrue(mainFolder.isDirectory(), "Main folder is not a folder!");
 		this.mainFolder = mainFolder;
 		addFiles(mainFolder, 0, null);
+		watchFolder();
 	}
 
 	/**
@@ -47,6 +55,12 @@ public class ExplorerPane extends VBox {
 	 */
 	int indexOf(ExplorerPaneFile file) {
 		return getChildren().indexOf(file);
+	}
+
+
+	public void kill() {
+		runnning = false;
+		System.out.println("KILL");
 	}
 
 	/**
@@ -79,6 +93,39 @@ public class ExplorerPane extends VBox {
 				parent.getFiles().add(explorerFile);
 				getChildren().add(explorerFile);
 			}
+		}
+	}
+
+	private void watchFolder() {
+		try {
+			watchService = FileSystems.getDefault().newWatchService();
+			WatchKey firstKey = mainFolder.toPath().register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+			processKey(firstKey);
+
+			runnning = true;
+			new Thread(() -> {
+				while (runnning) {
+					try {
+						processKey(watchService.take());
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}).start();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void processKey(WatchKey key) {
+		for (WatchEvent<?> event : key.pollEvents()) {
+			WatchEvent.Kind<?> kind = event.kind();
+			if (kind == OVERFLOW) return;
+
+			WatchEvent<Path> watchEvent = (WatchEvent<Path>) event;
+			Path file = watchEvent.context();
+			System.out.println(file);
 		}
 	}
 
