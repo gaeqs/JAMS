@@ -3,7 +3,7 @@
     -theme-foreground-darker: derive(-theme-foreground, -20%);
     -theme-foreground-lighter: #FFFFFF;
     -theme-background: #3C3F41;
-    -theme-background-darker: derive(-theme-foreground, -85%);
+    -theme-background-darker: derive(-theme-background, -20%);
     -theme-background-focused: derive(-theme-background, 20%);
     -theme-background-pressed: derive(-theme-background, 40%);
     -theme-background-text-area: derive(-theme-background, -30%);
