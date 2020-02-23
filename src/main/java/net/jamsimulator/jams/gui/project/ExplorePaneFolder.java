@@ -114,5 +114,11 @@ public class ExplorePaneFolder extends ExplorerPaneFile {
 
 		folderStatusView = new ImageView(icon);
 		getChildren().add(1, folderStatusView);
+
+		folderStatusView.setOnMouseClicked(event -> {
+			if(expanded) contract();
+			else expand();
+			event.consume();
+		});
 	}
 }
