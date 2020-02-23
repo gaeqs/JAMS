@@ -1,11 +1,15 @@
 package net.jamsimulator.jams.gui.project;
 
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.icon.FileIconManager;
+import net.jamsimulator.jams.gui.icon.Icons;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -24,6 +28,7 @@ public class ExplorePaneFolder extends ExplorerPaneFile {
 
 	private List<ExplorerPaneFile> files;
 	private boolean expanded;
+	private ImageView folderStatusView;
 
 	public ExplorePaneFolder(ExplorerPane explorer, int hierarchyLevel, File folder, ExplorePaneFolder parent) {
 		super(explorer, hierarchyLevel, folder, parent);
@@ -58,6 +63,11 @@ public class ExplorePaneFolder extends ExplorerPaneFile {
 		if (!expanded) return;
 		files.forEach(ExplorerPaneFile::remove);
 		expanded = false;
+
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_COLLAPSED,
+				Icons.EXPLORER_FOLDER_COLLAPSED_PATH, FileIconManager.IMAGE_SIZE, FileIconManager.IMAGE_SIZE)
+				.orElse(null);
+		folderStatusView.setImage(icon);
 	}
 
 	/**
@@ -69,8 +79,12 @@ public class ExplorePaneFolder extends ExplorerPaneFile {
 
 		int index = explorer.indexOf(this);
 		children.addAll(index + 1, files);
-
 		expanded = true;
+
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_EXPANDED,
+				Icons.EXPLORER_FOLDER_EXPANDED_PATH, FileIconManager.IMAGE_SIZE, FileIconManager.IMAGE_SIZE)
+				.orElse(null);
+		folderStatusView.setImage(icon);
 	}
 
 	@Override
@@ -88,5 +102,17 @@ public class ExplorePaneFolder extends ExplorerPaneFile {
 				else expand();
 			}
 		}
+	}
+
+	@Override
+	protected void init() {
+		super.init();
+
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_EXPANDED,
+				Icons.EXPLORER_FOLDER_EXPANDED_PATH, FileIconManager.IMAGE_SIZE, FileIconManager.IMAGE_SIZE)
+				.orElse(null);
+
+		folderStatusView = new ImageView(icon);
+		getChildren().add(1, folderStatusView);
 	}
 }

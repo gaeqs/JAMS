@@ -5,8 +5,8 @@ package net.jamsimulator.jams.gui.icon;
  */
 public class Icons {
 
-	public static final String SIDEBAR_PROJECT = "sidebar_project";
-	public static final String SIDEBAR_SETTINGS = "sidebar_settings";
+	public static final String EXPLORER_FOLDER_EXPANDED = "explorer_folder_expanded";
+	public static final String EXPLORER_FOLDER_COLLAPSED = "explorer_folder_collapsed";
 
 	public static final String FILE_FOLDER = "file_folder";
 	public static final String FILE_FILE = "file_file";
@@ -14,13 +14,19 @@ public class Icons {
 	public static final String FILE_TEXT = "file_text";
 	public static final String FILE_ASSEMBLY = "file_assembly";
 
-	public static final String SIDEBAR_PROJECT_PATH = "gui/icon/sidebar/project.png";
-	public static final String SIDEBAR_SETTINGS_PATH = "gui/icon/sidebar/settings.png";
+	public static final String SIDEBAR_EXPLORER = "sidebar_project";
+	public static final String SIDEBAR_SETTINGS = "sidebar_settings";
+
+	public static final String EXPLORER_FOLDER_COLLAPSED_PATH = "gui/icon/explorer/folder_collapsed.png";
+	public static final String EXPLORER_FOLDER_EXPANDED_PATH = "gui/icon/explorer/folder_expanded.png";
 
 	public static final String FILE_FOLDER_PATH = "gui/icon/file/folder.png";
 	public static final String FILE_FILE_PATH = "gui/icon/file/file.png";
 	public static final String FILE_UNKNOWN_PATH = "gui/icon/file/unknown.png";
 	public static final String FILE_TEXT_PATH = "gui/icon/file/text.png";
 	public static final String FILE_ASSEMBLY_PATH = "gui/icon/file/assembly.png";
+
+	public static final String SIDEBAR_EXPLORER_PATH = "gui/icon/file/folder.png";
+	public static final String SIDEBAR_SETTINGS_PATH = "gui/icon/sidebar/settings.png";
 
 }

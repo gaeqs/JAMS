@@ -24,8 +24,8 @@ public class ProjectPane extends WorkingPane {
 
 
 	private void loadSidebarModules() {
-		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_PROJECT,
-				Icons.SIDEBAR_PROJECT_PATH, SidebarButton.IMAGE_SIZE, SidebarButton.IMAGE_SIZE).orElse(null);
-		topLeftSidebar.addNode("Project", new ExplorerPane(project.getFolder()), explorerIcon);
+		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
+				Icons.SIDEBAR_EXPLORER_PATH, SidebarButton.IMAGE_SIZE, SidebarButton.IMAGE_SIZE).orElse(null);
+		topLeftSidebar.addNode("Explorer", new ExplorerPane(project.getFolder()), explorerIcon);
 	}
 }

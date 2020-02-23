@@ -18,6 +18,7 @@ import java.io.File;
 public class ExplorerPaneFile extends HBox {
 
 	public static final int SPACING = 5;
+	public static final int HIERARCHY_LEVEL_SEPARATOR_SIZE = 40;
 
 	protected ExplorerPane explorer;
 	protected File file;
@@ -100,17 +101,16 @@ public class ExplorerPaneFile extends HBox {
 		explorer.getChildren().remove(this);
 	}
 
-	private void init() {
-
+	protected void init() {
 		image = JamsApplication.getFileIconManager().getImageByFile(file);
 		name = new Label(file.getName());
 
 		separator = new Region();
-		separator.setPrefWidth(hierarchyLevel * 20);
+		separator.setPrefWidth(hierarchyLevel * HIERARCHY_LEVEL_SEPARATOR_SIZE);
 		getChildren().add(separator);
 		getChildren().add(new ImageView(image));
 		getChildren().add(name);
-		setSpacing(5);
+		setSpacing(SPACING);
 		setAlignment(Pos.CENTER_LEFT);
 	}
 }
