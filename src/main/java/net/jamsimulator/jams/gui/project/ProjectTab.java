@@ -8,15 +8,15 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
 import net.jamsimulator.jams.gui.main.WorkingPane;
-import net.jamsimulator.jams.project.FolderProject;
+import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
 /**
  * Represents a folder project's tab. This must be used by {@link MainAnchorPane#getProjectsTabPane()}
  */
-public class FolderProjectTab extends Tab {
+public class ProjectTab extends Tab {
 
-	private FolderProject project;
+	private Project project;
 	private TabPane projectTabPane;
 
 	/**
@@ -24,7 +24,7 @@ public class FolderProjectTab extends Tab {
 	 *
 	 * @param project the handled project.
 	 */
-	public FolderProjectTab(FolderProject project) {
+	public ProjectTab(Project project) {
 		super(project.getName());
 		this.project = project;
 
@@ -43,7 +43,7 @@ public class FolderProjectTab extends Tab {
 		tab.setClosable(false);
 		projectTabPane.getTabs().add(tab);
 
-		WorkingPane structurePane = new WorkingPane(this, new TextArea());
+		WorkingPane structurePane = new ProjectPane(this, project);
 		tab.setContent(structurePane);
 
 		setContent(pane);
@@ -54,7 +54,7 @@ public class FolderProjectTab extends Tab {
 	 *
 	 * @return the project.
 	 */
-	public FolderProject getProject() {
+	public Project getProject() {
 		return project;
 	}
 

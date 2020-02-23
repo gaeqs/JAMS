@@ -1,10 +1,14 @@
 package net.jamsimulator.jams.gui.project;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import net.jamsimulator.jams.gui.JamsApplication;
+
+import java.io.File;
 
 /**
  * Represents a file inside a {@link ExplorerPane}.
@@ -13,7 +17,10 @@ import javafx.scene.layout.Region;
  */
 public class ExplorerPaneFile extends HBox {
 
+	public static final int SPACING = 5;
+
 	protected ExplorerPane explorer;
+	protected File file;
 
 	protected int hierarchyLevel;
 	protected ExplorePaneFolder parent;
@@ -27,17 +34,14 @@ public class ExplorerPaneFile extends HBox {
 	 *
 	 * @param explorer       the {@link ExplorerPane} containing this file.
 	 * @param hierarchyLevel the hierarchy level of this file. Used by the margin.
-	 * @param image          the icon of the file.
-	 * @param name           the name of the file.
+	 * @param file           the file.
 	 * @param parent         the parent {@link ExplorePaneFolder} of this file, or null.
 	 */
-	public ExplorerPaneFile(ExplorerPane explorer, int hierarchyLevel,
-							Image image, Label name, ExplorePaneFolder parent) {
+	public ExplorerPaneFile(ExplorerPane explorer, int hierarchyLevel, File file, ExplorePaneFolder parent) {
 		getStyleClass().add("folder-explorer-file");
 		this.explorer = explorer;
+		this.file = file;
 		this.hierarchyLevel = hierarchyLevel;
-		this.image = image;
-		this.name = name;
 		this.parent = parent;
 		init();
 	}
@@ -49,6 +53,15 @@ public class ExplorerPaneFile extends HBox {
 	 */
 	public ExplorerPane getExplorer() {
 		return explorer;
+	}
+
+	/**
+	 * Returns the handled {@link File}.
+	 *
+	 * @return the handled {@link File}.
+	 */
+	public File getFile() {
+		return file;
 	}
 
 	/**
@@ -88,11 +101,16 @@ public class ExplorerPaneFile extends HBox {
 	}
 
 	private void init() {
+
+		image = JamsApplication.getFileIconManager().getImageByFile(file);
+		name = new Label(file.getName());
+
 		separator = new Region();
 		separator.setPrefWidth(hierarchyLevel * 20);
 		getChildren().add(separator);
 		getChildren().add(new ImageView(image));
 		getChildren().add(name);
-
+		setSpacing(5);
+		setAlignment(Pos.CENTER_LEFT);
 	}
 }

@@ -1,6 +1,8 @@
 package net.jamsimulator.jams;
 
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.icon.FileIconManager;
+import net.jamsimulator.jams.gui.icon.IconManager;
 import net.jamsimulator.jams.manager.AssemblerBuilderManager;
 import net.jamsimulator.jams.manager.MemoryBuilderManager;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;

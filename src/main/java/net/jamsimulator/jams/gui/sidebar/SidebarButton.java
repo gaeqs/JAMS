@@ -15,10 +15,13 @@ import net.jamsimulator.jams.gui.main.WorkingPane;
  */
 public class SidebarButton extends ToggleButton {
 
+	public static final int IMAGE_SIZE = 16;
+
 	private Sidebar sidebar;
 
 	private String name;
 	private SidePaneNode node;
+	private Image image;
 
 	/**
 	 * Creates a sidebar button.
@@ -27,8 +30,9 @@ public class SidebarButton extends ToggleButton {
 	 * @param name    the name of this button.
 	 * @param node    the node handled by this button.
 	 * @param left    whether the sidebar is a left sidebar or a right one.
+	 * @param icon   the icon of the button, or null.
 	 */
-	public SidebarButton(Sidebar sidebar, String name, SidePaneNode node, boolean left) {
+	public SidebarButton(Sidebar sidebar, String name, SidePaneNode node, boolean left, Image icon) {
 		this.sidebar = sidebar;
 		this.name = name;
 		this.node = node;
@@ -39,14 +43,16 @@ public class SidebarButton extends ToggleButton {
 		Label label = new Label(name);
 		Group group = new Group(label);
 
-		ImageView imageView = new ImageView(new Image("gui/icon/project.png",
-				WorkingPane.SIDEBAR_WIDTH, WorkingPane.SIDEBAR_WIDTH, true, false));
+		if (icon != null) {
+			ImageView imageView = new ImageView(icon);
+			VBox vBox = left ? new VBox(group, imageView) : new VBox(imageView, group);
+			vBox.setSpacing(2);
+			vBox.setAlignment(Pos.CENTER);
+			setGraphic(vBox);
+		} else {
+			setGraphic(group);
+		}
 
-		VBox vBox = left ? new VBox(group, imageView) : new VBox(imageView, group);
-		vBox.setSpacing(2);
-		vBox.setAlignment(Pos.CENTER);
-
-		setGraphic(vBox);
 		setPrefWidth(WorkingPane.SIDEBAR_WIDTH);
 
 		selectedProperty().addListener((obs, old, val) -> {

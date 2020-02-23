@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,12 +25,10 @@ public class ExplorePaneFolder extends ExplorerPaneFile {
 	private List<ExplorerPaneFile> files;
 	private boolean expanded;
 
-	public ExplorePaneFolder(ExplorerPane explorer, int hierarchyLevel, Image image,
-							 Label name, ExplorePaneFolder parent) {
-		super(explorer, hierarchyLevel, image, name, parent);
+	public ExplorePaneFolder(ExplorerPane explorer, int hierarchyLevel, File folder, ExplorePaneFolder parent) {
+		super(explorer, hierarchyLevel, folder, parent);
 		files = new LinkedList<>();
 		expanded = true;
-
 
 		setOnMouseClicked(this::onMouseClicked);
 	}

@@ -7,6 +7,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import net.jamsimulator.jams.gui.font.FontLoader;
+import net.jamsimulator.jams.gui.icon.FileIconManager;
+import net.jamsimulator.jams.gui.icon.IconManager;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
 
 public class JamsApplication extends Application {
@@ -52,4 +54,21 @@ public class JamsApplication extends Application {
 		launch(args);
 	}
 
+	/**
+	 * Returns the {@link IconManager}.
+	 *
+	 * @return the {@link IconManager}.
+	 */
+	public static IconManager getIconManager() {
+		return IconManager.INSTANCE;
+	}
+
+	/**
+	 * Returns the {@link FileIconManager}.
+	 *
+	 * @return the {@link FileIconManager}.
+	 */
+	public static FileIconManager getFileIconManager() {
+		return FileIconManager.INSTANCE;
+	}
 }

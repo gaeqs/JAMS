@@ -3,7 +3,9 @@ package net.jamsimulator.jams.gui.main;
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Separator;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -24,14 +26,15 @@ public class WorkingPane extends AnchorPane {
 	public static final int SIDEBAR_WIDTH = 25;
 	public static final int BOTTOM_BAR_HEIGHT = 25;
 
-	private Tab parent;
+	protected Tab parent;
 
-	private SplitPane horizontalSplitPane;
-	private SplitPane verticalSplitPane;
-	private Node center;
-	private SidePane leftPane, rightPane;
-	private Sidebar topLeftSidebar, bottomLeftSidebar,
+	protected SplitPane horizontalSplitPane;
+	protected SplitPane verticalSplitPane;
+	protected Node center;
+	protected SidePane leftPane, rightPane;
+	protected Sidebar topLeftSidebar, bottomLeftSidebar,
 			topRightSidebar, bottomRightSidebar;
+	protected BottomBar bottomBar;
 
 	public WorkingPane(Tab parent, Node center) {
 		this.parent = parent;
@@ -134,6 +137,14 @@ public class WorkingPane extends AnchorPane {
 		return bottomRightSidebar;
 	}
 
+	/**
+	 * Returns the {@link BottomBar}.
+	 *
+	 * @return the {@link BottomBar}.
+	 */
+	public BottomBar getBottomBar() {
+		return bottomBar;
+	}
 
 	private void loadSidebars() {
 		//Side panes
@@ -160,18 +171,11 @@ public class WorkingPane extends AnchorPane {
 		getChildren().addAll(leftSidebarHolder, rightSidebarHolder);
 
 		//Bottom panes
-		BottomBar bar = new BottomBar(verticalSplitPane);
-		AnchorUtils.setAnchor(bar, -1, 0, SIDEBAR_WIDTH, SIDEBAR_WIDTH);
-		bar.setPrefHeight(BOTTOM_BAR_HEIGHT);
-		bar.setMaxHeight(BOTTOM_BAR_HEIGHT);
-		getChildren().addAll(bar);
-
-		bar.addNode("TEST", new TextArea());
-		bar.addNode("TEST6", new TextArea());
-		topLeftSidebar.addNode("TEST2", new TextArea());
-		topRightSidebar.addNode("TEST3", new AnchorPane());
-		bottomLeftSidebar.addNode("TEST4", new AnchorPane());
-		bottomRightSidebar.addNode("TEST5", new AnchorPane());
+		bottomBar = new BottomBar(verticalSplitPane);
+		AnchorUtils.setAnchor(bottomBar, -1, 0, SIDEBAR_WIDTH, SIDEBAR_WIDTH);
+		bottomBar.setPrefHeight(BOTTOM_BAR_HEIGHT);
+		bottomBar.setMaxHeight(BOTTOM_BAR_HEIGHT);
+		getChildren().addAll(bottomBar);
 	}
 
 	private Sidebar loadSidebar(boolean left, boolean top) {

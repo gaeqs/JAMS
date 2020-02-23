@@ -2,6 +2,7 @@ package net.jamsimulator.jams.gui.sidebar;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 
 /**
@@ -83,12 +84,13 @@ public class Sidebar extends VBox {
 	 *
 	 * @param name the node name.
 	 * @param node the given node.
+	 * @param icon the icon shown on the button, or null.
 	 * @return whether the given node was added.
 	 */
-	public boolean addNode(String name, Node node) {
+	public boolean addNode(String name, Node node, Image icon) {
 		if (containsNode(name)) return false;
 		SidePaneNode sidePaneNode = new SidePaneNode(sidePane, node, name, top);
-		SidebarButton button = new SidebarButton(this, name, sidePaneNode, left);
+		SidebarButton button = new SidebarButton(this, name, sidePaneNode, left, icon);
 
 		getChildren().add(button);
 

@@ -61,8 +61,7 @@ public class ExplorerPane extends VBox {
 		if (files == null) return;
 
 		//Create the parent instance.
-		Label folderName = new Label(folder.getName());
-		ExplorePaneFolder parent = new ExplorePaneFolder(this, level, null, folderName, folderParent);
+		ExplorePaneFolder parent = new ExplorePaneFolder(this, level, folder, folderParent);
 		if (folderParent != null) {
 			folderParent.getFiles().add(parent);
 		}
@@ -76,8 +75,7 @@ public class ExplorerPane extends VBox {
 			}
 			//Else, add the file into the parent.
 			else {
-				Label fileName = new Label(file.getName());
-				ExplorerPaneFile explorerFile = new ExplorerPaneFile(this, level, null, fileName, parent);
+				ExplorerPaneFile explorerFile = new ExplorerPaneFile(this, level, file, parent);
 				parent.getFiles().add(explorerFile);
 				getChildren().add(explorerFile);
 			}
