@@ -65,6 +65,10 @@ public class ExplorerPaneFile extends HBox {
 		return file;
 	}
 
+	public String getName() {
+		return name.getText();
+	}
+
 	/**
 	 * Returns whether the given {@link ExplorePaneFolder} is a parent of this file.
 	 *
@@ -96,9 +100,12 @@ public class ExplorerPaneFile extends HBox {
 
 	/**
 	 * Removes this file from the {@link ExplorerPane}.
+	 *
+	 * @param fromParent marks whether this file should also be removed from the parent's list.
 	 */
-	public void remove() {
+	public void remove(boolean fromParent) {
 		explorer.getChildren().remove(this);
+		if (fromParent && parent != null) parent.getFiles().remove(this);
 	}
 
 	protected void init() {

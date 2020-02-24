@@ -1,7 +1,6 @@
 package net.jamsimulator.jams.gui.project;
 
 import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -61,7 +60,7 @@ public class ExplorePaneFolder extends ExplorerPaneFile {
 	 */
 	public void contract() {
 		if (!expanded) return;
-		files.forEach(ExplorerPaneFile::remove);
+		files.forEach(target -> target.remove(false));
 		expanded = false;
 
 		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_COLLAPSED,
@@ -88,10 +87,9 @@ public class ExplorePaneFolder extends ExplorerPaneFile {
 	}
 
 	@Override
-	public void remove() {
-		super.remove();
-		files.forEach(ExplorerPaneFile::remove);
-		expanded = false;
+	public void remove(boolean fromParent) {
+		super.remove(fromParent);
+		files.forEach(target -> target.remove(false));
 	}
 
 	private void onMouseClicked(MouseEvent mouseEvent) {
@@ -116,7 +114,7 @@ public class ExplorePaneFolder extends ExplorerPaneFile {
 		getChildren().add(1, folderStatusView);
 
 		folderStatusView.setOnMouseClicked(event -> {
-			if(expanded) contract();
+			if (expanded) contract();
 			else expand();
 			event.consume();
 		});
