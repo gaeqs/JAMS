@@ -124,8 +124,12 @@ public class ExplorerPane extends VBox {
 		if (folders.length == 1) {
 			if (file.isDirectory())
 				addFiles(file, 1, explorerMainFolder);
-			else
-				getChildren().add(new ExplorerPaneFile(this, 1, file, explorerMainFolder));
+			else {
+
+				ExplorerPaneFile newFile = new ExplorerPaneFile(this, 1, file, explorerMainFolder);
+				getChildren().add(newFile);
+				explorerMainFolder.getFiles().add(newFile);
+			}
 			return;
 		}
 
@@ -146,6 +150,7 @@ public class ExplorerPane extends VBox {
 			if (explorerFile == null) {
 				explorerFile = new ExplorerPaneFile(this, i + 1, file, (ExplorePaneFolder) parent);
 				getChildren().add(explorerFile);
+				((ExplorePaneFolder) parent).getFiles().add(explorerFile);
 			}
 			if (!(explorerFile instanceof ExplorePaneFolder))
 				throw new IllegalStateException("The file " + name + " should be a folder!");
@@ -154,8 +159,11 @@ public class ExplorerPane extends VBox {
 
 		if (file.isDirectory())
 			addFiles(file, folders.length, (ExplorePaneFolder) parent);
-		else
-			getChildren().add(new ExplorerPaneFile(this, folders.length, file, (ExplorePaneFolder) parent));
+		else {
+			ExplorerPaneFile newFile = new ExplorerPaneFile(this, folders.length, file, (ExplorePaneFolder) parent);
+			getChildren().add(newFile);
+			((ExplorePaneFolder) parent).getFiles().add(newFile);
+		}
 	}
 
 	private void watchFolder() {
