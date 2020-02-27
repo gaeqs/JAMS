@@ -11,7 +11,7 @@ import java.io.File;
 /**
  * Represents a file inside an {@link Explorer}.
  */
-public class ExplorerFile extends HBox {
+public class ExplorerFile extends HBox implements ExplorerElement {
 
 	public static final int SPACING = 5;
 
@@ -22,6 +22,8 @@ public class ExplorerFile extends HBox {
 	private ImageView icon;
 	private Label label;
 
+	private boolean selected;
+
 	/**
 	 * Creates an explorer file.
 	 *
@@ -29,10 +31,13 @@ public class ExplorerFile extends HBox {
 	 * @param file   the file to represent.
 	 */
 	public ExplorerFile(ExplorerFolder parent, File file) {
+		getStyleClass().add("explorer-element");
 		this.parent = parent;
 		this.file = file;
-		loadElements();
 
+		selected = false;
+
+		loadElements();
 		setOnContextMenuRequested(request -> {
 			parent.getExplorer().createContextMenu(this)
 					.show(this, request.getScreenX(), request.getScreenY());
@@ -65,6 +70,25 @@ public class ExplorerFile extends HBox {
 	 */
 	public Explorer getExplorer() {
 		return parent.getExplorer();
+	}
+
+	@Override
+	public boolean isSelected() {
+		return selected;
+	}
+
+	@Override
+	public void select() {
+		if (selected) return;
+		getStyleClass().add("selected-explorer-element");
+		selected = true;
+	}
+
+	@Override
+	public void deselect() {
+		if (!selected) return;
+		getStyleClass().remove("selected-explorer-element");
+		selected = false;
 	}
 
 	private void loadElements() {

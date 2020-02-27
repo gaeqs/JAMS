@@ -78,6 +78,7 @@ public class ExplorerFolderRepresentation extends HBox {
 			if (mouseEvent.getClickCount() % 2 == 0) {
 				folder.expandOrContract();
 			}
+			folder.getExplorer().setSelectedElement(folder);
 		}
 	}
 

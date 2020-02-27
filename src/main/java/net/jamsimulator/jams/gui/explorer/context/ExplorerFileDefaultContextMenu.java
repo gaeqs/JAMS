@@ -10,18 +10,26 @@ import java.awt.*;
 
 public class ExplorerFileDefaultContextMenu extends ContextMenu {
 
-	private ExplorerFile file;
+    public static final ExplorerFileDefaultContextMenu INSTANCE = new ExplorerFileDefaultContextMenu();
 
-	public ExplorerFileDefaultContextMenu(ExplorerFile file) {
-		this.file = file;
+    private ExplorerFile file;
 
-		getItems().add(new FileMenuItemRemove(file));
+    private ExplorerFileDefaultContextMenu() {
+        getItems().add(new FileMenuItemRemove(this));
 
-		getItems().add(new SeparatorMenuItem());
+        getItems().add(new SeparatorMenuItem());
 
-		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-			getItems().add(new FileMenuItemShowInFiles(file));
-		}
-	}
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            getItems().add(new FileMenuItemShowInFiles(this));
+        }
+    }
+
+    public ExplorerFile getCurrentFile() {
+        return file;
+    }
+
+    public void setCurrentExplorerFile(ExplorerFile file) {
+        this.file = file;
+    }
 
 }

@@ -19,6 +19,8 @@ import java.util.function.Function;
 public class Explorer extends VBox {
 
 	private ExplorerFolder mainFolder;
+	private ExplorerElement selectedElement;
+
 	private Function<ExplorerFile, ContextMenu> fileContextMenuCreator;
 	private Function<ExplorerFolder, ContextMenu> folderContextMenuCreator;
 
@@ -35,7 +37,10 @@ public class Explorer extends VBox {
 		getChildren().add(this.mainFolder);
 
 
-		fileContextMenuCreator = ExplorerFileDefaultContextMenu::new;
+		fileContextMenuCreator = file -> {
+			ExplorerFileDefaultContextMenu.INSTANCE.setCurrentExplorerFile(file);
+			return ExplorerFileDefaultContextMenu.INSTANCE;
+		};
 		folderContextMenuCreator = folder -> new ExplorerFolderDefaultContextMenu();
 	}
 
@@ -58,6 +63,20 @@ public class Explorer extends VBox {
 	 */
 	public ExplorerFolder getMainFolder() {
 		return mainFolder;
+	}
+
+	/**
+	 * Sets the selected element of the explorer.
+	 *
+	 * @param element the selected element.
+	 */
+	public void setSelectedElement(ExplorerElement element) {
+		if (selectedElement == element) return;
+		if (selectedElement != null)
+			selectedElement.deselect();
+		selectedElement = element;
+		if (element != null)
+			element.select();
 	}
 
 	/**

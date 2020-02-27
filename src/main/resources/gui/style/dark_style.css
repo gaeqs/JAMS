@@ -4,10 +4,12 @@
     -theme-foreground-lighter: #FFFFFF;
     -theme-background: #3C3F41;
     -theme-background-darker: derive(-theme-background, -20%);
-    -theme-background-focused: derive(-theme-background, 20%);
+    -theme-background-lighter: derive(-theme-background, 20%);
     -theme-background-pressed: derive(-theme-background, 40%);
     -theme-background-text-area: derive(-theme-background, -30%);
     -theme-header: #3B4754;
+    -theme-menu-item-hover: #4D6EAF;
+    -theme-explorer-element-selected: #4D6EAF;
 }
 
 
@@ -41,7 +43,7 @@
     -fx-background-color: -theme-background-text-area;
     -fx-text-fill: -theme-foreground;
     -fx-background-radius: 0;
-    -fx-border-color: -theme-background-focused;
+    -fx-border-color: -theme-background-lighter;
 }
 
 /*PANE*/
@@ -74,12 +76,12 @@ AnchorPane {
 }
 
 .tab-pane .tab-header-area .tab:selected {
-    -fx-background-color: -theme-background-focused;
+    -fx-background-color: -theme-background-lighter;
 }
 
 
 .tab-pane .tab-header-area .tab:showing {
-    -fx-background-color: -theme-background-focused;
+    -fx-background-color: -theme-background-lighter;
 }
 
 .tab-pane .tab-header-area .tab .tab-label {
@@ -114,6 +116,7 @@ AnchorPane {
 }
 
 .scroll-pane .viewport {
+    -fx-background-color: -theme-background;
     -fx-background-color: -theme-background;
 }
 
@@ -157,7 +160,7 @@ AnchorPane {
 
 .scroll-bar:horizontal .thumb,
 .scroll-bar:vertical .thumb {
-    -fx-background-color: -theme-background-focused;
+    -fx-background-color: -theme-background-lighter;
     -fx-background-radius: 0;
 }
 
@@ -182,14 +185,14 @@ AnchorPane {
 /*BUTTON*/
 .button {
     -fx-background-color: -theme-background;
-    -fx-border-color: -theme-background-focused;
+    -fx-border-color: -theme-background-lighter;
     -fx-background-radius: 0;
     -fx-text-fill: -theme-foreground;
 }
 
 .button:hover {
-    -fx-background-color: -theme-background-focused;
-    -fx-border-color: -theme-background-focused;
+    -fx-background-color: -theme-background-lighter;
+    -fx-border-color: -theme-background-lighter;
     -fx-background-radius: 0;
     -fx-text-fill: -theme-foreground;
 }
@@ -204,14 +207,14 @@ AnchorPane {
 /*BUTTON*/
 .button {
     -fx-background-color: -theme-background;
-    -fx-border-color: -theme-background-focused;
+    -fx-border-color: -theme-background-lighter;
     -fx-background-radius: 0;
     -fx-text-fill: -theme-foreground;
 }
 
 .button:hover {
-    -fx-background-color: -theme-background-focused;
-    -fx-border-color: -theme-background-focused;
+    -fx-background-color: -theme-background-lighter;
+    -fx-border-color: -theme-background-lighter;
     -fx-background-radius: 0;
     -fx-text-fill: -theme-foreground;
 }
@@ -225,28 +228,28 @@ AnchorPane {
 
 .menu-button {
     -fx-background-color: -theme-background;
-    -fx-border-color: -theme-background-focused;
+    -fx-border-color: -theme-background-lighter;
     -fx-background-radius: 0;
     -fx-text-fill: -theme-foreground;
 }
 
 .menu-button:hover {
-    -fx-background-color: -theme-background-focused;
-    -fx-border-color: -theme-background-focused;
+    -fx-background-color: -theme-background-lighter;
+    -fx-border-color: -theme-background-lighter;
     -fx-background-radius: 0;
     -fx-text-fill: -theme-foreground;
 }
 
 .toggle-button {
     -fx-background-color: -theme-background;
-    -fx-border-color: -theme-background-focused;
+    -fx-border-color: -theme-background-lighter;
     -fx-background-radius: 0;
     -fx-text-fill: -theme-foreground;
 }
 
 .toggle-button:hover {
-    -fx-background-color: -theme-background-focused;
-    -fx-border-color: -theme-background-focused;
+    -fx-background-color: -theme-background-lighter;
+    -fx-border-color: -theme-background-lighter;
     -fx-background-radius: 0;
     -fx-text-fill: -theme-foreground;
 }
@@ -292,13 +295,13 @@ AnchorPane {
 /*CHOICE BOX */
 .choice-box {
     -fx-background-color: -theme-background;
-    -fx-border-color: -theme-background-focused;
+    -fx-border-color: -theme-background-lighter;
 }
 
 /* COMBO BOX */
 .combo-box-base {
     -fx-background-color: -theme-background;
-    -fx-border-color: -theme-background-focused;
+    -fx-border-color: -theme-background-lighter;
 }
 
 .combo-box-base .list-cell {
@@ -317,7 +320,7 @@ AnchorPane {
 
 .list-view .list-cell:even {
     -fx-text-fill: -theme-foreground;
-    -fx-background-color: -theme-background-focused;
+    -fx-background-color: -theme-background-lighter;
 }
 
 .list-view .list-cell:odd {
@@ -340,7 +343,7 @@ AnchorPane {
 
 .table-view .table-row-cell:even {
     -fx-text-fill: -theme-foreground;
-    -fx-background-color: -theme-background-focused;
+    -fx-background-color: -theme-background-lighter;
 }
 
 .table-view .table-row-cell:odd {
@@ -371,7 +374,7 @@ AnchorPane {
 
 .tree-table-view .table-row-cell:even {
     -fx-text-fill: -theme-foreground;
-    -fx-background-color: -theme-background-focused;
+    -fx-background-color: -theme-background-lighter;
 }
 
 .tree-table-view .table-row-cell:odd {
@@ -399,25 +402,34 @@ AnchorPane {
     -fx-background-color: -theme-background-darker;
 }
 
+/*SEPARATOR*/
+.separator {
+    -fx-background-color: -theme-background-darker;
+}
+
+.separator .line {
+    -fx-border-color: transparent;
+}
+
 /*MENU BAR*/
 .menu-bar {
-    -fx-background-color: -theme-background-darker;
+    -fx-background-color: -theme-background;
     -fx-padding: 0;
 }
 
 .menu:hover {
-    -fx-background-color: -theme-background-focused;
+    -fx-background-color: -theme-background-lighter;
 }
 
 .menu:showing {
-    -fx-background-color: -theme-background-focused;
+    -fx-background-color: -theme-background-lighter;
 }
 
 .menu {
-    -fx-border-color: -theme-background-darker;
-    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-border-color: transparent;
     -fx-text-fill: -theme-foreground;
-    -fx-background-color: -theme-background-darker;
+    -fx-background-color: -theme-background;
     -fx-padding: 1 5 1 5;
 }
 
@@ -426,7 +438,7 @@ AnchorPane {
 }
 
 .menu-item {
-    -fx-background-color: -theme-background-darker;
+    -fx-background-color: -theme-background;
     -fx-padding: 2 5 2 5;
 }
 
@@ -435,7 +447,7 @@ AnchorPane {
 }
 
 .menu-item:focused {
-    -fx-background-color: -theme-background-focused;
+    -fx-background-color: -theme-menu-item-hover;
 }
 
 .context-menu {
@@ -443,13 +455,14 @@ AnchorPane {
     -fx-padding: 0px;
 }
 
-/*SEPARATOR*/
-.separator {
-    -fx-background-color: -theme-background-darker;
+.context-menu .separator {
+    -fx-background-color: transparent;
+
 }
 
-.separator .line {
-    -fx-border-color: -theme-background-darker;
+.context-menu .separator .line {
+    -fx-border-color: -theme-background-lighter transparent transparent transparent;
+    -fx-border-insets: 1 0 0 0;
 }
 
 /*SLIDER*/
@@ -458,7 +471,7 @@ AnchorPane {
 }
 
 .slider .thumb {
-    -fx-background-color: -theme-background-focused;
+    -fx-background-color: -theme-background-lighter;
 }
 
 /*SIDEBAR*/
@@ -547,4 +560,12 @@ AnchorPane {
     -fx-background-color: -theme-header;
     -fx-border-color: -theme-background-darker;
     -fx-border-width: 0 0 1 0;
+}
+
+.explorer-element {
+    -fx-background-color: -theme-background;
+}
+
+.selected-explorer-element {
+    -fx-background-color: -theme-explorer-element-selected;
 }

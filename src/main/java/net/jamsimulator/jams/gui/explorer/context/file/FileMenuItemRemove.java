@@ -1,13 +1,13 @@
 package net.jamsimulator.jams.gui.explorer.context.file;
 
 import javafx.scene.control.MenuItem;
-import net.jamsimulator.jams.gui.explorer.ExplorerFile;
+import net.jamsimulator.jams.gui.explorer.context.ExplorerFileDefaultContextMenu;
 
 public class FileMenuItemRemove extends MenuItem {
 
-	public FileMenuItemRemove(ExplorerFile file) {
-		super("Remove");
-		setOnAction(target -> file.getFile().delete());
-	}
+    public FileMenuItemRemove(ExplorerFileDefaultContextMenu contextMenu) {
+        super("Remove");
+        setOnAction(target -> contextMenu.getCurrentFile().getFile().delete());
+    }
 
 }
