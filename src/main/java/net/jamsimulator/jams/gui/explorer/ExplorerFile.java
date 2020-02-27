@@ -14,6 +14,8 @@ import java.io.File;
 public class ExplorerFile extends HBox {
 
 	public static final int SPACING = 5;
+
+	private ExplorerFolder parent;
 	private File file;
 
 	//REPRESENTATION DATA
@@ -23,11 +25,28 @@ public class ExplorerFile extends HBox {
 	/**
 	 * Creates an explorer file.
 	 *
-	 * @param file the file to represent.
+	 * @param parent the {@link ExplorerFolder} containing this file.
+	 * @param file   the file to represent.
 	 */
-	public ExplorerFile(File file) {
+	public ExplorerFile(ExplorerFolder parent, File file) {
+		this.parent = parent;
 		this.file = file;
 		loadElements();
+
+		setOnContextMenuRequested(request -> {
+			parent.getExplorer().createContextMenu(this)
+					.show(this, request.getScreenX(), request.getScreenY());
+			request.consume();
+		});
+	}
+
+	/**
+	 * Returns the {@link ExplorerFolder} containing this file.
+	 *
+	 * @return the {@link ExplorerFolder}.
+	 */
+	public ExplorerFolder getParentFolder() {
+		return parent;
 	}
 
 	/**
@@ -39,6 +58,14 @@ public class ExplorerFile extends HBox {
 		return file;
 	}
 
+	/**
+	 * Returns the {@link Explorer} of this file.
+	 *
+	 * @return the {@link Explorer}.
+	 */
+	public Explorer getExplorer() {
+		return parent.getExplorer();
+	}
 
 	private void loadElements() {
 		icon = new ImageView(JamsApplication.getFileIconManager().getImageByFile(file));

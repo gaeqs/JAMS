@@ -20,6 +20,9 @@ public class ExplorerFolder extends VBox {
 
 	public static final int SPACING = 4;
 
+	private Explorer explorer;
+	private ExplorerFolder parent;
+
 	private File folder;
 	private ExplorerFolderRepresentation representation;
 
@@ -36,9 +39,13 @@ public class ExplorerFolder extends VBox {
 	/**
 	 * Creates the explorer folder.
 	 *
-	 * @param folder the folder to represent.
+	 * @param explorer the {@link Explorer} of this folder.
+	 * @param parent   the {@link ExplorerFolder} containing this folder. This may be null.
+	 * @param folder   the folder to represent.
 	 */
-	public ExplorerFolder(File folder) {
+	public ExplorerFolder(Explorer explorer, ExplorerFolder parent, File folder) {
+		this.explorer = explorer;
+		this.parent = parent;
 		this.folder = folder;
 
 		representation = new ExplorerFolderRepresentation(this);
@@ -56,6 +63,31 @@ public class ExplorerFolder extends VBox {
 		loadElements();
 		loadWatcher();
 		refreshAllFilesAndFolders(true, true);
+
+		setOnContextMenuRequested(request -> {
+			parent.getExplorer().createContextMenu(this).
+					show(this, request.getScreenX(), request.getScreenY());
+			request.consume();
+		});
+	}
+
+	/**
+	 * Returns the {@link Explorer} of this folder.
+	 *
+	 * @return the {@link Explorer}.
+	 */
+	public Explorer getExplorer() {
+		return explorer;
+	}
+
+	/**
+	 * Returns the {@link ExplorerFolder} containing this folder.
+	 * This value is null when this folder is the root folder.
+	 *
+	 * @return the {@link ExplorerFolder}.
+	 */
+	public ExplorerFolder getParentFolder() {
+		return parent;
 	}
 
 	/**
@@ -140,10 +172,10 @@ public class ExplorerFolder extends VBox {
 	 */
 	public void add(File file) {
 		if (file.isDirectory()) {
-			folders.add(new ExplorerFolder(file));
+			folders.add(new ExplorerFolder(explorer, this, file));
 			refreshAllFilesAndFolders(false, true);
 		} else {
-			files.add(new ExplorerFile(file));
+			files.add(new ExplorerFile(this, file));
 			refreshAllFilesAndFolders(true, false);
 		}
 	}
@@ -181,9 +213,9 @@ public class ExplorerFolder extends VBox {
 
 		for (File file : folderFiles) {
 			if (file.isDirectory())
-				folders.add(new ExplorerFolder(file));
+				folders.add(new ExplorerFolder(explorer, this, file));
 			else if (file.isFile())
-				files.add(new ExplorerFile(file));
+				files.add(new ExplorerFile(this, file));
 		}
 	}
 
