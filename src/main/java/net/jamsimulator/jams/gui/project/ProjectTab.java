@@ -1,15 +1,19 @@
 package net.jamsimulator.jams.gui.project;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.utils.AnchorUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a folder project's tab. This must be used by {@link MainAnchorPane#getProjectsTabPane()}
@@ -19,6 +23,8 @@ public class ProjectTab extends Tab {
 	private Project project;
 	private TabPane projectTabPane;
 
+	private List<EventHandler<Event>> closeListeners;
+
 	/**
 	 * Creates the folder project's tab.
 	 *
@@ -27,6 +33,7 @@ public class ProjectTab extends Tab {
 	public ProjectTab(Project project) {
 		super(project.getName());
 		this.project = project;
+		closeListeners = new ArrayList<>();
 
 		AnchorPane pane = new AnchorPane();
 
@@ -43,10 +50,12 @@ public class ProjectTab extends Tab {
 		tab.setClosable(false);
 		projectTabPane.getTabs().add(tab);
 
-		WorkingPane structurePane = new ProjectPane(this, project);
+		WorkingPane structurePane = new ProjectPane(tab, this, project);
 		tab.setContent(structurePane);
 
 		setContent(pane);
+
+		setOnClosed(event -> closeListeners.forEach(target -> target.handle(event)));
 	}
 
 	/**
@@ -65,5 +74,24 @@ public class ProjectTab extends Tab {
 	 */
 	public TabPane getProjectTabPane() {
 		return projectTabPane;
+	}
+
+	/**
+	 * Adds a listener that will be invoked when the tab is closed.
+	 *
+	 * @param listener the listener.
+	 */
+	public void addTabCloseListener(EventHandler<Event> listener) {
+		closeListeners.add(listener);
+	}
+
+
+	/**
+	 * Removed a listener that would be invoked when the tab is closed.
+	 *
+	 * @param listener the listener.
+	 */
+	public void removeStageCloseListener(EventHandler<Event> listener) {
+		closeListeners.remove(listener);
 	}
 }

@@ -4,6 +4,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;

@@ -1,15 +1,20 @@
 package net.jamsimulator.jams.gui;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import net.jamsimulator.jams.gui.font.FontLoader;
 import net.jamsimulator.jams.gui.icon.FileIconManager;
 import net.jamsimulator.jams.gui.icon.IconManager;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class JamsApplication extends Application {
 
@@ -18,13 +23,19 @@ public class JamsApplication extends Application {
 	private static Stage stage;
 	private static Scene scene;
 
+	private static List<EventHandler<WindowEvent>> closeListeners;
+
 	@Override
 	public void start(Stage primaryStage) {
+
 		stage = primaryStage;
 		FontLoader.load();
 		primaryStage.setTitle("JAMS (Just Another MIPS Simulator)");
-		AnchorPane pane = new MainAnchorPane();
 
+		closeListeners = new ArrayList<>();
+		stage.setOnCloseRequest(event -> closeListeners.forEach(target -> target.handle(event)));
+
+		AnchorPane pane = new MainAnchorPane();
 		pane.getStylesheets().add("gui/style/dark_style.css");
 
 		scene = new Scene(pane);
@@ -75,5 +86,24 @@ public class JamsApplication extends Application {
 	 */
 	public static FileIconManager getFileIconManager() {
 		return FileIconManager.INSTANCE;
+	}
+
+	/**
+	 * Adds a listener that will be invoked when the main stage is closed.
+	 *
+	 * @param listener the listener.
+	 */
+	public static void addStageCloseListener(EventHandler<WindowEvent> listener) {
+		closeListeners.add(listener);
+	}
+
+
+	/**
+	 * Removed a listener that would be invoked when the main stage is closed.
+	 *
+	 * @param listener the listener.
+	 */
+	public static void removeStageCloseListener(EventHandler<WindowEvent> listener) {
+		closeListeners.remove(listener);
 	}
 }

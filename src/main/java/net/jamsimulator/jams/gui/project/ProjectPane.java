@@ -4,6 +4,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.icon.Icons;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.gui.sidebar.SidebarButton;
@@ -15,10 +16,10 @@ import net.jamsimulator.jams.project.Project;
 public class ProjectPane extends WorkingPane {
 
 	private Project project;
-	private ExplorerPane explorer;
+	private Explorer explorer;
 
-	public ProjectPane(Tab parent, Project project) {
-		super(parent, new TextArea());
+	public ProjectPane(Tab parent, ProjectTab projectTab, Project project) {
+		super(parent, projectTab, new TextArea());
 		this.project = project;
 		loadSidebarModules();
 	}
@@ -27,12 +28,12 @@ public class ProjectPane extends WorkingPane {
 	private void loadSidebarModules() {
 		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
 				Icons.SIDEBAR_EXPLORER_PATH, SidebarButton.IMAGE_SIZE, SidebarButton.IMAGE_SIZE).orElse(null);
-		explorer = new ExplorerPane(project.getFolder());
+		explorer = new Explorer(project.getFolder());
 		topLeftSidebar.addNode("Explorer", explorer, explorerIcon);
+	}
 
-		JamsApplication.getStage().onCloseRequestProperty().addListener(event -> {
-			System.out.println("TEST");
-			explorer.kill();
-		});
+	@Override
+	protected void onClose() {
+		explorer.killWatchers();
 	}
 }

@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.gui.main;
 
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Separator;
@@ -9,7 +10,10 @@ import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.WindowEvent;
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.bottombar.BottomBar;
+import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.sidebar.SidePane;
 import net.jamsimulator.jams.gui.sidebar.Sidebar;
 import net.jamsimulator.jams.gui.sidebar.SidebarFillRegion;
@@ -36,7 +40,9 @@ public class WorkingPane extends AnchorPane {
 			topRightSidebar, bottomRightSidebar;
 	protected BottomBar bottomBar;
 
-	public WorkingPane(Tab parent, Node center) {
+	private EventHandler<WindowEvent> stageCloseListener;
+
+	public WorkingPane(Tab parent, ProjectTab projectTab, Node center) {
 		this.parent = parent;
 		this.center = center;
 
@@ -62,6 +68,17 @@ public class WorkingPane extends AnchorPane {
 
 		loadSidebars();
 		loadResizeEvents();
+
+		//Close events
+		if (projectTab != null) {
+			projectTab.addTabCloseListener(target -> {
+				JamsApplication.removeStageCloseListener(stageCloseListener);
+				onClose();
+			});
+		}
+
+		stageCloseListener = target -> onClose();
+		JamsApplication.addStageCloseListener(stageCloseListener);
 	}
 
 
@@ -144,6 +161,13 @@ public class WorkingPane extends AnchorPane {
 	 */
 	public BottomBar getBottomBar() {
 		return bottomBar;
+	}
+
+	/**
+	 * This method must be called when this working pane is not in use anymore.
+	 */
+	protected void onClose() {
+
 	}
 
 	private void loadSidebars() {
