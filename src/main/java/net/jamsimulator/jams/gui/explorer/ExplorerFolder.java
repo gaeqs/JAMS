@@ -16,7 +16,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
 /**
  * Represents a folder inside an {@link Explorer}.
  */
-public class ExplorerFolder extends VBox implements ExplorerElement {
+public class ExplorerFolder extends VBox {
 
 	public static final int SPACING = 1;
 
@@ -35,9 +35,6 @@ public class ExplorerFolder extends VBox implements ExplorerElement {
 	private VBox contents;
 	private boolean expanded;
 
-	private boolean selected;
-
-
 	/**
 	 * Creates the explorer folder.
 	 *
@@ -46,7 +43,6 @@ public class ExplorerFolder extends VBox implements ExplorerElement {
 	 * @param folder   the folder to represent.
 	 */
 	public ExplorerFolder(Explorer explorer, ExplorerFolder parent, File folder) {
-		getStyleClass().add("explorer-element");
 		this.explorer = explorer;
 		this.parent = parent;
 		this.folder = folder;
@@ -57,8 +53,6 @@ public class ExplorerFolder extends VBox implements ExplorerElement {
 
 		contents = new VBox();
 		expanded = false;
-
-		selected = false;
 
 		setSpacing(SPACING);
 		contents.setSpacing(SPACING);
@@ -72,6 +66,10 @@ public class ExplorerFolder extends VBox implements ExplorerElement {
 			explorer.createContextMenu(this).
 					show(this, request.getScreenX(), request.getScreenY());
 			request.consume();
+		});
+
+		explorer.widthProperty().addListener((target, old, val) -> {
+			setPrefWidth(val.doubleValue());
 		});
 	}
 
@@ -209,27 +207,6 @@ public class ExplorerFolder extends VBox implements ExplorerElement {
 				refreshAllFilesAndFolders(true, false);
 		}
 	}
-
-
-	@Override
-	public boolean isSelected() {
-		return selected;
-	}
-
-	@Override
-	public void select() {
-		if (selected) return;
-		getStyleClass().add("selected-explorer-element");
-		selected = true;
-	}
-
-	@Override
-	public void deselect() {
-		if (!selected) return;
-		getStyleClass().remove("selected-explorer-element");
-		selected = false;
-	}
-
 
 	private void loadChildren() {
 		File[] folderFiles = folder.listFiles();

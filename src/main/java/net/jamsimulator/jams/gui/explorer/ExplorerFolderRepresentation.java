@@ -15,7 +15,7 @@ import net.jamsimulator.jams.gui.icon.Icons;
  * This class allows {@link ExplorerFolder}s to be represented inside the explorer.
  * It's functionality is similar to the class {@link ExplorerFile}.
  */
-public class ExplorerFolderRepresentation extends HBox {
+public class ExplorerFolderRepresentation extends HBox implements ExplorerElement {
 
 	private ExplorerFolder folder;
 
@@ -23,13 +23,19 @@ public class ExplorerFolderRepresentation extends HBox {
 	private ImageView icon;
 	private Label label;
 
+	private boolean selected;
+
 	/**
 	 * Creates the representation.
 	 *
 	 * @param folder the {@link ExplorerFolder} to represent.
 	 */
 	public ExplorerFolderRepresentation(ExplorerFolder folder) {
+		getStyleClass().add("explorer-element");
 		this.folder = folder;
+
+		selected = false;
+
 		loadElements();
 		loadListeners();
 		refreshStatusIcon();
@@ -51,6 +57,27 @@ public class ExplorerFolderRepresentation extends HBox {
 		}
 		statusIcon.setImage(icon);
 	}
+
+
+	@Override
+	public boolean isSelected() {
+		return selected;
+	}
+
+	@Override
+	public void select() {
+		if (selected) return;
+		getStyleClass().add("selected-explorer-element");
+		selected = true;
+	}
+
+	@Override
+	public void deselect() {
+		if (!selected) return;
+		getStyleClass().remove("selected-explorer-element");
+		selected = false;
+	}
+
 
 	private void loadElements() {
 		statusIcon = new ImageView();
@@ -78,7 +105,7 @@ public class ExplorerFolderRepresentation extends HBox {
 			if (mouseEvent.getClickCount() % 2 == 0) {
 				folder.expandOrContract();
 			}
-			folder.getExplorer().setSelectedElement(folder);
+			folder.getExplorer().setSelectedElement(this);
 		}
 	}
 

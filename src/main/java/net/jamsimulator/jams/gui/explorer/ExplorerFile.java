@@ -43,6 +43,10 @@ public class ExplorerFile extends HBox implements ExplorerElement {
 					.show(this, request.getScreenX(), request.getScreenY());
 			request.consume();
 		});
+
+		parent.getExplorer().widthProperty().addListener((target, old, val) -> {
+			setPrefWidth(val.doubleValue());
+		});
 	}
 
 	/**
