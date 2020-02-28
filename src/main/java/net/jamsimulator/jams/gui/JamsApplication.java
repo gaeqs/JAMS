@@ -36,9 +36,9 @@ public class JamsApplication extends Application {
 		stage.setOnCloseRequest(event -> closeListeners.forEach(target -> target.handle(event)));
 
 		AnchorPane pane = new MainAnchorPane();
-		pane.getStylesheets().add("gui/style/dark_style.css");
 
 		scene = new Scene(pane);
+		scene.getStylesheets().add("gui/style/dark_style.css");
 
 		primaryStage.setScene(scene);
 		primaryStage.setWidth(WIDTH);

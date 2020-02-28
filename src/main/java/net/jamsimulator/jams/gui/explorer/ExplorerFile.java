@@ -3,6 +3,8 @@ package net.jamsimulator.jams.gui.explorer;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.JamsApplication;
 
@@ -38,6 +40,8 @@ public class ExplorerFile extends HBox implements ExplorerElement {
 		selected = false;
 
 		loadElements();
+		loadListeners();
+
 		setOnContextMenuRequested(request -> {
 			parent.getExplorer().createContextMenu(this)
 					.show(this, request.getScreenX(), request.getScreenY());
@@ -102,5 +106,16 @@ public class ExplorerFile extends HBox implements ExplorerElement {
 		getChildren().addAll(icon, label);
 		setSpacing(SPACING);
 		setAlignment(Pos.CENTER_LEFT);
+	}
+
+	private void loadListeners() {
+		setOnMouseClicked(this::onMouseClicked);
+	}
+
+	private void onMouseClicked(MouseEvent mouseEvent) {
+		//Folders require a double click to expand or contract itself.
+		if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+			getExplorer().setSelectedElement(this);
+		}
 	}
 }
