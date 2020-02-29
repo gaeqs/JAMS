@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.gui.explorer;
 
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
@@ -9,6 +10,7 @@ import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import static java.nio.file.StandardWatchEventKinds.*;
 
@@ -116,6 +118,15 @@ public class ExplorerFolder extends VBox {
 	}
 
 	/**
+	 * Returns the {@link javafx.scene.layout.HBox} representing this folder in the explorer.
+	 *
+	 * @return the {@link ExplorerFolderRepresentation}.
+	 */
+	public ExplorerFolderRepresentation getRepresentation() {
+		return representation;
+	}
+
+	/**
 	 * Returns whether this folder is expanded.
 	 * If a explorer folder is expanded all its files will be shown on the {@link Explorer}.
 	 *
@@ -220,6 +231,66 @@ public class ExplorerFolder extends VBox {
 			if (files.removeIf(target -> target.getFile().equals(file)))
 				refreshAllFilesAndFolders(true, false);
 		}
+	}
+
+
+	/**
+	 * Returns the index of the given {@link ExplorerFile} inside this explorer folder.
+	 *
+	 * @param element the given {@link ExplorerFile}.
+	 * @return the index, or -1 if not found.
+	 * @see List#indexOf(Object)
+	 */
+	public int getIndex(Node element) {
+		return contents.getChildren().indexOf(element);
+	}
+
+
+	/**
+	 * Returns the {@link ExplorerElement} located at the given index.
+	 * The {@link ExplorerFolderRepresentation} is not represented by any index.¡
+	 * Use {@link #getRepresentation()} instead to get it.
+	 *
+	 * @param index the index.
+	 * @return the element, if found.
+	 */
+	public Optional<ExplorerElement> getElementByIndex(int index) {
+		if (index < 0 || contents.getChildren().size() <= index) return Optional.empty();
+
+		Node node = contents.getChildren().get(index);
+		if (node instanceof ExplorerFolder) return Optional.of(((ExplorerFolder) node).getRepresentation());
+		if (!(node instanceof ExplorerElement)) return Optional.empty();
+		return Optional.of((ExplorerElement) node);
+	}
+
+	/**
+	 * Returns the first {@link ExplorerElement} of this explorer folder.
+	 * <p>
+	 * For this method to work the folder must be expanded!
+	 *
+	 * @return the first {@link ExplorerElement}.
+	 */
+	public Optional<ExplorerElement> getFirstChildren() {
+		if (contents.getChildren().isEmpty()) return Optional.empty();
+		Node node = contents.getChildren().get(0);
+		if (node instanceof ExplorerFolder) return Optional.of(((ExplorerFolder) node).getRepresentation());
+		if (!(node instanceof ExplorerElement)) return Optional.empty();
+		return Optional.of((ExplorerElement) node);
+	}
+
+	/**
+	 * Returns the last {@link ExplorerElement} of this explorer folder.
+	 * <p>
+	 * For this method to work the folder must be expanded!
+	 *
+	 * @return the first {@link ExplorerElement}.
+	 */
+	public Optional<ExplorerElement> getLastChildren() {
+		if (contents.getChildren().isEmpty()) return Optional.empty();
+		Node node = contents.getChildren().get(getChildren().size() - 1);
+		if (node instanceof ExplorerFolder) return Optional.of(((ExplorerFolder) node).getRepresentation());
+		if (!(node instanceof ExplorerElement)) return Optional.empty();
+		return Optional.of((ExplorerElement) node);
 	}
 
 	private void loadChildren() {

@@ -4,12 +4,16 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.icon.FileIconManager;
 import net.jamsimulator.jams.gui.icon.Icons;
+
+import java.util.Optional;
 
 /**
  * This class allows {@link ExplorerFolder}s to be represented inside the explorer.
@@ -63,6 +67,16 @@ public class ExplorerFolderRepresentation extends HBox implements ExplorerElemen
 		statusIcon.setImage(icon);
 	}
 
+
+	/**
+	 * Returns the represented {@link ExplorerFolder}.
+	 *
+	 * @return the represented {@link ExplorerFolder}.
+	 */
+	public ExplorerFolder getFolder() {
+		return folder;
+	}
+
 	/**
 	 * Returns the hierarchy level.
 	 *
@@ -89,6 +103,70 @@ public class ExplorerFolderRepresentation extends HBox implements ExplorerElemen
 		if (!selected) return;
 		getStyleClass().remove("selected-explorer-element");
 		selected = false;
+	}
+
+	@Override
+	public Optional<ExplorerElement> getNext() {
+		Optional<ExplorerElement> optional = folder.getFirstChildren();
+		if (optional.isPresent()) return optional;
+
+		ExplorerFolder parent = folder.getParentFolder();
+
+		if(parent == null) return Optional.empty();
+
+		int index = folder.getParentFolder().getIndex(folder);
+
+		if (index == -1)
+			throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
+
+		index++;
+
+		Optional<ExplorerElement> element;
+		do {
+			element = parent.getElementByIndex(index);
+			if (element.isPresent()) return element;
+
+			if (parent.getParentFolder() == null) return Optional.empty();
+
+			index = parent.getParentFolder().getIndex(parent);
+			if (index == -1) {
+				throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
+			}
+			index++;
+			parent = parent.getParentFolder();
+		} while (parent != null);
+		return element;
+	}
+
+	@Override
+	public Optional<ExplorerElement> getPrevious() {
+		if (folder.getParentFolder() == null) return Optional.empty();
+		int index = folder.getParentFolder().getIndex(folder);
+		if (index == -1)
+			throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
+		index--;
+
+		if (index == -1)
+			return Optional.of(folder.getParentFolder().getRepresentation());
+
+		ExplorerElement element = folder.getParentFolder().getElementByIndex(index).get();
+		while (element instanceof ExplorerFolderRepresentation && ((ExplorerFolderRepresentation) element).getFolder().isExpanded()) {
+
+			Optional<ExplorerElement> optional = ((ExplorerFolderRepresentation) element).getFolder().getLastChildren();
+			if (!optional.isPresent()) return Optional.of(element);
+			element = optional.get();
+
+		}
+		return Optional.of(element);
+
+	}
+
+	@Override
+	public void handleKeyPressEvent(KeyEvent event) {
+		if(event.getCode() == KeyCode.LEFT)
+			folder.contract();
+		else if(event.getCode() == KeyCode.RIGHT)
+			folder.expand();
 	}
 
 

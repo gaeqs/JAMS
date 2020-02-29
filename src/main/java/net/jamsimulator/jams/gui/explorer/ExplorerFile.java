@@ -3,12 +3,14 @@ package net.jamsimulator.jams.gui.explorer;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.JamsApplication;
 
 import java.io.File;
+import java.util.Optional;
 
 /**
  * Represents a file inside an {@link Explorer}.
@@ -101,6 +103,56 @@ public class ExplorerFile extends HBox implements ExplorerElement {
 		if (!selected) return;
 		getStyleClass().remove("selected-explorer-element");
 		selected = false;
+	}
+
+	@Override
+	public Optional<ExplorerElement> getNext() {
+		int index = parent.getIndex(this);
+		if (index == -1)
+			throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
+		index++;
+
+		ExplorerFolder parent = this.parent;
+		Optional<ExplorerElement> element;
+		do {
+			element = parent.getElementByIndex(index);
+			if (element.isPresent()) return element;
+
+			if (parent.getParentFolder() == null) return Optional.empty();
+
+			index = parent.getParentFolder().getIndex(parent);
+			if (index == -1) {
+				throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
+			}
+			index++;
+			parent = parent.getParentFolder();
+		} while (parent != null);
+		return element;
+	}
+
+	@Override
+	public Optional<ExplorerElement> getPrevious() {
+		int index = parent.getIndex(this);
+		if (index == -1)
+			throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
+		index--;
+
+		if (index == -1)
+			return Optional.of(parent.getRepresentation());
+
+		ExplorerElement element = parent.getElementByIndex(index).get();
+		while (element instanceof ExplorerFolderRepresentation && ((ExplorerFolderRepresentation) element).getFolder().isExpanded()) {
+
+			Optional<ExplorerElement> optional = ((ExplorerFolderRepresentation) element).getFolder().getLastChildren();
+			if (!optional.isPresent()) return Optional.of(element);
+			element = optional.get();
+
+		}
+		return Optional.of(element);
+	}
+
+	@Override
+	public void handleKeyPressEvent(KeyEvent event) {
 	}
 
 	private void loadElements() {

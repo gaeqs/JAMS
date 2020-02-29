@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.gui.explorer;
 
 import javafx.scene.control.ContextMenu;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.explorer.context.ExplorerFileDefaultContextMenu;
 import net.jamsimulator.jams.gui.explorer.context.ExplorerFolderDefaultContextMenu;
@@ -42,6 +43,28 @@ public class Explorer extends VBox {
 			return ExplorerFileDefaultContextMenu.INSTANCE;
 		};
 		folderContextMenuCreator = folder -> new ExplorerFolderDefaultContextMenu();
+
+		setOnMouseClicked(event -> {
+			requestFocus();
+			event.consume();
+		});
+
+		setOnKeyPressed(event -> {
+			if (event.getCode() == KeyCode.UP) {
+				if (selectedElement != null) {
+					selectedElement.getPrevious().ifPresent(this::setSelectedElement);
+				}
+			} else if (event.getCode() == KeyCode.DOWN) {
+				if (selectedElement != null) {
+					selectedElement.getNext().ifPresent(this::setSelectedElement);
+				}
+			} else {
+				if (selectedElement != null) {
+					selectedElement.handleKeyPressEvent(event);
+				}
+			}
+			event.consume();
+		});
 	}
 
 	/**
