@@ -3,6 +3,7 @@ package net.jamsimulator.jams.gui.explorer;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -153,6 +154,11 @@ public class ExplorerFile extends HBox implements ExplorerElement {
 
 	@Override
 	public void handleKeyPressEvent(KeyEvent event) {
+		if (event.getCode() == KeyCode.LEFT) {
+			getExplorer().setSelectedElement(parent.getRepresentation());
+		} else if (event.getCode() == KeyCode.RIGHT) {
+			getNext().ifPresent(element -> getExplorer().setSelectedElement(element));
+		}
 	}
 
 	private void loadElements() {

@@ -112,7 +112,7 @@ public class ExplorerFolderRepresentation extends HBox implements ExplorerElemen
 
 		ExplorerFolder parent = folder.getParentFolder();
 
-		if(parent == null) return Optional.empty();
+		if (parent == null) return Optional.empty();
 
 		int index = folder.getParentFolder().getIndex(folder);
 
@@ -163,10 +163,19 @@ public class ExplorerFolderRepresentation extends HBox implements ExplorerElemen
 
 	@Override
 	public void handleKeyPressEvent(KeyEvent event) {
-		if(event.getCode() == KeyCode.LEFT)
-			folder.contract();
-		else if(event.getCode() == KeyCode.RIGHT)
-			folder.expand();
+		if (event.getCode() == KeyCode.LEFT) {
+			if (folder.isExpanded()) {
+				folder.contract();
+			} else {
+				getPrevious().ifPresent(element -> folder.getExplorer().setSelectedElement(element));
+			}
+		} else if (event.getCode() == KeyCode.RIGHT) {
+			if (!folder.isExpanded()) {
+				folder.expand();
+			} else {
+				getNext().ifPresent(element -> folder.getExplorer().setSelectedElement(element));
+			}
+		}
 	}
 
 
