@@ -1,7 +1,6 @@
 package net.jamsimulator.jams.gui.explorer;
 
 import javafx.application.Platform;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
@@ -35,19 +34,24 @@ public class ExplorerFolder extends VBox {
 	private VBox contents;
 	private boolean expanded;
 
+	//HIERARCHY
+	private int hierarchyLevel;
+
 	/**
 	 * Creates the explorer folder.
 	 *
-	 * @param explorer the {@link Explorer} of this folder.
-	 * @param parent   the {@link ExplorerFolder} containing this folder. This may be null.
-	 * @param folder   the folder to represent.
+	 * @param explorer       the {@link Explorer} of this folder.
+	 * @param parent         the {@link ExplorerFolder} containing this folder. This may be null.
+	 * @param folder         the folder to represent.
+	 * @param hierarchyLevel the hierarchy level, used by the spacing.
 	 */
-	public ExplorerFolder(Explorer explorer, ExplorerFolder parent, File folder) {
+	public ExplorerFolder(Explorer explorer, ExplorerFolder parent, File folder, int hierarchyLevel) {
 		this.explorer = explorer;
 		this.parent = parent;
 		this.folder = folder;
+		this.hierarchyLevel = hierarchyLevel;
 
-		representation = new ExplorerFolderRepresentation(this);
+		representation = new ExplorerFolderRepresentation(this, hierarchyLevel);
 		folders = new ArrayList<>();
 		files = new ArrayList<>();
 
@@ -63,6 +67,7 @@ public class ExplorerFolder extends VBox {
 		refreshAllFilesAndFolders(true, true);
 
 		setOnContextMenuRequested(request -> {
+			explorer.setSelectedElement(representation);
 			explorer.createContextMenu(this).
 					show(this, request.getScreenX(), request.getScreenY());
 			request.consume();
@@ -99,6 +104,15 @@ public class ExplorerFolder extends VBox {
 	 */
 	public File getFolder() {
 		return folder;
+	}
+
+	/**
+	 * Returns the hierarchy level.
+	 *
+	 * @return the hierarchy level.
+	 */
+	public int getHierarchyLevel() {
+		return hierarchyLevel;
 	}
 
 	/**
@@ -174,10 +188,10 @@ public class ExplorerFolder extends VBox {
 	 */
 	public void add(File file) {
 		if (file.isDirectory()) {
-			folders.add(new ExplorerFolder(explorer, this, file));
+			folders.add(new ExplorerFolder(explorer, this, file, hierarchyLevel + 1));
 			refreshAllFilesAndFolders(false, true);
 		} else {
-			files.add(new ExplorerFile(this, file));
+			files.add(new ExplorerFile(this, file, hierarchyLevel + 1));
 			refreshAllFilesAndFolders(true, false);
 		}
 	}
@@ -214,16 +228,16 @@ public class ExplorerFolder extends VBox {
 
 		for (File file : folderFiles) {
 			if (file.isDirectory())
-				folders.add(new ExplorerFolder(explorer, this, file));
+				folders.add(new ExplorerFolder(explorer, this, file, hierarchyLevel + 1));
 			else if (file.isFile())
-				files.add(new ExplorerFile(this, file));
+				files.add(new ExplorerFile(this, file, hierarchyLevel + 1));
 		}
 	}
 
 	private void loadElements() {
 		getChildren().clear();
 		getChildren().add(representation);
-		getChildren().add(new HBox(new ExplorerSeparatorRegion(), contents));
+		getChildren().add(contents);
 	}
 
 	private void refreshAllFilesAndFolders(boolean sortFiles, boolean sortFolders) {

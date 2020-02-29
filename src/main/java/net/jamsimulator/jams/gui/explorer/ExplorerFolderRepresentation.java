@@ -23,16 +23,21 @@ public class ExplorerFolderRepresentation extends HBox implements ExplorerElemen
 	private ImageView icon;
 	private Label label;
 
+	//HIERARCHY
+	private int hierarchyLevel;
+
 	private boolean selected;
 
 	/**
 	 * Creates the representation.
 	 *
-	 * @param folder the {@link ExplorerFolder} to represent.
+	 * @param folder         the {@link ExplorerFolder} to represent.
+	 * @param hierarchyLevel the hierarchy level, used by the spacing.
 	 */
-	public ExplorerFolderRepresentation(ExplorerFolder folder) {
+	public ExplorerFolderRepresentation(ExplorerFolder folder, int hierarchyLevel) {
 		getStyleClass().add("explorer-element");
 		this.folder = folder;
+		this.hierarchyLevel = hierarchyLevel;
 
 		selected = false;
 
@@ -58,6 +63,14 @@ public class ExplorerFolderRepresentation extends HBox implements ExplorerElemen
 		statusIcon.setImage(icon);
 	}
 
+	/**
+	 * Returns the hierarchy level.
+	 *
+	 * @return the hierarchy level.
+	 */
+	public int getHierarchyLevel() {
+		return hierarchyLevel;
+	}
 
 	@Override
 	public boolean isSelected() {
@@ -84,7 +97,9 @@ public class ExplorerFolderRepresentation extends HBox implements ExplorerElemen
 		icon = new ImageView(JamsApplication.getFileIconManager().getImageByFile(folder.getFolder()));
 		label = new Label(folder.getFolder().getName());
 
-		getChildren().addAll(statusIcon, icon, label);
+		ExplorerSeparatorRegion separator = new ExplorerSeparatorRegion(hierarchyLevel);
+
+		getChildren().addAll(separator, statusIcon, icon, label);
 		setSpacing(ExplorerFile.SPACING);
 		setAlignment(Pos.CENTER_LEFT);
 	}

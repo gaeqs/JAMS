@@ -24,18 +24,23 @@ public class ExplorerFile extends HBox implements ExplorerElement {
 	private ImageView icon;
 	private Label label;
 
+	//HIERARCHY
+	private int hierarchyLevel;
+
 	private boolean selected;
 
 	/**
 	 * Creates an explorer file.
 	 *
-	 * @param parent the {@link ExplorerFolder} containing this file.
-	 * @param file   the file to represent.
+	 * @param parent         the {@link ExplorerFolder} containing this file.
+	 * @param file           the file to represent.
+	 * @param hierarchyLevel the hierarchy level, used by the spacing.
 	 */
-	public ExplorerFile(ExplorerFolder parent, File file) {
+	public ExplorerFile(ExplorerFolder parent, File file, int hierarchyLevel) {
 		getStyleClass().add("explorer-element");
 		this.parent = parent;
 		this.file = file;
+		this.hierarchyLevel = hierarchyLevel;
 
 		selected = false;
 
@@ -43,14 +48,13 @@ public class ExplorerFile extends HBox implements ExplorerElement {
 		loadListeners();
 
 		setOnContextMenuRequested(request -> {
+			getExplorer().setSelectedElement(this);
 			parent.getExplorer().createContextMenu(this)
 					.show(this, request.getScreenX(), request.getScreenY());
 			request.consume();
 		});
 
-		parent.getExplorer().widthProperty().addListener((target, old, val) -> {
-			setPrefWidth(val.doubleValue());
-		});
+		parent.getExplorer().widthProperty().addListener((target, old, val) -> setPrefWidth(val.doubleValue()));
 	}
 
 	/**
@@ -103,7 +107,9 @@ public class ExplorerFile extends HBox implements ExplorerElement {
 		icon = new ImageView(JamsApplication.getFileIconManager().getImageByFile(file));
 		label = new Label(file.getName());
 
-		getChildren().addAll(icon, label);
+		ExplorerSeparatorRegion separator = new ExplorerSeparatorRegion(hierarchyLevel);
+
+		getChildren().addAll(separator, icon, label);
 		setSpacing(SPACING);
 		setAlignment(Pos.CENTER_LEFT);
 	}

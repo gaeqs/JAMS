@@ -33,7 +33,7 @@ public class Explorer extends VBox {
 		Validate.notNull(mainFolder, "Folder cannot be null!");
 		Validate.isTrue(mainFolder.isDirectory(), "Folder must be a directory!");
 
-		this.mainFolder = new ExplorerFolder(this, null, mainFolder);
+		this.mainFolder = new ExplorerFolder(this, null, mainFolder, 0);
 		getChildren().add(this.mainFolder);
 
 
