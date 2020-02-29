@@ -453,7 +453,8 @@ AnchorPane {
     -fx-font-size: 14;
 }
 
-.menu-item:focused {
+.menu-item:hover,
+.menu-item:selected {
     -fx-background-color: -theme-menu-item-hover;
 }
 
