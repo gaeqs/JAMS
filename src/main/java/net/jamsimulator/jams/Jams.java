@@ -1,9 +1,8 @@
 package net.jamsimulator.jams;
 
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.icon.FileIconManager;
-import net.jamsimulator.jams.gui.icon.IconManager;
 import net.jamsimulator.jams.manager.AssemblerBuilderManager;
+import net.jamsimulator.jams.manager.LanguageManager;
 import net.jamsimulator.jams.manager.MemoryBuilderManager;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
@@ -13,6 +12,8 @@ import java.io.IOException;
 
 public class Jams {
 
+	private static LanguageManager languageManager;
+
 	private static AssemblerBuilderManager assemblerBuilderManager;
 	private static MemoryBuilderManager memoryBuilderManager;
 	private static InstructionSet defaultInstructionSet;
@@ -20,6 +21,8 @@ public class Jams {
 
 	//JAMS main method.
 	public static void main(String[] args) throws IOException, ParseException {
+		languageManager = LanguageManager.INSTANCE;
+
 		defaultInstructionSet = new InstructionSet(true, true, true);
 		defaultDirectiveSet = new DirectiveSet(true, true);
 		assemblerBuilderManager = AssemblerBuilderManager.INSTANCE;
@@ -27,6 +30,15 @@ public class Jams {
 		JamsApplication.launch(JamsApplication.class, args);
 	}
 
+
+	/**
+	 * Returns the {@link LanguageManager}.
+	 *
+	 * @return the {@link LanguageManager}.
+	 */
+	public static LanguageManager getLanguageManager() {
+		return languageManager;
+	}
 
 	/**
 	 * Returns the default {@link InstructionSet}.

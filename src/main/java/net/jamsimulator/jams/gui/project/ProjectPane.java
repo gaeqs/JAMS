@@ -8,6 +8,7 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.icon.Icons;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.gui.sidebar.SidebarButton;
+import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.Project;
 
 /**
@@ -29,7 +30,7 @@ public class ProjectPane extends WorkingPane {
 		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
 				Icons.SIDEBAR_EXPLORER_PATH, SidebarButton.IMAGE_SIZE, SidebarButton.IMAGE_SIZE).orElse(null);
 		explorer = new Explorer(project.getFolder());
-		topLeftSidebar.addNode("Explorer", explorer, explorerIcon);
+		topLeftSidebar.addNode("Explorer", explorer, explorerIcon, Messages.EXPLORER_NAME);
 	}
 
 	@Override

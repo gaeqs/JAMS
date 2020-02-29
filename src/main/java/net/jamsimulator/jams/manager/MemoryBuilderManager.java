@@ -2,6 +2,7 @@ package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.mips.memory.builder.MIPS32MemoryBuilder;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
+import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -9,7 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * This singleton stores all {@link MemoryBuilder} that projects may use.
+ * This singleton stores all {@link MemoryBuilder}s that projects may use.
  * <p>
  * To register an {@link MemoryBuilder} use {@link #register(MemoryBuilder)}.
  * To unregister an {@link MemoryBuilder} use {@link #unregister(String)}.
@@ -67,7 +68,7 @@ public class MemoryBuilderManager {
 	 * Returns a unmodifiable {@link Set} with all {@link MemoryBuilder}s
 	 * registered in this manager.
 	 * <p>
-	 * Anny attempt to modify this {@link Set} result in an {@link UnsupportedOperationException}.
+	 * Any attempt to modify this {@link Set} result in an {@link UnsupportedOperationException}.
 	 *
 	 * @return the unmodifiable {@link Set};
 	 * @see Collections#unmodifiableSet(Set)
@@ -84,6 +85,7 @@ public class MemoryBuilderManager {
 	 * @return whether the builder was registered.
 	 */
 	public boolean register(MemoryBuilder builder) {
+		Validate.notNull(builder, "Builder cannot be null!");
 		return builders.add(builder);
 	}
 

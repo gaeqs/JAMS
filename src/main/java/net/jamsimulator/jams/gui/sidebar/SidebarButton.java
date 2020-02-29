@@ -8,6 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
 
 /**
@@ -30,9 +31,9 @@ public class SidebarButton extends ToggleButton {
 	 * @param name    the name of this button.
 	 * @param node    the node handled by this button.
 	 * @param left    whether the sidebar is a left sidebar or a right one.
-	 * @param icon   the icon of the button, or null.
+	 * @param icon    the icon of the button, or null.
 	 */
-	public SidebarButton(Sidebar sidebar, String name, SidePaneNode node, boolean left, Image icon) {
+	public SidebarButton(Sidebar sidebar, String name, SidePaneNode node, boolean left, Image icon, String languageNode) {
 		this.sidebar = sidebar;
 		this.name = name;
 		this.node = node;
@@ -40,7 +41,7 @@ public class SidebarButton extends ToggleButton {
 		getStyleClass().addAll("sidebar-button",
 				left ? "sidebar-button-left" : "sidebar-button-right");
 
-		Label label = new Label(name);
+		Label label = languageNode == null ? new Label(name) : new LanguageLabel(languageNode);
 		Group group = new Group(label);
 
 		if (icon != null) {

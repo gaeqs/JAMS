@@ -22,9 +22,9 @@ public class SidePaneNode extends AnchorPane {
 	 * @param name     the name of the {@link Node}.
 	 * @param top      whether the {@link Sidebar} containing this node is a top {@link Sidebar}.
 	 */
-	public SidePaneNode(SidePane sidePane, Node node, String name, boolean top) {
+	public SidePaneNode(SidePane sidePane, Node node, String name, boolean top, String languageNode) {
 		this.node = node;
-		this.header = new SidePaneNodeHeader(sidePane, name, top);
+		this.header = new SidePaneNodeHeader(sidePane, name, top, languageNode);
 
 		AnchorUtils.setAnchor(header, 0, -1, 0, 0);
 		AnchorUtils.setAnchor(node, SidePaneNodeHeader.HEIGHT, 0, 0, 0);

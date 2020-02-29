@@ -54,7 +54,7 @@
                   <executable>chmod</executable>
                   <arguments>
                     <argument>775</argument>
-                    <argument>target/${artifactId}-${version}.jar</argument>
+                    <argument>target/JAMS-1.0-SNAPSHOT.jar</argument>
                   </arguments>
                 </configuration>
               </execution>

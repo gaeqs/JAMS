@@ -9,6 +9,8 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
 import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.language.wrapper.LanguageTab;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
@@ -46,7 +48,7 @@ public class ProjectTab extends Tab {
 		AnchorUtils.setAnchor(projectTabPane, 1, 0, 0, 0);
 		pane.getChildren().add(projectTabPane);
 
-		Tab tab = new Tab("Project Structure");
+		Tab tab = new LanguageTab(Messages.PROJECT_TAB_STRUCTURE);
 		tab.setClosable(false);
 		projectTabPane.getTabs().add(tab);
 

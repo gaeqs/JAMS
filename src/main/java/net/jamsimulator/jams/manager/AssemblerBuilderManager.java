@@ -2,6 +2,7 @@ package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
 import net.jamsimulator.jams.mips.assembler.builder.MIPS32AssemblerBuilder;
+import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -9,7 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * This singleton stores all {@link AssemblerBuilder} that projects may use.
+ * This singleton stores all {@link AssemblerBuilder}s that projects may use.
  * <p>
  * To register an {@link AssemblerBuilder} use {@link #register(AssemblerBuilder)}.
  * To unregister an {@link AssemblerBuilder} use {@link #unregister(String)}.
@@ -67,7 +68,7 @@ public class AssemblerBuilderManager {
 	 * Returns a unmodifiable {@link Set} with all {@link AssemblerBuilder}s
 	 * registered in this manager.
 	 * <p>
-	 * Anny attempt to modify this {@link Set} result in an {@link UnsupportedOperationException}.
+	 * Any attempt to modify this {@link Set} result in an {@link UnsupportedOperationException}.
 	 *
 	 * @return the unmodifiable {@link Set};
 	 * @see Collections#unmodifiableSet(Set)
@@ -84,6 +85,7 @@ public class AssemblerBuilderManager {
 	 * @return whether the builder was registered.
 	 */
 	public boolean register(AssemblerBuilder builder) {
+		Validate.notNull(builder, "Builder cannot be null!");
 		return builders.add(builder);
 	}
 

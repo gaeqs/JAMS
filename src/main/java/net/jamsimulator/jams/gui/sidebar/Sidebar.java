@@ -87,10 +87,10 @@ public class Sidebar extends VBox {
 	 * @param icon the icon shown on the button, or null.
 	 * @return whether the given node was added.
 	 */
-	public boolean addNode(String name, Node node, Image icon) {
+	public boolean addNode(String name, Node node, Image icon, String languageNode) {
 		if (containsNode(name)) return false;
-		SidePaneNode sidePaneNode = new SidePaneNode(sidePane, node, name, top);
-		SidebarButton button = new SidebarButton(this, name, sidePaneNode, left, icon);
+		SidePaneNode sidePaneNode = new SidePaneNode(sidePane, node, name, top, languageNode);
+		SidebarButton button = new SidebarButton(this, name, sidePaneNode, left, icon, languageNode);
 
 		getChildren().add(button);
 
