@@ -3,7 +3,7 @@ package net.jamsimulator.jams.gui.explorer.context;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.SeparatorMenuItem;
 import net.jamsimulator.jams.gui.explorer.ExplorerFile;
-import net.jamsimulator.jams.gui.explorer.context.file.FileMenuItemRemove;
+import net.jamsimulator.jams.gui.explorer.context.file.FileMenuItemDelete;
 import net.jamsimulator.jams.gui.explorer.context.file.FileMenuItemShowInFiles;
 import net.jamsimulator.jams.gui.explorer.context.file.newmenu.FileMenuItemNew;
 
@@ -21,7 +21,7 @@ public class ExplorerFileDefaultContextMenu extends ContextMenu {
 
 		getItems().add(new SeparatorMenuItem());
 
-		getItems().add(new FileMenuItemRemove(this));
+		getItems().add(new FileMenuItemDelete(this));
 
 		getItems().add(new SeparatorMenuItem());
 
