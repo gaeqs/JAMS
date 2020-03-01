@@ -192,7 +192,7 @@ public class ExplorerFolderRepresentation extends HBox implements ExplorerElemen
 	}
 
 	private void loadListeners() {
-		setOnMouseClicked(this::onMouseClicked);
+		setOnMousePressed(this::onMouseClicked);
 
 		statusIcon.setOnMouseClicked(event -> {
 			folder.expandOrContract();

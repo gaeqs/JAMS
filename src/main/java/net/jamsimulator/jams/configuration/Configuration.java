@@ -6,6 +6,7 @@ import org.json.simple.JSONObject;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +35,32 @@ public class Configuration {
 		this.name = name;
 		this.map = map;
 		this.root = root;
+	}
+
+	/**
+	 * Returns the absolute name of this configuration.
+	 * <p>
+	 * This is the name that should be used to access this configuration from
+	 * the {@link RootConfiguration}.
+	 *
+	 * @return the absolute name.
+	 */
+	public String getAbsoluteName() {
+		return name;
+	}
+
+	/**
+	 * Returns the relative name of this configuration. This is equivalent to the last
+	 * node of the absolute name.
+	 * <p>
+	 * For example, if the absolute name of a configuration is "a.b.c" the relative name will be "c".
+	 *
+	 * @return the relative node.
+	 */
+	public String getRelativeName() {
+		int index = name.lastIndexOf(".");
+		if (index == -1 || index == name.length() - 1) return name;
+		return name.substring(index + 1);
 	}
 
 	/**
@@ -83,6 +110,20 @@ public class Configuration {
 
 		//Returns the value.
 		return Optional.ofNullable((T) parseMap(key, child.get(array[array.length - 1])));
+	}
+
+	/**
+	 * Returns all the children of this configuration. Maps are wrapped inside a configuration.
+	 * <p>
+	 * The given {@link Map} is a unmodifiable {@link Map} and it cannot be edited.
+	 * Any modification results in a {@link UnsupportedOperationException}.
+	 *
+	 * @return the map
+	 */
+	public Map<String, Object> getAll() {
+		Map<String, Object> map = new HashMap<>();
+		this.map.forEach((key, value) -> map.put(key, parseMap(key, value)));
+		return Collections.unmodifiableMap(map);
 	}
 
 	/**

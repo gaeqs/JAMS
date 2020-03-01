@@ -173,7 +173,7 @@ public class ExplorerFile extends HBox implements ExplorerElement {
 	}
 
 	private void loadListeners() {
-		setOnMouseClicked(this::onMouseClicked);
+		setOnMousePressed(this::onMouseClicked);
 	}
 
 	private void onMouseClicked(MouseEvent mouseEvent) {
