@@ -10,18 +10,19 @@ import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
+import java.io.IOException;
 
-public class NewFileWindow extends VBox {
+public class NewFolderWindow extends VBox {
 
 	public static int WIDTH = 300;
 	public static int HEIGHT = 50;
 
-	private NewFileWindow(Stage stage, File folder) {
+	private NewFolderWindow(Stage stage, File folder) {
 		getStyleClass().add("v-box");
 		Validate.notNull(folder, "Folder cannot be null!");
 		Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
 		setAlignment(Pos.BOTTOM_CENTER);
-		getChildren().add(new LanguageLabel(Messages.EXPLORER_ITEM_ACTION_WINDOW_NEW_FILE));
+		getChildren().add(new LanguageLabel(Messages.EXPLORER_ITEM_ACTION_WINDOW_NEW_FOLDER));
 
 		TextField field = new TextField();
 		getChildren().add(field);
@@ -33,7 +34,7 @@ public class NewFileWindow extends VBox {
 			}
 			File file = new File(folder, field.getText());
 			try {
-				file.createNewFile();
+				if (!file.mkdirs()) throw new IOException("Error creating folder.");
 				stage.close();
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -51,6 +52,6 @@ public class NewFileWindow extends VBox {
 
 	public static void open(File folder) {
 		Stage stage = new Stage();
-		PopupWindowHelper.open(stage, new NewFileWindow(stage, folder), WIDTH, HEIGHT);
+		PopupWindowHelper.open(stage, new NewFolderWindow(stage, folder), WIDTH, HEIGHT);
 	}
 }

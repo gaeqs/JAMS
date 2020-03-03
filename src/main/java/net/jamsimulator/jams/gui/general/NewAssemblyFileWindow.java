@@ -1,16 +1,12 @@
 package net.jamsimulator.jams.gui.general;
 
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
@@ -25,7 +21,8 @@ public class NewAssemblyFileWindow extends VBox {
 		Validate.notNull(folder, "Folder cannot be null!");
 		Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
 		setAlignment(Pos.BOTTOM_CENTER);
-		getChildren().add(new Label("New assembly file"));
+		getChildren().add(new LanguageLabel(Messages.EXPLORER_ITEM_ACTION_WINDOW_NEW_ASSEMBLY_FILE));
+
 
 		TextField field = new TextField();
 		getChildren().add(field);

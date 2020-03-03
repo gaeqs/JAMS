@@ -287,7 +287,7 @@ public class ExplorerFolder extends VBox {
 	 */
 	public Optional<ExplorerElement> getLastChildren() {
 		if (contents.getChildren().isEmpty()) return Optional.empty();
-		Node node = contents.getChildren().get(getChildren().size() - 1);
+		Node node = contents.getChildren().get(contents.getChildren().size() - 1);
 		if (node instanceof ExplorerFolder) return Optional.of(((ExplorerFolder) node).getRepresentation());
 		if (!(node instanceof ExplorerElement)) return Optional.empty();
 		return Optional.of((ExplorerElement) node);
