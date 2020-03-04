@@ -17,8 +17,8 @@ public class Icons {
 	public static final String SIDEBAR_EXPLORER = "sidebar_project";
 	public static final String SIDEBAR_SETTINGS = "sidebar_settings";
 
-	public static final String EXPLORER_FOLDER_COLLAPSED_PATH = "gui/icon/explorer/folder_collapsed.png";
-	public static final String EXPLORER_FOLDER_EXPANDED_PATH = "gui/icon/explorer/folder_expanded.png";
+	public static final String EXPLORER_SECTION_COLLAPSED_PATH = "gui/icon/explorer/section_collapsed.png";
+	public static final String EXPLORER_SECTION_EXPANDED_PATH = "gui/icon/explorer/section_expanded.png";
 
 	public static final String FILE_FOLDER_PATH = "gui/icon/file/folder.png";
 	public static final String FILE_FILE_PATH = "gui/icon/file/file.png";

@@ -1,6 +1,6 @@
-package net.jamsimulator.jams.gui.explorer.context.file.newmenu;
+package net.jamsimulator.jams.gui.explorer.folder.context.file.newmenu;
 
-import net.jamsimulator.jams.gui.explorer.context.ExplorerFileDefaultContextMenu;
+import net.jamsimulator.jams.gui.explorer.folder.context.ExplorerFileDefaultContextMenu;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageMenu;
 

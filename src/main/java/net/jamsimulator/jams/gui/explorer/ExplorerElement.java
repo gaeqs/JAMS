@@ -6,6 +6,8 @@ import java.util.Optional;
 
 public interface ExplorerElement {
 
+	String getName();
+
 	boolean isSelected();
 
 	void select();

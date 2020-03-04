@@ -8,41 +8,39 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import net.jamsimulator.jams.gui.JamsApplication;
 
-import java.io.File;
 import java.util.Optional;
 
 /**
  * Represents a file inside an {@link Explorer}.
  */
-public class ExplorerFile extends HBox implements ExplorerElement {
+public class ExplorerBasicElement extends HBox implements ExplorerElement {
 
 	public static final int SPACING = 5;
 
-	private ExplorerFolder parent;
-	private File file;
+	protected ExplorerSection parent;
+	protected String name;
 
 	//REPRESENTATION DATA
-	private ImageView icon;
-	private Label label;
+	protected ImageView icon;
+	protected Label label;
 
 	//HIERARCHY
-	private int hierarchyLevel;
+	protected int hierarchyLevel;
 
-	private boolean selected;
+	protected boolean selected;
 
 	/**
-	 * Creates an explorer file.
+	 * Creates an explorer basic element.
 	 *
-	 * @param parent         the {@link ExplorerFolder} containing this file.
-	 * @param file           the file to represent.
+	 * @param parent         the {@link ExplorerSection} containing this file.
+	 * @param name           the name of the element.
 	 * @param hierarchyLevel the hierarchy level, used by the spacing.
 	 */
-	public ExplorerFile(ExplorerFolder parent, File file, int hierarchyLevel) {
+	public ExplorerBasicElement(ExplorerSection parent, String name, int hierarchyLevel) {
 		getStyleClass().add("explorer-element");
 		this.parent = parent;
-		this.file = file;
+		this.name = name;
 		this.hierarchyLevel = hierarchyLevel;
 
 		selected = false;
@@ -61,22 +59,14 @@ public class ExplorerFile extends HBox implements ExplorerElement {
 	}
 
 	/**
-	 * Returns the {@link ExplorerFolder} containing this file.
+	 * Returns the {@link ExplorerSection} containing this file.
 	 *
-	 * @return the {@link ExplorerFolder}.
+	 * @return the {@link ExplorerSection}.
 	 */
-	public ExplorerFolder getParentFolder() {
+	public ExplorerSection getParentSection() {
 		return parent;
 	}
 
-	/**
-	 * Returns the {@link File} represented by this explorer file.
-	 *
-	 * @return the {@link File}.
-	 */
-	public File getFile() {
-		return file;
-	}
 
 	/**
 	 * Returns the {@link Explorer} of this file.
@@ -85,6 +75,11 @@ public class ExplorerFile extends HBox implements ExplorerElement {
 	 */
 	public Explorer getExplorer() {
 		return parent.getExplorer();
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 
 	@Override
@@ -113,20 +108,20 @@ public class ExplorerFile extends HBox implements ExplorerElement {
 			throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
 		index++;
 
-		ExplorerFolder parent = this.parent;
+		ExplorerSection parent = this.parent;
 		Optional<ExplorerElement> element;
 		do {
 			element = parent.getElementByIndex(index);
 			if (element.isPresent()) return element;
 
-			if (parent.getParentFolder() == null) return Optional.empty();
+			if (parent.getParentSection() == null) return Optional.empty();
 
-			index = parent.getParentFolder().getIndex(parent);
+			index = parent.getParentSection().getIndex(parent);
 			if (index == -1) {
 				throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
 			}
 			index++;
-			parent = parent.getParentFolder();
+			parent = parent.getParentSection();
 		} while (parent != null);
 		return element;
 	}
@@ -139,12 +134,12 @@ public class ExplorerFile extends HBox implements ExplorerElement {
 		index--;
 
 		if (index == -1)
-			return Optional.of(parent.getRepresentation());
+			return Optional.of(parent);
 
 		ExplorerElement element = parent.getElementByIndex(index).get();
-		while (element instanceof ExplorerFolderRepresentation && ((ExplorerFolderRepresentation) element).getFolder().isExpanded()) {
+		while (element instanceof ExplorerSectionRepresentation && ((ExplorerSectionRepresentation) element).getSection().isExpanded()) {
 
-			Optional<ExplorerElement> optional = ((ExplorerFolderRepresentation) element).getFolder().getLastChildren();
+			Optional<ExplorerElement> optional = ((ExplorerSectionRepresentation) element).getSection().getLastChildren();
 			if (!optional.isPresent()) return Optional.of(element);
 			element = optional.get();
 
@@ -155,15 +150,15 @@ public class ExplorerFile extends HBox implements ExplorerElement {
 	@Override
 	public void handleKeyPressEvent(KeyEvent event) {
 		if (event.getCode() == KeyCode.LEFT) {
-			getExplorer().setSelectedElement(parent.getRepresentation());
+			getExplorer().setSelectedElement(parent);
 		} else if (event.getCode() == KeyCode.RIGHT) {
 			getNext().ifPresent(element -> getExplorer().setSelectedElement(element));
 		}
 	}
 
-	private void loadElements() {
-		icon = new ImageView(JamsApplication.getFileIconManager().getImageByFile(file));
-		label = new Label(file.getName());
+	protected void loadElements() {
+		icon = new ImageView();
+		label = new Label(name);
 
 		ExplorerSeparatorRegion separator = new ExplorerSeparatorRegion(hierarchyLevel);
 
@@ -172,11 +167,11 @@ public class ExplorerFile extends HBox implements ExplorerElement {
 		setAlignment(Pos.CENTER_LEFT);
 	}
 
-	private void loadListeners() {
+	protected void loadListeners() {
 		setOnMousePressed(this::onMouseClicked);
 	}
 
-	private void onMouseClicked(MouseEvent mouseEvent) {
+	protected void onMouseClicked(MouseEvent mouseEvent) {
 		//Folders require a double click to expand or contract itself.
 		if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
 			getExplorer().setSelectedElement(this);

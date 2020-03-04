@@ -1,9 +1,9 @@
-package net.jamsimulator.jams.gui.explorer.context.file.newmenu;
+package net.jamsimulator.jams.gui.explorer.folder.context.file.newmenu;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.explorer.context.ExplorerFileDefaultContextMenu;
+import net.jamsimulator.jams.gui.explorer.folder.context.ExplorerFileDefaultContextMenu;
 import net.jamsimulator.jams.gui.general.NewAssemblyFileWindow;
 import net.jamsimulator.jams.gui.icon.FileIconManager;
 import net.jamsimulator.jams.gui.icon.Icons;
@@ -15,7 +15,7 @@ public class FileMenuItemNewAssemblyFile extends LanguageMenuItem {
 	public FileMenuItemNewAssemblyFile(ExplorerFileDefaultContextMenu contextMenu) {
 		super(Messages.EXPLORER_ITEM_ACTION_NEW_ASSEMBLY_FILE);
 		initIcon();
-		setOnAction(event -> NewAssemblyFileWindow.open(contextMenu.getCurrentFile().getParentFolder().getFolder()));
+		setOnAction(event -> NewAssemblyFileWindow.open(contextMenu.getCurrentFile().getParentSection().getFolder()));
 	}
 
 	private void initIcon() {

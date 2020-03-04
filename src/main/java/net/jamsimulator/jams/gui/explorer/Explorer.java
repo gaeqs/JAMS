@@ -3,11 +3,11 @@ package net.jamsimulator.jams.gui.explorer;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.explorer.context.ExplorerFileDefaultContextMenu;
-import net.jamsimulator.jams.gui.explorer.context.ExplorerFolderDefaultContextMenu;
+import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
+import net.jamsimulator.jams.gui.explorer.folder.context.ExplorerFileDefaultContextMenu;
+import net.jamsimulator.jams.gui.explorer.folder.context.ExplorerFolderDefaultContextMenu;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.function.Function;
 
@@ -17,29 +17,20 @@ import java.util.function.Function;
  * <p>
  * This class can be extend to add custom functionality.
  */
-public class Explorer extends VBox {
+public abstract class Explorer extends VBox {
 
-	private ExplorerFolder mainFolder;
-	private ExplorerElement selectedElement;
+	protected ExplorerSection mainSection;
+	protected ExplorerElement selectedElement;
 
-	private Function<ExplorerFile, ContextMenu> fileContextMenuCreator;
-	private Function<ExplorerFolder, ContextMenu> folderContextMenuCreator;
+	protected Function<ExplorerBasicElement, ContextMenu> fileContextMenuCreator;
+	protected Function<ExplorerSection, ContextMenu> folderContextMenuCreator;
 
 	/**
 	 * Creates an explorer.
-	 *
-	 * @param mainFolder the main folder of the explorer. This folder must exist and be a directory.
 	 */
-	public Explorer(File mainFolder) {
-		Validate.notNull(mainFolder, "Folder cannot be null!");
-		Validate.isTrue(mainFolder.isDirectory(), "Folder must be a directory!");
-
-		this.mainFolder = new ExplorerFolder(this, null, mainFolder, 0);
-		getChildren().add(this.mainFolder);
-
-
+	public Explorer(boolean generateOnConstructor) {
 		fileContextMenuCreator = file -> {
-			ExplorerFileDefaultContextMenu.INSTANCE.setCurrentExplorerFile(file);
+			ExplorerFileDefaultContextMenu.INSTANCE.setCurrentExplorerFile((ExplorerFile) file);
 			return ExplorerFileDefaultContextMenu.INSTANCE;
 		};
 		folderContextMenuCreator = folder -> new ExplorerFolderDefaultContextMenu();
@@ -65,17 +56,9 @@ public class Explorer extends VBox {
 			}
 			event.consume();
 		});
-	}
 
-	/**
-	 * Kills all {@link java.nio.file.WatchService}s of all folders inside this explorer.
-	 * This should be used when the explorer won't be used anymore.
-	 */
-	public void killWatchers() {
-		try {
-			this.mainFolder.killWatchService();
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (generateOnConstructor) {
+			generateMainSection();
 		}
 	}
 
@@ -84,8 +67,8 @@ public class Explorer extends VBox {
 	 *
 	 * @return the main folder.
 	 */
-	public ExplorerFolder getMainFolder() {
-		return mainFolder;
+	public ExplorerSection getMainSection() {
+		return mainSection;
 	}
 
 	/**
@@ -103,49 +86,51 @@ public class Explorer extends VBox {
 	}
 
 	/**
-	 * Sets the {@link Function} called to create {@link ExplorerFile}'s {@link ContextMenu}s,
-	 * allowing to create custom {@link ContextMenu}s when a {@link ExplorerFile}
+	 * Sets the {@link Function} called to create {@link ExplorerBasicElement}'s {@link ContextMenu}s,
+	 * allowing to create custom {@link ContextMenu}s when a {@link ExplorerBasicElement}
 	 * is clicked using the secondary button.
 	 *
 	 * @param fileContextMenuCreator the {@link Function}.
 	 */
-	public void setFileContextMenuCreator(Function<ExplorerFile, ContextMenu> fileContextMenuCreator) {
+	public void setFileContextMenuCreator(Function<ExplorerBasicElement, ContextMenu> fileContextMenuCreator) {
 		Validate.notNull(fileContextMenuCreator, "Function cannot be null!");
 		this.fileContextMenuCreator = fileContextMenuCreator;
 	}
 
 	/**
-	 * Sets the {@link Function} called to create {@link ExplorerFolder}'s {@link ContextMenu}s,
-	 * allowing to create custom {@link ContextMenu}s when a {@link ExplorerFolder}
+	 * Sets the {@link Function} called to create {@link ExplorerSection}'s {@link ContextMenu}s,
+	 * allowing to create custom {@link ContextMenu}s when a {@link ExplorerSection}
 	 * is clicked using the secondary button.
 	 *
 	 * @param folderContextMenuCreator the {@link Function}.
 	 */
-	public void setFolderContextMenuCreator(Function<ExplorerFolder, ContextMenu> folderContextMenuCreator) {
+	public void setFolderContextMenuCreator(Function<ExplorerSection, ContextMenu> folderContextMenuCreator) {
 		Validate.notNull(folderContextMenuCreator, "Function cannot be null!");
 		this.folderContextMenuCreator = folderContextMenuCreator;
 	}
 
 	/**
-	 * Creates a {@link ContextMenu} for the given {@link ExplorerFile}.
+	 * Creates a {@link ContextMenu} for the given {@link ExplorerBasicElement}.
 	 *
-	 * @param file the {@link ExplorerFile}.
+	 * @param file the {@link ExplorerBasicElement}.
 	 * @return the {@link ContextMenu}.
 	 * @see #setFileContextMenuCreator(Function)
 	 */
-	public ContextMenu createContextMenu(ExplorerFile file) {
+	public ContextMenu createContextMenu(ExplorerBasicElement file) {
 		return fileContextMenuCreator.apply(file);
 	}
 
 
 	/**
-	 * Creates a {@link ContextMenu} for the given {@link ExplorerFolder}.
+	 * Creates a {@link ContextMenu} for the given {@link ExplorerSection}.
 	 *
-	 * @param folder the {@link ExplorerFolder}.
+	 * @param folder the {@link ExplorerSection}.
 	 * @return the {@link ContextMenu}.
 	 * @see #setFolderContextMenuCreator(Function)
 	 */
-	public ContextMenu createContextMenu(ExplorerFolder folder) {
+	public ContextMenu createContextMenu(ExplorerSection folder) {
 		return folderContextMenuCreator.apply(folder);
 	}
+
+	protected abstract void generateMainSection();
 }

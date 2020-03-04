@@ -32,6 +32,24 @@ public class FileIconManager {
 	}
 
 	/**
+	 * Returns the {@link Image icon} representing a folder.
+	 *
+	 * @return the {@link Image icon}.
+	 */
+	public Image getFolderIcon() {
+		return folderIcon;
+	}
+
+	/**
+	 * Returns the {@link Image icon} representing an file with an unknown format.
+	 *
+	 * @return the {@link Image icon}.
+	 */
+	public Image getUnknownIcon() {
+		return unknownIcon;
+	}
+
+	/**
 	 * Returns the best icon for the given file.
 	 *
 	 * @param file the given file.

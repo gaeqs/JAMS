@@ -1,11 +1,12 @@
-package net.jamsimulator.jams.gui.explorer.context;
+package net.jamsimulator.jams.gui.explorer.folder.context;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.SeparatorMenuItem;
-import net.jamsimulator.jams.gui.explorer.ExplorerFile;
-import net.jamsimulator.jams.gui.explorer.context.file.FileMenuItemDelete;
-import net.jamsimulator.jams.gui.explorer.context.file.FileMenuItemShowInFiles;
-import net.jamsimulator.jams.gui.explorer.context.file.newmenu.FileMenuItemNew;
+import net.jamsimulator.jams.gui.explorer.ExplorerBasicElement;
+import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
+import net.jamsimulator.jams.gui.explorer.folder.context.file.FileMenuItemDelete;
+import net.jamsimulator.jams.gui.explorer.folder.context.file.FileMenuItemShowInFiles;
+import net.jamsimulator.jams.gui.explorer.folder.context.file.newmenu.FileMenuItemNew;
 
 import java.awt.*;
 

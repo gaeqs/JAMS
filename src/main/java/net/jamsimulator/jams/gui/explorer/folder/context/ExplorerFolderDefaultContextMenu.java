@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.explorer.context;
+package net.jamsimulator.jams.gui.explorer.folder.context;
 
 import javafx.scene.control.ContextMenu;
 
