@@ -2,10 +2,11 @@ package net.jamsimulator.jams.gui.settings.parameter;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import net.jamsimulator.jams.gui.explorer.ExplorerBasicElement;
 import net.jamsimulator.jams.gui.settings.ConfigurationWindowSection;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
-public abstract class ConfigurationParameter<E> extends HBox {
+public abstract class ConfigurationParameter<E> extends ExplorerBasicElement {
 
 	protected ConfigurationWindowSection section;
 

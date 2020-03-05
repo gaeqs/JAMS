@@ -4,6 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import net.jamsimulator.jams.utils.Validate;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -38,6 +39,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	 *
 	 * @param explorer       the {@link Explorer} of this section.
 	 * @param parent         the {@link ExplorerSection} containing this section. This may be null.
+	 * @param name           the name of the section.
 	 * @param hierarchyLevel the hierarchy level, used by the spacing.
 	 * @param comparator     the comparator used to sort the elements.
 	 */
@@ -220,6 +222,34 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	 */
 	public boolean isEmpty() {
 		return elements.isEmpty();
+	}
+
+	/**
+	 * Adds the given {@link ExplorerElement} to this section.
+	 *
+	 * @param element the element to add.
+	 */
+	public void addElement(ExplorerElement element) {
+		Validate.notNull(element, "Element cannot be null!");
+		elements.add(element);
+		refreshAllElements();
+		representation.refreshStatusIcon();
+	}
+
+	/**
+	 * Removes the given {@link ExplorerElement} from this section.
+	 *
+	 * @param element the given element.
+	 * @return whether the element was removed.
+	 */
+	public boolean removeElement(ExplorerElement element) {
+		Validate.notNull(element, "Element cannot be null!");
+		boolean result = elements.remove(element);
+		if (result) {
+			refreshAllElements();
+			representation.refreshStatusIcon();
+		}
+		return result;
 	}
 
 	@Override

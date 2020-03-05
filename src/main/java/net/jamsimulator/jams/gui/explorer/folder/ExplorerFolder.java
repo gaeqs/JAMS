@@ -72,14 +72,14 @@ public class ExplorerFolder extends ExplorerSection {
 	 *
 	 * @param file the file.
 	 */
-	public void add(File file) {
+	public void addFile(File file) {
+		ExplorerElement element;
 		if (file.isDirectory()) {
-			elements.add(new ExplorerFolder(explorer, this, file, hierarchyLevel + 1));
+			element = new ExplorerFolder(explorer, this, file, hierarchyLevel + 1);
 		} else {
-			elements.add(new ExplorerFile(this, file, hierarchyLevel + 1));
+			element = new ExplorerFile(this, file, hierarchyLevel + 1);
 		}
-		refreshAllElements();
-		representation.refreshStatusIcon();
+		addElement(element);
 	}
 
 
@@ -90,25 +90,23 @@ public class ExplorerFolder extends ExplorerSection {
 	 *
 	 * @param file the file.
 	 */
-	public void remove(File file) {
+	public void removeFile(File file) {
 		//Tries to remove a folder. If the folder doesn't exist, tries to remove a file.
 		ExplorerFolder folder = (ExplorerFolder) elements.stream().filter(target ->
 				target instanceof ExplorerFolder && ((ExplorerFolder) target).folder.equals(file))
 				.findFirst().orElse(null);
 		if (folder != null) {
-			elements.remove(folder);
+			if (!removeElement(folder)) return;
 			try {
 				folder.killWatchService();
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
-			refreshAllElements();
 		} else {
-			if (elements.removeIf(target ->
-					target instanceof ExplorerFile && ((ExplorerFile) target).getFile().equals(file)))
-				refreshAllElements();
+			elements.stream().filter(target ->
+					target instanceof ExplorerFile && ((ExplorerFile) target).getFile().equals(file))
+					.findFirst().ifPresent(this::removeElement);
 		}
-		representation.refreshStatusIcon();
 	}
 
 	private void loadChildren() {
@@ -162,9 +160,9 @@ public class ExplorerFolder extends ExplorerSection {
 			File file = path.toFile();
 
 			if (kind == ENTRY_DELETE) {
-				Platform.runLater(() -> remove(file));
+				Platform.runLater(() -> removeFile(file));
 			} else if (kind == ENTRY_CREATE) {
-				Platform.runLater(() -> add(file));
+				Platform.runLater(() -> addFile(file));
 			}
 		}
 		return key.reset();
