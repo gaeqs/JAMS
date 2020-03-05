@@ -171,6 +171,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 		//Folders require a double click to expand or contract itself.
 		if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
 			getExplorer().setSelectedElement(this);
+			mouseEvent.consume();
 		}
 	}
 

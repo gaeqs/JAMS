@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.explorer;
 
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -265,7 +266,14 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	@Override
 	public void select() {
 		representation.select();
-		requestFocus();
+		Platform.runLater(this::requestFocus);
+		new Thread(() -> {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}).start();
 	}
 
 	@Override

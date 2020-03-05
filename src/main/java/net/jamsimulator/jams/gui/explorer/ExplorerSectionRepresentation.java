@@ -135,6 +135,7 @@ public class ExplorerSectionRepresentation extends HBox {
 				section.expandOrContract();
 			}
 			section.getExplorer().setSelectedElement(section);
+			mouseEvent.consume();
 		}
 	}
 
