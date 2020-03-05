@@ -13,6 +13,9 @@ import java.util.Comparator;
 
 import static java.nio.file.StandardWatchEventKinds.*;
 
+/**
+ * Represents a {@link File folder} inside an {@link Explorer}.
+ */
 public class ExplorerFolder extends ExplorerSection {
 
 	private File folder;
@@ -76,6 +79,7 @@ public class ExplorerFolder extends ExplorerSection {
 			elements.add(new ExplorerFile(this, file, hierarchyLevel + 1));
 		}
 		refreshAllElements();
+		representation.refreshStatusIcon();
 	}
 
 
@@ -104,6 +108,7 @@ public class ExplorerFolder extends ExplorerSection {
 					target instanceof ExplorerFile && ((ExplorerFile) target).getFile().equals(file)))
 				refreshAllElements();
 		}
+		representation.refreshStatusIcon();
 	}
 
 	private void loadChildren() {
@@ -116,6 +121,7 @@ public class ExplorerFolder extends ExplorerSection {
 			else if (file.isFile())
 				elements.add(new ExplorerFile(this, file, hierarchyLevel + 1));
 		}
+		representation.refreshStatusIcon();
 	}
 
 	private void loadWatcher() {
@@ -169,6 +175,10 @@ public class ExplorerFolder extends ExplorerSection {
 		return new ExplorerFolderRepresentation(this, hierarchyLevel);
 	}
 
+	/**
+	 * This class is used to compare and sort all elements inside an {@link ExplorerFolder}.
+	 * {@link ExplorerFolder} have priority above all other {@link ExplorerElement}s.
+	 */
 	private static class ElementsComparator implements Comparator<ExplorerElement> {
 
 		public static final ElementsComparator INSTANCE = new ElementsComparator();

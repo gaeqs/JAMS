@@ -91,6 +91,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 	public void select() {
 		if (selected) return;
 		getStyleClass().add("selected-explorer-element");
+		requestFocus();
 		selected = true;
 	}
 
@@ -98,6 +99,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 	public void deselect() {
 		if (!selected) return;
 		getStyleClass().remove("selected-explorer-element");
+		setFocused(false);
 		selected = false;
 	}
 
@@ -147,15 +149,6 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 		return Optional.of(element);
 	}
 
-	@Override
-	public void handleKeyPressEvent(KeyEvent event) {
-		if (event.getCode() == KeyCode.LEFT) {
-			getExplorer().setSelectedElement(parent);
-		} else if (event.getCode() == KeyCode.RIGHT) {
-			getNext().ifPresent(element -> getExplorer().setSelectedElement(element));
-		}
-	}
-
 	protected void loadElements() {
 		icon = new ImageView();
 		label = new Label(name);
@@ -169,12 +162,25 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 
 	protected void loadListeners() {
 		setOnMousePressed(this::onMouseClicked);
+
+		//Only invoked when the element is focused.
+		setOnKeyPressed(this::onKeyPressed);
 	}
 
 	protected void onMouseClicked(MouseEvent mouseEvent) {
 		//Folders require a double click to expand or contract itself.
 		if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
 			getExplorer().setSelectedElement(this);
+		}
+	}
+
+	protected void onKeyPressed(KeyEvent event) {
+		if (event.getCode() == KeyCode.LEFT) {
+			getExplorer().setSelectedElement(parent);
+			event.consume();
+		} else if (event.getCode() == KeyCode.RIGHT) {
+			getNext().ifPresent(element -> getExplorer().setSelectedElement(element));
+			event.consume();
 		}
 	}
 }

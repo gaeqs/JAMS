@@ -3,12 +3,8 @@ package net.jamsimulator.jams.gui.explorer;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
-import net.jamsimulator.jams.gui.explorer.folder.context.ExplorerFileDefaultContextMenu;
-import net.jamsimulator.jams.gui.explorer.folder.context.ExplorerFolderDefaultContextMenu;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.io.IOException;
 import java.util.function.Function;
 
 /**
@@ -22,40 +18,17 @@ public abstract class Explorer extends VBox {
 	protected ExplorerSection mainSection;
 	protected ExplorerElement selectedElement;
 
-	protected Function<ExplorerBasicElement, ContextMenu> fileContextMenuCreator;
-	protected Function<ExplorerSection, ContextMenu> folderContextMenuCreator;
+	protected Function<ExplorerBasicElement, ContextMenu> basicElementContextMenuCreator;
+	protected Function<ExplorerSection, ContextMenu> sectionContextMenuCreator;
 
 	/**
 	 * Creates an explorer.
 	 */
 	public Explorer(boolean generateOnConstructor) {
-		fileContextMenuCreator = file -> {
-			ExplorerFileDefaultContextMenu.INSTANCE.setCurrentExplorerFile((ExplorerFile) file);
-			return ExplorerFileDefaultContextMenu.INSTANCE;
-		};
-		folderContextMenuCreator = folder -> new ExplorerFolderDefaultContextMenu();
+		basicElementContextMenuCreator = file -> null;
+		sectionContextMenuCreator = folder -> null;
 
-		setOnMouseClicked(event -> {
-			requestFocus();
-			event.consume();
-		});
-
-		setOnKeyPressed(event -> {
-			if (event.getCode() == KeyCode.UP) {
-				if (selectedElement != null) {
-					selectedElement.getPrevious().ifPresent(this::setSelectedElement);
-				}
-			} else if (event.getCode() == KeyCode.DOWN) {
-				if (selectedElement != null) {
-					selectedElement.getNext().ifPresent(this::setSelectedElement);
-				}
-			} else {
-				if (selectedElement != null) {
-					selectedElement.handleKeyPressEvent(event);
-				}
-			}
-			event.consume();
-		});
+		loadListeners();
 
 		if (generateOnConstructor) {
 			generateMainSection();
@@ -90,11 +63,11 @@ public abstract class Explorer extends VBox {
 	 * allowing to create custom {@link ContextMenu}s when a {@link ExplorerBasicElement}
 	 * is clicked using the secondary button.
 	 *
-	 * @param fileContextMenuCreator the {@link Function}.
+	 * @param basicElementContextMenuCreator the {@link Function}.
 	 */
-	public void setFileContextMenuCreator(Function<ExplorerBasicElement, ContextMenu> fileContextMenuCreator) {
-		Validate.notNull(fileContextMenuCreator, "Function cannot be null!");
-		this.fileContextMenuCreator = fileContextMenuCreator;
+	public void setBasicElementContextMenuCreator(Function<ExplorerBasicElement, ContextMenu> basicElementContextMenuCreator) {
+		Validate.notNull(basicElementContextMenuCreator, "Function cannot be null!");
+		this.basicElementContextMenuCreator = basicElementContextMenuCreator;
 	}
 
 	/**
@@ -102,35 +75,61 @@ public abstract class Explorer extends VBox {
 	 * allowing to create custom {@link ContextMenu}s when a {@link ExplorerSection}
 	 * is clicked using the secondary button.
 	 *
-	 * @param folderContextMenuCreator the {@link Function}.
+	 * @param sectionContextMenuCreator the {@link Function}.
 	 */
-	public void setFolderContextMenuCreator(Function<ExplorerSection, ContextMenu> folderContextMenuCreator) {
-		Validate.notNull(folderContextMenuCreator, "Function cannot be null!");
-		this.folderContextMenuCreator = folderContextMenuCreator;
+	public void setSectionContextMenuCreator(Function<ExplorerSection, ContextMenu> sectionContextMenuCreator) {
+		Validate.notNull(sectionContextMenuCreator, "Function cannot be null!");
+		this.sectionContextMenuCreator = sectionContextMenuCreator;
 	}
 
 	/**
 	 * Creates a {@link ContextMenu} for the given {@link ExplorerBasicElement}.
 	 *
-	 * @param file the {@link ExplorerBasicElement}.
+	 * @param element the {@link ExplorerBasicElement}.
 	 * @return the {@link ContextMenu}.
-	 * @see #setFileContextMenuCreator(Function)
+	 * @see #setBasicElementContextMenuCreator(Function)
 	 */
-	public ContextMenu createContextMenu(ExplorerBasicElement file) {
-		return fileContextMenuCreator.apply(file);
+	public ContextMenu createContextMenu(ExplorerBasicElement element) {
+		ContextMenu menu = basicElementContextMenuCreator.apply(element);
+		return menu == null ? new ContextMenu() : menu;
 	}
 
 
 	/**
 	 * Creates a {@link ContextMenu} for the given {@link ExplorerSection}.
 	 *
-	 * @param folder the {@link ExplorerSection}.
+	 * @param section the {@link ExplorerSection}.
 	 * @return the {@link ContextMenu}.
-	 * @see #setFolderContextMenuCreator(Function)
+	 * @see #setSectionContextMenuCreator(Function)
 	 */
-	public ContextMenu createContextMenu(ExplorerSection folder) {
-		return folderContextMenuCreator.apply(folder);
+	public ContextMenu createContextMenu(ExplorerSection section) {
+		ContextMenu menu = sectionContextMenuCreator.apply(section);
+		return menu == null ? new ContextMenu() : menu;
 	}
 
+	/**
+	 * This method should be override to generate the main {@link ExplorerSection} of this explorer.
+	 */
 	protected abstract void generateMainSection();
+
+	private void loadListeners() {
+		setOnMouseClicked(event -> {
+			requestFocus();
+			event.consume();
+		});
+
+		setOnKeyPressed(event -> {
+			if (event.getCode() == KeyCode.UP) {
+				if (selectedElement != null) {
+					selectedElement.getPrevious().ifPresent(this::setSelectedElement);
+				}
+				event.consume();
+			} else if (event.getCode() == KeyCode.DOWN) {
+				if (selectedElement != null) {
+					selectedElement.getNext().ifPresent(this::setSelectedElement);
+				}
+				event.consume();
+			}
+		});
+	}
 }

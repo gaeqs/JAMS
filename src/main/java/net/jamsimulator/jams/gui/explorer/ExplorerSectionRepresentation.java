@@ -17,11 +17,11 @@ import net.jamsimulator.jams.gui.icon.Icons;
  */
 public class ExplorerSectionRepresentation extends HBox {
 
-	private ExplorerSection section;
+	protected ExplorerSection section;
 
-	private ImageView statusIcon;
-	private ImageView icon;
-	private Label label;
+	protected ImageView statusIcon;
+	protected ImageView icon;
+	protected Label label;
 
 	//HIERARCHY
 	private int hierarchyLevel;
@@ -51,7 +51,9 @@ public class ExplorerSectionRepresentation extends HBox {
 	 */
 	public void refreshStatusIcon() {
 		Image icon;
-		if (section.isExpanded()) {
+		if (section.isEmpty()) {
+			icon = null;
+		} else if (section.isExpanded()) {
 			icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_EXPANDED,
 					Icons.EXPLORER_SECTION_EXPANDED_PATH, FileIconManager.IMAGE_SIZE,
 					FileIconManager.IMAGE_SIZE).orElse(null);
@@ -61,6 +63,11 @@ public class ExplorerSectionRepresentation extends HBox {
 					FileIconManager.IMAGE_SIZE).orElse(null);
 		}
 		statusIcon.setImage(icon);
+		if (icon == null) {
+			getChildren().remove(statusIcon);
+		} else if (!getChildren().contains(statusIcon)) {
+			getChildren().add(1, statusIcon);
+		}
 	}
 
 
@@ -101,7 +108,7 @@ public class ExplorerSectionRepresentation extends HBox {
 
 	protected void loadElements() {
 		statusIcon = new ImageView();
-		icon = loadIcon();
+		icon = new ImageView();
 		label = new Label(section.getName());
 
 		ExplorerSeparatorRegion separator = new ExplorerSeparatorRegion(hierarchyLevel);
@@ -109,10 +116,6 @@ public class ExplorerSectionRepresentation extends HBox {
 		getChildren().addAll(separator, statusIcon, icon, label);
 		setSpacing(ExplorerBasicElement.SPACING);
 		setAlignment(Pos.CENTER_LEFT);
-	}
-
-	protected ImageView loadIcon() {
-		return new ImageView((Image) null);
 	}
 
 	protected void loadListeners() {

@@ -48,9 +48,9 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		this.name = name;
 		this.hierarchyLevel = hierarchyLevel;
 		this.comparator = comparator;
+		this.elements = new ArrayList<>();
 
 		representation = loadRepresentation();
-		elements = new ArrayList<>();
 
 		contents = new VBox();
 		expanded = false;
@@ -59,6 +59,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		contents.setSpacing(SPACING);
 
 		loadElements();
+		loadListeners();
 		setOnContextMenuRequested(request -> {
 			explorer.setSelectedElement(this);
 			explorer.createContextMenu(this).
@@ -168,7 +169,6 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		return contents.getChildren().indexOf(element);
 	}
 
-
 	/**
 	 * Returns the {@link ExplorerElement} located at the given index.
 	 * The {@link ExplorerSectionRepresentation} is not represented by any index.¡
@@ -213,6 +213,15 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		return Optional.of((ExplorerElement) node);
 	}
 
+	/**
+	 * Returns whether this section has no {@link ExplorerElement}s.
+	 *
+	 * @return whether this section has no {@link ExplorerElement}s.
+	 */
+	public boolean isEmpty() {
+		return elements.isEmpty();
+	}
+
 	@Override
 	public String getName() {
 		return name;
@@ -226,6 +235,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	@Override
 	public void select() {
 		representation.select();
+		requestFocus();
 	}
 
 	@Override
@@ -287,32 +297,19 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 
 	}
 
-	@Override
-	public void handleKeyPressEvent(KeyEvent event) {
-		if (event.getCode() == KeyCode.LEFT) {
-			if (expanded) {
-				contract();
-			} else {
-				getPrevious().ifPresent(element -> explorer.setSelectedElement(element));
-			}
-		} else if (event.getCode() == KeyCode.RIGHT) {
-			if (!expanded) {
-				expand();
-			} else {
-				getNext().ifPresent(element -> explorer.setSelectedElement(element));
-			}
-		}
-	}
-
-	protected ExplorerSectionRepresentation loadRepresentation () {
+	protected ExplorerSectionRepresentation loadRepresentation() {
 		return new ExplorerSectionRepresentation(this, hierarchyLevel);
 	}
-
 
 	protected void loadElements() {
 		getChildren().clear();
 		getChildren().add(representation);
 		getChildren().add(contents);
+	}
+
+	protected void loadListeners() {
+		//Only invoked when the element is focused.
+		setOnKeyPressed(this::onKeyPressed);
 	}
 
 	protected void refreshAllElements() {
@@ -327,5 +324,23 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 			if (target instanceof Node)
 				contents.getChildren().add((Node) target);
 		});
+	}
+
+	protected void onKeyPressed(KeyEvent event) {
+		if (event.getCode() == KeyCode.LEFT) {
+			if (expanded) {
+				contract();
+			} else {
+				getPrevious().ifPresent(element -> explorer.setSelectedElement(element));
+			}
+			event.consume();
+		} else if (event.getCode() == KeyCode.RIGHT) {
+			if (!expanded) {
+				expand();
+			} else {
+				getNext().ifPresent(element -> explorer.setSelectedElement(element));
+			}
+			event.consume();
+		}
 	}
 }

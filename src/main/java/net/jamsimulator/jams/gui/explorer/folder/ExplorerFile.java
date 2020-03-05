@@ -1,6 +1,5 @@
 package net.jamsimulator.jams.gui.explorer.folder;
 
-import javafx.scene.image.ImageView;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.explorer.ExplorerBasicElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
