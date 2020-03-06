@@ -119,24 +119,10 @@ public class ExplorerSectionRepresentation extends HBox {
 	}
 
 	protected void loadListeners() {
-		setOnMousePressed(this::onMouseClicked);
-
 		statusIcon.setOnMouseClicked(event -> {
 			section.expandOrContract();
 			event.consume();
 		});
-	}
-
-
-	protected void onMouseClicked(MouseEvent mouseEvent) {
-		//Folders require a double click to expand or contract itself.
-		if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-			if (mouseEvent.getClickCount() % 2 == 0) {
-				section.expandOrContract();
-			}
-			section.getExplorer().setSelectedElement(section);
-			mouseEvent.consume();
-		}
 	}
 
 }

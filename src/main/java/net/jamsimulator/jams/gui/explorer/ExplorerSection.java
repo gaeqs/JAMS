@@ -1,9 +1,10 @@
 package net.jamsimulator.jams.gui.explorer;
 
-import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -266,14 +267,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	@Override
 	public void select() {
 		representation.select();
-		Platform.runLater(this::requestFocus);
-		new Thread(() -> {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}).start();
+		requestFocus();
 	}
 
 	@Override
@@ -324,9 +318,9 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 			return Optional.of(parent);
 
 		ExplorerElement element = parent.getElementByIndex(index).get();
-		while (element instanceof ExplorerSectionRepresentation && ((ExplorerSectionRepresentation) element).getSection().isExpanded()) {
+		while (element instanceof ExplorerSection && ((ExplorerSection) element).isExpanded()) {
 
-			Optional<ExplorerElement> optional = ((ExplorerSectionRepresentation) element).getSection().getLastChildren();
+			Optional<ExplorerElement> optional = ((ExplorerSection) element).getLastChildren();
 			if (!optional.isPresent()) return Optional.of(element);
 			element = optional.get();
 
@@ -346,6 +340,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	}
 
 	protected void loadListeners() {
+		setOnMouseClicked(this::onMouseClicked);
 		//Only invoked when the element is focused.
 		setOnKeyPressed(this::onKeyPressed);
 	}
@@ -379,6 +374,17 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 				getNext().ifPresent(element -> explorer.setSelectedElement(element));
 			}
 			event.consume();
+		}
+	}
+
+	protected void onMouseClicked(MouseEvent mouseEvent) {
+		//Folders require a double click to expand or contract itself.
+		if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+			if (mouseEvent.getClickCount() % 2 == 0) {
+				expandOrContract();
+			}
+			explorer.setSelectedElement(this);
+			mouseEvent.consume();
 		}
 	}
 }

@@ -139,9 +139,9 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 			return Optional.of(parent);
 
 		ExplorerElement element = parent.getElementByIndex(index).get();
-		while (element instanceof ExplorerSectionRepresentation && ((ExplorerSectionRepresentation) element).getSection().isExpanded()) {
+		while (element instanceof ExplorerSection && ((ExplorerSection) element).isExpanded()) {
 
-			Optional<ExplorerElement> optional = ((ExplorerSectionRepresentation) element).getSection().getLastChildren();
+			Optional<ExplorerElement> optional = ((ExplorerSection) element).getLastChildren();
 			if (!optional.isPresent()) return Optional.of(element);
 			element = optional.get();
 
@@ -161,7 +161,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 	}
 
 	protected void loadListeners() {
-		setOnMousePressed(this::onMouseClicked);
+		setOnMouseClicked(this::onMouseClicked);
 
 		//Only invoked when the element is focused.
 		setOnKeyPressed(this::onKeyPressed);
