@@ -16,9 +16,18 @@ public class RootConfiguration extends Configuration {
 	private File file;
 
 	/**
+	 * Creates an empty root configuration.
+	 */
+	public RootConfiguration() {
+		super(null, new HashMap<>(), null);
+		root = this;
+		file = null;
+	}
+
+	/**
 	 * Creates a root configuration using a file that contains a JSON string.
 	 *
-	 * @param json
+	 * @param json the json file to parse.
 	 * @throws IOException
 	 * @throws ParseException
 	 */

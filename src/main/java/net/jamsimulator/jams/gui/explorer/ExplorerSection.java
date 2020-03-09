@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.explorer;
 
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -36,6 +37,9 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	//HIERARCHY
 	protected int hierarchyLevel;
 
+	//EVENTS
+	protected EventHandler<MouseEvent> onMouseClicked;
+
 	/**
 	 * Creates the explorer section.
 	 *
@@ -54,6 +58,9 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		this.comparator = comparator;
 		this.elements = new ArrayList<>();
 
+		onMouseClicked = e -> {
+		};
+
 		representation = loadRepresentation();
 
 		contents = new VBox();
@@ -71,9 +78,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 			request.consume();
 		});
 
-		explorer.widthProperty().addListener((target, old, val) -> {
-			setPrefWidth(val.doubleValue());
-		});
+		explorer.widthProperty().addListener((target, old, val) -> setPrefWidth(val.doubleValue()));
 	}
 
 	/**
@@ -254,6 +259,31 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		return result;
 	}
 
+	/**
+	 * Returns the event handler invoked when a mouse click event is called.
+	 * <p>
+	 * This will not override the expansion / contraction of the section when
+	 * the user double-clicked it.
+	 *
+	 * @return the event handler.
+	 */
+	public EventHandler<MouseEvent> getOnMouseClickedEvent() {
+		return onMouseClicked;
+	}
+
+	/**
+	 * Sets the event handler invoked when a mouse click event is called.
+	 * <p>
+	 * This will not override the expansion / contraction of the section when
+	 * the user double-clicked it.
+	 *
+	 * @param eventHandler the event handler.
+	 */
+	public void setOnMouseClickedEvent(EventHandler<MouseEvent> eventHandler) {
+		Validate.notNull(eventHandler, "Event handler cannot be null!");
+		this.onMouseClicked = eventHandler;
+	}
+
 	@Override
 	public String getName() {
 		return name;
@@ -384,6 +414,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 				expandOrContract();
 			}
 			explorer.setSelectedElement(this);
+			onMouseClicked.handle(mouseEvent);
 			mouseEvent.consume();
 		}
 	}

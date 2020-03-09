@@ -583,3 +583,7 @@ AnchorPane {
 .selected-explorer-element {
     -fx-background-color: -theme-explorer-element-selected;
 }
+
+.configuration-window-node {
+    -fx-spacing: 5;
+}

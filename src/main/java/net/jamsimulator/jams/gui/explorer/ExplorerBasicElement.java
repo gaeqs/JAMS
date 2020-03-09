@@ -33,7 +33,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 	/**
 	 * Creates an explorer basic element.
 	 *
-	 * @param parent         the {@link ExplorerSection} containing this file.
+	 * @param parent         the {@link ExplorerSection} containing this element.
 	 * @param name           the name of the element.
 	 * @param hierarchyLevel the hierarchy level, used by the spacing.
 	 */
