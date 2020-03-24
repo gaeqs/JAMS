@@ -12,6 +12,7 @@ class PopupWindowHelper {
 
 	static void open(Stage stage, Node node, int width, int height) {
 		stage.initStyle(StageStyle.TRANSPARENT);
+		stage.initOwner(JamsApplication.getStage());
 		stage.setWidth(width);
 		stage.setHeight(height);
 
