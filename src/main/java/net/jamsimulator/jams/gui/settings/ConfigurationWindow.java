@@ -3,6 +3,7 @@ package net.jamsimulator.jams.gui.settings;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.gui.JamsApplication;
@@ -14,13 +15,18 @@ public class ConfigurationWindow extends SplitPane {
 	private static final int WIDTH = 800;
 	private static final int HEIGHT = 600;
 
+	private Stage stage;
+
 	private Configuration configuration;
+	private Configuration types;
 
 	private ConfigurationWindowExplorer explorer;
 	private VBox sectionDisplay;
 
-	public ConfigurationWindow(Configuration configuration) {
+	public ConfigurationWindow(Configuration configuration, Configuration types) {
+		this.stage = null;
 		this.configuration = configuration;
+		this.types = types;
 
 		this.explorer = new ConfigurationWindowExplorer(this);
 		this.sectionDisplay = new VBox();
@@ -29,6 +35,10 @@ public class ConfigurationWindow extends SplitPane {
 
 	public Configuration getConfiguration() {
 		return configuration;
+	}
+
+	public Configuration getTypes() {
+		return types;
 	}
 
 	private void init() {
@@ -43,18 +53,21 @@ public class ConfigurationWindow extends SplitPane {
 	}
 
 	public void open() {
-		Stage stage = new Stage();
-		Scene scene = new Scene(this);
-		stage.setScene(scene);
-		stage.setWidth(WIDTH);
-		stage.setHeight(HEIGHT);
-		scene.getStylesheets().add("gui/style/dark_style.css");
+		if (stage == null) {
+			stage = new Stage();
+			Scene scene = new Scene(this);
+			stage.initOwner(JamsApplication.getStage());
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setScene(scene);
+			stage.setWidth(WIDTH);
+			stage.setHeight(HEIGHT);
+			scene.getStylesheets().add("gui/style/dark_style.css");
 
-		Stage main = JamsApplication.getStage();
+			Stage main = JamsApplication.getStage();
 
-		stage.setX(main.getX() + main.getWidth() / 2 - (WIDTH >> 1));
-		stage.setY(main.getY() + main.getHeight() / 2 - (HEIGHT >> 1));
-
+			stage.setX(main.getX() + main.getWidth() / 2 - (WIDTH >> 1));
+			stage.setY(main.getY() + main.getHeight() / 2 - (HEIGHT >> 1));
+		}
 		stage.show();
 	}
 }

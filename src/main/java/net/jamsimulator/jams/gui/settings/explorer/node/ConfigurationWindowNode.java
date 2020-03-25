@@ -9,10 +9,10 @@ import java.util.Optional;
 
 public class ConfigurationWindowNode<E> extends HBox {
 
-	private Configuration configuration;
-	private String relativeNode;
-	private String languageNode;
-	private E defaultValue;
+	protected Configuration configuration;
+	protected String relativeNode;
+	protected String languageNode;
+	protected E defaultValue;
 
 
 	public ConfigurationWindowNode(Configuration configuration, String relativeNode,
@@ -42,15 +42,15 @@ public class ConfigurationWindowNode<E> extends HBox {
 	}
 
 	public E getValue() {
-		try {
-			Optional<E> optional = configuration.get(relativeNode);
-			return optional.orElse(defaultValue);
-		} catch (ClassCastException ex) {
-			return defaultValue;
-		}
+		Optional<E> optional = configuration.get(relativeNode);
+		return optional.orElse(defaultValue);
 	}
 
 	public void setValue(E value) {
+		saveValue(value);
+	}
+
+	protected void saveValue(E value) {
 		configuration.set(relativeNode, value);
 	}
 

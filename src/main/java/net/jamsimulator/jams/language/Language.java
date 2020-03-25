@@ -1,7 +1,7 @@
 package net.jamsimulator.jams.language;
 
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.exception.language.LanguageFailedLoadException;
+import net.jamsimulator.jams.language.exception.LanguageFailedLoadException;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.*;

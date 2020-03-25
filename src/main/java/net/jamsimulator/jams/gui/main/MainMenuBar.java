@@ -3,12 +3,18 @@ package net.jamsimulator.jams.gui.main;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.settings.ConfigurationWindow;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageMenu;
 import net.jamsimulator.jams.language.wrapper.LanguageMenuItem;
+import org.json.simple.parser.ParseException;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * The main {@link MenuBar}.
@@ -28,14 +34,15 @@ public class MainMenuBar extends MenuBar {
 		exit.setOnAction(event -> JamsApplication.getStage().close());
 		file.getItems().add(exit);
 
+		ConfigurationWindow window;
+		try {
+			Configuration types = new RootConfiguration(new InputStreamReader(Jams.class.getResourceAsStream(
+					"/configuration/main_config_types.jconfig")));
+			window = new ConfigurationWindow(Jams.getMainConfiguration(), types);
 
-		RootConfiguration configuration = new RootConfiguration();
-		configuration.set("a.b.c", true);
-		configuration.set("a.c", false);
-		configuration.set("b.c.d", true);
-		configuration.set("a.b.b", false);
-		ConfigurationWindow window = new ConfigurationWindow(configuration);
-
+		} catch (IOException | ParseException e) {
+			throw new RuntimeException(e);
+		}
 		MenuItem settings = new MenuItem("Settings");
 		settings.setOnAction(event -> window.open());
 		file.getItems().add(settings);

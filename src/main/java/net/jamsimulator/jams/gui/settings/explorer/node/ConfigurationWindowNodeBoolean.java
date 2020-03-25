@@ -5,6 +5,8 @@ import net.jamsimulator.jams.configuration.Configuration;
 
 public class ConfigurationWindowNodeBoolean extends ConfigurationWindowNode<Boolean> {
 
+	protected CheckBox box;
+
 	public ConfigurationWindowNodeBoolean(Configuration configuration, String relativeNode,
 										  String languageNode, Boolean defaultValue) {
 		super(configuration, relativeNode, languageNode, defaultValue);
@@ -13,11 +15,30 @@ public class ConfigurationWindowNodeBoolean extends ConfigurationWindowNode<Bool
 
 	@Override
 	protected void init() {
-		CheckBox box = new CheckBox();
+		box = new CheckBox();
 		box.setSelected(getValue());
 		getChildren().add(box);
 		super.init();
 
-		box.selectedProperty().addListener((obs, old, val) -> setValue(val));
+		box.selectedProperty().addListener((obs, old, val) -> saveValue(val));
+	}
+
+	@Override
+	public void setValue(Boolean value) {
+		saveValue(value);
+		box.setSelected(value);
+	}
+
+	@Override
+	protected void saveValue(Boolean value) {
+		super.saveValue(value);
+	}
+
+	static class Builder implements ConfigurationWindowNodeBuilder<Boolean> {
+
+		@Override
+		public ConfigurationWindowNode<Boolean> create(Configuration configuration, String relativeNode, String languageNode) {
+			return new ConfigurationWindowNodeBoolean(configuration, relativeNode, languageNode, false);
+		}
 	}
 }

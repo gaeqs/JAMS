@@ -3,10 +3,12 @@ package net.jamsimulator.jams.manager;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
-import net.jamsimulator.jams.exception.language.LanguageFailedLoadException;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
+import net.jamsimulator.jams.language.event.LanguageRegisterEvent;
+import net.jamsimulator.jams.language.event.LanguageUnregisterEvent;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
+import net.jamsimulator.jams.language.exception.LanguageFailedLoadException;
 import net.jamsimulator.jams.utils.FolderUtils;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -147,7 +149,12 @@ public class LanguageManager extends SimpleEventBroadcast {
 	 */
 	public boolean register(Language language) {
 		Validate.notNull(language, "Language cannot be null!");
-		return languages.add(language);
+
+		LanguageRegisterEvent.Before before = callEvent(new LanguageRegisterEvent.Before(language));
+		if (before.isCancelled()) return false;
+		boolean result = languages.add(language);
+		if (result) callEvent(new LanguageRegisterEvent.After(language));
+		return result;
 	}
 
 	/**
@@ -161,9 +168,18 @@ public class LanguageManager extends SimpleEventBroadcast {
 	 * @return whether the operation was successful.
 	 */
 	public boolean unregister(String name) {
+		Validate.notNull(name, "Name cannot be null!");
+		Language language = get(name).orElse(null);
+		if (language == null) return false;
+
+		LanguageUnregisterEvent.Before before = callEvent(new LanguageUnregisterEvent.Before(language));
+		if (before.isCancelled()) return false;
+
 		if (defaultLanguage.getName().equals(name)) return false;
 		if (selectedLanguage.getName().equals(name)) selectedLanguage = defaultLanguage;
-		return languages.removeIf(target -> target.getName().equals(name));
+		boolean result = languages.remove(language);
+		if (result) callEvent(new LanguageUnregisterEvent.After(language));
+		return result;
 	}
 
 	private void loadLanguagesFolder() {

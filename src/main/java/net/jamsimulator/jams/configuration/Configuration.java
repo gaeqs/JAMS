@@ -87,8 +87,7 @@ public class Configuration {
 	 *
 	 * @param key the key.
 	 * @param <T> the value type.
-	 * @return the value, if present.
-	 * @throws ClassCastException whether the value doesn't match the given value type.
+	 * @return the value, if present and matches the type.
 	 */
 	public <T> Optional<T> get(String key) {
 		//Checks the key.
@@ -96,21 +95,25 @@ public class Configuration {
 			throw new IllegalArgumentException("Bad key format: " + key + ".");
 		String[] array = key.split("\\.");
 
-		//If the array length is 1 return the value from the map.
-		if (array.length == 1) return Optional.ofNullable((T) parseMap(key, map.get(key)));
+		try {
+			//If the array length is 1 return the value from the map.
+			if (array.length == 1) return Optional.ofNullable((T) parseMap(key, map.get(key)));
 
-		//Iterates the child nodes.
-		Object obj = map.get(array[0]);
-		if (!(obj instanceof Map)) return Optional.empty();
-		Map<String, Object> child = (Map<String, Object>) obj;
-		for (int i = 1; i < array.length - 1; i++) {
-			obj = child.get(array[i]);
+			//Iterates the child nodes.
+			Object obj = map.get(array[0]);
 			if (!(obj instanceof Map)) return Optional.empty();
-			child = (Map<String, Object>) obj;
-		}
+			Map<String, Object> child = (Map<String, Object>) obj;
+			for (int i = 1; i < array.length - 1; i++) {
+				obj = child.get(array[i]);
+				if (!(obj instanceof Map)) return Optional.empty();
+				child = (Map<String, Object>) obj;
+			}
 
-		//Returns the value.
-		return Optional.ofNullable((T) parseMap(key, child.get(array[array.length - 1])));
+			//Returns the value.
+			return Optional.ofNullable((T) parseMap(key, child.get(array[array.length - 1])));
+		} catch (ClassCastException ex) {
+			return Optional.empty();
+		}
 	}
 
 	/**

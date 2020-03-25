@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.exception.language;
+package net.jamsimulator.jams.language.exception;
 
 public class LanguageFailedLoadException extends Exception {
 

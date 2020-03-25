@@ -5,13 +5,14 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.gui.settings.explorer.node.ConfigurationWindowNode;
-import net.jamsimulator.jams.gui.settings.explorer.node.ConfigurationWindowNodeBoolean;
+import net.jamsimulator.jams.gui.settings.explorer.node.ConfigurationWindowNodeBuilder;
+import net.jamsimulator.jams.gui.settings.explorer.node.ConfigurationWindowNodeBuilders;
 
 import java.util.*;
 
 public class ConfigurationWindowSection extends ExplorerSection {
 
-	protected Configuration configuration;
+	protected Configuration configuration, types;
 	protected List<ConfigurationWindowNode<?>> nodes;
 
 	/**
@@ -23,9 +24,10 @@ public class ConfigurationWindowSection extends ExplorerSection {
 	 * @param hierarchyLevel the hierarchy level, used by the spacing.
 	 */
 	public ConfigurationWindowSection(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name, int hierarchyLevel,
-									  Configuration configuration) {
+									  Configuration configuration, Configuration types) {
 		super(explorer, parent, name, hierarchyLevel, Comparator.comparing(ExplorerElement::getName));
 		this.configuration = configuration;
+		this.types = types;
 
 		this.nodes = new ArrayList<>();
 		loadChildren();
@@ -60,13 +62,24 @@ public class ConfigurationWindowSection extends ExplorerSection {
 
 	private void manageChildrenAddition(String name, Object value) {
 		if (value instanceof Configuration) {
+
+			Optional<Configuration> type = types == null ? Optional.empty() : types.get(name);
+
 			elements.add(new ConfigurationWindowSection(getExplorer(), this, name,
-					hierarchyLevel + 1, (Configuration) value));
+					hierarchyLevel + 1, (Configuration) value, type.orElse(null)));
 			return;
 		}
 
-		//NODES
-		if (value instanceof Boolean)
-			nodes.add(new ConfigurationWindowNodeBoolean(configuration, name, null, false));
+		Optional<String> type = types.getString(name);
+		if (type.isPresent()) {
+			Optional<ConfigurationWindowNodeBuilder<?>> builder = ConfigurationWindowNodeBuilders.getByName(type.get());
+			if (builder.isPresent()) {
+				nodes.add(builder.get().create(configuration, name, null));
+				return;
+			}
+		}
+
+		ConfigurationWindowNodeBuilders.getByType(value.getClass()).ifPresent(configurationWindowNodeBuilder ->
+				nodes.add(configurationWindowNodeBuilder.create(configuration, name, null)));
 	}
 }
