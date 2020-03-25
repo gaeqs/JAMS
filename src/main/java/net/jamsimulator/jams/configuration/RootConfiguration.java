@@ -62,11 +62,12 @@ public class RootConfiguration extends Configuration {
 	/**
 	 * Saves the {@link RootConfiguration} into the file that loaded it, if present.
 	 *
-	 * @throws IOException
+	 * @param useFormat whether the output text should be formatted.
+	 * @throws IOException writer IOException.
 	 */
-	public void save() throws IOException {
+	public void save(boolean useFormat) throws IOException {
 		if (file != null)
-			save(file);
+			save(file, useFormat);
 	}
 
 

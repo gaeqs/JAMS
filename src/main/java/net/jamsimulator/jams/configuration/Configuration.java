@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.configuration;
 
 import net.jamsimulator.jams.utils.CollectionUtils;
+import net.jamsimulator.jams.utils.json.JSONPrettyWriter;
 import org.json.simple.JSONObject;
 
 import java.io.File;
@@ -86,7 +87,7 @@ public class Configuration {
 	 *
 	 * @param key the key.
 	 * @param <T> the value type.
-	 * @return the key, if present.
+	 * @return the value, if present.
 	 * @throws ClassCastException whether the value doesn't match the given value type.
 	 */
 	public <T> Optional<T> get(String key) {
@@ -113,16 +114,54 @@ public class Configuration {
 	}
 
 	/**
+	 * Returns the value that matches the given key, if present.
+	 * If the value is not a {@link String}, returns it's {@link Object#toString()} representation.
+	 * <p>
+	 * You can get values stored in the child nodes of this configuration using the separator ".".
+	 * For example, if you want to get the value "data" inside the child "node", you must use the
+	 * key "node.data".
+	 * <p>
+	 * This method won't modify the structure of the configuration. If the node that should contain the
+	 * wanted value is not present, the method will immediately return {@column Optional.empty()}.
+	 * <p>
+	 * This method will never return {@link Map} instances, but {@link Configuration} objects.
+	 *
+	 * @param key the key.
+	 * @return the value as a {@link String}, if present.
+	 * @throws ClassCastException whether the value doesn't match the given value type.
+	 */
+	public Optional<String> getString(String key) {
+		Optional<Object> optional = get(key);
+		return optional.map(Object::toString);
+	}
+
+	/**
 	 * Returns all the children of this configuration. Maps are wrapped inside a configuration.
 	 * <p>
 	 * The given {@link Map} is a unmodifiable {@link Map} and it cannot be edited.
 	 * Any modification results in a {@link UnsupportedOperationException}.
+	 * <p>
+	 * Whether the boolean "deep" is true, the map will contain all it's children values, and not
+	 * the child configs. The name of these children values will be split using the separator ".".
 	 *
+	 * @param deep whether the map should cointain deep values.
 	 * @return the map
 	 */
-	public Map<String, Object> getAll() {
+	public Map<String, Object> getAll(boolean deep) {
 		Map<String, Object> map = new HashMap<>();
-		this.map.forEach((key, value) -> map.put(key, parseMap(key, value)));
+		if (!deep) {
+			this.map.forEach((key, value) -> map.put(key, parseMap(key, value)));
+		} else {
+			this.map.forEach((key, value) -> {
+				value = parseMap(key, value);
+				if (value instanceof Configuration) {
+					Configuration cConfig = (Configuration) value;
+					String relName = cConfig.getRelativeName();
+					cConfig.getAll(true).forEach((cKey, cValue) ->
+							map.put(relName + "." + cKey, cValue));
+				} else map.put(key, value);
+			});
+		}
 		return Collections.unmodifiableMap(map);
 	}
 
@@ -136,7 +175,7 @@ public class Configuration {
 	 * This method modifies the structure of the configuration: it will make new {@link Map}s
 	 * or override previous values that are not {@link Map}s to store the given object.
 	 * <p>
-	 * This method will never store {@link Configuration} instances, but a deep copy their inner {@link Map}s.
+	 * This method will never store {@link Configuration} or {@link Map} instances, but a deep copy of the {@link Map}s.
 	 *
 	 * @param key   the key.
 	 * @param value the value.
@@ -150,8 +189,11 @@ public class Configuration {
 			throw new IllegalArgumentException("Bad key format: " + key + ".");
 		String[] array = key.split("\\.");
 		if (array.length == 1) {
-			map.put(key, value instanceof Configuration ?
-					CollectionUtils.deepCopy(((Configuration) value).map) : value);
+
+			if (value instanceof Map) value = CollectionUtils.deepCopy(((Map<String, Object>) value));
+			if (value instanceof Configuration) value = CollectionUtils.deepCopy(((Configuration) value).map);
+
+			map.put(key, value);
 			return;
 		}
 
@@ -201,6 +243,34 @@ public class Configuration {
 	}
 
 	/**
+	 * Adds all nodes that are present in the given {@link Configuration} but
+	 * not in this instance.
+	 * <p>
+	 * This method won't override any present node, unless the old value is not a {@link Configuration}
+	 * but the new one is.
+	 *
+	 * @param configuration the configuration.
+	 */
+	public void addNotPresentValues(Configuration configuration) {
+		configuration.getAll(false).forEach((key, value) -> {
+			if (value instanceof Configuration) {
+				if (!map.containsKey(key)) {
+					set(key, value);
+				} else {
+					Object tValue = get(key).orElse(null);
+					if (tValue instanceof Configuration) {
+						((Configuration) tValue).addNotPresentValues((Configuration) value);
+					} else set(key, value);
+				}
+			} else {
+				if (!map.containsKey(key)) {
+					map.put(key, value);
+				}
+			}
+		});
+	}
+
+	/**
 	 * Removes this {@link Configuration} from the {@link RootConfiguration}.
 	 * This will throw an {@link IllegalStateException} if this node is the root node.
 	 */
@@ -212,12 +282,15 @@ public class Configuration {
 	/**
 	 * Saves this {@link Configuration} as a JSON string into the given file.
 	 *
-	 * @param file the file.
-	 * @throws IOException
+	 * @param useFormat whether the output text should be formatted.
+	 * @param file      the file.
+	 * @throws IOException writer IOException.
 	 */
-	public void save(File file) throws IOException {
+	public void save(File file, boolean useFormat) throws IOException {
 		FileWriter writer = new FileWriter(file);
-		JSONObject.writeJSONString(map, writer);
+		if (useFormat)
+			JSONPrettyWriter.writeJSONString(map, writer, 0);
+		else JSONObject.writeJSONString(map, writer);
 		writer.close();
 	}
 
@@ -230,5 +303,13 @@ public class Configuration {
 			return new Configuration(name, (Map<String, Object>) o, root);
 		}
 		return o;
+	}
+
+	@Override
+	public String toString() {
+		return "Configuration{" +
+				"name='" + name + '\'' +
+				", map=" + map +
+				'}';
 	}
 }

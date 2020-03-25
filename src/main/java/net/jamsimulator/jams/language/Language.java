@@ -1,12 +1,10 @@
 package net.jamsimulator.jams.language;
 
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.exception.language.LanguageFailedLoadException;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -18,7 +16,22 @@ public class Language {
 	private String name;
 	private Map<String, String> messages;
 
-	public Language(String name, InputStream inputStream) {
+	public Language(String name, File file) throws LanguageFailedLoadException {
+		Validate.notNull(name, "Name cannot be null!");
+		Validate.notNull(file, "File cannot be null!");
+		this.name = name;
+		this.messages = new HashMap<>();
+
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			loadMessages(reader);
+			reader.close();
+		} catch (Exception ex) {
+			throw new LanguageFailedLoadException(ex);
+		}
+	}
+
+	public Language(String name, InputStream inputStream) throws LanguageFailedLoadException {
 		Validate.notNull(name, "Name cannot be null!");
 		Validate.notNull(inputStream, "Input stream cannot be null!");
 		this.name = name;
@@ -29,7 +42,7 @@ public class Language {
 		try {
 			reader.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new LanguageFailedLoadException(e);
 		}
 	}
 

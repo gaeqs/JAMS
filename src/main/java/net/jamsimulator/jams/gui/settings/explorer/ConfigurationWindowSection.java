@@ -54,7 +54,7 @@ public class ConfigurationWindowSection extends ExplorerSection {
 	}
 
 	private void loadChildren() {
-		Map<String, Object> map = configuration.getAll();
+		Map<String, Object> map = configuration.getAll(false);
 		map.forEach(this::manageChildrenAddition);
 	}
 

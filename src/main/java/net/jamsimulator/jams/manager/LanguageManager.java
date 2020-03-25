@@ -1,12 +1,16 @@
 package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
+import net.jamsimulator.jams.exception.language.LanguageFailedLoadException;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
+import net.jamsimulator.jams.utils.FolderUtils;
 import net.jamsimulator.jams.utils.Validate;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
@@ -23,15 +27,23 @@ import java.util.Set;
 public class LanguageManager extends SimpleEventBroadcast {
 
 	public static final LanguageManager INSTANCE = new LanguageManager();
+	public static final String CONFIG_SELECTED_LANGUAGE = "language.selected";
+	public static final String CONFIG_DEFAULT_LANGUAGE = "language.default";
+
+	private static final String FOLDER_NAME = "language";
 
 	private Set<Language> languages;
 	private Language defaultLanguage;
 	private Language selectedLanguage;
 
+	private File folder;
+
 
 	private LanguageManager() {
 		languages = new HashSet<>();
+		loadLanguagesFolder();
 		loadDefaultLanguages();
+		assignSelectedAndDefaultLanguage();
 	}
 
 	/**
@@ -154,14 +166,71 @@ public class LanguageManager extends SimpleEventBroadcast {
 		return languages.removeIf(target -> target.getName().equals(name));
 	}
 
+	private void loadLanguagesFolder() {
+		folder = new File(Jams.getMainFolder(), FOLDER_NAME);
+		FolderUtils.checkFolder(folder);
+
+		File english = new File(folder, "english.jlang");
+		File spanish = new File(folder, "spanish.jlang");
+
+		if (!english.exists())
+			if (!FolderUtils.moveFromResources(Jams.class, "/language/english.jlang", english))
+				throw new NullPointerException("English language not found!");
+		if (!spanish.exists())
+			if (!FolderUtils.moveFromResources(Jams.class, "/language/spanish.jlang", spanish))
+				throw new NullPointerException("Spanish language not found!");
+	}
+
 
 	private void loadDefaultLanguages() {
-		Language english = new Language("English", Jams.class.getResourceAsStream("/language/english.jlang"));
-		Language spanish = new Language("Spanish", Jams.class.getResourceAsStream("/language/spanish.jlang"));
-		defaultLanguage = english;
-		selectedLanguage = english;
-		languages.add(english);
-		languages.add(spanish);
+		File[] files = folder.listFiles();
+		if (files == null) throw new NullPointerException("There's no languages!");
+
+		String name;
+		for (File file : files) {
+			name = file.getName();
+			if (!name.toLowerCase().endsWith(".jlang")) continue;
+			name = name.substring(0, name.length() - 6);
+			if (name.isEmpty()) continue;
+
+			//Capitalize
+			name = name.substring(0, 1).toUpperCase() + name.substring(1);
+
+			try {
+				languages.add(new Language(name, file));
+			} catch (LanguageFailedLoadException ex) {
+				System.err.println("Failed to load language " + name + ": ");
+				ex.printStackTrace();
+			}
+		}
+
+		if (languages.isEmpty()) throw new NullPointerException("There's no languages!");
+	}
+
+	private void assignSelectedAndDefaultLanguage() {
+		Configuration config = Jams.getMainConfiguration();
+		String configDefault = config.getString(CONFIG_DEFAULT_LANGUAGE).orElse("English");
+		String configSelected = config.getString(CONFIG_SELECTED_LANGUAGE).orElse("English");
+
+		Optional<Language> english = get("English");
+		Optional<Language> defaultOptional = get(configDefault);
+		if (!defaultOptional.isPresent()) {
+			System.err.println("Default language " + configDefault + " not found. Using English instead.");
+			if (!english.isPresent()) {
+				System.err.println("English language not found! Using the first found language instead.");
+				defaultLanguage = languages.stream().findFirst().get();
+			} else defaultLanguage = english.get();
+		} else defaultLanguage = defaultOptional.get();
+
+		Optional<Language> selectedOptional = get(configSelected);
+		if (!selectedOptional.isPresent()) {
+			System.err.println("Selected language " + configDefault + " not found. Using English instead.");
+			if (!english.isPresent()) {
+				System.err.println("English language not found! Using the first found language instead.");
+				selectedLanguage = languages.stream().findFirst().get();
+			} else selectedLanguage = english.get();
+		} else selectedLanguage = selectedOptional.get();
+
 	}
 
 }
