@@ -68,7 +68,8 @@ public class Language {
 	public String getOrDefault(String node) {
 		String string = messages.get(node);
 		if (string != null) return string;
-		return Jams.getLanguageManager().getSelected().getOrEmpty(node);
+		System.out.println(node + " is null");
+		return Jams.getLanguageManager().getDefault().getOrEmpty(node);
 	}
 
 	public void addNotPresentValues(Language language) {

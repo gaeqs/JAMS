@@ -60,7 +60,6 @@ public class ConfigurationWindowNodeLanguage extends ConfigurationWindowNode<Lan
 
 	@Override
 	protected void saveValue(Language value) {
-		System.out.println("SAVING!");
 		configuration.set(relativeNode, value.getName());
 	}
 
