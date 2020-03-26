@@ -27,10 +27,12 @@ public class ConfigurationWindowNodeBuilders {
 
 
 	public static Optional<ConfigurationWindowNodeBuilder<?>> getByName(String name) {
+		if (name == null) return Optional.empty();
 		return Optional.ofNullable(builderByName.get(name.toLowerCase()));
 	}
 
 	public static Optional<ConfigurationWindowNodeBuilder<?>> getByType(Class<?> clazz) {
+		if (clazz == null) return Optional.empty();
 		return Optional.ofNullable(buildersByType.get(clazz));
 	}
 

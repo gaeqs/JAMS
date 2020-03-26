@@ -14,11 +14,13 @@ public class Language {
 	public static final String MESSAGE_SEPARATOR = "=";
 
 	private String name;
+	private File file;
 	private Map<String, String> messages;
 
 	public Language(String name, File file) throws LanguageFailedLoadException {
 		Validate.notNull(name, "Name cannot be null!");
 		Validate.notNull(file, "File cannot be null!");
+		this.file = file;
 		this.name = name;
 		this.messages = new HashMap<>();
 
@@ -35,6 +37,7 @@ public class Language {
 		Validate.notNull(name, "Name cannot be null!");
 		Validate.notNull(inputStream, "Input stream cannot be null!");
 		this.name = name;
+		this.file = null;
 		this.messages = new HashMap<>();
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -48,6 +51,10 @@ public class Language {
 
 	public String getName() {
 		return name;
+	}
+
+	public Optional<File> getFile() {
+		return Optional.ofNullable(file);
 	}
 
 	public Optional<String> getMessage(String node) {
@@ -64,6 +71,31 @@ public class Language {
 		return Jams.getLanguageManager().getSelected().getOrEmpty(node);
 	}
 
+	public void addNotPresentValues(Language language) {
+		language.messages.forEach((key, value) -> messages.putIfAbsent(key, value));
+	}
+
+	public boolean save() {
+		return save(file);
+	}
+
+	public boolean save(File file) {
+		if (file == null) return false;
+		try {
+			Writer writer = new FileWriter(file, false);
+
+			for (Map.Entry<String, String> entry : messages.entrySet()) {
+				writer.write(entry.getKey() + "=" + entry.getValue() + "\n");
+			}
+
+			writer.close();
+
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
 	private void loadMessages(BufferedReader reader) {
 		try {

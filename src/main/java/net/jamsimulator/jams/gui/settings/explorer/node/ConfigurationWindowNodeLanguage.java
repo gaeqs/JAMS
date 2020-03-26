@@ -23,6 +23,7 @@ public class ConfigurationWindowNodeLanguage extends ConfigurationWindowNode<Lan
 
 	@Override
 	protected void init() {
+		super.init();
 		box = new ComboBox<>();
 
 		box.setConverter(new StringConverter<Language>() {
@@ -42,8 +43,6 @@ public class ConfigurationWindowNodeLanguage extends ConfigurationWindowNode<Lan
 		getChildren().add(box);
 
 		box.getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> saveValue(val));
-
-		super.init();
 	}
 
 	@Override

@@ -13,10 +13,7 @@ import net.jamsimulator.jams.utils.FolderUtils;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This singleton stores all {@link Language}s that projects may use.
@@ -28,13 +25,16 @@ import java.util.Set;
  */
 public class LanguageManager extends SimpleEventBroadcast {
 
-	public static final LanguageManager INSTANCE = new LanguageManager();
 	public static final String CONFIG_SELECTED_LANGUAGE = "language.selected";
 	public static final String CONFIG_DEFAULT_LANGUAGE = "language.default";
 
 	private static final String FOLDER_NAME = "language";
 
-	private Set<Language> languages;
+	public static final LanguageManager INSTANCE = new LanguageManager();
+
+	private final Map<String, String> bundledLanguages = new HashMap<>();
+
+	private final Set<Language> languages;
 	private Language defaultLanguage;
 	private Language selectedLanguage;
 
@@ -43,8 +43,13 @@ public class LanguageManager extends SimpleEventBroadcast {
 
 	private LanguageManager() {
 		languages = new HashSet<>();
+
+		bundledLanguages.put("English", "/language/english.jlang");
+		bundledLanguages.put("Spanish", "/language/spanish.jlang");
+
 		loadLanguagesFolder();
 		loadDefaultLanguages();
+		refreshBundledLanguages();
 		assignSelectedAndDefaultLanguage();
 	}
 
@@ -186,15 +191,13 @@ public class LanguageManager extends SimpleEventBroadcast {
 		folder = new File(Jams.getMainFolder(), FOLDER_NAME);
 		FolderUtils.checkFolder(folder);
 
-		File english = new File(folder, "english.jlang");
-		File spanish = new File(folder, "spanish.jlang");
-
-		if (!english.exists())
-			if (!FolderUtils.moveFromResources(Jams.class, "/language/english.jlang", english))
-				throw new NullPointerException("English language not found!");
-		if (!spanish.exists())
-			if (!FolderUtils.moveFromResources(Jams.class, "/language/spanish.jlang", spanish))
-				throw new NullPointerException("Spanish language not found!");
+		bundledLanguages.forEach((fileName, resourcePath) -> {
+			File file = new File(folder, fileName.toLowerCase() + ".jlang");
+			if (!file.exists()) {
+				if (!FolderUtils.moveFromResources(Jams.class, resourcePath, file))
+					throw new NullPointerException(fileName + " language not found!");
+			}
+		});
 	}
 
 
@@ -221,6 +224,22 @@ public class LanguageManager extends SimpleEventBroadcast {
 		}
 
 		if (languages.isEmpty()) throw new NullPointerException("There's no languages!");
+	}
+
+	private void refreshBundledLanguages() {
+		bundledLanguages.forEach((key, value) -> {
+			Language language = get(key).orElse(null);
+			if (language == null) return;
+
+			try {
+				Language bundled = new Language(key, Jams.class.getResourceAsStream(value));
+				language.addNotPresentValues(bundled);
+				language.save();
+			} catch (LanguageFailedLoadException e) {
+				e.printStackTrace();
+			}
+
+		});
 	}
 
 	private void assignSelectedAndDefaultLanguage() {

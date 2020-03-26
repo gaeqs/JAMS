@@ -1,0 +1,12 @@
+{
+  "language": {
+    "default": {
+      "type": "language",
+      "language_node": "CONFIG_LANGUAGE_DEFAULT"
+    },
+    "selected": {
+      "type": "language",
+      "language_node": "CONFIG_LANGUAGE_SELECTED"
+    }
+  }
+}

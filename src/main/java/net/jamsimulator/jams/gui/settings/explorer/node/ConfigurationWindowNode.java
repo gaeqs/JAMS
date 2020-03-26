@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.settings.explorer.node;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.configuration.Configuration;
@@ -55,6 +56,7 @@ public class ConfigurationWindowNode<E> extends HBox {
 	}
 
 	protected void init() {
+		setAlignment(Pos.CENTER_LEFT);
 		Label label = languageNode == null ? new Label(relativeNode) : new LanguageLabel(languageNode);
 		getChildren().add(label);
 	}

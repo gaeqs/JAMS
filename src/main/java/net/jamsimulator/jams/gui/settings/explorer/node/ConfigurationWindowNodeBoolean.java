@@ -15,10 +15,10 @@ public class ConfigurationWindowNodeBoolean extends ConfigurationWindowNode<Bool
 
 	@Override
 	protected void init() {
+		super.init();
 		box = new CheckBox();
 		box.setSelected(getValue());
 		getChildren().add(box);
-		super.init();
 
 		box.selectedProperty().addListener((obs, old, val) -> saveValue(val));
 	}

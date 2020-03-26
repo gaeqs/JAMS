@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.settings;
 
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.VBox;
@@ -18,18 +19,19 @@ public class ConfigurationWindow extends SplitPane {
 	private Stage stage;
 
 	private Configuration configuration;
-	private Configuration types;
+	private Configuration meta;
 
 	private ConfigurationWindowExplorer explorer;
 	private VBox sectionDisplay;
 
-	public ConfigurationWindow(Configuration configuration, Configuration types) {
+	public ConfigurationWindow(Configuration configuration, Configuration meta) {
 		this.stage = null;
 		this.configuration = configuration;
-		this.types = types;
+		this.meta = meta;
 
 		this.explorer = new ConfigurationWindowExplorer(this);
 		this.sectionDisplay = new VBox();
+		this.sectionDisplay.getStyleClass().add("configuration-window-display");
 		init();
 	}
 
@@ -37,14 +39,13 @@ public class ConfigurationWindow extends SplitPane {
 		return configuration;
 	}
 
-	public Configuration getTypes() {
-		return types;
+	public Configuration getMeta() {
+		return meta;
 	}
 
 	private void init() {
 		getItems().add(explorer);
 		getItems().add(sectionDisplay);
-		setDividerPosition(0, 0.1);
 	}
 
 	public void display(ConfigurationWindowSection section) {
@@ -69,5 +70,6 @@ public class ConfigurationWindow extends SplitPane {
 			stage.setY(main.getY() + main.getHeight() / 2 - (HEIGHT >> 1));
 		}
 		stage.show();
+		Platform.runLater(() -> setDividerPosition(0, 0.3));
 	}
 }

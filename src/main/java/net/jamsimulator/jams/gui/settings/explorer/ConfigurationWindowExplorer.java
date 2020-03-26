@@ -23,7 +23,7 @@ public class ConfigurationWindowExplorer extends Explorer {
 	@Override
 	protected void generateMainSection() {
 		mainSection = new ConfigurationWindowSection(this, null,
-				"Configuration", 0, configurationWindow.getConfiguration(), configurationWindow.getTypes());
+				"Configuration", 0, configurationWindow.getConfiguration(), configurationWindow.getMeta());
 		getChildren().add(mainSection);
 	}
 }

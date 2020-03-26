@@ -12,7 +12,7 @@ import java.util.*;
 
 public class ConfigurationWindowSection extends ExplorerSection {
 
-	protected Configuration configuration, types;
+	protected Configuration configuration, meta;
 	protected List<ConfigurationWindowNode<?>> nodes;
 
 	/**
@@ -24,10 +24,11 @@ public class ConfigurationWindowSection extends ExplorerSection {
 	 * @param hierarchyLevel the hierarchy level, used by the spacing.
 	 */
 	public ConfigurationWindowSection(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name, int hierarchyLevel,
-									  Configuration configuration, Configuration types) {
+									  Configuration configuration, Configuration meta) {
 		super(explorer, parent, name, hierarchyLevel, Comparator.comparing(ExplorerElement::getName));
+		getStyleClass().add("configuration-window-section");
 		this.configuration = configuration;
-		this.types = types;
+		this.meta = meta;
 
 		this.nodes = new ArrayList<>();
 		loadChildren();
@@ -63,23 +64,29 @@ public class ConfigurationWindowSection extends ExplorerSection {
 	private void manageChildrenAddition(String name, Object value) {
 		if (value instanceof Configuration) {
 
-			Optional<Configuration> type = types == null ? Optional.empty() : types.get(name);
+			Optional<Configuration> metaConfig = this.meta == null ? Optional.empty() : this.meta.get(name);
 
 			elements.add(new ConfigurationWindowSection(getExplorer(), this, name,
-					hierarchyLevel + 1, (Configuration) value, type.orElse(null)));
+					hierarchyLevel + 1, (Configuration) value, metaConfig.orElse(null)));
 			return;
 		}
 
-		Optional<String> type = types.getString(name);
-		if (type.isPresent()) {
-			Optional<ConfigurationWindowNodeBuilder<?>> builder = ConfigurationWindowNodeBuilders.getByName(type.get());
+		Optional<Configuration> metaOptional = meta.get(name);
+		Optional<ConfigurationWindowNodeBuilder<?>> builder;
+		String languageNode = null;
+		if (metaOptional.isPresent()) {
+			ConfigurationMetadata meta = new ConfigurationMetadata(metaOptional.get());
+
+			languageNode = meta.getLanguageNode();
+
+			builder = ConfigurationWindowNodeBuilders.getByName(meta.getType());
 			if (builder.isPresent()) {
-				nodes.add(builder.get().create(configuration, name, null));
+				nodes.add(builder.get().create(configuration, name, languageNode));
 				return;
 			}
 		}
-
-		ConfigurationWindowNodeBuilders.getByType(value.getClass()).ifPresent(configurationWindowNodeBuilder ->
-				nodes.add(configurationWindowNodeBuilder.create(configuration, name, null)));
+		builder = ConfigurationWindowNodeBuilders.getByType(value.getClass());
+		if (builder.isPresent())
+			nodes.add(builder.get().create(configuration, name, languageNode));
 	}
 }

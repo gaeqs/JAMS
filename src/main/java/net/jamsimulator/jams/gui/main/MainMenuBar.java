@@ -37,7 +37,7 @@ public class MainMenuBar extends MenuBar {
 		ConfigurationWindow window;
 		try {
 			Configuration types = new RootConfiguration(new InputStreamReader(Jams.class.getResourceAsStream(
-					"/configuration/main_config_types.jconfig")));
+					"/configuration/main_config_meta.jconfig")));
 			window = new ConfigurationWindow(Jams.getMainConfiguration(), types);
 
 		} catch (IOException | ParseException e) {

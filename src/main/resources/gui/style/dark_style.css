@@ -305,6 +305,21 @@ AnchorPane {
     -fx-border-color: -theme-background-lighter;
 }
 
+/*LIST VIEW*/
+.list-view {
+    -fx-background-color: -theme-background;
+}
+
+.list-view .list-cell:even {
+    -fx-text-fill: -theme-foreground;
+    -fx-background-color: -theme-background-lighter;
+}
+
+.list-view .list-cell:odd {
+    -fx-text-fill: -theme-foreground;
+    -fx-background-color: -theme-background-pressed;
+}
+
 /* COMBO BOX */
 .combo-box-base {
     -fx-background-color: -theme-background;
@@ -320,20 +335,19 @@ AnchorPane {
     -fx-background-color: -theme-background;
 }
 
-/*LIST VIEW*/
-.list-view {
-    -fx-background-color: -theme-background;
-}
 
-.list-view .list-cell:even {
+.combo-box-base .list-view .list-cell:odd {
     -fx-text-fill: -theme-foreground;
     -fx-background-color: -theme-background-lighter;
 }
 
-.list-view .list-cell:odd {
+
+.combo-box-base .list-view .list-cell:hover {
     -fx-text-fill: -theme-foreground;
     -fx-background-color: -theme-background-pressed;
 }
+
+
 
 /*TABLE VIEW*/
 .table-view {
@@ -577,7 +591,7 @@ AnchorPane {
 
 
 .explorer-element .label {
-    -fx-font-size: 14;
+    -fx-font-size: 14px;
 }
 
 .selected-explorer-element {
@@ -585,5 +599,19 @@ AnchorPane {
 }
 
 .configuration-window-node {
-    -fx-spacing: 5;
+    -fx-spacing: 5px;
+}
+
+.configuration-window-node .label {
+    -fx-font-size: 14px;
+}
+
+.configuration-window-section {
+    -fx-spacing: 5px;
+}
+
+
+.configuration-window-display {
+    -fx-spacing: 7px;
+    -fx-padding: 5 5 5 5;
 }
