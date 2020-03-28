@@ -4,6 +4,7 @@ public class Messages {
 
 	public static final String MAIN_MENU_FILE = "MAIN_MENU_FILE";
 	public static final String MAIN_MENU_FILE_EXIT = "MAIN_MENU_FILE_EXIT";
+	public static final String MAIN_MENU_FILE_SETTINGS = "MAIN_MENU_FILE_SETTINGS";
 
 	public static final String PROJECT_TAB_STRUCTURE = "PROJECT_TAB_STRUCTURE";
 

@@ -1,5 +1,6 @@
 MAIN_MENU_FILE=Archivo
 MAIN_MENU_FILE_EXIT=Salir
+MAIN_MENU_FILE_SETTINGS=Configuración
 
 PROJECT_TAB_STRUCTURE=Estructura del projecto
 

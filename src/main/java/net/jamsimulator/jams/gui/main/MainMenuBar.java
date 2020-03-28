@@ -43,7 +43,7 @@ public class MainMenuBar extends MenuBar {
 		} catch (IOException | ParseException e) {
 			throw new RuntimeException(e);
 		}
-		MenuItem settings = new MenuItem("Settings");
+		MenuItem settings = new LanguageMenuItem(Messages.MAIN_MENU_FILE_SETTINGS);
 		settings.setOnAction(event -> window.open());
 		file.getItems().add(settings);
 	}

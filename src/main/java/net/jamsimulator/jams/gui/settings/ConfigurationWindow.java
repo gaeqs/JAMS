@@ -7,9 +7,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import net.jamsimulator.jams.configuration.Configuration;
+import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.settings.explorer.ConfigurationWindowExplorer;
 import net.jamsimulator.jams.gui.settings.explorer.ConfigurationWindowSection;
+
+import java.io.IOException;
 
 public class ConfigurationWindow extends SplitPane {
 
@@ -18,13 +21,13 @@ public class ConfigurationWindow extends SplitPane {
 
 	private Stage stage;
 
-	private Configuration configuration;
+	private RootConfiguration configuration;
 	private Configuration meta;
 
 	private ConfigurationWindowExplorer explorer;
 	private VBox sectionDisplay;
 
-	public ConfigurationWindow(Configuration configuration, Configuration meta) {
+	public ConfigurationWindow(RootConfiguration configuration, Configuration meta) {
 		this.stage = null;
 		this.configuration = configuration;
 		this.meta = meta;
@@ -68,6 +71,14 @@ public class ConfigurationWindow extends SplitPane {
 
 			stage.setX(main.getX() + main.getWidth() / 2 - (WIDTH >> 1));
 			stage.setY(main.getY() + main.getHeight() / 2 - (HEIGHT >> 1));
+
+			stage.setOnCloseRequest(event -> {
+				try {
+					configuration.save(true);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			});
 		}
 		stage.show();
 		Platform.runLater(() -> setDividerPosition(0, 0.3));
