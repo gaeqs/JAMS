@@ -247,6 +247,10 @@ AnchorPane {
     -fx-text-fill: -theme-foreground;
 }
 
+.menu-button .text {
+    -fx-font-size: 15;
+}
+
 .toggle-button {
     -fx-background-color: -theme-background;
     -fx-border-color: -theme-background-lighter;

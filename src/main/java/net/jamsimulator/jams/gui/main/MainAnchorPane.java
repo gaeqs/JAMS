@@ -39,7 +39,7 @@ public class MainAnchorPane extends AnchorPane {
 		projectsTabPane = new TabPane();
 		projectsTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
 		getChildren().add(projectsTabPane);
-		AnchorUtils.setAnchor(projectsTabPane, 22, 0, 0, 0);
+		AnchorUtils.setAnchor(projectsTabPane, 23, 0, 0, 0);
 
 		//region DEBUG. GENERATES EMPTY PROJECT
 		String folder = System.getProperty("user.home") + File.separator + "JAMSProject";
