@@ -1,5 +1,8 @@
 {
   "language": {
+    "meta": {
+      "language_node": "CONFIG_LANGUAGE"
+    },
     "default": {
       "type": "language",
       "language_node": "CONFIG_LANGUAGE_DEFAULT"

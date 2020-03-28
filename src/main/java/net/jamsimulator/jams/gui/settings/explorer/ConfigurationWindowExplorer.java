@@ -2,10 +2,11 @@ package net.jamsimulator.jams.gui.settings.explorer;
 
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.settings.ConfigurationWindow;
+import net.jamsimulator.jams.language.Messages;
 
 public class ConfigurationWindowExplorer extends Explorer {
 
-	private ConfigurationWindow configurationWindow;
+	private final ConfigurationWindow configurationWindow;
 
 	/**
 	 * Creates a settings explorer.
@@ -23,7 +24,8 @@ public class ConfigurationWindowExplorer extends Explorer {
 	@Override
 	protected void generateMainSection() {
 		mainSection = new ConfigurationWindowSection(this, null,
-				"Configuration", 0, configurationWindow.getConfiguration(), configurationWindow.getMeta());
+				"Configuration", Messages.CONFIG,
+				0, configurationWindow.getConfiguration(), configurationWindow.getMeta());
 		getChildren().add(mainSection);
 	}
 }

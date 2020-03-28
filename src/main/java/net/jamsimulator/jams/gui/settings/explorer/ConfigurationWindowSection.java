@@ -1,9 +1,7 @@
 package net.jamsimulator.jams.gui.settings.explorer;
 
 import net.jamsimulator.jams.configuration.Configuration;
-import net.jamsimulator.jams.gui.explorer.Explorer;
-import net.jamsimulator.jams.gui.explorer.ExplorerElement;
-import net.jamsimulator.jams.gui.explorer.ExplorerSection;
+import net.jamsimulator.jams.gui.explorer.*;
 import net.jamsimulator.jams.gui.settings.explorer.node.ConfigurationWindowNode;
 import net.jamsimulator.jams.gui.settings.explorer.node.ConfigurationWindowNodeBuilder;
 import net.jamsimulator.jams.gui.settings.explorer.node.ConfigurationWindowNodeBuilders;
@@ -12,6 +10,7 @@ import java.util.*;
 
 public class ConfigurationWindowSection extends ExplorerSection {
 
+	protected String languageNode;
 	protected Configuration configuration, meta;
 	protected List<ConfigurationWindowNode<?>> nodes;
 
@@ -23,16 +22,18 @@ public class ConfigurationWindowSection extends ExplorerSection {
 	 * @param name           the name of the section.
 	 * @param hierarchyLevel the hierarchy level, used by the spacing.
 	 */
-	public ConfigurationWindowSection(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name, int hierarchyLevel,
-									  Configuration configuration, Configuration meta) {
+	public ConfigurationWindowSection(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name,
+									  String languageNode, int hierarchyLevel, Configuration configuration, Configuration meta) {
 		super(explorer, parent, name, hierarchyLevel, Comparator.comparing(ExplorerElement::getName));
 		getStyleClass().add("configuration-window-section");
 		this.configuration = configuration;
 		this.meta = meta;
+		this.languageNode = languageNode;
 
 		this.nodes = new ArrayList<>();
 		loadChildren();
 		refreshAllElements();
+		((ExplorerSectionLanguageRepresentation) representation).setLanguageNode(languageNode);
 		representation.refreshStatusIcon();
 	}
 
@@ -51,9 +52,15 @@ public class ConfigurationWindowSection extends ExplorerSection {
 		return (ConfigurationWindowExplorer) super.getExplorer();
 	}
 
+	@Override
 	protected void loadListeners() {
 		super.loadListeners();
 		setOnMouseClickedEvent(event -> getExplorer().getConfigurationWindow().display(this));
+	}
+
+	@Override
+	protected ExplorerSectionRepresentation loadRepresentation() {
+		return new ExplorerSectionLanguageRepresentation(this, hierarchyLevel, null);
 	}
 
 	private void loadChildren() {
@@ -63,10 +70,18 @@ public class ConfigurationWindowSection extends ExplorerSection {
 
 	private void manageChildrenAddition(String name, Object value) {
 		if (value instanceof Configuration) {
-
 			Optional<Configuration> metaConfig = this.meta == null ? Optional.empty() : this.meta.get(name);
+			String languageNode = null;
 
-			elements.add(new ConfigurationWindowSection(getExplorer(), this, name,
+			if (metaConfig.isPresent()) {
+				Optional<Configuration> metaOptional = metaConfig.get().get("meta");
+				if (metaOptional.isPresent()) {
+					ConfigurationMetadata meta = new ConfigurationMetadata(metaOptional.get());
+					languageNode = meta.getLanguageNode();
+				}
+			}
+
+			elements.add(new ConfigurationWindowSection(getExplorer(), this, name, languageNode,
 					hierarchyLevel + 1, (Configuration) value, metaConfig.orElse(null)));
 			return;
 		}

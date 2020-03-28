@@ -24,9 +24,9 @@ public class ExplorerSectionRepresentation extends HBox {
 	protected Label label;
 
 	//HIERARCHY
-	private int hierarchyLevel;
+	protected int hierarchyLevel;
 
-	private boolean selected;
+	protected boolean selected;
 
 	/**
 	 * Creates the representation.

@@ -17,8 +17,12 @@ public class LanguageLabel extends Label {
 		refreshMessage();
 	}
 
+	public void setNode(String node) {
+		this.node = node;
+	}
 
 	private void refreshMessage() {
+		if(node == null) return;
 		setText(Jams.getLanguageManager().getSelected().getOrDefault(node));
 	}
 
