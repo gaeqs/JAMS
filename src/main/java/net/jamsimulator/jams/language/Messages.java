@@ -26,5 +26,8 @@ public class Messages {
 	public static final String CONFIG_LANGUAGE_DEFAULT = "CONFIG_LANGUAGE_DEFAULT";
 	public static final String CONFIG_LANGUAGE_SELECTED = "CONFIG_LANGUAGE_SELECTED";
 
+	public static final String CONFIG_APPEARANCE = "CONFIG_APPEARANCE";
+	public static final String CONFIG_APPEARANCE_THEME = "CONFIG_APPEARANCE_THEME";
+
 
 }

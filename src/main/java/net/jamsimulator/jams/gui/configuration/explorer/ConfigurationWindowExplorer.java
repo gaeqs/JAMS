@@ -1,7 +1,7 @@
-package net.jamsimulator.jams.gui.settings.explorer;
+package net.jamsimulator.jams.gui.configuration.explorer;
 
 import net.jamsimulator.jams.gui.explorer.Explorer;
-import net.jamsimulator.jams.gui.settings.ConfigurationWindow;
+import net.jamsimulator.jams.gui.configuration.ConfigurationWindow;
 import net.jamsimulator.jams.language.Messages;
 
 public class ConfigurationWindowExplorer extends Explorer {
@@ -27,5 +27,6 @@ public class ConfigurationWindowExplorer extends Explorer {
 				"Configuration", Messages.CONFIG,
 				0, configurationWindow.getConfiguration(), configurationWindow.getMeta());
 		getChildren().add(mainSection);
+		mainSection.expand();
 	}
 }

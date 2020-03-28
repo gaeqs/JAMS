@@ -22,7 +22,7 @@ public class AssemblerBuilderManager {
 	public static final AssemblerBuilderManager INSTANCE = new AssemblerBuilderManager();
 
 	private AssemblerBuilder defaultBuilder;
-	private Set<AssemblerBuilder> builders;
+	private final Set<AssemblerBuilder> builders;
 
 
 	private AssemblerBuilderManager() {

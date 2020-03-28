@@ -7,7 +7,7 @@ import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.settings.ConfigurationWindow;
+import net.jamsimulator.jams.gui.configuration.ConfigurationWindow;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageMenu;
 import net.jamsimulator.jams.language.wrapper.LanguageMenuItem;

@@ -1,5 +1,6 @@
-package net.jamsimulator.jams.gui.settings.explorer.node;
+package net.jamsimulator.jams.gui.configuration.explorer.node;
 
+import net.jamsimulator.jams.gui.theme.Theme;
 import net.jamsimulator.jams.language.Language;
 
 import java.util.HashMap;
@@ -23,6 +24,15 @@ public class ConfigurationWindowNodeBuilders {
 		buildersByType.put(Language.class, languageBuilder);
 		ConfigurationWindowNodeSelectedLanguage.Builder selectedLanguageBuilder = new ConfigurationWindowNodeSelectedLanguage.Builder();
 		builderByName.put("selected_language", selectedLanguageBuilder);
+		ConfigurationWindowNodeDefaultLanguage.Builder defaultLanguageBuilder = new ConfigurationWindowNodeDefaultLanguage.Builder();
+		builderByName.put("default_language", defaultLanguageBuilder);
+
+		//THEMES
+		ConfigurationWindowNodeTheme.Builder themeBuilder = new ConfigurationWindowNodeTheme.Builder();
+		builderByName.put("theme", themeBuilder);
+		buildersByType.put(Theme.class, themeBuilder);
+		ConfigurationWindowNodeSelectedTheme.Builder selectedThemeBuilder = new ConfigurationWindowNodeSelectedTheme.Builder();
+		builderByName.put("selected_theme", selectedThemeBuilder);
 	}
 
 

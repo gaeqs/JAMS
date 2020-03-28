@@ -1,10 +1,10 @@
-package net.jamsimulator.jams.gui.settings.explorer;
+package net.jamsimulator.jams.gui.configuration.explorer;
 
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.gui.explorer.*;
-import net.jamsimulator.jams.gui.settings.explorer.node.ConfigurationWindowNode;
-import net.jamsimulator.jams.gui.settings.explorer.node.ConfigurationWindowNodeBuilder;
-import net.jamsimulator.jams.gui.settings.explorer.node.ConfigurationWindowNodeBuilders;
+import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNode;
+import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNodeBuilder;
+import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNodeBuilders;
 
 import java.util.*;
 

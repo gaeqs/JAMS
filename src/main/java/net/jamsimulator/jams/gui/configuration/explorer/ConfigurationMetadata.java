@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.settings.explorer;
+package net.jamsimulator.jams.gui.configuration.explorer;
 
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.utils.Validate;

@@ -1,3 +1,4 @@
+Dark Theme
 * {
     -theme-foreground: #ECECEC;
     -theme-foreground-darker: derive(-theme-foreground, -20%);

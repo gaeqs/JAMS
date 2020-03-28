@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.settings;
+package net.jamsimulator.jams.gui.configuration;
 
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -9,8 +9,9 @@ import javafx.stage.Stage;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.settings.explorer.ConfigurationWindowExplorer;
-import net.jamsimulator.jams.gui.settings.explorer.ConfigurationWindowSection;
+import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowExplorer;
+import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowSection;
+import net.jamsimulator.jams.gui.theme.ThemedScene;
 
 import java.io.IOException;
 
@@ -59,13 +60,12 @@ public class ConfigurationWindow extends SplitPane {
 	public void open() {
 		if (stage == null) {
 			stage = new Stage();
-			Scene scene = new Scene(this);
+			Scene scene = new ThemedScene(this);
 			stage.initOwner(JamsApplication.getStage());
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setScene(scene);
 			stage.setWidth(WIDTH);
 			stage.setHeight(HEIGHT);
-			scene.getStylesheets().add("gui/style/dark_style.css");
 
 			Stage main = JamsApplication.getStage();
 

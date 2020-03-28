@@ -7,42 +7,41 @@ import net.jamsimulator.jams.utils.Validate;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public class Language {
 
 	public static final String MESSAGE_SEPARATOR = "=";
 
-	private String name;
-	private File file;
-	private Map<String, String> messages;
+	private final String name;
+	private final File file;
+	private final Map<String, String> messages;
 
-	public Language(String name, File file) throws LanguageFailedLoadException {
-		Validate.notNull(name, "Name cannot be null!");
+	public Language(File file) throws LanguageFailedLoadException {
 		Validate.notNull(file, "File cannot be null!");
 		this.file = file;
-		this.name = name;
 		this.messages = new HashMap<>();
 
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
+			name = reader.readLine();
 			loadMessages(reader);
 			reader.close();
-		} catch (Exception ex) {
-			throw new LanguageFailedLoadException(ex);
+		} catch (IOException e) {
+			throw new LanguageFailedLoadException(e);
 		}
 	}
 
-	public Language(String name, InputStream inputStream) throws LanguageFailedLoadException {
-		Validate.notNull(name, "Name cannot be null!");
+	public Language(InputStream inputStream) throws LanguageFailedLoadException {
 		Validate.notNull(inputStream, "Input stream cannot be null!");
-		this.name = name;
 		this.file = null;
 		this.messages = new HashMap<>();
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-		loadMessages(reader);
 		try {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+			name = reader.readLine();
+			loadMessages(reader);
 			reader.close();
 		} catch (IOException e) {
 			throw new LanguageFailedLoadException(e);
@@ -84,6 +83,7 @@ public class Language {
 		if (file == null) return false;
 		try {
 			Writer writer = new FileWriter(file, false);
+			writer.write(name + "\n");
 
 			for (Map.Entry<String, String> entry : messages.entrySet()) {
 				writer.write(entry.getKey() + "=" + entry.getValue() + "\n");
@@ -98,28 +98,36 @@ public class Language {
 		}
 	}
 
-	private void loadMessages(BufferedReader reader) {
-		try {
-			String line;
-			int index;
-			String node;
-			String message;
-			while ((line = reader.readLine()) != null) {
-				if (line.isEmpty()) continue;
-				index = line.indexOf(MESSAGE_SEPARATOR);
-				if (index == -1 || index == line.length() - 1) {
-					System.err.println("Error while loading Language " + name + ": bad line format: " + line);
-					continue;
-				}
-
-				node = line.substring(0, index);
-				message = line.substring(index + 1);
-
-				messages.put(node, message);
+	private void loadMessages(BufferedReader reader) throws IOException {
+		String line;
+		int index;
+		String node;
+		String message;
+		while ((line = reader.readLine()) != null) {
+			if (line.isEmpty()) continue;
+			index = line.indexOf(MESSAGE_SEPARATOR);
+			if (index == -1 || index == line.length() - 1) {
+				System.err.println("Error while loading Language " + name + ": bad line format: " + line);
+				continue;
 			}
-		} catch (IOException e) {
-			System.err.println("Error while loading Language " + name + ":");
-			e.printStackTrace();
+
+			node = line.substring(0, index);
+			message = line.substring(index + 1);
+
+			messages.put(node, message);
 		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Language language = (Language) o;
+		return name.equals(language.name);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name);
 	}
 }

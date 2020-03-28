@@ -12,6 +12,8 @@ import net.jamsimulator.jams.gui.font.FontLoader;
 import net.jamsimulator.jams.gui.icon.FileIconManager;
 import net.jamsimulator.jams.gui.icon.IconManager;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
+import net.jamsimulator.jams.gui.theme.ThemedScene;
+import net.jamsimulator.jams.manager.ThemeManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +39,7 @@ public class JamsApplication extends Application {
 
 		AnchorPane pane = new MainAnchorPane();
 
-		scene = new Scene(pane);
-		scene.getStylesheets().add("gui/style/dark_style.css");
+		scene = new ThemedScene(pane);
 
 		primaryStage.setScene(scene);
 		primaryStage.setWidth(WIDTH);
@@ -86,6 +87,15 @@ public class JamsApplication extends Application {
 	 */
 	public static FileIconManager getFileIconManager() {
 		return FileIconManager.INSTANCE;
+	}
+
+	/**
+	 * Returns the {@link ThemeManager}.
+	 *
+	 * @return the {@link ThemeManager}.
+	 */
+	public static ThemeManager getThemeManager() {
+		return ThemeManager.INSTANCE;
 	}
 
 	/**

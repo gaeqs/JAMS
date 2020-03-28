@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.settings.explorer.node;
+package net.jamsimulator.jams.gui.configuration.explorer.node;
 
 import net.jamsimulator.jams.configuration.Configuration;
 

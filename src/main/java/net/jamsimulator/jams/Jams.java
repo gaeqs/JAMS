@@ -9,6 +9,7 @@ import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.utils.ConfigurationUtils;
 import net.jamsimulator.jams.utils.FolderUtils;
+import net.jamsimulator.jams.utils.TempUtils;
 import org.json.simple.parser.ParseException;
 
 import java.io.File;
@@ -29,6 +30,7 @@ public class Jams {
 	//JAMS main method.
 	public static void main(String[] args) throws IOException, ParseException {
 		mainFolder = FolderUtils.checkMainFolder();
+		TempUtils.loadTemporalFolder();
 
 		mainConfiguration = ConfigurationUtils.loadMainConfiguration();
 

@@ -2,6 +2,7 @@ package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
+import net.jamsimulator.jams.configuration.MainNodes;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
@@ -25,14 +26,12 @@ import java.util.*;
  */
 public class LanguageManager extends SimpleEventBroadcast {
 
-	public static final String CONFIG_SELECTED_LANGUAGE = "language.selected";
-	public static final String CONFIG_DEFAULT_LANGUAGE = "language.default";
 
 	private static final String FOLDER_NAME = "language";
 
 	public static final LanguageManager INSTANCE = new LanguageManager();
 
-	private final Map<String, String> bundledLanguages = new HashMap<>();
+	private final Map<String, String> bundledLanguages;
 
 	private final Set<Language> languages;
 	private Language defaultLanguage;
@@ -44,11 +43,12 @@ public class LanguageManager extends SimpleEventBroadcast {
 	private LanguageManager() {
 		languages = new HashSet<>();
 
+		bundledLanguages = new HashMap<>();
 		bundledLanguages.put("English", "/language/english.jlang");
 		bundledLanguages.put("Spanish", "/language/spanish.jlang");
 
 		loadLanguagesFolder();
-		loadDefaultLanguages();
+		loadStoredLanguages();
 		refreshBundledLanguages();
 		assignSelectedAndDefaultLanguage();
 	}
@@ -201,24 +201,17 @@ public class LanguageManager extends SimpleEventBroadcast {
 	}
 
 
-	private void loadDefaultLanguages() {
+	private void loadStoredLanguages() {
 		File[] files = folder.listFiles();
 		if (files == null) throw new NullPointerException("There's no languages!");
 
-		String name;
 		for (File file : files) {
-			name = file.getName();
-			if (!name.toLowerCase().endsWith(".jlang")) continue;
-			name = name.substring(0, name.length() - 6);
-			if (name.isEmpty()) continue;
-
-			//Capitalize
-			name = name.substring(0, 1).toUpperCase() + name.substring(1);
+			if (!file.getName().toLowerCase().endsWith(".jlang")) continue;
 
 			try {
-				languages.add(new Language(name, file));
+				languages.add(new Language(file));
 			} catch (LanguageFailedLoadException ex) {
-				System.err.println("Failed to load language " + name + ": ");
+				System.err.println("Failed to load language " + file.getName() + ": ");
 				ex.printStackTrace();
 			}
 		}
@@ -232,7 +225,7 @@ public class LanguageManager extends SimpleEventBroadcast {
 			if (language == null) return;
 
 			try {
-				Language bundled = new Language(key, Jams.class.getResourceAsStream(value));
+				Language bundled = new Language(Jams.class.getResourceAsStream(value));
 				language.addNotPresentValues(bundled);
 				language.save();
 			} catch (LanguageFailedLoadException e) {
@@ -244,8 +237,8 @@ public class LanguageManager extends SimpleEventBroadcast {
 
 	private void assignSelectedAndDefaultLanguage() {
 		Configuration config = Jams.getMainConfiguration();
-		String configDefault = config.getString(CONFIG_DEFAULT_LANGUAGE).orElse("English");
-		String configSelected = config.getString(CONFIG_SELECTED_LANGUAGE).orElse("English");
+		String configDefault = config.getString(MainNodes.CONFIG_LANGUAGE_DEFAULT).orElse("English");
+		String configSelected = config.getString(MainNodes.CONFIG_LANGUAGE_SELECTED).orElse("English");
 
 		Optional<Language> english = get("English");
 		Optional<Language> defaultOptional = get(configDefault);
@@ -259,7 +252,7 @@ public class LanguageManager extends SimpleEventBroadcast {
 
 		Optional<Language> selectedOptional = get(configSelected);
 		if (!selectedOptional.isPresent()) {
-			System.err.println("Selected language " + configDefault + " not found. Using English instead.");
+			System.err.println("Selected language " + configSelected + " not found. Using English instead.");
 			if (!english.isPresent()) {
 				System.err.println("English language not found! Using the first found language instead.");
 				selectedLanguage = languages.stream().findFirst().get();

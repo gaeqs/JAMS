@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.settings.explorer.node;
+package net.jamsimulator.jams.gui.configuration.explorer.node;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;

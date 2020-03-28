@@ -22,7 +22,7 @@ public class MemoryBuilderManager {
 	public static final MemoryBuilderManager INSTANCE = new MemoryBuilderManager();
 
 	private MemoryBuilder defaultBuilder;
-	private Set<MemoryBuilder> builders;
+	private final Set<MemoryBuilder> builders;
 
 
 	private MemoryBuilderManager() {

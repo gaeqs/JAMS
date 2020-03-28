@@ -2,5 +2,8 @@
   "language": {
     "default": "English",
     "selected": "English"
+  },
+  "appearance": {
+    "theme": "Dark Theme"
   }
 }

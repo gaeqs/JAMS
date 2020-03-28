@@ -1,11 +1,11 @@
 package net.jamsimulator.jams.gui.general;
 
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
 class PopupWindowHelper {
@@ -26,12 +26,12 @@ class PopupWindowHelper {
 		AnchorUtils.setAnchor(node, 0, 0, 0, 0);
 
 		background.getChildren().add(node);
-		Scene scene = new Scene(background);
-		scene.getStylesheets().add("gui/style/dark_style.css");
+		ThemedScene scene = new ThemedScene(background);
 
 		stage.setScene(scene);
 		stage.show();
 
+		stage.setOnCloseRequest(event -> scene.unregisterJamsListeners());
 
 		stage.focusedProperty().addListener((obs, old, val) -> {
 			if (!val) stage.close();
