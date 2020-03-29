@@ -2,11 +2,11 @@ package net.jamsimulator.jams.gui.explorer.folder.context;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.SeparatorMenuItem;
-import net.jamsimulator.jams.gui.explorer.ExplorerBasicElement;
-import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
-import net.jamsimulator.jams.gui.explorer.folder.context.file.FileMenuItemDelete;
-import net.jamsimulator.jams.gui.explorer.folder.context.file.FileMenuItemShowInFiles;
-import net.jamsimulator.jams.gui.explorer.folder.context.file.newmenu.FileMenuItemNew;
+import net.jamsimulator.jams.gui.explorer.ExplorerContextMenuItem;
+import net.jamsimulator.jams.gui.explorer.ExplorerElement;
+import net.jamsimulator.jams.gui.explorer.folder.context.option.FileMenuItemDelete;
+import net.jamsimulator.jams.gui.explorer.folder.context.option.FileMenuItemShowInFiles;
+import net.jamsimulator.jams.gui.explorer.folder.context.option.newmenu.FileMenuItemNew;
 
 import java.awt.*;
 
@@ -14,7 +14,7 @@ public class ExplorerFileDefaultContextMenu extends ContextMenu {
 
 	public static final ExplorerFileDefaultContextMenu INSTANCE = new ExplorerFileDefaultContextMenu();
 
-	private ExplorerFile file;
+	private ExplorerElement element;
 
 	private ExplorerFileDefaultContextMenu() {
 
@@ -31,12 +31,16 @@ public class ExplorerFileDefaultContextMenu extends ContextMenu {
 		}
 	}
 
-	public ExplorerFile getCurrentFile() {
-		return file;
+	public ExplorerElement getCurrentElement() {
+		return element;
 	}
 
-	public void setCurrentExplorerFile(ExplorerFile file) {
-		this.file = file;
+	public void setCurrentExplorerElement(ExplorerElement element) {
+		this.element = element;
+		getItems().forEach(target -> {
+			if (target instanceof ExplorerContextMenuItem)
+				((ExplorerContextMenuItem) target).onElementChange(element);
+		});
 	}
 
 }

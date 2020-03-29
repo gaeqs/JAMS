@@ -2,7 +2,6 @@ package net.jamsimulator.jams.gui.explorer.folder;
 
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.folder.context.ExplorerFileDefaultContextMenu;
-import net.jamsimulator.jams.gui.explorer.folder.context.ExplorerFolderDefaultContextMenu;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
@@ -28,10 +27,13 @@ public class FolderExplorer extends Explorer {
 		this.mainFolder = mainFolder;
 
 		basicElementContextMenuCreator = file -> {
-			ExplorerFileDefaultContextMenu.INSTANCE.setCurrentExplorerFile((ExplorerFile) file);
+			ExplorerFileDefaultContextMenu.INSTANCE.setCurrentExplorerElement(file);
 			return ExplorerFileDefaultContextMenu.INSTANCE;
 		};
-		sectionContextMenuCreator = folder -> new ExplorerFolderDefaultContextMenu();
+		sectionContextMenuCreator = folder -> {
+			ExplorerFileDefaultContextMenu.INSTANCE.setCurrentExplorerElement(folder);
+			return ExplorerFileDefaultContextMenu.INSTANCE;
+		};
 
 		generateMainSection();
 	}
