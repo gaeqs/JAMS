@@ -7,10 +7,18 @@ import javafx.scene.layout.Region;
  */
 public class ExplorerSeparatorRegion extends Region {
 
-	public static final int HIERARCHY_SEPARATOR_SIZE = 20;
+	public static final int HIERARCHY_SEPARATOR_SIZE_FILE = 38;
+	public static final int HIERARCHY_SEPARATOR_SIZE_FOLDER = 20;
 
-	public ExplorerSeparatorRegion(int hierarchyLevel) {
-		setPrefWidth(HIERARCHY_SEPARATOR_SIZE * hierarchyLevel);
+	public ExplorerSeparatorRegion(boolean folder, int hierarchyLevel) {
+		if (folder)
+			setPrefWidth(HIERARCHY_SEPARATOR_SIZE_FOLDER * hierarchyLevel);
+		else
+			setPrefWidth(HIERARCHY_SEPARATOR_SIZE_FOLDER * (hierarchyLevel - 1) + HIERARCHY_SEPARATOR_SIZE_FILE);
+	}
+
+	public ExplorerSeparatorRegion(double width) {
+		setPrefWidth(width);
 	}
 
 }

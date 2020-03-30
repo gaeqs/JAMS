@@ -4,8 +4,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.icon.FileIconManager;
@@ -22,6 +20,8 @@ public class ExplorerSectionRepresentation extends HBox {
 	protected ImageView statusIcon;
 	protected ImageView icon;
 	protected Label label;
+
+	protected ExplorerSeparatorRegion emptyRegion;
 
 	//HIERARCHY
 	protected int hierarchyLevel;
@@ -40,6 +40,8 @@ public class ExplorerSectionRepresentation extends HBox {
 		this.hierarchyLevel = hierarchyLevel;
 
 		selected = false;
+
+		emptyRegion = new ExplorerSeparatorRegion((double) FileIconManager.IMAGE_SIZE);
 
 		loadElements();
 		loadListeners();
@@ -65,7 +67,10 @@ public class ExplorerSectionRepresentation extends HBox {
 		statusIcon.setImage(icon);
 		if (icon == null) {
 			getChildren().remove(statusIcon);
+			if (!getChildren().contains(emptyRegion))
+				getChildren().add(1, emptyRegion);
 		} else if (!getChildren().contains(statusIcon)) {
+			getChildren().remove(emptyRegion);
 			getChildren().add(1, statusIcon);
 		}
 	}
@@ -111,7 +116,7 @@ public class ExplorerSectionRepresentation extends HBox {
 		icon = new ImageView();
 		label = new Label(section.getName());
 
-		ExplorerSeparatorRegion separator = new ExplorerSeparatorRegion(hierarchyLevel);
+		ExplorerSeparatorRegion separator = new ExplorerSeparatorRegion(true, hierarchyLevel);
 
 		getChildren().addAll(separator, statusIcon, icon, label);
 		setSpacing(ExplorerBasicElement.SPACING);
@@ -120,6 +125,7 @@ public class ExplorerSectionRepresentation extends HBox {
 
 	protected void loadListeners() {
 		statusIcon.setOnMouseClicked(event -> {
+			section.getExplorer().setSelectedElement(section);
 			section.expandOrContract();
 			event.consume();
 		});

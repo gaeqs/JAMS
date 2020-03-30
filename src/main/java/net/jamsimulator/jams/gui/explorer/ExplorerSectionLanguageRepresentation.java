@@ -47,7 +47,7 @@ public class ExplorerSectionLanguageRepresentation extends ExplorerSectionRepres
 		statusIcon = new ImageView();
 		icon = new ImageView();
 
-		ExplorerSeparatorRegion separator = new ExplorerSeparatorRegion(hierarchyLevel);
+		ExplorerSeparatorRegion separator = new ExplorerSeparatorRegion(true, hierarchyLevel);
 
 		getChildren().addAll(separator, statusIcon, icon);
 		setSpacing(ExplorerBasicElement.SPACING);

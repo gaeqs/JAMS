@@ -153,7 +153,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 		icon = new ImageView();
 		label = new Label(name);
 
-		ExplorerSeparatorRegion separator = new ExplorerSeparatorRegion(hierarchyLevel);
+		ExplorerSeparatorRegion separator = new ExplorerSeparatorRegion(false, hierarchyLevel);
 
 		getChildren().addAll(separator, icon, label);
 		setSpacing(SPACING);
