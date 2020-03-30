@@ -6,12 +6,16 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.configuration.RootConfiguration;
+import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowExplorer;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowSection;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
+import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 
 import java.io.IOException;
 
@@ -47,6 +51,10 @@ public class ConfigurationWindow extends SplitPane {
 		return meta;
 	}
 
+	public Stage getStage() {
+		return stage;
+	}
+
 	private void init() {
 		getItems().add(explorer);
 		getItems().add(sectionDisplay);
@@ -72,6 +80,8 @@ public class ConfigurationWindow extends SplitPane {
 			stage.setX(main.getX() + main.getWidth() / 2 - (WIDTH >> 1));
 			stage.setY(main.getY() + main.getHeight() / 2 - (HEIGHT >> 1));
 
+			stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.CONFIG));
+
 			stage.setOnCloseRequest(event -> {
 				try {
 					configuration.save(true);
@@ -79,8 +89,14 @@ public class ConfigurationWindow extends SplitPane {
 					e.printStackTrace();
 				}
 			});
+			Jams.getLanguageManager().registerListeners(this);
 		}
 		stage.show();
 		Platform.runLater(() -> setDividerPosition(0, 0.3));
+	}
+
+	@Listener
+	public void onSelectedLanguageChange(SelectedLanguageChangeEvent.After event) {
+		stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.CONFIG));
 	}
 }
