@@ -22,10 +22,10 @@ import java.util.List;
  */
 public class ProjectTab extends Tab {
 
-	private Project project;
-	private TabPane projectTabPane;
+	private final Project project;
+	private final TabPane projectTabPane;
 
-	private List<EventHandler<Event>> closeListeners;
+	private final List<EventHandler<Event>> closeListeners;
 
 	/**
 	 * Creates the folder project's tab.

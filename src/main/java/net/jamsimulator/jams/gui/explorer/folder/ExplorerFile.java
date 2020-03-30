@@ -1,6 +1,8 @@
 package net.jamsimulator.jams.gui.explorer.folder;
 
+import javafx.scene.input.MouseEvent;
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerBasicElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 
@@ -8,7 +10,7 @@ import java.io.File;
 
 public class ExplorerFile extends ExplorerBasicElement {
 
-	private File file;
+	private final File file;
 
 	/**
 	 * Creates an explorer file.
@@ -23,6 +25,16 @@ public class ExplorerFile extends ExplorerBasicElement {
 		icon.setImage(JamsApplication.getFileIconManager().getImageByFile(file));
 	}
 
+	@Override
+	protected void onMouseClicked(MouseEvent mouseEvent) {
+		super.onMouseClicked(mouseEvent);
+		if (mouseEvent.getClickCount() % 2 == 0) {
+			Explorer explorer = getExplorer();
+			if (explorer instanceof FolderExplorer) {
+				((FolderExplorer) explorer).getFileOpenAction().accept(this);
+			}
+		}
+	}
 
 	/**
 	 * Returns the {@link File} represented by this explorer file.
@@ -36,5 +48,10 @@ public class ExplorerFile extends ExplorerBasicElement {
 	@Override
 	public ExplorerFolder getParentSection() {
 		return (ExplorerFolder) super.getParentSection();
+	}
+
+	@Override
+	public Explorer getExplorer() {
+		return super.getExplorer();
 	}
 }

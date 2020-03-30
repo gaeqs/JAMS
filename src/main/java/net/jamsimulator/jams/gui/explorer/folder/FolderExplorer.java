@@ -6,6 +6,7 @@ import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Consumer;
 
 /**
  * Represents an {@link Explorer} whose elements
@@ -13,7 +14,8 @@ import java.io.IOException;
  */
 public class FolderExplorer extends Explorer {
 
-	private File mainFolder;
+	private Consumer<ExplorerFile> fileOpenAction;
+	private final File mainFolder;
 
 	/**
 	 * Creates the explorer folder.
@@ -35,11 +37,37 @@ public class FolderExplorer extends Explorer {
 			return ExplorerFileDefaultContextMenu.INSTANCE;
 		};
 
+		fileOpenAction = file -> {
+		};
+
 		generateMainSection();
 	}
 
+	/**
+	 * Returns the main {@link File folder} of this explorer.
+	 *
+	 * @return the main {@link File folder}.
+	 */
 	public File getMainFolder() {
 		return mainFolder;
+	}
+
+	/**
+	 * Returns the {@link Consumer action} to perform when a file is double-clicked.
+	 *
+	 * @return the {@link Consumer action}.
+	 */
+	public Consumer<ExplorerFile> getFileOpenAction() {
+		return fileOpenAction;
+	}
+
+	/**
+	 * Sets the {@link Consumer action} to perform when a file is double-clicked.
+	 *
+	 * @param fileOpenAction the {@link Consumer action}.
+	 */
+	public void setFileOpenAction(Consumer<ExplorerFile> fileOpenAction) {
+		this.fileOpenAction = fileOpenAction;
 	}
 
 	/**
