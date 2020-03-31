@@ -3,6 +3,7 @@ package net.jamsimulator.jams;
 import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.manager.AssemblerBuilderManager;
+import net.jamsimulator.jams.manager.FileTypeManager;
 import net.jamsimulator.jams.manager.LanguageManager;
 import net.jamsimulator.jams.manager.MemoryBuilderManager;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
@@ -22,6 +23,8 @@ public class Jams {
 	private static RootConfiguration mainConfiguration;
 
 	private static LanguageManager languageManager;
+	private static FileTypeManager fileTypeManager;
+
 	private static AssemblerBuilderManager assemblerBuilderManager;
 	private static MemoryBuilderManager memoryBuilderManager;
 	private static InstructionSet defaultInstructionSet;
@@ -35,6 +38,8 @@ public class Jams {
 		mainConfiguration = ConfigurationUtils.loadMainConfiguration();
 
 		languageManager = LanguageManager.INSTANCE;
+		fileTypeManager = FileTypeManager.INSTANCE;
+
 		defaultInstructionSet = new InstructionSet(true, true, true);
 		defaultDirectiveSet = new DirectiveSet(true, true);
 		assemblerBuilderManager = AssemblerBuilderManager.INSTANCE;
@@ -67,6 +72,15 @@ public class Jams {
 	 */
 	public static LanguageManager getLanguageManager() {
 		return languageManager;
+	}
+
+	/**
+	 * Returns the {@link FileTypeManager}.
+	 *
+	 * @return the {@link FileTypeManager}.
+	 */
+	public static FileTypeManager getFileTypeManager() {
+		return fileTypeManager;
 	}
 
 	/**

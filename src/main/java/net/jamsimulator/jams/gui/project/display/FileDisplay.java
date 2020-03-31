@@ -1,33 +1,33 @@
 package net.jamsimulator.jams.gui.project.display;
 
 
-import javafx.scene.control.TextArea;
 import net.jamsimulator.jams.utils.FileUtils;
+import org.fxmisc.richtext.CodeArea;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-public class FileDisplay extends TextArea {
+public class FileDisplay extends CodeArea {
 
 	private final FileDisplayTab tab;
 
 	public FileDisplay(FileDisplayTab tab) {
+		super(read(tab));
 		this.tab = tab;
-		read();
 	}
 
 	public FileDisplayTab getTab() {
 		return tab;
 	}
 
-	private void read() {
+	private static String read(FileDisplayTab tab) {
 		try {
-			setText(FileUtils.readAll(tab.getFile()));
+			return FileUtils.readAll(tab.getFile());
 		} catch (IOException ex) {
 			StringWriter writer = new StringWriter();
 			ex.printStackTrace(new PrintWriter(writer));
-			setText(writer.toString());
+			return writer.toString();
 		}
 	}
 }

@@ -1,7 +1,7 @@
 package net.jamsimulator.jams.gui.explorer.folder.context.option.newmenu;
 
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.explorer.ExplorerContextMenuItem;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
@@ -9,8 +9,6 @@ import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.context.ExplorerFileDefaultContextMenu;
 import net.jamsimulator.jams.gui.general.NewFileWindow;
-import net.jamsimulator.jams.gui.general.NewFolderWindow;
-import net.jamsimulator.jams.gui.icon.FileIconManager;
 import net.jamsimulator.jams.gui.icon.Icons;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageMenuItem;
@@ -27,7 +25,7 @@ public class FileMenuItemNewFile extends LanguageMenuItem implements ExplorerCon
 
 	private void initIcon() {
 		JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE, Icons.FILE_FILE_PATH,
-				FileIconManager.IMAGE_SIZE, FileIconManager.IMAGE_SIZE).ifPresent(icon -> setGraphic(new ImageView(icon)));
+				FileType.IMAGE_SIZE, FileType.IMAGE_SIZE).ifPresent(icon -> setGraphic(new ImageView(icon)));
 
 	}
 

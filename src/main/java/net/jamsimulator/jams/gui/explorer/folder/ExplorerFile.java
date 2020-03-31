@@ -1,7 +1,7 @@
 package net.jamsimulator.jams.gui.explorer.folder;
 
 import javafx.scene.input.MouseEvent;
-import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerBasicElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
@@ -22,7 +22,7 @@ public class ExplorerFile extends ExplorerBasicElement {
 	public ExplorerFile(ExplorerFolder parent, File file, int hierarchyLevel) {
 		super(parent, file.getName(), hierarchyLevel);
 		this.file = file;
-		icon.setImage(JamsApplication.getFileIconManager().getImageByFile(file));
+		icon.setImage(Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType()).getIcon());
 	}
 
 	@Override

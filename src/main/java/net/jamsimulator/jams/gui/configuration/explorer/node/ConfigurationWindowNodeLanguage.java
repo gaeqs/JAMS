@@ -64,12 +64,12 @@ public class ConfigurationWindowNodeLanguage extends ConfigurationWindowNode<Lan
 	}
 
 	@Listener
-	private void onLanguageRegister(LanguageRegisterEvent event) {
+	private void onLanguageRegister(LanguageRegisterEvent.After event) {
 		box.getItems().add(event.getLanguage());
 	}
 
 	@Listener
-	private void onLanguageUnregister(LanguageUnregisterEvent event) {
+	private void onLanguageUnregister(LanguageUnregisterEvent.After event) {
 		if (box.getSelectionModel().getSelectedItem().equals(event.getLanguage()))
 			setValue(defaultValue);
 		box.getItems().remove(event.getLanguage());

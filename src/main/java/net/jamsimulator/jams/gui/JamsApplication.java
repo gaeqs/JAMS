@@ -9,7 +9,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import net.jamsimulator.jams.gui.font.FontLoader;
-import net.jamsimulator.jams.gui.icon.FileIconManager;
 import net.jamsimulator.jams.gui.icon.IconManager;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
@@ -79,16 +78,7 @@ public class JamsApplication extends Application {
 	public static IconManager getIconManager() {
 		return IconManager.INSTANCE;
 	}
-
-	/**
-	 * Returns the {@link FileIconManager}.
-	 *
-	 * @return the {@link FileIconManager}.
-	 */
-	public static FileIconManager getFileIconManager() {
-		return FileIconManager.INSTANCE;
-	}
-
+	
 	/**
 	 * Returns the {@link ThemeManager}.
 	 *

@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.explorer.folder;
 
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.gui.explorer.ExplorerSectionRepresentation;
@@ -13,7 +14,7 @@ public class ExplorerFolderRepresentation extends ExplorerSectionRepresentation 
 	 */
 	public ExplorerFolderRepresentation(ExplorerSection section, int hierarchyLevel) {
 		super(section, hierarchyLevel);
-		icon.setImage(JamsApplication.getFileIconManager().getFolderIcon());
+		icon.setImage(Jams.getFileTypeManager().getFolderType().getIcon());
 	}
 
 }

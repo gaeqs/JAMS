@@ -5,8 +5,8 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.icon.FileIconManager;
 import net.jamsimulator.jams.gui.icon.Icons;
 
 /**
@@ -41,7 +41,7 @@ public class ExplorerSectionRepresentation extends HBox {
 
 		selected = false;
 
-		emptyRegion = new ExplorerSeparatorRegion((double) FileIconManager.IMAGE_SIZE);
+		emptyRegion = new ExplorerSeparatorRegion(FileType.IMAGE_SIZE);
 
 		loadElements();
 		loadListeners();
@@ -57,12 +57,12 @@ public class ExplorerSectionRepresentation extends HBox {
 			icon = null;
 		} else if (section.isExpanded()) {
 			icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_EXPANDED,
-					Icons.EXPLORER_SECTION_EXPANDED_PATH, FileIconManager.IMAGE_SIZE,
-					FileIconManager.IMAGE_SIZE).orElse(null);
+					Icons.EXPLORER_SECTION_EXPANDED_PATH, FileType.IMAGE_SIZE,
+					FileType.IMAGE_SIZE).orElse(null);
 		} else {
 			icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_COLLAPSED,
-					Icons.EXPLORER_SECTION_COLLAPSED_PATH, FileIconManager.IMAGE_SIZE,
-					FileIconManager.IMAGE_SIZE).orElse(null);
+					Icons.EXPLORER_SECTION_COLLAPSED_PATH, FileType.IMAGE_SIZE,
+					FileType.IMAGE_SIZE).orElse(null);
 		}
 		statusIcon.setImage(icon);
 		if (icon == null) {

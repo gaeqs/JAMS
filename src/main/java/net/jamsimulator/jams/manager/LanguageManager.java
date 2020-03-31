@@ -17,7 +17,7 @@ import java.io.File;
 import java.util.*;
 
 /**
- * This singleton stores all {@link Language}s that projects may use.
+ * This singleton stores all {@link Language}s that JAMS may use.
  * <p>
  * To register a {@link Language} use {@link #register(Language)}.
  * To unregister a {@link Language} use {@link #unregister(String)}.
