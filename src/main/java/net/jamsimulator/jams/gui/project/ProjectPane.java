@@ -6,7 +6,7 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.icon.Icons;
 import net.jamsimulator.jams.gui.main.WorkingPane;
-import net.jamsimulator.jams.gui.project.display.FileDisplayList;
+import net.jamsimulator.jams.gui.display.FileDisplayList;
 import net.jamsimulator.jams.gui.sidebar.SidebarButton;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.Project;

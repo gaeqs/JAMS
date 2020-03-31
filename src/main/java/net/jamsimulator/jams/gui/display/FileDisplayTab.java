@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.project.display;
+package net.jamsimulator.jams.gui.display;
 
 import javafx.scene.control.Tab;
 

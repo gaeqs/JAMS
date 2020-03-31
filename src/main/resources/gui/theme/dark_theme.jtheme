@@ -353,7 +353,6 @@ AnchorPane {
 }
 
 
-
 /*TABLE VIEW*/
 .table-view {
     -fx-background-color: -theme-background;
@@ -619,4 +618,31 @@ AnchorPane {
 .configuration-window-display {
     -fx-spacing: 7px;
     -fx-padding: 5 5 5 5;
+}
+
+
+/* CODE AREA */
+.code-area {
+    -fx-background-color: -theme-background-text-area;
+    -fx-text-fill: -theme-foreground;
+}
+
+.code-area .scroll-pane {
+    -fx-background-color: -theme-background-text-area;
+}
+
+/*Default text*/
+.code-area .text {
+    -fx-fill: -theme-foreground;
+    -rtfx-background-color: green;
+}
+
+/* NUMBER LINE */
+
+.code-area .lineno {
+    -fx-background-color: -theme-background-darker;
+    -fx-border-width: 0 1 0 0;
+    -fx-border-color: -theme-background-lighter;
+    -fx-fill: deeppink;
+    -fx-text-fill: deeppink;
 }
