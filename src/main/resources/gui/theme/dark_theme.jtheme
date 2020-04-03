@@ -22,12 +22,14 @@ Dark Theme
 /*LABEL*/
 .label {
     -fx-text-fill: -theme-foreground;
+    -fx-font-family: "{FONT_GENERAL}";
 }
 
 /*TEXT AREA*/
 .text-area {
     -fx-background-color: -theme-background-text-area;
     -fx-text-fill: -theme-foreground;
+    -fx-font-family: -fonr-general;
 }
 
 .text-area .scroll-pane {
@@ -94,6 +96,7 @@ AnchorPane {
 
 .tab-pane .tab-header-area .tab .tab-label {
     -fx-text-fill: -theme-foreground;
+    -fx-font-family: "{FONT_GENERAL}";
 }
 
 
@@ -631,18 +634,61 @@ AnchorPane {
     -fx-background-color: -theme-background-text-area;
 }
 
+.caret {
+    -fx-stroke: -theme-foreground;
+}
+
+.paragraph-box:has-caret {
+    -fx-background-color: -theme-background-darker;
+}
+
 /*Default text*/
 .code-area .text {
     -fx-fill: -theme-foreground;
-    -rtfx-background-color: green;
+    -fx-font-family: "{FONT_CODE}";
 }
+
+.code-area .paragraph-text {
+    -fx-padding: 0 0 0 5px;
+}
+
 
 /* NUMBER LINE */
 
-.code-area .lineno {
-    -fx-background-color: -theme-background-darker;
+.code-area .left-bar {
     -fx-border-width: 0 1 0 0;
     -fx-border-color: -theme-background-lighter;
-    -fx-fill: deeppink;
-    -fx-text-fill: deeppink;
+    -fx-background-color: -theme-background-darker;
+}
+
+.code-area .left-bar-background {
+    -fx-fill: -theme-background-darker;
+}
+
+.code-area .left-bar .line-number {
+    -fx-background-color: transparent;
+}
+
+.code-area .left-bar .line-number .text {
+    -fx-fill: -theme-background-lighter;
+    -fx-font-family: "{FONT_CODE}";
+    -fx-font-size: 12;
+}
+
+.paragraph-box:has-caret .left-bar .line-number .text {
+    -fx-fill: -theme-foreground;
+}
+
+/* ASSEMBLY */
+
+.code-area .comment {
+    -fx-fill: green;
+}
+
+.code-area .label {
+    -fx-font-style: italic;
+}
+
+.code-area .directive {
+    -fx-fill: pink;
 }

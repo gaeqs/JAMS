@@ -1,7 +1,9 @@
 package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
+import net.jamsimulator.jams.file.AssemblyFileType;
 import net.jamsimulator.jams.file.FileType;
+import net.jamsimulator.jams.file.TextFileType;
 import net.jamsimulator.jams.file.event.FileTypeRegisterEvent;
 import net.jamsimulator.jams.file.event.FileTypeUnregisterEvent;
 import net.jamsimulator.jams.gui.icon.Icons;
@@ -165,11 +167,11 @@ public class FileTypeManager extends SimpleEventBroadcast {
 	}
 
 	private void loadDefaults() {
-		unknownType = new FileType("Unknown", Icons.FILE_UNKNOWN, Icons.FILE_UNKNOWN_PATH);
-		folderType = new FileType("Folder", Icons.FILE_FOLDER, Icons.FILE_FOLDER_PATH);
+		unknownType = new TextFileType("Unknown", Icons.FILE_UNKNOWN, Icons.FILE_UNKNOWN_PATH);
+		folderType = new TextFileType("Folder", Icons.FILE_FOLDER, Icons.FILE_FOLDER_PATH);
 
-		register(new FileType("Text", Icons.FILE_TEXT, Icons.FILE_TEXT_PATH, "txt"));
-		register(new FileType("Assembly", Icons.FILE_ASSEMBLY, Icons.FILE_ASSEMBLY_PATH, "asm", "s"));
+		register(new TextFileType("Text", Icons.FILE_TEXT, Icons.FILE_TEXT_PATH, "txt"));
+		register(new AssemblyFileType("Assembly", Icons.FILE_ASSEMBLY, Icons.FILE_ASSEMBLY_PATH, "asm", "s"));
 	}
 
 }

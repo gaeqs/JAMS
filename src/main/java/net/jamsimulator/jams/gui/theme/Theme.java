@@ -67,6 +67,11 @@ public class Theme {
 		return css;
 	}
 
+	public String getFinalCss() {
+		return css.replace("{FONT_GENERAL}", "Noto Sans")
+				.replace("{FONT_CODE}", "JetBrains Mono");
+	}
+
 	public void apply(Node node) {
 		node.setStyle(css);
 	}
@@ -75,7 +80,7 @@ public class Theme {
 		File file = TempUtils.createTemporalFile("currentTheme");
 		try {
 			Writer writer = new FileWriter(file);
-			writer.write(css);
+			writer.write(getFinalCss());
 			writer.close();
 
 			scene.getStylesheets().setAll(file.toURI().toURL().toExternalForm());

@@ -14,6 +14,7 @@ Light Theme
 }
 
 
+
 /*REMOVE FOCUS INDICATOR (BLUE BORDER)*/
 .focus-indicator {
     -fx-border-color: transparent;
@@ -353,7 +354,6 @@ AnchorPane {
 }
 
 
-
 /*TABLE VIEW*/
 .table-view {
     -fx-background-color: -theme-background;
@@ -619,4 +619,37 @@ AnchorPane {
 .configuration-window-display {
     -fx-spacing: 7px;
     -fx-padding: 5 5 5 5;
+}
+
+
+/* CODE AREA */
+.code-area {
+    -fx-background-color: -theme-background-text-area;
+    -fx-text-fill: -theme-foreground;
+}
+
+.code-area .scroll-pane {
+    -fx-background-color: -theme-background-text-area;
+}
+
+/*Default text*/
+.code-area .text {
+    -fx-fill: -theme-foreground;
+}
+
+.code-area .paragraph-text {
+    -fx-padding: 0 0 0 5px;
+}
+
+/* NUMBER LINE */
+
+.code-area .left-bar {
+    -fx-border-width: 0 1 0 0;
+    -fx-border-color: -theme-background-lighter;
+    -fx-background-color: -theme-background-darker;
+
+}
+
+.code-area .left-bar-background {
+    -fx-fill: -theme-background-darker;
 }

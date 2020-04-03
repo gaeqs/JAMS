@@ -30,10 +30,6 @@ public class MainMenuBar extends MenuBar {
 		Menu file = new LanguageMenu(Messages.MAIN_MENU_FILE);
 		getMenus().add(file);
 
-		MenuItem exit = new LanguageMenuItem(Messages.MAIN_MENU_FILE_EXIT);
-		exit.setOnAction(event -> JamsApplication.getStage().close());
-		file.getItems().add(exit);
-
 		ConfigurationWindow window;
 		try {
 			Configuration types = new RootConfiguration(new InputStreamReader(Jams.class.getResourceAsStream(

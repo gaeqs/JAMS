@@ -2,6 +2,8 @@ package net.jamsimulator.jams.file;
 
 import javafx.scene.image.Image;
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.display.FileDisplay;
+import net.jamsimulator.jams.gui.display.FileDisplayTab;
 import net.jamsimulator.jams.gui.icon.IconManager;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -16,7 +18,7 @@ import java.util.Set;
  * Remember that if two file types contains the same extension and the're inside
  * the same manager some functions will cause unpredictable results.
  */
-public class FileType {
+public abstract class FileType {
 
 	public static final int IMAGE_SIZE = 16;
 
@@ -32,7 +34,10 @@ public class FileType {
 	 * Creates a file type.
 	 *
 	 * @param name       the name.
+	 * @param iconName   the name of the icon.
+	 * @param iconPath   the path of the icon.
 	 * @param extensions the extensions.
+	 * @see IconManager
 	 */
 	public FileType(String name, String iconName, String iconPath, String... extensions) {
 		Validate.notNull(name, "Name cannot be null!");
@@ -98,6 +103,14 @@ public class FileType {
 		}
 		return icon;
 	}
+
+	/**
+	 * Creates a {@link FileDisplayTab} for the given {@link FileDisplayTab}.
+	 *
+	 * @param tab the {@link FileDisplayTab}.
+	 * @return the {@link FileDisplay}.
+	 */
+	public abstract FileDisplay createDisplayTab(FileDisplayTab tab);
 
 	@Override
 	public boolean equals(Object o) {
