@@ -11,7 +11,7 @@ import net.jamsimulator.jams.gui.main.MainAnchorPane;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
-import net.jamsimulator.jams.project.Project;
+import net.jamsimulator.jams.project.MipsProject;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class ProjectTab extends Tab {
 
-	private final Project project;
+	private final MipsProject project;
 	private final TabPane projectTabPane;
 
 	private final List<EventHandler<Event>> closeListeners;
@@ -32,7 +32,7 @@ public class ProjectTab extends Tab {
 	 *
 	 * @param project the handled project.
 	 */
-	public ProjectTab(Project project) {
+	public ProjectTab(MipsProject project) {
 		super(project.getName());
 		this.project = project;
 		closeListeners = new ArrayList<>();
@@ -52,7 +52,7 @@ public class ProjectTab extends Tab {
 		tab.setClosable(false);
 		projectTabPane.getTabs().add(tab);
 
-		WorkingPane structurePane = new ProjectPane(tab, this, project);
+		WorkingPane structurePane = new MipsProjectPane(tab, this, project);
 		tab.setContent(structurePane);
 
 		setContent(pane);
@@ -65,7 +65,7 @@ public class ProjectTab extends Tab {
 	 *
 	 * @return the project.
 	 */
-	public Project getProject() {
+	public MipsProject getProject() {
 		return project;
 	}
 

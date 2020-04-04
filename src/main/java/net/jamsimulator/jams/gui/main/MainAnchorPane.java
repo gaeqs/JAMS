@@ -4,12 +4,11 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
-import net.jamsimulator.jams.project.Project;
+import net.jamsimulator.jams.project.MipsProject;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
 import java.io.File;
@@ -46,7 +45,7 @@ public class MainAnchorPane extends AnchorPane {
 		File file = new File(folder);
 		if (!file.exists()) file.mkdirs();
 
-		Project project = new Project("TEST", file,
+		MipsProject project = new MipsProject("TEST", file,
 				Jams.getAssemblerBuilderManager().get("MIPS32").get(),
 				Jams.getMemoryBuilderManager().get("MIPS32").get(),
 				new DirectiveSet(true, true),

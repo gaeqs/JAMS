@@ -9,22 +9,26 @@ import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.gui.display.FileDisplayList;
 import net.jamsimulator.jams.gui.sidebar.SidebarButton;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.project.Project;
+import net.jamsimulator.jams.project.MipsProject;
 
 /**
  * This class represent the working pane of a project.
  */
-public class ProjectPane extends WorkingPane {
+public class MipsProjectPane extends WorkingPane {
 
-	protected final Project project;
+	protected final MipsProject project;
 	protected FolderExplorer explorer;
 
-	public ProjectPane(Tab parent, ProjectTab projectTab, Project project) {
+	public MipsProjectPane(Tab parent, ProjectTab projectTab, MipsProject project) {
 		super(parent, projectTab, new FileDisplayList(null));
 		this.project = project;
 
 		getFileDisplayList().setWorkingPane(this);
 		loadSidebarModules();
+	}
+
+	public MipsProject getProject() {
+		return project;
 	}
 
 	public FileDisplayList getFileDisplayList() {

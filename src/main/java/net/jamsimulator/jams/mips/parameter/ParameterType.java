@@ -84,7 +84,7 @@ public enum ParameterType {
 	}
 
 	/**
-	 * Returns an mutable list with all the parameter types that are compatible with the given parameter.
+	 * Returns a mutable list with all the parameter types that are compatible with the given parameter.
 	 *
 	 * @param parameter the given parameter.
 	 * @return the mutable list.

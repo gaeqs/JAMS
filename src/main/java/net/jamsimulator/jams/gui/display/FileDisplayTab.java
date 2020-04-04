@@ -5,6 +5,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.file.FileType;
+import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.utils.AnchorUtils;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
@@ -43,6 +44,10 @@ public class FileDisplayTab extends Tab {
 
 	public FileDisplayList getList() {
 		return list;
+	}
+
+	public WorkingPane getWorkingPane() {
+		return list.getWorkingPane();
 	}
 
 	public File getFile() {

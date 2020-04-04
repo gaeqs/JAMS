@@ -15,20 +15,20 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Project implements IProject {
+public class MipsProject implements IProject {
 
-    private String name;
-    private File folder;
+    private final String name;
+    private final File folder;
 
-    private AssemblerBuilder assemblerBuilder;
-    private MemoryBuilder memoryBuilder;
-    private DirectiveSet directiveSet;
-    private InstructionSet instructionSet;
+    private final AssemblerBuilder assemblerBuilder;
+    private final MemoryBuilder memoryBuilder;
+    private final DirectiveSet directiveSet;
+    private final InstructionSet instructionSet;
 
-    private List<File> filesToAssemble;
+    private final List<File> filesToAssemble;
 
-    public Project(String name, File folder, AssemblerBuilder assemblerBuilder, MemoryBuilder memoryBuilder,
-                   DirectiveSet directiveSet, InstructionSet instructionSet) {
+    public MipsProject(String name, File folder, AssemblerBuilder assemblerBuilder, MemoryBuilder memoryBuilder,
+                       DirectiveSet directiveSet, InstructionSet instructionSet) {
         Validate.notNull(name, "Name cannot be null!");
         Validate.notNull(folder, "Folder cannot be null!");
         Validate.isTrue(folder.exists(), "Folder " + folder.getName() + " must exist!");
@@ -61,6 +61,22 @@ public class Project implements IProject {
     @Override
     public List<File> getFilesToAssemble() {
         return filesToAssemble;
+    }
+
+    public AssemblerBuilder getAssemblerBuilder() {
+        return assemblerBuilder;
+    }
+
+    public MemoryBuilder getMemoryBuilder() {
+        return memoryBuilder;
+    }
+
+    public DirectiveSet getDirectiveSet() {
+        return directiveSet;
+    }
+
+    public InstructionSet getInstructionSet() {
+        return instructionSet;
     }
 
     @Override

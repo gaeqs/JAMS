@@ -13,7 +13,6 @@ Dark Theme
     -theme-explorer-element-selected: #4D6EAF;
 }
 
-
 /*REMOVE FOCUS INDICATOR (BLUE BORDER)*/
 .focus-indicator {
     -fx-border-color: transparent;
@@ -681,23 +680,50 @@ AnchorPane {
 
 /* ASSEMBLY */
 
-.code-area .comment {
-    -fx-fill: gray;
+.code-area .assembly-comment {
+    -fx-fill: #8b8b8b;
 }
 
-.code-area .label {
+.code-area .assembly-label {
     -fx-font-style: italic;
 }
 
-.code-area .directive {
+.code-area .assembly-directive {
     -fx-fill: pink;
 }
 
-.code-area .directive-parameter {
-    -fx-fill: #FD8375;
+.code-area .assembly-directive-parameter {
+    -fx-fill: #ffd493;
 }
 
 
-.code-area .directive-parameter-string {
-    -fx-fill: darkolivegreen;
+.code-area .assembly-directive-parameter-string {
+    -fx-fill: #698658;
+}
+
+.code-area .assembly-instruction {
+    -fx-fill: #f85e6f;
+}
+
+.code-area .assembly-instruction-parameter-label {
+    -fx-fill: #ffffff;
+    -fx-font-style: italic;
+}
+
+.code-area .assembly-instruction-parameter-register {
+    -fx-fill: #579eff;
+}
+
+.code-area .assembly-instruction-parameter-immediate {
+    -fx-fill: #36fc5b;
+}
+
+
+.code-area .assembly-instruction-parameter-string {
+    -fx-fill: #698658;
+}
+
+.code-area .assembly-error {
+    -rtfx-underline-color: #cb2f2f;
+    -rtfx-underline-width: 1px;
 }

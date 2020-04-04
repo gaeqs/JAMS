@@ -102,4 +102,9 @@ public class StringUtils {
 		}
 		return string;
 	}
+
+	public static boolean isStringOrChar(String string) {
+		return string.startsWith("\"") && string.endsWith("\"") ||
+				string.startsWith("'") && string.endsWith("'");
+	}
 }
