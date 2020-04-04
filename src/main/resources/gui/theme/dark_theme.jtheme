@@ -682,7 +682,7 @@ AnchorPane {
 /* ASSEMBLY */
 
 .code-area .comment {
-    -fx-fill: green;
+    -fx-fill: gray;
 }
 
 .code-area .label {
@@ -691,4 +691,13 @@ AnchorPane {
 
 .code-area .directive {
     -fx-fill: pink;
+}
+
+.code-area .directive-parameter {
+    -fx-fill: #FD8375;
+}
+
+
+.code-area .directive-parameter-string {
+    -fx-fill: darkolivegreen;
 }

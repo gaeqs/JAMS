@@ -11,10 +11,8 @@ import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.utils.ConfigurationUtils;
 import net.jamsimulator.jams.utils.FolderUtils;
 import net.jamsimulator.jams.utils.TempUtils;
-import org.json.simple.parser.ParseException;
 
 import java.io.File;
-import java.io.IOException;
 
 public class Jams {
 
@@ -31,7 +29,11 @@ public class Jams {
 	private static DirectiveSet defaultDirectiveSet;
 
 	//JAMS main method.
-	public static void main(String[] args) throws IOException, ParseException {
+	public static void main(String[] args) {
+		JamsApplication.launch(JamsApplication.class, args);
+	}
+
+	public static void load() {
 		mainFolder = FolderUtils.checkMainFolder();
 		TempUtils.loadTemporalFolder();
 
@@ -44,7 +46,6 @@ public class Jams {
 		defaultDirectiveSet = new DirectiveSet(true, true);
 		assemblerBuilderManager = AssemblerBuilderManager.INSTANCE;
 		memoryBuilderManager = MemoryBuilderManager.INSTANCE;
-		JamsApplication.launch(JamsApplication.class, args);
 	}
 
 	/**

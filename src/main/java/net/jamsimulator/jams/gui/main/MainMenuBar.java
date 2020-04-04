@@ -6,12 +6,10 @@ import javafx.scene.control.MenuItem;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.configuration.RootConfiguration;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.configuration.ConfigurationWindow;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageMenu;
 import net.jamsimulator.jams.language.wrapper.LanguageMenuItem;
-import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,7 +34,7 @@ public class MainMenuBar extends MenuBar {
 					"/configuration/main_config_meta.jconfig")));
 			window = new ConfigurationWindow(Jams.getMainConfiguration(), types);
 
-		} catch (IOException | ParseException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 		MenuItem settings = new LanguageMenuItem(Messages.MAIN_MENU_FILE_SETTINGS);

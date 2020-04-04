@@ -1,8 +1,7 @@
 package net.jamsimulator.jams.configuration;
 
 import net.jamsimulator.jams.utils.CollectionUtils;
-import net.jamsimulator.jams.utils.json.JSONPrettyWriter;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -291,9 +290,11 @@ public class Configuration {
 	 */
 	public void save(File file, boolean useFormat) throws IOException {
 		FileWriter writer = new FileWriter(file);
+		JSONObject object = new JSONObject(map);
+
 		if (useFormat)
-			JSONPrettyWriter.writeJSONString(map, writer, 0);
-		else JSONObject.writeJSONString(map, writer);
+			writer.write(object.toString(1));
+		else writer.write(object.toString());
 		writer.close();
 	}
 

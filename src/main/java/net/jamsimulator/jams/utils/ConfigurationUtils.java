@@ -2,7 +2,6 @@ package net.jamsimulator.jams.utils;
 
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.RootConfiguration;
-import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +35,7 @@ public class ConfigurationUtils {
 			config.addNotPresentValues(def);
 			config.save(true);
 			return config;
-		} catch (IOException | ParseException ex) {
+		} catch (IOException ex) {
 			throw new RuntimeException("Couldn't load main configuration file!", ex);
 		}
 	}

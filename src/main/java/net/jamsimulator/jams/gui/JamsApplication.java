@@ -8,6 +8,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.font.FontLoader;
 import net.jamsimulator.jams.gui.icon.IconManager;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
@@ -19,6 +20,7 @@ import java.util.List;
 
 public class JamsApplication extends Application {
 
+
 	private static final int WIDTH = 1200, HEIGHT = 800;
 	private static final int MIN_WIDTH = 20, MIN_HEIGHT = 20;
 	private static Stage stage;
@@ -28,7 +30,7 @@ public class JamsApplication extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-
+		Jams.load();
 		stage = primaryStage;
 		FontLoader.load();
 		primaryStage.setTitle("JAMS (Just Another MIPS Simulator)");
@@ -78,7 +80,7 @@ public class JamsApplication extends Application {
 	public static IconManager getIconManager() {
 		return IconManager.INSTANCE;
 	}
-	
+
 	/**
 	 * Returns the {@link ThemeManager}.
 	 *
@@ -105,5 +107,9 @@ public class JamsApplication extends Application {
 	 */
 	public static void removeStageCloseListener(EventHandler<WindowEvent> listener) {
 		closeListeners.remove(listener);
+	}
+
+	public static void main(String[] args) {
+		launch(args);
 	}
 }

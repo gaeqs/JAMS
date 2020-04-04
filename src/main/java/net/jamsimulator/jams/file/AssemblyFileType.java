@@ -1,6 +1,6 @@
 package net.jamsimulator.jams.file;
 
-import net.jamsimulator.jams.gui.display.AssemblyFileDisplay;
+import net.jamsimulator.jams.gui.display.assembly.AssemblyFileDisplay;
 import net.jamsimulator.jams.gui.display.FileDisplay;
 import net.jamsimulator.jams.gui.display.FileDisplayTab;
 
