@@ -30,7 +30,6 @@ public class JamsApplication extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-		Jams.load();
 		stage = primaryStage;
 		FontLoader.load();
 		primaryStage.setTitle("JAMS (Just Another MIPS Simulator)");

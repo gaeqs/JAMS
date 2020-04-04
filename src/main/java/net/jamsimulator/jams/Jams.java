@@ -30,10 +30,6 @@ public class Jams {
 
 	//JAMS main method.
 	public static void main(String[] args) {
-		JamsApplication.launch(JamsApplication.class, args);
-	}
-
-	public static void load() {
 		mainFolder = FolderUtils.checkMainFolder();
 		TempUtils.loadTemporalFolder();
 
@@ -46,6 +42,7 @@ public class Jams {
 		defaultDirectiveSet = new DirectiveSet(true, true);
 		assemblerBuilderManager = AssemblerBuilderManager.INSTANCE;
 		memoryBuilderManager = MemoryBuilderManager.INSTANCE;
+		JamsApplication.main(args);
 	}
 
 	/**

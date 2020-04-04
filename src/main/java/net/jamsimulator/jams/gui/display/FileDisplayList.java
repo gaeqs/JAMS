@@ -17,7 +17,7 @@ public class FileDisplayList extends TabPane {
 	public FileDisplayList(WorkingPane workingPane) {
 		this.workingPane = workingPane;
 		this.displays = new ArrayList<>();
-		setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
+		setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
 	}
 
 	public void setWorkingPane(WorkingPane workingPane) {

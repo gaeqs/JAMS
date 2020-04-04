@@ -11,8 +11,8 @@ import net.jamsimulator.jams.mips.parameter.parse.exception.BadParameterParseRes
  */
 public class ParameterParseResult {
 
-	public static ParameterParseResult.Builder builder () {
-		return new ParameterParseResult.Builder();
+	public static Builder builder () {
+		return new Builder();
 	}
 
 	private String label;
