@@ -145,7 +145,7 @@ public class IconManager {
 		try {
 			return Optional.of(getOrLoad(name, path, width, height));
 		} catch (Exception ex) {
-			System.err.println("Error while loading an icon: " + ex.getMessage());
+			System.err.println("Error while loading an icon (" + path + "): " + ex.getMessage());
 			return Optional.empty();
 		}
 	}
