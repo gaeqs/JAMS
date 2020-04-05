@@ -39,7 +39,10 @@ public class FileDisplayTab extends Tab {
 
 		setContent(pane);
 
-		setOnClosed(target -> display.onClose());
+		setOnClosed(target -> {
+			list.closeFileInternal(this);
+			display.onClose();
+		});
 	}
 
 	public FileDisplayList getList() {

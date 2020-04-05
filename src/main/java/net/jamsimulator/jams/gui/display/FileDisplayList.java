@@ -28,14 +28,20 @@ public class FileDisplayList extends TabPane {
 		return workingPane;
 	}
 
-	public void openFile(File file) {
+	public boolean isFileOpen(File file) {
+		return displays.stream().anyMatch(target -> target.getFile().equals(file));
+	}
+
+	public boolean openFile(File file) {
 		Validate.notNull(file, "File cannot be null!");
 		Validate.isTrue(file.exists(), "File must exist!");
 		Validate.isTrue(file.isFile(), "File must be a file!");
+		if (isFileOpen(file)) return false;
 
 		FileDisplayTab tab = new FileDisplayTab(this, file);
 		displays.add(tab);
 		getTabs().add(tab);
+		return true;
 	}
 
 	public int closeFile(File file) {
@@ -49,6 +55,10 @@ public class FileDisplayList extends TabPane {
 			getTabs().remove(tab);
 		}
 		return tabs.size();
+	}
+
+	void closeFileInternal(FileDisplayTab tab) {
+		displays.remove(tab);
 	}
 
 	public void closeAll() {
