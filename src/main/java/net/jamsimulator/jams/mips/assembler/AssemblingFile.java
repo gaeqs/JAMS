@@ -1,5 +1,7 @@
 package net.jamsimulator.jams.mips.assembler;
 
+import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,13 +16,15 @@ public class AssemblingFile {
 
 	List<String> rawCode;
 	Map<String, Integer> labels;
-	List<InstructionSnapshot> snapshots;
+	List<InstructionSnapshot> instructionSnapshots;
+	List<DirectiveSnapshot> directiveSnapshots;
 	Map<String, String> equivalents;
 
 	AssemblingFile(List<String> rawCode) {
 		this.rawCode = rawCode;
 		this.labels = new HashMap<>();
-		this.snapshots = new LinkedList<>();
+		this.instructionSnapshots = new LinkedList<>();
+		this.directiveSnapshots = new LinkedList<>();
 		this.equivalents = new HashMap<>();
 	}
 
@@ -32,11 +36,25 @@ public class AssemblingFile {
 		return labels;
 	}
 
-	public List<InstructionSnapshot> getSnapshots() {
-		return snapshots;
+	public List<InstructionSnapshot> getInstructionSnapshots() {
+		return instructionSnapshots;
+	}
+
+	public List<DirectiveSnapshot> getDirectiveSnapshots() {
+		return directiveSnapshots;
 	}
 
 	public Map<String, String> getEquivalents() {
 		return equivalents;
+	}
+
+	public int getLabelValue(Assembler assembler, String label, int lineNumber) {
+		if (!labels.containsKey(label)) {
+			if (!assembler.getGlobalLabels().containsKey(label))
+				throw new AssemblerException(lineNumber, "Label " + label + " not found.");
+			return assembler.getGlobalLabels().get(label);
+		} else {
+			return labels.get(label);
+		}
 	}
 }

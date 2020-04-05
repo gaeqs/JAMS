@@ -74,7 +74,10 @@ public class MIPS32Assembler implements Assembler {
 
 		//Compile instructions
 		for (AssemblingFile file : files) {
-			for (InstructionSnapshot snapshot : file.snapshots) {
+			for (DirectiveSnapshot snapshot : file.directiveSnapshots) {
+				snapshot.compile(this, file);
+			}
+			for (InstructionSnapshot snapshot : file.instructionSnapshots) {
 				snapshot.compile(this, file);
 			}
 		}
@@ -196,7 +199,7 @@ public class MIPS32Assembler implements Assembler {
 
 			//If starts with ".", then compile directive
 			if (first.startsWith(".")) {
-				labelAddress = executeDirective(lineNumber, line, first.substring(1), parts);
+				labelAddress = executeDirective(lineNumber, file, line, first.substring(1), parts);
 			}
 			//Else compile instruction
 			else {
@@ -212,10 +215,15 @@ public class MIPS32Assembler implements Assembler {
 		}
 	}
 
-	private int executeDirective(int lineNumber, String line, String name, List<String> parameters) {
+	private int executeDirective(int lineNumber, AssemblingFile file, String line, String name, List<String> parameters) {
 		Optional<Directive> optional = directiveSet.getDirective(name);
 		if (!optional.isPresent()) throw new AssemblerException(lineNumber, "Directive " + name + " not found!");
-		int start = optional.get().execute(lineNumber, line, parameters.toArray(new String[0]), this);
+		String[] pArray = parameters.toArray(new String[0]);
+		int start = optional.get().execute(lineNumber, line, pArray, this);
+
+		DirectiveSnapshot snapshot = new DirectiveSnapshot(optional.get(), pArray, lineNumber, start);
+		file.directiveSnapshots.add(snapshot);
+
 		return start == -1 ? assemblerData.getCurrent() : start;
 	}
 
@@ -234,7 +242,7 @@ public class MIPS32Assembler implements Assembler {
 					+ Arrays.toString(types));
 		Instruction instruction = optional.get();
 
-		file.snapshots.add(new InstructionSnapshot(instruction, parameters, line, assemblerData.getCurrent()));
+		file.instructionSnapshots.add(new InstructionSnapshot(instruction, parameters, line, assemblerData.getCurrent()));
 		assemblerData.addCurrent(instruction instanceof PseudoInstruction ?
 				((PseudoInstruction) instruction).getInstructionAmount(parameters.toArray(new String[0])) << 2 : 4);
 	}

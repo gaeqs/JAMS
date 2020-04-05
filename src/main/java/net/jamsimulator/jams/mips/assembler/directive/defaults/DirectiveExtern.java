@@ -2,6 +2,7 @@ package net.jamsimulator.jams.mips.assembler.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.assembler.AssemblerData;
+import net.jamsimulator.jams.mips.assembler.AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.SelectedMemorySegment;
 import net.jamsimulator.jams.mips.assembler.directive.Directive;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
@@ -25,7 +26,7 @@ public class DirectiveExtern extends Directive {
 			throw new AssemblerException("Label " + parameters[0] + " is not legal.");
 		if (!NumericUtils.isInteger(parameters[1]))
 			throw new AssemblerException(parameters[1] + " is not a number.");
-		int i = Integer.parseInt(parameters[1]);
+		int i = NumericUtils.decodeInteger(parameters[1]);
 		if (i < 0)
 			throw new AssemblerException(i + " cannot be negative.");
 
@@ -38,5 +39,10 @@ public class DirectiveExtern extends Directive {
 		assembler.setAsGlobalLabel(lineNumber, parameters[0]);
 		data.setSelected(old);
 		return start;
+	}
+
+	@Override
+	public void postExecute(String[] parameters, Assembler assembler, AssemblingFile file, int lineNumber, int address) {
+
 	}
 }

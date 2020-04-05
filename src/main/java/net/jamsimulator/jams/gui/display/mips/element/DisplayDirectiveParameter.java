@@ -33,7 +33,8 @@ public class DisplayDirectiveParameter extends MipsCodeElement {
 
 	@Override
 	public List<String> getStyles() {
-		if(hasErrors()) return Arrays.asList(string ? "assembly-directive-parameter-string" : "assembly-directive-parameter", "assembly-error");
+		if (hasErrors())
+			return Arrays.asList(string ? "assembly-directive-parameter-string" : "assembly-directive-parameter", "assembly-error");
 		return Collections.singletonList(string ? "assembly-directive-parameter-string" : "assembly-directive-parameter");
 	}
 
@@ -41,7 +42,9 @@ public class DisplayDirectiveParameter extends MipsCodeElement {
 	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
 		if (NumericUtils.isInteger(text)) return;
 		if (StringUtils.isStringOrChar(text)) return;
-		errors.add(MipsDisplayError.INVALID_DIRECTIVE_PARAMETER);
+		if (elements.getLabels().stream().noneMatch(target -> target.getLabel().equals(text))) {
+			errors.add(MipsDisplayError.INVALID_DIRECTIVE_PARAMETER);
+		}
 	}
 
 }

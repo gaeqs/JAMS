@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.mips.assembler.directive;
 
 import net.jamsimulator.jams.mips.assembler.Assembler;
+import net.jamsimulator.jams.mips.assembler.AssemblingFile;
 
 /**
  * Represents a directive. Directive are the direct equivalent to the preprocessor code in C.
@@ -21,4 +22,5 @@ public abstract class Directive {
 
 	public abstract int execute(int lineNumber, String line, String[] parameters, Assembler assembler);
 
+	public abstract void postExecute(String[] parameters, Assembler assembler, AssemblingFile file, int lineNumber, int address);
 }

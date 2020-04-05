@@ -36,7 +36,7 @@ public class InstructionSnapshot {
 
 			//Parse label
 			if (result.isHasLabel()) {
-				result.setLabelValue(getLabelValue(assembler, file, result.getLabel()));
+				result.setLabelValue(file.getLabelValue(assembler, result.getLabel(), line));
 			}
 
 			compiledParameters[index++] = result;
@@ -55,15 +55,5 @@ public class InstructionSnapshot {
 			throw new AssemblerException(line, "Error while compiling instruction.", ex);
 		}
 
-	}
-
-	private int getLabelValue(Assembler assembler, AssemblingFile file, String label) {
-		if (!file.labels.containsKey(label)) {
-			if (!assembler.getGlobalLabels().containsKey(label))
-				throw new AssemblerException(line, "Label " + label + " not found.");
-			return assembler.getGlobalLabels().get(label);
-		} else {
-			return file.labels.get(label);
-		}
 	}
 }

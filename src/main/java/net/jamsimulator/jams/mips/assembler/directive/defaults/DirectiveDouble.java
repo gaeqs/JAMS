@@ -2,6 +2,7 @@ package net.jamsimulator.jams.mips.assembler.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.assembler.AssemblerData;
+import net.jamsimulator.jams.mips.assembler.AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.directive.Directive;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.utils.NumericUtils;
@@ -38,5 +39,10 @@ public class DirectiveDouble extends Directive {
 			data.addCurrent(8);
 		}
 		return start;
+	}
+
+	@Override
+	public void postExecute(String[] parameters, Assembler assembler, AssemblingFile file, int lineNumber, int address) {
+
 	}
 }

@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.mips.assembler.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.Assembler;
+import net.jamsimulator.jams.mips.assembler.AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.directive.Directive;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.utils.LabelUtils;
@@ -29,5 +30,10 @@ public class DirectiveGlobl extends Directive {
 		}
 
 		return -1;
+	}
+
+	@Override
+	public void postExecute(String[] parameters, Assembler assembler, AssemblingFile file, int lineNumber, int address) {
+
 	}
 }

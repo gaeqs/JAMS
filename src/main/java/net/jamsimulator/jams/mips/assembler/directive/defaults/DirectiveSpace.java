@@ -2,6 +2,7 @@ package net.jamsimulator.jams.mips.assembler.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.assembler.AssemblerData;
+import net.jamsimulator.jams.mips.assembler.AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.directive.Directive;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.utils.NumericUtils;
@@ -21,7 +22,7 @@ public class DirectiveSpace extends Directive {
 
 		if (!NumericUtils.isInteger(parameters[0]))
 			throw new AssemblerException(parameters[0] + " is not a number.");
-		int i = Integer.parseInt(parameters[0]);
+		int i = NumericUtils.decodeInteger(parameters[0]);
 		if (i < 0) throw new AssemblerException(i + " cannot be negative.");
 
 		AssemblerData data = assembler.getAssemblerData();
@@ -29,5 +30,10 @@ public class DirectiveSpace extends Directive {
 		int start = data.getCurrent();
 		data.addCurrent(i);
 		return start;
+	}
+
+	@Override
+	public void postExecute(String[] parameters, Assembler assembler, AssemblingFile file, int lineNumber, int address) {
+
 	}
 }

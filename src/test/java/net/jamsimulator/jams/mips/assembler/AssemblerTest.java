@@ -24,7 +24,9 @@ class AssemblerTest {
 		program.add(".data");
 		program.add(".byte 5 9 6 2");
 		program.add(".extern global 8");
-		program.add("sum: .word 10");
+		program.add("sum: .word 0x10");
+		program.add("wordTest: .byte 0");
+		program.add("wordTest2: .word wordTest");
 		program.add(".text");
 		program.add(".eqv ONETWOZERO $s1, $s2, $s0");
 		program.add("add ONETWOZERO#ADDS");
@@ -38,6 +40,7 @@ class AssemblerTest {
 		program.add("mul $t1, $t1, $t2");
 		program.add("sw $t1, sum");
 		program.add("lw $t1, sum");
+		program.add("lw $s0, wordTest2");
 
 		Assembler assembler = new MIPS32Assembler(
 				new DirectiveSet(true, true),
@@ -57,8 +60,9 @@ class AssemblerTest {
 			simulation.executeNextInstruction(true);
 		}
 		System.out.println("Simulation end");
-		System.out.println("$t1: "+ simulation.getRegisterSet().getRegister("t1").get().getValue());
-		System.out.println("$ra: 0x"+ Integer.toHexString(simulation.getRegisterSet().getRegister("ra").get().getValue()));
+		System.out.println("$t1: " + simulation.getRegisterSet().getRegister("t1").get().getValue());
+		System.out.println("$s0: 0x" + Integer.toHexString(simulation.getRegisterSet().getRegister("s0").get().getValue()));
+		System.out.println("$ra: 0x" + Integer.toHexString(simulation.getRegisterSet().getRegister("ra").get().getValue()));
 
 		//Check add
 

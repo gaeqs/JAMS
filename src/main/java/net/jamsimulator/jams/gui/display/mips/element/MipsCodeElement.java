@@ -38,6 +38,10 @@ public abstract class MipsCodeElement {
 		return text;
 	}
 
+	public String getLabel() {
+		return text.substring(0, text.length() - 1);
+	}
+
 	public List<MipsDisplayError> getErrors() {
 		return Collections.unmodifiableList(errors);
 	}

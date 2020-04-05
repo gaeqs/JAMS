@@ -1,20 +1,22 @@
 package net.jamsimulator.jams.utils;
 
+import java.math.BigInteger;
+import java.util.Optional;
+
 public class NumericUtils {
 
 	public static boolean isInteger(String string) {
 		try {
-			Integer.parseInt(string);
+			decodeInteger(string);
 			return true;
 		} catch (Exception ex) {
 			return false;
 		}
 	}
 
-
 	public static boolean isLong(String string) {
 		try {
-			Long.parseLong(string);
+			Long.decode(string);
 			return true;
 		} catch (Exception ex) {
 			return false;
@@ -57,6 +59,34 @@ public class NumericUtils {
 		}
 	}
 
+	public static int decodeInteger(String string) {
+		int multiplier = 1;
+		if (string.startsWith("+"))
+			string = string.substring(1);
+		else if (string.startsWith("-")) {
+			multiplier = -1;
+			string = string.substring(1);
+		}
+
+		if (string.startsWith("0x") || string.startsWith("0X") || string.startsWith("#")) {
+			return multiplier * new BigInteger(string.substring(2), 16).intValue();
+		}
+		if (string.startsWith("0o") || string.startsWith("0O")) {
+			return multiplier * new BigInteger(string.substring(2), 8).intValue();
+		}
+		if (string.startsWith("0b") || string.startsWith("0B")) {
+			return multiplier * new BigInteger(string.substring(2), 2).intValue();
+		}
+		return Integer.parseInt(string);
+	}
+
+	public static Optional<Integer> decodeIntegerSafe(String string) {
+		try {
+			return Optional.of(decodeInteger(string));
+		} catch (NumberFormatException ex) {
+			return Optional.empty();
+		}
+	}
 
 	public static double intsToDouble(int low, int high) {
 		return Double.longBitsToDouble((((long) high) << 32) + low);
