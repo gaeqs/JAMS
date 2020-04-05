@@ -3,12 +3,13 @@ package net.jamsimulator.jams.file;
 import net.jamsimulator.jams.gui.display.CodeFileDisplay;
 import net.jamsimulator.jams.gui.display.FileDisplay;
 import net.jamsimulator.jams.gui.display.FileDisplayTab;
+import net.jamsimulator.jams.gui.display.image.ImageFileDisplay;
 
-public class TextFileType extends FileType {
+public class ImageFileType extends FileType {
 
 
 	/**
-	 * Creates a text file type.
+	 * Creates a image file type.
 	 *
 	 * @param name       the name.
 	 * @param iconName   the name of the icon.
@@ -16,12 +17,18 @@ public class TextFileType extends FileType {
 	 * @param extensions the extensions.
 	 * @see net.jamsimulator.jams.gui.icon.IconManager
 	 */
-	public TextFileType(String name, String iconName, String iconPath, String... extensions) {
+	public ImageFileType(String name, String iconName, String iconPath, String... extensions) {
 		super(name, iconName, iconPath, extensions);
 	}
 
 	@Override
 	public FileDisplay createDisplayTab(FileDisplayTab tab) {
-		return new CodeFileDisplay(tab);
+		try {
+			return new ImageFileDisplay(tab);
+		} catch (Exception e) {
+			System.err.println("Exception while opening image " + tab.getFile() + ".");
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

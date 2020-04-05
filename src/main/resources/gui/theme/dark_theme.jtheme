@@ -651,6 +651,10 @@ AnchorPane {
     -fx-padding: 0 0 0 5px;
 }
 
+.code-area .selection {
+    -fx-fill: #214182;
+}
+
 
 /* NUMBER LINE */
 

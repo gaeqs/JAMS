@@ -7,6 +7,7 @@ import net.jamsimulator.jams.utils.Validate;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class FileDisplayList extends TabPane {
@@ -28,6 +29,10 @@ public class FileDisplayList extends TabPane {
 		return workingPane;
 	}
 
+	public Optional<FileDisplayTab> getFileDisplayTab(File file) {
+		return displays.stream().filter(target -> target.getFile().equals(file)).findAny();
+	}
+
 	public boolean isFileOpen(File file) {
 		return displays.stream().anyMatch(target -> target.getFile().equals(file));
 	}
@@ -36,11 +41,18 @@ public class FileDisplayList extends TabPane {
 		Validate.notNull(file, "File cannot be null!");
 		Validate.isTrue(file.exists(), "File must exist!");
 		Validate.isTrue(file.isFile(), "File must be a file!");
-		if (isFileOpen(file)) return false;
+
+		Optional<FileDisplayTab> optional = getFileDisplayTab(file);
+
+		if (optional.isPresent()) {
+			getSelectionModel().select(optional.get());
+			return false;
+		}
 
 		FileDisplayTab tab = new FileDisplayTab(this, file);
 		displays.add(tab);
 		getTabs().add(tab);
+		getSelectionModel().select(tab);
 		return true;
 	}
 

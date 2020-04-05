@@ -6,7 +6,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.stage.Popup;
-import net.jamsimulator.jams.gui.display.FileDisplay;
+import net.jamsimulator.jams.gui.display.CodeFileDisplay;
 import net.jamsimulator.jams.gui.display.FileDisplayTab;
 import net.jamsimulator.jams.gui.display.mips.element.MipsCodeElement;
 import net.jamsimulator.jams.gui.display.mips.element.MipsFileElements;
@@ -21,11 +21,12 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.SortedSet;
 
-public class MipsFileDisplay extends FileDisplay {
+public class MipsFileDisplay extends CodeFileDisplay {
 
 	private final MipsFileElements elements;
 	private final Popup popup;
 	private final VBox popupVBox;
+	private final Subscription subscription;
 
 	public MipsFileDisplay(FileDisplayTab tab) {
 		super(tab);
@@ -39,9 +40,15 @@ public class MipsFileDisplay extends FileDisplay {
 
 		initializePopupListeners();
 
-		Subscription subscription = multiPlainChanges().successionEnds(Duration.ofMillis(100))
+		subscription = multiPlainChanges().successionEnds(Duration.ofMillis(100))
 				.subscribe(ignore -> index());
 		index();
+	}
+
+	@Override
+	public void onClose() {
+		super.onClose();
+		subscription.unsubscribe();
 	}
 
 	private void index() {
@@ -50,7 +57,7 @@ public class MipsFileDisplay extends FileDisplay {
 	}
 
 	private void initializePopupListeners() {
-		setMouseOverTextDelay(Duration.ofSeconds(1));
+		setMouseOverTextDelay(Duration.ofMillis(300));
 		addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_BEGIN, event -> {
 			int index = event.getCharacterIndex();
 			Optional<MipsCodeElement> optional = elements.getElementAt(index);

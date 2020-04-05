@@ -1,14 +1,17 @@
 package net.jamsimulator.jams.gui.display;
 
+import javafx.scene.Node;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Region;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.utils.AnchorUtils;
+import org.fxmisc.flowless.Virtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
-import org.fxmisc.richtext.CodeArea;
 
 import java.io.File;
 import java.util.Objects;
@@ -25,17 +28,27 @@ public class FileDisplayTab extends Tab {
 
 		FileType type = Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType());
 		this.display = type.createDisplayTab(this);
+		if (display == null) return;
 
 		setGraphic(new ImageView(type.getIcon()));
 		setText(file.getName());
 
-		AnchorPane pane = new AnchorPane();
-		VirtualizedScrollPane<CodeArea> scroll = new VirtualizedScrollPane<>(display);
-		AnchorUtils.setAnchor(scroll, 0, 0, 0, 0);
-		display.prefWidthProperty().bind(pane.widthProperty());
-		display.prefHeightProperty().bind(pane.heightProperty());
 
-		pane.getChildren().addAll(scroll);
+		Node element = (Node) display;
+		AnchorPane pane = new AnchorPane();
+		if (element instanceof Region) {
+			((Region) element).prefWidthProperty().bind(pane.widthProperty());
+			((Region) element).prefHeightProperty().bind(pane.heightProperty());
+		}
+		if (display instanceof Region && display instanceof Virtualized) {
+			VirtualizedScrollPane scroll = new VirtualizedScrollPane(element);
+			AnchorUtils.setAnchor(scroll, 0, 0, 0, 0);
+			pane.getChildren().addAll(scroll);
+		} else {
+			ScrollPane scroll = new ScrollPane(element);
+			AnchorUtils.setAnchor(scroll, 0, 0, 0, 0);
+			pane.getChildren().addAll(scroll);
+		}
 
 		setContent(pane);
 
