@@ -727,3 +727,10 @@ AnchorPane {
     -rtfx-underline-color: #cb2f2f;
     -rtfx-underline-width: 1px;
 }
+
+.assembly-popup {
+    -fx-background-color: -theme-background;
+    -fx-padding: 5px 5px 5px 5px;
+    -fx-border-color: -theme-background-lighter;
+    -fx-border-width: 1px;
+}

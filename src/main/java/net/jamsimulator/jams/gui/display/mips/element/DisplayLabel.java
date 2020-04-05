@@ -1,7 +1,11 @@
 package net.jamsimulator.jams.gui.display.mips.element;
 
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.display.mips.MipsDisplayError;
 import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.utils.LabelUtils;
 
 import java.util.Arrays;
@@ -35,4 +39,18 @@ public class DisplayLabel extends MipsCodeElement {
 		}
 	}
 
+	@Override
+	public void populatePopup(VBox popup) {
+		populatePopupWithErrors(popup);
+	}
+
+	@Override
+	public void populatePopupWithErrors(VBox popup) {
+		Language language = Jams.getLanguageManager().getSelected();
+
+		errors.forEach(target -> {
+			String message = language.getOrDefault("EDITOR_MIPS_ERROR_" + target);
+			popup.getChildren().add(new Label(message.replace("{TEXT}", getLabel())));
+		});
+	}
 }

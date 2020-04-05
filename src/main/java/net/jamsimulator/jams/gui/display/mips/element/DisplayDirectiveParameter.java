@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.display.mips.element;
 
+import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.display.mips.MipsDisplayError;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.utils.NumericUtils;
@@ -43,8 +44,13 @@ public class DisplayDirectiveParameter extends MipsCodeElement {
 		if (NumericUtils.isInteger(text)) return;
 		if (StringUtils.isStringOrChar(text)) return;
 		if (elements.getLabels().stream().noneMatch(target -> target.getLabel().equals(text))) {
-			errors.add(MipsDisplayError.INVALID_DIRECTIVE_PARAMETER);
+			errors.add(MipsDisplayError.LABEL_NOT_FOUND);
 		}
+	}
+
+	@Override
+	public void populatePopup(VBox popup) {
+		populatePopupWithErrors(popup);
 	}
 
 }

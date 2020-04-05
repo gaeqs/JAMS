@@ -1,5 +1,7 @@
 package net.jamsimulator.jams.gui.display.mips.element;
 
+import javafx.scene.layout.VBox;
+import net.jamsimulator.jams.gui.display.mips.MipsDisplayError;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.StringUtils;
@@ -44,10 +46,13 @@ public class DisplayInstructionParameterPart extends MipsCodeElement {
 
 	@Override
 	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
-
+		if(type == InstructionParameterPartType.LABEL) {
+			if(elements.getLabels().stream().noneMatch(target -> target.getLabel().equals(text)))
+				errors.add(MipsDisplayError.LABEL_NOT_FOUND);
+		}
 	}
 
-	public static enum InstructionParameterPartType {
+	public enum InstructionParameterPartType {
 		REGISTER("assembly-instruction-parameter-register"),
 		IMMEDIATE("assembly-instruction-parameter-immediate"),
 		STRING("assembly-instruction-parameter-string"),
@@ -69,5 +74,10 @@ public class DisplayInstructionParameterPart extends MipsCodeElement {
 			if (StringUtils.isStringOrChar(string)) return STRING;
 			return LABEL;
 		}
+	}
+
+	@Override
+	public void populatePopup(VBox popup) {
+		populatePopupWithErrors(popup);
 	}
 }

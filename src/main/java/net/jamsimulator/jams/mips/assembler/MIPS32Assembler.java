@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.assembler;
 
+import javafx.stage.Popup;
 import net.jamsimulator.jams.mips.assembler.directive.Directive;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;

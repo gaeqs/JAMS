@@ -1,8 +1,8 @@
 package net.jamsimulator.jams.gui.display.mips.element;
 
+import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,6 +19,11 @@ public class DisplayComment extends MipsCodeElement {
 
 	@Override
 	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
+	}
+
+	@Override
+	public void populatePopup(VBox popup) {
+		populatePopupWithErrors(popup);
 	}
 
 }

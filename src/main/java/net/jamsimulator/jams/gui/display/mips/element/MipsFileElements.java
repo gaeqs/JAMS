@@ -114,6 +114,16 @@ public class MipsFileElements {
 	}
 
 	/**
+	 * Returns the element placed at the given index.
+	 *
+	 * @param index the index.
+	 * @return the element, if found.
+	 */
+	public Optional<MipsCodeElement> getElementAt(int index) {
+		return getElements().stream().filter(target -> target.getStartIndex() <= index && target.getEndIndex() > index).findAny();
+	}
+
+	/**
 	 * Refreshes the file.
 	 *
 	 * @param lines       the file text.

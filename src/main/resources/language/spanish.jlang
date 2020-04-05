@@ -29,3 +29,9 @@ CONFIG_LANGUAGE_SELECTED=Idioma a usar:
 CONFIG_APPEARANCE=Apariencia
 CONFIG_APPEARANCE_THEME=Tema:
 
+EDITOR_MIPS_ERROR_ILLEGAL_LABEL=El nombre de la etiqueta '{TEXT}' es inválido.
+EDITOR_MIPS_ERROR_LABEL_NOT_FOUND=No se ha podido encontrar la etiqueta '{TEXT}'.
+EDITOR_MIPS_ERROR_DUPLICATE_LABEL=La etiqueta '{TEXT}' está duplicada.
+EDITOR_MIPS_ERROR_DIRECTIVE_NOT_FOUND=No se ha podido encontrar la directiva '{TEXT}'.
+EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=No se ha podido encontrar la instrucción '{TEXT}' con los parámetros indicados.
+EDITOR_MIPS_ERROR_INVALID_INSTRUCTION_PARAMETER=El parámetro '{TEXT} tiene un formato incorrecto.

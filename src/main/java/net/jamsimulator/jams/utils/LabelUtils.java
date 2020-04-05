@@ -10,6 +10,7 @@ public class LabelUtils {
 			"+", "´", "¨");
 
 	public static boolean isLabelLegal(String label) {
+		if (label.isEmpty()) return false;
 		char firstChar = label.charAt(0);
 		return illegalCharacters.stream().noneMatch(label::contains);
 	}

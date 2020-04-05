@@ -1,7 +1,11 @@
 package net.jamsimulator.jams.gui.display.mips.element;
 
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.display.mips.MipsDisplayError;
 import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.language.Language;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,6 +57,18 @@ public abstract class MipsCodeElement {
 	public abstract List<String> getStyles();
 
 	public abstract void searchErrors(WorkingPane pane, MipsFileElements elements);
+
+	public void populatePopupWithErrors(VBox popup) {
+		Language language = Jams.getLanguageManager().getSelected();
+
+		errors.forEach(target -> {
+			String message = language.getOrDefault("EDITOR_MIPS_ERROR_" + target);
+			popup.getChildren().add(new Label(message.replace("{TEXT}", getText())));
+		});
+	}
+
+	public abstract void populatePopup(VBox popup);
+
 
 	@Override
 	public boolean equals(Object o) {

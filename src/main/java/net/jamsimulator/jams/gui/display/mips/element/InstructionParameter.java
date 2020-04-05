@@ -37,7 +37,7 @@ public class InstructionParameter {
 
 	public List<ParameterType> checkGlobalErrors(RegisterSet set) {
 		List<ParameterType> types = ParameterType.getCompatibleParameterTypes(text, set);
-		if (types.isEmpty()) parts.forEach(target -> target.errors.add(MipsDisplayError.INVALID_DIRECTIVE_PARAMETER));
+		if (types.isEmpty()) parts.forEach(target -> target.errors.add(MipsDisplayError.INVALID_INSTRUCTION_PARAMETER));
 		return types;
 	}
 

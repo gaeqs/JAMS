@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.display.mips.element;
 
+import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.display.mips.MipsDisplayError;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.gui.project.MipsProjectPane;
@@ -34,7 +35,7 @@ public class DisplayInstruction extends MipsCodeElement {
 
 	@Override
 	public List<String> getStyles() {
-		if(hasErrors()) return Arrays.asList("assembly-instruction", "assembly-error");
+		if (hasErrors()) return Arrays.asList("assembly-instruction", "assembly-error");
 		return Collections.singletonList("assembly-instruction");
 	}
 
@@ -58,6 +59,11 @@ public class DisplayInstruction extends MipsCodeElement {
 			errors.add(MipsDisplayError.INSTRUCTION_NOT_FOUND);
 		}
 
+	}
+
+	@Override
+	public void populatePopup(VBox popup) {
+		populatePopupWithErrors(popup);
 	}
 
 }
