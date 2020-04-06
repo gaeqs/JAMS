@@ -10,16 +10,15 @@ import net.jamsimulator.jams.gui.display.CodeFileDisplay;
 import net.jamsimulator.jams.gui.display.FileDisplayTab;
 import net.jamsimulator.jams.gui.display.mips.element.MipsCodeElement;
 import net.jamsimulator.jams.gui.display.mips.element.MipsFileElements;
+import net.jamsimulator.jams.gui.display.mips.element.MipsLine;
+import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.event.MouseOverTextEvent;
-import org.fxmisc.richtext.model.StyleSpans;
-import org.fxmisc.richtext.model.StyleSpansBuilder;
+import org.fxmisc.richtext.model.PlainTextChange;
 import org.reactfx.Subscription;
 
 import java.time.Duration;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
-import java.util.SortedSet;
 
 public class MipsFileDisplay extends CodeFileDisplay {
 
@@ -40,8 +39,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 		initializePopupListeners();
 
-		subscription = multiPlainChanges().successionEnds(Duration.ofMillis(100))
-				.subscribe(ignore -> index());
+		subscription = multiPlainChanges().subscribe(event -> event.forEach(this::index));
 		index();
 	}
 
@@ -51,15 +49,66 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		subscription.unsubscribe();
 	}
 
+	private void index(PlainTextChange change) {
+		String added = change.getInserted();
+		String removed = change.getRemoved();
+
+		//Check current line.
+		int currentLine = elements.lineOf(change.getPosition());
+		if (currentLine == -1) throw new IndexOutOfBoundsException("Illegal line of position " + change.getPosition());
+		elements.editLine(currentLine, getParagraph(currentLine).getText());
+
+		//Check next lines.
+		int addedLines = StringUtils.charCount(added, '\n', '\r');
+		int removedLines = StringUtils.charCount(removed, '\n', '\r');
+
+		if (removedLines == 0 && addedLines == 0) {
+			elements.searchErrors(getTab().getWorkingPane());
+			elements.styleLines(this, currentLine, 1);
+			return;
+		}
+
+		currentLine++;
+		int editedLines = Math.min(addedLines, removedLines);
+		int linesToAdd = Math.max(0, addedLines - removedLines);
+		int linesToRemove = Math.max(0, removedLines - addedLines);
+
+		for (int i = 0; i < editedLines; i++) {
+			elements.editLine(currentLine + i, getParagraph(currentLine + i).getText());
+		}
+
+		if (linesToRemove > 0) {
+			for (int i = 0; i < linesToRemove; i++) {
+				elements.removeLine(currentLine + editedLines);
+			}
+		} else if (linesToAdd > 0) {
+			for (int i = 0; i < linesToAdd; i++) {
+				elements.addLine(currentLine + i + editedLines,
+						getParagraph(currentLine + i + editedLines).getText());
+			}
+		}
+
+		elements.searchErrors(getTab().getWorkingPane());
+		elements.styleLines(this, currentLine - 1, 1 + editedLines + linesToAdd);
+	}
+
 	private void index() {
-		elements.refresh(getText(), getTab().getWorkingPane());
-		setStyleSpans(0, computeHighlighting());
+		long now = System.nanoTime();
+		elements.refreshAll(getText(), getTab().getWorkingPane());
+		List<MipsLine> lines = elements.getLines();
+		for (int i = 0; i < lines.size(); i++) {
+			lines.get(i).styleLine(this, i);
+		}
+
+		now = System.nanoTime() - now;
+		System.out.println("File indexed in : " + now / 1000000f + "ms.");
 	}
 
 	private void initializePopupListeners() {
 		setMouseOverTextDelay(Duration.ofMillis(300));
 		addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_BEGIN, event -> {
 			int index = event.getCharacterIndex();
+			System.out.println(index);
 			Optional<MipsCodeElement> optional = elements.getElementAt(index);
 			if (!optional.isPresent()) return;
 			popupVBox.getChildren().clear();
@@ -70,40 +119,6 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_END, event -> {
 			popup.hide();
 		});
-	}
-
-	private StyleSpans<Collection<String>> computeHighlighting() {
-		int textLength = getText().length();
-		int lastKwEnd = 0;
-		StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
-
-		if (textLength == 0) {
-			spansBuilder.add(Collections.emptyList(), 0);
-			return spansBuilder.create();
-		}
-
-		SortedSet<MipsCodeElement> codeElements = elements.getSortedElements();
-
-		for (MipsCodeElement element : codeElements) {
-			try {
-				if (element.getStartIndex() != lastKwEnd) {
-					spansBuilder.add(Collections.emptyList(), element.getStartIndex() - lastKwEnd);
-				}
-
-				spansBuilder.add(element.getStyles(), element.getEndIndex() - element.getStartIndex());
-
-				lastKwEnd = element.getEndIndex();
-			} catch (Exception exception) {
-				System.out.println("Last: " + lastKwEnd);
-				System.err.println("Element: " + element);
-				throw exception;
-			}
-		}
-
-		if (textLength > lastKwEnd) {
-			spansBuilder.add(Collections.emptyList(), textLength - lastKwEnd);
-		}
-		return spansBuilder.create();
 	}
 
 

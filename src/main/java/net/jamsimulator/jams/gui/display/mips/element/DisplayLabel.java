@@ -24,8 +24,13 @@ public class DisplayLabel extends MipsCodeElement {
 		return Collections.singletonList("assembly-label");
 	}
 
+	public String getLabel() {
+		return text.substring(0, text.length() - 1);
+	}
+
 	@Override
 	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
+		errors.clear();
 		//Illegal label
 		if (text.isEmpty() || !LabelUtils.isLabelLegal(text.substring(0, text.length() - 1))) {
 
@@ -34,7 +39,7 @@ public class DisplayLabel extends MipsCodeElement {
 			return;
 		}
 
-		if (elements.getLabels().stream().filter(target -> target.text.equals(text)).count() > 1) {
+		if (elements.labelCount(getLabel()) > 1) {
 			errors.add(MipsDisplayError.DUPLICATE_LABEL);
 		}
 	}

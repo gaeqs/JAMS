@@ -34,6 +34,12 @@ public class DisplayInstruction extends MipsCodeElement {
 	}
 
 	@Override
+	public void move(int offset) {
+		super.move(offset);
+		parameters.forEach(parameter -> parameter.getParts().forEach(target -> target.move(offset)));
+	}
+
+	@Override
 	public List<String> getStyles() {
 		if (hasErrors()) return Arrays.asList("assembly-instruction", "assembly-error");
 		return Collections.singletonList("assembly-instruction");
@@ -41,6 +47,7 @@ public class DisplayInstruction extends MipsCodeElement {
 
 	@Override
 	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
+		errors.clear();
 		if (!(pane instanceof MipsProjectPane)) return;
 		MipsProject project = ((MipsProjectPane) pane).getProject();
 		InstructionSet set = project.getInstructionSet();

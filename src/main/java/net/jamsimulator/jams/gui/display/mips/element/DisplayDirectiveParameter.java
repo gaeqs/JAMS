@@ -41,9 +41,10 @@ public class DisplayDirectiveParameter extends MipsCodeElement {
 
 	@Override
 	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
+		errors.clear();
 		if (NumericUtils.isInteger(text)) return;
 		if (StringUtils.isStringOrChar(text)) return;
-		if (elements.getLabels().stream().noneMatch(target -> target.getLabel().equals(text))) {
+		if (elements.labelCount(text) == 0) {
 			errors.add(MipsDisplayError.LABEL_NOT_FOUND);
 		}
 	}

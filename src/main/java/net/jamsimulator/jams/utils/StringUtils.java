@@ -7,6 +7,26 @@ import java.util.Map;
 
 public class StringUtils {
 
+	public static List<String> multiSplit(String string, String... separators) {
+		List<String> list = new ArrayList<>();
+		int length = string.length(), from = 0;
+
+		for (int i = 0; i < length; i++) {
+			for (String separator : separators) {
+				int sepLen = separator.length();
+				if (string.regionMatches(i, separator, 0, sepLen)) {
+					list.add(string.substring(from, i));
+					from = i + sepLen;
+					i = from - 1;
+					break;
+				}
+			}
+		}
+
+		if (from < length) list.add(string.substring(from));
+		return list;
+	}
+
 	public static List<String> multiSplitIgnoreInsideString(String string, String... separators) {
 		List<String> list = new ArrayList<>();
 		int length = string.length(), from = 0;
@@ -106,5 +126,19 @@ public class StringUtils {
 	public static boolean isStringOrChar(String string) {
 		return string.startsWith("\"") && string.endsWith("\"") ||
 				string.startsWith("'") && string.endsWith("'");
+	}
+
+	public static int charCount(String string, char... chars) {
+		char[] array = string.toCharArray();
+		int amount = 0;
+		for (char current : array) {
+			for (char target : chars) {
+				if (target == current) {
+					amount++;
+					break;
+				}
+			}
+		}
+		return amount;
 	}
 }

@@ -32,6 +32,12 @@ public class DisplayDirective extends MipsCodeElement {
 	}
 
 	@Override
+	public void move(int offset) {
+		super.move(offset);
+		parameters.forEach(parameter -> parameter.move(offset));
+	}
+
+	@Override
 	public List<String> getStyles() {
 		if (hasErrors()) return Arrays.asList("assembly-directive", "assembly-error");
 		return Collections.singletonList("assembly-directive");
@@ -39,6 +45,7 @@ public class DisplayDirective extends MipsCodeElement {
 
 	@Override
 	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
+		errors.clear();
 		if (!(pane instanceof MipsProjectPane)) return;
 		MipsProject project = ((MipsProjectPane) pane).getProject();
 		DirectiveSet set = project.getDirectiveSet();

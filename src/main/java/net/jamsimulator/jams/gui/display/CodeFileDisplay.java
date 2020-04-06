@@ -64,12 +64,10 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay {
 	}
 
 	private void applyIndentRemover() {
-
 		addEventHandler(KeyEvent.KEY_PRESSED, event -> {
 			if (event.getCode() == KeyCode.BACK_SPACE) {
 
 				int caretPosition = getCaretPosition();
-				System.out.println(caretPosition);
 
 				//If shift is pressed, then just execute a normal backspace.
 				if (event.isShiftDown()) {
