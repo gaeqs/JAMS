@@ -4,7 +4,6 @@ import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.display.mips.MipsDisplayError;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.utils.NumericUtils;
-import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,11 +41,23 @@ public class DisplayDirectiveParameter extends MipsCodeElement {
 	@Override
 	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
 		errors.clear();
-		if (NumericUtils.isInteger(text)) return;
-		if (StringUtils.isStringOrChar(text)) return;
-		if (elements.labelCount(text) == 0) {
+		if (string || NumericUtils.isInteger(text)) return;
+		if (!elements.hasLabel(text)) {
 			errors.add(MipsDisplayError.LABEL_NOT_FOUND);
 		}
+	}
+
+	@Override
+	public boolean searchLabelErrors(List<String> labels) {
+		if (string || NumericUtils.isInteger(text)) return false;
+		if (labels.contains(text)) {
+			if (!errors.contains(MipsDisplayError.LABEL_NOT_FOUND)) return false;
+			errors.remove(MipsDisplayError.LABEL_NOT_FOUND);
+		} else {
+			if (errors.contains(MipsDisplayError.LABEL_NOT_FOUND)) return false;
+			errors.add(MipsDisplayError.LABEL_NOT_FOUND);
+		}
+		return true;
 	}
 
 	@Override

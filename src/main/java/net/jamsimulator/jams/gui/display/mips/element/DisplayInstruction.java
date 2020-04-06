@@ -69,6 +69,11 @@ public class DisplayInstruction extends MipsCodeElement {
 	}
 
 	@Override
+	public boolean searchLabelErrors(List<String> labels) {
+		return false;
+	}
+
+	@Override
 	public void populatePopup(VBox popup) {
 		populatePopupWithErrors(popup);
 	}

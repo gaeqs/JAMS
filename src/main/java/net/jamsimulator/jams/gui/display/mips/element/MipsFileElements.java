@@ -14,12 +14,15 @@ public class MipsFileElements {
 
 	private final List<MipsLine> lines;
 
+	private final List<String> labels;
+
 	/**
 	 * Creates an empty element collection.
 	 * To populate it use {@link #refreshAll(String, WorkingPane)}.
 	 */
 	public MipsFileElements() {
 		this.lines = new ArrayList<>();
+		this.labels = new LinkedList<>();
 	}
 
 	/**
@@ -29,6 +32,15 @@ public class MipsFileElements {
 	 */
 	public List<MipsLine> getLines() {
 		return lines;
+	}
+
+	/**
+	 * Returns all labels of the represented file.
+	 *
+	 * @return the labels.
+	 */
+	public List<String> getLabels() {
+		return labels;
 	}
 
 	/**
@@ -69,6 +81,7 @@ public class MipsFileElements {
 	public void removeLine(int lineIndex) {
 		if (lineIndex < 0 || lineIndex >= lines.size()) throw new IndexOutOfBoundsException("Index out of bounds");
 		MipsLine line = lines.remove(lineIndex);
+		line.getLabel().ifPresent(label -> labels.remove(label.getLabel()));
 		int length = line.getText().length() + 1;
 
 		for (int i = lineIndex; i < lines.size(); i++) {
@@ -97,6 +110,7 @@ public class MipsFileElements {
 		MipsLine mipsLine = new MipsLine(start, line);
 		parseLine(start, start + line.length(), line, mipsLine);
 		lines.add(lineIndex, mipsLine);
+		mipsLine.getLabel().ifPresent(label -> labels.add(label.getLabel()));
 
 		int length = line.length() + 1;
 		for (int i = lineIndex + 1; i < lines.size(); i++) {
@@ -118,15 +132,27 @@ public class MipsFileElements {
 		if (lineIndex < 0 || lineIndex >= lines.size()) throw new IndexOutOfBoundsException("Index out of bounds");
 		if (line.contains("\n") || line.contains("\r")) throw new IllegalArgumentException("Invalid line!");
 		MipsLine old = lines.get(lineIndex);
+		old.getLabel().ifPresent(label -> labels.remove(label.getLabel()));
 		int difference = line.length() - old.getText().length();
 		MipsLine mipsLine = new MipsLine(old.getStart(), line);
 		parseLine(old.getStart(), old.getStart() + line.length(), line, mipsLine);
 		lines.set(lineIndex, mipsLine);
+		mipsLine.getLabel().ifPresent(label -> labels.add(label.getLabel()));
 
 		for (int i = lineIndex + 1; i < lines.size(); i++) {
 			mipsLine = lines.get(i);
 			mipsLine.setStart(mipsLine.getStart() + difference);
 		}
+	}
+
+	/**
+	 * Returns whether the file has the given label declared.
+	 *
+	 * @param label the label
+	 * @return whether the file has the given label declared.
+	 */
+	public boolean hasLabel(String label) {
+		return labels.contains(label);
 	}
 
 	/**
@@ -136,8 +162,7 @@ public class MipsFileElements {
 	 * @return the amount of times.
 	 */
 	public int labelCount(String label) {
-		return (int) lines.stream().filter(target -> target.getLabel().isPresent()
-				&& target.getLabel().get().getLabel().equals(label)).count();
+		return (int) labels.stream().filter(target -> target.equals(label)).count();
 	}
 
 	/**
@@ -181,19 +206,80 @@ public class MipsFileElements {
 		}
 
 		//Checks for errors.
-		searchErrors(workingPane);
+		refreshLabels();
+		searchAllErrors(workingPane);
 	}
 
-	public void searchErrors(WorkingPane workingPane) {
-		this.lines.forEach(line -> line.searchErrors(workingPane, this));
+	/**
+	 * Search for errors in all lines.
+	 *
+	 * @param workingPane the {@link WorkingPane} where the file is displayed.
+	 */
+	public void searchAllErrors(WorkingPane workingPane) {
+		lines.forEach(line -> line.searchAllErrors(workingPane, this));
 	}
 
+	/**
+	 * Search for errors in the selected lines.
+	 *
+	 * @param workingPane the {@link WorkingPane} where the file is displayed.
+	 * @param from        the first line to check.
+	 * @param amount      the amount of lines to check.
+	 */
+	public void searchAllErrors(WorkingPane workingPane, int from, int amount) {
+		if (from < 0 || from + amount > lines.size())
+			throw new IndexOutOfBoundsException("Index out of bounds. [" + from + ", " + (from + amount) + ")");
+		for (int i = 0; i < amount; i++) {
+			lines.get(from + i).searchAllErrors(workingPane, this);
+		}
+	}
+
+	/**
+	 * Search for label errors in all lines.
+	 */
+	public List<Integer> searchLabelErrors() {
+		List<Integer> updated = new ArrayList<>();
+
+		Iterator<MipsLine> iterator = lines.iterator();
+		int i = 0;
+		while (iterator.hasNext()) {
+			if (iterator.next().searchLabelErrors(labels)) updated.add(i);
+			i++;
+		}
+		return updated;
+	}
+
+	/**
+	 * Refresh the labels' list.
+	 */
+	public void refreshLabels() {
+		labels.clear();
+		lines.forEach(line -> line.getLabel().ifPresent(label -> labels.add(label.getLabel())));
+	}
+
+	/**
+	 * Styles the selected lines.
+	 *
+	 * @param area   the area to style.
+	 * @param from   the first line index.
+	 * @param amount the amount of lines to style.
+	 */
 	public void styleLines(CodeArea area, int from, int amount) {
 		if (from < 0 || from + amount > lines.size())
 			throw new IndexOutOfBoundsException("Index out of bounds. [" + from + ", " + (from + amount) + ")");
 		for (int i = 0; i < amount; i++) {
 			lines.get(from + i).styleLine(area, from + i);
 		}
+	}
+
+	/**
+	 * Styles the selected lines.
+	 *
+	 * @param area  the area to style.
+	 * @param lines the lines to update.
+	 */
+	public void styleLines(CodeArea area, Collection<Integer> lines) {
+		lines.forEach(target -> this.lines.get(target).styleLine(area, target));
 	}
 
 	private void parseLine(int start, int end, String line, MipsLine mipsLine) {

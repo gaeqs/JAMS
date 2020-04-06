@@ -48,9 +48,22 @@ public class DisplayInstructionParameterPart extends MipsCodeElement {
 	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
 		errors.clear();
 		if (type == InstructionParameterPartType.LABEL) {
-			if (elements.labelCount(text) == 0)
+			if (!elements.hasLabel(text))
 				errors.add(MipsDisplayError.LABEL_NOT_FOUND);
 		}
+	}
+
+	@Override
+	public boolean searchLabelErrors(List<String> labels) {
+		if (type != InstructionParameterPartType.LABEL) return false;
+		if (labels.contains(text)) {
+			if (!errors.contains(MipsDisplayError.LABEL_NOT_FOUND)) return false;
+			errors.remove(MipsDisplayError.LABEL_NOT_FOUND);
+		} else {
+			if (errors.contains(MipsDisplayError.LABEL_NOT_FOUND)) return false;
+			errors.add(MipsDisplayError.LABEL_NOT_FOUND);
+		}
+		return true;
 	}
 
 	public enum InstructionParameterPartType {

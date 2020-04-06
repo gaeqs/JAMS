@@ -50,6 +50,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 	}
 
 	private void index(PlainTextChange change) {
+		long now = System.nanoTime();
 		String added = change.getInserted();
 		String removed = change.getRemoved();
 
@@ -63,8 +64,11 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		int removedLines = StringUtils.charCount(removed, '\n', '\r');
 
 		if (removedLines == 0 && addedLines == 0) {
-			elements.searchErrors(getTab().getWorkingPane());
+			elements.searchAllErrors(getTab().getWorkingPane(), currentLine, 1);
+			elements.styleLines(this, elements.searchLabelErrors());
 			elements.styleLines(this, currentLine, 1);
+			now = System.nanoTime() - now;
+			System.out.println("File indexed in : " + now / 1000000f + "ms.");
 			return;
 		}
 
@@ -88,7 +92,8 @@ public class MipsFileDisplay extends CodeFileDisplay {
 			}
 		}
 
-		elements.searchErrors(getTab().getWorkingPane());
+		elements.searchAllErrors(getTab().getWorkingPane(), currentLine - 1, 1 + editedLines + linesToAdd);
+		elements.styleLines(this, elements.searchLabelErrors());
 		elements.styleLines(this, currentLine - 1, 1 + editedLines + linesToAdd);
 	}
 
@@ -108,7 +113,6 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		setMouseOverTextDelay(Duration.ofMillis(300));
 		addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_BEGIN, event -> {
 			int index = event.getCharacterIndex();
-			System.out.println(index);
 			Optional<MipsCodeElement> optional = elements.getElementAt(index);
 			if (!optional.isPresent()) return;
 			popupVBox.getChildren().clear();

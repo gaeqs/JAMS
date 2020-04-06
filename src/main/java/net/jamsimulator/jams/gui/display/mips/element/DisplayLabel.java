@@ -32,9 +32,8 @@ public class DisplayLabel extends MipsCodeElement {
 	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
 		errors.clear();
 		//Illegal label
-		if (text.isEmpty() || !LabelUtils.isLabelLegal(text.substring(0, text.length() - 1))) {
-
-			System.out.println("Illegal label \"" + text.substring(0, text.length() - 1) + "\"");
+		String label = getLabel();
+		if (label.isEmpty() || !LabelUtils.isLabelLegal(label)) {
 			errors.add(MipsDisplayError.ILLEGAL_LABEL);
 			return;
 		}
@@ -42,6 +41,19 @@ public class DisplayLabel extends MipsCodeElement {
 		if (elements.labelCount(getLabel()) > 1) {
 			errors.add(MipsDisplayError.DUPLICATE_LABEL);
 		}
+	}
+
+	@Override
+	public boolean searchLabelErrors(List<String> labels) {
+		String label = getLabel();
+		if (labels.stream().filter(target -> target.equals(label)).count() > 1) {
+			if (errors.contains(MipsDisplayError.DUPLICATE_LABEL)) return false;
+			errors.add(MipsDisplayError.DUPLICATE_LABEL);
+		} else {
+			if (!errors.contains(MipsDisplayError.DUPLICATE_LABEL)) return false;
+			errors.remove(MipsDisplayError.DUPLICATE_LABEL);
+		}
+		return true;
 	}
 
 	@Override

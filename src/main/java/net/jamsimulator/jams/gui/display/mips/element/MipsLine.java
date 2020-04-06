@@ -229,8 +229,22 @@ public class MipsLine {
 	 * @param pane     the {@link WorkingPane} where the file of this line is displayed.
 	 * @param elements the {@link MipsFileElements elements of the file}.
 	 */
-	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
+	public void searchAllErrors(WorkingPane pane, MipsFileElements elements) {
 		getSortedElements().forEach(target -> target.searchErrors(pane, elements));
+	}
+
+	/**
+	 * Search for label errors inside all this {@link MipsLine}'s elements.
+	 *
+	 * @param labels the labels declared in the file.
+	 * @return whether the line errors have been modified.
+	 */
+	public boolean searchLabelErrors(List<String> labels) {
+		boolean updated = false;
+		for (MipsCodeElement element : getSortedElements()) {
+			updated |= element.searchLabelErrors(labels);
+		}
+		return updated;
 	}
 
 	private int styleElement(StyleSpansBuilder<Collection<String>> spansBuilder, MipsCodeElement element, int lastEnd) {
