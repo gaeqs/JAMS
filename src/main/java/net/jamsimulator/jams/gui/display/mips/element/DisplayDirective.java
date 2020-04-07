@@ -31,6 +31,14 @@ public class DisplayDirective extends MipsCodeElement {
 		parameters.add(parameter);
 	}
 
+	public void appendReformattedCode(StringBuilder builder) {
+		builder.append(text);
+		parameters.forEach(target -> {
+			builder.append(' ');
+			builder.append(target.text);
+		});
+	}
+
 	@Override
 	public void move(int offset) {
 		super.move(offset);

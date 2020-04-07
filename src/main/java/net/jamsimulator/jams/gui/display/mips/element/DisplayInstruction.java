@@ -33,6 +33,18 @@ public class DisplayInstruction extends MipsCodeElement {
 		parameters.add(parameter);
 	}
 
+	public void appendReformattedCode(StringBuilder builder) {
+		builder.append(text);
+
+		boolean first = true;
+		builder.append(' ');
+		for (InstructionParameter parameter : parameters) {
+			if(first) first = false;
+			else builder.append(", ");
+			builder.append(parameter.getText());
+		}
+	}
+
 	@Override
 	public void move(int offset) {
 		super.move(offset);

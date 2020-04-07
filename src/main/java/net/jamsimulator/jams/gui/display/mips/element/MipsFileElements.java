@@ -282,6 +282,27 @@ public class MipsFileElements {
 		lines.forEach(target -> this.lines.get(target).styleLine(area, target));
 	}
 
+	public String getReformattedCode() {
+		StringBuilder builder = new StringBuilder();
+		boolean lastEmpty = false;
+		String trim;
+		for (MipsLine line : lines) {
+			trim = line.getText().trim();
+			if (trim.isEmpty()) {
+				if (!lastEmpty) {
+					lastEmpty = true;
+					builder.append('\n');
+				}
+			} else {
+				line.appendReformattedLine(builder);
+				builder.append('\n');
+				lastEmpty = false;
+			}
+		}
+		String result = builder.toString();
+		return result.substring(0, result.length() - 1);
+	}
+
 	private void parseLine(int start, int end, String line, MipsLine mipsLine) {
 
 		//COMMENT

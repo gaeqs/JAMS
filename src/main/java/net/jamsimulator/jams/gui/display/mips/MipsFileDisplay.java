@@ -41,6 +41,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 		subscription = multiPlainChanges().subscribe(event -> event.forEach(this::index));
 		index();
+		//replaceText(0, getText().length(), elements.getReformattedCode());
 	}
 
 	@Override
@@ -50,7 +51,6 @@ public class MipsFileDisplay extends CodeFileDisplay {
 	}
 
 	private void index(PlainTextChange change) {
-		long now = System.nanoTime();
 		String added = change.getInserted();
 		String removed = change.getRemoved();
 
@@ -67,8 +67,6 @@ public class MipsFileDisplay extends CodeFileDisplay {
 			elements.searchAllErrors(getTab().getWorkingPane(), currentLine, 1);
 			elements.styleLines(this, elements.searchLabelErrors());
 			elements.styleLines(this, currentLine, 1);
-			now = System.nanoTime() - now;
-			System.out.println("File indexed in : " + now / 1000000f + "ms.");
 			return;
 		}
 

@@ -247,6 +247,27 @@ public class MipsLine {
 		return updated;
 	}
 
+	public void appendReformattedLine(StringBuilder builder) {
+		if (label != null) {
+			builder.append(label.text);
+		}
+		if (directive != null) {
+			builder.append('\t');
+			directive.appendReformattedCode(builder);
+		}
+		if (instruction != null) {
+			builder.append('\t');
+			instruction.appendReformattedCode(builder);
+		}
+		if (comment != null) {
+			if (label != null) {
+				if (directive == null || instruction == null) builder.append('\t');
+				else builder.append(' ');
+			} else if (directive == null || instruction == null) builder.append('\t');
+			builder.append(comment.text);
+		}
+	}
+
 	private int styleElement(StyleSpansBuilder<Collection<String>> spansBuilder, MipsCodeElement element, int lastEnd) {
 		if (element.getStartIndex() != lastEnd) {
 			spansBuilder.add(Collections.emptyList(), element.getStartIndex() - lastEnd);
