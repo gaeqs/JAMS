@@ -64,7 +64,11 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay {
 	}
 
 	private void applyIndentRemover() {
+		addEventFilter(KeyEvent.KEY_PRESSED, filter -> {
+			if (filter.isAltDown()) filter.consume();
+		});
 		addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+			if (event.isAltDown()) event.consume();
 			if (event.getCode() == KeyCode.BACK_SPACE) {
 
 				int caretPosition = getCaretPosition();
