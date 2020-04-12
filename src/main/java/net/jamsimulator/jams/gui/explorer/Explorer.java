@@ -3,6 +3,8 @@ package net.jamsimulator.jams.gui.explorer;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
+import net.jamsimulator.jams.gui.TaggedRegion;
+import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.function.Function;
@@ -13,7 +15,7 @@ import java.util.function.Function;
  * <p>
  * This class can be extend to add custom functionality.
  */
-public abstract class Explorer extends VBox {
+public abstract class Explorer extends VBox implements TaggedRegion {
 
 	protected ExplorerSection mainSection;
 	protected ExplorerElement selectedElement;
@@ -111,6 +113,11 @@ public abstract class Explorer extends VBox {
 	 * This method should be override to generate the main {@link ExplorerSection} of this explorer.
 	 */
 	protected abstract void generateMainSection();
+
+	@Override
+	public String getTag() {
+		return RegionTags.EXPLORER;
+	}
 
 	private void loadListeners() {
 		setOnMouseClicked(event -> {

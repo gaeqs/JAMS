@@ -8,6 +8,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import net.jamsimulator.jams.gui.action.RegionTags;
 
 import java.util.Optional;
 
@@ -183,5 +184,10 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 			getNext().ifPresent(element -> getExplorer().setSelectedElement(element));
 			event.consume();
 		}
+	}
+
+	@Override
+	public String getTag() {
+		return RegionTags.EXPLORER_ELEMENT;
 	}
 }

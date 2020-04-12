@@ -7,6 +7,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.ArrayList;
@@ -417,5 +418,10 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 			onMouseClicked.handle(mouseEvent);
 			mouseEvent.consume();
 		}
+	}
+
+	@Override
+	public String getTag() {
+		return RegionTags.EXPLORER_ELEMENT;
 	}
 }

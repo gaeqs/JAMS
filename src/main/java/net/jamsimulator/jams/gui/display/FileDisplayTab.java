@@ -44,6 +44,9 @@ public class FileDisplayTab extends Tab {
 			VirtualizedScrollPane scroll = new VirtualizedScrollPane(element);
 			AnchorUtils.setAnchor(scroll, 0, 0, 0, 0);
 			pane.getChildren().addAll(scroll);
+			if (element instanceof VirtualScrollHandled) {
+				((VirtualScrollHandled) element).setScrollPane(scroll);
+			}
 		} else {
 			ScrollPane scroll = new ScrollPane(element);
 			AnchorUtils.setAnchor(scroll, 0, 0, 0, 0);

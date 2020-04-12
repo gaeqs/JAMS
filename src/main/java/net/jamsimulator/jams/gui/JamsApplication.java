@@ -4,18 +4,15 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.font.FontLoader;
 import net.jamsimulator.jams.gui.icon.IconManager;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
+import net.jamsimulator.jams.manager.ActionManager;
 import net.jamsimulator.jams.manager.ThemeManager;
 
 import java.util.ArrayList;
@@ -43,6 +40,7 @@ public class JamsApplication extends Application {
 		AnchorPane pane = new MainAnchorPane();
 
 		scene = new ThemedScene(pane);
+		getActionManager().addAcceleratorsToScene(scene, false);
 
 		primaryStage.setScene(scene);
 		primaryStage.setWidth(WIDTH);
@@ -90,6 +88,15 @@ public class JamsApplication extends Application {
 	 */
 	public static ThemeManager getThemeManager() {
 		return ThemeManager.INSTANCE;
+	}
+
+	/**
+	 * Returns the {@link ActionManager}.
+	 *
+	 * @return the {@link ActionManager}.
+	 */
+	public static ActionManager getActionManager() {
+		return ActionManager.INSTANCE;
 	}
 
 	/**

@@ -1,11 +1,13 @@
 package net.jamsimulator.jams.gui.explorer;
 
+import net.jamsimulator.jams.gui.TaggedRegion;
+
 import java.util.Optional;
 
 /**
  * Represents an element inside an {@link ExplorerSection}.
  */
-public interface ExplorerElement {
+public interface ExplorerElement extends TaggedRegion {
 
 	/**
 	 * Returns the name of the element. This is the name shown to the user.

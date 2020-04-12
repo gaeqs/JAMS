@@ -6,8 +6,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.TaggedRegion;
+import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
 import net.jamsimulator.jams.utils.FileUtils;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 
 import java.io.IOException;
@@ -16,10 +19,11 @@ import java.io.StringWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CodeFileDisplay extends CodeArea implements FileDisplay {
+public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegion, VirtualScrollHandled {
 
-	private final FileDisplayTab tab;
-	private String old;
+	protected final FileDisplayTab tab;
+	protected String old;
+	protected VirtualizedScrollPane scrollPane;
 
 	public CodeFileDisplay(FileDisplayTab tab) {
 		super(read(tab));
@@ -41,8 +45,26 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay {
 		return tab;
 	}
 
+	public void reformat() {
+	}
+
 	public void onClose() {
 		JamsApplication.getThemeManager().unregisterListeners(this);
+	}
+
+	@Override
+	public String getTag() {
+		return RegionTags.TEXT_EDITOR;
+	}
+
+	@Override
+	public VirtualizedScrollPane getScrollPane() {
+		return scrollPane;
+	}
+
+	@Override
+	public void setScrollPane(VirtualizedScrollPane scrollPane) {
+		this.scrollPane = scrollPane;
 	}
 
 	private void applyOldTextListener() {
@@ -102,5 +124,4 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay {
 	public void onThemeChange(SelectedThemeChangeEvent.After event) {
 		event.getNewTheme().apply(this);
 	}
-
 }

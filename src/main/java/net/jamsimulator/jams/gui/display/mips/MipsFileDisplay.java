@@ -41,7 +41,22 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 		subscription = multiPlainChanges().subscribe(event -> event.forEach(this::index));
 		index();
-		//replaceText(0, getText().length(), elements.getReformattedCode());
+	}
+
+	@Override
+	public void reformat() {
+		String reformattedCode = elements.getReformattedCode();
+		String text = getText();
+		if (reformattedCode.equals(text)) return;
+		int line = getCurrentParagraph();
+		int column = getCaretColumn();
+
+		replaceText(0, text.length(), reformattedCode);
+
+		column = Math.min(column, getParagraphLength(line));
+		moveTo(line, column);
+
+		scrollPane.scrollYToPixel(totalHeightEstimateProperty().getValue() * line / getParagraphs().size() - getLayoutBounds().getHeight() / 2);
 	}
 
 	@Override
@@ -96,15 +111,11 @@ public class MipsFileDisplay extends CodeFileDisplay {
 	}
 
 	private void index() {
-		long now = System.nanoTime();
 		elements.refreshAll(getText(), getTab().getWorkingPane());
 		List<MipsLine> lines = elements.getLines();
 		for (int i = 0; i < lines.size(); i++) {
 			lines.get(i).styleLine(this, i);
 		}
-
-		now = System.nanoTime() - now;
-		System.out.println("File indexed in : " + now / 1000000f + "ms.");
 	}
 
 	private void initializePopupListeners() {
