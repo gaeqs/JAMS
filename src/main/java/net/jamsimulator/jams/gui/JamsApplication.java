@@ -60,10 +60,6 @@ public class JamsApplication extends Application {
 		primaryStage.setY(y);
 
 		primaryStage.show();
-
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.K, KeyCodeCombination.ALT_DOWN), () -> {
-			System.out.println("AAAA");
-		});
 	}
 
 	public static Stage getStage() {
