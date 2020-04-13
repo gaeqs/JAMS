@@ -4,13 +4,14 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.MenuBar;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import net.jamsimulator.jams.gui.font.FontLoader;
 import net.jamsimulator.jams.gui.icon.IconManager;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
+import net.jamsimulator.jams.gui.project.ProjectsTabPane;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.manager.ActionManager;
 import net.jamsimulator.jams.manager.ThemeManager;
@@ -20,11 +21,12 @@ import java.util.List;
 
 public class JamsApplication extends Application {
 
-
 	private static final int WIDTH = 1200, HEIGHT = 800;
 	private static final int MIN_WIDTH = 20, MIN_HEIGHT = 20;
+
 	private static Stage stage;
 	private static Scene scene;
+	private static MainAnchorPane mainAnchorPane;
 
 	private static List<EventHandler<WindowEvent>> closeListeners;
 
@@ -37,9 +39,9 @@ public class JamsApplication extends Application {
 		closeListeners = new ArrayList<>();
 		stage.setOnCloseRequest(event -> closeListeners.forEach(target -> target.handle(event)));
 
-		AnchorPane pane = new MainAnchorPane();
+		mainAnchorPane = new MainAnchorPane();
 
-		scene = new ThemedScene(pane);
+		scene = new ThemedScene(mainAnchorPane);
 		getActionManager().addAcceleratorsToScene(scene, false);
 
 		primaryStage.setScene(scene);
@@ -60,16 +62,49 @@ public class JamsApplication extends Application {
 		primaryStage.show();
 	}
 
+	/**
+	 * Returns tha main {@link Stage} of the JAMS's GUI.
+	 *
+	 * @return the main {@link Stage}.
+	 */
 	public static Stage getStage() {
 		return stage;
 	}
 
+	/**
+	 * Returns the JAMS's main {@link Scene}.
+	 *
+	 * @return the main {@link Scene}.
+	 */
 	public static Scene getScene() {
 		return scene;
 	}
 
-	public static void start(String[] args) {
-		launch(args);
+	/**
+	 * Returns the {@link javafx.scene.layout.AnchorPane} inside the main {@link Scene}.
+	 *
+	 * @return the {@link javafx.scene.layout.AnchorPane}.
+	 */
+	public static MainAnchorPane getMainAnchorPane() {
+		return mainAnchorPane;
+	}
+
+	/**
+	 * Returns the {@link MenuBar} located at the top of the main {@link Scene}.
+	 *
+	 * @return the {@link MenuBar}.
+	 */
+	public static MenuBar getTopMenuBar() {
+		return mainAnchorPane.getTopMenuBar();
+	}
+
+	/**
+	 * Returns the {@link ProjectsTabPane}.
+	 *
+	 * @return the {@link ProjectsTabPane}.
+	 */
+	public static ProjectsTabPane getProjectsTabPane() {
+		return mainAnchorPane.getProjectsTabPane();
 	}
 
 	/**

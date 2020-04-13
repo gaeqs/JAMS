@@ -34,6 +34,7 @@ public class ProjectTab extends Tab {
 	 */
 	public ProjectTab(MipsProject project) {
 		super(project.getName());
+		setClosable(true);
 		this.project = project;
 		closeListeners = new ArrayList<>();
 

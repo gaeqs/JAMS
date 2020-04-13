@@ -15,7 +15,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MipsProject implements IProject {
+public class MipsProject implements Project {
 
     private final String name;
     private final File folder;

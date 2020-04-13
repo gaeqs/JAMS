@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public interface IProject {
+public interface Project {
 
 
 	String getName();

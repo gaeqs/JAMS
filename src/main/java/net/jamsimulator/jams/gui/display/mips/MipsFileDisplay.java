@@ -53,10 +53,15 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 		replaceText(0, text.length(), reformattedCode);
 
+		int newSize = getParagraphs().size();
+		line = Math.min(line, newSize - 1);
 		column = Math.min(column, getParagraphLength(line));
 		moveTo(line, column);
 
-		scrollPane.scrollYToPixel(totalHeightEstimateProperty().getValue() * line / getParagraphs().size() - getLayoutBounds().getHeight() / 2);
+		double toPixel = totalHeightEstimateProperty().getValue() * line / newSize - getLayoutBounds().getHeight() / 2;
+		toPixel = Math.max(0, Math.min(scrollPane.getTotalHeightEstimate(), toPixel));
+
+		scrollPane.scrollYBy(toPixel);
 	}
 
 	@Override

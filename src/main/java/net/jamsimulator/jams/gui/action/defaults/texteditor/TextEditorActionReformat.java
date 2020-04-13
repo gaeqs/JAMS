@@ -10,7 +10,7 @@ public class TextEditorActionReformat extends Action {
 	public static final String NAME = "TEXT_EDITOR_REFORMAT";
 
 	public TextEditorActionReformat() {
-		super(NAME, RegionTags.TEXT_EDITOR);
+		super(NAME, RegionTags.TEXT_EDITOR, null);
 	}
 
 	@Override
