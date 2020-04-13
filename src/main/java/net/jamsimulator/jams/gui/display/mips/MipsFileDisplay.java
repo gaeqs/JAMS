@@ -76,7 +76,10 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 		//Check current line.
 		int currentLine = elements.lineOf(change.getPosition());
-		if (currentLine == -1) throw new IndexOutOfBoundsException("Illegal line of position " + change.getPosition());
+		if (currentLine == -1) {
+			index();
+			return;
+		}
 		elements.editLine(currentLine, getParagraph(currentLine).getText());
 
 		//Check next lines.
