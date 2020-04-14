@@ -171,6 +171,11 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 		return getLocalToParentTransform().getTy() + parent.getExplorerYTranslation();
 	}
 
+	@Override
+	public int getTotalElements() {
+		return 1;
+	}
+
 	protected void loadElements() {
 		icon = new NearestImageView();
 		label = new Label(name);

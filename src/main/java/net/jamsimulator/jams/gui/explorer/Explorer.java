@@ -82,6 +82,17 @@ public abstract class Explorer extends VBox implements TaggedRegion {
 	}
 
 	/**
+	 * Returns the amount of elements inside this explorer.
+	 * <p>
+	 * This method also includes the element itself.
+	 *
+	 * @return the amount.
+	 */
+	public int getElementsAmount() {
+		return mainSection.getTotalElements();
+	}
+
+	/**
 	 * Sets the {@link Function} called to create {@link ExplorerBasicElement}'s {@link ContextMenu}s,
 	 * allowing to create custom {@link ContextMenu}s when a {@link ExplorerBasicElement}
 	 * is clicked using the secondary button.
@@ -176,7 +187,7 @@ public abstract class Explorer extends VBox implements TaggedRegion {
 				if (selectedElement != null) {
 					selectedElement.getPrevious().ifPresent(element -> {
 						setSelectedElement(element);
-						updateScrollPosition(element, true);
+						updateScrollPosition(element);
 					});
 				}
 				event.consume();
@@ -184,7 +195,7 @@ public abstract class Explorer extends VBox implements TaggedRegion {
 				if (selectedElement != null) {
 					selectedElement.getNext().ifPresent(element -> {
 						setSelectedElement(element);
-						updateScrollPosition(element, false);
+						updateScrollPosition(element);
 					});
 				}
 				event.consume();
@@ -192,18 +203,20 @@ public abstract class Explorer extends VBox implements TaggedRegion {
 		});
 	}
 
-	private void updateScrollPosition(ExplorerElement element, boolean up) {
+	private void updateScrollPosition(ExplorerElement element) {
 		double ty = element.getExplorerYTranslation();
 		Bounds bounds = scrollPane.getViewportBounds();
+
 		double scrollRelative = ty + bounds.getMinY();
 
-		System.out.println(scrollPane.getVvalue());
-		System.out.println(ty + "/" + getHeight());
-		System.out.println(ty / getHeight());
+
 		//If element is not visible
-		if (scrollRelative < 0 || scrollRelative > bounds.getHeight()) {
-			System.out.println("AAA");
-			scrollPane.setVvalue(ty / getHeight());
+		double height = getHeight() - bounds.getHeight();
+		if (scrollRelative < 40) {
+			scrollPane.setVvalue(scrollPane.getVvalue() + (scrollRelative - 40) / height);
+		}
+		if (scrollRelative > bounds.getHeight() - 80) {
+			scrollPane.setVvalue(scrollPane.getVvalue() + (scrollRelative - bounds.getHeight() + 80) / getHeight());
 		}
 	}
 }

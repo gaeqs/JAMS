@@ -60,4 +60,11 @@ public interface ExplorerElement extends TaggedRegion {
 	 * @return the y translation.
 	 */
 	double getExplorerYTranslation();
+
+	/**
+	 * Returns the total amount of children inside this element.
+	 *
+	 * @return the amount.
+	 */
+	int getTotalElements();
 }

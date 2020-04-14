@@ -391,6 +391,11 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		return parent == null ? getLocalToParentTransform().getTy() : getLocalToParentTransform().getTy() + parent.getExplorerYTranslation();
 	}
 
+	@Override
+	public int getTotalElements() {
+		return 1 + elements.stream().mapToInt(ExplorerElement::getTotalElements).sum();
+	}
+
 	protected ExplorerSectionRepresentation loadRepresentation() {
 		return new ExplorerSectionRepresentation(this, hierarchyLevel);
 	}
