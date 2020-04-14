@@ -386,6 +386,11 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 
 	}
 
+	@Override
+	public double getExplorerYTranslation() {
+		return parent == null ? getLocalToParentTransform().getTy() : getLocalToParentTransform().getTy() + parent.getExplorerYTranslation();
+	}
+
 	protected ExplorerSectionRepresentation loadRepresentation() {
 		return new ExplorerSectionRepresentation(this, hierarchyLevel);
 	}

@@ -1,6 +1,5 @@
 package net.jamsimulator.jams.gui.project;
 
-import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
@@ -40,9 +39,10 @@ public class MipsProjectPane extends WorkingPane {
 	private void loadSidebarModules() {
 		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
 				Icons.SIDEBAR_EXPLORER_PATH, SidebarButton.IMAGE_SIZE, SidebarButton.IMAGE_SIZE).orElse(null);
-		explorer = new FolderExplorer(project.getFolder());
 
-		ScrollPane pane = new ScrollPane(explorer);
+		ScrollPane pane = new ScrollPane();
+		explorer = new FolderExplorer(project.getFolder(), pane);
+		pane.setContent(explorer);
 		pane.setFitToHeight(true);
 		pane.setFitToWidth(true);
 

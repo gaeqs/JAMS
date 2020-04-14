@@ -53,4 +53,11 @@ public interface ExplorerElement extends TaggedRegion {
 	 * @return the previous element, if present.
 	 */
 	Optional<ExplorerElement> getPrevious();
+
+	/**
+	 * Returns the y translation of this element inside the explorer.
+	 *
+	 * @return the y translation.
+	 */
+	double getExplorerYTranslation();
 }

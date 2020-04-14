@@ -37,7 +37,7 @@ public class ConfigurationWindow extends SplitPane {
 		this.configuration = configuration;
 		this.meta = meta;
 
-		this.explorer = new ConfigurationWindowExplorer(this);
+		this.explorer = new ConfigurationWindowExplorer(this, null);
 		this.sectionDisplay = new VBox();
 		this.sectionDisplay.getStyleClass().add("configuration-window-display");
 		init();

@@ -2,7 +2,9 @@ package net.jamsimulator.jams.gui.explorer;
 
 import javafx.application.Platform;
 import javafx.beans.value.ObservableDoubleValue;
+import javafx.geometry.Bounds;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.TaggedRegion;
@@ -10,6 +12,7 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.utils.PropertyUtils;
 import net.jamsimulator.jams.utils.Validate;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -20,6 +23,8 @@ import java.util.function.Function;
  */
 public abstract class Explorer extends VBox implements TaggedRegion {
 
+	protected ScrollPane scrollPane;
+
 	protected ExplorerSection mainSection;
 	protected ExplorerElement selectedElement;
 
@@ -28,8 +33,12 @@ public abstract class Explorer extends VBox implements TaggedRegion {
 
 	/**
 	 * Creates an explorer.
+	 *
+	 * @param scrollPane            the {@link ScrollPane} holding this explorer, if present.
+	 * @param generateOnConstructor whether the method {@link #generateMainSection()} should be called on the constructor.
 	 */
-	public Explorer(boolean generateOnConstructor) {
+	public Explorer(ScrollPane scrollPane, boolean generateOnConstructor) {
+		this.scrollPane = scrollPane;
 		basicElementContextMenuCreator = file -> null;
 		sectionContextMenuCreator = folder -> null;
 
@@ -61,6 +70,15 @@ public abstract class Explorer extends VBox implements TaggedRegion {
 		selectedElement = element;
 		if (element != null)
 			element.select();
+	}
+
+	/**
+	 * Returns the {@link ScrollPane} holding this explorer, if present.
+	 *
+	 * @return the {@link ScrollPane}, if present.
+	 */
+	public Optional<ScrollPane> getScrollPane() {
+		return Optional.ofNullable(scrollPane);
 	}
 
 	/**
@@ -156,15 +174,36 @@ public abstract class Explorer extends VBox implements TaggedRegion {
 		setOnKeyPressed(event -> {
 			if (event.getCode() == KeyCode.UP) {
 				if (selectedElement != null) {
-					selectedElement.getPrevious().ifPresent(this::setSelectedElement);
+					selectedElement.getPrevious().ifPresent(element -> {
+						setSelectedElement(element);
+						updateScrollPosition(element, true);
+					});
 				}
 				event.consume();
 			} else if (event.getCode() == KeyCode.DOWN) {
 				if (selectedElement != null) {
-					selectedElement.getNext().ifPresent(this::setSelectedElement);
+					selectedElement.getNext().ifPresent(element -> {
+						setSelectedElement(element);
+						updateScrollPosition(element, false);
+					});
 				}
 				event.consume();
 			}
 		});
+	}
+
+	private void updateScrollPosition(ExplorerElement element, boolean up) {
+		double ty = element.getExplorerYTranslation();
+		Bounds bounds = scrollPane.getViewportBounds();
+		double scrollRelative = ty + bounds.getMinY();
+
+		System.out.println(scrollPane.getVvalue());
+		System.out.println(ty + "/" + getHeight());
+		System.out.println(ty / getHeight());
+		//If element is not visible
+		if (scrollRelative < 0 || scrollRelative > bounds.getHeight()) {
+			System.out.println("AAA");
+			scrollPane.setVvalue(ty / getHeight());
+		}
 	}
 }

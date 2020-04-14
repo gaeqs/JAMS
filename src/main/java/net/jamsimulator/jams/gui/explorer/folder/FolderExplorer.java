@@ -1,6 +1,6 @@
 package net.jamsimulator.jams.gui.explorer.folder;
 
-import javafx.scene.input.KeyEvent;
+import javafx.scene.control.ScrollPane;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.folder.context.ExplorerFileDefaultContextMenu;
 import net.jamsimulator.jams.utils.Validate;
@@ -23,8 +23,8 @@ public class FolderExplorer extends Explorer {
 	 *
 	 * @param mainFolder the main folder of the explorer.
 	 */
-	public FolderExplorer(File mainFolder) {
-		super(false);
+	public FolderExplorer(File mainFolder, ScrollPane scrollPane) {
+		super(scrollPane, false);
 		Validate.notNull(mainFolder, "Folder cannot be null!");
 		Validate.isTrue(mainFolder.isDirectory(), "Folder must be a directory!");
 		this.mainFolder = mainFolder;

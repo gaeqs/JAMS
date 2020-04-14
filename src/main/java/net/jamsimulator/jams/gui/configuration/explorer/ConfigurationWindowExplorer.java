@@ -1,7 +1,8 @@
 package net.jamsimulator.jams.gui.configuration.explorer;
 
-import net.jamsimulator.jams.gui.explorer.Explorer;
+import javafx.scene.control.ScrollPane;
 import net.jamsimulator.jams.gui.configuration.ConfigurationWindow;
+import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.language.Messages;
 
 public class ConfigurationWindowExplorer extends Explorer {
@@ -11,8 +12,8 @@ public class ConfigurationWindowExplorer extends Explorer {
 	/**
 	 * Creates a settings explorer.
 	 */
-	public ConfigurationWindowExplorer(ConfigurationWindow configurationWindow) {
-		super(false);
+	public ConfigurationWindowExplorer(ConfigurationWindow configurationWindow, ScrollPane scrollPane) {
+		super(scrollPane, false);
 		this.configurationWindow = configurationWindow;
 		generateMainSection();
 	}
