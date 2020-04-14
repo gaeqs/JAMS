@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.explorer.folder;
 
+import javafx.scene.input.KeyEvent;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.folder.context.ExplorerFileDefaultContextMenu;
 import net.jamsimulator.jams.utils.Validate;
@@ -41,6 +42,7 @@ public class FolderExplorer extends Explorer {
 		};
 
 		generateMainSection();
+		refreshWidth();
 	}
 
 	/**

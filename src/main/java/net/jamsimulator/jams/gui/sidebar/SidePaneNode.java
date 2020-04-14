@@ -11,8 +11,8 @@ import net.jamsimulator.jams.utils.AnchorUtils;
  */
 public class SidePaneNode extends AnchorPane {
 
-	private Node node;
-	private SidePaneNodeHeader header;
+	private final Node node;
+	private final SidePaneNodeHeader header;
 
 	/**
 	 * Creates a side pane node.
@@ -27,8 +27,8 @@ public class SidePaneNode extends AnchorPane {
 		this.header = new SidePaneNodeHeader(sidePane, name, top, languageNode);
 
 		AnchorUtils.setAnchor(header, 0, -1, 0, 0);
-		AnchorUtils.setAnchor(node, SidePaneNodeHeader.HEIGHT, 0, 0, 0);
 
+		AnchorUtils.setAnchor(node, SidePaneNodeHeader.HEIGHT, 0, 0, 0);
 
 		getChildren().add(header);
 		getChildren().add(node);

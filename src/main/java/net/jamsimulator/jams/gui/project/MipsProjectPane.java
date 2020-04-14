@@ -1,12 +1,14 @@
 package net.jamsimulator.jams.gui.project;
 
+import javafx.application.Platform;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.display.FileDisplayList;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.WorkingPane;
-import net.jamsimulator.jams.gui.display.FileDisplayList;
 import net.jamsimulator.jams.gui.sidebar.SidebarButton;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.MipsProject;
@@ -39,7 +41,14 @@ public class MipsProjectPane extends WorkingPane {
 		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
 				Icons.SIDEBAR_EXPLORER_PATH, SidebarButton.IMAGE_SIZE, SidebarButton.IMAGE_SIZE).orElse(null);
 		explorer = new FolderExplorer(project.getFolder());
-		topLeftSidebar.addNode("Explorer", explorer, explorerIcon, Messages.EXPLORER_NAME);
+
+		ScrollPane pane = new ScrollPane(explorer);
+		pane.setFitToHeight(true);
+		pane.setFitToWidth(true);
+
+
+		//explorer.prefWidthProperty().bind(pane.widthProperty().subtract(2));
+		topLeftSidebar.addNode("Explorer", pane, explorerIcon, Messages.EXPLORER_NAME);
 
 		explorer.setFileOpenAction(file -> getFileDisplayList().openFile(file.getFile()));
 	}

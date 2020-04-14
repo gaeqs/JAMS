@@ -1,10 +1,13 @@
 package net.jamsimulator.jams.gui.explorer;
 
+import javafx.application.Platform;
+import javafx.beans.value.ObservableDoubleValue;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.TaggedRegion;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.utils.PropertyUtils;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.function.Function;
@@ -113,6 +116,31 @@ public abstract class Explorer extends VBox implements TaggedRegion {
 	 * This method should be override to generate the main {@link ExplorerSection} of this explorer.
 	 */
 	protected abstract void generateMainSection();
+
+	/**
+	 * Refresh the width of the explorer.
+	 * This should be used when a item is added or removed or a section is expanded or contracted.
+	 */
+	public void refreshWidth() {
+		ObservableDoubleValue bound = PropertyUtils.getBoundValue(prefWidthProperty()).orElse(null);
+		if (bound != null) {
+			prefWidthProperty().unbind();
+		}
+		setMinWidth(10000);
+		setPrefWidth(10000);
+		applyCss();
+		layout();
+
+		Platform.runLater(() -> {
+			double width = mainSection.getBiggestElement() + 20;
+			setMinWidth(width);
+			if (PropertyUtils.getBoundValue(prefWidthProperty()).isPresent()) return;
+			if (bound != null) {
+				prefWidthProperty().bind(bound);
+			}
+		});
+
+	}
 
 	@Override
 	public String getTag() {

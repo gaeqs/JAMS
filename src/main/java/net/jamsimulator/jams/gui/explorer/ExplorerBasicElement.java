@@ -26,6 +26,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 	//REPRESENTATION DATA
 	protected ImageView icon;
 	protected Label label;
+	protected ExplorerSeparatorRegion separator;
 
 	//HIERARCHY
 	protected int hierarchyLevel;
@@ -57,7 +58,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 			request.consume();
 		});
 
-		parent.getExplorer().widthProperty().addListener((target, old, val) -> setPrefWidth(val.doubleValue()));
+		prefWidthProperty().bind(parent.getExplorer().widthProperty());
 	}
 
 	/**
@@ -77,6 +78,20 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 	 */
 	public Explorer getExplorer() {
 		return parent.getExplorer();
+	}
+
+	public double getRepresentationWidth() {
+		return separator.getWidth() + icon.getFitWidth()
+				+ label.getWidth() + ExplorerBasicElement.SPACING * 2;
+	}
+
+	/**
+	 * Retuns the {@link Label} of this element.
+	 *
+	 * @return the {@link Label}.
+	 */
+	public Label getLabel() {
+		return label;
 	}
 
 	@Override
@@ -155,7 +170,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 		icon = new NearestImageView();
 		label = new Label(name);
 
-		ExplorerSeparatorRegion separator = new ExplorerSeparatorRegion(false, hierarchyLevel);
+		separator = new ExplorerSeparatorRegion(false, hierarchyLevel);
 
 		getChildren().addAll(separator, icon, label);
 		setSpacing(SPACING);

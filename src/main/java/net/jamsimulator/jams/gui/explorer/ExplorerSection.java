@@ -78,8 +78,6 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 					show(this, request.getScreenX(), request.getScreenY());
 			request.consume();
 		});
-
-		explorer.widthProperty().addListener((target, old, val) -> setPrefWidth(val.doubleValue()));
 	}
 
 	/**
@@ -144,6 +142,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		});
 
 		representation.refreshStatusIcon();
+		explorer.refreshWidth();
 	}
 
 	/**
@@ -154,6 +153,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		addAllFilesToContents();
 		expanded = true;
 		representation.refreshStatusIcon();
+		explorer.refreshWidth();
 	}
 
 	/**
@@ -242,6 +242,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		elements.add(element);
 		refreshAllElements();
 		representation.refreshStatusIcon();
+		explorer.refreshWidth();
 	}
 
 	/**
@@ -257,6 +258,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 			refreshAllElements();
 			representation.refreshStatusIcon();
 		}
+		explorer.refreshWidth();
 		return result;
 	}
 
@@ -283,6 +285,30 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	public void setOnMouseClickedEvent(EventHandler<MouseEvent> eventHandler) {
 		Validate.notNull(eventHandler, "Event handler cannot be null!");
 		this.onMouseClicked = eventHandler;
+	}
+
+	/**
+	 * Returns the width property of the biggest element in this section.
+	 * This may return the {@link ExplorerSectionRepresentation} of this section.
+	 *
+	 * @return the width property.
+	 */
+	public double getBiggestElement() {
+		double property = getRepresentation().getRepresentationWidth();
+		if (!isExpanded()) return property;
+
+		double current;
+		for (ExplorerElement element : elements) {
+			if (element instanceof ExplorerSection) {
+				current = ((ExplorerSection) element).getBiggestElement();
+			} else if (element instanceof ExplorerBasicElement) {
+				current = ((ExplorerBasicElement) element).getRepresentationWidth();
+			} else continue;
+			if (property < current) {
+				property = current;
+			}
+		}
+		return property;
 	}
 
 	@Override

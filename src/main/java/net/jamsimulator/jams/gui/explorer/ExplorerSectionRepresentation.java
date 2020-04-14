@@ -21,6 +21,7 @@ public class ExplorerSectionRepresentation extends HBox {
 	protected ImageView statusIcon;
 	protected ImageView icon;
 	protected Label label;
+	protected ExplorerSeparatorRegion separator;
 
 	protected ExplorerSeparatorRegion emptyRegion;
 
@@ -47,6 +48,16 @@ public class ExplorerSectionRepresentation extends HBox {
 		loadElements();
 		loadListeners();
 		refreshStatusIcon();
+
+		prefWidthProperty().bind(section.explorer.widthProperty());
+	}
+
+	public double getRepresentationWidth() {
+		double statusWidth = statusIcon.getImage() == null ? 0 : statusIcon.getImage().getWidth();
+		double iconWidth = icon.getImage() == null ? 0 : icon.getImage().getWidth();
+		double separatorWidth = separator == null ? 0 : separator.getWidth();
+
+		return separatorWidth + statusWidth + iconWidth + label.getWidth() + ExplorerBasicElement.SPACING * 3;
 	}
 
 	/**
@@ -117,7 +128,7 @@ public class ExplorerSectionRepresentation extends HBox {
 		icon = new NearestImageView();
 		label = new Label(section.getName());
 
-		ExplorerSeparatorRegion separator = new ExplorerSeparatorRegion(true, hierarchyLevel);
+		separator = new ExplorerSeparatorRegion(true, hierarchyLevel);
 
 		getChildren().addAll(separator, statusIcon, icon, label);
 		setSpacing(ExplorerBasicElement.SPACING);
