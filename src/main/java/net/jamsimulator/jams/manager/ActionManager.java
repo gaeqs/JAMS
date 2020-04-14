@@ -10,6 +10,7 @@ import net.jamsimulator.jams.gui.TaggedRegion;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.defaults.texteditor.TextEditorActionReformat;
+import net.jamsimulator.jams.gui.action.defaults.texteditor.TextEditorActionSave;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionRegisterEvent;
 import net.jamsimulator.jams.gui.action.event.ActionUnbindEvent;
@@ -164,6 +165,8 @@ public class ActionManager extends SimpleEventBroadcast {
 
 	private void loadDefaultActions() {
 		actions.add(new TextEditorActionReformat());
+		actions.add(new TextEditorActionSave());
 		bind(new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN), TextEditorActionReformat.NAME);
+		bind(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN), TextEditorActionSave.NAME);
 	}
 }

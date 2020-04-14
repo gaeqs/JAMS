@@ -63,8 +63,11 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		column = Math.min(column, getParagraphLength(line));
 		moveTo(line, column);
 
-		double toPixel = totalHeightEstimateProperty().getValue() * line / newSize - getLayoutBounds().getHeight() / 2;
-		toPixel = Math.max(0, Math.min(scrollPane.getTotalHeightEstimate(), toPixel));
+
+		double height = totalHeightEstimateProperty().getValue() == null ? 0 : totalHeightEstimateProperty().getValue();
+
+		double toPixel = height * line / newSize - getLayoutBounds().getHeight() / 2;
+		toPixel = Math.max(0, Math.min(height, toPixel));
 
 		scrollPane.scrollYBy(toPixel);
 	}
@@ -142,9 +145,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 			Point2D position = event.getScreenPosition();
 			popup.show(this, position.getX(), position.getY() + 10);
 		});
-		addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_END, event -> {
-			popup.hide();
-		});
+		addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_END, event -> popup.hide());
 	}
 
 	@Override

@@ -1,9 +1,6 @@
 package net.jamsimulator.jams.utils;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.nio.file.Files;
 
 public class FileUtils {
@@ -34,6 +31,18 @@ public class FileUtils {
 			builder.append((char) c);
 		}
 
+		reader.close();
+
 		return builder.toString();
 	}
+
+	public static void writeAll(File file, String text) throws IOException {
+		Validate.notNull(file, "File cannot be null!");
+		Validate.isTrue(!file.exists() || file.isFile(), "File must not exist or be a file!");
+		Writer writer = new FileWriter(file);
+		writer.write(text);
+		writer.close();
+	}
+
 }
+

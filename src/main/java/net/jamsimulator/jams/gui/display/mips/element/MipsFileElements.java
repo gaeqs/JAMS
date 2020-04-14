@@ -300,7 +300,7 @@ public class MipsFileElements {
 			}
 		}
 		String result = builder.toString();
-		return result.substring(0, result.length() - 1);
+		return result.isEmpty() ? result : result.substring(0, result.length() - 1);
 	}
 
 	private void parseLine(int start, int end, String line, MipsLine mipsLine) {

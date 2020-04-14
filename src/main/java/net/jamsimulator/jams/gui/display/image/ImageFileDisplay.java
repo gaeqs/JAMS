@@ -24,4 +24,14 @@ public class ImageFileDisplay extends NearestImageView implements FileDisplay {
 	@Override
 	public void onClose() {
 	}
+
+	@Override
+	public void save() {
+
+	}
+
+	@Override
+	public void reload() {
+
+	}
 }

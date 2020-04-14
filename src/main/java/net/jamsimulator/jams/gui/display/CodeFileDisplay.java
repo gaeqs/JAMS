@@ -22,12 +22,13 @@ import java.util.regex.Pattern;
 public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegion, VirtualScrollHandled {
 
 	protected final FileDisplayTab tab;
-	protected String old;
+	protected String old, original;
 	protected VirtualizedScrollPane scrollPane;
 
 	public CodeFileDisplay(FileDisplayTab tab) {
 		super(read(tab));
 		this.tab = tab;
+		this.original = getText();
 
 		CustomLineNumberFactory factory = CustomLineNumberFactory.get(this);
 		getChildren().add(0, factory.getBackground());
@@ -39,6 +40,7 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegi
 		applyOldTextListener();
 		applyAutoIndent();
 		applyIndentRemover();
+		applySaveMarkListener();
 	}
 
 	public FileDisplayTab getTab() {
@@ -50,6 +52,22 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegi
 
 	public void onClose() {
 		JamsApplication.getThemeManager().unregisterListeners(this);
+	}
+
+	@Override
+	public void save() {
+		try {
+			FileUtils.writeAll(tab.getFile(), original = getText());
+			tab.setSaveMark(false);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void reload() {
+		replaceText(0, getText().length(), original = read(tab));
+		tab.setSaveMark(false);
 	}
 
 	@Override
@@ -107,6 +125,13 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegi
 					replaceText(to, caretPosition, lastParagraphEmpty ? s : "");
 				}
 			}
+		});
+	}
+
+	protected void applySaveMarkListener() {
+		addEventHandler(KeyEvent.KEY_TYPED, event -> {
+			if (event.getCharacter().isEmpty()) return;
+			tab.setSaveMark(!getText().equals(original));
 		});
 	}
 

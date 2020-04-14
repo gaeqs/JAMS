@@ -21,10 +21,12 @@ public class FileDisplayTab extends Tab {
 	private final FileDisplayList list;
 	private final File file;
 	private final FileDisplay display;
+	private boolean saveMark;
 
 	public FileDisplayTab(FileDisplayList list, File file) {
 		this.list = list;
 		this.file = file;
+		this.saveMark = false;
 
 		FileType type = Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType());
 		this.display = type.createDisplayTab(this);
@@ -75,6 +77,16 @@ public class FileDisplayTab extends Tab {
 
 	public FileDisplay getDisplay() {
 		return display;
+	}
+
+	public boolean isSaveMark() {
+		return saveMark;
+	}
+
+	public void setSaveMark(boolean saveMark) {
+		if (saveMark == this.saveMark) return;
+		this.saveMark = saveMark;
+		setText(saveMark ? file.getName() + " *" : file.getName());
 	}
 
 	@Override
