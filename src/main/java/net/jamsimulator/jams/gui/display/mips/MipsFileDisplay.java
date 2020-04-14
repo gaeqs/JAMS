@@ -1,6 +1,9 @@
 package net.jamsimulator.jams.gui.display.mips;
 
+import javafx.application.Platform;
 import javafx.geometry.Point2D;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
@@ -8,6 +11,7 @@ import javafx.scene.paint.Paint;
 import javafx.stage.Popup;
 import net.jamsimulator.jams.gui.display.CodeFileDisplay;
 import net.jamsimulator.jams.gui.display.FileDisplayTab;
+import net.jamsimulator.jams.gui.display.mips.element.DisplayLabel;
 import net.jamsimulator.jams.gui.display.mips.element.MipsCodeElement;
 import net.jamsimulator.jams.gui.display.mips.element.MipsFileElements;
 import net.jamsimulator.jams.gui.display.mips.element.MipsLine;
@@ -38,6 +42,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		popup.getContent().add(popupVBox);
 
 		initializePopupListeners();
+		applyLabelTabRemover();
 
 		subscription = multiPlainChanges().subscribe(event -> event.forEach(this::index));
 		index();
@@ -142,5 +147,56 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		});
 	}
 
+	@Override
+	protected void applyAutoIndent() {
+		addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+			if (event.getCode() == KeyCode.ENTER) {
+				int caretPosition = getCaretPosition();
+				int currentParagraph = getCurrentParagraph();
 
+				String previous = getParagraph(currentParagraph - 1).getSegments().get(0);
+
+				MipsLine line = elements.getLines().get(currentParagraph - 1);
+				if (line.getLabel().isPresent()) {
+					DisplayLabel label = line.getLabel().get();
+					previous = previous.substring(label.getText().length());
+				}
+
+				StringBuilder builder = new StringBuilder();
+				for (char c : previous.toCharArray()) {
+					if (c != '\t' && c != ' ') break;
+					builder.append(c);
+				}
+
+				Platform.runLater(() -> insertText(caretPosition, builder.toString()));
+			}
+		});
+	}
+
+	private void applyLabelTabRemover() {
+		addEventHandler(KeyEvent.KEY_TYPED, event -> {
+			if (event.getCharacter().equals(":")) {
+				int caretPosition = getCaretPosition();
+				int currentParagraph = getCurrentParagraph();
+				MipsLine line = elements.getLines().get(currentParagraph);
+
+				if (!line.getLabel().isPresent()) return;
+				DisplayLabel label = line.getLabel().get();
+				if (label.getEndIndex() != caretPosition - 1) return;
+
+				String text = label.getText();
+
+				int i = 0;
+				for (char c : text.toCharArray()) {
+					if (c != '\t' && c != ' ') break;
+					i++;
+				}
+				if (i == 0) return;
+
+				String first = text.substring(0, i);
+				String last = text.substring(i);
+				replaceText(label.getStartIndex(), label.getEndIndex() + 1, last + first);
+			}
+		});
+	}
 }

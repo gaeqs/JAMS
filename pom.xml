@@ -72,8 +72,8 @@
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
-            <version>0.10.3</version>
-            <scope>compile</scope>
+            <version>0.10.3-alt-fix</version>
+            <scope>system</scope>
             <systemPath>${basedir}/lib/richtextfx-alt-fix.jar</systemPath>
         </dependency>
         <!--JSON-->

@@ -71,7 +71,7 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegi
 		textProperty().addListener((obs, old, value) -> this.old = old);
 	}
 
-	private void applyAutoIndent() {
+	protected void applyAutoIndent() {
 		Pattern whiteSpace = Pattern.compile("^\\s+");
 		addEventHandler(KeyEvent.KEY_PRESSED, event -> {
 			if (event.getCode() == KeyCode.ENTER) {
@@ -83,7 +83,7 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegi
 		});
 	}
 
-	private void applyIndentRemover() {
+	protected void applyIndentRemover() {
 		addEventHandler(KeyEvent.KEY_PRESSED, event -> {
 			if (event.getCode() == KeyCode.BACK_SPACE) {
 
