@@ -7,6 +7,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
@@ -45,7 +46,7 @@ public class SidebarButton extends ToggleButton {
 		Group group = new Group(label);
 
 		if (icon != null) {
-			ImageView imageView = new ImageView(icon);
+			ImageView imageView = new NearestImageView(icon);
 			VBox vBox = left ? new VBox(group, imageView) : new VBox(imageView, group);
 			vBox.setSpacing(2);
 			vBox.setAlignment(Pos.CENTER);

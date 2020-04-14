@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.icon;
+package net.jamsimulator.jams.gui.image.icon;
 
 import javafx.scene.image.Image;
 import net.jamsimulator.jams.utils.Validate;
@@ -122,7 +122,8 @@ public class IconManager {
 		Optional<Image> icon = getIcon(name);
 		if (icon.isPresent()) return icon.get();
 
-		Image image = new Image(path, width, height, false, true);
+		Image image = new Image(path, width, height, false, false);
+
 		if (image.isError()) throw image.getException();
 		icons.put(name, image);
 

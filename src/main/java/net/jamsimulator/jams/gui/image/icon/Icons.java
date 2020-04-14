@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.icon;
+package net.jamsimulator.jams.gui.image.icon;
 
 /**
  * Util class that stores all default icons' names and paths.

@@ -7,7 +7,7 @@ import net.jamsimulator.jams.file.ImageFileType;
 import net.jamsimulator.jams.file.TextFileType;
 import net.jamsimulator.jams.file.event.FileTypeRegisterEvent;
 import net.jamsimulator.jams.file.event.FileTypeUnregisterEvent;
-import net.jamsimulator.jams.gui.icon.Icons;
+import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;

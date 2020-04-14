@@ -1,13 +1,13 @@
 package net.jamsimulator.jams.gui.display.image;
 
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import net.jamsimulator.jams.gui.display.FileDisplay;
 import net.jamsimulator.jams.gui.display.FileDisplayTab;
+import net.jamsimulator.jams.gui.image.NearestImageView;
 
 import java.net.MalformedURLException;
 
-public class ImageFileDisplay extends ImageView implements FileDisplay {
+public class ImageFileDisplay extends NearestImageView implements FileDisplay {
 
 	private final FileDisplayTab tab;
 

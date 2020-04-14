@@ -3,11 +3,11 @@ package net.jamsimulator.jams.gui.display;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.file.FileType;
+import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.utils.AnchorUtils;
 import org.fxmisc.flowless.Virtualized;
@@ -30,7 +30,7 @@ public class FileDisplayTab extends Tab {
 		this.display = type.createDisplayTab(this);
 		if (display == null) return;
 
-		setGraphic(new ImageView(type.getIcon()));
+		setGraphic(new NearestImageView(type.getIcon()));
 		setText(file.getName());
 
 

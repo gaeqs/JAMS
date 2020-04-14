@@ -7,7 +7,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.icon.Icons;
+import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.icon.Icons;
 
 /**
  * This class allows {@link ExplorerSection}s to be represented inside the explorer.
@@ -112,8 +113,8 @@ public class ExplorerSectionRepresentation extends HBox {
 
 
 	protected void loadElements() {
-		statusIcon = new ImageView();
-		icon = new ImageView();
+		statusIcon = new NearestImageView();
+		icon = new NearestImageView();
 		label = new Label(section.getName());
 
 		ExplorerSeparatorRegion separator = new ExplorerSeparatorRegion(true, hierarchyLevel);

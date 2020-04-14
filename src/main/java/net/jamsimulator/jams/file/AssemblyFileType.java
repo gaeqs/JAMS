@@ -14,7 +14,7 @@ public class AssemblyFileType extends FileType {
 	 * @param iconName   the name of the icon.
 	 * @param iconPath   the path of the icon.
 	 * @param extensions the extensions.
-	 * @see net.jamsimulator.jams.gui.icon.IconManager
+	 * @see net.jamsimulator.jams.gui.image.icon.IconManager
 	 */
 	public AssemblyFileType(String name, String iconName, String iconPath, String... extensions) {
 		super(name, iconName, iconPath, extensions);

@@ -9,6 +9,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.image.NearestImageView;
 
 import java.util.Optional;
 
@@ -151,7 +152,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 	}
 
 	protected void loadElements() {
-		icon = new ImageView();
+		icon = new NearestImageView();
 		label = new Label(name);
 
 		ExplorerSeparatorRegion separator = new ExplorerSeparatorRegion(false, hierarchyLevel);

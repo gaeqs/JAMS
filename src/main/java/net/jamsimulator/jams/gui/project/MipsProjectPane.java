@@ -4,7 +4,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
-import net.jamsimulator.jams.gui.icon.Icons;
+import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.gui.display.FileDisplayList;
 import net.jamsimulator.jams.gui.sidebar.SidebarButton;

@@ -4,7 +4,7 @@ import javafx.scene.image.Image;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.display.FileDisplay;
 import net.jamsimulator.jams.gui.display.FileDisplayTab;
-import net.jamsimulator.jams.gui.icon.IconManager;
+import net.jamsimulator.jams.gui.image.icon.IconManager;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Arrays;

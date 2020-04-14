@@ -9,7 +9,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import net.jamsimulator.jams.gui.font.FontLoader;
-import net.jamsimulator.jams.gui.icon.IconManager;
+import net.jamsimulator.jams.gui.image.icon.IconManager;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
 import net.jamsimulator.jams.gui.project.ProjectsTabPane;
 import net.jamsimulator.jams.gui.theme.ThemedScene;

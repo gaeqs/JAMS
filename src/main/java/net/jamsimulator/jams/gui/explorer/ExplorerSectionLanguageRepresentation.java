@@ -2,7 +2,7 @@ package net.jamsimulator.jams.gui.explorer;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
+import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
 /**
@@ -44,8 +44,8 @@ public class ExplorerSectionLanguageRepresentation extends ExplorerSectionRepres
 
 	@Override
 	protected void loadElements() {
-		statusIcon = new ImageView();
-		icon = new ImageView();
+		statusIcon = new NearestImageView();
+		icon = new NearestImageView();
 
 		ExplorerSeparatorRegion separator = new ExplorerSeparatorRegion(true, hierarchyLevel);
 
