@@ -1,5 +1,7 @@
 package net.jamsimulator.jams.gui.explorer.folder;
 
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.explorer.Explorer;
@@ -32,8 +34,22 @@ public class ExplorerFile extends ExplorerBasicElement {
 			Explorer explorer = getExplorer();
 			if (explorer instanceof FolderExplorer) {
 				((FolderExplorer) explorer).getFileOpenAction().accept(this);
+				mouseEvent.consume();
 			}
 		}
+	}
+
+	@Override
+	protected void onKeyPressed(KeyEvent event) {
+		if (event.getCode() == KeyCode.ENTER) {
+			Explorer explorer = getExplorer();
+			if (explorer instanceof FolderExplorer) {
+				((FolderExplorer) explorer).getFileOpenAction().accept(this);
+				event.consume();
+				return;
+			}
+		}
+		super.onKeyPressed(event);
 	}
 
 	/**

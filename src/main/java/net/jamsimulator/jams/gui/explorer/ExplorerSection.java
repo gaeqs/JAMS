@@ -2,7 +2,6 @@ package net.jamsimulator.jams.gui.explorer;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -407,9 +406,10 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	}
 
 	protected void loadListeners() {
-		setOnMouseClicked(this::onMouseClicked);
+		addEventHandler(MouseEvent.MOUSE_CLICKED, this::onMouseClicked);
+
 		//Only invoked when the element is focused.
-		setOnKeyPressed(this::onKeyPressed);
+		addEventHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
 	}
 
 	protected void refreshAllElements() {
@@ -427,20 +427,27 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	}
 
 	protected void onKeyPressed(KeyEvent event) {
-		if (event.getCode() == KeyCode.LEFT) {
-			if (expanded) {
-				contract();
-			} else {
-				getPrevious().ifPresent(element -> explorer.setSelectedElement(element));
-			}
-			event.consume();
-		} else if (event.getCode() == KeyCode.RIGHT) {
-			if (!expanded) {
-				expand();
-			} else {
-				getNext().ifPresent(element -> explorer.setSelectedElement(element));
-			}
-			event.consume();
+		switch (event.getCode()) {
+			case LEFT:
+				if (expanded) {
+					contract();
+				} else {
+					getPrevious().ifPresent(element -> explorer.setSelectedElement(element));
+				}
+				event.consume();
+				break;
+			case RIGHT:
+				if (!expanded) {
+					expand();
+				} else {
+					getNext().ifPresent(element -> explorer.setSelectedElement(element));
+				}
+				event.consume();
+				break;
+			case ENTER:
+				expandOrContract();
+				event.consume();
+				break;
 		}
 	}
 

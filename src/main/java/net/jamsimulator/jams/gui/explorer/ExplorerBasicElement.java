@@ -3,7 +3,6 @@ package net.jamsimulator.jams.gui.explorer;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -188,14 +187,13 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 	}
 
 	protected void loadListeners() {
-		setOnMouseClicked(this::onMouseClicked);
+		addEventHandler(MouseEvent.MOUSE_CLICKED, this::onMouseClicked);
 
 		//Only invoked when the element is focused.
-		setOnKeyPressed(this::onKeyPressed);
+		addEventHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
 	}
 
 	protected void onMouseClicked(MouseEvent mouseEvent) {
-		//Folders require a double click to expand or contract itself.
 		if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
 			getExplorer().setSelectedElement(this);
 			mouseEvent.consume();
@@ -203,12 +201,15 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 	}
 
 	protected void onKeyPressed(KeyEvent event) {
-		if (event.getCode() == KeyCode.LEFT) {
-			getExplorer().setSelectedElement(parent);
-			event.consume();
-		} else if (event.getCode() == KeyCode.RIGHT) {
-			getNext().ifPresent(element -> getExplorer().setSelectedElement(element));
-			event.consume();
+		switch (event.getCode()) {
+			case LEFT:
+				getExplorer().setSelectedElement(parent);
+				event.consume();
+				break;
+			case RIGHT:
+				getNext().ifPresent(element -> getExplorer().setSelectedElement(element));
+				event.consume();
+				break;
 		}
 	}
 
