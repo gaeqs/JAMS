@@ -1,16 +1,17 @@
 Light Theme
 * {
-    -theme-foreground: #111111;
-    -theme-foreground-darker: black;
-    -theme-foreground-lighter: #555555;
-    -theme-background: #DDDDDD;
-    -theme-background-darker: derive(-theme-background, -10%);
-    -theme-background-lighter: #D1D1D1;
-    -theme-background-pressed: derive(-theme-background, 20%);
-    -theme-background-text-area: derive(-theme-background, 30%);
-    -theme-header: derive(#3B4754, 80%);
-    -theme-menu-item-hover: #4D6EAF;
-    -theme-explorer-element-selected: #4D6EAF;
+    -theme-foreground: #1c1c1c;
+    -theme-foreground-darker: derive(-theme-foreground, -20%);
+    -theme-foreground-lighter: #535353;
+    -theme-background: #dedede;
+    -theme-background-darker: derive(-theme-background, 20%);
+    -theme-background-darker-2: derive(-theme-background, -5%);
+    -theme-background-lighter: derive(-theme-background, 30%);
+    -theme-background-pressed: derive(-theme-background, -40%);
+    -theme-background-text-area: white;
+    -theme-header: #778faa;
+    -theme-menu-item-hover: #6f9efc;
+    -theme-explorer-element-selected: #709ffc;
 }
 
 /*REMOVE FOCUS INDICATOR (BLUE BORDER)*/
@@ -501,9 +502,18 @@ AnchorPane {
     -fx-background-color: -theme-background-lighter;
 }
 
+/* PROJECT TAB PANE */
+.project-tab-pane {
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.project-tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: -theme-background-darker-2;
+}
+
 /*SIDEBAR*/
 .sidebar {
-    -fx-background-color: -theme-background;
+    -fx-background-color: -theme-background-darker-2;
     -fx-border-color: -theme-background-darker;
 }
 
@@ -517,6 +527,7 @@ AnchorPane {
 
 /*SIDEBAR BUTTON*/
 .sidebar-button {
+    -fx-background-color: -theme-background-darker-2;
     -fx-border-width: 0;
     -fx-padding: 10 0 5 0;
 }
@@ -537,15 +548,11 @@ AnchorPane {
 /*SIDE PANE NODE HEADER*/
 .side-pane-node-header {
     -fx-background-color: -theme-background;
-    -fx-border-color: -theme-background-darker;
-    -fx-border-width: 0 0 1 0;
 }
 
 .side-pane-node-header:hover,
 .side-pane-node-header:pressed {
     -fx-background-color: -theme-header;
-    -fx-border-color: -theme-background-darker;
-    -fx-border-width: 0 0 1 0;
 }
 
 /*PROJECT MENU*/
@@ -560,13 +567,14 @@ AnchorPane {
 
 /*BOTTOM BAR*/
 .bottom-bar {
-    -fx-background-color: -theme-background;
+    -fx-background-color: -theme-background-darker-2;
     -fx-border-color: -theme-background-darker;
     -fx-border-width: 1 0 0 0;
 }
 
 /*BOTTOM BAR BUTTON*/
 .bottom-bar-button {
+    -fx-background-color: -theme-background-darker-2;
     -fx-border-width: 0;
     -fx-padding: 0 10 0 10;
 }
@@ -578,15 +586,11 @@ AnchorPane {
 /*BOTTOM PANE NODE HEADER*/
 .bottom-pane-node-header {
     -fx-background-color: -theme-background;
-    -fx-border-color: -theme-background-darker;
-    -fx-border-width: 0 0 1 0;
 }
 
 .bottom-pane-node-header:hover,
 .bottom-pane-node-header:pressed {
     -fx-background-color: -theme-header;
-    -fx-border-color: -theme-background-darker;
-    -fx-border-width: 0 0 1 0;
 }
 
 .explorer-element {
@@ -621,6 +625,15 @@ AnchorPane {
     -fx-padding: 5 5 5 5;
 }
 
+/* FILE DISPLAY LIST */
+.file-display-list {
+    -fx-background-color: -theme-background;
+}
+
+.file-display-list .tab-header-area .tab-header-background {
+    -fx-background-color: -theme-background;
+}
+
 
 /* CODE AREA */
 .code-area {
@@ -644,6 +657,7 @@ AnchorPane {
 .code-area .text {
     -fx-fill: -theme-foreground;
     -fx-font-family: "{FONT_CODE}";
+    -fx-font-size: 13.5;
 }
 
 .code-area .paragraph-text {
@@ -656,7 +670,6 @@ AnchorPane {
 
 
 /* NUMBER LINE */
-
 .code-area .left-bar {
     -fx-border-width: 0 1 0 0;
     -fx-border-color: -theme-background-lighter;
@@ -672,7 +685,7 @@ AnchorPane {
 }
 
 .code-area .left-bar .line-number .text {
-    -fx-fill: -theme-foreground-lighter;
+    -fx-fill: derive(-theme-foreground-lighter, 10%);
     -fx-font-family: "{FONT_CODE}";
     -fx-font-size: 12;
 }
@@ -684,7 +697,7 @@ AnchorPane {
 /* ASSEMBLY */
 
 .code-area .assembly-comment {
-    -fx-fill: #8b8b8b;
+    -fx-fill: #404040;
 }
 
 .code-area .assembly-label {
@@ -692,42 +705,42 @@ AnchorPane {
 }
 
 .code-area .assembly-directive {
-    -fx-fill: #6f555a;
+    -fx-fill: #934709;
 }
 
 .code-area .assembly-directive-parameter {
-    -fx-fill: #6a583e;
+    -fx-fill: #90087d;
 }
 
 
 .code-area .assembly-directive-parameter-string {
-    -fx-fill: #4e6341;
+    -fx-fill: #395823;
 }
 
 .code-area .assembly-instruction {
-    -fx-fill: #6d2930;
+    -fx-fill: #a58318;
 }
 
 .code-area .assembly-instruction-parameter-label {
-    -fx-fill: #111111;
+    -fx-fill: #000000;
     -fx-font-style: italic;
 }
 
 .code-area .assembly-instruction-parameter-register {
-    -fx-fill: #1e385c;
+    -fx-fill: #12278e;
 }
 
 .code-area .assembly-instruction-parameter-immediate {
-    -fx-fill: #1a762b;
+    -fx-fill: #39742c;
 }
 
 
 .code-area .assembly-instruction-parameter-string {
-    -fx-fill: #3b4b31;
+    -fx-fill: #635524;
 }
 
 .code-area .assembly-error {
-    -rtfx-underline-color: #781b1b;
+    -rtfx-underline-color: #cb2f2f;
     -rtfx-underline-width: 1px;
 }
 

@@ -46,6 +46,7 @@ public class ProjectTab extends Tab {
 		pane.getChildren().add(separator);
 
 		projectTabPane = new TabPane();
+		projectTabPane.getStyleClass().add("project-tab-pane");
 		AnchorUtils.setAnchor(projectTabPane, 1, 0, 0, 0);
 		pane.getChildren().add(projectTabPane);
 

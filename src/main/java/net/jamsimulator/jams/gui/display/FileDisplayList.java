@@ -19,6 +19,7 @@ public class FileDisplayList extends TabPane {
 		this.workingPane = workingPane;
 		this.displays = new ArrayList<>();
 		setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
+		getStyleClass().add("file-display-list");
 	}
 
 	public void setWorkingPane(WorkingPane workingPane) {

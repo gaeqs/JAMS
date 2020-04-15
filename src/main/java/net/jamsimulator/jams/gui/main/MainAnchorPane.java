@@ -18,6 +18,7 @@ public class MainAnchorPane extends AnchorPane {
 	 * Creates the main anchor pane.
 	 */
 	public MainAnchorPane() {
+		getStyleClass().add("anchor-pane");
 		generateTopMenuBar();
 		generateProjectsTabPane();
 	}
