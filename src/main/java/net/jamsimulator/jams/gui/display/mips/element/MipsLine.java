@@ -249,7 +249,7 @@ public class MipsLine {
 
 	public void appendReformattedLine(StringBuilder builder) {
 		if (label != null) {
-			builder.append(label.text);
+			builder.append(label.text.trim());
 		}
 		if (directive != null) {
 			builder.append('\t');
