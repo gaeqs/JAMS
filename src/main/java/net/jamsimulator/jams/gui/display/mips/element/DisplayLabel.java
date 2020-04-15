@@ -25,7 +25,7 @@ public class DisplayLabel extends MipsCodeElement {
 	}
 
 	public String getLabel() {
-		return text.substring(0, text.length() - 1);
+		return text.substring(0, text.length() - 1).trim();
 	}
 
 	@Override
