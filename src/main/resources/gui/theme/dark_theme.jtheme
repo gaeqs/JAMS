@@ -728,7 +728,7 @@ AnchorPane {
 }
 
 .code-area .assembly-instruction-parameter-register {
-    -fx-fill: #5e78f8;
+    -fx-fill: #90a3fd;
 }
 
 .code-area .assembly-instruction-parameter-immediate {
