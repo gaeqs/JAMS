@@ -3,6 +3,7 @@ package net.jamsimulator.jams.gui.project;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
+import javafx.scene.input.ScrollEvent;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.display.FileDisplayList;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
@@ -45,6 +46,11 @@ public class MipsProjectPane extends WorkingPane {
 		pane.setContent(explorer);
 		pane.setFitToHeight(true);
 		pane.setFitToWidth(true);
+
+		pane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
+			double deltaY = scrollEvent.getDeltaY() * 0.003;
+			pane.setVvalue(pane.getVvalue() - deltaY);
+		});
 
 
 		//explorer.prefWidthProperty().bind(pane.widthProperty().subtract(2));
