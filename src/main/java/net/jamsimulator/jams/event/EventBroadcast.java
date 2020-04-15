@@ -25,8 +25,11 @@ public interface EventBroadcast {
 	boolean registerListener(Object instance, Method method);
 
 	/**
-	 * Registers all listeners of an instance. See {@link #registerListener(Object, Method)} for
-	 * more information.
+	 * Registers all listeners of an instance.
+	 *
+	 * This searches listener on all methods, including private ones. This also searches all superclasses' methods.
+	 *
+	 * See {@link #registerListener(Object, Method)} for more information.
 	 *
 	 * @param instance the instance.
 	 * @return the amount of registered listeners.

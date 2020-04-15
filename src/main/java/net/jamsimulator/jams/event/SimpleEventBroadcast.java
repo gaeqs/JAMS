@@ -46,9 +46,14 @@ public class SimpleEventBroadcast implements EventBroadcast {
 
 	public int registerListeners(Object instance) {
 		int amount = 0;
-		for (Method declaredMethod : instance.getClass().getDeclaredMethods()) {
-			if (registerListener(instance, declaredMethod))
-				amount++;
+
+		Class<?> c = instance.getClass();
+		while (c != null) {
+			for (Method declaredMethod : c.getDeclaredMethods()) {
+				if (registerListener(instance, declaredMethod))
+					amount++;
+			}
+			c = c.getSuperclass();
 		}
 		return amount;
 	}

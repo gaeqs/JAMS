@@ -1,8 +1,8 @@
 Light Theme
 * {
     -theme-foreground: #111111;
-    -theme-foreground-darker: derive(-theme-foreground, -10%);
-    -theme-foreground-lighter: #AAAAAA;
+    -theme-foreground-darker: black;
+    -theme-foreground-lighter: #555555;
     -theme-background: #DDDDDD;
     -theme-background-darker: derive(-theme-background, -10%);
     -theme-background-lighter: #D1D1D1;
@@ -13,8 +13,6 @@ Light Theme
     -theme-explorer-element-selected: #4D6EAF;
 }
 
-
-
 /*REMOVE FOCUS INDICATOR (BLUE BORDER)*/
 .focus-indicator {
     -fx-border-color: transparent;
@@ -23,12 +21,14 @@ Light Theme
 /*LABEL*/
 .label {
     -fx-text-fill: -theme-foreground;
+    -fx-font-family: "{FONT_GENERAL}";
 }
 
 /*TEXT AREA*/
 .text-area {
     -fx-background-color: -theme-background-text-area;
     -fx-text-fill: -theme-foreground;
+    -fx-font-family: -fonr-general;
 }
 
 .text-area .scroll-pane {
@@ -95,6 +95,7 @@ AnchorPane {
 
 .tab-pane .tab-header-area .tab .tab-label {
     -fx-text-fill: -theme-foreground;
+    -fx-font-family: "{FONT_GENERAL}";
 }
 
 
@@ -125,7 +126,6 @@ AnchorPane {
 }
 
 .scroll-pane .viewport {
-    -fx-background-color: -theme-background;
     -fx-background-color: -theme-background;
 }
 
@@ -632,14 +632,28 @@ AnchorPane {
     -fx-background-color: -theme-background-text-area;
 }
 
+.caret {
+    -fx-stroke: -theme-foreground;
+}
+
+.paragraph-box:has-caret {
+    -fx-background-color: -theme-background-darker;
+}
+
 /*Default text*/
 .code-area .text {
     -fx-fill: -theme-foreground;
+    -fx-font-family: "{FONT_CODE}";
 }
 
 .code-area .paragraph-text {
     -fx-padding: 0 0 0 5px;
 }
+
+.code-area .selection {
+    -fx-fill: #214182;
+}
+
 
 /* NUMBER LINE */
 
@@ -647,9 +661,79 @@ AnchorPane {
     -fx-border-width: 0 1 0 0;
     -fx-border-color: -theme-background-lighter;
     -fx-background-color: -theme-background-darker;
-
 }
 
 .code-area .left-bar-background {
     -fx-fill: -theme-background-darker;
+}
+
+.code-area .left-bar .line-number {
+    -fx-background-color: transparent;
+}
+
+.code-area .left-bar .line-number .text {
+    -fx-fill: -theme-foreground-lighter;
+    -fx-font-family: "{FONT_CODE}";
+    -fx-font-size: 12;
+}
+
+.paragraph-box:has-caret .left-bar .line-number .text {
+    -fx-fill: -theme-foreground;
+}
+
+/* ASSEMBLY */
+
+.code-area .assembly-comment {
+    -fx-fill: #8b8b8b;
+}
+
+.code-area .assembly-label {
+    -fx-font-style: italic;
+}
+
+.code-area .assembly-directive {
+    -fx-fill: #6f555a;
+}
+
+.code-area .assembly-directive-parameter {
+    -fx-fill: #6a583e;
+}
+
+
+.code-area .assembly-directive-parameter-string {
+    -fx-fill: #4e6341;
+}
+
+.code-area .assembly-instruction {
+    -fx-fill: #6d2930;
+}
+
+.code-area .assembly-instruction-parameter-label {
+    -fx-fill: #111111;
+    -fx-font-style: italic;
+}
+
+.code-area .assembly-instruction-parameter-register {
+    -fx-fill: #1e385c;
+}
+
+.code-area .assembly-instruction-parameter-immediate {
+    -fx-fill: #1a762b;
+}
+
+
+.code-area .assembly-instruction-parameter-string {
+    -fx-fill: #3b4b31;
+}
+
+.code-area .assembly-error {
+    -rtfx-underline-color: #781b1b;
+    -rtfx-underline-width: 1px;
+}
+
+.assembly-popup {
+    -fx-background-color: -theme-background;
+    -fx-padding: 5px 5px 5px 5px;
+    -fx-border-color: -theme-background-lighter;
+    -fx-border-width: 1px;
 }

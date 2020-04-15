@@ -127,7 +127,6 @@ AnchorPane {
 
 .scroll-pane .viewport {
     -fx-background-color: -theme-background;
-    -fx-background-color: -theme-background;
 }
 
 .scroll-pane .corner {
