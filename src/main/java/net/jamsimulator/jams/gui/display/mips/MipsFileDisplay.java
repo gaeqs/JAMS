@@ -17,6 +17,7 @@ import net.jamsimulator.jams.gui.display.mips.element.MipsCodeElement;
 import net.jamsimulator.jams.gui.display.mips.element.MipsFileElements;
 import net.jamsimulator.jams.gui.display.mips.element.MipsLine;
 import net.jamsimulator.jams.gui.project.MipsProjectPane;
+import net.jamsimulator.jams.project.MipsProject;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.event.MouseOverTextEvent;
 import org.fxmisc.richtext.model.PlainTextChange;
@@ -34,6 +35,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 	private final VBox popupVBox;
 	private final MipsAutocompletionPopup autocompletionPopup;
 	private final Subscription subscription;
+	private final MipsProject project;
 
 	private ChangeListener<? super Number> autocompletionMoveListener;
 
@@ -47,8 +49,10 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		popup.getContent().add(popupVBox);
 
 		if (tab.getWorkingPane() instanceof MipsProjectPane) {
-			autocompletionPopup = new MipsAutocompletionPopup(((MipsProjectPane) tab.getWorkingPane()).getProject());
+			project = ((MipsProjectPane) tab.getWorkingPane()).getProject();
+			autocompletionPopup = new MipsAutocompletionPopup(project);
 		} else {
+			project = null;
 			autocompletionPopup = null;
 		}
 
@@ -58,6 +62,10 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 		subscription = multiPlainChanges().subscribe(event -> event.forEach(this::index));
 		index();
+	}
+
+	public Optional<MipsProject> getProject() {
+		return Optional.ofNullable(project);
 	}
 
 	@Override
