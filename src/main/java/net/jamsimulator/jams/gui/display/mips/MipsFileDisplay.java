@@ -1,20 +1,22 @@
 package net.jamsimulator.jams.gui.display.mips;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
 import javafx.stage.Popup;
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.display.CodeFileDisplay;
 import net.jamsimulator.jams.gui.display.FileDisplayTab;
 import net.jamsimulator.jams.gui.display.mips.element.DisplayLabel;
 import net.jamsimulator.jams.gui.display.mips.element.MipsCodeElement;
 import net.jamsimulator.jams.gui.display.mips.element.MipsFileElements;
 import net.jamsimulator.jams.gui.display.mips.element.MipsLine;
+import net.jamsimulator.jams.gui.project.MipsProjectPane;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.event.MouseOverTextEvent;
 import org.fxmisc.richtext.model.PlainTextChange;
@@ -27,9 +29,13 @@ import java.util.Optional;
 public class MipsFileDisplay extends CodeFileDisplay {
 
 	private final MipsFileElements elements;
+
 	private final Popup popup;
 	private final VBox popupVBox;
+	private final MipsAutocompletionPopup autocompletionPopup;
 	private final Subscription subscription;
+
+	private ChangeListener<? super Number> autocompletionMoveListener;
 
 	public MipsFileDisplay(FileDisplayTab tab) {
 		super(tab);
@@ -37,11 +43,17 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 		popup = new Popup();
 		popupVBox = new VBox();
-		popupVBox.setBackground(new Background(new BackgroundFill(Paint.valueOf("#FF0000"), null, null)));
 		popupVBox.getStyleClass().add("assembly-popup");
 		popup.getContent().add(popupVBox);
 
+		if (tab.getWorkingPane() instanceof MipsProjectPane) {
+			autocompletionPopup = new MipsAutocompletionPopup(((MipsProjectPane) tab.getWorkingPane()).getProject());
+		} else {
+			autocompletionPopup = null;
+		}
+
 		initializePopupListeners();
+		initializeAutocompletionPopupListeners();
 		applyLabelTabRemover();
 
 		subscription = multiPlainChanges().subscribe(event -> event.forEach(this::index));
@@ -76,6 +88,10 @@ public class MipsFileDisplay extends CodeFileDisplay {
 	public void onClose() {
 		super.onClose();
 		subscription.unsubscribe();
+		JamsApplication.getStage().xProperty().removeListener(autocompletionMoveListener);
+		JamsApplication.getStage().yProperty().removeListener(autocompletionMoveListener);
+		JamsApplication.getStage().widthProperty().removeListener(autocompletionMoveListener);
+		JamsApplication.getStage().heightProperty().removeListener(autocompletionMoveListener);
 	}
 
 	private void index(PlainTextChange change) {
@@ -146,6 +162,47 @@ public class MipsFileDisplay extends CodeFileDisplay {
 			popup.show(this, position.getX(), position.getY() + 10);
 		});
 		addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_END, event -> popup.hide());
+	}
+
+	private void initializeAutocompletionPopupListeners() {
+		if (autocompletionPopup == null) return;
+		addEventHandler(KeyEvent.KEY_TYPED, event -> {
+			if (event.getCharacter().equals(" ")) {
+				autocompletionPopup.hide();
+			} else {
+				int caretPosition = getCaretPosition() - 1;
+				MipsCodeElement element = elements.getElementAt(caretPosition).orElse(null);
+				if (element == null) {
+					autocompletionPopup.hide();
+					return;
+				}
+
+				autocompletionPopup.refresh(element);
+				if (autocompletionPopup.isEmpty()) {
+					autocompletionPopup.hide();
+					return;
+				}
+
+
+				Platform.runLater(() -> {
+					Bounds bounds = getCaretBounds().orElse(null);
+					if (bounds == null) return;
+					autocompletionPopup.show(this, bounds.getMinX(), bounds.getMinY() + 20);
+				});
+			}
+		});
+
+		//FOCUS
+		focusedProperty().addListener((obs, old, val) -> autocompletionPopup.hide());
+		//CLICK
+		addEventHandler(MouseEvent.MOUSE_CLICKED, event -> autocompletionPopup.hide());
+		//MOVE
+
+		autocompletionMoveListener = (obs, old, val) -> autocompletionPopup.hide();
+		JamsApplication.getStage().xProperty().addListener(autocompletionMoveListener);
+		JamsApplication.getStage().yProperty().addListener(autocompletionMoveListener);
+		JamsApplication.getStage().widthProperty().addListener(autocompletionMoveListener);
+		JamsApplication.getStage().heightProperty().addListener(autocompletionMoveListener);
 	}
 
 	@Override

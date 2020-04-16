@@ -136,9 +136,9 @@ public class LanguageManager extends SimpleEventBroadcast {
 	 * Returns a unmodifiable {@link Set} with all {@link Language}s
 	 * registered in this manager.
 	 * <p>
-	 * Any attempt to modify this {@link Set} result in an {@link UnsupportedOperationException}.
+	 * Any attempt to modify this {@link Set} results in an {@link UnsupportedOperationException}.
 	 *
-	 * @return the unmodifiable {@link Set};
+	 * @return the unmodifiable {@link Set}.
 	 * @see Collections#unmodifiableSet(Set)
 	 */
 	public Set<Language> getAll() {

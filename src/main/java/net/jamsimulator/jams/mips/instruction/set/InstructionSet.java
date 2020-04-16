@@ -42,6 +42,20 @@ public class InstructionSet {
 		}
 	}
 
+
+	/**
+	 * Returns a unmodifiable {@link Set} with all {@link Instruction}s
+	 * registered in this instruction set.
+	 * <p>
+	 * Any attempt to modify this {@link Set} results in an {@link UnsupportedOperationException}.
+	 *
+	 * @return the unmodifiable {@link Set}.
+	 * @see Collections#unmodifiableSet(Set)
+	 */
+	public Set<Instruction> getInstructions() {
+		return Collections.unmodifiableSet(instructions);
+	}
+
 	/**
 	 * Returns the {@link Instruction} that matches the given mnemonic and parameter types, if present.
 	 *

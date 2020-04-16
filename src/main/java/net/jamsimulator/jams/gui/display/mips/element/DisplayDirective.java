@@ -22,6 +22,9 @@ public class DisplayDirective extends MipsCodeElement {
 		parameters = new ArrayList<>();
 	}
 
+	public String getDirective() {
+		return text.substring(1);
+	}
 
 	public List<DisplayDirectiveParameter> getParameters() {
 		return parameters;
