@@ -1,6 +1,6 @@
 package net.jamsimulator.jams.gui.action.event;
 
-import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.event.Cancellable;
 import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.gui.action.Action;
@@ -8,9 +8,9 @@ import net.jamsimulator.jams.gui.action.Action;
 public class ActionUnbindEvent extends Event {
 
 	protected Action action;
-	protected KeyCodeCombination combination;
+	protected KeyCombination combination;
 
-	ActionUnbindEvent(Action action, KeyCodeCombination combination) {
+	ActionUnbindEvent(Action action, KeyCombination combination) {
 		this.action = action;
 		this.combination = combination;
 	}
@@ -19,7 +19,7 @@ public class ActionUnbindEvent extends Event {
 		return action;
 	}
 
-	public KeyCodeCombination getCombination() {
+	public KeyCombination getCombination() {
 		return combination;
 	}
 
@@ -27,7 +27,7 @@ public class ActionUnbindEvent extends Event {
 
 		private boolean cancelled;
 
-		public Before(Action action, KeyCodeCombination combination) {
+		public Before(Action action, KeyCombination combination) {
 			super(action, combination);
 		}
 
@@ -44,7 +44,7 @@ public class ActionUnbindEvent extends Event {
 
 	public static class After extends ActionUnbindEvent {
 
-		public After(Action action, KeyCodeCombination combination) {
+		public After(Action action, KeyCombination combination) {
 			super(action, combination);
 		}
 

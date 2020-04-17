@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.gui.action;
 
 import javafx.scene.Node;
+import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Objects;
@@ -15,17 +16,20 @@ public abstract class Action {
 	private final String regionTag;
 	private final String languageNode;
 
+	private final KeyCombination defaultCombination;
+
 	/**
 	 * Creates the action.
 	 *
 	 * @param name the name of the action. This name must be unique.
 	 */
-	public Action(String name, String regionTag, String languageNode) {
+	public Action(String name, String regionTag, String languageNode, KeyCombination defaultCombination) {
 		Validate.notNull(name, "Name cannot be null!");
 		Validate.notNull(regionTag, "Region tag cannot be null!");
 		this.name = name;
 		this.regionTag = regionTag;
 		this.languageNode = languageNode;
+		this.defaultCombination = defaultCombination;
 	}
 
 	/**
@@ -58,6 +62,20 @@ public abstract class Action {
 	}
 
 	/**
+	 * Returns the default combination of the action, if present.
+	 * <p>
+	 * If the combination is present, this action is not present in the actions file and
+	 * no actions are bind to this combination this combination will be bind to this action.
+	 * <p>
+	 * The combination will not be bind if the action is present in the actions file but it has no combinations.
+	 *
+	 * @return the default code combination, if present.
+	 */
+	public Optional<KeyCombination> getDefaultCodeCombination() {
+		return Optional.ofNullable(defaultCombination);
+	}
+
+	/**
 	 * Executes this action.
 	 *
 	 * @param node the current focused node.
@@ -75,5 +93,15 @@ public abstract class Action {
 	@Override
 	public int hashCode() {
 		return Objects.hash(name);
+	}
+
+	@Override
+	public String toString() {
+		return "Action{" +
+				"name='" + name + '\'' +
+				", regionTag='" + regionTag + '\'' +
+				", languageNode='" + languageNode + '\'' +
+				", defaultCombination=" + defaultCombination +
+				'}';
 	}
 }

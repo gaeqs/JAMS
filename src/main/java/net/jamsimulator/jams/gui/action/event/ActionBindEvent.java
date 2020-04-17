@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.action.event;
 
+import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.event.Cancellable;
 import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.gui.action.Action;
@@ -10,11 +11,17 @@ import java.util.Map;
 public class ActionBindEvent extends Event {
 
 	protected Action action;
+	protected KeyCombination combination;
 	protected Map<String, Action> replacedActions;
 
-	ActionBindEvent(Action action, Map<String, Action> replacedActions) {
+	ActionBindEvent(Action action, KeyCombination combination, Map<String, Action> replacedActions) {
 		this.action = action;
+		this.combination = combination;
 		this.replacedActions = replacedActions;
+	}
+
+	public KeyCombination getCombination() {
+		return combination;
 	}
 
 	public Action getAction() {
@@ -29,8 +36,8 @@ public class ActionBindEvent extends Event {
 
 		private boolean cancelled;
 
-		public Before(Action action, Map<String, Action> replacedActions) {
-			super(action, replacedActions);
+		public Before(Action action, KeyCombination combination, Map<String, Action> replacedActions) {
+			super(action, combination, replacedActions);
 		}
 
 		@Override
@@ -46,8 +53,8 @@ public class ActionBindEvent extends Event {
 
 	public static class After extends ActionBindEvent {
 
-		public After(Action action, Map<String, Action> replacedActions) {
-			super(action, replacedActions);
+		public After(Action action, KeyCombination combination, Map<String, Action> replacedActions) {
+			super(action, combination, replacedActions);
 		}
 
 	}

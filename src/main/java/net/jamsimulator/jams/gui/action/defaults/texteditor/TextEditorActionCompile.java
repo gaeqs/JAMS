@@ -1,6 +1,9 @@
 package net.jamsimulator.jams.gui.action.defaults.texteditor;
 
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.display.mips.MipsFileDisplay;
@@ -16,9 +19,10 @@ import java.util.Collections;
 public class TextEditorActionCompile extends Action {
 
 	public static final String NAME = "EDITOR_COMPILE";
+	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
 
 	public TextEditorActionCompile() {
-		super(NAME, RegionTags.TEXT_EDITOR, null);
+		super(NAME, RegionTags.TEXT_EDITOR, null, DEFAULT_COMBINATION);
 	}
 
 	@Override
