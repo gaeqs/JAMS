@@ -13,13 +13,11 @@ public class ConfigurationUtils {
 	public static final String MAIN_CONFIGURATION = "config.jconfig";
 	public static final String DEFAULT_MAIN_CONFIGURATION_PATH = "/configuration/main_config.jconfig";
 
+	private static File configurationFolder = null;
+
 	public static RootConfiguration loadMainConfiguration() {
-		File folder = new File(Jams.getMainFolder(), CONFIGURATION_FOLDER);
 
-		if (!FolderUtils.checkFolder(folder))
-			throw new RuntimeException("Couldn't create configuration folder!");
-
-		File file = new File(folder, MAIN_CONFIGURATION);
+		File file = new File(getConfigurationFolder(), MAIN_CONFIGURATION);
 
 		if (!file.exists()) {
 			if (!FolderUtils.moveFromResources(Jams.class, DEFAULT_MAIN_CONFIGURATION_PATH, file))
@@ -40,4 +38,13 @@ public class ConfigurationUtils {
 		}
 	}
 
+	public static File getConfigurationFolder() {
+		if (configurationFolder == null) {
+			configurationFolder = new File(Jams.getMainFolder(), CONFIGURATION_FOLDER);
+
+			if (!FolderUtils.checkFolder(configurationFolder))
+				throw new RuntimeException("Couldn't create configuration folder!");
+		}
+		return configurationFolder;
+	}
 }

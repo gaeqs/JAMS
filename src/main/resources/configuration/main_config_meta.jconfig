@@ -20,5 +20,10 @@
       "type": "selected_theme",
       "language_node": "CONFIG_APPEARANCE_THEME"
     }
+  },
+  "action": {
+    "meta": {
+        "language_node": "CONFIG_ACTION"
+    }
   }
 }

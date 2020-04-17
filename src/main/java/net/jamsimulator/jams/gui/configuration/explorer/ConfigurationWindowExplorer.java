@@ -22,6 +22,11 @@ public class ConfigurationWindowExplorer extends Explorer {
 		return configurationWindow;
 	}
 
+	public void refresh() {
+		getChildren().clear();
+		generateMainSection();
+	}
+
 	@Override
 	protected void generateMainSection() {
 		mainSection = new ConfigurationWindowSection(this, null,

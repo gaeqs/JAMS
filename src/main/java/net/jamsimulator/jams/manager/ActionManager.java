@@ -4,6 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.TaggedRegion;
 import net.jamsimulator.jams.gui.action.Action;
@@ -15,19 +16,15 @@ import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionRegisterEvent;
 import net.jamsimulator.jams.gui.action.event.ActionUnbindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionUnregisterEvent;
-import net.jamsimulator.jams.utils.FolderUtils;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
-import java.nio.file.Files;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ActionManager extends SimpleEventBroadcast {
 
-	public static final String ACTIONS_FILE = "actions.jactions";
+	public static final String ACTIONS_SECTION = "action";
 
 	public static final ActionManager INSTANCE = new ActionManager();
 
@@ -37,7 +34,6 @@ public class ActionManager extends SimpleEventBroadcast {
 	public ActionManager() {
 		this.actions = new HashSet<>();
 		this.binds = new HashMap<>();
-		loadActionsFile();
 		loadDefaultActions();
 		if (loadDefaultBinds(loadBinds())) {
 			save();
@@ -179,42 +175,14 @@ public class ActionManager extends SimpleEventBroadcast {
 	}
 
 	public void save() {
-		File file = new File(Jams.getMainFolder(), ACTIONS_FILE);
+		Configuration root = Jams.getMainConfiguration().getOrCreateConfiguration(ACTIONS_SECTION);
+		root.clear();
+		actions.forEach(action -> root.set(action.getName(), getBindCombinations(action.getName()).stream()
+				.map(KeyCombination::getName).collect(Collectors.toList())));
 		try {
-			Writer writer = new FileWriter(file);
-
-			List<KeyCombination> combinations;
-			boolean firstAction = true, firstCombination;
-			for (Action action : actions) {
-
-				if (firstAction) firstAction = false;
-				else writer.write('\n');
-
-				writer.write(action.getName() + "=");
-				combinations = getBindCombinations(action.getName());
-				firstCombination = true;
-
-				for (KeyCombination combination : combinations) {
-					if (firstCombination) firstCombination = false;
-					else writer.write(',');
-					writer.write(combination.toString());
-				}
-			}
-
-			writer.close();
-
+			Jams.getMainConfiguration().save(true);
 		} catch (IOException e) {
-			System.err.println("Error while writing actions file.");
 			e.printStackTrace();
-		}
-	}
-
-
-	private void loadActionsFile() {
-		File file = new File(Jams.getMainFolder(), ACTIONS_FILE);
-		if (!file.exists()) {
-			if (!FolderUtils.moveFromResources(Jams.class, "/" + ACTIONS_FILE, file))
-				throw new NullPointerException("Error copying default action file!!");
 		}
 	}
 
@@ -225,59 +193,38 @@ public class ActionManager extends SimpleEventBroadcast {
 	}
 
 	private List<Action> loadBinds() {
-		File file = new File(Jams.getMainFolder(), ACTIONS_FILE);
-
 		List<Action> presentActions = new ArrayList<>();
+		Optional<Configuration> optional = Jams.getMainConfiguration().get(ACTIONS_SECTION);
+		if (!optional.isPresent()) return presentActions;
+		Configuration configuration = optional.get();
 
-		List<String> lines;
-		try {
-			lines = Files.readAllLines(file.toPath());
-		} catch (IOException e) {
-			System.err.println("Error reading actions file.");
-			e.printStackTrace();
-			return presentActions;
-		}
-
-		int equalsIndex;
-		String key, value;
-		String[] split;
-		Action action;
-		KeyCombination combination;
-		for (String line : lines) {
-			equalsIndex = line.indexOf('=');
-			if (equalsIndex == -1 || equalsIndex == 0) {
-				System.err.println("Error loading bind " + line + ". Bad format.");
-				continue;
+		configuration.getAll(false).forEach((key, value) -> {
+			if (!(value instanceof List)) {
+				System.err.println("Error while parsing action " + key + ". Bad format.");
+				return;
 			}
-
-			key = line.substring(0, equalsIndex);
-
-			action = get(key).orElse(null);
+			Action action = get(key).orElse(null);
 			if (action == null) {
 				System.err.println("Couldn't found action " + key + ".");
-				continue;
+				return;
 			}
 			presentActions.add(action);
 
-			//EMPTY
-			if (equalsIndex == line.length() - 1) {
-				continue;
-			}
-
-			value = line.substring(equalsIndex + 1);
-			split = value.split(",");
-
-			for (String comb : split) {
-				if (comb.isEmpty()) continue;
+			String string;
+			KeyCombination combination;
+			for (Object o : (List) value) {
+				string = o.toString();
+				if (string.isEmpty()) continue;
 				try {
-					combination = KeyCombination.valueOf(comb);
+					combination = KeyCombination.valueOf(string);
 				} catch (IllegalArgumentException ex) {
-					System.err.println("Error loading action combination " + value + ". Bad format.");
+					System.err.println("Error loading action combination " + string + " for action " + key + ". Bad format.");
 					continue;
 				}
 				bind(combination, key);
 			}
-		}
+		});
+
 		return presentActions;
 	}
 

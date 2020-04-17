@@ -65,6 +65,11 @@ public class ConfigurationWindow extends SplitPane {
 		section.getNodes().forEach(sectionDisplay.getChildren()::add);
 	}
 
+	public void refreshConfiguration() {
+		explorer.refresh();
+		sectionDisplay.getChildren().clear();
+	}
+
 	public void open() {
 		if (stage == null) {
 			stage = new Stage();
@@ -91,6 +96,9 @@ public class ConfigurationWindow extends SplitPane {
 			});
 			Jams.getLanguageManager().registerListeners(this);
 		}
+
+		refreshConfiguration();
+
 		stage.show();
 		Platform.runLater(() -> setDividerPosition(0, 0.3));
 	}

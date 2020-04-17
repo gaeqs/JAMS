@@ -116,6 +116,27 @@ public class Configuration {
 	}
 
 	/**
+	 * Returns the configuration that matches the given key, if present.
+	 * <p>
+	 * If no configuration is present, one new configuration will be created, replacing
+	 * any previous value.
+	 * <p>
+	 * You can get configurations stored in the child nodes of this configuration using the separator ".".
+	 * For example, if you want to get the configuration "data" inside the child "node", you must use the
+	 * key "node.data".
+	 *
+	 * @param key the key.
+	 * @return the configuration.
+	 */
+	public Configuration getOrCreateConfiguration(String key) {
+		Optional<Configuration> config = get(key);
+		if (config.isPresent()) return config.get();
+		set(key, new HashMap<>());
+		config = get(key);
+		return config.get();
+	}
+
+	/**
 	 * Returns the value that matches the given key, if present.
 	 * If the value is not a {@link String}, returns it's {@link Object#toString()} representation.
 	 * <p>
@@ -275,11 +296,22 @@ public class Configuration {
 	/**
 	 * Removes this {@link Configuration} from the {@link RootConfiguration}.
 	 * This will throw an {@link IllegalStateException} if this node is the root node.
+	 * <p>
+	 * Any further modification on this configuration won't cause any effect on the {@link RootConfiguration}.
 	 */
 	public void remove() {
 		if (root == this) throw new IllegalStateException("You cannot remove the root of a configuration!");
 		root.remove(name);
 	}
+
+	/**
+	 * Removes all children from this configuration.
+	 * Any further modification on any child configuration won't cause any effect on this configuration.
+	 */
+	public void clear() {
+		map.clear();
+	}
+
 
 	/**
 	 * Saves this {@link Configuration} as a JSON string into the given file.

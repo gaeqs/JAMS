@@ -1,10 +1,10 @@
 package net.jamsimulator.jams.gui.configuration.explorer;
 
 import net.jamsimulator.jams.configuration.Configuration;
-import net.jamsimulator.jams.gui.explorer.*;
 import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNode;
 import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNodeBuilder;
 import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNodeBuilders;
+import net.jamsimulator.jams.gui.explorer.*;
 
 import java.util.*;
 
@@ -86,7 +86,7 @@ public class ConfigurationWindowSection extends ExplorerSection {
 			return;
 		}
 
-		Optional<Configuration> metaOptional = meta.get(name);
+		Optional<Configuration> metaOptional = meta == null ? Optional.empty() : meta.get(name);
 		Optional<ConfigurationWindowNodeBuilder<?>> builder;
 		String languageNode = null;
 		if (metaOptional.isPresent()) {
