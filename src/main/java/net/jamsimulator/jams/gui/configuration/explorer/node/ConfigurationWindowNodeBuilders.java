@@ -13,10 +13,16 @@ public class ConfigurationWindowNodeBuilders {
 	private static final Map<Class<?>, ConfigurationWindowNodeBuilder<?>> buildersByType = new HashMap<>();
 
 	static {
+		//BOOLEAN
 		ConfigurationWindowNodeBoolean.Builder booleanBuilder = new ConfigurationWindowNodeBoolean.Builder();
 		builderByName.put("boolean", booleanBuilder);
 		buildersByType.put(boolean.class, booleanBuilder);
 		buildersByType.put(Boolean.class, booleanBuilder);
+
+		//STRING
+		ConfigurationWindowNodeString.Builder stringBuilder = new ConfigurationWindowNodeString.Builder();
+		builderByName.put("string", stringBuilder);
+		buildersByType.put(String.class, stringBuilder);
 
 		//LANGUAGES
 		ConfigurationWindowNodeLanguage.Builder languageBuilder = new ConfigurationWindowNodeLanguage.Builder();

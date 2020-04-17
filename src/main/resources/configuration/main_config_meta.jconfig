@@ -23,7 +23,8 @@
   },
   "action": {
     "meta": {
-        "language_node": "CONFIG_ACTION"
+        "language_node": "CONFIG_ACTION",
+        "type": "action"
     }
   }
 }
