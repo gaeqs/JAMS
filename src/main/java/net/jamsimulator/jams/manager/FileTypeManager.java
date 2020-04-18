@@ -127,7 +127,7 @@ public class FileTypeManager extends SimpleEventBroadcast {
 	}
 
 	/**
-	 * Attempts to unregisters the {@link FileType} that matches the given name.
+	 * Attempts to unregister the {@link FileType} that matches the given name.
 	 * This will fail if the {@link FileType} to unregister is the default one.
 	 * <p>
 	 * If the {@link FileType} to unregister is the selected {@link FileType}

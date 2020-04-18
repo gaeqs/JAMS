@@ -90,7 +90,7 @@ public class MemoryBuilderManager {
 	}
 
 	/**
-	 * Attempts to unregisters the {@link MemoryBuilder} that matches the given name.
+	 * Attempts to unregister the {@link MemoryBuilder} that matches the given name.
 	 * This will fail if the {@link MemoryBuilder} to unregister is the default one.
 	 *
 	 * @param name the given name.

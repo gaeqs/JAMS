@@ -5,6 +5,9 @@ import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowExplo
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowSection;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 
+/**
+ * Represents a builder for special {@link ConfigurationWindowSection}s.
+ */
 public interface ConfigurationWindowSpecialSectionBuilder {
 
 	ConfigurationWindowSection create(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name,

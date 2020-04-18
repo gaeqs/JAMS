@@ -20,12 +20,19 @@ import net.jamsimulator.jams.manager.ActionManager;
 
 import java.util.List;
 
+/**
+ * Represents a {@link net.jamsimulator.jams.gui.explorer.ExplorerElement} representing an {@link Action}.
+ */
 public class ActionsExplorerAction extends ExplorerBasicElement {
 
+	/**
+	 * The amount of shortcuts an user can add.
+	 * This limit avoids a bad structure in the explorer.
+	 */
 	public static final int MAX_SHORTCUTS = 3;
 
-	protected Action action;
-	protected Region bigSeparator;
+	protected final Action action;
+	protected final Region bigSeparator;
 
 	/**
 	 * Creates an action explorer element.
@@ -47,15 +54,27 @@ public class ActionsExplorerAction extends ExplorerBasicElement {
 		refresh();
 	}
 
+	/**
+	 * Returns the represented {@link Action}.
+	 *
+	 * @return the {@link Action}.
+	 */
 	public Action getAction() {
 		return action;
 	}
 
 
+	/**
+	 * Disposes this element, removing all listeners.
+	 * This should be called when this element is not longer needed.
+	 */
 	public void dispose() {
 		JamsApplication.getActionManager().unregisterListeners(this);
 	}
 
+	/**
+	 * Refresh all elements inside this representation.
+	 */
 	public void refresh() {
 		getChildren().clear();
 		getChildren().addAll(separator, icon, label, bigSeparator);

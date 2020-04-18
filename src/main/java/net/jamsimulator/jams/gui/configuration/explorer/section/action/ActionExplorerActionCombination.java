@@ -7,10 +7,16 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.popup.ConfirmationWindow;
 import net.jamsimulator.jams.language.Messages;
 
+/**
+ * Represents a {@link net.jamsimulator.jams.gui.action.Action}'s {@link KeyCombination}.
+ * <p>
+ * If clicked, this button opens a window to confirm its removal.
+ */
 public class ActionExplorerActionCombination extends Button {
 
 	private final ActionsExplorerAction action;
 	private final KeyCombination combination;
+
 
 	public ActionExplorerActionCombination(ActionsExplorerAction action, KeyCombination combination) {
 		super(combination.toString());
@@ -24,6 +30,9 @@ public class ActionExplorerActionCombination extends Button {
 
 	}
 
+	/**
+	 * This method is called when the combination must be unbind.
+	 */
 	private void deleteCombination() {
 		JamsApplication.getActionManager().unbind(combination, action.getAction().getRegionTag());
 		JamsApplication.getActionManager().save();

@@ -7,6 +7,9 @@ import net.jamsimulator.jams.gui.action.event.ActionRegisterEvent;
 import net.jamsimulator.jams.gui.action.event.ActionUnregisterEvent;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 
+/**
+ * Represents an explorer showing all actions registered in {@link JamsApplication#getActionManager()}.
+ */
 public class ActionsExplorer extends Explorer {
 
 	/**

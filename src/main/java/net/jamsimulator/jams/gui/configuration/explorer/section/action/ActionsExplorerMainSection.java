@@ -9,6 +9,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents the main section of an {@link ActionsExplorer}.
+ */
 public class ActionsExplorerMainSection extends ExplorerSection {
 
 	protected Map<String, ActionExplorerRegion> regions;
@@ -24,6 +27,13 @@ public class ActionsExplorerMainSection extends ExplorerSection {
 		generateRegions();
 	}
 
+	/**
+	 * Adds an {@link Action} to the explorer.
+	 * <p>
+	 * If the {@link Action} was already inside the explorer a duplicated element will be created. Be careful!
+	 *
+	 * @param action the {@link Action}.
+	 */
 	public void addAction(Action action) {
 		ActionExplorerRegion region;
 		if (regions.containsKey(action.getRegionTag())) {
@@ -36,6 +46,11 @@ public class ActionsExplorerMainSection extends ExplorerSection {
 		region.addElement(new ActionsExplorerAction(region, action));
 	}
 
+	/**
+	 * Removes an {@link Action} from the explorer.
+	 *
+	 * @param action the {@link Action}.
+	 */
 	public void removeAction(Action action) {
 		if (!regions.containsKey(action.getRegionTag())) return;
 		ActionExplorerRegion region = regions.get(action.getRegionTag());
@@ -58,7 +73,7 @@ public class ActionsExplorerMainSection extends ExplorerSection {
 
 	protected void generateRegions() {
 		regions = new HashMap<>();
-		JamsApplication.getActionManager().getActions().forEach(this::addAction);
+		JamsApplication.getActionManager().getAll().forEach(this::addAction);
 	}
 
 	@Override

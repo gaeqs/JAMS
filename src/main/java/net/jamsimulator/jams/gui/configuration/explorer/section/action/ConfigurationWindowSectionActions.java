@@ -13,12 +13,15 @@ import net.jamsimulator.jams.gui.explorer.ExplorerSectionRepresentation;
 
 import java.util.List;
 
+/**
+ * Represents a special {@link ConfigurationWindowSection} that contains all actions' configuration.
+ */
 public class ConfigurationWindowSectionActions extends ConfigurationWindowSection {
 
 	protected ActionsExplorer actionsExplorer;
 
 	/**
-	 * Creates the explorer section.
+	 * Creates the actions explorer section.
 	 *
 	 * @param explorer       the {@link Explorer} of this section.
 	 * @param parent         the {@link ExplorerSection} containing this section. This may be null.

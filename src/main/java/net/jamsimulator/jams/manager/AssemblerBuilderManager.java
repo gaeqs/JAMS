@@ -90,7 +90,7 @@ public class AssemblerBuilderManager {
 	}
 
 	/**
-	 * Attempts to unregisters the {@link AssemblerBuilder} that matches the given name.
+	 * Attempts to unregister the {@link AssemblerBuilder} that matches the given name.
 	 * This will fail if the {@link AssemblerBuilder} to unregister is the default one.
 	 *
 	 * @param name the given name.

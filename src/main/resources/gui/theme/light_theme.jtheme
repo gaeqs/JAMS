@@ -591,7 +591,6 @@ AnchorPane {
 }
 
 .configuration-window-section {
-    -fx-spacing: 5px;
 }
 
 .configuration-window-display {

@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Storage for {@link ConfigurationWindowSpecialSectionBuilder}s.
+ */
 public class ConfigurationWindowSpecialSectionBuilders {
 
 	private static final Map<String, ConfigurationWindowSpecialSectionBuilder> builderByName = new HashMap<>();

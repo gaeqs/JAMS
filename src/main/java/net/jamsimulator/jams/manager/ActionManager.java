@@ -18,10 +18,20 @@ import net.jamsimulator.jams.gui.action.event.ActionUnbindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionUnregisterEvent;
 import net.jamsimulator.jams.utils.Validate;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * This singleton stores all {@link Action}s that JAMS may use.
+ * <p>
+ * To register an {@link Action} use {@link #register(Action)}.
+ * To unregister am {@link Action} use {@link #unregister(String)}.
+ * <p>
+ * To bind an {@link Action} to a {@link KeyCombination} use {@link #bind(KeyCombination, String)}.
+ * To unbind them use {@link #unbind(KeyCombination, String)}.
+ */
 public class ActionManager extends SimpleEventBroadcast {
 
 	public static final String ACTIONS_SECTION = "action";
@@ -34,7 +44,7 @@ public class ActionManager extends SimpleEventBroadcast {
 	private final Set<Action> actions;
 	private final Map<KeyCombination, Map<String, Action>> binds;
 
-	public ActionManager() {
+	private ActionManager() {
 		this.actions = new HashSet<>();
 		this.binds = new HashMap<>();
 		loadDefaultActions();
@@ -49,17 +59,41 @@ public class ActionManager extends SimpleEventBroadcast {
 		}
 	}
 
+	/**
+	 * Returns the {@link Action} that matches the given name, if present.
+	 *
+	 * @param name the name.
+	 * @return the {@link Action}, if present.
+	 */
 	public Optional<Action> get(String name) {
 		Validate.notNull(name, "Name cannot be null!");
 		return actions.stream().filter(target -> target.getName().equals(name)).findAny();
 	}
 
-	public Set<Action> getActions() {
+	/**
+	 * Returns a unmodifiable {@link Set} with all {@link Action}s
+	 * registered in this manager.
+	 * <p>
+	 * Any attempt to modify this {@link Set} result in an {@link UnsupportedOperationException}.
+	 *
+	 * @return the unmodifiable {@link Set};
+	 * @see Collections#unmodifiableSet(Set)
+	 */
+	public Set<Action> getAll() {
 		return Collections.unmodifiableSet(actions);
 	}
 
+	/**
+	 * Registers the given {@link Action}.
+	 * This will fail if an {@link Action} with the same name already exists within this manager.
+	 *
+	 * @param action the {@link Action}.
+	 * @return whether the {@link Action} was registered.
+	 */
 	public boolean register(Action action) {
 		Validate.notNull(action, "Action cannot be null!");
+
+		if (actions.contains(action)) return false;
 
 		ActionRegisterEvent.Before before = callEvent(new ActionRegisterEvent.Before(action));
 		if (before.isCancelled()) return false;
@@ -68,6 +102,13 @@ public class ActionManager extends SimpleEventBroadcast {
 		return true;
 	}
 
+	/**
+	 * Attempts to unregister the {@link Action} that matches the given name.
+	 * This will unbind all {@link KeyCombination}s bind to this {@link Action}.
+	 *
+	 * @param name the given name.
+	 * @return whether the operation was successful.
+	 */
 	public boolean unregister(String name) {
 		Validate.notNull(name, "Name cannot be null!");
 		Action action = get(name).orElse(null);
@@ -80,6 +121,14 @@ public class ActionManager extends SimpleEventBroadcast {
 		return true;
 	}
 
+	/**
+	 * Returns the {@link Action} bind to the given {@link KeyCombination}
+	 * that matches the given region tag, if present.
+	 *
+	 * @param regionTag   the region tag.
+	 * @param combination the {@link KeyCombination}.
+	 * @return the {@link Action}, if present.
+	 */
 	public Optional<Action> getBindAction(String regionTag, KeyCombination combination) {
 		Validate.notNull(regionTag, "Region tag cannot be nulL!");
 		Validate.notNull(combination, "Combination cannot be null!");
@@ -96,6 +145,12 @@ public class ActionManager extends SimpleEventBroadcast {
 	}
 
 
+	/**
+	 * Returns all {@link Action}s bind to the given {@link KeyCombination}.
+	 *
+	 * @param combination the {@link KeyCombination}.
+	 * @return the {@link Action}s.
+	 */
 	public Map<String, Action> getBindActions(KeyCombination combination) {
 		Validate.notNull(combination, "Combination cannot be null!");
 
@@ -104,6 +159,13 @@ public class ActionManager extends SimpleEventBroadcast {
 		return Collections.unmodifiableMap(regions);
 	}
 
+	/**
+	 * Returns all {@link KeyCombination}s bind to the {@link Action} that matches the given name.
+	 * This will return an empty {@link List} if there's no registered {@link Action} that matches the given name.
+	 *
+	 * @param name the name.
+	 * @return the {@link List} wit h the {@link KeyCombination}s.
+	 */
 	public List<KeyCombination> getBindCombinations(String name) {
 		Validate.notNull(name, "Name cannot be null!");
 
@@ -120,6 +182,19 @@ public class ActionManager extends SimpleEventBroadcast {
 		return combinations;
 	}
 
+	/**
+	 * Binds the {@link Action} that matches the given name to the given {@link KeyCombination}.
+	 * <p>
+	 * This method returns {@code false} if there's no registered {@link Action} that matches the given name or
+	 * if the {@link Action} was already bind to the {@link KeyCombination}.
+	 * <p>
+	 * This will unbind the previous {@link Action}, or all {@link Action}s bind to the {@link KeyCombination} if
+	 * the region of the new {@link Action} is {@link RegionTags#GENERAL}.
+	 *
+	 * @param combination the {@link KeyCombination}.
+	 * @param name        the name of the {@link Action}.
+	 * @return whether the operation was successful.
+	 */
 	public boolean bind(KeyCombination combination, String name) {
 		Validate.notNull(combination, "Combination cannot be null!");
 		Validate.notNull(name, "Name cannot be null!");
@@ -163,6 +238,14 @@ public class ActionManager extends SimpleEventBroadcast {
 		return true;
 	}
 
+	/**
+	 * Unbinds the {@link Action} that matches the given region from the given {@link KeyCombination}.
+	 * This returns {@code false} if the {@link Action} is not present.
+	 *
+	 * @param combination the {@link KeyCombination}.
+	 * @param region      the region of the {@link Action}.
+	 * @return whether the operation was successful.
+	 */
 	public boolean unbind(KeyCombination combination, String region) {
 		Validate.notNull(combination, "Combination cannot be null!");
 
@@ -186,6 +269,12 @@ public class ActionManager extends SimpleEventBroadcast {
 		return true;
 	}
 
+	/**
+	 * Adds all {@link Action}s to the given {@link Scene}.
+	 *
+	 * @param scene the {@link Scene}.
+	 * @param clear whether this method should clear all previous accelerators.
+	 */
 	public void addAcceleratorsToScene(Scene scene, boolean clear) {
 		if (clear) {
 			scene.getAccelerators().clear();
@@ -198,6 +287,12 @@ public class ActionManager extends SimpleEventBroadcast {
 		}));
 	}
 
+	/**
+	 * Saves all {@link Action}s in the main {@link Configuration}.
+	 * <p>
+	 * You should invoke {@link Configuration#save(File, boolean)} after this if you want
+	 * to save this configuration inside a file.
+	 */
 	public void save() {
 		Configuration root = Jams.getMainConfiguration().getOrCreateConfiguration(ACTIONS_SECTION);
 		root.clear();

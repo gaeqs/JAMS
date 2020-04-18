@@ -1,11 +1,13 @@
 package net.jamsimulator.jams.gui.configuration.explorer.section.action;
 
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.explorer.*;
 import net.jamsimulator.jams.manager.ActionManager;
 
 import java.util.Comparator;
 
+/**
+ * Represents an {@link net.jamsimulator.jams.gui.action.Action} region inside the explorer.
+ */
 public class ActionExplorerRegion extends ExplorerSection {
 
 	/**
@@ -20,6 +22,10 @@ public class ActionExplorerRegion extends ExplorerSection {
 		((ExplorerSectionLanguageRepresentation) representation).setLanguageNode(ActionManager.LANGUAGE_REGION_NODE_PREFIX + region);
 	}
 
+	/**
+	 * Disposes this element, removing all listeners.
+	 * This should be called when this element is not longer needed.
+	 */
 	public void dispose() {
 		((ExplorerSectionLanguageRepresentation) representation).dispose();
 	}

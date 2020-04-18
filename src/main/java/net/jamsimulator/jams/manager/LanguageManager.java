@@ -163,7 +163,7 @@ public class LanguageManager extends SimpleEventBroadcast {
 	}
 
 	/**
-	 * Attempts to unregisters the {@link Language} that matches the given name.
+	 * Attempts to unregister the {@link Language} that matches the given name.
 	 * This will fail if the {@link Language} to unregister is the default one.
 	 * <p>
 	 * If the {@link Language} to unregister is the selected {@link Language}

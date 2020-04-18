@@ -40,7 +40,7 @@ public class ThemedScene extends Scene {
 		initializeJamsListeners();
 	}
 
-	private void initializeJamsListeners() {
+	protected void initializeJamsListeners() {
 		JamsApplication.getThemeManager().registerListeners(this);
 		JamsApplication.getThemeManager().getSelected().apply(this);
 	}

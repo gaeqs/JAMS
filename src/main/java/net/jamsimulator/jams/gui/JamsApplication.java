@@ -11,8 +11,8 @@ import javafx.stage.WindowEvent;
 import net.jamsimulator.jams.gui.font.FontLoader;
 import net.jamsimulator.jams.gui.image.icon.IconManager;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
+import net.jamsimulator.jams.gui.main.MainScene;
 import net.jamsimulator.jams.gui.project.ProjectsTabPane;
-import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.manager.ActionManager;
 import net.jamsimulator.jams.manager.ThemeManager;
 
@@ -41,7 +41,7 @@ public class JamsApplication extends Application {
 
 		mainAnchorPane = new MainAnchorPane();
 
-		scene = new ThemedScene(mainAnchorPane);
+		scene = new MainScene(mainAnchorPane);
 		getActionManager().addAcceleratorsToScene(scene, false);
 
 		primaryStage.setScene(scene);
