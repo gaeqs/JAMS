@@ -1,4 +1,10 @@
 Spanish
+
+GENERAL_CONFIRM=Aceptar
+GENERAL_OK=Ok
+GENERAL_CANCEL=Cancelar
+GENERAL_CONFIRMATION=Confirmación
+
 MAIN_MENU_FILE=Archivo
 MAIN_MENU_FILE_EXIT=Salir
 MAIN_MENU_FILE_SETTINGS=Configuración
@@ -23,6 +29,11 @@ EXPLORER_ITEM_ACTION_WINDOW_NEW_ASSEMBLY_FILE=Nuevo archivo ensamblador
 CONFIG=Configuración
 
 CONFIG_ACTION=Acciones
+CONFIG_ACTION_BIND_TITLE=Asignar una combinación a una acción
+CONFIG_ACTION_BIND_ENTER=Presiona la combinación de teclas que quieres asignar
+CONFIG_ACTION_BIND_CONFIRM=Las siguientes acciones serán desasignadas de la combinación:
+CONFIG_ACTION_BIND_CONFIRM_2=¿Quieres continuar?
+CONFIG_ACTION_UNBIND=¿Estás seguro de que quieres desasignar esta combinación?
 
 CONFIG_APPEARANCE=Apariencia
 CONFIG_APPEARANCE_THEME=Tema:

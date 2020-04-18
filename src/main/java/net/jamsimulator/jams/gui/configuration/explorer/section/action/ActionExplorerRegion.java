@@ -1,12 +1,12 @@
 package net.jamsimulator.jams.gui.configuration.explorer.section.action;
 
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.explorer.*;
+import net.jamsimulator.jams.manager.ActionManager;
 
 import java.util.Comparator;
 
 public class ActionExplorerRegion extends ExplorerSection {
-
-	public static final String LANGUAGE_NODE_PREFIX = "ACTION_REGION_";
 
 	/**
 	 * Creates the explorer section.
@@ -17,7 +17,11 @@ public class ActionExplorerRegion extends ExplorerSection {
 	 */
 	public ActionExplorerRegion(ActionsExplorer explorer, ExplorerSection parent, String region) {
 		super(explorer, parent, region, 1, Comparator.comparing(ExplorerElement::getName));
-		((ExplorerSectionLanguageRepresentation) representation).setLanguageNode(LANGUAGE_NODE_PREFIX + region);
+		((ExplorerSectionLanguageRepresentation) representation).setLanguageNode(ActionManager.LANGUAGE_REGION_NODE_PREFIX + region);
+	}
+
+	public void dispose() {
+		((ExplorerSectionLanguageRepresentation) representation).dispose();
 	}
 
 

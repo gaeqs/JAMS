@@ -2,6 +2,11 @@ package net.jamsimulator.jams.language;
 
 public class Messages {
 
+	public static final String GENERAL_CONFIRM = "GENERAL_CONFIRM";
+	public static final String GENERAL_OK = "GENERAL_OK";
+	public static final String GENERAL_CANCEL = "GENERAL_CANCEL";
+	public static final String GENERAL_CONFIRMATION = "GENERAL_CONFIRMATION";
+
 	public static final String MAIN_MENU_FILE = "MAIN_MENU_FILE";
 	public static final String MAIN_MENU_FILE_EXIT = "MAIN_MENU_FILE_EXIT";
 	public static final String MAIN_MENU_FILE_SETTINGS = "MAIN_MENU_FILE_SETTINGS";
@@ -25,12 +30,30 @@ public class Messages {
 
 	public static final String CONFIG = "CONFIG";
 
-	public static final String CONFIG_LANGUAGE = "CONFIG_LANGUAGE";
-	public static final String CONFIG_LANGUAGE_DEFAULT = "CONFIG_LANGUAGE_DEFAULT";
-	public static final String CONFIG_LANGUAGE_SELECTED = "CONFIG_LANGUAGE_SELECTED";
+	public static final String CONFIG_ACTION = "CONFIG_ACTION";
+	public static final String CONFIG_ACTION_BIND_TITLE = "CONFIG_ACTION_BIND_TITLE";
+	public static final String CONFIG_ACTION_BIND_ENTER = "CONFIG_ACTION_BIND_ENTER";
+	public static final String CONFIG_ACTION_BIND_CONFIRM = "CONFIG_ACTION_BIND_CONFIRM";
+	public static final String CONFIG_ACTION_BIND_CONFIRM_2 = "CONFIG_ACTION_BIND_CONFIRM_2";
+	public static final String CONFIG_ACTION_UNBIND = "CONFIG_ACTION_UNBIND";
 
 	public static final String CONFIG_APPEARANCE = "CONFIG_APPEARANCE";
 	public static final String CONFIG_APPEARANCE_THEME = "CONFIG_APPEARANCE_THEME";
 
+	public static final String CONFIG_LANGUAGE = "CONFIG_LANGUAGE";
+	public static final String CONFIG_LANGUAGE_DEFAULT = "CONFIG_LANGUAGE_DEFAULT";
+	public static final String CONFIG_LANGUAGE_SELECTED = "CONFIG_LANGUAGE_SELECTED";
+
+	public static final String EDITOR_MIPS_ERROR_ILLEGAL_LABEL = "EDITOR_MIPS_ERROR_ILLEGAL_LABEL";
+	public static final String EDITOR_MIPS_ERROR_LABEL_NOT_FOUND = "EDITOR_MIPS_ERROR_LABEL_NOT_FOUND";
+	public static final String EDITOR_MIPS_ERROR_DUPLICATE_LABEL = "EDITOR_MIPS_ERROR_DUPLICATE_LABEL";
+	public static final String EDITOR_MIPS_ERROR_DIRECTIVE_NOT_FOUND = "EDITOR_MIPS_ERROR_DIRECTIVE_NOT_FOUND";
+	public static final String EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND = "EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND";
+	public static final String EDITOR_MIPS_ERROR_INVALID_INSTRUCTION_PARAMETER = "EDITOR_MIPS_ERROR_INVALID_INSTRUCTION_PARAMETER";
+
+	public static final String ACTION_REGION_TEXT_EDITOR = "ACTION_REGION_TEXT_EDITOR";
+	public static final String ACTION_TEXT_EDITOR_COMPILE = "ACTION_TEXT_EDITOR_COMPILE";
+	public static final String ACTION_TEXT_EDITOR_REFORMAT = "ACTION_TEXT_EDITOR_REFORMAT";
+	public static final String ACTION_TEXT_EDITOR_SAVE = "ACTION_TEXT_EDITOR_SAVE";
 
 }

@@ -26,6 +26,9 @@ public class ActionManager extends SimpleEventBroadcast {
 
 	public static final String ACTIONS_SECTION = "action";
 
+	public static final String LANGUAGE_NODE_PREFIX = "ACTION_";
+	public static final String LANGUAGE_REGION_NODE_PREFIX = "ACTION_REGION_";
+
 	public static final ActionManager INSTANCE = new ActionManager();
 
 	private final Set<Action> actions;
@@ -92,6 +95,15 @@ public class ActionManager extends SimpleEventBroadcast {
 		return Optional.ofNullable(regions.get(regionTag));
 	}
 
+
+	public Map<String, Action> getBindActions(KeyCombination combination) {
+		Validate.notNull(combination, "Combination cannot be null!");
+
+		Map<String, Action> regions = binds.get(combination);
+		if (regions == null) return new HashMap<>();
+		return Collections.unmodifiableMap(regions);
+	}
+
 	public List<KeyCombination> getBindCombinations(String name) {
 		Validate.notNull(name, "Name cannot be null!");
 
@@ -122,6 +134,8 @@ public class ActionManager extends SimpleEventBroadcast {
 		} else {
 			map = binds.get(combination);
 		}
+
+		if (action.equals(map.get(action.getRegionTag()))) return false;
 
 		Map<String, Action> actionsToRemove = new HashMap<>();
 

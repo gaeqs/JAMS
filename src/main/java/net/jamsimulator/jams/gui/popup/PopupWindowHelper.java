@@ -2,6 +2,7 @@ package net.jamsimulator.jams.gui.popup;
 
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -17,23 +18,12 @@ class PopupWindowHelper {
 			stage.focusedProperty().addListener((obs, old, val) -> {
 				if (!val) stage.close();
 			});
-		}
-		else {
+		} else {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setResizable(false);
 		}
 
 		stage.initOwner(JamsApplication.getStage());
-		if (width != -1)
-			stage.setWidth(width);
-		if (height != -1)
-			stage.setHeight(height);
-
-
-		Stage main = JamsApplication.getStage();
-
-		stage.setX(main.getX() + main.getWidth() / 2 - (width >> 1));
-		stage.setY(main.getY() + main.getHeight() / 2 - (height >> 1));
 
 		AnchorPane background = new AnchorPane();
 		AnchorUtils.setAnchor(node, 0, 0, 0, 0);
@@ -42,9 +32,15 @@ class PopupWindowHelper {
 		ThemedScene scene = new ThemedScene(background);
 
 		stage.setScene(scene);
-		stage.show();
-
 		stage.setOnCloseRequest(event -> scene.unregisterJamsListeners());
+
+		if (node instanceof Region) {
+			node.applyCss();
+			((Region) node).layout();
+		}
+
+		stage.show();
+		stage.centerOnScreen();
 	}
 
 }

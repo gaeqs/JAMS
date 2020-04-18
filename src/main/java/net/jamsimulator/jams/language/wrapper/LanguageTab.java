@@ -17,11 +17,13 @@ public class LanguageTab extends Tab {
 		refreshMessage();
 	}
 
+	public void dispose () {
+		Jams.getLanguageManager().unregisterListeners(this);
+	}
 
 	private void refreshMessage() {
 		setText(Jams.getLanguageManager().getSelected().getOrDefault(node));
 	}
-
 
 	@Listener
 	public void onSelectedLanguageChange(SelectedLanguageChangeEvent.After event) {

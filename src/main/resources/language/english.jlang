@@ -1,4 +1,10 @@
 English
+
+GENERAL_CONFIRM=Confirm
+GENERAL_OK=Ok
+GENERAL_CANCEL=Cancel
+GENERAL_CONFIRMATION=Confirmation
+
 MAIN_MENU_FILE=File
 MAIN_MENU_FILE_EXIT=Exit
 MAIN_MENU_FILE_SETTINGS=Settings
@@ -23,6 +29,11 @@ EXPLORER_ITEM_ACTION_WINDOW_NEW_ASSEMBLY_FILE=New assembly file
 CONFIG=Configuration
 
 CONFIG_ACTION=Actions
+CONFIG_ACTION_BIND_TITLE=Bind combination to action
+CONFIG_ACTION_BIND_ENTER=Press the combination of keys to bind
+CONFIG_ACTION_BIND_CONFIRM=The following actions will be unbind from the given combination:
+CONFIG_ACTION_BIND_CONFIRM_2=Do you want to continue?
+CONFIG_ACTION_UNBIND=Are you sure you want to unbind this combination?
 
 CONFIG_APPEARANCE=Appearance
 CONFIG_APPEARANCE_THEME=Theme:

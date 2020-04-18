@@ -1,19 +1,24 @@
 package net.jamsimulator.jams.language.wrapper;
 
 import javafx.application.Platform;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.Button;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 
-public class LanguageMenuItem extends MenuItem {
+public class LanguageButton extends Button {
 
 	private String node;
 
-	public LanguageMenuItem(String node) {
+	public LanguageButton(String node) {
 		this.node = node;
 		Jams.getLanguageManager().registerListeners(this);
+		refreshMessage();
+	}
+
+	public void setNode(String node) {
+		this.node = node;
 		refreshMessage();
 	}
 
@@ -22,6 +27,7 @@ public class LanguageMenuItem extends MenuItem {
 	}
 
 	private void refreshMessage() {
+		if (node == null) return;
 		setText(Jams.getLanguageManager().getSelected().getOrDefault(node));
 	}
 

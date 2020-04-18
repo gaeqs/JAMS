@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * Represents a section inside an {@link Explorer}.
@@ -256,9 +257,19 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		if (result) {
 			refreshAllElements();
 			representation.refreshStatusIcon();
+			explorer.refreshWidth();
 		}
-		explorer.refreshWidth();
 		return result;
+	}
+
+	public boolean removeElementIf(Predicate<? super ExplorerElement> consumer) {
+		if (elements.removeIf(consumer)) {
+			refreshAllElements();
+			representation.refreshStatusIcon();
+			explorer.refreshWidth();
+			return true;
+		}
+		return false;
 	}
 
 	/**

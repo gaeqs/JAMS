@@ -34,10 +34,18 @@ public class ExplorerSectionLanguageRepresentation extends ExplorerSectionRepres
 			}
 		} else {
 			if (label instanceof LanguageLabel) {
+				((LanguageLabel) label).dispose();
 				getChildren().remove(label);
 				label = new Label(section.getName());
 				getChildren().add(label);
 			}
+		}
+	}
+
+
+	public void dispose() {
+		if (label instanceof LanguageLabel) {
+			((LanguageLabel) label).dispose();
 		}
 	}
 
@@ -58,5 +66,4 @@ public class ExplorerSectionLanguageRepresentation extends ExplorerSectionRepres
 		label = languageNode == null ? new Label(section.getName()) : new LanguageLabel(languageNode);
 		getChildren().add(label);
 	}
-
 }

@@ -22,11 +22,14 @@ public class LanguageLabel extends Label {
 		refreshMessage();
 	}
 
+	public void dispose () {
+		Jams.getLanguageManager().unregisterListeners(this);
+	}
+
 	private void refreshMessage() {
 		if (node == null) return;
 		setText(Jams.getLanguageManager().getSelected().getOrDefault(node));
 	}
-
 
 	@Listener
 	public void onSelectedLanguageChange(SelectedLanguageChangeEvent.After event) {

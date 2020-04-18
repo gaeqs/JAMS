@@ -17,6 +17,9 @@ public class LanguageMenu extends Menu {
 		refreshMessage();
 	}
 
+	public void dispose () {
+		Jams.getLanguageManager().unregisterListeners(this);
+	}
 
 	private void refreshMessage() {
 		setText(Jams.getLanguageManager().getSelected().getOrDefault(node));
