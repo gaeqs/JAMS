@@ -37,6 +37,12 @@ public class ActionManager extends SimpleEventBroadcast {
 		loadDefaultActions();
 		if (loadDefaultBinds(loadBinds())) {
 			save();
+
+			try {
+				Jams.getMainConfiguration().save(true);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -147,13 +153,17 @@ public class ActionManager extends SimpleEventBroadcast {
 		Validate.notNull(combination, "Combination cannot be null!");
 
 		Map<String, Action> map = binds.get(combination);
-		if (map == null) return false;
+		if (map == null)
+			return false;
 
 		Action action = map.get(region);
-		if (action == null) return false;
+		if (action == null)
+			return false;
 
 		ActionUnbindEvent.Before event = callEvent(new ActionUnbindEvent.Before(action, combination));
-		if (event.isCancelled()) return false;
+		if (event.isCancelled())
+			return false;
+
 
 		map.remove(region);
 		if (map.isEmpty()) binds.remove(combination);
@@ -179,11 +189,6 @@ public class ActionManager extends SimpleEventBroadcast {
 		root.clear();
 		actions.forEach(action -> root.set(action.getName(), getBindCombinations(action.getName()).stream()
 				.map(KeyCombination::getName).collect(Collectors.toList())));
-		try {
-			Jams.getMainConfiguration().save(true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private void loadDefaultActions() {

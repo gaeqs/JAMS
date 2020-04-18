@@ -26,11 +26,11 @@ public class ConfigurationWindow extends SplitPane {
 
 	private Stage stage;
 
-	private RootConfiguration configuration;
-	private Configuration meta;
+	private final RootConfiguration configuration;
+	private final Configuration meta;
 
-	private ConfigurationWindowExplorer explorer;
-	private VBox sectionDisplay;
+	private final ConfigurationWindowExplorer explorer;
+	private final VBox sectionDisplay;
 
 	public ConfigurationWindow(RootConfiguration configuration, Configuration meta) {
 		this.stage = null;
@@ -38,6 +38,7 @@ public class ConfigurationWindow extends SplitPane {
 		this.meta = meta;
 
 		this.explorer = new ConfigurationWindowExplorer(this, null);
+
 		this.sectionDisplay = new VBox();
 		this.sectionDisplay.getStyleClass().add("configuration-window-display");
 		init();
@@ -65,7 +66,7 @@ public class ConfigurationWindow extends SplitPane {
 		if (section.isSpecial()) {
 			sectionDisplay.getChildren().add(section.getSpecialNode());
 		} else {
-			section.getNodes().forEach(sectionDisplay.getChildren()::add);
+			sectionDisplay.getChildren().addAll(sectionDisplay.getChildren());
 		}
 	}
 
@@ -76,8 +77,11 @@ public class ConfigurationWindow extends SplitPane {
 			stage.initOwner(JamsApplication.getStage());
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setScene(scene);
+
 			stage.setWidth(WIDTH);
 			stage.setHeight(HEIGHT);
+			stage.setMinWidth(WIDTH >> 1);
+			stage.setMinHeight(HEIGHT >> 1);
 
 			Stage main = JamsApplication.getStage();
 

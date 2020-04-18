@@ -7,7 +7,7 @@ import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.context.ExplorerFileDefaultContextMenu;
-import net.jamsimulator.jams.gui.general.NewFileWindow;
+import net.jamsimulator.jams.gui.popup.NewFileWindow;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.language.Messages;

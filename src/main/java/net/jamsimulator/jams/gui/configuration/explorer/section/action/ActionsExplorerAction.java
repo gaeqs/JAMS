@@ -1,7 +1,7 @@
 package net.jamsimulator.jams.gui.configuration.explorer.section.action;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -29,7 +29,6 @@ public class ActionsExplorerAction extends ExplorerBasicElement {
 	public ActionsExplorerAction(ActionExplorerRegion parent, Action action) {
 		super(parent, action.getName(), 2);
 		this.action = action;
-
 		((LanguageLabel) label).setNode(LANGUAGE_NODE_PREFIX + action.getName());
 
 		Region separator = new Region();
@@ -37,8 +36,9 @@ public class ActionsExplorerAction extends ExplorerBasicElement {
 		getChildren().add(separator);
 
 		for (KeyCombination combination : JamsApplication.getActionManager().getBindCombinations(action.getName())) {
-			getChildren().add(new ActionExplorerActionCombination(combination));
+			getChildren().add(new ActionExplorerActionCombination(this, combination));
 		}
+		getChildren().add(new ActionExplorerActionCombinationAdd(this));
 	}
 
 	public Action getAction() {
@@ -54,6 +54,7 @@ public class ActionsExplorerAction extends ExplorerBasicElement {
 
 		getChildren().addAll(separator, icon, label);
 		setSpacing(SPACING);
+		setPadding(new Insets(0, 5, 0, 0));
 		setAlignment(Pos.CENTER_LEFT);
 	}
 }

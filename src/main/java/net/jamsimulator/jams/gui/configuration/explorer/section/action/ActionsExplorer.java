@@ -5,7 +5,6 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 
 public class ActionsExplorer extends Explorer {
 
-
 	/**
 	 * Creates an explorer.
 	 *
@@ -20,5 +19,10 @@ public class ActionsExplorer extends Explorer {
 		mainSection = new ActionsExplorerMainSection(this);
 		getChildren().add(mainSection);
 		mainSection.expand();
+	}
+
+	@Override
+	public void refreshWidth() {
+		//Not required. Makes the configuration explorer resize.
 	}
 }

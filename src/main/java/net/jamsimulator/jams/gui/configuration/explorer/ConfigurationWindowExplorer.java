@@ -3,6 +3,7 @@ package net.jamsimulator.jams.gui.configuration.explorer;
 import javafx.scene.control.ScrollPane;
 import net.jamsimulator.jams.gui.configuration.ConfigurationWindow;
 import net.jamsimulator.jams.gui.explorer.Explorer;
+import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.language.Messages;
 
 public class ConfigurationWindowExplorer extends Explorer {
@@ -22,17 +23,19 @@ public class ConfigurationWindowExplorer extends Explorer {
 		return configurationWindow;
 	}
 
-	public void refresh() {
-		getChildren().clear();
-		generateMainSection();
-	}
-
 	@Override
 	protected void generateMainSection() {
 		mainSection = new ConfigurationWindowSection(this, null,
 				"Configuration", Messages.CONFIG,
 				0, configurationWindow.getConfiguration(), configurationWindow.getMeta());
 		getChildren().add(mainSection);
-		mainSection.expand();
+	}
+
+	@Override
+	public void setSelectedElement(ExplorerElement element) {
+		super.setSelectedElement(element);
+		if (element instanceof ConfigurationWindowSection) {
+			configurationWindow.display((ConfigurationWindowSection) element);
+		}
 	}
 }

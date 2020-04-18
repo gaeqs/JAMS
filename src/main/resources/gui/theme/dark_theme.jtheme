@@ -23,6 +23,7 @@ Dark Theme
 .label {
     -fx-text-fill: -theme-foreground;
     -fx-font-family: "{FONT_GENERAL}";
+    -fx-font-size: 14px;
 }
 
 /*TEXT AREA*/
@@ -202,16 +203,10 @@ AnchorPane {
 
 .button:hover {
     -fx-background-color: -theme-background-lighter;
-    -fx-border-color: -theme-background-lighter;
-    -fx-background-radius: 0;
-    -fx-text-fill: -theme-foreground;
 }
 
 .button:pressed {
     -fx-background-color: -theme-background-pressed;
-    -fx-border-color: -theme-background-pressed;
-    -fx-background-radius: 0;
-    -fx-text-fill: -theme-foreground;
 }
 
 /*BUTTON*/
@@ -220,6 +215,7 @@ AnchorPane {
     -fx-border-color: -theme-background-lighter;
     -fx-background-radius: 0;
     -fx-text-fill: -theme-foreground;
+    -fx-font-size: 14px;
 }
 
 .button:hover {
@@ -607,6 +603,7 @@ AnchorPane {
     -fx-background-color: -theme-explorer-element-selected;
 }
 
+/* CONFIG */
 .configuration-window-node {
     -fx-spacing: 5px;
 }
@@ -616,7 +613,6 @@ AnchorPane {
 }
 
 .configuration-window-section {
-    -fx-spacing: 5px;
 }
 
 .configuration-window-display {
@@ -625,6 +621,11 @@ AnchorPane {
 
 .configuration-window-display .label {
     -fx-padding: 0 0 0 5;
+}
+
+/* ACTION CONFIG */
+.action-remove-button:hover {
+    -fx-background-color: darkred;
 }
 
 /* FILE DISPLAY LIST */

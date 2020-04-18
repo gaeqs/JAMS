@@ -23,6 +23,7 @@ Light Theme
 .label {
     -fx-text-fill: -theme-foreground;
     -fx-font-family: "{FONT_GENERAL}";
+    -fx-font-size: 14px;
 }
 
 /*TEXT AREA*/
@@ -195,45 +196,18 @@ AnchorPane {
 /*BUTTON*/
 .button {
     -fx-background-color: -theme-background;
-    -fx-border-color: -theme-background-lighter;
+    -fx-border-color: -theme-foreground-darker;
     -fx-background-radius: 0;
     -fx-text-fill: -theme-foreground;
+    -fx-font-size: 14px;
 }
 
 .button:hover {
     -fx-background-color: -theme-background-lighter;
-    -fx-border-color: -theme-background-lighter;
-    -fx-background-radius: 0;
-    -fx-text-fill: -theme-foreground;
 }
 
 .button:pressed {
     -fx-background-color: -theme-background-pressed;
-    -fx-border-color: -theme-background-pressed;
-    -fx-background-radius: 0;
-    -fx-text-fill: -theme-foreground;
-}
-
-/*BUTTON*/
-.button {
-    -fx-background-color: -theme-background;
-    -fx-border-color: -theme-background-lighter;
-    -fx-background-radius: 0;
-    -fx-text-fill: -theme-foreground;
-}
-
-.button:hover {
-    -fx-background-color: -theme-background-lighter;
-    -fx-border-color: -theme-background-lighter;
-    -fx-background-radius: 0;
-    -fx-text-fill: -theme-foreground;
-}
-
-.button:pressed {
-    -fx-background-color: -theme-background-pressed;
-    -fx-border-color: -theme-background-pressed;
-    -fx-background-radius: 0;
-    -fx-text-fill: -theme-foreground;
 }
 
 .menu-button {
@@ -607,6 +581,7 @@ AnchorPane {
     -fx-background-color: -theme-explorer-element-selected;
 }
 
+/* CONFIG */
 .configuration-window-node {
     -fx-spacing: 5px;
 }
@@ -625,6 +600,11 @@ AnchorPane {
 
 .configuration-window-display .label {
     -fx-padding: 0 0 0 5;
+}
+
+/* ACTION CONFIG */
+.action-remove-button:hover {
+    -fx-background-color: red;
 }
 
 /* FILE DISPLAY LIST */

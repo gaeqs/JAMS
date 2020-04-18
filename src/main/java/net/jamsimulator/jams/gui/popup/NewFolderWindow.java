@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.general;
+package net.jamsimulator.jams.gui.popup;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
@@ -52,6 +52,6 @@ public class NewFolderWindow extends VBox {
 
 	public static void open(File folder) {
 		Stage stage = new Stage();
-		PopupWindowHelper.open(stage, new NewFolderWindow(stage, folder), WIDTH, HEIGHT);
+		PopupWindowHelper.open(stage, new NewFolderWindow(stage, folder), WIDTH, HEIGHT, true);
 	}
 }

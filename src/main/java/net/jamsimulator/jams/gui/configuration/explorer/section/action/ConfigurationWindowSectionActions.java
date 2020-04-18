@@ -53,13 +53,7 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
 
 	@Override
 	public ConfigurationWindowExplorer getExplorer() {
-		return (ConfigurationWindowExplorer) super.getExplorer();
-	}
-
-	@Override
-	protected void loadListeners() {
-		super.loadListeners();
-		setOnMouseClickedEvent(event -> getExplorer().getConfigurationWindow().display(this));
+		return super.getExplorer();
 	}
 
 	@Override

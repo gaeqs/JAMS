@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.general;
+package net.jamsimulator.jams.gui.popup;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
@@ -11,18 +11,17 @@ import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
 
-public class NewAssemblyFileWindow extends VBox {
+public class NewFileWindow extends VBox {
 
 	public static int WIDTH = 300;
 	public static int HEIGHT = 50;
 
-	private NewAssemblyFileWindow(Stage stage, File folder) {
+	private NewFileWindow(Stage stage, File folder) {
 		getStyleClass().add("v-box");
 		Validate.notNull(folder, "Folder cannot be null!");
 		Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
 		setAlignment(Pos.BOTTOM_CENTER);
-		getChildren().add(new LanguageLabel(Messages.EXPLORER_ITEM_ACTION_WINDOW_NEW_ASSEMBLY_FILE));
-
+		getChildren().add(new LanguageLabel(Messages.EXPLORER_ITEM_ACTION_WINDOW_NEW_FILE));
 
 		TextField field = new TextField();
 		getChildren().add(field);
@@ -32,7 +31,7 @@ public class NewAssemblyFileWindow extends VBox {
 				stage.close();
 				return;
 			}
-			File file = new File(folder, field.getText() + ".asm");
+			File file = new File(folder, field.getText());
 			try {
 				file.createNewFile();
 				stage.close();
@@ -52,6 +51,6 @@ public class NewAssemblyFileWindow extends VBox {
 
 	public static void open(File folder) {
 		Stage stage = new Stage();
-		PopupWindowHelper.open(stage, new NewAssemblyFileWindow(stage, folder), WIDTH, HEIGHT);
+		PopupWindowHelper.open(stage, new NewFileWindow(stage, folder), WIDTH, HEIGHT, true);
 	}
 }
