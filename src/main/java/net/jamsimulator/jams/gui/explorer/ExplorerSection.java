@@ -429,15 +429,17 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	protected void onKeyPressed(KeyEvent event) {
 		switch (event.getCode()) {
 			case LEFT:
-				if (expanded) {
+				if (expanded && !isEmpty()) {
 					contract();
 				} else {
-					getPrevious().ifPresent(element -> explorer.setSelectedElement(element));
+					if (parent != null) {
+						getExplorer().setSelectedElement(parent);
+					}
 				}
 				event.consume();
 				break;
 			case RIGHT:
-				if (!expanded) {
+				if (!expanded && !isEmpty()) {
 					expand();
 				} else {
 					getNext().ifPresent(element -> explorer.setSelectedElement(element));

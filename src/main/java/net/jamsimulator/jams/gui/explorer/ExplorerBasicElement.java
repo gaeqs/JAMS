@@ -210,6 +210,10 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 				getNext().ifPresent(element -> getExplorer().setSelectedElement(element));
 				event.consume();
 				break;
+			case ENTER:
+				//Avoid parent to use enter.
+				event.consume();
+				break;
 		}
 	}
 
