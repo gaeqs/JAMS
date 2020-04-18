@@ -19,10 +19,11 @@ public class LanguageLabel extends Label {
 
 	public void setNode(String node) {
 		this.node = node;
+		refreshMessage();
 	}
 
 	private void refreshMessage() {
-		if(node == null) return;
+		if (node == null) return;
 		setText(Jams.getLanguageManager().getSelected().getOrDefault(node));
 	}
 

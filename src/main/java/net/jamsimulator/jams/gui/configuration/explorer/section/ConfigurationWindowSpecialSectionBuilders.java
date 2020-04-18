@@ -1,5 +1,7 @@
 package net.jamsimulator.jams.gui.configuration.explorer.section;
 
+import net.jamsimulator.jams.gui.configuration.explorer.section.action.ConfigurationWindowSectionActions;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

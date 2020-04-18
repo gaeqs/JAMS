@@ -1,7 +1,12 @@
 package net.jamsimulator.jams.gui.configuration.explorer.node;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.Action;
@@ -15,7 +20,9 @@ public class ConfigurationWindowNodeAction extends ConfigurationWindowNode<Actio
 
 	public ConfigurationWindowNodeAction(Action action) {
 		super(null, null, null, null);
+		getStyleClass().add("configuration-window-node-actions");
 		this.action = action;
+		setAlignment(Pos.CENTER_LEFT);
 		init2();
 	}
 
@@ -34,14 +41,18 @@ public class ConfigurationWindowNodeAction extends ConfigurationWindowNode<Actio
 	protected void init() {
 	}
 
-	protected void init2 () {
+	protected void init2() {
 		Label label = new Label(action.getName());
 		combinations = new VBox();
-		getChildren().addAll(label, combinations);
+
+
+		Region region = new Region();
+		HBox.setHgrow(region, Priority.ALWAYS);
+		getChildren().addAll(label, region, combinations);
 
 		List<KeyCombination> keys = JamsApplication.getActionManager().getBindCombinations(action.getName());
 		for (KeyCombination combination : keys) {
-			combinations.getChildren().add(new Label(combination.toString()));
+			combinations.getChildren().add(new TextField(combination.toString()));
 		}
 	}
 }

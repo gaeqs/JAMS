@@ -10,7 +10,7 @@ import net.jamsimulator.jams.gui.display.FileDisplay;
 
 public class TextEditorActionSave extends Action {
 
-	public static final String NAME = "EDITOR_SAVE";
+	public static final String NAME = "TEXT_EDITOR_SAVE";
 	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN);
 
 	public TextEditorActionSave() {

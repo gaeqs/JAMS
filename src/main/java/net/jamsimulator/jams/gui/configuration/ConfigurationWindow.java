@@ -62,7 +62,11 @@ public class ConfigurationWindow extends SplitPane {
 
 	public void display(ConfigurationWindowSection section) {
 		sectionDisplay.getChildren().clear();
-		section.getNodes().forEach(sectionDisplay.getChildren()::add);
+		if (section.isSpecial()) {
+			sectionDisplay.getChildren().add(section.getSpecialNode());
+		} else {
+			section.getNodes().forEach(sectionDisplay.getChildren()::add);
+		}
 	}
 
 	public void open() {

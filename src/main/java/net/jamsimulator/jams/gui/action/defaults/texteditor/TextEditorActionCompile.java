@@ -18,7 +18,7 @@ import java.util.Collections;
 
 public class TextEditorActionCompile extends Action {
 
-	public static final String NAME = "EDITOR_COMPILE";
+	public static final String NAME = "TEXT_EDITOR_COMPILE";
 	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
 
 	public TextEditorActionCompile() {

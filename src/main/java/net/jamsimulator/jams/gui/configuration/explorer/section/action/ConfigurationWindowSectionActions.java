@@ -1,22 +1,21 @@
-package net.jamsimulator.jams.gui.configuration.explorer.section;
+package net.jamsimulator.jams.gui.configuration.explorer.section.action;
 
+import javafx.scene.Node;
 import net.jamsimulator.jams.configuration.Configuration;
-import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowExplorer;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowSection;
 import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNode;
-import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNodeAction;
-import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNodeString;
+import net.jamsimulator.jams.gui.configuration.explorer.section.ConfigurationWindowSpecialSectionBuilder;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.gui.explorer.ExplorerSectionLanguageRepresentation;
 import net.jamsimulator.jams.gui.explorer.ExplorerSectionRepresentation;
 
-import java.util.Collections;
 import java.util.List;
 
 public class ConfigurationWindowSectionActions extends ConfigurationWindowSection {
+
+	protected ActionsExplorer actionsExplorer;
 
 	/**
 	 * Creates the explorer section.
@@ -29,6 +28,7 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
 	public ConfigurationWindowSectionActions(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name,
 											 String languageNode, int hierarchyLevel, Configuration configuration, Configuration meta) {
 		super(explorer, parent, name, languageNode, hierarchyLevel, configuration, meta);
+		actionsExplorer = new ActionsExplorer(null);
 	}
 
 	/**
@@ -38,7 +38,17 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
 	 * @return the unmodifiable {@link List}.
 	 */
 	public List<ConfigurationWindowNode<?>> getNodes() {
-		return Collections.unmodifiableList(nodes);
+		return null;
+	}
+
+	@Override
+	public Node getSpecialNode() {
+		return actionsExplorer;
+	}
+
+	@Override
+	public boolean isSpecial() {
+		return true;
 	}
 
 	@Override
@@ -59,9 +69,6 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
 
 	@Override
 	protected void loadChildren() {
-		for (Action action : JamsApplication.getActionManager().getActions()) {
-			nodes.add(new ConfigurationWindowNodeAction(action));
-		}
 	}
 
 	public static class Builder implements ConfigurationWindowSpecialSectionBuilder {

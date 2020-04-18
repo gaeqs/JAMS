@@ -37,3 +37,8 @@ EDITOR_MIPS_ERROR_DUPLICATE_LABEL=La etiqueta '{TEXT}' está duplicada.
 EDITOR_MIPS_ERROR_DIRECTIVE_NOT_FOUND=No se ha podido encontrar la directiva '{TEXT}'.
 EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=No se ha podido encontrar la instrucción '{TEXT}' con los parámetros indicados.
 EDITOR_MIPS_ERROR_INVALID_INSTRUCTION_PARAMETER=El parámetro '{TEXT} tiene un formato incorrecto.
+
+ACTION_REGION_TEXT_EDITOR=Editor de texto
+ACTION_TEXT_EDITOR_COMPILE=Compilar código
+ACTION_TEXT_EDITOR_REFORMAT=Reestructurar código
+ACTION_TEXT_EDITOR_SAVE=Guardar archivo

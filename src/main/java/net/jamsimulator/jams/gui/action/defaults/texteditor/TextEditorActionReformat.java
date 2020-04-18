@@ -10,7 +10,7 @@ import net.jamsimulator.jams.gui.display.CodeFileDisplay;
 
 public class TextEditorActionReformat extends Action {
 
-	public static final String NAME = "EDITOR_REFORMAT";
+	public static final String NAME = "TEXT_EDITOR_REFORMAT";
 	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
 
 	public TextEditorActionReformat() {

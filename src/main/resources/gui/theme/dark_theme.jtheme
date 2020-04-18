@@ -619,10 +619,12 @@ AnchorPane {
     -fx-spacing: 5px;
 }
 
-
 .configuration-window-display {
     -fx-spacing: 7px;
-    -fx-padding: 5 5 5 5;
+}
+
+.configuration-window-display .label {
+    -fx-padding: 0 0 0 5;
 }
 
 /* FILE DISPLAY LIST */

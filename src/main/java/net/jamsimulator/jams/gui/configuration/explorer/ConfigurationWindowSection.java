@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.configuration.explorer;
 
+import javafx.scene.Node;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNode;
 import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNodeBuilder;
@@ -45,6 +46,14 @@ public class ConfigurationWindowSection extends ExplorerSection {
 	 */
 	public List<ConfigurationWindowNode<?>> getNodes() {
 		return Collections.unmodifiableList(nodes);
+	}
+
+	public Node getSpecialNode() {
+		return null;
+	}
+
+	public boolean isSpecial() {
+		return false;
 	}
 
 	@Override

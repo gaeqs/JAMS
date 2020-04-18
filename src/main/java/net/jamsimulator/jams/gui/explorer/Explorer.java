@@ -206,6 +206,7 @@ public abstract class Explorer extends VBox implements TaggedRegion {
 	private void updateScrollPosition(ExplorerElement element) {
 		double ty = element.getExplorerYTranslation();
 		Bounds bounds = scrollPane.getViewportBounds();
+		if(bounds == null) return;
 
 		double scrollRelative = ty + bounds.getMinY();
 
