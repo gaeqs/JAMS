@@ -159,7 +159,7 @@ public abstract class MipsCodeElement {
 
 	@Override
 	public String toString() {
-		return "AssemblyCodeElement{" +
+		return "MipsCodeElement{" +
 				"startIndex=" + startIndex +
 				", endIndex=" + endIndex +
 				", text='" + text + '\'' +

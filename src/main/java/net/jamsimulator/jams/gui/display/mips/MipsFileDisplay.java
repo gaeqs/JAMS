@@ -2,7 +2,6 @@ package net.jamsimulator.jams.gui.display.mips;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -50,7 +49,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 		if (tab.getWorkingPane() instanceof MipsProjectPane) {
 			project = ((MipsProjectPane) tab.getWorkingPane()).getProject();
-			autocompletionPopup = new MipsAutocompletionPopup(project);
+			autocompletionPopup = new MipsAutocompletionPopup(project, elements);
 		} else {
 			project = null;
 			autocompletionPopup = null;
@@ -66,6 +65,10 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 	public Optional<MipsProject> getProject() {
 		return Optional.ofNullable(project);
+	}
+
+	public MipsAutocompletionPopup getAutocompletionPopup() {
+		return autocompletionPopup;
 	}
 
 	@Override
@@ -174,30 +177,12 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 	private void initializeAutocompletionPopupListeners() {
 		if (autocompletionPopup == null) return;
-		addEventHandler(KeyEvent.KEY_TYPED, event -> {
-			if (event.getCharacter().equals(" ")) {
-				autocompletionPopup.hide();
-			} else {
-				int caretPosition = getCaretPosition() - 1;
-				MipsCodeElement element = elements.getElementAt(caretPosition).orElse(null);
-				if (element == null) {
-					autocompletionPopup.hide();
-					return;
-				}
+		//AUTO COMPLETION
+		addEventHandler(KeyEvent.KEY_TYPED, event -> autocompletionPopup.managePressEvent(event, this));
 
-				autocompletionPopup.refresh(element);
-				if (autocompletionPopup.isEmpty()) {
-					autocompletionPopup.hide();
-					return;
-				}
-
-
-				Platform.runLater(() -> {
-					Bounds bounds = getCaretBounds().orElse(null);
-					if (bounds == null) return;
-					autocompletionPopup.show(this, bounds.getMinX(), bounds.getMinY() + 20);
-				});
-			}
+		//AUTOCOMPLETION MOVEMENT
+		addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+			if (autocompletionPopup.manageTypeEvent(event, this)) event.consume();
 		});
 
 		//FOCUS

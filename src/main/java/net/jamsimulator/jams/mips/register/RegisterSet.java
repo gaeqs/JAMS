@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.register;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -43,6 +44,19 @@ public class RegisterSet {
 	 */
 	public Register getProgramCounter() {
 		return programCounter;
+	}
+
+	/**
+	 * Returns an unmodifiable {@link Set} with all registers inside this set.
+	 *
+	 * @return the {@link Set}.
+	 */
+	public Set<Register> getRegisters() {
+		Set<Register> registers = new HashSet<>(this.registers);
+		registers.add(programCounter);
+		registers.addAll(coprocessor0Registers);
+		registers.addAll(coprocessor1Registers);
+		return Collections.unmodifiableSet(registers);
 	}
 
 	/**

@@ -12,6 +12,7 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.defaults.texteditor.TextEditorActionCompile;
 import net.jamsimulator.jams.gui.action.defaults.texteditor.TextEditorActionReformat;
 import net.jamsimulator.jams.gui.action.defaults.texteditor.TextEditorActionSave;
+import net.jamsimulator.jams.gui.action.defaults.texteditor.TextEditorActionShowAutocompletionPopup;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionRegisterEvent;
 import net.jamsimulator.jams.gui.action.event.ActionUnbindEvent;
@@ -304,6 +305,7 @@ public class ActionManager extends SimpleEventBroadcast {
 		actions.add(new TextEditorActionReformat());
 		actions.add(new TextEditorActionSave());
 		actions.add(new TextEditorActionCompile());
+		actions.add(new TextEditorActionShowAutocompletionPopup());
 	}
 
 	private List<Action> loadBinds() {

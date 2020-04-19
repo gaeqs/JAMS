@@ -33,6 +33,10 @@ public class DisplayInstructionParameterPart extends MipsCodeElement {
 		return instructionIndex;
 	}
 
+	public InstructionParameterPartType getType() {
+		return type;
+	}
+
 	@Override
 	public String getText() {
 		return super.getText();
