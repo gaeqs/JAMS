@@ -51,7 +51,10 @@ public class MipsAutocompletionPopup extends Popup {
 
 	public void managePressEvent(KeyEvent event, MipsFileDisplay display) {
 		byte b = event.getCharacter().getBytes()[0];
-		//ESCAPE OR SPACE
+		//SPECIAL
+		if (event.isControlDown() || event.isShiftDown() || event.isAltDown() || event.isMetaDown() || event.isShortcutDown())
+			return;
+		//ENTER, ESCAPE OR SPACE
 		if (b == CharacterCodes.ENTER) return;
 		if (b == CharacterCodes.ESCAPE || b == CharacterCodes.SPACE) {
 			hide();
