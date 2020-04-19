@@ -564,8 +564,15 @@ AnchorPane {
 }
 
 /*FOLDER EXPLORER*/
-.folder-explorer-file .label {
-    -fx-font-size: 15;
+.explorer-folder .label,
+.explorer-file .label {
+    -fx-border-width: 1;
+    -fx-border-color: transparent;
+}
+
+.explorer-folder-allow-drop > .label,
+.explorer-file-allow-drop > .label {
+    -fx-border-color: red;
 }
 
 /*BOTTOM BAR*/

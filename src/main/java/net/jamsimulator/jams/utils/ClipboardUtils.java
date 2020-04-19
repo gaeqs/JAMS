@@ -4,10 +4,6 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +28,6 @@ public class ClipboardUtils {
 		Validate.notNull(file, "File cannot be null!");
 		Validate.isTrue(file.exists(), "File must exist!");
 
-
 		Map<DataFormat, Object> contentMap = new HashMap<>();
 		List<File> files = new ArrayList<>();
 		files.add(file);
@@ -51,18 +46,6 @@ public class ClipboardUtils {
 		clipboard.getContentTypes().forEach(System.out::println);
 		List<File> files = clipboard.getFiles();
 
-		files.forEach(file -> {
-			try {
-				Path from = file.toPath();
-				Path to = new File(folder, file.getName()).toPath();
-				if (file.isDirectory()) {
-					Files.walkFileTree(from, new CopyFileVisitor(from, to));
-				} else {
-					Files.copy(from, to, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		});
+		files.forEach(file -> FileUtils.copyFile(folder, file));
 	}
 }

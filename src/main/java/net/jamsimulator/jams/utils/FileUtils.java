@@ -2,8 +2,18 @@ package net.jamsimulator.jams.utils;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 public class FileUtils {
+
+	public static boolean isChild(File child, File parent) {
+		return isChild(child.toPath().toAbsolutePath(), parent.toPath().toAbsolutePath());
+	}
+
+	public static boolean isChild(Path child, Path parent) {
+		return child.startsWith(parent);
+	}
 
 	public static boolean deleteDirectory(File directory) {
 		Validate.notNull(directory, "Directory cannot be null!");
@@ -42,6 +52,22 @@ public class FileUtils {
 		Writer writer = new FileWriter(file);
 		writer.write(text);
 		writer.close();
+	}
+
+	public static boolean copyFile(File folder, File target) {
+		try {
+			Path from = target.toPath();
+			Path to = new File(folder, target.getName()).toPath();
+			if (target.isDirectory()) {
+				Files.walkFileTree(from, new CopyFileVisitor(from, to));
+			} else {
+				Files.copy(from, to, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 
 }
