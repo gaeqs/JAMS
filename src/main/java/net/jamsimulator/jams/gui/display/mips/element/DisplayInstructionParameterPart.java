@@ -44,7 +44,7 @@ public class DisplayInstructionParameterPart extends MipsCodeElement {
 
 	@Override
 	public List<String> getStyles() {
-		if (hasErrors()) return Arrays.asList(type.getCssClass(), "assembly-error");
+		if (hasErrors()) return Arrays.asList(type.getCssClass(), "mips-error");
 		return Collections.singletonList(type.getCssClass());
 	}
 
@@ -71,10 +71,10 @@ public class DisplayInstructionParameterPart extends MipsCodeElement {
 	}
 
 	public enum InstructionParameterPartType {
-		REGISTER("assembly-instruction-parameter-register"),
-		IMMEDIATE("assembly-instruction-parameter-immediate"),
-		STRING("assembly-instruction-parameter-string"),
-		LABEL("assembly-instruction-parameter-label");
+		REGISTER("mips-instruction-parameter-register"),
+		IMMEDIATE("mips-instruction-parameter-immediate"),
+		STRING("mips-instruction-parameter-string"),
+		LABEL("mips-instruction-parameter-label");
 
 		private final String cssClass;
 

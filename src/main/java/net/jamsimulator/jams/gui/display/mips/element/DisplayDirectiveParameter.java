@@ -34,8 +34,8 @@ public class DisplayDirectiveParameter extends MipsCodeElement {
 	@Override
 	public List<String> getStyles() {
 		if (hasErrors())
-			return Arrays.asList(string ? "assembly-directive-parameter-string" : "assembly-directive-parameter", "assembly-error");
-		return Collections.singletonList(string ? "assembly-directive-parameter-string" : "assembly-directive-parameter");
+			return Arrays.asList(string ? "mips-directive-parameter-string" : "mips-directive-parameter", "assembly-error");
+		return Collections.singletonList(string ? "mips-directive-parameter-string" : "mips-directive-parameter");
 	}
 
 	@Override

@@ -20,8 +20,8 @@ public class DisplayLabel extends MipsCodeElement {
 
 	@Override
 	public List<String> getStyles() {
-		if (hasErrors()) return Arrays.asList("assembly-label", "assembly-error");
-		return Collections.singletonList("assembly-label");
+		if (hasErrors()) return Arrays.asList("mips-label", "mips-error");
+		return Collections.singletonList("mips-label");
 	}
 
 	public String getLabel() {

@@ -716,73 +716,76 @@ AnchorPane {
     -fx-fill: -theme-foreground;
 }
 
-/* ASSEMBLY */
+/* MIPS */
 
-.code-area .assembly-comment {
+.code-area .mips-comment {
     -fx-fill: #8b8b8b;
 }
 
-.code-area .assembly-label {
+.code-area .mips-label {
     -fx-font-style: italic;
 }
 
-.code-area .assembly-directive {
+.code-area .mips-directive {
     -fx-fill: #f8a15e;
 }
 
-.code-area .assembly-directive-parameter {
+.code-area .mips-directive-parameter {
     -fx-fill: #f85ee3;
 }
 
 
-.code-area .assembly-directive-parameter-string {
+.code-area .mips-directive-parameter-string {
     -fx-fill: #4c762e;
 }
 
-.code-area .assembly-instruction {
+.code-area .mips-instruction {
     -fx-fill: #f8d75e;
 }
 
-.code-area .assembly-instruction-parameter-label {
+.code-area .mips-instruction-parameter-label {
     -fx-fill: #ffffff;
     -fx-font-style: italic;
 }
 
-.code-area .assembly-instruction-parameter-register {
+.code-area .mips-instruction-parameter-register {
     -fx-fill: #90a3fd;
 }
 
-.code-area .assembly-instruction-parameter-immediate {
+.code-area .mips-instruction-parameter-immediate {
     -fx-fill: #7af85e;
 }
 
 
-.code-area .assembly-instruction-parameter-string {
+.code-area .mips-instruction-parameter-string {
     -fx-fill: #f8d75e;
 }
 
-.code-area .assembly-error {
+.code-area .mips-error {
     -rtfx-underline-color: #cb2f2f;
     -rtfx-underline-width: 1px;
 }
 
-/* ASSEMBLY POPUPS*/
-
-.assembly-popup {
+/* MIPS POPUPS*/
+.mips-popup {
     -fx-background-color: -theme-background-lighter;
     -fx-padding: 5px 5px 5px 5px;
     -fx-border-color: -theme-background-lighter;
     -fx-border-width: 1px;
 }
 
-.assembly-autocompletion-popup {
-    -fx-background-color: -theme-background-lighter;
-    -fx-padding: 5px 5px 5px 5px;
-    -fx-border-color: -theme-background-lighter;
+.mips-autocompletion-popup {
+    -fx-background-color: -theme-background;
+    -fx-border-color: -theme-background-darker-2;
     -fx-border-width: 1px;
 }
 
-.assembly-autocompletion-popup .label {
+.mips-autocompletion-popup-element .label {
+    -fx-padding: 0px 5px 0px 5px;
     -fx-font-family: "{FONT_CODE}";
     -fx-font-size: 13.5;
+}
+
+.mips-autocompletion-popup-element-selected {
+    -fx-background-color: -theme-explorer-element-selected;
 }

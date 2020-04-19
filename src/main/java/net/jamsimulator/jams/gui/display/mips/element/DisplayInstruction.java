@@ -53,8 +53,8 @@ public class DisplayInstruction extends MipsCodeElement {
 
 	@Override
 	public List<String> getStyles() {
-		if (hasErrors()) return Arrays.asList("assembly-instruction", "assembly-error");
-		return Collections.singletonList("assembly-instruction");
+		if (hasErrors()) return Arrays.asList("mips-instruction", "mips-error");
+		return Collections.singletonList("mips-instruction");
 	}
 
 	@Override

@@ -16,7 +16,7 @@ public class InstructionAbsSingle extends BasicRFPUInstruction {
 	public static final int FUNCTION_CODE = 0b000101;
 
 	private static final ParameterType[] PARAMETER_TYPES
-			= new ParameterType[]{ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER};
+			= new ParameterType[]{ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER};
 
 	public InstructionAbsSingle() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);

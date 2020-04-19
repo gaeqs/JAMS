@@ -50,8 +50,8 @@ public class DisplayDirective extends MipsCodeElement {
 
 	@Override
 	public List<String> getStyles() {
-		if (hasErrors()) return Arrays.asList("assembly-directive", "assembly-error");
-		return Collections.singletonList("assembly-directive");
+		if (hasErrors()) return Arrays.asList("mips-directive", "mips-error");
+		return Collections.singletonList("mips-directive");
 	}
 
 	@Override

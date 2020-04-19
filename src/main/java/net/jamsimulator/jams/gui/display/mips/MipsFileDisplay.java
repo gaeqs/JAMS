@@ -44,7 +44,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 		popup = new Popup();
 		popupVBox = new VBox();
-		popupVBox.getStyleClass().add("assembly-popup");
+		popupVBox.getStyleClass().add("mips-popup");
 		popup.getContent().add(popupVBox);
 
 		if (tab.getWorkingPane() instanceof MipsProjectPane) {

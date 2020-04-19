@@ -16,7 +16,7 @@ public class InstructionAbsDouble extends BasicRFPUInstruction {
 	public static final int FUNCTION_CODE = 0b000101;
 
 	private static final ParameterType[] PARAMETER_TYPES
-			= new ParameterType[]{ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER};
+			= new ParameterType[]{ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER};
 
 	public InstructionAbsDouble() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);

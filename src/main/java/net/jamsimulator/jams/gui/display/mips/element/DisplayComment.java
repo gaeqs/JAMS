@@ -14,7 +14,7 @@ public class DisplayComment extends MipsCodeElement {
 
 	@Override
 	public List<String> getStyles() {
-		return Collections.singletonList("assembly-comment");
+		return Collections.singletonList("mips-comment");
 	}
 
 	@Override
