@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.gui.configuration;
 
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.VBox;
@@ -64,8 +65,10 @@ public class ConfigurationWindow extends SplitPane {
 	public void display(ConfigurationWindowSection section) {
 		sectionDisplay.getChildren().clear();
 		if (section.isSpecial()) {
+			sectionDisplay.setPadding(new Insets(0));
 			sectionDisplay.getChildren().add(section.getSpecialNode());
 		} else {
+			sectionDisplay.setPadding(new Insets(5, 0, 0, 0));
 			sectionDisplay.getChildren().addAll(section.getNodes());
 		}
 	}

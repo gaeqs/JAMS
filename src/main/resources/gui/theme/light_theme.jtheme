@@ -98,6 +98,7 @@ AnchorPane {
 .tab-pane .tab-header-area .tab .tab-label {
     -fx-text-fill: -theme-foreground;
     -fx-font-family: "{FONT_GENERAL}";
+    -fx-font-size: 14px;
 }
 
 
@@ -309,11 +310,14 @@ AnchorPane {
 
 .combo-box-base .list-cell {
     -fx-text-fill: -theme-foreground;
+    -fx-font-size: 14px;
     -fx-background-color: -theme-background;
 }
 
 .combo-box-base .combo-box-popup .list-view {
     -fx-background-color: -theme-background;
+    -fx-text-fill: -theme-foreground;
+    -fx-font-size: 14px;
 }
 
 
@@ -506,6 +510,10 @@ AnchorPane {
     -fx-padding: 10 0 5 0;
 }
 
+.sidebar-button .label {
+    -fx-font-size: 12px;
+}
+
 .sidebar-button:selected {
     -fx-background-color: -theme-background-darker;
 }
@@ -551,6 +559,10 @@ AnchorPane {
     -fx-background-color: -theme-background-darker-2;
     -fx-border-width: 0;
     -fx-padding: 0 10 0 10;
+}
+
+.bottom-bar-button .label {
+    -fx-font-size: 12px;
 }
 
 .bottom-bar-button:selected {
