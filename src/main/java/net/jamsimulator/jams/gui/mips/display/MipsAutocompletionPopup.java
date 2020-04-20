@@ -1,8 +1,8 @@
-package net.jamsimulator.jams.gui.display.mips;
+package net.jamsimulator.jams.gui.mips.display;
 
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
-import net.jamsimulator.jams.gui.display.mips.element.*;
+import net.jamsimulator.jams.gui.mips.display.element.*;
 import net.jamsimulator.jams.gui.display.popup.AutocompletionPopup;
 import net.jamsimulator.jams.mips.assembler.directive.Directive;
 import net.jamsimulator.jams.mips.instruction.Instruction;

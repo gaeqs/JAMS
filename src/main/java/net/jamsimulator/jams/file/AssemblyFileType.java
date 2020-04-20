@@ -1,6 +1,6 @@
 package net.jamsimulator.jams.file;
 
-import net.jamsimulator.jams.gui.display.mips.MipsFileDisplay;
+import net.jamsimulator.jams.gui.mips.display.MipsFileDisplay;
 import net.jamsimulator.jams.gui.display.FileDisplay;
 import net.jamsimulator.jams.gui.display.FileDisplayTab;
 

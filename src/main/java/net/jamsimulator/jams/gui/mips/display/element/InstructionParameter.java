@@ -1,6 +1,6 @@
-package net.jamsimulator.jams.gui.display.mips.element;
+package net.jamsimulator.jams.gui.mips.display.element;
 
-import net.jamsimulator.jams.gui.display.mips.MipsDisplayError;
+import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.register.RegisterSet;
 

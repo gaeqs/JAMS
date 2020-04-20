@@ -1,9 +1,9 @@
-package net.jamsimulator.jams.gui.display.mips.element;
+package net.jamsimulator.jams.gui.mips.display.element;
 
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.display.mips.MipsDisplayError;
+import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
 import net.jamsimulator.jams.gui.main.WorkingPane;
-import net.jamsimulator.jams.gui.project.MipsProjectPane;
+import net.jamsimulator.jams.gui.mips.project.MipsProjectPane;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.ParameterType;

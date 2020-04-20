@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.display.mips;
+package net.jamsimulator.jams.gui.mips.display;
 
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
@@ -8,11 +8,11 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import net.jamsimulator.jams.gui.display.CodeFileDisplay;
 import net.jamsimulator.jams.gui.display.FileDisplayTab;
-import net.jamsimulator.jams.gui.display.mips.element.DisplayLabel;
-import net.jamsimulator.jams.gui.display.mips.element.MipsCodeElement;
-import net.jamsimulator.jams.gui.display.mips.element.MipsFileElements;
-import net.jamsimulator.jams.gui.display.mips.element.MipsLine;
-import net.jamsimulator.jams.gui.project.MipsProjectPane;
+import net.jamsimulator.jams.gui.mips.display.element.DisplayLabel;
+import net.jamsimulator.jams.gui.mips.display.element.MipsCodeElement;
+import net.jamsimulator.jams.gui.mips.display.element.MipsFileElements;
+import net.jamsimulator.jams.gui.mips.display.element.MipsLine;
+import net.jamsimulator.jams.gui.mips.project.MipsProjectPane;
 import net.jamsimulator.jams.project.MipsProject;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.event.MouseOverTextEvent;

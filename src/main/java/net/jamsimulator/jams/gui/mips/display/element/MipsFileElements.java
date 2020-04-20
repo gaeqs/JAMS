@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.display.mips.element;
+package net.jamsimulator.jams.gui.mips.display.element;
 
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.utils.StringUtils;

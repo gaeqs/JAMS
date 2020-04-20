@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.project;
+package net.jamsimulator.jams.gui.mips.project;
 
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
@@ -9,6 +9,7 @@ import net.jamsimulator.jams.gui.display.FileDisplayList;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.sidebar.SidebarButton;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.MipsProject;
