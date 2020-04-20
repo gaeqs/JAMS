@@ -2,12 +2,15 @@ package net.jamsimulator.jams.gui.display;
 
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.TaggedRegion;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.display.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
 import net.jamsimulator.jams.utils.FileUtils;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -25,6 +28,9 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegi
 	protected String old, original;
 	protected VirtualizedScrollPane scrollPane;
 
+	protected AutocompletionPopup autocompletionPopup;
+	private ChangeListener<? super Number> autocompletionMoveListener;
+
 	public CodeFileDisplay(FileDisplayTab tab) {
 		super(read(tab));
 		this.tab = tab;
@@ -41,10 +47,15 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegi
 		applyAutoIndent();
 		applyIndentRemover();
 		applySaveMarkListener();
+		initializeAutocompletionPopupListeners();
 	}
 
 	public FileDisplayTab getTab() {
 		return tab;
+	}
+
+	public AutocompletionPopup getAutocompletionPopup() {
+		return autocompletionPopup;
 	}
 
 	public void reformat() {
@@ -52,6 +63,10 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegi
 
 	public void onClose() {
 		JamsApplication.getThemeManager().unregisterListeners(this);
+		JamsApplication.getStage().xProperty().removeListener(autocompletionMoveListener);
+		JamsApplication.getStage().yProperty().removeListener(autocompletionMoveListener);
+		JamsApplication.getStage().widthProperty().removeListener(autocompletionMoveListener);
+		JamsApplication.getStage().heightProperty().removeListener(autocompletionMoveListener);
 	}
 
 	@Override
@@ -126,6 +141,41 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegi
 				}
 			}
 		});
+	}
+
+	protected void initializeAutocompletionPopupListeners() {
+		//AUTO COMPLETION
+		addEventHandler(KeyEvent.KEY_TYPED, event -> {
+			if (autocompletionPopup == null) return;
+			autocompletionPopup.managePressEvent(event);
+		});
+
+		//AUTOCOMPLETION MOVEMENT
+		addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+			if (autocompletionPopup == null) return;
+			if (autocompletionPopup.manageTypeEvent(event)) event.consume();
+		});
+
+		//FOCUS
+		focusedProperty().addListener((obs, old, val) -> {
+			if (autocompletionPopup == null) return;
+			autocompletionPopup.hide();
+		});
+		//CLICK
+		addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+			if (autocompletionPopup == null) return;
+			autocompletionPopup.hide();
+		});
+
+		//MOVE
+		autocompletionMoveListener = (obs, old, val) -> {
+			if (autocompletionPopup == null) return;
+			autocompletionPopup.hide();
+		};
+		JamsApplication.getStage().xProperty().addListener(autocompletionMoveListener);
+		JamsApplication.getStage().yProperty().addListener(autocompletionMoveListener);
+		JamsApplication.getStage().widthProperty().addListener(autocompletionMoveListener);
+		JamsApplication.getStage().heightProperty().addListener(autocompletionMoveListener);
 	}
 
 	protected void applySaveMarkListener() {

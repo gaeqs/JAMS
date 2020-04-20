@@ -6,8 +6,8 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.display.mips.MipsAutocompletionPopup;
-import net.jamsimulator.jams.gui.display.mips.MipsFileDisplay;
+import net.jamsimulator.jams.gui.display.CodeFileDisplay;
+import net.jamsimulator.jams.gui.display.popup.AutocompletionPopup;
 
 public class TextEditorActionShowAutocompletionPopup extends Action {
 
@@ -20,10 +20,9 @@ public class TextEditorActionShowAutocompletionPopup extends Action {
 
 	@Override
 	public void run(Node node) {
-		if (node instanceof MipsFileDisplay) {
-			MipsAutocompletionPopup popup = ((MipsFileDisplay) node).getAutocompletionPopup();
-			popup.refresh((MipsFileDisplay) node, 0, true);
-
+		if (node instanceof CodeFileDisplay) {
+			AutocompletionPopup popup = ((CodeFileDisplay) node).getAutocompletionPopup();
+			popup.execute(0, true);
 		}
 	}
 }

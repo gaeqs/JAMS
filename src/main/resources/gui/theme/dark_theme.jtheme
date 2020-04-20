@@ -716,8 +716,24 @@ AnchorPane {
     -fx-fill: -theme-foreground;
 }
 
-/* MIPS */
+/* AUTOCOMPLETION */
+.autocompletion-popup {
+    -fx-background-color: -theme-background;
+    -fx-border-color: -theme-background-darker-2;
+    -fx-border-width: 1px;
+}
 
+.autocompletion-popup-element .label {
+    -fx-padding: 0px 5px 0px 5px;
+    -fx-font-family: "{FONT_CODE}";
+    -fx-font-size: 13.5;
+}
+
+.autocompletion-popup-element-selected {
+    -fx-background-color: -theme-explorer-element-selected;
+}
+
+/* MIPS */
 .code-area .mips-comment {
     -fx-fill: #8b8b8b;
 }
@@ -772,20 +788,4 @@ AnchorPane {
     -fx-padding: 5px 5px 5px 5px;
     -fx-border-color: -theme-background-lighter;
     -fx-border-width: 1px;
-}
-
-.mips-autocompletion-popup {
-    -fx-background-color: -theme-background;
-    -fx-border-color: -theme-background-darker-2;
-    -fx-border-width: 1px;
-}
-
-.mips-autocompletion-popup-element .label {
-    -fx-padding: 0px 5px 0px 5px;
-    -fx-font-family: "{FONT_CODE}";
-    -fx-font-size: 13.5;
-}
-
-.mips-autocompletion-popup-element-selected {
-    -fx-background-color: -theme-explorer-element-selected;
 }

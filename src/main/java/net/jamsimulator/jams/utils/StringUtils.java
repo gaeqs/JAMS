@@ -141,4 +141,12 @@ public class StringUtils {
 		}
 		return amount;
 	}
+
+
+	public static String addExtraSpaces(String string) {
+		StringBuilder builder = new StringBuilder(string);
+		while (builder.length() < 10) builder.append(" ");
+		return builder.toString();
+	}
+
 }
