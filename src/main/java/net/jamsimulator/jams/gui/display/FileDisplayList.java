@@ -34,6 +34,20 @@ public class FileDisplayList extends TabPane {
 		return displays.stream().filter(target -> target.getFile().equals(file)).findAny();
 	}
 
+	public Optional<FileDisplayTab> getSelected() {
+		if (displays.isEmpty()) return Optional.empty();
+		return Optional.of((FileDisplayTab) getSelectionModel().getSelectedItem());
+	}
+
+
+	public void selectNext() {
+		getSelectionModel().selectNext();
+	}
+
+	public void selectPrevious() {
+		getSelectionModel().selectPrevious();
+	}
+
 	public boolean isFileOpen(File file) {
 		return displays.stream().anyMatch(target -> target.getFile().equals(file));
 	}
