@@ -13,6 +13,8 @@ import net.jamsimulator.jams.gui.sidebar.SidebarButton;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.MipsProject;
 
+import java.io.File;
+
 /**
  * This class represent the working pane of a project.
  */
@@ -21,6 +23,13 @@ public class MipsProjectPane extends WorkingPane {
 	protected final MipsProject project;
 	protected FolderExplorer explorer;
 
+	/**
+	 * Creates the mips project pane.
+	 *
+	 * @param parent     the {@link Tab} containing this pane.
+	 * @param projectTab the {@link ProjectTab} of the project.
+	 * @param project    the {@link MipsProject} to handle.
+	 */
 	public MipsProjectPane(Tab parent, ProjectTab projectTab, MipsProject project) {
 		super(parent, projectTab, new FileDisplayList(null));
 		this.project = project;
@@ -29,10 +38,20 @@ public class MipsProjectPane extends WorkingPane {
 		loadSidebarModules();
 	}
 
+	/**
+	 * Returns the {@link MipsProject} handled by this pane.
+	 *
+	 * @return the {@link MipsProject}.
+	 */
 	public MipsProject getProject() {
 		return project;
 	}
 
+	/**
+	 * Returns the {@link FileDisplayList} that handles files in this pane.
+	 *
+	 * @return the {@link FileDisplayList}.
+	 */
 	public FileDisplayList getFileDisplayList() {
 		return (FileDisplayList) center;
 	}
@@ -56,11 +75,16 @@ public class MipsProjectPane extends WorkingPane {
 		//explorer.prefWidthProperty().bind(pane.widthProperty().subtract(2));
 		topLeftSidebar.addNode("Explorer", pane, explorerIcon, Messages.EXPLORER_NAME);
 
-		explorer.setFileOpenAction(file -> getFileDisplayList().openFile(file.getFile()));
+		explorer.setFileOpenAction(file -> openFile(file.getFile()));
 	}
 
 	@Override
-	protected void onClose() {
+	public void onClose() {
 		explorer.killWatchers();
+	}
+
+	@Override
+	public void openFile(File file) {
+		getFileDisplayList().openFile(file);
 	}
 }

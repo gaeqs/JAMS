@@ -19,17 +19,20 @@ import net.jamsimulator.jams.gui.sidebar.Sidebar;
 import net.jamsimulator.jams.gui.sidebar.SidebarFillRegion;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
+import java.io.File;
+
 /**
  * The default working pane. This pane contains a central {@link SplitPane},
  * the central node, the left and right {@link SidePane}s and all four {@link Sidebar}s.
  * <p>
  * This class is extended by the projects to add custom panes.
  */
-public class WorkingPane extends AnchorPane {
+public abstract class WorkingPane extends AnchorPane {
 
 	public static final int SIDEBAR_WIDTH = 25;
 	public static final int BOTTOM_BAR_HEIGHT = 25;
 
+	protected ProjectTab projectTab;
 	protected Tab parent;
 
 	protected SplitPane horizontalSplitPane;
@@ -44,41 +47,9 @@ public class WorkingPane extends AnchorPane {
 
 	public WorkingPane(Tab parent, ProjectTab projectTab, Node center) {
 		this.parent = parent;
+		this.projectTab = projectTab;
 		this.center = center;
-
-		//Black line separator
-		Separator separator = new Separator(Orientation.HORIZONTAL);
-		AnchorUtils.setAnchor(separator, 0, -1, 0, 0);
-		getChildren().add(separator);
-
-		//Slit panes.
-
-		verticalSplitPane = new SplitPane();
-		getChildren().add(verticalSplitPane);
-		AnchorUtils.setAnchor(verticalSplitPane, 1, BOTTOM_BAR_HEIGHT, SIDEBAR_WIDTH, SIDEBAR_WIDTH);
-		verticalSplitPane.setOrientation(Orientation.VERTICAL);
-
-		horizontalSplitPane = new SplitPane();
-		verticalSplitPane.getItems().add(horizontalSplitPane);
-
-		//Center pane
-		if (center == null) center = new AnchorPane();
-		horizontalSplitPane.getItems().add(center);
-
-
-		loadSidebars();
-		loadResizeEvents();
-
-		//Close events
-		if (projectTab != null) {
-			projectTab.addTabCloseListener(target -> {
-				JamsApplication.removeStageCloseListener(stageCloseListener);
-				onClose();
-			});
-		}
-
-		stageCloseListener = target -> onClose();
-		JamsApplication.addStageCloseListener(stageCloseListener);
+		init();
 	}
 
 
@@ -89,6 +60,16 @@ public class WorkingPane extends AnchorPane {
 	 */
 	public Tab getParentTab() {
 		return parent;
+	}
+
+
+	/**
+	 * Returns the {@link Tab} of the project this {@link WorkingPane} manages.
+	 *
+	 * @return the {@link Tab}.
+	 */
+	public ProjectTab getProjectTab() {
+		return projectTab;
 	}
 
 	/**
@@ -166,8 +147,50 @@ public class WorkingPane extends AnchorPane {
 	/**
 	 * This method must be called when this working pane is not in use anymore.
 	 */
-	protected void onClose() {
+	public abstract void onClose();
 
+	/**
+	 * Opens the given {@link File}.
+	 *
+	 * @param file the {@link File}.
+	 */
+	public abstract void openFile(File file);
+
+	//region INIT
+
+	private void init() {
+		//Black line separator
+		Separator separator = new Separator(Orientation.HORIZONTAL);
+		AnchorUtils.setAnchor(separator, 0, -1, 0, 0);
+		getChildren().add(separator);
+
+		//Slit panes.
+		verticalSplitPane = new SplitPane();
+		getChildren().add(verticalSplitPane);
+		AnchorUtils.setAnchor(verticalSplitPane, 1, BOTTOM_BAR_HEIGHT, SIDEBAR_WIDTH, SIDEBAR_WIDTH);
+		verticalSplitPane.setOrientation(Orientation.VERTICAL);
+
+		horizontalSplitPane = new SplitPane();
+		verticalSplitPane.getItems().add(horizontalSplitPane);
+
+		//Center pane
+		if (center == null) center = new AnchorPane();
+		horizontalSplitPane.getItems().add(center);
+
+
+		loadSidebars();
+		loadResizeEvents();
+
+		//Close events
+		if (projectTab != null) {
+			projectTab.addTabCloseListener(target -> {
+				JamsApplication.removeStageCloseListener(stageCloseListener);
+				onClose();
+			});
+		}
+
+		stageCloseListener = target -> onClose();
+		JamsApplication.addStageCloseListener(stageCloseListener);
 	}
 
 	private void loadSidebars() {
@@ -226,5 +249,7 @@ public class WorkingPane extends AnchorPane {
 			});
 		});
 	}
+
+	//endregion
 
 }
