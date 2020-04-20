@@ -217,7 +217,7 @@ public abstract class Explorer extends VBox implements TaggedRegion {
 			scrollPane.setVvalue(scrollPane.getVvalue() + (scrollRelative - 40) / height);
 		}
 		if (scrollRelative > bounds.getHeight() - 80) {
-			scrollPane.setVvalue(scrollPane.getVvalue() + (scrollRelative - bounds.getHeight() + 80) / getHeight());
+			scrollPane.setVvalue(scrollPane.getVvalue() + (scrollRelative - bounds.getHeight() + 80) / height);
 		}
 	}
 }

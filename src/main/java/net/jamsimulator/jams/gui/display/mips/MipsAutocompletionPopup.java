@@ -18,12 +18,12 @@ import java.util.stream.Stream;
 
 public class MipsAutocompletionPopup extends AutocompletionPopup {
 
-	private final MipsFileElements elements;
+	private final MipsFileElements mipsElements;
 	private MipsCodeElement element;
 
 	public MipsAutocompletionPopup(MipsFileDisplay display) {
 		super(display);
-		this.elements = display.getElements();
+		this.mipsElements = display.getElements();
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class MipsAutocompletionPopup extends AutocompletionPopup {
 	public void execute(int caretOffset, boolean autocompleteIfOne) {
 		int caretPosition = display.getCaretPosition() + caretOffset;
 		if (caretPosition <= 0) return;
-		element = elements.getElementAt(caretPosition - 1).orElse(null);
+		element = mipsElements.getElementAt(caretPosition - 1).orElse(null);
 		if (element == null) {
 			hide();
 			return;
@@ -60,42 +60,50 @@ public class MipsAutocompletionPopup extends AutocompletionPopup {
 
 	@Override
 	public void refreshContents(int caretPosition) {
-		content.getChildren().clear();
+		elements.clear();
 		String start = element.getText().substring(0, Math.min(caretPosition - element.getStartIndex(), element.getText().length()));
 
-		if (element instanceof DisplayDirective) refreshDirective(start);
-		else if (element instanceof DisplayInstruction) refreshInstruction(start);
-		else if (element instanceof DisplayInstructionParameterPart) refreshDisplayInstructionParameterPart(start);
+		if (element instanceof DisplayDirective)
+			start = refreshDirective(start);
+		else if (element instanceof DisplayInstruction)
+			start = refreshInstruction(start);
+		else if (element instanceof DisplayInstructionParameterPart)
+			start = refreshDisplayInstructionParameterPart(start);
+
+		sortAndShowElements(start);
 
 		if (isEmpty()) return;
+		selectedIndex = 0;
 		refreshSelected();
 	}
 
-	protected void refreshDirective(String start) {
+	protected String refreshDirective(String start) {
 		MipsProject project = getDisplay().getProject().orElse(null);
-		if (project == null) return;
+		if (project == null) return start;
 
 		String directive = start.substring(1);
 		addElements(project.getDirectiveSet().getDirectives().stream().filter(target -> target.getName().startsWith(directive)),
 				Directive::getName, d -> "." + d.getName());
+		return directive;
 	}
 
-	protected void refreshInstruction(String start) {
+	protected String refreshInstruction(String start) {
 		MipsProject project = getDisplay().getProject().orElse(null);
-		if (project == null) return;
+		if (project == null) return start;
 
 		Stream<Instruction> stream = project.getInstructionSet().getInstructions().stream().filter(target -> target.getMnemonic().startsWith(start));
 		addElements(stream, i -> i.getMnemonic() + '\t' + i.getName(), Instruction::getMnemonic);
+		return start;
 	}
 
-	protected void refreshDisplayInstructionParameterPart(String start) {
+	protected String refreshDisplayInstructionParameterPart(String start) {
 		MipsProject project = getDisplay().getProject().orElse(null);
-		if (project == null) return;
+		if (project == null) return start;
 
 		switch (((DisplayInstructionParameterPart) element).getType()) {
 			case LABEL:
-				addElements(elements.getLabels().stream().filter(target -> target.startsWith(start)), s -> s, s -> s);
-				break;
+				addElements(mipsElements.getLabels().stream().filter(target -> target.startsWith(start)), s -> s, s -> s);
+				return start;
 			case REGISTER:
 				String registerName = start.substring(1);
 				//TODO change this
@@ -103,10 +111,11 @@ public class MipsAutocompletionPopup extends AutocompletionPopup {
 				Set<String> names = registerSet.getRegisters().stream().map(Register::getNames)
 						.flatMap(Collection::stream).collect(Collectors.toSet());
 				addElements(names.stream().filter(target -> target.startsWith(registerName)), s -> "$" + s, s -> "$" + s);
-				break;
+				return registerName;
 			case STRING:
 			case IMMEDIATE:
-				break;
+			default:
+				return start;
 		}
 	}
 
@@ -117,7 +126,7 @@ public class MipsAutocompletionPopup extends AutocompletionPopup {
 
 		int caretPosition = display.getCaretPosition();
 		if (caretPosition == 0) return;
-		MipsCodeElement element = elements.getElementAt(caretPosition - 1).orElse(null);
+		MipsCodeElement element = mipsElements.getElementAt(caretPosition - 1).orElse(null);
 		if (element == null) return;
 		if (element.getText().substring(0, caretPosition - element.getStartIndex()).equals(replacement)) return;
 		display.replaceText(element.getStartIndex(), caretPosition, replacement);

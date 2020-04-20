@@ -1,5 +1,7 @@
 package net.jamsimulator.jams.gui.display.popup;
 
+import javafx.geometry.Bounds;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
@@ -8,8 +10,10 @@ import net.jamsimulator.jams.gui.display.CodeFileDisplay;
 import net.jamsimulator.jams.utils.CharacterCodes;
 import net.jamsimulator.jams.utils.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -22,9 +26,12 @@ public abstract class AutocompletionPopup extends Popup {
 
 	protected final CodeFileDisplay display;
 	protected final VBox content;
+	protected final List<AutocompletionPopupElement> elements;
 
 	protected AutocompletionPopupElement selected;
 	protected int selectedIndex;
+
+	protected ScrollPane scroll;
 
 
 	/**
@@ -34,10 +41,15 @@ public abstract class AutocompletionPopup extends Popup {
 	 */
 	public AutocompletionPopup(CodeFileDisplay display) {
 		this.display = display;
-
 		content = new VBox();
 		content.getStyleClass().add("autocompletion-popup");
-		getContent().add(content);
+		elements = new ArrayList<>();
+
+
+		scroll = new ScrollPane(content);
+		scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		getContent().add(scroll);
+		scroll.setMaxHeight(200);
 	}
 
 	/**
@@ -79,8 +91,14 @@ public abstract class AutocompletionPopup extends Popup {
 		selectedIndex--;
 		if (selectedIndex < 0) {
 			selectedIndex = content.getChildren().size() - 1;
+			scroll.setVvalue(1);
+			refreshSelected();
 		}
-		refreshSelected();
+		else {
+			refreshSelected();
+			updateScrollPosition();
+		}
+
 	}
 
 	/**
@@ -90,8 +108,13 @@ public abstract class AutocompletionPopup extends Popup {
 		selectedIndex++;
 		if (selectedIndex == content.getChildren().size()) {
 			selectedIndex = 0;
+			scroll.setVvalue(0);
+			refreshSelected();
 		}
-		refreshSelected();
+		else {
+			refreshSelected();
+			updateScrollPosition();
+		}
 	}
 
 	/**
@@ -130,15 +153,13 @@ public abstract class AutocompletionPopup extends Popup {
 	 */
 	public <T> void addElements(Iterator<T> iterator, Function<T, String> conversion,
 								Function<T, String> autocompletionConversion) {
-		int i = 0;
 		AutocompletionPopupElement label;
 		T next;
-		while (iterator.hasNext() && i < 5) {
+		while (iterator.hasNext()) {
 			next = iterator.next();
 			label = new AutocompletionPopupElement(StringUtils.addExtraSpaces(conversion.apply(next)),
 					autocompletionConversion.apply(next));
-			content.getChildren().add(label);
-			i++;
+			elements.add(label);
 		}
 	}
 
@@ -151,6 +172,24 @@ public abstract class AutocompletionPopup extends Popup {
 		}
 		selected = (AutocompletionPopupElement) content.getChildren().get(selectedIndex);
 		selected.getStyleClass().add("autocompletion-popup-element-selected");
+	}
+
+
+	protected void updateScrollPosition() {
+		if (selected == null) return;
+		Bounds bounds = scroll.getViewportBounds();
+
+		double scrollRelative = selected.getLocalToParentTransform().getTy() + bounds.getMinY();
+
+
+		//If element is not visible
+		double height = getHeight();
+		if (scrollRelative < 40) {
+			scroll.setVvalue(scroll.getVvalue() + (scrollRelative - 40) / height);
+		}
+		if (scrollRelative > bounds.getHeight() - 80) {
+			scroll.setVvalue(scroll.getVvalue() + (scrollRelative - bounds.getHeight() + 80) / height);
+		}
 	}
 
 
@@ -173,6 +212,17 @@ public abstract class AutocompletionPopup extends Popup {
 			if (!isShowing() && b == CharacterCodes.BACKSPACE) return;
 			execute(0, false);
 		}
+	}
+
+	public void sortAndShowElements(String hint) {
+		content.getChildren().clear();
+		elements.sort((o1, o2) -> {
+			if (o1.getName().equals(hint)) return -1;
+			if (o2.getName().equals(hint)) return 1;
+
+			return o1.getName().compareTo(o2.getName());
+		});
+		content.getChildren().addAll(elements);
 	}
 
 	/**
