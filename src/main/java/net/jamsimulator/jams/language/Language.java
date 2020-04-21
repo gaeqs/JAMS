@@ -5,6 +5,7 @@ import net.jamsimulator.jams.language.exception.LanguageFailedLoadException;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -24,7 +25,7 @@ public class Language {
 		this.messages = new HashMap<>();
 
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(file));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
 			name = reader.readLine();
 			loadMessages(reader);
 			reader.close();
@@ -39,7 +40,7 @@ public class Language {
 		this.messages = new HashMap<>();
 
 		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 			name = reader.readLine();
 			loadMessages(reader);
 			reader.close();
@@ -71,7 +72,7 @@ public class Language {
 	}
 
 	public void addNotPresentValues(Language language) {
-		language.messages.forEach((key, value) -> messages.putIfAbsent(key, value));
+		language.messages.forEach(messages::putIfAbsent);
 	}
 
 	public boolean save() {
