@@ -5,7 +5,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionBal;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledRIInstruction;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.RegisterSet;
+import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
 import java.util.Optional;
@@ -22,7 +22,7 @@ public class CompiledInstructionBal extends CompiledRIInstruction {
 
 	@Override
 	public void execute(Simulation simulation) {
-		RegisterSet set = simulation.getRegisterSet();
+		Registers set = simulation.getRegisterSet();
 		Optional<Register> ra = set.getRegister(31);
 		if (!ra.isPresent()) error("Return address register not found.");
 

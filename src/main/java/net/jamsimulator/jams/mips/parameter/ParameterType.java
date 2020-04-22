@@ -2,7 +2,8 @@ package net.jamsimulator.jams.mips.parameter;
 
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.parameter.parse.matcher.*;
-import net.jamsimulator.jams.mips.register.RegisterSet;
+import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -57,9 +58,21 @@ public enum ParameterType {
 	 * @param set       the available registers.
 	 * @return whether the given parameter matches this parameter type.
 	 */
-	public boolean match(String parameter, RegisterSet set) {
+	public boolean match(String parameter, Registers set) {
 		return matcher.match(parameter, set);
 	}
+
+	/**
+	 * Returns whether the given parameter matches this parameter type.
+	 *
+	 * @param parameter the given parameter, as a {@link String}.
+	 * @param builder   the available registers.
+	 * @return whether the given parameter matches this parameter type.
+	 */
+	public boolean match(String parameter, RegistersBuilder builder) {
+		return matcher.match(parameter, builder);
+	}
+
 
 	/**
 	 * Parses the given parameter.
@@ -69,7 +82,7 @@ public enum ParameterType {
 	 * @return the {@link ParameterParseResult}.
 	 * @throws net.jamsimulator.jams.mips.parameter.parse.exception.ParameterParseException whether the parse goes wrong.
 	 */
-	public ParameterParseResult parse(String parameter, RegisterSet set) {
+	public ParameterParseResult parse(String parameter, Registers set) {
 		return matcher.parse(parameter, set);
 	}
 
@@ -79,7 +92,7 @@ public enum ParameterType {
 	 * @param parameter the given parameter, as a {@link String}.
 	 * @return the best parameter type, if present.
 	 */
-	public static Optional<ParameterType> getParameterMatch(String parameter, RegisterSet set) {
+	public static Optional<ParameterType> getParameterMatch(String parameter, Registers set) {
 		return Arrays.stream(values()).filter(target -> target.match(parameter, set)).findFirst();
 	}
 
@@ -87,9 +100,22 @@ public enum ParameterType {
 	 * Returns a mutable list with all the parameter types that are compatible with the given parameter.
 	 *
 	 * @param parameter the given parameter.
+	 * @param set       the set containing all registers.
 	 * @return the mutable list.
 	 */
-	public static List<ParameterType> getCompatibleParameterTypes(String parameter, RegisterSet set) {
+	public static List<ParameterType> getCompatibleParameterTypes(String parameter, Registers set) {
 		return Arrays.stream(values()).filter(target -> target.match(parameter, set)).collect(Collectors.toList());
+	}
+
+
+	/**
+	 * Returns a mutable list with all the parameter types that are compatible with the given parameter.
+	 *
+	 * @param parameter the given parameter.
+	 * @param builder   the builder containing all registers' names.
+	 * @return the mutable list.
+	 */
+	public static List<ParameterType> getCompatibleParameterTypes(String parameter, RegistersBuilder builder) {
+		return Arrays.stream(values()).filter(target -> target.match(parameter, builder)).collect(Collectors.toList());
 	}
 }

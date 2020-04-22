@@ -7,9 +7,9 @@ import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Mips32Memory;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.MIPS32RegisterSet;
+import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.RegisterSet;
+import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import org.junit.jupiter.api.Test;
 
@@ -23,11 +23,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 class GeneralInstructionTests {
 
 	static Simulation simulation = new Simulation(new InstructionSet(true, true, true),
-			new MIPS32RegisterSet(), new Mips32Memory());
+			new MIPS32Registers(), new Mips32Memory());
 
 	@Test
 	void testBasicInstruction() {
-		RegisterSet set = simulation.getRegisterSet();
+		Registers set = simulation.getRegisterSet();
 		Register t0 = set.getRegister("t0").get();
 		Register t1 = set.getRegister("t1").get();
 		Register t2 = set.getRegister("t2").get();
@@ -56,7 +56,7 @@ class GeneralInstructionTests {
 
 	@Test
 	void testOverflow() {
-		RegisterSet set = simulation.getRegisterSet();
+		Registers set = simulation.getRegisterSet();
 		Register t0 = set.getRegister("t0").get();
 		Register t1 = set.getRegister("t1").get();
 		Register t2 = set.getRegister("t2").get();

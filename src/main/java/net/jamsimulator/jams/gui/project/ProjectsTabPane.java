@@ -69,6 +69,7 @@ public class ProjectsTabPane extends TabPane {
 		MipsProject project = new MipsProject("TEST", file,
 				Jams.getAssemblerBuilderManager().get("MIPS32").get(),
 				Jams.getMemoryBuilderManager().get("MIPS32").get(),
+				Jams.getRegistersBuilderManager().get("MIPS32").get(),
 				new DirectiveSet(true, true),
 				new InstructionSet(true, true, true));
 		if (!openProject(project)) System.err.println("ERROR WHILE OPENING DEBUG PROJECT!");

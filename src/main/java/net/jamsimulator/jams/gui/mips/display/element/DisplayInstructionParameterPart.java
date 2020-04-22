@@ -1,8 +1,9 @@
 package net.jamsimulator.jams.gui.mips.display.element;
 
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
 import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
+import net.jamsimulator.jams.project.MipsProject;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -86,9 +87,16 @@ public class DisplayInstructionParameterPart extends MipsCodeElement {
 			return cssClass;
 		}
 
-		public static InstructionParameterPartType getByString(String string) {
+		public static InstructionParameterPartType getByString(String string, MipsProject project) {
 			if (NumericUtils.isInteger(string)) return IMMEDIATE;
-			if (string.startsWith("$")) return REGISTER;
+
+			if (project == null) {
+				if (string.startsWith("$")) return REGISTER;
+			} else {
+				if (project.getRegistersBuilder().getValidRegistersStarts()
+						.stream().anyMatch(target -> string.startsWith(target.toString()))) return REGISTER;
+			}
+
 			if (StringUtils.isStringOrChar(string)) return STRING;
 			return LABEL;
 		}

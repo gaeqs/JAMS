@@ -2,10 +2,7 @@ package net.jamsimulator.jams;
 
 import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.manager.AssemblerBuilderManager;
-import net.jamsimulator.jams.manager.FileTypeManager;
-import net.jamsimulator.jams.manager.LanguageManager;
-import net.jamsimulator.jams.manager.MemoryBuilderManager;
+import net.jamsimulator.jams.manager.*;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.utils.ConfigurationUtils;
@@ -25,6 +22,7 @@ public class Jams {
 
 	private static AssemblerBuilderManager assemblerBuilderManager;
 	private static MemoryBuilderManager memoryBuilderManager;
+	private static RegistersBuilderManager registersBuilderManager;
 	private static InstructionSet defaultInstructionSet;
 	private static DirectiveSet defaultDirectiveSet;
 
@@ -42,6 +40,7 @@ public class Jams {
 		defaultDirectiveSet = new DirectiveSet(true, true);
 		assemblerBuilderManager = AssemblerBuilderManager.INSTANCE;
 		memoryBuilderManager = MemoryBuilderManager.INSTANCE;
+		registersBuilderManager = RegistersBuilderManager.INSTANCE;
 		JamsApplication.main(args);
 	}
 
@@ -119,5 +118,14 @@ public class Jams {
 	 */
 	public static MemoryBuilderManager getMemoryBuilderManager() {
 		return memoryBuilderManager;
+	}
+
+	/**
+	 * Returns the {@link RegistersBuilderManager}.
+	 *
+	 * @return the {@link RegistersBuilderManager}.
+	 */
+	public static RegistersBuilderManager getRegistersBuilderManager() {
+		return registersBuilderManager;
 	}
 }

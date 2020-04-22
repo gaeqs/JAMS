@@ -2,18 +2,13 @@ package net.jamsimulator.jams.gui.mips.display;
 
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
-import net.jamsimulator.jams.gui.mips.display.element.*;
 import net.jamsimulator.jams.gui.display.popup.AutocompletionPopup;
+import net.jamsimulator.jams.gui.mips.display.element.*;
 import net.jamsimulator.jams.mips.assembler.directive.Directive;
 import net.jamsimulator.jams.mips.instruction.Instruction;
-import net.jamsimulator.jams.mips.register.MIPS32RegisterSet;
-import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.RegisterSet;
 import net.jamsimulator.jams.project.MipsProject;
 
-import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MipsAutocompletionPopup extends AutocompletionPopup {
@@ -105,13 +100,13 @@ public class MipsAutocompletionPopup extends AutocompletionPopup {
 				addElements(mipsElements.getLabels().stream().filter(target -> target.startsWith(start)), s -> s, s -> s);
 				return start;
 			case REGISTER:
-				String registerName = start.substring(1);
-				//TODO change this
-				RegisterSet registerSet = new MIPS32RegisterSet();
-				Set<String> names = registerSet.getRegisters().stream().map(Register::getNames)
-						.flatMap(Collection::stream).collect(Collectors.toSet());
-				addElements(names.stream().filter(target -> target.startsWith(registerName)), s -> "$" + s, s -> "$" + s);
-				return registerName;
+				Set<String> names = project.getRegistersBuilder().getRegistersNames();
+				Set<Character> starts = project.getRegistersBuilder().getValidRegistersStarts();
+
+				starts.forEach(c -> addElements(names.stream()
+						.filter(target -> (c + target).startsWith(start)), s -> c + s, s -> c + s));
+
+				return start;
 			case STRING:
 			case IMMEDIATE:
 			default:

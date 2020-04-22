@@ -3,15 +3,16 @@ package net.jamsimulator.jams.mips.parameter.parse.matcher;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.parameter.parse.exception.ParameterParseException;
-import net.jamsimulator.jams.mips.register.RegisterSet;
+import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 
 public class ParameterMatcherLabelRegisterShift implements ParameterMatcher {
 
 
 	@Override
-	public ParameterParseResult parse(String value, RegisterSet registerSet) {
+	public ParameterParseResult parse(String value, Registers registerSet) {
 		//Gets the label and the register
-		if (value.length() < 5 || !value.contains("($") || !value.endsWith(")"))
+		if (value.length() < 5 || !value.contains("(") || !value.endsWith(")"))
 			throw new ParameterParseException("Bad parameter format: " + value + ".");
 		int parenthesisIndex = value.indexOf('(');
 		//Parses
@@ -21,14 +22,26 @@ public class ParameterMatcherLabelRegisterShift implements ParameterMatcher {
 	}
 
 	@Override
-	public boolean match(String value, RegisterSet registerSet) {
+	public boolean match(String value, Registers registerSet) {
 		//Gets the label and the register
-		if (value.length() < 5 || !value.contains("($") || !value.endsWith(")")) return false;
+		if (value.length() < 5 || !value.contains("(") || !value.endsWith(")")) return false;
 		int parenthesisIndex = value.indexOf('(');
 		String register = value.substring(parenthesisIndex + 1, value.length() - 1);
 		//If the register is not valid, return false.
 		if (!ParameterType.REGISTER.match(register, registerSet)) return false;
 		//Checks the label
 		return ParameterType.LABEL.match(value.substring(0, parenthesisIndex), registerSet);
+	}
+
+	@Override
+	public boolean match(String value, RegistersBuilder builder) {
+		//Gets the label and the register
+		if (value.length() < 5 || !value.contains("(") || !value.endsWith(")")) return false;
+		int parenthesisIndex = value.indexOf('(');
+		String register = value.substring(parenthesisIndex + 1, value.length() - 1);
+		//If the register is not valid, return false.
+		if (!ParameterType.REGISTER.match(register, builder)) return false;
+		//Checks the label
+		return ParameterType.LABEL.match(value.substring(0, parenthesisIndex), builder);
 	}
 }

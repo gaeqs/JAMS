@@ -5,7 +5,8 @@ import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
-import net.jamsimulator.jams.mips.register.MIPS32RegisterSet;
+import net.jamsimulator.jams.mips.register.MIPS32Registers;
+import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -17,81 +18,88 @@ import java.util.List;
 
 public class MipsProject implements Project {
 
-    private final String name;
-    private final File folder;
+	private final String name;
+	private final File folder;
 
-    private final AssemblerBuilder assemblerBuilder;
-    private final MemoryBuilder memoryBuilder;
-    private final DirectiveSet directiveSet;
-    private final InstructionSet instructionSet;
+	private final AssemblerBuilder assemblerBuilder;
+	private final MemoryBuilder memoryBuilder;
+	private final RegistersBuilder registersBuilder;
+	private final DirectiveSet directiveSet;
+	private final InstructionSet instructionSet;
 
-    private final List<File> filesToAssemble;
+	private final List<File> filesToAssemble;
 
-    public MipsProject(String name, File folder, AssemblerBuilder assemblerBuilder, MemoryBuilder memoryBuilder,
-                       DirectiveSet directiveSet, InstructionSet instructionSet) {
-        Validate.notNull(name, "Name cannot be null!");
-        Validate.notNull(folder, "Folder cannot be null!");
-        Validate.isTrue(folder.exists(), "Folder " + folder.getName() + " must exist!");
-        Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
-        Validate.notNull(assemblerBuilder, "Assembler builder cannot be null!");
-        Validate.notNull(memoryBuilder, "Memory builder cannot be null!");
-        Validate.notNull(directiveSet, "Directive set cannot be null!");
-        Validate.notNull(instructionSet, "Instruction set cannot be null!");
+	public MipsProject(String name, File folder, AssemblerBuilder assemblerBuilder, MemoryBuilder memoryBuilder,
+					   RegistersBuilder registersBuilder, DirectiveSet directiveSet, InstructionSet instructionSet) {
+		Validate.notNull(name, "Name cannot be null!");
+		Validate.notNull(folder, "Folder cannot be null!");
+		Validate.isTrue(folder.exists(), "Folder " + folder.getName() + " must exist!");
+		Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
+		Validate.notNull(assemblerBuilder, "Assembler builder cannot be null!");
+		Validate.notNull(memoryBuilder, "Memory builder cannot be null!");
+		Validate.notNull(registersBuilder, "Registers builder cannot be null!");
+		Validate.notNull(directiveSet, "Directive set cannot be null!");
+		Validate.notNull(instructionSet, "Instruction set cannot be null!");
 
-        this.name = name;
-        this.folder = folder;
-        this.assemblerBuilder = assemblerBuilder;
-        this.memoryBuilder = memoryBuilder;
-        this.directiveSet = directiveSet;
-        this.instructionSet = instructionSet;
+		this.name = name;
+		this.folder = folder;
+		this.assemblerBuilder = assemblerBuilder;
+		this.memoryBuilder = memoryBuilder;
+		this.registersBuilder = registersBuilder;
+		this.directiveSet = directiveSet;
+		this.instructionSet = instructionSet;
 
-        filesToAssemble = new ArrayList<>();
-    }
+		filesToAssemble = new ArrayList<>();
+	}
 
 
-    @Override
-    public String getName() {
-        return name;
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    public File getFolder() {
-        return folder;
-    }
+	public File getFolder() {
+		return folder;
+	}
 
-    @Override
-    public List<File> getFilesToAssemble() {
-        return filesToAssemble;
-    }
+	@Override
+	public List<File> getFilesToAssemble() {
+		return filesToAssemble;
+	}
 
-    public AssemblerBuilder getAssemblerBuilder() {
-        return assemblerBuilder;
-    }
+	public AssemblerBuilder getAssemblerBuilder() {
+		return assemblerBuilder;
+	}
 
-    public MemoryBuilder getMemoryBuilder() {
-        return memoryBuilder;
-    }
+	public MemoryBuilder getMemoryBuilder() {
+		return memoryBuilder;
+	}
 
-    public DirectiveSet getDirectiveSet() {
-        return directiveSet;
-    }
+	public RegistersBuilder getRegistersBuilder() {
+		return registersBuilder;
+	}
 
-    public InstructionSet getInstructionSet() {
-        return instructionSet;
-    }
+	public DirectiveSet getDirectiveSet() {
+		return directiveSet;
+	}
 
-    @Override
-    public Simulation assemble() throws IOException {
-        Assembler assembler = assemblerBuilder.createAssembler(directiveSet, instructionSet,
-                new MIPS32RegisterSet(), memoryBuilder.createMemory());
+	public InstructionSet getInstructionSet() {
+		return instructionSet;
+	}
 
-        List<List<String>> files = new ArrayList<>();
+	@Override
+	public Simulation assemble() throws IOException {
+		Assembler assembler = assemblerBuilder.createAssembler(directiveSet, instructionSet,
+				new MIPS32Registers(), memoryBuilder.createMemory());
 
-        for (File target : filesToAssemble) {
-            files.add(Files.readAllLines(target.toPath()));
-        }
+		List<List<String>> files = new ArrayList<>();
 
-        assembler.setData(files);
-        assembler.compile();
-        return assembler.createSimulation();
-    }
+		for (File target : filesToAssemble) {
+			files.add(Files.readAllLines(target.toPath()));
+		}
+
+		assembler.setData(files);
+		assembler.compile();
+		return assembler.createSimulation();
+	}
 }

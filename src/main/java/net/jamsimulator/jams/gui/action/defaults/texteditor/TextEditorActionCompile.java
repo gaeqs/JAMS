@@ -9,7 +9,7 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.mips.display.MipsFileDisplay;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
-import net.jamsimulator.jams.mips.register.MIPS32RegisterSet;
+import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.project.MipsProject;
 
@@ -34,7 +34,7 @@ public class TextEditorActionCompile extends Action {
 
 
 			Assembler assembler = project.getAssemblerBuilder().createAssembler(project.getDirectiveSet(), project.getInstructionSet(),
-					new MIPS32RegisterSet(), project.getMemoryBuilder().createMemory());
+					new MIPS32Registers(), project.getMemoryBuilder().createMemory());
 			assembler.setData(Collections.singletonList(Arrays.asList(text.split("\n"))));
 			assembler.compile();
 			Simulation simulation = assembler.createSimulation();

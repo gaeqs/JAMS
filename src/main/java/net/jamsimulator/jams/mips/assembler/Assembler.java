@@ -3,7 +3,7 @@ package net.jamsimulator.jams.mips.assembler;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.register.RegisterSet;
+import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public interface Assembler {
 	/**
 	 * Creates a new {@link Simulation} using the compiled data of this assembler.
 	 * <p>
-	 * The {@link Simulation}'s {@link Memory} and {@link RegisterSet} is a copy of this assembler's data.
+	 * The {@link Simulation}'s {@link Memory} and {@link Registers} is a copy of this assembler's data.
 	 * Two {@link Simulation}s created by this method will have different memories and registers.
 	 *
 	 * @return the new {@link Simulation}.
@@ -62,12 +62,12 @@ public interface Assembler {
 	InstructionSet getInstructionSet();
 
 	/**
-	 * Returns this simulation's {@link RegisterSet}.
-	 * You can modify this {@link RegisterSet}.
+	 * Returns this simulation's {@link Registers}.
+	 * You can modify this {@link Registers}.
 	 *
-	 * @return the {@link RegisterSet}.
+	 * @return the {@link Registers}.
 	 */
-	RegisterSet getRegisterSet();
+	Registers getRegisterSet();
 
 	/**
 	 * Returns this simulation's {@link Memory}.
