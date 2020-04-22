@@ -7,8 +7,9 @@ import net.jamsimulator.jams.gui.mips.project.MipsProjectPane;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
-import net.jamsimulator.jams.mips.register.MIPS32RegisterSet;
-import net.jamsimulator.jams.mips.register.RegisterSet;
+import net.jamsimulator.jams.mips.register.MIPS32Registers;
+import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 import net.jamsimulator.jams.project.MipsProject;
 
 import java.util.ArrayList;
@@ -64,13 +65,11 @@ public class DisplayInstruction extends MipsCodeElement {
 		MipsProject project = ((MipsProjectPane) pane).getProject();
 		InstructionSet set = project.getInstructionSet();
 
-		//TODO change this
-		RegisterSet registerSet = new MIPS32RegisterSet();
-
+		RegistersBuilder builder = project.getRegistersBuilder();
 		List<ParameterType>[] types = new List[parameters.size()];
 
 		for (int i = 0; i < parameters.size(); i++) {
-			types[i] = parameters.get(i).checkGlobalErrors(registerSet);
+			types[i] = parameters.get(i).checkGlobalErrors(builder);
 		}
 
 		Instruction instruction = set.getBestCompatibleInstruction(text, types).orElse(null);

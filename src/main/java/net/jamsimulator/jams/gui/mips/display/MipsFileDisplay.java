@@ -34,7 +34,6 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 	public MipsFileDisplay(FileDisplayTab tab) {
 		super(tab);
-		elements = new MipsFileElements();
 
 		popup = new Popup();
 		popupVBox = new VBox();
@@ -47,6 +46,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 			project = null;
 		}
 
+		elements = new MipsFileElements(project);
 		autocompletionPopup = new MipsAutocompletionPopup(this);
 
 		initializePopupListeners();

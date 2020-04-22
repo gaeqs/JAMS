@@ -93,8 +93,7 @@ public abstract class AutocompletionPopup extends Popup {
 			selectedIndex = content.getChildren().size() - 1;
 			scroll.setVvalue(1);
 			refreshSelected();
-		}
-		else {
+		} else {
 			refreshSelected();
 			updateScrollPosition();
 		}
@@ -110,8 +109,7 @@ public abstract class AutocompletionPopup extends Popup {
 			selectedIndex = 0;
 			scroll.setVvalue(0);
 			refreshSelected();
-		}
-		else {
+		} else {
 			refreshSelected();
 			updateScrollPosition();
 		}
@@ -201,8 +199,7 @@ public abstract class AutocompletionPopup extends Popup {
 	 * @param event the event.
 	 */
 	public void managePressEvent(KeyEvent event) {
-		if (event.isControlDown() || event.isShiftDown() || event.isAltDown()
-				|| event.isMetaDown() || event.isShortcutDown()) return;
+		if (event.isControlDown() || event.isAltDown() || event.isMetaDown() || event.isShortcutDown()) return;
 
 		byte b = event.getCharacter().getBytes()[0];
 

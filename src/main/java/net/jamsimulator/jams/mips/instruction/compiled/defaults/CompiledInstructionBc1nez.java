@@ -5,7 +5,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionBc1nez;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledIFPUInstruction;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.RegisterSet;
+import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
 import java.util.Optional;
@@ -22,7 +22,7 @@ public class CompiledInstructionBc1nez extends CompiledIFPUInstruction {
 
 	@Override
 	public void execute(Simulation simulation) {
-		RegisterSet set = simulation.getRegisterSet();
+		Registers set = simulation.getRegisterSet();
 		Optional<Register> rt = set.getCoprocessor1Register(getTargetRegister());
 		if (!rt.isPresent()) error("Target register not found.");
 

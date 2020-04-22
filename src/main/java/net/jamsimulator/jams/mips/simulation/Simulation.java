@@ -5,7 +5,7 @@ import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.register.RegisterSet;
+import net.jamsimulator.jams.mips.register.Registers;
 
 import java.util.Optional;
 
@@ -13,10 +13,10 @@ public class Simulation {
 
 	private InstructionSet instructionSet;
 
-	private RegisterSet registerSet;
+	private Registers registerSet;
 	private Memory memory;
 
-	public Simulation(InstructionSet instructionSet, RegisterSet registerSet, Memory memory) {
+	public Simulation(InstructionSet instructionSet, Registers registerSet, Memory memory) {
 		this.instructionSet = instructionSet;
 		this.registerSet = registerSet;
 		this.memory = memory;
@@ -27,7 +27,7 @@ public class Simulation {
 		return instructionSet;
 	}
 
-	public RegisterSet getRegisterSet() {
+	public Registers getRegisterSet() {
 		return registerSet;
 	}
 

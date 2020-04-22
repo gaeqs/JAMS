@@ -5,7 +5,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionLw;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledI16Instruction;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.RegisterSet;
+import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
 import java.util.Optional;
@@ -22,7 +22,7 @@ public class CompiledInstructionLw extends CompiledI16Instruction {
 
 	@Override
 	public void execute(Simulation simulation) {
-		RegisterSet set = simulation.getRegisterSet();
+		Registers set = simulation.getRegisterSet();
 		Optional<Register> base = set.getRegister(getSourceRegister());
 		if (!base.isPresent()) error("Base register not found.");
 		Optional<Register> rt = set.getRegister(getTargetRegister());

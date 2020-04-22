@@ -1,5 +1,7 @@
 package net.jamsimulator.jams.mips.register;
 
+import net.jamsimulator.jams.utils.Validate;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
@@ -11,7 +13,9 @@ import java.util.Set;
  * <p>
  * Registers ProgramCounter, HighRegister and LowRegister are always present.
  */
-public class RegisterSet {
+public class Registers {
+
+	protected final Set<Character> validRegistersStarts;
 
 	protected Set<Register> registers;
 	protected Set<Register> coprocessor0Registers;
@@ -29,13 +33,27 @@ public class RegisterSet {
 	 * @param coprocessor0Registers the coprocessor 0 registers.
 	 * @param coprocessor1Registers the coprocessor 1 registers.
 	 */
-	public RegisterSet(Set<Register> registers, Set<Register> coprocessor0Registers, Set<Register> coprocessor1Registers) {
+	public Registers(Set<Character> validRegistersStarts, Set<Register> registers,
+					 Set<Register> coprocessor0Registers, Set<Register> coprocessor1Registers) {
+		Validate.notNull(validRegistersStarts, "Valid registers starts cannot be null!");
+		this.validRegistersStarts = validRegistersStarts;
 		this.registers = registers == null ? new HashSet<>() : registers;
 		this.coprocessor0Registers = coprocessor0Registers == null ? new HashSet<>() : coprocessor0Registers;
 		this.coprocessor1Registers = coprocessor1Registers == null ? new HashSet<>() : coprocessor1Registers;
 		loadEssentialRegisters();
 	}
 
+	/**
+	 * Returns the {@link Set} of valid registers' starts.
+	 * This is is unmodifiable.
+	 * <p>
+	 * Every register should start using any of these characters.
+	 *
+	 * @return the {@link Set}
+	 */
+	public Set<Character> getValidRegistersStarts() {
+		return Collections.unmodifiableSet(validRegistersStarts);
+	}
 
 	/**
 	 * Returns the program counter {@link Register}.
@@ -126,7 +144,7 @@ public class RegisterSet {
 	 *
 	 * @return the copy.
 	 */
-	public RegisterSet copy() {
+	public Registers copy() {
 		Set<Register> newRegisters = new HashSet<>();
 		Set<Register> newCop0Registers = new HashSet<>();
 		Set<Register> newCop1Registers = new HashSet<>();
@@ -134,7 +152,7 @@ public class RegisterSet {
 		coprocessor0Registers.forEach(target -> newCop0Registers.add(target.copy()));
 		coprocessor1Registers.forEach(target -> newCop1Registers.add(target.copy()));
 
-		RegisterSet set = new RegisterSet(newRegisters, newCop0Registers, newCop1Registers);
+		Registers set = new Registers(validRegistersStarts, newRegisters, newCop0Registers, newCop1Registers);
 		set.programCounter.setValue(programCounter.getValue());
 		return set;
 	}

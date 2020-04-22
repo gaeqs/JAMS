@@ -9,12 +9,12 @@ import java.util.Objects;
  * Represents a memory builder. Memory builders are used to create several {@link Memory}
  * using the given parameters.
  * <p>
- * If a plugin want to add a custom memory to JAMS, it should create a child of this class and register
+ * If a plugin wants to add a custom memory to JAMS, it should create a child of this class and register
  * it on the {@link net.jamsimulator.jams.manager.AssemblerBuilderManager}.
  */
 public abstract class MemoryBuilder {
 
-	private String name;
+	private final String name;
 
 	/**
 	 * Creates a memory builder using a name.

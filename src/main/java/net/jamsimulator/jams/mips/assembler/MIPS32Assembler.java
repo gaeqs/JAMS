@@ -1,6 +1,5 @@
 package net.jamsimulator.jams.mips.assembler;
 
-import javafx.stage.Popup;
 import net.jamsimulator.jams.mips.assembler.directive.Directive;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
@@ -9,7 +8,7 @@ import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
-import net.jamsimulator.jams.mips.register.RegisterSet;
+import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.LabelUtils;
 import net.jamsimulator.jams.utils.StringUtils;
@@ -24,7 +23,7 @@ public class MIPS32Assembler implements Assembler {
 
 	private DirectiveSet directiveSet;
 	private InstructionSet instructionSet;
-	private RegisterSet registerSet;
+	private Registers registerSet;
 	private Memory memory;
 
 	private AssemblerData assemblerData;
@@ -36,7 +35,7 @@ public class MIPS32Assembler implements Assembler {
 	private AssemblingFile currentAssemblingFile;
 	private boolean compiled;
 
-	public MIPS32Assembler(DirectiveSet directiveSet, InstructionSet instructionSet, RegisterSet registerSet, Memory memory) {
+	public MIPS32Assembler(DirectiveSet directiveSet, InstructionSet instructionSet, Registers registerSet, Memory memory) {
 		Validate.notNull(directiveSet, "The directive set cannot be null!");
 		Validate.notNull(instructionSet, "The instruction set cannot be null!");
 
@@ -94,7 +93,7 @@ public class MIPS32Assembler implements Assembler {
 	}
 
 	@Override
-	public RegisterSet getRegisterSet() {
+	public Registers getRegisterSet() {
 		return registerSet;
 	}
 

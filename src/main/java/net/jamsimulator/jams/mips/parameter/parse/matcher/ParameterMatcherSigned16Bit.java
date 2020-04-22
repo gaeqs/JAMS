@@ -2,13 +2,14 @@ package net.jamsimulator.jams.mips.parameter.parse.matcher;
 
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.parameter.parse.exception.ParameterParseException;
-import net.jamsimulator.jams.mips.register.RegisterSet;
+import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 import net.jamsimulator.jams.utils.NumericUtils;
 
 public class ParameterMatcherSigned16Bit implements ParameterMatcher {
 
 	@Override
-	public ParameterParseResult parse(String value, RegisterSet registerSet) {
+	public ParameterParseResult parse(String value, Registers registerSet) {
 		try {
 			int i = NumericUtils.decodeInteger(value);
 			if (i < -32768 || i >= 32768) throw new ParameterParseException("Number " + i + " out of bounds.");
@@ -19,7 +20,17 @@ public class ParameterMatcherSigned16Bit implements ParameterMatcher {
 	}
 
 	@Override
-	public boolean match(String value, RegisterSet registerSet) {
+	public boolean match(String value, Registers registerSet) {
+		try {
+			int i = NumericUtils.decodeInteger(value);
+			return i >= -32768 && i < 32768;
+		} catch (NumberFormatException ex) {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean match(String value, RegistersBuilder builder) {
 		try {
 			int i = NumericUtils.decodeInteger(value);
 			return i >= -32768 && i < 32768;

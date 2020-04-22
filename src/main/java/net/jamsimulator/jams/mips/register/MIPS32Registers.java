@@ -1,15 +1,20 @@
 package net.jamsimulator.jams.mips.register;
 
+import java.util.Collections;
+import java.util.Set;
+
 /**
  * Represents a default MIPS32 {@link Register} set.
  */
-public class MIPS32RegisterSet extends RegisterSet {
+public class MIPS32Registers extends Registers {
+
+	public static final Set<Character> VALID_REGISTERS_START = Collections.singleton('$');
 
 	/**
-	 * Creates a default MIPS32 {@link RegisterSet} set.
+	 * Creates a default MIPS32 {@link Registers} set.
 	 */
-	public MIPS32RegisterSet() {
-		super(null, null, null);
+	public MIPS32Registers() {
+		super(VALID_REGISTERS_START, null, null, null);
 		loadPrincipalRegisters();
 		loadCoprocessor0Registers();
 		loadCoprocessor1Registers();

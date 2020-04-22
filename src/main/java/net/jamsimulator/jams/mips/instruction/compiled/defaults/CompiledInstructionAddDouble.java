@@ -5,7 +5,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAddDouble;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledRFPUInstruction;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.RegisterSet;
+import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.NumericUtils;
 
@@ -24,7 +24,7 @@ public class CompiledInstructionAddDouble extends CompiledRFPUInstruction {
 
 	@Override
 	public void execute(Simulation simulation) {
-		RegisterSet set = simulation.getRegisterSet();
+		Registers set = simulation.getRegisterSet();
 		Optional<Register> rt0 = set.getCoprocessor1Register(getTargetRegister());
 		Optional<Register> rt1 = set.getCoprocessor1Register(getTargetRegister() + 1);
 		if (!rt0.isPresent()) error("Target register not found.");

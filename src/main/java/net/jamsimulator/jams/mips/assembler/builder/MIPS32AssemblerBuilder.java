@@ -4,7 +4,7 @@ import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.register.RegisterSet;
+import net.jamsimulator.jams.mips.register.Registers;
 
 public class MIPS32AssemblerBuilder extends AssemblerBuilder {
 
@@ -19,7 +19,7 @@ public class MIPS32AssemblerBuilder extends AssemblerBuilder {
 	}
 
 	@Override
-	public MIPS32Assembler createAssembler(DirectiveSet directiveSet, InstructionSet instructionSet, RegisterSet registerSet, Memory memory) {
+	public MIPS32Assembler createAssembler(DirectiveSet directiveSet, InstructionSet instructionSet, Registers registerSet, Memory memory) {
 		return new MIPS32Assembler(directiveSet, instructionSet, registerSet, memory);
 	}
 }

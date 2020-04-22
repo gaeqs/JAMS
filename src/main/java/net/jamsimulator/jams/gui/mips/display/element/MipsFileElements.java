@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.gui.mips.display.element;
 
 import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.project.MipsProject;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.CodeArea;
 
@@ -12,17 +13,27 @@ import java.util.stream.Collectors;
  */
 public class MipsFileElements {
 
+	private final MipsProject project;
 	private final List<MipsLine> lines;
-
 	private final List<String> labels;
 
 	/**
 	 * Creates an empty element collection.
 	 * To populate it use {@link #refreshAll(String, WorkingPane)}.
 	 */
-	public MipsFileElements() {
+	public MipsFileElements(MipsProject project) {
+		this.project = project;
 		this.lines = new ArrayList<>();
 		this.labels = new LinkedList<>();
+	}
+
+	/**
+	 * Returns the project containing this file, if present.
+	 *
+	 * @return the project, if present.
+	 */
+	public MipsProject getProject() {
+		return project;
 	}
 
 	/**
@@ -397,7 +408,7 @@ public class MipsFileElements {
 			DisplayInstructionParameterPart part = new DisplayInstructionParameterPart(instruction, parameterIndex,
 					start + index,
 					start + index + string.length(), string,
-					DisplayInstructionParameterPart.InstructionParameterPartType.getByString(string));
+					DisplayInstructionParameterPart.InstructionParameterPartType.getByString(string , project));
 			parameter.addPart(part);
 		});
 		return parameter;

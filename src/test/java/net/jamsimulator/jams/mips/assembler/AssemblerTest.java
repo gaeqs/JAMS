@@ -3,7 +3,7 @@ package net.jamsimulator.jams.mips.assembler;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Mips32Memory;
-import net.jamsimulator.jams.mips.register.MIPS32RegisterSet;
+import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ class AssemblerTest {
 		Assembler assembler = new MIPS32Assembler(
 				new DirectiveSet(true, true),
 				new InstructionSet(true, true, true),
-				new MIPS32RegisterSet(), new Mips32Memory());
+				new MIPS32Registers(), new Mips32Memory());
 		assembler.setData(files);
 		assembler.compile();
 		Simulation simulation = assembler.createSimulation();

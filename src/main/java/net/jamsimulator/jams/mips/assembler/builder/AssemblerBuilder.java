@@ -4,7 +4,7 @@ import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.register.RegisterSet;
+import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Objects;
@@ -42,7 +42,7 @@ public abstract class AssemblerBuilder {
 	}
 
 	/**
-	 * Creates an {@link Assembler} using a {@link DirectiveSet}, an {@link InstructionSet}, a {@link RegisterSet}
+	 * Creates an {@link Assembler} using a {@link DirectiveSet}, an {@link InstructionSet}, a {@link Registers}
 	 * and a {@link Memory}.
 	 *
 	 * @param directiveSet   the directive set.
@@ -51,7 +51,7 @@ public abstract class AssemblerBuilder {
 	 * @param memory         the memory.
 	 * @return the new {@link Assembler}.
 	 */
-	public abstract Assembler createAssembler(DirectiveSet directiveSet, InstructionSet instructionSet, RegisterSet registerSet, Memory memory);
+	public abstract Assembler createAssembler(DirectiveSet directiveSet, InstructionSet instructionSet, Registers registerSet, Memory memory);
 
 	@Override
 	public boolean equals(Object o) {

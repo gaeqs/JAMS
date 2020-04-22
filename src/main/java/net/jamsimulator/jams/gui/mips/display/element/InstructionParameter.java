@@ -2,7 +2,8 @@ package net.jamsimulator.jams.gui.mips.display.element;
 
 import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
-import net.jamsimulator.jams.mips.register.RegisterSet;
+import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +36,8 @@ public class InstructionParameter {
 		parts.add(part);
 	}
 
-	public List<ParameterType> checkGlobalErrors(RegisterSet set) {
-		List<ParameterType> types = ParameterType.getCompatibleParameterTypes(text, set);
+	public List<ParameterType> checkGlobalErrors(RegistersBuilder builder) {
+		List<ParameterType> types = ParameterType.getCompatibleParameterTypes(text, builder);
 		if (types.isEmpty()) parts.forEach(target -> target.errors.add(MipsDisplayError.INVALID_INSTRUCTION_PARAMETER));
 		return types;
 	}

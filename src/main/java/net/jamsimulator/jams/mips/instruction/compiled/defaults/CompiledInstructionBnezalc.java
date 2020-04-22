@@ -5,7 +5,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionBnezalc;
 import net.jamsimulator.jams.mips.instruction.compiled.CompiledI16Instruction;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.RegisterSet;
+import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
 import java.util.Optional;
@@ -22,7 +22,7 @@ public class CompiledInstructionBnezalc extends CompiledI16Instruction {
 
 	@Override
 	public void execute(Simulation simulation) {
-		RegisterSet set = simulation.getRegisterSet();
+		Registers set = simulation.getRegisterSet();
 		Optional<Register> rt = set.getRegister(getTargetRegister());
 		if (!rt.isPresent()) error("Target register not found.");
 		Optional<Register> ra = set.getRegister(31);
