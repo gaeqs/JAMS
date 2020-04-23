@@ -27,9 +27,7 @@ package net.jamsimulator.jams.gui.display;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.TaggedRegion;
@@ -37,6 +35,7 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.display.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
 import net.jamsimulator.jams.utils.FileUtils;
+import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 
@@ -51,6 +50,7 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegi
 	protected final FileDisplayTab tab;
 	protected String old, original;
 	protected VirtualizedScrollPane scrollPane;
+	protected ScaledVirtualized zoom;
 
 	protected AutocompletionPopup autocompletionPopup;
 	private ChangeListener<? super Number> autocompletionMoveListener;
@@ -72,6 +72,7 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegi
 		applyIndentRemover();
 		applySaveMarkListener();
 		initializeAutocompletionPopupListeners();
+		applyZoomListener();
 	}
 
 	public FileDisplayTab getTab() {
@@ -122,6 +123,16 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegi
 	@Override
 	public void setScrollPane(VirtualizedScrollPane scrollPane) {
 		this.scrollPane = scrollPane;
+	}
+
+	@Override
+	public ScaledVirtualized getZoom() {
+		return zoom;
+	}
+
+	@Override
+	public void setZoom(ScaledVirtualized zoom) {
+		this.zoom = zoom;
 	}
 
 	private void applyOldTextListener() {
@@ -206,6 +217,34 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegi
 		addEventHandler(KeyEvent.KEY_TYPED, event -> {
 			if (event.getCharacter().isEmpty()) return;
 			tab.setSaveMark(!getText().equals(original));
+		});
+	}
+
+	protected void applyZoomListener() {
+		addEventFilter(ScrollEvent.SCROLL, event -> {
+			if (event.isControlDown()) {
+				double current = zoom.getZoom().getX();
+				if (event.getDeltaY() < 0) {
+					if(current <= 0.4) return;
+					zoom.getZoom().setX(current - 0.2);
+					zoom.getZoom().setY(current - 0.2);
+					zoom.getZoom().setZ(current - 0.2);
+				} else {
+					zoom.getZoom().setX(current + 0.2);
+					zoom.getZoom().setY(current + 0.2);
+					zoom.getZoom().setZ(current + 0.2);
+				}
+				event.consume();
+			}
+		});
+
+		//RESET
+		addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+			if(event.isControlDown() && event.getButton() == MouseButton.MIDDLE) {
+				zoom.getZoom().setX(1);
+				zoom.getZoom().setY(1);
+				zoom.getZoom().setZ(1);
+			}
 		});
 	}
 

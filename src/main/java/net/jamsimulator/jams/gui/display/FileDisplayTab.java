@@ -34,6 +34,7 @@ import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.utils.AnchorUtils;
+import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.Virtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 
@@ -67,11 +68,13 @@ public class FileDisplayTab extends Tab {
 			((Region) element).prefHeightProperty().bind(pane.heightProperty());
 		}
 		if (display instanceof Region && display instanceof Virtualized) {
-			VirtualizedScrollPane scroll = new VirtualizedScrollPane(element);
+			ScaledVirtualized scale = new ScaledVirtualized(element);
+			VirtualizedScrollPane scroll = new VirtualizedScrollPane(scale);
 			AnchorUtils.setAnchor(scroll, 0, 0, 0, 0);
 			pane.getChildren().addAll(scroll);
 			if (element instanceof VirtualScrollHandled) {
 				((VirtualScrollHandled) element).setScrollPane(scroll);
+				((VirtualScrollHandled) element).setZoom(scale);
 			}
 		} else {
 			ScrollPane scroll = new ScrollPane(element);
