@@ -1,13 +1,20 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionBgez;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRIInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionBgez;
+import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
+import net.jamsimulator.jams.mips.register.Register;
+import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.simulation.Simulation;
 
-public class InstructionBgez extends BasicRIInstruction {
+import java.util.Optional;
+
+public class InstructionBgez extends BasicRIInstruction<AssembledInstructionBgez> {
 
 	public static final String NAME = "Branch on greater than or equal to zero";
 	public static final String MNEMONIC = "bgez";
@@ -18,15 +25,35 @@ public class InstructionBgez extends BasicRIInstruction {
 
 	public InstructionBgez() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 	}
 
 	@Override
-	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new CompiledInstructionBgez(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
+	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
+		return new AssembledInstructionBgez(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
 	}
 
 	@Override
-	public CompiledInstruction compileFromCode(int instructionCode) {
-		return new CompiledInstructionBgez(instructionCode, this, this);
+	public AssembledInstruction compileFromCode(int instructionCode) {
+		return new AssembledInstructionBgez(instructionCode, this, this);
+	}
+
+	public static class SingleCycle extends SingleCycleExecution<AssembledInstructionBgez> {
+
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, AssembledInstructionBgez instruction) {
+			super(simulation, instruction);
+		}
+
+		@Override
+		public void execute() {
+			Registers set = simulation.getRegisterSet();
+			Optional<Register> rs = set.getRegister(instruction.getSourceRegister());
+			if (!rs.isPresent()) error("Source register not found.");
+
+			if (rs.get().getValue() < 0) return;
+
+			Register pc = set.getProgramCounter();
+			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
+		}
 	}
 }

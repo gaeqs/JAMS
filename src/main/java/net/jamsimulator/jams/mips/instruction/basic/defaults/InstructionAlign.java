@@ -1,13 +1,20 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionAlign;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionAlign;
+import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
+import net.jamsimulator.jams.mips.register.Register;
+import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.simulation.Simulation;
 
-public class InstructionAlign extends BasicRInstruction {
+import java.util.Optional;
+
+public class InstructionAlign extends BasicRInstruction<AssembledInstructionAlign> {
 
 	public static final String NAME = "Concatenate two GRPs extracting a contiguous subset at a byte position";
 	public static final String MNEMONIC = "align";
@@ -21,23 +28,47 @@ public class InstructionAlign extends BasicRInstruction {
 
 	public InstructionAlign() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 	}
 
 
 	@Override
 	public boolean match(int instructionCode) {
 		return super.match(instructionCode) &&
-				((instructionCode >> CompiledInstructionAlign.ALIGN_CODE_SHIFT) & CompiledInstructionAlign.ALIGN_CODE_MASK) == ALIGN_CODE;
+				((instructionCode >> AssembledInstructionAlign.ALIGN_CODE_SHIFT) & AssembledInstructionAlign.ALIGN_CODE_MASK) == ALIGN_CODE;
 	}
 
 	@Override
-	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new CompiledInstructionAlign(parameters[1].getRegister(), parameters[2].getRegister(),
+	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
+		return new AssembledInstructionAlign(parameters[1].getRegister(), parameters[2].getRegister(),
 				parameters[0].getRegister(), parameters[3].getImmediate(), origin, this);
 	}
 
 	@Override
-	public CompiledInstruction compileFromCode(int instructionCode) {
-		return new CompiledInstructionAlign(instructionCode, this, this);
+	public AssembledInstruction compileFromCode(int instructionCode) {
+		return new AssembledInstructionAlign(instructionCode, this, this);
+	}
+
+	public static class SingleCycle extends SingleCycleExecution<AssembledInstructionAlign> {
+
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, AssembledInstructionAlign instruction) {
+			super(simulation, instruction);
+		}
+
+		@Override
+		public void execute() {
+			Registers set = simulation.getRegisterSet();
+			Optional<Register> rs = set.getRegister(instruction.getSourceRegister());
+			if (!rs.isPresent()) error("Source register not found.");
+			Optional<Register> rt = set.getRegister(instruction.getTargetRegister());
+			if (!rt.isPresent()) error("Target register not found.");
+			Optional<Register> rd = set.getRegister(instruction.getDestinationRegister());
+			if (!rd.isPresent()) error("Destination register not found");
+
+			int bp = instruction.getShiftAmount();
+			int tmpRtHi = rt.get().getValue() << (bp << 3);
+			int tmpRsLo = rs.get().getValue() >>> ((4 - bp) << 3);
+			rd.get().setValue(tmpRtHi | tmpRsLo);
+		}
 	}
 }

@@ -1,26 +1,32 @@
 package net.jamsimulator.jams.mips.simulation;
 
+import net.jamsimulator.jams.mips.architecture.Architecture;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
-import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
 
 import java.util.Optional;
 
-public class Simulation {
+public abstract class Simulation<Arch extends Architecture> {
 
-	private InstructionSet instructionSet;
+	protected final Arch architecture;
+	protected final InstructionSet instructionSet;
 
-	private Registers registerSet;
-	private Memory memory;
+	protected final Registers registerSet;
+	protected final Memory memory;
 
-	public Simulation(InstructionSet instructionSet, Registers registerSet, Memory memory) {
+	public Simulation(Arch architecture, InstructionSet instructionSet, Registers registerSet, Memory memory) {
+		this.architecture = architecture;
 		this.instructionSet = instructionSet;
 		this.registerSet = registerSet;
 		this.memory = memory;
 		memory.registerListeners(this);
+	}
+
+	public Arch getArchitecture() {
+		return architecture;
 	}
 
 	public InstructionSet getInstructionSet() {
@@ -35,53 +41,16 @@ public class Simulation {
 		return memory;
 	}
 
-	public CompiledInstruction getInstruction(int pc) {
-		//Fetch
+	public AssembledInstruction fetch(int pc) {
 		int data = memory.getWord(pc);
-		//Decode
 		Optional<BasicInstruction> optional = instructionSet.getInstructionByInstructionCode(data);
 		if (!optional.isPresent()) return null;
 		BasicInstruction instruction = optional.get();
 		return instruction.compileFromCode(data);
 	}
 
-	public void executeNextInstruction() {
-		executeNextInstruction(false);
-	}
+	public abstract void nextStep();
 
-	public void executeNextInstruction(boolean verbose) {
-		int pc = registerSet.getProgramCounter().getValue();
+	public abstract void executeAll();
 
-		//Fetch and Decode
-		registerSet.getProgramCounter().setValue(pc + 4);
-		CompiledInstruction instruction = getInstruction(pc);
-
-		if (instruction == null) {
-			int code = memory.getWord(pc);
-			throw new InstructionNotFoundException("Couldn't decode instruction 0x" +
-					addZeros(Integer.toHexString(code), 8) + ". (" + addZeros(Integer.toBinaryString(code), 32) + ")");
-		}
-
-		if (verbose) {
-			String address = "0x" + addZeros(Integer.toHexString(pc), 8);
-			String opCode = addZeros(Integer.toBinaryString(instruction.getOperationCode()), 6);
-			String mnemonic = instruction.getBasicOrigin().getMnemonic();
-			String code = "0x" + addZeros(Integer.toHexString(instruction.getCode()), 8);
-			System.out.println(address + "\t" + opCode + "\t" + mnemonic + " \t" + code);
-		}
-
-		//Execute, Memory and Write
-		instruction.execute(this);
-	}
-
-	private String addZeros(String s, int to) {
-		StringBuilder builder = new StringBuilder();
-		int max = Math.max(0, to - s.length());
-
-		for (int i = 0; i < max; i++) {
-			builder.append("0");
-		}
-
-		return builder + s;
-	}
 }

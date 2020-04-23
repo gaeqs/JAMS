@@ -1,13 +1,20 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionMuh;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRSOPInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionMuh;
+import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
+import net.jamsimulator.jams.mips.register.Register;
+import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.simulation.Simulation;
 
-public class InstructionMuh extends BasicRSOPInstruction {
+import java.util.Optional;
+
+public class InstructionMuh extends BasicRSOPInstruction<AssembledInstructionMuh> {
 
 	public static final String NAME = "Multiplication, high word";
 	public static final String MNEMONIC = "muh";
@@ -20,17 +27,39 @@ public class InstructionMuh extends BasicRSOPInstruction {
 
 	public InstructionMuh() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, SOP_CODE);
+		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 	}
 
 	@Override
-	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new CompiledInstructionMuh(parameters[1].getRegister(),
+	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
+		return new AssembledInstructionMuh(parameters[1].getRegister(),
 				parameters[2].getRegister(),
 				parameters[0].getRegister(), origin, this);
 	}
 
 	@Override
-	public CompiledInstruction compileFromCode(int instructionCode) {
-		return new CompiledInstructionMuh(instructionCode, this, this);
+	public AssembledInstruction compileFromCode(int instructionCode) {
+		return new AssembledInstructionMuh(instructionCode, this, this);
+	}
+
+	public static class SingleCycle extends SingleCycleExecution<AssembledInstructionMuh> {
+
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, AssembledInstructionMuh instruction) {
+			super(simulation, instruction);
+		}
+
+		@Override
+		public void execute() {
+			Registers set = simulation.getRegisterSet();
+			Optional<Register> rs = set.getRegister(instruction.getSourceRegister());
+			if (!rs.isPresent()) error("Source register not found.");
+			Optional<Register> rt = set.getRegister(instruction.getTargetRegister());
+			if (!rt.isPresent()) error("Target register not found.");
+			Optional<Register> rd = set.getRegister(instruction.getDestinationRegister());
+			if (!rd.isPresent()) error("Destination register not found");
+
+			long l = (long) (rs.get().getValue()) * rt.get().getValue();
+			rd.get().setValue((int) (l >> 32));
+		}
 	}
 }

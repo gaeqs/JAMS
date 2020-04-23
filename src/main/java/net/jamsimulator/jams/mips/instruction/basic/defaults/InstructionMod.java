@@ -1,13 +1,20 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionMod;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRSOPInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionMod;
+import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
+import net.jamsimulator.jams.mips.register.Register;
+import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.simulation.Simulation;
 
-public class InstructionMod extends BasicRSOPInstruction {
+import java.util.Optional;
+
+public class InstructionMod extends BasicRSOPInstruction<AssembledInstructionMod> {
 
 	public static final String NAME = "Module";
 	public static final String MNEMONIC = "mod";
@@ -20,17 +27,43 @@ public class InstructionMod extends BasicRSOPInstruction {
 
 	public InstructionMod() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, SOP_CODE);
+		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 	}
 
 	@Override
-	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new CompiledInstructionMod(parameters[1].getRegister(),
+	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
+		return new AssembledInstructionMod(parameters[1].getRegister(),
 				parameters[2].getRegister(),
 				parameters[0].getRegister(), origin, this);
 	}
 
 	@Override
-	public CompiledInstruction compileFromCode(int instructionCode) {
-		return new CompiledInstructionMod(instructionCode, this, this);
+	public AssembledInstruction compileFromCode(int instructionCode) {
+		return new AssembledInstructionMod(instructionCode, this, this);
+	}
+
+	public static class SingleCycle extends SingleCycleExecution<AssembledInstructionMod> {
+
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, AssembledInstructionMod instruction) {
+			super(simulation, instruction);
+		}
+
+		@Override
+		public void execute() {
+			Registers set = simulation.getRegisterSet();
+			Optional<Register> rs = set.getRegister(instruction.getSourceRegister());
+			if (!rs.isPresent()) error("Source register not found.");
+			Optional<Register> rt = set.getRegister(instruction.getTargetRegister());
+			if (!rt.isPresent()) error("Target register not found.");
+			Optional<Register> rd = set.getRegister(instruction.getDestinationRegister());
+			if (!rd.isPresent()) error("Destination register not found");
+
+			if (rt.get().getValue() == 0) {
+				//MIP rev 6: If the divisor in GPR rt is zero, the result value is UNPREDICTABLE.
+				rd.get().setValue(0);
+				return;
+			}
+			rd.get().setValue(rs.get().getValue() % rt.get().getValue());
+		}
 	}
 }

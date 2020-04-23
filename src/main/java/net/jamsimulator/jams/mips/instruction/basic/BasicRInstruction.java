@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.mips.instruction.basic;
 
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledRInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
@@ -8,9 +9,9 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
  * of the instruction, allowing the simulator to find this instruction based on
  * an instruction code.
  */
-public abstract class BasicRInstruction extends BasicInstruction {
+public abstract class BasicRInstruction<Inst extends AssembledInstruction> extends BasicInstruction<Inst> {
 
-	private int functionCode;
+	private final int functionCode;
 
 	/**
 	 * Creates a basic instruction using a name, a mnemonic, a parameter types array and an operation code.
@@ -30,7 +31,7 @@ public abstract class BasicRInstruction extends BasicInstruction {
 	@Override
 	public boolean match(int instructionCode) {
 		return super.match(instructionCode) &&
-				(instructionCode & CompiledRInstruction.FUNCTION_CODE_MASK) == functionCode;
+				(instructionCode & AssembledRInstruction.FUNCTION_CODE_MASK) == functionCode;
 	}
 
 	/**

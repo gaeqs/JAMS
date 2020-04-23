@@ -48,7 +48,7 @@ class AssemblerTest {
 				new MIPS32Registers(), new Mips32Memory());
 		assembler.setData(files);
 		assembler.compile();
-		Simulation simulation = assembler.createSimulation();
+		Simulation<?> simulation = assembler.createSimulation();
 
 		assertEquals(0x02508820, simulation.getMemory().getWord(simulation.getRegisterSet().getProgramCounter().getValue()));
 
@@ -57,7 +57,7 @@ class AssemblerTest {
 		System.out.println("Starting simulation");
 		Register pc = simulation.getRegisterSet().getProgramCounter();
 		while (pc.getValue() < assembler.getAssemblerData().getCurrentText()) {
-			simulation.executeNextInstruction(true);
+			simulation.nextStep();
 		}
 		System.out.println("Simulation end");
 		System.out.println("$t1: " + simulation.getRegisterSet().getRegister("t1").get().getValue());

@@ -4,7 +4,7 @@ import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAui;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -32,7 +32,7 @@ public class PseudoInstructionLuiRI extends PseudoInstruction {
 	}
 
 	@Override
-	public CompiledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
+	public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
 		Instruction basic = set.getInstruction(InstructionAui.MNEMONIC, BASIC_PARAMETER_TYPES).orElse(null);
 		if (!(basic instanceof BasicInstruction))
 			throw new AssemblerException("Basic instruction '" + InstructionAui.MNEMONIC + "' not found.");
@@ -41,6 +41,6 @@ public class PseudoInstructionLuiRI extends PseudoInstruction {
 				parameters[0], ZERO, parameters[1]
 		};
 
-		return new CompiledInstruction[]{((BasicInstruction) basic).assembleBasic(newParameters, this)};
+		return new AssembledInstruction[]{((BasicInstruction) basic).assembleBasic(newParameters, this)};
 	}
 }

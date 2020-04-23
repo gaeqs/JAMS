@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.mips.instruction.basic;
 
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledRSOPInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledRSOPInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
@@ -8,10 +9,10 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
  * of the instruction, allowing the simulator to find this instruction based on
  * an instruction code.
  */
-public abstract class BasicRSOPInstruction extends BasicInstruction {
+public abstract class BasicRSOPInstruction<Inst extends AssembledInstruction> extends BasicInstruction<Inst> {
 
-	private int functionCode;
-	private int sopCode;
+	private final int functionCode;
+	private final int sopCode;
 
 	/**
 	 * Creates a basic instruction using a name, a mnemonic, a parameter types array and an operation code.
@@ -31,8 +32,8 @@ public abstract class BasicRSOPInstruction extends BasicInstruction {
 
 	@Override
 	public boolean match(int instructionCode) {
-		int functionCode = instructionCode & CompiledRSOPInstruction.FUNCTION_CODE_MASK;
-		int sopCode = instructionCode >> CompiledRSOPInstruction.SOP_SHIFT & CompiledRSOPInstruction.SOP_MASK;
+		int functionCode = instructionCode & AssembledRSOPInstruction.FUNCTION_CODE_MASK;
+		int sopCode = instructionCode >> AssembledRSOPInstruction.SOP_SHIFT & AssembledRSOPInstruction.SOP_MASK;
 		return super.match(instructionCode) && functionCode == this.functionCode && sopCode == this.sopCode;
 	}
 

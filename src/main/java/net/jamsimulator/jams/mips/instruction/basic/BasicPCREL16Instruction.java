@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.mips.instruction.basic;
 
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledPCREL16Instruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledPCREL16Instruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
@@ -8,9 +9,9 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
  * of the instruction, allowing the simulator to find this instruction based on
  * a pc relative code.
  */
-public abstract class BasicPCREL16Instruction extends BasicInstruction {
+public abstract class BasicPCREL16Instruction<Inst extends AssembledInstruction> extends BasicInstruction<Inst> {
 
-	private int pcRelFunction;
+	private final int pcRelFunction;
 
 	/**
 	 * Creates a basic instruction using a name, a mnemonic, a parameter types array and an operation code.
@@ -30,7 +31,7 @@ public abstract class BasicPCREL16Instruction extends BasicInstruction {
 	@Override
 	public boolean match(int instructionCode) {
 		return super.match(instructionCode) &&
-				((instructionCode >> CompiledPCREL16Instruction.PCREL_SHIFT) & CompiledPCREL16Instruction.PCREL_MASK) == pcRelFunction;
+				((instructionCode >> AssembledPCREL16Instruction.PCREL_SHIFT) & AssembledPCREL16Instruction.PCREL_MASK) == pcRelFunction;
 	}
 
 	/**

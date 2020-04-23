@@ -1,13 +1,20 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionAuipc;
 import net.jamsimulator.jams.mips.instruction.basic.BasicPCREL16Instruction;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionAuipc;
+import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
+import net.jamsimulator.jams.mips.register.Register;
+import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.simulation.Simulation;
 
-public class InstructionAuipc extends BasicPCREL16Instruction {
+import java.util.Optional;
+
+public class InstructionAuipc extends BasicPCREL16Instruction<AssembledInstructionAuipc> {
 
 	public static final String NAME = "Add upper immediate to PC";
 	public static final String MNEMONIC = "auipc";
@@ -19,15 +26,33 @@ public class InstructionAuipc extends BasicPCREL16Instruction {
 
 	public InstructionAuipc() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, PCREL_CODE);
+		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 	}
 
 	@Override
-	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new CompiledInstructionAuipc(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
+	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
+		return new AssembledInstructionAuipc(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
 	}
 
 	@Override
-	public CompiledInstruction compileFromCode(int instructionCode) {
-		return new CompiledInstructionAuipc(instructionCode, this, this);
+	public AssembledInstruction compileFromCode(int instructionCode) {
+		return new AssembledInstructionAuipc(instructionCode, this, this);
+	}
+
+	public static class SingleCycle extends SingleCycleExecution<AssembledInstructionAuipc> {
+
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, AssembledInstructionAuipc instruction) {
+			super(simulation, instruction);
+		}
+
+		@Override
+		public void execute() {
+			Registers set = simulation.getRegisterSet();
+			Optional<Register> rs = set.getRegister(instruction.getSourceRegister());
+			if (!rs.isPresent()) error("Source register not found.");
+
+			int result = set.getProgramCounter().getValue() + (instruction.getImmediate() << 16);
+			rs.get().setValue(result);
+		}
 	}
 }

@@ -2,7 +2,7 @@ package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.instruction.Instruction;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
@@ -43,12 +43,12 @@ public class InstructionSnapshot {
 		}
 
 		try {
-			CompiledInstruction[] compiledInstructions = instruction.assemble(assembler.getInstructionSet(), address, compiledParameters);
+			AssembledInstruction[] assembledInstructions = instruction.assemble(assembler.getInstructionSet(), address, compiledParameters);
 
 			//Add instructions to memory
 			int relativeAddress = address;
-			for (CompiledInstruction compiledInstruction : compiledInstructions) {
-				assembler.getMemory().setWord(relativeAddress, compiledInstruction.getCode());
+			for (AssembledInstruction assembledInstruction : assembledInstructions) {
+				assembler.getMemory().setWord(relativeAddress, assembledInstruction.getCode());
 				relativeAddress += 4;
 			}
 		} catch (AssemblerException ex) {

@@ -2,7 +2,7 @@ package net.jamsimulator.jams.mips.instruction.set;
 
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.utils.Validate;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 /**
  * Represents an instruction set. An instruction set stores a collection of instruction and it's
- * used in compile time to parse the code into {@link CompiledInstruction}s.
+ * used in compile time to parse the code into {@link AssembledInstruction}s.
  * <p>
  * There may be several {@link InstructionSet} instances in the same runtime. The default one is located
  * inside the main class {@link net.jamsimulator.jams.Jams}.

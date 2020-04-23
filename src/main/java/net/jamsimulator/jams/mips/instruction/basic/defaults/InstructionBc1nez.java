@@ -1,14 +1,20 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionBc1Nez;
 import net.jamsimulator.jams.mips.instruction.basic.BasicIFPUInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionBc1eqz;
-import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionBc1nez;
+import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
+import net.jamsimulator.jams.mips.register.Register;
+import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.simulation.Simulation;
 
-public class InstructionBc1nez extends BasicIFPUInstruction {
+import java.util.Optional;
+
+public class InstructionBc1nez extends BasicIFPUInstruction<AssembledInstructionBc1Nez> {
 
 	public static final String NAME = "Branch if COP1 register bit 0 not equal to zero";
 	public static final String MNEMONIC = "bc1nez";
@@ -20,15 +26,36 @@ public class InstructionBc1nez extends BasicIFPUInstruction {
 
 	public InstructionBc1nez() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, BASE_CODE);
+		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 	}
 
 	@Override
-	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new CompiledInstructionBc1nez(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
+	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
+		return new AssembledInstructionBc1Nez(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
 	}
 
 	@Override
-	public CompiledInstruction compileFromCode(int instructionCode) {
-		return new CompiledInstructionBc1nez(instructionCode, this, this);
+	public AssembledInstruction compileFromCode(int instructionCode) {
+		return new AssembledInstructionBc1Nez(instructionCode, this, this);
+	}
+
+	public static class SingleCycle extends SingleCycleExecution<AssembledInstructionBc1Nez> {
+
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, AssembledInstructionBc1Nez instruction) {
+			super(simulation, instruction);
+		}
+
+		@Override
+		public void execute() {
+			Registers set = simulation.getRegisterSet();
+			Optional<Register> rt = set.getCoprocessor1Register(instruction.getTargetRegister());
+			if (!rt.isPresent()) error("Target register not found.");
+
+			if ((rt.get().getValue() & 1) == 0) return;
+
+			Register pc = set.getProgramCounter();
+			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
+
+		}
 	}
 }

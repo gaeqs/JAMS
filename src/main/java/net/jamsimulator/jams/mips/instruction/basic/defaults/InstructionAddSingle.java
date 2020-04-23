@@ -1,13 +1,20 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionAddSingle;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionAddSingle;
+import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
+import net.jamsimulator.jams.mips.register.Register;
+import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.simulation.Simulation;
 
-public class InstructionAddSingle extends BasicRFPUInstruction {
+import java.util.Optional;
+
+public class InstructionAddSingle extends BasicRFPUInstruction<AssembledInstructionAddSingle> {
 
 	public static final String NAME = "Addition (single)";
 	public static final String MNEMONIC = "add.s";
@@ -20,16 +27,38 @@ public class InstructionAddSingle extends BasicRFPUInstruction {
 
 	public InstructionAddSingle() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
+		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 	}
 
 	@Override
-	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new CompiledInstructionAddSingle(parameters[2].getRegister(), parameters[1].getRegister(),
+	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
+		return new AssembledInstructionAddSingle(parameters[2].getRegister(), parameters[1].getRegister(),
 				parameters[0].getRegister(), origin, this);
 	}
 
 	@Override
-	public CompiledInstruction compileFromCode(int instructionCode) {
-		return new CompiledInstructionAddSingle(instructionCode, this, this);
+	public AssembledInstruction compileFromCode(int instructionCode) {
+		return new AssembledInstructionAddSingle(instructionCode, this, this);
+	}
+
+	public static class SingleCycle extends SingleCycleExecution<AssembledInstructionAddSingle> {
+
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, AssembledInstructionAddSingle instruction) {
+			super(simulation, instruction);
+		}
+
+		@Override
+		public void execute() {
+			Registers set = simulation.getRegisterSet();
+			Optional<Register> rt = set.getCoprocessor1Register(instruction.getTargetRegister());
+			if (!rt.isPresent()) error("Target register not found.");
+			Optional<Register> rs = set.getCoprocessor1Register(instruction.getSourceRegister());
+			if (!rs.isPresent()) error("Source register not found.");
+			Optional<Register> rd = set.getCoprocessor1Register(instruction.getDestinationRegister());
+			if (!rd.isPresent()) error("Destination register not found");
+
+			float f = Float.intBitsToFloat(rt.get().getValue()) + Float.intBitsToFloat(rs.get().getValue());
+			rd.get().setValue(Float.floatToIntBits(f));
+		}
 	}
 }

@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.mips.instruction.basic;
 
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledRFPUInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
@@ -8,9 +9,9 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
  * of the instruction, allowing the simulator to find this instruction based on
  * a FMT.
  */
-public abstract class BasicRFPUInstruction extends BasicRInstruction {
+public abstract class BasicRFPUInstruction<Inst extends AssembledInstruction> extends BasicRInstruction<Inst> {
 
-	private int fmtCode;
+	private final int fmtCode;
 
 	/**
 	 * Creates a basic instruction using a name, a mnemonic, a parameter types array, an operation code,
@@ -32,7 +33,7 @@ public abstract class BasicRFPUInstruction extends BasicRInstruction {
 	@Override
 	public boolean match(int instructionCode) {
 		return super.match(instructionCode) &&
-				((instructionCode >> CompiledRFPUInstruction.FMT_SHIFT) & CompiledRFPUInstruction.FMT_MASK) == fmtCode;
+				((instructionCode >> AssembledRFPUInstruction.FMT_SHIFT) & AssembledRFPUInstruction.FMT_MASK) == fmtCode;
 	}
 
 	/**

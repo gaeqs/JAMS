@@ -5,7 +5,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAui;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionLw;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -37,7 +37,7 @@ public class PseudoInstructionLwRL extends PseudoInstruction {
 	}
 
 	@Override
-	public CompiledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
+	public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
 		//Get instructions
 		Instruction aui = set.getInstruction(InstructionAui.MNEMONIC, AUI_BASIC_PARAMETER_TYPES).orElse(null);
 		if (!(aui instanceof BasicInstruction))
@@ -61,7 +61,7 @@ public class PseudoInstructionLwRL extends PseudoInstruction {
 				parameters[0], ParameterParseResult.builder().register(1).immediate(lower).build()
 		};
 
-		return new CompiledInstruction[]{((BasicInstruction) aui).assembleBasic(auiParameters, this),
+		return new AssembledInstruction[]{((BasicInstruction) aui).assembleBasic(auiParameters, this),
 				((BasicInstruction) lw).assembleBasic(lwParameters, this)};
 	}
 }

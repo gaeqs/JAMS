@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.mips.instruction.basic;
 
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledIFPUInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledIFPUInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
@@ -8,7 +9,7 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
  * of the instruction, allowing the simulator to find this instruction based on
  * a subcode.
  */
-public abstract class BasicIFPUInstruction extends BasicInstruction {
+public abstract class BasicIFPUInstruction<Inst extends AssembledInstruction> extends BasicInstruction<Inst> {
 
 	private int subcode;
 
@@ -31,7 +32,7 @@ public abstract class BasicIFPUInstruction extends BasicInstruction {
 	@Override
 	public boolean match(int instructionCode) {
 		return super.match(instructionCode) &&
-				((instructionCode >> CompiledIFPUInstruction.BASE_REGISTER_SHIFT) & CompiledIFPUInstruction.BASE_REGISTER_MASK) == subcode;
+				((instructionCode >> AssembledIFPUInstruction.BASE_REGISTER_SHIFT) & AssembledIFPUInstruction.BASE_REGISTER_MASK) == subcode;
 	}
 
 	/**

@@ -37,11 +37,11 @@ public class TextEditorActionCompile extends Action {
 					new MIPS32Registers(), project.getMemoryBuilder().createMemory());
 			assembler.setData(Collections.singletonList(Arrays.asList(text.split("\n"))));
 			assembler.compile();
-			Simulation simulation = assembler.createSimulation();
+			Simulation<?> simulation = assembler.createSimulation();
 
 			try {
 				for (int i = 0; i < 1000; i++) {
-					simulation.executeNextInstruction(true);
+					simulation.nextStep();
 				}
 			} catch (InstructionNotFoundException ignore) {
 			}

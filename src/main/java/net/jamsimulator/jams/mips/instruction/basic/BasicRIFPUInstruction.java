@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.mips.instruction.basic;
 
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledRIFPUInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledRIFPUInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
@@ -8,9 +9,9 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
  * of the instruction, allowing the simulator to find this instruction based on
  * a subcode.
  */
-public abstract class BasicRIFPUInstruction extends BasicInstruction {
+public abstract class BasicRIFPUInstruction<Inst extends AssembledInstruction> extends BasicInstruction<Inst> {
 
-	private int subcode;
+	private final int subcode;
 
 	/**
 	 * Creates a basic instruction using a name, a mnemonic, a parameter types array, an operation code,
@@ -31,7 +32,7 @@ public abstract class BasicRIFPUInstruction extends BasicInstruction {
 	@Override
 	public boolean match(int instructionCode) {
 		return super.match(instructionCode) &&
-				((instructionCode >> CompiledRIFPUInstruction.SUBCODE_SHIFT) & CompiledRIFPUInstruction.SUBCODE_MASK) == subcode;
+				((instructionCode >> AssembledRIFPUInstruction.SUBCODE_SHIFT) & AssembledRIFPUInstruction.SUBCODE_MASK) == subcode;
 	}
 
 	/**

@@ -1,8 +1,11 @@
 package net.jamsimulator.jams.mips.instruction;
 
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAdd;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.RuntimeInstructionException;
+import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
+import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Mips32Memory;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -11,18 +14,18 @@ import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.SingleCycleSimulation;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 class GeneralInstructionTests {
 
-	static Simulation simulation = new Simulation(new InstructionSet(true, true, true),
+	static Simulation<?> simulation = new SingleCycleSimulation(SingleCycleArchitecture.INSTANCE, new InstructionSet(true, true, true),
 			new MIPS32Registers(), new Mips32Memory());
 
 	@Test
@@ -48,9 +51,16 @@ class GeneralInstructionTests {
 				ParameterParseResult.builder().register(t0.getIdentifier()).build()
 		};
 
-		CompiledInstruction[] instructions = optional.get().assemble(null, 0, parameters);
+		AssembledInstruction[] instructions = optional.get().assemble(null, 0, parameters);
 		if (instructions.length != 1) fail("Incorrect instruction.");
-		instructions[0].execute(simulation);
+
+
+		InstructionExecution<?, ?> execution = instructions[0].getBasicOrigin()
+				.generateExecution(simulation, instructions[0]).orElse(null);
+
+		assertTrue(execution instanceof SingleCycleExecution, "Execution is not a single cycle execution.");
+
+		((SingleCycleExecution<?>) execution).execute();
 		assertEquals(23, t2.getValue(), "Bad add instruction result.");
 	}
 
@@ -69,10 +79,14 @@ class GeneralInstructionTests {
 				ParameterParseResult.builder().register(t0.getIdentifier()).build()
 		};
 
-		CompiledInstruction instruction = new InstructionAdd().assembleBasic(parameters);
+		InstructionAdd add = new InstructionAdd();
+		AssembledInstruction instruction = add.assembleBasic(parameters);
+		InstructionExecution<?, ?> execution = add.generateExecution(simulation, instruction).orElse(null);
+
+		assertTrue(execution instanceof SingleCycleExecution, "Execution is not a single cycle execution.");
 
 		try {
-			instruction.execute(simulation);
+			((SingleCycleExecution<?>) execution).execute();
 			fail("Execution didn't throw an exception.");
 		} catch (RuntimeInstructionException ex) {
 			assertEquals(ex.getMessage(), "Integer overflow.", "Exception caught, but it's not an Integer Overflow exception.");

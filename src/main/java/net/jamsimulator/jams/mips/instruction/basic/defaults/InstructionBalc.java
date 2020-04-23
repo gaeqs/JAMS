@@ -1,14 +1,20 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionBalc;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionBal;
-import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionBalc;
+import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
+import net.jamsimulator.jams.mips.register.Register;
+import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.simulation.Simulation;
 
-public class InstructionBalc extends BasicInstruction {
+import java.util.Optional;
+
+public class InstructionBalc extends BasicInstruction<AssembledInstructionBalc> {
 
 	public static final String NAME = "Branch and link compact";
 	public static final String MNEMONIC = "balc";
@@ -18,15 +24,34 @@ public class InstructionBalc extends BasicInstruction {
 
 	public InstructionBalc() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
+		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 	}
 
 	@Override
-	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new CompiledInstructionBalc(origin, this, parameters[0].getImmediate());
+	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
+		return new AssembledInstructionBalc(origin, this, parameters[0].getImmediate());
 	}
 
 	@Override
-	public CompiledInstruction compileFromCode(int instructionCode) {
-		return new CompiledInstructionBalc(instructionCode, this, this);
+	public AssembledInstruction compileFromCode(int instructionCode) {
+		return new AssembledInstructionBalc(instructionCode, this, this);
+	}
+
+	public static class SingleCycle extends SingleCycleExecution<AssembledInstructionBalc> {
+
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, AssembledInstructionBalc instruction) {
+			super(simulation, instruction);
+		}
+
+		@Override
+		public void execute() {
+			Registers set = simulation.getRegisterSet();
+			Optional<Register> ra = set.getRegister(31);
+			if (!ra.isPresent()) error("Return address register not found.");
+
+			Register pc = set.getProgramCounter();
+			ra.get().setValue(pc.getValue());
+			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
+		}
 	}
 }

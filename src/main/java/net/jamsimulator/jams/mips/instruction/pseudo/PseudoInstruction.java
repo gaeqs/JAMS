@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.mips.instruction.pseudo;
 
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
@@ -58,7 +59,7 @@ public abstract class PseudoInstruction implements Instruction {
 	}
 
 	/**
-	 * Returns the amount of {@link net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction}s the
+	 * Returns the amount of {@link AssembledInstruction}s the
 	 * pseudo-instruction will compile at if the given non-compiled parameters are given to it.
 	 *
 	 * @param parameters the non-compiled parameters.

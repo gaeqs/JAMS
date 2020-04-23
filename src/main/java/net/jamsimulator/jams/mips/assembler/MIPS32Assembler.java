@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.assembler;
 
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.assembler.directive.Directive;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
@@ -10,6 +11,7 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.SingleCycleSimulation;
 import net.jamsimulator.jams.utils.LabelUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 import net.jamsimulator.jams.utils.Validate;
@@ -85,9 +87,9 @@ public class MIPS32Assembler implements Assembler {
 	}
 
 	@Override
-	public Simulation createSimulation() {
+	public Simulation<?> createSimulation() {
 		if (!compiled) throw new IllegalStateException("The program is still not compiled!");
-		Simulation simulation = new Simulation(instructionSet, registerSet.copy(), memory.copy());
+		Simulation<SingleCycleArchitecture> simulation = new SingleCycleSimulation(SingleCycleArchitecture.INSTANCE, instructionSet, registerSet.copy(), memory.copy());
 		simulation.getRegisterSet().getProgramCounter().setValue(assemblerData.getFirstText());
 		return simulation;
 	}

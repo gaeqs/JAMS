@@ -1,14 +1,21 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionBgezalc;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledI16Instruction;
-import net.jamsimulator.jams.mips.instruction.compiled.CompiledInstruction;
-import net.jamsimulator.jams.mips.instruction.compiled.defaults.CompiledInstructionBgezalc;
+import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
+import net.jamsimulator.jams.mips.register.Register;
+import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.simulation.Simulation;
 
-public class InstructionBgezalc extends BasicInstruction {
+import java.util.Optional;
+
+public class InstructionBgezalc extends BasicInstruction<AssembledInstructionBgezalc> {
 
 	public static final String NAME = "Branch and link on greater than or equal to zero compact";
 	public static final String MNEMONIC = "bgezalc";
@@ -18,22 +25,47 @@ public class InstructionBgezalc extends BasicInstruction {
 
 	public InstructionBgezalc() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
+		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 	}
 
 	@Override
-	public CompiledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new CompiledInstructionBgezalc(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
+	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
+		return new AssembledInstructionBgezalc(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
 	}
 
 	@Override
-	public CompiledInstruction compileFromCode(int instructionCode) {
-		return new CompiledInstructionBgezalc(instructionCode, this, this);
+	public AssembledInstruction compileFromCode(int instructionCode) {
+		return new AssembledInstructionBgezalc(instructionCode, this, this);
 	}
 
 	@Override
 	public boolean match(int instructionCode) {
-		int rs = instructionCode >> CompiledI16Instruction.SOURCE_REGISTER_SHIFT & CompiledI16Instruction.SOURCE_REGISTER_SHIFT;
-		int rt = instructionCode >> CompiledI16Instruction.TARGET_REGISTER_SHIFT & CompiledI16Instruction.TARGET_REGISTER_MASK;
+		int rs = instructionCode >> AssembledI16Instruction.SOURCE_REGISTER_SHIFT & AssembledI16Instruction.SOURCE_REGISTER_SHIFT;
+		int rt = instructionCode >> AssembledI16Instruction.TARGET_REGISTER_SHIFT & AssembledI16Instruction.TARGET_REGISTER_MASK;
 		return super.match(instructionCode) && rs == rt && rs != 0;
+	}
+
+
+	public static class SingleCycle extends SingleCycleExecution<AssembledInstructionBgezalc> {
+
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, AssembledInstructionBgezalc instruction) {
+			super(simulation, instruction);
+		}
+
+		@Override
+		public void execute() {
+			Registers set = simulation.getRegisterSet();
+			Optional<Register> rt = set.getRegister(instruction.getTargetRegister());
+			if (!rt.isPresent()) error("Target register not found.");
+			Optional<Register> ra = set.getRegister(31);
+			if (!ra.isPresent()) error("Return address register not found.");
+
+			if (rt.get().getValue() < 0) return;
+
+			Register pc = set.getProgramCounter();
+			ra.get().setValue(pc.getValue());
+
+			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
+		}
 	}
 }

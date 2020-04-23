@@ -43,7 +43,7 @@ public interface Assembler {
 	 * @throws IllegalStateException whether the assembler is not compiled.
 	 * @see #compile()
 	 */
-	Simulation createSimulation();
+	Simulation<?> createSimulation();
 
 	/**
 	 * Returns whether this assembler has compiled its code.
