@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.project;
 
+import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
@@ -21,6 +22,7 @@ public class MipsProject implements Project {
 	private final String name;
 	private final File folder;
 
+	private final Architecture architecture;
 	private final AssemblerBuilder assemblerBuilder;
 	private final MemoryBuilder memoryBuilder;
 	private final RegistersBuilder registersBuilder;
@@ -29,7 +31,7 @@ public class MipsProject implements Project {
 
 	private final List<File> filesToAssemble;
 
-	public MipsProject(String name, File folder, AssemblerBuilder assemblerBuilder, MemoryBuilder memoryBuilder,
+	public MipsProject(String name, File folder, Architecture architecture, AssemblerBuilder assemblerBuilder, MemoryBuilder memoryBuilder,
 					   RegistersBuilder registersBuilder, DirectiveSet directiveSet, InstructionSet instructionSet) {
 		Validate.notNull(name, "Name cannot be null!");
 		Validate.notNull(folder, "Folder cannot be null!");
@@ -43,6 +45,7 @@ public class MipsProject implements Project {
 
 		this.name = name;
 		this.folder = folder;
+		this.architecture = architecture;
 		this.assemblerBuilder = assemblerBuilder;
 		this.memoryBuilder = memoryBuilder;
 		this.registersBuilder = registersBuilder;
@@ -67,6 +70,10 @@ public class MipsProject implements Project {
 		return filesToAssemble;
 	}
 
+	public Architecture getArchitecture() {
+		return architecture;
+	}
+
 	public AssemblerBuilder getAssemblerBuilder() {
 		return assemblerBuilder;
 	}
@@ -88,7 +95,7 @@ public class MipsProject implements Project {
 	}
 
 	@Override
-	public Simulation assemble() throws IOException {
+	public Simulation<?> assemble() throws IOException {
 		Assembler assembler = assemblerBuilder.createAssembler(directiveSet, instructionSet,
 				new MIPS32Registers(), memoryBuilder.createMemory());
 
@@ -100,6 +107,6 @@ public class MipsProject implements Project {
 
 		assembler.setData(files);
 		assembler.compile();
-		return assembler.createSimulation();
+		return assembler.createSimulation(architecture);
 	}
 }

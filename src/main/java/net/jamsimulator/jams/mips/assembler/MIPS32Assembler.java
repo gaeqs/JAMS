@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.assembler;
 
+import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.assembler.directive.Directive;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
@@ -87,9 +88,9 @@ public class MIPS32Assembler implements Assembler {
 	}
 
 	@Override
-	public Simulation<?> createSimulation() {
+	public <Arch extends Architecture> Simulation<Arch> createSimulation(Arch architecture) {
 		if (!compiled) throw new IllegalStateException("The program is still not compiled!");
-		Simulation<SingleCycleArchitecture> simulation = new SingleCycleSimulation(SingleCycleArchitecture.INSTANCE, instructionSet, registerSet.copy(), memory.copy());
+		Simulation<Arch> simulation = (Simulation<Arch>) architecture.createSimulation(instructionSet, registerSet.copy(), memory.copy());
 		simulation.getRegisterSet().getProgramCounter().setValue(assemblerData.getFirstText());
 		return simulation;
 	}

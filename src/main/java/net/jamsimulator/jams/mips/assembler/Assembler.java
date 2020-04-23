@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.assembler;
 
+import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
@@ -27,9 +28,9 @@ public interface Assembler {
 	/**
 	 * Compiles the program.
 	 *
-	 * @throws AssemblerException if any compilation exception occurs.
-	 * @throws IllegalStateException                                           if the assembler has already compiled its code
-	 *                                                                         or if the assembler has no data.
+	 * @throws AssemblerException    if any compilation exception occurs.
+	 * @throws IllegalStateException if the assembler has already compiled its code
+	 *                               or if the assembler has no data.
 	 */
 	void compile();
 
@@ -39,11 +40,13 @@ public interface Assembler {
 	 * The {@link Simulation}'s {@link Memory} and {@link Registers} is a copy of this assembler's data.
 	 * Two {@link Simulation}s created by this method will have different memories and registers.
 	 *
+	 * @param architecture the {@link Architecture}.
+	 * @param <Arch>       the architecture type.
 	 * @return the new {@link Simulation}.
 	 * @throws IllegalStateException whether the assembler is not compiled.
 	 * @see #compile()
 	 */
-	Simulation<?> createSimulation();
+	<Arch extends Architecture> Simulation<Arch> createSimulation(Arch architecture);
 
 	/**
 	 * Returns whether this assembler has compiled its code.
@@ -106,7 +109,7 @@ public interface Assembler {
 	 * @param executingLine the line the executes this code. Used for exceptions.
 	 * @param label         the label.
 	 * @throws AssemblerException if two local labels
-	 *                                                                         in different files but with the same name as the given label exists.
+	 *                            in different files but with the same name as the given label exists.
 	 */
 	void setAsGlobalLabel(int executingLine, String label);
 
@@ -117,7 +120,7 @@ public interface Assembler {
 	 * @param label         the label.
 	 * @param value         the label value.
 	 * @throws AssemblerException if the global label or a local label with the
-	 *                                                                         same name already exist.
+	 *                            same name already exist.
 	 */
 	void addGlobalLabel(int executingLine, String label, int value);
 }

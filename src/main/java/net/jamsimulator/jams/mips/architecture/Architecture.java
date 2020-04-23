@@ -1,5 +1,8 @@
 package net.jamsimulator.jams.mips.architecture;
 
+import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.memory.Memory;
+import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
 /**
@@ -25,5 +28,13 @@ public abstract class Architecture {
 		return name;
 	}
 
-	public abstract Simulation<Architecture> createSimulation();
+	/**
+	 * Creates a simulation of this architecture using the given parameters.
+	 *
+	 * @param instructionSet the {@link InstructionSet} to use.
+	 * @param registers      the {@link Registers}.
+	 * @param memory         the {@link Memory}.
+	 * @return the {@link Simulation}.
+	 */
+	public abstract Simulation<? extends Architecture> createSimulation(InstructionSet instructionSet, Registers registers, Memory memory);
 }

@@ -2,6 +2,7 @@ package net.jamsimulator.jams.gui.project;
 
 import javafx.scene.control.TabPane;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.project.MipsProject;
@@ -67,6 +68,7 @@ public class ProjectsTabPane extends TabPane {
 		if (!file.exists()) file.mkdirs();
 
 		MipsProject project = new MipsProject("TEST", file,
+				SingleCycleArchitecture.INSTANCE,
 				Jams.getAssemblerBuilderManager().get("MIPS32").get(),
 				Jams.getMemoryBuilderManager().get("MIPS32").get(),
 				Jams.getRegistersBuilderManager().get("MIPS32").get(),

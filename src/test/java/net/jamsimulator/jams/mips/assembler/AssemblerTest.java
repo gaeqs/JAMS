@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.assembler;
 
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Mips32Memory;
@@ -48,7 +49,7 @@ class AssemblerTest {
 				new MIPS32Registers(), new Mips32Memory());
 		assembler.setData(files);
 		assembler.compile();
-		Simulation<?> simulation = assembler.createSimulation();
+		Simulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE);
 
 		assertEquals(0x02508820, simulation.getMemory().getWord(simulation.getRegisterSet().getProgramCounter().getValue()));
 

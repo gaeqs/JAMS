@@ -20,9 +20,11 @@ public class Jams {
 	private static LanguageManager languageManager;
 	private static FileTypeManager fileTypeManager;
 
+	private static ArchitectureManager architectureManager;
 	private static AssemblerBuilderManager assemblerBuilderManager;
 	private static MemoryBuilderManager memoryBuilderManager;
 	private static RegistersBuilderManager registersBuilderManager;
+
 	private static InstructionSet defaultInstructionSet;
 	private static DirectiveSet defaultDirectiveSet;
 
@@ -36,11 +38,13 @@ public class Jams {
 		languageManager = LanguageManager.INSTANCE;
 		fileTypeManager = FileTypeManager.INSTANCE;
 
-		defaultInstructionSet = new InstructionSet(true, true, true);
-		defaultDirectiveSet = new DirectiveSet(true, true);
+		architectureManager = ArchitectureManager.INSTANCE;
 		assemblerBuilderManager = AssemblerBuilderManager.INSTANCE;
 		memoryBuilderManager = MemoryBuilderManager.INSTANCE;
 		registersBuilderManager = RegistersBuilderManager.INSTANCE;
+
+		defaultInstructionSet = new InstructionSet(true, true, true);
+		defaultDirectiveSet = new DirectiveSet(true, true);
 		JamsApplication.main(args);
 	}
 
@@ -78,6 +82,15 @@ public class Jams {
 	 */
 	public static FileTypeManager getFileTypeManager() {
 		return fileTypeManager;
+	}
+
+	/**
+	 * Returns the {@link ArchitectureManager}.
+	 *
+	 * @return the {@link ArchitectureManager}.
+	 */
+	public static ArchitectureManager getArchitectureManager() {
+		return architectureManager;
 	}
 
 	/**
