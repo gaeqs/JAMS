@@ -22,21 +22,14 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.project;
+package net.jamsimulator.jams.gui.project;
 
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import javafx.scene.control.TabPane;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+public class ProjectTabPane extends TabPane {
 
-public interface Project {
-
-
-	String getName();
-
-	List<File> getFilesToAssemble();
-
-	Simulation<?> assemble() throws IOException;
+	public void ProjectTabPane () {
+		getStyleClass().add("project-tab-pane");
+	}
 
 }

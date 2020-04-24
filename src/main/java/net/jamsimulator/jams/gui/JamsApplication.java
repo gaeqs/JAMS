@@ -36,7 +36,7 @@ import net.jamsimulator.jams.gui.font.FontLoader;
 import net.jamsimulator.jams.gui.image.icon.IconManager;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
 import net.jamsimulator.jams.gui.main.MainScene;
-import net.jamsimulator.jams.gui.project.ProjectsTabPane;
+import net.jamsimulator.jams.gui.project.ProjectListTabPane;
 import net.jamsimulator.jams.manager.ActionManager;
 import net.jamsimulator.jams.manager.ThemeManager;
 
@@ -123,12 +123,12 @@ public class JamsApplication extends Application {
 	}
 
 	/**
-	 * Returns the {@link ProjectsTabPane}.
+	 * Returns the {@link ProjectListTabPane}.
 	 *
-	 * @return the {@link ProjectsTabPane}.
+	 * @return the {@link ProjectListTabPane}.
 	 */
-	public static ProjectsTabPane getProjectsTabPane() {
-		return mainAnchorPane.getProjectsTabPane();
+	public static ProjectListTabPane getProjectsTabPane() {
+		return mainAnchorPane.getProjectListTabPane();
 	}
 
 	/**

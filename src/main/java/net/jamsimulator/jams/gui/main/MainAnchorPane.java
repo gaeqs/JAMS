@@ -26,17 +26,17 @@ package net.jamsimulator.jams.gui.main;
 
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.AnchorPane;
-import net.jamsimulator.jams.gui.project.ProjectsTabPane;
+import net.jamsimulator.jams.gui.project.ProjectListTabPane;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
 /**
  * This is the main pane of JAMS's main window.
- * It contains the top {@link MenuBar} and the {@link ProjectsTabPane}.
+ * It contains the top {@link MenuBar} and the {@link ProjectListTabPane}.
  */
 public class MainAnchorPane extends AnchorPane {
 
 	private MenuBar topMenuBar;
-	private ProjectsTabPane projectsTabPane;
+	private ProjectListTabPane projectListTabPane;
 
 	/**
 	 * Creates the main anchor pane.
@@ -57,12 +57,12 @@ public class MainAnchorPane extends AnchorPane {
 	}
 
 	/**
-	 * Returns the {@link ProjectsTabPane}.
+	 * Returns the {@link ProjectListTabPane}.
 	 *
-	 * @return the {@link ProjectsTabPane}.
+	 * @return the {@link ProjectListTabPane}.
 	 */
-	public ProjectsTabPane getProjectsTabPane() {
-		return projectsTabPane;
+	public ProjectListTabPane getProjectListTabPane() {
+		return projectListTabPane;
 	}
 
 	private void generateTopMenuBar() {
@@ -72,8 +72,8 @@ public class MainAnchorPane extends AnchorPane {
 	}
 
 	private void generateProjectsTabPane() {
-		projectsTabPane = new ProjectsTabPane();
-		getChildren().add(projectsTabPane);
-		AnchorUtils.setAnchor(projectsTabPane, 23, 0, 0, 0);
+		projectListTabPane = new ProjectListTabPane();
+		getChildren().add(projectListTabPane);
+		AnchorUtils.setAnchor(projectListTabPane, 23, 0, 0, 0);
 	}
 }

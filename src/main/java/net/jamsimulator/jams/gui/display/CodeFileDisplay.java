@@ -225,14 +225,12 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegi
 			if (event.isControlDown()) {
 				double current = zoom.getZoom().getX();
 				if (event.getDeltaY() < 0) {
-					if(current <= 0.4) return;
+					if (current <= 0.4) return;
 					zoom.getZoom().setX(current - 0.2);
 					zoom.getZoom().setY(current - 0.2);
-					zoom.getZoom().setZ(current - 0.2);
 				} else {
 					zoom.getZoom().setX(current + 0.2);
 					zoom.getZoom().setY(current + 0.2);
-					zoom.getZoom().setZ(current + 0.2);
 				}
 				event.consume();
 			}
@@ -240,7 +238,7 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegi
 
 		//RESET
 		addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-			if(event.isControlDown() && event.getButton() == MouseButton.MIDDLE) {
+ 			if(event.isControlDown() && event.getButton() == MouseButton.MIDDLE) {
 				zoom.getZoom().setX(1);
 				zoom.getZoom().setY(1);
 				zoom.getZoom().setZ(1);

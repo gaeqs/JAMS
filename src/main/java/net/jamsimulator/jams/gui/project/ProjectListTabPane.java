@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.project;
 
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
@@ -33,6 +34,7 @@ import net.jamsimulator.jams.project.MipsProject;
 import net.jamsimulator.jams.project.Project;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,14 +42,25 @@ import java.util.stream.Collectors;
  * Represents the projects' tab pane.
  * Projects' tabs are stored here.
  */
-public class ProjectsTabPane extends TabPane {
+public class ProjectListTabPane extends TabPane {
 
 	/**
 	 * Creates the projects' main pane.
 	 */
-	public ProjectsTabPane() {
+	public ProjectListTabPane() {
 		setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
 		generateDebugProject();
+	}
+
+	/**
+	 * Returns the focused {@link ProjectTab} of this tab pane, if present.
+	 *
+	 * @return the {@link ProjectTab}, if present.
+	 */
+	public Optional<ProjectTab> getFocusedProject() {
+		Tab tab = selectionModelProperty().getValue().getSelectedItem();
+		if (!(tab instanceof ProjectTab)) return Optional.empty();
+		return Optional.of((ProjectTab) tab);
 	}
 
 	/**

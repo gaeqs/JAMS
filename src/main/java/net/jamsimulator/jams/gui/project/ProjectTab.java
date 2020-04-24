@@ -43,12 +43,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a folder project's tab. This must be used by {@link MainAnchorPane#getProjectsTabPane()}
+ * Represents a folder project's tab. This must be used by {@link MainAnchorPane#getProjectListTabPane()}
  */
 public class ProjectTab extends Tab {
 
 	private final MipsProject project;
-	private final TabPane projectTabPane;
+	private final ProjectTabPane projectTabPane;
 
 	private final List<EventHandler<Event>> closeListeners;
 
@@ -70,8 +70,7 @@ public class ProjectTab extends Tab {
 		AnchorUtils.setAnchor(separator, 0, -1, 0, 0);
 		pane.getChildren().add(separator);
 
-		projectTabPane = new TabPane();
-		projectTabPane.getStyleClass().add("project-tab-pane");
+		projectTabPane = new ProjectTabPane();
 		AnchorUtils.setAnchor(projectTabPane, 1, 0, 0, 0);
 		pane.getChildren().add(projectTabPane);
 
