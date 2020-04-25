@@ -25,10 +25,13 @@
 package net.jamsimulator.jams.gui.project;
 
 import javafx.scene.control.TabPane;
+import net.jamsimulator.jams.gui.main.WorkingPane;
 
 public class ProjectTabPane extends TabPane {
 
-	public void ProjectTabPane () {
+	private WorkingPane workingPane;
+
+	public ProjectTabPane () {
 		getStyleClass().add("project-tab-pane");
 	}
 
