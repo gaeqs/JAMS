@@ -30,8 +30,8 @@ import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
-import net.jamsimulator.jams.project.MipsProject;
 import net.jamsimulator.jams.project.Project;
+import net.jamsimulator.jams.project.mips.MipsProject;
 
 import java.io.File;
 import java.util.Optional;
@@ -71,6 +71,13 @@ public class ProjectListTabPane extends TabPane {
 	public Set<ProjectTab> getProjects() {
 		return getTabs().stream().filter(target -> target instanceof ProjectTab)
 				.map(target -> (ProjectTab) target).collect(Collectors.toSet());
+	}
+
+	public Optional<ProjectTab> getProjectTab(Project project) {
+		return getTabs().stream()
+				.filter(target -> target instanceof ProjectTab && ((ProjectTab) target).getProject().equals(project))
+				.map(target -> (ProjectTab) target)
+				.findAny();
 	}
 
 	/**

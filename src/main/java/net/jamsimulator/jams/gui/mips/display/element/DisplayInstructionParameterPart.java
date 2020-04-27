@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.mips.display.element;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
-import net.jamsimulator.jams.project.MipsProject;
+import net.jamsimulator.jams.project.mips.MipsProject;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -75,11 +75,6 @@ public class DisplayInstructionParameterPart extends MipsCodeElement {
 
 	@Override
 	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
-
-		if (type == InstructionParameterPartType.LABEL || type == InstructionParameterPartType.GLOBAL_LABEL) {
-			type = elements.getGlobalLabels().contains(text) ? InstructionParameterPartType.GLOBAL_LABEL : InstructionParameterPartType.LABEL;
-		}
-
 		errors.clear();
 		if (type == InstructionParameterPartType.LABEL || type == InstructionParameterPartType.GLOBAL_LABEL) {
 			if (!elements.hasLabel(text)) {
@@ -89,31 +84,21 @@ public class DisplayInstructionParameterPart extends MipsCodeElement {
 		}
 	}
 
-	@Override
-	public boolean searchLabelErrors(List<String> labels, List<String> fileGlobalLabels) {
-
+	public boolean searchLabelErrors(List<String> labels, List<String> globalLabels) {
 		if (type != InstructionParameterPartType.LABEL && type != InstructionParameterPartType.GLOBAL_LABEL)
 			return false;
 
+		boolean inGlobal = globalLabels.contains(text);
+		boolean changed = type == InstructionParameterPartType.GLOBAL_LABEL != inGlobal;
+		type = inGlobal ? InstructionParameterPartType.GLOBAL_LABEL : InstructionParameterPartType.LABEL;
 
-		boolean isNowGlobal = fileGlobalLabels.contains(text);
-		boolean hasGlobalChanged = type != (isNowGlobal ? InstructionParameterPartType.GLOBAL_LABEL : InstructionParameterPartType.LABEL);
-		type = isNowGlobal ? InstructionParameterPartType.GLOBAL_LABEL : InstructionParameterPartType.LABEL;
-
-		if (labels.contains(text)) {
-			if (!errors.contains(MipsDisplayError.LABEL_NOT_FOUND)) {
-				if (hasErrors()) type = InstructionParameterPartType.LABEL;
-				return hasGlobalChanged;
-			}
+		if (inGlobal || labels.contains(text)) {
+			if (!errors.contains(MipsDisplayError.LABEL_NOT_FOUND)) return changed;
 			errors.remove(MipsDisplayError.LABEL_NOT_FOUND);
 		} else {
-			if (errors.contains(MipsDisplayError.LABEL_NOT_FOUND)) {
-				if (hasErrors()) type = InstructionParameterPartType.LABEL;
-				return hasGlobalChanged;
-			}
+			if (errors.contains(MipsDisplayError.LABEL_NOT_FOUND)) return changed;
 			errors.add(MipsDisplayError.LABEL_NOT_FOUND);
 		}
-		if (hasErrors()) type = InstructionParameterPartType.LABEL;
 		return true;
 	}
 

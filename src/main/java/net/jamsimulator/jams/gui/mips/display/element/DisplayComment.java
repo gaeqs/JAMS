@@ -46,11 +46,6 @@ public class DisplayComment extends MipsCodeElement {
 	}
 
 	@Override
-	public boolean searchLabelErrors(List<String> labels, List<String> fileGlobalLabels) {
-		return false;
-	}
-
-	@Override
 	public void populatePopup(VBox popup) {
 		populatePopupWithErrors(popup);
 	}

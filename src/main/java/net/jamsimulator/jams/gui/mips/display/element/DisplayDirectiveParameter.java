@@ -25,8 +25,8 @@
 package net.jamsimulator.jams.gui.mips.display.element;
 
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
 import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
 import net.jamsimulator.jams.utils.NumericUtils;
 
 import java.util.Arrays;
@@ -71,10 +71,9 @@ public class DisplayDirectiveParameter extends MipsCodeElement {
 		}
 	}
 
-	@Override
-	public boolean searchLabelErrors(List<String> labels, List<String> fileGlobalLabels) {
+	public boolean searchLabelErrors(List<String> labels, List<String> globalLabels) {
 		if (string || NumericUtils.isInteger(text)) return false;
-		if (labels.contains(text)) {
+		if (labels.contains(text) || globalLabels.contains(text)) {
 			if (!errors.contains(MipsDisplayError.LABEL_NOT_FOUND)) return false;
 			errors.remove(MipsDisplayError.LABEL_NOT_FOUND);
 		} else {

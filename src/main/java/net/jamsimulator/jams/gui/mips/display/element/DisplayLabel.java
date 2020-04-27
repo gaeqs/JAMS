@@ -77,22 +77,38 @@ public class DisplayLabel extends MipsCodeElement {
 		}
 	}
 
-	@Override
-	public boolean searchLabelErrors(List<String> labels, List<String> fileGlobalLabels) {
+	/**
+	 * Searches for label error inside this element.
+	 *
+	 * @param labels       the labels declared in the file.
+	 * @param globalLabels the global labels.
+	 * @return whether the errors have been modified.
+	 */
+	public boolean searchLabelErrors(List<String> labels, List<String> globalLabels) {
 		String label = getLabel();
 
-		boolean isNowGlobal = fileGlobalLabels.contains(label);
-		boolean hasGlobalChanged = isNowGlobal != global;
-		global = isNowGlobal;
+		boolean changed = false;
 
 		if (labels.stream().filter(target -> target.equals(label)).count() > 1) {
-			if (errors.contains(MipsDisplayError.DUPLICATE_LABEL)) return hasGlobalChanged;
-			errors.add(MipsDisplayError.DUPLICATE_LABEL);
+			if (!errors.contains(MipsDisplayError.DUPLICATE_LABEL)) {
+				changed = errors.add(MipsDisplayError.DUPLICATE_LABEL);
+			}
 		} else {
-			if (!errors.contains(MipsDisplayError.DUPLICATE_LABEL)) return hasGlobalChanged;
-			errors.remove(MipsDisplayError.DUPLICATE_LABEL);
+			if (errors.contains(MipsDisplayError.DUPLICATE_LABEL)) {
+				changed = errors.remove(MipsDisplayError.DUPLICATE_LABEL);
+			}
 		}
-		return true;
+
+		if (globalLabels.stream().filter(target -> target.equals(label)).count() > 1) {
+			if (!errors.contains(MipsDisplayError.DUPLICATE_GLOBAL_LABEL)) {
+				changed = errors.add(MipsDisplayError.DUPLICATE_GLOBAL_LABEL);
+			}
+		} else {
+			if (errors.contains(MipsDisplayError.DUPLICATE_GLOBAL_LABEL)) {
+				changed = errors.remove(MipsDisplayError.DUPLICATE_GLOBAL_LABEL);
+			}
+		}
+		return changed;
 	}
 
 	@Override
@@ -108,5 +124,12 @@ public class DisplayLabel extends MipsCodeElement {
 			String message = language.getOrDefault("EDITOR_MIPS_ERROR_" + target);
 			popup.getChildren().add(new Label(message.replace("{TEXT}", getLabel())));
 		});
+	}
+
+	public boolean checkGlobalLabelsChanges(List<String> fileGlobalLabels) {
+		boolean isNowGlobal = fileGlobalLabels.contains(getLabel());
+		boolean hasGlobalChanged = isNowGlobal != global;
+		global = isNowGlobal;
+		return hasGlobalChanged;
 	}
 }

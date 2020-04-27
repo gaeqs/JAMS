@@ -263,13 +263,18 @@ public class MipsLine {
 	 * @param labels the labels declared in the file.
 	 * @return whether the line errors have been modified.
 	 */
-	public boolean searchLabelErrors(List<String> labels, List<String> fileGlobalLabels) {
-		boolean updated = false;
-		for (MipsCodeElement element : getSortedElements()) {
-			updated |= element.searchLabelErrors(labels, fileGlobalLabels);
-		}
+	public boolean searchLabelErrors(List<String> labels, List<String> globalLabels) {
+		boolean updated = label != null && label.searchLabelErrors(labels, globalLabels);
+		updated |= directive != null && directive.searchLabelErrors(labels, globalLabels);
+		updated |= instruction != null && instruction.searchLabelErrors(labels, globalLabels);
 		return updated;
 	}
+
+
+	public boolean checkGlobalLabelsChanges(List<String> fileGlobalLabels) {
+		return label != null && label.checkGlobalLabelsChanges(fileGlobalLabels);
+	}
+
 
 	public void appendReformattedLine(StringBuilder builder) {
 		if (label != null) {
@@ -292,7 +297,8 @@ public class MipsLine {
 		}
 	}
 
-	private int styleElement(StyleSpansBuilder<Collection<String>> spansBuilder, MipsCodeElement element, int lastEnd) {
+	private int styleElement(StyleSpansBuilder<Collection<String>> spansBuilder, MipsCodeElement element,
+							 int lastEnd) {
 		if (element.getStartIndex() != lastEnd) {
 			spansBuilder.add(Collections.emptyList(), element.getStartIndex() - lastEnd);
 		}

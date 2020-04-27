@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.project;
+package net.jamsimulator.jams.project.mips;
 
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.assembler.Assembler;
@@ -33,6 +33,7 @@ import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
@@ -53,7 +54,7 @@ public class MipsProject implements Project {
 	private final DirectiveSet directiveSet;
 	private final InstructionSet instructionSet;
 
-	private final List<File> filesToAssemble;
+	private final MipsFilesToAssemble filesToAssemble;
 
 	public MipsProject(String name, File folder, Architecture architecture, AssemblerBuilder assemblerBuilder, MemoryBuilder memoryBuilder,
 					   RegistersBuilder registersBuilder, DirectiveSet directiveSet, InstructionSet instructionSet) {
@@ -76,7 +77,7 @@ public class MipsProject implements Project {
 		this.directiveSet = directiveSet;
 		this.instructionSet = instructionSet;
 
-		filesToAssemble = new ArrayList<>();
+		filesToAssemble = new MipsFilesToAssemble(this);
 	}
 
 
@@ -89,8 +90,8 @@ public class MipsProject implements Project {
 		return folder;
 	}
 
-	@Override
-	public List<File> getFilesToAssemble() {
+
+	public MipsFilesToAssemble getFilesToAssemble() {
 		return filesToAssemble;
 	}
 
@@ -125,7 +126,7 @@ public class MipsProject implements Project {
 
 		List<List<String>> files = new ArrayList<>();
 
-		for (File target : filesToAssemble) {
+		for (File target : filesToAssemble.getFiles()) {
 			files.add(Files.readAllLines(target.toPath()));
 		}
 

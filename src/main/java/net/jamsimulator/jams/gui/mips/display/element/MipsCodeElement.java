@@ -138,15 +138,6 @@ public abstract class MipsCodeElement {
 	public abstract void searchErrors(WorkingPane pane, MipsFileElements elements);
 
 	/**
-	 * Searches for label error inside this element.
-	 *
-	 * @param labels           the labels declared in the file.
-	 * @param fileGlobalLabels the labels that this file has declared as global labels. These labels may not exist.
-	 * @return whether the errors have been modified.
-	 */
-	public abstract boolean searchLabelErrors(List<String> labels, List<String> fileGlobalLabels);
-
-	/**
 	 * Populates the given popup with the errors inside this element.
 	 *
 	 * @param popup the {@link VBox} inside the popup.

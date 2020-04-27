@@ -25,10 +25,11 @@
 package net.jamsimulator.jams.gui.mips.display.element;
 
 import net.jamsimulator.jams.gui.main.WorkingPane;
-import net.jamsimulator.jams.project.MipsProject;
+import net.jamsimulator.jams.project.mips.MipsProject;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.CodeArea;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,8 @@ import java.util.stream.Collectors;
  * Represents a collection of assembly elements within an {@link net.jamsimulator.jams.mips.assembler.AssemblingFile}.
  */
 public class MipsFileElements {
+
+	private final File file;
 
 	private final MipsProject project;
 	private final List<MipsLine> lines;
@@ -46,7 +49,8 @@ public class MipsFileElements {
 	 * Creates an empty element collection.
 	 * To populate it use {@link #refreshAll(String, WorkingPane)}.
 	 */
-	public MipsFileElements(MipsProject project) {
+	public MipsFileElements(File file, MipsProject project) {
+		this.file = file;
 		this.project = project;
 		this.lines = new ArrayList<>();
 		this.labels = new LinkedList<>();
@@ -81,12 +85,17 @@ public class MipsFileElements {
 	}
 
 	/**
-	 * Returns all global labels of the represented file.
+	 * Returns all global labels of the represented file. These labels may not exist.
+	 * To get all existing global labels use {@link List #getExistingGlobalLabels}.
 	 *
 	 * @return all global labels.
 	 */
 	public List<String> getGlobalLabels() {
 		return globalLabels;
+	}
+
+	public List<String> getExistingGlobalLabels() {
+		return globalLabels.stream().filter(labels::contains).collect(Collectors.toList());
 	}
 
 	/**
@@ -123,8 +132,9 @@ public class MipsFileElements {
 	 * If the line is not removed from the editor too the execution of this method will result on a buggy editor!
 	 *
 	 * @param lineIndex the absolute index.
+	 * @return whether a global labels refresh is required.
 	 */
-	public void removeLine(int lineIndex) {
+	public boolean removeLine(int lineIndex) {
 		if (lineIndex < 0 || lineIndex >= lines.size()) throw new IndexOutOfBoundsException("Index out of bounds");
 		MipsLine line = lines.remove(lineIndex);
 		line.getLabel().ifPresent(label -> labels.remove(label.getLabel()));
@@ -136,6 +146,10 @@ public class MipsFileElements {
 			line = lines.get(i);
 			line.setStart(line.getStart() - length);
 		}
+
+		//Refresh if any global label has changed.
+		return line.getDirective().map(DisplayDirective::isGlobalLabelsParameter).orElse(false) ||
+				line.getLabel().map(DisplayLabel::isGlobal).orElse(false);
 	}
 
 	/**
@@ -146,8 +160,9 @@ public class MipsFileElements {
 	 *
 	 * @param lineIndex the absolute index.
 	 * @param line      the line to remove.
+	 * @return whether a global labels refresh is required.
 	 */
-	public void addLine(int lineIndex, String line) {
+	public boolean addLine(int lineIndex, String line) {
 		if (lineIndex < 0 || lineIndex > lines.size()) throw new IndexOutOfBoundsException("Index out of bounds");
 		if (line.contains("\n") || line.contains("\r")) throw new IllegalArgumentException("Invalid line!");
 		int start = 0;
@@ -167,6 +182,13 @@ public class MipsFileElements {
 			mipsLine = lines.get(i);
 			mipsLine.setStart(mipsLine.getStart() + length);
 		}
+
+		//Check if new label is a global parameter.
+		mipsLine.getLabel().ifPresent(target -> target.checkGlobalLabelsChanges(globalLabels));
+
+		//Refresh if any global label has changed.
+		return mipsLine.getDirective().map(DisplayDirective::isGlobalLabelsParameter).orElse(false) ||
+				mipsLine.getLabel().map(DisplayLabel::isGlobal).orElse(false);
 	}
 
 	/**
@@ -177,8 +199,9 @@ public class MipsFileElements {
 	 *
 	 * @param lineIndex the absolute index.
 	 * @param line      the line to edit.
+	 * @return whether a global labels refresh is required.
 	 */
-	public void editLine(int lineIndex, String line) {
+	public boolean editLine(int lineIndex, String line) {
 		if (lineIndex < 0 || lineIndex >= lines.size()) throw new IndexOutOfBoundsException("Index out of bounds");
 		if (line.contains("\n") || line.contains("\r")) throw new IllegalArgumentException("Invalid line!");
 		MipsLine old = lines.get(lineIndex);
@@ -197,6 +220,16 @@ public class MipsFileElements {
 			mipsLine = lines.get(i);
 			mipsLine.setStart(mipsLine.getStart() + difference);
 		}
+
+
+		//Check if new label is a global parameter.
+		mipsLine.getLabel().ifPresent(target -> target.checkGlobalLabelsChanges(globalLabels));
+
+		//Refresh if any global label has changed.
+		return old.getDirective().map(DisplayDirective::isGlobalLabelsParameter).orElse(false) ||
+				mipsLine.getDirective().map(DisplayDirective::isGlobalLabelsParameter).orElse(false) ||
+				old.getLabel().map(DisplayLabel::isGlobal).orElse(false) ||
+				mipsLine.getLabel().map(DisplayLabel::isGlobal).orElse(false);
 	}
 
 	/**
@@ -261,7 +294,10 @@ public class MipsFileElements {
 
 		//Checks for errors.
 		refreshLabels();
-		searchAllErrors(workingPane);
+
+		if (workingPane != null) {
+			searchAllErrors(workingPane);
+		}
 	}
 
 	/**
@@ -313,6 +349,27 @@ public class MipsFileElements {
 				.filter(DisplayDirective::isGlobalLabelsParameter)
 				.ifPresent(directive -> directive.getParameters().forEach(label -> globalLabels.add(label.text))));
 		lines.forEach(line -> line.getLabel().ifPresent(label -> labels.add(label.getLabel())));
+	}
+
+
+	public List<Integer> refreshLabelsChanges() {
+
+		List<String> globalLabels;
+		if (project == null || !project.getFilesToAssemble().getFiles().contains(file)) {
+			globalLabels = this.globalLabels;
+		} else {
+			globalLabels = project.getFilesToAssemble().getGlobalLabels();
+		}
+
+		List<Integer> updated = new ArrayList<>();
+
+		Iterator<MipsLine> iterator = lines.iterator();
+		int i = 0;
+		while (iterator.hasNext()) {
+			if (iterator.next().checkGlobalLabelsChanges(globalLabels)) updated.add(i);
+			i++;
+		}
+		return updated;
 	}
 
 	/**

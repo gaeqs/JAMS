@@ -43,6 +43,10 @@ public enum MipsDisplayError {
 	 * Used when a label is duplicated.
 	 */
 	DUPLICATE_LABEL,
+	/**
+	 * Used when a global label is duplicated.
+	 */
+	DUPLICATE_GLOBAL_LABEL,
 
 	//DIRECTIVES
 	/**

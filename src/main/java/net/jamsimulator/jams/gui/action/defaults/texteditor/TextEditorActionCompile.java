@@ -35,7 +35,7 @@ import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.project.MipsProject;
+import net.jamsimulator.jams.project.mips.MipsProject;
 
 import java.util.Arrays;
 import java.util.Collections;

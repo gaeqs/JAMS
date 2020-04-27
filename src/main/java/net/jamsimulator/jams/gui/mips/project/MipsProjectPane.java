@@ -36,7 +36,7 @@ import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.sidebar.SidebarButton;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.project.MipsProject;
+import net.jamsimulator.jams.project.mips.MipsProject;
 
 import java.io.File;
 

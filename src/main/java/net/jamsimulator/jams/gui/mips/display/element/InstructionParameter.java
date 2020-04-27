@@ -66,4 +66,12 @@ public class InstructionParameter {
 		return types;
 	}
 
+	public boolean searchLabelErrors(List<String> labels, List<String> globalLabels) {
+		boolean updated = false;
+
+		for (DisplayInstructionParameterPart part : parts) {
+			updated |= part.searchLabelErrors(labels, globalLabels);
+		}
+		return updated;
+	}
 }

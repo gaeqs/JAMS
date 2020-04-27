@@ -31,7 +31,7 @@ import net.jamsimulator.jams.gui.mips.project.MipsProjectPane;
 import net.jamsimulator.jams.mips.assembler.directive.Directive;
 import net.jamsimulator.jams.mips.assembler.directive.defaults.DirectiveGlobl;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
-import net.jamsimulator.jams.project.MipsProject;
+import net.jamsimulator.jams.project.mips.MipsProject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,13 +99,16 @@ public class DisplayDirective extends MipsCodeElement {
 	}
 
 	@Override
-	public boolean searchLabelErrors(List<String> labels, List<String> fileGlobalLabels) {
-		return false;
-	}
-
-	@Override
 	public void populatePopup(VBox popup) {
 		populatePopupWithErrors(popup);
+	}
+
+	public boolean searchLabelErrors(List<String> labels, List<String> globalLabels) {
+		boolean updated = false;
+		for (DisplayDirectiveParameter parameter : parameters) {
+			updated |= parameter.searchLabelErrors(labels, globalLabels);
+		}
+		return updated;
 	}
 
 }

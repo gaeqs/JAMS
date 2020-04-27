@@ -25,16 +25,14 @@
 package net.jamsimulator.jams.gui.mips.display.element;
 
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
 import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
 import net.jamsimulator.jams.gui.mips.project.MipsProjectPane;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
-import net.jamsimulator.jams.mips.register.MIPS32Registers;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
-import net.jamsimulator.jams.project.MipsProject;
+import net.jamsimulator.jams.project.mips.MipsProject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,7 +62,7 @@ public class DisplayInstruction extends MipsCodeElement {
 		boolean first = true;
 		builder.append(' ');
 		for (InstructionParameter parameter : parameters) {
-			if(first) first = false;
+			if (first) first = false;
 			else builder.append(", ");
 			builder.append(parameter.getText());
 		}
@@ -104,13 +102,16 @@ public class DisplayInstruction extends MipsCodeElement {
 	}
 
 	@Override
-	public boolean searchLabelErrors(List<String> labels, List<String> fileGlobalLabels) {
-		return false;
-	}
-
-	@Override
 	public void populatePopup(VBox popup) {
 		populatePopupWithErrors(popup);
 	}
 
+	public boolean searchLabelErrors(List<String> labels, List<String> globalLabels) {
+		boolean updated = false;
+
+		for (InstructionParameter parameter : parameters) {
+			updated |= parameter.searchLabelErrors(labels, globalLabels);
+		}
+		return updated;
+	}
 }

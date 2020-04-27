@@ -37,7 +37,7 @@ import net.jamsimulator.jams.gui.mips.display.element.MipsCodeElement;
 import net.jamsimulator.jams.gui.mips.display.element.MipsFileElements;
 import net.jamsimulator.jams.gui.mips.display.element.MipsLine;
 import net.jamsimulator.jams.gui.mips.project.MipsProjectPane;
-import net.jamsimulator.jams.project.MipsProject;
+import net.jamsimulator.jams.project.mips.MipsProject;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.event.MouseOverTextEvent;
 import org.fxmisc.richtext.model.PlainTextChange;
@@ -66,11 +66,14 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 		if (tab.getWorkingPane() instanceof MipsProjectPane) {
 			project = ((MipsProjectPane) tab.getWorkingPane()).getProject();
+			Optional<MipsFileElements> elementsOptional = project.getFilesToAssemble().getFileElements(tab.getFile());
+			elements = elementsOptional.orElseGet(() -> new MipsFileElements(tab.getFile(), project));
 		} else {
 			project = null;
+			elements = new MipsFileElements(tab.getFile(), null);
 		}
 
-		elements = new MipsFileElements(project);
+
 		autocompletionPopup = new MipsAutocompletionPopup(this);
 
 		initializePopupListeners();
@@ -86,6 +89,11 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 	public MipsFileElements getElements() {
 		return elements;
+	}
+
+
+	public void refreshGlobalLabelErrorsAndParameters() {
+		elements.styleLines(this, elements.refreshLabelsChanges());
 	}
 
 	@Override
@@ -128,7 +136,9 @@ public class MipsFileDisplay extends CodeFileDisplay {
 			index();
 			return;
 		}
-		elements.editLine(currentLine, getParagraph(currentLine).getText());
+
+
+		boolean refreshGlobalLabels = elements.editLine(currentLine, getParagraph(currentLine).getText());
 
 		//Check next lines.
 		int addedLines = StringUtils.charCount(added, '\n', '\r');
@@ -138,8 +148,13 @@ public class MipsFileDisplay extends CodeFileDisplay {
 			elements.searchAllErrors(getTab().getWorkingPane(), currentLine, 1);
 			elements.styleLines(this, elements.searchLabelErrors());
 			elements.styleLines(this, currentLine, 1);
+
+			if (refreshGlobalLabels) {
+				refreshGlobalLabels();
+			}
 			return;
 		}
+
 
 		currentLine++;
 		int editedLines = Math.min(addedLines, removedLines);
@@ -147,16 +162,16 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		int linesToRemove = Math.max(0, removedLines - addedLines);
 
 		for (int i = 0; i < editedLines; i++) {
-			elements.editLine(currentLine + i, getParagraph(currentLine + i).getText());
+			refreshGlobalLabels |= elements.editLine(currentLine + i, getParagraph(currentLine + i).getText());
 		}
 
 		if (linesToRemove > 0) {
 			for (int i = 0; i < linesToRemove; i++) {
-				elements.removeLine(currentLine + editedLines);
+				refreshGlobalLabels |= elements.removeLine(currentLine + editedLines);
 			}
 		} else if (linesToAdd > 0) {
 			for (int i = 0; i < linesToAdd; i++) {
-				elements.addLine(currentLine + i + editedLines,
+				refreshGlobalLabels |= elements.addLine(currentLine + i + editedLines,
 						getParagraph(currentLine + i + editedLines).getText());
 			}
 		}
@@ -164,6 +179,19 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		elements.searchAllErrors(getTab().getWorkingPane(), currentLine - 1, 1 + editedLines + linesToAdd);
 		elements.styleLines(this, elements.searchLabelErrors());
 		elements.styleLines(this, currentLine - 1, 1 + editedLines + linesToAdd);
+
+		if (refreshGlobalLabels) {
+			refreshGlobalLabels();
+		}
+	}
+
+
+	private void refreshGlobalLabels() {
+		if (project.getFilesToAssemble().getFiles().contains(tab.getFile())) {
+			project.getFilesToAssemble().refreshGlobalLabels();
+		} else {
+			elements.styleLines(this, elements.refreshLabelsChanges());
+		}
 	}
 
 	private void index() {
@@ -171,6 +199,9 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		List<MipsLine> lines = elements.getLines();
 		for (int i = 0; i < lines.size(); i++) {
 			lines.get(i).styleLine(this, i);
+		}
+		if (project.getFilesToAssemble().getFiles().contains(tab.getFile())) {
+			project.getFilesToAssemble().refreshGlobalLabels();
 		}
 	}
 
