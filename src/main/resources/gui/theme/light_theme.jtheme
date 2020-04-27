@@ -721,6 +721,12 @@ AnchorPane {
     -fx-font-style: italic;
 }
 
+.code-area .mips-global-label {
+    -fx-fill: #aa3828;
+    -fx-font-style: italic;
+}
+
+
 .code-area .mips-directive {
     -fx-fill: #934709;
 }
@@ -740,6 +746,11 @@ AnchorPane {
 
 .code-area .mips-instruction-parameter-label {
     -fx-fill: #000000;
+    -fx-font-style: italic;
+}
+
+.code-area .mips-instruction-parameter-global-label {
+    -fx-fill: #aa3828;
     -fx-font-style: italic;
 }
 

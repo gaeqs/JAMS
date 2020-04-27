@@ -25,10 +25,11 @@
 package net.jamsimulator.jams.gui.mips.display.element;
 
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
 import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
 import net.jamsimulator.jams.gui.mips.project.MipsProjectPane;
 import net.jamsimulator.jams.mips.assembler.directive.Directive;
+import net.jamsimulator.jams.mips.assembler.directive.defaults.DirectiveGlobl;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.project.MipsProject;
 
@@ -39,11 +40,13 @@ import java.util.List;
 
 public class DisplayDirective extends MipsCodeElement {
 
+	protected final boolean globalLabelsParameter;
 	private final List<DisplayDirectiveParameter> parameters;
 
 	public DisplayDirective(int startIndex, int endIndex, String text) {
 		super(startIndex, endIndex, text);
 		parameters = new ArrayList<>();
+		globalLabelsParameter = text.trim().equals("." + DirectiveGlobl.NAME);
 	}
 
 	public String getDirective() {
@@ -52,6 +55,10 @@ public class DisplayDirective extends MipsCodeElement {
 
 	public List<DisplayDirectiveParameter> getParameters() {
 		return parameters;
+	}
+
+	public boolean isGlobalLabelsParameter() {
+		return globalLabelsParameter;
 	}
 
 	public void addParameter(DisplayDirectiveParameter parameter) {
@@ -92,7 +99,7 @@ public class DisplayDirective extends MipsCodeElement {
 	}
 
 	@Override
-	public boolean searchLabelErrors(List<String> labels) {
+	public boolean searchLabelErrors(List<String> labels, List<String> fileGlobalLabels) {
 		return false;
 	}
 

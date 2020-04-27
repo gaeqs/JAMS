@@ -40,6 +40,7 @@ public class MipsFileElements {
 	private final MipsProject project;
 	private final List<MipsLine> lines;
 	private final List<String> labels;
+	private final List<String> globalLabels;
 
 	/**
 	 * Creates an empty element collection.
@@ -49,6 +50,7 @@ public class MipsFileElements {
 		this.project = project;
 		this.lines = new ArrayList<>();
 		this.labels = new LinkedList<>();
+		this.globalLabels = new ArrayList<>();
 	}
 
 	/**
@@ -76,6 +78,15 @@ public class MipsFileElements {
 	 */
 	public List<String> getLabels() {
 		return labels;
+	}
+
+	/**
+	 * Returns all global labels of the represented file.
+	 *
+	 * @return all global labels.
+	 */
+	public List<String> getGlobalLabels() {
+		return globalLabels;
 	}
 
 	/**
@@ -117,6 +128,8 @@ public class MipsFileElements {
 		if (lineIndex < 0 || lineIndex >= lines.size()) throw new IndexOutOfBoundsException("Index out of bounds");
 		MipsLine line = lines.remove(lineIndex);
 		line.getLabel().ifPresent(label -> labels.remove(label.getLabel()));
+		line.getDirective().filter(DisplayDirective::isGlobalLabelsParameter).ifPresent(directive ->
+				directive.getParameters().forEach(label -> globalLabels.remove(label.text)));
 		int length = line.getText().length() + 1;
 
 		for (int i = lineIndex; i < lines.size(); i++) {
@@ -146,6 +159,8 @@ public class MipsFileElements {
 		parseLine(start, start + line.length(), line, mipsLine);
 		lines.add(lineIndex, mipsLine);
 		mipsLine.getLabel().ifPresent(label -> labels.add(label.getLabel()));
+		mipsLine.getDirective().filter(DisplayDirective::isGlobalLabelsParameter)
+				.ifPresent(directive -> directive.getParameters().forEach(label -> globalLabels.add(label.text)));
 
 		int length = line.length() + 1;
 		for (int i = lineIndex + 1; i < lines.size(); i++) {
@@ -168,11 +183,15 @@ public class MipsFileElements {
 		if (line.contains("\n") || line.contains("\r")) throw new IllegalArgumentException("Invalid line!");
 		MipsLine old = lines.get(lineIndex);
 		old.getLabel().ifPresent(label -> labels.remove(label.getLabel()));
+		old.getDirective().filter(DisplayDirective::isGlobalLabelsParameter).ifPresent(directive ->
+				directive.getParameters().forEach(label -> globalLabels.remove(label.text)));
 		int difference = line.length() - old.getText().length();
 		MipsLine mipsLine = new MipsLine(old.getStart(), line);
 		parseLine(old.getStart(), old.getStart() + line.length(), line, mipsLine);
 		lines.set(lineIndex, mipsLine);
 		mipsLine.getLabel().ifPresent(label -> labels.add(label.getLabel()));
+		mipsLine.getDirective().filter(DisplayDirective::isGlobalLabelsParameter)
+				.ifPresent(directive -> directive.getParameters().forEach(label -> globalLabels.add(label.text)));
 
 		for (int i = lineIndex + 1; i < lines.size(); i++) {
 			mipsLine = lines.get(i);
@@ -278,7 +297,7 @@ public class MipsFileElements {
 		Iterator<MipsLine> iterator = lines.iterator();
 		int i = 0;
 		while (iterator.hasNext()) {
-			if (iterator.next().searchLabelErrors(labels)) updated.add(i);
+			if (iterator.next().searchLabelErrors(labels, globalLabels)) updated.add(i);
 			i++;
 		}
 		return updated;
@@ -289,6 +308,10 @@ public class MipsFileElements {
 	 */
 	public void refreshLabels() {
 		labels.clear();
+		globalLabels.clear();
+		lines.forEach(line -> line.getDirective()
+				.filter(DisplayDirective::isGlobalLabelsParameter)
+				.ifPresent(directive -> directive.getParameters().forEach(label -> globalLabels.add(label.text))));
 		lines.forEach(line -> line.getLabel().ifPresent(label -> labels.add(label.getLabel())));
 	}
 
@@ -432,7 +455,7 @@ public class MipsFileElements {
 			DisplayInstructionParameterPart part = new DisplayInstructionParameterPart(instruction, parameterIndex,
 					start + index,
 					start + index + string.length(), string,
-					DisplayInstructionParameterPart.InstructionParameterPartType.getByString(string , project));
+					DisplayInstructionParameterPart.InstructionParameterPartType.getByString(string, project));
 			parameter.addPart(part);
 		});
 		return parameter;

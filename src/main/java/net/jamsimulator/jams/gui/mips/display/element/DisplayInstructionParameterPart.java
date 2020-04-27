@@ -39,7 +39,7 @@ public class DisplayInstructionParameterPart extends MipsCodeElement {
 
 	private final DisplayInstruction instruction;
 	private final int instructionIndex;
-	private final InstructionParameterPartType type;
+	private InstructionParameterPartType type;
 
 	public DisplayInstructionParameterPart(DisplayInstruction instruction, int instructionIndex,
 										   int startIndex, int endIndex, String text,
@@ -75,23 +75,45 @@ public class DisplayInstructionParameterPart extends MipsCodeElement {
 
 	@Override
 	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
+
+		if (type == InstructionParameterPartType.LABEL || type == InstructionParameterPartType.GLOBAL_LABEL) {
+			type = elements.getGlobalLabels().contains(text) ? InstructionParameterPartType.GLOBAL_LABEL : InstructionParameterPartType.LABEL;
+		}
+
 		errors.clear();
-		if (type == InstructionParameterPartType.LABEL) {
-			if (!elements.hasLabel(text))
+		if (type == InstructionParameterPartType.LABEL || type == InstructionParameterPartType.GLOBAL_LABEL) {
+			if (!elements.hasLabel(text)) {
 				errors.add(MipsDisplayError.LABEL_NOT_FOUND);
+				type = InstructionParameterPartType.LABEL;
+			}
 		}
 	}
 
 	@Override
-	public boolean searchLabelErrors(List<String> labels) {
-		if (type != InstructionParameterPartType.LABEL) return false;
+	public boolean searchLabelErrors(List<String> labels, List<String> fileGlobalLabels) {
+
+		if (type != InstructionParameterPartType.LABEL && type != InstructionParameterPartType.GLOBAL_LABEL)
+			return false;
+
+
+		boolean isNowGlobal = fileGlobalLabels.contains(text);
+		boolean hasGlobalChanged = type != (isNowGlobal ? InstructionParameterPartType.GLOBAL_LABEL : InstructionParameterPartType.LABEL);
+		type = isNowGlobal ? InstructionParameterPartType.GLOBAL_LABEL : InstructionParameterPartType.LABEL;
+
 		if (labels.contains(text)) {
-			if (!errors.contains(MipsDisplayError.LABEL_NOT_FOUND)) return false;
+			if (!errors.contains(MipsDisplayError.LABEL_NOT_FOUND)) {
+				if (hasErrors()) type = InstructionParameterPartType.LABEL;
+				return hasGlobalChanged;
+			}
 			errors.remove(MipsDisplayError.LABEL_NOT_FOUND);
 		} else {
-			if (errors.contains(MipsDisplayError.LABEL_NOT_FOUND)) return false;
+			if (errors.contains(MipsDisplayError.LABEL_NOT_FOUND)) {
+				if (hasErrors()) type = InstructionParameterPartType.LABEL;
+				return hasGlobalChanged;
+			}
 			errors.add(MipsDisplayError.LABEL_NOT_FOUND);
 		}
+		if (hasErrors()) type = InstructionParameterPartType.LABEL;
 		return true;
 	}
 
@@ -99,7 +121,8 @@ public class DisplayInstructionParameterPart extends MipsCodeElement {
 		REGISTER("mips-instruction-parameter-register"),
 		IMMEDIATE("mips-instruction-parameter-immediate"),
 		STRING("mips-instruction-parameter-string"),
-		LABEL("mips-instruction-parameter-label");
+		LABEL("mips-instruction-parameter-label"),
+		GLOBAL_LABEL("mips-instruction-parameter-global-label");
 
 		private final String cssClass;
 

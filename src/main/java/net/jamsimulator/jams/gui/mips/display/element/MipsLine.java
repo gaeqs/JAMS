@@ -263,10 +263,10 @@ public class MipsLine {
 	 * @param labels the labels declared in the file.
 	 * @return whether the line errors have been modified.
 	 */
-	public boolean searchLabelErrors(List<String> labels) {
+	public boolean searchLabelErrors(List<String> labels, List<String> fileGlobalLabels) {
 		boolean updated = false;
 		for (MipsCodeElement element : getSortedElements()) {
-			updated |= element.searchLabelErrors(labels);
+			updated |= element.searchLabelErrors(labels, fileGlobalLabels);
 		}
 		return updated;
 	}

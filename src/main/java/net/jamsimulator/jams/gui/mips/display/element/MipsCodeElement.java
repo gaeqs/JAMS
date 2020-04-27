@@ -27,8 +27,8 @@ package net.jamsimulator.jams.gui.mips.display.element;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
 import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
 import net.jamsimulator.jams.language.Language;
 
 import java.util.ArrayList;
@@ -140,10 +140,11 @@ public abstract class MipsCodeElement {
 	/**
 	 * Searches for label error inside this element.
 	 *
-	 * @param labels the labels declared in the file.
+	 * @param labels           the labels declared in the file.
+	 * @param fileGlobalLabels the labels that this file has declared as global labels. These labels may not exist.
 	 * @return whether the errors have been modified.
 	 */
-	public abstract boolean searchLabelErrors(List<String> labels);
+	public abstract boolean searchLabelErrors(List<String> labels, List<String> fileGlobalLabels);
 
 	/**
 	 * Populates the given popup with the errors inside this element.

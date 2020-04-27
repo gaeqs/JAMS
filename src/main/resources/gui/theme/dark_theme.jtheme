@@ -742,6 +742,11 @@ AnchorPane {
     -fx-font-style: italic;
 }
 
+.code-area .mips-global-label {
+    -fx-fill: #d55746;
+    -fx-font-style: italic;
+}
+
 .code-area .mips-directive {
     -fx-fill: #f8a15e;
 }
@@ -749,7 +754,6 @@ AnchorPane {
 .code-area .mips-directive-parameter {
     -fx-fill: #f85ee3;
 }
-
 
 .code-area .mips-directive-parameter-string {
     -fx-fill: #4c762e;
@@ -761,6 +765,11 @@ AnchorPane {
 
 .code-area .mips-instruction-parameter-label {
     -fx-fill: #ffffff;
+    -fx-font-style: italic;
+}
+
+.code-area .mips-instruction-parameter-global-label {
+    -fx-fill: #d55746;
     -fx-font-style: italic;
 }
 

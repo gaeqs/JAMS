@@ -121,6 +121,7 @@ public class MipsAutocompletionPopup extends AutocompletionPopup {
 
 		switch (((DisplayInstructionParameterPart) element).getType()) {
 			case LABEL:
+			case GLOBAL_LABEL:
 				addElements(mipsElements.getLabels().stream().filter(target -> target.startsWith(start)), s -> s, s -> s);
 				return start;
 			case REGISTER:

@@ -72,7 +72,7 @@ public class DisplayDirectiveParameter extends MipsCodeElement {
 	}
 
 	@Override
-	public boolean searchLabelErrors(List<String> labels) {
+	public boolean searchLabelErrors(List<String> labels, List<String> fileGlobalLabels) {
 		if (string || NumericUtils.isInteger(text)) return false;
 		if (labels.contains(text)) {
 			if (!errors.contains(MipsDisplayError.LABEL_NOT_FOUND)) return false;

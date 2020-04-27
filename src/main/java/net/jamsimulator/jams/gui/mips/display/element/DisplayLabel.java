@@ -27,8 +27,8 @@ package net.jamsimulator.jams.gui.mips.display.element;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
 import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.utils.LabelUtils;
 
@@ -38,43 +38,58 @@ import java.util.List;
 
 public class DisplayLabel extends MipsCodeElement {
 
+	private boolean global;
+
 	public DisplayLabel(int startIndex, int endIndex, String text) {
 		super(startIndex, endIndex, text);
+		global = false;
 	}
 
 	@Override
 	public List<String> getStyles() {
-		if (hasErrors()) return Arrays.asList("mips-label", "mips-error");
-		return Collections.singletonList("mips-label");
+		String style = global ? "mips-global-label" : "mips-label";
+		if (hasErrors()) return Arrays.asList(style, "mips-error");
+		return Collections.singletonList(style);
 	}
 
 	public String getLabel() {
 		return text.substring(0, text.length() - 1).trim();
 	}
 
+	public boolean isGlobal() {
+		return global;
+	}
+
 	@Override
 	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
 		errors.clear();
-		//Illegal label
+
 		String label = getLabel();
+		global = elements.getGlobalLabels().contains(label);
+		//Illegal label
 		if (label.isEmpty() || !LabelUtils.isLabelLegal(label)) {
 			errors.add(MipsDisplayError.ILLEGAL_LABEL);
 			return;
 		}
 
-		if (elements.labelCount(getLabel()) > 1) {
+		if (elements.labelCount(label) > 1) {
 			errors.add(MipsDisplayError.DUPLICATE_LABEL);
 		}
 	}
 
 	@Override
-	public boolean searchLabelErrors(List<String> labels) {
+	public boolean searchLabelErrors(List<String> labels, List<String> fileGlobalLabels) {
 		String label = getLabel();
+
+		boolean isNowGlobal = fileGlobalLabels.contains(label);
+		boolean hasGlobalChanged = isNowGlobal != global;
+		global = isNowGlobal;
+
 		if (labels.stream().filter(target -> target.equals(label)).count() > 1) {
-			if (errors.contains(MipsDisplayError.DUPLICATE_LABEL)) return false;
+			if (errors.contains(MipsDisplayError.DUPLICATE_LABEL)) return hasGlobalChanged;
 			errors.add(MipsDisplayError.DUPLICATE_LABEL);
 		} else {
-			if (!errors.contains(MipsDisplayError.DUPLICATE_LABEL)) return false;
+			if (!errors.contains(MipsDisplayError.DUPLICATE_LABEL)) return hasGlobalChanged;
 			errors.remove(MipsDisplayError.DUPLICATE_LABEL);
 		}
 		return true;
