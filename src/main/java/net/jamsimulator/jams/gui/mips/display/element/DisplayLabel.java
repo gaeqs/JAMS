@@ -65,7 +65,6 @@ public class DisplayLabel extends MipsCodeElement {
 		errors.clear();
 
 		String label = getLabel();
-		global = elements.getGlobalLabels().contains(label);
 		//Illegal label
 		if (label.isEmpty() || !LabelUtils.isLabelLegal(label)) {
 			errors.add(MipsDisplayError.ILLEGAL_LABEL);
@@ -88,7 +87,6 @@ public class DisplayLabel extends MipsCodeElement {
 		String label = getLabel();
 
 		boolean changed = false;
-
 		if (labels.stream().filter(target -> target.equals(label)).count() > 1) {
 			if (!errors.contains(MipsDisplayError.DUPLICATE_LABEL)) {
 				changed = errors.add(MipsDisplayError.DUPLICATE_LABEL);

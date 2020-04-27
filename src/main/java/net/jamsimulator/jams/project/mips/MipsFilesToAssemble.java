@@ -105,7 +105,7 @@ public class MipsFilesToAssemble {
 				}
 			}
 			//If the display is not present, just update the elements.
-			elements.refreshLabelsChanges();
+			elements.refreshGlobalLabelsChanges();
 		});
 	}
 

@@ -93,7 +93,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 
 	public void refreshGlobalLabelErrorsAndParameters() {
-		elements.styleLines(this, elements.refreshLabelsChanges());
+		elements.styleLines(this, elements.refreshGlobalLabelsChanges());
 	}
 
 	@Override
@@ -190,7 +190,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		if (project.getFilesToAssemble().getFiles().contains(tab.getFile())) {
 			project.getFilesToAssemble().refreshGlobalLabels();
 		} else {
-			elements.styleLines(this, elements.refreshLabelsChanges());
+			refreshGlobalLabelErrorsAndParameters();
 		}
 	}
 
@@ -199,9 +199,6 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		List<MipsLine> lines = elements.getLines();
 		for (int i = 0; i < lines.size(); i++) {
 			lines.get(i).styleLine(this, i);
-		}
-		if (project.getFilesToAssemble().getFiles().contains(tab.getFile())) {
-			project.getFilesToAssemble().refreshGlobalLabels();
 		}
 	}
 

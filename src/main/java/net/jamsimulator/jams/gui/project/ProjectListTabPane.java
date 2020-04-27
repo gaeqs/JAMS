@@ -101,6 +101,7 @@ public class ProjectListTabPane extends TabPane {
 		if (isProjectOpen(project)) return false;
 		if (!(project instanceof MipsProject)) return false;
 		ProjectTab tab = new ProjectTab((MipsProject) project);
+		project.assignProjectTab(tab);
 		getTabs().add(tab);
 		return true;
 	}

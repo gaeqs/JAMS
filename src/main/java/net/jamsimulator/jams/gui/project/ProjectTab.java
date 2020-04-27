@@ -32,10 +32,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
-import net.jamsimulator.jams.gui.main.WorkingPane;
-import net.jamsimulator.jams.gui.mips.project.MipsProjectPane;
-import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.language.wrapper.LanguageTab;
 import net.jamsimulator.jams.project.mips.MipsProject;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
@@ -75,7 +71,10 @@ public class ProjectTab extends Tab {
 		pane.getChildren().add(projectTabPane);
 		setContent(pane);
 
-		setOnClosed(event -> closeListeners.forEach(target -> target.handle(event)));
+		setOnClosed(event -> {
+			closeListeners.forEach(target -> target.handle(event));
+			project.assignProjectTab(null);
+		});
 	}
 
 	/**

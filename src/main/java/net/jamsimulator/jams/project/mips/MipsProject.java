@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.project.mips;
 
+import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
@@ -41,11 +42,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class MipsProject implements Project {
 
 	private final String name;
 	private final File folder;
+	private ProjectTab projectTab;
 
 	private final Architecture architecture;
 	private final AssemblerBuilder assemblerBuilder;
@@ -70,6 +73,8 @@ public class MipsProject implements Project {
 
 		this.name = name;
 		this.folder = folder;
+		this.projectTab = null;
+
 		this.architecture = architecture;
 		this.assemblerBuilder = assemblerBuilder;
 		this.memoryBuilder = memoryBuilder;
@@ -133,5 +138,16 @@ public class MipsProject implements Project {
 		assembler.setData(files);
 		assembler.compile();
 		return assembler.createSimulation(architecture);
+	}
+
+	@Override
+	public Optional<ProjectTab> getProjectTab() {
+		return Optional.ofNullable(projectTab);
+	}
+
+	@Override
+	public void assignProjectTab(ProjectTab tab) {
+		Validate.isTrue(tab == null || tab.getProject() == this, "Projects must be the same!");
+		this.projectTab = tab;
 	}
 }

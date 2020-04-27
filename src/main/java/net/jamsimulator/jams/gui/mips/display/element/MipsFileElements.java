@@ -294,6 +294,8 @@ public class MipsFileElements {
 
 		//Checks for errors.
 		refreshLabels();
+		searchLabelErrors();
+		refreshGlobalLabelsChanges();
 
 		if (workingPane != null) {
 			searchAllErrors(workingPane);
@@ -352,11 +354,10 @@ public class MipsFileElements {
 	}
 
 
-	public List<Integer> refreshLabelsChanges() {
-
+	public List<Integer> refreshGlobalLabelsChanges() {
 		List<String> globalLabels;
 		if (project == null || !project.getFilesToAssemble().getFiles().contains(file)) {
-			globalLabels = this.globalLabels;
+			globalLabels = getExistingGlobalLabels();
 		} else {
 			globalLabels = project.getFilesToAssemble().getGlobalLabels();
 		}

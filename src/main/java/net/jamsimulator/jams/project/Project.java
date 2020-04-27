@@ -24,9 +24,12 @@
 
 package net.jamsimulator.jams.project;
 
+import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.utils.Validate;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public interface Project {
 
@@ -34,5 +37,9 @@ public interface Project {
 	String getName();
 
 	Simulation<?> assemble() throws IOException;
+
+	Optional<ProjectTab> getProjectTab();
+
+	void assignProjectTab(ProjectTab tab);
 
 }
