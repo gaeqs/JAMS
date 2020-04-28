@@ -26,7 +26,6 @@ package net.jamsimulator.jams.gui.explorer;
 
 import javafx.application.Platform;
 import javafx.beans.value.ObservableDoubleValue;
-import javafx.geometry.Bounds;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
@@ -228,20 +227,22 @@ public abstract class Explorer extends VBox implements TaggedRegion {
 	}
 
 	private void updateScrollPosition(ExplorerElement element) {
-		double ty = element.getExplorerYTranslation();
-		if(scrollPane == null) return;
-		Bounds bounds = scrollPane.getViewportBounds();
+		double p = element.getExplorerYTranslation();
+		double ph = element.getElementHeight();
+		double ht = getHeight();
+		double hv = scrollPane.getViewportBounds().getHeight();
+		double vp = scrollPane.getVvalue() * (ht - hv);
 
-		double scrollRelative = ty + bounds.getMinY();
+		double vpn;
+		if (p + 2 * ph > vp + hv) {
+			vpn = p + ph - hv + 2 * ph;
+		} else if (p < vp) {
+			vpn = p;
+		} else return;
 
 
-		//If element is not visible
-		double height = getHeight() - bounds.getHeight();
-		if (scrollRelative < 40) {
-			scrollPane.setVvalue(scrollPane.getVvalue() + (scrollRelative - 40) / height);
-		}
-		if (scrollRelative > bounds.getHeight() - 80) {
-			scrollPane.setVvalue(scrollPane.getVvalue() + (scrollRelative - bounds.getHeight() + 80) / height);
-		}
+		double sp = Math.max(0, Math.min(1, vpn / (ht - hv)));
+		scrollPane.setVvalue(sp);
+
 	}
 }

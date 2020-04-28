@@ -86,6 +86,13 @@ public interface ExplorerElement extends TaggedRegion {
 	double getExplorerYTranslation();
 
 	/**
+	 * Returns the height of this element.
+	 *
+	 * @return the height.
+	 */
+	double getElementHeight();
+
+	/**
 	 * Returns the total amount of children inside this element.
 	 *
 	 * @return the amount.
