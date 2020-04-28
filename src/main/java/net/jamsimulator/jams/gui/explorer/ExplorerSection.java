@@ -426,6 +426,11 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	}
 
 	@Override
+	public double getElementHeight() {
+		return representation.getHeight();
+	}
+
+	@Override
 	public int getTotalElements() {
 		return 1 + elements.stream().mapToInt(ExplorerElement::getTotalElements).sum();
 	}

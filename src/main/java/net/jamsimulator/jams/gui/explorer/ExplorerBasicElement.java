@@ -195,6 +195,11 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 	}
 
 	@Override
+	public double getElementHeight() {
+		return getHeight();
+	}
+
+	@Override
 	public int getTotalElements() {
 		return 1;
 	}
