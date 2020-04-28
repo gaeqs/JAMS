@@ -38,7 +38,7 @@ import java.util.TreeSet;
  */
 public class SimpleEventBroadcast implements EventBroadcast {
 
-	private TreeSet<ListenerMethod> registeredListeners;
+	private final TreeSet<ListenerMethod> registeredListeners;
 
 	/**
 	 * Creates a event caller.
@@ -125,6 +125,13 @@ public class SimpleEventBroadcast implements EventBroadcast {
 						target.call(event);
 				});
 		return event;
+	}
+
+	/**
+	 * Removes all listeners from this broadcast.
+	 */
+	public void clear() {
+		registeredListeners.clear();
 	}
 
 }

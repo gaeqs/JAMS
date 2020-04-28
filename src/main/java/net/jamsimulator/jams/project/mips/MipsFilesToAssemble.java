@@ -1,6 +1,31 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2020 Gael Rial Costas
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package net.jamsimulator.jams.project.mips;
 
 import javafx.scene.Node;
+import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.display.FileDisplay;
 import net.jamsimulator.jams.gui.display.FileDisplayList;
@@ -8,6 +33,8 @@ import net.jamsimulator.jams.gui.display.FileDisplayTab;
 import net.jamsimulator.jams.gui.mips.display.MipsFileDisplay;
 import net.jamsimulator.jams.gui.mips.display.element.MipsFileElements;
 import net.jamsimulator.jams.gui.project.ProjectTab;
+import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
+import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
@@ -15,7 +42,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 
-public class MipsFilesToAssemble {
+public class MipsFilesToAssemble extends SimpleEventBroadcast {
 
 	private final MipsProject project;
 	private final Map<File, MipsFileElements> files;
@@ -43,6 +70,9 @@ public class MipsFilesToAssemble {
 		Validate.notNull(file, "File cannot be null!");
 		if (files.containsKey(file)) return;
 
+		FileAddToAssembleEvent.Before before = callEvent(new FileAddToAssembleEvent.Before(file));
+		if (before.isCancelled()) return;
+
 		MipsFileElements elements = new MipsFileElements(file, project);
 
 		try {
@@ -58,6 +88,7 @@ public class MipsFilesToAssemble {
 			elements.refreshAll(text, null);
 			files.put(file, elements);
 			refreshGlobalLabels();
+			callEvent(new FileAddToAssembleEvent.After(file));
 		} catch (IOException ex) {
 			throw new RuntimeException(ex);
 		}
@@ -66,9 +97,15 @@ public class MipsFilesToAssemble {
 	public void addFile(File file, MipsFileElements elements) {
 		Validate.notNull(file, "File cannot be null!");
 		Validate.notNull(elements, "Elements cannot be null!");
+
+		FileAddToAssembleEvent.Before before = callEvent(new FileAddToAssembleEvent.Before(file));
+		if (before.isCancelled()) return;
+
 		if (files.containsKey(file)) return;
 		files.put(file, elements);
 		refreshGlobalLabels();
+
+		callEvent(new FileAddToAssembleEvent.After(file));
 	}
 
 	public void addFile(File file, FileDisplayList list) {
@@ -81,6 +118,19 @@ public class MipsFilesToAssemble {
 			return;
 		}
 		addFile(file, ((MipsFileDisplay) tab.get().getDisplay()).getElements());
+	}
+
+	public void removeFile(File file) {
+		Validate.notNull(file, "File cannot be null!");
+
+		FileRemoveFromAssembleEvent.Before before = callEvent(new FileRemoveFromAssembleEvent.Before(file));
+		if (before.isCancelled()) return;
+
+		if (!files.containsKey(file)) return;
+		files.remove(file);
+		refreshGlobalLabels();
+
+		callEvent(new FileRemoveFromAssembleEvent.After(file));
 	}
 
 	public void refreshGlobalLabels() {

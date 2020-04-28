@@ -26,20 +26,53 @@ package net.jamsimulator.jams.project;
 
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.utils.Validate;
 
 import java.io.IOException;
 import java.util.Optional;
 
+
+/**
+ * Represents a JAMS's project.
+ * Use this class to create your own project types.
+ */
 public interface Project {
 
-
+	/**
+	 * Returns the name of this project. This name must be selected by the user.
+	 *
+	 * @return the name.
+	 */
 	String getName();
 
+	/**
+	 * Assembles this project, creating a {@link Simulation}.
+	 *
+	 * @return the {@link Simulation}.
+	 * @throws IOException                                                       any {@link IOException} occurred on assembly.
+	 * @throws net.jamsimulator.jams.mips.assembler.exception.AssemblerException any assembler exception thrown by the assembler.
+	 */
 	Simulation<?> assemble() throws IOException;
 
+	/**
+	 * Returns the assigned {@link ProjectTab}, if present.
+	 *
+	 * @return the assigned {@link ProjectTab}.
+	 */
 	Optional<ProjectTab> getProjectTab();
 
+	/**
+	 * Assigns the project to the given tab. Used to store
+	 * the {@link ProjectTab}.
+	 *
+	 * @param tab the tab.
+	 */
 	void assignProjectTab(ProjectTab tab);
+
+	/**
+	 * This method is called when the project tab is closed.
+	 * The implementation of this method should clear all
+	 * listeners from its inner {@link net.jamsimulator.jams.event.EventBroadcast}s.
+	 */
+	void onClose();
 
 }

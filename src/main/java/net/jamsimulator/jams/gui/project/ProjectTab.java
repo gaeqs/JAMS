@@ -74,6 +74,7 @@ public class ProjectTab extends Tab {
 		setOnClosed(event -> {
 			closeListeners.forEach(target -> target.handle(event));
 			project.assignProjectTab(null);
+			project.onClose();
 		});
 	}
 

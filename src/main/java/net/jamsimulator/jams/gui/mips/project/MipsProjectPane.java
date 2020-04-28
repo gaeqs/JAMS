@@ -33,6 +33,7 @@ import net.jamsimulator.jams.gui.display.FileDisplayList;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleDisplay;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.sidebar.SidebarButton;
 import net.jamsimulator.jams.language.Messages;
@@ -47,6 +48,7 @@ public class MipsProjectPane extends WorkingPane {
 
 	protected final MipsProject project;
 	protected FolderExplorer explorer;
+	protected FilesToAssembleDisplay filesToAssembleDisplay;
 
 	/**
 	 * Creates the mips project pane.
@@ -60,7 +62,8 @@ public class MipsProjectPane extends WorkingPane {
 		this.project = project;
 
 		getFileDisplayList().setWorkingPane(this);
-		loadSidebarModules();
+		loadExplorer();
+		loadFilesToAssembleDisplay();
 	}
 
 	/**
@@ -81,7 +84,7 @@ public class MipsProjectPane extends WorkingPane {
 		return (FileDisplayList) center;
 	}
 
-	private void loadSidebarModules() {
+	private void loadExplorer() {
 		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
 				Icons.SIDEBAR_EXPLORER_PATH, SidebarButton.IMAGE_SIZE, SidebarButton.IMAGE_SIZE).orElse(null);
 
@@ -101,6 +104,24 @@ public class MipsProjectPane extends WorkingPane {
 		topLeftSidebar.addNode("Explorer", pane, explorerIcon, Messages.EXPLORER_NAME);
 
 		explorer.setFileOpenAction(file -> openFile(file.getFile()));
+	}
+
+	private void loadFilesToAssembleDisplay() {
+		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
+				Icons.SIDEBAR_EXPLORER_PATH, SidebarButton.IMAGE_SIZE, SidebarButton.IMAGE_SIZE).orElse(null);
+
+		ScrollPane pane = new ScrollPane();
+		filesToAssembleDisplay = new FilesToAssembleDisplay();
+		pane.setContent(filesToAssembleDisplay);
+		pane.setFitToHeight(true);
+		pane.setFitToWidth(true);
+
+		pane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
+			double deltaY = scrollEvent.getDeltaY() * 0.003;
+			pane.setVvalue(pane.getVvalue() - deltaY);
+		});
+
+		bottomLeftSidebar.addNode("FilesToAssemble", filesToAssembleDisplay, explorerIcon, null);
 	}
 
 	@Override

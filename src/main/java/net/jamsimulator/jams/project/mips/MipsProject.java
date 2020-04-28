@@ -150,4 +150,9 @@ public class MipsProject implements Project {
 		Validate.isTrue(tab == null || tab.getProject() == this, "Projects must be the same!");
 		this.projectTab = tab;
 	}
+
+	@Override
+	public void onClose() {
+		filesToAssemble.clear();
+	}
 }
