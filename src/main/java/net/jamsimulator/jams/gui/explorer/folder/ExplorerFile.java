@@ -33,9 +33,8 @@ import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.utils.FileUtils;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 public class ExplorerFile extends ExplorerBasicElement {
 
@@ -93,10 +92,10 @@ public class ExplorerFile extends ExplorerBasicElement {
 
 			event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
 
-			if(!getStyleClass().contains("explorer-file-allow-drop")) {
+			if (!getStyleClass().contains("explorer-file-allow-drop")) {
 				getStyleClass().add("explorer-file-allow-drop");
 			}
-			if(parent instanceof ExplorerFolder) ((ExplorerFolder) parent).removeDragHint();
+			if (parent instanceof ExplorerFolder) ((ExplorerFolder) parent).removeDragHint();
 			event.consume();
 		});
 
@@ -113,7 +112,7 @@ public class ExplorerFile extends ExplorerBasicElement {
 		});
 
 		addEventHandler(MouseEvent.DRAG_DETECTED, event -> {
-			if(!selected) {
+			if (!selected) {
 				getExplorer().setSelectedElement(this);
 			}
 			Dragboard db = startDragAndDrop(TransferMode.COPY);
@@ -133,8 +132,8 @@ public class ExplorerFile extends ExplorerBasicElement {
 	}
 
 	@Override
-	public ExplorerFolder getParentSection() {
-		return (ExplorerFolder) super.getParentSection();
+	public Optional<? extends ExplorerFolder> getParentSection() {
+		return super.getParentSection().map(target -> (ExplorerFolder) target);
 	}
 
 	@Override

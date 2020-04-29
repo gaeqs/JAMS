@@ -31,9 +31,9 @@ import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.context.ExplorerFileDefaultContextMenu;
-import net.jamsimulator.jams.gui.popup.NewFolderWindow;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.popup.NewFolderWindow;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageMenuItem;
 
@@ -63,7 +63,7 @@ public class FileMenuItemNewFolder extends LanguageMenuItem implements ExplorerC
 		File folder;
 
 		if (element instanceof ExplorerFile) {
-			folder = ((ExplorerFile) element).getParentSection().getFolder();
+			folder = ((ExplorerFile) element).getFile().getParentFile();
 		} else if (element instanceof ExplorerFolder) {
 			folder = ((ExplorerFolder) element).getFolder();
 		} else {

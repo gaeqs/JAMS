@@ -63,7 +63,7 @@ public class FileMenuItemNewFile extends LanguageMenuItem implements ExplorerCon
 		File folder;
 
 		if (element instanceof ExplorerFile) {
-			folder = ((ExplorerFile) element).getParentSection().getFolder();
+			folder = ((ExplorerFile) element).getFile().getParentFile();
 		} else if (element instanceof ExplorerFolder) {
 			folder = ((ExplorerFolder) element).getFolder();
 		} else {

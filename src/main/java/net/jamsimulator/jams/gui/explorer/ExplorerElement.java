@@ -41,6 +41,20 @@ public interface ExplorerElement extends ActionRegion {
 	String getName();
 
 	/**
+	 * Returns the {@link Explorer} of this element.
+	 *
+	 * @return the {@link Explorer}.
+	 */
+	Explorer getExplorer();
+
+	/**
+	 * Returns the parent {@link ExplorerSection}.
+	 *
+	 * @return the parent {@link ExplorerSection}.
+	 */
+	Optional<? extends ExplorerSection> getParentSection();
+
+	/**
 	 * Returns whether the element is selected. If true, the elements
 	 * should be shown in the GUI with a blue background.
 	 *

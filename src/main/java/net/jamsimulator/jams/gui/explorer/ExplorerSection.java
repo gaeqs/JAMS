@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.explorer;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -106,25 +107,6 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 					show(this, request.getScreenX(), request.getScreenY());
 			request.consume();
 		});
-	}
-
-	/**
-	 * Returns the {@link Explorer} of this section.
-	 *
-	 * @return the {@link Explorer}.
-	 */
-	public Explorer getExplorer() {
-		return explorer;
-	}
-
-	/**
-	 * Returns the {@link ExplorerSection} containing this section.
-	 * This value is null when this section is the root section.
-	 *
-	 * @return the {@link ExplorerSection}.
-	 */
-	public ExplorerSection getParentSection() {
-		return parent;
 	}
 
 	/**
@@ -355,6 +337,16 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	}
 
 	@Override
+	public Explorer getExplorer() {
+		return explorer;
+	}
+
+	@Override
+	public Optional<? extends ExplorerSection> getParentSection() {
+		return Optional.ofNullable(parent);
+	}
+
+	@Override
 	public boolean isSelected() {
 		return representation.isSelected();
 	}
@@ -389,14 +381,14 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 			element = parent.getElementByIndex(index);
 			if (element.isPresent()) return element;
 
-			if (parent.getParentSection() == null) return Optional.empty();
+			if (!parent.getParentSection().isPresent()) return Optional.empty();
 
-			index = parent.getParentSection().getIndex(parent);
+			index = parent.getParentSection().get().getIndex(parent);
 			if (index == -1) {
 				throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
 			}
 			index++;
-			parent = parent.getParentSection();
+			parent = parent.getParentSection().orElse(null);
 		} while (parent != null);
 		return element;
 	}
@@ -471,36 +463,9 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	}
 
 	protected void onKeyPressed(KeyEvent event) {
-		switch (event.getCode()) {
-			case LEFT:
-				if (event.isShiftDown() || event.isControlDown()) return;
-				if (expanded && !isEmpty()) {
-					contract();
-				} else {
-					if (parent != null) {
-						explorer.setSelectedElement(parent);
-						explorer.updateScrollPosition(parent);
-					}
-				}
-				event.consume();
-				break;
-			case RIGHT:
-				if (event.isShiftDown() || event.isControlDown()) return;
-				if (!expanded && !isEmpty()) {
-					expand();
-				} else {
-					getNext().ifPresent(element -> {
-						explorer.setSelectedElement(element);
-						explorer.updateScrollPosition(element);
-					});
-
-				}
-				event.consume();
-				break;
-			case ENTER:
-				expandOrContract();
-				event.consume();
-				break;
+		if (event.getCode() == KeyCode.ENTER) {
+			expandOrContract();
+			event.consume();
 		}
 	}
 

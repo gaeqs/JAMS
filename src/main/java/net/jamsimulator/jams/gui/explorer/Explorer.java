@@ -28,12 +28,11 @@ import javafx.application.Platform;
 import javafx.beans.value.ObservableDoubleValue;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.utils.KeyCombinationBuilder;
 import net.jamsimulator.jams.utils.PropertyUtils;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -103,6 +102,15 @@ public abstract class Explorer extends VBox implements ActionRegion {
 	 */
 	public List<ExplorerElement> getSelectedElements() {
 		return Collections.unmodifiableList(selectedElements);
+	}
+
+	/**
+	 * Returns the last selected {@link ExplorerElement}, if present.
+	 *
+	 * @return the last selected {@link ExplorerElement}.
+	 */
+	public Optional<ExplorerElement> getLastSelectedElement() {
+		return selectedElements.isEmpty() ? Optional.empty() : Optional.of(selectedElements.getLast());
 	}
 
 	/**
@@ -252,33 +260,6 @@ public abstract class Explorer extends VBox implements ActionRegion {
 	}
 
 	/**
-	 * Manages a keyboard selection from a {@link KeyEvent}.
-	 * <p>
-	 * If control is down, {@link #addOrRemoveSelectedElement(ExplorerElement)} is invoked.
-	 * Else, {@link #setSelectedElement(ExplorerElement)} is invoked.
-	 * <p>
-	 * This method also updates the scroll position.
-	 *
-	 * @param event   the {@link KeyEvent}.
-	 * @param element the {@link ExplorerElement} to select.
-	 */
-	public void manageKeyboardSelection(KeyEvent event, ExplorerElement element) {
-		if (event.isControlDown()) return;
-		startKeyboardSelection();
-
-		if (event.isShiftDown()) {
-			if (element.isSelected()) {
-				addOrRemoveSelectedElement(selectedElements.getLast());
-			} else {
-				addOrRemoveSelectedElement(element);
-			}
-		} else {
-			setSelectedElement(element);
-		}
-		updateScrollPosition(element);
-	}
-
-	/**
 	 * Returns the {@link ScrollPane} holding this explorer, if present.
 	 *
 	 * @return the {@link ScrollPane}, if present.
@@ -390,7 +371,7 @@ public abstract class Explorer extends VBox implements ActionRegion {
 		double vp = scrollPane.getVvalue() * (ht - hv);
 
 		double vpn;
-		if (p + 2 * ph > vp + hv) {
+		if (p + 3 * ph > vp + hv) {
 			vpn = p + ph - hv + 2 * ph;
 		} else if (p < vp) {
 			vpn = p;
@@ -411,24 +392,18 @@ public abstract class Explorer extends VBox implements ActionRegion {
 			requestFocus();
 			event.consume();
 		});
-
+		//INVOKE ACCELERATORS HERE
 		setOnKeyPressed(event -> {
-			ExplorerElement element = null;
-			if (event.getCode() == KeyCode.UP) {
-				if (!selectedElements.isEmpty()) {
-					element = selectedElements.getLast().getPrevious().orElse(null);
-				}
-			} else if (event.getCode() == KeyCode.DOWN) {
-				if (!selectedElements.isEmpty()) {
-					element = selectedElements.getLast().getNext().orElse(null);
-				}
-			} else return;
-
-			if (element != null) {
-				manageKeyboardSelection(event, element);
+			Runnable runnable;
+			try {
+				runnable = getScene().getAccelerators().get(new KeyCombinationBuilder(event).build());
+			} catch (IllegalArgumentException ignore) {
+				return;
 			}
-
-			event.consume();
+			if (runnable != null) {
+				runnable.run();
+				event.consume();
+			}
 		});
 	}
 }

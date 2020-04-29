@@ -56,3 +56,11 @@ ACTION_TEXT_EDITOR_SAVE=Guardar archivo
 ACTION_TEXT_EDITOR_SHOW_AUTOCOMPLETION_POPUP=Mostrar autocompletador
 ACTION_TEXT_EDITOR_PREVIOUS_FILE=Ir al anterior archivo
 ACTION_TEXT_EDITOR_NEXT_FILE=Ir al siguiente archivo
+
+ACTION_REGION_EXPLORER_ELEMENT=Elementos del explorador
+ACTION_EXPLORER_ELEMENT_CONTRACT_OR_SELECT_PARENT=Contraer carpeta / seleccionar padre
+ACTION_EXPLORER_ELEMENT_EXPAND_OR_NEXT=Expandir carpeta / seleccionar siguente elemento
+ACTION_EXPLORER_ELEMENT_SELECT_NEXT=Seleccionar siguiente elemento
+ACTION_EXPLORER_ELEMENT_SELECT_NEXT_MULTIPLE=Seleccionar siguiente elemento (selección múltiple)
+ACTION_EXPLORER_ELEMENT_SELECT_PREVIOUS=Seleccionar elemento anterior
+ACTION_EXPLORER_ELEMENT_SELECT_PREVIOUS_MULTIPLE=Seleccionar elemento anterior (selección múltiple)

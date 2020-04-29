@@ -33,6 +33,7 @@ import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.defaults.explorerelement.*;
 import net.jamsimulator.jams.gui.action.defaults.texteditor.*;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionRegisterEvent;
@@ -333,12 +334,21 @@ public class ActionManager extends SimpleEventBroadcast {
 	}
 
 	private void loadDefaultActions() {
+		//TEXT EDITOR
 		actions.add(new TextEditorActionCompile());
 		actions.add(new TextEditorActionNextFile());
 		actions.add(new TextEditorActionPreviousFile());
 		actions.add(new TextEditorActionReformat());
 		actions.add(new TextEditorActionSave());
 		actions.add(new TextEditorActionShowAutocompletionPopup());
+
+		//EXPLORER ELEMENT
+		actions.add(new ExplorerElementActionContractOrSelectParent());
+		actions.add(new ExplorerElementActionExpandOrSelectNext());
+		actions.add(new ExplorerElementActionSelectNext());
+		actions.add(new ExplorerElementActionSelectNextMultiple());
+		actions.add(new ExplorerElementActionSelectPrevious());
+		actions.add(new ExplorerElementActionSelectPreviousMultiple());
 	}
 
 	private List<Action> loadBinds() {

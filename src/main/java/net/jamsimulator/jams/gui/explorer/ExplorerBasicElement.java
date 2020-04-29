@@ -27,6 +27,7 @@ package net.jamsimulator.jams.gui.explorer;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -86,25 +87,6 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 		prefWidthProperty().bind(parent.getExplorer().widthProperty());
 	}
 
-	/**
-	 * Returns the {@link ExplorerSection} containing this file.
-	 *
-	 * @return the {@link ExplorerSection}.
-	 */
-	public ExplorerSection getParentSection() {
-		return parent;
-	}
-
-
-	/**
-	 * Returns the {@link Explorer} of this file.
-	 *
-	 * @return the {@link Explorer}.
-	 */
-	public Explorer getExplorer() {
-		return parent.getExplorer();
-	}
-
 	public double getRepresentationWidth() {
 		return separator.getWidth() + icon.getFitWidth()
 				+ label.getWidth() + ExplorerBasicElement.SPACING * 2;
@@ -122,6 +104,15 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	public Optional<? extends ExplorerSection> getParentSection() {
+		return Optional.of(parent);
+	}
+
+	@Override
+	public Explorer getExplorer() {
+		return parent.getExplorer();
 	}
 
 	@Override
@@ -158,14 +149,14 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 			element = parent.getElementByIndex(index);
 			if (element.isPresent()) return element;
 
-			if (parent.getParentSection() == null) return Optional.empty();
+			if (!parent.getParentSection().isPresent()) return Optional.empty();
 
-			index = parent.getParentSection().getIndex(parent);
+			index = parent.getParentSection().get().getIndex(parent);
 			if (index == -1) {
 				throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
 			}
 			index++;
-			parent = parent.getParentSection();
+			parent = parent.getParentSection().orElse(null);
 		} while (parent != null);
 		return element;
 	}
@@ -232,23 +223,8 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 	}
 
 	protected void onKeyPressed(KeyEvent event) {
-		switch (event.getCode()) {
-			case LEFT:
-				if (event.isShiftDown() || event.isControlDown()) break;
-				getExplorer().setSelectedElement(parent);
-				getExplorer().updateScrollPosition(parent);
-				event.consume();
-				break;
-			case RIGHT:
-				if (event.isShiftDown() || event.isControlDown()) break;
-				getNext().ifPresent(element -> getExplorer().setSelectedElement(element));
-				getExplorer().updateScrollPosition(parent);
-				event.consume();
-				break;
-			case ENTER:
-				//Avoid parent to use enter.
-				event.consume();
-				break;
+		if (event.getCode() == KeyCode.ENTER) {//Avoid parent to use enter.
+			event.consume();
 		}
 	}
 

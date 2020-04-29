@@ -54,9 +54,9 @@ public class FileMenuItemShowInFiles extends LanguageMenuItem implements Explore
 		File folder;
 
 		if (element instanceof ExplorerFile) {
-			folder = ((ExplorerFile) element).getParentSection().getFolder();
+			folder = ((ExplorerFile) element).getFile().getParentFile();
 		} else if (element instanceof ExplorerFolder) {
-			ExplorerSection section = ((ExplorerFolder) element).getParentSection();
+			ExplorerSection section = element.getParentSection().orElse(null);
 			if (section instanceof ExplorerFolder) {
 				folder = ((ExplorerFolder) section).getFolder();
 			} else {

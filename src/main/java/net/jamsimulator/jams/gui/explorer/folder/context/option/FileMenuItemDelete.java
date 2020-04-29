@@ -59,7 +59,7 @@ public class FileMenuItemDelete extends LanguageMenuItem implements ExplorerCont
 		} else if (element instanceof ExplorerFolder) {
 			file = ((ExplorerFolder) element).getFolder();
 		} else {
-			throw new IllegalStateException("Element is not a file or a folder!");
+			throw new IllegalStateException("Element "+element+" is not a file or a folder!");
 		}
 
 		FileUtils.deleteDirectory(file);

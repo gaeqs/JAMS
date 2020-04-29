@@ -63,7 +63,7 @@ public class FileMenuItemNewAssemblyFile extends LanguageMenuItem implements Exp
 		File folder;
 
 		if (element instanceof ExplorerFile) {
-			folder = ((ExplorerFile) element).getParentSection().getFolder();
+			folder = ((ExplorerFile) element).getFile().getParentFile();
 		} else if (element instanceof ExplorerFolder) {
 			folder = ((ExplorerFolder) element).getFolder();
 		} else {

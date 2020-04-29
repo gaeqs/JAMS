@@ -49,17 +49,17 @@ public class FileMenuItemPaste extends LanguageMenuItem implements ExplorerConte
 
 	private void run(ExplorerFileDefaultContextMenu contextMenu) {
 		ExplorerElement element = contextMenu.getCurrentElement();
-		File file;
+		File folder;
 
 		if (element instanceof ExplorerFile) {
-			file = ((ExplorerFile) element).getParentSection().getFolder();
+			folder = ((ExplorerFile) element).getFile().getParentFile();
 		} else if (element instanceof ExplorerFolder) {
-			file = ((ExplorerFolder) element).getFolder();
+			folder = ((ExplorerFolder) element).getFolder();
 		} else {
 			throw new IllegalStateException("Element is not a file or a folder!");
 		}
 
-		ClipboardUtils.paste(file);
+		ClipboardUtils.paste(folder);
 	}
 
 }
