@@ -76,6 +76,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	 */
 	public ExplorerSection(Explorer explorer, ExplorerSection parent, String name, int hierarchyLevel,
 						   Comparator<ExplorerElement> comparator) {
+		getStyleClass().add("explorer-section");
 		this.explorer = explorer;
 		this.parent = parent;
 		this.name = name;
@@ -89,6 +90,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		representation = loadRepresentation();
 
 		contents = new VBox();
+		contents.getStyleClass().add("contents");
 		expanded = false;
 
 		setSpacing(SPACING);
@@ -97,7 +99,9 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		loadElements();
 		loadListeners();
 		setOnContextMenuRequested(request -> {
-			explorer.setSelectedElement(this);
+			if (!representation.selected) {
+				explorer.setSelectedElement(this);
+			}
 			explorer.createContextMenu(this).
 					show(this, request.getScreenX(), request.getScreenY());
 			request.consume();
@@ -469,20 +473,27 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	protected void onKeyPressed(KeyEvent event) {
 		switch (event.getCode()) {
 			case LEFT:
+				if(event.isShiftDown() || event.isControlDown()) return;
 				if (expanded && !isEmpty()) {
 					contract();
 				} else {
 					if (parent != null) {
-						getExplorer().setSelectedElement(parent);
+						explorer.setSelectedElement(parent);
+						explorer.updateScrollPosition(parent);
 					}
 				}
 				event.consume();
 				break;
 			case RIGHT:
+				if(event.isShiftDown() || event.isControlDown()) return;
 				if (!expanded && !isEmpty()) {
 					expand();
 				} else {
-					getNext().ifPresent(element -> explorer.setSelectedElement(element));
+					getNext().ifPresent(element -> {
+						explorer.setSelectedElement(element);
+						explorer.updateScrollPosition(element);
+					});
+
 				}
 				event.consume();
 				break;
@@ -496,10 +507,10 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	protected void onMouseClicked(MouseEvent mouseEvent) {
 		//Folders require a double click to expand or contract itself.
 		if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-			if (mouseEvent.getClickCount() % 2 == 0) {
+			if (!mouseEvent.isControlDown() && !mouseEvent.isShiftDown() && mouseEvent.getClickCount() % 2 == 0) {
 				expandOrContract();
 			}
-			explorer.setSelectedElement(this);
+			explorer.manageMouseSelection(mouseEvent, this);
 			onMouseClicked.handle(mouseEvent);
 			mouseEvent.consume();
 		}

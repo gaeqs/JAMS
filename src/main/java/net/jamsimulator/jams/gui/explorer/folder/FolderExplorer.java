@@ -48,19 +48,13 @@ public class FolderExplorer extends Explorer {
 	 * @param mainFolder the main folder of the explorer.
 	 */
 	public FolderExplorer(File mainFolder, ScrollPane scrollPane) {
-		super(scrollPane, false);
+		super(scrollPane, true, false);
 		Validate.notNull(mainFolder, "Folder cannot be null!");
 		Validate.isTrue(mainFolder.isDirectory(), "Folder must be a directory!");
 		this.mainFolder = mainFolder;
 
-		basicElementContextMenuCreator = file -> {
-			ExplorerFileDefaultContextMenu.INSTANCE.setCurrentExplorerElement(file);
-			return ExplorerFileDefaultContextMenu.INSTANCE;
-		};
-		sectionContextMenuCreator = folder -> {
-			ExplorerFileDefaultContextMenu.INSTANCE.setCurrentExplorerElement(folder);
-			return ExplorerFileDefaultContextMenu.INSTANCE;
-		};
+		basicElementContextMenuCreator = file -> ExplorerFileDefaultContextMenu.INSTANCE;
+		sectionContextMenuCreator = folder -> ExplorerFileDefaultContextMenu.INSTANCE;
 
 		fileOpenAction = file -> {
 		};

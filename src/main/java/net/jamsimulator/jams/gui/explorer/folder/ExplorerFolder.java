@@ -25,7 +25,10 @@
 package net.jamsimulator.jams.gui.explorer.folder;
 
 import javafx.application.Platform;
-import javafx.scene.input.*;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
@@ -35,7 +38,6 @@ import net.jamsimulator.jams.utils.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -46,7 +48,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
  */
 public class ExplorerFolder extends ExplorerSection {
 
-	private File folder;
+	private final File folder;
 	protected WatchService service;
 	protected boolean serviceRunning;
 
@@ -163,21 +165,18 @@ public class ExplorerFolder extends ExplorerSection {
 		addEventHandler(DragEvent.DRAG_EXITED, event -> removeDragHint());
 
 		addEventHandler(DragEvent.DRAG_DROPPED, event -> {
-			List<File> files = event.getDragboard().getFiles();
-			for (File file : files) {
-				if (!FileUtils.copyFile(folder, file)) {
-					System.err.println("Error while copying file " + file + ".");
-				}
-			}
+			FolderExplorerDragAndDropManagement.manageDrop(event.getDragboard(), folder);
 			event.setDropCompleted(true);
 			event.consume();
 		});
 
 		addEventHandler(MouseEvent.DRAG_DETECTED, event -> {
+			if (!isSelected()) {
+				getExplorer().setSelectedElement(this);
+			}
 			Dragboard db = startDragAndDrop(TransferMode.COPY);
-			ClipboardContent content = new ClipboardContent();
-			content.putFiles(Collections.singletonList(folder));
-			db.setContent(content);
+			List<ExplorerElement> selectedElements = getExplorer().getSelectedElements();
+			FolderExplorerDragAndDropManagement.manageDragFromElements(db, selectedElements);
 			event.consume();
 		});
 	}

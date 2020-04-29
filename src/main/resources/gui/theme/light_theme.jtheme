@@ -586,6 +586,14 @@ AnchorPane {
     -fx-background-color: -theme-header;
 }
 
+.explorer-section {
+    -fx-spacing: 0;
+}
+
+.explorer-section .contents {
+    -fx-spacing: 0;
+}
+
 .explorer-element {
     -fx-background-color: -theme-background;
     -fx-padding: 2 2 2 2;

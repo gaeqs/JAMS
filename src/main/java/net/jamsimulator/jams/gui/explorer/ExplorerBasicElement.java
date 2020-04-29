@@ -75,7 +75,9 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 		loadListeners();
 
 		setOnContextMenuRequested(request -> {
-			getExplorer().setSelectedElement(this);
+			if (!selected) {
+				getExplorer().setSelectedElement(this);
+			}
 			parent.getExplorer().createContextMenu(this)
 					.show(this, request.getScreenX(), request.getScreenY());
 			request.consume();
@@ -224,7 +226,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 
 	protected void onMouseClicked(MouseEvent mouseEvent) {
 		if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-			getExplorer().setSelectedElement(this);
+			getExplorer().manageMouseSelection(mouseEvent, this);
 			mouseEvent.consume();
 		}
 	}
@@ -232,11 +234,15 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 	protected void onKeyPressed(KeyEvent event) {
 		switch (event.getCode()) {
 			case LEFT:
+				if (event.isShiftDown() || event.isControlDown()) break;
 				getExplorer().setSelectedElement(parent);
+				getExplorer().updateScrollPosition(parent);
 				event.consume();
 				break;
 			case RIGHT:
+				if (event.isShiftDown() || event.isControlDown()) break;
 				getNext().ifPresent(element -> getExplorer().setSelectedElement(element));
+				getExplorer().updateScrollPosition(parent);
 				event.consume();
 				break;
 			case ENTER:

@@ -42,7 +42,7 @@ public class ActionsExplorer extends Explorer {
 	 * @param scrollPane the {@link ScrollPane} holding this explorer, if present.
 	 */
 	public ActionsExplorer(ScrollPane scrollPane) {
-		super(scrollPane, true);
+		super(scrollPane, false, true);
 	}
 
 	@Override

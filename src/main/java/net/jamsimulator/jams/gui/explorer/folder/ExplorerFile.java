@@ -28,12 +28,14 @@ import javafx.scene.input.*;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerBasicElement;
+import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.utils.FileUtils;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class ExplorerFile extends ExplorerBasicElement {
 
@@ -100,28 +102,23 @@ public class ExplorerFile extends ExplorerBasicElement {
 
 		addEventHandler(DragEvent.DRAG_EXITED, event -> {
 			getStyleClass().remove("explorer-file-allow-drop");
-			System.out.println(getStyleClass()
-			);
 			applyCss();
 		});
 
 		addEventHandler(DragEvent.DRAG_DROPPED, event -> {
-			List<File> files = event.getDragboard().getFiles();
-			for (File file : files) {
-				if (!FileUtils.copyFile(((ExplorerFolder) parent).getFolder(), file)) {
-					System.err.println("Error while copying file " + file + ".");
-				}
-			}
+			FolderExplorerDragAndDropManagement.manageDrop(event.getDragboard(),
+					((ExplorerFolder) parent).getFolder());
 			event.setDropCompleted(true);
 			event.consume();
 		});
 
 		addEventHandler(MouseEvent.DRAG_DETECTED, event -> {
-			getExplorer().setSelectedElement(this);
+			if(!selected) {
+				getExplorer().setSelectedElement(this);
+			}
 			Dragboard db = startDragAndDrop(TransferMode.COPY);
-			ClipboardContent content = new ClipboardContent();
-			content.putFiles(Collections.singletonList(file));
-			db.setContent(content);
+			List<ExplorerElement> selectedElements = getExplorer().getSelectedElements();
+			FolderExplorerDragAndDropManagement.manageDragFromElements(db, selectedElements);
 			event.consume();
 		});
 	}

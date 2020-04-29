@@ -38,7 +38,7 @@ public class ConfigurationWindowExplorer extends Explorer {
 	 * Creates a settings explorer.
 	 */
 	public ConfigurationWindowExplorer(ConfigurationWindow configurationWindow, ScrollPane scrollPane) {
-		super(scrollPane, false);
+		super(scrollPane, false, false);
 		this.configurationWindow = configurationWindow;
 		generateMainSection();
 	}
