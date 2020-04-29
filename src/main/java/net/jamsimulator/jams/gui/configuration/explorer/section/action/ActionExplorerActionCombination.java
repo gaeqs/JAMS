@@ -51,7 +51,7 @@ public class ActionExplorerActionCombination extends Button {
 		setOnAction(event -> ConfirmationWindow.open(Jams.getLanguageManager().getSelected()
 				.getOrDefault(Messages.CONFIG_ACTION_UNBIND), this::deleteCombination, () -> {
 		}));
-
+		ellipsisStringProperty().set(combination.toString());
 	}
 
 	/**

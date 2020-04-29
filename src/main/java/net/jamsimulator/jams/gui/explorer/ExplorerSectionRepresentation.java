@@ -25,10 +25,12 @@
 package net.jamsimulator.jams.gui.explorer;
 
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.NearestImageView;
@@ -154,7 +156,7 @@ public class ExplorerSectionRepresentation extends HBox {
 
 		separator = new ExplorerSeparatorRegion(true, hierarchyLevel);
 
-		getChildren().addAll(separator, statusIcon, icon, label);
+		getChildren().addAll(separator, statusIcon, icon, new Group(label));
 		setSpacing(ExplorerBasicElement.SPACING);
 		setAlignment(Pos.CENTER_LEFT);
 	}

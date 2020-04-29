@@ -54,6 +54,27 @@ public class ActionExplorerRegion extends ExplorerSection {
 		((ExplorerSectionLanguageRepresentation) representation).dispose();
 	}
 
+	public void setSmallRepresentation(boolean representation) {
+		for (ExplorerElement child : elements) {
+			if (child instanceof ActionsExplorerAction) {
+				((ActionsExplorerAction) child).setSmallRepresentation(representation);
+			}
+		}
+	}
+
+	public double getBiggestElementInBigRepresentation() {
+		double width = getRepresentation().getRepresentationWidth();
+		double current;
+		for (ExplorerElement child : elements) {
+			if (child instanceof ActionsExplorerAction) {
+				current = ((ActionsExplorerAction) child).getBigRepresentationWidth();
+				if (current > width) {
+					width = current;
+				}
+			}
+		}
+		return width;
+	}
 
 	@Override
 	protected ExplorerSectionRepresentation loadRepresentation() {

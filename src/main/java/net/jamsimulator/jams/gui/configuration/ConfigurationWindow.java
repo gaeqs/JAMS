@@ -27,7 +27,9 @@ package net.jamsimulator.jams.gui.configuration;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -55,6 +57,7 @@ public class ConfigurationWindow extends SplitPane {
 	private final Configuration meta;
 
 	private final ConfigurationWindowExplorer explorer;
+	private final ScrollPane explorerScrollPane;
 	private final VBox sectionDisplay;
 
 	public ConfigurationWindow(RootConfiguration configuration, Configuration meta) {
@@ -62,9 +65,19 @@ public class ConfigurationWindow extends SplitPane {
 		this.configuration = configuration;
 		this.meta = meta;
 
-		this.explorer = new ConfigurationWindowExplorer(this, null);
+		explorerScrollPane = new ScrollPane();
+		explorerScrollPane.setFitToHeight(true);
+		explorerScrollPane.setFitToWidth(true);
+		this.explorer = new ConfigurationWindowExplorer(this, explorerScrollPane);
+		explorerScrollPane.setContent(explorer);
+
+		explorerScrollPane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
+			double deltaY = scrollEvent.getDeltaY() * 0.003;
+			explorerScrollPane.setVvalue(explorerScrollPane.getVvalue() - deltaY);
+		});
 
 		this.sectionDisplay = new VBox();
+		this.sectionDisplay.setPadding(new Insets(5, 0, 0, 0));
 		this.sectionDisplay.getStyleClass().add("configuration-window-display");
 		init();
 	}
@@ -82,19 +95,23 @@ public class ConfigurationWindow extends SplitPane {
 	}
 
 	private void init() {
-		getItems().add(explorer);
+		getItems().add(explorerScrollPane);
 		getItems().add(sectionDisplay);
 	}
 
 	public void display(ConfigurationWindowSection section) {
-		sectionDisplay.getChildren().clear();
+		double divider = getDividerPositions()[0];
+		getItems().clear();
+		getItems().add(explorerScrollPane);
+
 		if (section.isSpecial()) {
-			sectionDisplay.setPadding(new Insets(0));
-			sectionDisplay.getChildren().add(section.getSpecialNode());
+			getItems().add(section.getSpecialNode());
 		} else {
-			sectionDisplay.setPadding(new Insets(5, 0, 0, 0));
+			getItems().add(sectionDisplay);
+			sectionDisplay.getChildren().clear();
 			sectionDisplay.getChildren().addAll(section.getNodes());
 		}
+		setDividerPosition(0, divider);
 	}
 
 	public void open() {
@@ -108,7 +125,7 @@ public class ConfigurationWindow extends SplitPane {
 			stage.setWidth(WIDTH);
 			stage.setHeight(HEIGHT);
 			stage.setMinWidth(WIDTH >> 1);
-			stage.setMinHeight(HEIGHT >> 1);
+			stage.setMinHeight(0);
 
 			Stage main = JamsApplication.getStage();
 

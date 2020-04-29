@@ -25,6 +25,8 @@
 package net.jamsimulator.jams.gui.configuration.explorer.section.action;
 
 import javafx.scene.Node;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.ScrollEvent;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowExplorer;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowSection;
@@ -42,6 +44,7 @@ import java.util.List;
  */
 public class ConfigurationWindowSectionActions extends ConfigurationWindowSection {
 
+	protected ScrollPane scrollPane;
 	protected ActionsExplorer actionsExplorer;
 
 	/**
@@ -55,7 +58,16 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
 	public ConfigurationWindowSectionActions(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name,
 											 String languageNode, int hierarchyLevel, Configuration configuration, Configuration meta) {
 		super(explorer, parent, name, languageNode, hierarchyLevel, configuration, meta);
-		actionsExplorer = new ActionsExplorer(null);
+		scrollPane = new ScrollPane();
+		scrollPane.setFitToHeight(true);
+		scrollPane.setFitToWidth(true);
+		actionsExplorer = new ActionsExplorer(scrollPane, false);
+		scrollPane.setContent(actionsExplorer);
+
+		scrollPane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
+			double deltaY = scrollEvent.getDeltaY() * 0.003;
+			scrollPane.setVvalue(scrollPane.getVvalue() - deltaY);
+		});
 	}
 
 	/**
@@ -70,7 +82,7 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
 
 	@Override
 	public Node getSpecialNode() {
-		return actionsExplorer;
+		return scrollPane;
 	}
 
 	@Override

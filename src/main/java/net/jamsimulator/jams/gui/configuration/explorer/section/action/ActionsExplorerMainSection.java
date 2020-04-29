@@ -45,10 +45,15 @@ public class ActionsExplorerMainSection extends ExplorerSection {
 	 *
 	 * @param explorer the {@link Explorer} of this section.
 	 */
-	public ActionsExplorerMainSection(ActionsExplorer explorer) {
+	public ActionsExplorerMainSection(ActionsExplorer explorer, boolean smallRepresentation) {
 		super(explorer, null, "Actions", 0, Comparator.comparing(ExplorerElement::getName));
 		((ExplorerSectionLanguageRepresentation) representation).setLanguageNode(Messages.CONFIG_ACTION);
 		generateRegions();
+	}
+
+	@Override
+	public ActionsExplorer getExplorer() {
+		return (ActionsExplorer) super.getExplorer();
 	}
 
 	/**
@@ -67,7 +72,7 @@ public class ActionsExplorerMainSection extends ExplorerSection {
 			regions.put(action.getRegionTag(), region);
 			addElement(region);
 		}
-		region.addElement(new ActionsExplorerAction(region, action));
+		region.addElement(new ActionsExplorerAction(region, action, getExplorer().isSmallRepresentation()));
 	}
 
 	/**
@@ -100,8 +105,34 @@ public class ActionsExplorerMainSection extends ExplorerSection {
 		JamsApplication.getActionManager().getAll().forEach(this::addAction);
 	}
 
+	public void setSmallRepresentation(boolean smallRepresentation) {
+		for (ActionExplorerRegion region : regions.values()) {
+			region.setSmallRepresentation(smallRepresentation);
+		}
+	}
+
 	@Override
 	protected ExplorerSectionRepresentation loadRepresentation() {
 		return new ExplorerSectionLanguageRepresentation(this, hierarchyLevel, null);
+	}
+
+	/**
+	 * Returns the width property of the biggest element in big representation this section.
+	 * This may return the {@link ExplorerSectionRepresentation} of this section.
+	 *
+	 * @return the width property.
+	 */
+	public double getBiggestElementInBigRepresentation() {
+		double property = getRepresentation().getRepresentationWidth();
+		double current;
+		for (ExplorerElement element : elements) {
+			if (element instanceof ActionExplorerRegion) {
+				current = ((ActionExplorerRegion) element).getBiggestElementInBigRepresentation();
+				if (property < current) {
+					property = current;
+				}
+			}
+		}
+		return property;
 	}
 }

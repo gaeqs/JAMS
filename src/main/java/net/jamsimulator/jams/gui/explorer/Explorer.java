@@ -338,22 +338,11 @@ public abstract class Explorer extends VBox implements ActionRegion {
 	 * This should be used when a item is added or removed or a section is expanded or contracted.
 	 */
 	public void refreshWidth() {
-		ObservableDoubleValue bound = PropertyUtils.getBoundValue(prefWidthProperty()).orElse(null);
-		if (bound != null) {
-			prefWidthProperty().unbind();
-		}
-		setMinWidth(10000);
-		setPrefWidth(10000);
 		applyCss();
 		layout();
-
 		Platform.runLater(() -> {
 			double width = mainSection.getBiggestElement() + 20;
 			setMinWidth(width);
-			if (PropertyUtils.getBoundValue(prefWidthProperty()).isPresent()) return;
-			if (bound != null) {
-				prefWidthProperty().bind(bound);
-			}
 		});
 	}
 

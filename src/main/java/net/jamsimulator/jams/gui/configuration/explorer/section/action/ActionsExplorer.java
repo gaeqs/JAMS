@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.gui.configuration.explorer.section.action;
 
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ScrollPane;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
@@ -36,26 +38,40 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
  */
 public class ActionsExplorer extends Explorer {
 
+	private boolean smallRepresentation;
+
 	/**
 	 * Creates an explorer.
 	 *
 	 * @param scrollPane the {@link ScrollPane} holding this explorer, if present.
 	 */
-	public ActionsExplorer(ScrollPane scrollPane) {
-		super(scrollPane, false, true);
+	public ActionsExplorer(ScrollPane scrollPane, boolean smallRepresentation) {
+		super(scrollPane, false, false);
+		this.smallRepresentation = smallRepresentation;
+		generateMainSection(smallRepresentation);
+		generateResizeListeners();
 	}
 
 	@Override
 	protected void generateMainSection() {
-		mainSection = new ActionsExplorerMainSection(this);
+	}
+
+	protected void generateMainSection(boolean smallRepresentation) {
+		mainSection = new ActionsExplorerMainSection(this, smallRepresentation);
 		getChildren().add(mainSection);
 		mainSection.expand();
 		JamsApplication.getActionManager().registerListeners(this);
 	}
 
-	@Override
-	public void refreshWidth() {
-		//Not required. Makes the configuration explorer resize.
+	public boolean isSmallRepresentation() {
+		return smallRepresentation;
+	}
+
+	public void setSmallRepresentation(boolean smallRepresentation) {
+		if (this.smallRepresentation == smallRepresentation) return;
+		this.smallRepresentation = smallRepresentation;
+		((ActionsExplorerMainSection) mainSection).setSmallRepresentation(smallRepresentation);
+		super.refreshWidth();
 	}
 
 	@Listener
@@ -66,5 +82,29 @@ public class ActionsExplorer extends Explorer {
 	@Listener
 	private void onActionUnregister(ActionUnregisterEvent.After event) {
 		((ActionsExplorerMainSection) mainSection).removeAction(event.getAction());
+	}
+
+	@Override
+	public void refreshWidth() {
+		super.refreshWidth();
+		Platform.runLater(() -> {
+			checkRepresentationMode(getWidth());
+		});
+	}
+
+	private void checkRepresentationMode(double width) {
+		final int SCROLLBAR_ERROR = 25;
+		double elementWidth = ((ActionsExplorerMainSection) mainSection).getBiggestElementInBigRepresentation();
+		setSmallRepresentation(elementWidth + SCROLLBAR_ERROR >= width);
+	}
+
+
+	private void generateResizeListeners() {
+		ChangeListener<? super Number> listener = (obs, old, val) -> checkRepresentationMode(val.doubleValue());
+		if (scrollPane == null) {
+			widthProperty().addListener(listener);
+		} else {
+			scrollPane.widthProperty().addListener(listener);
+		}
 	}
 }

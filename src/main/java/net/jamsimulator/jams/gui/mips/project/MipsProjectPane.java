@@ -89,10 +89,10 @@ public class MipsProjectPane extends WorkingPane {
 				Icons.SIDEBAR_EXPLORER_PATH, SidebarButton.IMAGE_SIZE, SidebarButton.IMAGE_SIZE).orElse(null);
 
 		ScrollPane pane = new ScrollPane();
-		explorer = new FolderExplorer(project.getFolder(), pane);
-		pane.setContent(explorer);
 		pane.setFitToHeight(true);
 		pane.setFitToWidth(true);
+		explorer = new FolderExplorer(project.getFolder(), pane);
+		pane.setContent(explorer);
 
 		pane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
 			double deltaY = scrollEvent.getDeltaY() * 0.003;
@@ -111,10 +111,10 @@ public class MipsProjectPane extends WorkingPane {
 				Icons.SIDEBAR_EXPLORER_PATH, SidebarButton.IMAGE_SIZE, SidebarButton.IMAGE_SIZE).orElse(null);
 
 		ScrollPane pane = new ScrollPane();
-		filesToAssembleDisplay = new FilesToAssembleDisplay();
-		pane.setContent(filesToAssembleDisplay);
 		pane.setFitToHeight(true);
 		pane.setFitToWidth(true);
+		filesToAssembleDisplay = new FilesToAssembleDisplay();
+		pane.setContent(filesToAssembleDisplay);
 
 		pane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
 			double deltaY = scrollEvent.getDeltaY() * 0.003;

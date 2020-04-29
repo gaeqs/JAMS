@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.explorer;
 
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -203,7 +204,8 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 
 		separator = new ExplorerSeparatorRegion(false, hierarchyLevel);
 
-		getChildren().addAll(separator, icon, label);
+		//The label's group avoids it from being resized.
+		getChildren().addAll(separator, icon, new Group(label));
 		setSpacing(SPACING);
 		setAlignment(Pos.CENTER_LEFT);
 	}

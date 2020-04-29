@@ -24,8 +24,11 @@
 
 package net.jamsimulator.jams.utils;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.BooleanPropertyBase;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.DoublePropertyBase;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableDoubleValue;
 
 import java.lang.reflect.Field;
@@ -39,6 +42,21 @@ public class PropertyUtils {
 				Field field = DoublePropertyBase.class.getDeclaredField("observable");
 				field.setAccessible(true);
 				return Optional.ofNullable((ObservableDoubleValue) field.get(property));
+			} catch (Exception e) {
+				e.printStackTrace();
+				return Optional.empty();
+			}
+		}
+		return Optional.empty();
+	}
+
+	public static Optional<ObservableBooleanValue> getBoundValue(BooleanProperty property) {
+		if (property instanceof BooleanPropertyBase) {
+			try {
+				Field field = DoublePropertyBase.class.getDeclaredField("observable");
+				field.setAccessible(true);
+				System.out.println("FOUND");
+				return Optional.ofNullable((ObservableBooleanValue) field.get(property));
 			} catch (Exception e) {
 				e.printStackTrace();
 				return Optional.empty();
