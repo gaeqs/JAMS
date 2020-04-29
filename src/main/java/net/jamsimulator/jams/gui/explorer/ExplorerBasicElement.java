@@ -253,7 +253,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 	}
 
 	@Override
-	public String getTag() {
-		return RegionTags.EXPLORER_ELEMENT;
+	public boolean supportsActionRegion(String region) {
+		return region.equals(RegionTags.EXPLORER_ELEMENT);
 	}
 }

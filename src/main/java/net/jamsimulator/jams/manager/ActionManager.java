@@ -30,7 +30,7 @@ import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
-import net.jamsimulator.jams.gui.TaggedRegion;
+import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.defaults.texteditor.*;
@@ -304,8 +304,18 @@ public class ActionManager extends SimpleEventBroadcast {
 
 		binds.forEach((combination, regions) -> scene.getAccelerators().put(combination, () -> {
 			Node node = scene.getFocusOwner();
-			String region = node instanceof TaggedRegion ? ((TaggedRegion) node).getTag() : RegionTags.UNKNOWN;
-			if (regions.containsKey(region)) regions.get(region).run(node);
+
+			if (node instanceof ActionRegion) {
+				regions.forEach((region, action) -> {
+					if (((ActionRegion) node).supportsActionRegion(region)) {
+						action.run(node);
+					}
+				});
+			} else {
+				if (regions.containsKey(RegionTags.UNKNOWN)) regions.get(RegionTags.UNKNOWN).run(node);
+			}
+
+
 		}));
 	}
 

@@ -29,8 +29,8 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.input.*;
 import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.TaggedRegion;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.display.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
@@ -45,7 +45,7 @@ import java.io.StringWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegion, VirtualScrollHandled {
+public class CodeFileDisplay extends CodeArea implements FileDisplay, ActionRegion, VirtualScrollHandled {
 
 	protected final FileDisplayTab tab;
 	protected String old, original;
@@ -111,8 +111,8 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, TaggedRegi
 	}
 
 	@Override
-	public String getTag() {
-		return RegionTags.TEXT_EDITOR;
+	public boolean supportsActionRegion(String region) {
+		return region.equals(RegionTags.TEXT_EDITOR);
 	}
 
 	@Override

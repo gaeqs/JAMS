@@ -24,8 +24,18 @@
 
 package net.jamsimulator.jams.gui;
 
-public interface TaggedRegion {
 
-	String getTag();
+/**
+ * Represents a region that supports {@link net.jamsimulator.jams.gui.action.Action}s.
+ */
+public interface ActionRegion {
+
+	/**
+	 * Returns whether the given region is supported by this region.
+	 *
+	 * @param region the region.
+	 * @return whether the given region is supported by this region.
+	 */
+	boolean supportsActionRegion(String region);
 
 }

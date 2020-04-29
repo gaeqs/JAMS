@@ -473,7 +473,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	protected void onKeyPressed(KeyEvent event) {
 		switch (event.getCode()) {
 			case LEFT:
-				if(event.isShiftDown() || event.isControlDown()) return;
+				if (event.isShiftDown() || event.isControlDown()) return;
 				if (expanded && !isEmpty()) {
 					contract();
 				} else {
@@ -485,7 +485,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 				event.consume();
 				break;
 			case RIGHT:
-				if(event.isShiftDown() || event.isControlDown()) return;
+				if (event.isShiftDown() || event.isControlDown()) return;
 				if (!expanded && !isEmpty()) {
 					expand();
 				} else {
@@ -516,8 +516,9 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		}
 	}
 
+
 	@Override
-	public String getTag() {
-		return RegionTags.EXPLORER_ELEMENT;
+	public boolean supportsActionRegion(String region) {
+		return region.equals(RegionTags.EXPLORER_ELEMENT);
 	}
 }

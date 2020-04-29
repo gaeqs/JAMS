@@ -32,7 +32,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.TaggedRegion;
+import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.utils.PropertyUtils;
 import net.jamsimulator.jams.utils.Validate;
@@ -49,7 +49,7 @@ import java.util.function.Function;
  * <p>
  * This class can be extend to add custom functionality.
  */
-public abstract class Explorer extends VBox implements TaggedRegion {
+public abstract class Explorer extends VBox implements ActionRegion {
 
 	protected ScrollPane scrollPane;
 
@@ -402,8 +402,8 @@ public abstract class Explorer extends VBox implements TaggedRegion {
 	}
 
 	@Override
-	public String getTag() {
-		return RegionTags.EXPLORER;
+	public boolean supportsActionRegion(String region) {
+		return region.equals(RegionTags.EXPLORER);
 	}
 
 	private void loadListeners() {
