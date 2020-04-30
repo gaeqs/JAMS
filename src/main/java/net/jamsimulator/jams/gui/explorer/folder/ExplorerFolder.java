@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import static java.nio.file.StandardWatchEventKinds.*;
 
@@ -76,6 +77,29 @@ public class ExplorerFolder extends ExplorerSection {
 	 */
 	public File getFolder() {
 		return folder;
+	}
+
+	/**
+	 * Returns the {@link ExplorerFile} represented by the given {@link File}.
+	 *
+	 * @param file the {@link File}.
+	 * @return the {@link ExplorerFile} representing this file, if present.
+	 */
+	public Optional<ExplorerFile> getExplorerFile(File file) {
+		if (folder.equals(file)) return Optional.empty();
+		for (ExplorerElement element : elements) {
+			if (element instanceof ExplorerFile) {
+				if (((ExplorerFile) element).getFile().equals(file)) {
+					return Optional.of((ExplorerFile) element);
+				}
+			} else if (element instanceof ExplorerFolder) {
+				Optional<ExplorerFile> optional = ((ExplorerFolder) element).getExplorerFile(file);
+				if (optional.isPresent()) {
+					return optional;
+				}
+			}
+		}
+		return Optional.empty();
 	}
 
 	/**
@@ -140,6 +164,9 @@ public class ExplorerFolder extends ExplorerSection {
 		}
 	}
 
+	/**
+	 * Removes the drag hint from this element.
+	 */
 	public void removeDragHint() {
 		representation.getStyleClass().remove("explorer-folder-allow-drop");
 		if (parent != null && parent instanceof ExplorerFolder) ((ExplorerFolder) parent).removeDragHint();

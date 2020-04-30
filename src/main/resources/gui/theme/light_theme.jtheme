@@ -780,10 +780,15 @@ AnchorPane {
     -rtfx-underline-width: 1px;
 }
 
-/* MIPS POPUPS*/
+/* MIPS POPUPS */
 .mips-popup {
     -fx-background-color: -theme-background-lighter;
     -fx-padding: 5px 5px 5px 5px;
     -fx-border-color: -theme-background-lighter;
     -fx-border-width: 1px;
+}
+
+/* MIPS EXPLORER */
+.explorer-file-to-assemble {
+    -fx-background-color: #7c9e71;
 }

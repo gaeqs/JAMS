@@ -30,9 +30,9 @@ import javafx.scene.image.Image;
 import javafx.scene.input.ScrollEvent;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.display.FileDisplayList;
-import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.gui.mips.explorer.MipsFolderExplorer;
 import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleDisplay;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.sidebar.SidebarButton;
@@ -47,7 +47,7 @@ import java.io.File;
 public class MipsProjectPane extends WorkingPane {
 
 	protected final MipsProject project;
-	protected FolderExplorer explorer;
+	protected MipsFolderExplorer explorer;
 	protected FilesToAssembleDisplay filesToAssembleDisplay;
 
 	/**
@@ -91,7 +91,7 @@ public class MipsProjectPane extends WorkingPane {
 		ScrollPane pane = new ScrollPane();
 		pane.setFitToHeight(true);
 		pane.setFitToWidth(true);
-		explorer = new FolderExplorer(project.getFolder(), pane);
+		explorer = new MipsFolderExplorer(project, pane);
 		pane.setContent(explorer);
 
 		pane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
@@ -126,7 +126,7 @@ public class MipsProjectPane extends WorkingPane {
 
 	@Override
 	public void onClose() {
-		explorer.killWatchers();
+		explorer.dispose();
 	}
 
 	@Override

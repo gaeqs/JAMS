@@ -68,11 +68,12 @@ public class MipsFileDisplay extends CodeFileDisplay {
 			project = ((MipsProjectPane) tab.getWorkingPane()).getProject();
 			Optional<MipsFileElements> elementsOptional = project.getFilesToAssemble().getFileElements(tab.getFile());
 			elements = elementsOptional.orElseGet(() -> new MipsFileElements(tab.getFile(), project));
+
+			project.getFilesToAssemble().addFile(tab.getFile(), elements);
 		} else {
 			project = null;
 			elements = new MipsFileElements(tab.getFile(), null);
 		}
-
 
 		autocompletionPopup = new MipsAutocompletionPopup(this);
 

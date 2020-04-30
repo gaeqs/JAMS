@@ -31,6 +31,7 @@ import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -70,6 +71,16 @@ public class FolderExplorer extends Explorer {
 	 */
 	public File getMainFolder() {
 		return mainFolder;
+	}
+
+	/**
+	 * Returns the {@link ExplorerFile} represented by the given {@link File}.
+	 *
+	 * @param file the {@link File}.
+	 * @return the {@link ExplorerFile} representing this file, if present.
+	 */
+	public Optional<ExplorerFile> getExplorerFile(File file) {
+		return ((ExplorerFolder) mainSection).getExplorerFile(file);
 	}
 
 	/**
