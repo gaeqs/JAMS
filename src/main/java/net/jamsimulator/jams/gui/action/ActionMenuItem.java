@@ -22,38 +22,25 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.action.defaults.explorerelement;
+package net.jamsimulator.jams.gui.action;
 
 import javafx.scene.Node;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.gui.action.Action;
-import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.explorer.Explorer;
-import net.jamsimulator.jams.gui.explorer.ExplorerElement;
-import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.gui.JamsApplication;
 
-public class ExplorerElementActionSelectPrevious extends Action {
+import java.util.List;
 
+public class ActionMenuItem extends MenuItem {
 
-	public static final String NAME = "EXPLORER_ELEMENT_SELECT_PREVIOUS";
-	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.UP);
-
-	public ExplorerElementActionSelectPrevious() {
-		super(NAME, RegionTags.EXPLORER_ELEMENT, Messages.ACTION_EXPLORER_ELEMENT_SELECT_PREVIOUS, DEFAULT_COMBINATION);
+	public ActionMenuItem(Action action, Node node) {
+		super(Jams.getLanguageManager().getSelected().getOrDefault(action.getLanguageNode().orElse(null)));
+		setOnAction(target -> action.run(node));
+		List<KeyCombination> list = JamsApplication.getActionManager().getBindCombinations(action.getName());
+		if (!list.isEmpty()) {
+			setAccelerator(list.get(0));
+		}
 	}
 
-	@Override
-	public void run(Node node) {
-		if (!(node instanceof ExplorerElement)) return;
-
-		ExplorerElement element = (ExplorerElement) node;
-		Explorer explorer = element.getExplorer();
-		explorer.startKeyboardSelection();
-		element.getPrevious().ifPresent(target -> {
-			explorer.setSelectedElement(target);
-			explorer.updateScrollPosition(target);
-		});
-	}
 }

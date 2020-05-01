@@ -22,47 +22,58 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.action.defaults.explorerelement;
+package net.jamsimulator.jams.gui.action.defaults.explorerelement.folder;
 
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.defaults.explorerelement.ExplorerElementContextAction;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
-import net.jamsimulator.jams.gui.explorer.ExplorerSection;
+import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
+import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
+import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.utils.ClipboardUtils;
 
-public class ExplorerElementActionContractOrSelectParent extends Action {
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
-	public static final String NAME = "EXPLORER_ELEMENT_CONTRACT_OR_SELECT_PARENT";
-	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.LEFT);
+public class FolderExplorerElementActionCopy extends ExplorerElementContextAction {
 
-	public ExplorerElementActionContractOrSelectParent() {
-		super(NAME, RegionTags.EXPLORER_ELEMENT, Messages.ACTION_EXPLORER_ELEMENT_CONTRACT_OR_SELECT_PARENT, DEFAULT_COMBINATION);
+
+	public static final String NAME = "FOLDER_EXPLORER_ELEMENT_COPY";
+	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN);
+
+	public FolderExplorerElementActionCopy() {
+		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_COPY, DEFAULT_COMBINATION, "clipboard");
 	}
 
 	@Override
 	public void run(Node node) {
 		if (!(node instanceof ExplorerElement)) return;
-
-		ExplorerElement element = (ExplorerElement) node;
-
-		if (element instanceof ExplorerSection) {
-			if (((ExplorerSection) element).isExpanded()) {
-				((ExplorerSection) element).contract();
-				return;
+		Explorer explorer = ((ExplorerElement) node).getExplorer();
+		if (!(explorer instanceof FolderExplorer)) return;
+		Set<File> files = new HashSet<>();
+		File file;
+		for (ExplorerElement element : explorer.getSelectedElements()) {
+			if (element instanceof ExplorerFile) {
+				file = ((ExplorerFile) element).getFile();
+			} else if (element instanceof ExplorerFolder) {
+				file = ((ExplorerFolder) element).getFolder();
+			} else {
+				throw new IllegalStateException("Element is not a file or a folder!");
 			}
+			files.add(file);
 		}
+		ClipboardUtils.copy(files);
+	}
 
-		Explorer explorer = element.getExplorer();
-		explorer.startKeyboardSelection();
-		element.getParentSection().ifPresent(target -> {
-			explorer.setSelectedElement(target);
-			explorer.updateScrollPosition(target);
-		});
-
+	@Override
+	public boolean supportsExplorerState(Explorer explorer) {
+		return explorer instanceof FolderExplorer;
 	}
 }

@@ -112,4 +112,9 @@ public interface ExplorerElement extends ActionRegion {
 	 * @return the amount.
 	 */
 	int getTotalElements();
+
+	/**
+	 * Creates a context menu for the {@link Explorer} containing this element.
+	 */
+	void createContextMenu(double screenX, double screenY);
 }

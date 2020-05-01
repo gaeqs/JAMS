@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.explorer;
 
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -33,10 +34,15 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.defaults.explorerelement.ExplorerElementContextAction;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Represents a file inside an {@link Explorer}.
@@ -80,8 +86,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 			if (!selected) {
 				getExplorer().setSelectedElement(this);
 			}
-			parent.getExplorer().createContextMenu(this)
-					.show(this, request.getScreenX(), request.getScreenY());
+			createContextMenu(request.getScreenX(), request.getScreenY());
 			request.consume();
 		});
 
@@ -196,6 +201,27 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 	@Override
 	public int getTotalElements() {
 		return 1;
+	}
+
+	@Override
+	public void createContextMenu(double screenX, double screenY) {
+		Set<ExplorerElementContextAction> set = getSupportedContextActions();
+		if (set.isEmpty()) return;
+		ContextMenu main = ExplorerContextCreator.createContextMenu(set, this);
+		main.show(this, screenX, screenY);
+	}
+
+	private Set<ExplorerElementContextAction> getSupportedContextActions() {
+		Explorer explorer = getExplorer();
+		Set<Action> actions = JamsApplication.getActionManager().getAll();
+		Set<ExplorerElementContextAction> set = new HashSet<>();
+		for (Action action : actions) {
+			if (action instanceof ExplorerElementContextAction && supportsActionRegion(action.getRegionTag())
+					&& ((ExplorerElementContextAction) action).supportsExplorerState(explorer)) {
+				set.add((ExplorerElementContextAction) action);
+			}
+		}
+		return set;
 	}
 
 	protected void loadElements() {

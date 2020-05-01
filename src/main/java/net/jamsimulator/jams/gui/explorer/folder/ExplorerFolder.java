@@ -29,6 +29,7 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
@@ -265,6 +266,11 @@ public class ExplorerFolder extends ExplorerSection {
 			}
 		}
 		return key.reset();
+	}
+
+	@Override
+	public boolean supportsActionRegion(String region) {
+		return super.supportsActionRegion(region) || RegionTags.FOLDER_EXPLORER_ELEMENT.contains(region);
 	}
 
 	@Override

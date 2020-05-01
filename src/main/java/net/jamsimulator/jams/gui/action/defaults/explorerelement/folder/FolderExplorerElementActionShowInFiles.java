@@ -22,46 +22,49 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.explorer.folder.context.option;
+package net.jamsimulator.jams.gui.action.defaults.explorerelement.folder;
 
-import net.jamsimulator.jams.gui.explorer.ExplorerContextMenuItem;
+import javafx.scene.Node;
+import javafx.scene.input.KeyCombination;
+import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.defaults.explorerelement.ExplorerElementContextAction;
+import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
-import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
-import net.jamsimulator.jams.gui.explorer.folder.context.ExplorerFileDefaultContextMenu;
+import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.language.wrapper.LanguageMenuItem;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-public class FileMenuItemShowInFiles extends LanguageMenuItem implements ExplorerContextMenuItem {
+public class FolderExplorerElementActionShowInFiles extends ExplorerElementContextAction {
 
-	public FileMenuItemShowInFiles(ExplorerFileDefaultContextMenu contextMenu) {
-		super(Messages.EXPLORER_ITEM_ACTION_SHOW_IN_FILES);
-		setOnAction(target -> run(contextMenu));
+
+	public static final String NAME = "FOLDER_EXPLORER_ELEMENT_SHOW_IN_FILES";
+	public static final KeyCombination DEFAULT_COMBINATION = null;
+
+	public FolderExplorerElementActionShowInFiles() {
+		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_SHOW_IN_FILES,
+				DEFAULT_COMBINATION, "show");
 	}
 
 	@Override
-	public void onElementChange(ExplorerElement element) {
-		setVisible(element instanceof ExplorerFile || element instanceof ExplorerFolder);
-	}
+	public void run(Node node) {
+		if (!(node instanceof ExplorerElement)) return;
+		Explorer explorer = ((ExplorerElement) node).getExplorer();
+		if (!(explorer instanceof FolderExplorer)) return;
+		if (explorer.getSelectedElements().size() != 1) return;
 
-	private void run(ExplorerFileDefaultContextMenu contextMenu) {
-		ExplorerElement element = contextMenu.getCurrentElement();
+		ExplorerElement element = explorer.getSelectedElements().get(0);
+
 		File folder;
 
 		if (element instanceof ExplorerFile) {
 			folder = ((ExplorerFile) element).getFile().getParentFile();
 		} else if (element instanceof ExplorerFolder) {
-			ExplorerSection section = element.getParentSection().orElse(null);
-			if (section instanceof ExplorerFolder) {
-				folder = ((ExplorerFolder) section).getFolder();
-			} else {
-				folder = ((ExplorerFolder) element).getFolder();
-			}
+			folder = ((ExplorerFolder) element).getFolder();
 		} else {
 			throw new IllegalStateException("Element is not a file or a folder!");
 		}
@@ -73,5 +76,10 @@ public class FileMenuItemShowInFiles extends LanguageMenuItem implements Explore
 				e.printStackTrace();
 			}
 		}).start();
+	}
+
+	@Override
+	public boolean supportsExplorerState(Explorer explorer) {
+		return explorer instanceof FolderExplorer && explorer.getSelectedElements().size() == 1;
 	}
 }

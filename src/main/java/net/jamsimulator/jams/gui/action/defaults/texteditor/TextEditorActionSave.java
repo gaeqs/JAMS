@@ -31,6 +31,7 @@ import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.display.FileDisplay;
+import net.jamsimulator.jams.language.Messages;
 
 public class TextEditorActionSave extends Action {
 
@@ -38,7 +39,7 @@ public class TextEditorActionSave extends Action {
 	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN);
 
 	public TextEditorActionSave() {
-		super(NAME, RegionTags.TEXT_EDITOR, null, DEFAULT_COMBINATION);
+		super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_SAVE, DEFAULT_COMBINATION);
 	}
 
 	@Override

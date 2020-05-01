@@ -45,7 +45,7 @@ public class NewAssemblyFileWindow extends VBox {
 		Validate.notNull(folder, "Folder cannot be null!");
 		Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
 		setAlignment(Pos.BOTTOM_CENTER);
-		getChildren().add(new LanguageLabel(Messages.EXPLORER_ITEM_ACTION_WINDOW_NEW_ASSEMBLY_FILE));
+		getChildren().add(new LanguageLabel(Messages.ACTION_FOLDER_EXPLORER_ELEMENT_NEW_ASSEMBLY_FILE));
 
 
 		TextField field = new TextField();

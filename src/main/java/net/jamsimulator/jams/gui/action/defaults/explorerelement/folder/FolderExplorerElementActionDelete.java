@@ -22,49 +22,53 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.action.defaults.explorerelement;
+package net.jamsimulator.jams.gui.action.defaults.explorerelement.folder;
 
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.defaults.explorerelement.ExplorerElementContextAction;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
+import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
+import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
+import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.utils.FileUtils;
 
-public class ExplorerElementActionSelectPreviousMultiple extends Action {
+public class FolderExplorerElementActionDelete extends ExplorerElementContextAction {
 
 
-	public static final String NAME = "EXPLORER_ELEMENT_SELECT_PREVIOUS_MULTIPLE";
-	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.UP, KeyCombination.SHIFT_DOWN);
+	public static final String NAME = "FOLDER_EXPLORER_ELEMENT_DELETE";
+	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.DELETE);
 
-	public ExplorerElementActionSelectPreviousMultiple() {
-		super(NAME, RegionTags.EXPLORER_ELEMENT, Messages.ACTION_EXPLORER_ELEMENT_SELECT_PREVIOUS_MULTIPLE, DEFAULT_COMBINATION);
+	public FolderExplorerElementActionDelete() {
+		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_DELETE, DEFAULT_COMBINATION, "clipboard");
 	}
 
 	@Override
 	public void run(Node node) {
 		if (!(node instanceof ExplorerElement)) return;
+		Explorer explorer = ((ExplorerElement) node).getExplorer();
+		if (!(explorer instanceof FolderExplorer)) return;
 
-		ExplorerElement element = (ExplorerElement) node;
-		Explorer explorer = element.getExplorer();
-		explorer.startKeyboardSelection();
-
-		ExplorerElement target = element.getPrevious().orElse(null);
-		if (target == null) return;
-
-		explorer.startKeyboardSelection();
-
-		if (target.isSelected()) {
-			explorer.getLastSelectedElement().ifPresent(explorer::addOrRemoveSelectedElement);
-		} else {
-			explorer.addOrRemoveSelectedElement(target);
+		for (ExplorerElement element : explorer.getSelectedElements()) {
+			if (element instanceof ExplorerFile) {
+				if (!((ExplorerFile) element).getFile().delete()) {
+					System.err.println("Error deleting file " + ((ExplorerFile) element).getFile());
+				}
+			} else if (element instanceof ExplorerFolder) {
+				if (!FileUtils.deleteDirectory(((ExplorerFolder) element).getFolder())) {
+					System.err.println("Error deleting folder " + ((ExplorerFolder) element).getFolder());
+				}
+			}
 		}
-		if (target instanceof Node) ((Node) target).requestFocus();
+	}
 
-		explorer.updateScrollPosition(target);
-
+	@Override
+	public boolean supportsExplorerState(Explorer explorer) {
+		return explorer instanceof FolderExplorer;
 	}
 }

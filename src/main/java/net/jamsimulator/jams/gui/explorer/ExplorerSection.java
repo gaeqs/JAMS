@@ -26,18 +26,19 @@ package net.jamsimulator.jams.gui.explorer;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.defaults.explorerelement.ExplorerElementContextAction;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 
 /**
@@ -103,8 +104,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 			if (!representation.selected) {
 				explorer.setSelectedElement(this);
 			}
-			explorer.createContextMenu(this).
-					show(this, request.getScreenX(), request.getScreenY());
+			createContextMenu(request.getScreenX(), request.getScreenY());
 			request.consume();
 		});
 	}
@@ -429,6 +429,27 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	@Override
 	public int getTotalElements() {
 		return 1 + elements.stream().mapToInt(ExplorerElement::getTotalElements).sum();
+	}
+
+	@Override
+	public void createContextMenu(double screenX, double screenY) {
+		Set<ExplorerElementContextAction> set = getSupportedContextActions();
+		if (set.isEmpty()) return;
+		ContextMenu main = ExplorerContextCreator.createContextMenu(set, this);
+		main.show(this, screenX, screenY);
+	}
+
+	private Set<ExplorerElementContextAction> getSupportedContextActions() {
+		Explorer explorer = getExplorer();
+		Set<Action> actions = JamsApplication.getActionManager().getAll();
+		Set<ExplorerElementContextAction> set = new HashSet<>();
+		for (Action action : actions) {
+			if (action instanceof ExplorerElementContextAction && supportsActionRegion(action.getRegionTag())
+					&& ((ExplorerElementContextAction) action).supportsExplorerState(explorer)) {
+				set.add((ExplorerElementContextAction) action);
+			}
+		}
+		return set;
 	}
 
 	protected ExplorerSectionRepresentation loadRepresentation() {

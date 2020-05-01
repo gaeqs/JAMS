@@ -34,6 +34,7 @@ import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.*;
+import net.jamsimulator.jams.gui.action.defaults.explorerelement.folder.*;
 import net.jamsimulator.jams.gui.action.defaults.texteditor.*;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionRegisterEvent;
@@ -349,6 +350,17 @@ public class ActionManager extends SimpleEventBroadcast {
 		actions.add(new ExplorerElementActionSelectNextMultiple());
 		actions.add(new ExplorerElementActionSelectPrevious());
 		actions.add(new ExplorerElementActionSelectPreviousMultiple());
+
+		//FOLDER EXPLORER ELEMENT
+		actions.add(new FolderExplorerElementActionCopy());
+		actions.add(new FolderExplorerElementActionDelete());
+		actions.add(new FolderExplorerElementActionPaste());
+
+		actions.add(new FolderExplorerElementActionShowInFiles());
+
+		actions.add(new FolderExplorerElementActionNewFile());
+		actions.add(new FolderExplorerElementActionNewAssemblyFile());
+		actions.add(new FolderExplorerElementActionNewFolder());
 	}
 
 	private List<Action> loadBinds() {

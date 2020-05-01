@@ -46,7 +46,7 @@ public class NewFolderWindow extends VBox {
 		Validate.notNull(folder, "Folder cannot be null!");
 		Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
 		setAlignment(Pos.BOTTOM_CENTER);
-		getChildren().add(new LanguageLabel(Messages.EXPLORER_ITEM_ACTION_WINDOW_NEW_FOLDER));
+		getChildren().add(new LanguageLabel(Messages.ACTION_FOLDER_EXPLORER_ELEMENT_NEW_FOLDER));
 
 		TextField field = new TextField();
 		getChildren().add(field);

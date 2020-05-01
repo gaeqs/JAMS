@@ -29,7 +29,7 @@ public class RegionTags {
 	public static final String GENERAL = "GENERAL";
 	public static final String UNKNOWN = "UNKNOWN";
 
-	public static final String EXPLORER = "EXPLORER";
+	public static final String FOLDER_EXPLORER_ELEMENT = "FOLDER_EXPLORER_ELEMENT";
 	public static final String EXPLORER_ELEMENT = "EXPLORER_ELEMENT";
 
 	public static final String TEXT_EDITOR = "TEXT_EDITOR";

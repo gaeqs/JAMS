@@ -22,44 +22,43 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.explorer.folder.context.option.newmenu;
+package net.jamsimulator.jams.gui.action.defaults.explorerelement.folder;
 
-import net.jamsimulator.jams.file.FileType;
-import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.explorer.ExplorerContextMenuItem;
+import javafx.scene.Node;
+import javafx.scene.input.KeyCombination;
+import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.defaults.explorerelement.ExplorerElementContextAction;
+import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
-import net.jamsimulator.jams.gui.explorer.folder.context.ExplorerFileDefaultContextMenu;
-import net.jamsimulator.jams.gui.image.NearestImageView;
-import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
+import net.jamsimulator.jams.gui.popup.NewFileWindow;
 import net.jamsimulator.jams.gui.popup.NewFolderWindow;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.language.wrapper.LanguageMenuItem;
 
 import java.io.File;
 
-public class FileMenuItemNewFolder extends LanguageMenuItem implements ExplorerContextMenuItem {
+public class FolderExplorerElementActionNewFolder extends ExplorerElementContextAction {
 
-	public FileMenuItemNewFolder(ExplorerFileDefaultContextMenu contextMenu) {
-		super(Messages.EXPLORER_ITEM_ACTION_NEW_FOLDER);
-		initIcon();
-		setOnAction(event -> run(contextMenu));
-	}
 
-	private void initIcon() {
-		JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FOLDER, Icons.FILE_FOLDER_PATH,
-				FileType.IMAGE_SIZE, FileType.IMAGE_SIZE).ifPresent(icon -> setGraphic(new NearestImageView(icon)));
+	public static final String NAME = "FOLDER_EXPLORER_ELEMENT_NEW_FOLDER";
+	public static final KeyCombination DEFAULT_COMBINATION = null;
 
+	public FolderExplorerElementActionNewFolder() {
+		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_NEW_FOLDER,
+				DEFAULT_COMBINATION, "new.general");
 	}
 
 	@Override
-	public void onElementChange(ExplorerElement element) {
-		setVisible(element instanceof ExplorerFile || element instanceof ExplorerFolder);
-	}
+	public void run(Node node) {
+		if (!(node instanceof ExplorerElement)) return;
+		Explorer explorer = ((ExplorerElement) node).getExplorer();
+		if (!(explorer instanceof FolderExplorer)) return;
+		if (explorer.getSelectedElements().size() != 1) return;
 
-	private void run(ExplorerFileDefaultContextMenu contextMenu) {
-		ExplorerElement element = contextMenu.getCurrentElement();
+		ExplorerElement element = explorer.getSelectedElements().get(0);
+
 		File folder;
 
 		if (element instanceof ExplorerFile) {
@@ -73,4 +72,8 @@ public class FileMenuItemNewFolder extends LanguageMenuItem implements ExplorerC
 		NewFolderWindow.open(folder);
 	}
 
+	@Override
+	public boolean supportsExplorerState(Explorer explorer) {
+		return explorer instanceof FolderExplorer && explorer.getSelectedElements().size() == 1;
+	}
 }

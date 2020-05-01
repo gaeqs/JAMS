@@ -54,9 +54,6 @@ public class FolderExplorer extends Explorer {
 		Validate.isTrue(mainFolder.isDirectory(), "Folder must be a directory!");
 		this.mainFolder = mainFolder;
 
-		basicElementContextMenuCreator = file -> ExplorerFileDefaultContextMenu.INSTANCE;
-		sectionContextMenuCreator = folder -> ExplorerFileDefaultContextMenu.INSTANCE;
-
 		fileOpenAction = file -> {
 		};
 

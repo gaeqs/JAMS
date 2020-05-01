@@ -31,6 +31,7 @@ import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.mips.display.MipsFileDisplay;
+import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
@@ -46,7 +47,7 @@ public class TextEditorActionCompile extends Action {
 	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
 
 	public TextEditorActionCompile() {
-		super(NAME, RegionTags.TEXT_EDITOR, null, DEFAULT_COMBINATION);
+		super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_COMPILE, DEFAULT_COMBINATION);
 	}
 
 	@Override

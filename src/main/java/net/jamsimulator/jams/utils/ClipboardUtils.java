@@ -28,21 +28,27 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ClipboardUtils {
 
-	public static void copy(File file) {
-		Validate.notNull(file, "File cannot be null!");
-		Validate.isTrue(file.exists(), "File must exist!");
+	public static void copy(File... files) {
+		Validate.hasNoNulls(files, "Files cannot be null!");
+		Validate.isTrue(Arrays.stream(files).allMatch(File::exists), "File must exist!");
 
 		Map<DataFormat, Object> contentMap = new HashMap<>();
-		List<File> files = new ArrayList<>();
-		files.add(file);
-		contentMap.put(DataFormat.FILES, files);
+		contentMap.put(DataFormat.FILES, new ArrayList<>(Arrays.asList(files)));
+
+		Clipboard.getSystemClipboard().setContent(contentMap);
+
+	}
+
+	public static void copy(Collection<File> files) {
+		Validate.notNull(files, "Files cannot be null!");
+		Validate.isTrue(files.stream().allMatch(File::exists), "File must exist!");
+
+		Map<DataFormat, Object> contentMap = new HashMap<>();
+		contentMap.put(DataFormat.FILES, new ArrayList<>(files));
 
 		Clipboard.getSystemClipboard().setContent(contentMap);
 

@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.explorer.folder;
 
 import javafx.scene.input.*;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerBasicElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
@@ -52,6 +53,15 @@ public class ExplorerFile extends ExplorerBasicElement {
 		getStyleClass().add("explorer-file");
 		this.file = file;
 		icon.setImage(Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType()).getIcon());
+	}
+
+	/**
+	 * Returns the {@link File} represented by this explorer file.
+	 *
+	 * @return the {@link File}.
+	 */
+	public File getFile() {
+		return file;
 	}
 
 	@Override
@@ -122,13 +132,9 @@ public class ExplorerFile extends ExplorerBasicElement {
 		});
 	}
 
-	/**
-	 * Returns the {@link File} represented by this explorer file.
-	 *
-	 * @return the {@link File}.
-	 */
-	public File getFile() {
-		return file;
+	@Override
+	public boolean supportsActionRegion(String region) {
+		return super.supportsActionRegion(region) || RegionTags.FOLDER_EXPLORER_ELEMENT.contains(region);
 	}
 
 	@Override

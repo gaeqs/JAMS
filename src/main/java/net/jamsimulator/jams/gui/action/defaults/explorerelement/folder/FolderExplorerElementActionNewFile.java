@@ -22,44 +22,59 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.explorer.folder.context.option;
+package net.jamsimulator.jams.gui.action.defaults.explorerelement.folder;
 
-import net.jamsimulator.jams.gui.explorer.ExplorerContextMenuItem;
+import javafx.scene.Node;
+import javafx.scene.input.KeyCombination;
+import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.defaults.explorerelement.ExplorerElementContextAction;
+import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
-import net.jamsimulator.jams.utils.ClipboardUtils;
-import net.jamsimulator.jams.gui.explorer.folder.context.ExplorerFileDefaultContextMenu;
+import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
+import net.jamsimulator.jams.gui.popup.NewFileWindow;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.language.wrapper.LanguageMenuItem;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 
-public class FileMenuItemCopy extends LanguageMenuItem implements ExplorerContextMenuItem {
+public class FolderExplorerElementActionNewFile extends ExplorerElementContextAction {
 
-	public FileMenuItemCopy(ExplorerFileDefaultContextMenu contextMenu) {
-		super(Messages.EXPLORER_ITEM_ACTION_COPY);
-		setOnAction(target -> run(contextMenu));
+
+	public static final String NAME = "FOLDER_EXPLORER_ELEMENT_NEW_FILE";
+	public static final KeyCombination DEFAULT_COMBINATION = null;
+
+	public FolderExplorerElementActionNewFile() {
+		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_NEW_FILE,
+				DEFAULT_COMBINATION, "new.general");
 	}
 
 	@Override
-	public void onElementChange(ExplorerElement element) {
-		setVisible(element instanceof ExplorerFile || element instanceof ExplorerFolder);
-	}
+	public void run(Node node) {
+		if (!(node instanceof ExplorerElement)) return;
+		Explorer explorer = ((ExplorerElement) node).getExplorer();
+		if (!(explorer instanceof FolderExplorer)) return;
+		if (explorer.getSelectedElements().size() != 1) return;
 
-	private void run(ExplorerFileDefaultContextMenu contextMenu) {
-		ExplorerElement element = contextMenu.getCurrentElement();
-		File file;
+		ExplorerElement element = explorer.getSelectedElements().get(0);
+
+		File folder;
 
 		if (element instanceof ExplorerFile) {
-			file = ((ExplorerFile) element).getFile();
+			folder = ((ExplorerFile) element).getFile().getParentFile();
 		} else if (element instanceof ExplorerFolder) {
-			file = ((ExplorerFolder) element).getFolder();
+			folder = ((ExplorerFolder) element).getFolder();
 		} else {
 			throw new IllegalStateException("Element is not a file or a folder!");
 		}
 
-		ClipboardUtils.copy(file);
+		NewFileWindow.open(folder);
 	}
 
+	@Override
+	public boolean supportsExplorerState(Explorer explorer) {
+		return explorer instanceof FolderExplorer && explorer.getSelectedElements().size() == 1;
+	}
 }

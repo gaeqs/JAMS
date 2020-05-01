@@ -32,6 +32,7 @@ import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.display.CodeFileDisplay;
 import net.jamsimulator.jams.gui.display.popup.AutocompletionPopup;
+import net.jamsimulator.jams.language.Messages;
 
 public class TextEditorActionShowAutocompletionPopup extends Action {
 
@@ -39,7 +40,7 @@ public class TextEditorActionShowAutocompletionPopup extends Action {
 	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.SPACE, KeyCombination.SHORTCUT_DOWN);
 
 	public TextEditorActionShowAutocompletionPopup() {
-		super(NAME, RegionTags.TEXT_EDITOR, null, DEFAULT_COMBINATION);
+		super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_SHOW_AUTOCOMPLETION_POPUP, DEFAULT_COMBINATION);
 	}
 
 	@Override

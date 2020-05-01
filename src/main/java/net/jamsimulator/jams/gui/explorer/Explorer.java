@@ -25,22 +25,15 @@
 package net.jamsimulator.jams.gui.explorer;
 
 import javafx.application.Platform;
-import javafx.beans.value.ObservableDoubleValue;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.ActionRegion;
-import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.utils.KeyCombinationBuilder;
-import net.jamsimulator.jams.utils.PropertyUtils;
-import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * Represents an explorer. An explorer represents graphically the list of files inside
@@ -48,7 +41,7 @@ import java.util.function.Function;
  * <p>
  * This class can be extend to add custom functionality.
  */
-public abstract class Explorer extends VBox implements ActionRegion {
+public abstract class Explorer extends VBox {
 
 	protected ScrollPane scrollPane;
 
@@ -57,9 +50,6 @@ public abstract class Explorer extends VBox implements ActionRegion {
 
 	protected final boolean multiSelection;
 	protected boolean keyboardSelection;
-
-	protected Function<ExplorerBasicElement, ContextMenu> basicElementContextMenuCreator;
-	protected Function<ExplorerSection, ContextMenu> sectionContextMenuCreator;
 
 	/**
 	 * Creates an explorer.
@@ -71,8 +61,6 @@ public abstract class Explorer extends VBox implements ActionRegion {
 	public Explorer(ScrollPane scrollPane, boolean multiSelection, boolean generateOnConstructor) {
 		this.scrollPane = scrollPane;
 		this.multiSelection = multiSelection;
-		basicElementContextMenuCreator = file -> null;
-		sectionContextMenuCreator = folder -> null;
 
 		this.selectedElements = new LinkedList<>();
 
@@ -280,55 +268,6 @@ public abstract class Explorer extends VBox implements ActionRegion {
 	}
 
 	/**
-	 * Sets the {@link Function} called to create {@link ExplorerBasicElement}'s {@link ContextMenu}s,
-	 * allowing to create custom {@link ContextMenu}s when a {@link ExplorerBasicElement}
-	 * is clicked using the secondary button.
-	 *
-	 * @param basicElementContextMenuCreator the {@link Function}.
-	 */
-	public void setBasicElementContextMenuCreator(Function<ExplorerBasicElement, ContextMenu> basicElementContextMenuCreator) {
-		Validate.notNull(basicElementContextMenuCreator, "Function cannot be null!");
-		this.basicElementContextMenuCreator = basicElementContextMenuCreator;
-	}
-
-	/**
-	 * Sets the {@link Function} called to create {@link ExplorerSection}'s {@link ContextMenu}s,
-	 * allowing to create custom {@link ContextMenu}s when a {@link ExplorerSection}
-	 * is clicked using the secondary button.
-	 *
-	 * @param sectionContextMenuCreator the {@link Function}.
-	 */
-	public void setSectionContextMenuCreator(Function<ExplorerSection, ContextMenu> sectionContextMenuCreator) {
-		Validate.notNull(sectionContextMenuCreator, "Function cannot be null!");
-		this.sectionContextMenuCreator = sectionContextMenuCreator;
-	}
-
-	/**
-	 * Creates a {@link ContextMenu} for the given {@link ExplorerBasicElement}.
-	 *
-	 * @param element the {@link ExplorerBasicElement}.
-	 * @return the {@link ContextMenu}.
-	 * @see #setBasicElementContextMenuCreator(Function)
-	 */
-	public ContextMenu createContextMenu(ExplorerBasicElement element) {
-		ContextMenu menu = basicElementContextMenuCreator.apply(element);
-		return menu == null ? new ContextMenu() : menu;
-	}
-
-
-	/**
-	 * Creates a {@link ContextMenu} for the given {@link ExplorerSection}.
-	 *
-	 * @param section the {@link ExplorerSection}.
-	 * @return the {@link ContextMenu}.
-	 * @see #setSectionContextMenuCreator(Function)
-	 */
-	public ContextMenu createContextMenu(ExplorerSection section) {
-		ContextMenu menu = sectionContextMenuCreator.apply(section);
-		return menu == null ? new ContextMenu() : menu;
-	}
-
-	/**
 	 * This method should be override to generate the main {@link ExplorerSection} of this explorer.
 	 */
 	protected abstract void generateMainSection();
@@ -369,11 +308,6 @@ public abstract class Explorer extends VBox implements ActionRegion {
 
 		double sp = Math.max(0, Math.min(1, vpn / (ht - hv)));
 		scrollPane.setVvalue(sp);
-	}
-
-	@Override
-	public boolean supportsActionRegion(String region) {
-		return region.equals(RegionTags.EXPLORER);
 	}
 
 	private void loadListeners() {

@@ -45,7 +45,10 @@ public abstract class Action {
 	/**
 	 * Creates the action.
 	 *
-	 * @param name the name of the action. This name must be unique.
+	 * @param name               the name of the action. This name must be unique.
+	 * @param regionTag          the region tag of this action. This action will only interact on regions that support this tag.
+	 * @param languageNode       the language node of this action.
+	 * @param defaultCombination the default combination of keys that a user needs to press to execute this action.
 	 */
 	public Action(String name, String regionTag, String languageNode, KeyCombination defaultCombination) {
 		Validate.notNull(name, "Name cannot be null!");
