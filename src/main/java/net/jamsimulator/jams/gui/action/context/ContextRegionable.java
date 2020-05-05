@@ -22,25 +22,26 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.action;
+package net.jamsimulator.jams.gui.action.context;
 
-import javafx.scene.Node;
-import javafx.scene.control.MenuItem;
-import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.JamsApplication;
+/**
+ * Represents a {@link javafx.scene.control.Menu} element that supports {@link ContextRegion}s.
+ */
+public interface ContextRegionable extends Comparable<ContextRegionable> {
 
-import java.util.List;
+	/**
+	 * Returns the region of this element.
+	 *
+	 * @return the region.
+	 */
+	ContextRegion getRegion();
 
-public class ActionMenuItem extends MenuItem {
-
-	public ActionMenuItem(Action action, Node node) {
-		super(Jams.getLanguageManager().getSelected().getOrDefault(action.getLanguageNode().orElse(null)));
-		setOnAction(target -> action.run(node));
-		List<KeyCombination> list = JamsApplication.getActionManager().getBindCombinations(action.getName());
-		if (!list.isEmpty()) {
-			setAccelerator(list.get(0));
-		}
-	}
+	/**
+	 * Returns the name of this element.
+	 * This is used to sort elements inside regions.
+	 *
+	 * @return the name.
+	 */
+	String getName();
 
 }

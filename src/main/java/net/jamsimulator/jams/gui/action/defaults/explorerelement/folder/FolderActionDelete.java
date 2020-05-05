@@ -29,7 +29,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.action.defaults.explorerelement.ExplorerElementContextAction;
+import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
@@ -38,14 +38,15 @@ import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.utils.FileUtils;
 
-public class FolderExplorerElementActionDelete extends ExplorerElementContextAction {
+public class FolderActionDelete extends ContextAction {
 
 
 	public static final String NAME = "FOLDER_EXPLORER_ELEMENT_DELETE";
 	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.DELETE);
 
-	public FolderExplorerElementActionDelete() {
-		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_DELETE, DEFAULT_COMBINATION, "clipboard");
+	public FolderActionDelete() {
+		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_DELETE,
+				DEFAULT_COMBINATION, FolderActionRegions.CLIPBOARD, null);
 	}
 
 	@Override
@@ -65,6 +66,7 @@ public class FolderExplorerElementActionDelete extends ExplorerElementContextAct
 				}
 			}
 		}
+		((ExplorerElement)node).getParentSection().ifPresent(explorer::setSelectedElement);
 	}
 
 	@Override

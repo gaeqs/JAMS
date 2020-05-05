@@ -25,30 +25,32 @@
 package net.jamsimulator.jams.gui.action.defaults.explorerelement.folder;
 
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.action.defaults.explorerelement.ExplorerElementContextAction;
+import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
-import net.jamsimulator.jams.gui.popup.NewFileWindow;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.utils.ClipboardUtils;
 
-import java.awt.*;
 import java.io.File;
-import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
-public class FolderExplorerElementActionNewFile extends ExplorerElementContextAction {
+public class FolderActionCopy extends ContextAction {
 
 
-	public static final String NAME = "FOLDER_EXPLORER_ELEMENT_NEW_FILE";
-	public static final KeyCombination DEFAULT_COMBINATION = null;
+	public static final String NAME = "FOLDER_EXPLORER_ELEMENT_COPY";
+	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN);
 
-	public FolderExplorerElementActionNewFile() {
-		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_NEW_FILE,
-				DEFAULT_COMBINATION, "new.general");
+	public FolderActionCopy() {
+		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_COPY,
+				DEFAULT_COMBINATION, FolderActionRegions.CLIPBOARD, null);
 	}
 
 	@Override
@@ -56,25 +58,23 @@ public class FolderExplorerElementActionNewFile extends ExplorerElementContextAc
 		if (!(node instanceof ExplorerElement)) return;
 		Explorer explorer = ((ExplorerElement) node).getExplorer();
 		if (!(explorer instanceof FolderExplorer)) return;
-		if (explorer.getSelectedElements().size() != 1) return;
-
-		ExplorerElement element = explorer.getSelectedElements().get(0);
-
-		File folder;
-
-		if (element instanceof ExplorerFile) {
-			folder = ((ExplorerFile) element).getFile().getParentFile();
-		} else if (element instanceof ExplorerFolder) {
-			folder = ((ExplorerFolder) element).getFolder();
-		} else {
-			throw new IllegalStateException("Element is not a file or a folder!");
+		Set<File> files = new HashSet<>();
+		File file;
+		for (ExplorerElement element : explorer.getSelectedElements()) {
+			if (element instanceof ExplorerFile) {
+				file = ((ExplorerFile) element).getFile();
+			} else if (element instanceof ExplorerFolder) {
+				file = ((ExplorerFolder) element).getFolder();
+			} else {
+				throw new IllegalStateException("Element is not a file or a folder!");
+			}
+			files.add(file);
 		}
-
-		NewFileWindow.open(folder);
+		ClipboardUtils.copy(files);
 	}
 
 	@Override
 	public boolean supportsExplorerState(Explorer explorer) {
-		return explorer instanceof FolderExplorer && explorer.getSelectedElements().size() == 1;
+		return explorer instanceof FolderExplorer;
 	}
 }

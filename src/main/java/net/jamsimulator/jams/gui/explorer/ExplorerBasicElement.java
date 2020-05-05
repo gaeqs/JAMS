@@ -37,7 +37,8 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.action.defaults.explorerelement.ExplorerElementContextAction;
+import net.jamsimulator.jams.gui.action.context.ContextAction;
+import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 
 import java.util.HashSet;
@@ -205,20 +206,20 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 
 	@Override
 	public void createContextMenu(double screenX, double screenY) {
-		Set<ExplorerElementContextAction> set = getSupportedContextActions();
+		Set<ContextAction> set = getSupportedContextActions();
 		if (set.isEmpty()) return;
-		ContextMenu main = ExplorerContextCreator.createContextMenu(set, this);
+		ContextMenu main = new ContextActionMenuBuilder(this).addAll(set).build();
 		main.show(this, screenX, screenY);
 	}
 
-	private Set<ExplorerElementContextAction> getSupportedContextActions() {
+	private Set<ContextAction> getSupportedContextActions() {
 		Explorer explorer = getExplorer();
 		Set<Action> actions = JamsApplication.getActionManager().getAll();
-		Set<ExplorerElementContextAction> set = new HashSet<>();
+		Set<ContextAction> set = new HashSet<>();
 		for (Action action : actions) {
-			if (action instanceof ExplorerElementContextAction && supportsActionRegion(action.getRegionTag())
-					&& ((ExplorerElementContextAction) action).supportsExplorerState(explorer)) {
-				set.add((ExplorerElementContextAction) action);
+			if (action instanceof ContextAction && supportsActionRegion(action.getRegionTag())
+					&& ((ContextAction) action).supportsExplorerState(explorer)) {
+				set.add((ContextAction) action);
 			}
 		}
 		return set;

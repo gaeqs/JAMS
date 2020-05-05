@@ -26,28 +26,30 @@ package net.jamsimulator.jams.gui.action.defaults.explorerelement.folder;
 
 import javafx.scene.Node;
 import javafx.scene.input.KeyCombination;
+import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.action.defaults.explorerelement.ExplorerElementContextAction;
+import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
+import net.jamsimulator.jams.gui.popup.NewFileWindow;
 import net.jamsimulator.jams.language.Messages;
 
-import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 
-public class FolderExplorerElementActionShowInFiles extends ExplorerElementContextAction {
+public class FolderActionNewFile extends ContextAction {
 
 
-	public static final String NAME = "FOLDER_EXPLORER_ELEMENT_SHOW_IN_FILES";
+	public static final String NAME = "FOLDER_EXPLORER_ELEMENT_NEW_FILE";
 	public static final KeyCombination DEFAULT_COMBINATION = null;
 
-	public FolderExplorerElementActionShowInFiles() {
-		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_SHOW_IN_FILES,
-				DEFAULT_COMBINATION, "show");
+	public FolderActionNewFile() {
+		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_NEW_FILE,
+				DEFAULT_COMBINATION, FolderActionRegions.NEW_GENERAL,
+				Jams.getFileTypeManager().getUnknownType().getIcon());
 	}
 
 	@Override
@@ -69,13 +71,7 @@ public class FolderExplorerElementActionShowInFiles extends ExplorerElementConte
 			throw new IllegalStateException("Element is not a file or a folder!");
 		}
 
-		new Thread(() -> {
-			try {
-				Desktop.getDesktop().browse(folder.toURI());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}).start();
+		NewFileWindow.open(folder);
 	}
 
 	@Override

@@ -29,7 +29,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.action.defaults.explorerelement.ExplorerElementContextAction;
+import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
@@ -40,14 +40,15 @@ import net.jamsimulator.jams.utils.ClipboardUtils;
 
 import java.io.File;
 
-public class FolderExplorerElementActionPaste extends ExplorerElementContextAction {
+public class FolderActionPaste extends ContextAction {
 
 
 	public static final String NAME = "FOLDER_EXPLORER_ELEMENT_PASTE";
 	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.V, KeyCombination.SHORTCUT_DOWN);
 
-	public FolderExplorerElementActionPaste() {
-		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_PASTE, DEFAULT_COMBINATION, "clipboard");
+	public FolderActionPaste() {
+		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_PASTE, DEFAULT_COMBINATION,
+				FolderActionRegions.CLIPBOARD, null);
 	}
 
 	@Override

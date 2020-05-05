@@ -26,27 +26,28 @@ package net.jamsimulator.jams.gui.action.defaults.explorerelement.folder;
 
 import javafx.scene.Node;
 import javafx.scene.input.KeyCombination;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.action.defaults.explorerelement.ExplorerElementContextAction;
+import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
-import net.jamsimulator.jams.gui.popup.NewAssemblyFileWindow;
+import net.jamsimulator.jams.gui.popup.NewFolderWindow;
 import net.jamsimulator.jams.language.Messages;
 
 import java.io.File;
 
-public class FolderExplorerElementActionNewAssemblyFile extends ExplorerElementContextAction {
+public class FolderActionNewFolder extends ContextAction {
 
 
-	public static final String NAME = "FOLDER_EXPLORER_ELEMENT_NEW_ASSEMBLY_FILE";
+	public static final String NAME = "FOLDER_EXPLORER_ELEMENT_NEW_FOLDER";
 	public static final KeyCombination DEFAULT_COMBINATION = null;
 
-	public FolderExplorerElementActionNewAssemblyFile() {
-		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_NEW_ASSEMBLY_FILE,
-				DEFAULT_COMBINATION, "new.general");
+	public FolderActionNewFolder() {
+		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_NEW_FOLDER,
+				DEFAULT_COMBINATION, FolderActionRegions.NEW_GENERAL, Jams.getFileTypeManager().getFolderType().getIcon());
 	}
 
 	@Override
@@ -68,7 +69,7 @@ public class FolderExplorerElementActionNewAssemblyFile extends ExplorerElementC
 			throw new IllegalStateException("Element is not a file or a folder!");
 		}
 
-		NewAssemblyFileWindow.open(folder);
+		NewFolderWindow.open(folder);
 	}
 
 	@Override

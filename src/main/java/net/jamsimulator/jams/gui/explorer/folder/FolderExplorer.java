@@ -26,7 +26,6 @@ package net.jamsimulator.jams.gui.explorer.folder;
 
 import javafx.scene.control.ScrollPane;
 import net.jamsimulator.jams.gui.explorer.Explorer;
-import net.jamsimulator.jams.gui.explorer.folder.context.ExplorerFileDefaultContextMenu;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;

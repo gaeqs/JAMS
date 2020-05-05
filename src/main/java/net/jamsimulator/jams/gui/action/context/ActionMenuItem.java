@@ -1,0 +1,60 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2020 Gael Rial Costas
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package net.jamsimulator.jams.gui.action.context;
+
+import javafx.scene.Node;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCombination;
+import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.action.Action;
+
+import java.util.List;
+
+/**
+ * A modified {@link MenuItem} that represents an {@link Action}.
+ */
+public class ActionMenuItem extends MenuItem {
+
+	/**
+	 * Creates the menu item.
+	 *
+	 * @param action the represented {@link Action}.
+	 * @param node   the {@link Node} of the context.
+	 * @param icon   the shown {@link Image icon} or null.
+	 */
+	public ActionMenuItem(Action action, Node node, Image icon) {
+		super(Jams.getLanguageManager().getSelected().getOrDefault(action.getLanguageNode().orElse(null)));
+		setGraphic(new ImageView(icon));
+		setOnAction(target -> action.run(node));
+		List<KeyCombination> list = JamsApplication.getActionManager().getBindCombinations(action.getName());
+		if (!list.isEmpty()) {
+			setAccelerator(list.get(0));
+		}
+	}
+
+}

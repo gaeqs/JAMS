@@ -48,7 +48,7 @@ import java.io.IOException;
 
 public class ConfigurationWindow extends SplitPane {
 
-	private static final int WIDTH = 800;
+	private static final int WIDTH = 900;
 	private static final int HEIGHT = 600;
 
 	private Stage stage;

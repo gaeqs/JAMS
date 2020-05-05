@@ -27,27 +27,27 @@ package net.jamsimulator.jams.gui.action.defaults.explorerelement.folder;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.action.defaults.explorerelement.ExplorerElementContextAction;
+import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
-import net.jamsimulator.jams.gui.popup.NewFileWindow;
-import net.jamsimulator.jams.gui.popup.NewFolderWindow;
 import net.jamsimulator.jams.language.Messages;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 
-public class FolderExplorerElementActionNewFolder extends ExplorerElementContextAction {
+public class FolderActionShowInFiles extends ContextAction {
 
 
-	public static final String NAME = "FOLDER_EXPLORER_ELEMENT_NEW_FOLDER";
+	public static final String NAME = "FOLDER_EXPLORER_ELEMENT_SHOW_IN_FILES";
 	public static final KeyCombination DEFAULT_COMBINATION = null;
 
-	public FolderExplorerElementActionNewFolder() {
-		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_NEW_FOLDER,
-				DEFAULT_COMBINATION, "new.general");
+	public FolderActionShowInFiles() {
+		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_SHOW_IN_FILES,
+				DEFAULT_COMBINATION, FolderActionRegions.SHOW, null);
 	}
 
 	@Override
@@ -69,7 +69,13 @@ public class FolderExplorerElementActionNewFolder extends ExplorerElementContext
 			throw new IllegalStateException("Element is not a file or a folder!");
 		}
 
-		NewFolderWindow.open(folder);
+		new Thread(() -> {
+			try {
+				Desktop.getDesktop().browse(folder.toURI());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}).start();
 	}
 
 	@Override

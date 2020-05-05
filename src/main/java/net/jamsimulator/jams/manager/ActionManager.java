@@ -352,15 +352,15 @@ public class ActionManager extends SimpleEventBroadcast {
 		actions.add(new ExplorerElementActionSelectPreviousMultiple());
 
 		//FOLDER EXPLORER ELEMENT
-		actions.add(new FolderExplorerElementActionCopy());
-		actions.add(new FolderExplorerElementActionDelete());
-		actions.add(new FolderExplorerElementActionPaste());
+		actions.add(new FolderActionCopy());
+		actions.add(new FolderActionDelete());
+		actions.add(new FolderActionPaste());
 
-		actions.add(new FolderExplorerElementActionShowInFiles());
+		actions.add(new FolderActionShowInFiles());
 
-		actions.add(new FolderExplorerElementActionNewFile());
-		actions.add(new FolderExplorerElementActionNewAssemblyFile());
-		actions.add(new FolderExplorerElementActionNewFolder());
+		actions.add(new FolderActionNewFile());
+		actions.add(new FolderActionNewAssemblyFile());
+		actions.add(new FolderActionNewFolder());
 	}
 
 	private List<Action> loadBinds() {

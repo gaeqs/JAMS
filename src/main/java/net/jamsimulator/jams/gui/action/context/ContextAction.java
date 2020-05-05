@@ -22,18 +22,23 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.action.defaults.explorerelement;
+package net.jamsimulator.jams.gui.action.context;
 
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.explorer.Explorer;
+import net.jamsimulator.jams.utils.Validate;
+
+import java.util.Optional;
 
 /**
- * Represents a explorer element action that can be shown in a {@link javafx.scene.control.ContextMenu}.
+ * Represents an action that can be shown in a {@link javafx.scene.control.ContextMenu}.
  */
-public abstract class ExplorerElementContextAction extends Action {
+public abstract class ContextAction extends Action implements ContextRegionable {
 
-	private final String menu;
+	private final Image icon;
+	private final ContextRegion contextRegion;
 
 	/**
 	 * Creates the context action.
@@ -42,24 +47,15 @@ public abstract class ExplorerElementContextAction extends Action {
 	 * @param regionTag          the region tag of this action. This action will only interact on regions that support this tag.
 	 * @param languageNode       the language node of this action.
 	 * @param defaultCombination the default combination of keys that a user needs to press to execute this action.
-	 * @param menu               the menu where this action should be displayed. Use points '.' to separate several submenus.
+	 * @param contextRegion      the context region this action will be shown on.
+	 * @param icon               the icon this action will show on the context menu or null.
 	 */
-	public ExplorerElementContextAction(String name, String regionTag,
-										String languageNode, KeyCombination defaultCombination, String menu) {
+	public ContextAction(String name, String regionTag, String languageNode,
+						 KeyCombination defaultCombination, ContextRegion contextRegion, Image icon) {
 		super(name, regionTag, languageNode, defaultCombination);
-		this.menu = menu;
-	}
-
-	/**
-	 * Returns the menu where this action should be displayed.
-	 * If there are several submenus, this string separates them using a point '.'.
-	 * <p>
-	 * If there's no submenus, this action will be displayed in the main context menu.
-	 *
-	 * @return the menu.
-	 */
-	public String getMenu() {
-		return menu;
+		Validate.notNull(contextRegion, "Context region cannot be null!");
+		this.contextRegion = contextRegion;
+		this.icon = icon;
 	}
 
 	/**
@@ -68,4 +64,22 @@ public abstract class ExplorerElementContextAction extends Action {
 	 * @param explorer the {@link Explorer}.
 	 */
 	public abstract boolean supportsExplorerState(Explorer explorer);
+
+	@Override
+	public ContextRegion getRegion() {
+		return contextRegion;
+	}
+
+	public Optional<Image> getIcon() {
+		return Optional.ofNullable(icon);
+	}
+
+	@Override
+	public int compareTo(ContextRegionable o) {
+		int comp = getRegion().compareTo(o.getRegion());
+		if(comp == 0) {
+			return getName().compareTo(o.getName());
+		}
+		return comp;
+	}
 }
