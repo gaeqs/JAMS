@@ -67,7 +67,7 @@ public class MainScene extends ThemedScene {
 	@Override
 	protected void initializeJamsListeners() {
 		super.initializeJamsListeners();
-		JamsApplication.getActionManager().registerListeners(this);
+		JamsApplication.getActionManager().registerListeners(this, true);
 	}
 
 	public void unregisterJamsListeners() {

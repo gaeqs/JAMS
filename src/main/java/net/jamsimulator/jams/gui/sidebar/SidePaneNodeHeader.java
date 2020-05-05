@@ -79,7 +79,7 @@ public class SidePaneNodeHeader extends AnchorPane {
 		AnchorUtils.setAnchor(label, 0, 0, 5, -1);
 		getChildren().add(label);
 
-		sidePane.registerListeners(this);
+		sidePane.registerListeners(this, true);
 		registerFXEvents();
 	}
 

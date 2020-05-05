@@ -64,7 +64,7 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, ActionRegi
 		getChildren().add(0, factory.getBackground());
 
 		JamsApplication.getThemeManager().getSelected().apply(this);
-		JamsApplication.getThemeManager().registerListeners(this);
+		JamsApplication.getThemeManager().registerListeners(this, true);
 
 		setParagraphGraphicFactory(factory);
 		applyOldTextListener();

@@ -186,13 +186,13 @@ public class SidePane extends SplitPane implements EventBroadcast {
 	//region EVENTS
 
 	@Override
-	public boolean registerListener(Object instance, Method method) {
-		return broadcast.registerListener(instance, method);
+	public boolean registerListener(Object instance, Method method, boolean useWeakReferences) {
+		return broadcast.registerListener(instance, method, useWeakReferences);
 	}
 
 	@Override
-	public int registerListeners(Object instance) {
-		return broadcast.registerListeners(instance);
+	public int registerListeners(Object instance, boolean useWeakReferences) {
+		return broadcast.registerListeners(instance, useWeakReferences);
 	}
 
 	@Override
@@ -202,7 +202,7 @@ public class SidePane extends SplitPane implements EventBroadcast {
 
 	@Override
 	public int unregisterListeners(Object instance) {
-		return broadcast.registerListeners(instance);
+		return broadcast.unregisterListeners(instance);
 	}
 
 	@Override

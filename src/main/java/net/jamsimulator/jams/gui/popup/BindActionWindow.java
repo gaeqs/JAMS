@@ -72,18 +72,12 @@ public class BindActionWindow extends VBox {
 
 		yes.setOnAction(event -> {
 			stage.close();
-			title.dispose();
-			yes.dispose();
-			cancel.dispose();
 			event.consume();
 			confirm();
 		});
 
 		cancel.setOnAction(event -> {
 			stage.close();
-			title.dispose();
-			yes.dispose();
-			cancel.dispose();
 			event.consume();
 		});
 
@@ -105,9 +99,6 @@ public class BindActionWindow extends VBox {
 		setOnKeyPressed(event -> {
 			if (event.getCode() == KeyCode.ESCAPE) {
 				stage.close();
-				title.dispose();
-				yes.dispose();
-				cancel.dispose();
 				event.consume();
 			} else {
 				if (event.getCode() == KeyCode.CONTROL || event.getCode() == KeyCode.SHIFT
@@ -120,6 +111,7 @@ public class BindActionWindow extends VBox {
 	}
 
 	private void confirm() {
+		if(combination == null) return;
 		Map<String, Action> map = JamsApplication.getActionManager().getBindActions(combination);
 		if (map.isEmpty()) {
 			bind();

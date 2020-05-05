@@ -33,16 +33,12 @@ import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 
 public class LanguageMenuItem extends MenuItem {
 
-	private String node;
+	private final String node;
 
 	public LanguageMenuItem(String node) {
 		this.node = node;
-		Jams.getLanguageManager().registerListeners(this);
+		Jams.getLanguageManager().registerListeners(this, true);
 		refreshMessage();
-	}
-
-	public void dispose () {
-		Jams.getLanguageManager().unregisterListeners(this);
 	}
 
 	private void refreshMessage() {

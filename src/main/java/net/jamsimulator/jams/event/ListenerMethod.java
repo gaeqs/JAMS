@@ -24,20 +24,31 @@
 
 package net.jamsimulator.jams.event;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 
 class ListenerMethod {
 
+	private Class<? extends Event> event;
+	private boolean weakReference;
+
 	private Object instance;
 	private Method method;
-	private Class<? extends Event> event;
 	private Listener listener;
 
-	ListenerMethod(Object instance, Method method, Class<? extends Event> event, Listener listener) {
-		this.instance = instance;
+	private WeakReference<Object> instanceWeakReference;
+
+	ListenerMethod(Object instance, Method method, Class<? extends Event> event, Listener listener, boolean weakReference) {
 		this.method = method;
 		this.event = event;
 		this.listener = listener;
+		this.weakReference = weakReference;
+
+		if (weakReference) {
+			this.instanceWeakReference = new WeakReference<>(instance);
+		} else {
+			this.instance = instance;
+		}
 	}
 
 	Class<? extends Event> getEvent() {
@@ -53,9 +64,20 @@ class ListenerMethod {
 		return this.method.equals(method) && instance == this.instance;
 	}
 
+	boolean isReferenceValid() {
+		return !weakReference || instanceWeakReference.get() != null;
+	}
+
 	void call(Event event) {
 		try {
-			method.invoke(instance, event);
+			if (weakReference) {
+				Object instance = instanceWeakReference.get();
+				if (instance != null) {
+					method.invoke(instance, event);
+				}
+			} else {
+				method.invoke(instance, event);
+			}
 		} catch (Exception e) {
 			System.err.println("Error while calling listener " + method.getName() + "!");
 			e.printStackTrace();

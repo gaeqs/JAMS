@@ -42,7 +42,7 @@ public class ConfigurationWindowNodeLanguage extends ConfigurationWindowNode<Lan
 	public ConfigurationWindowNodeLanguage(Configuration configuration, String relativeNode,
 										   String languageNode, Language defaultValue) {
 		super(configuration, relativeNode, languageNode, defaultValue);
-		Jams.getLanguageManager().registerListeners(this);
+		Jams.getLanguageManager().registerListeners(this, true);
 	}
 
 	@Override

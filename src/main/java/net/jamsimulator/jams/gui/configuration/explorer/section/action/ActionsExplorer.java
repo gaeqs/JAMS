@@ -60,7 +60,7 @@ public class ActionsExplorer extends Explorer {
 		mainSection = new ActionsExplorerMainSection(this, smallRepresentation);
 		getChildren().add(mainSection);
 		mainSection.expand();
-		JamsApplication.getActionManager().registerListeners(this);
+		JamsApplication.getActionManager().registerListeners(this, true);
 	}
 
 	public boolean isSmallRepresentation() {

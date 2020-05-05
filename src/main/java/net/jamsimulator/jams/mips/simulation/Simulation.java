@@ -46,7 +46,7 @@ public abstract class Simulation<Arch extends Architecture> {
 		this.instructionSet = instructionSet;
 		this.registerSet = registerSet;
 		this.memory = memory;
-		memory.registerListeners(this);
+		memory.registerListeners(this, true);
 	}
 
 	public Arch getArchitecture() {

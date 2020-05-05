@@ -84,7 +84,7 @@ public class ActionsExplorerAction extends ExplorerBasicElement {
 		HBox.setHgrow(bigSeparator, Priority.ALWAYS);
 		getChildren().add(bigSeparator);
 
-		JamsApplication.getActionManager().registerListeners(this);
+		JamsApplication.getActionManager().registerListeners(this, true);
 
 		refresh();
 	}

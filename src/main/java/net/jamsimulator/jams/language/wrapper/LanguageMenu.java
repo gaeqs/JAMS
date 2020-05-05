@@ -37,18 +37,13 @@ public class LanguageMenu extends Menu {
 
 	public LanguageMenu(String node) {
 		this.node = node;
-		Jams.getLanguageManager().registerListeners(this);
+		Jams.getLanguageManager().registerListeners(this, true);
 		refreshMessage();
-	}
-
-	public void dispose () {
-		Jams.getLanguageManager().unregisterListeners(this);
 	}
 
 	private void refreshMessage() {
 		setText(Jams.getLanguageManager().getSelected().getOrDefault(node));
 	}
-
 
 	@Listener
 	public void onSelectedLanguageChange(SelectedLanguageChangeEvent.After event) {

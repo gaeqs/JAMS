@@ -141,7 +141,7 @@ public class ConfigurationWindow extends SplitPane {
 					e.printStackTrace();
 				}
 			});
-			Jams.getLanguageManager().registerListeners(this);
+			Jams.getLanguageManager().registerListeners(this, true);
 		}
 
 		stage.show();

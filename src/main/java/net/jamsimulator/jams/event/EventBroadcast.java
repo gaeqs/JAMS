@@ -41,25 +41,39 @@ public interface EventBroadcast {
 	 * Registers a listener of an instance. A listener is a non-static method with
 	 * only one parameter. This parameter must be a {@link Event} or any subclass.
 	 * The method must also have one {@link Listener} annotation.
+	 * <p>
+	 * <p>
+	 * If {@code weakReference} is true the instance will be store in a weak reference instead of a normal parameter.
+	 * This is useful if you want to register this such as buttons, or labels, allowing the GC to free memory easily
+	 * when those elements are no longer referenced in your code.
+	 * Set this boolean to {@link false} if the only reference of the instance is hold by this broadcast.
 	 *
-	 * @param instance the instance.
-	 * @param method   the listener.
+	 * @param instance          the instance.
+	 * @param method            the listener.
+	 * @param useWeakReferences whether the broadcast should use weak references to register the listener.
 	 * @return true whether the listener was registered.
 	 */
-	boolean registerListener(Object instance, Method method);
+	boolean registerListener(Object instance, Method method, boolean useWeakReferences);
 
 	/**
 	 * Registers all listeners of an instance.
-	 *
+	 * <p>
 	 * This searches listener on all methods, including private ones. This also searches all superclasses' methods.
+	 * <p>
+	 * <p>
+	 * If {@code weakReference} is true the instance will be store in a weak reference instead of a normal parameter.
+	 * This is useful if you want to register this such as buttons, or labels, allowing the GC to free memory easily
+	 * when those elements are no longer referenced in your code.
+	 * Set this boolean to {@link false} if the only reference of the instance is hold by this broadcast.
+	 * <p>
+	 * See {@link #registerListener(Object, Method, boolean)} for more information.
 	 *
-	 * See {@link #registerListener(Object, Method)} for more information.
-	 *
-	 * @param instance the instance.
+	 * @param instance          the instance.
+	 * @param useWeakReferences whether the broadcast should use weak references to register the listeners.
 	 * @return the amount of registered listeners.
-	 * @see #registerListener(Object, Method)
+	 * @see #registerListener(Object, Method, boolean)
 	 */
-	int registerListeners(Object instance);
+	int registerListeners(Object instance, boolean useWeakReferences);
 
 	/**
 	 * Unregisters a listener of an instance.

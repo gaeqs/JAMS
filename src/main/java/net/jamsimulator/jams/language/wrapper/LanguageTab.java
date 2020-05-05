@@ -37,12 +37,8 @@ public class LanguageTab extends Tab {
 
 	public LanguageTab(String node) {
 		this.node = node;
-		Jams.getLanguageManager().registerListeners(this);
+		Jams.getLanguageManager().registerListeners(this, true);
 		refreshMessage();
-	}
-
-	public void dispose () {
-		Jams.getLanguageManager().unregisterListeners(this);
 	}
 
 	private void refreshMessage() {

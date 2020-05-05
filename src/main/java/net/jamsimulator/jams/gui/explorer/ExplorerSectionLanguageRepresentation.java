@@ -58,7 +58,6 @@ public class ExplorerSectionLanguageRepresentation extends ExplorerSectionRepres
 			}
 		} else {
 			if (label instanceof LanguageLabel) {
-				((LanguageLabel) label).dispose();
 				getChildren().remove(label);
 				label = new Label(section.getName());
 				getChildren().add(label);
@@ -69,7 +68,6 @@ public class ExplorerSectionLanguageRepresentation extends ExplorerSectionRepres
 
 	public void dispose() {
 		if (label instanceof LanguageLabel) {
-			((LanguageLabel) label).dispose();
 		}
 	}
 

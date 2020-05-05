@@ -42,7 +42,7 @@ public class ConfigurationWindowNodeTheme extends ConfigurationWindowNode<Theme>
 	public ConfigurationWindowNodeTheme(Configuration configuration, String relativeNode,
 										String languageNode, Theme defaultValue) {
 		super(configuration, relativeNode, languageNode, defaultValue);
-		JamsApplication.getThemeManager().registerListeners(this);
+		JamsApplication.getThemeManager().registerListeners(this, true);
 	}
 
 	@Override

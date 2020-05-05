@@ -31,7 +31,7 @@ import java.util.TreeSet;
  * Represents a simple event caller. An event caller allows to send
  * events to all the registered {@link Listener} the caller has.
  * <p>
- * To register a listener use {@link #registerListener(Object, Method)} or {@link #registerListeners(Object)}.
+ * To register a listener use {@link #registerListener(Object, Method, boolean)} or {@link #registerListeners(Object, boolean)}.
  * To send an {@link Event} use {@link #callEvent(Event)}.
  * <p>
  * {@link Listener}s listening a superclass of the {@link Event} will also be called.
@@ -51,7 +51,7 @@ public class SimpleEventBroadcast implements EventBroadcast {
 		}));
 	}
 
-	public boolean registerListener(Object instance, Method method) {
+	public boolean registerListener(Object instance, Method method, boolean useWeakReferences) {
 		if (method.getParameterCount() != 1) return false;
 		Class<?> clazz = method.getParameters()[0].getType();
 		if (!Event.class.isAssignableFrom(clazz)) return false;
@@ -63,18 +63,18 @@ public class SimpleEventBroadcast implements EventBroadcast {
 
 		method.setAccessible(true);
 
-		ListenerMethod listenerMethod = new ListenerMethod(instance, method, type, annotation);
+		ListenerMethod listenerMethod = new ListenerMethod(instance, method, type, annotation, useWeakReferences);
 		registeredListeners.add(listenerMethod);
 		return true;
 	}
 
-	public int registerListeners(Object instance) {
+	public int registerListeners(Object instance, boolean useWeakReferences) {
 		int amount = 0;
 
 		Class<?> c = instance.getClass();
 		while (c != null) {
 			for (Method declaredMethod : c.getDeclaredMethods()) {
-				if (registerListener(instance, declaredMethod))
+				if (registerListener(instance, declaredMethod, useWeakReferences))
 					amount++;
 			}
 			c = c.getSuperclass();
@@ -84,7 +84,8 @@ public class SimpleEventBroadcast implements EventBroadcast {
 
 	@Override
 	public boolean unregisterListener(Object instance, Method method) {
-		return registeredListeners.removeIf(target -> target.matches(instance, method));
+		//This method also uses the loop to remove listeners with invalid references.
+		return registeredListeners.removeIf(target -> !target.isReferenceValid() || target.matches(instance, method));
 	}
 
 	@Override
@@ -114,6 +115,8 @@ public class SimpleEventBroadcast implements EventBroadcast {
 	 * @see #callEvent(Event)
 	 */
 	public <T extends Event> T callEvent(T event, EventBroadcast broadcast) {
+		//Removes invalid events
+		registeredListeners.removeIf(target -> !target.isReferenceValid());
 		//Sets the caller.
 		event.setCaller(broadcast);
 		//For all listeners: filter and send.

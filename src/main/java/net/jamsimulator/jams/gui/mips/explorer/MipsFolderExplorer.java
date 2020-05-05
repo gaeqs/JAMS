@@ -50,7 +50,7 @@ public class MipsFolderExplorer extends FolderExplorer {
 	public MipsFolderExplorer(MipsProject project, ScrollPane scrollPane) {
 		super(project.getFolder(), scrollPane);
 		this.project = project;
-		project.getFilesToAssemble().registerListeners(this);
+		project.getFilesToAssemble().registerListeners(this, true);
 		for (File file : project.getFilesToAssemble().getFiles()) {
 			markFileToAssemble(file);
 		}

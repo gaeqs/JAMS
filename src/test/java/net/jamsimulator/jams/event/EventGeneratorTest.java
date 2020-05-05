@@ -35,7 +35,7 @@ class EventGeneratorTest {
 	@Test
 	void test() {
 		SimpleEventBroadcast caller = new SimpleEventBroadcast();
-		caller.registerListeners(new TestListener());
+		caller.registerListeners(new TestListener(), false);
 
 		TestEvent testEvent = new TestEvent(5);
 		caller.callEvent(testEvent);

@@ -37,17 +37,13 @@ public class LanguageLabel extends Label {
 
 	public LanguageLabel(String node) {
 		this.node = node;
-		Jams.getLanguageManager().registerListeners(this);
+		Jams.getLanguageManager().registerListeners(this, true);
 		refreshMessage();
 	}
 
 	public void setNode(String node) {
 		this.node = node;
 		refreshMessage();
-	}
-
-	public void dispose () {
-		Jams.getLanguageManager().unregisterListeners(this);
 	}
 
 	private void refreshMessage() {

@@ -65,7 +65,7 @@ public class ThemedScene extends Scene {
 	}
 
 	protected void initializeJamsListeners() {
-		JamsApplication.getThemeManager().registerListeners(this);
+		JamsApplication.getThemeManager().registerListeners(this, true);
 		JamsApplication.getThemeManager().getSelected().apply(this);
 	}
 
