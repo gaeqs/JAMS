@@ -66,12 +66,6 @@ public class ExplorerSectionLanguageRepresentation extends ExplorerSectionRepres
 	}
 
 
-	public void dispose() {
-		if (label instanceof LanguageLabel) {
-		}
-	}
-
-
 	@Override
 	protected void loadElements() {
 		statusIcon = new NearestImageView();

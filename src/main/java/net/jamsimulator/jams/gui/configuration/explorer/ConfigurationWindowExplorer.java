@@ -39,6 +39,7 @@ public class ConfigurationWindowExplorer extends Explorer {
 	 */
 	public ConfigurationWindowExplorer(ConfigurationWindow configurationWindow, ScrollPane scrollPane) {
 		super(scrollPane, false, false);
+		getStyleClass().add("configuration-window-explorer");
 		this.configurationWindow = configurationWindow;
 		generateMainSection();
 	}

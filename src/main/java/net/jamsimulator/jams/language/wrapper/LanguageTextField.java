@@ -22,23 +22,42 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.file;
+package net.jamsimulator.jams.language.wrapper;
 
-import net.jamsimulator.jams.gui.display.FileDisplay;
-import net.jamsimulator.jams.gui.display.FileDisplayTab;
-import net.jamsimulator.jams.gui.image.icon.Icons;
-import net.jamsimulator.jams.gui.mips.display.MipsFileDisplay;
+import javafx.application.Platform;
+import javafx.scene.control.TextField;
+import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
+import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 
-public class AssemblyFileType extends FileType {
+public class LanguageTextField extends TextField {
 
-	public static final String NAME = "Assembly";
+	private String node;
 
-	public AssemblyFileType() {
-		super(NAME, Icons.FILE_ASSEMBLY, Icons.FILE_ASSEMBLY_PATH, "asm", "s");
+	public LanguageTextField(String node) {
+		this.node = node;
+		Jams.getLanguageManager().registerListeners(this, true);
+		refreshMessage();
 	}
 
-	@Override
-	public FileDisplay createDisplayTab(FileDisplayTab tab) {
-		return new MipsFileDisplay(tab);
+	public void setNode(String node) {
+		this.node = node;
+		refreshMessage();
+	}
+
+	private void refreshMessage() {
+		if (node == null) return;
+		setPromptText(Jams.getLanguageManager().getSelected().getOrDefault(node));
+	}
+
+	@Listener
+	public void onSelectedLanguageChange(SelectedLanguageChangeEvent.After event) {
+		Platform.runLater(this::refreshMessage);
+	}
+
+	@Listener
+	public void onDefaultLanguageChange(DefaultLanguageChangeEvent.After event) {
+		Platform.runLater(this::refreshMessage);
 	}
 }

@@ -34,11 +34,20 @@ import java.util.Optional;
 public interface ExplorerElement extends ActionRegion {
 
 	/**
-	 * Returns the name of the element. This is the name shown to the user.
+	 * Returns the name of the element. This may be the name shown to the user.
 	 *
 	 * @return the name of the element.
 	 */
 	String getName();
+
+
+	/**
+	 * Returns the name that this elements is currently showing to the user.
+	 * This is the string that should be used for filters and lists.
+	 *
+	 * @return the visible name.
+	 */
+	String getVisibleName();
 
 	/**
 	 * Returns the {@link Explorer} of this element.

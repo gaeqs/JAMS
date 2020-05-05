@@ -196,7 +196,7 @@ public class FileTypeManager extends SimpleEventBroadcast {
 		folderType = new TextFileType("Folder", Icons.FILE_FOLDER, Icons.FILE_FOLDER_PATH);
 
 		register(new TextFileType("Text", Icons.FILE_TEXT, Icons.FILE_TEXT_PATH, "txt"));
-		register(new AssemblyFileType("Assembly", Icons.FILE_ASSEMBLY, Icons.FILE_ASSEMBLY_PATH, "asm", "s"));
+		register(new AssemblyFileType());
 		register(new ImageFileType("Image", Icons.FILE_IMAGE, Icons.FILE_IMAGE_PATH,
 				"png", "gif", "jpg", "jpeg", "tiff"));
 	}

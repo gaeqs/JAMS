@@ -361,6 +361,10 @@ public class ActionManager extends SimpleEventBroadcast {
 		actions.add(new FolderActionNewFile());
 		actions.add(new FolderActionNewAssemblyFile());
 		actions.add(new FolderActionNewFolder());
+
+		// MIPS EXPLORER ELEMENT
+		actions.add(new FolderActionAddFileToAssembler());
+		actions.add(new FolderActionRemoveFileFromAssembler());
 	}
 
 	private List<Action> loadBinds() {

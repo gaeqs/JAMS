@@ -138,7 +138,6 @@ public class MipsFileDisplay extends CodeFileDisplay {
 			return;
 		}
 
-
 		boolean refreshGlobalLabels = elements.editLine(currentLine, getParagraph(currentLine).getText());
 
 		//Check next lines.
@@ -147,7 +146,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 		if (removedLines == 0 && addedLines == 0) {
 			elements.searchAllErrors(getTab().getWorkingPane(), currentLine, 1);
-			elements.styleLines(this, elements.searchLabelErrors());
+			elements.styleLines(this, elements.searchLabelErrors(project.getFilesToAssemble().getGlobalLabels()));
 			elements.styleLines(this, currentLine, 1);
 
 			if (refreshGlobalLabels) {
@@ -178,7 +177,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		}
 
 		elements.searchAllErrors(getTab().getWorkingPane(), currentLine - 1, 1 + editedLines + linesToAdd);
-		elements.styleLines(this, elements.searchLabelErrors());
+		elements.styleLines(this, elements.searchLabelErrors(project.getFilesToAssemble().getGlobalLabels()));
 		elements.styleLines(this, currentLine - 1, 1 + editedLines + linesToAdd);
 
 		if (refreshGlobalLabels) {

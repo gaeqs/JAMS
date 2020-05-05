@@ -56,7 +56,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 
 	protected ExplorerSectionRepresentation representation;
 
-	protected List<ExplorerElement> elements;
+	protected List<ExplorerElement> elements, filteredElements;
 	protected Comparator<ExplorerElement> comparator;
 
 	protected VBox contents;
@@ -86,6 +86,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		this.hierarchyLevel = hierarchyLevel;
 		this.comparator = comparator;
 		this.elements = new ArrayList<>();
+		this.filteredElements = new ArrayList<>(elements);
 
 		onMouseClicked = e -> {
 		};
@@ -251,6 +252,17 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	public void addElement(ExplorerElement element) {
 		Validate.notNull(element, "Element cannot be null!");
 		elements.add(element);
+
+		if (element instanceof ExplorerBasicElement) {
+			if (explorer.filter.test((ExplorerBasicElement) element)) {
+				filteredElements.add(element);
+			}
+		} else if (element instanceof ExplorerSection) {
+			if (((ExplorerSection) element).applyFilter()) {
+				filteredElements.add(element);
+			}
+		}
+
 		refreshAllElements();
 		representation.refreshStatusIcon();
 		explorer.refreshWidth();
@@ -264,7 +276,8 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	 */
 	public boolean removeElement(ExplorerElement element) {
 		Validate.notNull(element, "Element cannot be null!");
-		boolean result = elements.remove(element);
+		elements.remove(element);
+		boolean result = filteredElements.remove(element);
 		if (result) {
 			refreshAllElements();
 			representation.refreshStatusIcon();
@@ -274,7 +287,8 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	}
 
 	public boolean removeElementIf(Predicate<? super ExplorerElement> consumer) {
-		if (elements.removeIf(consumer)) {
+		elements.removeIf(consumer);
+		if (filteredElements.removeIf(consumer)) {
 			refreshAllElements();
 			representation.refreshStatusIcon();
 			explorer.refreshWidth();
@@ -332,8 +346,35 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		return property;
 	}
 
+	protected boolean applyFilter() {
+		filteredElements.clear();
+		for (ExplorerElement element : elements) {
+			if (element instanceof ExplorerBasicElement) {
+				if (explorer.filter.test((ExplorerBasicElement) element)) {
+					filteredElements.add(element);
+				}
+			} else if (element instanceof ExplorerSection) {
+				if (((ExplorerSection) element).applyFilter()) {
+					filteredElements.add(element);
+				}
+			}
+		}
+
+
+		if (isExpanded()) {
+			refreshAllElements();
+		}
+
+		return elements.isEmpty() || !filteredElements.isEmpty();
+	}
+
 	@Override
 	public String getName() {
+		return name;
+	}
+
+	@Override
+	public String getVisibleName() {
 		return name;
 	}
 
@@ -473,12 +514,12 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	protected void refreshAllElements() {
 		//Clears, sorts and adds the files.
 		contents.getChildren().clear();
-		elements.sort(comparator);
+		filteredElements.sort(comparator);
 		if (expanded) addAllFilesToContents();
 	}
 
 	protected void addAllFilesToContents() {
-		elements.forEach(target -> {
+		filteredElements.forEach(target -> {
 			if (target instanceof Node)
 				contents.getChildren().add((Node) target);
 		});

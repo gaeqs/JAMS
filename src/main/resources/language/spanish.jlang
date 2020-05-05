@@ -16,6 +16,7 @@ EXPLORER_NAME=Explorador
 CONFIG=Configuración
 
 CONFIG_ACTION=Acciones
+CONFIG_ACTION_SEARCH=Buscar...
 CONFIG_ACTION_BIND_TITLE=Asignar una combinación a una acción
 CONFIG_ACTION_BIND_ENTER=Presiona la combinación de teclas que quieres asignar
 CONFIG_ACTION_BIND_CONFIRM=Las siguientes acciones serán desasignadas de la combinación:
@@ -61,3 +62,5 @@ ACTION_FOLDER_EXPLORER_ELEMENT_NEW=Nuevo
 ACTION_FOLDER_EXPLORER_ELEMENT_NEW_FILE=Archivo
 ACTION_FOLDER_EXPLORER_ELEMENT_NEW_ASSEMBLY_FILE=Archivo esamblador
 ACTION_FOLDER_EXPLORER_ELEMENT_NEW_FOLDER=Carpeta
+ACTION_FOLDER_EXPLORER_ELEMENT_ADD_FILE_TO_ASSEMBLER=Añadir archivo al esamblador
+ACTION_FOLDER_EXPLORER_ELEMENT_REMOVE_FILE_FROM_ASSEMBLER=Quitar archivo del esamblador

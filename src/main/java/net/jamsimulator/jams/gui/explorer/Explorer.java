@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * Represents an explorer. An explorer represents graphically the list of files inside
@@ -51,6 +52,8 @@ public abstract class Explorer extends VBox {
 	protected final boolean multiSelection;
 	protected boolean keyboardSelection;
 
+	protected Predicate<ExplorerBasicElement> filter;
+
 	/**
 	 * Creates an explorer.
 	 *
@@ -61,8 +64,8 @@ public abstract class Explorer extends VBox {
 	public Explorer(ScrollPane scrollPane, boolean multiSelection, boolean generateOnConstructor) {
 		this.scrollPane = scrollPane;
 		this.multiSelection = multiSelection;
-
 		this.selectedElements = new LinkedList<>();
+		this.filter = element -> true;
 
 		loadListeners();
 		if (generateOnConstructor) {
@@ -265,6 +268,26 @@ public abstract class Explorer extends VBox {
 	 */
 	public int getElementsAmount() {
 		return mainSection.getTotalElements();
+	}
+
+	/**
+	 * Makes not visible all elements that don't match the given consumer.
+	 * <p>
+	 * Sections will be visible if any of their children are visible.
+	 *
+	 * @param filter the filter.
+	 */
+	public void setFilter(Predicate<ExplorerBasicElement> filter) {
+		if(filter == null) filter = element -> true;
+		this.filter = filter;
+		mainSection.applyFilter();
+	}
+
+	/**
+	 * Removes any filter applied using {@link #setFilter(Predicate)}.
+	 */
+	public void removeFilter() {
+		setFilter(null);
 	}
 
 	/**

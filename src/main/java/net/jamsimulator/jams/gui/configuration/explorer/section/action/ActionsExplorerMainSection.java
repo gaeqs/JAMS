@@ -51,11 +51,6 @@ public class ActionsExplorerMainSection extends ExplorerSection {
 		generateRegions();
 	}
 
-	@Override
-	public ActionsExplorer getExplorer() {
-		return (ActionsExplorer) super.getExplorer();
-	}
-
 	/**
 	 * Adds an {@link Action} to the explorer.
 	 * <p>
@@ -84,19 +79,12 @@ public class ActionsExplorerMainSection extends ExplorerSection {
 		if (!regions.containsKey(action.getRegionTag())) return;
 		ActionExplorerRegion region = regions.get(action.getRegionTag());
 
-		region.removeElementIf(target -> {
-			if (target instanceof ActionsExplorerAction
-					&& ((ActionsExplorerAction) target).getAction().equals(action)) {
-				((ActionsExplorerAction) target).dispose();
-				return true;
-			}
-			return false;
-		});
+		region.removeElementIf(target -> target instanceof ActionsExplorerAction
+				&& ((ActionsExplorerAction) target).getAction().equals(action));
 
 		if (region.isEmpty()) {
 			regions.remove(action.getRegionTag());
 			removeElement(region);
-			region.dispose();
 		}
 	}
 
@@ -109,6 +97,16 @@ public class ActionsExplorerMainSection extends ExplorerSection {
 		for (ActionExplorerRegion region : regions.values()) {
 			region.setSmallRepresentation(smallRepresentation);
 		}
+	}
+
+	@Override
+	public ActionsExplorer getExplorer() {
+		return (ActionsExplorer) super.getExplorer();
+	}
+
+	@Override
+	public String getVisibleName() {
+		return representation.getLabel().getText();
 	}
 
 	@Override

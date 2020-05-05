@@ -630,6 +630,10 @@ AnchorPane {
 }
 
 /* CONFIG */
+.configuration-window-explorer {
+    -fx-background-color: -theme-background-darker-2;
+}
+
 .configuration-window-node {
     -fx-spacing: 5px;
 }
@@ -638,7 +642,12 @@ AnchorPane {
     -fx-font-size: 14px;
 }
 
-.configuration-window-section {
+.configuration-window-section .explorer-element {
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.configuration-window-section .selected-explorer-element {
+    -fx-background-color: -theme-explorer-element-selected;
 }
 
 .configuration-window-display {
@@ -650,8 +659,16 @@ AnchorPane {
 }
 
 /* ACTION CONFIG */
+.action-remove-button {
+    -fx-padding: 1 1 1 1;
+}
+
 .action-remove-button:hover {
     -fx-background-color: darkred;
+}
+
+.action-add-button {
+    -fx-padding: 1 3 1 3;
 }
 
 /* FILE DISPLAY LIST */

@@ -30,7 +30,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.NearestImageView;
@@ -63,7 +62,7 @@ public class ExplorerSectionRepresentation extends HBox {
 	 * @param hierarchyLevel the hierarchy level, used by the spacing.
 	 */
 	public ExplorerSectionRepresentation(ExplorerSection section, int hierarchyLevel) {
-		getStyleClass().add("explorer-element");
+		getStyleClass().addAll("explorer-element", "explorer-representation");
 		this.section = section;
 		this.hierarchyLevel = hierarchyLevel;
 
@@ -84,6 +83,15 @@ public class ExplorerSectionRepresentation extends HBox {
 		double separatorWidth = separator == null ? 0 : separator.getWidth();
 
 		return separatorWidth + statusWidth + iconWidth + label.getWidth() + ExplorerBasicElement.SPACING * 3;
+	}
+
+
+	public Label getLabel() {
+		return label;
+	}
+
+	public ImageView getIcon() {
+		return icon;
 	}
 
 	/**

@@ -26,7 +26,9 @@ package net.jamsimulator.jams.gui.configuration.explorer.section.action;
 
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowExplorer;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowSection;
@@ -36,6 +38,8 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.gui.explorer.ExplorerSectionLanguageRepresentation;
 import net.jamsimulator.jams.gui.explorer.ExplorerSectionRepresentation;
+import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.language.wrapper.LanguageTextField;
 
 import java.util.List;
 
@@ -44,6 +48,8 @@ import java.util.List;
  */
 public class ConfigurationWindowSectionActions extends ConfigurationWindowSection {
 
+	private VBox box;
+	protected TextField searchbar;
 	protected ScrollPane scrollPane;
 	protected ActionsExplorer actionsExplorer;
 
@@ -58,15 +64,29 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
 	public ConfigurationWindowSectionActions(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name,
 											 String languageNode, int hierarchyLevel, Configuration configuration, Configuration meta) {
 		super(explorer, parent, name, languageNode, hierarchyLevel, configuration, meta);
+
 		scrollPane = new ScrollPane();
 		scrollPane.setFitToHeight(true);
 		scrollPane.setFitToWidth(true);
+
+		box = new VBox();
+		box.setSpacing(SPACING);
+
+		searchbar = new LanguageTextField(Messages.CONFIG_ACTION_SEARCH);
+		box.getChildren().add(searchbar);
+
 		actionsExplorer = new ActionsExplorer(scrollPane, false);
 		scrollPane.setContent(actionsExplorer);
 
 		scrollPane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
 			double deltaY = scrollEvent.getDeltaY() * 0.003;
 			scrollPane.setVvalue(scrollPane.getVvalue() - deltaY);
+		});
+
+		box.getChildren().add(scrollPane);
+
+		searchbar.textProperty().addListener((obs, old, val) -> {
+			actionsExplorer.setFilter(element -> element.getVisibleName().toLowerCase().startsWith(val.toLowerCase()));
 		});
 	}
 
@@ -82,7 +102,7 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
 
 	@Override
 	public Node getSpecialNode() {
-		return scrollPane;
+		return box;
 	}
 
 	@Override

@@ -271,8 +271,10 @@ public class MipsLine {
 	}
 
 
-	public boolean checkGlobalLabelsChanges(List<String> fileGlobalLabels) {
-		return label != null && label.checkGlobalLabelsChanges(fileGlobalLabels);
+	public boolean checkGlobalLabelsChanges(List<String> labels, List<String> globalLabels) {
+		boolean labelErrors = searchLabelErrors(labels, globalLabels);
+		boolean check = label != null && label.checkGlobalLabelsChanges(globalLabels);
+		return check || labelErrors;
 	}
 
 

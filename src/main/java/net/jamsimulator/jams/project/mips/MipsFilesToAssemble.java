@@ -83,7 +83,9 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 			}
 
 			String text = builder.toString();
-			text = text.substring(0, text.length() - 1);
+			if(!text.isEmpty()) {
+				text = text.substring(0, text.length() - 1);
+			}
 
 			elements.refreshAll(text, null);
 			files.put(file, elements);

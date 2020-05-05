@@ -108,14 +108,6 @@ public class ActionsExplorerAction extends ExplorerBasicElement {
 	}
 
 	/**
-	 * Disposes this element, removing all listeners.
-	 * This should be called when this element is not longer needed.
-	 */
-	public void dispose() {
-		JamsApplication.getActionManager().unregisterListeners(this);
-	}
-
-	/**
 	 * Refresh all elements inside this representation.
 	 */
 	public void refresh() {
@@ -151,6 +143,7 @@ public class ActionsExplorerAction extends ExplorerBasicElement {
 		split.getChildren().add(new Group(label));
 
 		HBox bottom = new HBox();
+		bottom.setSpacing(SPACING);
 		split.getChildren().add(bottom);
 
 		List<KeyCombination> combinations = JamsApplication.getActionManager().getBindCombinations(action.getName());
@@ -163,6 +156,11 @@ public class ActionsExplorerAction extends ExplorerBasicElement {
 		if (combinations.size() < MAX_SHORTCUTS) {
 			bottom.getChildren().add(addButton = new ActionExplorerActionCombinationAdd(this));
 		}
+	}
+
+	@Override
+	public String getVisibleName() {
+		return label.getText();
 	}
 
 	@Override

@@ -113,6 +113,11 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 		return name;
 	}
 
+	@Override
+	public String getVisibleName() {
+		return name;
+	}
+
 	public Optional<? extends ExplorerSection> getParentSection() {
 		return Optional.of(parent);
 	}

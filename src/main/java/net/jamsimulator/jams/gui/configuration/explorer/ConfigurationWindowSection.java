@@ -125,15 +125,19 @@ public class ConfigurationWindowSection extends ExplorerSection {
 
 		if (special != null) {
 			Optional<ConfigurationWindowSpecialSectionBuilder> builder = ConfigurationWindowSpecialSectionBuilders.getByName(special);
+
 			if (builder.isPresent()) {
-				elements.add(builder.get().create(getExplorer(), this, name, languageNode,
-						hierarchyLevel + 1, value, metaConfig.orElse(null)));
+				ExplorerElement element = builder.get().create(getExplorer(), this, name, languageNode,
+						hierarchyLevel + 1, value, metaConfig.orElse(null));
+				elements.add(element);
+				filteredElements.add(element);
 				return;
 			}
 		}
-
-		elements.add(new ConfigurationWindowSection(getExplorer(), this, name, languageNode,
-				hierarchyLevel + 1, value, metaConfig.orElse(null)));
+		ExplorerElement element = new ConfigurationWindowSection(getExplorer(), this, name, languageNode,
+				hierarchyLevel + 1, value, metaConfig.orElse(null));
+		elements.add(element);
+		filteredElements.add(element);
 	}
 
 	protected void manageBasicObjectAddition(String name, Object value) {

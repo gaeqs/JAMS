@@ -213,11 +213,18 @@ public class ExplorerFolder extends ExplorerSection {
 		File[] folderFiles = folder.listFiles();
 		if (folderFiles == null) return;
 
+		ExplorerElement element;
 		for (File file : folderFiles) {
-			if (file.isDirectory())
-				elements.add(new ExplorerFolder(explorer, this, file, hierarchyLevel + 1));
-			else if (file.isFile())
-				elements.add(new ExplorerFile(this, file, hierarchyLevel + 1));
+			if (file.isDirectory()) {
+				element = new ExplorerFolder(explorer, this, file, hierarchyLevel + 1);
+				elements.add(element);
+				filteredElements.add(element);
+			}
+			else if (file.isFile()) {
+				element = new ExplorerFile(this, file, hierarchyLevel + 1);
+				elements.add(element);
+				filteredElements.add(element);
+			}
 		}
 		representation.refreshStatusIcon();
 	}

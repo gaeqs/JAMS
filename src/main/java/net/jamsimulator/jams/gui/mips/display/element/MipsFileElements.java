@@ -223,6 +223,7 @@ public class MipsFileElements {
 
 
 		//Check if new label is a global parameter.
+		System.out.println(line + " ? " + mipsLine.getText());
 		mipsLine.getLabel().ifPresent(target -> target.checkGlobalLabelsChanges(globalLabels));
 
 		//Refresh if any global label has changed.
@@ -294,7 +295,7 @@ public class MipsFileElements {
 
 		//Checks for errors.
 		refreshLabels();
-		searchLabelErrors();
+		searchLabelErrors(project == null ? globalLabels : project.getFilesToAssemble().getGlobalLabels());
 		refreshGlobalLabelsChanges();
 
 		if (workingPane != null) {
@@ -329,7 +330,7 @@ public class MipsFileElements {
 	/**
 	 * Search for label errors in all lines.
 	 */
-	public List<Integer> searchLabelErrors() {
+	public List<Integer> searchLabelErrors(List<String> globalLabels) {
 		List<Integer> updated = new ArrayList<>();
 
 		Iterator<MipsLine> iterator = lines.iterator();
@@ -367,7 +368,7 @@ public class MipsFileElements {
 		Iterator<MipsLine> iterator = lines.iterator();
 		int i = 0;
 		while (iterator.hasNext()) {
-			if (iterator.next().checkGlobalLabelsChanges(globalLabels)) updated.add(i);
+			if (iterator.next().checkGlobalLabelsChanges(labels, globalLabels)) updated.add(i);
 			i++;
 		}
 		return updated;
