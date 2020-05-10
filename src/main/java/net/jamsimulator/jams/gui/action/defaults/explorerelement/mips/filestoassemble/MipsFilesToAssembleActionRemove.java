@@ -64,7 +64,7 @@ public class MipsFilesToAssembleActionRemove extends ContextAction {
 		ProjectTab tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
 		if (tab == null) return;
 		MipsProject project = tab.getProject();
-		MipsFilesToAssemble files = project.getFilesToAssemble();
+		MipsFilesToAssemble files = project.getData().getFilesToAssemble();
 
 		for (ExplorerElement element : elements) {
 			files.removeFile(((FilesToAssembleDisplayElement) element).getFile());

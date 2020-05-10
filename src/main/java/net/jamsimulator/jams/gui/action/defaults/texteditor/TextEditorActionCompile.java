@@ -68,7 +68,7 @@ public class TextEditorActionCompile extends Action {
 				}
 
 				List<List<String>> files = new ArrayList<>();
-				for (File file : project.getFilesToAssemble().getFiles()) {
+				for (File file : project.getData().getFilesToAssemble().getFiles()) {
 					files.add(Files.readAllLines(file.toPath()));
 					System.out.println("- FILE: " + file);
 					for (String line : Files.readAllLines(file.toPath())) {

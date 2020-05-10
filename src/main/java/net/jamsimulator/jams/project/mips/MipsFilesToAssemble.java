@@ -36,13 +36,18 @@ import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
 import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
 import net.jamsimulator.jams.utils.Validate;
+import org.json.JSONArray;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.util.*;
 
 public class MipsFilesToAssemble extends SimpleEventBroadcast {
+
+	public static final String FILE_NAME = "files_to_assemble.json";
 
 	private final MipsProject project;
 	private final Map<File, MipsFileElements> files;
@@ -162,6 +167,18 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 		});
 	}
 
+
+	public void save(File folder) throws IOException {
+		Validate.notNull(folder, "Folder cannot be null!");
+		File file = new File(folder, FILE_NAME);
+		JSONArray array = new JSONArray();
+		files.keySet().stream().map(File::getAbsolutePath).forEach(array::put);
+
+		Writer writer = new FileWriter(file);
+		writer.write(array.toString());
+		writer.close();
+	}
+
 	private void refreshDeletedDisplay(File file, MipsFileElements elements) {
 		ProjectTab tab = JamsApplication.getProjectsTabPane().getProjectTab(project).orElse(null);
 		if (tab == null) return;
@@ -180,5 +197,4 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 			elements.refreshGlobalLabelsChanges();
 		}
 	}
-
 }

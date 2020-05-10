@@ -69,7 +69,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 		if (tab.getWorkingPane() instanceof MipsProjectPane) {
 			project = ((MipsProjectPane) tab.getWorkingPane()).getProject();
-			Optional<MipsFileElements> elementsOptional = project.getFilesToAssemble().getFileElements(tab.getFile());
+			Optional<MipsFileElements> elementsOptional = project.getData().getFilesToAssemble().getFileElements(tab.getFile());
 			elements = elementsOptional.orElseGet(() -> new MipsFileElements(tab.getFile(), project));
 			elementsAlreadyLoaded = elementsOptional.isPresent();
 		} else {
@@ -192,8 +192,8 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 
 	private void refreshGlobalLabels() {
-		if (project.getFilesToAssemble().getFiles().contains(tab.getFile())) {
-			project.getFilesToAssemble().refreshGlobalLabels();
+		if (project.getData().getFilesToAssemble().getFiles().contains(tab.getFile())) {
+			project.getData().getFilesToAssemble().refreshGlobalLabels();
 		} else {
 			refreshGlobalLabelErrorsAndParameters();
 		}

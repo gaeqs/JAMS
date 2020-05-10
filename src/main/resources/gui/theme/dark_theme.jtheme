@@ -629,6 +629,14 @@ AnchorPane {
     -fx-background-color: -theme-explorer-element-selected;
 }
 
+.explorer-jams-folder {
+    -fx-background-color: #5c4242;
+}
+
+.explorer-jams-folder.selected-explorer-element {
+    -fx-background-color: -theme-explorer-element-selected;
+}
+
 /* CONFIG */
 .configuration-window-explorer {
     -fx-background-color: -theme-background-darker-2;

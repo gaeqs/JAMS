@@ -27,6 +27,7 @@ package net.jamsimulator.jams.project;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -43,6 +44,21 @@ public interface Project {
 	 * @return the name.
 	 */
 	String getName();
+
+	/**
+	 * Returns the main {@link File folder} of this project.
+	 *
+	 * @return the main {@link File folder}.
+	 */
+	File getFolder();
+
+	/**
+	 * Returns the {@link ProjectData metadata} of this project.
+	 * The data stores project configurations, build settings and miscellaneous data.
+	 *
+	 * @return the {@link ProjectData metadata}.
+	 */
+	ProjectData getData();
 
 	/**
 	 * Assembles this project, creating a {@link Simulation}.

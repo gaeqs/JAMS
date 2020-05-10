@@ -339,8 +339,8 @@ public class MipsFileElements {
 	public List<Integer> searchLabelErrors() {
 		List<Integer> updated = new ArrayList<>();
 
-		List<String> gLabels = project == null || !project.getFilesToAssemble().getFiles().contains(file)
-				? globalLabels : project.getFilesToAssemble().getGlobalLabels();
+		List<String> gLabels = project == null || !project.getData().getFilesToAssemble().getFiles().contains(file)
+				? globalLabels : project.getData().getFilesToAssemble().getGlobalLabels();
 
 		Iterator<MipsLine> iterator = lines.iterator();
 		int i = 0;
@@ -366,10 +366,10 @@ public class MipsFileElements {
 
 	public List<Integer> refreshGlobalLabelsChanges() {
 		List<String> globalLabels;
-		if (project == null || !project.getFilesToAssemble().getFiles().contains(file)) {
+		if (project == null || !project.getData().getFilesToAssemble().getFiles().contains(file)) {
 			globalLabels = getExistingGlobalLabels();
 		} else {
-			globalLabels = project.getFilesToAssemble().getGlobalLabels();
+			globalLabels = project.getData().getFilesToAssemble().getGlobalLabels();
 		}
 
 		List<Integer> updated = new ArrayList<>();

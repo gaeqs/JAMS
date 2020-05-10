@@ -68,7 +68,7 @@ public class FolderActionRemoveFileFromAssembler extends ContextAction {
 		ProjectTab tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
 		if (tab == null) return;
 		MipsProject project = tab.getProject();
-		MipsFilesToAssemble files = project.getFilesToAssemble();
+		MipsFilesToAssemble files = project.getData().getFilesToAssemble();
 
 		if (!elements.stream().allMatch(target -> target instanceof ExplorerFile
 				&& files.getFiles().contains(((ExplorerFile) target).getFile()))) return;
@@ -88,7 +88,7 @@ public class FolderActionRemoveFileFromAssembler extends ContextAction {
 		ProjectTab tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
 		if (tab == null) return false;
 		MipsProject project = tab.getProject();
-		MipsFilesToAssemble files = project.getFilesToAssemble();
+		MipsFilesToAssemble files = project.getData().getFilesToAssemble();
 
 		return elements.stream().allMatch(target -> target instanceof ExplorerFile
 				&& files.getFiles().contains(((ExplorerFile) target).getFile()));

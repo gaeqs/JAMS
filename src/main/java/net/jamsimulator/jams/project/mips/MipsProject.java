@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.project.mips;
 
-import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
@@ -34,7 +33,7 @@ import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.project.Project;
+import net.jamsimulator.jams.project.BasicProject;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
@@ -42,13 +41,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-public class MipsProject implements Project {
-
-	private final String name;
-	private final File folder;
-	private ProjectTab projectTab;
+public class MipsProject extends BasicProject {
 
 	private final Architecture architecture;
 	private final AssemblerBuilder assemblerBuilder;
@@ -57,10 +51,9 @@ public class MipsProject implements Project {
 	private final DirectiveSet directiveSet;
 	private final InstructionSet instructionSet;
 
-	private final MipsFilesToAssemble filesToAssemble;
-
 	public MipsProject(String name, File folder, Architecture architecture, AssemblerBuilder assemblerBuilder, MemoryBuilder memoryBuilder,
 					   RegistersBuilder registersBuilder, DirectiveSet directiveSet, InstructionSet instructionSet) {
+		super(name, folder);
 		Validate.notNull(name, "Name cannot be null!");
 		Validate.notNull(folder, "Folder cannot be null!");
 		Validate.isTrue(folder.exists(), "Folder " + folder.getName() + " must exist!");
@@ -71,33 +64,17 @@ public class MipsProject implements Project {
 		Validate.notNull(directiveSet, "Directive set cannot be null!");
 		Validate.notNull(instructionSet, "Instruction set cannot be null!");
 
-		this.name = name;
-		this.folder = folder;
-		this.projectTab = null;
-
 		this.architecture = architecture;
 		this.assemblerBuilder = assemblerBuilder;
 		this.memoryBuilder = memoryBuilder;
 		this.registersBuilder = registersBuilder;
 		this.directiveSet = directiveSet;
 		this.instructionSet = instructionSet;
-
-		filesToAssemble = new MipsFilesToAssemble(this);
 	}
-
 
 	@Override
-	public String getName() {
-		return name;
-	}
-
-	public File getFolder() {
-		return folder;
-	}
-
-
-	public MipsFilesToAssemble getFilesToAssemble() {
-		return filesToAssemble;
+	public MipsProjectData getData() {
+		return (MipsProjectData) super.getData();
 	}
 
 	public Architecture getArchitecture() {
@@ -131,7 +108,7 @@ public class MipsProject implements Project {
 
 		List<List<String>> files = new ArrayList<>();
 
-		for (File target : filesToAssemble.getFiles()) {
+		for (File target : getData().getFilesToAssemble().getFiles()) {
 			files.add(Files.readAllLines(target.toPath()));
 		}
 
@@ -141,18 +118,13 @@ public class MipsProject implements Project {
 	}
 
 	@Override
-	public Optional<ProjectTab> getProjectTab() {
-		return Optional.ofNullable(projectTab);
-	}
-
-	@Override
-	public void assignProjectTab(ProjectTab tab) {
-		Validate.isTrue(tab == null || tab.getProject() == this, "Projects must be the same!");
-		this.projectTab = tab;
-	}
-
-	@Override
 	public void onClose() {
-		filesToAssemble.clear();
+		data.save();
+	}
+
+
+	@Override
+	protected void loadData() {
+		data = new MipsProjectData(this);
 	}
 }

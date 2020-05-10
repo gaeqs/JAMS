@@ -104,6 +104,25 @@ public class ExplorerFolder extends ExplorerSection {
 	}
 
 	/**
+	 * Returns the {@link ExplorerFolder} represented by the given {@link File}.
+	 *
+	 * @param file the {@link File folder}.
+	 * @return the {@link ExplorerFolder} representing this file, if present.
+	 */
+	public Optional<ExplorerFolder> getExplorerFolder(File file) {
+		if (folder.equals(file)) return Optional.of(this);
+		for (ExplorerElement element : elements) {
+			if (element instanceof ExplorerFolder) {
+				Optional<ExplorerFolder> optional = ((ExplorerFolder) element).getExplorerFolder(file);
+				if (optional.isPresent()) {
+					return optional;
+				}
+			}
+		}
+		return Optional.empty();
+	}
+
+	/**
 	 * Kills the {@link WatchService} of this folder. This prevents this folder
 	 * from receiving alerts from changes inside the folder.
 	 * <p>
@@ -219,8 +238,7 @@ public class ExplorerFolder extends ExplorerSection {
 				element = new ExplorerFolder(explorer, this, file, hierarchyLevel + 1);
 				elements.add(element);
 				filteredElements.add(element);
-			}
-			else if (file.isFile()) {
+			} else if (file.isFile()) {
 				element = new ExplorerFile(this, file, hierarchyLevel + 1);
 				elements.add(element);
 				filteredElements.add(element);

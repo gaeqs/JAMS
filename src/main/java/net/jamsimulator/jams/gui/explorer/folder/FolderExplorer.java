@@ -80,6 +80,16 @@ public class FolderExplorer extends Explorer {
 	}
 
 	/**
+	 * Returns the {@link ExplorerFolder} represented by the given {@link File}.
+	 *
+	 * @param file the {@link File folder}.
+	 * @return the {@link ExplorerFolder} representing this file, if present.
+	 */
+	public Optional<ExplorerFolder> getExplorerFolder(File file) {
+		return ((ExplorerFolder) mainSection).getExplorerFolder(file);
+	}
+
+	/**
 	 * Returns the {@link Consumer action} to perform when a file is double-clicked.
 	 *
 	 * @return the {@link Consumer action}.

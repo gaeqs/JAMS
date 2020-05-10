@@ -72,7 +72,7 @@ public class FolderActionAddFileToAssembler extends ContextAction {
 		ProjectTab tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
 		if (tab == null) return;
 		MipsProject project = tab.getProject();
-		MipsFilesToAssemble files = project.getFilesToAssemble();
+		MipsFilesToAssemble files = project.getData().getFilesToAssemble();
 		WorkingPane pane = tab.getProjectTabPane().getWorkingPane();
 		if (!(pane instanceof MipsProjectPane)) return;
 
@@ -91,7 +91,7 @@ public class FolderActionAddFileToAssembler extends ContextAction {
 		ProjectTab tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
 		if (tab == null) return false;
 		MipsProject project = tab.getProject();
-		MipsFilesToAssemble files = project.getFilesToAssemble();
+		MipsFilesToAssemble files = project.getData().getFilesToAssemble();
 
 		boolean allPresent = true;
 		for (ExplorerElement element : elements) {

@@ -50,11 +50,11 @@ public class FilesToAssembleDisplay extends Explorer {
 		super(scrollPane, true, true);
 		this.project = project;
 
-		project.getFilesToAssemble().registerListeners(this, true);
+		project.getData().getFilesToAssemble().registerListeners(this, true);
 
 		icon = Jams.getFileTypeManager().getByExtension("asm").map(FileType::getIcon).orElse(null);
 
-		for (File file : project.getFilesToAssemble().getFiles()) {
+		for (File file : project.getData().getFilesToAssemble().getFiles()) {
 			mainSection.addElement(new FilesToAssembleDisplayElement(mainSection, file, this, icon));
 		}
 

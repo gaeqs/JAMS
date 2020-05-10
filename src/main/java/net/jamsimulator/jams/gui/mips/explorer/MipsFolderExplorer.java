@@ -50,10 +50,13 @@ public class MipsFolderExplorer extends FolderExplorer {
 	public MipsFolderExplorer(MipsProject project, ScrollPane scrollPane) {
 		super(project.getFolder(), scrollPane);
 		this.project = project;
-		project.getFilesToAssemble().registerListeners(this, true);
-		for (File file : project.getFilesToAssemble().getFiles()) {
+		project.getData().getFilesToAssemble().registerListeners(this, true);
+		for (File file : project.getData().getFilesToAssemble().getFiles()) {
 			markFileToAssemble(file);
 		}
+
+		getExplorerFolder(project.getData().getFolder()).ifPresent(metadataFolder ->
+				metadataFolder.getRepresentation().getStyleClass().add("explorer-jams-folder"));
 	}
 
 	/**
@@ -70,7 +73,7 @@ public class MipsFolderExplorer extends FolderExplorer {
 	 */
 	public void dispose() {
 		killWatchers();
-		project.getFilesToAssemble().unregisterListeners(this);
+		project.getData().getFilesToAssemble().unregisterListeners(this);
 	}
 
 	private void markFileToAssemble(File file) {
