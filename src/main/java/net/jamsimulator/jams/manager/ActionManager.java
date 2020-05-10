@@ -35,6 +35,7 @@ import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.*;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.folder.*;
+import net.jamsimulator.jams.gui.action.defaults.explorerelement.mips.filestoassemble.MipsFilesToAssembleActionRemove;
 import net.jamsimulator.jams.gui.action.defaults.texteditor.*;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionRegisterEvent;
@@ -60,7 +61,6 @@ public class ActionManager extends SimpleEventBroadcast {
 
 	public static final String ACTIONS_SECTION = "action";
 
-	public static final String LANGUAGE_NODE_PREFIX = "ACTION_";
 	public static final String LANGUAGE_REGION_NODE_PREFIX = "ACTION_REGION_";
 
 	public static final ActionManager INSTANCE = new ActionManager();
@@ -346,6 +346,7 @@ public class ActionManager extends SimpleEventBroadcast {
 		//EXPLORER ELEMENT
 		actions.add(new ExplorerElementActionContractOrSelectParent());
 		actions.add(new ExplorerElementActionExpandOrSelectNext());
+		actions.add(new ExplorerElementActionSelectAll());
 		actions.add(new ExplorerElementActionSelectNext());
 		actions.add(new ExplorerElementActionSelectNextMultiple());
 		actions.add(new ExplorerElementActionSelectPrevious());
@@ -365,6 +366,8 @@ public class ActionManager extends SimpleEventBroadcast {
 		// MIPS EXPLORER ELEMENT
 		actions.add(new FolderActionAddFileToAssembler());
 		actions.add(new FolderActionRemoveFileFromAssembler());
+
+		actions.add(new MipsFilesToAssembleActionRemove());
 	}
 
 	private List<Action> loadBinds() {

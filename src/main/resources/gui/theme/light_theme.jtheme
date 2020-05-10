@@ -806,6 +806,11 @@ AnchorPane {
 }
 
 /* MIPS EXPLORER */
-.explorer-file-to-assemble {
+.mips-explorer-file-to-assemble {
     -fx-background-color: #7c9e71;
+}
+
+/*Added and selected*/
+.mips-explorer-file-to-assemble.selected-explorer-element {
+    -fx-background-color: #779eb0;
 }

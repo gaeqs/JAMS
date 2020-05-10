@@ -22,17 +22,33 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.action;
+package net.jamsimulator.jams.gui.action.defaults.explorerelement;
 
-public class RegionTags {
+import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import net.jamsimulator.jams.gui.action.Action;
+import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.explorer.Explorer;
+import net.jamsimulator.jams.gui.explorer.ExplorerElement;
+import net.jamsimulator.jams.language.Messages;
 
-	public static final String GENERAL = "GENERAL";
-	public static final String UNKNOWN = "UNKNOWN";
+public class ExplorerElementActionSelectAll extends Action {
 
-	public static final String FOLDER_EXPLORER_ELEMENT = "FOLDER_EXPLORER_ELEMENT";
-	public static final String EXPLORER_ELEMENT = "EXPLORER_ELEMENT";
 
-	public static final String TEXT_EDITOR = "TEXT_EDITOR";
+	public static final String NAME = "EXPLORER_ELEMENT_SELECT_ALL";
+	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN);
 
-	public static final String MIPS_FILE_TO_ASSEMBLE = "MIPS_FILE_TO_ASSEMBLE";
+	public ExplorerElementActionSelectAll() {
+		super(NAME, RegionTags.EXPLORER_ELEMENT, Messages.ACTION_EXPLORER_ELEMENT_SELECT_ALL, DEFAULT_COMBINATION);
+	}
+
+	@Override
+	public void run(Node node) {
+		if (!(node instanceof ExplorerElement)) return;
+		ExplorerElement element = (ExplorerElement) node;
+		Explorer explorer = element.getExplorer();
+		explorer.selectAll();
+	}
 }

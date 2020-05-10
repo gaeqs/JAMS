@@ -46,18 +46,14 @@ public class ActionsExplorer extends Explorer {
 	 * @param scrollPane the {@link ScrollPane} holding this explorer, if present.
 	 */
 	public ActionsExplorer(ScrollPane scrollPane, boolean smallRepresentation) {
-		super(scrollPane, false, false);
+		super(scrollPane, false, true);
 		this.smallRepresentation = smallRepresentation;
-		generateMainSection(smallRepresentation);
 		generateResizeListeners();
 	}
 
 	@Override
 	protected void generateMainSection() {
-	}
-
-	protected void generateMainSection(boolean smallRepresentation) {
-		mainSection = new ActionsExplorerMainSection(this, smallRepresentation);
+		mainSection = new ActionsExplorerMainSection(this);
 		getChildren().add(mainSection);
 		mainSection.expand();
 		JamsApplication.getActionManager().registerListeners(this, true);

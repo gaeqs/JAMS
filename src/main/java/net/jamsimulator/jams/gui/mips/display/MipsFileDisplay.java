@@ -53,8 +53,9 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 	private final Popup popup;
 	private final VBox popupVBox;
-	private final Subscription subscription;
 	private final MipsProject project;
+
+	private Subscription subscription;
 
 	public MipsFileDisplay(FileDisplayTab tab) {
 		super(tab);
@@ -100,6 +101,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 	@Override
 	public void reformat() {
+		subscription.unsubscribe();
 		String reformattedCode = elements.getReformattedCode();
 		String text = getText();
 		if (reformattedCode.equals(text)) return;
@@ -120,6 +122,8 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		toPixel = Math.max(0, Math.min(height, toPixel));
 
 		scrollPane.scrollYBy(toPixel);
+		index(true);
+		subscription = multiPlainChanges().subscribe(event -> event.forEach(this::index));
 	}
 
 	@Override

@@ -37,7 +37,7 @@ import java.util.Optional;
 
 public class MipsFolderExplorer extends FolderExplorer {
 
-	public static final String EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS = "explorer-file-to-assemble";
+	public static final String EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS = "mips-explorer-file-to-assemble";
 
 	private final MipsProject project;
 

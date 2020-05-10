@@ -78,7 +78,7 @@ public class ActionsExplorerAction extends ExplorerBasicElement {
 		this.smallRepresentation = smallRepresentation;
 		this.combinations = new ArrayList<>();
 
-		((LanguageLabel) label).setNode(ActionManager.LANGUAGE_NODE_PREFIX + action.getName());
+		((LanguageLabel) label).setNode(action.getLanguageNode().orElse(null));
 
 		bigSeparator = new Region();
 		HBox.setHgrow(bigSeparator, Priority.ALWAYS);

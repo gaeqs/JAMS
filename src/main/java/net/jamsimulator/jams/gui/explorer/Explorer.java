@@ -278,7 +278,7 @@ public abstract class Explorer extends VBox {
 	 * @param filter the filter.
 	 */
 	public void setFilter(Predicate<ExplorerBasicElement> filter) {
-		if(filter == null) filter = element -> true;
+		if (filter == null) filter = element -> true;
 		this.filter = filter;
 		mainSection.applyFilter();
 	}
@@ -331,6 +331,24 @@ public abstract class Explorer extends VBox {
 
 		double sp = Math.max(0, Math.min(1, vpn / (ht - hv)));
 		scrollPane.setVvalue(sp);
+	}
+
+	/**
+	 * Selects all elements of this explorer.
+	 * This method only works if explorer supports multiple selections.
+	 */
+	public void selectAll() {
+		if (!multiSelection) return;
+		deselectAll();
+		mainSection.selectAll();
+	}
+
+	/**
+	 * Deselects all selected elements of this explorer.
+	 */
+	public void deselectAll () {
+		selectedElements.forEach(ExplorerElement::deselect);
+		selectedElements.clear();
 	}
 
 	private void loadListeners() {

@@ -214,7 +214,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 		Set<ContextAction> set = getSupportedContextActions();
 		if (set.isEmpty()) return;
 		ContextMenu main = new ContextActionMenuBuilder(this).addAll(set).build();
-		main.show(this, screenX, screenY);
+		JamsApplication.openContextMenu(main, this, screenX, screenY);
 	}
 
 	private Set<ContextAction> getSupportedContextActions() {

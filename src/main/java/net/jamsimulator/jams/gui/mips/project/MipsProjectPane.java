@@ -113,7 +113,7 @@ public class MipsProjectPane extends WorkingPane {
 		ScrollPane pane = new ScrollPane();
 		pane.setFitToHeight(true);
 		pane.setFitToWidth(true);
-		filesToAssembleDisplay = new FilesToAssembleDisplay();
+		filesToAssembleDisplay = new FilesToAssembleDisplay(project, pane);
 		pane.setContent(filesToAssembleDisplay);
 
 		pane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
@@ -121,7 +121,7 @@ public class MipsProjectPane extends WorkingPane {
 			pane.setVvalue(pane.getVvalue() - deltaY);
 		});
 
-		bottomLeftSidebar.addNode("FilesToAssemble", filesToAssembleDisplay, explorerIcon, null);
+		bottomLeftSidebar.addNode("FilesToAssemble", pane, explorerIcon, Messages.FILES_TO_ASSEMBLE_NAME);
 	}
 
 	@Override

@@ -137,7 +137,7 @@ public class BindActionWindow extends VBox {
 			Language language = Jams.getLanguageManager().getSelected();
 
 			removed.forEach(target -> builder.append(" - ").append(language
-					.getOrDefault(ActionManager.LANGUAGE_NODE_PREFIX + target.getName())).append('\n'));
+					.getOrDefault(target.getLanguageNode().orElse(null))).append('\n'));
 			ConfirmationWindow.open(language.getOrDefault(Messages.CONFIG_ACTION_BIND_CONFIRM) + "\n\n"
 					+ builder + '\n' + language.getOrDefault(Messages.CONFIG_ACTION_BIND_CONFIRM_2), this::bind, () -> {
 			});

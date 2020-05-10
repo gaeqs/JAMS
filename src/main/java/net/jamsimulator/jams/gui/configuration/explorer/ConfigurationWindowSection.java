@@ -35,7 +35,7 @@ import net.jamsimulator.jams.gui.explorer.*;
 
 import java.util.*;
 
-public class ConfigurationWindowSection extends ExplorerSection {
+public class ConfigurationWindowSection extends LanguageExplorerSection {
 
 	protected Configuration configuration, meta;
 	protected List<ConfigurationWindowNode<?>> nodes;
@@ -50,7 +50,7 @@ public class ConfigurationWindowSection extends ExplorerSection {
 	 */
 	public ConfigurationWindowSection(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name,
 									  String languageNode, int hierarchyLevel, Configuration configuration, Configuration meta) {
-		super(explorer, parent, name, hierarchyLevel, Comparator.comparing(ExplorerElement::getName));
+		super(explorer, parent, name, hierarchyLevel, Comparator.comparing(ExplorerElement::getName), languageNode);
 		getStyleClass().add("configuration-window-section");
 		this.configuration = configuration;
 		this.meta = meta;
@@ -58,7 +58,6 @@ public class ConfigurationWindowSection extends ExplorerSection {
 		this.nodes = new ArrayList<>();
 		loadChildren();
 		refreshAllElements();
-		((ExplorerSectionLanguageRepresentation) representation).setLanguageNode(languageNode);
 		representation.refreshStatusIcon();
 	}
 
@@ -89,11 +88,6 @@ public class ConfigurationWindowSection extends ExplorerSection {
 	protected void loadListeners() {
 		super.loadListeners();
 		setOnMouseClickedEvent(event -> getExplorer().getConfigurationWindow().display(this));
-	}
-
-	@Override
-	protected ExplorerSectionRepresentation loadRepresentation() {
-		return new ExplorerSectionLanguageRepresentation(this, hierarchyLevel, null);
 	}
 
 	protected void loadChildren() {

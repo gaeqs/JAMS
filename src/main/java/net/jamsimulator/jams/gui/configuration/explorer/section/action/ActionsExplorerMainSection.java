@@ -36,7 +36,7 @@ import java.util.Map;
 /**
  * Represents the main section of an {@link ActionsExplorer}.
  */
-public class ActionsExplorerMainSection extends ExplorerSection {
+public class ActionsExplorerMainSection extends LanguageExplorerSection {
 
 	protected Map<String, ActionExplorerRegion> regions;
 
@@ -45,9 +45,9 @@ public class ActionsExplorerMainSection extends ExplorerSection {
 	 *
 	 * @param explorer the {@link Explorer} of this section.
 	 */
-	public ActionsExplorerMainSection(ActionsExplorer explorer, boolean smallRepresentation) {
-		super(explorer, null, "Actions", 0, Comparator.comparing(ExplorerElement::getName));
-		((ExplorerSectionLanguageRepresentation) representation).setLanguageNode(Messages.CONFIG_ACTION);
+	public ActionsExplorerMainSection(ActionsExplorer explorer) {
+		super(explorer, null, "Actions", 0,
+				Comparator.comparing(ExplorerElement::getName), Messages.CONFIG_ACTION);
 		generateRegions();
 	}
 
@@ -107,11 +107,6 @@ public class ActionsExplorerMainSection extends ExplorerSection {
 	@Override
 	public String getVisibleName() {
 		return representation.getLabel().getText();
-	}
-
-	@Override
-	protected ExplorerSectionRepresentation loadRepresentation() {
-		return new ExplorerSectionLanguageRepresentation(this, hierarchyLevel, null);
 	}
 
 	/**

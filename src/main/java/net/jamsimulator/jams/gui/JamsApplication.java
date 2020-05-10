@@ -27,7 +27,9 @@ package net.jamsimulator.jams.gui;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuBar;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -39,6 +41,7 @@ import net.jamsimulator.jams.gui.main.MainScene;
 import net.jamsimulator.jams.gui.project.ProjectListTabPane;
 import net.jamsimulator.jams.manager.ActionManager;
 import net.jamsimulator.jams.manager.ThemeManager;
+import net.jamsimulator.jams.utils.Validate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +56,8 @@ public class JamsApplication extends Application {
 	private static MainAnchorPane mainAnchorPane;
 
 	private static List<EventHandler<WindowEvent>> closeListeners;
+
+	private static ContextMenu lastContextMenu;
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -175,6 +180,24 @@ public class JamsApplication extends Application {
 	 */
 	public static void removeStageCloseListener(EventHandler<WindowEvent> listener) {
 		closeListeners.remove(listener);
+	}
+
+	/**
+	 * Opens the given {@link ContextMenu}, hiding the last open context menu.
+	 *
+	 * @param menu   the {@link ContextMenu} to open.
+	 * @param parent the parent's {@link Node}.
+	 * @param x      the x pos.
+	 * @param y      the y pos.
+	 */
+	public static void openContextMenu(ContextMenu menu, Node parent, double x, double y) {
+		Validate.notNull(menu, "Menu cannot be null!");
+		Validate.notNull(parent, "Parent cannot be null!");
+		if (lastContextMenu != null) {
+			lastContextMenu.hide();
+		}
+		lastContextMenu = menu;
+		lastContextMenu.show(parent, x, y);
 	}
 
 	public static void main(String[] args) {
