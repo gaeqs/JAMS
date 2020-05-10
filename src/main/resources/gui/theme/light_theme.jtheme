@@ -659,6 +659,11 @@ AnchorPane {
     -fx-background-color: -theme-background;
 }
 
+/* WINDOW POPUPS */
+.window-popup-background {
+    -fx-border-color: -theme-background-lighter;
+    -fx-border-width: 1px;
+}
 
 /* CODE AREA */
 .code-area {

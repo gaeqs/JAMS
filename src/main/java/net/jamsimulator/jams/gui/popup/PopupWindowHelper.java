@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.popup;
 
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
@@ -50,7 +51,15 @@ class PopupWindowHelper {
 		stage.initOwner(JamsApplication.getStage());
 
 		AnchorPane background = new AnchorPane();
+		background.getStyleClass().add("window-popup-background");
 		AnchorUtils.setAnchor(node, 0, 0, 0, 0);
+
+		if (width >= 0) {
+			background.setPrefWidth(width);
+		}
+		if (height >= 0) {
+			background.setPrefHeight(height);
+		}
 
 		background.getChildren().add(node);
 		ThemedScene scene = new ThemedScene(background);
@@ -59,12 +68,18 @@ class PopupWindowHelper {
 		stage.setOnCloseRequest(event -> scene.unregisterJamsListeners());
 
 		if (node instanceof Region) {
-			node.applyCss();
-			((Region) node).layout();
+			background.applyCss();
+			background.layout();
 		}
 
+
 		stage.show();
-		stage.centerOnScreen();
+		Platform.runLater(() -> {
+			Stage main = JamsApplication.getStage();
+			stage.setX(main.getX() + main.getWidth() / 2 - background.getWidth() / 2);
+			stage.setY(main.getY() + main.getHeight() / 2 - background.getHeight() / 2);
+		});
+
 	}
 
 }
