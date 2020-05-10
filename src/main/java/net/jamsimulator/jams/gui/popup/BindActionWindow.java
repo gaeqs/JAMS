@@ -104,8 +104,11 @@ public class BindActionWindow extends VBox {
 				if (event.getCode() == KeyCode.CONTROL || event.getCode() == KeyCode.SHIFT
 						|| event.getCode() == KeyCode.ALT || event.getCode() == KeyCode.META
 						|| event.getCode() == KeyCode.SHORTCUT) return;
-				combination = new KeyCombinationBuilder(event).build();
-				combinationDisplay.setText(combination.toString());
+				try {
+					combination = new KeyCombinationBuilder(event).build();
+					combinationDisplay.setText(combination.toString());
+				} catch (IllegalArgumentException ignore) {
+				}
 			}
 		});
 	}

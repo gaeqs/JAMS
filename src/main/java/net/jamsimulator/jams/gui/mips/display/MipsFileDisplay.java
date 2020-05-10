@@ -64,12 +64,13 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		popupVBox.getStyleClass().add("mips-popup");
 		popup.getContent().add(popupVBox);
 
+		boolean elementsAlreadyLoaded = false;
+
 		if (tab.getWorkingPane() instanceof MipsProjectPane) {
 			project = ((MipsProjectPane) tab.getWorkingPane()).getProject();
 			Optional<MipsFileElements> elementsOptional = project.getFilesToAssemble().getFileElements(tab.getFile());
 			elements = elementsOptional.orElseGet(() -> new MipsFileElements(tab.getFile(), project));
-
-			project.getFilesToAssemble().addFile(tab.getFile(), elements);
+			elementsAlreadyLoaded = elementsOptional.isPresent();
 		} else {
 			project = null;
 			elements = new MipsFileElements(tab.getFile(), null);
@@ -81,7 +82,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		applyLabelTabRemover();
 
 		subscription = multiPlainChanges().subscribe(event -> event.forEach(this::index));
-		index();
+		index(!elementsAlreadyLoaded);
 	}
 
 	public Optional<MipsProject> getProject() {
@@ -134,7 +135,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		//Check current line.
 		int currentLine = elements.lineOf(change.getPosition());
 		if (currentLine == -1) {
-			index();
+			index(true);
 			return;
 		}
 
@@ -145,7 +146,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		int removedLines = StringUtils.charCount(removed, '\n', '\r');
 
 		if (removedLines == 0 && addedLines == 0) {
-			elements.searchAllErrors(getTab().getWorkingPane(), currentLine, 1);
+			elements.searchGeneralErrors(getTab().getWorkingPane(), currentLine, 1);
 			elements.styleLines(this, elements.searchLabelErrors(project.getFilesToAssemble().getGlobalLabels()));
 			elements.styleLines(this, currentLine, 1);
 
@@ -176,7 +177,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 			}
 		}
 
-		elements.searchAllErrors(getTab().getWorkingPane(), currentLine - 1, 1 + editedLines + linesToAdd);
+		elements.searchGeneralErrors(getTab().getWorkingPane(), currentLine - 1, 1 + editedLines + linesToAdd);
 		elements.styleLines(this, elements.searchLabelErrors(project.getFilesToAssemble().getGlobalLabels()));
 		elements.styleLines(this, currentLine - 1, 1 + editedLines + linesToAdd);
 
@@ -194,8 +195,13 @@ public class MipsFileDisplay extends CodeFileDisplay {
 		}
 	}
 
-	private void index() {
-		elements.refreshAll(getText(), getTab().getWorkingPane());
+	private void index(boolean refresh) {
+		if(refresh) {
+			elements.refreshAll(getText(), getTab().getWorkingPane());
+		}
+		else {
+			elements.searchGeneralErrors(getTab().getWorkingPane());
+		}
 		List<MipsLine> lines = elements.getLines();
 		for (int i = 0; i < lines.size(); i++) {
 			lines.get(i).styleLine(this, i);

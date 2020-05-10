@@ -97,7 +97,8 @@ public class DisplayLabel extends MipsCodeElement {
 			}
 		}
 
-		if (globalLabels.stream().filter(target -> target.equals(label)).count() > 1) {
+		long glCount = globalLabels.stream().filter(target -> target.equals(label)).count();
+		if (glCount > 1 || !global && glCount > 0) {
 			if (!errors.contains(MipsDisplayError.DUPLICATE_GLOBAL_LABEL)) {
 				changed = errors.add(MipsDisplayError.DUPLICATE_GLOBAL_LABEL);
 			}
@@ -128,7 +129,6 @@ public class DisplayLabel extends MipsCodeElement {
 		boolean isNowGlobal = fileGlobalLabels.contains(getLabel());
 		boolean hasGlobalChanged = isNowGlobal != global;
 		global = isNowGlobal;
-		System.out.println("IS GLOBAL " + getLabel() + "? " + global);
 		return hasGlobalChanged;
 	}
 }

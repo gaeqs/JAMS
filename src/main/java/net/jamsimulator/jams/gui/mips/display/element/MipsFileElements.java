@@ -105,8 +105,12 @@ public class MipsFileElements {
 	 * @return the element, if found.
 	 */
 	public Optional<MipsCodeElement> getElementAt(int index) {
-		MipsLine line = lines.get(lineOf(index));
-		return line.getElementAt(index);
+		try {
+			MipsLine line = lines.get(lineOf(index));
+			return line.getElementAt(index);
+		} catch (IndexOutOfBoundsException ex) {
+			return Optional.empty();
+		}
 	}
 
 	/**
@@ -142,9 +146,10 @@ public class MipsFileElements {
 				directive.getParameters().forEach(label -> globalLabels.remove(label.text)));
 		int length = line.getText().length() + 1;
 
+		MipsLine current;
 		for (int i = lineIndex; i < lines.size(); i++) {
-			line = lines.get(i);
-			line.setStart(line.getStart() - length);
+			current = lines.get(i);
+			current.setStart(line.getStart() - length);
 		}
 
 		//Refresh if any global label has changed.
@@ -178,9 +183,10 @@ public class MipsFileElements {
 				.ifPresent(directive -> directive.getParameters().forEach(label -> globalLabels.add(label.text)));
 
 		int length = line.length() + 1;
+		MipsLine current;
 		for (int i = lineIndex + 1; i < lines.size(); i++) {
-			mipsLine = lines.get(i);
-			mipsLine.setStart(mipsLine.getStart() + length);
+			current = lines.get(i);
+			current.setStart(mipsLine.getStart() + length);
 		}
 
 		//Check if new label is a global parameter.
@@ -216,14 +222,14 @@ public class MipsFileElements {
 		mipsLine.getDirective().filter(DisplayDirective::isGlobalLabelsParameter)
 				.ifPresent(directive -> directive.getParameters().forEach(label -> globalLabels.add(label.text)));
 
+		MipsLine current;
 		for (int i = lineIndex + 1; i < lines.size(); i++) {
-			mipsLine = lines.get(i);
-			mipsLine.setStart(mipsLine.getStart() + difference);
+			current = lines.get(i);
+			current.setStart(mipsLine.getStart() + difference);
 		}
 
 
 		//Check if new label is a global parameter.
-		System.out.println(line + " ? " + mipsLine.getText());
 		mipsLine.getLabel().ifPresent(target -> target.checkGlobalLabelsChanges(globalLabels));
 
 		//Refresh if any global label has changed.
@@ -295,11 +301,12 @@ public class MipsFileElements {
 
 		//Checks for errors.
 		refreshLabels();
-		searchLabelErrors(project == null ? globalLabels : project.getFilesToAssemble().getGlobalLabels());
+		searchLabelErrors(project == null || !project.getFilesToAssemble().getFiles().contains(file)
+				? globalLabels : project.getFilesToAssemble().getGlobalLabels());
 		refreshGlobalLabelsChanges();
 
 		if (workingPane != null) {
-			searchAllErrors(workingPane);
+			searchGeneralErrors(workingPane);
 		}
 	}
 
@@ -308,7 +315,7 @@ public class MipsFileElements {
 	 *
 	 * @param workingPane the {@link WorkingPane} where the file is displayed.
 	 */
-	public void searchAllErrors(WorkingPane workingPane) {
+	public void searchGeneralErrors(WorkingPane workingPane) {
 		lines.forEach(line -> line.searchAllErrors(workingPane, this));
 	}
 
@@ -319,7 +326,7 @@ public class MipsFileElements {
 	 * @param from        the first line to check.
 	 * @param amount      the amount of lines to check.
 	 */
-	public void searchAllErrors(WorkingPane workingPane, int from, int amount) {
+	public void searchGeneralErrors(WorkingPane workingPane, int from, int amount) {
 		if (from < 0 || from + amount > lines.size())
 			throw new IndexOutOfBoundsException("Index out of bounds. [" + from + ", " + (from + amount) + ")");
 		for (int i = 0; i < amount; i++) {
@@ -368,7 +375,7 @@ public class MipsFileElements {
 		Iterator<MipsLine> iterator = lines.iterator();
 		int i = 0;
 		while (iterator.hasNext()) {
-			if (iterator.next().checkGlobalLabelsChanges(labels, globalLabels)) updated.add(i);
+			if (iterator.next().checkGlobalLabelsChanges(labels, this.globalLabels, globalLabels)) updated.add(i);
 			i++;
 		}
 		return updated;

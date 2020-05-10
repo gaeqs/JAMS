@@ -88,8 +88,23 @@ public class FolderActionAddFileToAssembler extends ContextAction {
 		List<ExplorerElement> elements = explorer.getSelectedElements();
 		if (elements.isEmpty()) return false;
 
-		return elements.stream().allMatch(target -> target instanceof ExplorerFile
-				&& Jams.getFileTypeManager().getByFile(((ExplorerFile) target).getFile())
-				.map(FileType::getName).orElse("").equals(AssemblyFileType.NAME));
+		ProjectTab tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
+		if (tab == null) return false;
+		MipsProject project = tab.getProject();
+		MipsFilesToAssemble files = project.getFilesToAssemble();
+
+		boolean allPresent = true;
+		for (ExplorerElement element : elements) {
+			//Is not a file
+			if (!(element instanceof ExplorerFile)) return false;
+			//Is not an assembly file
+			if (!Jams.getFileTypeManager().getByFile(((ExplorerFile) element).getFile())
+					.map(FileType::getName).orElse("").equals(AssemblyFileType.NAME))
+				return false;
+
+			allPresent &= files.getFiles().contains(((ExplorerFile) element).getFile());
+		}
+
+		return !allPresent;
 	}
 }

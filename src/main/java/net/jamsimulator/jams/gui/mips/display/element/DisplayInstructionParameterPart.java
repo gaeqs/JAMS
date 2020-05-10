@@ -76,7 +76,7 @@ public class DisplayInstructionParameterPart extends MipsCodeElement {
 	@Override
 	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
 		errors.clear();
-		if (type == InstructionParameterPartType.LABEL || type == InstructionParameterPartType.GLOBAL_LABEL) {
+		if (type == InstructionParameterPartType.LABEL) {
 			if (!elements.hasLabel(text)) {
 				errors.add(MipsDisplayError.LABEL_NOT_FOUND);
 				type = InstructionParameterPartType.LABEL;
