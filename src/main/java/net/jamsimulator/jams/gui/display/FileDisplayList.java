@@ -63,7 +63,6 @@ public class FileDisplayList extends TabPane {
 		return Optional.of((FileDisplayTab) getSelectionModel().getSelectedItem());
 	}
 
-
 	public void selectNext() {
 		getSelectionModel().selectNext();
 	}
@@ -115,5 +114,9 @@ public class FileDisplayList extends TabPane {
 	public void closeAll() {
 		displays.clear();
 		getTabs().clear();
+	}
+
+	public void saveAll () {
+		displays.forEach(display -> display.getDisplay().save());
 	}
 }

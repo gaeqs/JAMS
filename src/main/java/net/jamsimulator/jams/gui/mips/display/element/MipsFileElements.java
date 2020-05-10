@@ -301,8 +301,7 @@ public class MipsFileElements {
 
 		//Checks for errors.
 		refreshLabels();
-		searchLabelErrors(project == null || !project.getFilesToAssemble().getFiles().contains(file)
-				? globalLabels : project.getFilesToAssemble().getGlobalLabels());
+		searchLabelErrors();
 		refreshGlobalLabelsChanges();
 
 		if (workingPane != null) {
@@ -337,13 +336,16 @@ public class MipsFileElements {
 	/**
 	 * Search for label errors in all lines.
 	 */
-	public List<Integer> searchLabelErrors(List<String> globalLabels) {
+	public List<Integer> searchLabelErrors() {
 		List<Integer> updated = new ArrayList<>();
+
+		List<String> gLabels = project == null || !project.getFilesToAssemble().getFiles().contains(file)
+				? globalLabels : project.getFilesToAssemble().getGlobalLabels();
 
 		Iterator<MipsLine> iterator = lines.iterator();
 		int i = 0;
 		while (iterator.hasNext()) {
-			if (iterator.next().searchLabelErrors(labels, globalLabels)) updated.add(i);
+			if (iterator.next().searchLabelErrors(labels, gLabels)) updated.add(i);
 			i++;
 		}
 		return updated;

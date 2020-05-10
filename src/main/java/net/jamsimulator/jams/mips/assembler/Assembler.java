@@ -136,15 +136,4 @@ public interface Assembler {
 	 *                            in different files but with the same name as the given label exists.
 	 */
 	void setAsGlobalLabel(int executingLine, String label);
-
-	/**
-	 * Adds the given global label.
-	 *
-	 * @param executingLine the line the executes this code. Used for exceptions.
-	 * @param label         the label.
-	 * @param value         the label value.
-	 * @throws AssemblerException if the global label or a local label with the
-	 *                            same name already exist.
-	 */
-	void addGlobalLabel(int executingLine, String label, int value);
 }

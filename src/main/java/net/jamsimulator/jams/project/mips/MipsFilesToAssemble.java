@@ -83,7 +83,7 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 			}
 
 			String text = builder.toString();
-			if(!text.isEmpty()) {
+			if (!text.isEmpty()) {
 				text = text.substring(0, text.length() - 1);
 			}
 
@@ -129,7 +129,8 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 		if (before.isCancelled()) return;
 
 		if (!files.containsKey(file)) return;
-		files.remove(file);
+		MipsFileElements elements = files.remove(file);
+		refreshDeletedDisplay(file, elements);
 		refreshGlobalLabels();
 
 		callEvent(new FileRemoveFromAssembleEvent.After(file));
@@ -159,6 +160,25 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 			//If the display is not present, just update the elements.
 			elements.refreshGlobalLabelsChanges();
 		});
+	}
+
+	private void refreshDeletedDisplay(File file, MipsFileElements elements) {
+		ProjectTab tab = JamsApplication.getProjectsTabPane().getProjectTab(project).orElse(null);
+		if (tab == null) return;
+		Node node = tab.getProjectTabPane().getWorkingPane().getCenter();
+		if (!(node instanceof FileDisplayList)) return;
+		FileDisplayList list = (FileDisplayList) node;
+
+		Optional<FileDisplayTab> fTab = list.getFileDisplayTab(file);
+		if (fTab.isPresent()) {
+			FileDisplay display = fTab.get().getDisplay();
+			if (display instanceof MipsFileDisplay) {
+				((MipsFileDisplay) display).refreshGlobalLabelErrorsAndParameters();
+				return;
+			}
+		} else {
+			elements.refreshGlobalLabelsChanges();
+		}
 	}
 
 }

@@ -42,7 +42,7 @@ import java.util.Objects;
  */
 public abstract class AssemblerBuilder {
 
-	private String name;
+	private final String name;
 
 	/**
 	 * Creates an assembler builder using a name.

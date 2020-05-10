@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.mips.architecture.Architecture;
-import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.assembler.directive.Directive;
 import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
@@ -36,7 +35,6 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.mips.simulation.SingleCycleSimulation;
 import net.jamsimulator.jams.utils.LabelUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 import net.jamsimulator.jams.utils.Validate;
@@ -48,16 +46,16 @@ import java.util.*;
  */
 public class MIPS32Assembler implements Assembler {
 
-	private DirectiveSet directiveSet;
-	private InstructionSet instructionSet;
-	private Registers registerSet;
-	private Memory memory;
+	private final DirectiveSet directiveSet;
+	private final InstructionSet instructionSet;
+	private final Registers registerSet;
+	private final Memory memory;
 
-	private AssemblerData assemblerData;
-	private List<AssemblingFile> files;
+	private final AssemblerData assemblerData;
+	private final List<AssemblingFile> files;
 
-	private List<String> convertToGlobalLabel;
-	private Map<String, Integer> globalLabels;
+	private final List<String> convertToGlobalLabel;
+	private final Map<String, Integer> globalLabels;
 
 	private AssemblingFile currentAssemblingFile;
 	private boolean compiled;
@@ -96,6 +94,7 @@ public class MIPS32Assembler implements Assembler {
 		if (assemblerData == null) throw new AssemblerException("assembler not initialized.");
 		for (AssemblingFile file : files) {
 			currentAssemblingFile = file;
+			convertToGlobalLabel.clear();
 			compileFile(file);
 		}
 
@@ -169,22 +168,6 @@ public class MIPS32Assembler implements Assembler {
 				file.labels.remove(label);
 			}
 		}
-	}
-
-	@Override
-	public void addGlobalLabel(int executingLine, String label, int value) {
-		if (!convertToGlobalLabel.contains(label))
-			convertToGlobalLabel.add(label);
-
-		if (globalLabels.containsKey(label))
-			throw new AssemblerException("The global label " + label + "  already exists.");
-		for (AssemblingFile file : files) {
-			if (file.labels.containsKey(label)) {
-				throw new AssemblerException(executingLine, "The label " + label + " already exist as a local label.");
-			}
-		}
-
-		globalLabels.put(label, value);
 	}
 
 	private void compileFile(AssemblingFile file) {
@@ -289,6 +272,8 @@ public class MIPS32Assembler implements Assembler {
 			}
 			globalLabels.put(name, address);
 		} else {
+			if (globalLabels.containsKey(name))
+				throw new AssemblerException(line, "Label " + name + " already defined as a global label.");
 			if (file.labels.containsKey(name))
 				throw new AssemblerException(line, "Label " + name + " already defined.");
 			file.labels.put(name, address);
