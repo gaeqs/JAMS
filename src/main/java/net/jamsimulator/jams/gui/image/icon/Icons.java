@@ -29,6 +29,8 @@ package net.jamsimulator.jams.gui.image.icon;
  */
 public class Icons {
 
+	public static final String LOGO = "logo";
+
 	public static final String EXPLORER_FOLDER_EXPANDED = "explorer_folder_expanded";
 	public static final String EXPLORER_FOLDER_COLLAPSED = "explorer_folder_collapsed";
 
@@ -41,6 +43,8 @@ public class Icons {
 
 	public static final String SIDEBAR_EXPLORER = "sidebar_project";
 	public static final String SIDEBAR_SETTINGS = "sidebar_settings";
+
+	public static final String LOGO_PATH = "gui/icon/logo.png";
 
 	public static final String EXPLORER_SECTION_COLLAPSED_PATH = "gui/icon/explorer/section_collapsed.png";
 	public static final String EXPLORER_SECTION_EXPANDED_PATH = "gui/icon/explorer/section_expanded.png";

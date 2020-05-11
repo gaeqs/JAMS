@@ -36,6 +36,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import net.jamsimulator.jams.gui.font.FontLoader;
 import net.jamsimulator.jams.gui.image.icon.IconManager;
+import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
 import net.jamsimulator.jams.gui.main.MainScene;
 import net.jamsimulator.jams.gui.project.ProjectListTabPane;
@@ -89,8 +90,9 @@ public class JamsApplication extends Application {
 		primaryStage.setX(x);
 		primaryStage.setY(y);
 
-		primaryStage.show();
 
+		getIconManager().getOrLoadSafe(Icons.LOGO, Icons.LOGO_PATH, 250, 250).ifPresent(primaryStage.getIcons()::add);
+		primaryStage.show();
 
 		primaryStage.setOnCloseRequest(event -> onClose());
 	}
