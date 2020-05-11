@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.project.mips;
 
+import javafx.application.Platform;
 import javafx.scene.Node;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.JamsApplication;
@@ -71,7 +72,7 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 		return Collections.unmodifiableSet(files.keySet());
 	}
 
-	public void addFile(File file) {
+	public void addFile(File file, boolean refreshGlobalLabels) {
 		Validate.notNull(file, "File cannot be null!");
 		if (files.containsKey(file)) return;
 
@@ -94,14 +95,17 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 
 			elements.refreshAll(text, null);
 			files.put(file, elements);
-			refreshGlobalLabels();
+
+			if(refreshGlobalLabels) {
+				refreshGlobalLabels();
+			}
 			callEvent(new FileAddToAssembleEvent.After(file));
 		} catch (IOException ex) {
 			throw new RuntimeException(ex);
 		}
 	}
 
-	public void addFile(File file, MipsFileElements elements) {
+	public void addFile(File file, MipsFileElements elements, boolean refreshGlobalLabels) {
 		Validate.notNull(file, "File cannot be null!");
 		Validate.notNull(elements, "Elements cannot be null!");
 
@@ -110,21 +114,25 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 
 		if (files.containsKey(file)) return;
 		files.put(file, elements);
-		refreshGlobalLabels();
+
+
+		if(refreshGlobalLabels) {
+			refreshGlobalLabels();
+		}
 
 		callEvent(new FileAddToAssembleEvent.After(file));
 	}
 
-	public void addFile(File file, FileDisplayList list) {
+	public void addFile(File file, FileDisplayList list, boolean refreshGlobalLabels) {
 		Validate.notNull(file, "File cannot be null!");
 		Validate.notNull(list, "List cannot be null!");
 
 		Optional<FileDisplayTab> tab = list.getFileDisplayTab(file);
 		if (!tab.isPresent() || !(tab.get().getDisplay() instanceof MipsFileDisplay)) {
-			addFile(file);
+			addFile(file, refreshGlobalLabels);
 			return;
 		}
-		addFile(file, ((MipsFileDisplay) tab.get().getDisplay()).getElements());
+		addFile(file, ((MipsFileDisplay) tab.get().getDisplay()).getElements(), refreshGlobalLabels);
 	}
 
 	public void removeFile(File file) {
@@ -167,6 +175,22 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 		});
 	}
 
+	public void load(File folder) throws IOException {
+		File file = new File(folder, FILE_NAME);
+		if (!file.isFile()) return;
+
+		String value = String.join("\n", Files.readAllLines(file.toPath()));
+
+		JSONArray array = new JSONArray(value);
+
+		for (Object element : array) {
+			file = new File(element.toString());
+			if (!file.isFile()) continue;
+			addFile(file, false);
+		}
+
+		Platform.runLater(this::refreshGlobalLabels);
+	}
 
 	public void save(File folder) throws IOException {
 		Validate.notNull(folder, "Folder cannot be null!");

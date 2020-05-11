@@ -39,6 +39,7 @@ import net.jamsimulator.jams.gui.image.icon.IconManager;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
 import net.jamsimulator.jams.gui.main.MainScene;
 import net.jamsimulator.jams.gui.project.ProjectListTabPane;
+import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.manager.ActionManager;
 import net.jamsimulator.jams.manager.ThemeManager;
 import net.jamsimulator.jams.utils.Validate;
@@ -89,6 +90,9 @@ public class JamsApplication extends Application {
 		primaryStage.setY(y);
 
 		primaryStage.show();
+
+
+		primaryStage.setOnCloseRequest(event -> onClose());
 	}
 
 	/**
@@ -202,5 +206,15 @@ public class JamsApplication extends Application {
 
 	public static void main(String[] args) {
 		launch(args);
+	}
+
+
+	private static void onClose() {
+		for (ProjectTab project : getProjectsTabPane().getProjects()) {
+			project.getProject().onClose();
+		}
+
+		//Avoids exit lag.
+		new Thread(() -> System.exit(0)).start();
 	}
 }

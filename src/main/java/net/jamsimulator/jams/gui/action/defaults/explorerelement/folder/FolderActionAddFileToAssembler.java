@@ -77,7 +77,7 @@ public class FolderActionAddFileToAssembler extends ContextAction {
 		if (!(pane instanceof MipsWorkingPane)) return;
 
 		for (ExplorerElement element : elements) {
-			files.addFile(((ExplorerFile) element).getFile(), ((MipsWorkingPane) pane).getFileDisplayList());
+			files.addFile(((ExplorerFile) element).getFile(), ((MipsWorkingPane) pane).getFileDisplayList(), true);
 		}
 	}
 

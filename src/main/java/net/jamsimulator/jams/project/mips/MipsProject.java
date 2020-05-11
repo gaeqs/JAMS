@@ -53,7 +53,7 @@ public class MipsProject extends BasicProject {
 
 	public MipsProject(String name, File folder, Architecture architecture, AssemblerBuilder assemblerBuilder, MemoryBuilder memoryBuilder,
 					   RegistersBuilder registersBuilder, DirectiveSet directiveSet, InstructionSet instructionSet) {
-		super(name, folder);
+		super(name, folder, false);
 		Validate.notNull(name, "Name cannot be null!");
 		Validate.notNull(folder, "Folder cannot be null!");
 		Validate.isTrue(folder.exists(), "Folder " + folder.getName() + " must exist!");
@@ -70,6 +70,8 @@ public class MipsProject extends BasicProject {
 		this.registersBuilder = registersBuilder;
 		this.directiveSet = directiveSet;
 		this.instructionSet = instructionSet;
+
+		loadData();
 	}
 
 	@Override
@@ -126,5 +128,6 @@ public class MipsProject extends BasicProject {
 	@Override
 	protected void loadData() {
 		data = new MipsProjectData(this);
+		data.load();
 	}
 }

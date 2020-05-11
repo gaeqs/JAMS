@@ -30,7 +30,8 @@ import java.io.IOException;
 
 public class MipsProjectData extends ProjectData {
 
-	private final MipsFilesToAssemble filesToAssemble;
+	protected final MipsFilesToAssemble filesToAssemble;
+	protected boolean loaded;
 
 	public MipsProjectData(MipsProject project) {
 		super(project.getFolder());
@@ -47,6 +48,17 @@ public class MipsProjectData extends ProjectData {
 			filesToAssemble.save(folder);
 		} catch (IOException ex) {
 			ex.printStackTrace();
+		}
+	}
+
+	@Override
+	public void load() {
+		if(loaded) return;
+		loaded = true;
+		try {
+			filesToAssemble.load(folder);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

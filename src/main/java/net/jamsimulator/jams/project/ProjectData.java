@@ -46,4 +46,6 @@ public abstract class ProjectData {
 	}
 
 	public abstract void save();
+
+	public abstract void load();
 }

@@ -38,13 +38,16 @@ public abstract class BasicProject implements Project {
 
 	protected ProjectData data;
 
-	public BasicProject(String name, File folder) {
+	public BasicProject(String name, File folder, boolean loadDataOnConstructor) {
 		Validate.notNull(name, "Name cannot be null!");
 		Validate.notNull(folder, "Folder cannot be null!");
 		this.name = name;
 		this.folder = folder;
 		this.projectTab = null;
-		loadData();
+
+		if(loadDataOnConstructor) {
+			loadData();
+		}
 	}
 
 	@Override
