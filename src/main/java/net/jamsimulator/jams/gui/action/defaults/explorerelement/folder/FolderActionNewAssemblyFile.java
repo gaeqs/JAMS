@@ -28,6 +28,7 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.file.FileType;
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.explorer.Explorer;
@@ -36,9 +37,13 @@ import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.popup.NewAssemblyFileWindow;
+import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.project.Project;
+import net.jamsimulator.jams.project.mips.MipsProject;
 
 import java.io.File;
+import java.util.Optional;
 
 public class FolderActionNewAssemblyFile extends ContextAction {
 
@@ -72,7 +77,12 @@ public class FolderActionNewAssemblyFile extends ContextAction {
 			throw new IllegalStateException("Element is not a file or a folder!");
 		}
 
-		NewAssemblyFileWindow.open(folder);
+		Optional<Project> optional = JamsApplication.getProjectsTabPane().getFocusedProject().map(ProjectTab::getProject);
+		if (!optional.isPresent() || !(optional.get() instanceof MipsProject)) {
+			NewAssemblyFileWindow.open(folder, null);
+		} else {
+			NewAssemblyFileWindow.open(folder, (MipsProject) optional.get());
+		}
 	}
 
 	@Override

@@ -26,6 +26,8 @@ package net.jamsimulator.jams.gui.mips.explorer;
 
 import javafx.scene.control.ScrollPane;
 import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.gui.explorer.event.ExplorerAddElementEvent;
+import net.jamsimulator.jams.gui.explorer.event.ExplorerRemoveElementEvent;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.project.mips.MipsProject;
@@ -57,6 +59,8 @@ public class MipsFolderExplorer extends FolderExplorer {
 
 		getExplorerFolder(project.getData().getFolder()).ifPresent(metadataFolder ->
 				metadataFolder.getRepresentation().getStyleClass().add("explorer-jams-folder"));
+
+		registerListeners(this, true);
 	}
 
 	/**
@@ -104,5 +108,24 @@ public class MipsFolderExplorer extends FolderExplorer {
 	private void onFileRemoveFromAssemble(FileRemoveFromAssembleEvent.After event) {
 		File file = event.getFile();
 		unmarkFileToAssemble(file);
+	}
+
+	@Listener
+	private void onFileAdded(ExplorerAddElementEvent.After event) {
+		if (event.getElement() instanceof ExplorerFile) {
+			ExplorerFile eFile = (ExplorerFile) event.getElement();
+			File file = eFile.getFile();
+
+			if (project.getData().getFilesToAssemble().getFiles().contains(file)) {
+				if (!eFile.getStyleClass().contains(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS)) {
+					eFile.getStyleClass().add(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS);
+				}
+			}
+		}
+	}
+
+	@Listener
+	private void onFileRemoved (ExplorerRemoveElementEvent.After event) {
+		project.getData().getFilesToAssemble().checkFiles();
 	}
 }

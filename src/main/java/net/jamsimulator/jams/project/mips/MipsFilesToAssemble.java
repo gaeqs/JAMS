@@ -26,11 +26,13 @@ package net.jamsimulator.jams.project.mips;
 
 import javafx.application.Platform;
 import javafx.scene.Node;
+import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.display.FileDisplay;
 import net.jamsimulator.jams.gui.display.FileDisplayList;
 import net.jamsimulator.jams.gui.display.FileDisplayTab;
+import net.jamsimulator.jams.gui.explorer.event.ExplorerRemoveElementEvent;
 import net.jamsimulator.jams.gui.mips.display.MipsFileDisplay;
 import net.jamsimulator.jams.gui.mips.display.element.MipsFileElements;
 import net.jamsimulator.jams.gui.project.ProjectTab;
@@ -45,6 +47,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MipsFilesToAssemble extends SimpleEventBroadcast {
 
@@ -96,7 +99,7 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 			elements.refreshAll(text, null);
 			files.put(file, elements);
 
-			if(refreshGlobalLabels) {
+			if (refreshGlobalLabels) {
 				refreshGlobalLabels();
 			}
 			callEvent(new FileAddToAssembleEvent.After(file));
@@ -116,7 +119,7 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 		files.put(file, elements);
 
 
-		if(refreshGlobalLabels) {
+		if (refreshGlobalLabels) {
 			refreshGlobalLabels();
 		}
 
@@ -201,6 +204,13 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 		Writer writer = new FileWriter(file);
 		writer.write(array.toString());
 		writer.close();
+	}
+
+	public void checkFiles() {
+		List<File> toRemove = files.keySet().stream().filter(target -> !target.isFile()).collect(Collectors.toList());
+		for (File file : toRemove) {
+			removeFile(file);
+		}
 	}
 
 	private void refreshDeletedDisplay(File file, MipsFileElements elements) {

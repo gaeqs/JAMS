@@ -28,8 +28,12 @@ import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.event.EventBroadcast;
+import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.utils.KeyCombinationBuilder;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,7 +46,9 @@ import java.util.function.Predicate;
  * <p>
  * This class can be extend to add custom functionality.
  */
-public abstract class Explorer extends VBox {
+public abstract class Explorer extends VBox implements EventBroadcast {
+
+	private final SimpleEventBroadcast broadcast;
 
 	protected ScrollPane scrollPane;
 
@@ -62,6 +68,7 @@ public abstract class Explorer extends VBox {
 	 * @param generateOnConstructor whether the method {@link #generateMainSection()} should be called on the constructor.
 	 */
 	public Explorer(ScrollPane scrollPane, boolean multiSelection, boolean generateOnConstructor) {
+		this.broadcast = new SimpleEventBroadcast();
 		this.scrollPane = scrollPane;
 		this.multiSelection = multiSelection;
 		this.selectedElements = new LinkedList<>();
@@ -346,7 +353,7 @@ public abstract class Explorer extends VBox {
 	/**
 	 * Deselects all selected elements of this explorer.
 	 */
-	public void deselectAll () {
+	public void deselectAll() {
 		selectedElements.forEach(ExplorerElement::deselect);
 		selectedElements.clear();
 	}
@@ -370,4 +377,34 @@ public abstract class Explorer extends VBox {
 			}
 		});
 	}
+
+	//region broadcast methods
+
+	@Override
+	public boolean registerListener(Object instance, Method method, boolean useWeakReferences) {
+		return broadcast.registerListener(instance, method, useWeakReferences);
+	}
+
+	@Override
+	public int registerListeners(Object instance, boolean useWeakReferences) {
+		return broadcast.registerListeners(instance, useWeakReferences);
+	}
+
+	@Override
+	public boolean unregisterListener(Object instance, Method method) {
+		return broadcast.unregisterListener(instance, method);
+	}
+
+	@Override
+	public int unregisterListeners(Object instance) {
+		return broadcast.unregisterListeners(instance);
+	}
+
+	@Override
+	public <T extends Event> T callEvent(T event) {
+		return broadcast.callEvent(event);
+	}
+
+
+	//endregion
 }

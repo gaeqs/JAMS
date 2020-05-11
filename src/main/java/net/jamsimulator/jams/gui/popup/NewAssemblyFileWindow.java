@@ -25,31 +25,41 @@
 package net.jamsimulator.jams.gui.popup;
 
 import javafx.geometry.Pos;
+import javafx.scene.Group;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
+import net.jamsimulator.jams.project.mips.MipsProject;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
 
 public class NewAssemblyFileWindow extends VBox {
 
-	public static int WIDTH = 300;
+	public static int WIDTH = 500;
 	public static int HEIGHT = 50;
 
-	private NewAssemblyFileWindow(Stage stage, File folder) {
+	private NewAssemblyFileWindow(Stage stage, File folder, MipsProject project) {
 		getStyleClass().add("v-box");
 		Validate.notNull(folder, "Folder cannot be null!");
 		Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
-		setAlignment(Pos.BOTTOM_CENTER);
+		setAlignment(Pos.CENTER);
 		getChildren().add(new LanguageLabel(Messages.ACTION_FOLDER_EXPLORER_ELEMENT_NEW_ASSEMBLY_FILE));
 
 
 		TextField field = new TextField();
 		getChildren().add(field);
+
+		CheckBox check = new CheckBox("Add file to assembler");
+		if (project != null) {
+			getChildren().add(new Group(check));
+			check.setOnAction(action -> field.requestFocus());
+		}
 
 		field.setOnAction(event -> {
 			if (field.getText().isEmpty()) {
@@ -63,6 +73,10 @@ public class NewAssemblyFileWindow extends VBox {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
+
+			if (project != null && check.isSelected()) {
+				project.getData().getFilesToAssemble().addFile(file, true);
+			}
 		});
 
 		setOnKeyPressed(event -> {
@@ -71,11 +85,10 @@ public class NewAssemblyFileWindow extends VBox {
 				event.consume();
 			}
 		});
-
 	}
 
-	public static void open(File folder) {
+	public static void open(File folder, MipsProject project) {
 		Stage stage = new Stage();
-		PopupWindowHelper.open(stage, new NewAssemblyFileWindow(stage, folder), WIDTH, HEIGHT, true);
+		PopupWindowHelper.open(stage, new NewAssemblyFileWindow(stage, folder, project), WIDTH, HEIGHT, true);
 	}
 }

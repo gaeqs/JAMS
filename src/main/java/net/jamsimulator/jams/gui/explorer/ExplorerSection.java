@@ -37,10 +37,13 @@ import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
+import net.jamsimulator.jams.gui.explorer.event.ExplorerAddElementEvent;
+import net.jamsimulator.jams.gui.explorer.event.ExplorerRemoveElementEvent;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Represents a section inside an {@link Explorer}.
@@ -251,6 +254,11 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	 */
 	public void addElement(ExplorerElement element) {
 		Validate.notNull(element, "Element cannot be null!");
+
+		ExplorerAddElementEvent.Before before = new ExplorerAddElementEvent.Before(this, element);
+		explorer.callEvent(before);
+		if (before.isCancelled()) return;
+
 		elements.add(element);
 
 		if (element instanceof ExplorerBasicElement) {
@@ -266,6 +274,8 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		refreshAllElements();
 		representation.refreshStatusIcon();
 		explorer.refreshWidth();
+
+		explorer.callEvent(new ExplorerAddElementEvent.After(this, element));
 	}
 
 	/**
@@ -276,6 +286,11 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	 */
 	public boolean removeElement(ExplorerElement element) {
 		Validate.notNull(element, "Element cannot be null!");
+
+		ExplorerRemoveElementEvent.Before before = new ExplorerRemoveElementEvent.Before(this, element);
+		explorer.callEvent(before);
+		if (before.isCancelled()) return false;
+
 		elements.remove(element);
 		boolean result = filteredElements.remove(element);
 		if (result) {
@@ -283,18 +298,32 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 			representation.refreshStatusIcon();
 			explorer.refreshWidth();
 		}
+
+		explorer.callEvent(new ExplorerRemoveElementEvent.After(this, element));
+
 		return result;
 	}
 
-	public boolean removeElementIf(Predicate<? super ExplorerElement> consumer) {
-		elements.removeIf(consumer);
-		if (filteredElements.removeIf(consumer)) {
+	public void removeElementIf(Predicate<? super ExplorerElement> consumer) {
+		List<ExplorerElement> filter = elements.stream().filter(consumer).collect(Collectors.toList());
+
+		boolean result = false;
+		for (ExplorerElement element : filter) {
+			ExplorerRemoveElementEvent.Before before = new ExplorerRemoveElementEvent.Before(this, element);
+			explorer.callEvent(before);
+			if (before.isCancelled()) continue;
+
+			elements.remove(element);
+			result |= filteredElements.remove(element);
+
+			explorer.callEvent(new ExplorerRemoveElementEvent.After(this, element));
+		}
+
+		if (result) {
 			refreshAllElements();
 			representation.refreshStatusIcon();
 			explorer.refreshWidth();
-			return true;
 		}
-		return false;
 	}
 
 	/**

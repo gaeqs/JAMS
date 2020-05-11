@@ -30,6 +30,7 @@ import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.gui.mips.project.MipsWorkingPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
+import net.jamsimulator.jams.project.mips.MipsProject;
 
 public class ProjectTabPane extends TabPane {
 
@@ -42,7 +43,7 @@ public class ProjectTabPane extends TabPane {
 		tab.setClosable(false);
 		getTabs().add(tab);
 
-		workingPane = new MipsWorkingPane(tab, projectTab, projectTab.getProject());
+		workingPane = new MipsWorkingPane(tab, projectTab, (MipsProject) projectTab.getProject());
 		tab.setContent(workingPane);
 	}
 

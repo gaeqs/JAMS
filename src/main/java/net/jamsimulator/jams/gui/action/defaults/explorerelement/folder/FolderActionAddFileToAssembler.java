@@ -40,6 +40,7 @@ import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.gui.mips.project.MipsWorkingPane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.MipsFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MipsProject;
 
@@ -71,8 +72,9 @@ public class FolderActionAddFileToAssembler extends ContextAction {
 
 		ProjectTab tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
 		if (tab == null) return;
-		MipsProject project = tab.getProject();
-		MipsFilesToAssemble files = project.getData().getFilesToAssemble();
+		Project project = tab.getProject();
+		if (!(project instanceof MipsProject)) return;
+		MipsFilesToAssemble files = ((MipsProject) project).getData().getFilesToAssemble();
 		WorkingPane pane = tab.getProjectTabPane().getWorkingPane();
 		if (!(pane instanceof MipsWorkingPane)) return;
 
@@ -90,8 +92,9 @@ public class FolderActionAddFileToAssembler extends ContextAction {
 
 		ProjectTab tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
 		if (tab == null) return false;
-		MipsProject project = tab.getProject();
-		MipsFilesToAssemble files = project.getData().getFilesToAssemble();
+		Project project = tab.getProject();
+		if (!(project instanceof MipsProject)) return false;
+		MipsFilesToAssemble files = ((MipsProject) project).getData().getFilesToAssemble();
 
 		boolean allPresent = true;
 		for (ExplorerElement element : elements) {

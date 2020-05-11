@@ -32,6 +32,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
+import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.MipsProject;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
@@ -43,7 +44,7 @@ import java.util.List;
  */
 public class ProjectTab extends Tab {
 
-	private final MipsProject project;
+	private final Project project;
 	private final ProjectTabPane projectTabPane;
 
 	private final List<EventHandler<Event>> closeListeners;
@@ -83,7 +84,7 @@ public class ProjectTab extends Tab {
 	 *
 	 * @return the project.
 	 */
-	public MipsProject getProject() {
+	public Project getProject() {
 		return project;
 	}
 
