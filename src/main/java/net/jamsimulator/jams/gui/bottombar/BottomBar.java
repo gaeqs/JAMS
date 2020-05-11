@@ -135,6 +135,7 @@ public class BottomBar extends HBox {
 		selected = button == null ? null : button.getNode();
 		deselectExcept(button);
 		if (selected != null) {
+			SplitPane.setResizableWithParent(selected, false);
 			verticalSplitPane.getItems().add(selected);
 			verticalSplitPane.setDividerPosition(0, dividerPosition);
 		}

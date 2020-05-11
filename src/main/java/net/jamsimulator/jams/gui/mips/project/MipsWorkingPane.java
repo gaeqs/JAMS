@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.mips.project;
 
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.input.ScrollEvent;
@@ -44,7 +45,7 @@ import java.io.File;
 /**
  * This class represent the working pane of a project.
  */
-public class MipsProjectPane extends WorkingPane {
+public class MipsWorkingPane extends WorkingPane {
 
 	protected final MipsProject project;
 	protected MipsFolderExplorer explorer;
@@ -57,9 +58,11 @@ public class MipsProjectPane extends WorkingPane {
 	 * @param projectTab the {@link ProjectTab} of the project.
 	 * @param project    the {@link MipsProject} to handle.
 	 */
-	public MipsProjectPane(Tab parent, ProjectTab projectTab, MipsProject project) {
+	public MipsWorkingPane(Tab parent, ProjectTab projectTab, MipsProject project) {
 		super(parent, projectTab, new FileDisplayList(null));
 		this.project = project;
+
+		SplitPane.setResizableWithParent(center, true);
 
 		getFileDisplayList().setWorkingPane(this);
 		loadExplorer();

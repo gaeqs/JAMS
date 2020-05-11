@@ -36,7 +36,7 @@ import net.jamsimulator.jams.gui.mips.display.element.DisplayLabel;
 import net.jamsimulator.jams.gui.mips.display.element.MipsCodeElement;
 import net.jamsimulator.jams.gui.mips.display.element.MipsFileElements;
 import net.jamsimulator.jams.gui.mips.display.element.MipsLine;
-import net.jamsimulator.jams.gui.mips.project.MipsProjectPane;
+import net.jamsimulator.jams.gui.mips.project.MipsWorkingPane;
 import net.jamsimulator.jams.project.mips.MipsProject;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.event.MouseOverTextEvent;
@@ -67,8 +67,8 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 		boolean elementsAlreadyLoaded = false;
 
-		if (tab.getWorkingPane() instanceof MipsProjectPane) {
-			project = ((MipsProjectPane) tab.getWorkingPane()).getProject();
+		if (tab.getWorkingPane() instanceof MipsWorkingPane) {
+			project = ((MipsWorkingPane) tab.getWorkingPane()).getProject();
 			Optional<MipsFileElements> elementsOptional = project.getData().getFilesToAssemble().getFileElements(tab.getFile());
 			elements = elementsOptional.orElseGet(() -> new MipsFileElements(tab.getFile(), project));
 			elementsAlreadyLoaded = elementsOptional.isPresent();

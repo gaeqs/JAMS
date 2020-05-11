@@ -97,6 +97,7 @@ public class ConfigurationWindow extends SplitPane {
 	private void init() {
 		getItems().add(explorerScrollPane);
 		getItems().add(sectionDisplay);
+		SplitPane.setResizableWithParent(explorerScrollPane, false);
 	}
 
 	public void display(ConfigurationWindowSection section) {

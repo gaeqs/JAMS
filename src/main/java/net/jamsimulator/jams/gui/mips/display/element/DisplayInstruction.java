@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.mips.display.element;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
-import net.jamsimulator.jams.gui.mips.project.MipsProjectPane;
+import net.jamsimulator.jams.gui.mips.project.MipsWorkingPane;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -83,8 +83,8 @@ public class DisplayInstruction extends MipsCodeElement {
 	@Override
 	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
 		errors.clear();
-		if (!(pane instanceof MipsProjectPane)) return;
-		MipsProject project = ((MipsProjectPane) pane).getProject();
+		if (!(pane instanceof MipsWorkingPane)) return;
+		MipsProject project = ((MipsWorkingPane) pane).getProject();
 		InstructionSet set = project.getInstructionSet();
 
 		RegistersBuilder builder = project.getRegistersBuilder();

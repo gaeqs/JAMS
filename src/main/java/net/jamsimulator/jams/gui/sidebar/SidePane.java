@@ -41,10 +41,10 @@ public class SidePane extends SplitPane implements EventBroadcast {
 
 	private SidePaneNode top, bottom;
 
-	private SimpleEventBroadcast broadcast;
+	private final SimpleEventBroadcast broadcast;
 
-	private SplitPane parent;
-	private boolean left;
+	private final SplitPane parent;
+	private final boolean left;
 
 	private double dividerPosition, splitPaneDividerPosition;
 
@@ -55,6 +55,7 @@ public class SidePane extends SplitPane implements EventBroadcast {
 	 * @param left   whether the side pane should be placed at the right or left side.
 	 */
 	public SidePane(SplitPane parent, boolean left) {
+		SplitPane.setResizableWithParent(this, false);
 		this.parent = parent;
 		this.left = left;
 

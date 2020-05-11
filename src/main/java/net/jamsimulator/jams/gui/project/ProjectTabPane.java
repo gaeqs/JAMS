@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.project;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import net.jamsimulator.jams.gui.main.WorkingPane;
-import net.jamsimulator.jams.gui.mips.project.MipsProjectPane;
+import net.jamsimulator.jams.gui.mips.project.MipsWorkingPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
 
@@ -42,7 +42,7 @@ public class ProjectTabPane extends TabPane {
 		tab.setClosable(false);
 		getTabs().add(tab);
 
-		workingPane = new MipsProjectPane(tab, projectTab, projectTab.getProject());
+		workingPane = new MipsWorkingPane(tab, projectTab, projectTab.getProject());
 		tab.setContent(workingPane);
 	}
 
