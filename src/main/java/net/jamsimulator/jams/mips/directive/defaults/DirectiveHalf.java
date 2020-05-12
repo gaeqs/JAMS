@@ -22,19 +22,20 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.assembler.directive.defaults;
+package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.Assembler;
+import net.jamsimulator.jams.mips.assembler.AssemblerData;
 import net.jamsimulator.jams.mips.assembler.AssemblingFile;
-import net.jamsimulator.jams.mips.assembler.directive.Directive;
+import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
-import net.jamsimulator.jams.utils.LabelUtils;
+import net.jamsimulator.jams.utils.NumericUtils;
 
-public class DirectiveGlobl extends Directive {
+public class DirectiveHalf extends Directive {
 
-	public static final String NAME = "globl";
+	public static final String NAME = "half";
 
-	public DirectiveGlobl() {
+	public DirectiveHalf() {
 		super(NAME);
 	}
 
@@ -44,16 +45,18 @@ public class DirectiveGlobl extends Directive {
 			throw new AssemblerException(lineNumber, "." + NAME + " must have at least one parameter.");
 
 		for (String parameter : parameters) {
-			if (!LabelUtils.isLabelLegal(parameter))
-				throw new AssemblerException("Illegal label " + parameter + ".");
+			if (!NumericUtils.isShort(parameter))
+				throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a half.");
 		}
 
+		AssemblerData data = assembler.getAssemblerData();
+		data.align(1);
+		int start = data.getCurrent();
 		for (String parameter : parameters) {
-			assembler.setAsGlobalLabel(lineNumber, parameter);
-
+			assembler.getMemory().setWord(data.getCurrent(), Short.toUnsignedInt(Short.parseShort(parameter)));
+			data.addCurrent(2);
 		}
-
-		return -1;
+		return start;
 	}
 
 	@Override

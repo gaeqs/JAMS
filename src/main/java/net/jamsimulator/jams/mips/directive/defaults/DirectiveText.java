@@ -22,31 +22,32 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.architecture;
+package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
-import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.register.Registers;
-import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.mips.simulation.SingleCycleSimulation;
+import net.jamsimulator.jams.mips.assembler.Assembler;
+import net.jamsimulator.jams.mips.assembler.AssemblingFile;
+import net.jamsimulator.jams.mips.assembler.SelectedMemorySegment;
+import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 
-/**
- * Represents the Single cycle architecture.
- * <p>
- * In this architecture every instruction takes one cycle to execute.
- */
-public final class SingleCycleArchitecture extends Architecture {
+public class DirectiveText extends Directive {
 
-	public static final SingleCycleArchitecture INSTANCE = new SingleCycleArchitecture();
+	public static final String NAME = "text";
 
-	public static final String NAME = "Single Cycle";
-
-	private SingleCycleArchitecture() {
+	public DirectiveText() {
 		super(NAME);
 	}
 
 	@Override
-	public Simulation<SingleCycleArchitecture> createSimulation(InstructionSet instructionSet, Registers registers, Memory memory) {
-		return new SingleCycleSimulation(this, instructionSet, registers, memory);
+	public int execute(int lineNumber, String line, String[] parameters, Assembler assembler) {
+		if (parameters.length != 0)
+			throw new AssemblerException(lineNumber, "." + NAME + " directive cannot have parameters.");
+		assembler.getAssemblerData().setSelected(SelectedMemorySegment.TEXT);
+		return -1;
+	}
+
+	@Override
+	public void postExecute(String[] parameters, Assembler assembler, AssemblingFile file, int lineNumber, int address) {
+
 	}
 }

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.assembler.directive;
+package net.jamsimulator.jams.mips.directive;
 
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.assembler.AssemblingFile;

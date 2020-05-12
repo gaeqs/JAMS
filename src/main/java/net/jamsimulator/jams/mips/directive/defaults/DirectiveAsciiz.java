@@ -22,21 +22,21 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.assembler.directive.defaults;
+package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.assembler.AssemblerData;
 import net.jamsimulator.jams.mips.assembler.AssemblingFile;
-import net.jamsimulator.jams.mips.assembler.directive.Directive;
+import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 
 import java.nio.charset.StandardCharsets;
 
-public class DirectiveAscii extends Directive {
+public class DirectiveAsciiz extends Directive {
 
-	public static final String NAME = "ascii";
+	public static final String NAME = "asciiz";
 
-	public DirectiveAscii() {
+	public DirectiveAsciiz() {
 		super(NAME);
 	}
 
@@ -58,9 +58,11 @@ public class DirectiveAscii extends Directive {
 			assembler.getMemory().setByte(data.getCurrent(), b);
 			data.addCurrent(1);
 		}
-
+		assembler.getMemory().setByte(data.getCurrent(), (byte) 0);
+		data.addCurrent(1);
 		return start;
 	}
+
 
 	@Override
 	public void postExecute(String[] parameters, Assembler assembler, AssemblingFile file, int lineNumber, int address) {

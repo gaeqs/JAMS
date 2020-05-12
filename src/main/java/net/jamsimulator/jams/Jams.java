@@ -27,8 +27,6 @@ package net.jamsimulator.jams;
 import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.manager.*;
-import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
-import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.utils.ConfigurationUtils;
 import net.jamsimulator.jams.utils.FolderUtils;
 import net.jamsimulator.jams.utils.TempUtils;
@@ -49,8 +47,8 @@ public class Jams {
 	private static MemoryBuilderManager memoryBuilderManager;
 	private static RegistersBuilderManager registersBuilderManager;
 
-	private static InstructionSet defaultInstructionSet;
-	private static DirectiveSet defaultDirectiveSet;
+	private static InstructionSetManager instructionSetManager;
+	private static DirectiveSetManager directiveSetManager;
 
 	//JAMS main method.
 	public static void main(String[] args) {
@@ -67,8 +65,9 @@ public class Jams {
 		memoryBuilderManager = MemoryBuilderManager.INSTANCE;
 		registersBuilderManager = RegistersBuilderManager.INSTANCE;
 
-		defaultInstructionSet = new InstructionSet(true, true, true);
-		defaultDirectiveSet = new DirectiveSet(true, true);
+		instructionSetManager = InstructionSetManager.INSTANCE;
+		directiveSetManager = DirectiveSetManager.INSTANCE;
+
 		JamsApplication.main(args);
 	}
 
@@ -118,27 +117,6 @@ public class Jams {
 	}
 
 	/**
-	 * Returns the default {@link InstructionSet}.
-	 *
-	 * @return the default {@link InstructionSet}.
-	 * @see InstructionSet
-	 */
-	public static InstructionSet getDefaultInstructionSet() {
-		return defaultInstructionSet;
-	}
-
-
-	/**
-	 * Returns the default {@link DirectiveSet}.
-	 *
-	 * @return the default {@link DirectiveSet}.
-	 * @see DirectiveSet
-	 */
-	public static DirectiveSet getDefaultDirectiveSet() {
-		return defaultDirectiveSet;
-	}
-
-	/**
 	 * Return the {@link AssemblerBuilderManager}.
 	 *
 	 * @return the {@link AssemblerBuilderManager}.
@@ -164,5 +142,23 @@ public class Jams {
 	 */
 	public static RegistersBuilderManager getRegistersBuilderManager() {
 		return registersBuilderManager;
+	}
+
+	/**
+	 * Returns the {@link InstructionSetManager}.
+	 *
+	 * @return the {@link InstructionSetManager}.
+	 */
+	public static InstructionSetManager getInstructionSetManager() {
+		return instructionSetManager;
+	}
+
+	/**
+	 * Returns the {@link DirectiveSetManager}.
+	 *
+	 * @return the {@link DirectiveSetManager}.
+	 */
+	public static DirectiveSetManager getDirectiveSetManager() {
+		return directiveSetManager;
 	}
 }

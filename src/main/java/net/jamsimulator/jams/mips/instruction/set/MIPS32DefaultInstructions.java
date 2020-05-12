@@ -32,9 +32,9 @@ import net.jamsimulator.jams.mips.instruction.pseudo.defaults.*;
 import java.util.HashSet;
 import java.util.Set;
 
-class DefaultInstructions {
+class MIPS32DefaultInstructions {
 
-	static Set<BasicInstruction> basicInstructions = new HashSet<>();
+	static Set<BasicInstruction<?>> basicInstructions = new HashSet<>();
 	static Set<PseudoInstruction> pseudoInstructions = new HashSet<>();
 
 	static {

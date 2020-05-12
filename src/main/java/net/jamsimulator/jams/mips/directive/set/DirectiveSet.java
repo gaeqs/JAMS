@@ -22,9 +22,9 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.assembler.directive.set;
+package net.jamsimulator.jams.mips.directive.set;
 
-import net.jamsimulator.jams.mips.assembler.directive.Directive;
+import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Collections;
@@ -37,19 +37,24 @@ import java.util.Set;
  */
 public class DirectiveSet {
 
-	private final Set<Directive> directives;
+	protected final String name;
+	protected final Set<Directive> directives;
 
 	/**
 	 * Creates the directive set.
-	 *
-	 * @param loadDefaultDirectives whether default directives should be added automatically.
-	 * @param loadPluginDirectives  whether plugin directives should be added automatically.
 	 */
-	public DirectiveSet(boolean loadDefaultDirectives, boolean loadPluginDirectives) {
+	public DirectiveSet(String name) {
+		this.name = name;
 		directives = new HashSet<>();
-		if (loadDefaultDirectives) {
-			directives.addAll(DefaultDirectives.directives);
-		}
+	}
+
+	/**
+	 * Returns the name of this directive set.
+	 *
+	 * @return the name.
+	 */
+	public String getName() {
+		return name;
 	}
 
 	/**

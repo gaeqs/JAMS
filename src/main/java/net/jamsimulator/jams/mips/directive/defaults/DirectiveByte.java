@@ -22,20 +22,20 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.assembler.directive.defaults;
+package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.assembler.AssemblerData;
 import net.jamsimulator.jams.mips.assembler.AssemblingFile;
-import net.jamsimulator.jams.mips.assembler.directive.Directive;
+import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.utils.NumericUtils;
 
-public class DirectiveDouble extends Directive {
+public class DirectiveByte extends Directive {
 
-	public static final String NAME = "double";
+	public static final String NAME = "byte";
 
-	public DirectiveDouble() {
+	public DirectiveByte() {
 		super(NAME);
 	}
 
@@ -44,23 +44,24 @@ public class DirectiveDouble extends Directive {
 		if (parameters.length < 1)
 			throw new AssemblerException(lineNumber, "." + NAME + " must have at least one parameter.");
 
-		for (String parameter : parameters) {
-			if (!NumericUtils.isDouble(parameter))
-				throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a double.");
+		String parameter;
+		for (int i = 0; i < parameters.length; i++) {
+			parameter = parameters[i];
+
+			if (parameter.startsWith("'") && parameter.endsWith("'") && parameter.length() == 3) {
+				parameters[i] = parameter = String.valueOf((int) parameter.charAt(1));
+			}
+			if (!NumericUtils.isByte(parameter))
+				throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a signed byte.");
 		}
 
 		AssemblerData data = assembler.getAssemblerData();
-		data.align(3);
+		data.align(0);
 		int start = data.getCurrent();
-		for (String parameter : parameters) {
-			long l = Double.doubleToLongBits(Long.parseLong(parameter));
 
-			int low = (int) l;
-			int high = (int) (l >> 32);
-
-			assembler.getMemory().setWord(data.getCurrent(), low);
-			assembler.getMemory().setWord(data.getCurrent() + 4, high);
-			data.addCurrent(8);
+		for (String finalParameter : parameters) {
+			assembler.getMemory().setByte(data.getCurrent(), Byte.parseByte(finalParameter));
+			data.addCurrent(1);
 		}
 		return start;
 	}

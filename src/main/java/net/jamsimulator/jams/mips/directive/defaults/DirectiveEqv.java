@@ -22,41 +22,31 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.assembler.directive.defaults;
+package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.Assembler;
-import net.jamsimulator.jams.mips.assembler.AssemblerData;
 import net.jamsimulator.jams.mips.assembler.AssemblingFile;
-import net.jamsimulator.jams.mips.assembler.directive.Directive;
+import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
-import net.jamsimulator.jams.utils.NumericUtils;
 
-public class DirectiveHalf extends Directive {
+public class DirectiveEqv extends Directive {
 
-	public static final String NAME = "half";
+	public static final String NAME = "eqv";
 
-	public DirectiveHalf() {
+	public DirectiveEqv() {
 		super(NAME);
 	}
 
 	@Override
 	public int execute(int lineNumber, String line, String[] parameters, Assembler assembler) {
-		if (parameters.length < 1)
-			throw new AssemblerException(lineNumber, "." + NAME + " must have at least one parameter.");
+		if (parameters.length < 2)
+			throw new AssemblerException(lineNumber, "." + NAME + " must have at least two parameter.");
 
-		for (String parameter : parameters) {
-			if (!NumericUtils.isShort(parameter))
-				throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a half.");
-		}
+		String replace = line.substring(("." + NAME + " " + parameters[0]).length()).trim();
 
-		AssemblerData data = assembler.getAssemblerData();
-		data.align(1);
-		int start = data.getCurrent();
-		for (String parameter : parameters) {
-			assembler.getMemory().setWord(data.getCurrent(), Short.toUnsignedInt(Short.parseShort(parameter)));
-			data.addCurrent(2);
-		}
-		return start;
+		assembler.getCurrentAssemblingFile().getEquivalents().put(parameters[0], replace);
+
+		return -1;
 	}
 
 	@Override

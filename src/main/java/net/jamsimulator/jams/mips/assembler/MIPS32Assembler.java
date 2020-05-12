@@ -25,8 +25,8 @@
 package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.mips.architecture.Architecture;
-import net.jamsimulator.jams.mips.assembler.directive.Directive;
-import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
+import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;

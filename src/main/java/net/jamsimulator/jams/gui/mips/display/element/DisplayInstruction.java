@@ -85,9 +85,9 @@ public class DisplayInstruction extends MipsCodeElement {
 		errors.clear();
 		if (!(pane instanceof MipsWorkingPane)) return;
 		MipsProject project = ((MipsWorkingPane) pane).getProject();
-		InstructionSet set = project.getInstructionSet();
+		InstructionSet set = project.getData().getInstructionSet();
 
-		RegistersBuilder builder = project.getRegistersBuilder();
+		RegistersBuilder builder = project.getData().getRegistersBuilder();
 		List<ParameterType>[] types = new List[parameters.size()];
 
 		for (int i = 0; i < parameters.size(); i++) {

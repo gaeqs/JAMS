@@ -22,36 +22,32 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.assembler.directive.set;
+package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.mips.assembler.directive.Directive;
-import net.jamsimulator.jams.mips.assembler.directive.defaults.*;
+import net.jamsimulator.jams.mips.assembler.Assembler;
+import net.jamsimulator.jams.mips.assembler.AssemblingFile;
+import net.jamsimulator.jams.mips.assembler.SelectedMemorySegment;
+import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 
-import java.util.HashSet;
-import java.util.Set;
+public class DirectiveKText extends Directive {
 
-class DefaultDirectives {
+	public static final String NAME = "ktext";
 
-	static Set<Directive> directives = new HashSet<>();
-
-	static {
-		directives.add(new DirectiveAlign());
-		directives.add(new DirectiveAscii());
-		directives.add(new DirectiveAsciiz());
-		directives.add(new DirectiveByte());
-		directives.add(new DirectiveData());
-		directives.add(new DirectiveDouble());
-		directives.add(new DirectiveEqv());
-		directives.add(new DirectiveExtern());
-		directives.add(new DirectiveFloat());
-		directives.add(new DirectiveGlobl());
-		directives.add(new DirectiveHalf());
-		directives.add(new DirectiveInclude());
-		directives.add(new DirectiveKData());
-		directives.add(new DirectiveKText());
-		directives.add(new DirectiveSpace());
-		directives.add(new DirectiveText());
-		directives.add(new DirectiveWord());
+	public DirectiveKText() {
+		super(NAME);
 	}
 
+	@Override
+	public int execute(int lineNumber, String line, String[] parameters, Assembler assembler) {
+		if (parameters.length != 0)
+			throw new AssemblerException(lineNumber, "." + NAME + " directive cannot have parameters.");
+		assembler.getAssemblerData().setSelected(SelectedMemorySegment.KERNEL_TEXT);
+		return -1;
+	}
+
+	@Override
+	public void postExecute(String[] parameters, Assembler assembler, AssemblingFile file, int lineNumber, int address) {
+
+	}
 }

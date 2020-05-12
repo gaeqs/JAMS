@@ -22,47 +22,48 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.assembler.directive.defaults;
+package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.assembler.AssemblerData;
 import net.jamsimulator.jams.mips.assembler.AssemblingFile;
-import net.jamsimulator.jams.mips.assembler.directive.Directive;
+import net.jamsimulator.jams.mips.assembler.SelectedMemorySegment;
+import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
+import net.jamsimulator.jams.utils.LabelUtils;
+import net.jamsimulator.jams.utils.NumericUtils;
 
-import java.nio.charset.StandardCharsets;
+public class DirectiveExtern extends Directive {
 
-public class DirectiveAsciiz extends Directive {
+	public static final String NAME = "extern";
 
-	public static final String NAME = "asciiz";
-
-	public DirectiveAsciiz() {
+	public DirectiveExtern() {
 		super(NAME);
 	}
 
 	@Override
 	public int execute(int lineNumber, String line, String[] parameters, Assembler assembler) {
-		if (parameters.length != 1)
-			throw new AssemblerException(lineNumber, "." + NAME + " must have one string parameter.");
+		if (parameters.length != 2)
+			throw new AssemblerException(lineNumber, "." + NAME + " must have two parameter.");
 
-		String s = parameters[0];
-		if (!s.startsWith("\"") && !s.endsWith("\""))
-			throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + s + "' is not a string.");
+		if (!LabelUtils.isLabelLegal(parameters[0]))
+			throw new AssemblerException("Label " + parameters[0] + " is not legal.");
+		if (!NumericUtils.isInteger(parameters[1]))
+			throw new AssemblerException(parameters[1] + " is not a number.");
+		int i = NumericUtils.decodeInteger(parameters[1]);
+		if (i < 0)
+			throw new AssemblerException(i + " cannot be negative.");
 
 		AssemblerData data = assembler.getAssemblerData();
+		SelectedMemorySegment old = data.getSelected();
+		data.setSelected(SelectedMemorySegment.EXTERN);
 		data.align(0);
-
 		int start = data.getCurrent();
-
-		for (byte b : s.getBytes(StandardCharsets.US_ASCII)) {
-			assembler.getMemory().setByte(data.getCurrent(), b);
-			data.addCurrent(1);
-		}
-		assembler.getMemory().setByte(data.getCurrent(), (byte) 0);
-		data.addCurrent(1);
+		data.addCurrent(i);
+		assembler.setAsGlobalLabel(lineNumber, parameters[0]);
+		data.setSelected(old);
 		return start;
 	}
-
 
 	@Override
 	public void postExecute(String[] parameters, Assembler assembler, AssemblingFile file, int lineNumber, int address) {

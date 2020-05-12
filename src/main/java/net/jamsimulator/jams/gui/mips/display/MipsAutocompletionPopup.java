@@ -28,7 +28,7 @@ import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import net.jamsimulator.jams.gui.display.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.mips.display.element.*;
-import net.jamsimulator.jams.mips.assembler.directive.Directive;
+import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.project.mips.MipsProject;
 
@@ -101,7 +101,7 @@ public class MipsAutocompletionPopup extends AutocompletionPopup {
 		if (project == null) return start;
 
 		String directive = start.substring(1);
-		addElements(project.getDirectiveSet().getDirectives().stream().filter(target -> target.getName().startsWith(directive)),
+		addElements(project.getData().getDirectiveSet().getDirectives().stream().filter(target -> target.getName().startsWith(directive)),
 				Directive::getName, d -> "." + d.getName());
 		return directive;
 	}
@@ -110,7 +110,7 @@ public class MipsAutocompletionPopup extends AutocompletionPopup {
 		MipsProject project = getDisplay().getProject().orElse(null);
 		if (project == null) return start;
 
-		Stream<Instruction> stream = project.getInstructionSet().getInstructions().stream().filter(target -> target.getMnemonic().startsWith(start));
+		Stream<Instruction> stream = project.getData().getInstructionSet().getInstructions().stream().filter(target -> target.getMnemonic().startsWith(start));
 		addElements(stream, i -> i.getMnemonic() + '\t' + i.getName(), Instruction::getMnemonic);
 		return start;
 	}
@@ -125,8 +125,8 @@ public class MipsAutocompletionPopup extends AutocompletionPopup {
 				addElements(mipsElements.getLabels().stream().filter(target -> target.startsWith(start)), s -> s, s -> s);
 				return start;
 			case REGISTER:
-				Set<String> names = project.getRegistersBuilder().getRegistersNames();
-				Set<Character> starts = project.getRegistersBuilder().getValidRegistersStarts();
+				Set<String> names = project.getData().getRegistersBuilder().getRegistersNames();
+				Set<Character> starts = project.getData().getRegistersBuilder().getValidRegistersStarts();
 
 				starts.forEach(c -> addElements(names.stream()
 						.filter(target -> (c + target).startsWith(start)), s -> c + s, s -> c + s));

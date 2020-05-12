@@ -28,9 +28,9 @@ import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
 import net.jamsimulator.jams.gui.mips.project.MipsWorkingPane;
-import net.jamsimulator.jams.mips.assembler.directive.Directive;
-import net.jamsimulator.jams.mips.assembler.directive.defaults.DirectiveGlobl;
-import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
+import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.directive.defaults.DirectiveGlobl;
+import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.project.mips.MipsProject;
 
 import java.util.ArrayList;
@@ -90,7 +90,7 @@ public class DisplayDirective extends MipsCodeElement {
 		errors.clear();
 		if (!(pane instanceof MipsWorkingPane)) return;
 		MipsProject project = ((MipsWorkingPane) pane).getProject();
-		DirectiveSet set = project.getDirectiveSet();
+		DirectiveSet set = project.getData().getDirectiveSet();
 
 		Directive directive = set.getDirective(text.substring(1)).orElse(null);
 		if (directive == null) {

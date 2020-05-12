@@ -28,8 +28,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
-import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
-import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.MipsProject;
 
@@ -117,8 +115,8 @@ public class ProjectListTabPane extends TabPane {
 				Jams.getAssemblerBuilderManager().get("MIPS32").get(),
 				Jams.getMemoryBuilderManager().get("MIPS32").get(),
 				Jams.getRegistersBuilderManager().get("MIPS32").get(),
-				new DirectiveSet(true, true),
-				new InstructionSet(true, true, true));
+				Jams.getDirectiveSetManager().get("MIPS32").get(),
+				Jams.getInstructionSetManager().get("MIPS32").get());
 		if (!openProject(project)) System.err.println("ERROR WHILE OPENING DEBUG PROJECT!");
 	}
 }

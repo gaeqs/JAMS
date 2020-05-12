@@ -41,6 +41,9 @@ public abstract class BasicProject implements Project {
 	public BasicProject(String name, File folder, boolean loadDataOnConstructor) {
 		Validate.notNull(name, "Name cannot be null!");
 		Validate.notNull(folder, "Folder cannot be null!");
+		Validate.isTrue(folder.exists(), "Folder " + folder.getName() + " must exist!");
+		Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
+
 		this.name = name;
 		this.folder = folder;
 		this.projectTab = null;

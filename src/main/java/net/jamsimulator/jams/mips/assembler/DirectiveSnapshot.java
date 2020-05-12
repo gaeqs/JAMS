@@ -24,7 +24,7 @@
 
 package net.jamsimulator.jams.mips.assembler;
 
-import net.jamsimulator.jams.mips.assembler.directive.Directive;
+import net.jamsimulator.jams.mips.directive.Directive;
 
 public class DirectiveSnapshot {
 

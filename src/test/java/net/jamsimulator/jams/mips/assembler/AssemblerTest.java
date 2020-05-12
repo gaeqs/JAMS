@@ -25,8 +25,8 @@
 package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
-import net.jamsimulator.jams.mips.assembler.directive.set.DirectiveSet;
-import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.directive.set.MIPS32DirectiveSet;
+import net.jamsimulator.jams.mips.instruction.set.MIPS32InstructionSet;
 import net.jamsimulator.jams.mips.memory.Mips32Memory;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.register.Register;
@@ -68,8 +68,8 @@ class AssemblerTest {
 		program.add("lw $s0, wordTest2");
 
 		Assembler assembler = new MIPS32Assembler(
-				new DirectiveSet(true, true),
-				new InstructionSet(true, true, true),
+				new MIPS32DirectiveSet(),
+				new MIPS32InstructionSet(),
 				new MIPS32Registers(), new Mips32Memory());
 		assembler.setData(files);
 		assembler.compile();

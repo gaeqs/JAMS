@@ -185,7 +185,6 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 		String value = String.join("\n", Files.readAllLines(file.toPath()));
 
 		JSONArray array = new JSONArray(value);
-
 		for (Object element : array) {
 			file = new File(element.toString());
 			if (!file.isFile()) continue;
@@ -202,7 +201,7 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 		files.keySet().stream().map(File::getAbsolutePath).forEach(array::put);
 
 		Writer writer = new FileWriter(file);
-		writer.write(array.toString());
+		writer.write(array.toString(1));
 		writer.close();
 	}
 

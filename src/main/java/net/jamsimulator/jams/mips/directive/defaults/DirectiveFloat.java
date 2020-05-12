@@ -22,46 +22,40 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.assembler.directive.defaults;
+package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.assembler.AssemblerData;
 import net.jamsimulator.jams.mips.assembler.AssemblingFile;
-import net.jamsimulator.jams.mips.assembler.SelectedMemorySegment;
-import net.jamsimulator.jams.mips.assembler.directive.Directive;
+import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
-import net.jamsimulator.jams.utils.LabelUtils;
 import net.jamsimulator.jams.utils.NumericUtils;
 
-public class DirectiveExtern extends Directive {
+public class DirectiveFloat extends Directive {
 
-	public static final String NAME = "extern";
+	public static final String NAME = "float";
 
-	public DirectiveExtern() {
+	public DirectiveFloat() {
 		super(NAME);
 	}
 
 	@Override
 	public int execute(int lineNumber, String line, String[] parameters, Assembler assembler) {
-		if (parameters.length != 2)
-			throw new AssemblerException(lineNumber, "." + NAME + " must have two parameter.");
+		if (parameters.length < 1)
+			throw new AssemblerException(lineNumber, "." + NAME + " must have at least one parameter.");
 
-		if (!LabelUtils.isLabelLegal(parameters[0]))
-			throw new AssemblerException("Label " + parameters[0] + " is not legal.");
-		if (!NumericUtils.isInteger(parameters[1]))
-			throw new AssemblerException(parameters[1] + " is not a number.");
-		int i = NumericUtils.decodeInteger(parameters[1]);
-		if (i < 0)
-			throw new AssemblerException(i + " cannot be negative.");
+		for (String parameter : parameters) {
+			if (!NumericUtils.isFloat(parameter))
+				throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a float.");
+		}
 
 		AssemblerData data = assembler.getAssemblerData();
-		SelectedMemorySegment old = data.getSelected();
-		data.setSelected(SelectedMemorySegment.EXTERN);
-		data.align(0);
+		data.align(2);
 		int start = data.getCurrent();
-		data.addCurrent(i);
-		assembler.setAsGlobalLabel(lineNumber, parameters[0]);
-		data.setSelected(old);
+		for (String parameter : parameters) {
+			assembler.getMemory().setWord(data.getCurrent(), Float.floatToIntBits(Float.parseFloat(parameter)));
+			data.addCurrent(4);
+		}
 		return start;
 	}
 

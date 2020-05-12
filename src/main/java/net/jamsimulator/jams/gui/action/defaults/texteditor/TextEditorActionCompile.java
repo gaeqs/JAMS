@@ -77,11 +77,11 @@ public class TextEditorActionCompile extends Action {
 				}
 
 
-				Assembler assembler = project.getAssemblerBuilder().createAssembler(project.getDirectiveSet(), project.getInstructionSet(),
-						new MIPS32Registers(), project.getMemoryBuilder().createMemory());
+				Assembler assembler = project.getData().getAssemblerBuilder().createAssembler(project.getData().getDirectiveSet(), project.getData().getInstructionSet(),
+						new MIPS32Registers(), project.getData().getMemoryBuilder().createMemory());
 				assembler.setData(files);
 				assembler.compile();
-				Simulation<?> simulation = assembler.createSimulation(project.getArchitecture());
+				Simulation<?> simulation = assembler.createSimulation(project.getData().getArchitecture());
 
 				try {
 					for (int i = 0; i < 1000; i++) {

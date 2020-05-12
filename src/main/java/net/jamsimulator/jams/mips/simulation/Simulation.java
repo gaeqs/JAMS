@@ -67,9 +67,9 @@ public abstract class Simulation<Arch extends Architecture> {
 
 	public AssembledInstruction fetch(int pc) {
 		int data = memory.getWord(pc);
-		Optional<BasicInstruction> optional = instructionSet.getInstructionByInstructionCode(data);
+		Optional<? extends BasicInstruction<?>> optional = instructionSet.getInstructionByInstructionCode(data);
 		if (!optional.isPresent()) return null;
-		BasicInstruction instruction = optional.get();
+		BasicInstruction<?> instruction = optional.get();
 		return instruction.compileFromCode(data);
 	}
 

@@ -125,7 +125,7 @@ public class DisplayInstructionParameterPart extends MipsCodeElement {
 			if (project == null) {
 				if (string.startsWith("$")) return REGISTER;
 			} else {
-				if (project.getRegistersBuilder().getValidRegistersStarts()
+				if (project.getData().getRegistersBuilder().getValidRegistersStarts()
 						.stream().anyMatch(target -> string.startsWith(target.toString()))) return REGISTER;
 			}
 

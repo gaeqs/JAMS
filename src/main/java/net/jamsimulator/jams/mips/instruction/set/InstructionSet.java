@@ -25,8 +25,8 @@
 package net.jamsimulator.jams.mips.instruction.set;
 
 import net.jamsimulator.jams.mips.instruction.Instruction;
-import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.utils.Validate;
@@ -49,23 +49,24 @@ import java.util.stream.Collectors;
  */
 public class InstructionSet {
 
-	private static final CompatibleInstructionComparator COMPARATOR = new CompatibleInstructionComparator();
+	protected static final CompatibleInstructionComparator COMPARATOR = new CompatibleInstructionComparator();
 
-	private Set<Instruction> instructions;
+	protected final String name;
+	protected final Set<Instruction> instructions;
 
-	public InstructionSet(boolean loadDefaultBasics, boolean loadDefaultPseudo, boolean loadPluginInstructions) {
+	public InstructionSet(String name) {
+		this.name = name;
 		instructions = new HashSet<>();
-		if (loadDefaultBasics) {
-			instructions.addAll(DefaultInstructions.basicInstructions);
-		}
-		if (loadDefaultPseudo) {
-			instructions.addAll(DefaultInstructions.pseudoInstructions);
-		}
-		if (loadPluginInstructions) {
-			//TOdo plugins
-		}
 	}
 
+	/**
+	 * Returns the name of this instruction set.
+	 *
+	 * @return the name of this instruction set.
+	 */
+	public String getName() {
+		return name;
+	}
 
 	/**
 	 * Returns a unmodifiable {@link Set} with all {@link Instruction}s
@@ -124,9 +125,9 @@ public class InstructionSet {
 	 * @param instructionCode the given instruction code.
 	 * @return the {@link BasicInstruction}, if present.
 	 */
-	public Optional<BasicInstruction> getInstructionByInstructionCode(int instructionCode) {
+	public Optional<? extends BasicInstruction<?>> getInstructionByInstructionCode(int instructionCode) {
 		return instructions.stream().filter(target -> target instanceof BasicInstruction)
-				.map(target -> (BasicInstruction) target).filter(target -> target.match(instructionCode)).findFirst();
+				.map(target -> (BasicInstruction<?>) target).filter(target -> target.match(instructionCode)).findFirst();
 	}
 
 	/**
@@ -137,9 +138,9 @@ public class InstructionSet {
 	 * @param operationCode the given operation code.
 	 * @return the {@link BasicInstruction}, if present.
 	 */
-	public Optional<BasicInstruction> getInstructionByOperationCode(int operationCode) {
+	public Optional<? extends BasicInstruction<?>> getInstructionByOperationCode(int operationCode) {
 		return instructions.stream().filter(target -> target instanceof BasicInstruction)
-				.map(target -> (BasicInstruction) target)
+				.map(target -> (BasicInstruction<?>) target)
 				.filter(target -> target.match(operationCode)).findFirst();
 	}
 

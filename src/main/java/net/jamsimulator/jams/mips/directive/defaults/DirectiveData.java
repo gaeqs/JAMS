@@ -22,38 +22,28 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.assembler.directive.defaults;
+package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.Assembler;
-import net.jamsimulator.jams.mips.assembler.AssemblerData;
 import net.jamsimulator.jams.mips.assembler.AssemblingFile;
-import net.jamsimulator.jams.mips.assembler.directive.Directive;
+import net.jamsimulator.jams.mips.assembler.SelectedMemorySegment;
+import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
-import net.jamsimulator.jams.utils.NumericUtils;
 
-public class DirectiveSpace extends Directive {
+public class DirectiveData extends Directive {
 
-	public static final String NAME = "space";
+	public static final String NAME = "data";
 
-	public DirectiveSpace() {
+	public DirectiveData() {
 		super(NAME);
 	}
 
 	@Override
 	public int execute(int lineNumber, String line, String[] parameters, Assembler assembler) {
-		if (parameters.length != 1)
-			throw new AssemblerException(lineNumber, "." + NAME + " must have one parameter.");
-
-		if (!NumericUtils.isInteger(parameters[0]))
-			throw new AssemblerException(parameters[0] + " is not a number.");
-		int i = NumericUtils.decodeInteger(parameters[0]);
-		if (i < 0) throw new AssemblerException(i + " cannot be negative.");
-
-		AssemblerData data = assembler.getAssemblerData();
-		data.align(0);
-		int start = data.getCurrent();
-		data.addCurrent(i);
-		return start;
+		if (parameters.length != 0)
+			throw new AssemblerException(lineNumber, "." + NAME + " directive cannot have parameters.");
+		assembler.getAssemblerData().setSelected(SelectedMemorySegment.DATA);
+		return  -1;
 	}
 
 	@Override
