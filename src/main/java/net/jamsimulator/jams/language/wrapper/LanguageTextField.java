@@ -53,11 +53,11 @@ public class LanguageTextField extends TextField {
 
 	@Listener
 	public void onSelectedLanguageChange(SelectedLanguageChangeEvent.After event) {
-		Platform.runLater(this::refreshMessage);
+		refreshMessage();
 	}
 
 	@Listener
 	public void onDefaultLanguageChange(DefaultLanguageChangeEvent.After event) {
-		Platform.runLater(this::refreshMessage);
+		refreshMessage();
 	}
 }

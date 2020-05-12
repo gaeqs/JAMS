@@ -27,6 +27,7 @@ package net.jamsimulator.jams.gui.configuration.explorer.node;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
@@ -82,6 +83,10 @@ public class ConfigurationWindowNode<E> extends HBox {
 	protected void init() {
 		setAlignment(Pos.CENTER_LEFT);
 		Label label = languageNode == null ? new Label(relativeNode) : new LanguageLabel(languageNode);
-		getChildren().add(label);
+
+		Region region = new Region();
+		region.setPrefWidth(10);
+
+		getChildren().addAll(region, label);
 	}
 }

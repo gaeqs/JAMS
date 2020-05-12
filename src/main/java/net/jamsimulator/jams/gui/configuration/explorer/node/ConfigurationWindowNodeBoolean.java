@@ -24,8 +24,13 @@
 
 package net.jamsimulator.jams.gui.configuration.explorer.node;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Region;
 import net.jamsimulator.jams.configuration.Configuration;
+import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
 public class ConfigurationWindowNodeBoolean extends ConfigurationWindowNode<Boolean> {
 
@@ -39,12 +44,17 @@ public class ConfigurationWindowNodeBoolean extends ConfigurationWindowNode<Bool
 
 	@Override
 	protected void init() {
-		super.init();
 		box = new CheckBox();
 		box.setSelected(getValue());
-		getChildren().add(box);
-
 		box.selectedProperty().addListener((obs, old, val) -> saveValue(val));
+
+		setAlignment(Pos.CENTER_LEFT);
+		Label label = languageNode == null ? new Label(relativeNode) : new LanguageLabel(languageNode);
+
+		Region region = new Region();
+		region.setPrefWidth(10);
+
+		getChildren().addAll(region, box, label);
 	}
 
 	@Override

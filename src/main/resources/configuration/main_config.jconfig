@@ -5,5 +5,10 @@
   },
   "appearance": {
     "theme": "Dark Theme"
+  },
+  "mips": {
+    "editor": {
+      "add_created_asm_files_to_assemble": true
+    }
   }
 }

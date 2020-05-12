@@ -23,8 +23,22 @@
   },
   "action": {
     "meta": {
-        "language_node": "CONFIG_ACTION",
-        "type": "action"
+      "type": "action",
+      "language_node": "CONFIG_ACTION"
+    }
+  },
+  "mips": {
+    "meta": {
+      "language_node": "CONFIG_MIPS"
+    },
+    "editor": {
+      "meta": {
+        "language_node": "CONFIG_MIPS_EDITOR"
+      },
+      "add_created_asm_files_to_assemble": {
+        "type": "boolean",
+        "language_node": "CONFIG_MIPS_EDITOR_ADD_CREATED_ASM_FILES_TO_ASSEMBLE"
+      }
     }
   }
 }

@@ -22,42 +22,47 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.language.wrapper;
+package net.jamsimulator.jams.gui.configuration;
 
-import javafx.application.Platform;
-import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
+import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 
-public class LanguageButton extends Button {
+import java.util.ArrayList;
+import java.util.List;
 
-	private String node;
+public class SectionTreeDisplay extends Label {
 
-	public LanguageButton(String node) {
-		this.node = node;
+	private ExplorerSection current;
+
+	public SectionTreeDisplay() {
+		super("");
+		getStyleClass().add("configuration-section-tree-display");
 		Jams.getLanguageManager().registerListeners(this, true);
-		refreshMessage();
 	}
 
-	public void setNode(String node) {
-		this.node = node;
-		refreshMessage();
+	public void setSection(ExplorerSection section) {
+		current = section;
+		List<String> sections = new ArrayList<>();
+
+		while (section != null) {
+			sections.add(section.getVisibleName());
+			section = section.getParentSection().orElse(null);
+		}
+
+		StringBuilder builder = new StringBuilder();
+		for (int i = sections.size() - 1; i >= 0; i--) {
+			builder.append(sections.get(i)).append(" > ");
+		}
+
+		setText(builder.substring(0, builder.length() - 3));
 	}
 
-	private void refreshMessage() {
-		if (node == null) return;
-		setText(Jams.getLanguageManager().getSelected().getOrDefault(node));
+	@Listener(priority = -1)
+	private void onLanguageChange (SelectedLanguageChangeEvent.After event) {
+		setSection(current);
 	}
 
-	@Listener
-	public void onSelectedLanguageChange(SelectedLanguageChangeEvent.After event) {
-		refreshMessage();
-	}
-
-	@Listener
-	public void onDefaultLanguageChange(DefaultLanguageChangeEvent.After event) {
-		refreshMessage();
-	}
 }

@@ -27,17 +27,18 @@ package net.jamsimulator.jams.gui.popup;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.project.mips.MipsProject;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
+import java.util.Optional;
 
 public class NewAssemblyFileWindow extends VBox {
 
@@ -59,6 +60,8 @@ public class NewAssemblyFileWindow extends VBox {
 		if (project != null) {
 			getChildren().add(new Group(check));
 			check.setOnAction(action -> field.requestFocus());
+			Optional<Boolean> optional = Jams.getMainConfiguration().get("mips.editor.add_created_asm_files_to_assemble");
+			check.setSelected(optional.orElse(false));
 		}
 
 		field.setOnAction(event -> {

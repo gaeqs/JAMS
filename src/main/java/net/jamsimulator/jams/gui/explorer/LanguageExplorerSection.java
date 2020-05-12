@@ -49,6 +49,11 @@ public class LanguageExplorerSection extends ExplorerSection {
 	}
 
 	@Override
+	public String getVisibleName() {
+		return ((ExplorerSectionLanguageRepresentation) representation).label.getText();
+	}
+
+	@Override
 	protected ExplorerSectionRepresentation loadRepresentation() {
 		return new ExplorerSectionLanguageRepresentation(this, hierarchyLevel, null);
 	}

@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.language.wrapper;
 
-import javafx.application.Platform;
 import javafx.scene.control.Label;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
@@ -53,11 +52,11 @@ public class LanguageLabel extends Label {
 
 	@Listener
 	public void onSelectedLanguageChange(SelectedLanguageChangeEvent.After event) {
-		Platform.runLater(this::refreshMessage);
+		refreshMessage();
 	}
 
 	@Listener
 	public void onDefaultLanguageChange(DefaultLanguageChangeEvent.After event) {
-		Platform.runLater(this::refreshMessage);
+		refreshMessage();
 	}
 }

@@ -59,6 +59,10 @@ class ListenerMethod {
 		return listener;
 	}
 
+	public Method getMethod() {
+		return method;
+	}
+
 	boolean matches(Object instance, Method method) {
 		//We want to check that it's the same instance, not an equivalent one.
 		return this.method.equals(method) && instance == this.instance;

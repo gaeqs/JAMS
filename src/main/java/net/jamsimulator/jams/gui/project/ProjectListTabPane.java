@@ -110,13 +110,7 @@ public class ProjectListTabPane extends TabPane {
 		File file = new File(folder);
 		if (!file.exists()) file.mkdirs();
 
-		MipsProject project = new MipsProject("TEST", file,
-				SingleCycleArchitecture.INSTANCE,
-				Jams.getAssemblerBuilderManager().get("MIPS32").get(),
-				Jams.getMemoryBuilderManager().get("MIPS32").get(),
-				Jams.getRegistersBuilderManager().get("MIPS32").get(),
-				Jams.getDirectiveSetManager().get("MIPS32").get(),
-				Jams.getInstructionSetManager().get("MIPS32").get());
+		MipsProject project = new MipsProject("TEST", file);
 		if (!openProject(project)) System.err.println("ERROR WHILE OPENING DEBUG PROJECT!");
 	}
 }

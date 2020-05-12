@@ -26,10 +26,12 @@ package net.jamsimulator.jams.gui.configuration;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -40,6 +42,7 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowExplorer;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowSection;
+import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
@@ -58,7 +61,10 @@ public class ConfigurationWindow extends SplitPane {
 
 	private final ConfigurationWindowExplorer explorer;
 	private final ScrollPane explorerScrollPane;
+
+	private final SectionTreeDisplay sectionTreeDisplay;
 	private final VBox sectionDisplay;
+	private final VBox basicSectionContents;
 
 	public ConfigurationWindow(RootConfiguration configuration, Configuration meta) {
 		this.stage = null;
@@ -76,9 +82,17 @@ public class ConfigurationWindow extends SplitPane {
 			explorerScrollPane.setVvalue(explorerScrollPane.getVvalue() - deltaY);
 		});
 
+		this.sectionTreeDisplay = new SectionTreeDisplay();
+
 		this.sectionDisplay = new VBox();
-		this.sectionDisplay.setPadding(new Insets(5, 0, 0, 0));
 		this.sectionDisplay.getStyleClass().add("configuration-window-display");
+
+		this.basicSectionContents = new VBox();
+		this.basicSectionContents.setPadding(new Insets(5, 0, 0, 5));
+		this.basicSectionContents.getStyleClass().add("configuration-window-display-contents");
+
+		sectionDisplay.getChildren().add(sectionTreeDisplay);
+
 		init();
 	}
 
@@ -102,17 +116,24 @@ public class ConfigurationWindow extends SplitPane {
 
 	public void display(ConfigurationWindowSection section) {
 		double divider = getDividerPositions()[0];
-		getItems().clear();
-		getItems().add(explorerScrollPane);
+		while (sectionDisplay.getChildren().size() > 1) {
+			sectionDisplay.getChildren().remove(1);
+		}
 
 		if (section.isSpecial()) {
-			getItems().add(section.getSpecialNode());
+			Node node = section.getSpecialNode();
+			if (node instanceof Region) {
+				((Region) node).prefHeightProperty().bind(sectionDisplay.heightProperty()
+						.subtract(sectionTreeDisplay.heightProperty()));
+			}
+			sectionDisplay.getChildren().add(node);
 		} else {
-			getItems().add(sectionDisplay);
-			sectionDisplay.getChildren().clear();
-			sectionDisplay.getChildren().addAll(section.getNodes());
+			basicSectionContents.getChildren().clear();
+			basicSectionContents.getChildren().addAll(section.getNodes());
+			sectionDisplay.getChildren().add(basicSectionContents);
 		}
-		setDividerPosition(0, divider);
+
+		sectionTreeDisplay.setSection(section);
 	}
 
 	public void open() {
@@ -134,6 +155,9 @@ public class ConfigurationWindow extends SplitPane {
 			stage.setY(main.getY() + main.getHeight() / 2 - (HEIGHT >> 1));
 
 			stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.CONFIG));
+			JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO, Icons.LOGO_PATH, 250, 250)
+					.ifPresent(stage.getIcons()::add);
+
 
 			stage.setOnCloseRequest(event -> {
 				try {

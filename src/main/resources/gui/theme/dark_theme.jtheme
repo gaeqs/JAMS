@@ -292,6 +292,11 @@ AnchorPane {
 
 .check-box .box {
     -fx-background-color: -theme-background-darker;
+    -fx-background-radius: 1;
+}
+
+.check-box:selected > .box > .mark {
+    -fx-background-color: -theme-foreground;
 }
 
 /*PROGRESS BAR*/
@@ -327,26 +332,30 @@ AnchorPane {
 /* COMBO BOX */
 .combo-box-base {
     -fx-background-color: -theme-background;
-    -fx-border-color: -theme-background-lighter;
+    -fx-border-color: transparent;
+}
+
+.combo-box-base .arrow-button {
+    -fx-background-color: -theme-background-darker;
 }
 
 .combo-box-base .list-cell {
     -fx-text-fill: -theme-foreground;
     -fx-font-size: 14px;
-    -fx-background-color: -theme-background;
+    -fx-background-color: -theme-background-darker;
+    -fx-padding: 1 1 1 3;
 }
 
 .combo-box-base .combo-box-popup .list-view {
-    -fx-background-color: -theme-background;
+    -fx-background-color: -theme-background-darker;
     -fx-text-fill: -theme-foreground;
     -fx-font-size: 14px;
 }
 
-
-.combo-box-base .list-view .list-cell:odd {
-    -fx-background-color: -theme-background-lighter;
+.combo-box-base .list-view .list-cell {
+    -fx-text-fill: -theme-foreground;
+    -fx-background-color: -theme-background-darker;
 }
-
 
 .combo-box-base .list-view .list-cell:hover {
     -fx-text-fill: -theme-foreground;
@@ -659,11 +668,22 @@ AnchorPane {
 }
 
 .configuration-window-display {
+    -fx-spacing: 5px;
+}
+
+.configuration-window-display-contents {
     -fx-spacing: 7px;
 }
 
-.configuration-window-display .label {
+.configuration-window-display-contents .label {
     -fx-padding: 0 0 0 5;
+}
+
+.configuration-section-tree-display {
+    -fx-font-weight: bold;
+    -fx-text-fill: -theme-foreground-darker;
+    -fx-font-size: 12;
+    -fx-padding: 10 0 0 15;
 }
 
 /* ACTION CONFIG */

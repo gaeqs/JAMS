@@ -31,6 +31,10 @@ CONFIG_LANGUAGE=Language
 CONFIG_LANGUAGE_DEFAULT=Default language:
 CONFIG_LANGUAGE_SELECTED=Selected language:
 
+CONFIG_MIPS=MIPS
+CONFIG_MIPS_EDITOR=Editor
+CONFIG_MIPS_EDITOR_ADD_CREATED_ASM_FILES_TO_ASSEMBLE=Add created asm files to assemble automatically
+
 EDITOR_MIPS_ERROR_ILLEGAL_LABEL=The label '{TEXT}' has an invalid name.
 EDITOR_MIPS_ERROR_LABEL_NOT_FOUND=Couldn't found label '{TEXT}'.
 EDITOR_MIPS_ERROR_DUPLICATE_LABEL=Found duplicated label '{TEXT}'.

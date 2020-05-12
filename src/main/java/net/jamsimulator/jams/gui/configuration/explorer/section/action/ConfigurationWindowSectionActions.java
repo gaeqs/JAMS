@@ -48,7 +48,7 @@ import java.util.List;
  */
 public class ConfigurationWindowSectionActions extends ConfigurationWindowSection {
 
-	private VBox box;
+	private final VBox box;
 	protected TextField searchbar;
 	protected ScrollPane scrollPane;
 	protected ActionsExplorer actionsExplorer;
@@ -88,6 +88,8 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
 		searchbar.textProperty().addListener((obs, old, val) -> {
 			actionsExplorer.setFilter(element -> element.getVisibleName().toLowerCase().startsWith(val.toLowerCase()));
 		});
+
+		scrollPane.prefHeightProperty().bind(box.heightProperty().subtract(searchbar.heightProperty()));
 	}
 
 	/**
