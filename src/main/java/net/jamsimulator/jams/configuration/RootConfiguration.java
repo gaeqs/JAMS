@@ -24,9 +24,13 @@
 
 package net.jamsimulator.jams.configuration;
 
+import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.event.EventBroadcast;
+import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,9 +38,11 @@ import java.util.Map;
  * Represents the root of a configuration. This instance should be created using a JSON string or
  * a file that contains it.
  */
-public class RootConfiguration extends Configuration {
+public class RootConfiguration extends Configuration implements EventBroadcast {
 
 	private File file;
+
+	private final SimpleEventBroadcast broadcast;
 
 	/**
 	 * Creates an empty root configuration.
@@ -45,6 +51,7 @@ public class RootConfiguration extends Configuration {
 		super(null, new HashMap<>(), null);
 		root = this;
 		file = null;
+		broadcast = new SimpleEventBroadcast();
 	}
 
 	/**
@@ -57,6 +64,7 @@ public class RootConfiguration extends Configuration {
 		super(null, loadJSON(json), null);
 		root = this;
 		file = json;
+		broadcast = new SimpleEventBroadcast();
 	}
 
 	/**
@@ -69,6 +77,7 @@ public class RootConfiguration extends Configuration {
 		super(null, loadJSON(reader), null);
 		root = this;
 		file = null;
+		broadcast = new SimpleEventBroadcast();
 	}
 
 	/**
@@ -117,4 +126,33 @@ public class RootConfiguration extends Configuration {
 
 		return new JSONObject(string).toMap();
 	}
+
+	//region broadcast methods
+
+	@Override
+	public boolean registerListener(Object instance, Method method, boolean useWeakReferences) {
+		return broadcast.registerListener(instance, method, useWeakReferences);
+	}
+
+	@Override
+	public int registerListeners(Object instance, boolean useWeakReferences) {
+		return broadcast.registerListeners(instance, useWeakReferences);
+	}
+
+	@Override
+	public boolean unregisterListener(Object instance, Method method) {
+		return broadcast.unregisterListener(instance, method);
+	}
+
+	@Override
+	public int unregisterListeners(Object instance) {
+		return broadcast.unregisterListeners(instance);
+	}
+
+	@Override
+	public <T extends Event> T callEvent(T event) {
+		return broadcast.callEvent(event, this);
+	}
+
+	//endregion
 }

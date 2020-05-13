@@ -402,7 +402,7 @@ public abstract class Explorer extends VBox implements EventBroadcast {
 
 	@Override
 	public <T extends Event> T callEvent(T event) {
-		return broadcast.callEvent(event);
+		return broadcast.callEvent(event, this);
 	}
 
 

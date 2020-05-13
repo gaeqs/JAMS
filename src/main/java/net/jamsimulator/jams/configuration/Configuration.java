@@ -24,7 +24,9 @@
 
 package net.jamsimulator.jams.configuration;
 
+import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.utils.CollectionUtils;
+import net.jamsimulator.jams.utils.Validate;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -56,6 +58,8 @@ public class Configuration {
 	 * @param root the root configuration.
 	 */
 	public Configuration(String name, Map<String, Object> map, RootConfiguration root) {
+		Validate.notNull(map, "Map cannot be null!");
+		Validate.isTrue(root != null || this instanceof RootConfiguration, "Root cannot be found!");
 		this.name = name;
 		this.map = map;
 		this.root = root;
@@ -228,38 +232,39 @@ public class Configuration {
 	 * @param value the value.
 	 */
 	public void set(String key, Object value) {
-		if (value == null) {
-			remove(key);
-			return;
-		}
 		if (key.isEmpty() || key.startsWith(".") || key.endsWith("."))
 			throw new IllegalArgumentException("Bad key format: " + key + ".");
+
+		if (value instanceof Map) value = CollectionUtils.deepCopy(((Map<String, Object>) value));
+		else if (value instanceof Configuration) value = CollectionUtils.deepCopy(((Configuration) value).map);
+
 		String[] array = key.split("\\.");
-		if (array.length == 1) {
+		Map<String, Object> current = map;
+		Object obj;
 
-			if (value instanceof Map) value = CollectionUtils.deepCopy(((Map<String, Object>) value));
-			if (value instanceof Configuration) value = CollectionUtils.deepCopy(((Configuration) value).map);
-
-			map.put(key, value);
-			return;
-		}
-
-		Object obj = map.get(array[0]);
-		if (!(obj instanceof Map)) {
-			obj = new HashMap<String, Object>();
-			map.put(array[0], obj);
-		}
-		Map<String, Object> child = (Map<String, Object>) obj;
-		for (int i = 1; i < array.length - 1; i++) {
-			obj = child.get(array[i]);
+		for (int i = 0; i < array.length - 1; i++) {
+			obj = current.get(array[i]);
 			if (!(obj instanceof Map)) {
-				obj = new HashMap<String, Object>();
-				child.put(array[i], obj);
+				if (value == null) return;
+				obj = new HashMap<>();
+				current.put(array[i], obj);
 			}
-			child = (Map<String, Object>) obj;
+			current = (Map<String, Object>) obj;
 		}
-		child.put(array[array.length - 1], value instanceof Configuration ?
-				CollectionUtils.deepCopy(((Configuration) value).map) : value);
+
+		Object old = current.get(array[array.length - 1]);
+		ConfigurationNodeChangeEvent.Before before = root.callEvent(new ConfigurationNodeChangeEvent.Before(this, key, old, value));
+		if (before.isCancelled()) return;
+		Object nValue = before.getNewValue().orElse(null);
+
+		if (value != nValue) {
+			if (nValue instanceof Map) value = CollectionUtils.deepCopy(((Map<String, Object>) nValue));
+			else if (nValue instanceof Configuration) value = CollectionUtils.deepCopy(((Configuration) nValue).map);
+			else value = nValue;
+		}
+
+		current.put(array[array.length - 1], value);
+		root.callEvent(new ConfigurationNodeChangeEvent.After(this, key, old, value));
 	}
 
 	/**
@@ -270,23 +275,7 @@ public class Configuration {
 	 * @param key the key.
 	 */
 	public void remove(String key) {
-		if (key.isEmpty() || key.startsWith(".") || key.endsWith("."))
-			throw new IllegalArgumentException("Bad key format: " + key + ".");
-		String[] array = key.split("\\.");
-		if (array.length == 1) {
-			map.remove(key);
-			return;
-		}
-
-		Object obj = map.get(array[0]);
-		if (!(obj instanceof Map)) return;
-		Map<String, Object> child = (Map<String, Object>) obj;
-		for (int i = 1; i < array.length - 1; i++) {
-			obj = child.get(array[i]);
-			if (!(obj instanceof Map)) return;
-			child = (Map<String, Object>) obj;
-		}
-		child.remove(array[array.length - 1]);
+		set(key, null);
 	}
 
 	/**
