@@ -26,6 +26,7 @@ CONFIG_ACTION_UNBIND=¿Estás seguro de que quieres desasignar esta combinación
 
 CONFIG_APPEARANCE=Apariencia
 CONFIG_APPEARANCE_THEME=Tema:
+CONFIG_APPEARANCE_HIDE_TOP_BAR=Esconder barra superior
 
 CONFIG_LANGUAGE=Idioma
 CONFIG_LANGUAGE_DEFAULT=Idioma por defecto:

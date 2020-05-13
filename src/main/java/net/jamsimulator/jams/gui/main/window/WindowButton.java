@@ -22,53 +22,30 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.image;
+package net.jamsimulator.jams.gui.main.window;
 
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+import net.jamsimulator.jams.gui.image.NearestImageView;
 
-/**
- * Represents an {@link ImageView} that doesn't smooth the image inside..
- */
-public class NearestImageView extends ImageView {
+public class WindowButton extends Button {
 
-	/**
-	 * Creates the nearest image view.
-	 */
-	public NearestImageView() {
-		setSmooth(false);
+	public static final double FIT = 12;
+	public static final String STYLE_CLASS = "window_button";
+
+	protected final Stage stage;
+	protected final ImageView imageView;
+
+	public WindowButton(Stage stage, Image display) {
+		super("", new NearestImageView(display, FIT, FIT));
+		getStyleClass().add(STYLE_CLASS);
+		this.stage = stage;
+		this.imageView = (ImageView) getGraphic();
 	}
 
-	/**
-	 * Creates the nearest image view.
-	 *
-	 * @param url the image's URL.
-	 */
-	public NearestImageView(String url) {
-		super(url);
-		setSmooth(false);
+	public Stage getStage() {
+		return stage;
 	}
-
-	/**
-	 * Creates the nearest image view.
-	 *
-	 * @param image the image.
-	 */
-	public NearestImageView(Image image) {
-		super(image);
-		setSmooth(false);
-	}
-
-	/**
-	 * Creates the nearest image view.
-	 *
-	 * @param image the image.
-	 */
-	public NearestImageView(Image image, double width, double height) {
-		super(image);
-		setSmooth(false);
-		setFitWidth(width);
-		setFitHeight(height);
-	}
-
 }

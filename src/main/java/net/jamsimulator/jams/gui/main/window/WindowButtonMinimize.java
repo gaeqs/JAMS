@@ -22,53 +22,20 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.image;
+package net.jamsimulator.jams.gui.main.window;
 
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.image.icon.Icons;
 
-/**
- * Represents an {@link ImageView} that doesn't smooth the image inside..
- */
-public class NearestImageView extends ImageView {
+public class WindowButtonMinimize extends WindowButton {
 
-	/**
-	 * Creates the nearest image view.
-	 */
-	public NearestImageView() {
-		setSmooth(false);
+	public WindowButtonMinimize(Stage stage) {
+		super(stage, JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_MINIMIZE, Icons.WINDOW_MINIMIZE_PATH, 20, 20).orElse(null));
+		setOnAction(event -> onAction());
 	}
 
-	/**
-	 * Creates the nearest image view.
-	 *
-	 * @param url the image's URL.
-	 */
-	public NearestImageView(String url) {
-		super(url);
-		setSmooth(false);
+	private void onAction() {
+		stage.setIconified(true);
 	}
-
-	/**
-	 * Creates the nearest image view.
-	 *
-	 * @param image the image.
-	 */
-	public NearestImageView(Image image) {
-		super(image);
-		setSmooth(false);
-	}
-
-	/**
-	 * Creates the nearest image view.
-	 *
-	 * @param image the image.
-	 */
-	public NearestImageView(Image image, double width, double height) {
-		super(image);
-		setSmooth(false);
-		setFitWidth(width);
-		setFitHeight(height);
-	}
-
 }

@@ -24,7 +24,9 @@
 
 package net.jamsimulator.jams.gui.configuration.explorer.node;
 
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -47,14 +49,15 @@ public class ConfigurationWindowNodeBoolean extends ConfigurationWindowNode<Bool
 		box = new CheckBox();
 		box.setSelected(getValue());
 		box.selectedProperty().addListener((obs, old, val) -> saveValue(val));
-
 		setAlignment(Pos.CENTER_LEFT);
 		Label label = languageNode == null ? new Label(relativeNode) : new LanguageLabel(languageNode);
+		label.setOnMouseReleased(event -> box.setSelected(!box.isSelected()));
 
 		Region region = new Region();
 		region.setPrefWidth(10);
 
-		getChildren().addAll(region, box, label);
+		ObservableList<Node> children = getChildren();
+		children.addAll(region, box, label);
 	}
 
 	@Override

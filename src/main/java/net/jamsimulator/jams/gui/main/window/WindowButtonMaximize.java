@@ -22,53 +22,34 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.image;
+package net.jamsimulator.jams.gui.main.window;
 
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.image.icon.Icons;
 
-/**
- * Represents an {@link ImageView} that doesn't smooth the image inside..
- */
-public class NearestImageView extends ImageView {
+public class WindowButtonMaximize extends WindowButton {
 
-	/**
-	 * Creates the nearest image view.
-	 */
-	public NearestImageView() {
-		setSmooth(false);
+	private final Image maximized, windowed;
+
+	public WindowButtonMaximize(Stage stage) {
+		super(stage, null);
+
+		this.maximized = JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_UNMAXIMIZE, Icons.WINDOW_UNMAXIMIZE_PATH, 20, 20).orElse(null);
+		this.windowed = JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_MAXIMIZE, Icons.WINDOW_MAXIMIZE_PATH, 20, 20).orElse(null);
+
+		imageView.setImage(stage.isMaximized() ? maximized : windowed);
+
+		setOnAction(event -> onAction());
+		stage.maximizedProperty().addListener(this::onMaximizedChange);
 	}
 
-	/**
-	 * Creates the nearest image view.
-	 *
-	 * @param url the image's URL.
-	 */
-	public NearestImageView(String url) {
-		super(url);
-		setSmooth(false);
+	private void onAction() {
+		stage.setMaximized(!stage.isMaximized());
 	}
 
-	/**
-	 * Creates the nearest image view.
-	 *
-	 * @param image the image.
-	 */
-	public NearestImageView(Image image) {
-		super(image);
-		setSmooth(false);
+	private void onMaximizedChange(Object obs, boolean old, boolean val) {
+		imageView.setImage(val ? maximized : windowed);
 	}
-
-	/**
-	 * Creates the nearest image view.
-	 *
-	 * @param image the image.
-	 */
-	public NearestImageView(Image image, double width, double height) {
-		super(image);
-		setSmooth(false);
-		setFitWidth(width);
-		setFitHeight(height);
-	}
-
 }

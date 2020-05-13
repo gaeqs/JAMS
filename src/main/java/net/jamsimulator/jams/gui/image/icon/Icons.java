@@ -31,6 +31,11 @@ public class Icons {
 
 	public static final String LOGO = "logo";
 
+	public static final String WINDOW_CLOSE = "window_close";
+	public static final String WINDOW_MAXIMIZE = "window_maximize";
+	public static final String WINDOW_MINIMIZE = "window_minimize";
+	public static final String WINDOW_UNMAXIMIZE = "window_unmaximize";
+
 	public static final String EXPLORER_FOLDER_EXPANDED = "explorer_folder_expanded";
 	public static final String EXPLORER_FOLDER_COLLAPSED = "explorer_folder_collapsed";
 
@@ -45,6 +50,11 @@ public class Icons {
 	public static final String SIDEBAR_SETTINGS = "sidebar_settings";
 
 	public static final String LOGO_PATH = "gui/icon/logo.png";
+
+	public static final String WINDOW_CLOSE_PATH = "gui/icon/window/close.png";
+	public static final String WINDOW_MAXIMIZE_PATH = "gui/icon/window/maximize.png";
+	public static final String WINDOW_MINIMIZE_PATH = "gui/icon/window/minimize.png";
+	public static final String WINDOW_UNMAXIMIZE_PATH = "gui/icon/window/unmaximize.png";
 
 	public static final String EXPLORER_SECTION_COLLAPSED_PATH = "gui/icon/explorer/section_collapsed.png";
 	public static final String EXPLORER_SECTION_EXPANDED_PATH = "gui/icon/explorer/section_expanded.png";

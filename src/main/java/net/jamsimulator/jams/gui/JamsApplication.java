@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui;
 
+import com.goxr3plus.fxborderlessscene.borderless.BorderlessScene;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
@@ -31,12 +32,16 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.font.FontLoader;
 import net.jamsimulator.jams.gui.image.icon.IconManager;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.main.BorderlessMainScene;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
 import net.jamsimulator.jams.gui.main.MainScene;
 import net.jamsimulator.jams.gui.project.ProjectListTabPane;
@@ -47,6 +52,7 @@ import net.jamsimulator.jams.utils.Validate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class JamsApplication extends Application {
 
@@ -64,6 +70,7 @@ public class JamsApplication extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		stage = primaryStage;
+
 		FontLoader.load();
 		primaryStage.setTitle("JAMS (Just Another MIPS Simulator)");
 
@@ -72,29 +79,41 @@ public class JamsApplication extends Application {
 
 		mainAnchorPane = new MainAnchorPane();
 
-		scene = new MainScene(mainAnchorPane);
+		Optional<Boolean> useBorderless = Jams.getMainConfiguration().get("appearance.hide_top_bar");
+		if(useBorderless.orElse(false)) {
+			stage.initStyle(StageStyle.TRANSPARENT);
+			scene = new BorderlessMainScene(stage, mainAnchorPane);
+		} else {
+			scene = new MainScene(mainAnchorPane);
+		}
+
+
 		getActionManager().addAcceleratorsToScene(scene, false);
 
-		primaryStage.setScene(scene);
-		primaryStage.setWidth(WIDTH);
-		primaryStage.setHeight(HEIGHT);
+		if(scene instanceof BorderlessScene) {
+			((BorderlessScene) scene).setMoveControl(mainAnchorPane.getTopMenuBar());
+		}
 
-		primaryStage.setMinWidth(MIN_WIDTH);
-		primaryStage.setMinHeight(MIN_HEIGHT);
+		stage.setScene(scene);
+		stage.setWidth(WIDTH);
+		stage.setHeight(HEIGHT);
+
+		stage.setMinWidth(MIN_WIDTH);
+		stage.setMinHeight(MIN_HEIGHT);
 
 		Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
 
 		double x = bounds.getMinX() + (bounds.getWidth() - WIDTH) / 2;
 		double y = bounds.getMinY() + (bounds.getHeight() - HEIGHT) / 2;
 
-		primaryStage.setX(x);
-		primaryStage.setY(y);
+		stage.setX(x);
+		stage.setY(y);
 
 
 		getIconManager().getOrLoadSafe(Icons.LOGO, Icons.LOGO_PATH, 250, 250).ifPresent(primaryStage.getIcons()::add);
-		primaryStage.show();
+		stage.show();
 
-		primaryStage.setOnCloseRequest(event -> onClose());
+		stage.setOnHidden(event -> onClose());
 	}
 
 	/**

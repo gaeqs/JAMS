@@ -24,8 +24,20 @@
 
 package net.jamsimulator.jams.gui.main;
 
+import javafx.application.Platform;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.MenuBar;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.HBox;
+import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.main.window.WindowButton;
+import net.jamsimulator.jams.gui.main.window.WindowButtonClose;
+import net.jamsimulator.jams.gui.main.window.WindowButtonMaximize;
+import net.jamsimulator.jams.gui.main.window.WindowButtonMinimize;
 import net.jamsimulator.jams.gui.project.ProjectListTabPane;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
@@ -36,6 +48,7 @@ import net.jamsimulator.jams.utils.AnchorUtils;
 public class MainAnchorPane extends AnchorPane {
 
 	private MenuBar topMenuBar;
+	private HBox windowButtons;
 	private ProjectListTabPane projectListTabPane;
 
 	/**
@@ -44,6 +57,7 @@ public class MainAnchorPane extends AnchorPane {
 	public MainAnchorPane() {
 		getStyleClass().add("anchor-pane");
 		generateTopMenuBar();
+		generateWindowButtons();
 		generateProjectsTabPane();
 	}
 
@@ -68,7 +82,32 @@ public class MainAnchorPane extends AnchorPane {
 	private void generateTopMenuBar() {
 		topMenuBar = new MainMenuBar();
 		getChildren().add(topMenuBar);
-		AnchorUtils.setAnchor(topMenuBar, -1, -1, 0, 0);
+		AnchorUtils.setAnchor(topMenuBar, -1, -1, 0, 100);
+	}
+
+	private void generateWindowButtons() {
+		windowButtons = new HBox();
+		windowButtons.setSpacing(0);
+
+		getChildren().add(windowButtons);
+		AnchorUtils.setAnchor(windowButtons, -1, -1, -1, 0);
+		windowButtons.prefHeightProperty().bind(topMenuBar.heightProperty());
+
+		Button close = new WindowButtonClose(JamsApplication.getStage());
+		Button maximize = new WindowButtonMaximize(JamsApplication.getStage());
+		Button minimize = new WindowButtonMinimize(JamsApplication.getStage());
+
+		close.setAlignment(Pos.CENTER);
+		maximize.setAlignment(Pos.CENTER);
+		minimize.setAlignment(Pos.CENTER);
+
+		windowButtons.getChildren().addAll(minimize, maximize, close);
+
+		Platform.runLater(() -> {
+			close.setBorder(Border.EMPTY);
+			maximize.setBorder(Border.EMPTY);
+			minimize.setBorder(Border.EMPTY);
+		});
 	}
 
 	private void generateProjectsTabPane() {

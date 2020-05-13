@@ -4,7 +4,8 @@
     "selected": "English"
   },
   "appearance": {
-    "theme": "Dark Theme"
+    "theme": "Dark Theme",
+    "hide_top_bar": false
   },
   "mips": {
     "editor": {

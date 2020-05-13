@@ -19,6 +19,10 @@
     "theme": {
       "type": "selected_theme",
       "language_node": "CONFIG_APPEARANCE_THEME"
+    },
+    "hide_top_bar": {
+      "type": "boolean",
+      "language_node": "CONFIG_APPEARANCE_HIDE_TOP_BAR"
     }
   },
   "action": {
