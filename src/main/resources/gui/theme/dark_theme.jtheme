@@ -452,24 +452,24 @@ AnchorPane {
     -fx-padding: 0;
 }
 
+.menu {
+    -fx-border-radius: 0;
+    -fx-border-color: transparent;
+    -fx-text-fill: -theme-foreground;
+    -fx-background-color: -theme-background;
+    -fx-padding: 5 5 5 5;
+}
+
+.menu .label {
+    -fx-font-size: 13;
+}
+
 .menu:hover {
     -fx-background-color: -theme-background-lighter;
 }
 
 .menu:showing {
     -fx-background-color: -theme-background-lighter;
-}
-
-.menu {
-    -fx-border-radius: 0;
-    -fx-border-color: transparent;
-    -fx-text-fill: -theme-foreground;
-    -fx-background-color: -theme-background;
-    -fx-padding: 1 5 1 5;
-}
-
-.menu .label {
-    -fx-font-size: 13;
 }
 
 .menu-item {

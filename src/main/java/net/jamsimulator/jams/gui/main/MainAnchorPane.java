@@ -24,20 +24,10 @@
 
 package net.jamsimulator.jams.gui.main;
 
-import javafx.application.Platform;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.MenuBar;
-import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
-import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.image.icon.Icons;
-import net.jamsimulator.jams.gui.main.window.WindowButton;
-import net.jamsimulator.jams.gui.main.window.WindowButtonClose;
-import net.jamsimulator.jams.gui.main.window.WindowButtonMaximize;
-import net.jamsimulator.jams.gui.main.window.WindowButtonMinimize;
+import javafx.stage.Stage;
 import net.jamsimulator.jams.gui.project.ProjectListTabPane;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
@@ -47,27 +37,21 @@ import net.jamsimulator.jams.utils.AnchorUtils;
  */
 public class MainAnchorPane extends AnchorPane {
 
-	private MenuBar topMenuBar;
+	private TopBar topBar;
 	private HBox windowButtons;
 	private ProjectListTabPane projectListTabPane;
 
 	/**
 	 * Creates the main anchor pane.
 	 */
-	public MainAnchorPane() {
+	public MainAnchorPane(Stage stage, boolean transparent) {
 		getStyleClass().add("anchor-pane");
-		generateTopMenuBar();
-		generateWindowButtons();
+		generateTopMenuBar(stage, transparent);
 		generateProjectsTabPane();
 	}
 
-	/**
-	 * Returns the top {@link MenuBar}.
-	 *
-	 * @return the {@link MenuBar}.
-	 */
-	public MenuBar getTopMenuBar() {
-		return topMenuBar;
+	public TopBar getTopBar() {
+		return topBar;
 	}
 
 	/**
@@ -79,40 +63,16 @@ public class MainAnchorPane extends AnchorPane {
 		return projectListTabPane;
 	}
 
-	private void generateTopMenuBar() {
-		topMenuBar = new MainMenuBar();
-		getChildren().add(topMenuBar);
-		AnchorUtils.setAnchor(topMenuBar, -1, -1, 0, 100);
-	}
-
-	private void generateWindowButtons() {
-		windowButtons = new HBox();
-		windowButtons.setSpacing(0);
-
-		getChildren().add(windowButtons);
-		AnchorUtils.setAnchor(windowButtons, -1, -1, -1, 0);
-		windowButtons.prefHeightProperty().bind(topMenuBar.heightProperty());
-
-		Button close = new WindowButtonClose(JamsApplication.getStage());
-		Button maximize = new WindowButtonMaximize(JamsApplication.getStage());
-		Button minimize = new WindowButtonMinimize(JamsApplication.getStage());
-
-		close.setAlignment(Pos.CENTER);
-		maximize.setAlignment(Pos.CENTER);
-		minimize.setAlignment(Pos.CENTER);
-
-		windowButtons.getChildren().addAll(minimize, maximize, close);
-
-		Platform.runLater(() -> {
-			close.setBorder(Border.EMPTY);
-			maximize.setBorder(Border.EMPTY);
-			minimize.setBorder(Border.EMPTY);
-		});
+	private void generateTopMenuBar(Stage stage, boolean transparent) {
+		topBar = new TopBar(stage, transparent);
+		getChildren().add(topBar);
+		AnchorUtils.setAnchor(topBar, -1, -1, 0, 0);
+		topBar.setPrefHeight(30);
 	}
 
 	private void generateProjectsTabPane() {
 		projectListTabPane = new ProjectListTabPane();
 		getChildren().add(projectListTabPane);
-		AnchorUtils.setAnchor(projectListTabPane, 23, 0, 0, 0);
+		AnchorUtils.setAnchor(projectListTabPane, 30, 0, 0, 0);
 	}
 }

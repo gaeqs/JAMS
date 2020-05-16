@@ -430,20 +430,24 @@ AnchorPane {
     -fx-padding: 0;
 }
 
+.menu {
+    -fx-border-radius: 0;
+    -fx-border-color: transparent;
+    -fx-text-fill: -theme-foreground;
+    -fx-background-color: -theme-background;
+    -fx-padding: 5 5 5 5;
+}
+
+.menu .label {
+    -fx-font-size: 13;
+}
+
 .menu:hover {
     -fx-background-color: -theme-background-lighter;
 }
 
 .menu:showing {
     -fx-background-color: -theme-background-lighter;
-}
-
-.menu {
-    -fx-border-radius: 0;
-    -fx-border-color: transparent;
-    -fx-text-fill: -theme-foreground;
-    -fx-background-color: -theme-background;
-    -fx-padding: 1 5 1 5;
 }
 
 .menu .label {
@@ -487,6 +491,40 @@ AnchorPane {
 .slider .thumb {
     -fx-background-color: -theme-background-lighter;
 }
+
+/* WINDOW BUTTON*/
+.window_button {
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-color: -theme-background;
+}
+
+.window_button:hover {
+    -fx-background-color: -theme-background-lighter;
+}
+
+.window_button:pressed {
+    -fx-background-color: -theme-background-pressed;
+}
+
+.window_button-close {
+    -fx-graphic: url("/gui/icon/window/close_black.png");
+}
+
+.window_button-minimize {
+    -fx-graphic: url("/gui/icon/window/minimize_black.png");
+}
+
+
+.window_button-maximize {
+    -fx-graphic: url("/gui/icon/window/maximize_black.png");
+}
+
+
+.window_button-unmaximize {
+    -fx-graphic: url("/gui/icon/window/unmaximize_black.png");
+}
+
 
 /* PROJECT TAB PANE */
 .project-tab-pane {

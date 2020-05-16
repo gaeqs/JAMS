@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.gui.main.window;
 
+import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -41,8 +43,16 @@ public class WindowButton extends Button {
 	public WindowButton(Stage stage, Image display) {
 		super("", new NearestImageView(display, FIT, FIT));
 		getStyleClass().add(STYLE_CLASS);
+		setAlignment(Pos.CENTER);
 		this.stage = stage;
 		this.imageView = (ImageView) getGraphic();
+
+		imageView.imageProperty().addListener((obs, old, val) -> {
+			Platform.runLater(() -> {
+				imageView.setFitWidth(FIT);
+				imageView.setFitHeight(FIT);
+			});
+		});
 	}
 
 	public Stage getStage() {

@@ -26,7 +26,7 @@ CONFIG_ACTION_UNBIND=Are you sure you want to unbind this combination?
 
 CONFIG_APPEARANCE=Appearance
 CONFIG_APPEARANCE_THEME=Theme:
-CONFIG_APPEARANCE_HIDE_TOP_BAR=Hide top bar
+CONFIG_APPEARANCE_HIDE_TOP_BAR=Hide top bar     (Windows only, requires restart)
 
 CONFIG_LANGUAGE=Language
 CONFIG_LANGUAGE_DEFAULT=Default language:

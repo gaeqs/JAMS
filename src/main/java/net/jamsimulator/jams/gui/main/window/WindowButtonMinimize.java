@@ -31,7 +31,8 @@ import net.jamsimulator.jams.gui.image.icon.Icons;
 public class WindowButtonMinimize extends WindowButton {
 
 	public WindowButtonMinimize(Stage stage) {
-		super(stage, JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_MINIMIZE, Icons.WINDOW_MINIMIZE_PATH, 20, 20).orElse(null));
+		super(stage, JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_MINIMIZE, Icons.WINDOW_MINIMIZE_PATH, 12, 12).orElse(null));
+		getStyleClass().add("window_button-minimize");
 		setOnAction(event -> onAction());
 	}
 

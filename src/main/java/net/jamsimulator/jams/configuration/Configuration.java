@@ -253,7 +253,9 @@ public class Configuration {
 		}
 
 		Object old = current.get(array[array.length - 1]);
-		ConfigurationNodeChangeEvent.Before before = root.callEvent(new ConfigurationNodeChangeEvent.Before(this, key, old, value));
+
+		String absoluteKey = name.isEmpty() ? key : name + "." + key;
+		ConfigurationNodeChangeEvent.Before before = root.callEvent(new ConfigurationNodeChangeEvent.Before(this, absoluteKey, old, value));
 		if (before.isCancelled()) return;
 		Object nValue = before.getNewValue().orElse(null);
 
@@ -264,7 +266,7 @@ public class Configuration {
 		}
 
 		current.put(array[array.length - 1], value);
-		root.callEvent(new ConfigurationNodeChangeEvent.After(this, key, old, value));
+		root.callEvent(new ConfigurationNodeChangeEvent.After(this, absoluteKey, old, value));
 	}
 
 	/**

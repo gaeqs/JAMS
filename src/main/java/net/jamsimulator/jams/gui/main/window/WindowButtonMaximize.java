@@ -35,14 +35,20 @@ public class WindowButtonMaximize extends WindowButton {
 
 	public WindowButtonMaximize(Stage stage) {
 		super(stage, null);
-
-		this.maximized = JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_UNMAXIMIZE, Icons.WINDOW_UNMAXIMIZE_PATH, 20, 20).orElse(null);
-		this.windowed = JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_MAXIMIZE, Icons.WINDOW_MAXIMIZE_PATH, 20, 20).orElse(null);
+		this.maximized = JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_UNMAXIMIZE, Icons.WINDOW_UNMAXIMIZE_PATH, 12, 12).orElse(null);
+		this.windowed = JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_MAXIMIZE, Icons.WINDOW_MAXIMIZE_PATH, 12, 12).orElse(null);
 
 		imageView.setImage(stage.isMaximized() ? maximized : windowed);
 
 		setOnAction(event -> onAction());
 		stage.maximizedProperty().addListener(this::onMaximizedChange);
+
+		if(stage.isMaximized()) {
+			getStyleClass().add("window_button-unmaximize");
+		}
+		else {
+			getStyleClass().add("window_button-maximize");
+		}
 	}
 
 	private void onAction() {
@@ -51,5 +57,14 @@ public class WindowButtonMaximize extends WindowButton {
 
 	private void onMaximizedChange(Object obs, boolean old, boolean val) {
 		imageView.setImage(val ? maximized : windowed);
+
+		if(stage.isMaximized()) {
+			getStyleClass().remove("window_button-maximize");
+			getStyleClass().add("window_button-unmaximize");
+		}
+		else {
+			getStyleClass().remove("window_button-unmaximize");
+			getStyleClass().add("window_button-maximize");
+		}
 	}
 }

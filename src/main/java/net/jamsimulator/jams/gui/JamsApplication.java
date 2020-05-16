@@ -31,8 +31,6 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -77,22 +75,18 @@ public class JamsApplication extends Application {
 		closeListeners = new ArrayList<>();
 		stage.setOnCloseRequest(event -> closeListeners.forEach(target -> target.handle(event)));
 
-		mainAnchorPane = new MainAnchorPane();
-
 		Optional<Boolean> useBorderless = Jams.getMainConfiguration().get("appearance.hide_top_bar");
-		if(useBorderless.orElse(false)) {
+		boolean transparent = useBorderless.orElse(false);
+		mainAnchorPane = new MainAnchorPane(stage, transparent);
+
+		if (transparent) {
 			stage.initStyle(StageStyle.TRANSPARENT);
 			scene = new BorderlessMainScene(stage, mainAnchorPane);
+			((BorderlessScene) scene).setMoveControl(mainAnchorPane.getTopBar().getMenuBar());
 		} else {
 			scene = new MainScene(mainAnchorPane);
 		}
-
-
 		getActionManager().addAcceleratorsToScene(scene, false);
-
-		if(scene instanceof BorderlessScene) {
-			((BorderlessScene) scene).setMoveControl(mainAnchorPane.getTopMenuBar());
-		}
 
 		stage.setScene(scene);
 		stage.setWidth(WIDTH);
@@ -114,6 +108,7 @@ public class JamsApplication extends Application {
 		stage.show();
 
 		stage.setOnHidden(event -> onClose());
+		Jams.getMainConfiguration().registerListeners(this, true);
 	}
 
 	/**
@@ -141,15 +136,6 @@ public class JamsApplication extends Application {
 	 */
 	public static MainAnchorPane getMainAnchorPane() {
 		return mainAnchorPane;
-	}
-
-	/**
-	 * Returns the {@link MenuBar} located at the top of the main {@link Scene}.
-	 *
-	 * @return the {@link MenuBar}.
-	 */
-	public static MenuBar getTopMenuBar() {
-		return mainAnchorPane.getTopMenuBar();
 	}
 
 	/**
