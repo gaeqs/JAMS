@@ -38,7 +38,6 @@ import net.jamsimulator.jams.utils.AnchorUtils;
 public class MainAnchorPane extends AnchorPane {
 
 	private TopBar topBar;
-	private HBox windowButtons;
 	private ProjectListTabPane projectListTabPane;
 
 	/**

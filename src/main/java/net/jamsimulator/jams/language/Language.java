@@ -106,7 +106,10 @@ public class Language {
 	public boolean save(File file) {
 		if (file == null) return false;
 		try {
-			Writer writer = new FileWriter(file, false);
+
+			OutputStream stream = new FileOutputStream(file);
+
+			Writer writer = new BufferedWriter(new OutputStreamWriter(stream, StandardCharsets.UTF_8));
 			writer.write(name + "\n");
 
 			for (Map.Entry<String, String> entry : messages.entrySet()) {
