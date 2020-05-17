@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.theme;
 
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.theme.exception.ThemeFailedLoadException;
 import net.jamsimulator.jams.utils.TempUtils;
 import net.jamsimulator.jams.utils.Validate;
@@ -92,12 +93,12 @@ public class Theme {
 	}
 
 	public String getFinalCss() {
-		return css.replace("{FONT_GENERAL}", "Noto Sans")
-				.replace("{FONT_CODE}", "JetBrains Mono");
+		return css.replace("{FONT_GENERAL}", JamsApplication.getThemeManager().getGeneralFont().getName())
+				.replace("{FONT_CODE}", JamsApplication.getThemeManager().getCodeFont().getName());
 	}
 
 	public void apply(Node node) {
-		node.setStyle(css);
+		node.setStyle(getFinalCss());
 	}
 
 	public void apply(Scene scene) {

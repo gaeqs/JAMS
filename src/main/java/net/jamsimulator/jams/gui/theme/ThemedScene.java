@@ -30,6 +30,8 @@ import javafx.scene.SceneAntialiasing;
 import javafx.scene.paint.Paint;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
+import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
 
 public class ThemedScene extends Scene {
@@ -69,13 +71,19 @@ public class ThemedScene extends Scene {
 		JamsApplication.getThemeManager().getSelected().apply(this);
 	}
 
-	public void unregisterJamsListeners() {
-		JamsApplication.getThemeManager().unregisterListeners(this);
-	}
-
 	@Listener
 	public void onThemeChange(SelectedThemeChangeEvent.After event) {
 		event.getNewTheme().apply(this);
+	}
+
+	@Listener
+	public void onThemeChange(GeneralFontChangeEvent.After event) {
+		JamsApplication.getThemeManager().getSelected().apply(this);
+	}
+
+	@Listener
+	public void onThemeChange(CodeFontChangeEvent.After event) {
+		JamsApplication.getThemeManager().getSelected().apply(this);
 	}
 
 }

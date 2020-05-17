@@ -27,6 +27,8 @@ package net.jamsimulator.jams.manager;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.configuration.MainNodes;
+import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
+import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
@@ -51,7 +53,10 @@ import java.util.*;
 public class LanguageManager extends SimpleEventBroadcast {
 
 
-	private static final String FOLDER_NAME = "language";
+	public static final String FOLDER_NAME = "language";
+	public static final String DEFAULT_LANGUAGE_NODE = "language.default";
+	public static final String SELECTED_LANGUAGE_NODE = "language.selected";
+
 
 	public static final LanguageManager INSTANCE = new LanguageManager();
 
@@ -75,6 +80,7 @@ public class LanguageManager extends SimpleEventBroadcast {
 		loadStoredLanguages();
 		refreshBundledLanguages();
 		assignSelectedAndDefaultLanguage();
+		Jams.getMainConfiguration().registerListeners(this, true);
 	}
 
 	/**
@@ -282,7 +288,15 @@ public class LanguageManager extends SimpleEventBroadcast {
 				selectedLanguage = languages.stream().findFirst().get();
 			} else selectedLanguage = english.get();
 		} else selectedLanguage = selectedOptional.get();
+	}
 
+	@Listener
+	private void onNodeChange(ConfigurationNodeChangeEvent.After event) {
+		if (event.getNode().equals(SELECTED_LANGUAGE_NODE)) {
+			setSelected(event.getNewValue().orElse("").toString());
+		} else if (event.getNode().equals(DEFAULT_LANGUAGE_NODE)) {
+			setDefault(event.getNewValue().orElse("").toString());
+		}
 	}
 
 }

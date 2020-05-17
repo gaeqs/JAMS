@@ -254,7 +254,7 @@ public class Configuration {
 
 		Object old = current.get(array[array.length - 1]);
 
-		String absoluteKey = name.isEmpty() ? key : name + "." + key;
+		String absoluteKey = name == null || name.isEmpty() ? key : name + "." + key;
 		ConfigurationNodeChangeEvent.Before before = root.callEvent(new ConfigurationNodeChangeEvent.Before(this, absoluteKey, old, value));
 		if (before.isCancelled()) return;
 		Object nValue = before.getNewValue().orElse(null);

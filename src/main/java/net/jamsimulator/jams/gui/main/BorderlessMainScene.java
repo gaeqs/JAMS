@@ -31,6 +31,8 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionUnbindEvent;
 import net.jamsimulator.jams.gui.theme.ThemedBorderlessScene;
+import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
+import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
 
 /**
@@ -45,17 +47,6 @@ public class BorderlessMainScene extends ThemedBorderlessScene {
 
 	public BorderlessMainScene(Stage stage, Parent root, double width, double height) {
 		super(stage, root, width, height);
-	}
-
-	@Override
-	protected void initializeJamsListeners() {
-		super.initializeJamsListeners();
-		JamsApplication.getActionManager().registerListeners(this, true);
-	}
-
-	@Listener
-	public void onThemeChange(SelectedThemeChangeEvent.After event) {
-		event.getNewTheme().apply(this);
 	}
 
 	@Listener

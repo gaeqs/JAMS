@@ -22,31 +22,58 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.configuration.explorer.node;
+package net.jamsimulator.jams.gui.theme.event;
 
-import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.configuration.Configuration;
-import net.jamsimulator.jams.language.Language;
+import javafx.scene.text.Font;
+import net.jamsimulator.jams.event.Cancellable;
+import net.jamsimulator.jams.event.Event;
 
-public class ConfigurationWindowNodeSelectedLanguage extends ConfigurationWindowNodeLanguage {
+public class CodeFontChangeEvent extends Event {
 
-	public ConfigurationWindowNodeSelectedLanguage(Configuration configuration, String relativeNode,
-												   String languageNode, String region, Language defaultValue) {
-		super(configuration, relativeNode, languageNode, region, defaultValue);
+	protected Font oldFont;
+	protected Font newFont;
+
+	CodeFontChangeEvent(Font oldFont, Font newFont) {
+		this.oldFont = oldFont;
+		this.newFont = newFont;
 	}
 
-	@Override
-	protected void saveValue(Language value) {
-		super.saveValue(value);
-		Jams.getLanguageManager().setSelected(value.getName());
+	public Font getOldFont() {
+		return oldFont;
 	}
 
-	static class Builder implements ConfigurationWindowNodeBuilder<Language> {
+	public Font getNewFont() {
+		return newFont;
+	}
+
+	public static class Before extends CodeFontChangeEvent implements Cancellable {
+
+		private boolean cancelled;
+
+		public Before(Font oldFont, Font newFont) {
+			super(oldFont, newFont);
+		}
+
+		public void setNewFont(Font Font) {
+			this.newFont = Font;
+		}
 
 		@Override
-		public ConfigurationWindowNode<Language> create(Configuration configuration, String relativeNode, String languageNode, String region) {
-			return new ConfigurationWindowNodeSelectedLanguage(configuration, relativeNode,
-					languageNode, region, Jams.getLanguageManager().getDefault());
+		public boolean isCancelled() {
+			return cancelled;
 		}
+
+		@Override
+		public void setCancelled(boolean cancelled) {
+			this.cancelled = cancelled;
+		}
+	}
+
+	public static class After extends CodeFontChangeEvent {
+
+		public After(Font oldFont, Font newFont) {
+			super(oldFont, newFont);
+		}
+
 	}
 }

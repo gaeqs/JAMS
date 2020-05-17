@@ -32,6 +32,8 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionUnbindEvent;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
+import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
+import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
 
 /**
@@ -62,22 +64,6 @@ public class MainScene extends ThemedScene {
 
 	public MainScene(Parent root, double width, double height, boolean depthBuffer, SceneAntialiasing antiAliasing) {
 		super(root, width, height, depthBuffer, antiAliasing);
-	}
-
-	@Override
-	protected void initializeJamsListeners() {
-		super.initializeJamsListeners();
-		JamsApplication.getActionManager().registerListeners(this, true);
-	}
-
-	public void unregisterJamsListeners() {
-		JamsApplication.getThemeManager().unregisterListeners(this);
-		JamsApplication.getActionManager().unregisterListeners(this);
-	}
-
-	@Listener
-	public void onThemeChange(SelectedThemeChangeEvent.After event) {
-		event.getNewTheme().apply(this);
 	}
 
 	@Listener

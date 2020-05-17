@@ -33,6 +33,8 @@ import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.display.popup.AutocompletionPopup;
+import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
+import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
 import net.jamsimulator.jams.utils.FileUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
@@ -260,5 +262,15 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, ActionRegi
 	@Listener
 	public void onThemeChange(SelectedThemeChangeEvent.After event) {
 		event.getNewTheme().apply(this);
+	}
+
+	@Listener
+	public void onThemeChange(GeneralFontChangeEvent.After event) {
+		JamsApplication.getThemeManager().getSelected().apply(this);
+	}
+
+	@Listener
+	public void onThemeChange(CodeFontChangeEvent.After event) {
+		JamsApplication.getThemeManager().getSelected().apply(this);
 	}
 }

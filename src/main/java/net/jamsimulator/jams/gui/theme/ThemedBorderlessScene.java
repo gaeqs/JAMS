@@ -33,6 +33,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
+import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
 
 public class ThemedBorderlessScene extends BorderlessScene {
@@ -61,6 +63,16 @@ public class ThemedBorderlessScene extends BorderlessScene {
 	@Listener
 	public void onThemeChange(SelectedThemeChangeEvent.After event) {
 		event.getNewTheme().apply(this);
+	}
+
+	@Listener
+	public void onThemeChange(GeneralFontChangeEvent.After event) {
+		JamsApplication.getThemeManager().getSelected().apply(this);
+	}
+
+	@Listener
+	public void onThemeChange(CodeFontChangeEvent.After event) {
+		JamsApplication.getThemeManager().getSelected().apply(this);
 	}
 
 }

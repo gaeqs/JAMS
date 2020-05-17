@@ -65,7 +65,6 @@ class PopupWindowHelper {
 		ThemedScene scene = new ThemedScene(background);
 
 		stage.setScene(scene);
-		stage.setOnCloseRequest(event -> scene.unregisterJamsListeners());
 
 		if (node instanceof Region) {
 			background.applyCss();

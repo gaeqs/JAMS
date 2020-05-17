@@ -24,14 +24,16 @@
 
 package net.jamsimulator.jams.manager;
 
+import javafx.scene.text.Font;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.configuration.MainNodes;
+import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
+import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
+import net.jamsimulator.jams.gui.font.FontLoader;
 import net.jamsimulator.jams.gui.theme.Theme;
-import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
-import net.jamsimulator.jams.gui.theme.event.ThemeRegisterEvent;
-import net.jamsimulator.jams.gui.theme.event.ThemeUnregisterEvent;
+import net.jamsimulator.jams.gui.theme.event.*;
 import net.jamsimulator.jams.gui.theme.exception.ThemeFailedLoadException;
 import net.jamsimulator.jams.utils.FolderUtils;
 import net.jamsimulator.jams.utils.Validate;
@@ -52,7 +54,10 @@ import java.util.Set;
  */
 public class ThemeManager extends SimpleEventBroadcast {
 
-	private static final String FOLDER_NAME = "theme";
+	public static final String FOLDER_NAME = "theme";
+	public static final String SELECTED_THEME_NODE = "appearance.theme";
+	public static final String GENERAL_FONT_NODE = "appearance.general_font";
+	public static final String CODE_FONT_NODE = "appearance.code_font";
 
 	public static final ThemeManager INSTANCE = new ThemeManager();
 
@@ -60,6 +65,8 @@ public class ThemeManager extends SimpleEventBroadcast {
 
 	private final Set<Theme> themes;
 	private Theme selectedTheme;
+
+	private Font generalFont, codeFont;
 
 	private File folder;
 
@@ -75,6 +82,8 @@ public class ThemeManager extends SimpleEventBroadcast {
 		loadThemesFolder();
 		loadStoredThemes();
 		assignSelectedAndDefaultTheme();
+		loadFonts();
+		Jams.getMainConfiguration().registerListeners(this, true);
 	}
 
 	/**
@@ -86,6 +95,58 @@ public class ThemeManager extends SimpleEventBroadcast {
 	public Theme getSelected() {
 		return selectedTheme;
 	}
+
+	/**
+	 * Returns the font used for general purposes.
+	 *
+	 * @return the font.
+	 */
+	public Font getGeneralFont() {
+		return generalFont;
+	}
+
+
+	/**
+	 * Sets the font used for general purposes.
+	 *
+	 * @param font the font.
+	 */
+	public void setGeneralFont(Font font) {
+		Validate.notNull(font, "Font cannot be null!");
+
+		Font old = generalFont;
+		GeneralFontChangeEvent.Before before = callEvent(new GeneralFontChangeEvent.Before(codeFont, font));
+		if (before.isCancelled()) return;
+
+		this.generalFont = before.getNewFont();
+		callEvent(new GeneralFontChangeEvent.After(old, font));
+	}
+
+	/**
+	 * Returns the font used on the code editor.
+	 *
+	 * @return the font.
+	 */
+	public Font getCodeFont() {
+		return codeFont;
+	}
+
+	/**
+	 * Sets the font used on the code editor.
+	 *
+	 * @param font the font.
+	 */
+	public void setCodeFont(Font font) {
+		Validate.notNull(font, "Font cannot be null!");
+
+		Font old = codeFont;
+		CodeFontChangeEvent.Before before = callEvent(new CodeFontChangeEvent.Before(codeFont, font));
+		if (before.isCancelled()) return;
+
+		this.codeFont = before.getNewFont();
+		callEvent(new CodeFontChangeEvent.After(old, font));
+	}
+
 
 	/**
 	 * Attempts to set the registered {@link Theme} that matches the given name
@@ -102,7 +163,7 @@ public class ThemeManager extends SimpleEventBroadcast {
 		Theme old = selectedTheme;
 		SelectedThemeChangeEvent.Before before = callEvent(new SelectedThemeChangeEvent.Before(old, optional.get()));
 		if (before.isCancelled()) return false;
-		selectedTheme = optional.get();
+		selectedTheme = before.getNewTheme();
 
 		callEvent(new SelectedThemeChangeEvent.After(old, selectedTheme));
 		return true;
@@ -223,7 +284,33 @@ public class ThemeManager extends SimpleEventBroadcast {
 				selectedTheme = themes.stream().findFirst().get();
 			} else selectedTheme = darkOptional.get();
 		} else selectedTheme = selectedOptional.get();
+	}
 
+	private void loadFonts() {
+		Configuration config = Jams.getMainConfiguration();
+		String general = config.getString(GENERAL_FONT_NODE).orElse("Noto Sans");
+		String code = config.getString(CODE_FONT_NODE).orElse("JetBrains Mono Regular");
+
+		generalFont = Font.font(general, 12);
+		codeFont = Font.font(code);
+
+		if (generalFont == null) generalFont = Font.getDefault();
+		if (codeFont == null) codeFont = Font.getDefault();
+	}
+
+	@Listener
+	private void onNodeChange(ConfigurationNodeChangeEvent.After event) {
+		switch (event.getNode()) {
+			case SELECTED_THEME_NODE:
+				setSelected(event.getNewValue().orElse("").toString());
+				break;
+			case GENERAL_FONT_NODE:
+				setGeneralFont(Font.font(event.getNewValue().orElse("").toString()));
+				break;
+			case CODE_FONT_NODE:
+				setCodeFont(Font.font(event.getNewValue().orElse("").toString()));
+				break;
+		}
 	}
 
 }

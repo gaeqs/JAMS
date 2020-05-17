@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.configuration.explorer.node;
 
+import javafx.scene.text.Font;
 import net.jamsimulator.jams.gui.theme.Theme;
 import net.jamsimulator.jams.language.Language;
 
@@ -52,17 +53,16 @@ public class ConfigurationWindowNodeBuilders {
 		ConfigurationWindowNodeLanguage.Builder languageBuilder = new ConfigurationWindowNodeLanguage.Builder();
 		builderByName.put("language", languageBuilder);
 		buildersByType.put(Language.class, languageBuilder);
-		ConfigurationWindowNodeSelectedLanguage.Builder selectedLanguageBuilder = new ConfigurationWindowNodeSelectedLanguage.Builder();
-		builderByName.put("selected_language", selectedLanguageBuilder);
-		ConfigurationWindowNodeDefaultLanguage.Builder defaultLanguageBuilder = new ConfigurationWindowNodeDefaultLanguage.Builder();
-		builderByName.put("default_language", defaultLanguageBuilder);
 
 		//THEMES
 		ConfigurationWindowNodeTheme.Builder themeBuilder = new ConfigurationWindowNodeTheme.Builder();
 		builderByName.put("theme", themeBuilder);
 		buildersByType.put(Theme.class, themeBuilder);
-		ConfigurationWindowNodeSelectedTheme.Builder selectedThemeBuilder = new ConfigurationWindowNodeSelectedTheme.Builder();
-		builderByName.put("selected_theme", selectedThemeBuilder);
+
+		//FONTS
+		ConfigurationWindowNodeFont.Builder fontBuilder = new ConfigurationWindowNodeFont.Builder();
+		builderByName.put("font", fontBuilder);
+		buildersByType.put(Font.class, fontBuilder);
 	}
 
 

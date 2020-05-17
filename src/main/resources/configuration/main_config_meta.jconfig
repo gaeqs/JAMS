@@ -7,12 +7,12 @@
       }
     },
     "default": {
-      "type": "default_language",
+      "type": "language",
       "language_node": "CONFIG_LANGUAGE_DEFAULT",
       "region": "language"
     },
     "selected": {
-      "type": "selected_language",
+      "type": "language",
       "language_node": "CONFIG_LANGUAGE_SELECTED",
       "region": "language"
     }
@@ -26,8 +26,18 @@
       }
     },
     "theme": {
-      "type": "selected_theme",
+      "type": "theme",
       "language_node": "CONFIG_APPEARANCE_THEME",
+      "region": "theme"
+    },
+    "general_font": {
+      "type": "font",
+      "language_node": "CONFIG_APPEARANCE_GENERAL_FONT",
+      "region": "theme"
+    },
+    "code_font": {
+      "type": "font",
+      "language_node": "CONFIG_APPEARANCE_CODE_FONT",
       "region": "theme"
     },
     "hide_top_bar": {
