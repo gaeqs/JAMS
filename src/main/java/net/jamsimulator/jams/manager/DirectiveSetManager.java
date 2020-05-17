@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.manager;
 
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.directive.set.MIPS32DirectiveSet;
 import net.jamsimulator.jams.utils.Validate;

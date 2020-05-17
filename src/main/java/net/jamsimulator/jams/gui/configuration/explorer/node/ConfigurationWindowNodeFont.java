@@ -37,12 +37,12 @@ import net.jamsimulator.jams.gui.theme.event.ThemeUnregisterEvent;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ConfigurationWindowNodeFont extends ConfigurationWindowNode<Font> {
+public class ConfigurationWindowNodeFont extends ConfigurationWindowNode<String> {
 
-	private ComboBox<Font> box;
+	private ComboBox<String> box;
 
 	public ConfigurationWindowNodeFont(Configuration configuration, String relativeNode,
-									   String languageNode, String region, Font defaultValue) {
+									   String languageNode, String region, String defaultValue) {
 		super(configuration, relativeNode, languageNode, region, defaultValue);
 	}
 
@@ -51,19 +51,7 @@ public class ConfigurationWindowNodeFont extends ConfigurationWindowNode<Font> {
 		super.init();
 		box = new ComboBox<>();
 
-		box.setConverter(new StringConverter<Font>() {
-			@Override
-			public String toString(Font object) {
-				return object.getName();
-			}
-
-			@Override
-			public Font fromString(String string) {
-				return Font.font(string);
-			}
-		});
-
-		box.getItems().addAll(Font.getFamilies().stream().map(Font::font).collect(Collectors.toList()));
+		box.getItems().addAll(Font.getFamilies());
 		box.getSelectionModel().select(getValue());
 		getChildren().add(box);
 
@@ -71,27 +59,26 @@ public class ConfigurationWindowNodeFont extends ConfigurationWindowNode<Font> {
 	}
 
 	@Override
-	public Font getValue() {
+	public String getValue() {
 		Optional<String> optional = configuration.get(relativeNode);
-		if (!optional.isPresent()) return defaultValue;
-		return Font.font(optional.get());
+		return optional.orElse(defaultValue);
 	}
 
 	@Override
-	public void setValue(Font value) {
+	public void setValue(String value) {
 		box.getSelectionModel().select(value);
 		saveValue(value);
 	}
 
 	@Override
-	protected void saveValue(Font value) {
-		configuration.set(relativeNode, value.getName());
+	protected void saveValue(String value) {
+		configuration.set(relativeNode, value);
 	}
 
-	static class Builder implements ConfigurationWindowNodeBuilder<Font> {
+	static class Builder implements ConfigurationWindowNodeBuilder<String> {
 
 		@Override
-		public ConfigurationWindowNode<Font> create(Configuration configuration, String relativeNode, String languageNode, String region) {
+		public ConfigurationWindowNode<String> create(Configuration configuration, String relativeNode, String languageNode, String region) {
 			return new ConfigurationWindowNodeFont(configuration, relativeNode,
 					languageNode, region, JamsApplication.getThemeManager().getGeneralFont());
 		}

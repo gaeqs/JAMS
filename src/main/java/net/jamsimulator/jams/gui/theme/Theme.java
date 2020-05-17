@@ -93,8 +93,8 @@ public class Theme {
 	}
 
 	public String getFinalCss() {
-		return css.replace("{FONT_GENERAL}", JamsApplication.getThemeManager().getGeneralFont().getName())
-				.replace("{FONT_CODE}", JamsApplication.getThemeManager().getCodeFont().getName());
+		return css.replace("{FONT_GENERAL}", JamsApplication.getThemeManager().getGeneralFont())
+				.replace("{FONT_CODE}", JamsApplication.getThemeManager().getCodeFont());
 	}
 
 	public void apply(Node node) {

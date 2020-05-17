@@ -30,19 +30,19 @@ import net.jamsimulator.jams.event.Event;
 
 public class CodeFontChangeEvent extends Event {
 
-	protected Font oldFont;
-	protected Font newFont;
+	protected String oldFont;
+	protected String newFont;
 
-	CodeFontChangeEvent(Font oldFont, Font newFont) {
+	CodeFontChangeEvent(String oldFont, String newFont) {
 		this.oldFont = oldFont;
 		this.newFont = newFont;
 	}
 
-	public Font getOldFont() {
+	public String getOldFont() {
 		return oldFont;
 	}
 
-	public Font getNewFont() {
+	public String getNewFont() {
 		return newFont;
 	}
 
@@ -50,11 +50,11 @@ public class CodeFontChangeEvent extends Event {
 
 		private boolean cancelled;
 
-		public Before(Font oldFont, Font newFont) {
+		public Before(String oldFont, String newFont) {
 			super(oldFont, newFont);
 		}
 
-		public void setNewFont(Font Font) {
+		public void setNewFont(String Font) {
 			this.newFont = Font;
 		}
 
@@ -71,7 +71,7 @@ public class CodeFontChangeEvent extends Event {
 
 	public static class After extends CodeFontChangeEvent {
 
-		public After(Font oldFont, Font newFont) {
+		public After(String oldFont, String newFont) {
 			super(oldFont, newFont);
 		}
 

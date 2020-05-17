@@ -6,8 +6,8 @@
   "appearance": {
     "theme": "Dark Theme",
     "hide_top_bar": false,
-    "general_font": "JetBrains Mono Regular",
-    "code_font": "JetBrains Mono Medium"
+    "general_font": "JetBrains Mono",
+    "code_font": "JetBrains Mono"
   },
   "mips": {
     "editor": {

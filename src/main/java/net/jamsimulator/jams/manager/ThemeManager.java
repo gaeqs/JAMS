@@ -24,14 +24,12 @@
 
 package net.jamsimulator.jams.manager;
 
-import javafx.scene.text.Font;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.configuration.MainNodes;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
-import net.jamsimulator.jams.gui.font.FontLoader;
 import net.jamsimulator.jams.gui.theme.Theme;
 import net.jamsimulator.jams.gui.theme.event.*;
 import net.jamsimulator.jams.gui.theme.exception.ThemeFailedLoadException;
@@ -66,7 +64,7 @@ public class ThemeManager extends SimpleEventBroadcast {
 	private final Set<Theme> themes;
 	private Theme selectedTheme;
 
-	private Font generalFont, codeFont;
+	private String generalFont, codeFont;
 
 	private File folder;
 
@@ -101,7 +99,7 @@ public class ThemeManager extends SimpleEventBroadcast {
 	 *
 	 * @return the font.
 	 */
-	public Font getGeneralFont() {
+	public String getGeneralFont() {
 		return generalFont;
 	}
 
@@ -111,10 +109,10 @@ public class ThemeManager extends SimpleEventBroadcast {
 	 *
 	 * @param font the font.
 	 */
-	public void setGeneralFont(Font font) {
+	public void setGeneralFont(String font) {
 		Validate.notNull(font, "Font cannot be null!");
 
-		Font old = generalFont;
+		String old = generalFont;
 		GeneralFontChangeEvent.Before before = callEvent(new GeneralFontChangeEvent.Before(codeFont, font));
 		if (before.isCancelled()) return;
 
@@ -127,7 +125,7 @@ public class ThemeManager extends SimpleEventBroadcast {
 	 *
 	 * @return the font.
 	 */
-	public Font getCodeFont() {
+	public String getCodeFont() {
 		return codeFont;
 	}
 
@@ -136,10 +134,10 @@ public class ThemeManager extends SimpleEventBroadcast {
 	 *
 	 * @param font the font.
 	 */
-	public void setCodeFont(Font font) {
+	public void setCodeFont(String font) {
 		Validate.notNull(font, "Font cannot be null!");
 
-		Font old = codeFont;
+		String old = codeFont;
 		CodeFontChangeEvent.Before before = callEvent(new CodeFontChangeEvent.Before(codeFont, font));
 		if (before.isCancelled()) return;
 
@@ -288,14 +286,8 @@ public class ThemeManager extends SimpleEventBroadcast {
 
 	private void loadFonts() {
 		Configuration config = Jams.getMainConfiguration();
-		String general = config.getString(GENERAL_FONT_NODE).orElse("Noto Sans");
-		String code = config.getString(CODE_FONT_NODE).orElse("JetBrains Mono Regular");
-
-		generalFont = Font.font(general, 12);
-		codeFont = Font.font(code);
-
-		if (generalFont == null) generalFont = Font.getDefault();
-		if (codeFont == null) codeFont = Font.getDefault();
+		generalFont = config.getString(GENERAL_FONT_NODE).orElse("Noto Sans");
+		codeFont = config.getString(CODE_FONT_NODE).orElse("JetBrains Mono");
 	}
 
 	@Listener
@@ -305,10 +297,10 @@ public class ThemeManager extends SimpleEventBroadcast {
 				setSelected(event.getNewValue().orElse("").toString());
 				break;
 			case GENERAL_FONT_NODE:
-				setGeneralFont(Font.font(event.getNewValue().orElse("").toString()));
+				event.getNewValue().ifPresent(target -> setGeneralFont(target.toString()));
 				break;
 			case CODE_FONT_NODE:
-				setCodeFont(Font.font(event.getNewValue().orElse("").toString()));
+				event.getNewValue().ifPresent(target -> setCodeFont(target.toString()));
 				break;
 		}
 	}

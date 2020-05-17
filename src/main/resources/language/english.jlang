@@ -34,7 +34,7 @@ CONFIG_APPEARANCE_HIDE_TOP_BAR=Hide top bar     (Windows only, requires restart)
 
 CONFIG_LANGUAGE=Language
 CONFIG_LANGUAGE_REGION_LANGUAGE=Language
-CONFIG_LANGUAGE_DEFAULT=Secondary language:
+CONFIG_LANGUAGE_DEFAULT=Fallback language:
 CONFIG_LANGUAGE_SELECTED=Selected language:
 
 CONFIG_MIPS=MIPS
