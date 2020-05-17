@@ -28,7 +28,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import net.jamsimulator.jams.configuration.Configuration;
@@ -39,8 +38,8 @@ public class ConfigurationWindowNodeBoolean extends ConfigurationWindowNode<Bool
 	protected CheckBox box;
 
 	public ConfigurationWindowNodeBoolean(Configuration configuration, String relativeNode,
-										  String languageNode, Boolean defaultValue) {
-		super(configuration, relativeNode, languageNode, defaultValue);
+										  String languageNode, String region, Boolean defaultValue) {
+		super(configuration, relativeNode, languageNode, region, defaultValue);
 	}
 
 
@@ -74,8 +73,8 @@ public class ConfigurationWindowNodeBoolean extends ConfigurationWindowNode<Bool
 	static class Builder implements ConfigurationWindowNodeBuilder<Boolean> {
 
 		@Override
-		public ConfigurationWindowNode<Boolean> create(Configuration configuration, String relativeNode, String languageNode) {
-			return new ConfigurationWindowNodeBoolean(configuration, relativeNode, languageNode, false);
+		public ConfigurationWindowNode<Boolean> create(Configuration configuration, String relativeNode, String languageNode, String region) {
+			return new ConfigurationWindowNodeBoolean(configuration, relativeNode, languageNode, region, false);
 		}
 	}
 }

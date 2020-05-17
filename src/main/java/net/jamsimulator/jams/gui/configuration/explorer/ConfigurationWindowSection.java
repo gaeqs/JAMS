@@ -31,7 +31,10 @@ import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindow
 import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNodeBuilders;
 import net.jamsimulator.jams.gui.configuration.explorer.section.ConfigurationWindowSpecialSectionBuilder;
 import net.jamsimulator.jams.gui.configuration.explorer.section.ConfigurationWindowSpecialSectionBuilders;
-import net.jamsimulator.jams.gui.explorer.*;
+import net.jamsimulator.jams.gui.explorer.Explorer;
+import net.jamsimulator.jams.gui.explorer.ExplorerElement;
+import net.jamsimulator.jams.gui.explorer.ExplorerSection;
+import net.jamsimulator.jams.gui.explorer.LanguageExplorerSection;
 
 import java.util.*;
 
@@ -39,6 +42,7 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
 
 	protected Configuration configuration, meta;
 	protected List<ConfigurationWindowNode<?>> nodes;
+	protected Map<String, Integer> regions;
 
 	/**
 	 * Creates the explorer section.
@@ -49,13 +53,15 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
 	 * @param hierarchyLevel the hierarchy level, used by the spacing.
 	 */
 	public ConfigurationWindowSection(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name,
-									  String languageNode, int hierarchyLevel, Configuration configuration, Configuration meta) {
+									  String languageNode, int hierarchyLevel, Configuration configuration,
+									  Configuration meta, Map<String, Integer> regions) {
 		super(explorer, parent, name, hierarchyLevel, Comparator.comparing(ExplorerElement::getName), languageNode);
 		getStyleClass().add("configuration-window-section");
 		this.configuration = configuration;
 		this.meta = meta;
 
 		this.nodes = new ArrayList<>();
+		this.regions = regions;
 		loadChildren();
 		refreshAllElements();
 		representation.refreshStatusIcon();
@@ -68,7 +74,12 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
 	 * @return the unmodifiable {@link List}.
 	 */
 	public List<ConfigurationWindowNode<?>> getNodes() {
+		nodes.sort(Comparator.comparingInt(o -> o.getRegion() == null ? Integer.MAX_VALUE : regions.getOrDefault(o.getRegion(), Integer.MAX_VALUE)));
 		return Collections.unmodifiableList(nodes);
+	}
+
+	public Map<String, Integer> getRegions() {
+		return regions;
 	}
 
 	public Node getSpecialNode() {
@@ -107,6 +118,7 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
 		Optional<Configuration> metaConfig = this.meta == null ? Optional.empty() : this.meta.get(name);
 		String languageNode = null;
 		String special = null;
+		Map<String, Integer> regions = new HashMap<>();
 
 		if (metaConfig.isPresent()) {
 			Optional<Configuration> metaOptional = metaConfig.get().get("meta");
@@ -114,6 +126,7 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
 				ConfigurationMetadata meta = new ConfigurationMetadata(metaOptional.get());
 				languageNode = meta.getLanguageNode();
 				special = meta.getType();
+				regions = meta.getRegions();
 			}
 		}
 
@@ -122,14 +135,14 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
 
 			if (builder.isPresent()) {
 				ExplorerElement element = builder.get().create(getExplorer(), this, name, languageNode,
-						hierarchyLevel + 1, value, metaConfig.orElse(null));
+						hierarchyLevel + 1, value, metaConfig.orElse(null), regions);
 				elements.add(element);
 				filteredElements.add(element);
 				return;
 			}
 		}
 		ExplorerElement element = new ConfigurationWindowSection(getExplorer(), this, name, languageNode,
-				hierarchyLevel + 1, value, metaConfig.orElse(null));
+				hierarchyLevel + 1, value, metaConfig.orElse(null), regions);
 		elements.add(element);
 		filteredElements.add(element);
 	}
@@ -138,19 +151,22 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
 		Optional<Configuration> metaOptional = meta == null ? Optional.empty() : meta.get(name);
 		Optional<ConfigurationWindowNodeBuilder<?>> builder;
 		String languageNode = null;
+		String region = null;
+
 		if (metaOptional.isPresent()) {
 			ConfigurationMetadata meta = new ConfigurationMetadata(metaOptional.get());
 
 			languageNode = meta.getLanguageNode();
+			region = meta.getRegion();
 
 			builder = ConfigurationWindowNodeBuilders.getByName(meta.getType());
 			if (builder.isPresent()) {
-				nodes.add(builder.get().create(configuration, name, languageNode));
+				nodes.add(builder.get().create(configuration, name, languageNode, region));
 				return;
 			}
 		}
 		builder = ConfigurationWindowNodeBuilders.getByType(value.getClass());
 		if (builder.isPresent())
-			nodes.add(builder.get().create(configuration, name, languageNode));
+			nodes.add(builder.get().create(configuration, name, languageNode, region));
 	}
 }

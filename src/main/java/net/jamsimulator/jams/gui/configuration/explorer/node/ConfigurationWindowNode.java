@@ -38,15 +38,17 @@ public class ConfigurationWindowNode<E> extends HBox {
 	protected Configuration configuration;
 	protected String relativeNode;
 	protected String languageNode;
+	protected String region;
 	protected E defaultValue;
 
 
 	public ConfigurationWindowNode(Configuration configuration, String relativeNode,
-								   String languageNode, E defaultValue) {
+								   String languageNode, String region, E defaultValue) {
 		getStyleClass().add("configuration-window-node");
 		this.configuration = configuration;
 		this.relativeNode = relativeNode;
 		this.languageNode = languageNode;
+		this.region = region;
 		this.defaultValue = defaultValue;
 		init();
 	}
@@ -61,6 +63,10 @@ public class ConfigurationWindowNode<E> extends HBox {
 
 	public String getLanguageNode() {
 		return languageNode;
+	}
+
+	public String getRegion() {
+		return region;
 	}
 
 	public E getDefaultValue() {

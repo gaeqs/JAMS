@@ -31,8 +31,8 @@ import net.jamsimulator.jams.gui.theme.Theme;
 public class ConfigurationWindowNodeSelectedTheme extends ConfigurationWindowNodeTheme {
 
 	public ConfigurationWindowNodeSelectedTheme(Configuration configuration, String relativeNode,
-												String languageNode, Theme defaultValue) {
-		super(configuration, relativeNode, languageNode, defaultValue);
+												String languageNode, String region, Theme defaultValue) {
+		super(configuration, relativeNode, languageNode, region, defaultValue);
 	}
 
 	@Override
@@ -44,9 +44,9 @@ public class ConfigurationWindowNodeSelectedTheme extends ConfigurationWindowNod
 	static class Builder implements ConfigurationWindowNodeBuilder<Theme> {
 
 		@Override
-		public ConfigurationWindowNode<Theme> create(Configuration configuration, String relativeNode, String languageNode) {
+		public ConfigurationWindowNode<Theme> create(Configuration configuration, String relativeNode, String languageNode, String region) {
 			return new ConfigurationWindowNodeSelectedTheme(configuration, relativeNode,
-					languageNode, JamsApplication.getThemeManager().getSelected());
+					languageNode, region, JamsApplication.getThemeManager().getSelected());
 		}
 	}
 }

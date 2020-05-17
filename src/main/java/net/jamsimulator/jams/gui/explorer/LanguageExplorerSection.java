@@ -48,6 +48,15 @@ public class LanguageExplorerSection extends ExplorerSection {
 		((ExplorerSectionLanguageRepresentation) representation).setLanguageNode(languageNode);
 	}
 
+	/**
+	 * Returns the language node of this section, or null if not present.
+	 *
+	 * @return the language node or null.
+	 */
+	public String getLanguageNode() {
+		return ((ExplorerSectionLanguageRepresentation) representation).getLanguageNode();
+	}
+
 	@Override
 	public String getVisibleName() {
 		return ((ExplorerSectionLanguageRepresentation) representation).label.getText();

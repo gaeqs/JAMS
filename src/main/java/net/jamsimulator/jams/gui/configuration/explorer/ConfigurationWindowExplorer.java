@@ -30,6 +30,8 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.language.Messages;
 
+import java.util.HashMap;
+
 public class ConfigurationWindowExplorer extends Explorer {
 
 	private final ConfigurationWindow configurationWindow;
@@ -52,7 +54,7 @@ public class ConfigurationWindowExplorer extends Explorer {
 	protected void generateMainSection() {
 		mainSection = new ConfigurationWindowSection(this, null,
 				"Configuration", Messages.CONFIG,
-				0, configurationWindow.getConfiguration(), configurationWindow.getMeta());
+				0, configurationWindow.getConfiguration(), configurationWindow.getMeta(), new HashMap<>());
 		getChildren().add(mainSection);
 	}
 

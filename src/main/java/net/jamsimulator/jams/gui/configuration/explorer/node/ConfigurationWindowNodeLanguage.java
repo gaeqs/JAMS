@@ -40,8 +40,8 @@ public class ConfigurationWindowNodeLanguage extends ConfigurationWindowNode<Lan
 	private ComboBox<Language> box;
 
 	public ConfigurationWindowNodeLanguage(Configuration configuration, String relativeNode,
-										   String languageNode, Language defaultValue) {
-		super(configuration, relativeNode, languageNode, defaultValue);
+										   String languageNode, String region, Language defaultValue) {
+		super(configuration, relativeNode, languageNode, region, defaultValue);
 		Jams.getLanguageManager().registerListeners(this, true);
 	}
 
@@ -102,9 +102,9 @@ public class ConfigurationWindowNodeLanguage extends ConfigurationWindowNode<Lan
 	static class Builder implements ConfigurationWindowNodeBuilder<Language> {
 
 		@Override
-		public ConfigurationWindowNode<Language> create(Configuration configuration, String relativeNode, String languageNode) {
+		public ConfigurationWindowNode<Language> create(Configuration configuration, String relativeNode, String languageNode, String region) {
 			return new ConfigurationWindowNodeLanguage(configuration, relativeNode,
-					languageNode, Jams.getLanguageManager().getDefault());
+					languageNode, region, Jams.getLanguageManager().getDefault());
 		}
 	}
 }

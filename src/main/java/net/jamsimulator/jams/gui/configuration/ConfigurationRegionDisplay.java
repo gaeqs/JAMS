@@ -22,22 +22,41 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.configuration.explorer.section;
+package net.jamsimulator.jams.gui.configuration;
 
-import net.jamsimulator.jams.configuration.Configuration;
-import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowExplorer;
+import javafx.geometry.Orientation;
+import javafx.scene.Group;
+import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
+import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowSection;
-import net.jamsimulator.jams.gui.explorer.ExplorerSection;
+import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
-import java.util.Map;
+public class ConfigurationRegionDisplay extends HBox {
 
-/**
- * Represents a builder for special {@link ConfigurationWindowSection}s.
- */
-public interface ConfigurationWindowSpecialSectionBuilder {
+	private String languageNode;
 
-	ConfigurationWindowSection create(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name,
-									  String languageNode, int hierarchyLevel, Configuration configuration,
-									  Configuration meta, Map<String, Integer> regions);
+	public ConfigurationRegionDisplay(ConfigurationWindowSection section, String region) {
+		setSpacing(5);
+		languageNode = section.getLanguageNode();
+		if (languageNode != null) {
+			languageNode += "_REGION_" + region.toUpperCase();
+		}
+		refresh();
+	}
+
+	private void refresh() {
+		getChildren().clear();
+
+		Label label = new LanguageLabel(languageNode);
+		Separator separator = new Separator(Orientation.HORIZONTAL);
+
+		label.getStyleClass().add("configuration-window-region-label");
+		separator.getStyleClass().add("configuration-window-region-separator");
+		separator.prefWidthProperty().bind(widthProperty().subtract(label.widthProperty()).subtract(20));
+
+		getChildren().add(new Group(label));
+		getChildren().add(separator);
+	}
 
 }

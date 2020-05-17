@@ -2,6 +2,7 @@ Dark Theme
 * {
     -theme-foreground: #ECECEC;
     -theme-foreground-darker: derive(-theme-foreground, -20%);
+    -theme-foreground-darker-2: derive(-theme-foreground, -40%);
     -theme-foreground-lighter: #FFFFFF;
     -theme-background: #3C3F41;
     -theme-background-darker: derive(-theme-background, -20%);
@@ -697,9 +698,22 @@ AnchorPane {
 
 .configuration-section-tree-display {
     -fx-font-weight: bold;
-    -fx-text-fill: -theme-foreground-darker;
+    -fx-text-fill: -theme-foreground-darker-2;
     -fx-font-size: 12;
     -fx-padding: 10 0 0 15;
+}
+
+.configuration-window-region-label {
+    -fx-text-fill: -theme-foreground-darker-2;
+    -fx-alignment: top-left;
+}
+
+.configuration-window-region-separator {
+    -fx-background-color: transparent;
+    -fx-border-color: -theme-foreground-darker-2;
+    -fx-border-width: 0 0 1 0;
+
+    -fx-padding: 7 0 0 0;
 }
 
 /* ACTION CONFIG */

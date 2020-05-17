@@ -34,8 +34,8 @@ public class ConfigurationWindowNodeString extends ConfigurationWindowNode<Strin
 	protected TextField field;
 
 	public ConfigurationWindowNodeString(Configuration configuration, String relativeNode,
-										 String languageNode, String defaultValue) {
-		super(configuration, relativeNode, languageNode, defaultValue);
+										 String languageNode, String region, String defaultValue) {
+		super(configuration, relativeNode, languageNode, region, defaultValue);
 	}
 
 
@@ -73,8 +73,8 @@ public class ConfigurationWindowNodeString extends ConfigurationWindowNode<Strin
 	static class Builder implements ConfigurationWindowNodeBuilder<String> {
 
 		@Override
-		public ConfigurationWindowNode<String> create(Configuration configuration, String relativeNode, String languageNode) {
-			return new ConfigurationWindowNodeString(configuration, relativeNode, languageNode, "");
+		public ConfigurationWindowNode<String> create(Configuration configuration, String relativeNode, String languageNode, String region) {
+			return new ConfigurationWindowNodeString(configuration, relativeNode, languageNode, region, "");
 		}
 	}
 }

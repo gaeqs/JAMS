@@ -31,8 +31,8 @@ import net.jamsimulator.jams.language.Language;
 public class ConfigurationWindowNodeDefaultLanguage extends ConfigurationWindowNodeLanguage {
 
 	public ConfigurationWindowNodeDefaultLanguage(Configuration configuration, String relativeNode,
-												  String languageNode, Language defaultValue) {
-		super(configuration, relativeNode, languageNode, defaultValue);
+												  String languageNode, String region, Language defaultValue) {
+		super(configuration, relativeNode, languageNode, region, defaultValue);
 	}
 
 	@Override
@@ -44,9 +44,9 @@ public class ConfigurationWindowNodeDefaultLanguage extends ConfigurationWindowN
 	static class Builder implements ConfigurationWindowNodeBuilder<Language> {
 
 		@Override
-		public ConfigurationWindowNode<Language> create(Configuration configuration, String relativeNode, String languageNode) {
+		public ConfigurationWindowNode<Language> create(Configuration configuration, String relativeNode, String languageNode, String region) {
 			return new ConfigurationWindowNodeDefaultLanguage(configuration, relativeNode,
-					languageNode, Jams.getLanguageManager().getDefault());
+					languageNode, region, Jams.getLanguageManager().getDefault());
 		}
 	}
 }

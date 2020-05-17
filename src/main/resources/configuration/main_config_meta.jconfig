@@ -1,28 +1,39 @@
 {
   "language": {
     "meta": {
-      "language_node": "CONFIG_LANGUAGE"
+      "language_node": "CONFIG_LANGUAGE",
+      "regions": {
+        "language": 0
+      }
     },
     "default": {
       "type": "default_language",
-      "language_node": "CONFIG_LANGUAGE_DEFAULT"
+      "language_node": "CONFIG_LANGUAGE_DEFAULT",
+      "region": "language"
     },
     "selected": {
       "type": "selected_language",
-      "language_node": "CONFIG_LANGUAGE_SELECTED"
+      "language_node": "CONFIG_LANGUAGE_SELECTED",
+      "region": "language"
     }
   },
   "appearance": {
     "meta": {
-      "language_node": "CONFIG_APPEARANCE"
+      "language_node": "CONFIG_APPEARANCE",
+      "regions": {
+        "theme": 0,
+        "tweaks": 1
+      }
     },
     "theme": {
       "type": "selected_theme",
-      "language_node": "CONFIG_APPEARANCE_THEME"
+      "language_node": "CONFIG_APPEARANCE_THEME",
+      "region": "theme"
     },
     "hide_top_bar": {
       "type": "boolean",
-      "language_node": "CONFIG_APPEARANCE_HIDE_TOP_BAR"
+      "language_node": "CONFIG_APPEARANCE_HIDE_TOP_BAR",
+      "region": "tweaks"
     }
   },
   "action": {
@@ -37,11 +48,15 @@
     },
     "editor": {
       "meta": {
-        "language_node": "CONFIG_MIPS_EDITOR"
+        "language_node": "CONFIG_MIPS_EDITOR",
+        "regions_": {
+          "creation": 0
+        }
       },
       "add_created_asm_files_to_assemble": {
         "type": "boolean",
-        "language_node": "CONFIG_MIPS_EDITOR_ADD_CREATED_ASM_FILES_TO_ASSEMBLE"
+        "language_node": "CONFIG_MIPS_EDITOR_ADD_CREATED_ASM_FILES_TO_ASSEMBLE",
+        "region": "creation"
       }
     }
   }

@@ -43,7 +43,7 @@ public class ConfigurationWindowNodeAction extends ConfigurationWindowNode<Actio
 	protected VBox combinations;
 
 	public ConfigurationWindowNodeAction(Action action) {
-		super(null, null, null, null);
+		super(null, null, null, null, null);
 		getStyleClass().add("configuration-window-node-actions");
 		this.action = action;
 		setAlignment(Pos.CENTER_LEFT);

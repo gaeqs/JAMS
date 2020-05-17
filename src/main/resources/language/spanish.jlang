@@ -25,15 +25,19 @@ CONFIG_ACTION_BIND_CONFIRM_2=¿Quieres continuar?
 CONFIG_ACTION_UNBIND=¿Estás seguro de que quieres desasignar esta combinación?
 
 CONFIG_APPEARANCE=Apariencia
+CONFIG_APPEARANCE_REGION_THEME=Tema
+CONFIG_APPEARANCE_REGION_TWEAKS=Ajustes
 CONFIG_APPEARANCE_THEME=Tema:
 CONFIG_APPEARANCE_HIDE_TOP_BAR=Esconder barra superior      (Solo para Windows, necesita un reinicio)
 
 CONFIG_LANGUAGE=Idioma
-CONFIG_LANGUAGE_DEFAULT=Idioma por defecto:
+CONFIG_LANGUAGE_REGION_LANGUAGE=Idioma
+CONFIG_LANGUAGE_DEFAULT=Idioma de respaldo:
 CONFIG_LANGUAGE_SELECTED=Idioma a usar:
 
 CONFIG_MIPS=MIPS
 CONFIG_MIPS_EDITOR=Editor
+CONFIG_MIPS_EDITOR_REGION_CREATION=Creación
 CONFIG_MIPS_EDITOR_ADD_CREATED_ASM_FILES_TO_ASSEMBLE=Añadir archivos asm a ensamblar automaticamente cuando son creados
 
 EDITOR_MIPS_ERROR_ILLEGAL_LABEL=El nombre de la etiqueta '{TEXT}' es inválido.

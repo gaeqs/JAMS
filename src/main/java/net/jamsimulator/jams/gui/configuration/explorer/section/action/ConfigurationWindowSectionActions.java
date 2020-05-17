@@ -42,6 +42,7 @@ import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTextField;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a special {@link ConfigurationWindowSection} that contains all actions' configuration.
@@ -62,8 +63,8 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
 	 * @param hierarchyLevel the hierarchy level, used by the spacing.
 	 */
 	public ConfigurationWindowSectionActions(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name,
-											 String languageNode, int hierarchyLevel, Configuration configuration, Configuration meta) {
-		super(explorer, parent, name, languageNode, hierarchyLevel, configuration, meta);
+											 String languageNode, int hierarchyLevel, Configuration configuration, Configuration meta, Map<String, Integer> regions) {
+		super(explorer, parent, name, languageNode, hierarchyLevel, configuration, meta, regions);
 
 		scrollPane = new ScrollPane();
 		scrollPane.setFitToHeight(true);
@@ -130,8 +131,9 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
 
 		@Override
 		public ConfigurationWindowSection create(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name,
-												 String languageNode, int hierarchyLevel, Configuration configuration, Configuration meta) {
-			return new ConfigurationWindowSectionActions(explorer, parent, name, languageNode, hierarchyLevel, configuration, meta);
+												 String languageNode, int hierarchyLevel, Configuration configuration,
+												 Configuration meta, Map<String, Integer> regions) {
+			return new ConfigurationWindowSectionActions(explorer, parent, name, languageNode, hierarchyLevel, configuration, meta, regions);
 		}
 	}
 }

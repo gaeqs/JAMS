@@ -40,8 +40,8 @@ public class ConfigurationWindowNodeTheme extends ConfigurationWindowNode<Theme>
 	private ComboBox<Theme> box;
 
 	public ConfigurationWindowNodeTheme(Configuration configuration, String relativeNode,
-										String languageNode, Theme defaultValue) {
-		super(configuration, relativeNode, languageNode, defaultValue);
+										String languageNode, String region, Theme defaultValue) {
+		super(configuration, relativeNode, languageNode, region, defaultValue);
 		JamsApplication.getThemeManager().registerListeners(this, true);
 	}
 
@@ -102,9 +102,9 @@ public class ConfigurationWindowNodeTheme extends ConfigurationWindowNode<Theme>
 	static class Builder implements ConfigurationWindowNodeBuilder<Theme> {
 
 		@Override
-		public ConfigurationWindowNode<Theme> create(Configuration configuration, String relativeNode, String languageNode) {
+		public ConfigurationWindowNode<Theme> create(Configuration configuration, String relativeNode, String languageNode, String region) {
 			return new ConfigurationWindowNodeTheme(configuration, relativeNode,
-					languageNode, JamsApplication.getThemeManager().getSelected());
+					languageNode, region, JamsApplication.getThemeManager().getSelected());
 		}
 	}
 }

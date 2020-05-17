@@ -28,6 +28,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.ScrollEvent;
@@ -42,12 +43,14 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowExplorer;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowSection;
+import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNode;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 
 import java.io.IOException;
+import java.util.List;
 
 public class ConfigurationWindow extends SplitPane {
 
@@ -128,12 +131,30 @@ public class ConfigurationWindow extends SplitPane {
 			}
 			sectionDisplay.getChildren().add(node);
 		} else {
-			basicSectionContents.getChildren().clear();
-			basicSectionContents.getChildren().addAll(section.getNodes());
-			sectionDisplay.getChildren().add(basicSectionContents);
+			displayNormalSection(section);
 		}
 
 		sectionTreeDisplay.setSection(section);
+	}
+
+	private void displayNormalSection (ConfigurationWindowSection section) {
+		basicSectionContents.getChildren().clear();
+
+		List<ConfigurationWindowNode<?>> nodes = section.getNodes();
+		String currentRegion = null;
+
+		for (ConfigurationWindowNode<?> node : nodes) {
+			if(currentRegion == null || !currentRegion.equals(node.getRegion())) {
+				currentRegion = node.getRegion();
+				if(currentRegion != null) {
+					basicSectionContents.getChildren().add(new ConfigurationRegionDisplay(section, currentRegion));
+				}
+			}
+			basicSectionContents.getChildren().add(node);
+		}
+
+
+		sectionDisplay.getChildren().add(basicSectionContents);
 	}
 
 	public void open() {

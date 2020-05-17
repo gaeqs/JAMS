@@ -35,6 +35,8 @@ import net.jamsimulator.jams.language.wrapper.LanguageLabel;
  */
 public class ExplorerSectionLanguageRepresentation extends ExplorerSectionRepresentation {
 
+	private String languageNode;
+
 	/**
 	 * Creates the representation.
 	 *
@@ -44,10 +46,26 @@ public class ExplorerSectionLanguageRepresentation extends ExplorerSectionRepres
 	 */
 	public ExplorerSectionLanguageRepresentation(ExplorerSection section, int hierarchyLevel, String languageNode) {
 		super(section, hierarchyLevel);
+		this.languageNode = languageNode;
 		loadElements(languageNode);
 	}
 
+	/**
+	 * Returns the language node of this representation, or null if not present.
+	 *
+	 * @return the language node or null.
+	 */
+	public String getLanguageNode() {
+		return languageNode;
+	}
+
+	/**
+	 * Sets the language node of this representation. This node may be null.
+	 *
+	 * @param node the language node.
+	 */
 	public void setLanguageNode(String node) {
+		this.languageNode = node;
 		if (node != null) {
 			if (label instanceof LanguageLabel) {
 				((LanguageLabel) label).setNode(node);
