@@ -101,6 +101,7 @@ public class FileDisplayList extends TabPane {
 
 		List<FileDisplayTab> tabs = displays.stream().filter(target -> target.getFile().equals(file)).collect(Collectors.toList());
 		for (FileDisplayTab tab : tabs) {
+			tab.getDisplay().save();
 			displays.remove(tab);
 			getTabs().remove(tab);
 		}
@@ -108,15 +109,17 @@ public class FileDisplayList extends TabPane {
 	}
 
 	void closeFileInternal(FileDisplayTab tab) {
+		tab.getDisplay().save();
 		displays.remove(tab);
 	}
 
 	public void closeAll() {
+		displays.forEach(target -> target.getDisplay().save());
 		displays.clear();
 		getTabs().clear();
 	}
 
-	public void saveAll () {
+	public void saveAll() {
 		displays.forEach(display -> display.getDisplay().save());
 	}
 }

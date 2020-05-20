@@ -102,6 +102,7 @@ public class RootConfiguration extends Configuration implements EventBroadcast {
 
 
 	private static Map<String, Object> loadJSON(File file) throws IOException {
+		if(!file.isFile()) return new HashMap<>();
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		Map<String, Object> map = loadJSON(reader);
 		reader.close();

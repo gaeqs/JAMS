@@ -24,15 +24,22 @@
 
 package net.jamsimulator.jams.project;
 
+import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.utils.FolderUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 public abstract class ProjectData {
 
 	public static final String METADATA_FOLDER_NAME = ".jams";
+	public static final String METADATA_DATA_NAME = "data.json";
 
 	protected final File folder;
+	protected boolean loaded;
+	protected RootConfiguration data;
+
+	protected String name;
 
 	public ProjectData(File projectFolder) {
 		folder = new File(projectFolder, METADATA_FOLDER_NAME);
@@ -45,7 +52,28 @@ public abstract class ProjectData {
 		return folder;
 	}
 
-	public abstract void save();
+	public String getName() {
+		return name;
+	}
 
-	public abstract void load();
+	public void save() {
+		data.set("name", name);
+		try {
+			data.save(true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void load() {
+		if (loaded) return;
+		loaded = true;
+		try {
+			data = new RootConfiguration(new File(folder, METADATA_DATA_NAME));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		name = data.getString("name").orElse(folder.getParentFile().getName());
+	}
 }

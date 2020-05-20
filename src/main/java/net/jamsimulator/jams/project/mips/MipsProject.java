@@ -24,6 +24,9 @@
 
 package net.jamsimulator.jams.project.mips;
 
+import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.gui.mips.project.MipsWorkingPane;
+import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
@@ -39,6 +42,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class MipsProject extends BasicProject {
 
@@ -80,6 +84,12 @@ public class MipsProject extends BasicProject {
 	@Override
 	public void onClose() {
 		data.save();
+		if(projectTab != null) {
+			WorkingPane pane = projectTab.getProjectTabPane().getWorkingPane();
+			if(pane instanceof MipsWorkingPane) {
+				((MipsWorkingPane) pane).getFileDisplayList().closeAll();
+			}
+		}
 	}
 
 
@@ -87,6 +97,7 @@ public class MipsProject extends BasicProject {
 	protected void loadData() {
 		data = new MipsProjectData(this);
 		data.load();
+		data.save();
 	}
 
 	protected void loadData(Architecture architecture, AssemblerBuilder assemblerBuilder, MemoryBuilder memoryBuilder,

@@ -26,8 +26,6 @@ package net.jamsimulator.jams.gui.project;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.MipsProject;
 
@@ -47,7 +45,6 @@ public class ProjectListTabPane extends TabPane {
 	 */
 	public ProjectListTabPane() {
 		setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
-		generateDebugProject();
 	}
 
 	/**
@@ -78,6 +75,12 @@ public class ProjectListTabPane extends TabPane {
 				.findAny();
 	}
 
+
+	public boolean isProjectOpen(File folder) {
+		return getTabs().stream().anyMatch(target -> target instanceof ProjectTab
+				&& ((ProjectTab) target).getProject().getFolder().equals(folder));
+	}
+
 	/**
 	 * Returns whether the given {@link Project} is open in this tab pane.
 	 *
@@ -102,15 +105,5 @@ public class ProjectListTabPane extends TabPane {
 		project.assignProjectTab(tab);
 		getTabs().add(tab);
 		return true;
-	}
-
-
-	private void generateDebugProject() {
-		String folder = System.getProperty("user.home") + File.separator + "JAMSProject";
-		File file = new File(folder);
-		if (!file.exists()) file.mkdirs();
-
-		MipsProject project = new MipsProject("TEST", file);
-		if (!openProject(project)) System.err.println("ERROR WHILE OPENING DEBUG PROJECT!");
 	}
 }

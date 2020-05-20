@@ -32,7 +32,6 @@ import java.util.Optional;
 
 public abstract class BasicProject implements Project {
 
-	protected final String name;
 	protected final File folder;
 	protected ProjectTab projectTab;
 
@@ -44,7 +43,6 @@ public abstract class BasicProject implements Project {
 		Validate.isTrue(folder.exists(), "Folder " + folder.getName() + " must exist!");
 		Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
 
-		this.name = name;
 		this.folder = folder;
 		this.projectTab = null;
 
@@ -55,7 +53,7 @@ public abstract class BasicProject implements Project {
 
 	@Override
 	public String getName() {
-		return name;
+		return data.getName();
 	}
 
 	@Override

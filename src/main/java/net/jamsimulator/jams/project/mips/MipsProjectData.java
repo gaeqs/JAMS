@@ -25,6 +25,8 @@
 package net.jamsimulator.jams.project.mips;
 
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.configuration.Configuration;
+import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
@@ -44,8 +46,6 @@ import java.util.Optional;
 
 public class MipsProjectData extends ProjectData {
 
-	public static final String MIPS_CONFIGURATION_FILE = "mips_configuration.json";
-
 	protected Architecture architecture;
 	protected AssemblerBuilder assemblerBuilder;
 	protected MemoryBuilder memoryBuilder;
@@ -54,7 +54,6 @@ public class MipsProjectData extends ProjectData {
 	protected InstructionSet instructionSet;
 
 	protected final MipsFilesToAssemble filesToAssemble;
-	protected boolean loaded;
 
 	public MipsProjectData(MipsProject project) {
 		super(project.getFolder());
@@ -97,12 +96,13 @@ public class MipsProjectData extends ProjectData {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
+		super.save();
 	}
 
 	@Override
 	public void load() {
 		if (loaded) return;
-		loaded = true;
+		super.load();
 		try {
 			loadMipsConfiguration();
 			filesToAssemble.load(folder);
@@ -113,6 +113,7 @@ public class MipsProjectData extends ProjectData {
 
 	public void load(Architecture architecture, AssemblerBuilder assemblerBuilder, MemoryBuilder memoryBuilder,
 					 RegistersBuilder registersBuilder, DirectiveSet directiveSet, InstructionSet instructionSet) {
+		super.load();
 		if (loaded) return;
 		loaded = true;
 
@@ -136,63 +137,39 @@ public class MipsProjectData extends ProjectData {
 		}
 	}
 
-	private void saveMipsConfiguration() throws IOException {
-		JSONObject object = new JSONObject();
-		object.put("architecture", architecture.getName());
-		object.put("assembler", assemblerBuilder.getName());
-		object.put("memory", memoryBuilder.getName());
-		object.put("registers", registersBuilder.getName());
-		object.put("directives", directiveSet.getName());
-		object.put("instructions", instructionSet.getName());
-
-		File file = new File(folder, MIPS_CONFIGURATION_FILE);
-		Writer writer = new FileWriter(file);
-		writer.write(object.toString(1));
-		writer.close();
+	private void saveMipsConfiguration() {
+		data.set("mips.architecture", architecture.getName());
+		data.set("mips.architecture", architecture.getName());
+		data.set("mips.assembler", assemblerBuilder.getName());
+		data.set("mips.memory", memoryBuilder.getName());
+		data.set("mips.registers", registersBuilder.getName());
+		data.set("mips.directives", directiveSet.getName());
 	}
 
 
-	protected void loadMipsConfiguration() throws IOException {
-		File file = new File(folder, MIPS_CONFIGURATION_FILE);
-		if (!file.isFile()) return;
-
-		String value = String.join("\n", Files.readAllLines(file.toPath()));
-		JSONObject object = new JSONObject(value);
-
+	protected void loadMipsConfiguration() {
 		//ARCHITECTURE
-		Optional<Architecture> archOptional = object.has("architecture")
-				? Jams.getArchitectureManager().get(object.getString("architecture"))
-				: Optional.empty();
+		Optional<Architecture> archOptional =  data.getString("mips.architecture").flatMap(Jams.getArchitectureManager()::get);
 		architecture = archOptional.orElseGet(() -> Jams.getArchitectureManager().getDefault());
 
 		//ASSEMBLER
-		Optional<AssemblerBuilder> asOptional = object.has("assembler")
-				? Jams.getAssemblerBuilderManager().get(object.getString("assembler"))
-				: Optional.empty();
+		Optional<AssemblerBuilder> asOptional =  data.getString("mips.assembler").flatMap(Jams.getAssemblerBuilderManager()::get);
 		assemblerBuilder = asOptional.orElseGet(() -> Jams.getAssemblerBuilderManager().getDefault());
 
 		//MEMORY
-		Optional<MemoryBuilder> memOptional = object.has("memory")
-				? Jams.getMemoryBuilderManager().get(object.getString("memory"))
-				: Optional.empty();
+		Optional<MemoryBuilder> memOptional =  data.getString("mips.memory").flatMap(Jams.getMemoryBuilderManager()::get);
 		memoryBuilder = memOptional.orElseGet(() -> Jams.getMemoryBuilderManager().getDefault());
 
 		//REGISTERS
-		Optional<RegistersBuilder> regOptional = object.has("registers")
-				? Jams.getRegistersBuilderManager().get(object.getString("registers"))
-				: Optional.empty();
+		Optional<RegistersBuilder> regOptional =  data.getString("mips.registers").flatMap(Jams.getRegistersBuilderManager()::get);
 		registersBuilder = regOptional.orElseGet(() -> Jams.getRegistersBuilderManager().getDefault());
 
 		//DIRECTIVES
-		Optional<DirectiveSet> dirOptional = object.has("directives")
-				? Jams.getDirectiveSetManager().get(object.getString("directives"))
-				: Optional.empty();
+		Optional<DirectiveSet> dirOptional =  data.getString("mips.directives").flatMap(Jams.getDirectiveSetManager()::get);
 		directiveSet = dirOptional.orElseGet(() -> Jams.getDirectiveSetManager().getDefault());
 
 		//INSTRUCTIONS
-		Optional<InstructionSet> insOptional = object.has("instructions")
-				? Jams.getInstructionSetManager().get(object.getString("instructions"))
-				: Optional.empty();
+		Optional<InstructionSet> insOptional =  data.getString("mips.instructions").flatMap(Jams.getInstructionSetManager()::get);
 		instructionSet = insOptional.orElseGet(() -> Jams.getInstructionSetManager().getDefault());
 	}
 }

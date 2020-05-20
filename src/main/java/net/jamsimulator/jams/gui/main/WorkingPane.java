@@ -260,6 +260,10 @@ public abstract class WorkingPane extends AnchorPane {
 	private void loadResizeEvents() {
 		//Rescaling AnchorPane inside a tab. Thanks JavaFX for the bug.
 		Platform.runLater(() -> {
+			if(getScene() == null) {
+				loadResizeEvents();
+				return;
+			}
 			getScene().heightProperty().addListener((obs, old, val) -> {
 				double height = val.doubleValue() - getLocalToSceneTransform().getTy();
 				setPrefHeight(height);

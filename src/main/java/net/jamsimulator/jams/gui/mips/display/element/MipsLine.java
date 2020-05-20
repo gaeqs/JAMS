@@ -220,16 +220,12 @@ public class MipsLine {
 	 * @param line the line index.
 	 */
 	public void styleLine(CodeArea area, int line) {
+		if(text.isEmpty()) return;
 		int textLength = text.length();
 		int lastEnd = start;
 		StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
 
-		if (textLength == 0 || getSortedElements().isEmpty()) {
-			spansBuilder.add(Collections.emptyList(), 0);
-			area.setStyleSpans(line, 0, spansBuilder.create());
-			return;
-		}
-
+		if (getSortedElements().isEmpty()) return;
 
 		for (MipsCodeElement element : getSortedElements()) {
 			try {

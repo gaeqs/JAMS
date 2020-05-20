@@ -27,14 +27,18 @@ package net.jamsimulator.jams.gui.main;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.stage.DirectoryChooser;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.configuration.RootConfiguration;
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.configuration.ConfigurationWindow;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageMenu;
 import net.jamsimulator.jams.language.wrapper.LanguageMenuItem;
+import net.jamsimulator.jams.project.mips.MipsProject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -51,6 +55,15 @@ public class MainMenuBar extends MenuBar {
 	private void loadDefaults() {
 		Menu file = new LanguageMenu(Messages.MAIN_MENU_FILE);
 		getMenus().add(file);
+
+		MenuItem openProject = new LanguageMenuItem(Messages.MAIN_MENU_FILE_OPEN_PROJECT);
+		openProject.setOnAction(event -> {
+			DirectoryChooser chooser = new DirectoryChooser();
+			File folder = chooser.showDialog(JamsApplication.getStage());
+			if(folder == null || JamsApplication.getProjectsTabPane().isProjectOpen(folder)) return;
+			JamsApplication.getProjectsTabPane().openProject(new MipsProject("JAMSProject", folder));
+		});
+		file.getItems().add(openProject);
 
 		ConfigurationWindow window;
 		try {
