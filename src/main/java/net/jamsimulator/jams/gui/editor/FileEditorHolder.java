@@ -29,6 +29,7 @@ public class FileEditorHolder extends SplitPane {
 		this.list = new FileEditorTabList(this);
 		getItems().add(list);
 		this.workingPane = workingPane;
+		SplitPane.setResizableWithParent(list, false);
 	}
 
 	/**
@@ -43,6 +44,7 @@ public class FileEditorHolder extends SplitPane {
 		this.workingPane = workingPane;
 		list.setHolder(this);
 		getItems().add(list);
+		SplitPane.setResizableWithParent(list, false);
 	}
 
 	/**
@@ -66,6 +68,8 @@ public class FileEditorHolder extends SplitPane {
 		setOrientation(horizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL);
 		getItems().add(first);
 		getItems().add(second);
+		SplitPane.setResizableWithParent(first, false);
+		SplitPane.setResizableWithParent(second, false);
 	}
 
 	/**
@@ -232,6 +236,8 @@ public class FileEditorHolder extends SplitPane {
 			getItems().add(first);
 			getItems().add(second);
 			setOrientation(horizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL);
+			SplitPane.setResizableWithParent(first, false);
+			SplitPane.setResizableWithParent(second, false);
 			list = null;
 		} else {
 			(first == null ? second : first).openInNewHolder(display, horizontal);
@@ -243,7 +249,7 @@ public class FileEditorHolder extends SplitPane {
 	 * This doesn't work if this holder has no list.
 	 */
 	void checkIfEmpty() {
-		if (list != null && list.isEmpty()) {
+		if (list != null && list.isEmpty() && parent != null) {
 			parent.removeChild(this);
 		}
 	}
@@ -266,6 +272,7 @@ public class FileEditorHolder extends SplitPane {
 		if (first == null) {
 			list = new FileEditorTabList(this);
 			getItems().add(list);
+			SplitPane.setResizableWithParent(list, false);
 		}
 	}
 }
