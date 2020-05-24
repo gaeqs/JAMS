@@ -58,7 +58,7 @@ public class FolderActionAddFileToAssembler extends ContextAction {
 	}
 
 	@Override
-	public void run(Node node) {
+	public void run(Object node) {
 		if (!(node instanceof ExplorerElement)) return;
 		Explorer explorer = ((ExplorerElement) node).getExplorer();
 		if (!(explorer instanceof FolderExplorer)) return;
@@ -79,7 +79,7 @@ public class FolderActionAddFileToAssembler extends ContextAction {
 		if (!(pane instanceof MipsWorkingPane)) return;
 
 		for (ExplorerElement element : elements) {
-			files.addFile(((ExplorerFile) element).getFile(), ((MipsWorkingPane) pane).getFileDisplayList(), true);
+			files.addFile(((ExplorerFile) element).getFile(), ((MipsWorkingPane) pane).getFileDisplayHolder(), true);
 		}
 	}
 

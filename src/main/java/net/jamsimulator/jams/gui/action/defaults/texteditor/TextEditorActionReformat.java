@@ -30,7 +30,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.display.CodeFileDisplay;
+import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.language.Messages;
 
 public class TextEditorActionReformat extends Action {
@@ -43,9 +43,9 @@ public class TextEditorActionReformat extends Action {
 	}
 
 	@Override
-	public void run(Node node) {
-		if (node instanceof CodeFileDisplay) {
-			((CodeFileDisplay) node).reformat();
+	public void run(Object node) {
+		if (node instanceof CodeFileEditor) {
+			((CodeFileEditor) node).reformat();
 		}
 	}
 }

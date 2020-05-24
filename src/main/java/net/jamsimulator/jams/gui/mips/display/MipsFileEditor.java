@@ -30,8 +30,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
-import net.jamsimulator.jams.gui.display.CodeFileDisplay;
-import net.jamsimulator.jams.gui.display.FileDisplayTab;
+import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.FileEditorTab;
 import net.jamsimulator.jams.gui.mips.display.element.DisplayLabel;
 import net.jamsimulator.jams.gui.mips.display.element.MipsCodeElement;
 import net.jamsimulator.jams.gui.mips.display.element.MipsFileElements;
@@ -47,7 +47,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
-public class MipsFileDisplay extends CodeFileDisplay {
+public class MipsFileEditor extends CodeFileEditor {
 
 	private final MipsFileElements elements;
 
@@ -57,7 +57,7 @@ public class MipsFileDisplay extends CodeFileDisplay {
 
 	private Subscription subscription;
 
-	public MipsFileDisplay(FileDisplayTab tab) {
+	public MipsFileEditor(FileEditorTab tab) {
 		super(tab);
 
 		popup = new Popup();

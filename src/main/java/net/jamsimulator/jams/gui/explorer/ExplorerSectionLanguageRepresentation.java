@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.explorer;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
@@ -86,8 +87,19 @@ public class ExplorerSectionLanguageRepresentation extends ExplorerSectionRepres
 
 	@Override
 	protected void loadElements() {
-		statusIcon = new NearestImageView();
-		icon = new NearestImageView();
+		statusIcon = new NearestImageView(null,0, 0);
+		icon = new NearestImageView(null, 0, 0);
+
+
+		statusIcon.imageProperty().addListener((obs, old, val) -> {
+			statusIcon.setFitHeight(val == null ? 0 : FileType.IMAGE_SIZE);
+			statusIcon.setFitWidth(val == null ? 0 : FileType.IMAGE_SIZE);
+		});
+
+		icon.imageProperty().addListener((obs, old, val) -> {
+			icon.setFitHeight(val == null ? 0 : FileType.IMAGE_SIZE);
+			icon.setFitWidth(val == null ? 0 : FileType.IMAGE_SIZE);
+		});
 
 		ExplorerSeparatorRegion separator = new ExplorerSeparatorRegion(true, hierarchyLevel);
 

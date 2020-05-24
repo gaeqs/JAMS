@@ -30,7 +30,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.input.ScrollEvent;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.display.FileDisplayList;
+import net.jamsimulator.jams.gui.editor.FileEditorHolder;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.gui.mips.explorer.MipsFolderExplorer;
@@ -59,14 +59,17 @@ public class MipsWorkingPane extends WorkingPane {
 	 * @param project    the {@link MipsProject} to handle.
 	 */
 	public MipsWorkingPane(Tab parent, ProjectTab projectTab, MipsProject project) {
-		super(parent, projectTab, new FileDisplayList(null));
+		super(parent, projectTab, null, false);
+		center = new FileEditorHolder(this);
 		this.project = project;
+
+		init();
 
 		SplitPane.setResizableWithParent(center, true);
 
-		getFileDisplayList().setWorkingPane(this);
 		loadExplorer();
 		loadFilesToAssembleDisplay();
+
 	}
 
 	/**
@@ -79,17 +82,17 @@ public class MipsWorkingPane extends WorkingPane {
 	}
 
 	/**
-	 * Returns the {@link FileDisplayList} that handles files in this pane.
+	 * Returns the {@link FileEditorHolder} that handles files in this pane.
 	 *
-	 * @return the {@link FileDisplayList}.
+	 * @return the {@link FileEditorHolder}.
 	 */
-	public FileDisplayList getFileDisplayList() {
-		return (FileDisplayList) center;
+	public FileEditorHolder getFileDisplayHolder() {
+		return (FileEditorHolder) center;
 	}
 
 	private void loadExplorer() {
 		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
-				Icons.SIDEBAR_EXPLORER_PATH, SidebarButton.IMAGE_SIZE, SidebarButton.IMAGE_SIZE).orElse(null);
+				Icons.SIDEBAR_EXPLORER_PATH, 1024, 1024).orElse(null);
 
 		ScrollPane pane = new ScrollPane();
 		pane.setFitToHeight(true);
@@ -134,6 +137,6 @@ public class MipsWorkingPane extends WorkingPane {
 
 	@Override
 	public void openFile(File file) {
-		getFileDisplayList().openFile(file);
+		getFileDisplayHolder().openFile(file);
 	}
 }

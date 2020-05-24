@@ -22,15 +22,23 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.display;
+package net.jamsimulator.jams.gui.editor;
 
+import javafx.application.Platform;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.file.FileType;
+import net.jamsimulator.jams.gui.ActionRegion;
+import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.action.Action;
+import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.context.ContextAction;
+import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.utils.AnchorUtils;
@@ -39,16 +47,20 @@ import org.fxmisc.flowless.Virtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
-public class FileDisplayTab extends Tab {
+public class FileEditorTab extends Tab implements ActionRegion {
 
-	private final FileDisplayList list;
+	private FileEditorTabList list;
 	private final File file;
-	private final FileDisplay display;
+	private final FileEditor display;
 	private boolean saveMark;
 
-	public FileDisplayTab(FileDisplayList list, File file) {
+	public FileEditorTab(FileEditorTabList list, File file) {
+
 		this.list = list;
 		this.file = file;
 		this.saveMark = false;
@@ -57,7 +69,7 @@ public class FileDisplayTab extends Tab {
 		this.display = type.createDisplayTab(this);
 		if (display == null) return;
 
-		setGraphic(new NearestImageView(type.getIcon()));
+		setGraphic(new NearestImageView(type.getIcon(), FileType.IMAGE_SIZE, FileType.IMAGE_SIZE));
 		setText(file.getName());
 
 
@@ -85,13 +97,19 @@ public class FileDisplayTab extends Tab {
 		setContent(pane);
 
 		setOnClosed(target -> {
-			list.closeFileInternal(this);
+			this.list.closeFileInternal(this);
 			display.onClose();
 		});
+
+		setContextMenu(createContextMenu());
 	}
 
-	public FileDisplayList getList() {
+	public FileEditorTabList getList() {
 		return list;
+	}
+
+	void setList(FileEditorTabList list) {
+		this.list = list;
 	}
 
 	public WorkingPane getWorkingPane() {
@@ -102,7 +120,7 @@ public class FileDisplayTab extends Tab {
 		return file;
 	}
 
-	public FileDisplay getDisplay() {
+	public FileEditor getDisplay() {
 		return display;
 	}
 
@@ -116,11 +134,37 @@ public class FileDisplayTab extends Tab {
 		setText(saveMark ? file.getName() + " *" : file.getName());
 	}
 
+	public void openInNewHolder(boolean horizontal) {
+		list.getHolder().openInNewHolder(this, horizontal);
+	}
+
+	private Set<ContextAction> getSupportedContextActions() {
+		Set<Action> actions = JamsApplication.getActionManager().getAll();
+		Set<ContextAction> set = new HashSet<>();
+		for (Action action : actions) {
+			if (action instanceof ContextAction && supportsActionRegion(action.getRegionTag())) {
+				set.add((ContextAction) action);
+			}
+		}
+		return set;
+	}
+
+	private ContextMenu createContextMenu() {
+		Set<ContextAction> set = getSupportedContextActions();
+		if (set.isEmpty()) return null;
+		return new ContextActionMenuBuilder(this).addAll(set).build();
+	}
+
+	@Override
+	public boolean supportsActionRegion(String region) {
+		return RegionTags.EDITOR_TAB.equals(region);
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		FileDisplayTab that = (FileDisplayTab) o;
+		FileEditorTab that = (FileEditorTab) o;
 		return file.equals(that.file);
 	}
 

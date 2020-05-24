@@ -22,40 +22,47 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.display.image;
+package net.jamsimulator.jams.gui.editor.popup;
 
-import javafx.scene.image.Image;
-import net.jamsimulator.jams.gui.display.FileDisplay;
-import net.jamsimulator.jams.gui.display.FileDisplayTab;
-import net.jamsimulator.jams.gui.image.NearestImageView;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 
-import java.net.MalformedURLException;
+/**
+ * Represents an element inside a {@link AutocompletionPopup}.
+ */
+public class AutocompletionPopupElement extends HBox {
 
-public class ImageFileDisplay extends NearestImageView implements FileDisplay {
+	private final String name;
+	private final String autocompletion;
 
-	private final FileDisplayTab tab;
-
-	public ImageFileDisplay(FileDisplayTab tab) throws MalformedURLException, IllegalArgumentException {
-		super(new Image(tab.getFile().toURI().toURL().toString()));
-		this.tab = tab;
+	/**
+	 * Creates the element.
+	 *
+	 * @param name           the name the {@link AutocompletionPopup} is showing.
+	 * @param autocompletion the replacement to place when the autocompletion is finished.
+	 */
+	public AutocompletionPopupElement(String name, String autocompletion) {
+		getStyleClass().add("autocompletion-popup-element");
+		this.name = name;
+		this.autocompletion = autocompletion;
+		getChildren().add(new Label(name));
 	}
 
-	@Override
-	public FileDisplayTab getTab() {
-		return tab;
+	/**
+	 * Returns the name the {@link AutocompletionPopup} will show.
+	 *
+	 * @return the name.
+	 */
+	public String getName() {
+		return name;
 	}
 
-	@Override
-	public void onClose() {
-	}
-
-	@Override
-	public void save() {
-
-	}
-
-	@Override
-	public void reload() {
-
+	/**
+	 * Returns the replacement used by the {@link AutocompletionPopup} to autocomplete.
+	 *
+	 * @return the replacement.
+	 */
+	public String getAutocompletion() {
+		return autocompletion;
 	}
 }

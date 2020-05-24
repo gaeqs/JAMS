@@ -24,9 +24,9 @@
 
 package net.jamsimulator.jams.file;
 
-import net.jamsimulator.jams.gui.display.CodeFileDisplay;
-import net.jamsimulator.jams.gui.display.FileDisplay;
-import net.jamsimulator.jams.gui.display.FileDisplayTab;
+import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.FileEditor;
+import net.jamsimulator.jams.gui.editor.FileEditorTab;
 
 public class TextFileType extends FileType {
 
@@ -45,7 +45,7 @@ public class TextFileType extends FileType {
 	}
 
 	@Override
-	public FileDisplay createDisplayTab(FileDisplayTab tab) {
-		return new CodeFileDisplay(tab);
+	public FileEditor createDisplayTab(FileEditorTab tab) {
+		return new CodeFileEditor(tab);
 	}
 }

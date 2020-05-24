@@ -26,7 +26,7 @@ package net.jamsimulator.jams.gui.mips.display;
 
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
-import net.jamsimulator.jams.gui.display.popup.AutocompletionPopup;
+import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.mips.display.element.*;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.instruction.Instruction;
@@ -40,14 +40,14 @@ public class MipsAutocompletionPopup extends AutocompletionPopup {
 	private final MipsFileElements mipsElements;
 	private MipsCodeElement element;
 
-	public MipsAutocompletionPopup(MipsFileDisplay display) {
+	public MipsAutocompletionPopup(MipsFileEditor display) {
 		super(display);
 		this.mipsElements = display.getElements();
 	}
 
 	@Override
-	public MipsFileDisplay getDisplay() {
-		return (MipsFileDisplay) super.getDisplay();
+	public MipsFileEditor getDisplay() {
+		return (MipsFileEditor) super.getDisplay();
 	}
 
 	@Override

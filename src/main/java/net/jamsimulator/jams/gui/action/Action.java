@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.action;
 
-import javafx.scene.Node;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -107,7 +106,7 @@ public abstract class Action {
 	 *
 	 * @param node the current focused node.
 	 */
-	public abstract void run(Node node);
+	public abstract void run(Object node);
 
 	@Override
 	public boolean equals(Object o) {

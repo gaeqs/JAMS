@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.display.popup;
+package net.jamsimulator.jams.gui.editor.popup;
 
 import javafx.geometry.Bounds;
 import javafx.scene.control.ScrollPane;
@@ -30,7 +30,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
-import net.jamsimulator.jams.gui.display.CodeFileDisplay;
+import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.utils.CharacterCodes;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -48,7 +48,7 @@ import java.util.stream.Stream;
  */
 public abstract class AutocompletionPopup extends Popup {
 
-	protected final CodeFileDisplay display;
+	protected final CodeFileEditor display;
 	protected final VBox content;
 	protected final List<AutocompletionPopupElement> elements;
 
@@ -63,7 +63,7 @@ public abstract class AutocompletionPopup extends Popup {
 	 *
 	 * @param display the code display where this popup is displayed.
 	 */
-	public AutocompletionPopup(CodeFileDisplay display) {
+	public AutocompletionPopup(CodeFileEditor display) {
 		this.display = display;
 		content = new VBox();
 		content.getStyleClass().add("autocompletion-popup");
@@ -77,11 +77,11 @@ public abstract class AutocompletionPopup extends Popup {
 	}
 
 	/**
-	 * Returns the {@link CodeFileDisplay} where this popup is displayed.
+	 * Returns the {@link CodeFileEditor} where this popup is displayed.
 	 *
-	 * @return the {@link CodeFileDisplay}.
+	 * @return the {@link CodeFileEditor}.
 	 */
-	public CodeFileDisplay getDisplay() {
+	public CodeFileEditor getDisplay() {
 		return display;
 	}
 
@@ -218,7 +218,7 @@ public abstract class AutocompletionPopup extends Popup {
 	//region EVENTS
 
 	/**
-	 * Manages a {@link CodeFileDisplay}'s press event.
+	 * Manages a {@link CodeFileEditor}'s press event.
 	 *
 	 * @param event the event.
 	 */
@@ -247,7 +247,7 @@ public abstract class AutocompletionPopup extends Popup {
 	}
 
 	/**
-	 * Manages a {@link CodeFileDisplay}'s press event. This should be called on the filter stage.
+	 * Manages a {@link CodeFileEditor}'s press event. This should be called on the filter stage.
 	 *
 	 * @param event the event.
 	 * @return whether the event should be cancelled.

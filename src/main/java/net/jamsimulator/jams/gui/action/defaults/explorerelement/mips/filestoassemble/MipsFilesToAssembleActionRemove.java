@@ -54,7 +54,7 @@ public class MipsFilesToAssembleActionRemove extends ContextAction {
 	}
 
 	@Override
-	public void run(Node node) {
+	public void run(Object node) {
 		if (!(node instanceof FilesToAssembleDisplayElement)) return;
 		Explorer explorer = ((FilesToAssembleDisplayElement) node).getExplorer();
 		if (!(explorer instanceof FilesToAssembleDisplay)) return;

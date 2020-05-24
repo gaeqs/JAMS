@@ -24,14 +24,13 @@
 
 package net.jamsimulator.jams.gui.action.defaults.texteditor;
 
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.display.CodeFileDisplay;
-import net.jamsimulator.jams.gui.display.popup.AutocompletionPopup;
+import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
 import net.jamsimulator.jams.language.Messages;
 
 public class TextEditorActionShowAutocompletionPopup extends Action {
@@ -44,9 +43,9 @@ public class TextEditorActionShowAutocompletionPopup extends Action {
 	}
 
 	@Override
-	public void run(Node node) {
-		if (node instanceof CodeFileDisplay) {
-			AutocompletionPopup popup = ((CodeFileDisplay) node).getAutocompletionPopup();
+	public void run(Object node) {
+		if (node instanceof CodeFileEditor) {
+			AutocompletionPopup popup = ((CodeFileEditor) node).getAutocompletionPopup();
 			popup.execute(0, true);
 		}
 	}

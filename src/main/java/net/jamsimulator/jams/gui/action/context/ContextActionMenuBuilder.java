@@ -40,10 +40,10 @@ import java.util.TreeSet;
 
 public class ContextActionMenuBuilder {
 
-	private final Node node;
+	private final Object node;
 	private final ActionMainMenu menu;
 
-	public ContextActionMenuBuilder(Node node) {
+	public ContextActionMenuBuilder(Object node) {
 		Validate.notNull(node, "Node cannot be null!");
 		this.node = node;
 		menu = new ActionMainMenu(node);
@@ -94,10 +94,10 @@ public class ContextActionMenuBuilder {
 
 	private static class ActionMainMenu extends ContextMenu implements ActionMenu {
 
-		private final Node node;
+		private final Object node;
 		private final TreeSet<ContextRegionable> elements;
 
-		public ActionMainMenu(Node node) {
+		public ActionMainMenu(Object node) {
 			this.node = node;
 			this.elements = new TreeSet<>(((o1, o2) -> {
 				int val = o1.compareTo(o2);
@@ -129,10 +129,10 @@ public class ContextActionMenuBuilder {
 	private static class ActionSubmenu extends Menu implements ActionMenu, ContextRegionable {
 
 		private final ContextSubmenu submenu;
-		private final Node node;
+		private final Object node;
 		private final TreeSet<ContextRegionable> elements;
 
-		public ActionSubmenu(ContextSubmenu submenu, Node node) {
+		public ActionSubmenu(ContextSubmenu submenu, Object node) {
 			super(submenu.getLanguageNode().isPresent()
 					? Jams.getLanguageManager().getSelected().getOrDefault(submenu.getLanguageNode().get())
 					: submenu.getName());
@@ -186,7 +186,7 @@ public class ContextActionMenuBuilder {
 	}
 
 
-	private static void refresh(ObservableList<MenuItem> items, TreeSet<ContextRegionable> elements, Node node) {
+	private static void refresh(ObservableList<MenuItem> items, TreeSet<ContextRegionable> elements, Object node) {
 		items.clear();
 		ContextRegion current = null;
 		for (ContextRegionable element : elements) {

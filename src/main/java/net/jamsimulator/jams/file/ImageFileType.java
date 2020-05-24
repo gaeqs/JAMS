@@ -24,9 +24,9 @@
 
 package net.jamsimulator.jams.file;
 
-import net.jamsimulator.jams.gui.display.FileDisplay;
-import net.jamsimulator.jams.gui.display.FileDisplayTab;
-import net.jamsimulator.jams.gui.display.image.ImageFileDisplay;
+import net.jamsimulator.jams.gui.editor.FileEditor;
+import net.jamsimulator.jams.gui.editor.FileEditorTab;
+import net.jamsimulator.jams.gui.editor.image.ImageFileEditor;
 
 public class ImageFileType extends FileType {
 
@@ -45,9 +45,9 @@ public class ImageFileType extends FileType {
 	}
 
 	@Override
-	public FileDisplay createDisplayTab(FileDisplayTab tab) {
+	public FileEditor createDisplayTab(FileEditorTab tab) {
 		try {
-			return new ImageFileDisplay(tab);
+			return new ImageFileEditor(tab);
 		} catch (Exception e) {
 			System.err.println("Exception while opening image " + tab.getFile() + ".");
 			e.printStackTrace();

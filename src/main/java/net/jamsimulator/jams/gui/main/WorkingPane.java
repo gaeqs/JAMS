@@ -69,11 +69,13 @@ public abstract class WorkingPane extends AnchorPane {
 
 	private EventHandler<WindowEvent> stageCloseListener;
 
-	public WorkingPane(Tab parent, ProjectTab projectTab, Node center) {
+	public WorkingPane(Tab parent, ProjectTab projectTab, Node center, boolean init) {
 		this.parent = parent;
 		this.projectTab = projectTab;
 		this.center = center;
-		init();
+		if(init) {
+			init();
+		}
 	}
 
 
@@ -182,7 +184,7 @@ public abstract class WorkingPane extends AnchorPane {
 
 	//region INIT
 
-	private void init() {
+	protected void init() {
 		//Black line separator
 		Separator separator = new Separator(Orientation.HORIZONTAL);
 		AnchorUtils.setAnchor(separator, 0, -1, 0, 0);

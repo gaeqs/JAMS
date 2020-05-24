@@ -22,23 +22,14 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.file;
+package net.jamsimulator.jams.gui.action.defaults.editortab;
 
-import net.jamsimulator.jams.gui.editor.FileEditor;
-import net.jamsimulator.jams.gui.editor.FileEditorTab;
-import net.jamsimulator.jams.gui.image.icon.Icons;
-import net.jamsimulator.jams.gui.mips.display.MipsFileEditor;
+import net.jamsimulator.jams.gui.action.context.ContextRegion;
+import net.jamsimulator.jams.gui.action.context.ContextSubmenu;
+import net.jamsimulator.jams.language.Messages;
 
-public class AssemblyFileType extends FileType {
+public class EditorTagRegions {
 
-	public static final String NAME = "Assembly";
+	public static final ContextRegion SPLIT = new ContextRegion("split", null, 0);
 
-	public AssemblyFileType() {
-		super(NAME, Icons.FILE_ASSEMBLY, Icons.FILE_ASSEMBLY_PATH, "asm", "s");
-	}
-
-	@Override
-	public FileEditor createDisplayTab(FileEditorTab tab) {
-		return new MipsFileEditor(tab);
-	}
 }

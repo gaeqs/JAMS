@@ -26,7 +26,7 @@ package net.jamsimulator.jams.utils;
 
 public class Validate {
 
-	/**
+	/**display
 	 * Throws a {@link NullPointerException} if the given object is null.
 	 *
 	 * @param object the object to check.

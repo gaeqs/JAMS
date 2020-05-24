@@ -22,16 +22,46 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.display;
+package net.jamsimulator.jams.gui.editor.image;
 
+import javafx.scene.image.Image;
+import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.editor.FileEditor;
+import net.jamsimulator.jams.gui.editor.FileEditorTab;
+import net.jamsimulator.jams.gui.image.NearestImageView;
 
-public interface FileDisplay {
+import java.net.MalformedURLException;
 
-	FileDisplayTab getTab();
+public class ImageFileEditor extends NearestImageView implements FileEditor {
 
-	void onClose();
+	private final FileEditorTab tab;
 
-	void save();
+	public ImageFileEditor(FileEditorTab tab) throws MalformedURLException, IllegalArgumentException {
+		super(new Image(tab.getFile().toURI().toURL().toString()));
+		this.tab = tab;
+	}
 
-	void reload();
+	@Override
+	public FileEditorTab getTab() {
+		return tab;
+	}
+
+	@Override
+	public void onClose() {
+	}
+
+	@Override
+	public void save() {
+
+	}
+
+	@Override
+	public void reload() {
+
+	}
+
+	@Override
+	public boolean supportsActionRegion(String region) {
+		return RegionTags.EDITOR_TAB.equals(region);
+	}
 }

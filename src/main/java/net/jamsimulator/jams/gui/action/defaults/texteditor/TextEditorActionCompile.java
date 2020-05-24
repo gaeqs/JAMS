@@ -24,13 +24,12 @@
 
 package net.jamsimulator.jams.gui.action.defaults.texteditor;
 
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.mips.display.MipsFileDisplay;
+import net.jamsimulator.jams.gui.mips.display.MipsFileEditor;
 import net.jamsimulator.jams.gui.mips.project.MipsWorkingPane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
@@ -55,16 +54,16 @@ public class TextEditorActionCompile extends Action {
 	}
 
 	@Override
-	public void run(Node node) {
+	public void run(Object node) {
 		try {
-			if (node instanceof MipsFileDisplay) {
-				MipsProject project = ((MipsFileDisplay) node).getProject().orElse(null);
+			if (node instanceof MipsFileEditor) {
+				MipsProject project = ((MipsFileEditor) node).getProject().orElse(null);
 				if (project == null) return;
 
 				ProjectTab tab = project.getProjectTab().orElse(null);
 				if (tab != null) {
 					MipsWorkingPane pane = (MipsWorkingPane) tab.getProjectTabPane().getWorkingPane();
-					pane.getFileDisplayList().saveAll();
+					pane.getFileDisplayHolder().saveAll(true);
 				}
 
 				List<List<String>> files = new ArrayList<>();

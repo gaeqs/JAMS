@@ -70,7 +70,7 @@ public class SidebarButton extends ToggleButton {
 		Group group = new Group(label);
 
 		if (icon != null) {
-			ImageView imageView = new NearestImageView(icon);
+			ImageView imageView = new NearestImageView(icon, IMAGE_SIZE, IMAGE_SIZE);
 			VBox vBox = left ? new VBox(group, imageView) : new VBox(imageView, group);
 			vBox.setSpacing(2);
 			vBox.setAlignment(Pos.CENTER);

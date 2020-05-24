@@ -78,8 +78,8 @@ public class ExplorerSectionRepresentation extends HBox {
 	}
 
 	public double getRepresentationWidth() {
-		double statusWidth = statusIcon.getImage() == null ? 0 : statusIcon.getImage().getWidth();
-		double iconWidth = icon.getImage() == null ? 0 : icon.getImage().getWidth();
+		double statusWidth = statusIcon.getImage() == null ? 0 : statusIcon.getFitWidth();
+		double iconWidth = icon.getImage() == null ? 0 : icon.getFitWidth();
 		double separatorWidth = separator == null ? 0 : separator.getWidth();
 
 		return separatorWidth + statusWidth + iconWidth + label.getWidth() + ExplorerBasicElement.SPACING * 3;
@@ -103,12 +103,10 @@ public class ExplorerSectionRepresentation extends HBox {
 			icon = null;
 		} else if (section.isExpanded()) {
 			icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_EXPANDED,
-					Icons.EXPLORER_SECTION_EXPANDED_PATH, FileType.IMAGE_SIZE,
-					FileType.IMAGE_SIZE).orElse(null);
+					Icons.EXPLORER_SECTION_EXPANDED_PATH, 1024, 1024).orElse(null);
 		} else {
 			icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_COLLAPSED,
-					Icons.EXPLORER_SECTION_COLLAPSED_PATH, FileType.IMAGE_SIZE,
-					FileType.IMAGE_SIZE).orElse(null);
+					Icons.EXPLORER_SECTION_COLLAPSED_PATH, 1024, 1024).orElse(null);
 		}
 		statusIcon.setImage(icon);
 		if (icon == null) {
@@ -158,9 +156,20 @@ public class ExplorerSectionRepresentation extends HBox {
 
 
 	protected void loadElements() {
-		statusIcon = new NearestImageView();
-		icon = new NearestImageView();
+		statusIcon = new NearestImageView(null, 0, 0);
+		icon = new NearestImageView(null, 0, 0);
 		label = new Label(section.getName());
+
+		statusIcon.imageProperty().addListener((obs, old, val) -> {
+			statusIcon.setFitHeight(val == null ? 0 : FileType.IMAGE_SIZE);
+			statusIcon.setFitWidth(val == null ? 0 : FileType.IMAGE_SIZE);
+		});
+
+		icon.imageProperty().addListener((obs, old, val) -> {
+			icon.setFitHeight(val == null ? 0 : FileType.IMAGE_SIZE);
+			icon.setFitWidth(val == null ? 0 : FileType.IMAGE_SIZE);
+		});
+
 
 		separator = new ExplorerSeparatorRegion(true, hierarchyLevel);
 

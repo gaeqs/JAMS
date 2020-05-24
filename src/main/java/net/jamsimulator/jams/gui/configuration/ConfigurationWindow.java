@@ -28,7 +28,6 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.ScrollEvent;
@@ -118,7 +117,6 @@ public class ConfigurationWindow extends SplitPane {
 	}
 
 	public void display(ConfigurationWindowSection section) {
-		double divider = getDividerPositions()[0];
 		while (sectionDisplay.getChildren().size() > 1) {
 			sectionDisplay.getChildren().remove(1);
 		}
@@ -137,16 +135,16 @@ public class ConfigurationWindow extends SplitPane {
 		sectionTreeDisplay.setSection(section);
 	}
 
-	private void displayNormalSection (ConfigurationWindowSection section) {
+	private void displayNormalSection(ConfigurationWindowSection section) {
 		basicSectionContents.getChildren().clear();
 
 		List<ConfigurationWindowNode<?>> nodes = section.getNodes();
 		String currentRegion = null;
 
 		for (ConfigurationWindowNode<?> node : nodes) {
-			if(currentRegion == null || !currentRegion.equals(node.getRegion())) {
+			if (currentRegion == null || !currentRegion.equals(node.getRegion())) {
 				currentRegion = node.getRegion();
-				if(currentRegion != null) {
+				if (currentRegion != null) {
 					basicSectionContents.getChildren().add(new ConfigurationRegionDisplay(section, currentRegion));
 				}
 			}
@@ -190,8 +188,10 @@ public class ConfigurationWindow extends SplitPane {
 			Jams.getLanguageManager().registerListeners(this, true);
 		}
 
+		stage.setOnShown(target -> Platform.runLater(() ->
+				Platform.runLater(() -> setDividerPosition(0, 0.3))));
+
 		stage.show();
-		Platform.runLater(() -> setDividerPosition(0, 0.3));
 	}
 
 	@Listener

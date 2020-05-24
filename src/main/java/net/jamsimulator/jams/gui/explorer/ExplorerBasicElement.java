@@ -34,6 +34,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
@@ -231,7 +232,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 	}
 
 	protected void loadElements() {
-		icon = new NearestImageView();
+		icon = new NearestImageView(null, FileType.IMAGE_SIZE, FileType.IMAGE_SIZE);
 		label = new Label(name);
 
 		separator = new ExplorerSeparatorRegion(false, hierarchyLevel);

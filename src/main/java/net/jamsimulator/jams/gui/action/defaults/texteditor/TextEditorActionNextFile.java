@@ -30,8 +30,8 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.display.FileDisplay;
-import net.jamsimulator.jams.gui.display.FileDisplayList;
+import net.jamsimulator.jams.gui.editor.FileEditor;
+import net.jamsimulator.jams.gui.editor.FileEditorTabList;
 import net.jamsimulator.jams.language.Messages;
 
 public class TextEditorActionNextFile extends Action {
@@ -44,9 +44,9 @@ public class TextEditorActionNextFile extends Action {
 	}
 
 	@Override
-	public void run(Node node) {
-		if (node instanceof FileDisplay) {
-			FileDisplayList list = ((FileDisplay) node).getTab().getList();
+	public void run(Object node) {
+		if (node instanceof FileEditor) {
+			FileEditorTabList list = ((FileEditor) node).getTab().getList();
 			list.selectNext();
 			list.getSelected().ifPresent(target -> {
 				if (target.getDisplay() instanceof Node) {

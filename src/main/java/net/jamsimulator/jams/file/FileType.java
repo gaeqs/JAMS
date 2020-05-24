@@ -26,8 +26,8 @@ package net.jamsimulator.jams.file;
 
 import javafx.scene.image.Image;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.display.FileDisplay;
-import net.jamsimulator.jams.gui.display.FileDisplayTab;
+import net.jamsimulator.jams.gui.editor.FileEditor;
+import net.jamsimulator.jams.gui.editor.FileEditorTab;
 import net.jamsimulator.jams.gui.image.icon.IconManager;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -123,18 +123,18 @@ public abstract class FileType {
 	public Image getIcon() {
 		if (icon == null) {
 			IconManager manager = JamsApplication.getIconManager();
-			icon = manager.getOrLoadSafe(iconName, iconPath, IMAGE_SIZE, IMAGE_SIZE).orElse(null);
+			icon = manager.getOrLoadSafe(iconName, iconPath, 1024, 1024).orElse(null);
 		}
 		return icon;
 	}
 
 	/**
-	 * Creates a {@link FileDisplayTab} for the given {@link FileDisplayTab}.
+	 * Creates a {@link FileEditorTab} for the given {@link FileEditorTab}.
 	 *
-	 * @param tab the {@link FileDisplayTab}.
-	 * @return the {@link FileDisplay}.
+	 * @param tab the {@link FileEditorTab}.
+	 * @return the {@link FileEditor}.
 	 */
-	public abstract FileDisplay createDisplayTab(FileDisplayTab tab);
+	public abstract FileEditor createDisplayTab(FileEditorTab tab);
 
 	@Override
 	public boolean equals(Object o) {

@@ -22,47 +22,19 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.display.popup;
+package net.jamsimulator.jams.gui.editor;
 
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import org.fxmisc.flowless.ScaledVirtualized;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 
-/**
- * Represents an element inside a {@link AutocompletionPopup}.
- */
-public class AutocompletionPopupElement extends HBox {
+public interface VirtualScrollHandled {
 
-	private final String name;
-	private final String autocompletion;
+	VirtualizedScrollPane getScrollPane();
 
-	/**
-	 * Creates the element.
-	 *
-	 * @param name           the name the {@link AutocompletionPopup} is showing.
-	 * @param autocompletion the replacement to place when the autocompletion is finished.
-	 */
-	public AutocompletionPopupElement(String name, String autocompletion) {
-		getStyleClass().add("autocompletion-popup-element");
-		this.name = name;
-		this.autocompletion = autocompletion;
-		getChildren().add(new Label(name));
-	}
+	void setScrollPane(VirtualizedScrollPane scrollPane);
 
-	/**
-	 * Returns the name the {@link AutocompletionPopup} will show.
-	 *
-	 * @return the name.
-	 */
-	public String getName() {
-		return name;
-	}
+	ScaledVirtualized getZoom ();
 
-	/**
-	 * Returns the replacement used by the {@link AutocompletionPopup} to autocomplete.
-	 *
-	 * @return the replacement.
-	 */
-	public String getAutocompletion() {
-		return autocompletion;
-	}
+	void setZoom (ScaledVirtualized zoom);
+
 }

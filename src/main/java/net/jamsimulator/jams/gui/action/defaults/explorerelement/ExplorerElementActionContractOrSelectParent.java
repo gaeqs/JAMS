@@ -45,7 +45,7 @@ public class ExplorerElementActionContractOrSelectParent extends Action {
 	}
 
 	@Override
-	public void run(Node node) {
+	public void run(Object node) {
 		if (!(node instanceof ExplorerElement)) return;
 
 		ExplorerElement element = (ExplorerElement) node;

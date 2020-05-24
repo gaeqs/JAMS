@@ -27,11 +27,12 @@ package net.jamsimulator.jams.gui.action.context;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.Action;
+import net.jamsimulator.jams.gui.image.NearestImageView;
 
 import java.util.List;
 
@@ -47,9 +48,9 @@ public class ActionMenuItem extends MenuItem {
 	 * @param node   the {@link Node} of the context.
 	 * @param icon   the shown {@link Image icon} or null.
 	 */
-	public ActionMenuItem(Action action, Node node, Image icon) {
+	public ActionMenuItem(Action action, Object node, Image icon) {
 		super(Jams.getLanguageManager().getSelected().getOrDefault(action.getLanguageNode().orElse(null)));
-		setGraphic(new ImageView(icon));
+		setGraphic(new NearestImageView(icon, FileType.IMAGE_SIZE, FileType.IMAGE_SIZE));
 		setOnAction(target -> action.run(node));
 		List<KeyCombination> list = JamsApplication.getActionManager().getBindCombinations(action.getName());
 		if (!list.isEmpty()) {

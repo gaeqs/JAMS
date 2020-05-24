@@ -22,19 +22,35 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.display;
+package net.jamsimulator.jams.gui.editor;
 
-import org.fxmisc.flowless.ScaledVirtualized;
-import org.fxmisc.flowless.VirtualizedScrollPane;
 
-public interface VirtualScrollHandled {
+import net.jamsimulator.jams.gui.ActionRegion;
 
-	VirtualizedScrollPane getScrollPane();
+/**
+ * Represents a file editor.
+ */
+public interface FileEditor extends ActionRegion {
 
-	void setScrollPane(VirtualizedScrollPane scrollPane);
+	/**
+	 * Returns the {@link FileEditorTab} of this editor.
+	 *
+	 * @return the {@link FileEditorTab}.
+	 */
+	FileEditorTab getTab();
 
-	ScaledVirtualized getZoom ();
+	/**
+	 * This method is executed when the file editor is closed.
+	 */
+	void onClose();
 
-	void setZoom (ScaledVirtualized zoom);
+	/**
+	 * This method is executed when the file should be saved.
+	 */
+	void save();
 
+	/**
+	 * This method is executed when the file should be reloaded.
+	 */
+	void reload();
 }

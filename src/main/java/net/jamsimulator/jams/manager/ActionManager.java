@@ -33,6 +33,8 @@ import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.defaults.editortab.EditorTabActionSplitHorizontally;
+import net.jamsimulator.jams.gui.action.defaults.editortab.EditorTabActionSplitVertically;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.*;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.folder.*;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.mips.filestoassemble.MipsFilesToAssembleActionRemove;
@@ -362,6 +364,10 @@ public class ActionManager extends SimpleEventBroadcast {
 		actions.add(new FolderActionNewFile());
 		actions.add(new FolderActionNewAssemblyFile());
 		actions.add(new FolderActionNewFolder());
+
+		//TAB
+		actions.add(new EditorTabActionSplitHorizontally());
+		actions.add(new EditorTabActionSplitVertically());
 
 		// MIPS EXPLORER ELEMENT
 		actions.add(new FolderActionAddFileToAssembler());

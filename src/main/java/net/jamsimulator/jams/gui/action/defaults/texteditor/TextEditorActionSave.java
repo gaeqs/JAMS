@@ -24,13 +24,12 @@
 
 package net.jamsimulator.jams.gui.action.defaults.texteditor;
 
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.display.FileDisplay;
+import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.language.Messages;
 
 public class TextEditorActionSave extends Action {
@@ -43,9 +42,9 @@ public class TextEditorActionSave extends Action {
 	}
 
 	@Override
-	public void run(Node node) {
-		if (node instanceof FileDisplay) {
-			((FileDisplay) node).save();
+	public void run(Object node) {
+		if (node instanceof FileEditor) {
+			((FileEditor) node).save();
 		}
 	}
 }

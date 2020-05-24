@@ -22,17 +22,16 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.display;
+package net.jamsimulator.jams.gui.editor;
 
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.input.*;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.display.popup.AutocompletionPopup;
+import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
@@ -47,9 +46,9 @@ import java.io.StringWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CodeFileDisplay extends CodeArea implements FileDisplay, ActionRegion, VirtualScrollHandled {
+public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrollHandled {
 
-	protected final FileDisplayTab tab;
+	protected final FileEditorTab tab;
 	protected String old, original;
 	protected VirtualizedScrollPane scrollPane;
 	protected ScaledVirtualized zoom;
@@ -57,7 +56,7 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, ActionRegi
 	protected AutocompletionPopup autocompletionPopup;
 	private ChangeListener<? super Number> autocompletionMoveListener;
 
-	public CodeFileDisplay(FileDisplayTab tab) {
+	public CodeFileEditor(FileEditorTab tab) {
 		super(read(tab));
 		this.tab = tab;
 		this.original = getText();
@@ -77,7 +76,7 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, ActionRegi
 		applyZoomListener();
 	}
 
-	public FileDisplayTab getTab() {
+	public FileEditorTab getTab() {
 		return tab;
 	}
 
@@ -114,7 +113,7 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, ActionRegi
 
 	@Override
 	public boolean supportsActionRegion(String region) {
-		return region.equals(RegionTags.TEXT_EDITOR);
+		return RegionTags.TEXT_EDITOR.equals(region) || RegionTags.EDITOR_TAB.equals(region);
 	}
 
 	@Override
@@ -249,7 +248,7 @@ public class CodeFileDisplay extends CodeArea implements FileDisplay, ActionRegi
 		});
 	}
 
-	private static String read(FileDisplayTab tab) {
+	private static String read(FileEditorTab tab) {
 		try {
 			return FileUtils.readAll(tab.getFile());
 		} catch (IOException ex) {
