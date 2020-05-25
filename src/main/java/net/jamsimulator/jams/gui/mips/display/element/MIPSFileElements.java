@@ -162,14 +162,11 @@ public class MIPSFileElements {
 		if (index < 0 || index >= lines.size()) throw new IndexOutOfBoundsException("Index out of bounds");
 		MIPSLine line = lines.remove(index);
 
-		line.getLabel().ifPresent(label -> labels.remove(label.getLabel()));
-
 		int length = line.getText().length() + 1;
 		for (int i = index; i < lines.size(); i++)
 			lines.get(i).move(-length);
 
 		requiresUpdate.remove(lines.size());
-
 		return checkLabels(line, false);
 	}
 
@@ -185,7 +182,6 @@ public class MIPSFileElements {
 
 		MIPSLine line = new MIPSLine(this, start, text);
 		lines.add(index, line);
-		line.getLabel().ifPresent(label -> labels.add(label.getLabel()));
 
 		int length = text.length() + 1;
 		for (int i = index + 1; i < lines.size(); i++)

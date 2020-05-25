@@ -32,6 +32,7 @@ import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.project.mips.MipsProject;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -80,7 +81,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 	@Override
 	public void refreshContents(int caretPosition) {
 		elements.clear();
-		String start = element.getText().substring(0, Math.min(caretPosition - element.getStartIndex(), element.getText().length()));
+		String start = element.getSimpleText();
 
 		if (element instanceof MIPSDirective)
 			start = refreshDirective(start);
@@ -122,7 +123,9 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 		switch (((MIPSInstructionParameterPart) element).getType()) {
 			case LABEL:
 			case GLOBAL_LABEL:
-				addElements(mipsElements.getLabels().stream().filter(target -> target.startsWith(start)), s -> s, s -> s);
+				Set<String> labels = new HashSet<>(mipsElements.getLabels());
+				mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
+				addElements(labels.stream().filter(target -> target.startsWith(start)), s -> s, s -> s);
 				return start;
 			case REGISTER:
 				Set<String> names = project.getData().getRegistersBuilder().getRegistersNames();

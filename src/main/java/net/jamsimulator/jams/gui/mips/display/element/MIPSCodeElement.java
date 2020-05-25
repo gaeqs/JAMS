@@ -134,7 +134,7 @@ public abstract class MIPSCodeElement {
 
 		errors.forEach(target -> {
 			String message = language.getOrDefault("EDITOR_MIPS_ERROR_" + target);
-			popup.getChildren().add(new Label(message.replace("{TEXT}", getText())));
+			popup.getChildren().add(new Label(message.replace("{TEXT}", getSimpleText())));
 		});
 	}
 

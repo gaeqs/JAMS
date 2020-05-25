@@ -73,6 +73,7 @@ public class MIPSInstruction extends MIPSCodeElement {
 
 	@Override
 	public List<String> getStyles() {
+		if(hasErrors()) return Arrays.asList("mips-instruction", "mips-error");
 		return Collections.singletonList("mips-instruction");
 	}
 
@@ -90,7 +91,7 @@ public class MIPSInstruction extends MIPSCodeElement {
 			types[i] = parameters.get(i).refreshMetadata(builder);
 		}
 
-		Instruction instruction = set.getBestCompatibleInstruction(text, types).orElse(null);
+		Instruction instruction = set.getBestCompatibleInstruction(this.instruction, types).orElse(null);
 		if (instruction == null) {
 			errors.add(MIPSEditorError.INSTRUCTION_NOT_FOUND);
 		}
@@ -115,5 +116,6 @@ public class MIPSInstruction extends MIPSCodeElement {
 		}
 
 		startIndex += first.getKey();
+		endIndex = startIndex + instruction.length();
 	}
 }

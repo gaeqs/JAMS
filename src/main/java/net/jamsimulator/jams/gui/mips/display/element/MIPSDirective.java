@@ -99,7 +99,6 @@ public class MIPSDirective extends MIPSCodeElement {
 		stringParameters.remove(0);
 
 		//Adds all parameters.
-		MIPSDirectiveParameter parameter;
 		for (Map.Entry<Integer, String> entry : stringParameters) {
 			parameters.add(new MIPSDirectiveParameter(
 					startIndex + entry.getKey(),
@@ -107,5 +106,6 @@ public class MIPSDirective extends MIPSCodeElement {
 		}
 
 		startIndex += first.getKey();
+		endIndex = startIndex + directive.length();
 	}
 }

@@ -223,15 +223,16 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
 		ProjectTab tab = JamsApplication.getProjectsTabPane().getProjectTab(project).orElse(null);
 		if (tab == null) return;
 		Node node = tab.getProjectTabPane().getWorkingPane().getCenter();
-		if (!(node instanceof FileEditorTabList)) return;
-		FileEditorTabList list = (FileEditorTabList) node;
+		if (!(node instanceof FileEditorHolder)) return;
+		FileEditorHolder holder = (FileEditorHolder) node;
 
-		Optional<FileEditorTab> fTab = list.getFileDisplayTab(file);
+		Optional<FileEditorTab> fTab = holder.getFileDisplayTab(file, true);
+
+		elements.searchForUpdates(globalLabels);
 		if (fTab.isPresent()) {
 			FileEditor display = fTab.get().getDisplay();
 			if (display instanceof MIPSFileEditor) {
 				elements.update(((MIPSFileEditor) display));
-				return;
 			}
 		}
 	}
