@@ -195,10 +195,11 @@ public class MIPSLine {
 	 * @param line the line index.
 	 */
 	public void styleLine(CodeArea area, int line) {
-		if (text.isEmpty()) return;
+		if (getSortedElements().isEmpty()) return;
 		int textLength = text.length();
 		int lastEnd = start;
 		StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
+
 
 		for (MIPSCodeElement element : getSortedElements()) {
 			try {
@@ -253,8 +254,8 @@ public class MIPSLine {
 		if (element.getStartIndex() != lastEnd) {
 			spansBuilder.add(Collections.emptyList(), element.getStartIndex() - lastEnd);
 		}
-		int end = element.getStartIndex() + element.getSimpleText().length();
-		spansBuilder.add(element.getStyles(), end - element.getStartIndex());
-		return end;
+		spansBuilder.add(element.getStyles(), element.getSimpleText().length());
+
+		return element.getStartIndex() + element.getSimpleText().length();
 	}
 }

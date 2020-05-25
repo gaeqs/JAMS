@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.mips.display.element;
 
 import net.jamsimulator.jams.collection.Bag;
+import net.jamsimulator.jams.gui.mips.display.MIPSFileEditor;
 import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MipsProject;
 import org.fxmisc.richtext.CodeArea;
@@ -222,6 +223,7 @@ public class MIPSFileElements {
 	public void refreshAll(String raw) {
 		lines.clear();
 		labels.clear();
+		setAsGlobalLabel.clear();
 		if (raw.isEmpty()) return;
 
 		int start = 0;
@@ -235,7 +237,14 @@ public class MIPSFileElements {
 			c = raw.charAt(end);
 			if (c == '\n' || c == '\r') {
 				line = new MIPSLine(this, start, builder.toString());
+
 				line.getLabel().ifPresent(label -> labels.add(label.getLabel()));
+				if (line.getDirective().isPresent() && line.getDirective().get().isGlobl()) {
+					line.getDirective().get().getParameters().forEach(target -> {
+						setAsGlobalLabel.add(target.text);
+					});
+				}
+
 				this.lines.add(line);
 				//Restarts the builder.
 				builder = new StringBuilder();
@@ -247,8 +256,19 @@ public class MIPSFileElements {
 		//Final line
 		if (end >= start) {
 			line = new MIPSLine(this, start, builder.toString());
+
 			line.getLabel().ifPresent(label -> labels.add(label.getLabel()));
+			if (line.getDirective().isPresent() && line.getDirective().get().isGlobl()) {
+				line.getDirective().get().getParameters().forEach(target -> {
+					setAsGlobalLabel.add(target.text);
+				});
+			}
+
 			this.lines.add(line);
+		}
+
+		for (MIPSLine mipsLine : lines) {
+			mipsLine.refreshMetadata(this);
 		}
 	}
 
@@ -257,10 +277,9 @@ public class MIPSFileElements {
 	 *
 	 * @param area the area to style.
 	 */
-	public void updateAndStyleAll(CodeArea area) {
+	public void styleAll(CodeArea area) {
 		int i = 0;
 		for (MIPSLine line : lines) {
-			line.refreshMetadata(this);
 			line.styleLine(area, i);
 			i++;
 		}
@@ -297,11 +316,10 @@ public class MIPSFileElements {
 	 *
 	 * @param area the {@link CodeArea}.
 	 */
-	public void update(CodeArea area) {
-		MIPSLine line;
+	public void update(MIPSFileEditor area) {
 		for (Integer i : requiresUpdate) {
 			if (i < 0 || i >= lines.size()) continue;
-			line = lines.get(i);
+			MIPSLine line = lines.get(i);
 			line.refreshMetadata(this);
 			line.styleLine(area, i);
 		}
@@ -313,7 +331,7 @@ public class MIPSFileElements {
 	 *
 	 * @param labelsToCheck the labels.
 	 */
-	public void searchForUpdates(List<String> labelsToCheck) {
+	public void searchForUpdates(Collection<String> labelsToCheck) {
 		int i = 0;
 		Set<String> used;
 		for (MIPSLine mipsLine : lines) {
@@ -324,6 +342,11 @@ public class MIPSFileElements {
 						requiresUpdate.add(i);
 						break;
 					}
+				}
+			}
+			if (mipsLine.getLabel().isPresent()) {
+				if (labelsToCheck.contains(mipsLine.getLabel().get().getLabel())) {
+					requiresUpdate.add(i);
 				}
 			}
 			i++;

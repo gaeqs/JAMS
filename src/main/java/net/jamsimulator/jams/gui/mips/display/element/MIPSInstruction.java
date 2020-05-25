@@ -113,5 +113,7 @@ public class MIPSInstruction extends MIPSCodeElement {
 		for (Map.Entry<Integer, String> entry : stringParameters) {
 			parameters.add(new MIPSInstructionParameter(elements, startIndex + entry.getKey(), entry.getValue()));
 		}
+
+		startIndex += first.getKey();
 	}
 }

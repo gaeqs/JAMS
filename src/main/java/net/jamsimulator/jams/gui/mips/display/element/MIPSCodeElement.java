@@ -121,7 +121,7 @@ public abstract class MIPSCodeElement {
 	 * @return whether this element has errors.
 	 */
 	public boolean hasErrors() {
-		return errors.isEmpty();
+		return !errors.isEmpty();
 	}
 
 	/**

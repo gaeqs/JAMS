@@ -20,7 +20,7 @@ public class Bag<E> implements Collection<E> {
 	 * @return the amount of times.
 	 */
 	public int amount(Object o) {
-		return amount.get(o);
+		return amount.getOrDefault(o, 0);
 	}
 
 	/**
@@ -120,5 +120,10 @@ public class Bag<E> implements Collection<E> {
 	@Override
 	public void clear() {
 		amount.clear();
+	}
+
+	@Override
+	public String toString() {
+		return amount.toString();
 	}
 }

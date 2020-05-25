@@ -64,14 +64,10 @@ public class MIPSFileEditor extends CodeFileEditor {
 		popupVBox = new VBox();
 		popupVBox.getStyleClass().add("mips-popup");
 		popup.getContent().add(popupVBox);
-
-		boolean elementsAlreadyLoaded = false;
-
 		if (tab.getWorkingPane() instanceof MipsWorkingPane) {
 			project = ((MipsWorkingPane) tab.getWorkingPane()).getProject();
 			Optional<MIPSFileElements> elementsOptional = project.getData().getFilesToAssemble().getFileElements(tab.getFile());
 			elements = elementsOptional.orElseGet(() -> new MIPSFileElements(project));
-			elementsAlreadyLoaded = elementsOptional.isPresent();
 		} else {
 			project = null;
 			elements = new MIPSFileElements(null);
@@ -83,7 +79,7 @@ public class MIPSFileEditor extends CodeFileEditor {
 		applyLabelTabRemover();
 
 		subscription = multiPlainChanges().subscribe(event -> event.forEach(this::index));
-		index(!elementsAlreadyLoaded);
+		index();
 	}
 
 	public Optional<MipsProject> getProject() {
@@ -117,7 +113,7 @@ public class MIPSFileEditor extends CodeFileEditor {
 		toPixel = Math.max(0, Math.min(height, toPixel));
 
 		scrollPane.scrollYBy(toPixel);
-		index(true);
+		index();
 		subscription = multiPlainChanges().subscribe(event -> event.forEach(this::index));
 	}
 
@@ -161,7 +157,7 @@ public class MIPSFileEditor extends CodeFileEditor {
 		//Check current line.
 		int currentLine = elements.lineOf(change.getPosition());
 		if (currentLine == -1) {
-			index(true);
+			index();
 			return;
 		}
 
@@ -172,10 +168,11 @@ public class MIPSFileEditor extends CodeFileEditor {
 		int removedLines = StringUtils.charCount(removed, '\n', '\r');
 
 		if (removedLines == 0 && addedLines == 0) {
-			if(refresh) {
+			if (refresh && elements.getFilesToAssemble().isPresent()) {
 				elements.getFilesToAssemble().ifPresent(MIPSFilesToAssemble::refreshGlobalLabels);
+			} else {
+				elements.update(this);
 			}
-			elements.styleLines(this, currentLine, 1);
 			return;
 		}
 
@@ -198,20 +195,16 @@ public class MIPSFileEditor extends CodeFileEditor {
 			}
 		}
 
-		if(refresh) {
+		if (refresh && elements.getFilesToAssemble().isPresent()) {
 			elements.getFilesToAssemble().ifPresent(MIPSFilesToAssemble::refreshGlobalLabels);
+		} else {
+			elements.update(this);
 		}
-
-		elements.styleLines(this, currentLine - 1, 1 + editedLines + linesToAdd);
 	}
 
-	private void index(boolean refresh) {
-		if (refresh) {
-			elements.refreshAll(getText());
-		}
-
-		//elements.searchGeneralErrors(getTab().getWorkingPane());
-		elements.updateAndStyleAll(this);
+	private void index() {
+		elements.refreshAll(getText());
+		elements.styleAll(this);
 	}
 
 	private void initializePopupListeners() {

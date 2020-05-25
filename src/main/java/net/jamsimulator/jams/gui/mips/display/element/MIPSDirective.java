@@ -78,7 +78,7 @@ public class MIPSDirective extends MIPSCodeElement {
 		if (project == null) return;
 
 		DirectiveSet set = project.getData().getDirectiveSet();
-		Directive directive = set.getDirective(text.substring(1)).orElse(null);
+		Directive directive = set.getDirective(this.directive.substring(1)).orElse(null);
 		if (directive == null) {
 			errors.add(MIPSEditorError.DIRECTIVE_NOT_FOUND);
 		}
@@ -105,5 +105,7 @@ public class MIPSDirective extends MIPSCodeElement {
 					startIndex + entry.getKey(),
 					startIndex + entry.getKey() + entry.getValue().length(), entry.getValue()));
 		}
+
+		startIndex += first.getKey();
 	}
 }
