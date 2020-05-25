@@ -102,6 +102,9 @@ AnchorPane {
     -fx-font-size: 14px;
 }
 
+.tab-pane .tab-header-area .tab-close-button {
+    -fx-background-color: -theme-foreground;
+}
 
 .tab-pane .headers-region {
     -fx-background-color: -theme-background;
