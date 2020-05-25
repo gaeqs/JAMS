@@ -26,14 +26,15 @@ package net.jamsimulator.jams.project.mips;
 
 import javafx.application.Platform;
 import javafx.scene.Node;
+import net.jamsimulator.jams.collection.Bag;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditorHolder;
-import net.jamsimulator.jams.gui.editor.FileEditorTabList;
 import net.jamsimulator.jams.gui.editor.FileEditorTab;
-import net.jamsimulator.jams.gui.mips.display.MipsFileEditor;
-import net.jamsimulator.jams.gui.mips.display.element.MipsFileElements;
+import net.jamsimulator.jams.gui.editor.FileEditorTabList;
+import net.jamsimulator.jams.gui.mips.display.MIPSFileEditor;
+import net.jamsimulator.jams.gui.mips.display.element.MIPSFileElements;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
 import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
@@ -48,26 +49,26 @@ import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class MipsFilesToAssemble extends SimpleEventBroadcast {
+public class MIPSFilesToAssemble extends SimpleEventBroadcast {
 
 	public static final String FILE_NAME = "files_to_assemble.json";
 
 	private final MipsProject project;
-	private final Map<File, MipsFileElements> files;
-	private final List<String> globalLabels;
+	private final Map<File, MIPSFileElements> files;
+	private final Bag<String> globalLabels;
 
-	public MipsFilesToAssemble(MipsProject project) {
+	public MIPSFilesToAssemble(MipsProject project) {
 		this.project = project;
 		files = new HashMap<>();
-		globalLabels = new ArrayList<>();
+		globalLabels = new Bag<>();
 	}
 
-	public Optional<MipsFileElements> getFileElements(File file) {
+	public Optional<MIPSFileElements> getFileElements(File file) {
 		return Optional.ofNullable(files.get(file));
 	}
 
-	public List<String> getGlobalLabels() {
-		return Collections.unmodifiableList(globalLabels);
+	public Bag<String> getGlobalLabels() {
+		return globalLabels;
 	}
 
 	public Set<File> getFiles() {
@@ -81,7 +82,8 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 		FileAddToAssembleEvent.Before before = callEvent(new FileAddToAssembleEvent.Before(file));
 		if (before.isCancelled()) return;
 
-		MipsFileElements elements = new MipsFileElements(file, project);
+		MIPSFileElements elements = new MIPSFileElements(project);
+		elements.setFilesToAssemble(this);
 
 		try {
 			List<String> lines = Files.readAllLines(file.toPath());
@@ -95,19 +97,20 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 				text = text.substring(0, text.length() - 1);
 			}
 
-			elements.refreshAll(text, null);
+			elements.refreshAll(text);
 			files.put(file, elements);
 
 			if (refreshGlobalLabels) {
 				refreshGlobalLabels();
 			}
+
 			callEvent(new FileAddToAssembleEvent.After(file));
 		} catch (IOException ex) {
 			throw new RuntimeException(ex);
 		}
 	}
 
-	public void addFile(File file, MipsFileElements elements, boolean refreshGlobalLabels) {
+	public void addFile(File file, MIPSFileElements elements, boolean refreshGlobalLabels) {
 		Validate.notNull(file, "File cannot be null!");
 		Validate.notNull(elements, "Elements cannot be null!");
 
@@ -116,7 +119,7 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 
 		if (files.containsKey(file)) return;
 		files.put(file, elements);
-
+		elements.setFilesToAssemble(this);
 
 		if (refreshGlobalLabels) {
 			refreshGlobalLabels();
@@ -130,11 +133,11 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 		Validate.notNull(holder, "List cannot be null!");
 
 		Optional<FileEditorTab> tab = holder.getFileDisplayTab(file, true);
-		if (!tab.isPresent() || !(tab.get().getDisplay() instanceof MipsFileEditor)) {
+		if (!tab.isPresent() || !(tab.get().getDisplay() instanceof MIPSFileEditor)) {
 			addFile(file, refreshGlobalLabels);
 			return;
 		}
-		addFile(file, ((MipsFileEditor) tab.get().getDisplay()).getElements(), refreshGlobalLabels);
+		addFile(file, ((MIPSFileEditor) tab.get().getDisplay()).getElements(), refreshGlobalLabels);
 	}
 
 	public void removeFile(File file) {
@@ -144,36 +147,41 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 		if (before.isCancelled()) return;
 
 		if (!files.containsKey(file)) return;
-		MipsFileElements elements = files.remove(file);
+		MIPSFileElements elements = files.remove(file);
+		elements.setFilesToAssemble(null);
 		refreshDeletedDisplay(file, elements);
+
 		refreshGlobalLabels();
 
 		callEvent(new FileRemoveFromAssembleEvent.After(file));
 	}
 
 	public void refreshGlobalLabels() {
+		Set<String> toUpdate = new HashSet<>(globalLabels);
+
 		globalLabels.clear();
-		for (MipsFileElements elements : files.values()) {
+		for (MIPSFileElements elements : files.values()) {
 			globalLabels.addAll(elements.getExistingGlobalLabels());
 		}
 
+		toUpdate.addAll(globalLabels);
+
 		ProjectTab tab = JamsApplication.getProjectsTabPane().getProjectTab(project).orElse(null);
+
 		if (tab == null) return;
 		Node node = tab.getProjectTabPane().getWorkingPane().getCenter();
-		if (!(node instanceof FileEditorTabList)) return;
-		FileEditorTabList list = (FileEditorTabList) node;
+		if (!(node instanceof FileEditorHolder)) return;
+		FileEditorHolder holder = (FileEditorHolder) node;
 
 		files.forEach((file, elements) -> {
-			Optional<FileEditorTab> fTab = list.getFileDisplayTab(file);
+			elements.searchForUpdates(toUpdate);
+			Optional<FileEditorTab> fTab = holder.getFileDisplayTab(file, true);
 			if (fTab.isPresent()) {
 				FileEditor display = fTab.get().getDisplay();
-				if (display instanceof MipsFileEditor) {
-					((MipsFileEditor) display).refreshGlobalLabelErrorsAndParameters();
-					return;
+				if (display instanceof MIPSFileEditor) {
+					elements.update(((MIPSFileEditor) display));
 				}
 			}
-			//If the display is not present, just update the elements.
-			elements.refreshGlobalLabelsChanges();
 		});
 	}
 
@@ -211,22 +219,21 @@ public class MipsFilesToAssemble extends SimpleEventBroadcast {
 		}
 	}
 
-	private void refreshDeletedDisplay(File file, MipsFileElements elements) {
+	private void refreshDeletedDisplay(File file, MIPSFileElements elements) {
 		ProjectTab tab = JamsApplication.getProjectsTabPane().getProjectTab(project).orElse(null);
 		if (tab == null) return;
 		Node node = tab.getProjectTabPane().getWorkingPane().getCenter();
-		if (!(node instanceof FileEditorTabList)) return;
-		FileEditorTabList list = (FileEditorTabList) node;
+		if (!(node instanceof FileEditorHolder)) return;
+		FileEditorHolder holder = (FileEditorHolder) node;
 
-		Optional<FileEditorTab> fTab = list.getFileDisplayTab(file);
+		Optional<FileEditorTab> fTab = holder.getFileDisplayTab(file, true);
+
+		elements.searchForUpdates(globalLabels);
 		if (fTab.isPresent()) {
 			FileEditor display = fTab.get().getDisplay();
-			if (display instanceof MipsFileEditor) {
-				((MipsFileEditor) display).refreshGlobalLabelErrorsAndParameters();
-				return;
+			if (display instanceof MIPSFileEditor) {
+				elements.update(((MIPSFileEditor) display));
 			}
-		} else {
-			elements.refreshGlobalLabelsChanges();
 		}
 	}
 }

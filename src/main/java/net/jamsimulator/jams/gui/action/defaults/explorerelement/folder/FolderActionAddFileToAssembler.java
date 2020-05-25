@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.action.defaults.explorerelement.folder;
 
-import javafx.scene.Node;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.file.AssemblyFileType;
@@ -41,7 +40,7 @@ import net.jamsimulator.jams.gui.mips.project.MipsWorkingPane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.Project;
-import net.jamsimulator.jams.project.mips.MipsFilesToAssemble;
+import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MipsProject;
 
 import java.util.List;
@@ -74,7 +73,7 @@ public class FolderActionAddFileToAssembler extends ContextAction {
 		if (tab == null) return;
 		Project project = tab.getProject();
 		if (!(project instanceof MipsProject)) return;
-		MipsFilesToAssemble files = ((MipsProject) project).getData().getFilesToAssemble();
+		MIPSFilesToAssemble files = ((MipsProject) project).getData().getFilesToAssemble();
 		WorkingPane pane = tab.getProjectTabPane().getWorkingPane();
 		if (!(pane instanceof MipsWorkingPane)) return;
 
@@ -94,7 +93,7 @@ public class FolderActionAddFileToAssembler extends ContextAction {
 		if (tab == null) return false;
 		Project project = tab.getProject();
 		if (!(project instanceof MipsProject)) return false;
-		MipsFilesToAssemble files = ((MipsProject) project).getData().getFilesToAssemble();
+		MIPSFilesToAssemble files = ((MipsProject) project).getData().getFilesToAssemble();
 
 		boolean allPresent = true;
 		for (ExplorerElement element : elements) {

@@ -22,20 +22,45 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.utils;
+package net.jamsimulator.jams.gui.mips.display.element;
+
+import net.jamsimulator.jams.gui.mips.display.MIPSEditorError;
+import net.jamsimulator.jams.utils.NumericUtils;
+import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class LabelUtils {
+public class MIPSDirectiveParameter extends MIPSCodeElement {
 
-	private static final List<String> illegalCharacters = Arrays.asList(" ", ",", "/", "\\", ";", "!", "|", "\"", "@",
-			"·", "#", "~", "½", "&", "¬", "(", ")", "[", "]", "{", "}", "=", "'", "=", "?", "¿", "^", "*",
-			"+", "´", "¨");
+	private final boolean string;
 
-	public static boolean isLabelLegal(String label) {
-		if (label.isEmpty()) return false;
-		return illegalCharacters.stream().noneMatch(label::contains);
+	public MIPSDirectiveParameter(int startIndex, int endIndex, String text) {
+		super(startIndex, endIndex, text);
+		this.string = StringUtils.isStringOrChar(text);
+	}
+
+	@Override
+	public String getSimpleText() {
+		return text;
+	}
+
+	@Override
+	public List<String> getStyles() {
+		String style = string ? "mips-directive-parameter-string" : "mips-directive-parameter";
+		if (hasErrors()) return Arrays.asList(style, "mips-error");
+		return Collections.singletonList(style);
+	}
+
+	@Override
+	public void refreshMetadata(MIPSFileElements elements) {
+		errors.clear();
+		if (string || NumericUtils.isInteger(text)) return;
+
+		if (!elements.getLabels().contains(text)) {
+			errors.add(MIPSEditorError.LABEL_NOT_FOUND);
+		}
 	}
 
 }

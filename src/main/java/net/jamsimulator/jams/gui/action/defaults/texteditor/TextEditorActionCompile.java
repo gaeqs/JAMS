@@ -29,7 +29,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.mips.display.MipsFileEditor;
+import net.jamsimulator.jams.gui.mips.display.MIPSFileEditor;
 import net.jamsimulator.jams.gui.mips.project.MipsWorkingPane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
@@ -56,8 +56,8 @@ public class TextEditorActionCompile extends Action {
 	@Override
 	public void run(Object node) {
 		try {
-			if (node instanceof MipsFileEditor) {
-				MipsProject project = ((MipsFileEditor) node).getProject().orElse(null);
+			if (node instanceof MIPSFileEditor) {
+				MipsProject project = ((MIPSFileEditor) node).getProject().orElse(null);
 				if (project == null) return;
 
 				ProjectTab tab = project.getProjectTab().orElse(null);

@@ -24,9 +24,8 @@
 
 package net.jamsimulator.jams.gui.mips.display.element;
 
-import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.main.WorkingPane;
-import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
+import net.jamsimulator.jams.gui.mips.display.MIPSEditorError;
+import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MipsProject;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.StringUtils;
@@ -35,27 +34,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class DisplayInstructionParameterPart extends MipsCodeElement {
+public class MIPSInstructionParameterPart extends MIPSCodeElement {
 
-	private final DisplayInstruction instruction;
-	private final int instructionIndex;
 	private InstructionParameterPartType type;
 
-	public DisplayInstructionParameterPart(DisplayInstruction instruction, int instructionIndex,
-										   int startIndex, int endIndex, String text,
-										   InstructionParameterPartType type) {
+	public MIPSInstructionParameterPart(MIPSFileElements elements, int startIndex, int endIndex, String text) {
 		super(startIndex, endIndex, text);
-		this.instruction = instruction;
-		this.instructionIndex = instructionIndex;
-		this.type = type;
-	}
-
-	public DisplayInstruction getInstruction() {
-		return instruction;
-	}
-
-	public int getInstructionIndex() {
-		return instructionIndex;
+		this.type = InstructionParameterPartType.getByString(text, elements.getProject().orElse(null));
 	}
 
 	public InstructionParameterPartType getType() {
@@ -63,8 +48,8 @@ public class DisplayInstructionParameterPart extends MipsCodeElement {
 	}
 
 	@Override
-	public String getText() {
-		return super.getText();
+	public String getSimpleText() {
+		return text;
 	}
 
 	@Override
@@ -74,32 +59,25 @@ public class DisplayInstructionParameterPart extends MipsCodeElement {
 	}
 
 	@Override
-	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
+	public void refreshMetadata(MIPSFileElements elements) {
 		errors.clear();
-		if (type == InstructionParameterPartType.LABEL) {
-			if (!elements.hasLabel(text)) {
-				errors.add(MipsDisplayError.LABEL_NOT_FOUND);
-				type = InstructionParameterPartType.LABEL;
-			}
-		}
-	}
+		if (type != InstructionParameterPartType.LABEL && type != InstructionParameterPartType.GLOBAL_LABEL) return;
 
-	public boolean searchLabelErrors(List<String> labels, List<String> globalLabels) {
-		if (type != InstructionParameterPartType.LABEL && type != InstructionParameterPartType.GLOBAL_LABEL)
-			return false;
+		MIPSFilesToAssemble filesToAssemble = elements.getFilesToAssemble().orElse(null);
 
-		boolean inGlobal = globalLabels.contains(text);
-		boolean changed = type == InstructionParameterPartType.GLOBAL_LABEL != inGlobal;
-		type = inGlobal ? InstructionParameterPartType.GLOBAL_LABEL : InstructionParameterPartType.LABEL;
-
-		if (inGlobal || labels.contains(text)) {
-			if (!errors.contains(MipsDisplayError.LABEL_NOT_FOUND)) return changed;
-			errors.remove(MipsDisplayError.LABEL_NOT_FOUND);
+		boolean containsLocal = elements.getLabels().contains(text);
+		boolean isGlobal;
+		if (filesToAssemble == null) {
+			isGlobal = containsLocal && elements.getSetAsGlobalLabel().contains(text);
 		} else {
-			if (errors.contains(MipsDisplayError.LABEL_NOT_FOUND)) return changed;
-			errors.add(MipsDisplayError.LABEL_NOT_FOUND);
+			isGlobal = filesToAssemble.getGlobalLabels().contains(text);
 		}
-		return true;
+
+		type = isGlobal ? InstructionParameterPartType.GLOBAL_LABEL : InstructionParameterPartType.LABEL;
+
+		if (!containsLocal && !isGlobal) {
+			errors.add(MIPSEditorError.LABEL_NOT_FOUND);
+		}
 	}
 
 	public enum InstructionParameterPartType {
@@ -132,10 +110,5 @@ public class DisplayInstructionParameterPart extends MipsCodeElement {
 			if (StringUtils.isStringOrChar(string)) return STRING;
 			return LABEL;
 		}
-	}
-
-	@Override
-	public void populatePopup(VBox popup) {
-		populatePopupWithErrors(popup);
 	}
 }

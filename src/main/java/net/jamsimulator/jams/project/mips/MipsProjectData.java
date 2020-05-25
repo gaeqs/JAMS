@@ -25,8 +25,6 @@
 package net.jamsimulator.jams.project.mips;
 
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.configuration.Configuration;
-import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
@@ -35,13 +33,8 @@ import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 import net.jamsimulator.jams.project.ProjectData;
 import net.jamsimulator.jams.utils.Validate;
-import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
-import java.nio.file.Files;
 import java.util.Optional;
 
 public class MipsProjectData extends ProjectData {
@@ -53,11 +46,11 @@ public class MipsProjectData extends ProjectData {
 	protected DirectiveSet directiveSet;
 	protected InstructionSet instructionSet;
 
-	protected final MipsFilesToAssemble filesToAssemble;
+	protected final MIPSFilesToAssemble filesToAssemble;
 
 	public MipsProjectData(MipsProject project) {
 		super(project.getFolder());
-		filesToAssemble = new MipsFilesToAssemble(project);
+		filesToAssemble = new MIPSFilesToAssemble(project);
 	}
 
 	public Architecture getArchitecture() {
@@ -84,7 +77,7 @@ public class MipsProjectData extends ProjectData {
 		return instructionSet;
 	}
 
-	public MipsFilesToAssemble getFilesToAssemble() {
+	public MIPSFilesToAssemble getFilesToAssemble() {
 		return filesToAssemble;
 	}
 

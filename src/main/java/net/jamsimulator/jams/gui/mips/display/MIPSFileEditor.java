@@ -32,11 +32,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditorTab;
-import net.jamsimulator.jams.gui.mips.display.element.DisplayLabel;
-import net.jamsimulator.jams.gui.mips.display.element.MipsCodeElement;
-import net.jamsimulator.jams.gui.mips.display.element.MipsFileElements;
-import net.jamsimulator.jams.gui.mips.display.element.MipsLine;
+import net.jamsimulator.jams.gui.mips.display.element.MIPSCodeElement;
+import net.jamsimulator.jams.gui.mips.display.element.MIPSFileElements;
+import net.jamsimulator.jams.gui.mips.display.element.MIPSLabel;
+import net.jamsimulator.jams.gui.mips.display.element.MIPSLine;
 import net.jamsimulator.jams.gui.mips.project.MipsWorkingPane;
+import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MipsProject;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.event.MouseOverTextEvent;
@@ -44,12 +45,11 @@ import org.fxmisc.richtext.model.PlainTextChange;
 import org.reactfx.Subscription;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Optional;
 
-public class MipsFileEditor extends CodeFileEditor {
+public class MIPSFileEditor extends CodeFileEditor {
 
-	private final MipsFileElements elements;
+	private final MIPSFileElements elements;
 
 	private final Popup popup;
 	private final VBox popupVBox;
@@ -57,52 +57,43 @@ public class MipsFileEditor extends CodeFileEditor {
 
 	private Subscription subscription;
 
-	public MipsFileEditor(FileEditorTab tab) {
+	public MIPSFileEditor(FileEditorTab tab) {
 		super(tab);
 
 		popup = new Popup();
 		popupVBox = new VBox();
 		popupVBox.getStyleClass().add("mips-popup");
 		popup.getContent().add(popupVBox);
-
-		boolean elementsAlreadyLoaded = false;
-
 		if (tab.getWorkingPane() instanceof MipsWorkingPane) {
 			project = ((MipsWorkingPane) tab.getWorkingPane()).getProject();
-			Optional<MipsFileElements> elementsOptional = project.getData().getFilesToAssemble().getFileElements(tab.getFile());
-			elements = elementsOptional.orElseGet(() -> new MipsFileElements(tab.getFile(), project));
-			elementsAlreadyLoaded = elementsOptional.isPresent();
+			Optional<MIPSFileElements> elementsOptional = project.getData().getFilesToAssemble().getFileElements(tab.getFile());
+			elements = elementsOptional.orElseGet(() -> new MIPSFileElements(project));
 		} else {
 			project = null;
-			elements = new MipsFileElements(tab.getFile(), null);
+			elements = new MIPSFileElements(null);
 		}
 
-		autocompletionPopup = new MipsAutocompletionPopup(this);
+		autocompletionPopup = new MIPSAutocompletionPopup(this);
 
 		initializePopupListeners();
 		applyLabelTabRemover();
 
 		subscription = multiPlainChanges().subscribe(event -> event.forEach(this::index));
-		index(!elementsAlreadyLoaded);
+		index();
 	}
 
 	public Optional<MipsProject> getProject() {
 		return Optional.ofNullable(project);
 	}
 
-	public MipsFileElements getElements() {
+	public MIPSFileElements getElements() {
 		return elements;
-	}
-
-
-	public void refreshGlobalLabelErrorsAndParameters() {
-		elements.styleLines(this, elements.refreshGlobalLabelsChanges());
 	}
 
 	@Override
 	public void reformat() {
 		subscription.unsubscribe();
-		String reformattedCode = elements.getReformattedCode();
+		String reformattedCode = getText(); //elements.getReformattedCode();
 		String text = getText();
 		if (reformattedCode.equals(text)) return;
 		int line = getCurrentParagraph();
@@ -122,7 +113,7 @@ public class MipsFileEditor extends CodeFileEditor {
 		toPixel = Math.max(0, Math.min(height, toPixel));
 
 		scrollPane.scrollYBy(toPixel);
-		index(true);
+		index();
 		subscription = multiPlainChanges().subscribe(event -> event.forEach(this::index));
 	}
 
@@ -130,100 +121,6 @@ public class MipsFileEditor extends CodeFileEditor {
 	public void onClose() {
 		super.onClose();
 		subscription.unsubscribe();
-	}
-
-	private void index(PlainTextChange change) {
-		String added = change.getInserted();
-		String removed = change.getRemoved();
-
-		//Check current line.
-		int currentLine = elements.lineOf(change.getPosition());
-		if (currentLine == -1) {
-			index(true);
-			return;
-		}
-
-		boolean refreshGlobalLabels = elements.editLine(currentLine, getParagraph(currentLine).getText());
-
-		//Check next lines.
-		int addedLines = StringUtils.charCount(added, '\n', '\r');
-		int removedLines = StringUtils.charCount(removed, '\n', '\r');
-
-		if (removedLines == 0 && addedLines == 0) {
-			elements.searchGeneralErrors(getTab().getWorkingPane(), currentLine, 1);
-			elements.styleLines(this, elements.searchLabelErrors());
-			elements.styleLines(this, currentLine, 1);
-
-			if (refreshGlobalLabels) {
-				refreshGlobalLabels();
-			}
-			return;
-		}
-
-
-		currentLine++;
-		int editedLines = Math.min(addedLines, removedLines);
-		int linesToAdd = Math.max(0, addedLines - removedLines);
-		int linesToRemove = Math.max(0, removedLines - addedLines);
-
-		for (int i = 0; i < editedLines; i++) {
-			refreshGlobalLabels |= elements.editLine(currentLine + i, getParagraph(currentLine + i).getText());
-		}
-
-		if (linesToRemove > 0) {
-			for (int i = 0; i < linesToRemove; i++) {
-				refreshGlobalLabels |= elements.removeLine(currentLine + editedLines);
-			}
-		} else if (linesToAdd > 0) {
-			for (int i = 0; i < linesToAdd; i++) {
-				refreshGlobalLabels |= elements.addLine(currentLine + i + editedLines,
-						getParagraph(currentLine + i + editedLines).getText());
-			}
-		}
-
-		elements.searchGeneralErrors(getTab().getWorkingPane(), currentLine - 1, 1 + editedLines + linesToAdd);
-		elements.styleLines(this, elements.searchLabelErrors());
-		elements.styleLines(this, currentLine - 1, 1 + editedLines + linesToAdd);
-
-		if (refreshGlobalLabels) {
-			refreshGlobalLabels();
-		}
-	}
-
-
-	private void refreshGlobalLabels() {
-		if (project.getData().getFilesToAssemble().getFiles().contains(tab.getFile())) {
-			project.getData().getFilesToAssemble().refreshGlobalLabels();
-		} else {
-			refreshGlobalLabelErrorsAndParameters();
-		}
-	}
-
-	private void index(boolean refresh) {
-		if(refresh) {
-			elements.refreshAll(getText(), getTab().getWorkingPane());
-		}
-		else {
-			elements.searchGeneralErrors(getTab().getWorkingPane());
-		}
-		List<MipsLine> lines = elements.getLines();
-		for (int i = 0; i < lines.size(); i++) {
-			lines.get(i).styleLine(this, i);
-		}
-	}
-
-	private void initializePopupListeners() {
-		setMouseOverTextDelay(Duration.ofMillis(300));
-		addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_BEGIN, event -> {
-			int index = event.getCharacterIndex();
-			Optional<MipsCodeElement> optional = elements.getElementAt(index);
-			if (!optional.isPresent()) return;
-			popupVBox.getChildren().clear();
-			optional.get().populatePopup(popupVBox);
-			Point2D position = event.getScreenPosition();
-			popup.show(this, position.getX(), position.getY() + 10);
-		});
-		addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_END, event -> popup.hide());
 	}
 
 	@Override
@@ -235,9 +132,9 @@ public class MipsFileEditor extends CodeFileEditor {
 
 				String previous = getParagraph(currentParagraph - 1).getSegments().get(0);
 
-				MipsLine line = elements.getLines().get(currentParagraph - 1);
+				MIPSLine line = elements.getLines().get(currentParagraph - 1);
 				if (line.getLabel().isPresent()) {
-					DisplayLabel label = line.getLabel().get();
+					MIPSLabel label = line.getLabel().get();
 					previous = previous.substring(label.getText().length());
 				}
 
@@ -252,15 +149,87 @@ public class MipsFileEditor extends CodeFileEditor {
 		});
 	}
 
+
+	private void index(PlainTextChange change) {
+		String added = change.getInserted();
+		String removed = change.getRemoved();
+
+		//Check current line.
+		int currentLine = elements.lineOf(change.getPosition());
+		if (currentLine == -1) {
+			index();
+			return;
+		}
+
+		boolean refresh = elements.editLine(currentLine, getParagraph(currentLine).getText());
+
+		//Check next lines.
+		int addedLines = StringUtils.charCount(added, '\n', '\r');
+		int removedLines = StringUtils.charCount(removed, '\n', '\r');
+
+		if (removedLines == 0 && addedLines == 0) {
+			if (refresh && elements.getFilesToAssemble().isPresent()) {
+				elements.getFilesToAssemble().ifPresent(MIPSFilesToAssemble::refreshGlobalLabels);
+			} else {
+				elements.update(this);
+			}
+			return;
+		}
+
+		currentLine++;
+		int editedLines = Math.min(addedLines, removedLines);
+		int linesToAdd = Math.max(0, addedLines - removedLines);
+		int linesToRemove = Math.max(0, removedLines - addedLines);
+
+		for (int i = 0; i < editedLines; i++) {
+			refresh |= elements.editLine(currentLine + i, getParagraph(currentLine + i).getText());
+		}
+
+		if (linesToRemove > 0) {
+			for (int i = 0; i < linesToRemove; i++) {
+				refresh |= elements.removeLine(currentLine + editedLines);
+			}
+		} else if (linesToAdd > 0) {
+			for (int i = 0; i < linesToAdd; i++) {
+				refresh |= elements.addLine(currentLine + i + editedLines, getParagraph(currentLine + i + editedLines).getText());
+			}
+		}
+
+		if (refresh && elements.getFilesToAssemble().isPresent()) {
+			elements.getFilesToAssemble().ifPresent(MIPSFilesToAssemble::refreshGlobalLabels);
+		} else {
+			elements.update(this);
+		}
+	}
+
+	private void index() {
+		elements.refreshAll(getText());
+		elements.styleAll(this);
+	}
+
+	private void initializePopupListeners() {
+		setMouseOverTextDelay(Duration.ofMillis(300));
+		addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_BEGIN, event -> {
+			int index = event.getCharacterIndex();
+			Optional<MIPSCodeElement> optional = elements.getElementAt(index);
+			if (!optional.isPresent()) return;
+			popupVBox.getChildren().clear();
+			optional.get().populatePopupWithErrors(popupVBox);
+			Point2D position = event.getScreenPosition();
+			popup.show(this, position.getX(), position.getY() + 10);
+		});
+		addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_END, event -> popup.hide());
+	}
+
 	private void applyLabelTabRemover() {
 		addEventHandler(KeyEvent.KEY_TYPED, event -> {
 			if (event.getCharacter().equals(":")) {
 				int caretPosition = getCaretPosition();
 				int currentParagraph = getCurrentParagraph();
-				MipsLine line = elements.getLines().get(currentParagraph);
+				MIPSLine line = elements.getLines().get(currentParagraph);
 
 				if (!line.getLabel().isPresent()) return;
-				DisplayLabel label = line.getLabel().get();
+				MIPSLabel label = line.getLabel().get();
 				if (label.getEndIndex() != caretPosition - 1) return;
 
 				String text = label.getText();
