@@ -24,48 +24,45 @@
 
 package net.jamsimulator.jams.gui.mips.display.element;
 
-import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.main.WorkingPane;
-import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
-import net.jamsimulator.jams.gui.mips.project.MipsWorkingPane;
+import net.jamsimulator.jams.gui.mips.display.MIPSEditorError;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.utils.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class DisplayInstruction extends MipsCodeElement {
+public class MIPSInstruction extends MIPSCodeElement {
 
-	private final List<InstructionParameter> parameters;
+	private String instruction;
+	private final List<MIPSInstructionParameter> parameters;
+	private final Set<String> usedLabels;
 
-	public DisplayInstruction(int startIndex, int endIndex, String text) {
+	public MIPSInstruction(MIPSFileElements elements, int startIndex, int endIndex, String text) {
 		super(startIndex, endIndex, text);
 		this.parameters = new ArrayList<>();
+		parseText(elements);
+
+		usedLabels = new HashSet<>();
+		for (MIPSInstructionParameter parameter : parameters) {
+			parameter.getLabelParameterPart().ifPresent(usedLabels::add);
+		}
 	}
 
-	public List<InstructionParameter> getParameters() {
+	@Override
+	public String getSimpleText() {
+		return instruction;
+	}
+
+	public List<MIPSInstructionParameter> getParameters() {
 		return parameters;
 	}
 
-	public void addParameter(InstructionParameter parameter) {
-		parameters.add(parameter);
-	}
-
-	public void appendReformattedCode(StringBuilder builder) {
-		builder.append(text);
-
-		boolean first = true;
-		builder.append(' ');
-		for (InstructionParameter parameter : parameters) {
-			if (first) first = false;
-			else builder.append(", ");
-			builder.append(parameter.getText());
-		}
+	public Set<String> getUsedLabels() {
+		return usedLabels;
 	}
 
 	@Override
@@ -76,42 +73,45 @@ public class DisplayInstruction extends MipsCodeElement {
 
 	@Override
 	public List<String> getStyles() {
-		if (hasErrors()) return Arrays.asList("mips-instruction", "mips-error");
 		return Collections.singletonList("mips-instruction");
 	}
 
 	@Override
-	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
+	public void refreshMetadata(MIPSFileElements elements) {
 		errors.clear();
-		if (!(pane instanceof MipsWorkingPane)) return;
-		MipsProject project = ((MipsWorkingPane) pane).getProject();
+
+		MipsProject project = elements.getProject().orElse(null);
 		InstructionSet set = project.getData().getInstructionSet();
 
 		RegistersBuilder builder = project.getData().getRegistersBuilder();
 		List<ParameterType>[] types = new List[parameters.size()];
 
 		for (int i = 0; i < parameters.size(); i++) {
-			types[i] = parameters.get(i).checkGlobalErrors(builder);
+			types[i] = parameters.get(i).refreshMetadata(builder);
 		}
 
 		Instruction instruction = set.getBestCompatibleInstruction(text, types).orElse(null);
 		if (instruction == null) {
-			errors.add(MipsDisplayError.INSTRUCTION_NOT_FOUND);
+			errors.add(MIPSEditorError.INSTRUCTION_NOT_FOUND);
 		}
-
 	}
 
-	@Override
-	public void populatePopup(VBox popup) {
-		populatePopupWithErrors(popup);
-	}
+	private void parseText(MIPSFileElements elements) {
+		Map<Integer, String> parts = StringUtils.multiSplitIgnoreInsideStringWithIndex(text, false, " ", ",", "\t");
+		if (parts.isEmpty()) return;
 
-	public boolean searchLabelErrors(List<String> labels, List<String> globalLabels) {
-		boolean updated = false;
+		//Sorts all entries by their indices.
+		List<Map.Entry<Integer, String>> stringParameters = parts.entrySet().stream()
+				.sorted(Comparator.comparingInt(Map.Entry::getKey)).collect(Collectors.toList());
 
-		for (InstructionParameter parameter : parameters) {
-			updated |= parameter.searchLabelErrors(labels, globalLabels);
+		//The first entry is the instruction itself.
+		Map.Entry<Integer, String> first = stringParameters.get(0);
+		instruction = first.getValue();
+		stringParameters.remove(0);
+
+		//Adds all parameters.
+		for (Map.Entry<Integer, String> entry : stringParameters) {
+			parameters.add(new MIPSInstructionParameter(elements, startIndex + entry.getKey(), entry.getValue()));
 		}
-		return updated;
 	}
 }

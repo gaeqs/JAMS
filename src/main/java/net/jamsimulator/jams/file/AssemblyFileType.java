@@ -27,7 +27,7 @@ package net.jamsimulator.jams.file;
 import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditorTab;
 import net.jamsimulator.jams.gui.image.icon.Icons;
-import net.jamsimulator.jams.gui.mips.display.MipsFileEditor;
+import net.jamsimulator.jams.gui.mips.display.MIPSFileEditor;
 
 public class AssemblyFileType extends FileType {
 
@@ -39,6 +39,6 @@ public class AssemblyFileType extends FileType {
 
 	@Override
 	public FileEditor createDisplayTab(FileEditorTab tab) {
-		return new MipsFileEditor(tab);
+		return new MIPSFileEditor(tab);
 	}
 }

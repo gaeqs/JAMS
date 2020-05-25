@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.action.defaults.explorerelement.mips.filestoassemble;
 
-import javafx.scene.Node;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
@@ -37,7 +36,7 @@ import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleDisplayElement;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.Project;
-import net.jamsimulator.jams.project.mips.MipsFilesToAssemble;
+import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MipsProject;
 
 import java.util.List;
@@ -66,7 +65,7 @@ public class MipsFilesToAssembleActionRemove extends ContextAction {
 		if (tab == null) return;
 		Project project = tab.getProject();
 		if (!(project instanceof MipsProject)) return;
-		MipsFilesToAssemble files = ((MipsProject) project).getData().getFilesToAssemble();
+		MIPSFilesToAssemble files = ((MipsProject) project).getData().getFilesToAssemble();
 
 		for (ExplorerElement element : elements) {
 			files.removeFile(((FilesToAssembleDisplayElement) element).getFile());

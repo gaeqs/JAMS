@@ -25,9 +25,9 @@
 package net.jamsimulator.jams.gui.mips.display;
 
 /**
- * This enum recollects all error that can be displayed by a {@link MipsFileEditor}.
+ * This enum recollects all error that can be displayed by a {@link MIPSFileEditor}.
  */
-public enum MipsDisplayError {
+public enum MIPSEditorError {
 
 	//LABELS
 

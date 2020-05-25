@@ -35,19 +35,19 @@ import net.jamsimulator.jams.project.mips.MipsProject;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class MipsAutocompletionPopup extends AutocompletionPopup {
+public class MIPSAutocompletionPopup extends AutocompletionPopup {
 
-	private final MipsFileElements mipsElements;
-	private MipsCodeElement element;
+	private final MIPSFileElements mipsElements;
+	private MIPSCodeElement element;
 
-	public MipsAutocompletionPopup(MipsFileEditor display) {
+	public MIPSAutocompletionPopup(MIPSFileEditor display) {
 		super(display);
 		this.mipsElements = display.getElements();
 	}
 
 	@Override
-	public MipsFileEditor getDisplay() {
-		return (MipsFileEditor) super.getDisplay();
+	public MIPSFileEditor getDisplay() {
+		return (MIPSFileEditor) super.getDisplay();
 	}
 
 	@Override
@@ -82,11 +82,11 @@ public class MipsAutocompletionPopup extends AutocompletionPopup {
 		elements.clear();
 		String start = element.getText().substring(0, Math.min(caretPosition - element.getStartIndex(), element.getText().length()));
 
-		if (element instanceof DisplayDirective)
+		if (element instanceof MIPSDirective)
 			start = refreshDirective(start);
-		else if (element instanceof DisplayInstruction)
+		else if (element instanceof MIPSInstruction)
 			start = refreshInstruction(start);
-		else if (element instanceof DisplayInstructionParameterPart)
+		else if (element instanceof MIPSInstructionParameterPart)
 			start = refreshDisplayInstructionParameterPart(start);
 
 		sortAndShowElements(start);
@@ -119,7 +119,7 @@ public class MipsAutocompletionPopup extends AutocompletionPopup {
 		MipsProject project = getDisplay().getProject().orElse(null);
 		if (project == null) return start;
 
-		switch (((DisplayInstructionParameterPart) element).getType()) {
+		switch (((MIPSInstructionParameterPart) element).getType()) {
 			case LABEL:
 			case GLOBAL_LABEL:
 				addElements(mipsElements.getLabels().stream().filter(target -> target.startsWith(start)), s -> s, s -> s);
@@ -146,7 +146,7 @@ public class MipsAutocompletionPopup extends AutocompletionPopup {
 
 		int caretPosition = display.getCaretPosition();
 		if (caretPosition == 0) return;
-		MipsCodeElement element = mipsElements.getElementAt(caretPosition - 1).orElse(null);
+		MIPSCodeElement element = mipsElements.getElementAt(caretPosition - 1).orElse(null);
 		if (element == null) return;
 		if (element.getText().substring(0, caretPosition - element.getStartIndex()).equals(replacement)) return;
 		display.replaceText(element.getStartIndex(), caretPosition, replacement);

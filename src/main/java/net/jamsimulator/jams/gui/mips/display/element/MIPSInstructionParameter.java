@@ -24,54 +24,58 @@
 
 package net.jamsimulator.jams.gui.mips.display.element;
 
-import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
+import net.jamsimulator.jams.gui.mips.display.MIPSEditorError;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
+import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-public class InstructionParameter {
+public class MIPSInstructionParameter {
 
 	private final String text;
-	private final DisplayInstruction instruction;
-	private final List<DisplayInstructionParameterPart> parts;
+	private final List<MIPSInstructionParameterPart> parts;
 
-	public InstructionParameter(String text, DisplayInstruction instruction) {
+	public MIPSInstructionParameter(MIPSFileElements elements, int start, String text) {
 		this.text = text;
-		this.instruction = instruction;
 		this.parts = new ArrayList<>();
+		parseText(start, elements);
 	}
 
 	public String getText() {
 		return text;
 	}
 
-	public DisplayInstruction getInstruction() {
-		return instruction;
-	}
-
-	public List<DisplayInstructionParameterPart> getParts() {
+	public List<MIPSInstructionParameterPart> getParts() {
 		return parts;
 	}
 
-	public void addPart(DisplayInstructionParameterPart part) {
-		parts.add(part);
+	public Optional<String> getLabelParameterPart() {
+		for (MIPSInstructionParameterPart part : parts) {
+			if (part.getType() == MIPSInstructionParameterPart.InstructionParameterPartType.LABEL
+					|| part.getType() == MIPSInstructionParameterPart.InstructionParameterPartType.GLOBAL_LABEL) {
+				return Optional.of(part.text);
+			}
+		}
+		return Optional.empty();
 	}
 
-	public List<ParameterType> checkGlobalErrors(RegistersBuilder builder) {
+	public List<ParameterType> refreshMetadata(RegistersBuilder builder) {
 		List<ParameterType> types = ParameterType.getCompatibleParameterTypes(text, builder);
-		if (types.isEmpty()) parts.forEach(target -> target.errors.add(MipsDisplayError.INVALID_INSTRUCTION_PARAMETER));
+		if (types.isEmpty()) parts.forEach(target -> target.errors.add(MIPSEditorError.INVALID_INSTRUCTION_PARAMETER));
 		return types;
 	}
 
-	public boolean searchLabelErrors(List<String> labels, List<String> globalLabels) {
-		boolean updated = false;
 
-		for (DisplayInstructionParameterPart part : parts) {
-			updated |= part.searchLabelErrors(labels, globalLabels);
-		}
-		return updated;
+	private void parseText(int start, MIPSFileElements elements) {
+		Map<Integer, String> parts = StringUtils.multiSplitIgnoreInsideStringWithIndex(text, false, "+", "(", ")");
+
+		//Adds all parts.
+		parts.forEach((index, string) -> this.parts.add(
+				new MIPSInstructionParameterPart(elements,
+						start + index, start + index + string.length(), string)));
 	}
 }

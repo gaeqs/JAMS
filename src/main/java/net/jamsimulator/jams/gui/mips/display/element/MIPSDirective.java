@@ -24,53 +24,38 @@
 
 package net.jamsimulator.jams.gui.mips.display.element;
 
-import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.main.WorkingPane;
-import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
-import net.jamsimulator.jams.gui.mips.project.MipsWorkingPane;
+import net.jamsimulator.jams.gui.mips.display.MIPSEditorError;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveGlobl;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.utils.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class DisplayDirective extends MipsCodeElement {
+public class MIPSDirective extends MIPSCodeElement {
 
-	protected final boolean globalLabelsParameter;
-	private final List<DisplayDirectiveParameter> parameters;
+	private String directive;
+	private final List<MIPSDirectiveParameter> parameters;
 
-	public DisplayDirective(int startIndex, int endIndex, String text) {
+	public MIPSDirective(int startIndex, int endIndex, String text) {
 		super(startIndex, endIndex, text);
 		parameters = new ArrayList<>();
-		globalLabelsParameter = text.trim().equals("." + DirectiveGlobl.NAME);
+		parseText();
 	}
 
-	public String getDirective() {
-		return text.substring(1);
+	@Override
+	public String getSimpleText() {
+		return directive;
 	}
 
-	public List<DisplayDirectiveParameter> getParameters() {
+	public List<MIPSDirectiveParameter> getParameters() {
 		return parameters;
 	}
 
-	public boolean isGlobalLabelsParameter() {
-		return globalLabelsParameter;
-	}
-
-	public void addParameter(DisplayDirectiveParameter parameter) {
-		parameters.add(parameter);
-	}
-
-	public void appendReformattedCode(StringBuilder builder) {
-		builder.append(text);
-		parameters.forEach(target -> {
-			builder.append(' ');
-			builder.append(target.text);
-		});
+	public boolean isGlobl() {
+		return directive.equalsIgnoreCase("." + DirectiveGlobl.NAME);
 	}
 
 	@Override
@@ -86,29 +71,39 @@ public class DisplayDirective extends MipsCodeElement {
 	}
 
 	@Override
-	public void searchErrors(WorkingPane pane, MipsFileElements elements) {
+	public void refreshMetadata(MIPSFileElements elements) {
 		errors.clear();
-		if (!(pane instanceof MipsWorkingPane)) return;
-		MipsProject project = ((MipsWorkingPane) pane).getProject();
-		DirectiveSet set = project.getData().getDirectiveSet();
 
+		MipsProject project = elements.getProject().orElse(null);
+		if (project == null) return;
+
+		DirectiveSet set = project.getData().getDirectiveSet();
 		Directive directive = set.getDirective(text.substring(1)).orElse(null);
 		if (directive == null) {
-			errors.add(MipsDisplayError.DIRECTIVE_NOT_FOUND);
+			errors.add(MIPSEditorError.DIRECTIVE_NOT_FOUND);
 		}
 	}
 
-	@Override
-	public void populatePopup(VBox popup) {
-		populatePopupWithErrors(popup);
-	}
 
-	public boolean searchLabelErrors(List<String> labels, List<String> globalLabels) {
-		boolean updated = false;
-		for (DisplayDirectiveParameter parameter : parameters) {
-			updated |= parameter.searchLabelErrors(labels, globalLabels);
+	private void parseText() {
+		Map<Integer, String> parts = StringUtils.multiSplitIgnoreInsideStringWithIndex(text, false, " ", ",", "\t");
+		if (parts.isEmpty()) return;
+
+		//Sorts all entries by their indices.
+		List<Map.Entry<Integer, String>> stringParameters = parts.entrySet().stream()
+				.sorted(Comparator.comparingInt(Map.Entry::getKey)).collect(Collectors.toList());
+
+		//The first entry is the directive itself.
+		Map.Entry<Integer, String> first = stringParameters.get(0);
+		directive = first.getValue();
+		stringParameters.remove(0);
+
+		//Adds all parameters.
+		MIPSDirectiveParameter parameter;
+		for (Map.Entry<Integer, String> entry : stringParameters) {
+			parameters.add(new MIPSDirectiveParameter(
+					startIndex + entry.getKey(),
+					startIndex + entry.getKey() + entry.getValue().length(), entry.getValue()));
 		}
-		return updated;
 	}
-
 }

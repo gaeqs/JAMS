@@ -27,25 +27,23 @@ package net.jamsimulator.jams.gui.mips.display.element;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.main.WorkingPane;
-import net.jamsimulator.jams.gui.mips.display.MipsDisplayError;
+import net.jamsimulator.jams.gui.mips.display.MIPSEditorError;
 import net.jamsimulator.jams.language.Language;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 /**
  * Represents a element inside a MIPS file.
  */
-public abstract class MipsCodeElement {
+public abstract class MIPSCodeElement {
 
 	protected int startIndex;
 	protected int endIndex;
 	protected final String text;
 
-	protected List<MipsDisplayError> errors;
+	protected List<MIPSEditorError> errors;
 
 	/**
 	 * Creates the element.
@@ -56,7 +54,7 @@ public abstract class MipsCodeElement {
 	 * @param endIndex   the end index.
 	 * @param text       the text.
 	 */
-	public MipsCodeElement(int startIndex, int endIndex, String text) {
+	public MIPSCodeElement(int startIndex, int endIndex, String text) {
 		if (startIndex > endIndex) {
 			throw new IllegalArgumentException("Start index (" + startIndex + ") is bigger than the end index (" + endIndex + ").");
 		}
@@ -104,23 +102,11 @@ public abstract class MipsCodeElement {
 	}
 
 	/**
-	 * Returns a unmodifiable {@link List} with all errors inside this element.
-	 * The method {@link #searchErrors(WorkingPane, MipsFileElements)} must be invoked before use this method.
+	 * Returns the text representing this element without any children.
 	 *
-	 * @return the {@link List}.
+	 * @return the text.
 	 */
-	public List<MipsDisplayError> getErrors() {
-		return Collections.unmodifiableList(errors);
-	}
-
-	/**
-	 * Returns whether this element has any {@link MipsDisplayError}.
-	 *
-	 * @return whether this element has any {@link MipsDisplayError}.
-	 */
-	public boolean hasErrors() {
-		return !errors.isEmpty();
-	}
+	public abstract String getSimpleText();
 
 	/**
 	 * Returns the styles to apply to this element.
@@ -130,12 +116,13 @@ public abstract class MipsCodeElement {
 	public abstract List<String> getStyles();
 
 	/**
-	 * Searches for error inside this element.
+	 * Returns whether this element has errors.
 	 *
-	 * @param pane     the {@link WorkingPane} where the file of this element is displayed.
-	 * @param elements the {@link MipsFileElements elements of the file}.
+	 * @return whether this element has errors.
 	 */
-	public abstract void searchErrors(WorkingPane pane, MipsFileElements elements);
+	public boolean hasErrors() {
+		return errors.isEmpty();
+	}
 
 	/**
 	 * Populates the given popup with the errors inside this element.
@@ -152,18 +139,19 @@ public abstract class MipsCodeElement {
 	}
 
 	/**
-	 * Populates the {@link VBox} inside the popup.
+	 * Refreshes the metadata of this element.
+	 * <p>
+	 * Metadata includes errors and global status for labels.
 	 *
-	 * @param popup the {@link VBox} inside the popup.
+	 * @param elements the {@link MIPSFileElements}.
 	 */
-	public abstract void populatePopup(VBox popup);
-
+	public abstract void refreshMetadata(MIPSFileElements elements);
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		MipsCodeElement that = (MipsCodeElement) o;
+		MIPSCodeElement that = (MIPSCodeElement) o;
 		return startIndex == that.startIndex &&
 				endIndex == that.endIndex;
 	}
@@ -175,7 +163,7 @@ public abstract class MipsCodeElement {
 
 	@Override
 	public String toString() {
-		return "MipsCodeElement{" +
+		return getClass().getSimpleName() + "{" +
 				"startIndex=" + startIndex +
 				", endIndex=" + endIndex +
 				", text='" + text + '\'' +
