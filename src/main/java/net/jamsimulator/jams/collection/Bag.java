@@ -33,9 +33,30 @@ public class Bag<E> implements Collection<E> {
 		return amount.remove(o) > 0;
 	}
 
+	/**
+	 * Returns the amount of elements inside this bag.
+	 * This only counts the types of elements, not their amount.
+	 * <p>
+	 * For example, if an instance of a Bag contains two elements "A" and one element "B",
+	 * this method returns "2".
+	 *
+	 * @return the amount of elements inside this bag.
+	 */
 	@Override
 	public int size() {
 		return amount.size();
+	}
+
+	/**
+	 * Returns the amount of elements inside this bag, including all elements of all types.
+	 * <p>
+	 * For example, if an instance of a Bag contains two elements "A" and one element "B",
+	 * this method returns "3".
+	 *
+	 * @return the amount of elements inside this bag.
+	 */
+	public int amount() {
+		return amount.values().stream().mapToInt(entry -> entry).sum();
 	}
 
 	@Override
@@ -94,6 +115,12 @@ public class Bag<E> implements Collection<E> {
 		return true;
 	}
 
+	/**
+	 * Removes one amount from all elements inside the given collection.
+	 *
+	 * @param c the collection.
+	 * @return whether this bag was modified.
+	 */
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		boolean removed = false;
@@ -103,6 +130,12 @@ public class Bag<E> implements Collection<E> {
 		return removed;
 	}
 
+	/**
+	 * Removes one amount from all elements that are not present in the given collection.
+	 *
+	 * @param c the collection.
+	 * @return whether this bag was modified.
+	 */
 	@Override
 	public boolean retainAll(Collection<?> c) {
 		Set<E> keys = new HashSet<>(amount.keySet());
@@ -110,7 +143,7 @@ public class Bag<E> implements Collection<E> {
 		boolean removed = false;
 		for (E key : keys) {
 			if (!c.contains(key)) {
-				removed |= remove(keys);
+				removed |= remove(key);
 			}
 		}
 
