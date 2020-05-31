@@ -40,6 +40,7 @@ import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowExplorer;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowSection;
 import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNode;
@@ -57,6 +58,7 @@ public class ConfigurationWindow extends SplitPane {
 	private static final int HEIGHT = 600;
 
 	private Stage stage;
+	private Scene scene;
 
 	private final RootConfiguration configuration;
 	private final Configuration meta;
@@ -158,7 +160,7 @@ public class ConfigurationWindow extends SplitPane {
 	public void open() {
 		if (stage == null) {
 			stage = new Stage();
-			Scene scene = new ThemedScene(this);
+			scene = new ThemedScene(this);
 			stage.initOwner(JamsApplication.getStage());
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setScene(scene);
@@ -185,6 +187,8 @@ public class ConfigurationWindow extends SplitPane {
 					e.printStackTrace();
 				}
 			});
+
+			JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);
 			Jams.getLanguageManager().registerListeners(this, true);
 		}
 
@@ -195,7 +199,23 @@ public class ConfigurationWindow extends SplitPane {
 	}
 
 	@Listener
-	public void onSelectedLanguageChange(SelectedLanguageChangeEvent.After event) {
+	private void onSelectedLanguageChange(SelectedLanguageChangeEvent.After event) {
 		stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.CONFIG));
+	}
+
+	@Listener
+	private void onActionBind(ActionBindEvent.After event) {
+		if (scene != null) {
+			JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);
+		}
+
+	}
+
+	@Listener
+	private void onActionUnbind(ActionBindEvent.After event) {
+		if (scene != null) {
+			JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);
+		}
+
 	}
 }
