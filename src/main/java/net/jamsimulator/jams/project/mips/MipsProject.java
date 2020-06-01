@@ -24,8 +24,8 @@
 
 package net.jamsimulator.jams.project.mips;
 
-import net.jamsimulator.jams.gui.main.WorkingPane;
-import net.jamsimulator.jams.gui.mips.project.MipsWorkingPane;
+import net.jamsimulator.jams.gui.project.WorkingPane;
+import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
@@ -84,8 +84,8 @@ public class MipsProject extends BasicProject {
 		data.save();
 		if (projectTab != null) {
 			WorkingPane pane = projectTab.getProjectTabPane().getWorkingPane();
-			if (pane instanceof MipsWorkingPane) {
-				((MipsWorkingPane) pane).getFileDisplayHolder().closeAll(true);
+			if (pane instanceof MipsStructurePane) {
+				((MipsStructurePane) pane).getFileDisplayHolder().closeAll(true);
 			}
 		}
 	}

@@ -29,13 +29,14 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.editor.FileEditorHolder;
 import net.jamsimulator.jams.gui.image.icon.Icons;
-import net.jamsimulator.jams.gui.main.WorkingPane;
 import net.jamsimulator.jams.gui.mips.explorer.MipsFolderExplorer;
 import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleDisplay;
 import net.jamsimulator.jams.gui.project.ProjectTab;
+import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.sidebar.SidebarButton;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.mips.MipsProject;
@@ -45,7 +46,7 @@ import java.io.File;
 /**
  * This class represent the working pane of a project.
  */
-public class MipsWorkingPane extends WorkingPane {
+public class MipsStructurePane extends WorkingPane {
 
 	protected final MipsProject project;
 	protected MipsFolderExplorer explorer;
@@ -58,7 +59,7 @@ public class MipsWorkingPane extends WorkingPane {
 	 * @param projectTab the {@link ProjectTab} of the project.
 	 * @param project    the {@link MipsProject} to handle.
 	 */
-	public MipsWorkingPane(Tab parent, ProjectTab projectTab, MipsProject project) {
+	public MipsStructurePane(Tab parent, ProjectTab projectTab, MipsProject project) {
 		super(parent, projectTab, null, false);
 		center = new FileEditorHolder(this);
 		this.project = project;
@@ -88,6 +89,15 @@ public class MipsWorkingPane extends WorkingPane {
 	 */
 	public FileEditorHolder getFileDisplayHolder() {
 		return (FileEditorHolder) center;
+	}
+
+	/**
+	 * Opens the given {@link File}.
+	 *
+	 * @param file the {@link File}.
+	 */
+	public void openFile(File file) {
+		getFileDisplayHolder().openFile(file);
 	}
 
 	private void loadExplorer() {
@@ -131,12 +141,18 @@ public class MipsWorkingPane extends WorkingPane {
 	}
 
 	@Override
-	public void onClose() {
-		explorer.dispose();
+	public String getLanguageNode() {
+		return Messages.PROJECT_TAB_STRUCTURE;
 	}
 
 	@Override
-	public void openFile(File file) {
-		getFileDisplayHolder().openFile(file);
+	public void populateButtons(HBox buttons) {
+
+	}
+
+	@Override
+	public void onClose() {
+		super.onClose();
+		explorer.dispose();
 	}
 }

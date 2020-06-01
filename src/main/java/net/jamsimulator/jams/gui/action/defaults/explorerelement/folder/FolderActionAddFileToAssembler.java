@@ -35,8 +35,8 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
-import net.jamsimulator.jams.gui.main.WorkingPane;
-import net.jamsimulator.jams.gui.mips.project.MipsWorkingPane;
+import net.jamsimulator.jams.gui.project.WorkingPane;
+import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.Project;
@@ -75,10 +75,10 @@ public class FolderActionAddFileToAssembler extends ContextAction {
 		if (!(project instanceof MipsProject)) return;
 		MIPSFilesToAssemble files = ((MipsProject) project).getData().getFilesToAssemble();
 		WorkingPane pane = tab.getProjectTabPane().getWorkingPane();
-		if (!(pane instanceof MipsWorkingPane)) return;
+		if (!(pane instanceof MipsStructurePane)) return;
 
 		for (ExplorerElement element : elements) {
-			files.addFile(((ExplorerFile) element).getFile(), ((MipsWorkingPane) pane).getFileDisplayHolder(), true);
+			files.addFile(((ExplorerFile) element).getFile(), ((MipsStructurePane) pane).getFileDisplayHolder(), true);
 		}
 	}
 

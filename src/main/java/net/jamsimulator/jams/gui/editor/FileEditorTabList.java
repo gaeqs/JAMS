@@ -25,7 +25,7 @@
 package net.jamsimulator.jams.gui.editor;
 
 import javafx.scene.control.TabPane;
-import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;

@@ -26,28 +26,60 @@ package net.jamsimulator.jams.gui.project;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import net.jamsimulator.jams.gui.main.WorkingPane;
-import net.jamsimulator.jams.gui.mips.project.MipsWorkingPane;
-import net.jamsimulator.jams.language.Messages;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
 import net.jamsimulator.jams.project.mips.MipsProject;
 
+import java.util.function.BiFunction;
+
 public class ProjectTabPane extends TabPane {
 
+	private final ProjectTab projectTab;
+
 	private final WorkingPane workingPane;
+	private HBox currentPaneButtons;
 
-	public ProjectTabPane (ProjectTab projectTab) {
+	public ProjectTabPane(ProjectTab projectTab) {
 		getStyleClass().add("project-tab-pane");
+		this.projectTab = projectTab;
 
-		Tab tab = new LanguageTab(Messages.PROJECT_TAB_STRUCTURE);
-		tab.setClosable(false);
-		getTabs().add(tab);
+		currentPaneButtons = new HBox();
 
-		workingPane = new MipsWorkingPane(tab, projectTab, (MipsProject) projectTab.getProject());
-		tab.setContent(workingPane);
+		workingPane = createProjectPane((tab, pt) -> new MipsStructurePane(tab, pt, (MipsProject) pt.getProject()));
+
+		projectTab.addTabCloseListener(event -> {
+			for (Tab tab : getTabs()) {
+				if (tab.getContent() instanceof ProjectPane)
+					((ProjectPane) tab.getContent()).onClose();
+			}
+		});
 	}
 
 	public WorkingPane getWorkingPane() {
 		return workingPane;
+	}
+
+	public HBox getCurrentPaneButtons() {
+		return currentPaneButtons;
+	}
+
+	public <E extends ProjectPane> E createProjectPane(BiFunction<Tab, ProjectTab, E> creator) {
+		LanguageTab tab = new LanguageTab("");
+		tab.setClosable(false);
+		getTabs().add(tab);
+
+		E pane = creator.apply(tab, projectTab);
+		if (!(pane instanceof Pane)) throw new IllegalArgumentException("Pane must be a Pane!");
+
+		tab.setNode(pane.getLanguageNode());
+		tab.setContent((Pane) pane);
+
+		tab.setOnClosed(event -> pane.onClose());
+		tab.selectedProperty().addListener((obs, old, val) -> {
+			if (val) pane.populateButtons(currentPaneButtons);
+		});
+		return pane;
 	}
 }

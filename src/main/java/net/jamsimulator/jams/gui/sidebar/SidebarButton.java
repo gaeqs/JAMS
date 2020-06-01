@@ -32,7 +32,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.image.NearestImageView;
-import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
 

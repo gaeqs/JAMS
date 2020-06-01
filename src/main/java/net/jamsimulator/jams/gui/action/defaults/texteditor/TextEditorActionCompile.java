@@ -30,7 +30,7 @@ import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.mips.display.MIPSFileEditor;
-import net.jamsimulator.jams.gui.mips.project.MipsWorkingPane;
+import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.mips.assembler.Assembler;
@@ -62,7 +62,7 @@ public class TextEditorActionCompile extends Action {
 
 				ProjectTab tab = project.getProjectTab().orElse(null);
 				if (tab != null) {
-					MipsWorkingPane pane = (MipsWorkingPane) tab.getProjectTabPane().getWorkingPane();
+					MipsStructurePane pane = (MipsStructurePane) tab.getProjectTabPane().getWorkingPane();
 					pane.getFileDisplayHolder().saveAll(true);
 				}
 

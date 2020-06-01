@@ -37,6 +37,7 @@ public class Messages {
 	public static final String MAIN_MENU_FILE_OPEN_PROJECT = "MAIN_MENU_FILE_OPEN_PROJECT";
 
 	public static final String PROJECT_TAB_STRUCTURE = "PROJECT_TAB_STRUCTURE";
+	public static final String PROJECT_TAB_SIMULATION = "PROJECT_TAB_SIMULATION";
 
 	public static final String EXPLORER_NAME = "EXPLORER_NAME";
 	public static final String FILES_TO_ASSEMBLE_NAME = "FILES_TO_ASSEMBLE_NAME";

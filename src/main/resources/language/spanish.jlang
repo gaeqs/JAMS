@@ -11,6 +11,7 @@ MAIN_MENU_FILE_SETTINGS=Configuración
 MAIN_MENU_FILE_OPEN_PROJECT=Abrir proyecto
 
 PROJECT_TAB_STRUCTURE=Estructura del projecto
+PROJECT_TAB_SIMULATION=Simulación
 
 EXPLORER_NAME=Explorador
 FILES_TO_ASSEMBLE_NAME=Archivos a ensamblar

@@ -36,7 +36,7 @@ import net.jamsimulator.jams.gui.mips.display.element.MIPSCodeElement;
 import net.jamsimulator.jams.gui.mips.display.element.MIPSFileElements;
 import net.jamsimulator.jams.gui.mips.display.element.MIPSLabel;
 import net.jamsimulator.jams.gui.mips.display.element.MIPSLine;
-import net.jamsimulator.jams.gui.mips.project.MipsWorkingPane;
+import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MipsProject;
 import net.jamsimulator.jams.utils.StringUtils;
@@ -64,8 +64,8 @@ public class MIPSFileEditor extends CodeFileEditor {
 		popupVBox = new VBox();
 		popupVBox.getStyleClass().add("mips-popup");
 		popup.getContent().add(popupVBox);
-		if (tab.getWorkingPane() instanceof MipsWorkingPane) {
-			project = ((MipsWorkingPane) tab.getWorkingPane()).getProject();
+		if (tab.getWorkingPane() instanceof MipsStructurePane) {
+			project = ((MipsStructurePane) tab.getWorkingPane()).getProject();
 			Optional<MIPSFileElements> elementsOptional = project.getData().getFilesToAssemble().getFileElements(tab.getFile());
 			elements = elementsOptional.orElseGet(() -> new MIPSFileElements(project));
 		} else {

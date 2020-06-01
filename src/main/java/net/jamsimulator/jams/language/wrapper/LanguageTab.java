@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.language.wrapper;
 
-import javafx.application.Platform;
 import javafx.scene.control.Tab;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
@@ -38,6 +37,15 @@ public class LanguageTab extends Tab {
 	public LanguageTab(String node) {
 		this.node = node;
 		Jams.getLanguageManager().registerListeners(this, true);
+		refreshMessage();
+	}
+
+	public String getNode() {
+		return node;
+	}
+
+	public void setNode(String node) {
+		this.node = node;
 		refreshMessage();
 	}
 

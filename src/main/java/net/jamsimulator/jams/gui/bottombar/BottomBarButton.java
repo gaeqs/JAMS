@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.bottombar;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
-import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.gui.project.WorkingPane;
 
 /**
  * Represents a button inside a {@link BottomBar}.

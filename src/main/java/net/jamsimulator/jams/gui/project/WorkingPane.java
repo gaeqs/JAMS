@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.main;
+package net.jamsimulator.jams.gui.project;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -37,7 +37,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.WindowEvent;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.bottombar.BottomBar;
-import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.sidebar.SidePane;
 import net.jamsimulator.jams.gui.sidebar.Sidebar;
 import net.jamsimulator.jams.gui.sidebar.SidebarFillRegion;
@@ -51,7 +50,7 @@ import java.io.File;
  * <p>
  * This class is extended by the projects to add custom panes.
  */
-public abstract class WorkingPane extends AnchorPane {
+public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 
 	public static final int SIDEBAR_WIDTH = 25;
 	public static final int BOTTOM_BAR_HEIGHT = 25;
@@ -73,7 +72,7 @@ public abstract class WorkingPane extends AnchorPane {
 		this.parent = parent;
 		this.projectTab = projectTab;
 		this.center = center;
-		if(init) {
+		if (init) {
 			init();
 		}
 	}
@@ -170,17 +169,12 @@ public abstract class WorkingPane extends AnchorPane {
 		return bottomBar;
 	}
 
-	/**
-	 * This method must be called when this working pane is not in use anymore.
-	 */
-	public abstract void onClose();
-
-	/**
-	 * Opens the given {@link File}.
-	 *
-	 * @param file the {@link File}.
-	 */
-	public abstract void openFile(File file);
+	@Override
+	public void onClose() {
+		if (stageCloseListener != null) {
+			JamsApplication.removeStageCloseListener(stageCloseListener);
+		}
+	}
 
 	//region INIT
 
@@ -207,15 +201,10 @@ public abstract class WorkingPane extends AnchorPane {
 		loadSidebars();
 		loadResizeEvents();
 
-		//Close events
-		if (projectTab != null) {
-			projectTab.addTabCloseListener(target -> {
-				JamsApplication.removeStageCloseListener(stageCloseListener);
-				onClose();
-			});
-		}
-
-		stageCloseListener = target -> onClose();
+		stageCloseListener = target -> {
+			stageCloseListener = null;
+			onClose();
+		};
 		JamsApplication.addStageCloseListener(stageCloseListener);
 	}
 
@@ -262,7 +251,7 @@ public abstract class WorkingPane extends AnchorPane {
 	private void loadResizeEvents() {
 		//Rescaling AnchorPane inside a tab. Thanks JavaFX for the bug.
 		Platform.runLater(() -> {
-			if(getScene() == null) {
+			if (getScene() == null) {
 				loadResizeEvents();
 				return;
 			}

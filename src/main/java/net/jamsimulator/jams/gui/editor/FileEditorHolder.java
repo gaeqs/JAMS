@@ -2,7 +2,7 @@ package net.jamsimulator.jams.gui.editor;
 
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
-import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;

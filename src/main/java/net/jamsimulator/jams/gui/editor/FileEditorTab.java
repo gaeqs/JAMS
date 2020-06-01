@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.editor;
 
-import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ScrollPane;
@@ -40,7 +39,7 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.image.NearestImageView;
-import net.jamsimulator.jams.gui.main.WorkingPane;
+import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.utils.AnchorUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.Virtualized;
@@ -50,7 +49,6 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 public class FileEditorTab extends Tab implements ActionRegion {
 
