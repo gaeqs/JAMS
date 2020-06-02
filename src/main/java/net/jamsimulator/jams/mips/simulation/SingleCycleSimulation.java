@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.simulation;
 
+import net.jamsimulator.jams.gui.util.Log;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
@@ -34,9 +35,14 @@ import net.jamsimulator.jams.mips.register.Registers;
 
 public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
+	private Log log;
 
 	public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, Registers registerSet, Memory memory) {
 		super(architecture, instructionSet, registerSet, memory);
+	}
+
+	public void setLog(Log log) {
+		this.log = log;
 	}
 
 	@Override
@@ -57,7 +63,12 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		String opCode = addZeros(Integer.toBinaryString(instruction.getOperationCode()), 6);
 		String mnemonic = instruction.getBasicOrigin().getMnemonic();
 		String code = "0x" + addZeros(Integer.toHexString(instruction.getCode()), 8);
-		System.out.println(address + "\t" + opCode + "\t" + mnemonic + " \t" + code);
+
+		if(log == null) {
+			System.out.println(address + "\t" + opCode + "\t" + mnemonic + " \t" + code);
+		} else {
+			log.println(address + "\t" + opCode + "\t" + mnemonic + " \t" + code);
+		}
 
 		//Execute, Memory and Write
 

@@ -46,8 +46,14 @@ public class Icons {
 	public static final String FILE_ASSEMBLY = "file_assembly";
 	public static final String FILE_IMAGE = "file_image";
 
-	public static final String SIDEBAR_EXPLORER = "sidebar_project";
+	public static final String SIDEBAR_EXPLORER = "sidebar_explorer";
 	public static final String SIDEBAR_SETTINGS = "sidebar_settings";
+	public static final String SIDEBAR_SIMULATION = "sidebar_simulation";
+
+
+	public static final String PROJECT_ASSEMBLE = "project_assemble";
+	public static final String PROJECT_ASSEMBLE_GRAY = "project_assemble_gray";
+	public static final String PROJECT_PLAY = "project_play";
 
 	public static final String LOGO_PATH = "gui/icon/logo.png";
 
@@ -68,5 +74,11 @@ public class Icons {
 
 	public static final String SIDEBAR_EXPLORER_PATH = "gui/icon/file/folder.png";
 	public static final String SIDEBAR_SETTINGS_PATH = "gui/icon/sidebar/settings.png";
+	public static final String SIDEBAR_SIMULATION_PATH = "gui/icon/file/folder.png";
+
+	public static final String PROJECT_ASSEMBLE_PATH = "gui/icon/project/assemble.png";
+	public static final String PROJECT_ASSEMBLE_GRAY_PATH = "gui/icon/project/assemble_gray.png";
+	public static final String PROJECT_PLAY_PATH = "gui/icon/project/play.png";
+
 
 }

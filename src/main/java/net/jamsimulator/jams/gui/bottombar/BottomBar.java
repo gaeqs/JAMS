@@ -26,10 +26,13 @@ package net.jamsimulator.jams.gui.bottombar;
 
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.sidebar.SidePane;
 import net.jamsimulator.jams.gui.sidebar.SidePaneNode;
 import net.jamsimulator.jams.gui.sidebar.SidebarButton;
+
+import java.util.Optional;
 
 /**
  * Represents a bottom bar. A bottom bar is a small vertical rectangle situated at a side of the window.
@@ -43,7 +46,7 @@ import net.jamsimulator.jams.gui.sidebar.SidebarButton;
  */
 public class BottomBar extends HBox {
 
-	private SplitPane verticalSplitPane;
+	private final SplitPane verticalSplitPane;
 	private BottomPaneNode selected;
 
 	private double dividerPosition;
@@ -79,6 +82,18 @@ public class BottomBar extends HBox {
 	}
 
 	/**
+	 * Returns the {@link BottomBarButton} that matches the given name, if present.
+	 *
+	 * @param name the name.
+	 * @return the {@link BottomBarButton}, if present.
+	 */
+	public Optional<BottomBarButton> get(String name) {
+		return getChildren().stream().filter(target -> target instanceof BottomBarButton
+				&& ((BottomBarButton) target).getName().equals(name))
+				.map(target -> (BottomBarButton) target).findAny();
+	}
+
+	/**
 	 * Returns whether this bottom bar contains a node whose assigned name equals the given name.
 	 *
 	 * @param name the given name.
@@ -98,10 +113,10 @@ public class BottomBar extends HBox {
 	 * @param node the given node.
 	 * @return whether the given node was added.
 	 */
-	public boolean addNode(String name, Node node) {
+	public boolean addNode(String name, Node node, Image icon, String languageNode) {
 		if (containsNode(name)) return false;
-		BottomPaneNode bottomPaneNode = new BottomPaneNode(verticalSplitPane, node, name);
-		BottomBarButton button = new BottomBarButton(this, name, bottomPaneNode);
+		BottomPaneNode bottomPaneNode = new BottomPaneNode(verticalSplitPane, node, name, languageNode);
+		BottomBarButton button = new BottomBarButton(this, name, bottomPaneNode, icon, languageNode);
 
 		getChildren().add(button);
 

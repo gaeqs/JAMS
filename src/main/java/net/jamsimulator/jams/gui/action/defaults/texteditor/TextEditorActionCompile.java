@@ -32,16 +32,22 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.mips.display.MIPSFileEditor;
 import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
+import net.jamsimulator.jams.gui.util.Log;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
+import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.SingleCycleSimulation;
 import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MipsSimulationConfiguration;
+import net.jamsimulator.jams.utils.NumericUtils;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class TextEditorActionCompile extends Action {
@@ -55,43 +61,108 @@ public class TextEditorActionCompile extends Action {
 
 	@Override
 	public void run(Object node) {
-		try {
-			if (node instanceof MIPSFileEditor) {
-				MipsProject project = ((MIPSFileEditor) node).getProject().orElse(null);
-				if (project == null) return;
-
-				ProjectTab tab = project.getProjectTab().orElse(null);
-				if (tab != null) {
-					MipsStructurePane pane = (MipsStructurePane) tab.getProjectTabPane().getWorkingPane();
-					pane.getFileDisplayHolder().saveAll(true);
-				}
-
-				List<List<String>> files = new ArrayList<>();
-				for (File file : project.getData().getFilesToAssemble().getFiles()) {
-					files.add(Files.readAllLines(file.toPath()));
-					System.out.println("- FILE: " + file);
-					for (String line : Files.readAllLines(file.toPath())) {
-						System.out.println(line);
-					}
-				}
-
-
-				Assembler assembler = project.getData().getAssemblerBuilder().createAssembler(project.getData().getDirectiveSet(), project.getData().getInstructionSet(),
-						new MIPS32Registers(), project.getData().getMemoryBuilder().createMemory());
-				assembler.setData(files);
-				assembler.compile();
-				Simulation<?> simulation = assembler.createSimulation(project.getData().getArchitecture());
-
-				try {
-					for (int i = 0; i < 1000; i++) {
-						simulation.nextStep();
-					}
-				} catch (InstructionNotFoundException ignore) {
-				}
-				simulation.getRegisterSet().getRegister("s0").ifPresent(register -> System.out.println(register.getValue()));
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		if (node instanceof MIPSFileEditor) {
+			MipsProject project = ((MIPSFileEditor) node).getProject().orElse(null);
+			if (project == null) return;
+			compileAndShow(project);
 		}
+	}
+
+	public static void compileAndShow(MipsProject project) {
+		ProjectTab tab = project.getProjectTab().orElse(null);
+		if (tab == null) return;
+		MipsStructurePane pane = (MipsStructurePane) tab.getProjectTabPane().getWorkingPane();
+		pane.getFileDisplayHolder().saveAll(true);
+		pane.getLogButton().setSelected(true);
+		Log log = pane.getLog();
+		try {
+			List<List<String>> files = new ArrayList<>();
+			for (File file : project.getData().getFilesToAssemble().getFiles()) {
+				files.add(Files.readAllLines(file.toPath()));
+				log.printInfoLn("- FILE: " + file);
+				for (String line : Files.readAllLines(file.toPath())) {
+					log.println(line);
+				}
+			}
+
+			MipsSimulationConfiguration selected = project.getData().getSelectedConfiguration().orElse(null);
+			if (selected == null) {
+				log.printErrorLn("Configuration not found!");
+				return;
+			}
+
+			Assembler assembler = project.getData().getAssemblerBuilder().createAssembler(project.getData().getDirectiveSet(), project.getData().getInstructionSet(),
+					new MIPS32Registers(), selected.getMemoryBuilder().createMemory());
+			assembler.setData(files);
+			assembler.compile();
+
+			int mainLabel = assembler.getGlobalLabels().getOrDefault("main", -1);
+			Simulation<?> simulation = assembler.createSimulation(selected.getArchitecture());
+			if (simulation instanceof SingleCycleSimulation) {
+				((SingleCycleSimulation) simulation).setLog(log);
+			}
+
+			log.println();
+			if (mainLabel == -1) {
+				log.printWarningLn("Global label \"main\" not found. Staring at the start of the text section.");
+			} else {
+				log.printInfoLn("Global label \"main\" found. Starting simulaiton at this location.");
+				simulation.getRegisterSet().getProgramCounter().setValue(mainLabel);
+			}
+
+			log.println();
+			log.printInfoLn("SIMULATION:");
+			log.println();
+
+			try {
+				for (int i = 0; i < 1000; i++) {
+					simulation.nextStep();
+				}
+			} catch (InstructionNotFoundException ignore) {
+			}
+
+			log.println();
+			log.printDoneLn("FINISHED");
+			log.println("_________________________________________");
+			log.println();
+			log.printInfoLn("RESULTS:");
+			log.println();
+
+			log.printInfoLn("REGISTERS:");
+			log.println();
+			log.printInfo("\tPC");
+			log.print(": 0x" + toHexFill(simulation.getRegisterSet().getProgramCounter().getValue()));
+			log.printDoneLn("\t" + simulation.getRegisterSet().getProgramCounter().getValue());
+			log.println();
+
+			simulation.getRegisterSet().getGeneralRegisters().stream()
+					.sorted(Comparator.comparingInt(Register::getIdentifier))
+					.forEach(register -> {
+						String name = register.getNames().stream().filter(target -> !NumericUtils.isInteger(target)).findFirst().orElse("-");
+						log.printInfo("\t" + name);
+						log.print(": 0x" + toHexFill(register.getValue()));
+						log.printDoneLn("\t " + register.getValue());
+					});
+
+			simulation.getRegisterSet().getRegister("s0").ifPresent(register -> System.out.println(register.getValue()));
+		} catch (Exception ex) {
+			log.printErrorLn("ERROR:");
+			log.printErrorLn(ex.getMessage());
+		}
+	}
+
+	private static String toHexFill(int i) {
+		return addZeros(Integer.toHexString(i), 8);
+	}
+
+	private static String addZeros(String s, int to) {
+		StringBuilder builder = new StringBuilder();
+		int max = Math.max(0, to - s.length());
+
+		for (int i = 0; i < max; i++) {
+			builder.append("0");
+		}
+
+		return builder + s;
 	}
 }

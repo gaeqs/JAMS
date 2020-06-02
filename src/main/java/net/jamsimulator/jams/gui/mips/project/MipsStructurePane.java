@@ -31,13 +31,15 @@ import javafx.scene.image.Image;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.bottombar.BottomBarButton;
 import net.jamsimulator.jams.gui.editor.FileEditorHolder;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.explorer.MipsFolderExplorer;
-import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleDisplay;
+import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebar;
+import net.jamsimulator.jams.gui.mips.sidebar.SimulationSidebar;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
-import net.jamsimulator.jams.gui.sidebar.SidebarButton;
+import net.jamsimulator.jams.gui.util.Log;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.mips.MipsProject;
 
@@ -50,7 +52,11 @@ public class MipsStructurePane extends WorkingPane {
 
 	protected final MipsProject project;
 	protected MipsFolderExplorer explorer;
-	protected FilesToAssembleDisplay filesToAssembleDisplay;
+	protected FilesToAssembleSidebar filesToAssembleSidebar;
+	protected SimulationSidebar simulationSidebar;
+
+	protected Log log;
+	protected BottomBarButton logButton;
 
 	/**
 	 * Creates the mips project pane.
@@ -69,8 +75,9 @@ public class MipsStructurePane extends WorkingPane {
 		SplitPane.setResizableWithParent(center, true);
 
 		loadExplorer();
-		loadFilesToAssembleDisplay();
-
+		loadFilesToAssembleSidebar();
+		loadSimulationSidebar();
+		loadLogBottomBar();
 	}
 
 	/**
@@ -89,6 +96,24 @@ public class MipsStructurePane extends WorkingPane {
 	 */
 	public FileEditorHolder getFileDisplayHolder() {
 		return (FileEditorHolder) center;
+	}
+
+	/**
+	 * Returns the {@link Log} of this project.
+	 *
+	 * @return the {@link Log}.
+	 */
+	public Log getLog() {
+		return log;
+	}
+
+	/**
+	 * Returns the log's {@link BottomBarButton}.
+	 *
+	 * @return the log's {@link BottomBarButton}.
+	 */
+	public BottomBarButton getLogButton() {
+		return logButton;
 	}
 
 	/**
@@ -122,15 +147,15 @@ public class MipsStructurePane extends WorkingPane {
 		explorer.setFileOpenAction(file -> openFile(file.getFile()));
 	}
 
-	private void loadFilesToAssembleDisplay() {
+	private void loadFilesToAssembleSidebar() {
 		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
-				Icons.SIDEBAR_EXPLORER_PATH, SidebarButton.IMAGE_SIZE, SidebarButton.IMAGE_SIZE).orElse(null);
+				Icons.SIDEBAR_EXPLORER_PATH, 1024, 1024).orElse(null);
 
 		ScrollPane pane = new ScrollPane();
 		pane.setFitToHeight(true);
 		pane.setFitToWidth(true);
-		filesToAssembleDisplay = new FilesToAssembleDisplay(project, pane);
-		pane.setContent(filesToAssembleDisplay);
+		filesToAssembleSidebar = new FilesToAssembleSidebar(project, pane);
+		pane.setContent(filesToAssembleSidebar);
 
 		pane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
 			double deltaY = scrollEvent.getDeltaY() * 0.003;
@@ -138,6 +163,30 @@ public class MipsStructurePane extends WorkingPane {
 		});
 
 		bottomLeftSidebar.addNode("FilesToAssemble", pane, explorerIcon, Messages.FILES_TO_ASSEMBLE_NAME);
+	}
+
+	private void loadSimulationSidebar() {
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_ASSEMBLE_GRAY,
+				Icons.PROJECT_ASSEMBLE_GRAY_PATH, 1024, 1024).orElse(null);
+		ScrollPane pane = new ScrollPane();
+		pane.setFitToWidth(true);
+		pane.setFitToHeight(true);
+		simulationSidebar = new SimulationSidebar(project);
+		pane.setContent(simulationSidebar);
+		topRightSidebar.addNode("Simulation", pane, icon, Messages.SIMULATION_NAME);
+	}
+
+	private void loadLogBottomBar() {
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE,
+				Icons.FILE_FILE_PATH, 1024, 1024).orElse(null);
+		ScrollPane pane = new ScrollPane();
+		pane.setFitToWidth(true);
+		pane.setFitToHeight(true);
+
+		log = new Log();
+		pane.setContent(log);
+		bottomBar.addNode("Log", pane, icon, Messages.LOG_NAME);
+		logButton = bottomBar.get("Log").get();
 	}
 
 	@Override

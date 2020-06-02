@@ -31,7 +31,7 @@ Light Theme
 .text-area {
     -fx-background-color: -theme-background-text-area;
     -fx-text-fill: -theme-foreground;
-    -fx-font-family: -fonr-general;
+    -fx-font-family: "{FONT_GENERAL}";
 }
 
 .text-area .scroll-pane {
@@ -45,10 +45,11 @@ Light Theme
 
 /*TEXT FIELD*/
 .text-field {
-    -fx-background-color: -theme-background-text-area;
+    -fx-font-family: "{FONT_GENERAL}";
+    -fx-background-color: -theme-background-darker;
     -fx-text-fill: -theme-foreground;
-    -fx-background-radius: 0;
-    -fx-border-color: -theme-background-lighter;
+    -fx-background-radius: 1;
+    -fx-border-color: transparent;
 }
 
 /*PANE*/
@@ -200,11 +201,10 @@ AnchorPane {
 
 /*BUTTON*/
 .button {
-    -fx-background-color: -theme-background;
-    -fx-border-color: -theme-foreground-darker;
-    -fx-background-radius: 0;
+    -fx-background-color: -theme-background-darker-2;
+    -fx-border-color: transparent;
+    -fx-background-radius: 5;
     -fx-text-fill: -theme-foreground;
-    -fx-font-size: 14px;
 }
 
 .button:hover {
@@ -213,6 +213,31 @@ AnchorPane {
 
 .button:pressed {
     -fx-background-color: -theme-background-pressed;
+}
+
+.bold-button {
+    -fx-background-color: -theme-background;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0;
+    -fx-text-fill: -theme-foreground;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.bold-button:hover {
+    -fx-background-color: -theme-background-lighter;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0;
+    -fx-text-fill: -theme-foreground;
+    -fx-font-weight: bold;
+}
+
+.bold-button:pressed {
+    -fx-background-color: -theme-background-pressed;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0;
+    -fx-text-fill: -theme-foreground;
+    -fx-font-weight: bold;
 }
 
 .menu-button {
@@ -823,8 +848,24 @@ AnchorPane {
     -fx-background-color: -theme-explorer-element-selected;
 }
 
-/* MIPS */
+/* LOG */
+.code-area .log_error {
+    -fx-fill: #cb2f2f;
+}
 
+.code-area .log_info {
+    -fx-fill: #2f94cb;
+}
+
+.code-area .log_warning {
+    -fx-fill: #cbb62f;
+}
+
+.code-area .log_done {
+    -fx-fill: #3fcb2f;
+}
+
+/* MIPS */
 .code-area .mips-comment {
     -fx-fill: #404040;
 }

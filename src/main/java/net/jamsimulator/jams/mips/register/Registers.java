@@ -102,6 +102,33 @@ public class Registers {
 	}
 
 	/**
+	 * Returns an unmodifiable {@link Set} with all general registers inside this set.
+	 *
+	 * @return the {@link Set}.
+	 */
+	public Set<Register> getGeneralRegisters() {
+		return Collections.unmodifiableSet(registers);
+	}
+
+	/**
+	 * Returns an unmodifiable {@link Set} with all COP0 registers inside this set.
+	 *
+	 * @return the {@link Set}.
+	 */
+	public Set<Register> getCoprocessor0Registers() {
+		return Collections.unmodifiableSet(registers);
+	}
+
+	/**
+	 * Returns an unmodifiable {@link Set} with all COP1 registers inside this set.
+	 *
+	 * @return the {@link Set}.
+	 */
+	public Set<Register> getCoprocessor1Registers() {
+		return Collections.unmodifiableSet(registers);
+	}
+
+	/**
 	 * Get the general {@link Register} whose name matches the given string, if present.
 	 *
 	 * @param name the name.

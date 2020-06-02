@@ -31,7 +31,6 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
-import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.gui.explorer.LanguageExplorerSection;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.mips.MipsProject;
@@ -41,12 +40,12 @@ import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
 import java.io.File;
 import java.util.Comparator;
 
-public class FilesToAssembleDisplay extends Explorer {
+public class FilesToAssembleSidebar extends Explorer {
 
 	private final Image icon;
 	private final MipsProject project;
 
-	public FilesToAssembleDisplay(MipsProject project, ScrollPane scrollPane) {
+	public FilesToAssembleSidebar(MipsProject project, ScrollPane scrollPane) {
 		super(scrollPane, true, true);
 		this.project = project;
 
@@ -55,7 +54,7 @@ public class FilesToAssembleDisplay extends Explorer {
 		icon = Jams.getFileTypeManager().getByExtension("asm").map(FileType::getIcon).orElse(null);
 
 		for (File file : project.getData().getFilesToAssemble().getFiles()) {
-			mainSection.addElement(new FilesToAssembleDisplayElement(mainSection, file, this, icon));
+			mainSection.addElement(new FilesToAssembleSidebarElement(mainSection, file, this, icon));
 		}
 
 		mainSection.expand();
@@ -81,12 +80,12 @@ public class FilesToAssembleDisplay extends Explorer {
 
 	@Listener
 	private void onFileAdd(FileAddToAssembleEvent.After event) {
-		mainSection.addElement(new FilesToAssembleDisplayElement(mainSection, event.getFile(), this, icon));
+		mainSection.addElement(new FilesToAssembleSidebarElement(mainSection, event.getFile(), this, icon));
 	}
 
 	@Listener
 	private void onFileRemoved(FileRemoveFromAssembleEvent.After event) {
-		mainSection.removeElementIf(element -> element instanceof FilesToAssembleDisplayElement
-				&& ((FilesToAssembleDisplayElement) element).getFile().equals(event.getFile()));
+		mainSection.removeElementIf(element -> element instanceof FilesToAssembleSidebarElement
+				&& ((FilesToAssembleSidebarElement) element).getFile().equals(event.getFile()));
 	}
 }

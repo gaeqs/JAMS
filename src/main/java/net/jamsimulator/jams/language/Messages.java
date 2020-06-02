@@ -41,6 +41,13 @@ public class Messages {
 
 	public static final String EXPLORER_NAME = "EXPLORER_NAME";
 	public static final String FILES_TO_ASSEMBLE_NAME = "FILES_TO_ASSEMBLE_NAME";
+	public static final String SIMULATION_NAME = "SIMULATION_NAME";
+	public static final String LOG_NAME = "LOG_NAME";
+
+	public static final String SIMULATION_CONFIGURATION_INFO = "SIMULATION_CONFIGURATION_INFO";
+	public static final String SIMULATION_CONFIGURATION_NAME = "SIMULATION_CONFIGURATION_NAME";
+	public static final String SIMULATION_CONFIGURATION_ARCHITECTURE = "SIMULATION_CONFIGURATION_ARCHITECTURE";
+	public static final String SIMULATION_CONFIGURATION_MEMORY = "SIMULATION_CONFIGURATION_MEMORY";
 
 	public static final String CONFIG = "CONFIG";
 

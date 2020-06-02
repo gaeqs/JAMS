@@ -29,6 +29,8 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 
+import java.util.Optional;
+
 /**
  * Represents a sidebar. A sidebar is a small vertical rectangle situated at a side of the window.
  * This sidebar contains {@link SidebarButton}s that add or remove their assigned panes into this sidebar's {@link SidePane}.
@@ -41,10 +43,10 @@ import javafx.scene.layout.VBox;
  */
 public class Sidebar extends VBox {
 
-	private boolean left;
-	private boolean top;
+	private final boolean left;
+	private final boolean top;
 
-	private SidePane sidePane;
+	private final SidePane sidePane;
 
 	/**
 	 * Creates a sidebar.
@@ -89,6 +91,18 @@ public class Sidebar extends VBox {
 		return top;
 	}
 
+
+	/**
+	 * Returns the {@link SidebarButton} that matches the given name, if present.
+	 *
+	 * @param name the name.
+	 * @return the {@link SidebarButton}, if present.
+	 */
+	public Optional<SidebarButton> get(String name) {
+		return getChildren().stream().filter(target -> target instanceof SidebarButton
+				&& ((SidebarButton) target).getName().equals(name))
+				.map(target -> (SidebarButton) target).findAny();
+	}
 
 	/**
 	 * Returns whether this sidebar contains a node whose assigned name equals the given name.

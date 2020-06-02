@@ -25,23 +25,29 @@
 package net.jamsimulator.jams.project.mips;
 
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.mips.architecture.Architecture;
+import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
-import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 import net.jamsimulator.jams.project.ProjectData;
+import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationAddEvent;
+import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationRemoveEvent;
+import net.jamsimulator.jams.project.mips.event.SelectedMipsSimulationConfigurationChangeEvent;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 public class MipsProjectData extends ProjectData {
 
-	protected Architecture architecture;
+	protected Set<MipsSimulationConfiguration> configurations;
+	protected MipsSimulationConfiguration selectedConfiguration;
+
 	protected AssemblerBuilder assemblerBuilder;
-	protected MemoryBuilder memoryBuilder;
 	protected RegistersBuilder registersBuilder;
 	protected DirectiveSet directiveSet;
 	protected InstructionSet instructionSet;
@@ -53,16 +59,66 @@ public class MipsProjectData extends ProjectData {
 		filesToAssemble = new MIPSFilesToAssemble(project);
 	}
 
-	public Architecture getArchitecture() {
-		return architecture;
+	public Set<MipsSimulationConfiguration> getConfigurations() {
+		return Collections.unmodifiableSet(configurations);
+	}
+
+	public boolean addConfiguration(MipsSimulationConfiguration configuration) {
+		Validate.notNull(configuration, "Configuration is null!");
+		if (configurations.stream().anyMatch(target -> target.getName().equals(configuration.getName())))
+			return false;
+
+		MipsSimulationConfigurationAddEvent.Before before = callEvent(new MipsSimulationConfigurationAddEvent.Before(this, configuration));
+		if (before.isCancelled()) return false;
+
+		boolean result = configurations.add(configuration);
+		if (result) {
+			callEvent(new MipsSimulationConfigurationAddEvent.After(this, configuration));
+		}
+
+		return result;
+	}
+
+	public boolean removeConfiguration(String name) {
+		Validate.notNull(name, "Name cannot be null!");
+		MipsSimulationConfiguration configuration = configurations.stream()
+				.filter(target -> target.getName().equals(name)).findAny().orElse(null);
+		if (configuration == null) return false;
+		MipsSimulationConfigurationRemoveEvent.Before before = callEvent(new MipsSimulationConfigurationRemoveEvent.Before(this, configuration));
+		if (before.isCancelled()) return false;
+		boolean result = configurations.remove(configuration);
+		if (result) {
+			callEvent(new MipsSimulationConfigurationRemoveEvent.After(this, configuration));
+		}
+		if (configuration == selectedConfiguration) {
+			setSelectedConfiguration(null);
+		}
+		return result;
+	}
+
+	public Optional<MipsSimulationConfiguration> getSelectedConfiguration() {
+		return Optional.ofNullable(selectedConfiguration);
+	}
+
+	public boolean setSelectedConfiguration(String name) {
+		MipsSimulationConfiguration configuration = name == null ? null : configurations.stream()
+				.filter(target -> target.getName().equals(name)).findAny().orElse(null);
+		if (configuration == null && name != null) return false;
+		if (configuration == selectedConfiguration) return false;
+
+		MipsSimulationConfiguration old = selectedConfiguration;
+		SelectedMipsSimulationConfigurationChangeEvent.Before before =
+				callEvent(new SelectedMipsSimulationConfigurationChangeEvent.Before(this, old, configuration));
+		if (before.isCancelled()) return false;
+		selectedConfiguration = configuration;
+
+		callEvent(new SelectedMipsSimulationConfigurationChangeEvent.After(this, old, configuration));
+
+		return true;
 	}
 
 	public AssemblerBuilder getAssemblerBuilder() {
 		return assemblerBuilder;
-	}
-
-	public MemoryBuilder getMemoryBuilder() {
-		return memoryBuilder;
 	}
 
 	public RegistersBuilder getRegistersBuilder() {
@@ -104,24 +160,27 @@ public class MipsProjectData extends ProjectData {
 		}
 	}
 
-	public void load(Architecture architecture, AssemblerBuilder assemblerBuilder, MemoryBuilder memoryBuilder,
-					 RegistersBuilder registersBuilder, DirectiveSet directiveSet, InstructionSet instructionSet) {
+	public void load(Set<MipsSimulationConfiguration> configurations, String selected,
+					 AssemblerBuilder assemblerBuilder, RegistersBuilder registersBuilder,
+					 DirectiveSet directiveSet, InstructionSet instructionSet) {
 		super.load();
 		if (loaded) return;
 		loaded = true;
 
 		Validate.notNull(assemblerBuilder, "Assembler builder cannot be null!");
-		Validate.notNull(memoryBuilder, "Memory builder cannot be null!");
+		Validate.notNull(configurations, "Memory builder cannot be null!");
 		Validate.notNull(registersBuilder, "Registers builder cannot be null!");
 		Validate.notNull(directiveSet, "Directive set cannot be null!");
 		Validate.notNull(instructionSet, "Instruction set cannot be null!");
 
-		this.architecture = architecture;
+		this.configurations = new HashSet<>(configurations);
 		this.assemblerBuilder = assemblerBuilder;
-		this.memoryBuilder = memoryBuilder;
 		this.registersBuilder = registersBuilder;
 		this.directiveSet = directiveSet;
 		this.instructionSet = instructionSet;
+
+		this.selectedConfiguration = selected == null ? null : configurations.stream()
+				.filter(target -> target.getName().equals(selected)).findAny().orElse(null);
 
 		try {
 			filesToAssemble.load(folder);
@@ -131,38 +190,48 @@ public class MipsProjectData extends ProjectData {
 	}
 
 	private void saveMipsConfiguration() {
-		data.set("mips.architecture", architecture.getName());
-		data.set("mips.architecture", architecture.getName());
 		data.set("mips.assembler", assemblerBuilder.getName());
-		data.set("mips.memory", memoryBuilder.getName());
 		data.set("mips.registers", registersBuilder.getName());
 		data.set("mips.directives", directiveSet.getName());
+		data.set("mips.instructions", instructionSet.getName());
+		data.remove("mips.configurations");
+
+		configurations.forEach(config -> config.save(data, "mips.configurations"));
+		data.set("mips.selectedConfiguration", selectedConfiguration == null ? null : selectedConfiguration.getName());
 	}
 
 
 	protected void loadMipsConfiguration() {
-		//ARCHITECTURE
-		Optional<Architecture> archOptional =  data.getString("mips.architecture").flatMap(Jams.getArchitectureManager()::get);
-		architecture = archOptional.orElseGet(() -> Jams.getArchitectureManager().getDefault());
-
 		//ASSEMBLER
-		Optional<AssemblerBuilder> asOptional =  data.getString("mips.assembler").flatMap(Jams.getAssemblerBuilderManager()::get);
+		Optional<AssemblerBuilder> asOptional = data.getString("mips.assembler").flatMap(Jams.getAssemblerBuilderManager()::get);
 		assemblerBuilder = asOptional.orElseGet(() -> Jams.getAssemblerBuilderManager().getDefault());
 
-		//MEMORY
-		Optional<MemoryBuilder> memOptional =  data.getString("mips.memory").flatMap(Jams.getMemoryBuilderManager()::get);
-		memoryBuilder = memOptional.orElseGet(() -> Jams.getMemoryBuilderManager().getDefault());
-
 		//REGISTERS
-		Optional<RegistersBuilder> regOptional =  data.getString("mips.registers").flatMap(Jams.getRegistersBuilderManager()::get);
+		Optional<RegistersBuilder> regOptional = data.getString("mips.registers").flatMap(Jams.getRegistersBuilderManager()::get);
 		registersBuilder = regOptional.orElseGet(() -> Jams.getRegistersBuilderManager().getDefault());
 
 		//DIRECTIVES
-		Optional<DirectiveSet> dirOptional =  data.getString("mips.directives").flatMap(Jams.getDirectiveSetManager()::get);
+		Optional<DirectiveSet> dirOptional = data.getString("mips.directives").flatMap(Jams.getDirectiveSetManager()::get);
 		directiveSet = dirOptional.orElseGet(() -> Jams.getDirectiveSetManager().getDefault());
 
 		//INSTRUCTIONS
-		Optional<InstructionSet> insOptional =  data.getString("mips.instructions").flatMap(Jams.getInstructionSetManager()::get);
+		Optional<InstructionSet> insOptional = data.getString("mips.instructions").flatMap(Jams.getInstructionSetManager()::get);
 		instructionSet = insOptional.orElseGet(() -> Jams.getInstructionSetManager().getDefault());
+
+		configurations = new HashSet<>();
+
+		Optional<Configuration> configOptional = data.get("mips.configurations");
+		if (configOptional.isPresent()) {
+			Configuration config = configOptional.get();
+
+			config.getAll(false).forEach((name, data) -> {
+				if (!(data instanceof Configuration)) return;
+				configurations.add(new MipsSimulationConfiguration(name, (Configuration) data));
+			});
+		}
+
+		String selectedConfig = data.getString("mips.selectedConfiguration").orElse(null);
+		selectedConfiguration = configurations.stream().filter(target -> target.getName().equals(selectedConfig)).findAny().orElse(null);
+
 	}
 }

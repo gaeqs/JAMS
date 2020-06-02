@@ -31,9 +31,9 @@ import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 
 import java.io.File;
 
-public class FilesToAssembleDisplayElement extends ExplorerBasicElement {
+public class FilesToAssembleSidebarElement extends ExplorerBasicElement {
 
-	private final FilesToAssembleDisplay display;
+	private final FilesToAssembleSidebar display;
 	private final File file;
 
 	/**
@@ -41,17 +41,17 @@ public class FilesToAssembleDisplayElement extends ExplorerBasicElement {
 	 *
 	 * @param parent  the {@link ExplorerSection} containing this element.
 	 * @param file    the represented file.
-	 * @param display the {@link FilesToAssembleDisplay} this elements is being displayed on.
+	 * @param display the {@link FilesToAssembleSidebar} this elements is being displayed on.
 	 * @param icon    the displayed icon.
 	 */
-	public FilesToAssembleDisplayElement(ExplorerSection parent, File file, FilesToAssembleDisplay display, Image icon) {
+	public FilesToAssembleSidebarElement(ExplorerSection parent, File file, FilesToAssembleSidebar display, Image icon) {
 		super(parent, display.getProject().getFolder().toPath().relativize(file.toPath()).toString(), 1);
 		this.display = display;
 		this.file = file;
 		this.icon.setImage(icon);
 	}
 
-	public FilesToAssembleDisplay getDisplay() {
+	public FilesToAssembleSidebar getDisplay() {
 		return display;
 	}
 

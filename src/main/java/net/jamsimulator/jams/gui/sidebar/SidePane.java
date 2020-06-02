@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.sidebar;
 
+import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import net.jamsimulator.jams.event.Event;
@@ -152,8 +153,15 @@ public class SidePane extends SplitPane implements EventBroadcast {
 	 * Adds this side pane into the split pane.
 	 */
 	private void addToParent() {
-		parent.getItems().add(left ? 0 : parent.getItems().size(), this);
-		parent.setDividerPosition(getSplitPaneDividerIndex(), splitPaneDividerPosition);
+		if (left && parent.getItems().size() > 1) {
+			double right = parent.getDividerPositions()[0];
+			parent.getItems().add(0, this);
+			parent.setDividerPosition(0, splitPaneDividerPosition);
+			parent.setDividerPosition(1, right);
+		} else {
+			parent.getItems().add(left ? 0 : parent.getItems().size(), this);
+			parent.setDividerPosition(getSplitPaneDividerIndex(), splitPaneDividerPosition);
+		}
 	}
 
 	/**
@@ -162,7 +170,14 @@ public class SidePane extends SplitPane implements EventBroadcast {
 	private void removeFromParentIfEmpty() {
 		if (getItems().isEmpty()) {
 			splitPaneDividerPosition = parent.getDividerPositions()[getSplitPaneDividerIndex()];
-			parent.getItems().remove(this);
+
+			if (left && parent.getItems().size() > 2) {
+				double right = parent.getDividerPositions()[1];
+				parent.getItems().remove(this);
+				parent.setDividerPosition(0, right);
+			} else {
+				parent.getItems().remove(this);
+			}
 		}
 	}
 

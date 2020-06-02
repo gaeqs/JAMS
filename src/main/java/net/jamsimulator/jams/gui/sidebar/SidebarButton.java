@@ -43,10 +43,10 @@ public class SidebarButton extends ToggleButton {
 
 	public static final int IMAGE_SIZE = 16;
 
-	private Sidebar sidebar;
+	private final Sidebar sidebar;
 
-	private String name;
-	private SidePaneNode node;
+	private final String name;
+	private final SidePaneNode node;
 	private Image image;
 
 	/**

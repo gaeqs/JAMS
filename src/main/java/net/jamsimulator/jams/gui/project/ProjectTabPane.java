@@ -26,7 +26,6 @@ package net.jamsimulator.jams.gui.project;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
@@ -39,13 +38,10 @@ public class ProjectTabPane extends TabPane {
 	private final ProjectTab projectTab;
 
 	private final WorkingPane workingPane;
-	private HBox currentPaneButtons;
 
 	public ProjectTabPane(ProjectTab projectTab) {
 		getStyleClass().add("project-tab-pane");
 		this.projectTab = projectTab;
-
-		currentPaneButtons = new HBox();
 
 		workingPane = createProjectPane((tab, pt) -> new MipsStructurePane(tab, pt, (MipsProject) pt.getProject()));
 
@@ -61,10 +57,6 @@ public class ProjectTabPane extends TabPane {
 		return workingPane;
 	}
 
-	public HBox getCurrentPaneButtons() {
-		return currentPaneButtons;
-	}
-
 	public <E extends ProjectPane> E createProjectPane(BiFunction<Tab, ProjectTab, E> creator) {
 		LanguageTab tab = new LanguageTab("");
 		tab.setClosable(false);
@@ -77,9 +69,6 @@ public class ProjectTabPane extends TabPane {
 		tab.setContent((Pane) pane);
 
 		tab.setOnClosed(event -> pane.onClose());
-		tab.selectedProperty().addListener((obs, old, val) -> {
-			if (val) pane.populateButtons(currentPaneButtons);
-		});
 		return pane;
 	}
 }

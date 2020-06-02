@@ -25,12 +25,13 @@
 package net.jamsimulator.jams.project;
 
 import net.jamsimulator.jams.configuration.RootConfiguration;
+import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.utils.FolderUtils;
 
 import java.io.File;
 import java.io.IOException;
 
-public abstract class ProjectData {
+public abstract class ProjectData extends SimpleEventBroadcast {
 
 	public static final String METADATA_FOLDER_NAME = ".jams";
 	public static final String METADATA_DATA_NAME = "data.json";

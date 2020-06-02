@@ -24,20 +24,28 @@
 
 package net.jamsimulator.jams.gui.bottombar;
 
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.project.WorkingPane;
+import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
 /**
  * Represents a button inside a {@link BottomBar}.
  */
 public class BottomBarButton extends ToggleButton {
 
-	private BottomBar bottomBar;
+	public static final int IMAGE_SIZE = 16;
 
-	private String name;
-	private BottomPaneNode node;
+	private final BottomBar bottomBar;
+
+	private final String name;
+	private final BottomPaneNode node;
 
 	/**
 	 * Creates a bottom bar button.
@@ -46,7 +54,7 @@ public class BottomBarButton extends ToggleButton {
 	 * @param name      the name of this button.
 	 * @param node      the node handled by this button.
 	 */
-	public BottomBarButton(BottomBar bottomBar, String name, BottomPaneNode node) {
+	public BottomBarButton(BottomBar bottomBar, String name, BottomPaneNode node, Image icon, String languageNode) {
 		this.bottomBar = bottomBar;
 
 		this.name = name;
@@ -54,10 +62,18 @@ public class BottomBarButton extends ToggleButton {
 
 		getStyleClass().addAll("bottom-bar-button");
 
-		Label label = new Label(name);
+		Label label = languageNode == null ? new Label(name) : new LanguageLabel(languageNode);
 		Group group = new Group(label);
 
-		setGraphic(group);
+		if (icon != null) {
+			ImageView imageView = new NearestImageView(icon, IMAGE_SIZE, IMAGE_SIZE);
+			HBox hBox = new HBox(imageView, group);
+			hBox.setSpacing(2);
+			hBox.setAlignment(Pos.CENTER);
+			setGraphic(hBox);
+		} else {
+			setGraphic(group);
+		}
 		setPrefHeight(WorkingPane.SIDEBAR_WIDTH);
 
 		selectedProperty().addListener((obs, old, val) -> {

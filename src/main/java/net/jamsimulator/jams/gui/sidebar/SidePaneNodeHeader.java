@@ -58,9 +58,10 @@ public class SidePaneNodeHeader extends AnchorPane {
 	/**
 	 * Creates the header.
 	 *
-	 * @param sidePane the {@link SidePane} that handles the wrapped {@link javafx.scene.Node}.
-	 * @param name     the name of the {@link javafx.scene.Node}.
-	 * @param top      whether the {@link Sidebar} containing the {@link javafx.scene.Node} is a top {@link Sidebar}.
+	 * @param sidePane     the {@link SidePane} that handles the wrapped {@link javafx.scene.Node}.
+	 * @param name         the name of the {@link javafx.scene.Node}.
+	 * @param top          whether the {@link Sidebar} containing the {@link javafx.scene.Node} is a top {@link Sidebar}.
+	 * @param languageNode the language node to display or null.
 	 */
 	public SidePaneNodeHeader(SidePane sidePane, String name, boolean top, String languageNode) {
 		this.sidePane = sidePane;

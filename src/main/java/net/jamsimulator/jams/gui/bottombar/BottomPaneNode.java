@@ -46,9 +46,9 @@ public class BottomPaneNode extends AnchorPane {
 	 * @param node              the wrapped node.
 	 * @param name              the name of the node.
 	 */
-	public BottomPaneNode(SplitPane verticalSplitPane, Node node, String name) {
+	public BottomPaneNode(SplitPane verticalSplitPane, Node node, String name, String languageNode) {
 		this.node = node;
-		this.header = new BottomPaneNodeHeader(verticalSplitPane, name);
+		this.header = new BottomPaneNodeHeader(verticalSplitPane, name, languageNode);
 
 		AnchorUtils.setAnchor(header, 0, -1, 0, 0);
 		AnchorUtils.setAnchor(node, BottomPaneNodeHeader.HEIGHT, 0, 0, 0);

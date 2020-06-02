@@ -28,6 +28,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
+import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
 /**
@@ -56,8 +57,9 @@ public class BottomPaneNodeHeader extends AnchorPane {
 	 *
 	 * @param verticalSplitPane the {@link SplitPane} that handles the wrapped {@link javafx.scene.Node}.
 	 * @param name              the name of the {@link javafx.scene.Node}.
+	 * @param languageNode      the language node to display or null.
 	 */
-	public BottomPaneNodeHeader(SplitPane verticalSplitPane, String name) {
+	public BottomPaneNodeHeader(SplitPane verticalSplitPane, String name, String languageNode) {
 		this.verticalSplitPane = verticalSplitPane;
 		this.name = name;
 
@@ -66,7 +68,7 @@ public class BottomPaneNodeHeader extends AnchorPane {
 
 		setCursor(CURSOR);
 
-		label = new Label(name);
+		label = languageNode == null ? new Label(name) : new LanguageLabel(languageNode);
 		AnchorUtils.setAnchor(label, 0, 0, 5, -1);
 		getChildren().add(label);
 		registerFXEvents();

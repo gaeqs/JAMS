@@ -24,15 +24,9 @@
 
 package net.jamsimulator.jams.project.mips;
 
-import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
-import net.jamsimulator.jams.mips.architecture.Architecture;
+import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.mips.assembler.Assembler;
-import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
-import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
-import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
-import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
-import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.project.BasicProject;
 
@@ -43,12 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MipsProject extends BasicProject {
-
-	public MipsProject(String name, File folder, Architecture architecture, AssemblerBuilder assemblerBuilder, MemoryBuilder memoryBuilder,
-					   RegistersBuilder registersBuilder, DirectiveSet directiveSet, InstructionSet instructionSet) {
-		super(name, folder, false);
-		loadData(architecture, assemblerBuilder, memoryBuilder, registersBuilder, directiveSet, instructionSet);
-	}
 
 	public MipsProject(String name, File folder) {
 		super(name, folder, false);
@@ -62,11 +50,13 @@ public class MipsProject extends BasicProject {
 
 	@Override
 	public Simulation<?> assemble() throws IOException {
+		MipsSimulationConfiguration selected = getData().getSelectedConfiguration().orElse(null);
+		if (selected == null) return null;
 		Assembler assembler = getData().getAssemblerBuilder().createAssembler(
 				getData().getDirectiveSet(),
 				getData().getInstructionSet(),
 				getData().getRegistersBuilder().createRegisters(),
-				getData().getMemoryBuilder().createMemory());
+				selected.getMemoryBuilder().createMemory());
 
 		List<List<String>> files = new ArrayList<>();
 
@@ -76,7 +66,7 @@ public class MipsProject extends BasicProject {
 
 		assembler.setData(files);
 		assembler.compile();
-		return assembler.createSimulation(getData().getArchitecture());
+		return assembler.createSimulation(selected.getArchitecture());
 	}
 
 	@Override
@@ -96,11 +86,5 @@ public class MipsProject extends BasicProject {
 		data = new MipsProjectData(this);
 		data.load();
 		data.save();
-	}
-
-	protected void loadData(Architecture architecture, AssemblerBuilder assemblerBuilder, MemoryBuilder memoryBuilder,
-							RegistersBuilder registersBuilder, DirectiveSet directiveSet, InstructionSet instructionSet) {
-		data = new MipsProjectData(this);
-		((MipsProjectData) data).load(architecture, assemblerBuilder, memoryBuilder, registersBuilder, directiveSet, instructionSet);
 	}
 }

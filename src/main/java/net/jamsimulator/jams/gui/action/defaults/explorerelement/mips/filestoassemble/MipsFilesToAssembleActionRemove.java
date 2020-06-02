@@ -31,8 +31,8 @@ import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.folder.FolderActionRegions;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
-import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleDisplay;
-import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleDisplayElement;
+import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebar;
+import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebarElement;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.Project;
@@ -54,9 +54,9 @@ public class MipsFilesToAssembleActionRemove extends ContextAction {
 
 	@Override
 	public void run(Object node) {
-		if (!(node instanceof FilesToAssembleDisplayElement)) return;
-		Explorer explorer = ((FilesToAssembleDisplayElement) node).getExplorer();
-		if (!(explorer instanceof FilesToAssembleDisplay)) return;
+		if (!(node instanceof FilesToAssembleSidebarElement)) return;
+		Explorer explorer = ((FilesToAssembleSidebarElement) node).getExplorer();
+		if (!(explorer instanceof FilesToAssembleSidebar)) return;
 
 		List<ExplorerElement> elements = explorer.getSelectedElements();
 		if (elements.isEmpty()) return;
@@ -68,15 +68,15 @@ public class MipsFilesToAssembleActionRemove extends ContextAction {
 		MIPSFilesToAssemble files = ((MipsProject) project).getData().getFilesToAssemble();
 
 		for (ExplorerElement element : elements) {
-			files.removeFile(((FilesToAssembleDisplayElement) element).getFile());
+			files.removeFile(((FilesToAssembleSidebarElement) element).getFile());
 		}
 	}
 
 	@Override
 	public boolean supportsExplorerState(Explorer explorer) {
-		if (!(explorer instanceof FilesToAssembleDisplay)) return false;
+		if (!(explorer instanceof FilesToAssembleSidebar)) return false;
 		List<ExplorerElement> elements = explorer.getSelectedElements();
 		if (elements.isEmpty()) return false;
-		return elements.stream().allMatch(target -> target instanceof FilesToAssembleDisplayElement);
+		return elements.stream().allMatch(target -> target instanceof FilesToAssembleSidebarElement);
 	}
 }
