@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.sidebar;
 
-import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import net.jamsimulator.jams.event.Event;
@@ -66,7 +65,7 @@ public class SidePane extends SplitPane implements EventBroadcast {
 		bottom = null;
 
 		dividerPosition = 0.5;
-		splitPaneDividerPosition = left ? 0.2 : 0.8;
+		splitPaneDividerPosition = left ? 0.25 : 0.75;
 
 		setOrientation(Orientation.VERTICAL);
 	}

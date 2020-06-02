@@ -28,6 +28,7 @@ public class Messages {
 
 	public static final String GENERAL_CONFIRM = "GENERAL_CONFIRM";
 	public static final String GENERAL_OK = "GENERAL_OK";
+	public static final String GENERAL_FINISH = "GENERAL_FINISH";
 	public static final String GENERAL_CANCEL = "GENERAL_CANCEL";
 	public static final String GENERAL_CONFIRMATION = "GENERAL_CONFIRMATION";
 
@@ -35,6 +36,10 @@ public class Messages {
 	public static final String MAIN_MENU_FILE_EXIT = "MAIN_MENU_FILE_EXIT";
 	public static final String MAIN_MENU_FILE_SETTINGS = "MAIN_MENU_FILE_SETTINGS";
 	public static final String MAIN_MENU_FILE_OPEN_PROJECT = "MAIN_MENU_FILE_OPEN_PROJECT";
+	public static final String MAIN_MENU_FILE_CREATE_PROJECT = "MAIN_MENU_FILE_CREATE_PROJECT";
+	public static final String MAIN_MENU_FILE_CREATE_PROJECT_TITLE = "MAIN_MENU_FILE_CREATE_PROJECT_TITLE";
+	public static final String MAIN_MENU_FILE_CREATE_PROJECT_NAME = "MAIN_MENU_FILE_CREATE_PROJECT_NAME";
+	public static final String MAIN_MENU_FILE_CREATE_PROJECT_PATH = "MAIN_MENU_FILE_CREATE_PROJECT_PATH";
 
 	public static final String PROJECT_TAB_STRUCTURE = "PROJECT_TAB_STRUCTURE";
 	public static final String PROJECT_TAB_SIMULATION = "PROJECT_TAB_SIMULATION";
@@ -44,6 +49,7 @@ public class Messages {
 	public static final String SIMULATION_NAME = "SIMULATION_NAME";
 	public static final String LOG_NAME = "LOG_NAME";
 
+	public static final String SIMULATION_CONFIGURATION_CONFIGURATIONS = "SIMULATION_CONFIGURATION_CONFIGURATIONS";
 	public static final String SIMULATION_CONFIGURATION_INFO = "SIMULATION_CONFIGURATION_INFO";
 	public static final String SIMULATION_CONFIGURATION_NAME = "SIMULATION_CONFIGURATION_NAME";
 	public static final String SIMULATION_CONFIGURATION_ARCHITECTURE = "SIMULATION_CONFIGURATION_ARCHITECTURE";

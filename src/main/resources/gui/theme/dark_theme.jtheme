@@ -52,6 +52,14 @@ Dark Theme
     -fx-border-color: transparent;
 }
 
+.invalid-text-field {
+    -fx-font-family: "{FONT_GENERAL}";
+    -fx-background-color: #842020;
+    -fx-text-fill: -theme-foreground;
+    -fx-background-radius: 1;
+    -fx-border-color: transparent;
+}
+
 /*PANE*/
 AnchorPane {
     -fx-background-color: -theme-background;

@@ -68,7 +68,7 @@ public class BottomBarButton extends ToggleButton {
 		if (icon != null) {
 			ImageView imageView = new NearestImageView(icon, IMAGE_SIZE, IMAGE_SIZE);
 			HBox hBox = new HBox(imageView, group);
-			hBox.setSpacing(2);
+			hBox.setSpacing(4);
 			hBox.setAlignment(Pos.CENTER);
 			setGraphic(hBox);
 		} else {

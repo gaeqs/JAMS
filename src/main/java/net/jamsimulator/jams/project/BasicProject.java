@@ -37,8 +37,7 @@ public abstract class BasicProject implements Project {
 
 	protected ProjectData data;
 
-	public BasicProject(String name, File folder, boolean loadDataOnConstructor) {
-		Validate.notNull(name, "Name cannot be null!");
+	public BasicProject(File folder, boolean loadDataOnConstructor) {
 		Validate.notNull(folder, "Folder cannot be null!");
 		Validate.isTrue(folder.exists(), "Folder " + folder.getName() + " must exist!");
 		Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
@@ -46,8 +45,8 @@ public abstract class BasicProject implements Project {
 		this.folder = folder;
 		this.projectTab = null;
 
-		if(loadDataOnConstructor) {
-			loadData();
+		if (loadDataOnConstructor) {
+			loadData(null);
 		}
 	}
 
@@ -76,5 +75,10 @@ public abstract class BasicProject implements Project {
 		this.projectTab = tab;
 	}
 
-	protected abstract void loadData();
+	/**
+	 * Loads the data of this project.
+	 *
+	 * @param name the name of the project, or null if the name should be get from the data.
+	 */
+	protected abstract void loadData(String name);
 }

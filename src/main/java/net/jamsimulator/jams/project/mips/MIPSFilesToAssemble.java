@@ -46,6 +46,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -193,7 +194,7 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
 
 		JSONArray array = new JSONArray(value);
 		for (Object element : array) {
-			file = new File(element.toString());
+			file = new File(project.getFolder(), element.toString());
 			if (!file.isFile()) continue;
 			addFile(file, false);
 		}
@@ -205,7 +206,8 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
 		Validate.notNull(folder, "Folder cannot be null!");
 		File file = new File(folder, FILE_NAME);
 		JSONArray array = new JSONArray();
-		files.keySet().stream().map(File::getAbsolutePath).forEach(array::put);
+		Path projectPath = project.getFolder().toPath();
+		files.keySet().stream().map(target -> projectPath.relativize(target.toPath())).forEach(array::put);
 
 		Writer writer = new FileWriter(file);
 		writer.write(array.toString(1));

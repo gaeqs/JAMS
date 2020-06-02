@@ -25,9 +25,7 @@
 package net.jamsimulator.jams.utils;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 
 public class FileUtils {
 
@@ -94,5 +92,13 @@ public class FileUtils {
 		return true;
 	}
 
+	public static boolean isValidPath(String path) {
+		try {
+			Paths.get(path);
+		} catch (InvalidPathException | NullPointerException ex) {
+			return false;
+		}
+		return true;
+	}
 }
 

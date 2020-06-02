@@ -65,7 +65,6 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
 	public ConfigurationWindowSectionActions(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name,
 											 String languageNode, int hierarchyLevel, Configuration configuration, Configuration meta, Map<String, Integer> regions) {
 		super(explorer, parent, name, languageNode, hierarchyLevel, configuration, meta, regions);
-
 		scrollPane = new ScrollPane();
 		scrollPane.setFitToHeight(true);
 		scrollPane.setFitToWidth(true);

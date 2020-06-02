@@ -5,7 +5,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.CacheHint;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -51,6 +50,12 @@ public class SimulationSidebar extends VBox {
 	}
 
 	private void init() {
+		getChildren().add(new Separator(Orientation.HORIZONTAL));
+
+		HBox configurationsTitle = new HBox(new Group(), new LanguageLabel(Messages.SIMULATION_CONFIGURATION_CONFIGURATIONS));
+		configurationsTitle.setSpacing(5);
+		getChildren().add(configurationsTitle);
+
 		generateConfigurationHBox();
 		generateButtonsHBox();
 		getChildren().add(new Separator(Orientation.HORIZONTAL));

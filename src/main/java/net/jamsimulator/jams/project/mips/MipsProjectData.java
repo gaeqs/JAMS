@@ -76,6 +76,10 @@ public class MipsProjectData extends ProjectData {
 			callEvent(new MipsSimulationConfigurationAddEvent.After(this, configuration));
 		}
 
+		if (selectedConfiguration == null) {
+			setSelectedConfiguration(configuration.getName());
+		}
+
 		return result;
 	}
 
@@ -91,7 +95,7 @@ public class MipsProjectData extends ProjectData {
 			callEvent(new MipsSimulationConfigurationRemoveEvent.After(this, configuration));
 		}
 		if (configuration == selectedConfiguration) {
-			setSelectedConfiguration(null);
+			setSelectedConfiguration(configurations.stream().findAny().map(MipsSimulationConfiguration::getName).orElse(null));
 		}
 		return result;
 	}

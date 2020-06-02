@@ -38,9 +38,14 @@ import java.util.List;
 
 public class MipsProject extends BasicProject {
 
+	public MipsProject(File folder) {
+		super(folder, false);
+		loadData(null);
+	}
+
 	public MipsProject(String name, File folder) {
-		super(name, folder, false);
-		loadData();
+		super(folder, false);
+		loadData(name);
 	}
 
 	@Override
@@ -82,9 +87,14 @@ public class MipsProject extends BasicProject {
 
 
 	@Override
-	protected void loadData() {
+	protected void loadData(String name) {
 		data = new MipsProjectData(this);
 		data.load();
+
+		if(name != null) {
+			data.setName(name);
+		}
+
 		data.save();
 	}
 }

@@ -143,8 +143,6 @@ public class TextEditorActionCompile extends Action {
 						log.print(": 0x" + toHexFill(register.getValue()));
 						log.printDoneLn("\t " + register.getValue());
 					});
-
-			simulation.getRegisterSet().getRegister("s0").ifPresent(register -> System.out.println(register.getValue()));
 		} catch (Exception ex) {
 			log.printErrorLn("ERROR:");
 			log.printErrorLn(ex.getMessage());

@@ -57,6 +57,10 @@ public abstract class ProjectData extends SimpleEventBroadcast {
 		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public void save() {
 		data.set("name", name);
 		try {

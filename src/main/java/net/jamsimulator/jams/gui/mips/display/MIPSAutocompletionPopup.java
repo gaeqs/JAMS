@@ -152,6 +152,9 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 		MIPSCodeElement element = mipsElements.getElementAt(caretPosition - 1).orElse(null);
 		if (element == null) return;
 		if (element.getText().substring(0, caretPosition - element.getStartIndex()).equals(replacement)) return;
-		display.replaceText(element.getStartIndex(), caretPosition, replacement);
+
+		boolean addSpace = element instanceof MIPSInstruction || element instanceof MIPSDirective;
+
+		display.replaceText(element.getStartIndex(), caretPosition, addSpace ? replacement + " " : replacement);
 	}
 }
