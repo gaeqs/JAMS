@@ -11,11 +11,25 @@ import javafx.scene.input.TransferMode;
 
 import java.util.UUID;
 
+/**
+ * This class help applications to add drag and drop support for Tabs.
+ * Create an instance and call {@link #addSupport(TabPane)} to add drag and drop support
+ * to a {@link TabPane}.
+ * <p>
+ * {@link TabPane}s that uses the same dragging support can share {@link Tab}s.
+ */
 public class DraggingSupport {
 
 	private Tab current;
 	private final String draggingID = "JDS-" + UUID.randomUUID();
 
+	/**
+	 * Adds drag and drop support to the given {@link TabPane}.
+	 * <p>
+	 * {@link TabPane}s that uses the same dragging support can share {@link Tab}s.
+	 *
+	 * @param tabPane the {@link TabPane}.
+	 */
 	public void addSupport(TabPane tabPane) {
 		tabPane.getTabs().forEach(this::addDragHandlers);
 		tabPane.getTabs().addListener((ListChangeListener.Change<? extends Tab> change) -> {
