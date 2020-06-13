@@ -280,9 +280,14 @@ public class FileEditorHolder extends SplitPane {
 			second = null;
 		} else return;
 		if (first == null) {
-			list = new FileEditorTabList(this);
-			getItems().add(list);
-			SplitPane.setResizableWithParent(list, false);
+			if (parent == null) {
+				list = new FileEditorTabList(this);
+				list.setHolder(this);
+				getItems().add(list);
+				SplitPane.setResizableWithParent(list, false);
+			} else {
+				parent.removeChild(this);
+			}
 		}
 	}
 
