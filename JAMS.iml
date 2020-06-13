@@ -11,58 +11,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:14" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:linux:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-media:win:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-media:mac:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-media:linux:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:win:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:14" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-base:linux:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:mac:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:linux:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:14" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:linux:14" level="project" />
-    <orderEntry type="library" name="Maven: com.github.goxr3plus:FX-BorderlessScene:4.4.0" level="project" />
-    <orderEntry type="library" name="Maven: net.java.dev.jna:jna:5.3.1" level="project" />
-    <orderEntry type="library" name="Maven: net.java.dev.jna:jna-platform:5.3.1" level="project" />
-    <orderEntry type="library" name="Maven: org.fxmisc.richtext:richtextfx:0.10.5" level="project" />
-    <orderEntry type="library" name="Maven: org.reactfx:reactfx:2.0-M5" level="project" />
-    <orderEntry type="library" name="Maven: org.fxmisc.undo:undofx:2.1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.fxmisc.flowless:flowless:0.6.1" level="project" />
-    <orderEntry type="library" name="Maven: org.fxmisc.wellbehaved:wellbehavedfx:0.3.3" level="project" />
-    <orderEntry type="library" name="Maven: org.json:json:20190722" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-api:5.5.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apiguardian:apiguardian-api:1.1.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.opentest4j:opentest4j:1.2.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.junit.platform:junit-platform-commons:1.5.2" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:win:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-media:win:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-media:mac:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-media:linux:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:win:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:win:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:mac:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:linux:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:14" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:win:14" level="project" />
-    <orderEntry type="library" name="Maven: com.github.goxr3plus:FX-BorderlessScene:4.4.0" level="project" />
-    <orderEntry type="library" name="Maven: net.java.dev.jna:jna:5.3.1" level="project" />
-    <orderEntry type="library" name="Maven: net.java.dev.jna:jna-platform:5.3.1" level="project" />
-    <orderEntry type="library" name="Maven: org.fxmisc.richtext:richtextfx:0.10.5" level="project" />
-    <orderEntry type="library" name="Maven: org.reactfx:reactfx:2.0-M5" level="project" />
-    <orderEntry type="library" name="Maven: org.fxmisc.undo:undofx:2.1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.fxmisc.flowless:flowless:0.6.1" level="project" />
-    <orderEntry type="library" name="Maven: org.fxmisc.wellbehaved:wellbehavedfx:0.3.3" level="project" />
-    <orderEntry type="library" name="Maven: org.json:json:20190722" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-api:5.5.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apiguardian:apiguardian-api:1.1.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.opentest4j:opentest4j:1.2.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.junit.platform:junit-platform-commons:1.5.2" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:14" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:win:14" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:14" level="project" />

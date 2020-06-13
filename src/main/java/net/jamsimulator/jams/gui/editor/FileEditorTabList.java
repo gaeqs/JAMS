@@ -24,12 +24,14 @@
 
 package net.jamsimulator.jams.gui.editor;
 
+import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,7 +43,6 @@ import java.util.stream.Collectors;
 public class FileEditorTabList extends TabPane {
 
 	private FileEditorHolder holder;
-	private final List<FileEditorTab> displays;
 
 	/**
 	 * Creates the list.
@@ -50,9 +51,23 @@ public class FileEditorTabList extends TabPane {
 	 */
 	public FileEditorTabList(FileEditorHolder holder) {
 		this.holder = holder;
-		this.displays = new ArrayList<>();
 		setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
 		getStyleClass().add("file-display-list");
+
+		getTabs().addListener((ListChangeListener<Tab>) change -> {
+			while (change.next()) {
+				if (change.wasRemoved()) {
+					Platform.runLater(this::refreshList);
+				}
+				if (change.wasAdded()) {
+					for (Tab tab : change.getAddedSubList()) {
+						if (tab instanceof FileEditorTab) {
+							((FileEditorTab) tab).setList(this);
+						}
+					}
+				}
+			}
+		});
 	}
 
 
@@ -91,7 +106,10 @@ public class FileEditorTabList extends TabPane {
 	 * @return the {@link FileEditorTab}, if present.
 	 */
 	public Optional<FileEditorTab> getFileDisplayTab(File file) {
-		return displays.stream().filter(target -> target.getFile().equals(file)).findAny();
+		return getTabs().stream().filter(target -> target instanceof FileEditorTab)
+				.filter(target -> ((FileEditorTab) target).getFile().equals(file))
+				.map(target -> (FileEditorTab) target)
+				.findAny();
 	}
 
 	/**
@@ -100,7 +118,7 @@ public class FileEditorTabList extends TabPane {
 	 * @return the selected {@link FileEditorTab}.
 	 */
 	public Optional<FileEditorTab> getSelected() {
-		if (displays.isEmpty()) return Optional.empty();
+		if (getTabs().isEmpty()) return Optional.empty();
 		return Optional.of((FileEditorTab) getSelectionModel().getSelectedItem());
 	}
 
@@ -124,7 +142,7 @@ public class FileEditorTabList extends TabPane {
 	 * @return whether this list is empty.
 	 */
 	public boolean isEmpty() {
-		return displays.isEmpty();
+		return getTabs().isEmpty();
 	}
 
 	/**
@@ -133,7 +151,7 @@ public class FileEditorTabList extends TabPane {
 	 * @return the amount.
 	 */
 	public int size() {
-		return displays.size();
+		return getTabs().size();
 	}
 
 	/**
@@ -143,7 +161,7 @@ public class FileEditorTabList extends TabPane {
 	 * @return whether this list contains the given {@link FileEditorTab}.
 	 */
 	public boolean contains(FileEditorTab tab) {
-		return displays.contains(tab);
+		return getTabs().contains(tab);
 	}
 
 	/**
@@ -153,15 +171,16 @@ public class FileEditorTabList extends TabPane {
 	 * @return if there's any {@link FileEditorTab} inside this list that matches the given {@link File}.
 	 */
 	public boolean isFileOpen(File file) {
-		return displays.stream().anyMatch(target -> target.getFile().equals(file));
+		return getTabs().stream().anyMatch(target -> target instanceof FileEditorTab
+				&& ((FileEditorTab) target).getFile().equals(file));
 	}
 
 	/**
 	 * Closes all {@link FileEditorTab} inside this list.
 	 */
 	public void closeAll() {
-		displays.forEach(target -> target.getDisplay().save());
-		displays.clear();
+		getTabs().stream().filter(target -> target instanceof FileEditorTab)
+				.forEach(target -> ((FileEditorTab) target).getDisplay().save());
 		getTabs().clear();
 		refreshList();
 	}
@@ -170,7 +189,8 @@ public class FileEditorTabList extends TabPane {
 	 * Saves all {@link FileEditorTab} inside this list.
 	 */
 	public void saveAll() {
-		displays.forEach(display -> display.getDisplay().save());
+		getTabs().stream().filter(target -> target instanceof FileEditorTab)
+				.forEach(display -> ((FileEditorTab) display).getDisplay().save());
 	}
 
 	/**
@@ -192,7 +212,6 @@ public class FileEditorTabList extends TabPane {
 		}
 
 		FileEditorTab tab = new FileEditorTab(this, file);
-		displays.add(tab);
 		getTabs().add(tab);
 		getSelectionModel().select(tab);
 		return true;
@@ -209,10 +228,13 @@ public class FileEditorTabList extends TabPane {
 		Validate.isTrue(file.exists(), "File must exist!");
 		Validate.isTrue(file.isFile(), "File must be a file!");
 
-		List<FileEditorTab> tabs = displays.stream().filter(target -> target.getFile().equals(file)).collect(Collectors.toList());
+		List<FileEditorTab> tabs = getTabs().stream()
+				.filter(target -> target instanceof FileEditorTab)
+				.filter(target -> ((FileEditorTab) target).getFile().equals(file))
+				.map(target -> (FileEditorTab) target)
+				.collect(Collectors.toList());
 		for (FileEditorTab tab : tabs) {
 			tab.getDisplay().save();
-			displays.remove(tab);
 			getTabs().remove(tab);
 		}
 		return tabs.size();
@@ -225,7 +247,6 @@ public class FileEditorTabList extends TabPane {
 	 */
 	void closeFileInternal(FileEditorTab tab) {
 		tab.getDisplay().save();
-		displays.remove(tab);
 		refreshList();
 	}
 
@@ -236,7 +257,6 @@ public class FileEditorTabList extends TabPane {
 	 */
 	void removeTabSimple(FileEditorTab tab) {
 		getTabs().remove(tab);
-		displays.remove(tab);
 	}
 
 	/**
@@ -246,12 +266,11 @@ public class FileEditorTabList extends TabPane {
 	 */
 	void addTabSimple(FileEditorTab tab) {
 		getTabs().add(tab);
-		displays.add(tab);
 		tab.setList(this);
 	}
 
 	private void refreshList() {
-		if (displays.isEmpty()) {
+		if (getTabs().isEmpty()) {
 			holder.checkIfEmpty();
 		}
 	}

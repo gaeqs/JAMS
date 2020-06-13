@@ -3,6 +3,7 @@ package net.jamsimulator.jams.gui.editor;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import net.jamsimulator.jams.gui.project.WorkingPane;
+import net.jamsimulator.jams.utils.DraggingSupport;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
@@ -19,6 +20,7 @@ public class FileEditorHolder extends SplitPane {
 
 	private FileEditorTabList list;
 	private FileEditorHolder first, second;
+	private DraggingSupport draggingSupport;
 
 	/**
 	 * Creates the holder.
@@ -30,6 +32,9 @@ public class FileEditorHolder extends SplitPane {
 		getItems().add(list);
 		this.workingPane = workingPane;
 		SplitPane.setResizableWithParent(list, false);
+
+		this.draggingSupport = new DraggingSupport();
+		refreshSupport();
 	}
 
 	/**
@@ -45,6 +50,9 @@ public class FileEditorHolder extends SplitPane {
 		list.setHolder(this);
 		getItems().add(list);
 		SplitPane.setResizableWithParent(list, false);
+
+		this.draggingSupport = new DraggingSupport();
+		refreshSupport();
 	}
 
 	/**
@@ -70,6 +78,7 @@ public class FileEditorHolder extends SplitPane {
 		getItems().add(second);
 		SplitPane.setResizableWithParent(first, false);
 		SplitPane.setResizableWithParent(second, false);
+		refreshSupport();
 	}
 
 	/**
@@ -239,6 +248,7 @@ public class FileEditorHolder extends SplitPane {
 			SplitPane.setResizableWithParent(first, false);
 			SplitPane.setResizableWithParent(second, false);
 			list = null;
+			refreshSupport();
 		} else {
 			(first == null ? second : first).openInNewHolder(display, horizontal);
 		}
@@ -273,6 +283,18 @@ public class FileEditorHolder extends SplitPane {
 			list = new FileEditorTabList(this);
 			getItems().add(list);
 			SplitPane.setResizableWithParent(list, false);
+		}
+	}
+
+	private void refreshSupport() {
+		if (list != null) draggingSupport.addSupport(list);
+		if (first != null) {
+			first.draggingSupport = draggingSupport;
+			first.refreshSupport();
+		}
+		if (second != null) {
+			second.draggingSupport = draggingSupport;
+			second.refreshSupport();
 		}
 	}
 }
