@@ -1,11 +1,14 @@
 package net.jamsimulator.jams.gui.action.defaults.editortab;
 
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditorTab;
 import net.jamsimulator.jams.gui.explorer.Explorer;
+import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.language.Messages;
 
 public class EditorTabActionSplitHorizontally extends ContextAction {
@@ -16,7 +19,7 @@ public class EditorTabActionSplitHorizontally extends ContextAction {
 
 	public EditorTabActionSplitHorizontally() {
 		super(NAME, RegionTags.EDITOR_TAB, Messages.ACTION_EDITOR_TAB_SPLIT_HORIZONTALLY,
-				DEFAULT_COMBINATION, EditorTagRegions.SPLIT, null);
+				DEFAULT_COMBINATION, EditorTagRegions.SPLIT, loadIcon());
 	}
 
 	@Override
@@ -34,5 +37,10 @@ public class EditorTabActionSplitHorizontally extends ContextAction {
 	@Override
 	public boolean supportsExplorerState(Explorer explorer) {
 		return false;
+	}
+
+	private static Image loadIcon() {
+		return JamsApplication.getIconManager().getOrLoadSafe(Icons.TAB_SPLIT_HORIZONTALLY,
+				Icons.TAB_SPLIT_HORIZONTALLY_PATH, 1024, 1024).orElse(null);
 	}
 }
