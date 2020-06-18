@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.register;
 
+import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Collections;
@@ -37,7 +38,7 @@ import java.util.Set;
  * <p>
  * Registers ProgramCounter, HighRegister and LowRegister are always present.
  */
-public class Registers {
+public class Registers extends SimpleEventBroadcast {
 
 	protected final Set<Character> validRegistersStarts;
 
@@ -199,16 +200,19 @@ public class Registers {
 		Set<Register> newRegisters = new HashSet<>();
 		Set<Register> newCop0Registers = new HashSet<>();
 		Set<Register> newCop1Registers = new HashSet<>();
-		registers.forEach(target -> newRegisters.add(target.copy()));
-		coprocessor0Registers.forEach(target -> newCop0Registers.add(target.copy()));
-		coprocessor1Registers.forEach(target -> newCop1Registers.add(target.copy()));
 
 		Registers set = new Registers(validRegistersStarts, newRegisters, newCop0Registers, newCop1Registers);
+
+		registers.forEach(target -> newRegisters.add(target.copy(set)));
+		coprocessor0Registers.forEach(target -> newCop0Registers.add(target.copy(set)));
+		coprocessor1Registers.forEach(target -> newCop1Registers.add(target.copy(set)));
+
+
 		set.programCounter.setValue(programCounter.getValue());
 		return set;
 	}
 
 	protected void loadEssentialRegisters() {
-		programCounter = new Register(-1, 0x00400000, true, "pc");
+		programCounter = new Register(this, -1, 0x00400000, true, "pc");
 	}
 }

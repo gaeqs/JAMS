@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.register;
 
+import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Arrays;
@@ -40,20 +41,25 @@ import java.util.Set;
  */
 public class Register {
 
-	private int identifier;
-	private Set<String> names;
+	private final Registers registers;
+
+	private final int identifier;
+	private final Set<String> names;
 	private int value;
-	private boolean modifiable;
+	private final boolean modifiable;
 	private int defaultValue;
 
 	/**
 	 * Creates a register using a identifier and a list of names.
 	 *
+	 * @param registers  the {@link Registers register set} where this register is stored at.
 	 * @param identifier the identifies.
 	 * @param names      the names.
 	 */
-	public Register(int identifier, String... names) {
+	public Register(Registers registers, int identifier, String... names) {
+		Validate.notNull(registers, "Registers cannot be null!");
 		Validate.isTrue(names.length > 0, "A register must have at least one name!");
+		this.registers = registers;
 		this.identifier = identifier;
 		this.names = new HashSet<>();
 		this.names.addAll(Arrays.asList(names));
@@ -64,11 +70,14 @@ public class Register {
 	/**
 	 * Creates a register using a identifier and a list of names.
 	 *
+	 * @param registers  the {@link Registers register set} where this register is stored at.
 	 * @param identifier the identifies.
 	 * @param names      the names.
 	 */
-	public Register(int identifier, Collection<String> names) {
+	public Register(Registers registers, int identifier, Collection<String> names) {
+		Validate.notNull(registers, "Registers cannot be null!");
 		Validate.isTrue(names.size() > 0, "A register must have at least one name!");
+		this.registers = registers;
 		this.identifier = identifier;
 		this.names = new HashSet<>();
 		this.names.addAll(names);
@@ -80,13 +89,16 @@ public class Register {
 	 * Creates a register using a identifier, a value and a list of names. If the boolean
 	 * 'modifiable' is false this register will be read-only.
 	 *
+	 * @param registers  the {@link Registers register set} where this register is stored at.
 	 * @param identifier the identifier.
 	 * @param value      the value.
 	 * @param modifiable whether this register is modifiable.
 	 * @param names      the names.
 	 */
-	public Register(int identifier, int value, boolean modifiable, String... names) {
+	public Register(Registers registers, int identifier, int value, boolean modifiable, String... names) {
+		Validate.notNull(registers, "Registers cannot be null!");
 		Validate.isTrue(names.length > 0, "A register must have at least one name!");
+		this.registers = registers;
 		this.identifier = identifier;
 		this.names = new HashSet<>();
 		this.names.addAll(Arrays.asList(names));
@@ -98,13 +110,16 @@ public class Register {
 	 * Creates a register using a identifier, a value and a list of names. If the boolean
 	 * 'modifiable' is false this register will be read-only.
 	 *
+	 * @param registers  the {@link Registers register set} where this register is stored at.
 	 * @param identifier the identifier.
 	 * @param value      the value.
 	 * @param modifiable whether this register is modifiable.
 	 * @param names      the names.
 	 */
-	public Register(int identifier, int value, boolean modifiable, Collection<String> names) {
+	public Register(Registers registers, int identifier, int value, boolean modifiable, Collection<String> names) {
+		Validate.notNull(registers, "Registers cannot be null!");
 		Validate.isTrue(names.size() > 0, "A register must have at least one name!");
+		this.registers = registers;
 		this.identifier = identifier;
 		this.names = new HashSet<>();
 		this.names.addAll(names);
@@ -159,7 +174,15 @@ public class Register {
 	 */
 	public void setValue(int value) {
 		if (!modifiable) return;
-		this.value = value;
+
+		RegisterChangeValueEvent.Before before = registers.callEvent(
+				new RegisterChangeValueEvent.Before(this, this.value, value));
+		if (before.isCancelled()) return;
+
+		int old = this.value;
+		this.value = before.getNewValue();
+
+		registers.callEvent(new RegisterChangeValueEvent.After(this, old, this.value));
 	}
 
 	/**
@@ -175,16 +198,17 @@ public class Register {
 	 * Sets this register's value to its initial state.
 	 */
 	public void reset() {
-		value = defaultValue;
+		setValue(defaultValue);
 	}
 
 	/**
 	 * Creates a copy of the register.
 	 *
+	 * @param registers the {@link Registers register set} the copy will be stored at.
 	 * @return the copy.
 	 */
-	public Register copy() {
-		Register register = new Register(identifier, value, modifiable, names);
+	public Register copy(Registers registers) {
+		Register register = new Register(registers, identifier, value, modifiable, names);
 		register.defaultValue = defaultValue;
 		return register;
 	}
