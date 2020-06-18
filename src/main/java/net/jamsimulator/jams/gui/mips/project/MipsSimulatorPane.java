@@ -11,8 +11,8 @@ import net.jamsimulator.jams.project.mips.MipsProject;
 
 public class MipsSimulatorPane extends WorkingPane {
 
-	private MipsProject project;
-	private Simulation<?> simulation;
+	private final MipsProject project;
+	private final Simulation<?> simulation;
 
 	public MipsSimulatorPane(Tab parent, ProjectTab projectTab, MipsProject project, Simulation<?> simulation) {
 		super(parent, projectTab, null, false);

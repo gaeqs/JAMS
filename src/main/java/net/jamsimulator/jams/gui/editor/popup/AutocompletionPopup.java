@@ -71,7 +71,8 @@ public abstract class AutocompletionPopup extends Popup {
 
 
 		scroll = new ScrollPane(content);
-		scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		scroll.setFitToHeight(true);
+		scroll.setFitToWidth(true);
 		getContent().add(scroll);
 		scroll.setMaxHeight(200);
 	}
