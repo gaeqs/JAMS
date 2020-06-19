@@ -117,7 +117,7 @@ public class Registers extends SimpleEventBroadcast {
 	 * @return the {@link Set}.
 	 */
 	public Set<Register> getCoprocessor0Registers() {
-		return Collections.unmodifiableSet(registers);
+		return Collections.unmodifiableSet(coprocessor0Registers);
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class Registers extends SimpleEventBroadcast {
 	 * @return the {@link Set}.
 	 */
 	public Set<Register> getCoprocessor1Registers() {
-		return Collections.unmodifiableSet(registers);
+		return Collections.unmodifiableSet(coprocessor1Registers);
 	}
 
 	/**

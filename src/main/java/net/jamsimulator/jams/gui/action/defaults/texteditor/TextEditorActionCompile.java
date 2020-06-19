@@ -30,6 +30,7 @@ import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.mips.display.MIPSFileEditor;
+import net.jamsimulator.jams.gui.mips.project.MipsSimulatorPane;
 import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.util.Log;
@@ -98,6 +99,11 @@ public class TextEditorActionCompile extends Action {
 
 			int mainLabel = assembler.getGlobalLabels().getOrDefault("main", -1);
 			Simulation<?> simulation = assembler.createSimulation(selected.getArchitecture());
+
+			project.getProjectTab().ifPresent(projectTab ->
+					projectTab.getProjectTabPane()
+							.createProjectPane((t, pt) -> new MipsSimulatorPane(t, pt, project, simulation), true));
+
 			if (simulation instanceof SingleCycleSimulation) {
 				((SingleCycleSimulation) simulation).setLog(log);
 			}

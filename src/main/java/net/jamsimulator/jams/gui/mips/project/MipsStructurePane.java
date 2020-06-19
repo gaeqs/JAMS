@@ -195,11 +195,6 @@ public class MipsStructurePane extends WorkingPane {
 	}
 
 	@Override
-	public void populateButtons(HBox buttons) {
-
-	}
-
-	@Override
 	public void onClose() {
 		super.onClose();
 		explorer.dispose();

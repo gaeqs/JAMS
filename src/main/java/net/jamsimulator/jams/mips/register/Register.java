@@ -127,6 +127,14 @@ public class Register {
 		this.modifiable = modifiable;
 	}
 
+	/**
+	 * Returns the {@link Registers register set} this register is inside of.
+	 *
+	 * @return the {@link Registers register set}.
+	 */
+	public Registers getRegisters() {
+		return registers;
+	}
 
 	/**
 	 * Returns the identifier of the register.

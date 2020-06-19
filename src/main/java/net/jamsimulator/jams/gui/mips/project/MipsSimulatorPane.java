@@ -1,18 +1,28 @@
 package net.jamsimulator.jams.gui.mips.project;
 
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
+import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.mips.project.simulator.RegistersTable;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.project.mips.MipsProject;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class MipsSimulatorPane extends WorkingPane {
 
-	private final MipsProject project;
-	private final Simulation<?> simulation;
+	protected MipsProject project;
+	protected Simulation<?> simulation;
+	protected TabPane registersTabs;
 
 	public MipsSimulatorPane(Tab parent, ProjectTab projectTab, MipsProject project, Simulation<?> simulation) {
 		super(parent, projectTab, null, false);
@@ -20,7 +30,12 @@ public class MipsSimulatorPane extends WorkingPane {
 		this.simulation = simulation;
 
 		center = new AnchorPane();
+
 		init();
+
+		SplitPane.setResizableWithParent(center, true);
+
+		loadRegisterTabs();
 	}
 
 	public MipsProject getProject() {
@@ -31,13 +46,25 @@ public class MipsSimulatorPane extends WorkingPane {
 		return simulation;
 	}
 
-	@Override
-	public String getLanguageNode() {
-		return Messages.PROJECT_TAB_STRUCTURE;
+	private void loadRegisterTabs() {
+		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
+				Icons.SIDEBAR_EXPLORER_PATH, 1024, 1024).orElse(null);
+
+		registersTabs = new TabPane();
+
+
+		Set<Register> general = new HashSet<>(simulation.getRegisterSet().getGeneralRegisters());
+		general.add(simulation.getRegisterSet().getProgramCounter());
+
+		registersTabs.getTabs().add(new Tab("General", new RegistersTable(general, false)));
+		registersTabs.getTabs().add(new Tab("COP0", new RegistersTable(simulation.getRegisterSet().getCoprocessor0Registers(), false)));
+		registersTabs.getTabs().add(new Tab("COP1", new RegistersTable(simulation.getRegisterSet().getCoprocessor1Registers(), true)));
+
+		topRightSidebar.addNode("Registers", registersTabs, explorerIcon, null);
 	}
 
 	@Override
-	public void populateButtons(HBox buttons) {
-
+	public String getLanguageNode() {
+		return Messages.PROJECT_TAB_SIMULATION;
 	}
 }

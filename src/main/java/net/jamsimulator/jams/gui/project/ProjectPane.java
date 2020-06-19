@@ -6,8 +6,6 @@ public interface ProjectPane {
 
 	String getLanguageNode();
 
-	void populateButtons(HBox buttons);
-
 	void onClose();
 
 }

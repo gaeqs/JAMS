@@ -138,7 +138,7 @@ AnchorPane {
 }
 
 .scroll-pane .corner {
-    -fx-opacity: 0;
+    -fx-background-color: -theme-background;
 }
 
 /*SCROLL BAR*/
@@ -375,6 +375,10 @@ AnchorPane {
     -fx-background-color: -theme-background;
 }
 
+.table-view .corner {
+    -fx-background-color: -theme-background;
+}
+
 .table-view .filler {
     -fx-background-color: -theme-background-darker;
 }
@@ -384,13 +388,16 @@ AnchorPane {
 }
 
 .table-view .table-row-cell:even {
-    -fx-text-fill: -theme-foreground;
-    -fx-background-color: -theme-background-lighter;
+    -fx-background-color: -theme-background-darker-2;
 }
 
 .table-view .table-row-cell:odd {
+    -fx-background-color: -theme-background-darker;
+}
+
+
+.table-view .table-cell {
     -fx-text-fill: -theme-foreground;
-    -fx-background-color: -theme-background-pressed;
 }
 
 .table-view .column-drag-header {
@@ -399,6 +406,10 @@ AnchorPane {
 
 .table-view .table-row-cell {
     -fx-table-cell-border-color: -theme-background;
+}
+
+.table-view .column-resize-line {
+    -fx-background-color: -theme-foreground;
 }
 
 /*TREE TABLE VIEW*/
@@ -430,6 +441,10 @@ AnchorPane {
 
 .tree-table-view .table-row-cell {
     -fx-table-cell-border-color: -theme-background;
+}
+
+.tree-table-view .column-resize-line {
+    -fx-background-color: -theme-foreground;
 }
 
 /*TREE VIEW*/

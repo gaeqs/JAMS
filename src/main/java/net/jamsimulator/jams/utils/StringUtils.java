@@ -173,4 +173,15 @@ public class StringUtils {
 		return builder.toString();
 	}
 
+	public static String addZeros(String s, int to) {
+		StringBuilder builder = new StringBuilder();
+		int max = Math.max(0, to - s.length());
+
+		for (int i = 0; i < max; i++) {
+			builder.append("0");
+		}
+
+		return builder + s;
+	}
+
 }
