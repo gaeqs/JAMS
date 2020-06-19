@@ -43,7 +43,7 @@ public class ProjectTabPane extends TabPane {
 		getStyleClass().add("project-tab-pane");
 		this.projectTab = projectTab;
 
-		workingPane = createProjectPane((tab, pt) -> new MipsStructurePane(tab, pt, (MipsProject) pt.getProject()));
+		workingPane = createProjectPane((tab, pt) -> new MipsStructurePane(tab, pt, (MipsProject) pt.getProject()), false);
 
 		projectTab.addTabCloseListener(event -> {
 			for (Tab tab : getTabs()) {
@@ -57,9 +57,9 @@ public class ProjectTabPane extends TabPane {
 		return workingPane;
 	}
 
-	public <E extends ProjectPane> E createProjectPane(BiFunction<Tab, ProjectTab, E> creator) {
+	public <E extends ProjectPane> E createProjectPane(BiFunction<Tab, ProjectTab, E> creator, boolean closeable) {
 		LanguageTab tab = new LanguageTab("");
-		tab.setClosable(false);
+		tab.setClosable(closeable);
 		getTabs().add(tab);
 
 		E pane = creator.apply(tab, projectTab);
