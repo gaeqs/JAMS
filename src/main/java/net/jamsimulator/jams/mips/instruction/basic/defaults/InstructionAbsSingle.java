@@ -60,7 +60,7 @@ public class InstructionAbsSingle extends BasicRFPUInstruction<AssembledInstruct
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionAbsSingle(instructionCode, this, this);
 	}
 

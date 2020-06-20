@@ -62,7 +62,7 @@ public class InstructionSubDouble extends BasicRFPUInstruction<AssembledInstruct
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionSubDouble(instructionCode, this, this);
 	}
 

@@ -22,12 +22,12 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.display.element;
+package net.jamsimulator.jams.gui.mips.editor.element;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.mips.display.MIPSEditorError;
+import net.jamsimulator.jams.gui.mips.editor.MIPSEditorError;
 import net.jamsimulator.jams.language.Language;
 
 import java.util.ArrayList;

@@ -28,6 +28,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledIFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionBc1eqz;
+import net.jamsimulator.jams.utils.StringUtils;
 
 public class AssembledInstructionBc1Eqz extends AssembledIFPUInstruction {
 
@@ -37,5 +38,11 @@ public class AssembledInstructionBc1Eqz extends AssembledIFPUInstruction {
 
 	public AssembledInstructionBc1Eqz(int instructionCode, Instruction origin, BasicInstruction<AssembledInstructionBc1Eqz> basicOrigin) {
 		super(instructionCode, origin, basicOrigin);
+	}
+
+	@Override
+	public String parametersToString(String registersStart) {
+		return registersStart + getTargetRegister()
+				+ ", 0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 4);
 	}
 }

@@ -40,4 +40,11 @@ public class AssembledInstructionAddu extends AssembledRInstruction {
 	public AssembledInstructionAddu(int instructionCode, Instruction origin, BasicInstruction<AssembledInstructionAddu> basicOrigin) {
 		super(instructionCode, origin, basicOrigin);
 	}
+
+	@Override
+	public String parametersToString(String registersStart) {
+		return registersStart + getDestinationRegister()
+				+ ", " + registersStart + getSourceRegister()
+				+ ", " + registersStart + getTargetRegister();
+	}
 }

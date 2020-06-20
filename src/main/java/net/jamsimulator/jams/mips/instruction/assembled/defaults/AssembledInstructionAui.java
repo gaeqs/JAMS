@@ -28,6 +28,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAui;
+import net.jamsimulator.jams.utils.StringUtils;
 
 public class AssembledInstructionAui extends AssembledI16Instruction {
 
@@ -37,5 +38,12 @@ public class AssembledInstructionAui extends AssembledI16Instruction {
 
 	public AssembledInstructionAui(int instructionCode, Instruction origin, BasicInstruction<AssembledInstructionAui> basicOrigin) {
 		super(instructionCode, origin, basicOrigin);
+	}
+
+	@Override
+	public String parametersToString(String registersStart) {
+		return registersStart + getTargetRegister()
+				+ ", " + registersStart + getSourceRegister()
+				+ ", 0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 4);
 	}
 }

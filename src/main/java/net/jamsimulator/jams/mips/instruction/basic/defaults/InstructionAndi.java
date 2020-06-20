@@ -59,7 +59,7 @@ public class InstructionAndi extends BasicInstruction<AssembledInstructionAndi> 
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionAndi(instructionCode, this, this);
 	}
 

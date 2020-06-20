@@ -40,4 +40,11 @@ public class AssembledInstructionDiv extends AssembledRSOPInstruction {
 	public AssembledInstructionDiv(int instructionCode, Instruction origin, BasicInstruction<AssembledInstructionDiv> basicOrigin) {
 		super(instructionCode, origin, basicOrigin);
 	}
+
+	@Override
+	public String parametersToString(String registersStart) {
+		return registersStart + getDestinationRegister()
+				+ ", " + registersStart + getSourceRegister()
+				+ ", " + registersStart + getTargetRegister();
+	}
 }

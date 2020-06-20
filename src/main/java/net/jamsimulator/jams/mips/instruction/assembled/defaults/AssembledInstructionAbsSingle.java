@@ -40,4 +40,8 @@ public class AssembledInstructionAbsSingle extends AssembledRFPUInstruction {
 		super(instructionCode, origin, basicOrigin);
 	}
 
+	@Override
+	public String parametersToString(String registersStart) {
+		return registersStart + getDestinationRegister() + ", " + registersStart + getSourceRegister();
+	}
 }

@@ -59,7 +59,7 @@ public class InstructionAddiupc extends BasicPCREL19Instruction<AssembledInstruc
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionAddiupc(instructionCode, this, this);
 	}
 

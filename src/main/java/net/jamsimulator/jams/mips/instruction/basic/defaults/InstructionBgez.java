@@ -58,7 +58,7 @@ public class InstructionBgez extends BasicRIInstruction<AssembledInstructionBgez
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionBgez(instructionCode, this, this);
 	}
 

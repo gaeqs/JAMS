@@ -40,4 +40,10 @@ public class AssembledInstructionDivDouble extends AssembledRFPUInstruction {
 		super(instructionCode, origin, basicOrigin);
 	}
 
+	@Override
+	public String parametersToString(String registersStart) {
+		return registersStart + getDestinationRegister()
+				+ ", " + registersStart + getSourceRegister()
+				+ ", " + registersStart + getTargetRegister();
+	}
 }

@@ -60,5 +60,5 @@ public abstract class Architecture {
 	 * @param memory         the {@link Memory}.
 	 * @return the {@link Simulation}.
 	 */
-	public abstract Simulation<? extends Architecture> createSimulation(InstructionSet instructionSet, Registers registers, Memory memory);
+	public abstract Simulation<? extends Architecture> createSimulation(InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom);
 }

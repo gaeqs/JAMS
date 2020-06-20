@@ -32,13 +32,14 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.utils.StringUtils;
 
 public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
 	private Log log;
 
-	public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, Registers registerSet, Memory memory) {
-		super(architecture, instructionSet, registerSet, memory);
+	public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, Registers registerSet, Memory memory, int instructionStackBottom) {
+		super(architecture, instructionSet, registerSet, memory, instructionStackBottom);
 	}
 
 	public void setLog(Log log) {
@@ -49,6 +50,10 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	public void nextStep() {
 		int pc = registerSet.getProgramCounter().getValue();
 
+		if (pc > instructionStackBottom) {
+			throw new InstructionNotFoundException("Dropped off bottom.");
+		}
+
 		//Fetch and Decode
 		registerSet.getProgramCounter().setValue(pc + 4);
 		AssembledInstruction instruction = fetch(pc);
@@ -56,15 +61,15 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		if (instruction == null) {
 			int code = memory.getWord(pc);
 			throw new InstructionNotFoundException("Couldn't decode instruction 0x" +
-					addZeros(Integer.toHexString(code), 8) + ". (" + addZeros(Integer.toBinaryString(code), 32) + ")");
+					StringUtils.addZeros(Integer.toHexString(code), 8) + ". (" + StringUtils.addZeros(Integer.toBinaryString(code), 32) + ")");
 		}
 
-		String address = "0x" + addZeros(Integer.toHexString(pc), 8);
-		String opCode = addZeros(Integer.toBinaryString(instruction.getOperationCode()), 6);
+		String address = "0x" + StringUtils.addZeros(Integer.toHexString(pc), 8);
+		String opCode = StringUtils.addZeros(Integer.toBinaryString(instruction.getOperationCode()), 6);
 		String mnemonic = instruction.getBasicOrigin().getMnemonic();
-		String code = "0x" + addZeros(Integer.toHexString(instruction.getCode()), 8);
+		String code = "0x" + StringUtils.addZeros(Integer.toHexString(instruction.getCode()), 8);
 
-		if(log == null) {
+		if (log == null) {
 			System.out.println(address + "\t" + opCode + "\t" + mnemonic + " \t" + code);
 		} else {
 			log.println(address + "\t" + opCode + "\t" + mnemonic + " \t" + code);
@@ -82,17 +87,8 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
 	@Override
 	public void executeAll() {
-
-	}
-
-	private String addZeros(String s, int to) {
-		StringBuilder builder = new StringBuilder();
-		int max = Math.max(0, to - s.length());
-
-		for (int i = 0; i < max; i++) {
-			builder.append("0");
+		while (registerSet.getProgramCounter().getValue() <= instructionStackBottom) {
+			nextStep();
 		}
-
-		return builder + s;
 	}
 }

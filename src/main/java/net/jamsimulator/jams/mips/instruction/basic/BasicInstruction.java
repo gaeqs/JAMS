@@ -146,12 +146,12 @@ public abstract class BasicInstruction<Inst extends AssembledInstruction> implem
 	public abstract AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin);
 
 	/**
-	 * Compiles the basic instruction using the given instruction code.
+	 * Assembles the basic instruction using the given instruction code.
 	 *
 	 * @param instructionCode the instruction code.
 	 * @return the {@link AssembledInstruction}.
 	 */
-	public abstract AssembledInstruction compileFromCode(int instructionCode);
+	public abstract AssembledInstruction assembleFromCode(int instructionCode);
 
 	/**
 	 * Generates a {@link InstructionExecution} that matches the given {@link Architecture}.

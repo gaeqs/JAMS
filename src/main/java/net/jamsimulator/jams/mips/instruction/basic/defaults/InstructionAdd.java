@@ -61,7 +61,7 @@ public class InstructionAdd extends BasicRInstruction<AssembledInstructionAdd> {
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionAdd(instructionCode, this, this);
 	}
 

@@ -59,7 +59,7 @@ public class InstructionSw extends BasicInstruction<AssembledInstructionSw> {
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionSw(instructionCode, this, this);
 	}
 

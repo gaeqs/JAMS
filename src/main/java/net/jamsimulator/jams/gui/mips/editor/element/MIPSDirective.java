@@ -22,59 +22,52 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.display.element;
+package net.jamsimulator.jams.gui.mips.editor.element;
 
-import net.jamsimulator.jams.gui.mips.display.MIPSEditorError;
-import net.jamsimulator.jams.mips.instruction.Instruction;
-import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
-import net.jamsimulator.jams.mips.parameter.ParameterType;
-import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
+import net.jamsimulator.jams.gui.mips.editor.MIPSEditorError;
+import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.directive.defaults.DirectiveGlobl;
+import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.project.mips.MipsProject;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class MIPSInstruction extends MIPSCodeElement {
+public class MIPSDirective extends MIPSCodeElement {
 
-	private String instruction;
-	private final List<MIPSInstructionParameter> parameters;
-	private final Set<String> usedLabels;
+	private String directive;
+	private final List<MIPSDirectiveParameter> parameters;
 
-	public MIPSInstruction(MIPSFileElements elements, int startIndex, int endIndex, String text) {
+	public MIPSDirective(int startIndex, int endIndex, String text) {
 		super(startIndex, endIndex, text);
-		this.parameters = new ArrayList<>();
-		parseText(elements);
-
-		usedLabels = new HashSet<>();
-		for (MIPSInstructionParameter parameter : parameters) {
-			parameter.getLabelParameterPart().ifPresent(usedLabels::add);
-		}
+		parameters = new ArrayList<>();
+		parseText();
 	}
 
 	@Override
 	public String getSimpleText() {
-		return instruction;
+		return directive;
 	}
 
-	public List<MIPSInstructionParameter> getParameters() {
+	public List<MIPSDirectiveParameter> getParameters() {
 		return parameters;
 	}
 
-	public Set<String> getUsedLabels() {
-		return usedLabels;
+	public boolean isGlobl() {
+		return directive.equalsIgnoreCase("." + DirectiveGlobl.NAME);
 	}
 
 	@Override
 	public void move(int offset) {
 		super.move(offset);
-		parameters.forEach(parameter -> parameter.getParts().forEach(target -> target.move(offset)));
+		parameters.forEach(parameter -> parameter.move(offset));
 	}
 
 	@Override
 	public List<String> getStyles() {
-		if(hasErrors()) return Arrays.asList("mips-instruction", "mips-error");
-		return Collections.singletonList("mips-instruction");
+		if (hasErrors()) return Arrays.asList("mips-directive", "mips-error");
+		return Collections.singletonList("mips-directive");
 	}
 
 	@Override
@@ -82,22 +75,17 @@ public class MIPSInstruction extends MIPSCodeElement {
 		errors.clear();
 
 		MipsProject project = elements.getProject().orElse(null);
-		InstructionSet set = project.getData().getInstructionSet();
+		if (project == null) return;
 
-		RegistersBuilder builder = project.getData().getRegistersBuilder();
-		List<ParameterType>[] types = new List[parameters.size()];
-
-		for (int i = 0; i < parameters.size(); i++) {
-			types[i] = parameters.get(i).refreshMetadata(builder);
-		}
-
-		Instruction instruction = set.getBestCompatibleInstruction(this.instruction, types).orElse(null);
-		if (instruction == null) {
-			errors.add(MIPSEditorError.INSTRUCTION_NOT_FOUND);
+		DirectiveSet set = project.getData().getDirectiveSet();
+		Directive directive = set.getDirective(this.directive.substring(1)).orElse(null);
+		if (directive == null) {
+			errors.add(MIPSEditorError.DIRECTIVE_NOT_FOUND);
 		}
 	}
 
-	private void parseText(MIPSFileElements elements) {
+
+	private void parseText() {
 		Map<Integer, String> parts = StringUtils.multiSplitIgnoreInsideStringWithIndex(text, false, " ", ",", "\t");
 		if (parts.isEmpty()) return;
 
@@ -105,17 +93,19 @@ public class MIPSInstruction extends MIPSCodeElement {
 		List<Map.Entry<Integer, String>> stringParameters = parts.entrySet().stream()
 				.sorted(Comparator.comparingInt(Map.Entry::getKey)).collect(Collectors.toList());
 
-		//The first entry is the instruction itself.
+		//The first entry is the directive itself.
 		Map.Entry<Integer, String> first = stringParameters.get(0);
-		instruction = first.getValue();
+		directive = first.getValue();
 		stringParameters.remove(0);
 
 		//Adds all parameters.
 		for (Map.Entry<Integer, String> entry : stringParameters) {
-			parameters.add(new MIPSInstructionParameter(elements, startIndex + entry.getKey(), entry.getValue()));
+			parameters.add(new MIPSDirectiveParameter(
+					startIndex + entry.getKey(),
+					startIndex + entry.getKey() + entry.getValue().length(), entry.getValue()));
 		}
 
 		startIndex += first.getKey();
-		endIndex = startIndex + instruction.length();
+		endIndex = startIndex + directive.length();
 	}
 }

@@ -27,7 +27,7 @@ package net.jamsimulator.jams.mips.assembler;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.directive.set.MIPS32DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.MIPS32InstructionSet;
-import net.jamsimulator.jams.mips.memory.Mips32Memory;
+import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
@@ -70,14 +70,14 @@ class AssemblerTest {
 		Assembler assembler = new MIPS32Assembler(
 				new MIPS32DirectiveSet(),
 				new MIPS32InstructionSet(),
-				new MIPS32Registers(), new Mips32Memory());
+				new MIPS32Registers(), new MIPS32Memory());
 		assembler.setData(files);
 		assembler.compile();
 		Simulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE);
 
 		assertEquals(0x02508820, simulation.getMemory().getWord(simulation.getRegisterSet().getProgramCounter().getValue()));
 
-		System.out.println("Extern next address: " + (assembler.getAssemblerData().getCurrentExtern() - Mips32Memory.DATA));
+		System.out.println("Extern next address: " + (assembler.getAssemblerData().getCurrentExtern() - MIPS32Memory.DATA));
 
 		System.out.println("Starting simulation");
 		Register pc = simulation.getRegisterSet().getProgramCounter();
@@ -93,7 +93,7 @@ class AssemblerTest {
 
 		byte[] values = {(byte) 5, (byte) 9, (byte) 6, (byte) 2};
 		for (int i = 0; i < 4; i++) {
-			assertEquals(values[i], simulation.getMemory().getByte(Mips32Memory.STATIC_DATA + i), "Incorrect data.");
+			assertEquals(values[i], simulation.getMemory().getByte(MIPS32Memory.STATIC_DATA + i), "Incorrect data.");
 		}
 	}
 

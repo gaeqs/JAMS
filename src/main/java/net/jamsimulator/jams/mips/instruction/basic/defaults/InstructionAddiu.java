@@ -59,7 +59,7 @@ public class InstructionAddiu extends BasicInstruction<AssembledInstructionAddiu
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionAddiu(instructionCode, this, this);
 	}
 

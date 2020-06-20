@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.instruction.assembled;
 
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.utils.StringUtils;
 
 /**
  * Represents a compiled I-Type Off9 instruction. An I-Type Off9 instruction is composed of a function code,
@@ -57,7 +58,7 @@ public abstract class AssembledI9Instruction extends AssembledInstruction {
 	 * an origin {@link Instruction} and an origin {@link BasicInstruction}.
 	 *
 	 * @param operationCode  the operation code.
-	 * @param baseRegister   the source register .
+	 * @param baseRegister   the base register .
 	 * @param targetRegister the target register.
 	 * @param offset         the immediate.
 	 * @param functionCode   the function code.
@@ -107,9 +108,9 @@ public abstract class AssembledI9Instruction extends AssembledInstruction {
 	}
 
 	/**
-	 * Returns the source register of this instruction-
+	 * Returns the base register of this instruction-
 	 *
-	 * @return the source register.
+	 * @return the base register.
 	 */
 	public int getBaseRegister() {
 		return value >> BASE_REGISTER_SHIFT & BASE_REGISTER_MASK;
@@ -124,5 +125,4 @@ public abstract class AssembledI9Instruction extends AssembledInstruction {
 		value += functionCode & FUNCTION_CODE_MASK;
 		return value;
 	}
-
 }

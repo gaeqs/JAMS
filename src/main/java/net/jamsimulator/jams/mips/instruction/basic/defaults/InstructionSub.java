@@ -61,7 +61,7 @@ public class InstructionSub extends BasicRInstruction<AssembledInstructionSub> {
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionSub(instructionCode, this, this);
 	}
 

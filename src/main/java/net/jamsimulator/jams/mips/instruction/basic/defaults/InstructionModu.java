@@ -62,7 +62,7 @@ public class InstructionModu extends BasicRSOPInstruction<AssembledInstructionMo
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionModu(instructionCode, this, this);
 	}
 

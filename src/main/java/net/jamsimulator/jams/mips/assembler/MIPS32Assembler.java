@@ -113,7 +113,7 @@ public class MIPS32Assembler implements Assembler {
 	@Override
 	public <Arch extends Architecture> Simulation<Arch> createSimulation(Arch architecture) {
 		if (!compiled) throw new IllegalStateException("The program is still not compiled!");
-		Simulation<Arch> simulation = (Simulation<Arch>) architecture.createSimulation(instructionSet, registerSet.copy(), memory.copy());
+		Simulation<Arch> simulation = (Simulation<Arch>) architecture.createSimulation(instructionSet, registerSet.copy(), memory.copy(), assemblerData.currentText - 4);
 		simulation.getRegisterSet().getProgramCounter().setValue(assemblerData.getFirstText());
 		return simulation;
 	}

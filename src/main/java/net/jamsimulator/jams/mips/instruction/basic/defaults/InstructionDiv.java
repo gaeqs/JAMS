@@ -62,7 +62,7 @@ public class InstructionDiv extends BasicRSOPInstruction<AssembledInstructionDiv
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionDiv(instructionCode, this, this);
 	}
 

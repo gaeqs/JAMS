@@ -40,4 +40,11 @@ public class AssembledInstructionMuhu extends AssembledRSOPInstruction {
 	public AssembledInstructionMuhu(int instructionCode, Instruction origin, BasicInstruction<AssembledInstructionMuhu> basicOrigin) {
 		super(instructionCode, origin, basicOrigin);
 	}
+
+	@Override
+	public String parametersToString(String registersStart) {
+		return registersStart + getDestinationRegister()
+				+ ", " + registersStart + getSourceRegister()
+				+ ", " + registersStart + getTargetRegister();
+	}
 }

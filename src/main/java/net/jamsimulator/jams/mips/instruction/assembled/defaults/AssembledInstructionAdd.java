@@ -40,4 +40,11 @@ public class AssembledInstructionAdd extends AssembledRInstruction {
 	public AssembledInstructionAdd(int instructionCode, Instruction origin, BasicInstruction<AssembledInstructionAdd> basicOrigin) {
 		super(instructionCode, origin, basicOrigin);
 	}
+
+	@Override
+	public String parametersToString(String registersStart) {
+		return registersStart + getDestinationRegister()
+				+ ", " + registersStart + getSourceRegister()
+				+ ", " + registersStart + getTargetRegister();
+	}
 }

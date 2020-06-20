@@ -28,6 +28,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAlign;
+import net.jamsimulator.jams.utils.StringUtils;
 
 public class AssembledInstructionAlign extends AssembledRInstruction {
 
@@ -54,5 +55,13 @@ public class AssembledInstructionAlign extends AssembledRInstruction {
 
 	public int getAlignCode() {
 		return value >> ALIGN_CODE_SHIFT & ALIGN_CODE_MASK;
+	}
+
+	@Override
+	public String parametersToString(String registersStart) {
+		return registersStart + getDestinationRegister()
+				+ ", " + registersStart + getSourceRegister()
+				+ ", " + registersStart + getTargetRegister()
+				+ ", 0x" + Integer.toHexString(getShiftAmount());
 	}
 }

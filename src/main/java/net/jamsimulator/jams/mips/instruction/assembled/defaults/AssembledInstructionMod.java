@@ -40,4 +40,11 @@ public class AssembledInstructionMod extends AssembledRSOPInstruction {
 	public AssembledInstructionMod(int instructionCode, Instruction origin, BasicInstruction<AssembledInstructionMod> basicOrigin) {
 		super(instructionCode, origin, basicOrigin);
 	}
+
+	@Override
+	public String parametersToString(String registersStart) {
+		return registersStart + getDestinationRegister()
+				+ ", " + registersStart + getSourceRegister()
+				+ ", " + registersStart + getTargetRegister();
+	}
 }

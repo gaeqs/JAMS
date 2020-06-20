@@ -39,4 +39,11 @@ public class AssembledInstructionDivSingle extends AssembledRFPUInstruction {
 	public AssembledInstructionDivSingle(int instructionCode, Instruction origin, BasicInstruction<AssembledInstructionDivSingle> basicOrigin) {
 		super(instructionCode, origin, basicOrigin);
 	}
+
+	@Override
+	public String parametersToString(String registersStart) {
+		return registersStart + getDestinationRegister()
+				+ ", " + registersStart + getSourceRegister()
+				+ ", " + registersStart + getTargetRegister();
+	}
 }

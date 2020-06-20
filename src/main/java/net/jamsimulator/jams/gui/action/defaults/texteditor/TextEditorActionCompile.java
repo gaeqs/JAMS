@@ -29,7 +29,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.mips.display.MIPSFileEditor;
+import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
 import net.jamsimulator.jams.gui.mips.project.MipsSimulatorPane;
 import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
@@ -121,10 +121,9 @@ public class TextEditorActionCompile extends Action {
 			log.println();
 
 			try {
-				for (int i = 0; i < 1000; i++) {
-					simulation.nextStep();
-				}
-			} catch (InstructionNotFoundException ignore) {
+				simulation.executeAll();
+			} catch (InstructionNotFoundException ex) {
+				log.printInfo("Stop. "+ex.getMessage());
 			}
 
 			log.println();

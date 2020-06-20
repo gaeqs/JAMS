@@ -58,7 +58,7 @@ public class InstructionBlezalc extends BasicInstruction<AssembledInstructionBle
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionBlezalc(instructionCode, this, this);
 	}
 

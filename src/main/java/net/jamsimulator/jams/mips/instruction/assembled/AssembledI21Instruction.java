@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.instruction.assembled;
 
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.utils.StringUtils;
 
 /**
  * Represents a compiled I-Type Imm21 instruction. An I-Type Imm21 instruction is composed of an 21-bit immediate,
@@ -102,5 +103,4 @@ public abstract class AssembledI21Instruction extends AssembledInstruction {
 		value += immediate & IMMEDIATE_MASK;
 		return value;
 	}
-
 }

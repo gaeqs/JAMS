@@ -25,7 +25,7 @@
 package net.jamsimulator.jams.mips.memory.builder;
 
 import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.memory.Mips32Memory;
+import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 
 public class MIPS32MemoryBuilder extends MemoryBuilder {
 
@@ -40,6 +40,6 @@ public class MIPS32MemoryBuilder extends MemoryBuilder {
 
 	@Override
 	public Memory createMemory() {
-		return new Mips32Memory();
+		return new MIPS32Memory();
 	}
 }

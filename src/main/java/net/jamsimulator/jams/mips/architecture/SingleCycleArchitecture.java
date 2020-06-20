@@ -46,7 +46,7 @@ public final class SingleCycleArchitecture extends Architecture {
 	}
 
 	@Override
-	public Simulation<SingleCycleArchitecture> createSimulation(InstructionSet instructionSet, Registers registers, Memory memory) {
-		return new SingleCycleSimulation(this, instructionSet, registers, memory);
+	public Simulation<SingleCycleArchitecture> createSimulation(InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom) {
+		return new SingleCycleSimulation(this, instructionSet, registers, memory, instructionStackBottom);
 	}
 }

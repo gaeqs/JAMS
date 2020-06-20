@@ -59,7 +59,7 @@ public class InstructionBc1eqz extends BasicIFPUInstruction<AssembledInstruction
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionBc1Eqz(instructionCode, this, this);
 	}
 

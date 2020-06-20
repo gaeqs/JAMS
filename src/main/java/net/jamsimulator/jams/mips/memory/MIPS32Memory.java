@@ -31,7 +31,7 @@ import java.util.Map;
  * Represents a MIPS32 memory managed by a {@link SimpleMemory}.
  * This memory has all the sections a MIPS memory would have.
  */
-public class Mips32Memory extends SimpleMemory {
+public class MIPS32Memory extends SimpleMemory {
 
 	public static final int KERNEL_RESERVED_1 = 0;
 	public static final int TEXT = 0x04000000;
@@ -46,10 +46,10 @@ public class Mips32Memory extends SimpleMemory {
 	public static final int HEAP = 0x10010000;
 
 
-	public Mips32Memory() {
+	public MIPS32Memory() {
 		super(false,
-				Mips32Memory.TEXT, Mips32Memory.STATIC_DATA, Mips32Memory.KERNEL_TEXT,
-				Mips32Memory.KERNEL_DATA, Mips32Memory.EXTERNAL,
+				MIPS32Memory.TEXT, MIPS32Memory.STATIC_DATA, MIPS32Memory.KERNEL_TEXT,
+				MIPS32Memory.KERNEL_DATA, MIPS32Memory.EXTERNAL,
 				new MemorySection("Kernel reserved 1", KERNEL_RESERVED_1, TEXT),
 				new MemorySection("Text", TEXT, DATA - TEXT),
 				new MemorySection("Data", DATA, 0x70000000),
@@ -59,9 +59,9 @@ public class Mips32Memory extends SimpleMemory {
 				new MemorySection("Kernel reserved 2", KERNEL_RESERVED_2, 0xFFFFFFFF - 0xFFFF0000 - 9));
 	}
 
-	private Mips32Memory(Map<String, MemorySection> sections, boolean bigEndian) {
-		super(sections, bigEndian, Mips32Memory.TEXT, Mips32Memory.STATIC_DATA, Mips32Memory.KERNEL_TEXT,
-				Mips32Memory.KERNEL_DATA, Mips32Memory.EXTERNAL);
+	private MIPS32Memory(Map<String, MemorySection> sections, boolean bigEndian) {
+		super(sections, bigEndian, MIPS32Memory.TEXT, MIPS32Memory.STATIC_DATA, MIPS32Memory.KERNEL_TEXT,
+				MIPS32Memory.KERNEL_DATA, MIPS32Memory.EXTERNAL);
 	}
 
 
@@ -69,6 +69,6 @@ public class Mips32Memory extends SimpleMemory {
 	public Memory copy() {
 		HashMap<String, MemorySection> sections = new HashMap<>();
 		this.sections.forEach((name, section) -> sections.put(name, section.copy()));
-		return new Mips32Memory(sections, bigEndian);
+		return new MIPS32Memory(sections, bigEndian);
 	}
 }

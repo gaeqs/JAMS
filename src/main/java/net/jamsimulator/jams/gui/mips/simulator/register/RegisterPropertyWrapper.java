@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.mips.project.simulator;
+package net.jamsimulator.jams.gui.mips.simulator.register;
 
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;

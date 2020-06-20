@@ -22,9 +22,9 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.display.element;
+package net.jamsimulator.jams.gui.mips.editor.element;
 
-import net.jamsimulator.jams.gui.mips.display.MIPSEditorError;
+import net.jamsimulator.jams.gui.mips.editor.MIPSEditorError;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 import net.jamsimulator.jams.utils.StringUtils;

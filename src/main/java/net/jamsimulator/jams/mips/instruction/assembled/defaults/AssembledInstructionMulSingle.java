@@ -39,4 +39,11 @@ public class AssembledInstructionMulSingle extends AssembledRFPUInstruction {
 	public AssembledInstructionMulSingle(int instructionCode, Instruction origin, BasicInstruction<AssembledInstructionMulSingle> basicOrigin) {
 		super(instructionCode, origin, basicOrigin);
 	}
+
+	@Override
+	public String parametersToString(String registersStart) {
+		return registersStart + getDestinationRegister()
+				+ ", " + registersStart + getSourceRegister()
+				+ ", " + registersStart + getTargetRegister();
+	}
 }

@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.mips.project.simulator;
+package net.jamsimulator.jams.gui.mips.simulator.register;
 
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -20,10 +20,13 @@ public class RegistersTable extends TableView<RegisterPropertyWrapper> {
 
 		identifierColumn.setCellValueFactory(p -> p.getValue().identifierProperty());
 		nameColumn.setCellValueFactory(p -> p.getValue().nameProperty());
+
 		valueColumn.setCellFactory(TextFieldTableCell.forTableColumn());
 		valueColumn.setCellValueFactory(p -> p.getValue().valueProperty());
+
 		hexColumn.setCellFactory(TextFieldTableCell.forTableColumn());
 		hexColumn.setCellValueFactory(p -> p.getValue().hexProperty());
+
 		identifierColumn.setEditable(false);
 		nameColumn.setEditable(false);
 		valueColumn.setEditable(true);

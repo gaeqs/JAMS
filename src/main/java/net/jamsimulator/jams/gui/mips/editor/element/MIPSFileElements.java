@@ -22,10 +22,10 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.display.element;
+package net.jamsimulator.jams.gui.mips.editor.element;
 
 import net.jamsimulator.jams.collection.Bag;
-import net.jamsimulator.jams.gui.mips.display.MIPSFileEditor;
+import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
 import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MipsProject;
 import org.fxmisc.richtext.CodeArea;

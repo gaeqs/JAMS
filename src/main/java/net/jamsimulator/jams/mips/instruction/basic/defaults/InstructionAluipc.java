@@ -59,7 +59,7 @@ public class InstructionAluipc extends BasicPCREL16Instruction<AssembledInstruct
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionAluipc(instructionCode, this, this);
 	}
 

@@ -85,4 +85,12 @@ public abstract class AssembledInstruction {
 	public int getOperationCode() {
 		return value >>> OPERATION_CODE_SHIFT;
 	}
+
+	/**
+	 * Returns a string representing all parameters of this assembled instruction.
+	 *
+	 * @param registersStart the start of the registers.
+	 * @return the parameters as a string.
+	 */
+	public abstract String parametersToString(String registersStart);
 }

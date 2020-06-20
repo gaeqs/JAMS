@@ -28,6 +28,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionBnezalc;
+import net.jamsimulator.jams.utils.StringUtils;
 
 public class AssembledInstructionBnezalc extends AssembledI16Instruction {
 
@@ -37,5 +38,11 @@ public class AssembledInstructionBnezalc extends AssembledI16Instruction {
 
 	public AssembledInstructionBnezalc(int instructionCode, Instruction origin, BasicInstruction<AssembledInstructionBnezalc> basicOrigin) {
 		super(instructionCode, origin, basicOrigin);
+	}
+
+	@Override
+	public String parametersToString(String registersStart) {
+		return registersStart + getTargetRegister()
+				+ ", 0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 4);
 	}
 }

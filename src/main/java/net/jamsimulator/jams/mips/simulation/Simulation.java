@@ -24,11 +24,14 @@
 
 package net.jamsimulator.jams.mips.simulation;
 
+import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
+import net.jamsimulator.jams.mips.memory.event.ByteSetEvent;
+import net.jamsimulator.jams.mips.memory.event.WordSetEvent;
 import net.jamsimulator.jams.mips.register.Registers;
 
 import java.util.Optional;
@@ -41,11 +44,14 @@ public abstract class Simulation<Arch extends Architecture> {
 	protected final Registers registerSet;
 	protected final Memory memory;
 
-	public Simulation(Arch architecture, InstructionSet instructionSet, Registers registerSet, Memory memory) {
+	protected int instructionStackBottom;
+
+	public Simulation(Arch architecture, InstructionSet instructionSet, Registers registerSet, Memory memory, int instructionStackBottom) {
 		this.architecture = architecture;
 		this.instructionSet = instructionSet;
 		this.registerSet = registerSet;
 		this.memory = memory;
+		this.instructionStackBottom = instructionStackBottom;
 		memory.registerListeners(this, true);
 	}
 
@@ -65,16 +71,35 @@ public abstract class Simulation<Arch extends Architecture> {
 		return memory;
 	}
 
+	public int getInstructionStackBottom() {
+		return instructionStackBottom;
+	}
+
 	public AssembledInstruction fetch(int pc) {
 		int data = memory.getWord(pc);
 		Optional<? extends BasicInstruction<?>> optional = instructionSet.getInstructionByInstructionCode(data);
 		if (!optional.isPresent()) return null;
 		BasicInstruction<?> instruction = optional.get();
-		return instruction.compileFromCode(data);
+		return instruction.assembleFromCode(data);
 	}
 
 	public abstract void nextStep();
 
 	public abstract void executeAll();
+
+
+	@Listener
+	private void onMemoryChange(ByteSetEvent.After event) {
+		if (event.getMemorySection().getName().equals("Text") && instructionStackBottom < event.getAddress()) {
+			instructionStackBottom = event.getAddress() >> 2 << 2;
+		}
+	}
+
+	@Listener
+	private void onMemoryChange(WordSetEvent.After event) {
+		if (event.getMemorySection().getName().equals("Text") && instructionStackBottom < event.getAddress()) {
+			instructionStackBottom = event.getAddress();
+		}
+	}
 
 }

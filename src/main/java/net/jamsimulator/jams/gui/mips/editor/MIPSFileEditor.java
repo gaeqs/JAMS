@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.display;
+package net.jamsimulator.jams.gui.mips.editor;
 
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
@@ -32,10 +32,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditorTab;
-import net.jamsimulator.jams.gui.mips.display.element.MIPSCodeElement;
-import net.jamsimulator.jams.gui.mips.display.element.MIPSFileElements;
-import net.jamsimulator.jams.gui.mips.display.element.MIPSLabel;
-import net.jamsimulator.jams.gui.mips.display.element.MIPSLine;
+import net.jamsimulator.jams.gui.mips.editor.element.MIPSCodeElement;
+import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
+import net.jamsimulator.jams.gui.mips.editor.element.MIPSLabel;
+import net.jamsimulator.jams.gui.mips.editor.element.MIPSLine;
 import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MipsProject;

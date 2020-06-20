@@ -28,6 +28,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRIInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionBal;
+import net.jamsimulator.jams.utils.StringUtils;
 
 public class AssembledInstructionBal extends AssembledRIInstruction {
 
@@ -37,5 +38,10 @@ public class AssembledInstructionBal extends AssembledRIInstruction {
 
 	public AssembledInstructionBal(int instructionCode, Instruction origin, BasicInstruction<AssembledInstructionBal> basicOrigin) {
 		super(instructionCode, origin, basicOrigin);
+	}
+
+	@Override
+	public String parametersToString(String registersStart) {
+		return "0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 4);
 	}
 }

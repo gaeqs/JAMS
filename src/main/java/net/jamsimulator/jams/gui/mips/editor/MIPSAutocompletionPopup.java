@@ -22,12 +22,12 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.display;
+package net.jamsimulator.jams.gui.mips.editor;
 
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
-import net.jamsimulator.jams.gui.mips.display.element.*;
+import net.jamsimulator.jams.gui.mips.editor.element.*;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.project.mips.MipsProject;

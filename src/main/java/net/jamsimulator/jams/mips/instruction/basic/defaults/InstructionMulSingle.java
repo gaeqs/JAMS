@@ -61,7 +61,7 @@ public class InstructionMulSingle extends BasicRFPUInstruction<AssembledInstruct
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionMulSingle(instructionCode, this, this);
 	}
 

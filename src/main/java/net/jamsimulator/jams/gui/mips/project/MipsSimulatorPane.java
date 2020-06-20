@@ -7,7 +7,8 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
-import net.jamsimulator.jams.gui.mips.project.simulator.RegistersTable;
+import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionsTable;
+import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.language.Messages;
@@ -25,11 +26,9 @@ public class MipsSimulatorPane extends WorkingPane {
 	protected TabPane registersTabs;
 
 	public MipsSimulatorPane(Tab parent, ProjectTab projectTab, MipsProject project, Simulation<?> simulation) {
-		super(parent, projectTab, null, false);
+		super(parent, projectTab, new InstructionsTable(simulation), false);
 		this.project = project;
 		this.simulation = simulation;
-
-		center = new AnchorPane();
 
 		init();
 

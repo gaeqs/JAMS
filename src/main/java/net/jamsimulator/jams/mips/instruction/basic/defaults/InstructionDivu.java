@@ -62,7 +62,7 @@ public class InstructionDivu extends BasicRSOPInstruction<AssembledInstructionDi
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionDivu(instructionCode, this, this);
 	}
 

@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.instruction.assembled;
 
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.utils.StringUtils;
 
 /**
  * Represents a compiled I-Type Imm26 instruction.
@@ -88,5 +89,4 @@ public abstract class AssembledI26Instruction extends AssembledInstruction {
 	static int calculateValue(int operationCode, int immediate) {
 		return (operationCode << AssembledInstruction.OPERATION_CODE_SHIFT) + (immediate & IMMEDIATE_MASK);
 	}
-
 }

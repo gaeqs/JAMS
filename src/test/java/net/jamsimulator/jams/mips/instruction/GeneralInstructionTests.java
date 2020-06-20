@@ -30,9 +30,8 @@ import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAdd;
 import net.jamsimulator.jams.mips.instruction.exception.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
-import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.instruction.set.MIPS32InstructionSet;
-import net.jamsimulator.jams.mips.memory.Mips32Memory;
+import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
@@ -51,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GeneralInstructionTests {
 
 	static Simulation<?> simulation = new SingleCycleSimulation(SingleCycleArchitecture.INSTANCE, new MIPS32InstructionSet(),
-			new MIPS32Registers(), new Mips32Memory());
+			new MIPS32Registers(), new MIPS32Memory(), 0);
 
 	@Test
 	void testBasicInstruction() {

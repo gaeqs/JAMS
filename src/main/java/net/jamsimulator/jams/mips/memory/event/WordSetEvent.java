@@ -85,7 +85,7 @@ public class WordSetEvent extends MemoryEvent {
 	 */
 	public static class After extends WordSetEvent {
 
-		private MemorySection memorySection;
+		private final MemorySection memorySection;
 
 		public After(Memory memory, MemorySection memorySection, int address, int value) {
 			super(memory, address, value);

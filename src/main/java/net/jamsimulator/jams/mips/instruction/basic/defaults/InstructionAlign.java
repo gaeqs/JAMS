@@ -69,7 +69,7 @@ public class InstructionAlign extends BasicRInstruction<AssembledInstructionAlig
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionAlign(instructionCode, this, this);
 	}
 

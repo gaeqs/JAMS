@@ -28,6 +28,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRIInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionBgez;
+import net.jamsimulator.jams.utils.StringUtils;
 
 public class AssembledInstructionBgez extends AssembledRIInstruction {
 
@@ -37,5 +38,11 @@ public class AssembledInstructionBgez extends AssembledRIInstruction {
 
 	public AssembledInstructionBgez(int instructionCode, Instruction origin, BasicInstruction<AssembledInstructionBgez> basicOrigin) {
 		super(instructionCode, origin, basicOrigin);
+	}
+
+	@Override
+	public String parametersToString(String registersStart) {
+		return registersStart + getSourceRegister()
+				+ ", 0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 4);
 	}
 }

@@ -62,7 +62,7 @@ public class InstructionMuhu extends BasicRSOPInstruction<AssembledInstructionMu
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionMuhu(instructionCode, this, this);
 	}
 

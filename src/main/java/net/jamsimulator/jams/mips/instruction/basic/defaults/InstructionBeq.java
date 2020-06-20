@@ -59,7 +59,7 @@ public class InstructionBeq extends BasicInstruction<AssembledInstructionBeq> {
 	}
 
 	@Override
-	public AssembledInstruction compileFromCode(int instructionCode) {
+	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new AssembledInstructionBeq(instructionCode, this, this);
 	}
 

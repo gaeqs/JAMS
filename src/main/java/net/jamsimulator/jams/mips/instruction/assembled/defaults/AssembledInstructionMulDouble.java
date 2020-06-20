@@ -39,4 +39,11 @@ public class AssembledInstructionMulDouble extends AssembledRFPUInstruction {
 	public AssembledInstructionMulDouble(int instructionCode, Instruction origin, BasicInstruction<AssembledInstructionMulDouble> basicOrigin) {
 		super(instructionCode, origin, basicOrigin);
 	}
+
+	@Override
+	public String parametersToString(String registersStart) {
+		return registersStart + getDestinationRegister()
+				+ ", " + registersStart + getSourceRegister()
+				+ ", " + registersStart + getTargetRegister();
+	}
 }

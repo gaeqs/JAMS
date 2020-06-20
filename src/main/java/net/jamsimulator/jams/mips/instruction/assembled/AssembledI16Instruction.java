@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.instruction.assembled;
 
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.utils.StringUtils;
 
 /**
  * Represents a compiled I-Type Imm16 instruction. An I-Type Imm16 instruction is composed of an 16-bit immediate,
@@ -111,5 +112,4 @@ public abstract class AssembledI16Instruction extends AssembledInstruction {
 		value += immediate & IMMEDIATE_MASK;
 		return value;
 	}
-
 }
