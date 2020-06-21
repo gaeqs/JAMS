@@ -24,8 +24,7 @@
 
 package net.jamsimulator.jams.mips.directive;
 
-import net.jamsimulator.jams.mips.assembler.Assembler;
-import net.jamsimulator.jams.mips.assembler.AssemblingFile;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Objects;
@@ -59,21 +58,20 @@ public abstract class Directive {
 	 * @param lineNumber the line number the directive is at.
 	 * @param line       the line of the directive.
 	 * @param parameters the parameters of the directive.
-	 * @param assembler  the assembler.
-	 * @return the amount of bytes that have been allocated for this directive.
+	 * @param file       the file where this directive is at.
+	 * @return the start address of the directive.
 	 */
-	public abstract int execute(int lineNumber, String line, String[] parameters, Assembler assembler);
+	public abstract int execute(int lineNumber, String line, String[] parameters, MIPS32AssemblingFile file);
 
 	/**
 	 * This method is executed after all labels, instructions and directives had been decoded.
 	 *
 	 * @param parameters the parameters of the directive.
-	 * @param assembler  the assembler.
 	 * @param file       the file where the directive is located at.
 	 * @param lineNumber the line number the directive is at.
-	 * @param address    the start of the memory address dedicated to this directive in the method {@link #execute(int, String, String[], Assembler)}.
+	 * @param address    the start of the memory address dedicated to this directive in the method {@link #execute(int, String, String[], MIPS32AssemblingFile)}.
 	 */
-	public abstract void postExecute(String[] parameters, Assembler assembler, AssemblingFile file, int lineNumber, int address);
+	public abstract void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address);
 
 
 	@Override

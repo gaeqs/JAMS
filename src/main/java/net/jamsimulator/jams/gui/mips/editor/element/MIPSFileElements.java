@@ -33,7 +33,7 @@ import org.fxmisc.richtext.CodeArea;
 import java.util.*;
 
 /**
- * Represents a collection of assembly elements within an {@link net.jamsimulator.jams.mips.assembler.AssemblingFile}.
+ * Represents a collection of assembly elements within an {@link net.jamsimulator.jams.mips.assemblerold.AssemblingFile}.
  */
 public class MIPSFileElements {
 

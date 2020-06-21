@@ -1,73 +1,45 @@
-/*
- * MIT License
- *
- * Copyright (c) 2020 Gael Rial Costas
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
+import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
+import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.utils.StringUtils;
 
-import java.util.List;
+import java.util.*;
 
-/**
- * Represents a instruction snapshot. Because labels may be below instructions
- * they cannot be compiled on the first scan. They must be stored in a snapshot.
- */
 public class InstructionSnapshot {
 
-	public Instruction instruction;
-	public List<String> parameters;
-	public int line;
-	public int address;
+	private final int line, address;
+	private final String raw;
 
-	public InstructionSnapshot(Instruction instruction, List<String> parameters, int line, int address) {
-		this.instruction = instruction;
-		this.parameters = parameters;
-		this.line = line;
+
+	private String mnemonic;
+	private List<String> parameters;
+	private Instruction instruction;
+
+	public InstructionSnapshot(int line, int address, String raw) {
 		this.address = address;
+		this.line = line;
+		this.raw = raw;
 	}
 
-	public void compile(Assembler assembler, AssemblingFile file) {
-		ParameterParseResult[] compiledParameters = new ParameterParseResult[parameters.size()];
+	public int scan(MIPS32Assembler assembler) {
+		decode();
+		return scanInstruction(assembler.getRegisters(), assembler.getInstructionSet());
+	}
 
-		int index = 0;
-		ParameterParseResult result;
-		for (ParameterType parameter : instruction.getParameters()) {
-			result = parameter.parse(parameters.get(index), assembler.getRegisterSet());
-
-			//Parse label
-			if (result.isHasLabel()) {
-				result.setLabelValue(file.getLabelValue(assembler, result.getLabel(), line));
-			}
-
-			compiledParameters[index++] = result;
-		}
+	public void assemble(MIPS32AssemblingFile file) {
+		ParameterParseResult[] parameters = assembleParameters(file);
 
 		try {
-			AssembledInstruction[] assembledInstructions = instruction.assemble(assembler.getInstructionSet(), address, compiledParameters);
+			Assembler assembler = file.getAssembler();
+			AssembledInstruction[] assembledInstructions =
+					instruction.assemble(assembler.getInstructionSet(), address, parameters);
 
 			//Add instructions to memory
 			int relativeAddress = address;
@@ -76,8 +48,69 @@ public class InstructionSnapshot {
 				relativeAddress += 4;
 			}
 		} catch (AssemblerException ex) {
-			throw new AssemblerException(line, "Error while compiling instruction.", ex);
+			throw new AssemblerException(line, "Error while assembling instruction.", ex);
+		}
+	}
+
+	private void decode() {
+		int mnemonicIndex = raw.indexOf(' ');
+		int tabIndex = raw.indexOf("\t");
+		if (mnemonicIndex == -1) mnemonicIndex = tabIndex;
+		else if (tabIndex != -1) mnemonicIndex = Math.min(mnemonicIndex, tabIndex);
+
+		if (mnemonicIndex == -1) {
+			mnemonic = raw;
+			parameters = Collections.emptyList();
+			return;
 		}
 
+		mnemonic = raw.substring(0, mnemonicIndex);
+		String raw = this.raw.substring(mnemonicIndex + 1);
+		parameters = StringUtils.multiSplitIgnoreInsideString(raw, false, " ", ",", "\t");
 	}
+
+	private int scanInstruction(Registers registers, InstructionSet instructionSet) {
+		List<ParameterType>[] types = new List[parameters.size()];
+		int parameterIndex = 0;
+		for (String parameter : parameters) {
+			List<ParameterType> list = ParameterType.getCompatibleParameterTypes(parameter, registers);
+			if (list.isEmpty()) throw new AssemblerException(line, "Bad parameter " + parameter);
+			types[parameterIndex++] = list;
+		}
+
+		Optional<Instruction> optional = instructionSet.getBestCompatibleInstruction(mnemonic, types);
+		if (!optional.isPresent())
+			throw new AssemblerException(line, "Instruction " + mnemonic + " with the given parameters not found.\n"
+					+ Arrays.toString(types));
+		instruction = optional.get();
+
+		return instruction instanceof PseudoInstruction
+				? ((PseudoInstruction) instruction).getInstructionAmount(parameters) << 2
+				: 4;
+	}
+
+	private ParameterParseResult[] assembleParameters(MIPS32AssemblingFile file) {
+		ParameterParseResult[] assembledParameters = new ParameterParseResult[parameters.size()];
+
+		int index = 0;
+		ParameterParseResult result;
+		for (ParameterType parameter : instruction.getParameters()) {
+			result = parameter.parse(parameters.get(index), file.getAssembler().getRegisters());
+
+			//Parse label
+			if (result.isHasLabel()) {
+
+				OptionalInt optional = file.getLabelAddress(result.getLabel());
+				if (!optional.isPresent()) {
+					throw new AssemblerException(line, "Label " + result.getLabel() + " not found.");
+				}
+
+				result.setLabelValue(optional.getAsInt());
+			}
+			assembledParameters[index++] = result;
+		}
+
+		return assembledParameters;
+	}
+
 }

@@ -24,11 +24,10 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.mips.assembler.Assembler;
-import net.jamsimulator.jams.mips.assembler.AssemblerData;
-import net.jamsimulator.jams.mips.assembler.AssemblingFile;
-import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
+import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.utils.NumericUtils;
 
@@ -41,11 +40,11 @@ public class DirectiveWord extends Directive {
 	}
 
 	@Override
-	public int execute(int lineNumber, String line, String[] parameters, Assembler assembler) {
+	public int execute(int lineNumber, String line, String[] parameters, MIPS32AssemblingFile file) {
 		if (parameters.length < 1)
 			throw new AssemblerException(lineNumber, "." + NAME + " must have at least one parameter.");
 
-		AssemblerData data = assembler.getAssemblerData();
+		MIPS32AssemblerData data = file.getAssembler().getAssemblerData();
 		data.align(2);
 		int start = data.getCurrent();
 		data.addCurrent(4 * parameters.length);
@@ -53,10 +52,12 @@ public class DirectiveWord extends Directive {
 	}
 
 	@Override
-	public void postExecute(String[] parameters, Assembler assembler, AssemblingFile file, int lineNumber, int address) {
-		Memory memory = assembler.getMemory();
+	public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address) {
+		Memory memory = file.getAssembler().getMemory();
 		for (String parameter : parameters) {
-			int value = NumericUtils.decodeIntegerSafe(parameter).orElseGet(() -> file.getLabelValue(assembler, parameter, lineNumber));
+			int value = NumericUtils.decodeIntegerSafe(parameter)
+					.orElseGet(() -> file.getLabelAddress(parameter)
+							.orElseThrow(() -> new AssemblerException(lineNumber, "Label " + parameter + " not found.")));
 			memory.setWord(address, value);
 			address += 4;
 		}

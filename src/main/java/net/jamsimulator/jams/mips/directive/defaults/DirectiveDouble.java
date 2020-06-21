@@ -24,11 +24,10 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.mips.assembler.Assembler;
-import net.jamsimulator.jams.mips.assembler.AssemblerData;
-import net.jamsimulator.jams.mips.assembler.AssemblingFile;
-import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
+import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.utils.NumericUtils;
 
 public class DirectiveDouble extends Directive {
@@ -40,7 +39,7 @@ public class DirectiveDouble extends Directive {
 	}
 
 	@Override
-	public int execute(int lineNumber, String line, String[] parameters, Assembler assembler) {
+	public int execute(int lineNumber, String line, String[] parameters, MIPS32AssemblingFile file) {
 		if (parameters.length < 1)
 			throw new AssemblerException(lineNumber, "." + NAME + " must have at least one parameter.");
 
@@ -49,7 +48,7 @@ public class DirectiveDouble extends Directive {
 				throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a double.");
 		}
 
-		AssemblerData data = assembler.getAssemblerData();
+		MIPS32AssemblerData data = file.getAssembler().getAssemblerData();
 		data.align(3);
 		int start = data.getCurrent();
 		for (String parameter : parameters) {
@@ -58,15 +57,15 @@ public class DirectiveDouble extends Directive {
 			int low = (int) l;
 			int high = (int) (l >> 32);
 
-			assembler.getMemory().setWord(data.getCurrent(), low);
-			assembler.getMemory().setWord(data.getCurrent() + 4, high);
+			file.getAssembler().getMemory().setWord(data.getCurrent(), low);
+			file.getAssembler().getMemory().setWord(data.getCurrent() + 4, high);
 			data.addCurrent(8);
 		}
 		return start;
 	}
 
 	@Override
-	public void postExecute(String[] parameters, Assembler assembler, AssemblingFile file, int lineNumber, int address) {
+	public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address) {
 
 	}
 }

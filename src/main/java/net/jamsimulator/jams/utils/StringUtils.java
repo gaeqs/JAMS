@@ -51,13 +51,14 @@ public class StringUtils {
 		return list;
 	}
 
-	public static List<String> multiSplitIgnoreInsideString(String string, String... separators) {
+	public static List<String> multiSplitIgnoreInsideString(String string, boolean addEmpty, String... separators) {
 		List<String> list = new ArrayList<>();
 		int length = string.length(), from = 0;
 
 		boolean insideString = false;
 		boolean insideChar = false;
 		boolean escape = false;
+		String result;
 		for (int i = 0; i < length; i++) {
 			char c = string.charAt(i);
 			if (c == '"' && !escape)
@@ -70,7 +71,9 @@ public class StringUtils {
 			for (String separator : separators) {
 				int sepLen = separator.length();
 				if (string.regionMatches(i, separator, 0, sepLen)) {
-					list.add(string.substring(from, i));
+					result = string.substring(from, i);
+					if (addEmpty || !result.isEmpty())
+						list.add(result);
 					from = i + sepLen;
 					i = from - 1;
 					break;

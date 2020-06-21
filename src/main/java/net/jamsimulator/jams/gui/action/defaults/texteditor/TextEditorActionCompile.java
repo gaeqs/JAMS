@@ -35,7 +35,7 @@ import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.util.Log;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.mips.assembler.Assembler;
+import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.register.Register;
@@ -77,9 +77,9 @@ public class TextEditorActionCompile extends Action {
 		pane.getLogButton().setSelected(true);
 		Log log = pane.getLog();
 		try {
-			List<List<String>> files = new ArrayList<>();
+			List<String> files = new ArrayList<>();
 			for (File file : project.getData().getFilesToAssemble().getFiles()) {
-				files.add(Files.readAllLines(file.toPath()));
+				files.add(String.join("\n", Files.readAllLines(file.toPath())));
 				log.printInfoLn("- FILE: " + file);
 				for (String line : Files.readAllLines(file.toPath())) {
 					log.println(line);
@@ -92,12 +92,12 @@ public class TextEditorActionCompile extends Action {
 				return;
 			}
 
-			Assembler assembler = project.getData().getAssemblerBuilder().createAssembler(project.getData().getDirectiveSet(), project.getData().getInstructionSet(),
-					new MIPS32Registers(), selected.getMemoryBuilder().createMemory());
-			assembler.setData(files);
-			assembler.compile();
+			MIPS32Assembler assembler = (MIPS32Assembler) project.getData().getAssemblerBuilder()
+					.createAssembler(files, project.getData().getDirectiveSet(), project.getData().getInstructionSet(),
+							new MIPS32Registers(), selected.getMemoryBuilder().createMemory());
+			assembler.assemble();
 
-			int mainLabel = assembler.getGlobalLabels().getOrDefault("main", -1);
+			int mainLabel = assembler.getGlobalLabelAddress("main").orElse(-1);
 			Simulation<?> simulation = assembler.createSimulation(selected.getArchitecture());
 
 			project.getProjectTab().ifPresent(projectTab ->
@@ -123,7 +123,7 @@ public class TextEditorActionCompile extends Action {
 			try {
 				simulation.executeAll();
 			} catch (InstructionNotFoundException ex) {
-				log.printInfo("Stop. "+ex.getMessage());
+				log.printInfo("Stop. " + ex.getMessage());
 			}
 
 			log.println();
@@ -151,6 +151,7 @@ public class TextEditorActionCompile extends Action {
 		} catch (Exception ex) {
 			log.printErrorLn("ERROR:");
 			log.printErrorLn(ex.getMessage());
+			ex.printStackTrace();
 		}
 	}
 

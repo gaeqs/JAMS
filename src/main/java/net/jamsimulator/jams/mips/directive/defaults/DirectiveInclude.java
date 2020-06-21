@@ -24,10 +24,9 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.mips.assembler.Assembler;
-import net.jamsimulator.jams.mips.assembler.AssemblingFile;
-import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
+import net.jamsimulator.jams.mips.directive.Directive;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +42,7 @@ public class DirectiveInclude extends Directive {
 	}
 
 	@Override
-	public int execute(int lineNumber, String line, String[] parameters, Assembler assembler) {
+	public int execute(int lineNumber, String line, String[] parameters, MIPS32AssemblingFile aFile) {
 		if (parameters.length != 1)
 			throw new AssemblerException(lineNumber, "." + NAME + " must have one parameter.");
 
@@ -57,12 +56,12 @@ public class DirectiveInclude extends Directive {
 		} catch (IOException e) {
 			throw new AssemblerException(e);
 		}
-		assembler.getCurrentAssemblingFile().getRawCode().addAll(lineNumber + 1, lines);
+		aFile.getRawCode().addAll(lineNumber + 1, lines);
 		return -1;
 	}
 
 	@Override
-	public void postExecute(String[] parameters, Assembler assembler, AssemblingFile file, int lineNumber, int address) {
+	public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address) {
 
 	}
 }

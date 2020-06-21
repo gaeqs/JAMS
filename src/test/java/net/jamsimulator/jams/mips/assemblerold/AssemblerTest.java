@@ -22,9 +22,10 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.assembler;
+package net.jamsimulator.jams.mips.assemblerold;
 
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
+import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
 import net.jamsimulator.jams.mips.directive.set.MIPS32DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.MIPS32InstructionSet;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
@@ -42,9 +43,8 @@ class AssemblerTest {
 
 	@Test
 	void testCompiler() {
-		List<List<String>> files = new ArrayList<>();
+		List<String> files = new ArrayList<>();
 		List<String> program = new ArrayList<>();
-		files.add(program);
 
 		program.add(".data");
 		program.add(".byte 5 9 6 2");
@@ -67,12 +67,14 @@ class AssemblerTest {
 		program.add("lw $t1, sum");
 		program.add("lw $s0, wordTest2");
 
-		Assembler assembler = new MIPS32Assembler(
-				new MIPS32DirectiveSet(),
+		files.add(String.join("\n", program));
+
+		MIPS32Assembler assembler = new MIPS32Assembler(
+				files,
 				new MIPS32InstructionSet(),
+				new MIPS32DirectiveSet(),
 				new MIPS32Registers(), new MIPS32Memory());
-		assembler.setData(files);
-		assembler.compile();
+		assembler.assemble();
 		Simulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE);
 
 		assertEquals(0x02508820, simulation.getMemory().getWord(simulation.getRegisterSet().getProgramCounter().getValue()));

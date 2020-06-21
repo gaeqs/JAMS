@@ -31,6 +31,7 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.utils.Validate;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -69,13 +70,15 @@ public abstract class AssemblerBuilder {
 	 * Creates an {@link Assembler} using a {@link DirectiveSet}, an {@link InstructionSet}, a {@link Registers}
 	 * and a {@link Memory}.
 	 *
+	 * @param rawFiles       the raw text of all files to assemble.
 	 * @param directiveSet   the directive set.
 	 * @param instructionSet the instruction set.
 	 * @param registerSet    the register set.
 	 * @param memory         the memory.
 	 * @return the new {@link Assembler}.
 	 */
-	public abstract Assembler createAssembler(DirectiveSet directiveSet, InstructionSet instructionSet, Registers registerSet, Memory memory);
+	public abstract Assembler createAssembler(List<String> rawFiles, DirectiveSet directiveSet,
+											  InstructionSet instructionSet, Registers registerSet, Memory memory);
 
 	@Override
 	public boolean equals(Object o) {

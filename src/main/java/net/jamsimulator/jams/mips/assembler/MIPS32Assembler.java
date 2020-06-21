@@ -1,43 +1,12 @@
-/*
- * MIT License
- *
- * Copyright (c) 2020 Gael Rial Costas
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.mips.architecture.Architecture;
-import net.jamsimulator.jams.mips.directive.Directive;
-import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
-import net.jamsimulator.jams.mips.instruction.Instruction;
-import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
+import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.utils.LabelUtils;
-import net.jamsimulator.jams.utils.StringUtils;
-import net.jamsimulator.jams.utils.Validate;
 
 import java.util.*;
 
@@ -46,106 +15,84 @@ import java.util.*;
  */
 public class MIPS32Assembler implements Assembler {
 
-	private final DirectiveSet directiveSet;
+	private final List<MIPS32AssemblingFile> files;
+
+	private final MIPS32AssemblerData assemblerData;
+
 	private final InstructionSet instructionSet;
-	private final Registers registerSet;
+	private final DirectiveSet directiveSet;
+	private final Registers registers;
 	private final Memory memory;
 
-	private final AssemblerData assemblerData;
-	private final List<AssemblingFile> files;
-
-	private final List<String> convertToGlobalLabel;
 	private final Map<String, Integer> globalLabels;
 
-	private AssemblingFile currentAssemblingFile;
-	private boolean compiled;
+	private boolean assembled = false;
 
-	public MIPS32Assembler(DirectiveSet directiveSet, InstructionSet instructionSet, Registers registerSet, Memory memory) {
-		Validate.notNull(directiveSet, "The directive set cannot be null!");
-		Validate.notNull(instructionSet, "The instruction set cannot be null!");
-
-		Validate.notNull(registerSet, "The register set cannot be null!");
-		Validate.notNull(memory, "The memory cannot be null!");
-		this.directiveSet = directiveSet;
-		this.instructionSet = instructionSet;
-		this.registerSet = registerSet;
-		this.memory = memory;
-
-		this.convertToGlobalLabel = new ArrayList<>();
-		this.globalLabels = new HashMap<>();
+	public MIPS32Assembler(List<String> rawFiles, InstructionSet instructionSet, DirectiveSet directiveSet, Registers registers, Memory memory) {
 		this.files = new ArrayList<>();
 
-		this.assemblerData = new AssemblerData(memory);
+		this.assemblerData = new MIPS32AssemblerData(memory);
 
-		this.compiled = false;
+		this.instructionSet = instructionSet;
+		this.directiveSet = directiveSet;
+		this.registers = registers;
+		this.memory = memory;
+
+		this.globalLabels = new HashMap<>();
+
+		rawFiles.forEach(target -> files.add(new MIPS32AssemblingFile(target, this)));
 	}
 
-	@Override
-	public void setData(List<List<String>> data) {
-		Validate.notNull(data, "The raw code cannot be null!");
-		files.clear();
-		data.forEach(target -> this.files.add(new AssemblingFile(target)));
-	}
-
-	@Override
-	public void compile() {
-		if (compiled) throw new IllegalStateException("A assembler can only compile once!");
-		if (files == null) throw new IllegalStateException("Data not found.");
-		if (assemblerData == null) throw new AssemblerException("assembler not initialized.");
-		for (AssemblingFile file : files) {
-			currentAssemblingFile = file;
-			convertToGlobalLabel.clear();
-			compileFile(file);
+	/**
+	 * Adds the given label as a global label.
+	 *
+	 * @param executingLine the line executing this command.
+	 * @param label         the label to register.
+	 * @param address       the address of the label.
+	 */
+	public void addGlobalLabel(int executingLine, String label, int address) {
+		if (globalLabels.containsKey(label)) {
+			throw new AssemblerException(executingLine, "The global label " + label + " is already defined.");
 		}
 
-		//Compile instructions
-		for (AssemblingFile file : files) {
-			for (DirectiveSnapshot snapshot : file.directiveSnapshots) {
-				snapshot.compile(this, file);
-			}
-			for (InstructionSnapshot snapshot : file.instructionSnapshots) {
-				snapshot.compile(this, file);
-			}
+		if (files.stream().anyMatch(target -> target.getLocalLabelAddress(label).isPresent())) {
+			throw new AssemblerException(executingLine, "The label " + label +
+					" cannot be converted to a global label because there are two or more files with the same label.");
 		}
-		compiled = true;
+		globalLabels.put(label, address);
 	}
 
-	@Override
-	public <Arch extends Architecture> Simulation<Arch> createSimulation(Arch architecture) {
-		if (!compiled) throw new IllegalStateException("The program is still not compiled!");
-		Simulation<Arch> simulation = (Simulation<Arch>) architecture.createSimulation(instructionSet, registerSet.copy(), memory.copy(), assemblerData.currentText - 4);
-		simulation.getRegisterSet().getProgramCounter().setValue(assemblerData.getFirstText());
-		return simulation;
+	/**
+	 * Returns the address that matches the given global label, if present.
+	 *
+	 * @param label the label.
+	 * @return the address, if present.
+	 */
+	public OptionalInt getGlobalLabelAddress(String label) {
+		return globalLabels.containsKey(label) ? OptionalInt.of(globalLabels.get(label)) : OptionalInt.empty();
 	}
 
-	@Override
-	public Registers getRegisterSet() {
-		return registerSet;
-	}
-
-	@Override
-	public Memory getMemory() {
-		return memory;
-	}
-
-	@Override
-	public AssemblerData getAssemblerData() {
+	/**
+	 * Returns the {@link MIPS32AssemblerData} of this assembler.
+	 *
+	 * @return the {@link MIPS32AssemblerData}.
+	 */
+	public MIPS32AssemblerData getAssemblerData() {
 		return assemblerData;
 	}
 
 	@Override
-	public AssemblingFile getCurrentAssemblingFile() {
-		return currentAssemblingFile;
+	public boolean isAssembled() {
+		return assembled;
 	}
 
 	@Override
-	public Map<String, Integer> getGlobalLabels() {
-		return globalLabels;
-	}
-
-	@Override
-	public boolean isCompiled() {
-		return compiled;
+	public <Arch extends Architecture> Simulation<Arch> createSimulation(Arch architecture) {
+		if (!assembled) throw new IllegalStateException("The program is still not assembled!");
+		Simulation<Arch> simulation = (Simulation<Arch>) architecture.createSimulation(instructionSet,
+				registers.copy(), memory.copy(), assemblerData.getCurrentText() - 4);
+		simulation.getRegisterSet().getProgramCounter().setValue(assemblerData.getFirstText());
+		return simulation;
 	}
 
 	@Override
@@ -154,141 +101,30 @@ public class MIPS32Assembler implements Assembler {
 	}
 
 	@Override
-	public void setAsGlobalLabel(int executingLine, String label) {
-		if (convertToGlobalLabel.contains(label)) return;
-		convertToGlobalLabel.add(label);
-		boolean found = false;
-		for (AssemblingFile file : files) {
-			if (file.labels.containsKey(label)) {
-				if (found)
-					throw new AssemblerException(executingLine, "The label " + label +
-							" cannot be converted to a global label because there are two or more files with the same label.");
-				found = true;
-				globalLabels.put(label, file.labels.get(label));
-				file.labels.remove(label);
-			}
-		}
+	public DirectiveSet getDirectiveSet() {
+		return directiveSet;
 	}
 
-	private void compileFile(AssemblingFile file) {
-		String line;
-		List<String> parts;
-		String first;
-		String label;
-		int labelAddress;
-		for (int lineNumber = 0; lineNumber < file.rawCode.size(); lineNumber++) {
-			line = file.rawCode.get(lineNumber);
-			parts = sanityLine(file, line);
-			if (parts == null) continue;
-
-			//Check label
-			first = parts.get(0);
-			if (first.contains(":")) {
-				parts.remove(0);
-
-				int index = first.indexOf(':');
-				if (index != first.length() - 1) {
-					parts.add(0, first.substring(index + 1));
-				}
-				label = first.substring(0, index);
-
-			} else label = null;
-
-			//If empty, parse the label or move it to the next line, and continue
-			if (parts.isEmpty()) {
-				if (file.rawCode.size() == lineNumber + 1) {
-					checkLabel(lineNumber, file, label, assemblerData.getCurrent());
-				} else {
-					file.rawCode.set(lineNumber + 1, label + ":" + file.rawCode.get(lineNumber + 1));
-				}
-				continue;
-			}
-
-			first = parts.get(0);
-			parts.remove(0);
-
-			//If starts with ".", then compile directive
-			if (first.startsWith(".")) {
-				labelAddress = executeDirective(lineNumber, file, line, first.substring(1), parts);
-			}
-			//Else compile instruction
-			else {
-				//Align data and label
-				assemblerData.align(2);
-				labelAddress = assemblerData.getCurrent();
-				compileInstruction(lineNumber, file, first, parts);
-			}
-
-			if (label != null) {
-				checkLabel(lineNumber, file, label, labelAddress);
-			}
-		}
+	@Override
+	public Registers getRegisters() {
+		return registers;
 	}
 
-	private int executeDirective(int lineNumber, AssemblingFile file, String line, String name, List<String> parameters) {
-		Optional<Directive> optional = directiveSet.getDirective(name);
-		if (!optional.isPresent()) throw new AssemblerException(lineNumber, "Directive " + name + " not found!");
-		String[] pArray = parameters.toArray(new String[0]);
-		int start = optional.get().execute(lineNumber, line, pArray, this);
-
-		DirectiveSnapshot snapshot = new DirectiveSnapshot(optional.get(), pArray, lineNumber, start);
-		file.directiveSnapshots.add(snapshot);
-
-		return start == -1 ? assemblerData.getCurrent() : start;
+	@Override
+	public Memory getMemory() {
+		return memory;
 	}
 
-	private void compileInstruction(int line, AssemblingFile file, String mnemonic, List<String> parameters) {
-		List<ParameterType>[] types = new List[parameters.size()];
+	@Override
+	public void assemble() {
+		if (assembled) throw new AssemblerException("The code is already assembled!");
 
-		int parameterIndex = 0;
-		for (String parameter : parameters) {
-			List<ParameterType> list = ParameterType.getCompatibleParameterTypes(parameter, registerSet);
-			if (list.isEmpty()) throw new AssemblerException(line, "Bad parameter " + parameter);
-			types[parameterIndex++] = list;
-		}
-		Optional<Instruction> optional = instructionSet.getBestCompatibleInstruction(mnemonic, types);
-		if (!optional.isPresent())
-			throw new AssemblerException(line, "Instruction " + mnemonic + " with the given parameters not found.\n"
-					+ Arrays.toString(types));
-		Instruction instruction = optional.get();
+		files.forEach(MIPS32AssemblingFile::scan);
+		files.forEach(file -> {
+			file.assembleInstructions();
+			file.executeLabelRequiredDirectives();
+		});
 
-		file.instructionSnapshots.add(new InstructionSnapshot(instruction, parameters, line, assemblerData.getCurrent()));
-		assemblerData.addCurrent(instruction instanceof PseudoInstruction ?
-				((PseudoInstruction) instruction).getInstructionAmount(parameters.toArray(new String[0])) << 2 : 4);
+		assembled = true;
 	}
-
-
-	private void checkLabel(int line, AssemblingFile file, String name, int address) {
-		if (!LabelUtils.isLabelLegal(name))
-			throw new AssemblerException(line, "Label " + name + " contains illegal characters.");
-
-		if (globalLabels.containsKey(name))
-			throw new AssemblerException(line, "Global label " + name + " already defined.");
-
-		if (convertToGlobalLabel.contains(name)) {
-			for (AssemblingFile otherFile : files) {
-				if (otherFile.labels.containsKey(name))
-					throw new AssemblerException(line, "Global label " + name + " already defined as a local label.");
-			}
-			globalLabels.put(name, address);
-		} else {
-			if (globalLabels.containsKey(name))
-				throw new AssemblerException(line, "Label " + name + " already defined as a global label.");
-			if (file.labels.containsKey(name))
-				throw new AssemblerException(line, "Label " + name + " already defined.");
-			file.labels.put(name, address);
-		}
-	}
-
-	private List<String> sanityLine(AssemblingFile file, String line) {
-		line = StringUtils.removeComments(line).trim();
-		for (Map.Entry<String, String> entry : file.equivalents.entrySet()) {
-			line = line.replace(entry.getKey(), entry.getValue());
-		}
-		if (line.isEmpty()) return null;
-		List<String> parts = StringUtils.multiSplitIgnoreInsideString(line, " ", ",", "\t");
-		parts.removeIf(String::isEmpty);
-		return parts;
-	}
-
 }

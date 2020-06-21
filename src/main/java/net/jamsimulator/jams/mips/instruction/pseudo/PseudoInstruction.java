@@ -30,6 +30,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -80,6 +81,17 @@ public abstract class PseudoInstruction implements Instruction {
 			i++;
 		}
 		return true;
+	}
+
+	/**
+	 * Returns the amount of {@link AssembledInstruction}s the
+	 * pseudo-instruction will compile at if the given non-compiled parameters are given to it.
+	 *
+	 * @param parameters the non-compiled parameters.
+	 * @return the amount.
+	 */
+	public int getInstructionAmount(Collection<String> parameters) {
+		return getInstructionAmount(parameters.toArray(new String[0]));
 	}
 
 	/**

@@ -24,11 +24,10 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.mips.assembler.Assembler;
-import net.jamsimulator.jams.mips.assembler.AssemblerData;
-import net.jamsimulator.jams.mips.assembler.AssemblingFile;
-import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
+import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.utils.NumericUtils;
 
 public class DirectiveSpace extends Directive {
@@ -40,7 +39,7 @@ public class DirectiveSpace extends Directive {
 	}
 
 	@Override
-	public int execute(int lineNumber, String line, String[] parameters, Assembler assembler) {
+	public int execute(int lineNumber, String line, String[] parameters, MIPS32AssemblingFile file) {
 		if (parameters.length != 1)
 			throw new AssemblerException(lineNumber, "." + NAME + " must have one parameter.");
 
@@ -49,7 +48,7 @@ public class DirectiveSpace extends Directive {
 		int i = NumericUtils.decodeInteger(parameters[0]);
 		if (i < 0) throw new AssemblerException(i + " cannot be negative.");
 
-		AssemblerData data = assembler.getAssemblerData();
+		MIPS32AssemblerData data = file.getAssembler().getAssemblerData();
 		data.align(0);
 		int start = data.getCurrent();
 		data.addCurrent(i);
@@ -57,7 +56,7 @@ public class DirectiveSpace extends Directive {
 	}
 
 	@Override
-	public void postExecute(String[] parameters, Assembler assembler, AssemblingFile file, int lineNumber, int address) {
+	public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address) {
 
 	}
 }

@@ -24,11 +24,10 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.mips.assembler.Assembler;
-import net.jamsimulator.jams.mips.assembler.AssemblerData;
-import net.jamsimulator.jams.mips.assembler.AssemblingFile;
-import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
+import net.jamsimulator.jams.mips.directive.Directive;
 
 import java.nio.charset.StandardCharsets;
 
@@ -41,7 +40,7 @@ public class DirectiveAsciiz extends Directive {
 	}
 
 	@Override
-	public int execute(int lineNumber, String line, String[] parameters, Assembler assembler) {
+	public int execute(int lineNumber, String line, String[] parameters, MIPS32AssemblingFile file) {
 		if (parameters.length != 1)
 			throw new AssemblerException(lineNumber, "." + NAME + " must have one string parameter.");
 
@@ -49,23 +48,23 @@ public class DirectiveAsciiz extends Directive {
 		if (!s.startsWith("\"") && !s.endsWith("\""))
 			throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + s + "' is not a string.");
 
-		AssemblerData data = assembler.getAssemblerData();
+		MIPS32AssemblerData data = file.getAssembler().getAssemblerData();
 		data.align(0);
 
 		int start = data.getCurrent();
 
 		for (byte b : s.getBytes(StandardCharsets.US_ASCII)) {
-			assembler.getMemory().setByte(data.getCurrent(), b);
+			file.getAssembler().getMemory().setByte(data.getCurrent(), b);
 			data.addCurrent(1);
 		}
-		assembler.getMemory().setByte(data.getCurrent(), (byte) 0);
+		file.getAssembler().getMemory().setByte(data.getCurrent(), (byte) 0);
 		data.addCurrent(1);
 		return start;
 	}
 
 
 	@Override
-	public void postExecute(String[] parameters, Assembler assembler, AssemblingFile file, int lineNumber, int address) {
+	public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address) {
 
 	}
 }

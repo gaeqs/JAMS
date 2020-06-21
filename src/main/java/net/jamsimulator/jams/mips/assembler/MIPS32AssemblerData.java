@@ -30,29 +30,29 @@ import net.jamsimulator.jams.mips.memory.Memory;
 /**
  * Contains all the data required by the assembler.
  */
-public class AssemblerData {
+public class MIPS32AssemblerData {
 
-	SelectedMemorySegment selected;
+	private SelectedMemorySegment selected;
 
-	int firstText;
-	int firstData;
-	int firstKText;
-	int firstKData;
-	int firstExtern;
-	int currentText;
-	int currentData;
-	int currentKText;
-	int currentKData;
-	int currentExtern;
-	int nextForcedAlignment;
+	private final int firstText;
+	private final int firstData;
+	private final int firstKText;
+	private final int firstKData;
+	private final int firstExtern;
+	private int currentText;
+	private int currentData;
+	private int currentKText;
+	private int currentKData;
+	private int currentExtern;
+	private int nextForcedAlignment;
 
 
-	public AssemblerData(Memory memory) {
+	public MIPS32AssemblerData(Memory memory) {
 		this(memory.getFirstTextAddress(), memory.getFirstDataAddress(), memory.getFirstKernelTextAddress(),
 				memory.getFirstKernelDataAddress(), memory.getFirstExternalAddress());
 	}
 
-	public AssemblerData(int currentText, int currentData, int currentKText, int currentKData, int currentExtern) {
+	public MIPS32AssemblerData(int currentText, int currentData, int currentKText, int currentKData, int currentExtern) {
 		this.firstText = currentText;
 		this.firstData = currentData;
 		this.firstKText = currentKText;
@@ -127,13 +127,22 @@ public class AssemblerData {
 		this.nextForcedAlignment = nextForcedAlignment;
 	}
 
-	public boolean align(int unforcedAlign) {
-		int align = isNextAlignmentForced() ? nextForcedAlignment : unforcedAlign;
+	/**
+	 * Aligns the memory to the given power. The given value won't be used if a forced alignment is scheduled:
+	 * the forced alignment will be used instead.
+	 * <p>
+	 * Examples:
+	 * If the alignment is 0 no changes will be performed.
+	 * If the alignment is 1 the address will be aligned to a multiple of 2. 373621 -> 373622
+	 * If the alignment is 2 the address will be aligned to a multiple of 4. 373621 -> 373624
+	 *
+	 * @param unforcedAlignment the alignment to use if no forced alignment is scheduled.
+	 * @return whether any changes were made.
+	 */
+	public boolean align(int unforcedAlignment) {
+		int align = isNextAlignmentForced() ? nextForcedAlignment : unforcedAlignment;
 		nextForcedAlignment = -1;
-		int pow = 1;
-		for (int i = 0; i < align; i++) {
-			pow *= 2;
-		}
+		int pow = 1 << align;
 
 		int current = getCurrent();
 		int mod = current % pow;
@@ -142,7 +151,11 @@ public class AssemblerData {
 		return true;
 	}
 
-
+	/**
+	 * Returns the next memory address to be used of the selected memory segment.
+	 *
+	 * @return the next memory address.
+	 */
 	public int getCurrent() {
 		switch (selected) {
 			case TEXT:
@@ -159,6 +172,12 @@ public class AssemblerData {
 		throw new AssemblerException("Selected section not defined.");
 	}
 
+	/**
+	 * Adds an offset to the current memory address of the selected memory segment.
+	 * This method is used to reserve memory for an instruction or a directive.
+	 *
+	 * @param add the offset to add.
+	 */
 	public void addCurrent(int add) {
 		switch (selected) {
 			case TEXT:

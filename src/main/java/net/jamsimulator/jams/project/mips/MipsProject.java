@@ -57,20 +57,21 @@ public class MipsProject extends BasicProject {
 	public Simulation<?> assemble() throws IOException {
 		MipsSimulationConfiguration selected = getData().getSelectedConfiguration().orElse(null);
 		if (selected == null) return null;
+
+		List<String> files = new ArrayList<>();
+
+		for (File target : getData().getFilesToAssemble().getFiles()) {
+			files.add(String.join("\n", Files.readAllLines(target.toPath())));
+		}
+
 		Assembler assembler = getData().getAssemblerBuilder().createAssembler(
+				files,
 				getData().getDirectiveSet(),
 				getData().getInstructionSet(),
 				getData().getRegistersBuilder().createRegisters(),
 				selected.getMemoryBuilder().createMemory());
 
-		List<List<String>> files = new ArrayList<>();
-
-		for (File target : getData().getFilesToAssemble().getFiles()) {
-			files.add(Files.readAllLines(target.toPath()));
-		}
-
-		assembler.setData(files);
-		assembler.compile();
+		assembler.assemble();
 		return assembler.createSimulation(selected.getArchitecture());
 	}
 
@@ -91,7 +92,7 @@ public class MipsProject extends BasicProject {
 		data = new MipsProjectData(this);
 		data.load();
 
-		if(name != null) {
+		if (name != null) {
 			data.setName(name);
 		}
 
