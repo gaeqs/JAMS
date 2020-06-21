@@ -4,7 +4,6 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionsTable;
@@ -12,6 +11,7 @@ import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.project.mips.MipsProject;
@@ -25,8 +25,8 @@ public class MipsSimulatorPane extends WorkingPane {
 	protected Simulation<?> simulation;
 	protected TabPane registersTabs;
 
-	public MipsSimulatorPane(Tab parent, ProjectTab projectTab, MipsProject project, Simulation<?> simulation) {
-		super(parent, projectTab, new InstructionsTable(simulation), false);
+	public MipsSimulatorPane(Tab parent, ProjectTab projectTab, MipsProject project, Simulation<?> simulation, Assembler assembler) {
+		super(parent, projectTab, new InstructionsTable(simulation, assembler.getOriginals()), false);
 		this.project = project;
 		this.simulation = simulation;
 

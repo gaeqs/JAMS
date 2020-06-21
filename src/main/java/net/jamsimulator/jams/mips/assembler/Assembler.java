@@ -7,6 +7,8 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
+import java.util.Map;
+
 /**
  * Represents an assembler. An assembler transforms assembly code into machine code.
  * <p>
@@ -72,5 +74,13 @@ public interface Assembler {
 	 * @return the {@link Memory}.
 	 */
 	Memory getMemory();
+
+	/**
+	 * Returns an unmodifiable map that links instruction addresses to their original instructions.
+	 * If a pseudo instruction creates several instructions only the first one will be found inside this map.
+	 *
+	 * @return the unmodifiable map.
+	 */
+	Map<Integer, String> getOriginals();
 
 }

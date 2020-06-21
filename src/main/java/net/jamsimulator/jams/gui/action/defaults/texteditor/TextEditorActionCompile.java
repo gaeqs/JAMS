@@ -102,7 +102,7 @@ public class TextEditorActionCompile extends Action {
 
 			project.getProjectTab().ifPresent(projectTab ->
 					projectTab.getProjectTabPane()
-							.createProjectPane((t, pt) -> new MipsSimulatorPane(t, pt, project, simulation), true));
+							.createProjectPane((t, pt) -> new MipsSimulatorPane(t, pt, project, simulation, assembler), true));
 
 			if (simulation instanceof SingleCycleSimulation) {
 				((SingleCycleSimulation) simulation).setLog(log);

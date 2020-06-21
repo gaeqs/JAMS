@@ -6,9 +6,11 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
+import java.util.Map;
+
 public class InstructionsTable extends TableView<InstructionEntry> {
 
-	public InstructionsTable(Simulation<?> simulation) {
+	public InstructionsTable(Simulation<?> simulation, Map<Integer, String> originals) {
 		setEditable(true);
 		TableColumn<InstructionEntry, String> addressColumn = new TableColumn<>("Address");
 		TableColumn<InstructionEntry, String> codeColumn = new TableColumn<>("Code");
@@ -33,7 +35,7 @@ public class InstructionsTable extends TableView<InstructionEntry> {
 		int current = MIPS32Memory.TEXT;
 		int end = simulation.getInstructionStackBottom();
 		while (current <= end) {
-			getItems().add(new InstructionEntry(simulation, current, "-"));
+			getItems().add(new InstructionEntry(simulation, current, originals.getOrDefault(current, "")));
 			current += 4;
 		}
 	}

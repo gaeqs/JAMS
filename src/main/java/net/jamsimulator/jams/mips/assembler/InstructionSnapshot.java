@@ -29,6 +29,7 @@ public class InstructionSnapshot {
 	}
 
 	public int scan(MIPS32Assembler assembler) {
+		assembler.addOriginalInstruction(address, raw);
 		decode();
 		return scanInstruction(assembler.getRegisters(), assembler.getInstructionSet());
 	}

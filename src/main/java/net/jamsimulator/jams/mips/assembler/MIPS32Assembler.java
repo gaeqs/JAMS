@@ -26,6 +26,8 @@ public class MIPS32Assembler implements Assembler {
 
 	private final Map<String, Integer> globalLabels;
 
+	private final Map<Integer, String> originalInstructions;
+
 	private boolean assembled = false;
 
 	public MIPS32Assembler(List<String> rawFiles, InstructionSet instructionSet, DirectiveSet directiveSet, Registers registers, Memory memory) {
@@ -39,8 +41,21 @@ public class MIPS32Assembler implements Assembler {
 		this.memory = memory;
 
 		this.globalLabels = new HashMap<>();
+		this.originalInstructions = new HashMap<>();
 
 		rawFiles.forEach(target -> files.add(new MIPS32AssemblingFile(target, this)));
+	}
+
+
+	/**
+	 * Links the original instruction to the address its first compiled instruction is located.
+	 *
+	 * @param address the address.
+	 * @param string  the instruction.
+	 * @see #getOriginals()
+	 */
+	public void addOriginalInstruction(int address, String string) {
+		originalInstructions.put(address, string);
 	}
 
 	/**
@@ -113,6 +128,11 @@ public class MIPS32Assembler implements Assembler {
 	@Override
 	public Memory getMemory() {
 		return memory;
+	}
+
+	@Override
+	public Map<Integer, String> getOriginals() {
+		return Collections.unmodifiableMap(originalInstructions);
 	}
 
 	@Override
