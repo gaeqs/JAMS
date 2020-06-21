@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.mips.editor.element;
 
 import net.jamsimulator.jams.gui.mips.editor.MIPSEditorError;
 import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.directive.defaults.DirectiveEqv;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveGlobl;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.project.mips.MipsProject;
@@ -56,6 +57,14 @@ public class MIPSDirective extends MIPSCodeElement {
 
 	public boolean isGlobl() {
 		return directive.equalsIgnoreCase("." + DirectiveGlobl.NAME);
+	}
+
+	public boolean isEqv() {
+		return directive.equalsIgnoreCase("." + DirectiveEqv.NAME);
+	}
+
+	public String getEqvKey() {
+		return parameters.isEmpty() ? "" : parameters.get(0).text;
 	}
 
 	@Override
@@ -98,11 +107,13 @@ public class MIPSDirective extends MIPSCodeElement {
 		directive = first.getValue();
 		stringParameters.remove(0);
 
+		boolean eqv = isEqv();
+
 		//Adds all parameters.
 		for (Map.Entry<Integer, String> entry : stringParameters) {
 			parameters.add(new MIPSDirectiveParameter(
 					startIndex + entry.getKey(),
-					startIndex + entry.getKey() + entry.getValue().length(), entry.getValue()));
+					startIndex + entry.getKey() + entry.getValue().length(), entry.getValue(), eqv));
 		}
 
 		startIndex += first.getKey();

@@ -35,10 +35,12 @@ import java.util.List;
 public class MIPSDirectiveParameter extends MIPSCodeElement {
 
 	private final boolean string;
+	private final boolean eqv;
 
-	public MIPSDirectiveParameter(int startIndex, int endIndex, String text) {
+	public MIPSDirectiveParameter(int startIndex, int endIndex, String text, boolean eqv) {
 		super(startIndex, endIndex, text);
 		this.string = StringUtils.isStringOrChar(text);
+		this.eqv = eqv;
 	}
 
 	@Override
@@ -56,7 +58,7 @@ public class MIPSDirectiveParameter extends MIPSCodeElement {
 	@Override
 	public void refreshMetadata(MIPSFileElements elements) {
 		errors.clear();
-		if (string || NumericUtils.isInteger(text)) return;
+		if (eqv || string || NumericUtils.isInteger(text)) return;
 
 		if (!elements.getLabels().contains(text)) {
 			errors.add(MIPSEditorError.LABEL_NOT_FOUND);
