@@ -84,24 +84,30 @@ public class NumericUtils {
 	}
 
 	public static int decodeInteger(String string) {
-		int multiplier = 1;
+		char c = '+';
 		if (string.startsWith("+"))
 			string = string.substring(1);
 		else if (string.startsWith("-")) {
-			multiplier = -1;
+			c = '-';
 			string = string.substring(1);
 		}
 
+		int radix = 10;
+		int substring = 0;
 		if (string.startsWith("0x") || string.startsWith("0X") || string.startsWith("#")) {
-			return multiplier * new BigInteger(string.substring(2), 16).intValue();
+			radix = 16;
+			substring = 2;
 		}
 		if (string.startsWith("0o") || string.startsWith("0O")) {
-			return multiplier * new BigInteger(string.substring(2), 8).intValue();
+			radix = 8;
+			substring = 2;
 		}
 		if (string.startsWith("0b") || string.startsWith("0B")) {
-			return multiplier * new BigInteger(string.substring(2), 2).intValue();
+			radix = 2;
+			substring = 2;
 		}
-		return Integer.parseInt(string);
+
+		return new BigInteger(c + string.substring(substring), radix).intValue();
 	}
 
 	public static Optional<Integer> decodeIntegerSafe(String string) {

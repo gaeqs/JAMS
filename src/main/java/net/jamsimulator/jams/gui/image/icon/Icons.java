@@ -54,6 +54,7 @@ public class Icons {
 	public static final String PROJECT_ASSEMBLE = "project_assemble";
 	public static final String PROJECT_ASSEMBLE_GRAY = "project_assemble_gray";
 	public static final String PROJECT_PLAY = "project_play";
+	public static final String PROJECT_PLAY_ONE = "project_play_one";
 
 	public static final String TAB_SPLIT_VERTICALLY = "tab_split_vertically";
 	public static final String TAB_SPLIT_HORIZONTALLY = "tab_split_horizontally";
@@ -82,6 +83,7 @@ public class Icons {
 	public static final String PROJECT_ASSEMBLE_PATH = "gui/icon/project/assemble.png";
 	public static final String PROJECT_ASSEMBLE_GRAY_PATH = "gui/icon/project/assemble_gray.png";
 	public static final String PROJECT_PLAY_PATH = "gui/icon/project/play.png";
+	public static final String PROJECT_PLAY_ONE_PATH = "gui/icon/project/play_one.png";
 
 	public static final String TAB_SPLIT_VERTICALLY_PATH = "gui/icon/tab/split_vertically.png";
 	public static final String TAB_SPLIT_HORIZONTALLY_PATH = "gui/icon/tab/split_horizontally.png";

@@ -1,6 +1,5 @@
 package net.jamsimulator.jams.gui.mips.simulator.instruction;
 
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;

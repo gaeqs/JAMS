@@ -6,7 +6,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
-import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionsTable;
+import net.jamsimulator.jams.gui.mips.simulator.SimulatorCentralPane;
 import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
@@ -26,7 +26,7 @@ public class MipsSimulatorPane extends WorkingPane {
 	protected TabPane registersTabs;
 
 	public MipsSimulatorPane(Tab parent, ProjectTab projectTab, MipsProject project, Simulation<?> simulation, Assembler assembler) {
-		super(parent, projectTab, new InstructionsTable(simulation, assembler.getOriginals()), false);
+		super(parent, projectTab, new SimulatorCentralPane(simulation, assembler.getOriginals()), false);
 		this.project = project;
 		this.simulation = simulation;
 

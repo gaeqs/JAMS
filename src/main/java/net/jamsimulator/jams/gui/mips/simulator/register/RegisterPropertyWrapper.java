@@ -98,16 +98,16 @@ public class RegisterPropertyWrapper {
 			hexProperty = new SimpleStringProperty(this, "hex");
 			hexProperty.setValue("0x" + StringUtils.addZeros(Integer.toHexString(register.getValue()), 8));
 			hexProperty.addListener((obs, old, val) -> {
-				String oldHex = "0x" + StringUtils.addZeros(Integer.toHexString(register.getValue()), 8);
-				if (oldHex.equals(val)) return;
+				if (old.equals(val)) return;
 				if (register.isModifiable()) {
 					try {
 						register.setValue(NumericUtils.decodeInteger(val));
 					} catch (NumberFormatException ex) {
-						hexProperty.setValue(oldHex);
+						ex.printStackTrace();
+						hexProperty.setValue(old);
 					}
 				} else {
-					hexProperty.set(oldHex);
+					hexProperty.set(old);
 				}
 			});
 		}
