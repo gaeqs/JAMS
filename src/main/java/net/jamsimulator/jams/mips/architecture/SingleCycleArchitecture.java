@@ -28,7 +28,7 @@ import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.mips.simulation.SingleCycleSimulation;
+import net.jamsimulator.jams.mips.simulation.singlecycle.SingleCycleSimulation;
 
 /**
  * Represents the Single cycle architecture.

@@ -38,7 +38,7 @@ import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.mips.simulation.SingleCycleSimulation;
+import net.jamsimulator.jams.mips.simulation.singlecycle.SingleCycleSimulation;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;

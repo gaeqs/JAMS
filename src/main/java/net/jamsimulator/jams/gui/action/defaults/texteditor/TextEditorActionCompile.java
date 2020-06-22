@@ -36,19 +36,15 @@ import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.util.Log;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
-import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.mips.simulation.SingleCycleSimulation;
+import net.jamsimulator.jams.mips.simulation.singlecycle.SingleCycleSimulation;
 import net.jamsimulator.jams.project.mips.MipsProject;
 import net.jamsimulator.jams.project.mips.MipsSimulationConfiguration;
-import net.jamsimulator.jams.utils.NumericUtils;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class TextEditorActionCompile extends Action {
@@ -115,39 +111,6 @@ public class TextEditorActionCompile extends Action {
 				log.printInfoLn("Global label \"main\" found. Starting simulaiton at this location.");
 				simulation.getRegisterSet().getProgramCounter().setValue(mainLabel);
 			}
-
-			log.println();
-			log.printInfoLn("SIMULATION:");
-			log.println();
-
-			try {
-				simulation.executeAll();
-			} catch (InstructionNotFoundException ex) {
-				log.printInfo("Stop. " + ex.getMessage());
-			}
-
-			log.println();
-			log.printDoneLn("FINISHED");
-			log.println("_________________________________________");
-			log.println();
-			log.printInfoLn("RESULTS:");
-			log.println();
-
-			log.printInfoLn("REGISTERS:");
-			log.println();
-			log.printInfo("\tPC");
-			log.print(": 0x" + toHexFill(simulation.getRegisterSet().getProgramCounter().getValue()));
-			log.printDoneLn("\t" + simulation.getRegisterSet().getProgramCounter().getValue());
-			log.println();
-
-			simulation.getRegisterSet().getGeneralRegisters().stream()
-					.sorted(Comparator.comparingInt(Register::getIdentifier))
-					.forEach(register -> {
-						String name = register.getNames().stream().filter(target -> !NumericUtils.isInteger(target)).findFirst().orElse("-");
-						log.printInfo("\t" + name);
-						log.print(": 0x" + toHexFill(register.getValue()));
-						log.printDoneLn("\t " + register.getValue());
-					});
 		} catch (Exception ex) {
 			log.printErrorLn("ERROR:");
 			log.printErrorLn(ex.getMessage());

@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.simulation;
 
 import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
@@ -36,7 +37,7 @@ import net.jamsimulator.jams.mips.register.Registers;
 
 import java.util.Optional;
 
-public abstract class Simulation<Arch extends Architecture> {
+public abstract class Simulation<Arch extends Architecture> extends SimpleEventBroadcast {
 
 	protected final Arch architecture;
 	protected final InstructionSet instructionSet;

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.simulation;
+package net.jamsimulator.jams.mips.simulation.singlecycle;
 
 import net.jamsimulator.jams.gui.util.Log;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
@@ -32,6 +32,8 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.singlecycle.event.SingleCycleInstructionExecutionEvent;
 import net.jamsimulator.jams.utils.StringUtils;
 
 public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
@@ -64,6 +66,41 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 					StringUtils.addZeros(Integer.toHexString(code), 8) + ". (" + StringUtils.addZeros(Integer.toBinaryString(code), 32) + ")");
 		}
 
+		sendInstructionLog(instruction, pc);
+
+		//Execute, Memory and Write
+
+		SingleCycleExecution<?> execution = (SingleCycleExecution<?>)
+				instruction.getBasicOrigin().generateExecution(this, instruction).orElse(null);
+
+		//Send before event
+		SingleCycleInstructionExecutionEvent.Before before = callEvent(
+				new SingleCycleInstructionExecutionEvent.Before(this, pc, instruction, execution));
+		if (before.isCancelled()) return;
+
+		//Gets the modifies execution. This may be null.
+		execution = before.getExecution().orElse(null);
+
+		if (execution == null) {
+			throw new InstructionNotFoundException("Couldn't decode instruction " +
+					StringUtils.addZeros(Integer.toHexString(instruction.getCode()), 8) + ".");
+		}
+
+		execution.execute();
+
+
+		callEvent(new SingleCycleInstructionExecutionEvent.After(this, pc, instruction, execution));
+	}
+
+	@Override
+	public void executeAll() {
+		while (registerSet.getProgramCounter().getValue() <= instructionStackBottom) {
+			nextStep();
+		}
+	}
+
+
+	private void sendInstructionLog(AssembledInstruction instruction, int pc) {
 		String address = "0x" + StringUtils.addZeros(Integer.toHexString(pc), 8);
 		String opCode = StringUtils.addZeros(Integer.toBinaryString(instruction.getOperationCode()), 6);
 		String mnemonic = instruction.getBasicOrigin().getMnemonic();
@@ -73,22 +110,6 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 			System.out.println(address + "\t" + opCode + "\t" + mnemonic + " \t" + code);
 		} else {
 			log.println(address + "\t" + opCode + "\t" + mnemonic + " \t" + code);
-		}
-
-		//Execute, Memory and Write
-
-		SingleCycleExecution<?> execution = (SingleCycleExecution<?>)
-				instruction.getBasicOrigin().generateExecution(this, instruction).orElse(null);
-		if (execution == null) {
-			throw new InstructionNotFoundException("Couldn't decode instruction " + code + ".");
-		}
-		execution.execute();
-	}
-
-	@Override
-	public void executeAll() {
-		while (registerSet.getProgramCounter().getValue() <= instructionStackBottom) {
-			nextStep();
 		}
 	}
 }
