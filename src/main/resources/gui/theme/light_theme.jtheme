@@ -384,7 +384,7 @@ AnchorPane {
 }
 
 .table-view .column-header {
-    -fx-background-color: -theme-background-darker;
+    -fx-background-color: -theme-background-text-area;
 }
 
 .table-view .table-row-cell:even {
@@ -395,6 +395,9 @@ AnchorPane {
     -fx-background-color: -theme-background-darker;
 }
 
+.table-view .table-row-cell:selected {
+    -fx-background-color: -theme-background-lighter;
+}
 
 .table-view .table-cell {
     -fx-text-fill: -theme-foreground;

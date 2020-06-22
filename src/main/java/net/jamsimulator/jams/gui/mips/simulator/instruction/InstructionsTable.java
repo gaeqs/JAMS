@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.mips.simulator.instruction;
 
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -12,6 +13,7 @@ public class InstructionsTable extends TableView<InstructionEntry> {
 
 	public InstructionsTable(Simulation<?> simulation, Map<Integer, String> originals) {
 		setEditable(true);
+
 		TableColumn<InstructionEntry, String> addressColumn = new TableColumn<>("Address");
 		TableColumn<InstructionEntry, String> codeColumn = new TableColumn<>("Code");
 		TableColumn<InstructionEntry, String> instructionColumn = new TableColumn<>("Instruction");
@@ -38,5 +40,7 @@ public class InstructionsTable extends TableView<InstructionEntry> {
 			getItems().add(new InstructionEntry(simulation, current, originals.getOrDefault(current, "")));
 			current += 4;
 		}
+
+		getSelectionModel().select(2, codeColumn);
 	}
 }
