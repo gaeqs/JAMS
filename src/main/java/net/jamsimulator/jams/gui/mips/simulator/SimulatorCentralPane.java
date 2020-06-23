@@ -12,11 +12,11 @@ public class SimulatorCentralPane extends AnchorPane {
 
 
 	public SimulatorCentralPane(Simulation<?> simulation, Map<Integer, String> originals) {
-		ExecutionButtons buttons = new ExecutionButtons();
+		ExecutionButtons buttons = new ExecutionButtons(simulation);
 		AnchorUtils.setAnchor(buttons, 0, -1, 0, 0);
 		buttons.setPrefHeight(30);
 
-		InstructionsTable table = new InstructionsTable(simulation, originals);
+		InstructionsTable table = InstructionsTable.createTable(simulation.getArchitecture(), simulation, originals);
 		AnchorUtils.setAnchor(table, 29, 0, 0, 0);
 
 		getChildren().addAll(buttons, table);

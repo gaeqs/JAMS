@@ -936,3 +936,12 @@ AnchorPane {
 .mips-explorer-file-to-assemble.selected-explorer-element {
     -fx-background-color: #4b6578;
 }
+
+/* ----------------------- */
+/* SINGLE CYCLE SIMULATION */
+/* ----------------------- */
+
+/* INSTRUCTION TABLE */
+.table-view .single-cycle-current-instruction {
+    -fx-background-color: #276f2a;
+}

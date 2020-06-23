@@ -43,6 +43,7 @@ public class AssembledInstructionSw extends AssembledI16Instruction {
 	@Override
 	public String parametersToString(String registersStart) {
 		return registersStart + getTargetRegister()
-				+ ", 0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 4) + "(" + getSourceRegister() + ")";
+				+ ", 0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 4)
+				+ "(" + registersStart + getSourceRegister() + ")";
 	}
 }
