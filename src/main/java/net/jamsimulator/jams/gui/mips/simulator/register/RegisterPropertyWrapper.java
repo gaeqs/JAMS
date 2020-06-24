@@ -77,10 +77,9 @@ public class RegisterPropertyWrapper {
 				if (val.equals(old)) return;
 				if (register.isModifiable()) {
 					try {
-						if (useDecimals) {
-							register.setValue(Float.floatToIntBits(Float.parseFloat(val)));
-						} else {
-							register.setValue(NumericUtils.decodeInteger(val));
+						int to = useDecimals ? Float.floatToIntBits(Float.parseFloat(val)) : NumericUtils.decodeInteger(val);
+						if (register.getValue() != to) {
+							register.setValue(to);
 						}
 					} catch (NumberFormatException ex) {
 						valueProperty.setValue(old);
@@ -100,8 +99,10 @@ public class RegisterPropertyWrapper {
 			hexProperty.addListener((obs, old, val) -> {
 				if (old.equals(val)) return;
 				if (register.isModifiable()) {
+					int to = NumericUtils.decodeInteger(val);
+					if (register.getValue() == to) return;
 					try {
-						register.setValue(NumericUtils.decodeInteger(val));
+						register.setValue(to);
 					} catch (NumberFormatException ex) {
 						ex.printStackTrace();
 						hexProperty.setValue(old);

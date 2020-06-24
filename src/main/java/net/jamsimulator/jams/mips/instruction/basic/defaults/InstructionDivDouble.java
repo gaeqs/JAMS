@@ -75,7 +75,7 @@ public class InstructionDivDouble extends BasicRFPUInstruction<AssembledInstruct
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisterSet();
+			Registers set = simulation.getRegisters();
 			Optional<Register> rt0 = set.getCoprocessor1Register(instruction.getTargetRegister());
 			Optional<Register> rt1 = set.getCoprocessor1Register(instruction.getTargetRegister() + 1);
 			if (!rt0.isPresent()) error("Target register not found.");

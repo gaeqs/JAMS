@@ -24,63 +24,58 @@
 
 package net.jamsimulator.jams.mips.memory.event;
 
+import net.jamsimulator.jams.event.Cancellable;
 import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.memory.MemorySection;
 
 /**
- * Represents a event invoked when a byte is get from a {@link Memory}.
+ * Represents a event invoked when the endianness of a {@link Memory} changes.
  */
-public class ByteGetEvent extends MemoryEvent {
+public class MemoryEndiannessChange extends MemoryEvent {
 
-	protected int address;
+	protected boolean newEndiannessBigEndian;
 
-	private ByteGetEvent(Memory memory, int address) {
+	private MemoryEndiannessChange(Memory memory, boolean newEndiannessBigEndian) {
 		super(memory);
-		this.address = address;
+		this.newEndiannessBigEndian = newEndiannessBigEndian;
 	}
 
-	public int getAddress() {
-		return address;
-	}
-
-	/**
-	 * This event is invoked before a byte is get from a memory.
-	 */
-	public static class Before extends ByteGetEvent {
-
-		public Before(Memory memory, int address) {
-			super(memory, address);
-		}
-
-		public void setAddress(int address) {
-			this.address = address;
-		}
+	public boolean isNewEndiannessBigEndian() {
+		return newEndiannessBigEndian;
 	}
 
 	/**
-	 * This event is invoked after a byte is get from a memory.
+	 * This event is invoked before the endianness of a  {@link Memory} changes.
 	 */
-	public static class After extends ByteGetEvent {
+	public static class Before extends MemoryEndiannessChange implements Cancellable {
 
-		private byte value;
-		private MemorySection memorySection;
+		private boolean cancelled;
 
-		public After(Memory memory, MemorySection memorySection, int address, byte value) {
-			super(memory, address);
-			this.value = value;
-			this.memorySection = memorySection;
+		public Before(Memory memory, boolean newEndianness) {
+			super(memory, newEndianness);
 		}
 
-		public MemorySection getMemorySection() {
-			return memorySection;
+		public void setNewEndiannessBigEndian(boolean bigEndian) {
+			this.newEndiannessBigEndian = bigEndian;
 		}
 
-		public byte getValue() {
-			return value;
+		@Override
+		public boolean isCancelled() {
+			return cancelled;
 		}
 
-		public void setValue(byte value) {
-			this.value = value;
+		@Override
+		public void setCancelled(boolean cancelled) {
+			this.cancelled = cancelled;
+		}
+	}
+
+	/**
+	 * This event is invoked after the endianness of a {@link Memory} changes.
+	 */
+	public static class After extends MemoryEndiannessChange {
+
+		public After(Memory memory, boolean newEndianness) {
+			super(memory, newEndianness);
 		}
 	}
 }

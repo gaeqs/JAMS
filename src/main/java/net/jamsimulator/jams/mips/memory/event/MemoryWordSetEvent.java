@@ -24,63 +24,82 @@
 
 package net.jamsimulator.jams.mips.memory.event;
 
+import net.jamsimulator.jams.event.Cancellable;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.MemorySection;
 
 /**
- * Represents a event invoked when a word is get from a {@link Memory}.
+ * Represents a event invoked when a word is stored in a {@link Memory}.
  */
-public class WordGetEvent extends MemoryEvent {
+public class MemoryWordSetEvent extends MemoryEvent {
 
 	protected int address;
+	protected int value;
+	protected boolean cancelled;
 
-	private WordGetEvent(Memory memory, int address) {
+	private MemoryWordSetEvent(Memory memory, int address, int value) {
 		super(memory);
 		this.address = address;
+		this.value = value;
+		this.cancelled = false;
 	}
 
 	public int getAddress() {
 		return address;
 	}
 
-	/**
-	 * This event is invoked before a word is get from a memory.
-	 */
-	public static class Before extends WordGetEvent {
+	public int getValue() {
+		return value;
+	}
 
-		public Before(Memory memory, int address) {
-			super(memory, address);
+	/**
+	 * This event is invoked before a word is stored in a {@link Memory}.
+	 */
+	public static class Before extends MemoryWordSetEvent implements Cancellable {
+
+		public Before(Memory memory, int address, int value) {
+			super(memory, address, value);
 		}
 
 		public void setAddress(int address) {
 			this.address = address;
 		}
+
+		public void setValue(int value) {
+			this.value = value;
+		}
+
+		@Override
+		public boolean isCancelled() {
+			return cancelled;
+		}
+
+		@Override
+		public void setCancelled(boolean cancelled) {
+			this.cancelled = cancelled;
+		}
 	}
 
 	/**
-	 * This event is invoked after a word is get from a memory.
+	 * This event is invoked after a word is stored in a {@link Memory}.
 	 */
-	public static class After extends WordGetEvent {
+	public static class After extends MemoryWordSetEvent {
 
-		private int value;
-		private MemorySection memorySection;
+		private final MemorySection memorySection;
+		private final int oldValue;
 
-		public After(Memory memory, MemorySection memorySection, int address, int value) {
-			super(memory, address);
-			this.value = value;
+		public After(Memory memory, MemorySection memorySection, int address, int value, int oldValue) {
+			super(memory, address, value);
 			this.memorySection = memorySection;
+			this.oldValue = oldValue;
 		}
 
 		public MemorySection getMemorySection() {
 			return memorySection;
 		}
 
-		public int getValue() {
-			return value;
-		}
-
-		public void setValue(int value) {
-			this.value = value;
+		public int getOldValue() {
+			return oldValue;
 		}
 	}
 }

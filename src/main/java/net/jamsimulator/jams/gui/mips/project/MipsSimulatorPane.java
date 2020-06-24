@@ -52,12 +52,12 @@ public class MipsSimulatorPane extends WorkingPane {
 		registersTabs = new TabPane();
 
 
-		Set<Register> general = new HashSet<>(simulation.getRegisterSet().getGeneralRegisters());
-		general.add(simulation.getRegisterSet().getProgramCounter());
+		Set<Register> general = new HashSet<>(simulation.getRegisters().getGeneralRegisters());
+		general.add(simulation.getRegisters().getProgramCounter());
 
 		registersTabs.getTabs().add(new Tab("General", new RegistersTable(general, false)));
-		registersTabs.getTabs().add(new Tab("COP0", new RegistersTable(simulation.getRegisterSet().getCoprocessor0Registers(), false)));
-		registersTabs.getTabs().add(new Tab("COP1", new RegistersTable(simulation.getRegisterSet().getCoprocessor1Registers(), true)));
+		registersTabs.getTabs().add(new Tab("COP0", new RegistersTable(simulation.getRegisters().getCoprocessor0Registers(), false)));
+		registersTabs.getTabs().add(new Tab("COP1", new RegistersTable(simulation.getRegisters().getCoprocessor1Registers(), true)));
 
 		topRightSidebar.addNode("Registers", registersTabs, explorerIcon, null);
 	}

@@ -77,19 +77,19 @@ class AssemblerTest {
 		assembler.assemble();
 		Simulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE);
 
-		assertEquals(0x02508820, simulation.getMemory().getWord(simulation.getRegisterSet().getProgramCounter().getValue()));
+		assertEquals(0x02508820, simulation.getMemory().getWord(simulation.getRegisters().getProgramCounter().getValue()));
 
 		System.out.println("Extern next address: " + (assembler.getAssemblerData().getCurrentExtern() - MIPS32Memory.DATA));
 
 		System.out.println("Starting simulation");
-		Register pc = simulation.getRegisterSet().getProgramCounter();
+		Register pc = simulation.getRegisters().getProgramCounter();
 		while (pc.getValue() < assembler.getAssemblerData().getCurrentText()) {
 			simulation.nextStep();
 		}
 		System.out.println("Simulation end");
-		System.out.println("$t1: " + simulation.getRegisterSet().getRegister("t1").get().getValue());
-		System.out.println("$s0: 0x" + Integer.toHexString(simulation.getRegisterSet().getRegister("s0").get().getValue()));
-		System.out.println("$ra: 0x" + Integer.toHexString(simulation.getRegisterSet().getRegister("ra").get().getValue()));
+		System.out.println("$t1: " + simulation.getRegisters().getRegister("t1").get().getValue());
+		System.out.println("$s0: 0x" + Integer.toHexString(simulation.getRegisters().getRegister("s0").get().getValue()));
+		System.out.println("$ra: 0x" + Integer.toHexString(simulation.getRegisters().getRegister("ra").get().getValue()));
 
 		//Check add
 

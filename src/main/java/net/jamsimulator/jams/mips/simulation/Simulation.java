@@ -31,8 +31,8 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.memory.event.ByteSetEvent;
-import net.jamsimulator.jams.mips.memory.event.WordSetEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.Registers;
 
 import java.util.Optional;
@@ -42,18 +42,19 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	protected final Arch architecture;
 	protected final InstructionSet instructionSet;
 
-	protected final Registers registerSet;
+	protected final Registers registers;
 	protected final Memory memory;
 
 	protected int instructionStackBottom;
 
-	public Simulation(Arch architecture, InstructionSet instructionSet, Registers registerSet, Memory memory, int instructionStackBottom) {
+	public Simulation(Arch architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom) {
 		this.architecture = architecture;
 		this.instructionSet = instructionSet;
-		this.registerSet = registerSet;
+		this.registers = registers;
 		this.memory = memory;
 		this.instructionStackBottom = instructionStackBottom;
 		memory.registerListeners(this, true);
+		registers.registerListeners(this, true);
 	}
 
 	public Arch getArchitecture() {
@@ -64,8 +65,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		return instructionSet;
 	}
 
-	public Registers getRegisterSet() {
-		return registerSet;
+	public Registers getRegisters() {
+		return registers;
 	}
 
 	public Memory getMemory() {
@@ -84,20 +85,27 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		return instruction.assembleFromCode(data);
 	}
 
+	public void reset() {
+		registers.restoreSavedState();
+		memory.restoreSavedState();
+	}
+
 	public abstract void nextStep();
 
 	public abstract void executeAll();
 
+	public abstract void undoLastStep();
+
 
 	@Listener
-	private void onMemoryChange(ByteSetEvent.After event) {
+	private void onMemoryChange(MemoryByteSetEvent.After event) {
 		if (event.getMemorySection().getName().equals("Text") && instructionStackBottom < event.getAddress()) {
 			instructionStackBottom = event.getAddress() >> 2 << 2;
 		}
 	}
 
 	@Listener
-	private void onMemoryChange(WordSetEvent.After event) {
+	private void onMemoryChange(MemoryWordSetEvent.After event) {
 		if (event.getMemorySection().getName().equals("Text") && instructionStackBottom < event.getAddress()) {
 			instructionStackBottom = event.getAddress();
 		}

@@ -71,7 +71,7 @@ public class InstructionSw extends BasicInstruction<AssembledInstructionSw> {
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisterSet();
+			Registers set = simulation.getRegisters();
 			Optional<Register> base = set.getRegister(instruction.getSourceRegister());
 			if (!base.isPresent()) error("Base register not found.");
 			Optional<Register> rt = set.getRegister(instruction.getTargetRegister());

@@ -212,6 +212,27 @@ public class Registers extends SimpleEventBroadcast {
 		return set;
 	}
 
+	/**
+	 * Saves the current state of all {@link Register}s.
+	 * You can return to this state using {@link #restoreSavedState()}.
+	 */
+	public void saveState() {
+		programCounter.makeCurrentValueAsDefault();
+		registers.forEach(Register::makeCurrentValueAsDefault);
+		coprocessor0Registers.forEach(Register::makeCurrentValueAsDefault);
+		coprocessor1Registers.forEach(Register::makeCurrentValueAsDefault);
+	}
+
+	/**
+	 * Returns all {@link Register}s' states to the latest state saved using {@link #saveState()}.
+	 */
+	public void restoreSavedState() {
+		programCounter.reset();
+		registers.forEach(Register::reset);
+		coprocessor0Registers.forEach(Register::reset);
+		coprocessor1Registers.forEach(Register::reset);
+	}
+
 	protected void loadEssentialRegisters() {
 		programCounter = new Register(this, -1, 0x00400000, true, "pc");
 	}

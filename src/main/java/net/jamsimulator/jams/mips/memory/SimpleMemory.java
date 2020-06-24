@@ -26,10 +26,7 @@ package net.jamsimulator.jams.mips.memory;
 
 import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
-import net.jamsimulator.jams.mips.memory.event.ByteGetEvent;
-import net.jamsimulator.jams.mips.memory.event.ByteSetEvent;
-import net.jamsimulator.jams.mips.memory.event.WordGetEvent;
-import net.jamsimulator.jams.mips.memory.event.WordSetEvent;
+import net.jamsimulator.jams.mips.memory.event.*;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.*;
@@ -48,8 +45,9 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 
 	protected Map<String, MemorySection> sections;
+	protected Map<String, MemorySection> savedSections;
 	protected boolean bigEndian;
-	private int firstTextAddress, firstDataAddress, firstKernelTextAddress, firstKernelDataAddress, firstExternalAddress;
+	private final int firstTextAddress, firstDataAddress, firstKernelTextAddress, firstKernelDataAddress, firstExternalAddress;
 
 	/**
 	 * Creates a simple memory using a list of {@link MemorySection}s and a boolean representing whether
@@ -128,13 +126,20 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 	@Override
 	public void setBigEndian(boolean bigEndian) {
-		this.bigEndian = bigEndian;
+		if (this.bigEndian == bigEndian) return;
+		MemoryEndiannessChange.Before before = callEvent(new MemoryEndiannessChange.Before(this, bigEndian));
+		if (before.isCancelled()) return;
+		if (this.bigEndian == before.isNewEndiannessBigEndian()) return;
+
+		this.bigEndian = before.isNewEndiannessBigEndian();
+
+		callEvent(new MemoryEndiannessChange.After(this, this.bigEndian));
 	}
 
 	@Override
 	public byte getByte(int address) {
 		//Invokes the before event.
-		ByteGetEvent.Before before = callEvent(new ByteGetEvent.Before(this, address));
+		MemoryByteGetEvent.Before before = callEvent(new MemoryByteGetEvent.Before(this, address));
 
 		//Refresh data.
 		address = before.getAddress();
@@ -144,13 +149,13 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		byte b = section.getByte(address);
 
 		//Invokes the after event.
-		return callEvent(new ByteGetEvent.After(this, section, address, b)).getValue();
+		return callEvent(new MemoryByteGetEvent.After(this, section, address, b)).getValue();
 	}
 
 	@Override
 	public void setByte(int address, byte b) {
 		//Invokes the before event.
-		ByteSetEvent.Before before = callEvent(new ByteSetEvent.Before(this, address, b));
+		MemoryByteSetEvent.Before before = callEvent(new MemoryByteSetEvent.Before(this, address, b));
 		if (before.isCancelled()) return;
 
 		//Refresh data.
@@ -159,16 +164,16 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 		//Gets the section and sets the byte.
 		MemorySection section = getSectionOrThrowException(address);
-		section.setByte(address, b);
+		byte old = section.setByte(address, b);
 
 		//Invokes the after event.
-		callEvent(new ByteSetEvent.After(this, section, address, b));
+		callEvent(new MemoryByteSetEvent.After(this, section, address, b, old));
 	}
 
 	@Override
 	public int getWord(int address) {
 		//Invokes the before event.
-		WordGetEvent.Before before = callEvent(new WordGetEvent.Before(this, address));
+		MemoryWordGetEvent.Before before = callEvent(new MemoryWordGetEvent.Before(this, address));
 
 		//Refresh data.
 		address = before.getAddress();
@@ -180,13 +185,13 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		int word = section.getWord(address, bigEndian);
 
 		//Invokes the after event.
-		return callEvent(new WordGetEvent.After(this, section, address, word)).getValue();
+		return callEvent(new MemoryWordGetEvent.After(this, section, address, word)).getValue();
 	}
 
 	@Override
 	public void setWord(int address, int word) {
 		//Invokes the before event.
-		WordSetEvent.Before before = callEvent(new WordSetEvent.Before(this, address, word));
+		MemoryWordSetEvent.Before before = callEvent(new MemoryWordSetEvent.Before(this, address, word));
 		if (before.isCancelled()) return;
 
 		//Refresh data.
@@ -197,10 +202,10 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 		//Gets the section and sets the word.
 		MemorySection section = getSectionOrThrowException(address);
-		section.setWord(address, word, bigEndian);
+		int old = section.setWord(address, word, bigEndian);
 
 		//Invokes the after event.
-		callEvent(new WordSetEvent.After(this, section, address, word));
+		callEvent(new MemoryWordSetEvent.After(this, section, address, word, old));
 	}
 
 	@Override
@@ -233,6 +238,22 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		HashMap<String, MemorySection> sections = new HashMap<>();
 		this.sections.forEach((name, section) -> sections.put(name, section.copy()));
 		return new SimpleMemory(sections, bigEndian, firstTextAddress, firstDataAddress, firstKernelTextAddress, firstKernelDataAddress, firstExternalAddress);
+	}
+
+	@Override
+	public void saveState() {
+		savedSections = new HashMap<>();
+		sections.forEach((key, section) -> savedSections.put(key, section.copy()));
+	}
+
+	@Override
+	public void restoreSavedState() {
+		if (savedSections == null) {
+			sections.forEach((key, section) -> section.wipe());
+		} else {
+			sections.clear();
+			savedSections.forEach((key, section) -> sections.put(key, section.copy()));
+		}
 	}
 
 

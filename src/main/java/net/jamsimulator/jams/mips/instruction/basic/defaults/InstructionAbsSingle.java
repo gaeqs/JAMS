@@ -72,7 +72,7 @@ public class InstructionAbsSingle extends BasicRFPUInstruction<AssembledInstruct
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisterSet();
+			Registers set = simulation.getRegisters();
 			Optional<Register> rs = set.getCoprocessor1Register(instruction.getSourceRegister());
 			if (!rs.isPresent()) error("Source register not found.");
 			Optional<Register> rd = set.getCoprocessor1Register(instruction.getDestinationRegister());

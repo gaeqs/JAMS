@@ -29,15 +29,15 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.MemorySection;
 
 /**
- * Represents a event invoked when a word is stored in a {@link Memory}.
+ * Represents a event invoked when a byte is stored in a {@link Memory}.
  */
-public class WordSetEvent extends MemoryEvent {
+public class MemoryByteSetEvent extends MemoryEvent {
 
 	protected int address;
-	protected int value;
+	protected byte value;
 	protected boolean cancelled;
 
-	private WordSetEvent(Memory memory, int address, int value) {
+	private MemoryByteSetEvent(Memory memory, int address, byte value) {
 		super(memory);
 		this.address = address;
 		this.value = value;
@@ -48,16 +48,16 @@ public class WordSetEvent extends MemoryEvent {
 		return address;
 	}
 
-	public int getValue() {
+	public byte getValue() {
 		return value;
 	}
 
 	/**
-	 * This event is invoked before the a word is stored in a {@link Memory}.
+	 * This event is invoked before a byte is stored in a {@link Memory}.
 	 */
-	public static class Before extends WordSetEvent implements Cancellable {
+	public static class Before extends MemoryByteSetEvent implements Cancellable {
 
-		public Before(Memory memory, int address, int value) {
+		public Before(Memory memory, int address, byte value) {
 			super(memory, address, value);
 		}
 
@@ -65,7 +65,7 @@ public class WordSetEvent extends MemoryEvent {
 			this.address = address;
 		}
 
-		public void setValue(int value) {
+		public void setValue(byte value) {
 			this.value = value;
 		}
 
@@ -81,19 +81,25 @@ public class WordSetEvent extends MemoryEvent {
 	}
 
 	/**
-	 * This event is invoked after a word is stored in a {@link Memory}.
+	 * This event is invoked after a byte is stored in a {@link Memory}.
 	 */
-	public static class After extends WordSetEvent {
+	public static class After extends MemoryByteSetEvent {
 
 		private final MemorySection memorySection;
+		private final byte oldValue;
 
-		public After(Memory memory, MemorySection memorySection, int address, int value) {
+		public After(Memory memory, MemorySection memorySection, int address, byte value, byte oldValue) {
 			super(memory, address, value);
 			this.memorySection = memorySection;
+			this.oldValue = oldValue;
 		}
 
 		public MemorySection getMemorySection() {
 			return memorySection;
+		}
+
+		public byte getOldValue() {
+			return oldValue;
 		}
 	}
 }

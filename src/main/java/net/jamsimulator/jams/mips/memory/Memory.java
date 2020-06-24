@@ -128,4 +128,16 @@ public interface Memory extends EventBroadcast {
 	 * @return the copy.
 	 */
 	Memory copy();
+
+	/**
+	 * Saves the current state of the {@link Memory}.
+	 * You can return to this state using {@link #restoreSavedState()}.
+	 */
+	void saveState();
+
+	/**
+	 * Returns this memory state to the latest state saved using {@link #saveState()}.
+	 * If no saved states are found the memory will be wiped.
+	 */
+	void restoreSavedState();
 }

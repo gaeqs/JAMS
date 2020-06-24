@@ -203,6 +203,15 @@ public class Register {
 	}
 
 	/**
+	 * Makes the current value the default value.
+	 * When the method {@link #reset()} is invoked the current value
+	 * will be set to the current value when this method is used.
+	 */
+	public void makeCurrentValueAsDefault() {
+		defaultValue = value;
+	}
+
+	/**
 	 * Sets this register's value to its initial state.
 	 */
 	public void reset() {

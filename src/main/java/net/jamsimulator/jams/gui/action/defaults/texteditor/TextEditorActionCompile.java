@@ -109,8 +109,12 @@ public class TextEditorActionCompile extends Action {
 				log.printWarningLn("Global label \"main\" not found. Staring at the start of the text section.");
 			} else {
 				log.printInfoLn("Global label \"main\" found. Starting simulaiton at this location.");
-				simulation.getRegisterSet().getProgramCounter().setValue(mainLabel);
+				simulation.getRegisters().getProgramCounter().setValue(mainLabel);
 			}
+
+			simulation.getRegisters().saveState();
+			simulation.getMemory().saveState();
+
 		} catch (Exception ex) {
 			log.printErrorLn("ERROR:");
 			log.printErrorLn(ex.getMessage());

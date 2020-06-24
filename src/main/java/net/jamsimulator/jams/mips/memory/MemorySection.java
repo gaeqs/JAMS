@@ -26,6 +26,8 @@ package net.jamsimulator.jams.mips.memory;
 
 import net.jamsimulator.jams.utils.Validate;
 
+import java.util.Arrays;
+
 /**
  * Represents a memory section. A memory section is a part of a simulation memory
  * who manages a list of {@link MemoryCell}s.
@@ -148,14 +150,15 @@ public class MemorySection {
 	 *
 	 * @param address the address.
 	 * @param b       the byte.
+	 * @return the old byte
 	 */
-	public void setByte(int address, byte b) {
+	public byte setByte(int address, byte b) {
 		if (!isInside(address))
 			throw new IndexOutOfBoundsException("Address " + address + " out of bounds.");
 		address -= firstAddress;
 		int cellIndex = address / cellSize;
 		MemoryCell cell = getOrCreateCell(cellIndex);
-		cell.setByte(address - cellIndex * cellSize, b);
+		return cell.setByte(address - cellIndex * cellSize, b);
 	}
 
 	/**
@@ -183,15 +186,15 @@ public class MemorySection {
 	 *
 	 * @param address   the address.
 	 * @param bigEndian whether the memory is big endian.
-	 * @return the word.
+	 * @return the old word.
 	 */
-	public void setWord(int address, int word, boolean bigEndian) {
+	public int setWord(int address, int word, boolean bigEndian) {
 		if (!isInside(address))
 			throw new IndexOutOfBoundsException("Address " + address + " out of bounds.");
 		address -= firstAddress;
 		int cellIndex = address / cellSize;
 		MemoryCell cell = getOrCreateCell(cellIndex);
-		cell.setWord(address - cellIndex * cellSize, word, bigEndian);
+		return cell.setWord(address - cellIndex * cellSize, word, bigEndian);
 	}
 
 	/**
@@ -216,6 +219,13 @@ public class MemorySection {
 			section.cells[i] = cells[i] == null ? null : cells[i].copy();
 		}
 		return section;
+	}
+
+	/**
+	 * Wipes this memory section.
+	 */
+	public void wipe() {
+		Arrays.fill(cells, null);
 	}
 
 	private void generateCellsArray() {

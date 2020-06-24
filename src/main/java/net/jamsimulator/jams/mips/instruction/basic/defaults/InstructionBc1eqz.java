@@ -71,7 +71,7 @@ public class InstructionBc1eqz extends BasicIFPUInstruction<AssembledInstruction
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisterSet();
+			Registers set = simulation.getRegisters();
 			Optional<Register> rt = set.getCoprocessor1Register(instruction.getTargetRegister());
 			if (!rt.isPresent()) error("Target register not found.");
 

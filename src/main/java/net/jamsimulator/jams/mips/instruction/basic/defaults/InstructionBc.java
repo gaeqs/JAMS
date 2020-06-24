@@ -67,7 +67,7 @@ public class InstructionBc extends BasicInstruction<AssembledInstructionBc> {
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisterSet();
+			Registers set = simulation.getRegisters();
 
 			Register pc = set.getProgramCounter();
 			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));

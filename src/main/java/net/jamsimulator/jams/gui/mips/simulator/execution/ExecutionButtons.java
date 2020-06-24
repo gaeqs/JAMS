@@ -16,19 +16,34 @@ public class ExecutionButtons extends HBox {
 				1024, 1024).orElse(null);
 		Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_PLAY, Icons.PROJECT_PLAY_PATH,
 				1024, 1024).orElse(null);
+		Image undoOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_UNDO_ONE, Icons.PROJECT_UNDO_ONE_PATH,
+				1024, 1024).orElse(null);
+		Image resetIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_RESET, Icons.PROJECT_RESET_PATH,
+				1024, 1024).orElse(null);
 
 		Button runOne = new Button("", new NearestImageView(runOneIcon, 16, 16));
 		runOne.getStyleClass().add("bold-button");
-		runOne.setTooltip(new Tooltip("Run one instruction"));
+		runOne.setTooltip(new Tooltip("Execute one step"));
 		runOne.setOnAction(event -> simulation.nextStep());
 
 
 		Button runAll = new Button("", new NearestImageView(runAllIcon, 16, 16));
 		runAll.getStyleClass().add("bold-button");
-		runAll.setTooltip(new Tooltip("Run all"));
+		runAll.setTooltip(new Tooltip("Execute all"));
 		runAll.setOnAction(event -> simulation.executeAll());
 
-		getChildren().addAll(runOne, runAll);
+
+		Button undo = new Button("", new NearestImageView(undoOneIcon, 16, 16));
+		undo.getStyleClass().add("bold-button");
+		undo.setTooltip(new Tooltip("Undo last step"));
+		undo.setOnAction(event -> simulation.undoLastStep());
+
+		Button reset = new Button("", new NearestImageView(resetIcon, 16, 16));
+		reset.getStyleClass().add("bold-button");
+		reset.setTooltip(new Tooltip("Reset"));
+		reset.setOnAction(event -> simulation.reset());
+
+		getChildren().addAll(runAll, runOne, undo, reset);
 	}
 
 }

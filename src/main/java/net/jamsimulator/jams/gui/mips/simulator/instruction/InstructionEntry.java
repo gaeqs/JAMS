@@ -6,8 +6,8 @@ import javafx.beans.property.StringProperty;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
-import net.jamsimulator.jams.mips.memory.event.ByteSetEvent;
-import net.jamsimulator.jams.mips.memory.event.WordSetEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.StringUtils;
@@ -79,14 +79,14 @@ public class InstructionEntry {
 
 
 	@Listener
-	private void onMemoryChange(WordSetEvent.After event) {
+	private void onMemoryChange(MemoryWordSetEvent.After event) {
 		if (event.getAddress() == address) {
 			refresh(event.getValue());
 		}
 	}
 
 	@Listener
-	private void onMemoryChange(ByteSetEvent.After event) {
+	private void onMemoryChange(MemoryByteSetEvent.After event) {
 		if (event.getAddress() >> 2 == address >> 2) {
 			refresh(event.getMemory().getWord(address));
 		}
@@ -106,7 +106,7 @@ public class InstructionEntry {
 			AssembledInstruction assembled = instruction.assembleFromCode(code);
 			StringBuilder display = new StringBuilder(instruction.getMnemonic());
 
-			String start = String.valueOf(simulation.getRegisterSet()
+			String start = String.valueOf(simulation.getRegisters()
 					.getValidRegistersStarts().stream().findFirst().orElse('$'));
 
 			display.append(" ").append(assembled.parametersToString(start));

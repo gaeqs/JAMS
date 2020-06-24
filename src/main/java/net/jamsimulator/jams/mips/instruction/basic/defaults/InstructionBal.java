@@ -70,7 +70,7 @@ public class InstructionBal extends BasicRIInstruction<AssembledInstructionBal> 
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisterSet();
+			Registers set = simulation.getRegisters();
 			Optional<Register> ra = set.getRegister(31);
 			if (!ra.isPresent()) error("Return address register not found.");
 

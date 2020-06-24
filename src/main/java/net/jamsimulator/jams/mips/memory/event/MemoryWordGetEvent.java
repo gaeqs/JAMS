@@ -24,76 +24,63 @@
 
 package net.jamsimulator.jams.mips.memory.event;
 
-import net.jamsimulator.jams.event.Cancellable;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.MemorySection;
 
 /**
- * Represents a event invoked when a byte is stored in a {@link Memory}.
+ * Represents a event invoked when a word is get from a {@link Memory}.
  */
-public class ByteSetEvent extends MemoryEvent {
+public class MemoryWordGetEvent extends MemoryEvent {
 
 	protected int address;
-	protected byte value;
-	protected boolean cancelled;
 
-	private ByteSetEvent(Memory memory, int address, byte value) {
+	private MemoryWordGetEvent(Memory memory, int address) {
 		super(memory);
 		this.address = address;
-		this.value = value;
-		this.cancelled = false;
 	}
 
 	public int getAddress() {
 		return address;
 	}
 
-	public byte getValue() {
-		return value;
-	}
-
 	/**
-	 * This event is invoked before the a byte is stored in a {@link Memory}.
+	 * This event is invoked before a word is get from a memory.
 	 */
-	public static class Before extends ByteSetEvent implements Cancellable {
+	public static class Before extends MemoryWordGetEvent {
 
-		public Before(Memory memory, int address, byte value) {
-			super(memory, address, value);
+		public Before(Memory memory, int address) {
+			super(memory, address);
 		}
 
 		public void setAddress(int address) {
 			this.address = address;
 		}
-
-		public void setValue(byte value) {
-			this.value = value;
-		}
-
-		@Override
-		public boolean isCancelled() {
-			return cancelled;
-		}
-
-		@Override
-		public void setCancelled(boolean cancelled) {
-			this.cancelled = cancelled;
-		}
 	}
 
 	/**
-	 * This event is invoked after a byte is stored in a {@link Memory}.
+	 * This event is invoked after a word is get from a memory.
 	 */
-	public static class After extends ByteSetEvent {
+	public static class After extends MemoryWordGetEvent {
 
+		private int value;
 		private MemorySection memorySection;
 
-		public After(Memory memory, MemorySection memorySection, int address, byte value) {
-			super(memory, address, value);
+		public After(Memory memory, MemorySection memorySection, int address, int value) {
+			super(memory, address);
+			this.value = value;
 			this.memorySection = memorySection;
 		}
 
 		public MemorySection getMemorySection() {
 			return memorySection;
+		}
+
+		public int getValue() {
+			return value;
+		}
+
+		public void setValue(int value) {
+			this.value = value;
 		}
 	}
 }

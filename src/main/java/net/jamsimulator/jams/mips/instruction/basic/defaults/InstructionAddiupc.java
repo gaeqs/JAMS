@@ -71,7 +71,7 @@ public class InstructionAddiupc extends BasicPCREL19Instruction<AssembledInstruc
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisterSet();
+			Registers set = simulation.getRegisters();
 			Optional<Register> rs = set.getRegister(instruction.getSourceRegister());
 			if (!rs.isPresent()) error("Source register not found.");
 			rs.get().setValue(set.getProgramCounter().getValue() + (instruction.getImmediateAsSigned() << 2));

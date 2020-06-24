@@ -106,7 +106,7 @@ public class MIPS32Assembler implements Assembler {
 		if (!assembled) throw new IllegalStateException("The program is still not assembled!");
 		Simulation<Arch> simulation = (Simulation<Arch>) architecture.createSimulation(instructionSet,
 				registers.copy(), memory.copy(), assemblerData.getCurrentText() - 4);
-		simulation.getRegisterSet().getProgramCounter().setValue(assemblerData.getFirstText());
+		simulation.getRegisters().getProgramCounter().setValue(assemblerData.getFirstText());
 		return simulation;
 	}
 

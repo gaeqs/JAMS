@@ -7,6 +7,7 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionEntry;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionsTable;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
+import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
@@ -21,8 +22,8 @@ public class SingleCycleInstructionsTable extends InstructionsTable {
 
 	public SingleCycleInstructionsTable(Simulation<? extends SingleCycleArchitecture> simulation, Map<Integer, String> originals) {
 		super(simulation, originals);
-		simulation.getRegisterSet().registerListeners(this, true);
-		pc = simulation.getRegisterSet().getProgramCounter();
+		simulation.getRegisters().registerListeners(this, true);
+		pc = simulation.getRegisters().getProgramCounter();
 	}
 
 	@Listener
@@ -31,6 +32,12 @@ public class SingleCycleInstructionsTable extends InstructionsTable {
 			refresh();
 		}
 	}
+
+	@Listener
+	private void onInstructionExecution(MemoryEndiannessChange.After event) {
+		refresh();
+	}
+
 
 	@Override
 	public void onRowUpdate(TableRow<InstructionEntry> row) {

@@ -54,7 +54,7 @@ class GeneralInstructionTests {
 
 	@Test
 	void testBasicInstruction() {
-		Registers set = simulation.getRegisterSet();
+		Registers set = simulation.getRegisters();
 		Register t0 = set.getRegister("t0").get();
 		Register t1 = set.getRegister("t1").get();
 		Register t2 = set.getRegister("t2").get();
@@ -90,7 +90,7 @@ class GeneralInstructionTests {
 
 	@Test
 	void testOverflow() {
-		Registers set = simulation.getRegisterSet();
+		Registers set = simulation.getRegisters();
 		Register t0 = set.getRegister("t0").get();
 		Register t1 = set.getRegister("t1").get();
 		Register t2 = set.getRegister("t2").get();

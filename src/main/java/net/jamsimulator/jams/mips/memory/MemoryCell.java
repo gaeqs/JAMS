@@ -67,9 +67,12 @@ public class MemoryCell {
 	 *
 	 * @param address the relative address.
 	 * @param b       the byte.
+	 * @return the old byte.
 	 */
-	public void setByte(int address, byte b) {
+	public byte setByte(int address, byte b) {
+		byte old = data[address];
 		data[address] = b;
+		return old;
 	}
 
 	/**
@@ -93,8 +96,10 @@ public class MemoryCell {
 	 * @param address   the relative address.
 	 * @param word      the word.
 	 * @param bigEndian whether the memory is big endian.
+	 * @return the old word.
 	 */
-	public void setWord(int address, int word, boolean bigEndian) {
+	public int setWord(int address, int word, boolean bigEndian) {
+		int old = getWord(address, bigEndian);
 		byte[] array = split(word);
 		if (bigEndian) {
 			data[address++] = array[3];
@@ -107,6 +112,7 @@ public class MemoryCell {
 			data[address++] = array[2];
 			data[address] = array[3];
 		}
+		return old;
 	}
 
 	/**

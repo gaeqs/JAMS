@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.simulation.singlecycle;
 
+import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.util.Log;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
@@ -31,17 +32,28 @@ import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundExcep
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
+import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
+import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.change.*;
 import net.jamsimulator.jams.mips.simulation.singlecycle.event.SingleCycleInstructionExecutionEvent;
 import net.jamsimulator.jams.utils.StringUtils;
+
+import java.util.LinkedList;
 
 public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
 	private Log log;
 
+	private final LinkedList<StepChanges<SingleCycleArchitecture>> changes;
+	private StepChanges<SingleCycleArchitecture> currentStepChanges;
+
 	public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, Registers registerSet, Memory memory, int instructionStackBottom) {
 		super(architecture, instructionSet, registerSet, memory, instructionStackBottom);
+		changes = new LinkedList<>();
 	}
 
 	public void setLog(Log log) {
@@ -49,19 +61,22 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	}
 
 	@Override
-	public void nextStep() {
-		int pc = registerSet.getProgramCounter().getValue();
+	public synchronized void nextStep() {
+		currentStepChanges = new StepChanges<>();
+		int pc = registers.getProgramCounter().getValue();
 
 		if (pc > instructionStackBottom) {
+			currentStepChanges = null;
 			throw new InstructionNotFoundException("Dropped off bottom.");
 		}
 
 		//Fetch and Decode
-		registerSet.getProgramCounter().setValue(pc + 4);
+		registers.getProgramCounter().setValue(pc + 4);
 		AssembledInstruction instruction = fetch(pc);
 
 		if (instruction == null) {
 			int code = memory.getWord(pc);
+			currentStepChanges = null;
 			throw new InstructionNotFoundException("Couldn't decode instruction 0x" +
 					StringUtils.addZeros(Integer.toHexString(code), 8) + ". (" + StringUtils.addZeros(Integer.toBinaryString(code), 32) + ")");
 		}
@@ -88,15 +103,29 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
 		execution.execute();
 
-
 		callEvent(new SingleCycleInstructionExecutionEvent.After(this, pc, instruction, execution));
+
+		changes.add(currentStepChanges);
+		currentStepChanges = null;
 	}
 
 	@Override
-	public void executeAll() {
-		while (registerSet.getProgramCounter().getValue() <= instructionStackBottom) {
+	public synchronized void reset() {
+		super.reset();
+		changes.clear();
+	}
+
+	@Override
+	public synchronized void executeAll() {
+		while (registers.getProgramCounter().getValue() <= instructionStackBottom) {
 			nextStep();
 		}
+	}
+
+	@Override
+	public synchronized void undoLastStep() {
+		if (changes.isEmpty()) return;
+		changes.removeLast().restore(this);
 	}
 
 
@@ -112,4 +141,33 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 			log.println(address + "\t" + opCode + "\t" + mnemonic + " \t" + code);
 		}
 	}
+
+	//region change listeners
+
+	@Listener
+	private synchronized void onMemoryChange(MemoryWordSetEvent.After event) {
+		if (currentStepChanges == null) return;
+		currentStepChanges.addChange(new SimulationChangeMemoryWord(event.getAddress(), event.getOldValue()));
+	}
+
+	@Listener
+	private synchronized void onMemoryChange(MemoryByteSetEvent.After event) {
+		if (currentStepChanges == null) return;
+		currentStepChanges.addChange(new SimulationChangeMemoryByte(event.getAddress(), event.getOldValue()));
+	}
+
+	@Listener
+	private synchronized void onRegisterChange(RegisterChangeValueEvent.After event) {
+		if (currentStepChanges == null) return;
+		currentStepChanges.addChange(new SimulationChangeRegister(event.getRegister(), event.getOldValue()));
+	}
+
+	@Listener
+	private synchronized void onEndiannessChange(MemoryEndiannessChange.After event) {
+		if (currentStepChanges == null) return;
+		currentStepChanges.addChange(new SimulationChangeMemoryEndianness(!event.isNewEndiannessBigEndian()));
+	}
+
+	//endregion
+
 }

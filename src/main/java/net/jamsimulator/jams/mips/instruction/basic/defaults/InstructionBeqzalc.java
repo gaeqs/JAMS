@@ -77,7 +77,7 @@ public class InstructionBeqzalc extends BasicInstruction<AssembledInstructionBeq
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisterSet();
+			Registers set = simulation.getRegisters();
 			Optional<Register> rt = set.getRegister(instruction.getTargetRegister());
 			if (!rt.isPresent()) error("Target register not found.");
 			Optional<Register> ra = set.getRegister(31);

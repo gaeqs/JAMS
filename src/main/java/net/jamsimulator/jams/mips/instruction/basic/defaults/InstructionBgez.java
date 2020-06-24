@@ -70,7 +70,7 @@ public class InstructionBgez extends BasicRIInstruction<AssembledInstructionBgez
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisterSet();
+			Registers set = simulation.getRegisters();
 			Optional<Register> rs = set.getRegister(instruction.getSourceRegister());
 			if (!rs.isPresent()) error("Source register not found.");
 
