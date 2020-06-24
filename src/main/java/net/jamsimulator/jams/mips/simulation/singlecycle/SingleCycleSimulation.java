@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.mips.simulation.singlecycle;
 
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.util.Log;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
@@ -44,20 +43,34 @@ import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.LinkedList;
 
+/**
+ * Represents the execution of a set of instruction inside a MIPS32 single-cycle computer.
+ * <p>
+ * This architecture executes one instruction per cycle, starting and finishing the
+ * execution of an instruction on the same cycle. This makes this architecture slow,
+ * having high seconds per cycle.
+ * <p>
+ * This is also the easiest architecture to implement.
+ *
+ * @see SingleCycleArchitecture
+ */
 public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
-
-	private Log log;
 
 	private final LinkedList<StepChanges<SingleCycleArchitecture>> changes;
 	private StepChanges<SingleCycleArchitecture> currentStepChanges;
 
-	public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, Registers registerSet, Memory memory, int instructionStackBottom) {
-		super(architecture, instructionSet, registerSet, memory, instructionStackBottom);
+	/**
+	 * Creates the single-cycle simulation.
+	 *
+	 * @param architecture           the architecture of the simulation. This should be given by a simulation subclass.
+	 * @param instructionSet         the instruction used by the simulation. This set should be the same as the set used to compile the code.
+	 * @param registers              the registers to use on this simulation.
+	 * @param memory                 the memory to use in this simulation.
+	 * @param instructionStackBottom the address of the bottom of the instruction stack.
+	 */
+	public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom) {
+		super(architecture, instructionSet, registers, memory, instructionStackBottom);
 		changes = new LinkedList<>();
-	}
-
-	public void setLog(Log log) {
-		this.log = log;
 	}
 
 	@Override
@@ -80,8 +93,6 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 			throw new InstructionNotFoundException("Couldn't decode instruction 0x" +
 					StringUtils.addZeros(Integer.toHexString(code), 8) + ". (" + StringUtils.addZeros(Integer.toBinaryString(code), 32) + ")");
 		}
-
-		sendInstructionLog(instruction, pc);
 
 		//Execute, Memory and Write
 
@@ -123,23 +134,10 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	}
 
 	@Override
-	public synchronized void undoLastStep() {
-		if (changes.isEmpty()) return;
+	public synchronized boolean undoLastStep() {
+		if (changes.isEmpty()) return false;
 		changes.removeLast().restore(this);
-	}
-
-
-	private void sendInstructionLog(AssembledInstruction instruction, int pc) {
-		String address = "0x" + StringUtils.addZeros(Integer.toHexString(pc), 8);
-		String opCode = StringUtils.addZeros(Integer.toBinaryString(instruction.getOperationCode()), 6);
-		String mnemonic = instruction.getBasicOrigin().getMnemonic();
-		String code = "0x" + StringUtils.addZeros(Integer.toHexString(instruction.getCode()), 8);
-
-		if (log == null) {
-			System.out.println(address + "\t" + opCode + "\t" + mnemonic + " \t" + code);
-		} else {
-			log.println(address + "\t" + opCode + "\t" + mnemonic + " \t" + code);
-		}
+		return true;
 	}
 
 	//region change listeners

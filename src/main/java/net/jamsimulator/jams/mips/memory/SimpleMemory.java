@@ -46,7 +46,10 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 	protected Map<String, MemorySection> sections;
 	protected Map<String, MemorySection> savedSections;
+
 	protected boolean bigEndian;
+	protected boolean savedEndian;
+
 	private final int firstTextAddress, firstDataAddress, firstKernelTextAddress, firstKernelDataAddress, firstExternalAddress;
 
 	/**
@@ -62,6 +65,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		Validate.isTrue(!sections.isEmpty(), "There must be at least one memory section!");
 		this.sections = new HashMap<>();
 		this.bigEndian = bigEndian;
+		this.savedEndian = bigEndian;
 
 		this.firstTextAddress = firstTextAddress;
 		this.firstDataAddress = firstDataAddress;
@@ -244,6 +248,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 	public void saveState() {
 		savedSections = new HashMap<>();
 		sections.forEach((key, section) -> savedSections.put(key, section.copy()));
+		savedEndian = bigEndian;
 	}
 
 	@Override
@@ -254,6 +259,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 			sections.clear();
 			savedSections.forEach((key, section) -> sections.put(key, section.copy()));
 		}
+		bigEndian = savedEndian;
 	}
 
 
