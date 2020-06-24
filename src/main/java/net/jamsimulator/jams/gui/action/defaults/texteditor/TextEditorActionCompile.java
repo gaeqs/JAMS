@@ -100,10 +100,6 @@ public class TextEditorActionCompile extends Action {
 					projectTab.getProjectTabPane()
 							.createProjectPane((t, pt) -> new MipsSimulatorPane(t, pt, project, simulation, assembler), true));
 
-			if (simulation instanceof SingleCycleSimulation) {
-				((SingleCycleSimulation) simulation).setLog(log);
-			}
-
 			log.println();
 			if (mainLabel == -1) {
 				log.printWarningLn("Global label \"main\" not found. Staring at the start of the text section.");

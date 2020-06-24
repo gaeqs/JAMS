@@ -29,6 +29,7 @@ import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
@@ -37,6 +38,18 @@ import net.jamsimulator.jams.mips.register.Registers;
 
 import java.util.Optional;
 
+/**
+ * Represents the execution of a set of instructions, including a memory and a register set.
+ * Simulations are used to execute MIPS code.
+ * <p>
+ * They are based on {@link Architecture}s: the simulation should behave like the
+ * architecture does on a real machine.
+ * <p>
+ * One step is equals to one cycle. Users should be able to execute and undo steps.
+ * They should be also able to reset the simulation to their first state.
+ *
+ * @param <Arch> the architecture the simulation is based on.
+ */
 public abstract class Simulation<Arch extends Architecture> extends SimpleEventBroadcast {
 
 	protected final Arch architecture;
@@ -47,6 +60,15 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 	protected int instructionStackBottom;
 
+	/**
+	 * Creates the simulation.
+	 *
+	 * @param architecture           the architecture of the simulation. This should be given by a simulation subclass.
+	 * @param instructionSet         the instruction used by the simulation. This set should be the same as the set used to compile the code.
+	 * @param registers              the registers to use on this simulation.
+	 * @param memory                 the memory to use in this simulation.
+	 * @param instructionStackBottom the address of the bottom of the instruction stack.
+	 */
 	public Simulation(Arch architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom) {
 		this.architecture = architecture;
 		this.instructionSet = instructionSet;
@@ -57,26 +79,68 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		registers.registerListeners(this, true);
 	}
 
+	/**
+	 * Returns the {@link Architecture} this simulation is based on.
+	 *
+	 * @return the {@link Architecture}.
+	 */
 	public Arch getArchitecture() {
 		return architecture;
 	}
 
+	/**
+	 * Returns the {@link InstructionSet} used by this simulation. This set is used to decode instructions.
+	 *
+	 * @return the {@link InstructionSet}.
+	 */
 	public InstructionSet getInstructionSet() {
 		return instructionSet;
 	}
 
+	/**
+	 * Returns the {@link Registers} of this simulation.
+	 * <p>
+	 * Modifications of these registers outside the simulation won't be registered by the simulation's changes stack,
+	 * allowing no undo operations.
+	 *
+	 * @return the {@link Registers}.
+	 */
 	public Registers getRegisters() {
 		return registers;
 	}
 
+	/**
+	 * Returns the {@link Memory} of this simulation.
+	 * <p>
+	 * Modifications of the memory outside the simulation won't be registered by the simulation's changes stack,
+	 * allowing no undo operations.
+	 *
+	 * @return the {@link Memory}.
+	 */
 	public Memory getMemory() {
 		return memory;
 	}
 
+	/**
+	 * Returns the instruction stack bottom address.
+	 * This value may be modifiable if any instruction cell is modified in the {@link Memory}.
+	 *
+	 * @return the instruction stack bottom address.
+	 */
 	public int getInstructionStackBottom() {
 		return instructionStackBottom;
 	}
 
+	/**
+	 * Fetch the {@link AssembledInstruction} located at the given address.
+	 * <p>
+	 * This method may return {@code null} if the instruction cannot be decoded.
+	 *
+	 * @param pc the address to fetch.
+	 * @return the {@link AssembledInstruction} or null.
+	 * @throws IllegalArgumentException  if the given address is not aligned to words.
+	 * @throws IndexOutOfBoundsException if the address if out of bounds.
+	 */
 	public AssembledInstruction fetch(int pc) {
 		int data = memory.getWord(pc);
 		Optional<? extends BasicInstruction<?>> optional = instructionSet.getInstructionByInstructionCode(data);
@@ -85,16 +149,39 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		return instruction.assembleFromCode(data);
 	}
 
+	/**
+	 * Returns the simulation to its first state.
+	 * <p>
+	 * This method depends on {@link Registers#restoreSavedState()} and {@link Memory#restoreSavedState()}.
+	 * Any invocation to {@link Registers#saveState()} and {@link Memory#saveState()} on this simulation's
+	 * {@link Memory} and {@link Registers} may result on unexpected results.
+	 */
 	public void reset() {
 		registers.restoreSavedState();
 		memory.restoreSavedState();
 	}
 
+	/**
+	 * Executes the next step of this simulation.
+	 *
+	 * @throws InstructionNotFoundException when an instruction couldn't be decoded or when the bottom of the instruction stack is reached.
+	 */
 	public abstract void nextStep();
 
+	/**
+	 * Executes steps until the bottom of the instruction stack is reached.
+	 *
+	 * @throws InstructionNotFoundException when an instruction couldn't be decoded.
+	 */
 	public abstract void executeAll();
 
-	public abstract void undoLastStep();
+	/**
+	 * Undoes the last step made by this simulation.
+	 * This method won't do nothing if no steps were made.
+	 *
+	 * @return whether a step was undone.
+	 */
+	public abstract boolean undoLastStep();
 
 
 	@Listener

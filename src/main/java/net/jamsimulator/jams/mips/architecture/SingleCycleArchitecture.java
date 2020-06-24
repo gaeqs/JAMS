@@ -31,9 +31,11 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.singlecycle.SingleCycleSimulation;
 
 /**
- * Represents the Single cycle architecture.
+ * Represents the single-cycle architecture.
  * <p>
- * In this architecture every instruction takes one cycle to execute.
+ * This architecture executes one instruction per cycle, starting and finishing the
+ * execution of an instruction on the same cycle. This makes this architecture slow,
+ * having high seconds per cycle.
  */
 public final class SingleCycleArchitecture extends Architecture {
 
