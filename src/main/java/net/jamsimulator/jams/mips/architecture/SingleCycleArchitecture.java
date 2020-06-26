@@ -24,11 +24,13 @@
 
 package net.jamsimulator.jams.mips.architecture;
 
+import net.jamsimulator.jams.gui.util.Log;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.singlecycle.SingleCycleSimulation;
+import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 
 /**
  * Represents the single-cycle architecture.
@@ -48,7 +50,12 @@ public final class SingleCycleArchitecture extends Architecture {
 	}
 
 	@Override
-	public Simulation<SingleCycleArchitecture> createSimulation(InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom) {
-		return new SingleCycleSimulation(this, instructionSet, registers, memory, instructionStackBottom);
+	public Simulation<SingleCycleArchitecture> createSimulation(InstructionSet instructionSet,
+																Registers registers,
+																Memory memory,
+																SimulationSyscallExecutions syscallExecutions,
+																Log log,
+																int instructionStackBottom) {
+		return new SingleCycleSimulation(this, instructionSet, registers, memory, syscallExecutions, log, instructionStackBottom);
 	}
 }

@@ -45,18 +45,26 @@ public class MIPS32Memory extends SimpleMemory {
 	public static final int STATIC_DATA = 0x10010000;
 	public static final int HEAP = 0x10010000;
 
+	public static final String KERNEL_RESERVED_1_NAME = "Kernel reserved 1";
+	public static final String TEXT_NAME = "Text";
+	public static final String DATA_NAME = "Data";
+	public static final String KERNEL_TEXT_NAME = "Kernel text";
+	public static final String KERNEL_DATA_NAME = "Kernel data";
+	public static final String MEMORY_MAPPED_IO_NAME = "Memory mapped IO";
+	public static final String KERNEL_RESERVED_2_NAME = "Kernel reserved 2";
+
 
 	public MIPS32Memory() {
 		super(false,
 				MIPS32Memory.TEXT, MIPS32Memory.STATIC_DATA, MIPS32Memory.KERNEL_TEXT,
 				MIPS32Memory.KERNEL_DATA, MIPS32Memory.EXTERNAL,
-				new MemorySection("Kernel reserved 1", KERNEL_RESERVED_1, TEXT),
-				new MemorySection("Text", TEXT, DATA - TEXT),
-				new MemorySection("Data", DATA, 0x70000000),
-				new MemorySection("Kernel text", KERNEL_TEXT, 0x10000000),
-				new MemorySection("Kernel data", KERNEL_DATA, MEMORY_MAPPED_IO - KERNEL_DATA),
-				new MemorySection("Memory mapped IO", MEMORY_MAPPED_IO, 10, 10),
-				new MemorySection("Kernel reserved 2", KERNEL_RESERVED_2, 0xFFFFFFFF - 0xFFFF0000 - 9));
+				new MemorySection(KERNEL_RESERVED_1_NAME, KERNEL_RESERVED_1, TEXT),
+				new MemorySection(TEXT_NAME, TEXT, DATA - TEXT),
+				new MemorySection(DATA_NAME, DATA, 0x70000000),
+				new MemorySection(KERNEL_TEXT_NAME, KERNEL_TEXT, 0x10000000),
+				new MemorySection(KERNEL_DATA_NAME, KERNEL_DATA, MEMORY_MAPPED_IO - KERNEL_DATA),
+				new MemorySection(MEMORY_MAPPED_IO_NAME, MEMORY_MAPPED_IO, 10, 10),
+				new MemorySection(KERNEL_RESERVED_2_NAME, KERNEL_RESERVED_2, 0xFFFFFFFF - 0xFFFF0000 - 9));
 	}
 
 	private MIPS32Memory(Map<String, MemorySection> sections, boolean bigEndian) {

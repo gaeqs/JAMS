@@ -99,20 +99,41 @@ public class MIPS32AssemblerData {
 		return currentText;
 	}
 
+	public void setCurrentText(int currentText) {
+		this.currentText = currentText;
+	}
+
 	public int getCurrentData() {
 		return currentData;
+	}
+
+
+	public void setCurrentData(int currentData) {
+		this.currentData = currentData;
 	}
 
 	public int getCurrentKText() {
 		return currentKText;
 	}
 
+	public void setCurrentKText(int currentKText) {
+		this.currentKText = currentKText;
+	}
+
 	public int getCurrentKData() {
 		return currentKData;
 	}
 
+	public void setCurrentKData(int currentKData) {
+		this.currentKData = currentKData;
+	}
+
 	public int getCurrentExtern() {
 		return currentExtern;
+	}
+
+	public void setCurrentExtern(int currentExtern) {
+		this.currentExtern = currentExtern;
 	}
 
 	public boolean isNextAlignmentForced() {

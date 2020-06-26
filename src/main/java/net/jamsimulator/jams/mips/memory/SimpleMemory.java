@@ -262,6 +262,11 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		bigEndian = savedEndian;
 	}
 
+	@Override
+	public String getMemorySectionName(int address) {
+		return getSectionOrThrowException(address).getName();
+	}
+
 
 	private MemorySection getSectionOrThrowException(int address) {
 		//Filters sections

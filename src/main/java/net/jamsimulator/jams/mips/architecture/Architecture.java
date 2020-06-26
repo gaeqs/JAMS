@@ -24,10 +24,12 @@
 
 package net.jamsimulator.jams.mips.architecture;
 
+import net.jamsimulator.jams.gui.util.Log;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 
 /**
  * Architectures tell JAMS how instructions are executed.
@@ -60,5 +62,10 @@ public abstract class Architecture {
 	 * @param memory         the {@link Memory}.
 	 * @return the {@link Simulation}.
 	 */
-	public abstract Simulation<? extends Architecture> createSimulation(InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom);
+	public abstract Simulation<? extends Architecture> createSimulation(InstructionSet instructionSet,
+																		Registers registers,
+																		Memory memory,
+																		SimulationSyscallExecutions syscallExecutions,
+																		Log log,
+																		int instructionStackBottom);
 }

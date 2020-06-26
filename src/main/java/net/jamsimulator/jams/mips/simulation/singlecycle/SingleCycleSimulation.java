@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.simulation.singlecycle;
 
 import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.gui.util.Log;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
@@ -39,6 +40,7 @@ import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.change.*;
 import net.jamsimulator.jams.mips.simulation.singlecycle.event.SingleCycleInstructionExecutionEvent;
+import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.LinkedList;
@@ -68,8 +70,9 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	 * @param memory                 the memory to use in this simulation.
 	 * @param instructionStackBottom the address of the bottom of the instruction stack.
 	 */
-	public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom) {
-		super(architecture, instructionSet, registers, memory, instructionStackBottom);
+	public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet,
+								 Registers registers, Memory memory, SimulationSyscallExecutions syscallExecutions, Log log, int instructionStackBottom) {
+		super(architecture, instructionSet, registers, memory, syscallExecutions, log, instructionStackBottom);
 		changes = new LinkedList<>();
 	}
 

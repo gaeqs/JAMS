@@ -29,7 +29,7 @@ public class InstructionEntry {
 	public InstructionEntry(Simulation<?> simulation, int address, String original) {
 		this.simulation = simulation;
 		this.address = address;
-		this.addressProperty = new ReadOnlyStringWrapper("0x" + Integer.toHexString(address));
+		this.addressProperty = new ReadOnlyStringWrapper("0x" + StringUtils.addZeros(Integer.toHexString(address), 8));
 		this.originalProperty = new ReadOnlyStringWrapper(original);
 
 		simulation.getMemory().registerListeners(this, true);

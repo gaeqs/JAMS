@@ -140,4 +140,13 @@ public interface Memory extends EventBroadcast {
 	 * If no saved states are found the memory will be wiped.
 	 */
 	void restoreSavedState();
+
+	/**
+	 * Returns the name of the memory section that matches the given address.
+	 *
+	 * @param address the address.
+	 * @return the name of the memory section.
+	 * @throws IndexOutOfBoundsException if no section contains the address.
+	 */
+	String getMemorySectionName(int address);
 }

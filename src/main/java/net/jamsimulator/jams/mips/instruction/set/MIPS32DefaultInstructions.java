@@ -88,6 +88,8 @@ class MIPS32DefaultInstructions {
 
 		basicInstructions.add(new InstructionSw());
 
+		basicInstructions.add(new InstructionSyscall());
+
 		//PSEUDO
 		pseudoInstructions.add(new PseudoInstructionBI());
 		pseudoInstructions.add(new PseudoInstructionBL());

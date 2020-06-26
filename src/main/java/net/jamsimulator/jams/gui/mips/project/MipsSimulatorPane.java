@@ -35,6 +35,7 @@ public class MipsSimulatorPane extends WorkingPane {
 		SplitPane.setResizableWithParent(center, true);
 
 		loadRegisterTabs();
+		loadLog();
 	}
 
 	public MipsProject getProject() {
@@ -60,6 +61,12 @@ public class MipsSimulatorPane extends WorkingPane {
 		registersTabs.getTabs().add(new Tab("COP1", new RegistersTable(simulation.getRegisters().getCoprocessor1Registers(), true)));
 
 		topRightSidebar.addNode("Registers", registersTabs, explorerIcon, null);
+	}
+
+	private void loadLog() {
+		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE,
+				Icons.FILE_FILE_PATH, 1024, 1024).orElse(null);
+		bottomBar.addNode("Log", simulation.getLog(), explorerIcon, Messages.LOG_NAME);
 	}
 
 	@Override

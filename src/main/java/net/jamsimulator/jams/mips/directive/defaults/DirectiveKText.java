@@ -28,6 +28,8 @@ import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.SelectedMemorySegment;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.memory.MIPS32Memory;
+import net.jamsimulator.jams.utils.NumericUtils;
 
 public class DirectiveKText extends Directive {
 
@@ -39,8 +41,22 @@ public class DirectiveKText extends Directive {
 
 	@Override
 	public int execute(int lineNumber, String line, String[] parameters, MIPS32AssemblingFile file) {
-		if (parameters.length != 0)
-			throw new AssemblerException(lineNumber, "." + NAME + " directive cannot have parameters.");
+		if (parameters.length == 1) {
+			int address;
+			try {
+				address = NumericUtils.decodeInteger(parameters[0]);
+			} catch (NumberFormatException ex) {
+				throw new AssemblerException(lineNumber, "." + NAME + "'s first parameter must be a number!");
+			}
+
+			if (!file.getAssembler().getMemory().getMemorySectionName(address).equals(MIPS32Memory.KERNEL_TEXT_NAME)) {
+				throw new AssemblerException(lineNumber, "Given address is not inside the kernel text memory section");
+			}
+
+			file.getAssembler().getAssemblerData().setCurrentKText(address);
+
+		} else if (parameters.length != 0)
+			throw new AssemblerException(lineNumber, "." + NAME + " directive must have one or zero parameters.");
 		file.getAssembler().getAssemblerData().setSelected(SelectedMemorySegment.KERNEL_TEXT);
 		return -1;
 	}

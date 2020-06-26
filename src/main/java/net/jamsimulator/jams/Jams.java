@@ -49,6 +49,7 @@ public class Jams {
 
 	private static InstructionSetManager instructionSetManager;
 	private static DirectiveSetManager directiveSetManager;
+	private static SyscallExecutionBuilderManager syscallExecutionBuilderManager;
 
 	//JAMS main method.
 	public static void main(String[] args) {
@@ -67,6 +68,7 @@ public class Jams {
 
 		instructionSetManager = InstructionSetManager.INSTANCE;
 		directiveSetManager = DirectiveSetManager.INSTANCE;
+		syscallExecutionBuilderManager = SyscallExecutionBuilderManager.INSTANCE;
 
 		JamsApplication.main(args);
 	}
@@ -160,5 +162,14 @@ public class Jams {
 	 */
 	public static DirectiveSetManager getDirectiveSetManager() {
 		return directiveSetManager;
+	}
+
+	/**
+	 * Returns the {@link SyscallExecutionBuilderManager}.
+	 *
+	 * @return the {@link SyscallExecutionBuilderManager}.
+	 */
+	public static SyscallExecutionBuilderManager getSyscallExecutionBuilderManager() {
+		return syscallExecutionBuilderManager;
 	}
 }

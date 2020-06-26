@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.simulation;
 
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
+import net.jamsimulator.jams.gui.util.Log;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
@@ -35,6 +36,7 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 
 import java.util.Optional;
 
@@ -57,6 +59,9 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 	protected final Registers registers;
 	protected final Memory memory;
+	protected final SimulationSyscallExecutions syscallExecutions;
+
+	private final Log log;
 
 	protected int instructionStackBottom;
 
@@ -67,13 +72,18 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 * @param instructionSet         the instruction used by the simulation. This set should be the same as the set used to compile the code.
 	 * @param registers              the registers to use on this simulation.
 	 * @param memory                 the memory to use in this simulation.
+	 * @param syscallExecutions      the syscall executions.
+	 * @param log                    the log used to output info.
 	 * @param instructionStackBottom the address of the bottom of the instruction stack.
 	 */
-	public Simulation(Arch architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom) {
+	public Simulation(Arch architecture, InstructionSet instructionSet, Registers registers, Memory memory,
+					  SimulationSyscallExecutions syscallExecutions, Log log, int instructionStackBottom) {
 		this.architecture = architecture;
 		this.instructionSet = instructionSet;
 		this.registers = registers;
 		this.memory = memory;
+		this.syscallExecutions = syscallExecutions;
+		this.log = log;
 		this.instructionStackBottom = instructionStackBottom;
 		memory.registerListeners(this, true);
 		registers.registerListeners(this, true);
@@ -119,6 +129,26 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 */
 	public Memory getMemory() {
 		return memory;
+	}
+
+
+	/**
+	 * Returns the {@link SimulationSyscallExecutions syscall execution}s of this simulation.
+	 * These executions are used when the instruction "syscall" is invoked.
+	 *
+	 * @return the {@link SimulationSyscallExecutions syscall execution}s.
+	 */
+	public SimulationSyscallExecutions getSyscallExecutions() {
+		return syscallExecutions;
+	}
+
+	/**
+	 * Returns the {@link Log} of this simulation. This log is used to print the output of the simulation.
+	 *
+	 * @return the {@link Log}.
+	 */
+	public Log getLog() {
+		return log;
 	}
 
 	/**
