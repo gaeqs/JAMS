@@ -24,8 +24,12 @@
 
 package net.jamsimulator.jams.manager;
 
+import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.memory.builder.MIPS32MemoryBuilder;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
+import net.jamsimulator.jams.mips.memory.builder.event.DefaultMemoryBuilderChangeEvent;
+import net.jamsimulator.jams.mips.memory.builder.event.MemoryBuilderRegisterEvent;
+import net.jamsimulator.jams.mips.memory.builder.event.MemoryBuilderUnregisterEvent;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Collections;
@@ -41,7 +45,7 @@ import java.util.Set;
  * An {@link MemoryBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public class MemoryBuilderManager {
+public class MemoryBuilderManager extends SimpleEventBroadcast {
 
 	public static final MemoryBuilderManager INSTANCE = new MemoryBuilderManager();
 
@@ -74,8 +78,17 @@ public class MemoryBuilderManager {
 	 */
 	public boolean setDefault(String name) {
 		Optional<MemoryBuilder> optional = get(name);
-		optional.ifPresent(builder -> defaultBuilder = builder);
-		return optional.isPresent();
+		if (!optional.isPresent()) return false;
+
+		DefaultMemoryBuilderChangeEvent.Before before =
+				callEvent(new DefaultMemoryBuilderChangeEvent.Before(defaultBuilder, optional.get()));
+		if (before.isCancelled()) return false;
+
+		MemoryBuilder old = defaultBuilder;
+		defaultBuilder = before.getNewMemoryBuilder();
+
+		callEvent(new DefaultMemoryBuilderChangeEvent.After(old, defaultBuilder));
+		return true;
 	}
 
 	/**
@@ -110,7 +123,15 @@ public class MemoryBuilderManager {
 	 */
 	public boolean register(MemoryBuilder builder) {
 		Validate.notNull(builder, "Builder cannot be null!");
-		return builders.add(builder);
+
+		if (builders.contains(builder)) return false;
+
+		MemoryBuilderRegisterEvent.Before before = callEvent(new MemoryBuilderRegisterEvent.Before(builder));
+		if (before.isCancelled()) return false;
+
+		if (!builders.add(builder)) return false;
+		callEvent(new MemoryBuilderRegisterEvent.After(builder));
+		return true;
 	}
 
 	/**
@@ -122,7 +143,18 @@ public class MemoryBuilderManager {
 	 */
 	public boolean unregister(String name) {
 		if (defaultBuilder.getName().equals(name)) return false;
-		return builders.removeIf(target -> target.getName().equals(name));
+
+		MemoryBuilder builder = builders.stream()
+				.filter(target -> target.getName().equals(name))
+				.findAny().orElse(null);
+		if (builder == null) return false;
+
+		MemoryBuilderUnregisterEvent.Before before =
+				callEvent(new MemoryBuilderUnregisterEvent.Before(builder));
+		if (before.isCancelled()) return false;
+		if (!builders.remove(builder)) return false;
+		callEvent(new MemoryBuilderUnregisterEvent.After(builder));
+		return true;
 	}
 
 	private void addDefaults() {

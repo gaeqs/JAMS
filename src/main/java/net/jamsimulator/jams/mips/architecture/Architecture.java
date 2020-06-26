@@ -30,6 +30,9 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
+import net.jamsimulator.jams.utils.Validate;
+
+import java.util.Objects;
 
 /**
  * Architectures tell JAMS how instructions are executed.
@@ -42,6 +45,7 @@ public abstract class Architecture {
 	private final String name;
 
 	public Architecture(String name) {
+		Validate.notNull(name, "Name cannot be null!");
 		this.name = name;
 	}
 
@@ -68,4 +72,17 @@ public abstract class Architecture {
 																		SimulationSyscallExecutions syscallExecutions,
 																		Log log,
 																		int instructionStackBottom);
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Architecture that = (Architecture) o;
+		return name.equals(that.name);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name);
+	}
 }

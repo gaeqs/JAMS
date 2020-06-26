@@ -17,14 +17,19 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.defaults.texteditor.TextEditorActionCompile;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.util.ArchitectureComboBox;
+import net.jamsimulator.jams.gui.util.MemoryBuilderComboBox;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
+import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.project.mips.MipsProject;
 import net.jamsimulator.jams.project.mips.MipsSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationAddEvent;
 import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationRemoveEvent;
 import net.jamsimulator.jams.project.mips.event.SelectedMipsSimulationConfigurationChangeEvent;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class SimulationSidebar extends VBox {
@@ -36,7 +41,9 @@ public class SimulationSidebar extends VBox {
 	private ComboBox<String> configBox;
 	private Button addConfigButton, removeConfigButton;
 	private TextField nameField;
-	private ComboBox<String> memoryBox, architectureBox;
+	private MemoryBuilderComboBox memoryBox;
+	private ArchitectureComboBox architectureBox;
+	private SimulationSyscallsConfiguration syscallsConfiguration;
 
 	public SimulationSidebar(MipsProject project) {
 		setAlignment(Pos.TOP_LEFT);
@@ -60,6 +67,8 @@ public class SimulationSidebar extends VBox {
 		generateButtonsHBox();
 		getChildren().add(new Separator(Orientation.HORIZONTAL));
 		generateConfigurationInfo();
+		getChildren().add(new Separator(Orientation.HORIZONTAL));
+		generateSyscallsConfiguration();
 
 		project.getData().registerListeners(this, true);
 	}
@@ -93,6 +102,11 @@ public class SimulationSidebar extends VBox {
 		addConfigButton = new Button("+");
 		addConfigButton.getStyleClass().add("bold-button");
 		addConfigButton.setEllipsisString("+");
+
+
+		Map<Integer, SyscallExecutionBuilder<?>> syscalls = new HashMap<>();
+		//TODO DEFAULT
+
 		addConfigButton.setOnAction(event -> {
 			Set<MipsSimulationConfiguration> configs = project.getData().getConfigurations();
 			String name = "New Configuration";
@@ -107,10 +121,12 @@ public class SimulationSidebar extends VBox {
 					i++;
 				} while (repeat);
 				project.getData().addConfiguration(new MipsSimulationConfiguration(newName,
-						Jams.getArchitectureManager().getDefault(), Jams.getMemoryBuilderManager().getDefault()));
+						Jams.getArchitectureManager().getDefault(), Jams.getMemoryBuilderManager().getDefault(),
+						syscalls));
 			} else {
 				project.getData().addConfiguration(new MipsSimulationConfiguration(name,
-						Jams.getArchitectureManager().getDefault(), Jams.getMemoryBuilderManager().getDefault()));
+						Jams.getArchitectureManager().getDefault(), Jams.getMemoryBuilderManager().getDefault(),
+						syscalls));
 			}
 
 		});
@@ -147,7 +163,7 @@ public class SimulationSidebar extends VBox {
 	}
 
 
-	//region configuraiton info
+	//region configuration info
 
 	private void generateConfigurationInfo() {
 		getChildren().add(new LanguageLabel(Messages.SIMULATION_CONFIGURATION_INFO));
@@ -202,19 +218,16 @@ public class SimulationSidebar extends VBox {
 		architectureHBox.getChildren().add(new Region());
 		Label label = new LanguageLabel(Messages.SIMULATION_CONFIGURATION_ARCHITECTURE);
 		architectureHBox.getChildren().add(new Group(label));
-		architectureBox = new ComboBox<>();
+
+		architectureBox = new ArchitectureComboBox(selected == null ? Jams.getArchitectureManager().getDefault() : selected.getArchitecture());
 		architectureBox.setVisible(selected != null);
-		Jams.getArchitectureManager().getAll().forEach(target -> architectureBox.getItems().add(target.getName()));
-		if (selected != null) {
-			architectureBox.getSelectionModel().select(selected.getArchitecture().getName());
-		}
+		architectureBox.prefWidthProperty().bind(widthProperty().subtract(label.widthProperty()).subtract(30));
+
 		architectureBox.setOnAction(event -> {
 			if (!project.getData().getSelectedConfiguration().isPresent()) return;
-			Jams.getArchitectureManager().get(architectureBox.getSelectionModel().getSelectedItem())
-					.ifPresent(target -> project.getData().getSelectedConfiguration().get().setArchitecture(target));
+			project.getData().getSelectedConfiguration().get()
+					.setArchitecture(architectureBox.getSelectionModel().getSelectedItem());
 		});
-
-		architectureBox.prefWidthProperty().bind(widthProperty().subtract(label.widthProperty()).subtract(30));
 
 		architectureHBox.getChildren().add(architectureBox);
 		getChildren().add(architectureHBox);
@@ -228,22 +241,31 @@ public class SimulationSidebar extends VBox {
 		memoryHBox.getChildren().add(new Region());
 		Label label = new LanguageLabel(Messages.SIMULATION_CONFIGURATION_MEMORY);
 		memoryHBox.getChildren().add(new Group(label));
-		memoryBox = new ComboBox<>();
+
+		memoryBox = new MemoryBuilderComboBox(selected == null ? Jams.getMemoryBuilderManager().getDefault() : selected.getMemoryBuilder());
 		memoryBox.setVisible(selected != null);
-		Jams.getMemoryBuilderManager().getAll().forEach(target -> memoryBox.getItems().add(target.getName()));
-		if (selected != null) {
-			memoryBox.getSelectionModel().select(selected.getMemoryBuilder().getName());
-		}
+		memoryBox.prefWidthProperty().bind(widthProperty().subtract(label.widthProperty()).subtract(30));
+
 		memoryBox.setOnAction(event -> {
 			if (!project.getData().getSelectedConfiguration().isPresent()) return;
-			Jams.getMemoryBuilderManager().get(memoryBox.getSelectionModel().getSelectedItem())
-					.ifPresent(target -> project.getData().getSelectedConfiguration().get().setMemoryBuilder(target));
+			project.getData().getSelectedConfiguration().get()
+					.setMemoryBuilder(memoryBox.getSelectionModel().getSelectedItem());
 		});
 
-		memoryBox.prefWidthProperty().bind(widthProperty().subtract(label.widthProperty()).subtract(30));
 
 		memoryHBox.getChildren().add(memoryBox);
 		getChildren().add(memoryHBox);
+	}
+
+
+	//endregion
+
+	//region syscalls
+
+	private void generateSyscallsConfiguration() {
+		getChildren().add(new LanguageLabel(Messages.SIMULATION_SYSTEM_CALLS));
+		syscallsConfiguration = new SimulationSyscallsConfiguration(project.getData().getSelectedConfiguration().orElse(null));
+		getChildren().add(syscallsConfiguration);
 	}
 
 
@@ -270,6 +292,7 @@ public class SimulationSidebar extends VBox {
 
 	@Listener
 	private void onConfigurationChange(SelectedMipsSimulationConfigurationChangeEvent.After event) {
+		syscallsConfiguration.setConfiguration(event.getNewConfig());
 		if (event.getNewConfig() == null) {
 			nameField.setVisible(false);
 			architectureBox.setVisible(false);
@@ -283,8 +306,9 @@ public class SimulationSidebar extends VBox {
 
 		configBox.getSelectionModel().select(event.getNewConfig().getName());
 		nameField.setText(event.getNewConfig().getName());
-		architectureBox.getSelectionModel().select(event.getNewConfig().getArchitecture().getName());
-		memoryBox.getSelectionModel().select(event.getNewConfig().getMemoryBuilder().getName());
+		architectureBox.getSelectionModel().select(event.getNewConfig().getArchitecture());
+		memoryBox.getSelectionModel().select(event.getNewConfig().getMemoryBuilder());
+		syscallsConfiguration.setConfiguration(event.getNewConfig());
 	}
 
 }

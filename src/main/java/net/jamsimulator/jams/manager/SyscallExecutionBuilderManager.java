@@ -24,9 +24,12 @@
 
 package net.jamsimulator.jams.manager;
 
+import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionPrintInteger;
 import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionRunExceptionHandler;
+import net.jamsimulator.jams.mips.syscall.event.SyscallExecutionBuilderRegisterEvent;
+import net.jamsimulator.jams.mips.syscall.event.SyscallExecutionBuilderUnregisterEvent;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Collections;
@@ -42,7 +45,7 @@ import java.util.Set;
  * An {@link SyscallExecutionBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public class SyscallExecutionBuilderManager {
+public class SyscallExecutionBuilderManager extends SimpleEventBroadcast {
 
 	public static final SyscallExecutionBuilderManager INSTANCE = new SyscallExecutionBuilderManager();
 
@@ -85,7 +88,16 @@ public class SyscallExecutionBuilderManager {
 	 */
 	public boolean register(SyscallExecutionBuilder<?> builder) {
 		Validate.notNull(builder, "Builder cannot be null!");
-		return builders.add(builder);
+
+		if (builders.contains(builder)) return false;
+
+		SyscallExecutionBuilderRegisterEvent.Before before =
+				callEvent(new SyscallExecutionBuilderRegisterEvent.Before(builder));
+		if (before.isCancelled()) return false;
+
+		if (!builders.add(builder)) return false;
+		callEvent(new SyscallExecutionBuilderRegisterEvent.After(builder));
+		return true;
 	}
 
 	/**
@@ -96,7 +108,17 @@ public class SyscallExecutionBuilderManager {
 	 * @return whether the operation was successful.
 	 */
 	public boolean unregister(String name) {
-		return builders.removeIf(target -> target.getName().equals(name));
+		SyscallExecutionBuilder<?> builder = builders.stream()
+				.filter(target -> target.getName().equals(name))
+				.findAny().orElse(null);
+		if (builder == null) return false;
+
+		SyscallExecutionBuilderUnregisterEvent.Before before =
+				callEvent(new SyscallExecutionBuilderUnregisterEvent.Before(builder));
+		if (before.isCancelled()) return false;
+		if (!builders.remove(builder)) return false;
+		callEvent(new SyscallExecutionBuilderUnregisterEvent.After(builder));
+		return true;
 	}
 
 	private void addDefaults() {

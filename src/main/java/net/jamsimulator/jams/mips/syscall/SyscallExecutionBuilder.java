@@ -3,6 +3,7 @@ package net.jamsimulator.jams.mips.syscall;
 import javafx.beans.property.Property;
 
 import java.util.List;
+import java.util.Objects;
 
 public abstract class SyscallExecutionBuilder<Exe extends SyscallExecution> {
 
@@ -18,6 +19,10 @@ public abstract class SyscallExecutionBuilder<Exe extends SyscallExecution> {
 		return name;
 	}
 
+	public String getLanguageNode() {
+		return "SYSCALL_" + name;
+	}
+
 	public List<Property<?>> getProperties() {
 		return properties;
 	}
@@ -25,4 +30,17 @@ public abstract class SyscallExecutionBuilder<Exe extends SyscallExecution> {
 	public abstract Exe build();
 
 	public abstract SyscallExecutionBuilder<Exe> makeNewInstance();
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		SyscallExecutionBuilder<?> that = (SyscallExecutionBuilder<?>) o;
+		return name.equals(that.name);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name);
+	}
 }

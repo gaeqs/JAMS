@@ -39,7 +39,6 @@ import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
-import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionPrintInteger;
 import net.jamsimulator.jams.project.mips.MipsProject;
 import net.jamsimulator.jams.project.mips.MipsSimulationConfiguration;
 
@@ -95,16 +94,10 @@ public class TextEditorActionCompile extends Action {
 			assembler.assemble();
 
 			int mainLabel = assembler.getGlobalLabelAddress("main").orElse(-1);
-
 			Log simulationLog = new Log();
 
-			//TESTS
-
 			SimulationSyscallExecutions executions = new SimulationSyscallExecutions();
-			executions.bindExecution(1, new SyscallExecutionPrintInteger(true));
-			executions.bindExecution(2, new SyscallExecutionPrintInteger(false));
-
-			//END TESTS
+			selected.getSyscallExecutionBuilders().forEach((key, builder) -> executions.bindExecution(key, builder.build()));
 
 			Simulation<?> simulation = assembler.createSimulation(selected.getArchitecture(), executions, simulationLog);
 

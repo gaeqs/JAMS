@@ -24,8 +24,12 @@
 
 package net.jamsimulator.jams.manager;
 
+import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.event.ArchitectureRegisterEvent;
+import net.jamsimulator.jams.mips.architecture.event.ArchitectureUnregisterEvent;
+import net.jamsimulator.jams.mips.architecture.event.DefaultArchitectureChangeEvent;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Collections;
@@ -41,15 +45,15 @@ import java.util.Set;
  * An {@link Architecture}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public class ArchitectureManager {
+public class ArchitectureManager extends SimpleEventBroadcast {
 
 	public static final ArchitectureManager INSTANCE = new ArchitectureManager();
 
-	private Architecture defaultBuilder;
-	private final Set<Architecture> builders;
+	private Architecture defaultArchitecture;
+	private final Set<Architecture> architectures;
 
 	private ArchitectureManager() {
-		builders = new HashSet<>();
+		architectures = new HashSet<>();
 		addDefaults();
 	}
 
@@ -60,7 +64,7 @@ public class ArchitectureManager {
 	 * @return the default {@link Architecture}.
 	 */
 	public Architecture getDefault() {
-		return defaultBuilder;
+		return defaultArchitecture;
 	}
 
 	/**
@@ -73,8 +77,17 @@ public class ArchitectureManager {
 	 */
 	public boolean setDefault(String name) {
 		Optional<Architecture> optional = get(name);
-		optional.ifPresent(builder -> defaultBuilder = builder);
-		return optional.isPresent();
+		if (!optional.isPresent()) return false;
+
+		DefaultArchitectureChangeEvent.Before before =
+				callEvent(new DefaultArchitectureChangeEvent.Before(defaultArchitecture, optional.get()));
+		if (before.isCancelled()) return false;
+
+		Architecture old = defaultArchitecture;
+		defaultArchitecture = before.getNewArchitecture();
+
+		callEvent(new DefaultArchitectureChangeEvent.After(old, defaultArchitecture));
+		return true;
 	}
 
 	/**
@@ -84,7 +97,7 @@ public class ArchitectureManager {
 	 * @return the {@link Architecture}, if present.
 	 */
 	public Optional<Architecture> get(String name) {
-		return builders.stream().filter(target -> target.getName().equalsIgnoreCase(name)).findFirst();
+		return architectures.stream().filter(target -> target.getName().equalsIgnoreCase(name)).findFirst();
 	}
 
 	/**
@@ -97,19 +110,26 @@ public class ArchitectureManager {
 	 * @see Collections#unmodifiableSet(Set)
 	 */
 	public Set<Architecture> getAll() {
-		return Collections.unmodifiableSet(builders);
+		return Collections.unmodifiableSet(architectures);
 	}
 
 	/**
 	 * Attempts to register the given {@link Architecture} into the manager.
 	 * This will fail if a {@link Architecture} with the same name already exists within this manager.
 	 *
-	 * @param builder the builder to register.
+	 * @param architecture the builder to register.
 	 * @return whether the builder was registered.
 	 */
-	public boolean register(Architecture builder) {
-		Validate.notNull(builder, "Builder cannot be null!");
-		return builders.add(builder);
+	public boolean register(Architecture architecture) {
+		Validate.notNull(architecture, "Architecture cannot be null!");
+		if (architectures.contains(architecture)) return false;
+
+		ArchitectureRegisterEvent.Before before = callEvent(new ArchitectureRegisterEvent.Before(architecture));
+		if (before.isCancelled()) return false;
+
+		if (!architectures.add(architecture)) return false;
+		callEvent(new ArchitectureRegisterEvent.After(architecture));
+		return true;
 	}
 
 	/**
@@ -120,12 +140,22 @@ public class ArchitectureManager {
 	 * @return whether the operation was successful.
 	 */
 	public boolean unregister(String name) {
-		if (defaultBuilder.getName().equals(name)) return false;
-		return builders.removeIf(target -> target.getName().equals(name));
+		if (defaultArchitecture.getName().equals(name)) return false;
+
+		Architecture architecture = architectures.stream()
+				.filter(target -> target.getName().equals(name))
+				.findAny().orElse(null);
+		if (architecture == null) return false;
+
+		ArchitectureUnregisterEvent.Before before = callEvent(new ArchitectureUnregisterEvent.Before(architecture));
+		if (before.isCancelled()) return false;
+		if (!architectures.remove(architecture)) return false;
+		callEvent(new ArchitectureUnregisterEvent.After(architecture));
+		return true;
 	}
 
 	private void addDefaults() {
-		builders.add(defaultBuilder = SingleCycleArchitecture.INSTANCE);
+		architectures.add(defaultArchitecture = SingleCycleArchitecture.INSTANCE);
 	}
 
 }
