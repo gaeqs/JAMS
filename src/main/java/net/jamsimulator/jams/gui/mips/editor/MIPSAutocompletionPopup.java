@@ -30,7 +30,9 @@ import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.mips.editor.element.*;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -112,7 +114,9 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 		if (project == null) return start;
 
 		Stream<Instruction> stream = project.getData().getInstructionSet().getInstructions().stream().filter(target -> target.getMnemonic().startsWith(start));
-		addElements(stream, i -> i.getMnemonic() + '\t' + i.getName(), Instruction::getMnemonic);
+		addElements(stream, i -> i.getMnemonic() + '\t'
+				+ StringUtils.addSpaces(parseParameters(i.getParameters()), 25, true) + "\t"
+				+ i.getName(), Instruction::getMnemonic);
 		return start;
 	}
 
@@ -140,6 +144,14 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 			default:
 				return start;
 		}
+	}
+
+	protected String parseParameters(ParameterType[] types) {
+		StringBuilder builder = new StringBuilder();
+		for (ParameterType type : types) {
+			builder.append(type.getExample()).append(" ");
+		}
+		return builder.length() == 0 ? " " : builder.substring(0, builder.length() - 1);
 	}
 
 	@Override

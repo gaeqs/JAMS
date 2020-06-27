@@ -187,4 +187,15 @@ public class StringUtils {
 		return builder + s;
 	}
 
+	public static String addSpaces(String s, int to, boolean end) {
+		StringBuilder builder = new StringBuilder();
+		int max = Math.max(0, to - s.length());
+
+		for (int i = 0; i < max; i++) {
+			builder.append(" ");
+		}
+
+		return end ? s + builder : builder + s;
+	}
+
 }
