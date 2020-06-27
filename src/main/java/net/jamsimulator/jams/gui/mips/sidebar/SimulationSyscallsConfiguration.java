@@ -1,8 +1,8 @@
 package net.jamsimulator.jams.gui.mips.sidebar;
 
 import javafx.beans.property.Property;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -18,6 +18,7 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionRunExceptionHandler;
 import net.jamsimulator.jams.project.mips.MipsSimulationConfiguration;
 import net.jamsimulator.jams.utils.NumericUtils;
+import net.jamsimulator.jams.utils.Spacer;
 
 import java.util.Map;
 
@@ -152,6 +153,7 @@ public class SimulationSyscallsConfiguration extends VBox {
 			});
 
 			builderComboBox.setOnAction(event -> {
+				if (builderComboBox.getSelectionModel().getSelectedItem() == null) return;
 				SyscallExecutionBuilder<?> target = builderComboBox.getSelectionModel().getSelectedItem().makeNewInstance();
 				config.getConfiguration().getSyscallExecutionBuilders().put(key, target);
 				loadProperties(target);
@@ -172,9 +174,9 @@ public class SimulationSyscallsConfiguration extends VBox {
 				HBox box = new HBox();
 				Label name = new LanguageLabel(builder.getLanguageNode() + "_PROPERTY_" + property.getName());
 
-				box.getChildren().addAll(new Region(), new Region(), editor.thisInstanceAsNode(), name);
+				box.getChildren().addAll(new Spacer(55, 0), editor.thisInstanceAsNode(), name);
 				box.setSpacing(5);
-				propertiesBox.getChildren().add(box);
+				propertiesBox.getChildren().add(new Group(box));
 			}
 
 		}

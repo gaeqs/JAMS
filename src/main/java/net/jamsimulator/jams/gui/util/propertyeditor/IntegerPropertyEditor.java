@@ -1,23 +1,38 @@
 package net.jamsimulator.jams.gui.util.propertyeditor;
 
-import com.sun.javafx.scene.control.IntegerField;
 import javafx.beans.property.Property;
 import javafx.scene.Node;
+import javafx.scene.control.TextField;
+import net.jamsimulator.jams.utils.NumericUtils;
 
-public class IntegerPropertyEditor extends IntegerField implements PropertyEditor<Integer> {
+public class IntegerPropertyEditor extends TextField implements PropertyEditor<Integer> {
 
 	private final Property<Integer> property;
+	private String oldText;
 
 	public IntegerPropertyEditor(Property<Integer> property) {
 		this.property = property;
 
-		setValue(property.getValue());
-		setOnAction(event -> property.setValue(getValue()));
+		setText(property.getValue().toString());
+
+		oldText = getText();
+		Runnable run = () -> {
+			if (oldText.equals(getText())) return;
+			try {
+				int number = NumericUtils.decodeInteger(getText());
+				property.setValue(number);
+				oldText = getText();
+			} catch (NumberFormatException ex) {
+				setText(oldText);
+			}
+		};
+
+		setOnAction(event -> run.run());
 		focusedProperty().addListener((obs, old, val) -> {
 			if (val) return;
-			property.setValue(getValue());
+			run.run();
 		});
-
+		setPrefWidth(40);
 	}
 
 	@Override

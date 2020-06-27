@@ -14,6 +14,7 @@ public class DoublePropertyEditor extends TextField implements PropertyEditor<Do
 
 		setText(property.getValue().toString());
 
+		oldText = getText();
 		Runnable run = () -> {
 			if (oldText.equals(getText())) return;
 			try {
@@ -30,7 +31,7 @@ public class DoublePropertyEditor extends TextField implements PropertyEditor<Do
 			if (val) return;
 			run.run();
 		});
-
+		setPrefWidth(40);
 	}
 
 	@Override
