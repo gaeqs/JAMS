@@ -33,11 +33,8 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
-
-import java.util.Optional;
 
 public class InstructionBgezc extends BasicInstruction<InstructionBgezc.Assembled> {
 
@@ -94,14 +91,9 @@ public class InstructionBgezc extends BasicInstruction<InstructionBgezc.Assemble
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> rt = set.getRegister(instruction.getTargetRegister());
-			if (!rt.isPresent()) error("Target register not found.");
-
-			if (rt.get().getValue() < 0) return;
-
-			Register pc = set.getProgramCounter();
-
+			Register rt = register(instruction.getTargetRegister());
+			if (rt.getValue() < 0) return;
+			Register pc = pc();
 			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
 		}
 	}

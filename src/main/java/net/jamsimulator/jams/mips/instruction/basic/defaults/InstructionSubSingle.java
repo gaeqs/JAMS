@@ -34,10 +34,7 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-
-import java.util.Optional;
 
 public class InstructionSubSingle extends BasicRFPUInstruction<InstructionSubSingle.Assembled> {
 
@@ -93,16 +90,11 @@ public class InstructionSubSingle extends BasicRFPUInstruction<InstructionSubSin
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> rt = set.getCoprocessor1Register(instruction.getTargetRegister());
-			if (!rt.isPresent()) error("Target register not found.");
-			Optional<Register> rs = set.getCoprocessor1Register(instruction.getSourceRegister());
-			if (!rs.isPresent()) error("Source register not found.");
-			Optional<Register> rd = set.getCoprocessor1Register(instruction.getDestinationRegister());
-			if (!rd.isPresent()) error("Destination register not found");
-
-			float f = Float.intBitsToFloat(rs.get().getValue()) - Float.intBitsToFloat(rt.get().getValue());
-			rd.get().setValue(Float.floatToIntBits(f));
+			Register rt = registerCop1(instruction.getTargetRegister());
+			Register rs = registerCop1(instruction.getSourceRegister());
+			Register rd = registerCop1(instruction.getDestinationRegister());
+			float f = Float.intBitsToFloat(rs.getValue()) - Float.intBitsToFloat(rt.getValue());
+			rd.setValue(Float.floatToIntBits(f));
 		}
 	}
 }

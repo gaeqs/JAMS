@@ -34,11 +34,8 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
-
-import java.util.Optional;
 
 public class InstructionAluipc extends BasicPCREL16Instruction<InstructionAluipc.Assembled> {
 
@@ -90,12 +87,10 @@ public class InstructionAluipc extends BasicPCREL16Instruction<InstructionAluipc
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> rs = set.getRegister(instruction.getSourceRegister());
-			if (!rs.isPresent()) error("Source register not found.");
+			Register rs = register(instruction.getSourceRegister());
 
-			int result = ~0x0FFFF & (set.getProgramCounter().getValue() + (instruction.getImmediate() << 16));
-			rs.get().setValue(result);
+			int result = ~0x0FFFF & (pc().getValue() + (instruction.getImmediate() << 16));
+			rs.setValue(result);
 		}
 	}
 }

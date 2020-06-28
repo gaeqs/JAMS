@@ -66,6 +66,9 @@ class MIPS32DefaultInstructions {
 		basicInstructions.add(new InstructionBeqzalc());
 		basicInstructions.add(new InstructionBnezalc());
 
+		basicInstructions.add(new InstructionBlezc());
+		basicInstructions.add(new InstructionBgezc());
+
 		basicInstructions.add(new InstructionDiv());
 		basicInstructions.add(new InstructionMod());
 		basicInstructions.add(new InstructionDivu());

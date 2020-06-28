@@ -33,11 +33,8 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
-
-import java.util.Optional;
 
 public class InstructionAddiu extends BasicInstruction<InstructionAddiu.Assembled> {
 
@@ -90,12 +87,9 @@ public class InstructionAddiu extends BasicInstruction<InstructionAddiu.Assemble
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> rs = set.getRegister(instruction.getSourceRegister());
-			if (!rs.isPresent()) error("Source register not found.");
-			Optional<Register> rt = set.getRegister(instruction.getTargetRegister());
-			if (!rt.isPresent()) error("Target register not found.");
-			rt.get().setValue(rs.get().getValue() + instruction.getImmediateAsSigned());
+			Register rs = register(instruction.getSourceRegister());
+			Register rt = register(instruction.getTargetRegister());
+			rt.setValue(rs.getValue() + instruction.getImmediateAsSigned());
 		}
 	}
 }

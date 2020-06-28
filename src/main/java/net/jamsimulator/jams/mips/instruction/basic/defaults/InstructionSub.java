@@ -34,10 +34,7 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-
-import java.util.Optional;
 
 public class InstructionSub extends BasicRInstruction<InstructionSub.Assembled> {
 
@@ -94,16 +91,12 @@ public class InstructionSub extends BasicRInstruction<InstructionSub.Assembled> 
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> rs = set.getRegister(instruction.getSourceRegister());
-			if (!rs.isPresent()) error("Source register not found.");
-			Optional<Register> rt = set.getRegister(instruction.getTargetRegister());
-			if (!rt.isPresent()) error("Target register not found.");
-			Optional<Register> rd = set.getRegister(instruction.getDestinationRegister());
-			if (!rd.isPresent()) error("Destination register not found");
+			Register rt = register(instruction.getTargetRegister());
+			Register rs = register(instruction.getSourceRegister());
+			Register rd = register(instruction.getDestinationRegister());
 
 			try {
-				rd.get().setValue(Math.subtractExact(rs.get().getValue(), rt.get().getValue()));
+				rd.setValue(Math.subtractExact(rs.getValue(), rt.getValue()));
 			} catch (ArithmeticException ex) {
 				error("Integer overflow.", ex);
 			}

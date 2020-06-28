@@ -33,11 +33,8 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
-
-import java.util.Optional;
 
 public class InstructionBlezalc extends BasicInstruction<InstructionBlezalc.Assembled> {
 
@@ -94,19 +91,12 @@ public class InstructionBlezalc extends BasicInstruction<InstructionBlezalc.Asse
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> rt = set.getRegister(instruction.getTargetRegister());
-			if (!rt.isPresent()) error("Target register not found.");
-			Optional<Register> ra = set.getRegister(31);
-			if (!ra.isPresent()) error("Return address register not found.");
-
-			if (rt.get().getValue() > 0) return;
-
-			Register pc = set.getProgramCounter();
-			ra.get().setValue(pc.getValue());
-
+			Register rt = register(instruction.getTargetRegister());
+			Register ra = register(31);
+			if (rt.getValue() > 0) return;
+			Register pc = pc();
+			ra.setValue(pc.getValue());
 			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
-
 		}
 	}
 }

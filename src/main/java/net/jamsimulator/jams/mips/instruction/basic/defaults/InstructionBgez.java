@@ -34,11 +34,8 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
-
-import java.util.Optional;
 
 public class InstructionBgez extends BasicRIInstruction<InstructionBgez.Assembled> {
 
@@ -89,13 +86,9 @@ public class InstructionBgez extends BasicRIInstruction<InstructionBgez.Assemble
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> rs = set.getRegister(instruction.getSourceRegister());
-			if (!rs.isPresent()) error("Source register not found.");
-
-			if (rs.get().getValue() < 0) return;
-
-			Register pc = set.getProgramCounter();
+			Register rs = register(instruction.getSourceRegister());
+			if (rs.getValue() < 0) return;
+			Register pc = pc();
 			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
 		}
 	}

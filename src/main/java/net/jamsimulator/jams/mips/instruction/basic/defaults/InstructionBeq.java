@@ -90,15 +90,10 @@ public class InstructionBeq extends BasicInstruction<InstructionBeq.Assembled> {
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> rs = set.getRegister(instruction.getSourceRegister());
-			if (!rs.isPresent()) error("Source register not found.");
-			Optional<Register> rt = set.getRegister(instruction.getTargetRegister());
-			if (!rt.isPresent()) error("Target register not found.");
-
-			if (rs.get().getValue() != rt.get().getValue()) return;
-
-			Register pc = set.getProgramCounter();
+			Register rs = register(instruction.getSourceRegister());
+			Register rt = register(instruction.getTargetRegister());
+			if (rs.getValue() != rt.getValue()) return;
+			Register pc = pc();
 			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
 
 		}

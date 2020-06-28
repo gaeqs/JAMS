@@ -34,11 +34,8 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
-
-import java.util.Optional;
 
 public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled> {
 
@@ -88,14 +85,10 @@ public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled>
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> ra = set.getRegister(31);
-			if (!ra.isPresent()) error("Return address register not found.");
-
-			Register pc = set.getProgramCounter();
-			ra.get().setValue(pc.getValue());
+			Register ra = register(31);
+			Register pc = pc();
+			ra.setValue(pc.getValue());
 			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
-
 		}
 	}
 }

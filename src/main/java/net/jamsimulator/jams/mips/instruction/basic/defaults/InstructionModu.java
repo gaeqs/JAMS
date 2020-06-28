@@ -34,10 +34,7 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-
-import java.util.Optional;
 
 public class InstructionModu extends BasicRSOPInstruction<InstructionModu.Assembled> {
 
@@ -95,20 +92,16 @@ public class InstructionModu extends BasicRSOPInstruction<InstructionModu.Assemb
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> rs = set.getRegister(instruction.getSourceRegister());
-			if (!rs.isPresent()) error("Source register not found.");
-			Optional<Register> rt = set.getRegister(instruction.getTargetRegister());
-			if (!rt.isPresent()) error("Target register not found.");
-			Optional<Register> rd = set.getRegister(instruction.getDestinationRegister());
-			if (!rd.isPresent()) error("Destination register not found");
+			Register rt = register(instruction.getTargetRegister());
+			Register rs = register(instruction.getSourceRegister());
+			Register rd = register(instruction.getDestinationRegister());
 
-			if (rt.get().getValue() == 0) {
+			if (rt.getValue() == 0) {
 				//MIP rev 6: If the divisor in GPR rt is zero, the result value is UNPREDICTABLE.
-				rd.get().setValue(0);
+				rd.setValue(0);
 				return;
 			}
-			rd.get().setValue(Integer.remainderUnsigned(rs.get().getValue(), rt.get().getValue()));
+			rd.setValue(Integer.remainderUnsigned(rs.getValue(), rt.getValue()));
 		}
 	}
 }

@@ -33,11 +33,8 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
-
-import java.util.Optional;
 
 public class InstructionSw extends BasicInstruction<InstructionSw.Assembled> {
 
@@ -90,14 +87,10 @@ public class InstructionSw extends BasicInstruction<InstructionSw.Assembled> {
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> base = set.getRegister(instruction.getSourceRegister());
-			if (!base.isPresent()) error("Base register not found.");
-			Optional<Register> rt = set.getRegister(instruction.getTargetRegister());
-			if (!rt.isPresent()) error("Target register not found.");
-
-			int address = base.get().getValue() + instruction.getImmediateAsSigned();
-			simulation.getMemory().setWord(address, rt.get().getValue());
+			Register base = register(instruction.getSourceRegister());
+			Register rt = register(instruction.getTargetRegister());
+			int address = base.getValue() + instruction.getImmediateAsSigned();
+			simulation.getMemory().setWord(address, rt.getValue());
 		}
 	}
 }

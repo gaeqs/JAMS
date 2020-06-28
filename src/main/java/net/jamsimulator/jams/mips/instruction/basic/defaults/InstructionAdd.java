@@ -37,8 +37,6 @@ import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
-import java.util.Optional;
-
 public class InstructionAdd extends BasicRInstruction<InstructionAdd.Assembled> {
 
 	public static final String NAME = "Addition";
@@ -94,16 +92,12 @@ public class InstructionAdd extends BasicRInstruction<InstructionAdd.Assembled> 
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> rs = set.getRegister(instruction.getSourceRegister());
-			if (!rs.isPresent()) error("Source register not found.");
-			Optional<Register> rt = set.getRegister(instruction.getTargetRegister());
-			if (!rt.isPresent()) error("Target register not found.");
-			Optional<Register> rd = set.getRegister(instruction.getDestinationRegister());
-			if (!rd.isPresent()) error("Destination register not found");
+			Register rs = register(instruction.getSourceRegister());
+			Register rt = register(instruction.getTargetRegister());
+			Register rd = register(instruction.getDestinationRegister());
 
 			try {
-				rd.get().setValue(Math.addExact(rs.get().getValue(), rt.get().getValue()));
+				rd.setValue(Math.addExact(rs.getValue(), rt.getValue()));
 			} catch (ArithmeticException ex) {
 				error("Integer overflow.", ex);
 			}

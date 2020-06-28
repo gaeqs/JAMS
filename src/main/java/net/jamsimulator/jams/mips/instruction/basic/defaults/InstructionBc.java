@@ -33,7 +33,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -85,9 +84,7 @@ public class InstructionBc extends BasicInstruction<InstructionBc.Assembled> {
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-
-			Register pc = set.getProgramCounter();
+			Register pc = pc();
 			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
 
 		}

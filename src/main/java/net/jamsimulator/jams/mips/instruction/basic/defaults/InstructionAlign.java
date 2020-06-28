@@ -34,10 +34,7 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-
-import java.util.Optional;
 
 public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembled> {
 
@@ -118,18 +115,14 @@ public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembl
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> rs = set.getRegister(instruction.getSourceRegister());
-			if (!rs.isPresent()) error("Source register not found.");
-			Optional<Register> rt = set.getRegister(instruction.getTargetRegister());
-			if (!rt.isPresent()) error("Target register not found.");
-			Optional<Register> rd = set.getRegister(instruction.getDestinationRegister());
-			if (!rd.isPresent()) error("Destination register not found");
+			Register rt = register(instruction.getTargetRegister());
+			Register rs = register(instruction.getSourceRegister());
+			Register rd = register(instruction.getDestinationRegister());
 
 			int bp = instruction.getShiftAmount();
-			int tmpRtHi = rt.get().getValue() << (bp << 3);
-			int tmpRsLo = rs.get().getValue() >>> ((4 - bp) << 3);
-			rd.get().setValue(tmpRtHi | tmpRsLo);
+			int tmpRtHi = rt.getValue() << (bp << 3);
+			int tmpRsLo = rs.getValue() >>> ((4 - bp) << 3);
+			rd.setValue(tmpRtHi | tmpRsLo);
 		}
 	}
 }

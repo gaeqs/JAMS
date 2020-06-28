@@ -38,8 +38,6 @@ import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.NumericUtils;
 
-import java.util.Optional;
-
 public class InstructionAbsDouble extends BasicRFPUInstruction<InstructionAbsDouble.Assembled> {
 
 	public static final String NAME = "Absolute (double)";
@@ -91,24 +89,17 @@ public class InstructionAbsDouble extends BasicRFPUInstruction<InstructionAbsDou
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> rs0 = set.getCoprocessor1Register(instruction.getSourceRegister());
-			Optional<Register> rs1 = set.getCoprocessor1Register(instruction.getSourceRegister() + 1);
-			if (!rs0.isPresent()) error("Source register not found.");
-			if (!rs1.isPresent()) error("Source register not found.");
-			if (rs0.get().getIdentifier() % 2 != 0) error("Source register identifier is not even.");
-			Optional<Register> rd0 = set.getCoprocessor1Register(instruction.getDestinationRegister());
-			Optional<Register> rd1 = set.getCoprocessor1Register(instruction.getDestinationRegister() + 1);
-			if (!rd0.isPresent()) error("Destination register not found");
-			if (!rd1.isPresent()) error("Destination register not found");
-			if (rd0.get().getIdentifier() % 2 != 0) error("Destination register identifier is not even.");
+			if (instruction.getSourceRegister() % 2 != 0) error("Source register identifier is not even.");
+			if (instruction.getDestinationRegister() % 2 != 0) error("Destination register identifier is not even.");
 
-			int d0 = rs0.get().getValue();
-			int d1 = rs1.get().getValue();
-			double abs = Math.abs(NumericUtils.intsToDouble(d0, d1));
+			Register rs0 = registerCop1(instruction.getSourceRegister());
+			Register rs1 = registerCop1(instruction.getSourceRegister() + 1);
+
+			double abs = Math.abs(NumericUtils.intsToDouble(rs0.getValue(), rs1.getValue()));
 			int[] ints = NumericUtils.doubleToInts(abs);
-			rs0.get().setValue(ints[0]);
-			rs1.get().setValue(ints[1]);
+
+			registerCop1(instruction.getDestinationRegister()).setValue(ints[0]);
+			registerCop1(instruction.getDestinationRegister() + 1).setValue(ints[1]);
 		}
 	}
 }

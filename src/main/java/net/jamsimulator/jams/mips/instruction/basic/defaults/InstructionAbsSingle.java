@@ -34,10 +34,7 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-
-import java.util.Optional;
 
 public class InstructionAbsSingle extends BasicRFPUInstruction<InstructionAbsSingle.Assembled> {
 
@@ -90,14 +87,10 @@ public class InstructionAbsSingle extends BasicRFPUInstruction<InstructionAbsSin
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> rs = set.getCoprocessor1Register(instruction.getSourceRegister());
-			if (!rs.isPresent()) error("Source register not found.");
-			Optional<Register> rd = set.getCoprocessor1Register(instruction.getDestinationRegister());
-			if (!rd.isPresent()) error("Destination register not found");
-
-			float f = Math.abs(Float.intBitsToFloat(rs.get().getValue()));
-			rd.get().setValue(Float.floatToIntBits(f));
+			Register rs = registerCop1(instruction.getSourceRegister());
+			Register rd = registerCop1(instruction.getDestinationRegister());
+			float f = Math.abs(Float.intBitsToFloat(rs.getValue()));
+			rd.setValue(Float.floatToIntBits(f));
 		}
 	}
 }

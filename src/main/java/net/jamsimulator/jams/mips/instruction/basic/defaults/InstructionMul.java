@@ -34,10 +34,7 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-
-import java.util.Optional;
 
 public class InstructionMul extends BasicRSOPInstruction<InstructionMul.Assembled> {
 
@@ -95,14 +92,10 @@ public class InstructionMul extends BasicRSOPInstruction<InstructionMul.Assemble
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> rs = set.getRegister(instruction.getSourceRegister());
-			if (!rs.isPresent()) error("Source register not found.");
-			Optional<Register> rt = set.getRegister(instruction.getTargetRegister());
-			if (!rt.isPresent()) error("Target register not found.");
-			Optional<Register> rd = set.getRegister(instruction.getDestinationRegister());
-			if (!rd.isPresent()) error("Destination register not found");
-			rd.get().setValue(rs.get().getValue() * rt.get().getValue());
+			Register rt = register(instruction.getTargetRegister());
+			Register rs = register(instruction.getSourceRegister());
+			Register rd = register(instruction.getDestinationRegister());
+			rd.setValue(rs.getValue() * rt.getValue());
 		}
 	}
 }

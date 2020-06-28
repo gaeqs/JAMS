@@ -34,11 +34,8 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.NumericUtils;
-
-import java.util.Optional;
 
 public class InstructionDivDouble extends BasicRFPUInstruction<InstructionDivDouble.Assembled> {
 
@@ -95,29 +92,24 @@ public class InstructionDivDouble extends BasicRFPUInstruction<InstructionDivDou
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> rt0 = set.getCoprocessor1Register(instruction.getTargetRegister());
-			Optional<Register> rt1 = set.getCoprocessor1Register(instruction.getTargetRegister() + 1);
-			if (!rt0.isPresent()) error("Target register not found.");
-			if (!rt1.isPresent()) error("Target register not found.");
-			if (rt0.get().getIdentifier() % 2 != 0) error("Target register identifier is not even.");
-			Optional<Register> rs0 = set.getCoprocessor1Register(instruction.getSourceRegister());
-			Optional<Register> rs1 = set.getCoprocessor1Register(instruction.getSourceRegister() + 1);
-			if (!rs0.isPresent()) error("Source register not found.");
-			if (!rs1.isPresent()) error("Source register not found.");
-			if (rs0.get().getIdentifier() % 2 != 0) error("Source register identifier is not even.");
-			Optional<Register> rd0 = set.getCoprocessor1Register(instruction.getDestinationRegister());
-			Optional<Register> rd1 = set.getCoprocessor1Register(instruction.getDestinationRegister() + 1);
-			if (!rd0.isPresent()) error("Destination register not found");
-			if (!rd1.isPresent()) error("Destination register not found");
-			if (rd0.get().getIdentifier() % 2 != 0) error("Destination register identifier is not even.");
+			if (instruction.getTargetRegister() % 2 != 0) error("Target register identifier is not even.");
+			if (instruction.getSourceRegister() % 2 != 0) error("Source register identifier is not even.");
+			if (instruction.getDestinationRegister() % 2 != 0) error("Destination register identifier is not even.");
 
-			double target = NumericUtils.intsToDouble(rt0.get().getValue(), rt1.get().getValue());
-			double source = NumericUtils.intsToDouble(rs0.get().getValue(), rs1.get().getValue());
+			Register rt0 = registerCop1(instruction.getTargetRegister());
+			Register rt1 = registerCop1(instruction.getTargetRegister() + 1);
+			Register rs0 = registerCop1(instruction.getSourceRegister());
+			Register rs1 = registerCop1(instruction.getSourceRegister() + 1);
+			Register rd0 = registerCop1(instruction.getDestinationRegister());
+			Register rd1 = registerCop1(instruction.getDestinationRegister() + 1);
+
+			double target = NumericUtils.intsToDouble(rt0.getValue(), rt1.getValue());
+			double source = NumericUtils.intsToDouble(rs0.getValue(), rs1.getValue());
 			double destination = source / target;
 			int[] ints = NumericUtils.doubleToInts(destination);
-			rs0.get().setValue(ints[0]);
-			rs1.get().setValue(ints[1]);
+
+			rd0.setValue(ints[0]);
+			rd1.setValue(ints[1]);
 		}
 	}
 }

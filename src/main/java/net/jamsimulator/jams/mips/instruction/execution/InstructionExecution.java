@@ -27,8 +27,11 @@ package net.jamsimulator.jams.mips.instruction.execution;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.RuntimeInstructionException;
+import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.Validate;
+
+import java.util.Optional;
 
 public abstract class InstructionExecution<Arch extends Architecture, Inst extends AssembledInstruction> {
 
@@ -68,5 +71,92 @@ public abstract class InstructionExecution<Arch extends Architecture, Inst exten
 	 */
 	protected void error(String message, Exception ex) {
 		throw new RuntimeInstructionException(message, ex);
+	}
+
+	/**
+	 * Returns the program counter of the simulation.
+	 *
+	 * @return the pc.
+	 */
+	protected Register pc() {
+		return simulation.getRegisters().getProgramCounter();
+	}
+
+	/**
+	 * Returns the register that matches the given name.
+	 *
+	 * @param name the name
+	 * @return the register.
+	 * @throws RuntimeInstructionException if the register is not present.
+	 */
+	protected Register register(String name) {
+		Optional<Register> register = simulation.getRegisters().getRegister(name);
+		if (!register.isPresent()) error("Register " + name + " not found.");
+		return register.get();
+	}
+
+	/**
+	 * Returns the COP0 register that matches the given name.
+	 *
+	 * @param name the name
+	 * @return the register.
+	 * @throws RuntimeInstructionException if the register is not present.
+	 */
+	protected Register registerCop0(String name) {
+		Optional<Register> register = simulation.getRegisters().getCoprocessor0Register(name);
+		if (!register.isPresent()) error("Register " + name + " not found.");
+		return register.get();
+	}
+
+	/**
+	 * Returns the COP1 register that matches the given name.
+	 *
+	 * @param name the name
+	 * @return the register.
+	 * @throws RuntimeInstructionException if the register is not present.
+	 */
+	protected Register registerCop1(String name) {
+		Optional<Register> register = simulation.getRegisters().getCoprocessor1Register(name);
+		if (!register.isPresent()) error("Register " + name + " not found.");
+		return register.get();
+	}
+
+	/**
+	 * Returns the register that matches the given identifier.
+	 *
+	 * @param identifier the identifier.
+	 * @return the register.
+	 * @throws RuntimeInstructionException if the register is not present.
+	 */
+	protected Register register(int identifier) {
+		Optional<Register> register = simulation.getRegisters().getRegister(identifier);
+		if (!register.isPresent()) error("Register " + identifier + " not found.");
+		return register.get();
+	}
+
+	/**
+	 * Returns the COP0 register that matches the given identifier.
+	 *
+	 * @param identifier the identifier.
+	 * @return the register.
+	 * @throws RuntimeInstructionException if the register is not present.
+	 */
+	protected Register registerCop0(int identifier) {
+		Optional<Register> register = simulation.getRegisters().getCoprocessor0Register(identifier);
+		if (!register.isPresent()) error("Register " + identifier + " not found.");
+		return register.get();
+	}
+
+	/**
+	 * Returns the COP1 register that matches the given identifier.
+	 *
+	 * @param identifier the identifier.
+	 * @return the register.
+	 * @throws RuntimeInstructionException if the register is not present.
+	 */
+	protected Register registerCop1(int identifier) {
+		Optional<Register> register = simulation.getRegisters().getCoprocessor1Register(identifier);
+		if (!register.isPresent()) error("Register " + identifier + " not found.");
+		return register.get();
 	}
 }

@@ -33,11 +33,8 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
-
-import java.util.Optional;
 
 public class InstructionLw extends BasicInstruction<InstructionLw.Assembled> {
 
@@ -64,7 +61,7 @@ public class InstructionLw extends BasicInstruction<InstructionLw.Assembled> {
 		return new Assembled(instructionCode, this, this);
 	}
 
-	public class Assembled extends AssembledI16Instruction {
+	public static class Assembled extends AssembledI16Instruction {
 
 		public Assembled(int baseRegister, int targetRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
 			super(InstructionLw.OPERATION_CODE, baseRegister, targetRegister, offset, origin, basicOrigin);
@@ -90,15 +87,11 @@ public class InstructionLw extends BasicInstruction<InstructionLw.Assembled> {
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> base = set.getRegister(instruction.getSourceRegister());
-			if (!base.isPresent()) error("Base register not found.");
-			Optional<Register> rt = set.getRegister(instruction.getTargetRegister());
-			if (!rt.isPresent()) error("Target register not found.");
-
-			int address = base.get().getValue() + instruction.getImmediateAsSigned();
+			Register base = register(instruction.getSourceRegister());
+			Register rt = register(instruction.getTargetRegister());
+			int address = base.getValue() + instruction.getImmediateAsSigned();
 			int word = simulation.getMemory().getWord(address);
-			rt.get().setValue(word);
+			rt.setValue(word);
 		}
 	}
 }

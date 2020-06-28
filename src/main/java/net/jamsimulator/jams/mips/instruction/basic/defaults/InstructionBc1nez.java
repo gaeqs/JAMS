@@ -34,11 +34,8 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
-
-import java.util.Optional;
 
 public class InstructionBc1nez extends BasicIFPUInstruction<InstructionBc1nez.Assembled> {
 
@@ -90,15 +87,10 @@ public class InstructionBc1nez extends BasicIFPUInstruction<InstructionBc1nez.As
 
 		@Override
 		public void execute() {
-			Registers set = simulation.getRegisters();
-			Optional<Register> rt = set.getCoprocessor1Register(instruction.getTargetRegister());
-			if (!rt.isPresent()) error("Target register not found.");
-
-			if ((rt.get().getValue() & 1) == 0) return;
-
-			Register pc = set.getProgramCounter();
+			Register rt = register(instruction.getTargetRegister());
+			if ((rt.getValue() & 1) == 0) return;
+			Register pc = pc();
 			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
-
 		}
 	}
 }
