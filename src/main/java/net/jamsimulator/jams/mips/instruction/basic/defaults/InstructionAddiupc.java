@@ -27,7 +27,8 @@ package net.jamsimulator.jams.mips.instruction.basic.defaults;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionAddiupc;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledPCREL19Instruction;
+import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicPCREL19Instruction;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -35,10 +36,11 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.Optional;
 
-public class InstructionAddiupc extends BasicPCREL19Instruction<AssembledInstructionAddiupc> {
+public class InstructionAddiupc extends BasicPCREL19Instruction<InstructionAddiupc.Assembled> {
 
 	public static final String NAME = "Immediate addition to pc without overflow";
 	public static final String MNEMONIC = "addiupc";
@@ -55,17 +57,35 @@ public class InstructionAddiupc extends BasicPCREL19Instruction<AssembledInstruc
 
 	@Override
 	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new AssembledInstructionAddiupc(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
+		return new Assembled(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
 	}
 
 	@Override
 	public AssembledInstruction assembleFromCode(int instructionCode) {
-		return new AssembledInstructionAddiupc(instructionCode, this, this);
+		return new Assembled(instructionCode, this, this);
 	}
 
-	public static class SingleCycle extends SingleCycleExecution<AssembledInstructionAddiupc> {
+	public static class Assembled extends AssembledPCREL19Instruction {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, AssembledInstructionAddiupc instruction) {
+		public Assembled(int sourceRegister, int immediate, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(InstructionAddiupc.OPERATION_CODE, sourceRegister, InstructionAddiupc.PCREL_CODE, immediate, origin, basicOrigin);
+		}
+
+		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(instructionCode, origin, basicOrigin);
+		}
+
+		@Override
+		public String parametersToString(String registersStart) {
+			return registersStart + getSourceRegister()
+					+ ", 0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 4);
+		}
+	}
+
+
+	public static class SingleCycle extends SingleCycleExecution<Assembled> {
+
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction) {
 			super(simulation, instruction);
 		}
 

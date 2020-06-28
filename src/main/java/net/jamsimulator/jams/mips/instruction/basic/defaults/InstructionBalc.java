@@ -26,8 +26,8 @@ package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledI26Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionBalc;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -35,10 +35,11 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.Optional;
 
-public class InstructionBalc extends BasicInstruction<AssembledInstructionBalc> {
+public class InstructionBalc extends BasicInstruction<InstructionBalc.Assembled> {
 
 	public static final String NAME = "Branch and link compact";
 	public static final String MNEMONIC = "balc";
@@ -53,17 +54,33 @@ public class InstructionBalc extends BasicInstruction<AssembledInstructionBalc> 
 
 	@Override
 	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new AssembledInstructionBalc(origin, this, parameters[0].getImmediate());
+		return new Assembled(origin, this, parameters[0].getImmediate());
 	}
 
 	@Override
 	public AssembledInstruction assembleFromCode(int instructionCode) {
-		return new AssembledInstructionBalc(instructionCode, this, this);
+		return new Assembled(instructionCode, this, this);
 	}
 
-	public static class SingleCycle extends SingleCycleExecution<AssembledInstructionBalc> {
+	public static class Assembled extends AssembledI26Instruction {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, AssembledInstructionBalc instruction) {
+		public Assembled(Instruction origin, BasicInstruction<Assembled> basicOrigin, int offset) {
+			super(InstructionBalc.OPERATION_CODE, offset, origin, basicOrigin);
+		}
+
+		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(instructionCode, origin, basicOrigin);
+		}
+
+		@Override
+		public String parametersToString(String registersStart) {
+			return "0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 7);
+		}
+	}
+
+	public static class SingleCycle extends SingleCycleExecution<Assembled> {
+
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction) {
 			super(simulation, instruction);
 		}
 

@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.mips.instruction.assembled;
 
-import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionAddiu;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAddiu;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -39,7 +38,7 @@ class CompiledIInstructionTest {
 	static void initialize() {
 		//addi $9, $10, -100
 		InstructionAddiu addiu = new InstructionAddiu();
-		instruction = new AssembledInstructionAddiu(9, 10, -100, addiu, addiu);
+		instruction = new InstructionAddiu.Assembled(9, 10, -100, addiu, addiu);
 	}
 
 	@Test

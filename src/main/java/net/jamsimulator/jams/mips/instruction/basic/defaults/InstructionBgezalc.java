@@ -28,7 +28,6 @@ import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionBgezalc;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -36,10 +35,11 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.Optional;
 
-public class InstructionBgezalc extends BasicInstruction<AssembledInstructionBgezalc> {
+public class InstructionBgezalc extends BasicInstruction<InstructionBgezalc.Assembled> {
 
 	public static final String NAME = "Branch and link on greater than or equal to zero compact";
 	public static final String MNEMONIC = "bgezalc";
@@ -54,12 +54,12 @@ public class InstructionBgezalc extends BasicInstruction<AssembledInstructionBge
 
 	@Override
 	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new AssembledInstructionBgezalc(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
+		return new Assembled(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
 	}
 
 	@Override
 	public AssembledInstruction assembleFromCode(int instructionCode) {
-		return new AssembledInstructionBgezalc(instructionCode, this, this);
+		return new Assembled(instructionCode, this, this);
 	}
 
 	@Override
@@ -69,10 +69,26 @@ public class InstructionBgezalc extends BasicInstruction<AssembledInstructionBge
 		return super.match(instructionCode) && rs == rt && rs != 0;
 	}
 
+	public static class Assembled extends AssembledI16Instruction {
 
-	public static class SingleCycle extends SingleCycleExecution<AssembledInstructionBgezalc> {
+		public Assembled(int targetRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(InstructionBgezalc.OPERATION_CODE, targetRegister, targetRegister, offset, origin, basicOrigin);
+		}
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, AssembledInstructionBgezalc instruction) {
+		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(instructionCode, origin, basicOrigin);
+		}
+
+		@Override
+		public String parametersToString(String registersStart) {
+			return registersStart + getTargetRegister()
+					+ ", 0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 4);
+		}
+	}
+
+	public static class SingleCycle extends SingleCycleExecution<Assembled> {
+
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction) {
 			super(simulation, instruction);
 		}
 

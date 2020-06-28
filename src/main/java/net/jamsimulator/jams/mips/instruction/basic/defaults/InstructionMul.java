@@ -27,7 +27,8 @@ package net.jamsimulator.jams.mips.instruction.basic.defaults;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionMul;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledRSOPInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRSOPInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -38,7 +39,7 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 import java.util.Optional;
 
-public class InstructionMul extends BasicRSOPInstruction<AssembledInstructionMul> {
+public class InstructionMul extends BasicRSOPInstruction<InstructionMul.Assembled> {
 
 	public static final String NAME = "Multiplication, low word";
 	public static final String MNEMONIC = "mul";
@@ -56,19 +57,39 @@ public class InstructionMul extends BasicRSOPInstruction<AssembledInstructionMul
 
 	@Override
 	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new AssembledInstructionMul(parameters[1].getRegister(),
+		return new Assembled(parameters[1].getRegister(),
 				parameters[2].getRegister(),
 				parameters[0].getRegister(), origin, this);
 	}
 
 	@Override
 	public AssembledInstruction assembleFromCode(int instructionCode) {
-		return new AssembledInstructionMul(instructionCode, this, this);
+		return new Assembled(instructionCode, this, this);
 	}
 
-	public static class SingleCycle extends SingleCycleExecution<AssembledInstructionMul> {
+	public static class Assembled extends AssembledRSOPInstruction {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, AssembledInstructionMul instruction) {
+		public Assembled(int sourceRegister, int targetRegister, int destinationRegister,
+						 Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(InstructionMul.OPERATION_CODE, sourceRegister, targetRegister, destinationRegister, InstructionMul.SOP_CODE,
+					InstructionMul.FUNCTION_CODE, origin, basicOrigin);
+		}
+
+		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(instructionCode, origin, basicOrigin);
+		}
+
+		@Override
+		public String parametersToString(String registersStart) {
+			return registersStart + getDestinationRegister()
+					+ ", " + registersStart + getSourceRegister()
+					+ ", " + registersStart + getTargetRegister();
+		}
+	}
+
+	public static class SingleCycle extends SingleCycleExecution<Assembled> {
+
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction) {
 			super(simulation, instruction);
 		}
 

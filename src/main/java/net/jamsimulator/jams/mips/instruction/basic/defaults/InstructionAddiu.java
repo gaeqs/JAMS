@@ -26,8 +26,8 @@ package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionAddiu;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -35,10 +35,11 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.Optional;
 
-public class InstructionAddiu extends BasicInstruction<AssembledInstructionAddiu> {
+public class InstructionAddiu extends BasicInstruction<InstructionAddiu.Assembled> {
 
 	public static final String NAME = "Immediate addition without overflow";
 	public static final String MNEMONIC = "addiu";
@@ -54,18 +55,36 @@ public class InstructionAddiu extends BasicInstruction<AssembledInstructionAddiu
 
 	@Override
 	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new AssembledInstructionAddiu(parameters[1].getRegister(), parameters[0].getRegister(),
+		return new Assembled(parameters[1].getRegister(), parameters[0].getRegister(),
 				parameters[2].getImmediate(), origin, this);
 	}
 
 	@Override
 	public AssembledInstruction assembleFromCode(int instructionCode) {
-		return new AssembledInstructionAddiu(instructionCode, this, this);
+		return new Assembled(instructionCode, this, this);
 	}
 
-	public static class SingleCycle extends SingleCycleExecution<AssembledInstructionAddiu> {
+	public static class Assembled extends AssembledI16Instruction {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, AssembledInstructionAddiu instruction) {
+		public Assembled(int sourceRegister, int targetRegister, int immediate, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(InstructionAddiu.OPERATION_CODE, sourceRegister, targetRegister, immediate, origin, basicOrigin);
+		}
+
+		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(instructionCode, origin, basicOrigin);
+		}
+
+		@Override
+		public String parametersToString(String registersStart) {
+			return registersStart + getTargetRegister()
+					+ ", " + registersStart + getSourceRegister()
+					+ ", 0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 4);
+		}
+	}
+
+	public static class SingleCycle extends SingleCycleExecution<Assembled> {
+
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction) {
 			super(simulation, instruction);
 		}
 

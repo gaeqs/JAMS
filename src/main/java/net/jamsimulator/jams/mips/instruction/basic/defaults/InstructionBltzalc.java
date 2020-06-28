@@ -28,7 +28,6 @@ import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionBltzalc;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -36,10 +35,11 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.Optional;
 
-public class InstructionBltzalc extends BasicInstruction<AssembledInstructionBltzalc> {
+public class InstructionBltzalc extends BasicInstruction<InstructionBltzalc.Assembled> {
 
 	public static final String NAME = "Branch and link on less than to zero compact";
 	public static final String MNEMONIC = "bltzalc";
@@ -54,12 +54,12 @@ public class InstructionBltzalc extends BasicInstruction<AssembledInstructionBlt
 
 	@Override
 	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new AssembledInstructionBltzalc(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
+		return new Assembled(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
 	}
 
 	@Override
 	public AssembledInstruction assembleFromCode(int instructionCode) {
-		return new AssembledInstructionBltzalc(instructionCode, this, this);
+		return new Assembled(instructionCode, this, this);
 	}
 
 	@Override
@@ -69,9 +69,26 @@ public class InstructionBltzalc extends BasicInstruction<AssembledInstructionBlt
 		return super.match(instructionCode) && rs == rt && rs != 0;
 	}
 
-	public static class SingleCycle extends SingleCycleExecution<AssembledInstructionBltzalc> {
+	public static class Assembled extends AssembledI16Instruction {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, AssembledInstructionBltzalc instruction) {
+		public Assembled(int targetRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(InstructionBltzalc.OPERATION_CODE, targetRegister, targetRegister, offset, origin, basicOrigin);
+		}
+
+		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(instructionCode, origin, basicOrigin);
+		}
+
+		@Override
+		public String parametersToString(String registersStart) {
+			return registersStart + getTargetRegister()
+					+ ", 0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 4);
+		}
+	}
+
+	public static class SingleCycle extends SingleCycleExecution<Assembled> {
+
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction) {
 			super(simulation, instruction);
 		}
 

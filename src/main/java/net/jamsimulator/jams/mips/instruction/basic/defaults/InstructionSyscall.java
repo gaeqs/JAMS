@@ -27,14 +27,15 @@ package net.jamsimulator.jams.mips.instruction.basic.defaults;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionSyscall;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
-public class InstructionSyscall extends BasicRInstruction<AssembledInstructionSyscall> {
+public class InstructionSyscall extends BasicRInstruction<InstructionSyscall.Assembled> {
 
 	public static final String NAME = "System call";
 	public static final String MNEMONIC = "syscall";
@@ -50,17 +51,34 @@ public class InstructionSyscall extends BasicRInstruction<AssembledInstructionSy
 
 	@Override
 	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new AssembledInstructionSyscall(origin, this);
+		return new Assembled(origin, this);
 	}
 
 	@Override
 	public AssembledInstruction assembleFromCode(int instructionCode) {
-		return new AssembledInstructionSyscall(instructionCode, this, this);
+		return new Assembled(instructionCode, this, this);
 	}
 
-	public static class SingleCycle extends SingleCycleExecution<AssembledInstructionSyscall> {
+	public static class Assembled extends AssembledRInstruction {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, AssembledInstructionSyscall instruction) {
+		public Assembled(Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(InstructionSyscall.OPERATION_CODE, 0, 0, 0, 0,
+					InstructionSyscall.FUNCTION_CODE, origin, basicOrigin);
+		}
+
+		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(instructionCode, origin, basicOrigin);
+		}
+
+		@Override
+		public String parametersToString(String registersStart) {
+			return "";
+		}
+	}
+
+	public static class SingleCycle extends SingleCycleExecution<Assembled> {
+
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction) {
 			super(simulation, instruction);
 		}
 

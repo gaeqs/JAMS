@@ -27,7 +27,8 @@ package net.jamsimulator.jams.mips.instruction.basic.defaults;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionMulDouble;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -39,7 +40,7 @@ import net.jamsimulator.jams.utils.NumericUtils;
 
 import java.util.Optional;
 
-public class InstructionMulDouble extends BasicRFPUInstruction<AssembledInstructionMulDouble> {
+public class InstructionMulDouble extends BasicRFPUInstruction<InstructionMulDouble.Assembled> {
 
 	public static final String NAME = "Multiplication (double)";
 	public static final String MNEMONIC = "mul.d";
@@ -57,18 +58,37 @@ public class InstructionMulDouble extends BasicRFPUInstruction<AssembledInstruct
 
 	@Override
 	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new AssembledInstructionMulDouble(parameters[2].getRegister(), parameters[1].getRegister(),
+		return new Assembled(parameters[2].getRegister(), parameters[1].getRegister(),
 				parameters[0].getRegister(), origin, this);
 	}
 
 	@Override
 	public AssembledInstruction assembleFromCode(int instructionCode) {
-		return new AssembledInstructionMulDouble(instructionCode, this, this);
+		return new Assembled(instructionCode, this, this);
 	}
 
-	public static class SingleCycle extends SingleCycleExecution<AssembledInstructionMulDouble> {
+	public static class Assembled extends AssembledRFPUInstruction {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, AssembledInstructionMulDouble instruction) {
+		public Assembled(int targetRegister, int sourceRegister, int destinationRegister, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(InstructionMulDouble.OPERATION_CODE, InstructionMulDouble.FMT, targetRegister, sourceRegister, destinationRegister,
+					InstructionMulDouble.FUNCTION_CODE, origin, basicOrigin);
+		}
+
+		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(instructionCode, origin, basicOrigin);
+		}
+
+		@Override
+		public String parametersToString(String registersStart) {
+			return registersStart + getDestinationRegister()
+					+ ", " + registersStart + getSourceRegister()
+					+ ", " + registersStart + getTargetRegister();
+		}
+	}
+
+	public static class SingleCycle extends SingleCycleExecution<Assembled> {
+
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction) {
 			super(simulation, instruction);
 		}
 

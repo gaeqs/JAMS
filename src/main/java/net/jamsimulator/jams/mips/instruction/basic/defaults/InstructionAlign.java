@@ -27,7 +27,8 @@ package net.jamsimulator.jams.mips.instruction.basic.defaults;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.instruction.assembled.defaults.AssembledInstructionAlign;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -38,7 +39,7 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 import java.util.Optional;
 
-public class InstructionAlign extends BasicRInstruction<AssembledInstructionAlign> {
+public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembled> {
 
 	public static final String NAME = "Concatenate two GRPs extracting a contiguous subset at a byte position";
 	public static final String MNEMONIC = "align";
@@ -59,23 +60,59 @@ public class InstructionAlign extends BasicRInstruction<AssembledInstructionAlig
 	@Override
 	public boolean match(int instructionCode) {
 		return super.match(instructionCode) &&
-				((instructionCode >> AssembledInstructionAlign.ALIGN_CODE_SHIFT) & AssembledInstructionAlign.ALIGN_CODE_MASK) == ALIGN_CODE;
+				((instructionCode >> Assembled.ALIGN_CODE_SHIFT) & Assembled.ALIGN_CODE_MASK) == ALIGN_CODE;
 	}
 
 	@Override
 	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new AssembledInstructionAlign(parameters[1].getRegister(), parameters[2].getRegister(),
+		return new Assembled(parameters[1].getRegister(), parameters[2].getRegister(),
 				parameters[0].getRegister(), parameters[3].getImmediate(), origin, this);
 	}
 
 	@Override
 	public AssembledInstruction assembleFromCode(int instructionCode) {
-		return new AssembledInstructionAlign(instructionCode, this, this);
+		return new Assembled(instructionCode, this, this);
 	}
 
-	public static class SingleCycle extends SingleCycleExecution<AssembledInstructionAlign> {
+	public static class Assembled extends AssembledRInstruction {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, AssembledInstructionAlign instruction) {
+		public static final int ALIGN_CODE_SHIFT = 8;
+		public static final int ALIGN_CODE_MASK = 0x7;
+		public static final int SHIFT_AMOUNT_MASK = 0x3;
+
+		public Assembled(int sourceRegister, int targetRegister, int destinationRegister, int shiftAmount,
+						 Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(InstructionAlign.OPERATION_CODE, sourceRegister, targetRegister, destinationRegister,
+					(InstructionAlign.ALIGN_CODE << (ALIGN_CODE_SHIFT - SHIFT_AMOUNT_SHIFT)) + shiftAmount,
+					InstructionAlign.FUNCTION_CODE, origin, basicOrigin);
+		}
+
+		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(instructionCode, origin, basicOrigin);
+		}
+
+
+		@Override
+		public int getShiftAmount() {
+			return super.getShiftAmount() & SHIFT_AMOUNT_MASK;
+		}
+
+		public int getAlignCode() {
+			return value >> ALIGN_CODE_SHIFT & ALIGN_CODE_MASK;
+		}
+
+		@Override
+		public String parametersToString(String registersStart) {
+			return registersStart + getDestinationRegister()
+					+ ", " + registersStart + getSourceRegister()
+					+ ", " + registersStart + getTargetRegister()
+					+ ", 0x" + Integer.toHexString(getShiftAmount());
+		}
+	}
+
+	public static class SingleCycle extends SingleCycleExecution<Assembled> {
+
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction) {
 			super(simulation, instruction);
 		}
 
