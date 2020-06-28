@@ -26,36 +26,32 @@ package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
-import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledI21Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
-import java.util.Optional;
+public class InstructionBeqzc extends BasicInstruction<InstructionBeqzc.Assembled> {
 
-public class InstructionBeq extends BasicInstruction<InstructionBeq.Assembled> {
+	public static final String NAME = "Branch on equals to zero compact";
+	public static final String MNEMONIC = "beqzc";
+	public static final int OPERATION_CODE = 0b110110;
 
-	public static final String NAME = "Branch on equal";
-	public static final String MNEMONIC = "beq";
-	public static final int OPERATION_CODE = 0b000100;
+	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.SIGNED_32_BIT};
 
-	private static final ParameterType[] PARAMETER_TYPES
-			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
-
-	public InstructionBeq() {
+	public InstructionBeqzc() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 	}
 
 	@Override
 	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new Assembled(parameters[0].getRegister(), parameters[1].getRegister(), parameters[2].getImmediate(), origin, this);
+		return new Assembled(parameters[1].getRegister(), parameters[2].getImmediate(), origin, this);
 	}
 
 	@Override
@@ -63,10 +59,16 @@ public class InstructionBeq extends BasicInstruction<InstructionBeq.Assembled> {
 		return new Assembled(instructionCode, this, this);
 	}
 
-	public static class Assembled extends AssembledI16Instruction {
+	@Override
+	public boolean match(int instructionCode) {
+		int rs = instructionCode >> AssembledI21Instruction.DESTINATION_REGISTER_MASK & AssembledI21Instruction.DESTINATION_REGISTER_MASK;
+		return super.match(instructionCode) && rs != 0;
+	}
 
-		public Assembled(int sourceRegister, int targetRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-			super(InstructionBeq.OPERATION_CODE, sourceRegister, targetRegister, offset, origin, basicOrigin);
+	public static class Assembled extends AssembledI21Instruction {
+
+		public Assembled(int sourceRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(InstructionBeqzc.OPERATION_CODE, sourceRegister, offset, origin, basicOrigin);
 		}
 
 		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -75,8 +77,7 @@ public class InstructionBeq extends BasicInstruction<InstructionBeq.Assembled> {
 
 		@Override
 		public String parametersToString(String registersStart) {
-			return registersStart + getSourceRegister()
-					+ ", " + registersStart + getTargetRegister()
+			return registersStart + getDestinationRegister()
 					+ ", 0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 4);
 		}
 	}
@@ -89,9 +90,8 @@ public class InstructionBeq extends BasicInstruction<InstructionBeq.Assembled> {
 
 		@Override
 		public void execute() {
-			Register rs = register(instruction.getSourceRegister());
-			Register rt = register(instruction.getTargetRegister());
-			if (rs.getValue() != rt.getValue()) return;
+			Register rs = register(instruction.getDestinationRegister());
+			if (rs.getValue() != 0) return;
 			Register pc = pc();
 			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
 

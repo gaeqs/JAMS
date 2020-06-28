@@ -65,9 +65,18 @@ class MIPS32DefaultInstructions {
 		basicInstructions.add(new InstructionBltzalc());
 		basicInstructions.add(new InstructionBeqzalc());
 		basicInstructions.add(new InstructionBnezalc());
-
 		basicInstructions.add(new InstructionBlezc());
 		basicInstructions.add(new InstructionBgezc());
+		basicInstructions.add(new InstructionBgec());
+		basicInstructions.add(new InstructionBgtzc());
+		basicInstructions.add(new InstructionBltzc());
+		basicInstructions.add(new InstructionBltc());
+		basicInstructions.add(new InstructionBgeuc());
+		basicInstructions.add(new InstructionBltuc());
+		basicInstructions.add(new InstructionBeqc());
+		basicInstructions.add(new InstructionBnec());
+		basicInstructions.add(new InstructionBeqzc());
+		basicInstructions.add(new InstructionBnezc());
 
 		basicInstructions.add(new InstructionDiv());
 		basicInstructions.add(new InstructionMod());
@@ -103,12 +112,27 @@ class MIPS32DefaultInstructions {
 		pseudoInstructions.add(new PseudoInstructionBc1nezL());
 		pseudoInstructions.add(new PseudoInstructionBeqRRL());
 		pseudoInstructions.add(new PseudoInstructionBgezRL());
-		pseudoInstructions.add(new PseudoInstructionBeqzalcRL());
-		pseudoInstructions.add(new PseudoInstructionBgezalcRL());
-		pseudoInstructions.add(new PseudoInstructionBgtzalcRL());
-		pseudoInstructions.add(new PseudoInstructionBlezalcRL());
-		pseudoInstructions.add(new PseudoInstructionBltzalcRL());
-		pseudoInstructions.add(new PseudoInstructionBnezalcRL());
+
+
+		//BRANCHES
+		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBeqzalc.NAME, InstructionBeqzalc.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBgezalc.NAME, InstructionBgezalc.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBgtzalc.NAME, InstructionBgtzalc.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBlezalc.NAME, InstructionBlezalc.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBltzalc.NAME, InstructionBltzalc.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBnezalc.NAME, InstructionBnezalc.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBgec.NAME, InstructionBgec.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBltc.NAME, InstructionBltc.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBgeuc.NAME, InstructionBgeuc.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBltuc.NAME, InstructionBltuc.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBeqc.NAME, InstructionBeqc.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBnec.NAME, InstructionBnec.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRL(InstructionBlezc.NAME, InstructionBlezc.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRL(InstructionBgezc.NAME, InstructionBgezc.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRL(InstructionBgtzc.NAME, InstructionBgtzc.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRL(InstructionBltzc.NAME, InstructionBltzc.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRL21(InstructionBeqzc.NAME, InstructionBeqzc.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRL21(InstructionBnezc.NAME, InstructionBnezc.MNEMONIC));
 
 		pseudoInstructions.add(new PseudoInstructionLuiRI());
 		pseudoInstructions.add(new PseudoInstructionLwRL());

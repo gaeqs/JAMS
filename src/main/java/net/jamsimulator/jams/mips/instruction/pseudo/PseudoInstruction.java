@@ -40,9 +40,9 @@ import java.util.Objects;
  */
 public abstract class PseudoInstruction implements Instruction {
 
-	private String name;
-	private String mnemonic;
-	private ParameterType[] parameters;
+	protected final String name;
+	protected final String mnemonic;
+	protected final ParameterType[] parameters;
 
 
 	public PseudoInstruction(String name, String mnemonic, ParameterType[] parameters) {

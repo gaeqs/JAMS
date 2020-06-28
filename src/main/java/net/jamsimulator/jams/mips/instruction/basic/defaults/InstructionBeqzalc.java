@@ -61,8 +61,8 @@ public class InstructionBeqzalc extends BasicInstruction<InstructionBeqzalc.Asse
 
 	@Override
 	public boolean match(int instructionCode) {
-		int rs = instructionCode >> AssembledI16Instruction.SOURCE_REGISTER_SHIFT & AssembledI16Instruction.SOURCE_REGISTER_SHIFT;
-		int rt = instructionCode >> AssembledI16Instruction.TARGET_REGISTER_SHIFT & AssembledI16Instruction.TARGET_REGISTER_MASK;
+		int rs = instructionCode >> Assembled.SOURCE_REGISTER_SHIFT & Assembled.SOURCE_REGISTER_MASK;
+		int rt = instructionCode >> Assembled.TARGET_REGISTER_SHIFT & Assembled.TARGET_REGISTER_MASK;
 		return super.match(instructionCode) && rs == 0 && rt != 0;
 	}
 

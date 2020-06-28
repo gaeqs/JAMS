@@ -33,29 +33,25 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
-import java.util.Optional;
+public class InstructionBgtzc extends BasicInstruction<InstructionBgtzc.Assembled> {
 
-public class InstructionBeq extends BasicInstruction<InstructionBeq.Assembled> {
+	public static final String NAME = "Branch on greater than zero compact";
+	public static final String MNEMONIC = "bgtzc";
+	public static final int OPERATION_CODE = 0b010111;
 
-	public static final String NAME = "Branch on equal";
-	public static final String MNEMONIC = "beq";
-	public static final int OPERATION_CODE = 0b000100;
+	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
 
-	private static final ParameterType[] PARAMETER_TYPES
-			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
-
-	public InstructionBeq() {
+	public InstructionBgtzc() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 	}
 
 	@Override
 	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new Assembled(parameters[0].getRegister(), parameters[1].getRegister(), parameters[2].getImmediate(), origin, this);
+		return new Assembled(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
 	}
 
 	@Override
@@ -63,10 +59,17 @@ public class InstructionBeq extends BasicInstruction<InstructionBeq.Assembled> {
 		return new Assembled(instructionCode, this, this);
 	}
 
+	@Override
+	public boolean match(int instructionCode) {
+		int rs = instructionCode >> AssembledI16Instruction.SOURCE_REGISTER_SHIFT & AssembledI16Instruction.SOURCE_REGISTER_MASK;
+		int rt = instructionCode >> AssembledI16Instruction.TARGET_REGISTER_SHIFT & AssembledI16Instruction.TARGET_REGISTER_MASK;
+		return super.match(instructionCode) && rs == 0 && rt != 0;
+	}
+
 	public static class Assembled extends AssembledI16Instruction {
 
-		public Assembled(int sourceRegister, int targetRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-			super(InstructionBeq.OPERATION_CODE, sourceRegister, targetRegister, offset, origin, basicOrigin);
+		public Assembled(int targetRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(InstructionBgtzc.OPERATION_CODE, 0, targetRegister, offset, origin, basicOrigin);
 		}
 
 		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -75,8 +78,7 @@ public class InstructionBeq extends BasicInstruction<InstructionBeq.Assembled> {
 
 		@Override
 		public String parametersToString(String registersStart) {
-			return registersStart + getSourceRegister()
-					+ ", " + registersStart + getTargetRegister()
+			return registersStart + getTargetRegister()
 					+ ", 0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 4);
 		}
 	}
@@ -89,9 +91,8 @@ public class InstructionBeq extends BasicInstruction<InstructionBeq.Assembled> {
 
 		@Override
 		public void execute() {
-			Register rs = register(instruction.getSourceRegister());
 			Register rt = register(instruction.getTargetRegister());
-			if (rs.getValue() != rt.getValue()) return;
+			if (rt.getValue() <= 0) return;
 			Register pc = pc();
 			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
 

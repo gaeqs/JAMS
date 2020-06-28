@@ -61,7 +61,7 @@ public class InstructionBgezalc extends BasicInstruction<InstructionBgezalc.Asse
 
 	@Override
 	public boolean match(int instructionCode) {
-		int rs = instructionCode >> AssembledI16Instruction.SOURCE_REGISTER_SHIFT & AssembledI16Instruction.SOURCE_REGISTER_SHIFT;
+		int rs = instructionCode >> AssembledI16Instruction.SOURCE_REGISTER_SHIFT & AssembledI16Instruction.SOURCE_REGISTER_MASK;
 		int rt = instructionCode >> AssembledI16Instruction.TARGET_REGISTER_SHIFT & AssembledI16Instruction.TARGET_REGISTER_MASK;
 		return super.match(instructionCode) && rs == rt && rs != 0;
 	}

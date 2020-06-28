@@ -26,24 +26,20 @@ package net.jamsimulator.jams.mips.instruction.pseudo.defaults;
 
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.instruction.Instruction;
-import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
-import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionBlezalc;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
-public class PseudoInstructionBlezalcRL extends PseudoInstruction {
-
-	public static final String NAME = InstructionBlezalc.NAME;
-	public static final String MNEMONIC = InstructionBlezalc.MNEMONIC;
+public class PseudoInstructionBranchRL21 extends PseudoInstruction {
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.LABEL};
-	private static final ParameterType[] BASIC_PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
+	private static final ParameterType[] BASIC_PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.SIGNED_32_BIT};
 
-	public PseudoInstructionBlezalcRL() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES);
+	public PseudoInstructionBranchRL21(String name, String mnemonic) {
+		super(name, mnemonic, PARAMETER_TYPES);
 	}
 
 	@Override
@@ -56,9 +52,9 @@ public class PseudoInstructionBlezalcRL extends PseudoInstruction {
 		int offset = parameters[1].getLabelValue() - address - 4;
 		offset >>= 2;
 
-		Instruction basic = set.getInstruction(MNEMONIC, BASIC_PARAMETER_TYPES).orElse(null);
+		Instruction basic = set.getInstruction(mnemonic, BASIC_PARAMETER_TYPES).orElse(null);
 		if (!(basic instanceof BasicInstruction))
-			throw new AssemblerException("Basic instruction '" + InstructionBlezalc.MNEMONIC + "' not found.");
+			throw new AssemblerException("Basic instruction '" + mnemonic + "' not found.");
 
 		ParameterParseResult[] newParameters = new ParameterParseResult[]{
 				parameters[0],
