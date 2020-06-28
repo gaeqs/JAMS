@@ -105,16 +105,15 @@ class MIPS32DefaultInstructions {
 		//PSEUDO
 		pseudoInstructions.add(new PseudoInstructionBI());
 		pseudoInstructions.add(new PseudoInstructionBL());
-		pseudoInstructions.add(new PseudoInstructionBalL());
-		pseudoInstructions.add(new PseudoInstructionBalcL());
-		pseudoInstructions.add(new PseudoInstructionBcL());
 		pseudoInstructions.add(new PseudoInstructionBc1eqzL());
 		pseudoInstructions.add(new PseudoInstructionBc1nezL());
-		pseudoInstructions.add(new PseudoInstructionBeqRRL());
-		pseudoInstructions.add(new PseudoInstructionBgezRL());
-
 
 		//BRANCHES
+		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBal.NAME, InstructionBal.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBalc.NAME, InstructionBalc.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBc.NAME, InstructionBc.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBeq.NAME, InstructionBeq.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBgez.NAME, InstructionBgez.MNEMONIC));
 		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBeqzalc.NAME, InstructionBeqzalc.MNEMONIC));
 		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBgezalc.NAME, InstructionBgezalc.MNEMONIC));
 		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBgtzalc.NAME, InstructionBgtzalc.MNEMONIC));
