@@ -41,6 +41,7 @@ public class ProjectTabPane extends TabPane {
 
 	public ProjectTabPane(ProjectTab projectTab) {
 		getStyleClass().add("project-tab-pane");
+		setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
 		this.projectTab = projectTab;
 
 		workingPane = createProjectPane((tab, pt) -> new MipsStructurePane(tab, pt, (MipsProject) pt.getProject()), false);
