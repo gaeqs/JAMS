@@ -26,8 +26,10 @@ package net.jamsimulator.jams.gui.editor;
 
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 import net.jamsimulator.jams.Jams;
@@ -55,21 +57,22 @@ public class FileEditorTab extends Tab implements ActionRegion {
 	private FileEditorTabList list;
 	private final File file;
 	private final FileEditor display;
+	private final Label name;
 	private boolean saveMark;
 
 	public FileEditorTab(FileEditorTabList list, File file) {
-
 		this.list = list;
 		this.file = file;
 		this.saveMark = false;
 
 		FileType type = Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType());
 		this.display = type.createDisplayTab(this);
+
+		ImageView view = new NearestImageView(type.getIcon(), FileType.IMAGE_SIZE, FileType.IMAGE_SIZE);
+		name = new Label(file.getName(), view);
+		setGraphic(name);
+
 		if (display == null) return;
-
-		setGraphic(new NearestImageView(type.getIcon(), FileType.IMAGE_SIZE, FileType.IMAGE_SIZE));
-		setText(file.getName());
-
 
 		Node element = (Node) display;
 		AnchorPane pane = new AnchorPane();
@@ -129,7 +132,7 @@ public class FileEditorTab extends Tab implements ActionRegion {
 	public void setSaveMark(boolean saveMark) {
 		if (saveMark == this.saveMark) return;
 		this.saveMark = saveMark;
-		setText(saveMark ? file.getName() + " *" : file.getName());
+		name.setText(saveMark ? file.getName() + " *" : file.getName());
 	}
 
 	public void openInNewHolder(boolean horizontal) {
