@@ -114,8 +114,8 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 		if (project == null) return start;
 
 		Stream<Instruction> stream = project.getData().getInstructionSet().getInstructions().stream().filter(target -> target.getMnemonic().startsWith(start));
-		addElements(stream, i -> i.getMnemonic() + '\t'
-				+ StringUtils.addSpaces(parseParameters(i.getParameters()), 25, true) + "\t"
+		addElements(stream, i -> i.getMnemonic() + " \t"
+				+ StringUtils.addSpaces(parseParameters(i.getParameters()), 25, true)
 				+ i.getName(), Instruction::getMnemonic);
 		return start;
 	}

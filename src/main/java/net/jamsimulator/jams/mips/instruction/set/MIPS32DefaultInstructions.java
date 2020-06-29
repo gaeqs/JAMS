@@ -84,6 +84,17 @@ class MIPS32DefaultInstructions {
 		basicInstructions.add(new InstructionBne());
 		basicInstructions.add(new InstructionBovc());
 		basicInstructions.add(new InstructionBnvc());
+		basicInstructions.add(new InstructionBreak());
+		basicInstructions.add(new InstructionCeilLDouble());
+		basicInstructions.add(new InstructionCeilLSingle());
+		basicInstructions.add(new InstructionCeilWDouble());
+		basicInstructions.add(new InstructionCeilWSingle());
+		basicInstructions.add(new InstructionClo());
+		basicInstructions.add(new InstructionClz());
+		for (FloatCondition condition : FloatCondition.values()) {
+			basicInstructions.add(new InstructionCmpCondnSingle(condition));
+			basicInstructions.add(new InstructionCmpCondnDouble(condition));
+		}
 
 		basicInstructions.add(new InstructionDiv());
 		basicInstructions.add(new InstructionMod());

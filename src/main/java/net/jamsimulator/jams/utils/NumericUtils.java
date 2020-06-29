@@ -129,4 +129,11 @@ public class NumericUtils {
 		array[1] = (int) (l >> 32);
 		return array;
 	}
+
+	public static int[] longToInts(long l) {
+		int[] array = new int[2];
+		array[0] = (int) l;
+		array[1] = (int) (l >> 32);
+		return array;
+	}
 }
