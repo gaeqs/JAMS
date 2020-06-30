@@ -26,8 +26,11 @@ package net.jamsimulator.jams.gui.editor;
 
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
+import javafx.geometry.Orientation;
+import javafx.scene.Cursor;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.Region;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -43,6 +46,7 @@ import java.util.stream.Collectors;
 public class FileEditorTabList extends TabPane {
 
 	private FileEditorHolder holder;
+	private double relativeDragPosition;
 
 	/**
 	 * Creates the list.
@@ -52,7 +56,9 @@ public class FileEditorTabList extends TabPane {
 	public FileEditorTabList(FileEditorHolder holder) {
 		this.holder = holder;
 		setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
-		getStyleClass().add("file-display-list");
+		getStyleClass().add("file-editor-list");
+
+		Platform.runLater(this::checkIfDraggable);
 
 		getTabs().addListener((ListChangeListener<Tab>) change -> {
 			while (change.next()) {
@@ -67,6 +73,27 @@ public class FileEditorTabList extends TabPane {
 					}
 				}
 			}
+		});
+
+		setOnMousePressed(event -> relativeDragPosition = event.getY());
+		setOnMouseDragged(event -> {
+			FileEditorHolder holderToMove = getHolder();
+			Region child = this;
+			while (holderToMove != null && (holderToMove.getItems().size() < 2 || holderToMove.getOrientation() != Orientation.VERTICAL)) {
+				child = holderToMove;
+				holderToMove = holderToMove.getParentHolder();
+			}
+			if (holderToMove == null || holderToMove.getOrientation() != Orientation.VERTICAL) return;
+
+			int index = holderToMove.getItems().indexOf(child);
+			if (index < 1) return;
+
+			double absolute = event.getSceneY();
+			double min = holderToMove.getLocalToSceneTransform().getTy();
+			double max = min + holderToMove.getHeight();
+			double relative = (absolute - min - relativeDragPosition) / (max - min);
+			if (relative > 0.9) relative = 0.9;
+			holderToMove.setDividerPosition(index - 1, relative);
 		});
 	}
 
@@ -88,6 +115,7 @@ public class FileEditorTabList extends TabPane {
 	 */
 	void setHolder(FileEditorHolder holder) {
 		this.holder = holder;
+		Platform.runLater(this::checkIfDraggable);
 	}
 
 	/**
@@ -272,6 +300,28 @@ public class FileEditorTabList extends TabPane {
 	private void refreshList() {
 		if (getTabs().isEmpty()) {
 			holder.checkIfEmpty();
+		}
+	}
+
+	private void checkIfDraggable() {
+		FileEditorHolder holderToMove = holder;
+		Region child = this;
+		while (holderToMove != null && (holderToMove.getItems().size() < 2 || holderToMove.getOrientation() != Orientation.VERTICAL)) {
+			child = holderToMove;
+			holderToMove = holderToMove.getParentHolder();
+		}
+
+		if (holderToMove == null || holderToMove.getOrientation() != Orientation.VERTICAL) return;
+		int index = holderToMove.getItems().indexOf(child);
+
+		if (index >= 1) {
+			if (!getStyleClass().contains("draggable-file-editor-list")) {
+				getStyleClass().add("draggable-file-editor-list");
+			}
+			setCursor(Cursor.N_RESIZE);
+		} else {
+			getStyleClass().remove("draggable-file-editor-list");
+			setCursor(Cursor.DEFAULT);
 		}
 	}
 }

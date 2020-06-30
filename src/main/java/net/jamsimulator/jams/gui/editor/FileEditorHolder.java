@@ -91,6 +91,15 @@ public class FileEditorHolder extends SplitPane {
 	}
 
 	/**
+	 * Returns the holder parent of this holder, or null.
+	 *
+	 * @return the parent or null.
+	 */
+	public FileEditorHolder getParentHolder() {
+		return parent;
+	}
+
+	/**
 	 * Returns the {@link FileEditorTabList} inside this holder, if present.
 	 * This elements is not present if this holder has children.
 	 *

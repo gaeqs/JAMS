@@ -100,7 +100,6 @@ AnchorPane {
     -fx-background-color: -theme-background-lighter;
 }
 
-
 .tab-pane .tab-header-area .tab:showing {
     -fx-background-color: -theme-background-lighter;
 }
@@ -517,7 +516,6 @@ AnchorPane {
 
 .context-menu .separator {
     -fx-background-color: transparent;
-
 }
 
 .context-menu .separator .line {
@@ -753,12 +751,20 @@ AnchorPane {
 }
 
 /* FILE DISPLAY LIST */
-.file-display-list {
+.file-editor-list {
     -fx-background-color: -theme-background;
 }
 
-.file-display-list .tab-header-area .tab-header-background {
+.file-editor-list .tab-header-area .tab-header-background {
     -fx-background-color: -theme-background;
+}
+
+.draggable-file-editor-list:hover {
+    -fx-background-color: -theme-header;
+}
+
+.draggable-file-editor-list .tab-header-area .tab-header-background:hover {
+    -fx-background-color: -theme-header;
 }
 
 /* WINDOW POPUPS */

@@ -38,6 +38,7 @@ public class InstructionsTable extends TableView<InstructionEntry> {
 
 	public InstructionsTable(Simulation<?> simulation, Map<Integer, String> originals) {
 		setEditable(true);
+		setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 
 		TableColumn<InstructionEntry, String> addressColumn = new TableColumn<>("Address");
 		TableColumn<InstructionEntry, String> codeColumn = new TableColumn<>("Code");

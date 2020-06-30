@@ -77,6 +77,10 @@ AnchorPane {
     -fx-background-color: -theme-background;
 }
 
+.draggable-tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: -theme-header;
+}
+
 .tab-pane .tab-down-button {
     -fx-background-color: -theme-background;
 }
@@ -776,13 +780,22 @@ AnchorPane {
 }
 
 /* FILE DISPLAY LIST */
-.file-display-list {
+.file-editor-list {
     -fx-background-color: -theme-background;
 }
 
-.file-display-list .tab-header-area .tab-header-background {
+.file-editor .tab-header-area .tab-header-background {
     -fx-background-color: -theme-background;
 }
+
+.draggable-file-editor-list:hover {
+    -fx-background-color: -theme-header;
+}
+
+.draggable-file-editor-list .tab-header-area .tab-header-background:hover {
+    -fx-background-color: -theme-header;
+}
+
 
 /* WINDOW POPUPS */
 .window-popup-background {

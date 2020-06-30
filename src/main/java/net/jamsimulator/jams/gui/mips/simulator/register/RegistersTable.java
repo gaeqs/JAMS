@@ -12,6 +12,8 @@ public class RegistersTable extends TableView<RegisterPropertyWrapper> {
 
 	public RegistersTable(Set<Register> registers, boolean useDecimals) {
 		setEditable(true);
+		setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
+
 		TableColumn<RegisterPropertyWrapper, Number> identifierColumn = new TableColumn<>("Id");
 		TableColumn<RegisterPropertyWrapper, String> nameColumn = new TableColumn<>("Name");
 		TableColumn<RegisterPropertyWrapper, String> valueColumn = new TableColumn<>("Value");
