@@ -26,10 +26,14 @@ package net.jamsimulator.jams.gui.project;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.utils.FileUtils;
+import org.json.JSONArray;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -45,6 +49,7 @@ public class ProjectListTabPane extends TabPane {
 	 */
 	public ProjectListTabPane() {
 		setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
+		openSavedProjects();
 	}
 
 	/**
@@ -105,5 +110,39 @@ public class ProjectListTabPane extends TabPane {
 		project.assignProjectTab(tab);
 		getTabs().add(tab);
 		return true;
+	}
+
+	/**
+	 * Saves all opened projects on the opened_project.dat file.
+	 * This file will be read when JAMS starts, opening them.
+	 */
+	public void saveOpenProjects() {
+		JSONArray array = new JSONArray();
+		for (ProjectTab project : getProjects()) {
+			array.put(project.getProject().getFolder());
+		}
+
+		try {
+			FileUtils.writeAll(new File(Jams.getMainFolder(), "opened_projects.dat"), array.toString(1));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void openSavedProjects() {
+		File file = new File(Jams.getMainFolder(), "opened_projects.dat");
+		if (!file.exists()) return;
+		try {
+			JSONArray object = new JSONArray(FileUtils.readAll(file));
+
+			for (Object o : object) {
+				File to = new File(o.toString());
+				if (!to.isDirectory()) continue;
+				openProject(new MipsProject(to));
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 }

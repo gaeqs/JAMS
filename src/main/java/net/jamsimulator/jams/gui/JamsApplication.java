@@ -217,6 +217,7 @@ public class JamsApplication extends Application {
 
 
 	private static void onClose() {
+		getProjectsTabPane().saveOpenProjects();
 		for (ProjectTab project : getProjectsTabPane().getProjects()) {
 			project.getProject().onClose();
 		}
