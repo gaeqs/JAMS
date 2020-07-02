@@ -112,6 +112,9 @@ class MIPS32DefaultInstructions {
 		basicInstructions.add(new InstructionMulSingle());
 		basicInstructions.add(new InstructionMulDouble());
 
+		basicInstructions.add(new InstructionOr());
+		basicInstructions.add(new InstructionOri());
+
 		basicInstructions.add(new InstructionSub());
 		basicInstructions.add(new InstructionSubSingle());
 		basicInstructions.add(new InstructionSubDouble());
@@ -156,6 +159,7 @@ class MIPS32DefaultInstructions {
 		pseudoInstructions.add(new PseudoInstructionBranchRL21(InstructionBeqzc.NAME, InstructionBeqzc.MNEMONIC));
 		pseudoInstructions.add(new PseudoInstructionBranchRL21(InstructionBnezc.NAME, InstructionBnezc.MNEMONIC));
 
+		pseudoInstructions.add(new PseudoInstructionLaRL());
 		pseudoInstructions.add(new PseudoInstructionLuiRI());
 		pseudoInstructions.add(new PseudoInstructionLwRL());
 		pseudoInstructions.add(new PseudoInstructionLwRLr());
