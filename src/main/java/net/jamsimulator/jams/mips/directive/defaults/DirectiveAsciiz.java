@@ -53,7 +53,7 @@ public class DirectiveAsciiz extends Directive {
 
 		int start = data.getCurrent();
 
-		for (byte b : s.getBytes(StandardCharsets.US_ASCII)) {
+		for (byte b : s.substring(1, s.length() - 1).getBytes(StandardCharsets.US_ASCII)) {
 			file.getAssembler().getMemory().setByte(data.getCurrent(), b);
 			data.addCurrent(1);
 		}

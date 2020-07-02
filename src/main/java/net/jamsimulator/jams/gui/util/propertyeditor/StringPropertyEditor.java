@@ -16,7 +16,7 @@ public class StringPropertyEditor extends TextField implements PropertyEditor<St
 			if (val) return;
 			property.setValue(getText());
 		});
-		setPrefWidth(40);
+		setPrefWidth(60);
 	}
 
 	@Override

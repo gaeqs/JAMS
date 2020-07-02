@@ -31,7 +31,7 @@ public class FloatPropertyEditor extends TextField implements PropertyEditor<Flo
 			if (val) return;
 			run.run();
 		});
-		setPrefWidth(40);
+		setPrefWidth(45);
 	}
 
 	@Override

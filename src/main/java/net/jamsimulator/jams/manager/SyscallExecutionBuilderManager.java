@@ -26,10 +26,7 @@ package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
-import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionPrintDouble;
-import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionPrintFloat;
-import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionPrintInteger;
-import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionRunExceptionHandler;
+import net.jamsimulator.jams.mips.syscall.defaults.*;
 import net.jamsimulator.jams.mips.syscall.event.SyscallExecutionBuilderRegisterEvent;
 import net.jamsimulator.jams.mips.syscall.event.SyscallExecutionBuilderUnregisterEvent;
 import net.jamsimulator.jams.utils.Validate;
@@ -128,6 +125,7 @@ public class SyscallExecutionBuilderManager extends SimpleEventBroadcast {
 		builders.add(new SyscallExecutionPrintInteger.Builder());
 		builders.add(new SyscallExecutionPrintFloat.Builder());
 		builders.add(new SyscallExecutionPrintDouble.Builder());
+		builders.add(new SyscallExecutionPrintString.Builder());
 	}
 
 }

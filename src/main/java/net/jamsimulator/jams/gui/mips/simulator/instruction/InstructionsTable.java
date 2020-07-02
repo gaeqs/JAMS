@@ -37,6 +37,7 @@ public class InstructionsTable extends TableView<InstructionEntry> {
 	}
 
 	public InstructionsTable(Simulation<?> simulation, Map<Integer, String> originals) {
+		getStyleClass().add("table-view-horizontal-fit");
 		setEditable(true);
 		setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 

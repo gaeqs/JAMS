@@ -11,6 +11,7 @@ import java.util.Set;
 public class RegistersTable extends TableView<RegisterPropertyWrapper> {
 
 	public RegistersTable(Set<Register> registers, boolean useDecimals) {
+		getStyleClass().add("table-view-horizontal-fit");
 		setEditable(true);
 		setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 

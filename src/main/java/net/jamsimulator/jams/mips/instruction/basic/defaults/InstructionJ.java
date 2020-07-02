@@ -26,34 +26,31 @@ package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
-import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledJInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
-public class InstructionOri extends BasicInstruction<InstructionOri.Assembled> {
+public class InstructionJ extends BasicInstruction<InstructionJ.Assembled> {
 
-	public static final String NAME = "Or immediate";
-	public static final String MNEMONIC = "ori";
-	public static final int OPERATION_CODE = 0b001101;
+	public static final String NAME = "Jump";
+	public static final String MNEMONIC = "j";
+	public static final int OPERATION_CODE = 0b000010;
 
-	private static final ParameterType[] PARAMETER_TYPES
-			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
+	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.SIGNED_32_BIT};
 
-	public InstructionOri() {
+	public InstructionJ() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 	}
 
 	@Override
 	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new Assembled(parameters[1].getRegister(), parameters[0].getRegister(),
-				parameters[2].getImmediate(), origin, this);
+		return new Assembled(origin, this, parameters[0].getImmediate());
 	}
 
 	@Override
@@ -61,10 +58,10 @@ public class InstructionOri extends BasicInstruction<InstructionOri.Assembled> {
 		return new Assembled(instructionCode, this, this);
 	}
 
-	public static class Assembled extends AssembledI16Instruction {
+	public static class Assembled extends AssembledJInstruction {
 
-		public Assembled(int sourceRegister, int targetRegister, int immediate, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-			super(InstructionOri.OPERATION_CODE, sourceRegister, targetRegister, immediate, origin, basicOrigin);
+		public Assembled(Instruction origin, BasicInstruction<Assembled> basicOrigin, int address) {
+			super(OPERATION_CODE, address, origin, basicOrigin);
 		}
 
 		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -73,9 +70,7 @@ public class InstructionOri extends BasicInstruction<InstructionOri.Assembled> {
 
 		@Override
 		public String parametersToString(String registersStart) {
-			return registersStart + getTargetRegister()
-					+ ", " + registersStart + getSourceRegister()
-					+ ", 0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 4);
+			return "0x" + StringUtils.addZeros(Integer.toHexString(getAddress()), 7);
 		}
 	}
 
@@ -87,9 +82,7 @@ public class InstructionOri extends BasicInstruction<InstructionOri.Assembled> {
 
 		@Override
 		public void execute() {
-			Register rs = register(instruction.getSourceRegister());
-			Register rt = register(instruction.getTargetRegister());
-			rt.setValue(rs.getValue() | instruction.getImmediate());
+			pc().setValue(instruction.getAbsoluteAddress(pc().getValue()));
 		}
 	}
 }

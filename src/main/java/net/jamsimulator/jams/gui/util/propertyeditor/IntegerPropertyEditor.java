@@ -32,7 +32,7 @@ public class IntegerPropertyEditor extends TextField implements PropertyEditor<I
 			if (val) return;
 			run.run();
 		});
-		setPrefWidth(40);
+		setPrefWidth(45);
 	}
 
 	@Override

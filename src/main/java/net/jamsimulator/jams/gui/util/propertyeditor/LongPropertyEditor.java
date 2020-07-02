@@ -30,7 +30,7 @@ public class LongPropertyEditor extends TextField implements PropertyEditor<Long
 			if (val) return;
 			run.run();
 		});
-		setPrefWidth(40);
+		setPrefWidth(45);
 	}
 
 	@Override

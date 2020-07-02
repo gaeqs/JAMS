@@ -31,7 +31,7 @@ public class DoublePropertyEditor extends TextField implements PropertyEditor<Do
 			if (val) return;
 			run.run();
 		});
-		setPrefWidth(40);
+		setPrefWidth(45);
 	}
 
 	@Override

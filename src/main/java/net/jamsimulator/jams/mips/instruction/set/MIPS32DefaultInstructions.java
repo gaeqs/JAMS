@@ -103,6 +103,8 @@ class MIPS32DefaultInstructions {
 		basicInstructions.add(new InstructionDivSingle());
 		basicInstructions.add(new InstructionDivDouble());
 
+		basicInstructions.add(new InstructionJ());
+
 		basicInstructions.add(new InstructionLw());
 
 		basicInstructions.add(new InstructionMuh());
@@ -147,24 +149,33 @@ class MIPS32DefaultInstructions {
 		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBltuc.NAME, InstructionBltuc.MNEMONIC));
 		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBeqc.NAME, InstructionBeqc.MNEMONIC));
 		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBnec.NAME, InstructionBnec.MNEMONIC));
+		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBne.NAME, InstructionBne.MNEMONIC));
 		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBovc.NAME, InstructionBovc.MNEMONIC));
 		pseudoInstructions.add(new PseudoInstructionBranchRRL(InstructionBnvc.NAME, InstructionBnvc.MNEMONIC));
-
 		pseudoInstructions.add(new PseudoInstructionBranchRL(InstructionBlezc.NAME, InstructionBlezc.MNEMONIC));
 		pseudoInstructions.add(new PseudoInstructionBranchRL(InstructionBgezc.NAME, InstructionBgezc.MNEMONIC));
 		pseudoInstructions.add(new PseudoInstructionBranchRL(InstructionBgtzc.NAME, InstructionBgtzc.MNEMONIC));
 		pseudoInstructions.add(new PseudoInstructionBranchRL(InstructionBltzc.NAME, InstructionBltzc.MNEMONIC));
 		pseudoInstructions.add(new PseudoInstructionBranchRL(InstructionBgtz.NAME, InstructionBgtz.MNEMONIC));
-
 		pseudoInstructions.add(new PseudoInstructionBranchRL21(InstructionBeqzc.NAME, InstructionBeqzc.MNEMONIC));
 		pseudoInstructions.add(new PseudoInstructionBranchRL21(InstructionBnezc.NAME, InstructionBnezc.MNEMONIC));
 
+		pseudoInstructions.add(new PseudoInstructionDivRRI16());
+		pseudoInstructions.add(new PseudoInstructionDivRRI32());
+
+		pseudoInstructions.add(new PseudoInstructionJL());
+
 		pseudoInstructions.add(new PseudoInstructionLaRL());
+		pseudoInstructions.add(new PseudoInstructionLiRI16());
+		pseudoInstructions.add(new PseudoInstructionLiRI32());
 		pseudoInstructions.add(new PseudoInstructionLuiRI());
 		pseudoInstructions.add(new PseudoInstructionLwRL());
 		pseudoInstructions.add(new PseudoInstructionLwRLr());
 		pseudoInstructions.add(new PseudoInstructionLwRLs());
 		pseudoInstructions.add(new PseudoInstructionLwRLsr());
+
+		pseudoInstructions.add(new PseudoInstructionMulRRI16());
+		pseudoInstructions.add(new PseudoInstructionMulRRI32());
 
 		pseudoInstructions.add(new PseudoInstructionSwRL());
 		pseudoInstructions.add(new PseudoInstructionSwRLr());

@@ -454,6 +454,12 @@ AnchorPane {
     -fx-background-color: -theme-foreground;
 }
 
+/* Special class used to hide the horizontal scroll bar */
+.table-view-horizontal-fit .scroll-bar:horizontal {
+    -fx-opacity: 0;
+    -fx-padding: -7;
+}
+
 /*TREE VIEW*/
 .tree-view {
     -fx-background-color: -theme-background;
