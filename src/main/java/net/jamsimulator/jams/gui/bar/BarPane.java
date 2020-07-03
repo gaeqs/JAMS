@@ -2,22 +2,22 @@ package net.jamsimulator.jams.gui.bar;
 
 import javafx.scene.Node;
 
-public interface ProjectBarPane {
+public interface BarPane {
 
 	/**
 	 * Returns the name of this pane.
-	 * This is the name inside the {@link ProjectPaneSnapshot}.
+	 * This is the name inside the {@link PaneSnapshot}.
 	 *
 	 * @return the name.
 	 */
 	String getName();
 
 	/**
-	 * Returns the {@link ProjectPaneSnapshot} of this pane.
+	 * Returns the {@link PaneSnapshot} of this pane.
 	 *
-	 * @return the {@link ProjectPaneSnapshot}.
+	 * @return the {@link PaneSnapshot}.
 	 */
-	ProjectPaneSnapshot getSnapshot();
+	PaneSnapshot getSnapshot();
 
 	/**
 	 * Returns the {@link Node} handled by this pane.

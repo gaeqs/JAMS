@@ -26,8 +26,8 @@ package net.jamsimulator.jams.gui.bar.sidebar;
 
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
-import net.jamsimulator.jams.gui.bar.ProjectBarPane;
-import net.jamsimulator.jams.gui.bar.ProjectPaneSnapshot;
+import net.jamsimulator.jams.gui.bar.BarPane;
+import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
 /**
@@ -35,9 +35,9 @@ import net.jamsimulator.jams.utils.AnchorUtils;
  * This wrapper has a {@link SidePaneNodeHeader} that contains information
  * about the node.
  */
-public class SidePaneNode extends AnchorPane implements ProjectBarPane {
+public class SidePaneNode extends AnchorPane implements BarPane {
 
-	private final ProjectPaneSnapshot snapshot;
+	private final PaneSnapshot snapshot;
 	private final SidePaneNodeHeader header;
 
 	/**
@@ -47,7 +47,7 @@ public class SidePaneNode extends AnchorPane implements ProjectBarPane {
 	 * @param top      whether the {@link Sidebar} containing this node is a top {@link Sidebar}.
 	 * @param snapshot the snapshot of the side pane.
 	 */
-	public SidePaneNode(SidePane sidePane, boolean top, ProjectPaneSnapshot snapshot) {
+	public SidePaneNode(SidePane sidePane, boolean top, PaneSnapshot snapshot) {
 		this.snapshot = snapshot;
 		this.header = new SidePaneNodeHeader(sidePane, snapshot.getName(), top, snapshot.getLanguageNode());
 
@@ -65,7 +65,7 @@ public class SidePaneNode extends AnchorPane implements ProjectBarPane {
 	}
 
 	@Override
-	public ProjectPaneSnapshot getSnapshot() {
+	public PaneSnapshot getSnapshot() {
 		return snapshot;
 	}
 

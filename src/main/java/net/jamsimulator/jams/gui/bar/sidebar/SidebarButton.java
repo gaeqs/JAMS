@@ -28,36 +28,26 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.bar.ProjectBarButton;
-import net.jamsimulator.jams.gui.bar.ProjectPaneSnapshot;
-import net.jamsimulator.jams.gui.explorer.ExplorerElement;
-import net.jamsimulator.jams.gui.explorer.folder.FolderExplorerDragAndDropManagement;
+import net.jamsimulator.jams.gui.bar.BarButton;
+import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
-
-import java.util.List;
 
 
 /**
  * Represents a button inside a {@link Sidebar}.
  */
-public class SidebarButton extends ToggleButton implements ProjectBarButton {
+public class SidebarButton extends ToggleButton implements BarButton {
 
 	public static final int IMAGE_SIZE = 16;
 	public static final String DRAG_DROP_PREFIX = "sidebar";
 
 	private final Sidebar sidebar;
-
 	private final SidePaneNode pane;
-	private Image image;
 
 	/**
 	 * Creates a sidebar button.
@@ -92,6 +82,7 @@ public class SidebarButton extends ToggleButton implements ProjectBarButton {
 		setPrefWidth(WorkingPane.SIDEBAR_WIDTH);
 
 		loadSelectedListener();
+		loadDragAndDropListeners();
 	}
 
 
@@ -106,7 +97,7 @@ public class SidebarButton extends ToggleButton implements ProjectBarButton {
 	}
 
 	@Override
-	public ProjectPaneSnapshot getSnapshot() {
+	public PaneSnapshot getSnapshot() {
 		return pane.getSnapshot();
 	}
 
@@ -136,19 +127,18 @@ public class SidebarButton extends ToggleButton implements ProjectBarButton {
 
 		addEventHandler(DragEvent.DRAG_DROPPED, event -> {
 			String name = event.getDragboard().getString().substring(DRAG_DROP_PREFIX.length() + 1);
-
-
+			sidebar.manageDrop(name, sidebar.getChildren().indexOf(this));
 			event.setDropCompleted(true);
 			event.consume();
 		});
 
 		addEventHandler(MouseEvent.DRAG_DETECTED, event -> {
-			if (!selected) {
-				getExplorer().setSelectedElement(this);
-			}
-			Dragboard db = startDragAndDrop(TransferMode.COPY);
-			List<ExplorerElement> selectedElements = getExplorer().getSelectedElements();
-			FolderExplorerDragAndDropManagement.manageDragFromElements(db, selectedElements);
+			Dragboard dragboard = startDragAndDrop(TransferMode.COPY);
+
+			ClipboardContent content = new ClipboardContent();
+			content.putString(DRAG_DROP_PREFIX + ":" + getName());
+			dragboard.setContent(content);
+
 			event.consume();
 		});
 	}

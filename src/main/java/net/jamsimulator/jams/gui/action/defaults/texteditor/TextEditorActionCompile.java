@@ -70,7 +70,7 @@ public class TextEditorActionCompile extends Action {
 		if (tab == null) return;
 		MipsStructurePane pane = (MipsStructurePane) tab.getProjectTabPane().getWorkingPane();
 		pane.getFileDisplayHolder().saveAll(true);
-		pane.getLogButton().setSelected(true);
+		//pane.getLogButton().setSelected(true);
 		Log log = pane.getLog();
 		try {
 			List<String> files = new ArrayList<>();

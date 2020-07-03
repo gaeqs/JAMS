@@ -26,10 +26,12 @@ package net.jamsimulator.jams.gui.bar.bottombar;
 
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
+import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
-import net.jamsimulator.jams.gui.bar.ProjectBar;
-import net.jamsimulator.jams.gui.bar.ProjectBarPane;
-import net.jamsimulator.jams.gui.bar.ProjectPaneSnapshot;
+import net.jamsimulator.jams.gui.bar.Bar;
+import net.jamsimulator.jams.gui.bar.BarButton;
+import net.jamsimulator.jams.gui.bar.BarMap;
+import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.bar.sidebar.SidePane;
 import net.jamsimulator.jams.gui.bar.sidebar.SidePaneNode;
 import net.jamsimulator.jams.gui.bar.sidebar.SidebarButton;
@@ -46,10 +48,11 @@ import java.util.Optional;
  * @see SidebarButton
  * @see SidePaneNode
  */
-public class BottomBar extends HBox implements ProjectBar {
+public class BottomBar extends HBox implements Bar {
 
 	private final SplitPane verticalSplitPane;
 	private BottomPaneNode selected;
+	private BarMap barMap;
 
 	private double dividerPosition;
 
@@ -63,6 +66,7 @@ public class BottomBar extends HBox implements ProjectBar {
 		this.selected = null;
 		getStyleClass().addAll("bottom-bar");
 		dividerPosition = 0.7;
+		loadDragAndDropListeners();
 	}
 
 	/**
@@ -72,6 +76,16 @@ public class BottomBar extends HBox implements ProjectBar {
 	 */
 	public SplitPane getVerticalSplitPane() {
 		return verticalSplitPane;
+	}
+
+	@Override
+	public Optional<BarMap> getBarMap() {
+		return Optional.ofNullable(barMap);
+	}
+
+	@Override
+	public void setBarMap(BarMap barMap) {
+		this.barMap = barMap;
 	}
 
 	@Override
@@ -87,18 +101,39 @@ public class BottomBar extends HBox implements ProjectBar {
 	}
 
 	@Override
+	public boolean remove(String name) {
+		BottomBarButton button = getChildren().stream()
+				.filter(target -> target instanceof BarButton
+						&& ((BottomBarButton) target).getName().equals(name))
+				.map(target -> (BottomBarButton) target)
+				.findAny().orElse(null);
+
+		if (button == null) return false;
+		if (button.getPane().equals(getCurrent().orElse(null))) {
+			select(null);
+		}
+
+		return getChildren().remove(button);
+	}
+
+	@Override
 	public boolean contains(String name) {
 		return getChildren().stream().anyMatch(target -> target instanceof BottomBarButton
 				&& ((BottomBarButton) target).getName().equals(name));
 	}
 
 	@Override
-	public boolean add(ProjectPaneSnapshot snapshot) {
+	public boolean add(PaneSnapshot snapshot) {
+		return add(getChildren().size(), snapshot);
+	}
+
+	@Override
+	public boolean add(int index, PaneSnapshot snapshot) {
 		if (contains(snapshot.getName())) return false;
 		BottomPaneNode bottomPaneNode = new BottomPaneNode(verticalSplitPane, snapshot);
-		BottomBarButton button = new BottomBarButton(this, bottomPaneNode, snapshot);
+		BottomBarButton button = new BottomBarButton(this, bottomPaneNode);
 
-		getChildren().add(button);
+		getChildren().add(index, button);
 
 		return true;
 	}
@@ -122,12 +157,11 @@ public class BottomBar extends HBox implements ProjectBar {
 	 * @param button the button.
 	 */
 	void select(BottomBarButton button) {
-
 		if (selected != null) {
 			dividerPosition = verticalSplitPane.getDividerPositions()[0];
 			verticalSplitPane.getItems().remove(selected);
 		}
-		selected = button == null ? null : button.getNode();
+		selected = button == null ? null : button.getPane();
 		deselectExcept(button);
 		if (selected != null) {
 			SplitPane.setResizableWithParent(selected, false);
@@ -135,4 +169,42 @@ public class BottomBar extends HBox implements ProjectBar {
 			verticalSplitPane.setDividerPosition(0, dividerPosition);
 		}
 	}
+
+	void manageDrop(String name, int index) {
+		if (index < 0) index = 0;
+		BarMap barMap = getBarMap().orElse(null);
+		if (barMap == null) return;
+
+		Optional<? extends BarButton> optional = barMap.searchButton(name);
+		if (!optional.isPresent()) return;
+		BarButton button = optional.get();
+
+		if (button.getProjectBar().equals(this) && button instanceof SidebarButton) {
+			getChildren().remove(button);
+			getChildren().add(index, (SidebarButton) button);
+		} else {
+			button.getProjectBar().remove(name);
+			add(index, button.getSnapshot());
+		}
+
+	}
+
+	private void loadDragAndDropListeners() {
+		addEventHandler(DragEvent.DRAG_OVER, event -> {
+			if (!event.getDragboard().hasString() ||
+					!event.getDragboard().getString().startsWith(SidebarButton.DRAG_DROP_PREFIX))
+				return;
+			event.acceptTransferModes(TransferMode.COPY);
+			event.consume();
+		});
+
+		addEventHandler(DragEvent.DRAG_DROPPED, event -> {
+			String name = event.getDragboard()
+					.getString().substring(SidebarButton.DRAG_DROP_PREFIX.length() + 1);
+			manageDrop(name, getChildren().size());
+			event.setDropCompleted(true);
+			event.consume();
+		});
+	}
 }
+

@@ -32,7 +32,7 @@ import javafx.scene.layout.VBox;
 
 public class SidebarFillRegion extends Region implements ChangeListener<Number> {
 
-	private VBox holder, top, bottom;
+	private final VBox holder, top, bottom;
 
 	public SidebarFillRegion(boolean left, VBox holder, Sidebar top, Sidebar bottom) {
 		getStyleClass().addAll("sidebar", left ? "sidebar-left" : "sidebar-right");

@@ -31,15 +31,15 @@ import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.input.ScrollEvent;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.bar.bottombar.BottomBarButton;
+import net.jamsimulator.jams.gui.bar.BarButton;
+import net.jamsimulator.jams.gui.bar.BarType;
+import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.editor.FileEditorHolder;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.explorer.MipsFolderExplorer;
 import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebar;
 import net.jamsimulator.jams.gui.mips.sidebar.SimulationSidebar;
 import net.jamsimulator.jams.gui.project.ProjectTab;
-import net.jamsimulator.jams.gui.bar.ProjectPaneSnapshot;
-import net.jamsimulator.jams.gui.bar.ProjectPaneType;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.Log;
 import net.jamsimulator.jams.language.Messages;
@@ -59,7 +59,7 @@ public class MipsStructurePane extends WorkingPane {
 	protected SimulationSidebar simulationSidebar;
 
 	protected Log log;
-	protected BottomBarButton logButton;
+	protected BarButton logButton;
 
 	/**
 	 * Creates the mips project pane.
@@ -111,11 +111,11 @@ public class MipsStructurePane extends WorkingPane {
 	}
 
 	/**
-	 * Returns the log's {@link BottomBarButton}.
+	 * Returns the log's {@link BarButton}.
 	 *
-	 * @return the log's {@link BottomBarButton}.
+	 * @return the log's {@link BarButton}.
 	 */
-	public BottomBarButton getLogButton() {
+	public BarButton getLogButton() {
 		return logButton;
 	}
 
@@ -143,7 +143,7 @@ public class MipsStructurePane extends WorkingPane {
 			pane.setVvalue(pane.getVvalue() - deltaY);
 		});
 
-		projectPaneSnapshots.add(new ProjectPaneSnapshot("Explorer", ProjectPaneType.TOP_LEFT,
+		paneSnapshots.add(new PaneSnapshot("Explorer", BarType.TOP_LEFT,
 				pane, explorerIcon, Messages.EXPLORER_NAME));
 
 		explorer.setFileOpenAction(file -> openFile(file.getFile()));
@@ -164,7 +164,7 @@ public class MipsStructurePane extends WorkingPane {
 			pane.setVvalue(pane.getVvalue() - deltaY);
 		});
 
-		projectPaneSnapshots.add(new ProjectPaneSnapshot("FilesToAssemble", ProjectPaneType.BOTTOM_LEFT,
+		paneSnapshots.add(new PaneSnapshot("FilesToAssemble", BarType.BOTTOM_LEFT,
 				pane, explorerIcon, Messages.FILES_TO_ASSEMBLE_NAME));
 	}
 
@@ -176,7 +176,7 @@ public class MipsStructurePane extends WorkingPane {
 		pane.setFitToHeight(true);
 		simulationSidebar = new SimulationSidebar(project);
 		pane.setContent(simulationSidebar);
-		projectPaneSnapshots.add(new ProjectPaneSnapshot("Simulation", ProjectPaneType.TOP_RIGHT,
+		paneSnapshots.add(new PaneSnapshot("Simulation", BarType.TOP_RIGHT,
 				pane, icon, Messages.SIMULATION_NAME));
 	}
 
@@ -192,10 +192,10 @@ public class MipsStructurePane extends WorkingPane {
 
 		Platform.runLater(() -> {
 			//TODO Provisional
-			logButton = bottomBar.get("Log").get();
+			logButton = barMap.get(BarType.BOTTOM).get().get("Log").get();
 		});
 
-		projectPaneSnapshots.add(new ProjectPaneSnapshot("Log", ProjectPaneType.BOTTOM, pane, icon, Messages.LOG_NAME));
+		paneSnapshots.add(new PaneSnapshot("Log", BarType.BOTTOM, pane, icon, Messages.LOG_NAME));
 	}
 
 	@Override

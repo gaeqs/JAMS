@@ -36,8 +36,9 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.WindowEvent;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.bar.ProjectPaneSnapshot;
-import net.jamsimulator.jams.gui.bar.ProjectPaneType;
+import net.jamsimulator.jams.gui.bar.BarMap;
+import net.jamsimulator.jams.gui.bar.BarType;
+import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.bar.bottombar.BottomBar;
 import net.jamsimulator.jams.gui.bar.sidebar.SidePane;
 import net.jamsimulator.jams.gui.bar.sidebar.Sidebar;
@@ -63,20 +64,20 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 	protected SplitPane horizontalSplitPane;
 	protected SplitPane verticalSplitPane;
 	protected Node center;
-	protected SidePane leftPane, rightPane;
-	protected Sidebar topLeftSidebar, bottomLeftSidebar, topRightSidebar, bottomRightSidebar;
-	protected BottomBar bottomBar;
 
-	protected final Set<ProjectPaneSnapshot> projectPaneSnapshots;
+	protected BarMap barMap;
+
+	protected final Set<PaneSnapshot> paneSnapshots;
 
 	private EventHandler<WindowEvent> stageCloseListener;
 
 	public WorkingPane(Tab parent, ProjectTab projectTab, Node center,
-					   Set<ProjectPaneSnapshot> projectPaneSnapshots, boolean init) {
+					   Set<PaneSnapshot> paneSnapshots, boolean init) {
 		this.parent = parent;
 		this.projectTab = projectTab;
 		this.center = center;
-		this.projectPaneSnapshots = projectPaneSnapshots;
+		this.paneSnapshots = paneSnapshots;
+		this.barMap = new BarMap();
 		if (init) {
 			init();
 		}
@@ -111,76 +112,23 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 	}
 
 	/**
-	 * Returns the left {@link SidePane}.
+	 * Returns the {@link BarMap} of this working pane.
+	 * The bar map stores all sidebars and bottolm bars of the pane.
 	 *
-	 * @return the left {@link SidePane}.
+	 * @return the {@link BarMap}.
 	 */
-	public SidePane getLeftPane() {
-		return leftPane;
+	private BarMap getBarMap() {
+		return barMap;
 	}
 
 	/**
-	 * Returns the right {@link SidePane}.
+	 * Adds the given {@link PaneSnapshot} to the matching {@link Sidebar} or {@link BottomBar}.
 	 *
-	 * @return the right {@link SidePane}.
-	 */
-	public SidePane getRightPane() {
-		return rightPane;
-	}
-
-	/**
-	 * Returns the top left {@link Sidebar}.
-	 *
-	 * @return the top left {@link Sidebar}.
-	 */
-	public Sidebar getTopLeftSidebar() {
-		return topLeftSidebar;
-	}
-
-	/**
-	 * Returns the bottom left {@link Sidebar}.
-	 *
-	 * @return the bottom left {@link Sidebar}.
-	 */
-	public Sidebar getBottomLeftSidebar() {
-		return bottomLeftSidebar;
-	}
-
-	/**
-	 * Returns the top right {@link Sidebar}.
-	 *
-	 * @return the top right {@link Sidebar}.
-	 */
-	public Sidebar getTopRightSidebar() {
-		return topRightSidebar;
-	}
-
-	/**
-	 * Returns the bottom right {@link Sidebar}.
-	 *
-	 * @return the bottom right {@link Sidebar}.
-	 */
-	public Sidebar getBottomRightSidebar() {
-		return bottomRightSidebar;
-	}
-
-	/**
-	 * Returns the {@link BottomBar}.
-	 *
-	 * @return the {@link BottomBar}.
-	 */
-	public BottomBar getBottomBar() {
-		return bottomBar;
-	}
-
-	/**
-	 * Adds the given {@link ProjectPaneSnapshot} to the matching {@link Sidebar} or {@link BottomBar}.
-	 *
-	 * @param snapshot the {@link ProjectPaneSnapshot}.
+	 * @param snapshot the {@link PaneSnapshot}.
 	 * @return whether the snapshot was added. This method fails whether a snapshot with the same name is already added.
 	 */
-	public boolean addSidePaneSnapshot(ProjectPaneSnapshot snapshot) {
-		if (!projectPaneSnapshots.add(snapshot)) return false;
+	public boolean addSidePaneSnapshot(PaneSnapshot snapshot) {
+		if (!paneSnapshots.add(snapshot)) return false;
 		manageSidePaneAddition(snapshot);
 		return true;
 	}
@@ -192,30 +140,8 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 		}
 	}
 
-	private void manageSidePaneAddition (ProjectPaneSnapshot snapshot) {
-		if (snapshot.getCurrentPosition() == ProjectPaneType.BOTTOM) {
-			bottomBar.add(snapshot.getName(), snapshot.getNode(),
-					snapshot.getIcon(), snapshot.getLanguageNode());
-		}
-
-		Sidebar bar;
-		switch (snapshot.getCurrentPosition()) {
-			case TOP_LEFT:
-				bar = topLeftSidebar;
-				break;
-			case BOTTOM_LEFT:
-				bar = bottomLeftSidebar;
-				break;
-			case TOP_RIGHT:
-				bar = topRightSidebar;
-				break;
-			default:
-			case BOTTOM_RIGHT:
-				bar = bottomRightSidebar;
-				break;
-		}
-
-		bar.add(snapshot);
+	private void manageSidePaneAddition(PaneSnapshot snapshot) {
+		barMap.get(snapshot.getDefaultPosition()).ifPresent(target -> target.add(snapshot));
 	}
 
 	//region INIT
@@ -253,8 +179,8 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 
 	private void loadSidebars() {
 		//Side panes
-		leftPane = new SidePane(horizontalSplitPane, true);
-		rightPane = new SidePane(horizontalSplitPane, false);
+		SidePane leftPane = new SidePane(horizontalSplitPane, true);
+		SidePane rightPane = new SidePane(horizontalSplitPane, false);
 
 		//Sidebars
 
@@ -263,10 +189,10 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 		AnchorUtils.setAnchor(leftSidebarHolder, 1, BOTTOM_BAR_HEIGHT, 0, -1);
 		AnchorUtils.setAnchor(rightSidebarHolder, 1, BOTTOM_BAR_HEIGHT, -1, 0);
 
-		topLeftSidebar = loadSidebar(true, true);
-		bottomLeftSidebar = loadSidebar(true, false);
-		topRightSidebar = loadSidebar(false, true);
-		bottomRightSidebar = loadSidebar(false, false);
+		Sidebar topLeftSidebar = loadSidebar(true, true, leftPane);
+		Sidebar bottomLeftSidebar = loadSidebar(true, false, leftPane);
+		Sidebar topRightSidebar = loadSidebar(false, true, rightPane);
+		Sidebar bottomRightSidebar = loadSidebar(false, false, rightPane);
 
 		Region leftFill = new SidebarFillRegion(true, leftSidebarHolder, topLeftSidebar, bottomLeftSidebar);
 		Region rightFill = new SidebarFillRegion(false, rightSidebarHolder, topRightSidebar, bottomRightSidebar);
@@ -276,15 +202,21 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 		getChildren().addAll(leftSidebarHolder, rightSidebarHolder);
 
 		//Bottom panes
-		bottomBar = new BottomBar(verticalSplitPane);
+		BottomBar bottomBar = new BottomBar(verticalSplitPane);
 		AnchorUtils.setAnchor(bottomBar, -1, 0, SIDEBAR_WIDTH, SIDEBAR_WIDTH);
 		bottomBar.setPrefHeight(BOTTOM_BAR_HEIGHT);
 		bottomBar.setMaxHeight(BOTTOM_BAR_HEIGHT);
 		getChildren().addAll(bottomBar);
+
+		barMap.put(BarType.TOP_LEFT, topLeftSidebar);
+		barMap.put(BarType.BOTTOM_LEFT, bottomLeftSidebar);
+		barMap.put(BarType.TOP_RIGHT, topRightSidebar);
+		barMap.put(BarType.BOTTOM_RIGHT, bottomRightSidebar);
+		barMap.put(BarType.BOTTOM, bottomBar);
 	}
 
-	private Sidebar loadSidebar(boolean left, boolean top) {
-		Sidebar sidebar = new Sidebar(left, top, left ? leftPane : rightPane);
+	private Sidebar loadSidebar(boolean left, boolean top, SidePane sidePane) {
+		Sidebar sidebar = new Sidebar(left, top, sidePane);
 
 		sidebar.setPrefWidth(SIDEBAR_WIDTH);
 		sidebar.setMaxWidth(SIDEBAR_WIDTH);
@@ -292,7 +224,7 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 	}
 
 	private void addSnapshots() {
-		for (ProjectPaneSnapshot snapshot : projectPaneSnapshots) {
+		for (PaneSnapshot snapshot : paneSnapshots) {
 			manageSidePaneAddition(snapshot);
 		}
 	}

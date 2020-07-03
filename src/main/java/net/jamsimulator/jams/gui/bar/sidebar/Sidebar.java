@@ -26,10 +26,10 @@ package net.jamsimulator.jams.gui.bar.sidebar;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.bar.ProjectBar;
-import net.jamsimulator.jams.gui.bar.ProjectBarPane;
-import net.jamsimulator.jams.gui.bar.ProjectPaneSnapshot;
+import net.jamsimulator.jams.gui.bar.*;
 
 import java.util.Optional;
 
@@ -43,12 +43,13 @@ import java.util.Optional;
  * @see SidebarButton
  * @see SidePaneNode
  */
-public class Sidebar extends VBox implements ProjectBar {
+public class Sidebar extends VBox implements Bar {
 
 	private final boolean left;
 	private final boolean top;
 
 	private final SidePane sidePane;
+	private BarMap barMap;
 
 	/**
 	 * Creates a sidebar.
@@ -64,6 +65,8 @@ public class Sidebar extends VBox implements ProjectBar {
 		getStyleClass().addAll("sidebar", left ? "sidebar-left" : "sidebar-right");
 
 		if (!top) setAlignment(Pos.BOTTOM_LEFT);
+		loadDragAndDropListeners();
+		setMinHeight(100);
 	}
 
 	/**
@@ -94,7 +97,17 @@ public class Sidebar extends VBox implements ProjectBar {
 	}
 
 	@Override
-	public Optional<ProjectBarPane> getCurrent() {
+	public Optional<BarMap> getBarMap() {
+		return Optional.ofNullable(barMap);
+	}
+
+	@Override
+	public void setBarMap(BarMap barMap) {
+		this.barMap = barMap;
+	}
+
+	@Override
+	public Optional<BarPane> getCurrent() {
 		return Optional.ofNullable(top ? sidePane.getTop() : sidePane.getBottom());
 	}
 
@@ -112,18 +125,39 @@ public class Sidebar extends VBox implements ProjectBar {
 	}
 
 	@Override
+	public boolean remove(String name) {
+		SidebarButton button = getChildren().stream()
+				.filter(target -> target instanceof SidebarButton
+						&& ((SidebarButton) target).getName().equals(name))
+				.map(target -> (SidebarButton) target)
+				.findAny().orElse(null);
+
+		if (button == null) return false;
+		if (button.getPane().equals(getCurrent().orElse(null))) {
+			select(null);
+		}
+
+		return getChildren().remove(button);
+	}
+
+	@Override
 	public boolean contains(String name) {
 		return getChildren().stream().anyMatch(target -> target instanceof SidebarButton
 				&& ((SidebarButton) target).getName().equals(name));
 	}
 
 	@Override
-	public boolean add(ProjectPaneSnapshot snapshot) {
+	public boolean add(PaneSnapshot snapshot) {
+		return add(getChildren().size(), snapshot);
+	}
+
+	@Override
+	public boolean add(int index, PaneSnapshot snapshot) {
 		if (contains(snapshot.getName())) return false;
 		SidePaneNode sidePaneNode = new SidePaneNode(sidePane, top, snapshot);
 		SidebarButton button = new SidebarButton(this, sidePaneNode, left);
 
-		getChildren().add(button);
+		getChildren().add(index, button);
 
 		return true;
 	}
@@ -153,5 +187,42 @@ public class Sidebar extends VBox implements ProjectBar {
 		} else {
 			sidePane.setBottom(button == null ? null : button.getPane());
 		}
+	}
+
+	void manageDrop(String name, int index) {
+		if (index < 0) index = 0;
+		BarMap barMap = getBarMap().orElse(null);
+		if (barMap == null) return;
+
+		Optional<? extends BarButton> optional = barMap.searchButton(name);
+		if (!optional.isPresent()) return;
+		BarButton button = optional.get();
+
+		if (button.getProjectBar().equals(this) && button instanceof SidebarButton) {
+			getChildren().remove(button);
+			getChildren().add(index, (SidebarButton) button);
+		} else {
+			button.getProjectBar().remove(name);
+			add(index, button.getSnapshot());
+		}
+
+	}
+
+	private void loadDragAndDropListeners() {
+		addEventHandler(DragEvent.DRAG_OVER, event -> {
+			if (!event.getDragboard().hasString() ||
+					!event.getDragboard().getString().startsWith(SidebarButton.DRAG_DROP_PREFIX))
+				return;
+			event.acceptTransferModes(TransferMode.COPY);
+			event.consume();
+		});
+
+		addEventHandler(DragEvent.DRAG_DROPPED, event -> {
+			String name = event.getDragboard()
+					.getString().substring(SidebarButton.DRAG_DROP_PREFIX.length() + 1);
+			manageDrop(name, getChildren().size());
+			event.setDropCompleted(true);
+			event.consume();
+		});
 	}
 }

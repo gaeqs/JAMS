@@ -1,6 +1,6 @@
 package net.jamsimulator.jams.gui.bar;
 
-public enum ProjectPaneType {
+public enum BarType {
 
 	TOP_LEFT,
 	BOTTOM_LEFT,

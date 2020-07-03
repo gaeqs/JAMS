@@ -27,8 +27,8 @@ package net.jamsimulator.jams.gui.bar.bottombar;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
-import net.jamsimulator.jams.gui.bar.ProjectBarPane;
-import net.jamsimulator.jams.gui.bar.ProjectPaneSnapshot;
+import net.jamsimulator.jams.gui.bar.BarPane;
+import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
 /**
@@ -36,18 +36,18 @@ import net.jamsimulator.jams.utils.AnchorUtils;
  * This wrapper has a {@link BottomPaneNodeHeader} that contains information
  * about the node.
  */
-public class BottomPaneNode extends AnchorPane implements ProjectBarPane {
+public class BottomPaneNode extends AnchorPane implements BarPane {
 
-	private final ProjectPaneSnapshot snapshot;
+	private final PaneSnapshot snapshot;
 	private final BottomPaneNodeHeader header;
 
 	/**
 	 * Creates a bottom pane node.
 	 *
 	 * @param verticalSplitPane the vertical {@link SplitPane} where the node can be.
-	 * @param snapshot          the {@link ProjectPaneSnapshot} holding the node.
+	 * @param snapshot          the {@link PaneSnapshot} holding the node.
 	 */
-	public BottomPaneNode(SplitPane verticalSplitPane, ProjectPaneSnapshot snapshot) {
+	public BottomPaneNode(SplitPane verticalSplitPane, PaneSnapshot snapshot) {
 		this.snapshot = snapshot;
 		this.header = new BottomPaneNodeHeader(verticalSplitPane, snapshot.getName(), snapshot.getLanguageNode());
 
@@ -65,7 +65,7 @@ public class BottomPaneNode extends AnchorPane implements ProjectBarPane {
 	}
 
 	@Override
-	public ProjectPaneSnapshot getSnapshot() {
+	public PaneSnapshot getSnapshot() {
 		return snapshot;
 	}
 

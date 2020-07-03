@@ -66,7 +66,7 @@ public class MipsSimulatorPane extends WorkingPane {
 	private void loadLog() {
 		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE,
 				Icons.FILE_FILE_PATH, 1024, 1024).orElse(null);
-		bottomBar.add("Log", simulation.getLog(), explorerIcon, Messages.LOG_NAME);
+		//bottomBar.add("Log", simulation.getLog(), explorerIcon, Messages.LOG_NAME);
 	}
 
 	@Override
