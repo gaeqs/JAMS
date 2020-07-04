@@ -22,12 +22,14 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.sidebar;
+package net.jamsimulator.jams.gui.bar.sidebar;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
+import net.jamsimulator.jams.gui.bar.ProjectBar;
+import net.jamsimulator.jams.gui.bar.ProjectBarPane;
+import net.jamsimulator.jams.gui.bar.ProjectPaneSnapshot;
 
 import java.util.Optional;
 
@@ -41,7 +43,7 @@ import java.util.Optional;
  * @see SidebarButton
  * @see SidePaneNode
  */
-public class Sidebar extends VBox {
+public class Sidebar extends VBox implements ProjectBar {
 
 	private final boolean left;
 	private final boolean top;
@@ -91,6 +93,10 @@ public class Sidebar extends VBox {
 		return top;
 	}
 
+	@Override
+	public Optional<ProjectBarPane> getCurrent() {
+		return Optional.ofNullable(top ? sidePane.getTop() : sidePane.getBottom());
+	}
 
 	/**
 	 * Returns the {@link SidebarButton} that matches the given name, if present.
@@ -98,50 +104,28 @@ public class Sidebar extends VBox {
 	 * @param name the name.
 	 * @return the {@link SidebarButton}, if present.
 	 */
+	@Override
 	public Optional<SidebarButton> get(String name) {
 		return getChildren().stream().filter(target -> target instanceof SidebarButton
 				&& ((SidebarButton) target).getName().equals(name))
 				.map(target -> (SidebarButton) target).findAny();
 	}
 
-	/**
-	 * Returns whether this sidebar contains a node whose assigned name equals the given name.
-	 *
-	 * @param name the given name.
-	 * @return whether this sidebar contains the node.
-	 */
-	public boolean containsNode(String name) {
+	@Override
+	public boolean contains(String name) {
 		return getChildren().stream().anyMatch(target -> target instanceof SidebarButton
 				&& ((SidebarButton) target).getName().equals(name));
 	}
 
-	/**
-	 * Adds a node in this sidebar. This node will be wrapped by a {@link SidePaneNode}.
-	 * <p>
-	 * If a node with the given name is already inside the sidebar the given node wont be added.
-	 *
-	 * @param name the node name.
-	 * @param node the given node.
-	 * @param icon the icon shown on the button, or null.
-	 * @return whether the given node was added.
-	 */
-	public boolean addNode(String name, Node node, Image icon, String languageNode) {
-		if (containsNode(name)) return false;
-		SidePaneNode sidePaneNode = new SidePaneNode(sidePane, node, name, top, languageNode);
-		SidebarButton button = new SidebarButton(this, name, sidePaneNode, left, icon, languageNode);
+	@Override
+	public boolean add(ProjectPaneSnapshot snapshot) {
+		if (contains(snapshot.getName())) return false;
+		SidePaneNode sidePaneNode = new SidePaneNode(sidePane, top, snapshot);
+		SidebarButton button = new SidebarButton(this, sidePaneNode, left);
 
 		getChildren().add(button);
 
 		return true;
-	}
-
-	/**
-	 * Returns the selected node of the assigned {@link SidePane}.
-	 *
-	 * @return the selected node.
-	 */
-	SidePaneNode getSelected() {
-		return top ? sidePane.getTop() : sidePane.getBottom();
 	}
 
 	/**
@@ -165,9 +149,9 @@ public class Sidebar extends VBox {
 	void select(SidebarButton button) {
 		if (button != null) deselectExcept(button);
 		if (top) {
-			sidePane.setTop(button == null ? null : button.getNode());
+			sidePane.setTop(button == null ? null : button.getPane());
 		} else {
-			sidePane.setBottom(button == null ? null : button.getNode());
+			sidePane.setBottom(button == null ? null : button.getPane());
 		}
 	}
 }

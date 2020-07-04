@@ -22,57 +22,64 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.sidebar;
+package net.jamsimulator.jams.gui.bar.bottombar;
 
 import javafx.scene.Node;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
+import net.jamsimulator.jams.gui.bar.ProjectBarPane;
+import net.jamsimulator.jams.gui.bar.ProjectPaneSnapshot;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
 /**
- * Represents a wrapper of a node used by a {@link Sidebar}.
- * This wrapper has a {@link SidePaneNodeHeader} that contains information
+ * Represents a wrapper of a node used by a {@link BottomBar}.
+ * This wrapper has a {@link BottomPaneNodeHeader} that contains information
  * about the node.
  */
-public class SidePaneNode extends AnchorPane {
+public class BottomPaneNode extends AnchorPane implements ProjectBarPane {
 
-	private final Node node;
-	private final SidePaneNodeHeader header;
+	private final ProjectPaneSnapshot snapshot;
+	private final BottomPaneNodeHeader header;
 
 	/**
-	 * Creates a side pane node.
+	 * Creates a bottom pane node.
 	 *
-	 * @param sidePane the {@link SidePane} handling this side pane node.
-	 * @param node     the wrapped {@link Node}.
-	 * @param name     the name of the {@link Node}.
-	 * @param top      whether the {@link Sidebar} containing this node is a top {@link Sidebar}.
+	 * @param verticalSplitPane the vertical {@link SplitPane} where the node can be.
+	 * @param snapshot          the {@link ProjectPaneSnapshot} holding the node.
 	 */
-	public SidePaneNode(SidePane sidePane, Node node, String name, boolean top, String languageNode) {
-		this.node = node;
-		this.header = new SidePaneNodeHeader(sidePane, name, top, languageNode);
+	public BottomPaneNode(SplitPane verticalSplitPane, ProjectPaneSnapshot snapshot) {
+		this.snapshot = snapshot;
+		this.header = new BottomPaneNodeHeader(verticalSplitPane, snapshot.getName(), snapshot.getLanguageNode());
 
 		AnchorUtils.setAnchor(header, 0, -1, 0, 0);
+		AnchorUtils.setAnchor(snapshot.getNode(), BottomPaneNodeHeader.HEIGHT, 0, 0, 0);
 
-		AnchorUtils.setAnchor(node, SidePaneNodeHeader.HEIGHT, 0, 0, 0);
 
 		getChildren().add(header);
-		getChildren().add(node);
+		getChildren().add(snapshot.getNode());
 	}
 
-	/**
-	 * Returns the {@link Node} wrapped by this side pane node.
-	 *
-	 * @return the {@link Node}.
-	 */
+	@Override
+	public String getName() {
+		return snapshot.getName();
+	}
+
+	@Override
+	public ProjectPaneSnapshot getSnapshot() {
+		return snapshot;
+	}
+
+	@Override
 	public Node getNode() {
-		return node;
+		return snapshot.getNode();
 	}
 
 	/**
-	 * Returns the {@link SidePaneNodeHeader} of this side pane node.
+	 * Returns the {@link BottomPaneNodeHeader} of this side pane node.
 	 *
-	 * @return the {@link SidePaneNodeHeader}.
+	 * @return the {@link BottomPaneNodeHeader}.
 	 */
-	public SidePaneNodeHeader getHeader() {
+	public BottomPaneNodeHeader getHeader() {
 		return header;
 	}
 }

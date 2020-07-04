@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.bottombar;
+package net.jamsimulator.jams.gui.bar.bottombar;
 
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -31,6 +31,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import net.jamsimulator.jams.gui.bar.ProjectBarButton;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
@@ -38,7 +39,7 @@ import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 /**
  * Represents a button inside a {@link BottomBar}.
  */
-public class BottomBarButton extends ToggleButton {
+public class BottomBarButton extends ToggleButton implements ProjectBarButton {
 
 	public static final int IMAGE_SIZE = 16;
 
@@ -80,7 +81,7 @@ public class BottomBarButton extends ToggleButton {
 			if (old == val) return;
 			if (val) {
 				bottomBar.select(this);
-			} else if (bottomBar.getSelected() == node) {
+			} else if (bottomBar.getCurrent().orElse(null) == node) {
 				bottomBar.select(null);
 			}
 
@@ -88,20 +89,12 @@ public class BottomBarButton extends ToggleButton {
 
 	}
 
-	/**
-	 * Returns the {@link BottomBar} handling this button.
-	 *
-	 * @return the {@link BottomBar}.
-	 */
-	public BottomBar getBottomBar() {
+	@Override
+	public BottomBar getProjectBar() {
 		return bottomBar;
 	}
 
-	/**
-	 * Returns the name of the button.
-	 *
-	 * @return the name.
-	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -111,7 +104,8 @@ public class BottomBarButton extends ToggleButton {
 	 *
 	 * @return the {@link BottomPaneNode}.
 	 */
-	public BottomPaneNode getNode() {
-		return node;
+	public BottomPaneNode getNode
+	() {
+		return pane;
 	}
 }

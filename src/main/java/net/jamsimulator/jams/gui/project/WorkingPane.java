@@ -36,13 +36,15 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.WindowEvent;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.bottombar.BottomBar;
-import net.jamsimulator.jams.gui.sidebar.SidePane;
-import net.jamsimulator.jams.gui.sidebar.Sidebar;
-import net.jamsimulator.jams.gui.sidebar.SidebarFillRegion;
+import net.jamsimulator.jams.gui.bar.ProjectPaneSnapshot;
+import net.jamsimulator.jams.gui.bar.ProjectPaneType;
+import net.jamsimulator.jams.gui.bar.bottombar.BottomBar;
+import net.jamsimulator.jams.gui.bar.sidebar.SidePane;
+import net.jamsimulator.jams.gui.bar.sidebar.Sidebar;
+import net.jamsimulator.jams.gui.bar.sidebar.SidebarFillRegion;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
-import java.io.File;
+import java.util.Set;
 
 /**
  * The default working pane. This pane contains a central {@link SplitPane},
@@ -62,21 +64,23 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 	protected SplitPane verticalSplitPane;
 	protected Node center;
 	protected SidePane leftPane, rightPane;
-	protected Sidebar topLeftSidebar, bottomLeftSidebar,
-			topRightSidebar, bottomRightSidebar;
+	protected Sidebar topLeftSidebar, bottomLeftSidebar, topRightSidebar, bottomRightSidebar;
 	protected BottomBar bottomBar;
+
+	protected final Set<ProjectPaneSnapshot> projectPaneSnapshots;
 
 	private EventHandler<WindowEvent> stageCloseListener;
 
-	public WorkingPane(Tab parent, ProjectTab projectTab, Node center, boolean init) {
+	public WorkingPane(Tab parent, ProjectTab projectTab, Node center,
+					   Set<ProjectPaneSnapshot> projectPaneSnapshots, boolean init) {
 		this.parent = parent;
 		this.projectTab = projectTab;
 		this.center = center;
+		this.projectPaneSnapshots = projectPaneSnapshots;
 		if (init) {
 			init();
 		}
 	}
-
 
 	/**
 	 * Returns the {@link Tab} that contains this pane, or null.
@@ -169,11 +173,49 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 		return bottomBar;
 	}
 
+	/**
+	 * Adds the given {@link ProjectPaneSnapshot} to the matching {@link Sidebar} or {@link BottomBar}.
+	 *
+	 * @param snapshot the {@link ProjectPaneSnapshot}.
+	 * @return whether the snapshot was added. This method fails whether a snapshot with the same name is already added.
+	 */
+	public boolean addSidePaneSnapshot(ProjectPaneSnapshot snapshot) {
+		if (!projectPaneSnapshots.add(snapshot)) return false;
+		manageSidePaneAddition(snapshot);
+		return true;
+	}
+
 	@Override
 	public void onClose() {
 		if (stageCloseListener != null) {
 			JamsApplication.removeStageCloseListener(stageCloseListener);
 		}
+	}
+
+	private void manageSidePaneAddition (ProjectPaneSnapshot snapshot) {
+		if (snapshot.getCurrentPosition() == ProjectPaneType.BOTTOM) {
+			bottomBar.add(snapshot.getName(), snapshot.getNode(),
+					snapshot.getIcon(), snapshot.getLanguageNode());
+		}
+
+		Sidebar bar;
+		switch (snapshot.getCurrentPosition()) {
+			case TOP_LEFT:
+				bar = topLeftSidebar;
+				break;
+			case BOTTOM_LEFT:
+				bar = bottomLeftSidebar;
+				break;
+			case TOP_RIGHT:
+				bar = topRightSidebar;
+				break;
+			default:
+			case BOTTOM_RIGHT:
+				bar = bottomRightSidebar;
+				break;
+		}
+
+		bar.add(snapshot);
 	}
 
 	//region INIT
@@ -199,6 +241,7 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 
 
 		loadSidebars();
+		addSnapshots();
 		loadResizeEvents();
 
 		stageCloseListener = target -> {
@@ -246,6 +289,12 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 		sidebar.setPrefWidth(SIDEBAR_WIDTH);
 		sidebar.setMaxWidth(SIDEBAR_WIDTH);
 		return sidebar;
+	}
+
+	private void addSnapshots() {
+		for (ProjectPaneSnapshot snapshot : projectPaneSnapshots) {
+			manageSidePaneAddition(snapshot);
+		}
 	}
 
 	private void loadResizeEvents() {

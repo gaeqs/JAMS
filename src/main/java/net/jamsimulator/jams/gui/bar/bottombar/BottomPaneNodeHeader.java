@@ -22,67 +22,58 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.sidebar;
+package net.jamsimulator.jams.gui.bar.bottombar;
 
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
-import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.sidebar.event.SidebarChangeNodeEvent;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
 /**
- * Represents the header of a {@link SidePaneNode}. This header contains
- * information and options about the wrapped {@link javafx.scene.Node} of the {@link SidePaneNode}.
+ * Represents the header of a {@link BottomPaneNode}. This header contains
+ * information and options about the wrapped {@link javafx.scene.Node} of the {@link BottomPaneNode}.
  * <p>
  * This header also allows to resize the {@link javafx.scene.Node}.
  *
- * @see SidePaneNode
+ * @see BottomPaneNode
  */
-public class SidePaneNodeHeader extends AnchorPane {
+public class BottomPaneNodeHeader extends AnchorPane {
 
 	public static final int HEIGHT = 25;
-	public static final Cursor TOP_NULL_CURSOR = Cursor.DEFAULT;
-	public static final Cursor TOP_NOT_NULL_CURSOR = Cursor.N_RESIZE;
+	public static final Cursor CURSOR = Cursor.N_RESIZE;
 
-	private SidePane sidePane;
-
-	private boolean top;
+	private SplitPane verticalSplitPane;
 
 	private String name;
 	private Label label;
 
 	private double relativeDragPosition;
 
+
 	/**
 	 * Creates the header.
 	 *
-	 * @param sidePane     the {@link SidePane} that handles the wrapped {@link javafx.scene.Node}.
-	 * @param name         the name of the {@link javafx.scene.Node}.
-	 * @param top          whether the {@link Sidebar} containing the {@link javafx.scene.Node} is a top {@link Sidebar}.
-	 * @param languageNode the language node to display or null.
+	 * @param verticalSplitPane the {@link SplitPane} that handles the wrapped {@link javafx.scene.Node}.
+	 * @param name              the name of the {@link javafx.scene.Node}.
+	 * @param languageNode      the language node to display or null.
 	 */
-	public SidePaneNodeHeader(SidePane sidePane, String name, boolean top, String languageNode) {
-		this.sidePane = sidePane;
+	public BottomPaneNodeHeader(SplitPane verticalSplitPane, String name, String languageNode) {
+		this.verticalSplitPane = verticalSplitPane;
 		this.name = name;
 
-		this.top = top;
-
-		getStyleClass().add("side-pane-node-header");
+		getStyleClass().add("bottom-pane-node-header");
 		setPrefHeight(HEIGHT);
 
-		if (!top) {
-			setCursor(sidePane.getTop() == null ? TOP_NULL_CURSOR : TOP_NOT_NULL_CURSOR);
-		}
+		setCursor(CURSOR);
 
 		label = languageNode == null ? new Label(name) : new LanguageLabel(languageNode);
 		AnchorUtils.setAnchor(label, 0, 0, 5, -1);
 		getChildren().add(label);
-
-		sidePane.registerListeners(this, true);
 		registerFXEvents();
 	}
+
 
 	/**
 	 * Returns the name of the header.
@@ -102,36 +93,14 @@ public class SidePaneNodeHeader extends AnchorPane {
 		return label;
 	}
 
-	/**
-	 * Returns whether the {@link Sidebar} containing the {@link javafx.scene.Node} is a top {@link Sidebar}.
-	 *
-	 * @return whether the {@link Sidebar} containing the {@link javafx.scene.Node} is a top {@link Sidebar}.
-	 */
-	public boolean isTop() {
-		return top;
-	}
-
-	@Listener
-	private void onTopChange(SidebarChangeNodeEvent event) {
-		if (top || !event.isTop()) return;
-
-		if (event.getFrom() == null && event.getTo() != null) {
-			setCursor(TOP_NOT_NULL_CURSOR);
-		} else if (event.getFrom() != null && event.getTo() == null) {
-			setCursor(TOP_NULL_CURSOR);
-		}
-	}
-
 	private void registerFXEvents() {
-		if (top) return;
 		setOnMousePressed(event -> relativeDragPosition = event.getY());
 		setOnMouseDragged(event -> {
-			if (getCursor() == TOP_NULL_CURSOR) return;
 			double absolute = event.getSceneY();
-			double min = sidePane.getLocalToSceneTransform().getTy();
-			double max = min + sidePane.getHeight();
+			double min = verticalSplitPane.getLocalToSceneTransform().getTy();
+			double max = min + verticalSplitPane.getHeight();
 			double relative = (absolute - min - relativeDragPosition) / (max - min);
-			sidePane.setDividerPosition(0, relative);
+			verticalSplitPane.setDividerPosition(0, relative);
 		});
 	}
 }

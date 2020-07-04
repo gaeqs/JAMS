@@ -22,15 +22,17 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.bottombar;
+package net.jamsimulator.jams.gui.bar.bottombar;
 
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
-import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
-import net.jamsimulator.jams.gui.sidebar.SidePane;
-import net.jamsimulator.jams.gui.sidebar.SidePaneNode;
-import net.jamsimulator.jams.gui.sidebar.SidebarButton;
+import net.jamsimulator.jams.gui.bar.ProjectBar;
+import net.jamsimulator.jams.gui.bar.ProjectBarPane;
+import net.jamsimulator.jams.gui.bar.ProjectPaneSnapshot;
+import net.jamsimulator.jams.gui.bar.sidebar.SidePane;
+import net.jamsimulator.jams.gui.bar.sidebar.SidePaneNode;
+import net.jamsimulator.jams.gui.bar.sidebar.SidebarButton;
 
 import java.util.Optional;
 
@@ -44,7 +46,7 @@ import java.util.Optional;
  * @see SidebarButton
  * @see SidePaneNode
  */
-public class BottomBar extends HBox {
+public class BottomBar extends HBox implements ProjectBar {
 
 	private final SplitPane verticalSplitPane;
 	private BottomPaneNode selected;
@@ -72,51 +74,29 @@ public class BottomBar extends HBox {
 		return verticalSplitPane;
 	}
 
-	/**
-	 * Returns the selected {@link BottomPaneNode}, or null.
-	 *
-	 * @return the selected {@link BottomPaneNode}, or null.
-	 */
-	public BottomPaneNode getSelected() {
-		return selected;
+	@Override
+	public Optional<BottomPaneNode> getCurrent() {
+		return Optional.ofNullable(selected);
 	}
 
-	/**
-	 * Returns the {@link BottomBarButton} that matches the given name, if present.
-	 *
-	 * @param name the name.
-	 * @return the {@link BottomBarButton}, if present.
-	 */
+	@Override
 	public Optional<BottomBarButton> get(String name) {
 		return getChildren().stream().filter(target -> target instanceof BottomBarButton
 				&& ((BottomBarButton) target).getName().equals(name))
 				.map(target -> (BottomBarButton) target).findAny();
 	}
 
-	/**
-	 * Returns whether this bottom bar contains a node whose assigned name equals the given name.
-	 *
-	 * @param name the given name.
-	 * @return whether this bottom bar contains the node.
-	 */
-	public boolean containsNode(String name) {
+	@Override
+	public boolean contains(String name) {
 		return getChildren().stream().anyMatch(target -> target instanceof BottomBarButton
 				&& ((BottomBarButton) target).getName().equals(name));
 	}
 
-	/**
-	 * Adds a node in this bottom bar. This node will be wrapped by a {@link SidePaneNode}.
-	 * <p>
-	 * If a node with the given name is already inside the bottom bar the given node wont be added.
-	 *
-	 * @param name the node name.
-	 * @param node the given node.
-	 * @return whether the given node was added.
-	 */
-	public boolean addNode(String name, Node node, Image icon, String languageNode) {
-		if (containsNode(name)) return false;
-		BottomPaneNode bottomPaneNode = new BottomPaneNode(verticalSplitPane, node, name, languageNode);
-		BottomBarButton button = new BottomBarButton(this, name, bottomPaneNode, icon, languageNode);
+	@Override
+	public boolean add(ProjectPaneSnapshot snapshot) {
+		if (contains(snapshot.getName())) return false;
+		BottomPaneNode bottomPaneNode = new BottomPaneNode(verticalSplitPane, snapshot);
+		BottomBarButton button = new BottomBarButton(this, bottomPaneNode, snapshot);
 
 		getChildren().add(button);
 

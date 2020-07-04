@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.sidebar;
+package net.jamsimulator.jams.gui.bar.sidebar;
 
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -30,47 +30,57 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
+import net.jamsimulator.jams.gui.bar.ProjectBarButton;
+import net.jamsimulator.jams.gui.bar.ProjectPaneSnapshot;
+import net.jamsimulator.jams.gui.explorer.ExplorerElement;
+import net.jamsimulator.jams.gui.explorer.folder.FolderExplorerDragAndDropManagement;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
+
+import java.util.List;
 
 
 /**
  * Represents a button inside a {@link Sidebar}.
  */
-public class SidebarButton extends ToggleButton {
+public class SidebarButton extends ToggleButton implements ProjectBarButton {
 
 	public static final int IMAGE_SIZE = 16;
+	public static final String DRAG_DROP_PREFIX = "sidebar";
 
 	private final Sidebar sidebar;
 
-	private final String name;
-	private final SidePaneNode node;
+	private final SidePaneNode pane;
 	private Image image;
 
 	/**
 	 * Creates a sidebar button.
 	 *
 	 * @param sidebar the sidebar handling this button.
-	 * @param name    the name of this button.
-	 * @param node    the node handled by this button.
+	 * @param pane    the node handled by this button.
 	 * @param left    whether the sidebar is a left sidebar or a right one.
-	 * @param icon    the icon of the button, or null.
 	 */
-	public SidebarButton(Sidebar sidebar, String name, SidePaneNode node, boolean left, Image icon, String languageNode) {
+	public SidebarButton(Sidebar sidebar, SidePaneNode pane, boolean left) {
 		this.sidebar = sidebar;
-		this.name = name;
-		this.node = node;
+		this.pane = pane;
 
 		getStyleClass().addAll("sidebar-button",
 				left ? "sidebar-button-left" : "sidebar-button-right");
 
-		Label label = languageNode == null ? new Label(name) : new LanguageLabel(languageNode);
+		Label label = pane.getSnapshot().getLanguageNode() == null ?
+				new Label(pane.getSnapshot().getName()) :
+				new LanguageLabel(pane.getSnapshot().getLanguageNode());
+
 		Group group = new Group(label);
 
-		if (icon != null) {
-			ImageView imageView = new NearestImageView(icon, IMAGE_SIZE, IMAGE_SIZE);
+		if (pane.getSnapshot().getIcon() != null) {
+			ImageView imageView = new NearestImageView(pane.getSnapshot().getIcon(), IMAGE_SIZE, IMAGE_SIZE);
 			VBox vBox = left ? new VBox(group, imageView) : new VBox(imageView, group);
 			vBox.setSpacing(4);
 			vBox.setAlignment(Pos.CENTER);
@@ -81,40 +91,65 @@ public class SidebarButton extends ToggleButton {
 
 		setPrefWidth(WorkingPane.SIDEBAR_WIDTH);
 
+		loadSelectedListener();
+	}
+
+
+	@Override
+	public Sidebar getProjectBar() {
+		return sidebar;
+	}
+
+	@Override
+	public String getName() {
+		return pane.getSnapshot().getName();
+	}
+
+	@Override
+	public ProjectPaneSnapshot getSnapshot() {
+		return pane.getSnapshot();
+	}
+
+	@Override
+	public SidePaneNode getPane() {
+		return pane;
+	}
+
+	private void loadSelectedListener() {
 		selectedProperty().addListener((obs, old, val) -> {
 			if (old == val) return;
 			if (val) {
 				sidebar.select(this);
-			} else if (sidebar.getSelected() == node) {
+			} else if (sidebar.getCurrent().orElse(null) == pane) {
 				sidebar.select(null);
 			}
 		});
 	}
 
-	/**
-	 * Returns the {@link Sidebar} handling this button.
-	 *
-	 * @return the {@link Sidebar}.
-	 */
-	public Sidebar getSidebar() {
-		return sidebar;
-	}
+	private void loadDragAndDropListeners() {
+		addEventHandler(DragEvent.DRAG_OVER, event -> {
+			if (!event.getDragboard().hasString() || !event.getDragboard().getString().startsWith(DRAG_DROP_PREFIX))
+				return;
+			event.acceptTransferModes(TransferMode.COPY);
+			event.consume();
+		});
 
-	/**
-	 * Returns the name of the button.
-	 *
-	 * @return the name.
-	 */
-	public String getName() {
-		return name;
-	}
+		addEventHandler(DragEvent.DRAG_DROPPED, event -> {
+			String name = event.getDragboard().getString().substring(DRAG_DROP_PREFIX.length() + 1);
 
-	/**
-	 * Returns the {@link SidePaneNode} handled by this button.
-	 *
-	 * @return the {@link SidePaneNode}.
-	 */
-	public SidePaneNode getNode() {
-		return node;
+
+			event.setDropCompleted(true);
+			event.consume();
+		});
+
+		addEventHandler(MouseEvent.DRAG_DETECTED, event -> {
+			if (!selected) {
+				getExplorer().setSelectedElement(this);
+			}
+			Dragboard db = startDragAndDrop(TransferMode.COPY);
+			List<ExplorerElement> selectedElements = getExplorer().getSelectedElements();
+			FolderExplorerDragAndDropManagement.manageDragFromElements(db, selectedElements);
+			event.consume();
+		});
 	}
 }

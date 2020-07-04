@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.sidebar;
+package net.jamsimulator.jams.gui.bar.sidebar;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;

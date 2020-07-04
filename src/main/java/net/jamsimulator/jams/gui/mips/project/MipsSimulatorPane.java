@@ -26,7 +26,7 @@ public class MipsSimulatorPane extends WorkingPane {
 	protected TabPane registersTabs;
 
 	public MipsSimulatorPane(Tab parent, ProjectTab projectTab, MipsProject project, Simulation<?> simulation, Assembler assembler) {
-		super(parent, projectTab, new SimulatorCentralPane(simulation, assembler.getOriginals()), false);
+		super(parent, projectTab, new SimulatorCentralPane(simulation, assembler.getOriginals()), new HashSet<>(), false);
 		this.project = project;
 		this.simulation = simulation;
 
@@ -60,13 +60,13 @@ public class MipsSimulatorPane extends WorkingPane {
 		registersTabs.getTabs().add(new Tab("COP0", new RegistersTable(simulation.getRegisters().getCoprocessor0Registers(), false)));
 		registersTabs.getTabs().add(new Tab("COP1", new RegistersTable(simulation.getRegisters().getCoprocessor1Registers(), true)));
 
-		topRightSidebar.addNode("Registers", registersTabs, explorerIcon, null);
+		//topRightSidebar.addNode("Registers", registersTabs, explorerIcon, null);
 	}
 
 	private void loadLog() {
 		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE,
 				Icons.FILE_FILE_PATH, 1024, 1024).orElse(null);
-		bottomBar.addNode("Log", simulation.getLog(), explorerIcon, Messages.LOG_NAME);
+		bottomBar.add("Log", simulation.getLog(), explorerIcon, Messages.LOG_NAME);
 	}
 
 	@Override

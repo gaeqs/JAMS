@@ -22,11 +22,11 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.sidebar.event;
+package net.jamsimulator.jams.gui.bar.sidebar.event;
 
 import net.jamsimulator.jams.event.Event;
-import net.jamsimulator.jams.gui.sidebar.SidePane;
-import net.jamsimulator.jams.gui.sidebar.SidePaneNode;
+import net.jamsimulator.jams.gui.bar.sidebar.SidePane;
+import net.jamsimulator.jams.gui.bar.sidebar.SidePaneNode;
 
 /**
  * This event is called by a {@link SidePane} when a node is changed.

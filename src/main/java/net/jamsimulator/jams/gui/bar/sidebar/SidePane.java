@@ -22,14 +22,14 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.sidebar;
+package net.jamsimulator.jams.gui.bar.sidebar;
 
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
-import net.jamsimulator.jams.gui.sidebar.event.SidebarChangeNodeEvent;
+import net.jamsimulator.jams.gui.bar.sidebar.event.SidebarChangeNodeEvent;
 
 import java.lang.reflect.Method;
 
