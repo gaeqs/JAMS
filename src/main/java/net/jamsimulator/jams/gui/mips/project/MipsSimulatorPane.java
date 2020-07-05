@@ -5,6 +5,8 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.bar.BarType;
+import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.simulator.SimulatorCentralPane;
 import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
@@ -30,12 +32,12 @@ public class MipsSimulatorPane extends WorkingPane {
 		this.project = project;
 		this.simulation = simulation;
 
+		loadRegisterTabs();
+		loadLog();
+
 		init();
 
 		SplitPane.setResizableWithParent(center, true);
-
-		loadRegisterTabs();
-		loadLog();
 	}
 
 	public MipsProject getProject() {
@@ -59,14 +61,13 @@ public class MipsSimulatorPane extends WorkingPane {
 		registersTabs.getTabs().add(new Tab("General", new RegistersTable(general, false)));
 		registersTabs.getTabs().add(new Tab("COP0", new RegistersTable(simulation.getRegisters().getCoprocessor0Registers(), false)));
 		registersTabs.getTabs().add(new Tab("COP1", new RegistersTable(simulation.getRegisters().getCoprocessor1Registers(), true)));
-
-		//topRightSidebar.addNode("Registers", registersTabs, explorerIcon, null);
+		paneSnapshots.add(new PaneSnapshot("Registers", BarType.TOP_RIGHT, registersTabs, explorerIcon, null));
 	}
 
 	private void loadLog() {
 		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE,
 				Icons.FILE_FILE_PATH, 1024, 1024).orElse(null);
-		//bottomBar.add("Log", simulation.getLog(), explorerIcon, Messages.LOG_NAME);
+		paneSnapshots.add(new PaneSnapshot("Log", BarType.BOTTOM, simulation.getLog(), explorerIcon, Messages.LOG_NAME));
 	}
 
 	@Override

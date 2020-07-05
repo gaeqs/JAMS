@@ -103,8 +103,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 				instruction.getBasicOrigin().generateExecution(this, instruction).orElse(null);
 
 		//Send before event
-		SingleCycleInstructionExecutionEvent.Before before = callEvent(
-				new SingleCycleInstructionExecutionEvent.Before(this, pc, instruction, execution));
+		SingleCycleInstructionExecutionEvent.Before before = callEvent(new SingleCycleInstructionExecutionEvent.Before(this, pc, instruction, execution));
 		if (before.isCancelled()) return;
 
 		//Gets the modifies execution. This may be null.
