@@ -29,4 +29,22 @@ public interface BarButton {
 	 * @return the {@link BarPane}.
 	 */
 	BarPane getPane();
+
+	/**
+	 * Shows this pane if it was hidden, hiding any other pane.
+	 * <p>
+	 * If this pane is already shown, this method returns false.
+	 *
+	 * @return whether the operation was successful.
+	 */
+	boolean show();
+
+	/**
+	 * Hides this pane if it was shown.
+	 * <p>
+	 * If this pane is already hidden, this method returns false.
+	 *
+	 * @return whether the operation was successful.
+	 */
+	boolean hide();
 }

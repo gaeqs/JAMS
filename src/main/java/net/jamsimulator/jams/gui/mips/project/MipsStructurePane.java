@@ -24,14 +24,12 @@
 
 package net.jamsimulator.jams.gui.mips.project;
 
-import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.input.ScrollEvent;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.bar.BarButton;
 import net.jamsimulator.jams.gui.bar.BarType;
 import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.editor.FileEditorHolder;
@@ -59,7 +57,6 @@ public class MipsStructurePane extends WorkingPane {
 	protected SimulationSidebar simulationSidebar;
 
 	protected Log log;
-	protected BarButton logButton;
 
 	/**
 	 * Creates the mips project pane.
@@ -108,15 +105,6 @@ public class MipsStructurePane extends WorkingPane {
 	 */
 	public Log getLog() {
 		return log;
-	}
-
-	/**
-	 * Returns the log's {@link BarButton}.
-	 *
-	 * @return the log's {@link BarButton}.
-	 */
-	public BarButton getLogButton() {
-		return logButton;
 	}
 
 	/**
@@ -189,12 +177,6 @@ public class MipsStructurePane extends WorkingPane {
 
 		log = new Log();
 		pane.setContent(log);
-
-		Platform.runLater(() -> {
-			//TODO Provisional
-			logButton = barMap.get(BarType.BOTTOM).get().get("Log").get();
-		});
-
 		paneSnapshots.add(new PaneSnapshot("Log", BarType.BOTTOM, pane, icon, Messages.LOG_NAME));
 	}
 

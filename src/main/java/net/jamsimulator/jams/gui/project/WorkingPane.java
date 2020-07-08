@@ -117,7 +117,7 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 	 *
 	 * @return the {@link BarMap}.
 	 */
-	private BarMap getBarMap() {
+	public BarMap getBarMap() {
 		return barMap;
 	}
 

@@ -130,13 +130,13 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 				Set<String> labels = new HashSet<>(mipsElements.getLabels());
 				mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
 				addElements(labels.stream().filter(target -> target.startsWith(start)), s -> s, s -> s);
-				return start;
 			case REGISTER:
 				Set<String> names = project.getData().getRegistersBuilder().getRegistersNames();
 				Set<Character> starts = project.getData().getRegistersBuilder().getValidRegistersStarts();
 
 				starts.forEach(c -> addElements(names.stream()
-						.filter(target -> (c + target).startsWith(start)), s -> c + s, s -> c + s));
+						.filter(target -> target.startsWith(start)
+								|| (c + target).startsWith(start)), s -> c + s, s -> c + s));
 
 				return start;
 			case STRING:

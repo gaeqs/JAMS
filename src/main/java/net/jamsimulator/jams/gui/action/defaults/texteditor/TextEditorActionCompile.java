@@ -29,6 +29,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.bar.BarButton;
 import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
 import net.jamsimulator.jams.gui.mips.project.MipsSimulatorPane;
 import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
@@ -70,7 +71,9 @@ public class TextEditorActionCompile extends Action {
 		if (tab == null) return;
 		MipsStructurePane pane = (MipsStructurePane) tab.getProjectTabPane().getWorkingPane();
 		pane.getFileDisplayHolder().saveAll(true);
-		//pane.getLogButton().setSelected(true);
+
+		pane.getBarMap().searchButton("Log").ifPresent(BarButton::show);
+
 		Log log = pane.getLog();
 		try {
 			List<String> files = new ArrayList<>();

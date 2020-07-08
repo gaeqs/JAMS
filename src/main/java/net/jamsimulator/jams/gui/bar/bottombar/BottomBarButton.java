@@ -38,6 +38,8 @@ import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
+import java.util.Optional;
+
 /**
  * Represents a button inside a {@link BottomBar}.
  */
@@ -98,6 +100,23 @@ public class BottomBarButton extends ToggleButton implements BarButton {
 	@Override
 	public BottomPaneNode getPane() {
 		return pane;
+	}
+
+
+	@Override
+	public boolean show() {
+		Optional<BottomPaneNode> optional = bottomBar.getCurrent();
+		if (optional.isPresent() && optional.get().equals(pane)) return false;
+		bottomBar.select(this);
+		return true;
+	}
+
+	@Override
+	public boolean hide() {
+		Optional<BottomPaneNode> optional = bottomBar.getCurrent();
+		if (!optional.isPresent() || !optional.get().equals(pane)) return false;
+		bottomBar.select(null);
+		return true;
 	}
 
 	private void loadSelectedListener() {

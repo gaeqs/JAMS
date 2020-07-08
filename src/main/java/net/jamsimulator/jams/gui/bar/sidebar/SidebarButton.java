@@ -32,10 +32,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.bar.BarButton;
+import net.jamsimulator.jams.gui.bar.BarPane;
 import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
+
+import java.util.Optional;
 
 
 /**
@@ -104,6 +107,22 @@ public class SidebarButton extends ToggleButton implements BarButton {
 	@Override
 	public SidePaneNode getPane() {
 		return pane;
+	}
+
+	@Override
+	public boolean show() {
+		Optional<BarPane> optional = sidebar.getCurrent();
+		if (optional.isPresent() && optional.get().equals(pane)) return false;
+		sidebar.select(this);
+		return true;
+	}
+
+	@Override
+	public boolean hide() {
+		Optional<BarPane> optional = sidebar.getCurrent();
+		if (!optional.isPresent() || !optional.get().equals(pane)) return false;
+		sidebar.select(null);
+		return true;
 	}
 
 	private void loadSelectedListener() {
