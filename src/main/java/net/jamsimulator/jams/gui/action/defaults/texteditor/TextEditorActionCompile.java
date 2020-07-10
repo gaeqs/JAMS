@@ -31,10 +31,11 @@ import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.bar.BarButton;
 import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
-import net.jamsimulator.jams.gui.mips.project.MipsSimulatorPane;
+import net.jamsimulator.jams.gui.mips.project.MIPSSimulationPane;
 import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
-import net.jamsimulator.jams.gui.util.Log;
+import net.jamsimulator.jams.gui.util.log.Console;
+import net.jamsimulator.jams.gui.util.log.SimpleLog;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
@@ -74,7 +75,7 @@ public class TextEditorActionCompile extends Action {
 
 		pane.getBarMap().searchButton("Log").ifPresent(BarButton::show);
 
-		Log log = pane.getLog();
+		SimpleLog log = pane.getLog();
 		try {
 			List<String> files = new ArrayList<>();
 			for (File file : project.getData().getFilesToAssemble().getFiles()) {
@@ -97,16 +98,16 @@ public class TextEditorActionCompile extends Action {
 			assembler.assemble();
 
 			int mainLabel = assembler.getGlobalLabelAddress("main").orElse(-1);
-			Log simulationLog = new Log();
+			Console console = new Console();
 
 			SimulationSyscallExecutions executions = new SimulationSyscallExecutions();
 			selected.getSyscallExecutionBuilders().forEach((key, builder) -> executions.bindExecution(key, builder.build()));
 
-			Simulation<?> simulation = assembler.createSimulation(selected.getArchitecture(), executions, simulationLog);
+			Simulation<?> simulation = assembler.createSimulation(selected.getArchitecture(), executions, console);
 
 			project.getProjectTab().ifPresent(projectTab ->
 					projectTab.getProjectTabPane()
-							.createProjectPane((t, pt) -> new MipsSimulatorPane(t, pt, project, simulation, assembler), true));
+							.createProjectPane((t, pt) -> new MIPSSimulationPane(t, pt, project, simulation, assembler), true));
 
 			log.println();
 			if (mainLabel == -1) {

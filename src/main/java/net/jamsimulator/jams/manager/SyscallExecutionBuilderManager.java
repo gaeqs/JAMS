@@ -126,6 +126,12 @@ public class SyscallExecutionBuilderManager extends SimpleEventBroadcast {
 		builders.add(new SyscallExecutionPrintFloat.Builder());
 		builders.add(new SyscallExecutionPrintDouble.Builder());
 		builders.add(new SyscallExecutionPrintString.Builder());
+		builders.add(new SyscallExecutionReadInteger.Builder());
+		builders.add(new SyscallExecutionReadFloat.Builder());
+		builders.add(new SyscallExecutionReadDouble.Builder());
+		builders.add(new SyscallExecutionReadString.Builder());
+
+		builders.add(new SyscallExecutionExit.Builder());
 	}
 
 }

@@ -26,7 +26,7 @@ package net.jamsimulator.jams.project.mips;
 
 import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.gui.project.WorkingPane;
-import net.jamsimulator.jams.gui.util.Log;
+import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.project.BasicProject;
@@ -75,7 +75,7 @@ public class MipsProject extends BasicProject {
 		assembler.assemble();
 
 		//TODO ADD EXECUTIONS
-		return assembler.createSimulation(selected.getArchitecture(), null, new Log());
+		return assembler.createSimulation(selected.getArchitecture(), null, new Console());
 	}
 
 	@Override

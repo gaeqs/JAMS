@@ -25,7 +25,7 @@
 package net.jamsimulator.jams.mips.simulation.singlecycle;
 
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.util.Log;
+import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
@@ -39,6 +39,7 @@ import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.change.*;
+import net.jamsimulator.jams.mips.simulation.event.SimulationUnlockEvent;
 import net.jamsimulator.jams.mips.simulation.singlecycle.event.SingleCycleInstructionExecutionEvent;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 import net.jamsimulator.jams.utils.StringUtils;
@@ -71,20 +72,16 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	 * @param instructionStackBottom the address of the bottom of the instruction stack.
 	 */
 	public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet,
-								 Registers registers, Memory memory, SimulationSyscallExecutions syscallExecutions, Log log, int instructionStackBottom) {
+								 Registers registers, Memory memory, SimulationSyscallExecutions syscallExecutions, Console log, int instructionStackBottom) {
 		super(architecture, instructionSet, registers, memory, syscallExecutions, log, instructionStackBottom);
 		changes = new LinkedList<>();
 	}
 
 	@Override
 	public synchronized void nextStep() {
+		if (locked || finished) return;
 		currentStepChanges = new StepChanges<>();
 		int pc = registers.getProgramCounter().getValue();
-
-		if (pc > instructionStackBottom) {
-			currentStepChanges = null;
-			throw new InstructionNotFoundException("Dropped off bottom.");
-		}
 
 		//Fetch and Decode
 		registers.getProgramCounter().setValue(pc + 4);
@@ -120,6 +117,12 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
 		changes.add(currentStepChanges);
 		currentStepChanges = null;
+
+		if (pc + 4 > instructionStackBottom) {
+			finished = true;
+			getConsole().println();
+			getConsole().printWarningLn("Execution finished. Dropped off bottom.");
+		}
 	}
 
 	@Override
@@ -130,14 +133,22 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
 	@Override
 	public synchronized void executeAll() {
-		while (registers.getProgramCounter().getValue() <= instructionStackBottom) {
+		if (locked || finished) return;
+		shouldResumeExecutionOnUnlock = true;
+		while (!finished) {
 			nextStep();
+			if (locked) return;
 		}
+		shouldResumeExecutionOnUnlock = false;
 	}
 
 	@Override
 	public synchronized boolean undoLastStep() {
 		if (changes.isEmpty()) return false;
+		callEvent(new SimulationUnlockEvent(this));
+		locked = false;
+		finished = false;
+		shouldResumeExecutionOnUnlock = false;
 		changes.removeLast().restore(this);
 		return true;
 	}

@@ -8,10 +8,10 @@ import net.jamsimulator.jams.utils.AnchorUtils;
 
 import java.util.Map;
 
-public class SimulatorCentralPane extends AnchorPane {
+public class MIPSSimulationCentralPane extends AnchorPane {
 
 
-	public SimulatorCentralPane(Simulation<?> simulation, Map<Integer, String> originals) {
+	public MIPSSimulationCentralPane(Simulation<?> simulation, Map<Integer, String> originals) {
 		ExecutionButtons buttons = new ExecutionButtons(simulation);
 		AnchorUtils.setAnchor(buttons, 0, -1, 0, 0);
 		buttons.setPrefHeight(30);

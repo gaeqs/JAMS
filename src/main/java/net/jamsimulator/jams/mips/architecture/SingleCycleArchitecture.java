@@ -24,7 +24,7 @@
 
 package net.jamsimulator.jams.mips.architecture;
 
-import net.jamsimulator.jams.gui.util.Log;
+import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
@@ -54,7 +54,7 @@ public final class SingleCycleArchitecture extends Architecture {
 																Registers registers,
 																Memory memory,
 																SimulationSyscallExecutions syscallExecutions,
-																Log log,
+																Console log,
 																int instructionStackBottom) {
 		return new SingleCycleSimulation(this, instructionSet, registers, memory, syscallExecutions, log, instructionStackBottom);
 	}

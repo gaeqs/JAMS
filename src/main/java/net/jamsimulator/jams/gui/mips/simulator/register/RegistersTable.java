@@ -35,8 +35,20 @@ public class RegistersTable extends TableView<RegisterPropertyWrapper> {
 		valueColumn.setEditable(true);
 		hexColumn.setEditable(true);
 
-		valueColumn.setOnEditCommit(t -> t.getRowValue().valueProperty().setValue(t.getNewValue()));
-		hexColumn.setOnEditCommit(t -> t.getRowValue().hexProperty().setValue(t.getNewValue()));
+		valueColumn.setOnEditCommit(t -> {
+			if (!t.getRowValue().getRegister().isModifiable()) {
+				t.getRowValue().valueProperty().setValue(t.getOldValue());
+				return;
+			}
+			t.getRowValue().valueProperty().setValue(t.getNewValue());
+		});
+		hexColumn.setOnEditCommit(t -> {
+			if (!t.getRowValue().getRegister().isModifiable()) {
+				t.getRowValue().hexProperty().setValue(t.getOldValue());
+				return;
+			}
+			t.getRowValue().hexProperty().setValue(t.getNewValue());
+		});
 
 		registers.stream()
 				.sorted((Comparator.comparingInt(Register::getIdentifier)))

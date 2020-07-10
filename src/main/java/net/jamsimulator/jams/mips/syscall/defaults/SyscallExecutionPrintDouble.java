@@ -34,7 +34,7 @@ public class SyscallExecutionPrintDouble implements SyscallExecution {
 		Register register1 = simulation.getRegisters().getCoprocessor1Register(register).orElse(null);
 		if (register1 == null)
 			throw new IllegalStateException("Floating point register " + register + " not found");
-		Register register2 = simulation.getRegisters().getCoprocessor1Register(register).orElse(null);
+		Register register2 = simulation.getRegisters().getCoprocessor1Register(register + 1).orElse(null);
 		if (register2 == null)
 			throw new IllegalStateException("Floating point register " + (register + 1) + " not found");
 
@@ -43,14 +43,13 @@ public class SyscallExecutionPrintDouble implements SyscallExecution {
 		if (printHex) {
 			long value = (((long) register2.getValue()) << 32) + register1.getValue();
 			toPrint = "0x" + Long.toHexString(value);
-		}
-		else {
+		} else {
 			double value = NumericUtils.intsToDouble(register1.getValue(), register2.getValue());
 			toPrint = String.valueOf(value);
 		}
 
-		simulation.getLog().print(toPrint);
-		if (lineJump) simulation.getLog().println();
+		simulation.getConsole().print(toPrint);
+		if (lineJump) simulation.getConsole().println();
 	}
 
 	public static class Builder extends SyscallExecutionBuilder<SyscallExecutionPrintDouble> {
@@ -63,7 +62,7 @@ public class SyscallExecutionPrintDouble implements SyscallExecution {
 			super(NAME, new LinkedList<>());
 			properties.add(hexProperty = new SimpleBooleanProperty(null, "PRINT_HEX", false));
 			properties.add(lineJump = new SimpleBooleanProperty(null, "LINE_JUMP", false));
-			properties.add(register = new SimpleIntegerProperty(null, "REGISTER", 12));
+			properties.add(register = new SimpleIntegerProperty(null, "REGISTER", 0));
 		}
 
 		@Override

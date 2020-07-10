@@ -56,6 +56,14 @@ public class Messages {
 	public static final String SIMULATION_CONFIGURATION_MEMORY = "SIMULATION_CONFIGURATION_MEMORY";
 	public static final String SIMULATION_SYSTEM_CALLS = "SIMULATION_SYSTEM_CALLS";
 
+
+	public static final String REGISTERS_NAME = "REGISTERS_NAME";
+	public static final String CONSOLE_NAME = "CONSOLE_NAME";
+
+	public static final String REGISTERS_GENERAL = "REGISTERS_GENERAL";
+	public static final String REGISTERS_COP0 = "REGISTERS_COP0";
+	public static final String REGISTERS_COP1 = "REGISTERS_COP1";
+
 	public static final String CONFIG = "CONFIG";
 
 	public static final String CONFIG_ACTION = "CONFIG_ACTION";

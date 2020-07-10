@@ -107,7 +107,7 @@ public class BottomBarButton extends ToggleButton implements BarButton {
 	public boolean show() {
 		Optional<BottomPaneNode> optional = bottomBar.getCurrent();
 		if (optional.isPresent() && optional.get().equals(pane)) return false;
-		bottomBar.select(this);
+		selectedProperty().set(true);
 		return true;
 	}
 
@@ -115,7 +115,7 @@ public class BottomBarButton extends ToggleButton implements BarButton {
 	public boolean hide() {
 		Optional<BottomPaneNode> optional = bottomBar.getCurrent();
 		if (!optional.isPresent() || !optional.get().equals(pane)) return false;
-		bottomBar.select(null);
+		selectedProperty().set(false);
 		return true;
 	}
 

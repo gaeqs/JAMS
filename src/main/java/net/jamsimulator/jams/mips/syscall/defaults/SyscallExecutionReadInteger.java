@@ -8,18 +8,17 @@ import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
+import net.jamsimulator.jams.utils.NumericUtils;
 
 import java.util.LinkedList;
 
-public class SyscallExecutionPrintInteger implements SyscallExecution {
+public class SyscallExecutionReadInteger implements SyscallExecution {
 
-	public static final String NAME = "PRINT_INTEGER";
-
-	private final boolean printHex, lineJump;
+	public static final String NAME = "READ_INTEGER";
+	private final boolean lineJump;
 	private final int register;
 
-	public SyscallExecutionPrintInteger(boolean printHex, boolean lineJump, int register) {
-		this.printHex = printHex;
+	public SyscallExecutionReadInteger(boolean lineJump, int register) {
 		this.lineJump = lineJump;
 		this.register = register;
 	}
@@ -28,32 +27,42 @@ public class SyscallExecutionPrintInteger implements SyscallExecution {
 	public void execute(Simulation<?> simulation) {
 		Register register = simulation.getRegisters().getRegister(this.register).orElse(null);
 		if (register == null) throw new IllegalStateException("Register " + this.register + " not found");
-		int value = register.getValue();
-		String toPrint = printHex ? "0x" + Integer.toHexString(value) : String.valueOf(value);
-		simulation.getConsole().print(toPrint);
-		if (lineJump) simulation.getConsole().println();
+
+
+		simulation.popInputOrLock(value -> {
+			try {
+				int input = NumericUtils.decodeInteger(value);
+				register.setValue(input);
+
+				simulation.getConsole().printDone(value);
+				if(lineJump) simulation.getConsole().println();
+
+				return true;
+			} catch (NumberFormatException ignore) {
+				return false;
+			}
+		});
+
 	}
 
-	public static class Builder extends SyscallExecutionBuilder<SyscallExecutionPrintInteger> {
+	public static class Builder extends SyscallExecutionBuilder<SyscallExecutionReadInteger> {
 
-		private final BooleanProperty hexProperty;
 		private final BooleanProperty lineJump;
 		private final IntegerProperty register;
 
 		public Builder() {
 			super(NAME, new LinkedList<>());
-			properties.add(hexProperty = new SimpleBooleanProperty(null, "PRINT_HEX", false));
 			properties.add(lineJump = new SimpleBooleanProperty(null, "LINE_JUMP", false));
-			properties.add(register = new SimpleIntegerProperty(null, "REGISTER", 4));
+			properties.add(register = new SimpleIntegerProperty(null, "REGISTER", 2));
 		}
 
 		@Override
-		public SyscallExecutionPrintInteger build() {
-			return new SyscallExecutionPrintInteger(hexProperty.get(), lineJump.get(), register.get());
+		public SyscallExecutionReadInteger build() {
+			return new SyscallExecutionReadInteger(lineJump.get(), register.get());
 		}
 
 		@Override
-		public SyscallExecutionBuilder<SyscallExecutionPrintInteger> makeNewInstance() {
+		public SyscallExecutionBuilder<SyscallExecutionReadInteger> makeNewInstance() {
 			return new Builder();
 		}
 	}

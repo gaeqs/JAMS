@@ -1,6 +1,6 @@
 package net.jamsimulator.jams.mips.assembler;
 
-import net.jamsimulator.jams.gui.util.Log;
+import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
@@ -15,7 +15,7 @@ import java.util.Map;
  * Represents an assembler. An assembler transforms assembly code into machine code.
  * <p>
  * To use a implementation of this class you must invoke {@link #assemble()} to assemble the code.
- * Then, invoke {@link #createSimulation(Architecture, Log)} to create a {@link Simulation}.
+ * Then, invoke {@link #createSimulation(Architecture, Console)} to create a {@link Simulation}.
  */
 public interface Assembler {
 
@@ -42,7 +42,7 @@ public interface Assembler {
 	 * @return the {@link Simulation}.
 	 * @throws IllegalStateException when the code is not assembled.
 	 */
-	<Arch extends Architecture> Simulation<Arch> createSimulation(Arch architecture, SimulationSyscallExecutions executions, Log log);
+	<Arch extends Architecture> Simulation<Arch> createSimulation(Arch architecture, SimulationSyscallExecutions executions, Console console);
 
 	/**
 	 * Returns the {@link InstructionSet} used by this assembler.

@@ -24,7 +24,7 @@
 
 package net.jamsimulator.jams.mips.instruction;
 
-import net.jamsimulator.jams.gui.util.Log;
+import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAdd;
@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GeneralInstructionTests {
 
 	static Simulation<?> simulation = new SingleCycleSimulation(SingleCycleArchitecture.INSTANCE, new MIPS32InstructionSet(),
-			new MIPS32Registers(), new MIPS32Memory(), new SimulationSyscallExecutions(), new Log(), 0);
+			new MIPS32Registers(), new MIPS32Memory(), new SimulationSyscallExecutions(), new Console(), 0);
 
 	@Test
 	void testBasicInstruction() {

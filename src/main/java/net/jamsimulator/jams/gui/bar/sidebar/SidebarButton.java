@@ -113,7 +113,7 @@ public class SidebarButton extends ToggleButton implements BarButton {
 	public boolean show() {
 		Optional<BarPane> optional = sidebar.getCurrent();
 		if (optional.isPresent() && optional.get().equals(pane)) return false;
-		sidebar.select(this);
+		selectedProperty().set(true);
 		return true;
 	}
 
@@ -121,7 +121,7 @@ public class SidebarButton extends ToggleButton implements BarButton {
 	public boolean hide() {
 		Optional<BarPane> optional = sidebar.getCurrent();
 		if (!optional.isPresent() || !optional.get().equals(pane)) return false;
-		sidebar.select(null);
+		selectedProperty().set(false);
 		return true;
 	}
 

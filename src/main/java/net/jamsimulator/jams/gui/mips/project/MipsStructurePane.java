@@ -39,7 +39,7 @@ import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebar;
 import net.jamsimulator.jams.gui.mips.sidebar.SimulationSidebar;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
-import net.jamsimulator.jams.gui.util.Log;
+import net.jamsimulator.jams.gui.util.log.SimpleLog;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.mips.MipsProject;
 
@@ -56,7 +56,7 @@ public class MipsStructurePane extends WorkingPane {
 	protected FilesToAssembleSidebar filesToAssembleSidebar;
 	protected SimulationSidebar simulationSidebar;
 
-	protected Log log;
+	protected SimpleLog log;
 
 	/**
 	 * Creates the mips project pane.
@@ -99,11 +99,11 @@ public class MipsStructurePane extends WorkingPane {
 	}
 
 	/**
-	 * Returns the {@link Log} of this project.
+	 * Returns the {@link SimpleLog} of this project.
 	 *
-	 * @return the {@link Log}.
+	 * @return the {@link SimpleLog}.
 	 */
-	public Log getLog() {
+	public SimpleLog getLog() {
 		return log;
 	}
 
@@ -175,7 +175,7 @@ public class MipsStructurePane extends WorkingPane {
 		pane.setFitToWidth(true);
 		pane.setFitToHeight(true);
 
-		log = new Log();
+		log = new SimpleLog();
 		pane.setContent(log);
 		paneSnapshots.add(new PaneSnapshot("Log", BarType.BOTTOM, pane, icon, Messages.LOG_NAME));
 	}

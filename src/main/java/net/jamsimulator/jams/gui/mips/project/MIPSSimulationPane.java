@@ -8,11 +8,12 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.bar.BarType;
 import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.image.icon.Icons;
-import net.jamsimulator.jams.gui.mips.simulator.SimulatorCentralPane;
+import net.jamsimulator.jams.gui.mips.simulator.MIPSSimulationCentralPane;
 import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.language.wrapper.LanguageTab;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
@@ -21,19 +22,19 @@ import net.jamsimulator.jams.project.mips.MipsProject;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MipsSimulatorPane extends WorkingPane {
+public class MIPSSimulationPane extends WorkingPane {
 
 	protected MipsProject project;
 	protected Simulation<?> simulation;
 	protected TabPane registersTabs;
 
-	public MipsSimulatorPane(Tab parent, ProjectTab projectTab, MipsProject project, Simulation<?> simulation, Assembler assembler) {
-		super(parent, projectTab, new SimulatorCentralPane(simulation, assembler.getOriginals()), new HashSet<>(), false);
+	public MIPSSimulationPane(Tab parent, ProjectTab projectTab, MipsProject project, Simulation<?> simulation, Assembler assembler) {
+		super(parent, projectTab, new MIPSSimulationCentralPane(simulation, assembler.getOriginals()), new HashSet<>(), false);
 		this.project = project;
 		this.simulation = simulation;
 
 		loadRegisterTabs();
-		loadLog();
+		loadConsole();
 
 		init();
 
@@ -58,16 +59,19 @@ public class MipsSimulatorPane extends WorkingPane {
 		Set<Register> general = new HashSet<>(simulation.getRegisters().getGeneralRegisters());
 		general.add(simulation.getRegisters().getProgramCounter());
 
-		registersTabs.getTabs().add(new Tab("General", new RegistersTable(general, false)));
-		registersTabs.getTabs().add(new Tab("COP0", new RegistersTable(simulation.getRegisters().getCoprocessor0Registers(), false)));
-		registersTabs.getTabs().add(new Tab("COP1", new RegistersTable(simulation.getRegisters().getCoprocessor1Registers(), true)));
-		paneSnapshots.add(new PaneSnapshot("Registers", BarType.TOP_RIGHT, registersTabs, explorerIcon, null));
+		registersTabs.getTabs().add(new LanguageTab(Messages.REGISTERS_GENERAL, new RegistersTable(general, false)));
+		registersTabs.getTabs().add(new LanguageTab(Messages.REGISTERS_COP0, new RegistersTable(simulation.getRegisters().getCoprocessor0Registers(), false)));
+		registersTabs.getTabs().add(new LanguageTab(Messages.REGISTERS_COP1, new RegistersTable(simulation.getRegisters().getCoprocessor1Registers(), true)));
+
+		registersTabs.getTabs().forEach(tab -> tab.setClosable(false));
+
+		paneSnapshots.add(new PaneSnapshot("Registers", BarType.TOP_RIGHT, registersTabs, explorerIcon, Messages.REGISTERS_NAME));
 	}
 
-	private void loadLog() {
+	private void loadConsole() {
 		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE,
 				Icons.FILE_FILE_PATH, 1024, 1024).orElse(null);
-		paneSnapshots.add(new PaneSnapshot("Log", BarType.BOTTOM, simulation.getLog(), explorerIcon, Messages.LOG_NAME));
+		paneSnapshots.add(new PaneSnapshot("Console", BarType.BOTTOM, simulation.getConsole(), explorerIcon, Messages.CONSOLE_NAME));
 	}
 
 	@Override

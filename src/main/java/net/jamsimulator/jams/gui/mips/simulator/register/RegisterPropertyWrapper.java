@@ -31,6 +31,10 @@ public class RegisterPropertyWrapper {
 		register.getRegisters().registerListeners(this, true);
 	}
 
+	public Register getRegister() {
+		return register;
+	}
+
 	public ReadOnlyIntegerProperty identifierProperty() {
 		if (identifierProperty == null) {
 			identifierProperty = new SimpleIntegerProperty(this, "identifier");
@@ -74,19 +78,17 @@ public class RegisterPropertyWrapper {
 			}
 
 			valueProperty.addListener((obs, old, val) -> {
+
 				if (val.equals(old)) return;
-				if (register.isModifiable()) {
-					try {
-						int to = useDecimals ? Float.floatToIntBits(Float.parseFloat(val)) : NumericUtils.decodeInteger(val);
-						if (register.getValue() != to) {
-							register.setValue(to);
-						}
-					} catch (NumberFormatException ex) {
-						valueProperty.setValue(old);
+				try {
+					int to = useDecimals ? Float.floatToIntBits(Float.parseFloat(val)) : NumericUtils.decodeInteger(val);
+					if (register.getValue() != to) {
+						register.setValue(to);
 					}
-				} else {
-					valueProperty.set(old);
+				} catch (NumberFormatException ex) {
+					valueProperty.setValue(old);
 				}
+
 			});
 		}
 		return valueProperty;
@@ -97,18 +99,15 @@ public class RegisterPropertyWrapper {
 			hexProperty = new SimpleStringProperty(this, "hex");
 			hexProperty.setValue("0x" + StringUtils.addZeros(Integer.toHexString(register.getValue()), 8));
 			hexProperty.addListener((obs, old, val) -> {
+				if (!register.isModifiable()) return;
 				if (old.equals(val)) return;
-				if (register.isModifiable()) {
-					int to = NumericUtils.decodeInteger(val);
-					if (register.getValue() == to) return;
-					try {
-						register.setValue(to);
-					} catch (NumberFormatException ex) {
-						ex.printStackTrace();
-						hexProperty.setValue(old);
-					}
-				} else {
-					hexProperty.set(old);
+				int to = NumericUtils.decodeInteger(val);
+				if (register.getValue() == to) return;
+				try {
+					register.setValue(to);
+				} catch (NumberFormatException ex) {
+					ex.printStackTrace();
+					hexProperty.setValue(old);
 				}
 			});
 		}

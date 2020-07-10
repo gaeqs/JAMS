@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.util;
+package net.jamsimulator.jams.gui.util.log;
 
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseButton;
@@ -12,11 +12,11 @@ import org.fxmisc.richtext.CodeArea;
 
 import java.util.Collections;
 
-public class Log extends HBox {
+public class SimpleLog extends HBox implements Log {
 
-	protected final CodeArea codeArea;
+	protected final CodeArea display;
 
-	public Log() {
+	public SimpleLog() {
 		super();
 
 		VBox buttons = new VBox();
@@ -30,81 +30,91 @@ public class Log extends HBox {
 		VirtualizedScrollPane<ScaledVirtualized<CodeArea>> scroll = new VirtualizedScrollPane<>(new ScaledVirtualized<>(new CodeArea()));
 		getChildren().add(scroll);
 
-		codeArea = (CodeArea) scroll.getContent().getChildrenUnmodifiable().get(0);
-		codeArea.setEditable(false);
+		display = (CodeArea) scroll.getContent().getChildrenUnmodifiable().get(0);
+		display.setEditable(false);
 		applyZoomListener(scroll);
 
-		codeArea.prefWidthProperty().bind(widthProperty().subtract(buttons.widthProperty()));
+		display.prefWidthProperty().bind(widthProperty().subtract(buttons.widthProperty()));
 	}
 
+	@Override
 	public void print(Object object) {
-		codeArea.appendText(object == null ? "null" : object.toString());
+		display.appendText(object == null ? "null" : object.toString());
 	}
 
+	@Override
 	public void println(Object object) {
-		codeArea.appendText((object == null ? "null" : object.toString()) + '\n');
+		display.appendText((object == null ? "null" : object.toString()) + '\n');
 	}
 
+	@Override
 	public void printError(Object object) {
-		int length = codeArea.getLength();
+		int length = display.getLength();
 		print(object);
-		codeArea.setStyle(length, codeArea.getLength(), Collections.singleton("log_error"));
+		display.setStyle(length, display.getLength(), Collections.singleton("log_error"));
 	}
 
+	@Override
 	public void printErrorLn(Object object) {
-		int length = codeArea.getLength();
+		int length = display.getLength();
 		println(object);
-		codeArea.setStyle(length, codeArea.getLength(), Collections.singleton("log_error"));
+		display.setStyle(length, display.getLength(), Collections.singleton("log_error"));
 	}
 
+	@Override
 	public void printInfo(Object object) {
-		int length = codeArea.getLength();
+		int length = display.getLength();
 		print(object);
-		codeArea.setStyle(length, codeArea.getLength(), Collections.singleton("log_info"));
+		display.setStyle(length, display.getLength(), Collections.singleton("log_info"));
 	}
 
+	@Override
 	public void printInfoLn(Object object) {
-		int length = codeArea.getLength();
+		int length = display.getLength();
 		println(object);
-		codeArea.setStyle(length, codeArea.getLength(), Collections.singleton("log_info"));
+		display.setStyle(length, display.getLength(), Collections.singleton("log_info"));
 	}
 
-
+	@Override
 	public void printWarning(Object object) {
-		int length = codeArea.getLength();
+		int length = display.getLength();
 		print(object);
-		codeArea.setStyle(length, codeArea.getLength(), Collections.singleton("log_warning"));
+		display.setStyle(length, display.getLength(), Collections.singleton("log_warning"));
 	}
 
+	@Override
 	public void printWarningLn(Object object) {
-		int length = codeArea.getLength();
+		int length = display.getLength();
 		println(object);
-		codeArea.setStyle(length, codeArea.getLength(), Collections.singleton("log_warning"));
+		display.setStyle(length, display.getLength(), Collections.singleton("log_warning"));
 	}
 
-
+	@Override
 	public void printDone(Object object) {
-		int length = codeArea.getLength();
+		int length = display.getLength();
 		print(object);
-		codeArea.setStyle(length, codeArea.getLength(), Collections.singleton("log_done"));
+		display.setStyle(length, display.getLength(), Collections.singleton("log_done"));
 	}
 
+	@Override
 	public void printDoneLn(Object object) {
-		int length = codeArea.getLength();
+		int length = display.getLength();
 		println(object);
-		codeArea.setStyle(length, codeArea.getLength(), Collections.singleton("log_done"));
+		display.setStyle(length, display.getLength(), Collections.singleton("log_done"));
 	}
 
+	@Override
 	public void println() {
-		codeArea.appendText("\n");
+		display.appendText("\n");
 	}
 
+	@Override
 	public void clear() {
-		codeArea.clear();
+		display.clear();
 	}
 
 	protected void applyZoomListener(VirtualizedScrollPane<ScaledVirtualized<CodeArea>> scroll) {
-		codeArea.addEventFilter(ScrollEvent.SCROLL, event -> {
+		display.addEventFilter(ScrollEvent.SCROLL, event -> {
 			if (event.isControlDown()) {
 				double current = scroll.getContent().getZoom().getX();
 				if (event.getDeltaY() < 0) {
@@ -121,7 +131,7 @@ public class Log extends HBox {
 		});
 
 		//RESET
-		codeArea.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+		display.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
 			if (event.isControlDown() && event.getButton() == MouseButton.MIDDLE) {
 				scroll.getContent().getZoom().setX(1);
 				scroll.getContent().getZoom().setY(1);

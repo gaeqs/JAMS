@@ -41,10 +41,10 @@ public class SyscallExecutionPrintString implements SyscallExecution {
 
 		if (amount > 0) {
 			String string = new String(chars, 0, maxChars);
-			simulation.getLog().print(string);
+			simulation.getConsole().print(string);
 		}
 
-		if (lineJump) simulation.getLog().println();
+		if (lineJump) simulation.getConsole().println();
 	}
 
 	public static class Builder extends SyscallExecutionBuilder<SyscallExecutionPrintString> {

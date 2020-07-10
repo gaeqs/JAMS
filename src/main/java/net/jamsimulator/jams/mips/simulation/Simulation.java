@@ -26,7 +26,8 @@ package net.jamsimulator.jams.mips.simulation;
 
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
-import net.jamsimulator.jams.gui.util.Log;
+import net.jamsimulator.jams.gui.util.log.Console;
+import net.jamsimulator.jams.gui.util.log.event.ConsoleInputEvent;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
@@ -36,9 +37,12 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.simulation.event.SimulationLockEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationUnlockEvent;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Represents the execution of a set of instructions, including a memory and a register set.
@@ -61,8 +65,14 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	protected final Memory memory;
 	protected final SimulationSyscallExecutions syscallExecutions;
 
-	private final Log log;
+	private final Console console;
 
+	protected boolean locked;
+	protected Function<String, Boolean> functionExecution;
+	protected boolean shouldResumeExecutionOnUnlock;
+
+
+	protected boolean finished;
 	protected int instructionStackBottom;
 
 	/**
@@ -73,20 +83,21 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 * @param registers              the registers to use on this simulation.
 	 * @param memory                 the memory to use in this simulation.
 	 * @param syscallExecutions      the syscall executions.
-	 * @param log                    the log used to output info.
+	 * @param console                the log used to output info.
 	 * @param instructionStackBottom the address of the bottom of the instruction stack.
 	 */
 	public Simulation(Arch architecture, InstructionSet instructionSet, Registers registers, Memory memory,
-					  SimulationSyscallExecutions syscallExecutions, Log log, int instructionStackBottom) {
+					  SimulationSyscallExecutions syscallExecutions, Console console, int instructionStackBottom) {
 		this.architecture = architecture;
 		this.instructionSet = instructionSet;
 		this.registers = registers;
 		this.memory = memory;
 		this.syscallExecutions = syscallExecutions;
-		this.log = log;
+		this.console = console;
 		this.instructionStackBottom = instructionStackBottom;
 		memory.registerListeners(this, true);
 		registers.registerListeners(this, true);
+		console.registerListeners(this, true);
 	}
 
 	/**
@@ -131,7 +142,6 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		return memory;
 	}
 
-
 	/**
 	 * Returns the {@link SimulationSyscallExecutions syscall execution}s of this simulation.
 	 * These executions are used when the instruction "syscall" is invoked.
@@ -143,12 +153,13 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	}
 
 	/**
-	 * Returns the {@link Log} of this simulation. This log is used to print the output of the simulation.
+	 * Returns the {@link Console} of this simulation.
+	 * This console is used to print the output of the simulation and to receive data from the user.
 	 *
-	 * @return the {@link Log}.
+	 * @return the {@link Console}.
 	 */
-	public Log getLog() {
-		return log;
+	public Console getConsole() {
+		return console;
 	}
 
 	/**
@@ -162,6 +173,35 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	}
 
 	/**
+	 * Returns whether the simulation is locked.
+	 * <p>
+	 * A simulation is locked when it's waiting some data from the user.
+	 * <p>
+	 * Resets and undoes will unlock the simulation.
+	 *
+	 * @return whether the simulation is locked.
+	 */
+	public boolean isLocked() {
+		return locked;
+	}
+
+	public void popInputOrLock(Function<String, Boolean> onUnlock) {
+		Optional<String> optional;
+		boolean finished = false;
+		while (!finished) {
+			optional = console.popInput();
+			if (!optional.isPresent()) {
+				callEvent(new SimulationLockEvent(this));
+				locked = true;
+				functionExecution = onUnlock;
+				return;
+			} else {
+				finished = onUnlock.apply(optional.get());
+			}
+		}
+	}
+
+	/**¿
 	 * Fetch the {@link AssembledInstruction} located at the given address.
 	 * <p>
 	 * This method may return {@code null} if the instruction cannot be decoded.
@@ -189,6 +229,10 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	public void reset() {
 		registers.restoreSavedState();
 		memory.restoreSavedState();
+		callEvent(new SimulationUnlockEvent(this));
+		locked = false;
+		finished = false;
+		shouldResumeExecutionOnUnlock = false;
 	}
 
 	/**
@@ -208,11 +252,30 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	/**
 	 * Undoes the last step made by this simulation.
 	 * This method won't do nothing if no steps were made.
+	 * <p>
+	 * If this simulation was execution all instructions and this method is used,
+	 * the simulation will stop.
 	 *
 	 * @return whether a step was undone.
 	 */
 	public abstract boolean undoLastStep();
 
+	/**
+	 * Finishes the execution of this program.
+	 * This value can be set to false using the methods {@link  #reset()} and {@link #undoLastStep()}.
+	 */
+	public void exit() {
+		finished = true;
+	}
+
+	/**
+	 * Returns whether this simulation has finished its execution.
+	 *
+	 * @return whether this simulation has finished its execution.
+	 */
+	public boolean isFinished() {
+		return finished;
+	}
 
 	@Listener
 	private void onMemoryChange(MemoryByteSetEvent.After event) {
@@ -225,6 +288,17 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	private void onMemoryChange(MemoryWordSetEvent.After event) {
 		if (event.getMemorySection().getName().equals("Text") && instructionStackBottom < event.getAddress()) {
 			instructionStackBottom = event.getAddress();
+		}
+	}
+
+	@Listener
+	private void onInput(ConsoleInputEvent.After event) {
+		if (!locked) return;
+		locked = false;
+		callEvent(new SimulationUnlockEvent(this));
+		popInputOrLock(functionExecution);
+		if (shouldResumeExecutionOnUnlock) {
+			executeAll();
 		}
 	}
 
