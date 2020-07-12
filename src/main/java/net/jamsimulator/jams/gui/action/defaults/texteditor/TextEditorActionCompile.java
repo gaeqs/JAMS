@@ -103,7 +103,7 @@ public class TextEditorActionCompile extends Action {
 			SimulationSyscallExecutions executions = new SimulationSyscallExecutions();
 			selected.getSyscallExecutionBuilders().forEach((key, builder) -> executions.bindExecution(key, builder.build()));
 
-			Simulation<?> simulation = assembler.createSimulation(selected.getArchitecture(), executions, console);
+			Simulation<?> simulation = assembler.createSimulation(selected.getArchitecture(), executions, project.getData().getFilesFolder(), console);
 
 			project.getProjectTab().ifPresent(projectTab ->
 					projectTab.getProjectTabPane()

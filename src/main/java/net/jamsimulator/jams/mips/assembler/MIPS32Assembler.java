@@ -10,6 +10,7 @@ import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -104,10 +105,10 @@ public class MIPS32Assembler implements Assembler {
 	}
 
 	@Override
-	public <Arch extends Architecture> Simulation<Arch> createSimulation(Arch architecture, SimulationSyscallExecutions executions, Console console) {
+	public <Arch extends Architecture> Simulation<Arch> createSimulation(Arch architecture, SimulationSyscallExecutions executions, File workingDirectory, Console console) {
 		if (!assembled) throw new IllegalStateException("The program is still not assembled!");
 		Simulation<?> simulation = architecture.createSimulation(instructionSet,
-				registers.copy(), memory.copy(), executions, console, assemblerData.getCurrentText() - 4);
+				workingDirectory, registers.copy(), memory.copy(), executions, console, assemblerData.getCurrentText() - 4);
 		simulation.getRegisters().getProgramCounter().setValue(assemblerData.getFirstText());
 		return (Simulation<Arch>) simulation;
 	}

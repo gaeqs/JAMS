@@ -37,8 +37,10 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.simulation.file.SimulationFiles;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 
+import java.io.File;
 import java.util.Optional;
 
 /**
@@ -58,12 +60,15 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	protected final Arch architecture;
 	protected final InstructionSet instructionSet;
 
+	protected final File workingDirectory;
+
 	protected final Registers registers;
 	protected final Memory memory;
 	protected final SimulationSyscallExecutions syscallExecutions;
+	protected final SimulationFiles files;
 
 	protected int instructionStackBottom;
-	private final Console console;
+	protected final Console console;
 
 	protected Thread thread;
 	protected final Object lock;
@@ -83,15 +88,18 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 * @param console                the log used to output info.
 	 * @param instructionStackBottom the address of the bottom of the instruction stack.
 	 */
-	public Simulation(Arch architecture, InstructionSet instructionSet, Registers registers, Memory memory,
+	public Simulation(Arch architecture, InstructionSet instructionSet, File workingDirectory, Registers registers, Memory memory,
 					  SimulationSyscallExecutions syscallExecutions, Console console, int instructionStackBottom) {
 		this.architecture = architecture;
 		this.instructionSet = instructionSet;
+		this.workingDirectory = workingDirectory;
 		this.registers = registers;
 		this.memory = memory;
 		this.syscallExecutions = syscallExecutions;
 		this.console = console;
 		this.instructionStackBottom = instructionStackBottom;
+		this.files = new SimulationFiles(this);
+
 		memory.registerListeners(this, true);
 		registers.registerListeners(this, true);
 		console.registerListeners(this, true);
@@ -119,6 +127,18 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 */
 	public InstructionSet getInstructionSet() {
 		return instructionSet;
+	}
+
+
+	/**
+	 * Returns the working directory of this simulation.
+	 * <p>
+	 * The simulation used this directory as the relative root for files.
+	 *
+	 * @return the working directory.
+	 */
+	public File getWorkingDirectory() {
+		return workingDirectory;
 	}
 
 	/**
@@ -153,6 +173,15 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 */
 	public SimulationSyscallExecutions getSyscallExecutions() {
 		return syscallExecutions;
+	}
+
+	/**
+	 * Returns the open files of this simulation. This small manager allows to open, get and close files.
+	 *
+	 * @return the {@link SimulationFiles file manager}.
+	 */
+	public SimulationFiles getFiles() {
+		return files;
 	}
 
 	/**

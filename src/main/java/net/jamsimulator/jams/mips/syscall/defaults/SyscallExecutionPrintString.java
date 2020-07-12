@@ -40,7 +40,7 @@ public class SyscallExecutionPrintString implements SyscallExecution {
 		}
 
 		if (amount > 0) {
-			String string = new String(chars, 0, maxChars);
+			String string = new String(chars, 0, amount);
 			simulation.getConsole().print(string);
 		}
 

@@ -32,6 +32,7 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 import net.jamsimulator.jams.utils.Validate;
 
+import java.io.File;
 import java.util.Objects;
 
 /**
@@ -67,6 +68,7 @@ public abstract class Architecture {
 	 * @return the {@link Simulation}.
 	 */
 	public abstract Simulation<? extends Architecture> createSimulation(InstructionSet instructionSet,
+																		File workingDirectory,
 																		Registers registers,
 																		Memory memory,
 																		SimulationSyscallExecutions syscallExecutions,

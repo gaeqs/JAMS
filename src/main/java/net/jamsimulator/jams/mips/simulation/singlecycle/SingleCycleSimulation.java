@@ -32,9 +32,9 @@ import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundExcep
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
+import net.jamsimulator.jams.mips.memory.event.MemoryAllocateMemoryEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
-import net.jamsimulator.jams.mips.memory.event.MemoryAllocateMemoryEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
@@ -47,6 +47,7 @@ import net.jamsimulator.jams.mips.simulation.singlecycle.event.SingleCycleInstru
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 import net.jamsimulator.jams.utils.StringUtils;
 
+import java.io.File;
 import java.util.LinkedList;
 
 /**
@@ -74,9 +75,9 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	 * @param memory                 the memory to use in this simulation.
 	 * @param instructionStackBottom the address of the bottom of the instruction stack.
 	 */
-	public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet,
+	public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, File workingDirectory,
 								 Registers registers, Memory memory, SimulationSyscallExecutions syscallExecutions, Console log, int instructionStackBottom) {
-		super(architecture, instructionSet, registers, memory, syscallExecutions, log, instructionStackBottom);
+		super(architecture, instructionSet, workingDirectory, registers, memory, syscallExecutions, log, instructionStackBottom);
 		changes = new LinkedList<>();
 	}
 

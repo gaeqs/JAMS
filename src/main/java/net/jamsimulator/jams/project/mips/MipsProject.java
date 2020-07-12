@@ -75,7 +75,7 @@ public class MipsProject extends BasicProject {
 		assembler.assemble();
 
 		//TODO ADD EXECUTIONS
-		return assembler.createSimulation(selected.getArchitecture(), null, new Console());
+		return assembler.createSimulation(selected.getArchitecture(), null, data.getFilesFolder(), new Console());
 	}
 
 	@Override

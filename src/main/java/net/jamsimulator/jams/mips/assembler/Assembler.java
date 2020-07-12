@@ -9,6 +9,7 @@ import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 
+import java.io.File;
 import java.util.Map;
 
 /**
@@ -42,7 +43,7 @@ public interface Assembler {
 	 * @return the {@link Simulation}.
 	 * @throws IllegalStateException when the code is not assembled.
 	 */
-	<Arch extends Architecture> Simulation<Arch> createSimulation(Arch architecture, SimulationSyscallExecutions executions, Console console);
+	<Arch extends Architecture> Simulation<Arch> createSimulation(Arch architecture, SimulationSyscallExecutions executions, File workingDirectory, Console console);
 
 	/**
 	 * Returns the {@link InstructionSet} used by this assembler.

@@ -32,6 +32,8 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.singlecycle.SingleCycleSimulation;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 
+import java.io.File;
+
 /**
  * Represents the single-cycle architecture.
  * <p>
@@ -51,11 +53,12 @@ public final class SingleCycleArchitecture extends Architecture {
 
 	@Override
 	public Simulation<SingleCycleArchitecture> createSimulation(InstructionSet instructionSet,
+																File workingDirectory,
 																Registers registers,
 																Memory memory,
 																SimulationSyscallExecutions syscallExecutions,
 																Console log,
 																int instructionStackBottom) {
-		return new SingleCycleSimulation(this, instructionSet, registers, memory, syscallExecutions, log, instructionStackBottom);
+		return new SingleCycleSimulation(this, instructionSet, workingDirectory, registers, memory, syscallExecutions, log, instructionStackBottom);
 	}
 }

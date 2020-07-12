@@ -36,6 +36,7 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +79,7 @@ class AssemblerTest {
 				new MIPS32Registers(), new MIPS32Memory());
 		assembler.assemble();
 		SimulationSyscallExecutions executions = new SimulationSyscallExecutions();
-		Simulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE, executions, new Console());
+		Simulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE, executions, new File(""), new Console());
 
 		assertEquals(0x02508820, simulation.getMemory().getWord(simulation.getRegisters().getProgramCounter().getValue()));
 

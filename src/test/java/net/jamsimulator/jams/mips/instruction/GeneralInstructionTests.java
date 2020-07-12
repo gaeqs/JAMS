@@ -43,6 +43,7 @@ import net.jamsimulator.jams.mips.simulation.singlecycle.SingleCycleSimulation;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -52,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GeneralInstructionTests {
 
 	static Simulation<?> simulation = new SingleCycleSimulation(SingleCycleArchitecture.INSTANCE, new MIPS32InstructionSet(),
+			new File(""),
 			new MIPS32Registers(), new MIPS32Memory(), new SimulationSyscallExecutions(), new Console(), 0);
 
 	@Test
