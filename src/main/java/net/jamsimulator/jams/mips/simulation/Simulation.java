@@ -223,6 +223,31 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	}
 
 	/**
+	 * Pops the next character or pauses the execution.
+	 * If the execution is interrupted this method returns {@code 0}.
+	 * <p>
+	 * This method should be called only by the execution thread.
+	 */
+	public char popCharOrLock() {
+		Optional<Character> optional = Optional.empty();
+		while (!optional.isPresent()) {
+			optional = console.popChar();
+
+			if (!optional.isPresent()) {
+				try {
+					synchronized (lock) {
+						lock.wait();
+					}
+				} catch (InterruptedException ex) {
+					interrupt();
+					return 0;
+				}
+			}
+		}
+		return optional.get();
+	}
+
+	/**
 	 * Marks the execution of this simulation as interrupted.
 	 * This method should be only called by the execution thread.
 	 */

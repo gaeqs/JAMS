@@ -55,7 +55,38 @@ public class Console extends HBox implements Log, EventBroadcast {
 	public Optional<String> popInput() {
 		try {
 			synchronized (inputs) {
-				return Optional.of(inputs.removeFirst());
+				Optional<String> optional = Optional.of(inputs.removeFirst());
+				refreshLater();
+				return optional;
+			}
+		} catch (NoSuchElementException ex) {
+			return Optional.empty();
+		}
+	}
+
+	public Optional<Character> popChar() {
+		try {
+			synchronized (inputs) {
+				boolean found = false;
+				char c = 0;
+				String str;
+
+				while (!found) {
+					str = inputs.getFirst();
+					if (str.isEmpty()) {
+						inputs.removeFirst();
+					} else {
+						c = str.charAt(0);
+						found = true;
+						if (str.length() == 1) {
+							inputs.removeFirst();
+						} else {
+							inputs.set(0, str.substring(1));
+						}
+						refreshLater();
+					}
+				}
+				return Optional.of(c);
 			}
 		} catch (NoSuchElementException ex) {
 			return Optional.empty();
@@ -74,58 +105,42 @@ public class Console extends HBox implements Log, EventBroadcast {
 
 	@Override
 	public void printError(Object object) {
-		int length = display.getLength();
-		print(object);
-		setStyleSync(length, display.getLength(), "log_error");
+		printAndStyle(object, "log_error");
 	}
 
 	@Override
 	public void printErrorLn(Object object) {
-		int length = display.getLength();
-		println(object);
-		setStyleSync(length, display.getLength(), "log_error");
+		printAndStyleLn(object, "log_error");
 	}
 
 	@Override
 	public void printInfo(Object object) {
-		int length = display.getLength();
-		print(object);
-		setStyleSync(length, display.getLength(), "log_info");
+		printAndStyle(object, "log_info");
 	}
 
 	@Override
 	public void printInfoLn(Object object) {
-		int length = display.getLength();
-		println(object);
-		setStyleSync(length, display.getLength(), "log_info");
+		printAndStyleLn(object, "log_info");
 	}
 
 	@Override
 	public void printWarning(Object object) {
-		int length = display.getLength();
-		print(object);
-		setStyleSync(length, display.getLength(), "log_warning");
+		printAndStyle(object, "log_warning");
 	}
 
 	@Override
 	public void printWarningLn(Object object) {
-		int length = display.getLength();
-		println(object);
-		setStyleSync(length, display.getLength(), "log_warning");
+		printAndStyleLn(object, "log_warning");
 	}
 
 	@Override
 	public void printDone(Object object) {
-		int length = display.getLength();
-		print(object);
-		setStyleSync(length, display.getLength(), "log_done");
+		printAndStyle(object, "log_done");
 	}
 
 	@Override
 	public void printDoneLn(Object object) {
-		int length = display.getLength();
-		println(object);
-		setStyleSync(length, display.getLength(), "log_done");
+		printAndStyleLn(object, "log_done");
 	}
 
 	@Override
@@ -136,6 +151,22 @@ public class Console extends HBox implements Log, EventBroadcast {
 	@Override
 	public void clear() {
 		Platform.runLater(() -> display.clear());
+	}
+
+	private void printAndStyle(Object object, String style) {
+		Platform.runLater(() -> {
+			int from = display.getLength();
+			display.appendText(object == null ? "null" : object.toString());
+			display.setStyle(from, display.getLength(), Collections.singleton(style));
+		});
+	}
+
+	private void printAndStyleLn(Object object, String style) {
+		Platform.runLater(() -> {
+			int from = display.getLength();
+			display.appendText((object == null ? "null" : object.toString()) + '\n');
+			display.setStyle(from, display.getLength(), Collections.singleton(style));
+		});
 	}
 
 	protected void applyZoomListener(VirtualizedScrollPane<ScaledVirtualized<CodeArea>> scroll) {
@@ -165,17 +196,16 @@ public class Console extends HBox implements Log, EventBroadcast {
 		});
 	}
 
-	private void setStyleSync(int from, int to, String style) {
-		Platform.runLater(() -> display.setStyle(from, to, Collections.singleton(style)));
-	}
-
-	private void refreshLater() {
+	protected void refreshLater() {
 		if (willRefresh) return;
 		willRefresh = true;
 		Platform.runLater(() -> {
+			willRefresh = false;
 			inputsDisplay.getChildren().clear();
+
+			int index = 0;
 			for (String in : inputs) {
-				inputsDisplay.getChildren().add(new ConsoleInput(in, this));
+				inputsDisplay.getChildren().add(new ConsoleInput(in, index++, this));
 			}
 		});
 	}

@@ -13,13 +13,15 @@ public class ConsoleInput extends Region {
 	 *
 	 * @param text the handled input.
 	 */
-	public ConsoleInput(String text, Console console) {
+	public ConsoleInput(String text, int index, Console console) {
 		getStyleClass().add("input");
 		label = new Label(text);
 		getChildren().add(label);
 
 		setOnMouseClicked(event -> {
-			console.inputs.remove(text);
+			if (console.willRefresh) return;
+			console.inputs.remove(index);
+			console.refreshLater();
 		});
 
 		if (NumericUtils.isInteger(text) || NumericUtils.isLong(text)) {
