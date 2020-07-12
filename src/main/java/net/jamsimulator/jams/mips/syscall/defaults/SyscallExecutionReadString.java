@@ -36,32 +36,27 @@ public class SyscallExecutionReadString implements SyscallExecution {
 		Register addressReg = simulation.getRegisters().getRegister(this.addressRegister).orElse(null);
 		if (addressReg == null) throw new IllegalStateException("Register " + this.addressRegister + " not found");
 
-		simulation.popInputOrLock(value -> {
-			try {
-				Memory memory = simulation.getMemory();
-				byte[] bytes = value.getBytes(StandardCharsets.US_ASCII);
 
-				int address = addressReg.getValue();
-				int amount = 0;
+		String value = simulation.popInputOrLock();
+		if (simulation.checkInterrupted()) return;
 
-				while (amount < maxChars - 1 && amount < bytes.length) {
+		Memory memory = simulation.getMemory();
+		byte[] bytes = value.getBytes(StandardCharsets.US_ASCII);
 
-					memory.setByte(address, bytes[amount]);
+		int address = addressReg.getValue();
+		int amount = 0;
 
-					amount++;
-					address++;
-				}
-				memory.setByte(address, (byte) 0);
+		while (amount < maxChars - 1 && amount < bytes.length) {
 
-				simulation.getConsole().printDone(value);
-				if(lineJump) simulation.getConsole().println();
+			memory.setByte(address, bytes[amount]);
 
-				return true;
-			} catch (NumberFormatException ignore) {
-				return false;
-			}
-		});
+			amount++;
+			address++;
+		}
+		memory.setByte(address, (byte) 0);
 
+		simulation.getConsole().printDone(value);
+		if (lineJump) simulation.getConsole().println();
 	}
 
 	public static class Builder extends SyscallExecutionBuilder<SyscallExecutionReadString> {

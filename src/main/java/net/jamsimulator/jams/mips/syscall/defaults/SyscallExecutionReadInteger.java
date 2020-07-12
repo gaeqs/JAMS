@@ -28,20 +28,21 @@ public class SyscallExecutionReadInteger implements SyscallExecution {
 		Register register = simulation.getRegisters().getRegister(this.register).orElse(null);
 		if (register == null) throw new IllegalStateException("Register " + this.register + " not found");
 
+		boolean done = false;
+		while (!done) {
+			String value = simulation.popInputOrLock();
+			if (simulation.checkInterrupted()) return;
 
-		simulation.popInputOrLock(value -> {
 			try {
 				int input = NumericUtils.decodeInteger(value);
 				register.setValue(input);
 
 				simulation.getConsole().printDone(value);
-				if(lineJump) simulation.getConsole().println();
-
-				return true;
+				if (lineJump) simulation.getConsole().println();
+				done = true;
 			} catch (NumberFormatException ignore) {
-				return false;
 			}
-		});
+		}
 
 	}
 

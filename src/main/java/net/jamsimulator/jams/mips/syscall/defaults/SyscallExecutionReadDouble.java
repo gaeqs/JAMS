@@ -31,7 +31,11 @@ public class SyscallExecutionReadDouble implements SyscallExecution {
 		if (register == null) throw new IllegalStateException("Register " + this.register + " not found");
 		if (register2 == null) throw new IllegalStateException("Register " + (this.register + 1) + " not found");
 
-		simulation.popInputOrLock(value -> {
+		boolean done = false;
+		while (!done) {
+			String value = simulation.popInputOrLock();
+			if (simulation.checkInterrupted()) return;
+
 			try {
 				double input = Double.parseDouble(value);
 
@@ -42,12 +46,10 @@ public class SyscallExecutionReadDouble implements SyscallExecution {
 
 				simulation.getConsole().printDone(value);
 				if (lineJump) simulation.getConsole().println();
-
-				return true;
+				done = true;
 			} catch (NumberFormatException ignore) {
-				return false;
 			}
-		});
+		}
 
 	}
 

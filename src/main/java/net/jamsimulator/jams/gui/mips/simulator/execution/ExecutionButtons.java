@@ -9,33 +9,28 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.mips.simulation.event.SimulationLockEvent;
-import net.jamsimulator.jams.mips.simulation.event.SimulationUnlockEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 
 public class ExecutionButtons extends HBox {
 
-	private final Button runOne, runAll, undo, reset;
+	private final Button runOrStop, runOne, undo, reset;
 
 	public ExecutionButtons(Simulation<?> simulation) {
 		Image runOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_PLAY_ONE, Icons.PROJECT_PLAY_ONE_PATH,
-				1024, 1024).orElse(null);
-		Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_PLAY, Icons.PROJECT_PLAY_PATH,
 				1024, 1024).orElse(null);
 		Image undoOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_UNDO_ONE, Icons.PROJECT_UNDO_ONE_PATH,
 				1024, 1024).orElse(null);
 		Image resetIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_RESET, Icons.PROJECT_RESET_PATH,
 				1024, 1024).orElse(null);
 
+		runOrStop = new Button("", new NearestImageView(null, 16, 16));
+		changeToRunAll(simulation);
+
 		runOne = new Button("", new NearestImageView(runOneIcon, 16, 16));
 		runOne.getStyleClass().add("bold-button");
 		runOne.setTooltip(new Tooltip("Execute one step"));
 		runOne.setOnAction(event -> simulation.nextStep());
-
-
-		runAll = new Button("", new NearestImageView(runAllIcon, 16, 16));
-		runAll.getStyleClass().add("bold-button");
-		runAll.setTooltip(new Tooltip("Execute all"));
-		runAll.setOnAction(event -> simulation.executeAll());
 
 
 		undo = new Button("", new NearestImageView(undoOneIcon, 16, 16));
@@ -48,22 +43,42 @@ public class ExecutionButtons extends HBox {
 		reset.setTooltip(new Tooltip("Reset"));
 		reset.setOnAction(event -> simulation.reset());
 
-		getChildren().addAll(runAll, runOne, undo, reset);
+		getChildren().addAll(runOrStop, runOne, undo, reset);
 
 		simulation.registerListeners(this, true);
 	}
 
 
 	@Listener
-	private void onSimulationLock(SimulationLockEvent event) {
+	private void onSimulationStart(SimulationStartEvent event) {
 		runOne.setDisable(true);
-		runAll.setDisable(true);
+		changeToStop(event.getSimulation());
 	}
 
 	@Listener
-	private void onSimulationUnlock (SimulationUnlockEvent event) {
+	private void onSimulationStop(SimulationStopEvent event) {
 		runOne.setDisable(false);
-		runAll.setDisable(false);
+		changeToRunAll(event.getSimulation());
+	}
+
+	private void changeToRunAll(Simulation<?> simulation) {
+		Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_PLAY, Icons.PROJECT_PLAY_PATH,
+				1024, 1024).orElse(null);
+
+		((NearestImageView) runOrStop.getGraphic()).setImage(runAllIcon);
+		runOrStop.getStyleClass().add("bold-button");
+		runOrStop.setTooltip(new Tooltip("Execute all"));
+		runOrStop.setOnAction(event -> simulation.executeAll());
+	}
+
+	private void changeToStop(Simulation<?> simulation) {
+		Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_STOP, Icons.PROJECT_STOP_PATH,
+				1024, 1024).orElse(null);
+
+		((NearestImageView) runOrStop.getGraphic()).setImage(runAllIcon);
+		runOrStop.getStyleClass().add("bold-button");
+		runOrStop.setTooltip(new Tooltip("Stop"));
+		runOrStop.setOnAction(event -> simulation.stop());
 	}
 
 }

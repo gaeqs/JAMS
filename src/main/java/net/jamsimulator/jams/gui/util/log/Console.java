@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.util.log;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -21,6 +22,8 @@ import org.fxmisc.richtext.CodeArea;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class Console extends HBox implements Log, EventBroadcast {
@@ -29,7 +32,10 @@ public class Console extends HBox implements Log, EventBroadcast {
 
 	protected CodeArea display;
 	protected TextField input;
-	protected VBox inputs;
+
+	protected final LinkedList<String> inputs;
+	protected VBox inputsDisplay;
+	protected boolean willRefresh = false;
 
 	protected SimpleEventBroadcast broadcast;
 
@@ -37,6 +43,7 @@ public class Console extends HBox implements Log, EventBroadcast {
 		super();
 		getStyleClass().add("console");
 
+		inputs = new LinkedList<>();
 		broadcast = new SimpleEventBroadcast();
 
 		loadButtons();
@@ -47,87 +54,88 @@ public class Console extends HBox implements Log, EventBroadcast {
 
 	public Optional<String> popInput() {
 		try {
-			ConsoleInput input = (ConsoleInput) inputs.getChildren().remove(0);
-			return Optional.of(input.getText());
-		} catch (IndexOutOfBoundsException ex) {
+			synchronized (inputs) {
+				return Optional.of(inputs.removeFirst());
+			}
+		} catch (NoSuchElementException ex) {
 			return Optional.empty();
 		}
 	}
 
 	@Override
 	public void print(Object object) {
-		display.appendText(object == null ? "null" : object.toString());
+		Platform.runLater(() -> display.appendText(object == null ? "null" : object.toString()));
 	}
 
 	@Override
 	public void println(Object object) {
-		display.appendText((object == null ? "null" : object.toString()) + '\n');
+		Platform.runLater(() -> display.appendText((object == null ? "null" : object.toString()) + '\n'));
 	}
 
 	@Override
 	public void printError(Object object) {
 		int length = display.getLength();
 		print(object);
-		display.setStyle(length, display.getLength(), Collections.singleton("log_error"));
+		setStyleSync(length, display.getLength(), "log_error");
 	}
 
 	@Override
 	public void printErrorLn(Object object) {
 		int length = display.getLength();
 		println(object);
-		display.setStyle(length, display.getLength(), Collections.singleton("log_error"));
+		setStyleSync(length, display.getLength(), "log_error");
 	}
 
 	@Override
 	public void printInfo(Object object) {
 		int length = display.getLength();
 		print(object);
-		display.setStyle(length, display.getLength(), Collections.singleton("log_info"));
+		setStyleSync(length, display.getLength(), "log_info");
 	}
 
 	@Override
 	public void printInfoLn(Object object) {
 		int length = display.getLength();
 		println(object);
-		display.setStyle(length, display.getLength(), Collections.singleton("log_info"));
+		setStyleSync(length, display.getLength(), "log_info");
 	}
 
 	@Override
 	public void printWarning(Object object) {
 		int length = display.getLength();
 		print(object);
-		display.setStyle(length, display.getLength(), Collections.singleton("log_warning"));
+		setStyleSync(length, display.getLength(), "log_warning");
 	}
 
 	@Override
 	public void printWarningLn(Object object) {
 		int length = display.getLength();
 		println(object);
-		display.setStyle(length, display.getLength(), Collections.singleton("log_warning"));
+		setStyleSync(length, display.getLength(), "log_warning");
 	}
 
 	@Override
 	public void printDone(Object object) {
 		int length = display.getLength();
 		print(object);
-		display.setStyle(length, display.getLength(), Collections.singleton("log_done"));
+		setStyleSync(length, display.getLength(), "log_done");
 	}
 
 	@Override
 	public void printDoneLn(Object object) {
 		int length = display.getLength();
 		println(object);
-		display.setStyle(length, display.getLength(), Collections.singleton("log_done"));
+		setStyleSync(length, display.getLength(), "log_done");
 	}
 
 	@Override
 	public void println() {
-		display.appendText("\n");
+		println("");
 	}
 
 	@Override
 	public void clear() {
-		display.clear();
+		Platform.runLater(() -> display.clear());
 	}
 
 	protected void applyZoomListener(VirtualizedScrollPane<ScaledVirtualized<CodeArea>> scroll) {
@@ -157,6 +165,21 @@ public class Console extends HBox implements Log, EventBroadcast {
 		});
 	}
 
+	private void setStyleSync(int from, int to, String style) {
+		Platform.runLater(() -> display.setStyle(from, to, Collections.singleton(style)));
+	}
+
+	private void refreshLater() {
+		if (willRefresh) return;
+		willRefresh = true;
+		Platform.runLater(() -> {
+			inputsDisplay.getChildren().clear();
+			for (String in : inputs) {
+				inputsDisplay.getChildren().add(new ConsoleInput(in, this));
+			}
+		});
+	}
+
 	private void loadButtons() {
 		buttons = new VBox();
 		Button clear = new Button("C");
@@ -164,7 +187,7 @@ public class Console extends HBox implements Log, EventBroadcast {
 		clear.getStyleClass().add("bold-button");
 
 		Button clearInputs = new Button("Ci");
-		clearInputs.setOnAction(event -> inputs.getChildren().clear());
+		clearInputs.setOnAction(event -> inputsDisplay.getChildren().clear());
 		clearInputs.getStyleClass().add("bold-button");
 
 		buttons.getChildren().addAll(clear, clearInputs);
@@ -181,15 +204,15 @@ public class Console extends HBox implements Log, EventBroadcast {
 		applyZoomListener(scroll);
 		display.getStyleClass().add("display");
 
-		inputs = new VBox();
-		inputs.getStyleClass().add("inputs");
+		inputsDisplay = new VBox();
+		inputsDisplay.getStyleClass().add("inputs");
 
-		ScrollPane inputsScroll = new ScrollPane(inputs);
+		ScrollPane inputsScroll = new ScrollPane(inputsDisplay);
 		inputsScroll.setPadding(new Insets(0));
 		inputsScroll.setFitToWidth(true);
 		inputsScroll.setFitToHeight(true);
 		inputsScroll.setPrefWidth(200);
-		inputs.minHeightProperty().bind(inputsScroll.heightProperty());
+		inputsDisplay.minHeightProperty().bind(inputsScroll.heightProperty());
 
 		anchor.getChildren().add(inputsScroll);
 		anchor.getChildren().add(scroll);
@@ -220,7 +243,8 @@ public class Console extends HBox implements Log, EventBroadcast {
 					callEvent(new ConsoleInputEvent.Before(this, data));
 			if (before.isCancelled()) return;
 
-			inputs.getChildren().add(new ConsoleInput(before.getInput(), inputs));
+			inputs.add(before.getInput());
+			refreshLater();
 			input.setText("");
 
 			callEvent(new ConsoleInputEvent.After(this, data));

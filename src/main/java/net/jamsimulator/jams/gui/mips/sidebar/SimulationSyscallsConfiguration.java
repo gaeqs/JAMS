@@ -3,6 +3,7 @@ package net.jamsimulator.jams.gui.mips.sidebar;
 import javafx.beans.property.Property;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -20,6 +21,8 @@ import net.jamsimulator.jams.project.mips.MipsSimulationConfiguration;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.Spacer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class SimulationSyscallsConfiguration extends VBox {
@@ -44,6 +47,7 @@ public class SimulationSyscallsConfiguration extends VBox {
 
 	private void init() {
 		if (configuration == null) return;
+
 		setAlignment(Pos.TOP_CENTER);
 		setSpacing(3);
 		configuration.getSyscallExecutionBuilders().forEach((key, builder) ->
@@ -51,8 +55,12 @@ public class SimulationSyscallsConfiguration extends VBox {
 
 		addButton = new Button("+");
 		addButton.getStyleClass().add("bold-button");
-		addButton.setOnAction(event -> getChildren().add(getChildren().indexOf(addButton), createEmptySyscallBox()));
+		addButton.setOnAction(event -> {
+			getChildren().add(getChildren().indexOf(addButton), createEmptySyscallBox());
+			sort();
+		});
 		getChildren().add(addButton);
+		sort();
 	}
 
 	private SyscallBox createEmptySyscallBox() {
@@ -67,6 +75,17 @@ public class SimulationSyscallsConfiguration extends VBox {
 
 		configuration.getSyscallExecutionBuilders().put(id, builder);
 		return new SyscallBox(id, builder, this);
+	}
+
+	private void sort() {
+		List<Node> children = new ArrayList<>(getChildren());
+		children.sort((o1, o2) -> {
+			if (!(o1 instanceof SyscallBox)) return 1;
+			if (!(o2 instanceof SyscallBox)) return -1;
+			return ((SyscallBox) o1).getKey() - ((SyscallBox) o2).getKey();
+		});
+		getChildren().clear();
+		getChildren().addAll(children);
 	}
 
 
@@ -109,6 +128,7 @@ public class SimulationSyscallsConfiguration extends VBox {
 			this.key = key;
 
 			keyTextField.setText(String.valueOf(key));
+			config.sort();
 			return true;
 		}
 

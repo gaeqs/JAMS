@@ -78,4 +78,10 @@ public class MIPSSimulationPane extends WorkingPane {
 	public String getLanguageNode() {
 		return Messages.PROJECT_TAB_SIMULATION;
 	}
+
+	@Override
+	public void onClose() {
+		super.onClose();
+		simulation.stop();
+	}
 }

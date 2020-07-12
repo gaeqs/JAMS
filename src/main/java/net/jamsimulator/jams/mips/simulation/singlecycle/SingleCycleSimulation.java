@@ -39,7 +39,8 @@ import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.change.*;
-import net.jamsimulator.jams.mips.simulation.event.SimulationUnlockEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 import net.jamsimulator.jams.mips.simulation.singlecycle.event.SingleCycleInstructionExecutionEvent;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 import net.jamsimulator.jams.utils.StringUtils;
@@ -78,8 +79,62 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	}
 
 	@Override
-	public synchronized void nextStep() {
-		if (locked || finished) return;
+	public void nextStep() {
+		if (finished || running) return;
+		running = true;
+		interrupted = false;
+
+		thread = new Thread(() -> {
+			runStep();
+			synchronized (finishedRunningLock) {
+				running = false;
+				finishedRunningLock.notifyAll();
+				callEvent(new SimulationStopEvent(this));
+			}
+		});
+		callEvent(new SimulationStartEvent(this));
+		thread.start();
+	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		changes.clear();
+	}
+
+	@Override
+	public void executeAll() {
+		if (finished || running) return;
+		running = true;
+		interrupted = false;
+
+		thread = new Thread(() -> {
+			while (!finished && !checkInterrupted()) {
+				runStep();
+			}
+			synchronized (finishedRunningLock) {
+				running = false;
+				finishedRunningLock.notifyAll();
+				callEvent(new SimulationStopEvent(this));
+			}
+		});
+		callEvent(new SimulationStartEvent(this));
+		thread.start();
+	}
+
+	@Override
+	public boolean undoLastStep() {
+		stop();
+		waitForExecutionFinish();
+
+		if (changes.isEmpty()) return false;
+		finished = false;
+		changes.removeLast().restore(this);
+		return true;
+	}
+
+	private void runStep() {
+		if (finished) return;
 		currentStepChanges = new StepChanges<>();
 		int pc = registers.getProgramCounter().getValue();
 
@@ -95,7 +150,6 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		}
 
 		//Execute, Memory and Write
-
 		SingleCycleExecution<?> execution = (SingleCycleExecution<?>)
 				instruction.getBasicOrigin().generateExecution(this, instruction).orElse(null);
 
@@ -113,6 +167,14 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
 		execution.execute();
 
+		//Check thread, if interrupted, return to the previous cycle.
+		if (checkInterrupted()) {
+			StepChanges<SingleCycleArchitecture> changes = currentStepChanges;
+			currentStepChanges = null;
+			changes.restore(this);
+			return;
+		}
+
 		callEvent(new SingleCycleInstructionExecutionEvent.After(this, pc, instruction, execution));
 
 		changes.add(currentStepChanges);
@@ -123,34 +185,6 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 			getConsole().println();
 			getConsole().printWarningLn("Execution finished. Dropped off bottom.");
 		}
-	}
-
-	@Override
-	public synchronized void reset() {
-		super.reset();
-		changes.clear();
-	}
-
-	@Override
-	public synchronized void executeAll() {
-		if (locked || finished) return;
-		shouldResumeExecutionOnUnlock = true;
-		while (!finished) {
-			nextStep();
-			if (locked) return;
-		}
-		shouldResumeExecutionOnUnlock = false;
-	}
-
-	@Override
-	public synchronized boolean undoLastStep() {
-		if (changes.isEmpty()) return false;
-		callEvent(new SimulationUnlockEvent(this));
-		locked = false;
-		finished = false;
-		shouldResumeExecutionOnUnlock = false;
-		changes.removeLast().restore(this);
-		return true;
 	}
 
 	//region change listeners

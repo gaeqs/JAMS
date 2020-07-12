@@ -2,13 +2,17 @@ package net.jamsimulator.jams.mips.simulation.event;
 
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
-public class SimulationUnlockEvent extends SimulationEvent {
+/**
+ * This event is called when the execution of a simulation has stopped.
+ * This method is invoked by the execution itself.
+ */
+public class SimulationStartEvent extends SimulationEvent {
 	/**
 	 * Creates the simulation event.
 	 *
 	 * @param simulation the {@link Simulation} tha created this event.
 	 */
-	public SimulationUnlockEvent(Simulation<?> simulation) {
+	public SimulationStartEvent(Simulation<?> simulation) {
 		super(simulation);
 	}
 }

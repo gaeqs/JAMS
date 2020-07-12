@@ -11,17 +11,23 @@ import java.util.LinkedList;
 public class StepChanges<Arch extends Architecture> {
 
 	private final LinkedList<SimulationChange<? super Arch>> changes;
+	private final Object lock = new Object();
 
 	public StepChanges() {
 		changes = new LinkedList<>();
 	}
 
 	public void addChange(SimulationChange<? super Arch> change) {
-		changes.addFirst(change);
+		synchronized (lock) {
+			changes.addFirst(change);
+		}
 	}
 
 	public void restore(Simulation<? extends Arch> simulation) {
-		changes.forEach(target -> target.restore(simulation));
+		synchronized (lock) {
+			changes.forEach(target -> target.restore(simulation));
+			changes.clear();
+		}
 	}
 
 }

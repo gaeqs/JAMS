@@ -1,7 +1,6 @@
 package net.jamsimulator.jams.gui.util.log;
 
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import net.jamsimulator.jams.utils.NumericUtils;
 
@@ -14,12 +13,14 @@ public class ConsoleInput extends Region {
 	 *
 	 * @param text the handled input.
 	 */
-	public ConsoleInput(String text, Pane inputs) {
+	public ConsoleInput(String text, Console console) {
 		getStyleClass().add("input");
 		label = new Label(text);
 		getChildren().add(label);
 
-		setOnMouseClicked(event -> inputs.getChildren().remove(this));
+		setOnMouseClicked(event -> {
+			console.inputs.remove(text);
+		});
 
 		if (NumericUtils.isInteger(text) || NumericUtils.isLong(text)) {
 			getStyleClass().add("input-integer");
