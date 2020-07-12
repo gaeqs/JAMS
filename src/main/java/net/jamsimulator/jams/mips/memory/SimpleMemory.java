@@ -50,7 +50,9 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 	protected boolean bigEndian;
 	protected boolean savedEndian;
 
-	private final int firstTextAddress, firstDataAddress, firstKernelTextAddress, firstKernelDataAddress, firstExternalAddress;
+	protected final int firstTextAddress, firstDataAddress, firstKernelTextAddress, firstKernelDataAddress, firstExternalAddress;
+	protected int nextDataAddress;
+	protected int savedNextDataAddress;
 
 	/**
 	 * Creates a simple memory using a list of {@link MemorySection}s and a boolean representing whether
@@ -73,6 +75,9 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		this.firstKernelDataAddress = firstKernelDataAddress;
 		this.firstExternalAddress = firstExternalAddress;
 
+		this.nextDataAddress = firstDataAddress;
+		this.savedNextDataAddress = firstDataAddress;
+
 		sections.forEach(target -> this.sections.put(target.getName(), target));
 	}
 
@@ -86,14 +91,18 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 	public SimpleMemory(boolean bigEndian, int firstTextAddress, int firstDataAddress, int firstKernelTextAddress,
 						int firstKernelDataAddress, int firstExternalAddress, MemorySection... sections) {
 		Validate.isTrue(sections.length > 0, "There must be at least one memory section!");
-		this.bigEndian = bigEndian;
 		this.sections = new HashMap<>();
+		this.bigEndian = bigEndian;
+		this.savedEndian = bigEndian;
 
 		this.firstTextAddress = firstTextAddress;
 		this.firstDataAddress = firstDataAddress;
 		this.firstKernelTextAddress = firstKernelTextAddress;
 		this.firstKernelDataAddress = firstKernelDataAddress;
 		this.firstExternalAddress = firstExternalAddress;
+
+		this.nextDataAddress = firstDataAddress;
+		this.savedNextDataAddress = firstDataAddress;
 
 		for (MemorySection section : sections) {
 			this.sections.put(section.getName(), section);
@@ -106,12 +115,16 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		Validate.isTrue(!sections.isEmpty(), "There must be at least one memory section!");
 		this.sections = sections;
 		this.bigEndian = bigEndian;
+		this.savedEndian = bigEndian;
 
 		this.firstTextAddress = firstTextAddress;
 		this.firstDataAddress = firstDataAddress;
 		this.firstKernelTextAddress = firstKernelTextAddress;
 		this.firstKernelDataAddress = firstKernelDataAddress;
 		this.firstExternalAddress = firstExternalAddress;
+
+		this.nextDataAddress = firstDataAddress;
+		this.savedNextDataAddress = firstDataAddress;
 	}
 
 	/**
@@ -223,6 +236,16 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 	}
 
 	@Override
+	public int getNextDataAddress() {
+		return nextDataAddress;
+	}
+
+	@Override
+	public void setNextDataAddress(int nextDataAddress) {
+		this.nextDataAddress = nextDataAddress;
+	}
+
+	@Override
 	public int getFirstKernelTextAddress() {
 		return firstKernelTextAddress;
 	}
@@ -238,10 +261,36 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 	}
 
 	@Override
+	public int allocateMemory(int length) {
+		//Align
+		int first = nextDataAddress;
+		int mod = first % 4;
+		if (mod > 0) {
+			first += 4 - mod;
+		}
+
+		MemoryAllocateMemoryEvent.Before before =
+				callEvent(new MemoryAllocateMemoryEvent.Before(this, nextDataAddress, first, length));
+		if (before.isCancelled()) return 0;
+
+		length = before.getLength();
+
+		int old = nextDataAddress;
+		nextDataAddress = first + length;
+
+		callEvent(new MemoryAllocateMemoryEvent.After(this, old, first, length));
+
+		return first;
+	}
+
+	@Override
 	public Memory copy() {
 		HashMap<String, MemorySection> sections = new HashMap<>();
 		this.sections.forEach((name, section) -> sections.put(name, section.copy()));
-		return new SimpleMemory(sections, bigEndian, firstTextAddress, firstDataAddress, firstKernelTextAddress, firstKernelDataAddress, firstExternalAddress);
+		SimpleMemory memory = new SimpleMemory(sections, bigEndian, firstTextAddress, firstDataAddress, firstKernelTextAddress, firstKernelDataAddress, firstExternalAddress);
+		memory.savedNextDataAddress = nextDataAddress;
+		memory.nextDataAddress = nextDataAddress;
+		return memory;
 	}
 
 	@Override
@@ -249,6 +298,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		savedSections = new HashMap<>();
 		sections.forEach((key, section) -> savedSections.put(key, section.copy()));
 		savedEndian = bigEndian;
+		savedNextDataAddress = nextDataAddress;
 	}
 
 	@Override
@@ -260,6 +310,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 			savedSections.forEach((key, section) -> sections.put(key, section.copy()));
 		}
 		bigEndian = savedEndian;
+		nextDataAddress = savedNextDataAddress;
 	}
 
 	@Override

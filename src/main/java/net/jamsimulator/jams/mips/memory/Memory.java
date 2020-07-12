@@ -101,12 +101,28 @@ public interface Memory extends EventBroadcast {
 	int getFirstDataAddress();
 
 	/**
+	 * Returns the next data address.
+	 * This address is used to reserve more memory.
+	 *
+	 * @return the next data address.
+	 */
+	int getNextDataAddress();
+
+	/**
+	 * Sets the next data address.
+	 * <p>
+	 * WARNING! This method should only be used by simulations when they undo a memory reservation!
+	 *
+	 * @param nextDataAddress the next data address.
+	 */
+	void setNextDataAddress(int nextDataAddress);
+
+	/**
 	 * Returns the first kernel text address assemblers should use.
 	 *
 	 * @return the first kernel text address.
 	 */
 	int getFirstKernelTextAddress();
-
 
 	/**
 	 * Returns the first kernel data address assemblers should use.
@@ -121,6 +137,14 @@ public interface Memory extends EventBroadcast {
 	 * @return the external kernel data address.
 	 */
 	int getFirstExternalAddress();
+
+	/**
+	 * Reserves 'length' bytes in the dynamic data section.
+	 *
+	 * @param length the amount of bytes to reserve.
+	 * @return the first address of the reserved data.
+	 */
+	int allocateMemory(int length);
 
 	/**
 	 * Creates a deep copy of the memory.

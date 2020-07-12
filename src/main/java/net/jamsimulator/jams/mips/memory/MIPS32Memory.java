@@ -77,6 +77,9 @@ public class MIPS32Memory extends SimpleMemory {
 	public Memory copy() {
 		HashMap<String, MemorySection> sections = new HashMap<>();
 		this.sections.forEach((name, section) -> sections.put(name, section.copy()));
-		return new MIPS32Memory(sections, bigEndian);
+		MIPS32Memory memory = new MIPS32Memory(sections, bigEndian);
+		memory.savedNextDataAddress = nextDataAddress;
+		memory.nextDataAddress = nextDataAddress;
+		return memory;
 	}
 }

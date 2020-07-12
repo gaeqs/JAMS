@@ -34,6 +34,7 @@ import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
+import net.jamsimulator.jams.mips.memory.event.MemoryAllocateMemoryEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
@@ -213,6 +214,12 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	private synchronized void onEndiannessChange(MemoryEndiannessChange.After event) {
 		if (currentStepChanges == null) return;
 		currentStepChanges.addChange(new SimulationChangeMemoryEndianness(!event.isNewEndiannessBigEndian()));
+	}
+
+	@Listener
+	private synchronized void onReserve(MemoryAllocateMemoryEvent.After event) {
+		if (currentStepChanges == null) return;
+		currentStepChanges.addChange(new SimulationChangeAllocatedMemory(event.getOldCurrentData()));
 	}
 
 	//endregion

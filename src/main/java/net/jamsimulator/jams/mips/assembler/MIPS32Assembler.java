@@ -147,6 +147,8 @@ public class MIPS32Assembler implements Assembler {
 			file.executeLabelRequiredDirectives();
 		});
 
+		//Reserves static memory.
+		memory.allocateMemory(assemblerData.getCurrentData() - assemblerData.getFirstData());
 		assembled = true;
 	}
 }

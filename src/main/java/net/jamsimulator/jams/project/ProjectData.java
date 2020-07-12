@@ -34,9 +34,11 @@ import java.io.IOException;
 public abstract class ProjectData extends SimpleEventBroadcast {
 
 	public static final String METADATA_FOLDER_NAME = ".jams";
+	public static final String FILES_FOLDER_NAME = "files";
 	public static final String METADATA_DATA_NAME = "data.json";
 
 	protected final File folder;
+	protected final File filesFolder;
 	protected boolean loaded;
 	protected RootConfiguration data;
 
@@ -47,10 +49,18 @@ public abstract class ProjectData extends SimpleEventBroadcast {
 		if (!FolderUtils.checkFolder(folder)) {
 			throw new RuntimeException("Couldn't create data folder!");
 		}
+		filesFolder = new File(projectFolder, FILES_FOLDER_NAME);
+		if (!FolderUtils.checkFolder(filesFolder)) {
+			throw new RuntimeException("Couldn't create files folder!");
+		}
 	}
 
 	public File getFolder() {
 		return folder;
+	}
+
+	public File getFilesFolder() {
+		return filesFolder;
 	}
 
 	public String getName() {
