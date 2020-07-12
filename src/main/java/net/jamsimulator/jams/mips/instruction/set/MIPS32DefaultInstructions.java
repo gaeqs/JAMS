@@ -107,6 +107,12 @@ class MIPS32DefaultInstructions {
 
 		basicInstructions.add(new InstructionLw());
 
+		basicInstructions.add(new InstructionMfc0());
+		basicInstructions.add(new InstructionMfc1());
+
+		basicInstructions.add(new InstructionMtc0());
+		basicInstructions.add(new InstructionMtc1());
+
 		basicInstructions.add(new InstructionMuh());
 		basicInstructions.add(new InstructionMuhu());
 		basicInstructions.add(new InstructionMul());

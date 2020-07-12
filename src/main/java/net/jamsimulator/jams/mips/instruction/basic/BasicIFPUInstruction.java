@@ -35,7 +35,7 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
  */
 public abstract class BasicIFPUInstruction<Inst extends AssembledInstruction> extends BasicInstruction<Inst> {
 
-	private int subcode;
+	private final int subcode;
 
 	/**
 	 * Creates a basic instruction using a name, a mnemonic, a parameter types array, an operation code,

@@ -111,6 +111,14 @@ public abstract class AssembledI11Instruction extends AssembledInstruction {
 		return value >> SOURCE_REGISTER_SHIFT & SOURCE_REGISTER_MASK;
 	}
 
+	/**
+	 * Returns the destination register of this instruction-
+	 *
+	 * @return the destination register.
+	 */
+	public int getDestinationRegister () {
+		return value >> DESTINATION_REGISTER_SHIFT & DESTINATION_REGISTER_MASK;
+	}
 
 	static int calculateValue(int operationCode, int sourceRegister, int targetRegister, int destinationRegister, int immediate) {
 		int value = operationCode << AssembledInstruction.OPERATION_CODE_SHIFT;

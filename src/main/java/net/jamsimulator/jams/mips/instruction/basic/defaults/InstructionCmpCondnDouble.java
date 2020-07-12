@@ -29,6 +29,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
@@ -38,7 +39,7 @@ import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.NumericUtils;
 
-public class InstructionCmpCondnDouble extends BasicRInstruction<InstructionCmpCondnDouble.Assembled> {
+public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionCmpCondnDouble.Assembled> {
 
 	public static final String NAME = "Floating point compare (%s) (double)";
 	public static final String MNEMONIC = "cmp.%s.d";
@@ -48,8 +49,7 @@ public class InstructionCmpCondnDouble extends BasicRInstruction<InstructionCmpC
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER};
 
 	public InstructionCmpCondnDouble(FloatCondition condition) {
-		super(String.format(NAME, condition.getName()), String.format(MNEMONIC, condition.getMnemonic()),
-				PARAMETER_TYPES, OPERATION_CODE, condition.getCode());
+		super(String.format(NAME, condition.getName()), String.format(MNEMONIC, condition.getMnemonic()), PARAMETER_TYPES, OPERATION_CODE, condition.getCode(), FMT);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 	}
 

@@ -29,6 +29,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
@@ -37,7 +38,7 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
-public class InstructionCmpCondnSingle extends BasicRInstruction<InstructionCmpCondnSingle.Assembled> {
+public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionCmpCondnSingle.Assembled> {
 
 	public static final String NAME = "Floating point compare (%s) (single)";
 	public static final String MNEMONIC = "cmp.%s.s";
@@ -47,8 +48,7 @@ public class InstructionCmpCondnSingle extends BasicRInstruction<InstructionCmpC
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER};
 
 	public InstructionCmpCondnSingle(FloatCondition condition) {
-		super(String.format(NAME, condition.getName()), String.format(MNEMONIC, condition.getMnemonic()),
-				PARAMETER_TYPES, OPERATION_CODE, condition.getCode());
+		super(String.format(NAME, condition.getName()), String.format(MNEMONIC, condition.getMnemonic()), PARAMETER_TYPES, OPERATION_CODE, condition.getCode(), FMT);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 	}
 
