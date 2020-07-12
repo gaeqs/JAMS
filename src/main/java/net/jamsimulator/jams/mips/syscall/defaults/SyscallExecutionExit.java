@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.mips.syscall.defaults;
 
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
@@ -18,6 +19,7 @@ public class SyscallExecutionExit implements SyscallExecution {
 		simulation.exit();
 		simulation.getConsole().println();
 		simulation.getConsole().printDoneLn("Execution finished successfully");
+		simulation.callEvent(new SimulationFinishedEvent(simulation));
 	}
 
 	public static class Builder extends SyscallExecutionBuilder<SyscallExecutionExit> {

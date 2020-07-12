@@ -954,8 +954,12 @@ AnchorPane {
 /* ----------------------- */
 
 /* INSTRUCTION TABLE */
-.table-view .single-cycle-current-instruction {
+.table-view .single-cycle-next-instruction {
     -fx-background-color: #276f2a;
+}
+
+.table-view .single-cycle-current-instruction {
+    -fx-background-color: #aa7524;
 }
 
 .console .prompt {

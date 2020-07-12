@@ -36,7 +36,10 @@ public class InstructionsTable extends TableView<InstructionEntry> {
 		return builder.apply(simulation, originals);
 	}
 
+	protected Simulation<?> simulation;
+
 	public InstructionsTable(Simulation<?> simulation, Map<Integer, String> originals) {
+		this.simulation = simulation;
 		getStyleClass().add("table-view-horizontal-fit");
 		setEditable(true);
 		setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
@@ -79,6 +82,10 @@ public class InstructionsTable extends TableView<InstructionEntry> {
 
 		getSelectionModel().select(2, codeColumn);
 
+	}
+
+	public Simulation<?> getSimulation() {
+		return simulation;
 	}
 
 	public void onRowUpdate(TableRow<InstructionEntry> row) {

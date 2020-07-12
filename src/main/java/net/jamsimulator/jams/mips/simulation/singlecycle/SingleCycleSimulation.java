@@ -39,6 +39,7 @@ import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.change.*;
+import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 import net.jamsimulator.jams.mips.simulation.singlecycle.event.SingleCycleInstructionExecutionEvent;
@@ -184,6 +185,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 			finished = true;
 			getConsole().println();
 			getConsole().printWarningLn("Execution finished. Dropped off bottom.");
+			callEvent(new SimulationFinishedEvent(this));
 		}
 	}
 

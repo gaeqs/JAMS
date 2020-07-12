@@ -11,17 +11,22 @@ import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 
 import java.util.Map;
 
 public class SingleCycleInstructionsTable extends InstructionsTable {
 
 	public static final String CURRENT_INSTRUCTION_STYLE_CLASS = "single-cycle-current-instruction";
+	public static final String NEXT_INSTRUCTION_STYLE_CLASS = "single-cycle-next-instruction";
 
 	private final Register pc;
 
 	public SingleCycleInstructionsTable(Simulation<? extends SingleCycleArchitecture> simulation, Map<Integer, String> originals) {
 		super(simulation, originals);
+		simulation.registerListeners(this, true);
 		simulation.getRegisters().registerListeners(this, true);
 		pc = simulation.getRegisters().getProgramCounter();
 	}
@@ -34,7 +39,22 @@ public class SingleCycleInstructionsTable extends InstructionsTable {
 	}
 
 	@Listener
-	private void onInstructionExecution(MemoryEndiannessChange.After event) {
+	private void onSimulationStart(SimulationStartEvent event) {
+		refresh();
+	}
+
+	@Listener
+	private void onSimulationStop(SimulationStopEvent event) {
+		refresh();
+	}
+
+	@Listener
+	private void onSimulationFinishes(SimulationFinishedEvent event) {
+		refresh();
+	}
+
+	@Listener
+	private void onMemoryEndianness(MemoryEndiannessChange.After event) {
 		refresh();
 	}
 
@@ -42,17 +62,23 @@ public class SingleCycleInstructionsTable extends InstructionsTable {
 	@Override
 	public void onRowUpdate(TableRow<InstructionEntry> row) {
 		int current = pc.getValue();
-		if (row.getItem() != null && row.getItem().getAddress() == current) {
+		String style = simulation.isRunning() ? CURRENT_INSTRUCTION_STYLE_CLASS : NEXT_INSTRUCTION_STYLE_CLASS;
+		if (simulation.isRunning()) current -= 4;
+
+		if (!simulation.isFinished() && row.getItem() != null && row.getItem().getAddress() == current) {
 			Platform.runLater(() -> {
 				for (Node child : row.getChildrenUnmodifiable()) {
-					if (!child.getStyleClass().contains(CURRENT_INSTRUCTION_STYLE_CLASS)) {
-						child.getStyleClass().add(CURRENT_INSTRUCTION_STYLE_CLASS);
+					child.getStyleClass().remove(CURRENT_INSTRUCTION_STYLE_CLASS);
+					child.getStyleClass().remove(NEXT_INSTRUCTION_STYLE_CLASS);
+					if (!child.getStyleClass().contains(style)) {
+						child.getStyleClass().add(style);
 					}
 				}
 			});
 		} else {
 			for (Node child : row.getChildrenUnmodifiable()) {
 				child.getStyleClass().remove(CURRENT_INSTRUCTION_STYLE_CLASS);
+				child.getStyleClass().remove(NEXT_INSTRUCTION_STYLE_CLASS);
 			}
 		}
 	}

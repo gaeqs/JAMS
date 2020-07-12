@@ -986,5 +986,38 @@ AnchorPane {
 
 /* INSTRUCTION TABLE */
 .table-view .single-cycle-current-instruction {
-    -fx-background-color: #aa3828;
+    -fx-background-color: #276f2a;
+}
+
+.console .prompt {
+    -fx-background-color: -theme-background-darkest;
+    -fx-border-width: 1 0 0 0;
+    -fx-border-color: -theme-background;
+}
+
+.console .inputs {
+    -fx-background-color: -theme-background-darkest;
+    -fx-border-width: 0 0 0 1;
+    -fx-border-color: -theme-background;
+}
+
+.console .input {
+    -fx-padding: 0 0 0 3;
+    -fx-background-radius: 1;
+}
+
+.console .input-string .label {
+    -fx-text-fill: #4c762e;
+}
+
+.console .input-integer .label {
+    -fx-text-fill: #7af85e;
+}
+
+.console .input-float .label {
+    -fx-text-fill: #5eb5f8;
+}
+
+.console .input:hover {
+    -fx-background-color: darkred;
 }
