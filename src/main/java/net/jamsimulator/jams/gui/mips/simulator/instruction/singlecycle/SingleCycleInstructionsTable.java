@@ -11,9 +11,11 @@ import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationLockEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationUnlockEvent;
+import net.jamsimulator.jams.mips.simulation.singlecycle.event.SingleCycleInstructionExecutionEvent;
 
 import java.util.Map;
 
@@ -27,7 +29,6 @@ public class SingleCycleInstructionsTable extends InstructionsTable {
 	public SingleCycleInstructionsTable(Simulation<? extends SingleCycleArchitecture> simulation, Map<Integer, String> originals) {
 		super(simulation, originals);
 		simulation.registerListeners(this, true);
-		simulation.getRegisters().registerListeners(this, true);
 		pc = simulation.getRegisters().getProgramCounter();
 	}
 
@@ -39,17 +40,25 @@ public class SingleCycleInstructionsTable extends InstructionsTable {
 	}
 
 	@Listener
+	private void onSimulationLock(SimulationLockEvent event) {
+		simulation.getRegisters().registerListeners(this, true);
+		refresh();
+	}
+
+	@Listener
+	private void onSimulationUnlock(SimulationUnlockEvent event) {
+		simulation.getRegisters().unregisterListeners(this);
+	}
+
+	@Listener
 	private void onSimulationStart(SimulationStartEvent event) {
+		simulation.getRegisters().unregisterListeners(this);
 		refresh();
 	}
 
 	@Listener
 	private void onSimulationStop(SimulationStopEvent event) {
-		refresh();
-	}
-
-	@Listener
-	private void onSimulationFinishes(SimulationFinishedEvent event) {
+		simulation.getRegisters().registerListeners(this, true);
 		refresh();
 	}
 

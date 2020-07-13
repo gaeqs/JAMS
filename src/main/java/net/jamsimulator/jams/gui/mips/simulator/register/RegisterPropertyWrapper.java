@@ -117,15 +117,19 @@ public class RegisterPropertyWrapper {
 	@Listener
 	private synchronized void onRegisterValueChange(RegisterChangeValueEvent.After event) {
 		if (!event.getRegister().equals(register)) return;
+		updateRegister(event.getNewValue());
+	}
+
+	private void updateRegister (int newValue) {
 		if (valueProperty == null) valueProperty();
 		if (hexProperty == null) hexProperty();
 
 		if (useDecimals) {
-			valueProperty.setValue(String.valueOf(Float.intBitsToFloat(event.getNewValue())));
+			valueProperty.setValue(String.valueOf(Float.intBitsToFloat(newValue)));
 		} else {
-			valueProperty.setValue(String.valueOf(event.getNewValue()));
+			valueProperty.setValue(String.valueOf(newValue));
 		}
 
-		hexProperty.set("0x" + StringUtils.addZeros(Integer.toHexString(event.getNewValue()), 8));
+		hexProperty.set("0x" + StringUtils.addZeros(Integer.toHexString(newValue), 8));
 	}
 }

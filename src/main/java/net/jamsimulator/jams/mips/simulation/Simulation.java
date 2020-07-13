@@ -38,6 +38,8 @@ import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationLockEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationUnlockEvent;
 import net.jamsimulator.jams.mips.simulation.file.SimulationFiles;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 
@@ -243,6 +245,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 			if (!optional.isPresent()) {
 				try {
+					callEvent(new SimulationLockEvent(this));
 					synchronized (lock) {
 						lock.wait();
 					}
@@ -268,6 +271,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 			if (!optional.isPresent()) {
 				try {
+					callEvent(new SimulationLockEvent(this));
 					synchronized (lock) {
 						lock.wait();
 					}
@@ -402,6 +406,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 	@Listener
 	private void onInput(ConsoleInputEvent.After event) {
+		callEvent(new SimulationUnlockEvent(this));
 		synchronized (lock) {
 			lock.notifyAll();
 		}
