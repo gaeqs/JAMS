@@ -37,6 +37,7 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
 import net.jamsimulator.jams.mips.simulation.file.SimulationFiles;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 
@@ -215,7 +216,9 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 * This value can be set to false using the methods {@link  #reset()} and {@link #undoLastStep()}.
 	 */
 	public void exit() {
+		if (finished) return;
 		finished = true;
+		callEvent(new SimulationFinishedEvent(this));
 	}
 
 	/**

@@ -186,10 +186,11 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		changes.add(currentStepChanges);
 		currentStepChanges = null;
 
-		if (pc + 4 > instructionStackBottom) {
+		if (pc + 4 > instructionStackBottom && !finished) {
 			finished = true;
 			getConsole().println();
 			getConsole().printWarningLn("Execution finished. Dropped off bottom.");
+			getConsole().println();
 			callEvent(new SimulationFinishedEvent(this));
 		}
 	}
