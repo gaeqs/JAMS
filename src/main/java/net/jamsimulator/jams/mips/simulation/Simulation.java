@@ -44,9 +44,7 @@ import net.jamsimulator.jams.mips.simulation.file.SimulationFiles;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Represents the execution of a set of instructions, including a memory and a register set.
@@ -74,6 +72,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 	protected int instructionStackBottom;
 	protected final Console console;
+	protected final Set<Integer> breakpoints;
 
 	protected final Map<Integer, AssembledInstruction> instructionCache;
 
@@ -107,6 +106,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		this.instructionStackBottom = instructionStackBottom;
 		this.files = new SimulationFiles(this);
 
+		this.breakpoints = new HashSet<>();
 		this.instructionCache = new HashMap<>();
 
 		memory.registerListeners(this, true);
@@ -202,6 +202,15 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 */
 	public Console getConsole() {
 		return console;
+	}
+
+	/**
+	 * Returns a modifiable {@link Set} with all this simulation's breakpoints.
+	 *
+	 * @return the {@link Set}.
+	 */
+	public Set<Integer> getBreakpoints() {
+		return breakpoints;
 	}
 
 	/**

@@ -53,12 +53,13 @@ public class MIPS32Assembler implements Assembler {
 	/**
 	 * Links the original instruction to the address its first compiled instruction is located.
 	 *
+	 * @param line    the line of the instruction.
 	 * @param address the address.
 	 * @param string  the instruction.
 	 * @see #getOriginals()
 	 */
-	public void addOriginalInstruction(int address, String string) {
-		originalInstructions.put(address, string);
+	public void addOriginalInstruction(int line, int address, String string) {
+		originalInstructions.put(address, line + ": \t" + string);
 	}
 
 	/**

@@ -297,7 +297,7 @@ AnchorPane {
 }
 
 .check-box .box {
-    -fx-background-color: -theme-background-darker;
+    -fx-background-color: -theme-background-darkest;
     -fx-background-radius: 1;
 }
 

@@ -44,7 +44,7 @@ public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionC
 	public static final String NAME = "Floating point compare (%s) (double)";
 	public static final String MNEMONIC = "cmp.%s.d";
 	public static final int OPERATION_CODE = 0b010001;
-	public static final int FMT = 0b10001;
+	public static final int FMT = 0b10101;
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER};
 

@@ -132,6 +132,7 @@ public class MIPS32AssemblingFile {
 	}
 
 	private void scanLine(int index, String line) {
+		String original = line;
 		MIPS32AssemblerData data = assembler.getAssemblerData();
 		line = sanityLine(line);
 
@@ -156,7 +157,7 @@ public class MIPS32AssemblingFile {
 		} else {
 			data.align(2);
 			labelAddress = data.getCurrent();
-			InstructionSnapshot snapshot = new InstructionSnapshot(index, labelAddress, line);
+			InstructionSnapshot snapshot = new InstructionSnapshot(index, labelAddress, line, original);
 			instructions.add(snapshot);
 			data.addCurrent(snapshot.scan(assembler));
 		}

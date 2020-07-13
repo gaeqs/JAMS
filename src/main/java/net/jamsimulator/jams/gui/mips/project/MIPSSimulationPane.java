@@ -9,6 +9,7 @@ import net.jamsimulator.jams.gui.bar.BarType;
 import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.simulator.MIPSSimulationCentralPane;
+import net.jamsimulator.jams.gui.mips.simulator.memory.MemoryTable;
 import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
@@ -35,6 +36,7 @@ public class MIPSSimulationPane extends WorkingPane {
 
 		loadRegisterTabs();
 		loadConsole();
+		loadMemoryTab();
 
 		init();
 
@@ -73,6 +75,16 @@ public class MIPSSimulationPane extends WorkingPane {
 				Icons.FILE_FILE_PATH, 1024, 1024).orElse(null);
 		paneSnapshots.add(new PaneSnapshot("Console", BarType.BOTTOM, simulation.getConsole(), explorerIcon, Messages.CONSOLE_NAME));
 	}
+
+	private void loadMemoryTab() {
+		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE,
+				Icons.FILE_FILE_PATH, 1024, 1024).orElse(null);
+
+		MemoryTable table = new MemoryTable(simulation);
+
+		paneSnapshots.add(new PaneSnapshot("Memory", BarType.TOP_LEFT, table, explorerIcon, Messages.SIMULATION_CONFIGURATION_MEMORY));
+	}
+
 
 	@Override
 	public String getLanguageNode() {

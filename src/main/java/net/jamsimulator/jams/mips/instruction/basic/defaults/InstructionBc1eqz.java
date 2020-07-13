@@ -90,7 +90,7 @@ public class InstructionBc1eqz extends BasicIFPUInstruction<InstructionBc1eqz.As
 
 		@Override
 		public void execute() {
-			Register rt = register(instruction.getTargetRegister());
+			Register rt = registerCop1(instruction.getTargetRegister());
 			if ((rt.getValue() & 1) != 0) return;
 			Register pc = pc();
 			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));

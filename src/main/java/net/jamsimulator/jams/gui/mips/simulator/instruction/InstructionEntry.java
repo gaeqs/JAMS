@@ -1,8 +1,6 @@
 package net.jamsimulator.jams.gui.mips.simulator.instruction;
 
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
@@ -23,6 +21,7 @@ public class InstructionEntry {
 	private final StringProperty addressProperty;
 	private final StringProperty originalProperty;
 
+	private BooleanProperty breakpointProperty;
 	private StringProperty codeProperty;
 	private StringProperty instructionProperty;
 
@@ -45,6 +44,20 @@ public class InstructionEntry {
 
 	public StringProperty originalProperty() {
 		return originalProperty;
+	}
+
+	public BooleanProperty breakpointProperty() {
+		if (breakpointProperty == null) {
+			breakpointProperty = new SimpleBooleanProperty(null, "breakpoint", false);
+			breakpointProperty.addListener((obs, old, val) -> {
+				if(val) {
+					simulation.getBreakpoints().add(address);
+				} else {
+					simulation.getBreakpoints().remove(address);
+				}
+			});
+		}
+		return breakpointProperty;
 	}
 
 	public StringProperty codeProperty() {

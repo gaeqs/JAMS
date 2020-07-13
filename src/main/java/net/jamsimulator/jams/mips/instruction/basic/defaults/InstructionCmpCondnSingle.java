@@ -43,7 +43,7 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
 	public static final String NAME = "Floating point compare (%s) (single)";
 	public static final String MNEMONIC = "cmp.%s.s";
 	public static final int OPERATION_CODE = 0b010001;
-	public static final int FMT = 0b10000;
+	public static final int FMT = 0b10100;
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER};
 

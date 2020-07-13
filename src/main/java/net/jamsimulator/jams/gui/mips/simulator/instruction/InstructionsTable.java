@@ -3,6 +3,7 @@ package net.jamsimulator.jams.gui.mips.simulator.instruction;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.singlecycle.SingleCycleInstructionsTable;
 import net.jamsimulator.jams.mips.architecture.Architecture;
@@ -44,10 +45,15 @@ public class InstructionsTable extends TableView<InstructionEntry> {
 		setEditable(true);
 		setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 
+		TableColumn<InstructionEntry, Boolean> breakPointColumn = new TableColumn<>("Brk.");
 		TableColumn<InstructionEntry, String> addressColumn = new TableColumn<>("Address");
 		TableColumn<InstructionEntry, String> codeColumn = new TableColumn<>("Code");
 		TableColumn<InstructionEntry, String> instructionColumn = new TableColumn<>("Instruction");
 		TableColumn<InstructionEntry, String> originalColumn = new TableColumn<>("Original");
+
+
+		breakPointColumn.setCellValueFactory(p -> p.getValue().breakpointProperty());
+		breakPointColumn.setCellFactory(param -> new CheckBoxTableCell<>());
 
 		addressColumn.setCellValueFactory(p -> p.getValue().addressProperty());
 		codeColumn.setCellValueFactory(p -> p.getValue().codeProperty());
@@ -55,6 +61,7 @@ public class InstructionsTable extends TableView<InstructionEntry> {
 		instructionColumn.setCellValueFactory(p -> p.getValue().instructionProperty());
 		originalColumn.setCellValueFactory(p -> p.getValue().originalProperty());
 
+		breakPointColumn.setEditable(true);
 		addressColumn.setEditable(false);
 		codeColumn.setEditable(true);
 		instructionColumn.setEditable(false);
@@ -71,7 +78,7 @@ public class InstructionsTable extends TableView<InstructionEntry> {
 		codeColumn.setOnEditCommit(t -> t.getRowValue().codeProperty().setValue(t.getNewValue()));
 
 
-		getColumns().setAll(addressColumn, codeColumn, instructionColumn, originalColumn);
+		getColumns().setAll(breakPointColumn, addressColumn, codeColumn, instructionColumn, originalColumn);
 
 		int current = MIPS32Memory.TEXT;
 		int end = simulation.getInstructionStackBottom();

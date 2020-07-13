@@ -15,21 +15,22 @@ import java.util.*;
 public class InstructionSnapshot {
 
 	private final int line, address;
-	private final String raw;
+	private final String raw, original;
 
 
 	private String mnemonic;
 	private List<String> parameters;
 	private Instruction instruction;
 
-	public InstructionSnapshot(int line, int address, String raw) {
+	public InstructionSnapshot(int line, int address, String raw, String original) {
 		this.address = address;
 		this.line = line;
 		this.raw = raw;
+		this.original = original;
 	}
 
 	public int scan(MIPS32Assembler assembler) {
-		assembler.addOriginalInstruction(address, raw);
+		assembler.addOriginalInstruction(line, address, original);
 		decode();
 		return scanInstruction(assembler.getRegisters(), assembler.getInstructionSet());
 	}

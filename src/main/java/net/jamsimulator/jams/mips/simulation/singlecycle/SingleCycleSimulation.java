@@ -96,7 +96,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		interrupted = false;
 
 		thread = new Thread(() -> {
-			runStep();
+			runStep(true);
 			synchronized (finishedRunningLock) {
 				running = false;
 				finishedRunningLock.notifyAll();
@@ -123,8 +123,10 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 			instructions = 0;
 			start = System.nanoTime();
 
+			boolean first = true;
 			while (!finished && !checkInterrupted()) {
-				runStep();
+				runStep(first);
+				first = false;
 				instructions++;
 			}
 
@@ -156,10 +158,17 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		return true;
 	}
 
-	private void runStep() {
+	private void runStep(boolean first) {
 		if (finished) return;
-		currentStepChanges = new StepChanges<>();
 		int pc = registers.getProgramCounter().getValue();
+
+		if (breakpoints.contains(pc) && !first) {
+			interrupt();
+			return;
+		}
+
+		currentStepChanges = new StepChanges<>();
+
 
 		//Fetch and Decode
 		registers.getProgramCounter().setValue(pc + 4);

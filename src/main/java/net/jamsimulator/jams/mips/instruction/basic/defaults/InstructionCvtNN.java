@@ -47,7 +47,7 @@ public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Asse
 	private final FmtNumbers to, from;
 
 	public InstructionCvtNN(FmtNumbers to, FmtNumbers from) {
-		super(String.format(NAME, to.getName(), from.getName()),
+		super(String.format(NAME, from.getName(), to.getName()),
 				String.format(MNEMONIC, to.getMnemonic(), from.getMnemonic()),
 				PARAMETER_TYPES, OPERATION_CODE, to.getCvt(), from.getFmt());
 		this.to = to;
