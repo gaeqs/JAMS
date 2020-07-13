@@ -44,6 +44,8 @@ import net.jamsimulator.jams.mips.simulation.file.SimulationFiles;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -72,6 +74,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 	protected int instructionStackBottom;
 	protected final Console console;
+
+	protected final Map<Integer, AssembledInstruction> instructionCache;
 
 	protected Thread thread;
 	protected final Object lock;
@@ -102,6 +106,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		this.console = console;
 		this.instructionStackBottom = instructionStackBottom;
 		this.files = new SimulationFiles(this);
+
+		this.instructionCache = new HashMap<>();
 
 		memory.registerListeners(this, true);
 		registers.registerListeners(this, true);
@@ -316,11 +322,16 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 * @throws IndexOutOfBoundsException if the address if out of bounds.
 	 */
 	public AssembledInstruction fetch(int pc) {
+		AssembledInstruction cached = instructionCache.get(pc);
+		if (cached != null) return cached;
+
 		int data = memory.getWord(pc);
 		Optional<? extends BasicInstruction<?>> optional = instructionSet.getInstructionByInstructionCode(data);
 		if (!optional.isPresent()) return null;
 		BasicInstruction<?> instruction = optional.get();
-		return instruction.assembleFromCode(data);
+		cached = instruction.assembleFromCode(data);
+		instructionCache.put(pc, cached);
+		return cached;
 	}
 
 	/**
@@ -392,15 +403,19 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 	@Listener
 	private void onMemoryChange(MemoryByteSetEvent.After event) {
+		int address = event.getAddress() >> 2 << 2;
+		instructionCache.remove(address);
 		if (event.getMemorySection().getName().equals("Text") && instructionStackBottom < event.getAddress()) {
-			instructionStackBottom = event.getAddress() >> 2 << 2;
+			instructionStackBottom = address;
 		}
 	}
 
 	@Listener
 	private void onMemoryChange(MemoryWordSetEvent.After event) {
+		int address = event.getAddress();
+		instructionCache.remove(address);
 		if (event.getMemorySection().getName().equals("Text") && instructionStackBottom < event.getAddress()) {
-			instructionStackBottom = event.getAddress();
+			instructionStackBottom = address;
 		}
 	}
 

@@ -66,6 +66,8 @@ import java.util.LinkedList;
  */
 public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
+	public static final int MAX_CHANGES = 10000;
+
 	private final LinkedList<StepChanges<SingleCycleArchitecture>> changes;
 	private StepChanges<SingleCycleArchitecture> currentStepChanges;
 
@@ -199,6 +201,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		callEvent(new SingleCycleInstructionExecutionEvent.After(this, pc, instruction, execution));
 
 		changes.add(currentStepChanges);
+		if (changes.size() > MAX_CHANGES) changes.removeFirst();
 		currentStepChanges = null;
 
 		if (pc + 4 > instructionStackBottom && !finished) {
