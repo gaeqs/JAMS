@@ -41,7 +41,6 @@ public class ParameterMatcherSigned16BitRegisterShift implements ParameterMatche
 		//Parses
 		String register = value.substring(parenthesisIndex + 1, value.length() - 1);
 		ParameterParseResult result = ParameterType.REGISTER.parse(register, registerSet);
-		System.out.println(ParameterType.SIGNED_16_BIT.parse(value.substring(0, parenthesisIndex), registerSet));
 		return result.and(ParameterType.SIGNED_16_BIT.parse(value.substring(0, parenthesisIndex), registerSet));
 	}
 

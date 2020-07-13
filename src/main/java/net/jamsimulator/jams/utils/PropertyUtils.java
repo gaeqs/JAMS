@@ -55,7 +55,6 @@ public class PropertyUtils {
 			try {
 				Field field = DoublePropertyBase.class.getDeclaredField("observable");
 				field.setAccessible(true);
-				System.out.println("FOUND");
 				return Optional.ofNullable((ObservableBooleanValue) field.get(property));
 			} catch (Exception e) {
 				e.printStackTrace();

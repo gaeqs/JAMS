@@ -96,6 +96,13 @@ class MIPS32DefaultInstructions {
 			basicInstructions.add(new InstructionCmpCondnDouble(condition));
 		}
 
+		for (FmtNumbers to : FmtNumbers.values()) {
+			for (FmtNumbers from : FmtNumbers.values()) {
+				if (to == from) continue;
+				basicInstructions.add(new InstructionCvtNN(to, from));
+			}
+		}
+
 		basicInstructions.add(new InstructionDiv());
 		basicInstructions.add(new InstructionMod());
 		basicInstructions.add(new InstructionDivu());

@@ -69,6 +69,9 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	private final LinkedList<StepChanges<SingleCycleArchitecture>> changes;
 	private StepChanges<SingleCycleArchitecture> currentStepChanges;
 
+	private int instructions;
+	private long start;
+
 	/**
 	 * Creates the single-cycle simulation.
 	 *
@@ -115,9 +118,21 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		interrupted = false;
 
 		thread = new Thread(() -> {
+			instructions = 0;
+			start = System.nanoTime();
+
 			while (!finished && !checkInterrupted()) {
 				runStep();
+				instructions++;
 			}
+
+			long millis = (System.nanoTime() - start) / 1000000;
+
+			getConsole().println();
+			getConsole().printInfoLn(instructions + " instructions executed in " + millis + " millis.");
+			getConsole().printInfoLn((instructions / (((float) millis) / 1000)) + " inst/s");
+			getConsole().println();
+
 			synchronized (finishedRunningLock) {
 				running = false;
 				finishedRunningLock.notifyAll();
