@@ -43,6 +43,9 @@ import net.jamsimulator.jams.mips.simulation.change.*;
 import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
+import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileCloseEvent;
+import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileOpenEvent;
+import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileWriteEvent;
 import net.jamsimulator.jams.mips.simulation.singlecycle.event.SingleCycleInstructionExecutionEvent;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 import net.jamsimulator.jams.utils.StringUtils;
@@ -194,33 +197,51 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	//region change listeners
 
 	@Listener
-	private synchronized void onMemoryChange(MemoryWordSetEvent.After event) {
+	private void onMemoryChange(MemoryWordSetEvent.After event) {
 		if (currentStepChanges == null) return;
 		currentStepChanges.addChange(new SimulationChangeMemoryWord(event.getAddress(), event.getOldValue()));
 	}
 
 	@Listener
-	private synchronized void onMemoryChange(MemoryByteSetEvent.After event) {
+	private void onMemoryChange(MemoryByteSetEvent.After event) {
 		if (currentStepChanges == null) return;
 		currentStepChanges.addChange(new SimulationChangeMemoryByte(event.getAddress(), event.getOldValue()));
 	}
 
 	@Listener
-	private synchronized void onRegisterChange(RegisterChangeValueEvent.After event) {
+	private void onRegisterChange(RegisterChangeValueEvent.After event) {
 		if (currentStepChanges == null) return;
 		currentStepChanges.addChange(new SimulationChangeRegister(event.getRegister(), event.getOldValue()));
 	}
 
 	@Listener
-	private synchronized void onEndiannessChange(MemoryEndiannessChange.After event) {
+	private void onEndiannessChange(MemoryEndiannessChange.After event) {
 		if (currentStepChanges == null) return;
 		currentStepChanges.addChange(new SimulationChangeMemoryEndianness(!event.isNewEndiannessBigEndian()));
 	}
 
 	@Listener
-	private synchronized void onReserve(MemoryAllocateMemoryEvent.After event) {
+	private void onReserve(MemoryAllocateMemoryEvent.After event) {
 		if (currentStepChanges == null) return;
 		currentStepChanges.addChange(new SimulationChangeAllocatedMemory(event.getOldCurrentData()));
+	}
+
+	@Listener
+	private void onFileOpen(SimulationFileOpenEvent.After event) {
+		if (currentStepChanges == null) return;
+		currentStepChanges.addChange(new SimulationChangeFileOpen(event.getSimulationFile().getId()));
+	}
+
+	@Listener
+	private void onFileClose(SimulationFileCloseEvent.After event) {
+		if (currentStepChanges == null) return;
+		currentStepChanges.addChange(new SimulationChangeFileClose(event.getFile()));
+	}
+
+	@Listener
+	private void onFileWrite(SimulationFileWriteEvent.After event) {
+		if (currentStepChanges == null) return;
+		currentStepChanges.addChange(new SimulationChangeFileWrite(event.getFile(), event.getData().length));
 	}
 
 	//endregion

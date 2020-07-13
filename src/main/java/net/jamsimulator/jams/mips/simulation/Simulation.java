@@ -103,6 +103,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		memory.registerListeners(this, true);
 		registers.registerListeners(this, true);
 		console.registerListeners(this, true);
+		files.registerListeners(this, true);
 
 		lock = new Object();
 		finishedRunningLock = new Object();

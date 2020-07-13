@@ -1,15 +1,23 @@
 package net.jamsimulator.jams.mips.simulation.file;
 
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileReadEvent;
 
 public class ConsoleInSimulationFile implements SimulationFile {
 
+	protected final SimulationFiles files;
 	protected final int id;
 	protected final Simulation<?> simulation;
 
-	public ConsoleInSimulationFile(int id, Simulation<?> simulation) {
+	public ConsoleInSimulationFile(SimulationFiles files, int id, Simulation<?> simulation) {
+		this.files = files;
 		this.id = id;
 		this.simulation = simulation;
+	}
+
+	@Override
+	public SimulationFiles getFiles() {
+		return files;
 	}
 
 	@Override
@@ -19,6 +27,11 @@ public class ConsoleInSimulationFile implements SimulationFile {
 
 	@Override
 	public byte[] read(int bytes) {
+
+		SimulationFileReadEvent.Before before = files.callEvent(new SimulationFileReadEvent.Before(this, bytes));
+		if (before.isCancelled()) return new byte[0];
+		bytes = before.getAmount();
+
 		if (bytes < 0) {
 			throw new RuntimeException("Invalid amount: " + bytes);
 		}
@@ -30,6 +43,8 @@ public class ConsoleInSimulationFile implements SimulationFile {
 			c = simulation.popCharOrLock();
 			array[current++] = (byte) c;
 		}
+
+		files.callEvent(new SimulationFileReadEvent.After(this, bytes, array));
 
 		return array;
 	}

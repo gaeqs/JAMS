@@ -4,6 +4,8 @@ import java.io.IOException;
 
 public interface SimulationFile {
 
+	SimulationFiles getFiles();
+
 	int getId();
 
 	byte[] read(int bytes);
