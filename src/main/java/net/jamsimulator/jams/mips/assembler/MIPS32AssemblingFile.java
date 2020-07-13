@@ -23,7 +23,7 @@ public class MIPS32AssemblingFile {
 
 
 	public MIPS32AssemblingFile(String rawData, MIPS32Assembler assembler) {
-		this(Arrays.asList(rawData.split("([\\n\\r])+")), assembler);
+		this(StringUtils.multiSplit(rawData, "\n", "\r"), assembler);
 	}
 
 	public MIPS32AssemblingFile(List<String> lines, MIPS32Assembler assembler) {

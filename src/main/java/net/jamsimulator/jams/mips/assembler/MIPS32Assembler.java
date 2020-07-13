@@ -59,7 +59,7 @@ public class MIPS32Assembler implements Assembler {
 	 * @see #getOriginals()
 	 */
 	public void addOriginalInstruction(int line, int address, String string) {
-		originalInstructions.put(address, line + ": \t" + string);
+		originalInstructions.put(address, (line + 1) + ": \t" + string);
 	}
 
 	/**
