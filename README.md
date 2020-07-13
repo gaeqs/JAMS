@@ -1,7 +1,7 @@
 # JAMS
 Just Another MIPS Simulator.
 
-![Image JAMS](https://i.imgur.com/kwzl9Ta.png)
+![Image JAMS](https://i.imgur.com/T2DFkki.png)
 
 ## Introduction
 
