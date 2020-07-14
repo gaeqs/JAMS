@@ -62,11 +62,6 @@ AnchorPane {
     -fx-background-color: -theme-background;
 }
 
-/*MUST ADD THIS CLASS TO ELEMENTS*/
-.h-box {
-    -fx-background-color: -theme-background;
-}
-
 /*TAB*/
 
 .tab-pane .tab-header-area {
@@ -132,9 +127,8 @@ AnchorPane {
 }
 
 /*scroll pane*/
-
 .scroll-pane {
-    -fx-background-color: -theme-background;
+    -fx-background-color: transparent;
 }
 
 .scroll-pane .viewport {

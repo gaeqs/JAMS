@@ -29,23 +29,25 @@ import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
-import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowSection;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
 public class ConfigurationRegionDisplay extends HBox {
 
-	private String languageNode;
-
-	public ConfigurationRegionDisplay(ConfigurationWindowSection section, String region) {
+	public ConfigurationRegionDisplay(String languageNode, String region) {
 		setSpacing(5);
-		languageNode = section.getLanguageNode();
 		if (languageNode != null) {
 			languageNode += "_REGION_" + region.toUpperCase();
 		}
-		refresh();
+		refresh(languageNode);
 	}
 
-	private void refresh() {
+	public ConfigurationRegionDisplay(String languageNode) {
+		setSpacing(5);
+		refresh(languageNode);
+	}
+
+
+	private void refresh(String languageNode) {
 		getChildren().clear();
 
 		Label label = new LanguageLabel(languageNode);

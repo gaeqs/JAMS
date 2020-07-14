@@ -147,7 +147,7 @@ public class ConfigurationWindow extends SplitPane {
 			if (currentRegion == null || !currentRegion.equals(node.getRegion())) {
 				currentRegion = node.getRegion();
 				if (currentRegion != null) {
-					basicSectionContents.getChildren().add(new ConfigurationRegionDisplay(section, currentRegion));
+					basicSectionContents.getChildren().add(new ConfigurationRegionDisplay(section.getLanguageNode(), currentRegion));
 				}
 			}
 			basicSectionContents.getChildren().add(node);

@@ -1,5 +1,6 @@
-package net.jamsimulator.jams.gui.mips.sidebar;
+package net.jamsimulator.jams.gui.mips.configuration;
 
+import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -22,15 +23,16 @@ import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.Spacer;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class SimulationSyscallsConfiguration extends VBox {
+public class ConfigurationSyscallTab extends VBox {
 
-	private MipsSimulationConfiguration configuration;
+	private final MipsSimulationConfiguration configuration;
 	private Button addButton;
 
-	public SimulationSyscallsConfiguration(MipsSimulationConfiguration configuration) {
+	public ConfigurationSyscallTab(MipsSimulationConfiguration configuration) {
 		this.configuration = configuration;
 		init();
 	}
@@ -39,19 +41,11 @@ public class SimulationSyscallsConfiguration extends VBox {
 		return configuration;
 	}
 
-	public void setConfiguration(MipsSimulationConfiguration configuration) {
-		this.configuration = configuration;
-		getChildren().clear();
-		init();
-	}
-
 	private void init() {
 		if (configuration == null) return;
 
 		setAlignment(Pos.TOP_CENTER);
 		setSpacing(3);
-		configuration.getSyscallExecutionBuilders().forEach((key, builder) ->
-				getChildren().add(new SyscallBox(key, builder, this)));
 
 		addButton = new Button("+");
 		addButton.getStyleClass().add("bold-button");
@@ -59,8 +53,22 @@ public class SimulationSyscallsConfiguration extends VBox {
 			getChildren().add(getChildren().indexOf(addButton), createEmptySyscallBox());
 			sort();
 		});
-		getChildren().add(addButton);
-		sort();
+
+		getChildren().add(new Region());
+		addSlowly(new LinkedList<>(configuration.getSyscallExecutionBuilders().entrySet()));
+	}
+
+	private void addSlowly(LinkedList<Map.Entry<Integer, SyscallExecutionBuilder<?>>> list) {
+		if (list.isEmpty()) {
+			getChildren().add(addButton);
+			sort();
+			return;
+		}
+		Platform.runLater(() -> {
+			Map.Entry<Integer, SyscallExecutionBuilder<?>> entry = list.removeFirst();
+			getChildren().add(new SyscallBox(entry.getKey(), entry.getValue(), this));
+			addSlowly(list);
+		});
 	}
 
 	private SyscallBox createEmptySyscallBox() {
@@ -95,12 +103,12 @@ public class SimulationSyscallsConfiguration extends VBox {
 
 		private TextField keyTextField;
 		private SyscallBuilderComboBox builderComboBox;
-		private final SimulationSyscallsConfiguration config;
+		private final ConfigurationSyscallTab config;
 		private final VBox propertiesBox;
 
 		private String oldText;
 
-		public SyscallBox(int key, SyscallExecutionBuilder<?> builder, SimulationSyscallsConfiguration config) {
+		public SyscallBox(int key, SyscallExecutionBuilder<?> builder, ConfigurationSyscallTab config) {
 			this.key = key;
 			this.config = config;
 			loadGeneral(key, builder);

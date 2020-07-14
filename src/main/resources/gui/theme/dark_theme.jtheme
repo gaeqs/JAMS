@@ -70,13 +70,7 @@ AnchorPane {
     -fx-background-color: -theme-background;
 }
 
-/*MUST ADD THIS CLASS TO ELEMENTS*/
-.h-box {
-    -fx-background-color: -theme-background;
-}
-
 /*TAB*/
-
 .tab-pane .tab-header-area {
     -fx-padding: 0;
 }
@@ -135,9 +129,8 @@ AnchorPane {
 }
 
 /*scroll pane*/
-
 .scroll-pane {
-    -fx-background-color: -theme-background;
+    -fx-background-color: transparent;
 }
 
 .scroll-pane .viewport {
@@ -947,6 +940,22 @@ AnchorPane {
 /*Added and selected*/
 .mips-explorer-file-to-assemble.selected-explorer-element {
     -fx-background-color: #4b6578;
+}
+
+/* MIPS CONFIGURATIONS */
+.mips-configurations-list {
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.mips-configurations-list-buttons {
+    -fx-background-color: -theme-background;
+}
+
+.mips-configurations-list-entry {
+}
+
+.mips-configurations-list-entry-selected {
+    -fx-background-color: -theme-explorer-element-selected;
 }
 
 /* ----------------------- */
