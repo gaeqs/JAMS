@@ -44,8 +44,8 @@ import java.util.*;
 public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 
-	protected Map<String, MemorySection> sections;
-	protected Map<String, MemorySection> savedSections;
+	protected MemorySection[] sections;
+	protected MemorySection[] savedSections;
 
 	protected boolean bigEndian;
 	protected boolean savedEndian;
@@ -61,11 +61,11 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 	 * @param sections  the {@link MemorySection}s.
 	 * @param bigEndian whether this memory is big endian.
 	 */
-	public SimpleMemory(List<MemorySection> sections, boolean bigEndian, int firstTextAddress, int firstDataAddress,
+	public SimpleMemory(Collection<MemorySection> sections, boolean bigEndian, int firstTextAddress, int firstDataAddress,
 						int firstKernelTextAddress, int firstKernelDataAddress, int firstExternalAddress) {
 		Validate.notNull(sections, "There must be at least one memory section!");
 		Validate.isTrue(!sections.isEmpty(), "There must be at least one memory section!");
-		this.sections = new HashMap<>();
+		this.sections = new MemorySection[sections.size()];
 		this.bigEndian = bigEndian;
 		this.savedEndian = bigEndian;
 
@@ -78,7 +78,11 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		this.nextDataAddress = firstDataAddress;
 		this.savedNextDataAddress = firstDataAddress;
 
-		sections.forEach(target -> this.sections.put(target.getName(), target));
+		int i = 0;
+		for (MemorySection section : sections) {
+			this.sections[i++] = section;
+		}
+		Arrays.sort(this.sections, (Comparator.comparingInt(MemorySection::getFirstAddress)));
 	}
 
 	/**
@@ -91,7 +95,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 	public SimpleMemory(boolean bigEndian, int firstTextAddress, int firstDataAddress, int firstKernelTextAddress,
 						int firstKernelDataAddress, int firstExternalAddress, MemorySection... sections) {
 		Validate.isTrue(sections.length > 0, "There must be at least one memory section!");
-		this.sections = new HashMap<>();
+		this.sections = new MemorySection[sections.length];
 		this.bigEndian = bigEndian;
 		this.savedEndian = bigEndian;
 
@@ -104,15 +108,14 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		this.nextDataAddress = firstDataAddress;
 		this.savedNextDataAddress = firstDataAddress;
 
-		for (MemorySection section : sections) {
-			this.sections.put(section.getName(), section);
-		}
+		System.arraycopy(sections, 0, this.sections, 0, sections.length);
+		Arrays.sort(this.sections, (Comparator.comparingInt(MemorySection::getFirstAddress)));
 	}
 
-	protected SimpleMemory(Map<String, MemorySection> sections, boolean bigEndian, int firstTextAddress,
+	protected SimpleMemory(MemorySection[] sections, boolean bigEndian, int firstTextAddress,
 						   int firstDataAddress, int firstKernelTextAddress, int firstKernelDataAddress, int firstExternalAddress) {
 		Validate.notNull(sections, "There must be at least one memory section!");
-		Validate.isTrue(!sections.isEmpty(), "There must be at least one memory section!");
+		Validate.isTrue(sections.length != 0, "There must be at least one memory section!");
 		this.sections = sections;
 		this.bigEndian = bigEndian;
 		this.savedEndian = bigEndian;
@@ -133,7 +136,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 	 * @return thee immutable list.
 	 */
 	public List<MemorySection> getSections() {
-		return new ArrayList<>(sections.values());
+		return Arrays.asList(sections);
 	}
 
 	@Override
@@ -285,8 +288,12 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 	@Override
 	public Memory copy() {
-		HashMap<String, MemorySection> sections = new HashMap<>();
-		this.sections.forEach((name, section) -> sections.put(name, section.copy()));
+
+		MemorySection[] sections = new MemorySection[this.sections.length];
+		for (int i = 0; i < this.sections.length; i++) {
+			sections[i] = this.sections[i].copy();
+		}
+
 		SimpleMemory memory = new SimpleMemory(sections, bigEndian, firstTextAddress, firstDataAddress, firstKernelTextAddress, firstKernelDataAddress, firstExternalAddress);
 		memory.savedNextDataAddress = nextDataAddress;
 		memory.nextDataAddress = nextDataAddress;
@@ -295,8 +302,10 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 	@Override
 	public void saveState() {
-		savedSections = new HashMap<>();
-		sections.forEach((key, section) -> savedSections.put(key, section.copy()));
+		savedSections = new MemorySection[sections.length];
+		for (int i = 0; i < sections.length; i++) {
+			savedSections[i] = sections[i].copy();
+		}
 		savedEndian = bigEndian;
 		savedNextDataAddress = nextDataAddress;
 	}
@@ -304,10 +313,13 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 	@Override
 	public void restoreSavedState() {
 		if (savedSections == null) {
-			sections.forEach((key, section) -> section.wipe());
+			for (MemorySection section : sections) {
+				section.wipe();
+			}
 		} else {
-			sections.clear();
-			savedSections.forEach((key, section) -> sections.put(key, section.copy()));
+			for (int i = 0; i < sections.length; i++) {
+				sections[i] = savedSections[i].copy();
+			}
 		}
 		bigEndian = savedEndian;
 		nextDataAddress = savedNextDataAddress;
@@ -320,11 +332,9 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 
 	private MemorySection getSectionOrThrowException(int address) {
-		//Filters sections
-		Optional<MemorySection> optional = sections.values().stream().filter(target -> target.isInside(address)).findAny();
-		//If not present throw exception.
-		if (!optional.isPresent())
-			throw new IndexOutOfBoundsException("Memory section not found for address " + address + ".");
-		return optional.get();
+		for (MemorySection section : sections) {
+			if (section.isInside(address)) return section;
+		}
+		throw new IndexOutOfBoundsException("Memory section not found for address " + address + ".");
 	}
 }

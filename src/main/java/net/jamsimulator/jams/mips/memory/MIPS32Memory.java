@@ -24,9 +24,6 @@
 
 package net.jamsimulator.jams.mips.memory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Represents a MIPS32 memory managed by a {@link SimpleMemory}.
  * This memory has all the sections a MIPS memory would have.
@@ -67,7 +64,7 @@ public class MIPS32Memory extends SimpleMemory {
 				new MemorySection(KERNEL_RESERVED_2_NAME, KERNEL_RESERVED_2, 0xFFFFFFFF - 0xFFFF0000 - 9));
 	}
 
-	private MIPS32Memory(Map<String, MemorySection> sections, boolean bigEndian) {
+	private MIPS32Memory(MemorySection[] sections, boolean bigEndian) {
 		super(sections, bigEndian, MIPS32Memory.TEXT, MIPS32Memory.STATIC_DATA, MIPS32Memory.KERNEL_TEXT,
 				MIPS32Memory.KERNEL_DATA, MIPS32Memory.EXTERNAL);
 	}
@@ -75,8 +72,11 @@ public class MIPS32Memory extends SimpleMemory {
 
 	@Override
 	public Memory copy() {
-		HashMap<String, MemorySection> sections = new HashMap<>();
-		this.sections.forEach((name, section) -> sections.put(name, section.copy()));
+		MemorySection[] sections = new MemorySection[this.sections.length];
+		for (int i = 0; i < this.sections.length; i++) {
+			sections[i] = this.sections[i].copy();
+		}
+
 		MIPS32Memory memory = new MIPS32Memory(sections, bigEndian);
 		memory.savedNextDataAddress = nextDataAddress;
 		memory.nextDataAddress = nextDataAddress;
