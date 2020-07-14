@@ -4,9 +4,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
+import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 
 import java.util.HashMap;
 
@@ -50,11 +53,26 @@ public class MemoryTable extends TableView<MemoryEntry> {
 		}
 
 
-		simulation.getMemory().registerListeners(this, true);
+		simulation.registerListeners(this, true);
+		if (!simulation.isRunning()) {
+			simulation.getMemory().registerListeners(this, true);
+		}
 	}
 
 	public Simulation<?> getSimulation() {
 		return simulation;
+	}
+
+	@Listener
+	private void onSimulationStart(SimulationStartEvent event) {
+		simulation.getMemory().unregisterListeners(this);
+	}
+
+	@Listener
+	private void onSimulationStop(SimulationStopEvent event) {
+		simulation.getMemory().registerListeners(this, true);
+		Memory memory = event.getSimulation().getMemory();
+		entries.values().forEach(entry -> entry.refresh(memory));
 	}
 
 	@Listener

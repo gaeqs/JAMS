@@ -30,7 +30,7 @@ import java.lang.reflect.Method;
  * Represents an event broadcast. An event broadcast allows to send
  * events to all the registered {@link Listener} the broadcast has.
  * <p>
- * To register a listener use {@link #registerListener(Object, Method)} or {@link #registerListeners(Object)}.
+ * To register a listener use {@link #registerListener(Object, Method, Boolean)} or {@link #registerListeners(Object, Boolean)}.
  * To send an {@link Event} use {@link #callEvent(Event)}.
  * <p>
  * {@link Listener}s listening a superclass of the {@link Event} will also be called.
@@ -94,6 +94,8 @@ public interface EventBroadcast {
 
 	/**
 	 * Calls all listeners compatible with the given {@link Event}.
+	 * <p>
+	 * Events must match the same class. If it matches any superclass the event won't be invoked.
 	 *
 	 * @param event the {@link Event}.
 	 * @return the {@link Event}.

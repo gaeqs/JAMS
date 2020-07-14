@@ -4,9 +4,7 @@ import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -16,6 +14,9 @@ import java.util.Set;
  * This class wraps a {@link Register}, making it valid to be used in a {@link javafx.scene.control.TableView}.
  */
 public class RegisterPropertyWrapper {
+
+	private final Object lock = new Object();
+	private boolean updating;
 
 	private final Register register;
 	private final boolean useDecimals;
@@ -28,7 +29,6 @@ public class RegisterPropertyWrapper {
 	public RegisterPropertyWrapper(Register register, boolean useDecimals) {
 		this.register = register;
 		this.useDecimals = useDecimals;
-		register.getRegisters().registerListeners(this, true);
 	}
 
 	public Register getRegister() {
@@ -78,17 +78,17 @@ public class RegisterPropertyWrapper {
 			}
 
 			valueProperty.addListener((obs, old, val) -> {
-
-				if (val.equals(old)) return;
-				try {
-					int to = useDecimals ? Float.floatToIntBits(Float.parseFloat(val)) : NumericUtils.decodeInteger(val);
-					if (register.getValue() != to) {
-						register.setValue(to);
+				synchronized (lock) {
+					if (updating || val.equals(old) || !register.isModifiable()) return;
+					try {
+						int to = useDecimals ? Float.floatToIntBits(Float.parseFloat(val)) : NumericUtils.decodeInteger(val);
+						if (register.getValue() != to) {
+							register.setValue(to);
+						}
+					} catch (NumberFormatException ex) {
+						valueProperty.setValue(old);
 					}
-				} catch (NumberFormatException ex) {
-					valueProperty.setValue(old);
 				}
-
 			});
 		}
 		return valueProperty;
@@ -99,37 +99,41 @@ public class RegisterPropertyWrapper {
 			hexProperty = new SimpleStringProperty(this, "hex");
 			hexProperty.setValue("0x" + StringUtils.addZeros(Integer.toHexString(register.getValue()), 8));
 			hexProperty.addListener((obs, old, val) -> {
-				if (!register.isModifiable()) return;
-				if (old.equals(val)) return;
-				int to = NumericUtils.decodeInteger(val);
-				if (register.getValue() == to) return;
-				try {
-					register.setValue(to);
-				} catch (NumberFormatException ex) {
-					ex.printStackTrace();
-					hexProperty.setValue(old);
+				synchronized (lock) {
+					if (updating || !register.isModifiable()) return;
+					if (old.equals(val)) return;
+					int to = NumericUtils.decodeInteger(val);
+					if (register.getValue() == to) return;
+					try {
+						register.setValue(to);
+					} catch (NumberFormatException ex) {
+						ex.printStackTrace();
+						hexProperty.setValue(old);
+					}
 				}
 			});
 		}
 		return hexProperty;
 	}
 
-	@Listener
-	private synchronized void onRegisterValueChange(RegisterChangeValueEvent.After event) {
-		if (!event.getRegister().equals(register)) return;
-		updateRegister(event.getNewValue());
+	public void updateRegister() {
+		updateRegister(register.getValue());
 	}
 
-	private void updateRegister (int newValue) {
-		if (valueProperty == null) valueProperty();
-		if (hexProperty == null) hexProperty();
+	public void updateRegister(int newValue) {
+		synchronized (lock) {
+			updating = true;
+			if (valueProperty == null) valueProperty();
+			if (hexProperty == null) hexProperty();
 
-		if (useDecimals) {
-			valueProperty.setValue(String.valueOf(Float.intBitsToFloat(newValue)));
-		} else {
-			valueProperty.setValue(String.valueOf(newValue));
+			if (useDecimals) {
+				valueProperty.setValue(String.valueOf(Float.intBitsToFloat(newValue)));
+			} else {
+				valueProperty.setValue(String.valueOf(newValue));
+			}
+
+			hexProperty.set("0x" + StringUtils.addZeros(Integer.toHexString(newValue), 8));
+			updating = false;
 		}
-
-		hexProperty.set("0x" + StringUtils.addZeros(Integer.toHexString(newValue), 8));
 	}
 }

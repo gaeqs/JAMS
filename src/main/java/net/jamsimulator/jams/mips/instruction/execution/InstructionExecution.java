@@ -83,45 +83,6 @@ public abstract class InstructionExecution<Arch extends Architecture, Inst exten
 	}
 
 	/**
-	 * Returns the register that matches the given name.
-	 *
-	 * @param name the name
-	 * @return the register.
-	 * @throws RuntimeInstructionException if the register is not present.
-	 */
-	protected Register register(String name) {
-		Optional<Register> register = simulation.getRegisters().getRegister(name);
-		if (!register.isPresent()) error("Register " + name + " not found.");
-		return register.get();
-	}
-
-	/**
-	 * Returns the COP0 register that matches the given name.
-	 *
-	 * @param name the name
-	 * @return the register.
-	 * @throws RuntimeInstructionException if the register is not present.
-	 */
-	protected Register registerCop0(String name) {
-		Optional<Register> register = simulation.getRegisters().getCoprocessor0Register(name);
-		if (!register.isPresent()) error("Register " + name + " not found.");
-		return register.get();
-	}
-
-	/**
-	 * Returns the COP1 register that matches the given name.
-	 *
-	 * @param name the name
-	 * @return the register.
-	 * @throws RuntimeInstructionException if the register is not present.
-	 */
-	protected Register registerCop1(String name) {
-		Optional<Register> register = simulation.getRegisters().getCoprocessor1Register(name);
-		if (!register.isPresent()) error("Register " + name + " not found.");
-		return register.get();
-	}
-
-	/**
 	 * Returns the register that matches the given identifier.
 	 *
 	 * @param identifier the identifier.

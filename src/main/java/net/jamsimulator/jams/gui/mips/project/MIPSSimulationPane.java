@@ -61,9 +61,9 @@ public class MIPSSimulationPane extends WorkingPane {
 		Set<Register> general = new HashSet<>(simulation.getRegisters().getGeneralRegisters());
 		general.add(simulation.getRegisters().getProgramCounter());
 
-		registersTabs.getTabs().add(new LanguageTab(Messages.REGISTERS_GENERAL, new RegistersTable(general, false)));
-		registersTabs.getTabs().add(new LanguageTab(Messages.REGISTERS_COP0, new RegistersTable(simulation.getRegisters().getCoprocessor0Registers(), false)));
-		registersTabs.getTabs().add(new LanguageTab(Messages.REGISTERS_COP1, new RegistersTable(simulation.getRegisters().getCoprocessor1Registers(), true)));
+		registersTabs.getTabs().add(new LanguageTab(Messages.REGISTERS_GENERAL, new RegistersTable(simulation, general, false)));
+		registersTabs.getTabs().add(new LanguageTab(Messages.REGISTERS_COP0, new RegistersTable(simulation, simulation.getRegisters().getCoprocessor0Registers(), false)));
+		registersTabs.getTabs().add(new LanguageTab(Messages.REGISTERS_COP1, new RegistersTable(simulation, simulation.getRegisters().getCoprocessor1Registers(), true)));
 
 		registersTabs.getTabs().forEach(tab -> tab.setClosable(false));
 

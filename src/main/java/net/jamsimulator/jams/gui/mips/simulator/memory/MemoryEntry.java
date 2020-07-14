@@ -2,6 +2,7 @@ package net.jamsimulator.jams.gui.mips.simulator.memory;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class MemoryEntry {
@@ -15,6 +16,10 @@ public class MemoryEntry {
 	public MemoryEntry(Simulation<?> simulation, int address) {
 		this.simulation = simulation;
 		this.address = address;
+	}
+
+	public int getAddress() {
+		return address;
 	}
 
 	public StringProperty addressProperty() {
@@ -59,6 +64,13 @@ public class MemoryEntry {
 		}
 
 		return pC;
+	}
+
+	public void refresh(Memory memory) {
+		update(memory.getWord(address), 0, false);
+		update(memory.getWord(address + 4), 4, false);
+		update(memory.getWord(address + 8), 8, false);
+		update(memory.getWord(address + 12), 12, false);
 	}
 
 	public void update(int value, int offset, boolean asFloat) {

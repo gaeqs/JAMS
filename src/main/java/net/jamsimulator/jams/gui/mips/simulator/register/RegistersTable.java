@@ -3,14 +3,23 @@ package net.jamsimulator.jams.gui.mips.simulator.register;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
+import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.register.Register;
+import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
+import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Set;
 
 public class RegistersTable extends TableView<RegisterPropertyWrapper> {
 
-	public RegistersTable(Set<Register> registers, boolean useDecimals) {
+	private final HashMap<Register, RegisterPropertyWrapper> registers;
+
+	public RegistersTable(Simulation<?> simulation, Set<Register> registers, boolean useDecimals) {
+		this.registers = new HashMap<>();
 		getStyleClass().add("table-view-horizontal-fit");
 		setEditable(true);
 		setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
@@ -53,5 +62,34 @@ public class RegistersTable extends TableView<RegisterPropertyWrapper> {
 		registers.stream()
 				.sorted((Comparator.comparingInt(Register::getIdentifier)))
 				.forEach(target -> getItems().add(new RegisterPropertyWrapper(target, useDecimals)));
+
+
+		for (RegisterPropertyWrapper item : getItems()) {
+			this.registers.put(item.getRegister(), item);
+		}
+
+		simulation.registerListeners(this, true);
+		if(!simulation.isRunning()) {
+			simulation.getRegisters().registerListeners(this, true);
+		}
+	}
+
+	@Listener
+	private void onSimulationStart(SimulationStartEvent event) {
+		event.getSimulation().getRegisters().unregisterListeners(this);
+	}
+
+	@Listener
+	private void onSimulationStop(SimulationStopEvent event) {
+		event.getSimulation().getRegisters().registerListeners(this, true);
+		registers.values().forEach(RegisterPropertyWrapper::updateRegister);
+	}
+
+	@Listener
+	private void onRegisterValueChange(RegisterChangeValueEvent.After event) {
+		RegisterPropertyWrapper wrapper = registers.get(event.getRegister());
+		if (wrapper == null) return;
+		int value = event.getNewValue();
+		wrapper.updateRegister(value);
 	}
 }

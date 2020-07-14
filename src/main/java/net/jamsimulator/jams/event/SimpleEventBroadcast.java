@@ -25,6 +25,9 @@
 package net.jamsimulator.jams.event;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeSet;
 
 /**
@@ -38,17 +41,13 @@ import java.util.TreeSet;
  */
 public class SimpleEventBroadcast implements EventBroadcast {
 
-	private final TreeSet<ListenerMethod> registeredListeners;
+	private final Map<Class<?>, TreeSet<ListenerMethod>> registeredListeners;
 
 	/**
 	 * Creates a event caller.
 	 */
 	public SimpleEventBroadcast() {
-		registeredListeners = new TreeSet<>(((o1, o2) -> {
-			int val = o2.getListener().priority() - o1.getListener().priority();
-			//Avoids override. Listeners registered first have priority.
-			return val == 0 ? -1 : val;
-		}));
+		registeredListeners = new HashMap<>();
 	}
 
 	public boolean registerListener(Object instance, Method method, boolean useWeakReferences) {
@@ -64,7 +63,16 @@ public class SimpleEventBroadcast implements EventBroadcast {
 		method.setAccessible(true);
 
 		ListenerMethod listenerMethod = new ListenerMethod(instance, method, type, annotation, useWeakReferences);
-		registeredListeners.add(listenerMethod);
+
+		TreeSet<ListenerMethod> methods = registeredListeners.computeIfAbsent(type, k -> new TreeSet<>(((o1, o2) -> {
+			int val = o2.getListener().priority() - o1.getListener().priority();
+			//Avoids override. Listeners registered first have priority.
+			return val == 0 ? -1 : val;
+		})));
+
+
+		if (methods.stream().anyMatch(target -> target.matches(instance, method))) return false;
+		methods.add(listenerMethod);
 		return true;
 	}
 
@@ -84,8 +92,22 @@ public class SimpleEventBroadcast implements EventBroadcast {
 
 	@Override
 	public boolean unregisterListener(Object instance, Method method) {
-		//This method also uses the loop to remove listeners with invalid references.
-		return registeredListeners.removeIf(target -> !target.isReferenceValid() || target.matches(instance, method));
+		if (method.getParameterCount() != 1) return false;
+		Class<?> clazz = method.getParameters()[0].getType();
+		if (!Event.class.isAssignableFrom(clazz)) return false;
+		Class<? extends Event> type = (Class<? extends Event>) clazz;
+
+		Listener[] annotations = method.getAnnotationsByType(Listener.class);
+		if (annotations.length != 1) return false;
+
+		TreeSet<ListenerMethod> methods = registeredListeners.get(type);
+		if (methods == null) return false;
+
+		boolean b = methods.removeIf(target -> !target.isReferenceValid() || target.matches(instance, method));
+		if (!b) return false;
+
+		if (methods.isEmpty()) registeredListeners.remove(type);
+		return true;
 	}
 
 	@Override
@@ -98,6 +120,7 @@ public class SimpleEventBroadcast implements EventBroadcast {
 		return amount;
 	}
 
+	@Override
 	public <T extends Event> T callEvent(T event) {
 		return callEvent(event, this);
 	}
@@ -115,18 +138,26 @@ public class SimpleEventBroadcast implements EventBroadcast {
 	 * @see #callEvent(Event)
 	 */
 	public <T extends Event> T callEvent(T event, EventBroadcast broadcast) {
-		//Removes invalid events
-		registeredListeners.removeIf(target -> !target.isReferenceValid());
-		//Sets the caller.
 		event.setCaller(broadcast);
-		//For all listeners: filter and send.
-		registeredListeners.stream().filter(target -> target.getEvent().isAssignableFrom(event.getClass()))
-				.forEach(target -> {
-					if (target.getListener().ignoreCancelled() ||
-							!(event instanceof Cancellable) ||
-							!((Cancellable) event).isCancelled())
-						target.call(event);
-				});
+		TreeSet<ListenerMethod> methods = registeredListeners.get(event.getClass());
+		if (methods == null) return event;
+
+		Iterator<ListenerMethod> iterator = methods.iterator();
+		ListenerMethod method;
+		while (iterator.hasNext()) {
+			method = iterator.next();
+			if (!method.isReferenceValid()) {
+				iterator.remove();
+				continue;
+			}
+
+			if (method.getListener().ignoreCancelled()
+					|| !(event instanceof Cancellable)
+					|| !((Cancellable) event).isCancelled()) {
+				method.call(event);
+			}
+		}
+
 		return event;
 	}
 

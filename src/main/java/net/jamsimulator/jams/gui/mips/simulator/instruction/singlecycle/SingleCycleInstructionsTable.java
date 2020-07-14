@@ -15,7 +15,6 @@ import net.jamsimulator.jams.mips.simulation.event.SimulationLockEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUnlockEvent;
-import net.jamsimulator.jams.mips.simulation.singlecycle.event.SingleCycleInstructionExecutionEvent;
 
 import java.util.Map;
 
@@ -30,6 +29,9 @@ public class SingleCycleInstructionsTable extends InstructionsTable {
 		super(simulation, originals);
 		simulation.registerListeners(this, true);
 		pc = simulation.getRegisters().getProgramCounter();
+		if (!simulation.isRunning()) {
+			simulation.getRegisters().registerListeners(this, true);
+		}
 	}
 
 	@Listener

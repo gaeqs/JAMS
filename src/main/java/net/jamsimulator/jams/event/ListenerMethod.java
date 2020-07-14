@@ -65,6 +65,9 @@ class ListenerMethod {
 
 	boolean matches(Object instance, Method method) {
 		//We want to check that it's the same instance, not an equivalent one.
+		if(weakReference) {
+			return this.method.equals(method) && instance == this.instanceWeakReference.get();
+		}
 		return this.method.equals(method) && instance == this.instance;
 	}
 
@@ -86,5 +89,13 @@ class ListenerMethod {
 			System.err.println("Error while calling listener " + method.getName() + "!");
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "ListenerMethod{" +
+				"method=" + method +
+				", instance=" + instance +
+				'}';
 	}
 }

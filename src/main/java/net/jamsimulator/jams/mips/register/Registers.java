@@ -27,10 +27,7 @@ package net.jamsimulator.jams.mips.register;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Represents a {@link Register} set. An instance of this class stores all
@@ -42,9 +39,9 @@ public class Registers extends SimpleEventBroadcast {
 
 	protected final Set<Character> validRegistersStarts;
 
-	protected Set<Register> registers;
-	protected Set<Register> coprocessor0Registers;
-	protected Set<Register> coprocessor1Registers;
+	protected Register[] registers;
+	protected Register[] coprocessor0Registers;
+	protected Register[] coprocessor1Registers;
 
 	protected Register programCounter;
 
@@ -58,13 +55,13 @@ public class Registers extends SimpleEventBroadcast {
 	 * @param coprocessor0Registers the coprocessor 0 registers.
 	 * @param coprocessor1Registers the coprocessor 1 registers.
 	 */
-	public Registers(Set<Character> validRegistersStarts, Set<Register> registers,
-					 Set<Register> coprocessor0Registers, Set<Register> coprocessor1Registers) {
+	public Registers(Set<Character> validRegistersStarts, Register[] registers,
+					 Register[] coprocessor0Registers, Register[] coprocessor1Registers) {
 		Validate.notNull(validRegistersStarts, "Valid registers starts cannot be null!");
 		this.validRegistersStarts = validRegistersStarts;
-		this.registers = registers == null ? new HashSet<>() : registers;
-		this.coprocessor0Registers = coprocessor0Registers == null ? new HashSet<>() : coprocessor0Registers;
-		this.coprocessor1Registers = coprocessor1Registers == null ? new HashSet<>() : coprocessor1Registers;
+		this.registers = registers == null ? new Register[32] : registers;
+		this.coprocessor0Registers = coprocessor0Registers == null ? new Register[32] : coprocessor0Registers;
+		this.coprocessor1Registers = coprocessor1Registers == null ? new Register[32] : coprocessor1Registers;
 		loadEssentialRegisters();
 	}
 
@@ -95,10 +92,19 @@ public class Registers extends SimpleEventBroadcast {
 	 * @return the {@link Set}.
 	 */
 	public Set<Register> getRegisters() {
-		Set<Register> registers = new HashSet<>(this.registers);
+		Set<Register> registers = new HashSet<>();
 		registers.add(programCounter);
-		registers.addAll(coprocessor0Registers);
-		registers.addAll(coprocessor1Registers);
+
+		for (Register register : this.registers) {
+			if(register != null) registers.add(register);
+		}
+		for (Register register : coprocessor0Registers) {
+			if(register != null) registers.add(register);
+		}
+		for (Register register : coprocessor1Registers) {
+			if(register != null) registers.add(register);
+		}
+
 		return Collections.unmodifiableSet(registers);
 	}
 
@@ -108,6 +114,10 @@ public class Registers extends SimpleEventBroadcast {
 	 * @return the {@link Set}.
 	 */
 	public Set<Register> getGeneralRegisters() {
+		Set<Register> registers = new HashSet<>();
+		for (Register register : this.registers) {
+			if(register != null) registers.add(register);
+		}
 		return Collections.unmodifiableSet(registers);
 	}
 
@@ -117,7 +127,11 @@ public class Registers extends SimpleEventBroadcast {
 	 * @return the {@link Set}.
 	 */
 	public Set<Register> getCoprocessor0Registers() {
-		return Collections.unmodifiableSet(coprocessor0Registers);
+		Set<Register> registers = new HashSet<>();
+		for (Register register : coprocessor0Registers) {
+			if(register != null) registers.add(register);
+		}
+		return Collections.unmodifiableSet(registers);
 	}
 
 	/**
@@ -126,17 +140,27 @@ public class Registers extends SimpleEventBroadcast {
 	 * @return the {@link Set}.
 	 */
 	public Set<Register> getCoprocessor1Registers() {
-		return Collections.unmodifiableSet(coprocessor1Registers);
+		Set<Register> registers = new HashSet<>();
+		for (Register register : coprocessor1Registers) {
+			if(register != null) registers.add(register);
+		}
+		return Collections.unmodifiableSet(registers);
 	}
 
 	/**
 	 * Get the general {@link Register} whose name matches the given string, if present.
+	 * <p>
+	 * This method should not be used on execution, as it consumes resources.
 	 *
 	 * @param name the name.
 	 * @return the {@link Register}, if present.
 	 */
 	public Optional<Register> getRegister(String name) {
-		return registers.stream().filter(target -> target.hasName(name)).findFirst();
+		for (Register register : registers) {
+			if(register == null) continue;
+			if(register.hasName(name)) return Optional.of(register);
+		}
+		return Optional.empty();
 	}
 
 	/**
@@ -146,17 +170,23 @@ public class Registers extends SimpleEventBroadcast {
 	 * @return the {@link Register}, if present.
 	 */
 	public Optional<Register> getRegister(int identifier) {
-		return registers.stream().filter(target -> target.getIdentifier() == identifier).findFirst();
+		return Optional.ofNullable(registers[identifier]);
 	}
 
 	/**
 	 * Get the coprocessor 0 {@link Register} whose name matches the given string, if present.
+	 * <p>
+	 * This method should not be used on execution, as it consumes resources.
 	 *
 	 * @param name the name.
 	 * @return the {@link Register}, if present.
 	 */
 	public Optional<Register> getCoprocessor0Register(String name) {
-		return coprocessor0Registers.stream().filter(target -> target.hasName(name)).findFirst();
+		for (Register register : coprocessor0Registers) {
+			if(register == null) continue;
+			if(register.hasName(name)) return Optional.of(register);
+		}
+		return Optional.empty();
 	}
 
 
@@ -167,18 +197,24 @@ public class Registers extends SimpleEventBroadcast {
 	 * @return the {@link Register}, if present.
 	 */
 	public Optional<Register> getCoprocessor0Register(int identifier) {
-		return coprocessor0Registers.stream().filter(target -> target.getIdentifier() == identifier).findFirst();
+		return Optional.ofNullable(coprocessor0Registers[identifier]);
 	}
 
 
 	/**
 	 * Get the coprocessor 1 {@link Register} whose name matches the given string, if present.
+	 * <p>
+	 * This method should not be used on execution, as it consumes resources.
 	 *
 	 * @param name the name.
 	 * @return the {@link Register}, if present.
 	 */
 	public Optional<Register> getCoprocessor1Register(String name) {
-		return coprocessor1Registers.stream().filter(target -> target.hasName(name)).findFirst();
+		for (Register register : coprocessor1Registers) {
+			if(register == null) continue;
+			if(register.hasName(name)) return Optional.of(register);
+		}
+		return Optional.empty();
 	}
 
 	/**
@@ -188,7 +224,7 @@ public class Registers extends SimpleEventBroadcast {
 	 * @return the {@link Register}, if present.
 	 */
 	public Optional<Register> getCoprocessor1Register(int identifier) {
-		return coprocessor1Registers.stream().filter(target -> target.getIdentifier() == identifier).findFirst();
+		return Optional.ofNullable(coprocessor1Registers[identifier]);
 	}
 
 	/**
@@ -197,16 +233,17 @@ public class Registers extends SimpleEventBroadcast {
 	 * @return the copy.
 	 */
 	public Registers copy() {
-		Set<Register> newRegisters = new HashSet<>();
-		Set<Register> newCop0Registers = new HashSet<>();
-		Set<Register> newCop1Registers = new HashSet<>();
+		Registers set = new Registers(validRegistersStarts, null, null, null);
 
-		Registers set = new Registers(validRegistersStarts, newRegisters, newCop0Registers, newCop1Registers);
-
-		registers.forEach(target -> newRegisters.add(target.copy(set)));
-		coprocessor0Registers.forEach(target -> newCop0Registers.add(target.copy(set)));
-		coprocessor1Registers.forEach(target -> newCop1Registers.add(target.copy(set)));
-
+		for (int i = 0; i < registers.length; i++) {
+			set.registers[i] = registers[i] == null ? null : registers[i].copy(set);
+		}
+		for (int i = 0; i < coprocessor0Registers.length; i++) {
+			set.coprocessor0Registers[i] = coprocessor0Registers[i] == null ? null : coprocessor0Registers[i].copy(set);
+		}
+		for (int i = 0; i < coprocessor1Registers.length; i++) {
+			set.coprocessor1Registers[i] = coprocessor1Registers[i] == null ? null : coprocessor1Registers[i].copy(set);
+		}
 
 		set.programCounter.setValue(programCounter.getValue());
 		return set;
@@ -218,9 +255,15 @@ public class Registers extends SimpleEventBroadcast {
 	 */
 	public void saveState() {
 		programCounter.makeCurrentValueAsDefault();
-		registers.forEach(Register::makeCurrentValueAsDefault);
-		coprocessor0Registers.forEach(Register::makeCurrentValueAsDefault);
-		coprocessor1Registers.forEach(Register::makeCurrentValueAsDefault);
+		for (Register register : registers) {
+			if (register != null) register.makeCurrentValueAsDefault();
+		}
+		for (Register register : coprocessor0Registers) {
+			if (register != null) register.makeCurrentValueAsDefault();
+		}
+		for (Register register : coprocessor1Registers) {
+			if (register != null) register.makeCurrentValueAsDefault();
+		}
 	}
 
 	/**
@@ -228,9 +271,15 @@ public class Registers extends SimpleEventBroadcast {
 	 */
 	public void restoreSavedState() {
 		programCounter.reset();
-		registers.forEach(Register::reset);
-		coprocessor0Registers.forEach(Register::reset);
-		coprocessor1Registers.forEach(Register::reset);
+		for (Register register : registers) {
+			if (register != null) register.reset();
+		}
+		for (Register register : coprocessor0Registers) {
+			if (register != null) register.reset();
+		}
+		for (Register register : coprocessor1Registers) {
+			if (register != null) register.reset();
+		}
 	}
 
 	protected void loadEssentialRegisters() {

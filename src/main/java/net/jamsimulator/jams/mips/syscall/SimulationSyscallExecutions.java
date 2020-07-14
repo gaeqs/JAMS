@@ -27,7 +27,7 @@ public class SimulationSyscallExecutions {
 	}
 
 	public void executeSyscall(Simulation<?> simulation) {
-		Register v0 = simulation.getRegisters().getRegister("v0").orElse(null);
+		Register v0 = simulation.getRegisters().getRegister(2).orElse(null);
 		if (v0 == null) throw new IllegalStateException("Register v0 not found");
 
 		SyscallExecution execution = executions.getOrDefault(v0.getValue(), defaultExecution);
