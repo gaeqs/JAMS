@@ -29,7 +29,10 @@ import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.memory.event.*;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Represents a simple memory. A simple memory is formed by several {@link MemorySection},
@@ -53,6 +56,8 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 	protected final int firstTextAddress, firstDataAddress, firstKernelTextAddress, firstKernelDataAddress, firstExternalAddress;
 	protected int nextDataAddress;
 	protected int savedNextDataAddress;
+
+	protected boolean eventCallsEnabled;
 
 	/**
 	 * Creates a simple memory using a list of {@link MemorySection}s and a boolean representing whether
@@ -83,6 +88,8 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 			this.sections[i++] = section;
 		}
 		Arrays.sort(this.sections, (Comparator.comparingInt(MemorySection::getFirstAddress)));
+
+		this.eventCallsEnabled = true;
 	}
 
 	/**
@@ -110,6 +117,8 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 		System.arraycopy(sections, 0, this.sections, 0, sections.length);
 		Arrays.sort(this.sections, (Comparator.comparingInt(MemorySection::getFirstAddress)));
+
+		this.eventCallsEnabled = true;
 	}
 
 	protected SimpleMemory(MemorySection[] sections, boolean bigEndian, int firstTextAddress,
@@ -128,6 +137,8 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 		this.nextDataAddress = firstDataAddress;
 		this.savedNextDataAddress = firstDataAddress;
+
+		this.eventCallsEnabled = true;
 	}
 
 	/**
@@ -146,6 +157,10 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 	@Override
 	public void setBigEndian(boolean bigEndian) {
+		if (!eventCallsEnabled) {
+			this.bigEndian = bigEndian;
+			return;
+		}
 		if (this.bigEndian == bigEndian) return;
 		MemoryEndiannessChange.Before before = callEvent(new MemoryEndiannessChange.Before(this, bigEndian));
 		if (before.isCancelled()) return;
@@ -158,6 +173,9 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 	@Override
 	public byte getByte(int address) {
+		if (!eventCallsEnabled) {
+			return getSectionOrThrowException(address).getByte(address);
+		}
 		//Invokes the before event.
 		MemoryByteGetEvent.Before before = callEvent(new MemoryByteGetEvent.Before(this, address));
 
@@ -174,6 +192,10 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 	@Override
 	public void setByte(int address, byte b) {
+		if (!eventCallsEnabled) {
+			getSectionOrThrowException(address).setByte(address, b);
+			return;
+		}
 		//Invokes the before event.
 		MemoryByteSetEvent.Before before = callEvent(new MemoryByteSetEvent.Before(this, address, b));
 		if (before.isCancelled()) return;
@@ -192,6 +214,9 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 	@Override
 	public int getWord(int address) {
+		if (!eventCallsEnabled) {
+			return getSectionOrThrowException(address).getWord(address, bigEndian);
+		}
 		//Invokes the before event.
 		MemoryWordGetEvent.Before before = callEvent(new MemoryWordGetEvent.Before(this, address));
 
@@ -210,6 +235,10 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 	@Override
 	public void setWord(int address, int word) {
+		if (!eventCallsEnabled) {
+			getSectionOrThrowException(address).setWord(address, word, bigEndian);
+			return;
+		}
 		//Invokes the before event.
 		MemoryWordSetEvent.Before before = callEvent(new MemoryWordSetEvent.Before(this, address, word));
 		if (before.isCancelled()) return;
@@ -287,6 +316,16 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 	}
 
 	@Override
+	public void enableEventCalls(boolean enable) {
+		this.eventCallsEnabled = enable;
+	}
+
+	@Override
+	public boolean areEventCallsEnabled() {
+		return eventCallsEnabled;
+	}
+
+	@Override
 	public Memory copy() {
 
 		MemorySection[] sections = new MemorySection[this.sections.length];
@@ -297,6 +336,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		SimpleMemory memory = new SimpleMemory(sections, bigEndian, firstTextAddress, firstDataAddress, firstKernelTextAddress, firstKernelDataAddress, firstExternalAddress);
 		memory.savedNextDataAddress = nextDataAddress;
 		memory.nextDataAddress = nextDataAddress;
+		memory.eventCallsEnabled = eventCallsEnabled;
 		return memory;
 	}
 

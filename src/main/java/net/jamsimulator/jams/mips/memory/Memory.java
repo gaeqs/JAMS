@@ -147,6 +147,27 @@ public interface Memory extends EventBroadcast {
 	int allocateMemory(int length);
 
 	/**
+	 * Enables or disabled event calls.
+	 * <p>
+	 * If this feature is disable the memory will work faster, but actions won't be able to be listened.
+	 * <p>
+	 * This state won't be registered by {@link #saveState()}, but it will be copied if you use {@link #copy()}.
+	 *
+	 * @param enable whether this feature should be enabled or disabled.
+	 */
+	void enableEventCalls(boolean enable);
+
+	/**
+	 * Returns whether event calls are enabled.
+	 * <p>
+	 * If this feature is disable the memory will work faster, but actions won't be able to be listened.
+	 *
+	 * @return whether this feature is enabled.
+	 * @see #enableEventCalls(boolean)
+	 */
+	boolean areEventCallsEnabled();
+
+	/**
 	 * Creates a deep copy of the memory.
 	 *
 	 * @return the copy.

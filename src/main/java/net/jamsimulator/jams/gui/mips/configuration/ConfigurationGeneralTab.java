@@ -4,7 +4,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -22,6 +24,8 @@ public class ConfigurationGeneralTab extends VBox {
 	private final MipsProjectData data;
 	private final MipsSimulationConfiguration configuration;
 
+	private HBox enableUndoHBox;
+
 	public ConfigurationGeneralTab(ConfigurationsWindow window, MipsProjectData data, MipsSimulationConfiguration configuration) {
 		this.window = window;
 		this.data = data;
@@ -36,6 +40,11 @@ public class ConfigurationGeneralTab extends VBox {
 		generateNameHBox();
 		generateArchitectureHBox();
 		generateMemoryHBox();
+
+		getChildren().add(new Separator());
+
+		generateCallEventsCheckBox();
+		generateEnableUndoCheckBox();
 	}
 
 	private void generateNameHBox() {
@@ -108,6 +117,40 @@ public class ConfigurationGeneralTab extends VBox {
 
 		memoryHBox.getChildren().add(memoryBox);
 		getChildren().add(memoryHBox);
+	}
+
+	private void generateCallEventsCheckBox() {
+		HBox box = new HBox();
+		box.setSpacing(5);
+
+		CheckBox checkBox = new CheckBox();
+		checkBox.setSelected(configuration.isCallEvents());
+		checkBox.selectedProperty().addListener((obs, old, val) -> {
+			configuration.setCallEvents(val);
+			enableUndoHBox.setDisable(!val);
+		});
+
+		Label label = new LanguageLabel(Messages.SIMULATION_CONFIGURATION_CALL_EVENTS);
+		label.setOnMouseClicked(event -> checkBox.setSelected(!checkBox.isSelected()));
+
+		box.getChildren().addAll(new Region(), checkBox, label);
+		getChildren().add(box);
+	}
+
+	private void generateEnableUndoCheckBox() {
+		enableUndoHBox = new HBox();
+		enableUndoHBox.setSpacing(5);
+		enableUndoHBox.setDisable(!configuration.isCallEvents());
+
+		CheckBox checkBox = new CheckBox();
+		checkBox.setSelected(configuration.isEnableUndo());
+		checkBox.selectedProperty().addListener((obs, old, val) -> configuration.setEnableUndo(val));
+
+		Label label = new LanguageLabel(Messages.SIMULATION_CONFIGURATION_ENABLE_UNDO);
+		label.setOnMouseClicked(event -> checkBox.setSelected(!checkBox.isSelected()));
+
+		enableUndoHBox.getChildren().addAll(new Region(), checkBox, label);
+		getChildren().add(enableUndoHBox);
 	}
 
 }

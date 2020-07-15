@@ -29,6 +29,7 @@ import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.project.BasicProject;
 
 import java.io.File;
@@ -56,8 +57,8 @@ public class MipsProject extends BasicProject {
 
 	@Override
 	public Simulation<?> assemble() throws IOException {
-		MipsSimulationConfiguration selected = getData().getSelectedConfiguration().orElse(null);
-		if (selected == null) return null;
+		MipsSimulationConfiguration configuration = getData().getSelectedConfiguration().orElse(null);
+		if (configuration == null) return null;
 
 		List<String> files = new ArrayList<>();
 
@@ -70,12 +71,12 @@ public class MipsProject extends BasicProject {
 				getData().getDirectiveSet(),
 				getData().getInstructionSet(),
 				getData().getRegistersBuilder().createRegisters(),
-				selected.getMemoryBuilder().createMemory());
+				configuration.getMemoryBuilder().createMemory());
 
 		assembler.assemble();
 
-		//TODO ADD EXECUTIONS
-		return assembler.createSimulation(selected.getArchitecture(), null, data.getFilesFolder(), new Console());
+		SimulationData simulationData = new SimulationData(configuration, data.getFilesFolder(), new Console());
+		return assembler.createSimulation(configuration.getArchitecture(), simulationData);
 	}
 
 	@Override

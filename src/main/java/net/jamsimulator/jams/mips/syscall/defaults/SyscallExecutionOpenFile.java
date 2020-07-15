@@ -49,7 +49,7 @@ public class SyscallExecutionOpenFile implements SyscallExecution {
 		if (path.isAbsolute()) {
 			file = path.toFile();
 		} else {
-			file = new File(simulation.getWorkingDirectory(), name);
+			file = new File(simulation.getData().getWorkingDirectory(), name);
 		}
 
 		boolean write, append;

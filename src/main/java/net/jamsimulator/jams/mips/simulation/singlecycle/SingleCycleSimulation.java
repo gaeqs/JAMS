@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.mips.simulation.singlecycle;
 
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
@@ -39,6 +38,7 @@ import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.mips.simulation.change.*;
 import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
@@ -47,10 +47,8 @@ import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileCloseEvent
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileOpenEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileWriteEvent;
 import net.jamsimulator.jams.mips.simulation.singlecycle.event.SingleCycleInstructionExecutionEvent;
-import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 import net.jamsimulator.jams.utils.StringUtils;
 
-import java.io.File;
 import java.util.LinkedList;
 
 /**
@@ -83,10 +81,9 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	 * @param memory                 the memory to use in this simulation.
 	 * @param instructionStackBottom the address of the bottom of the instruction stack.
 	 */
-	public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, File workingDirectory,
-								 Registers registers, Memory memory, SimulationSyscallExecutions syscallExecutions, Console log, int instructionStackBottom) {
-		super(architecture, instructionSet, workingDirectory, registers, memory, syscallExecutions, log, instructionStackBottom);
-		changes = new LinkedList<>();
+	public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, SimulationData data) {
+		super(architecture, instructionSet, registers, memory, instructionStackBottom, data);
+		changes = data.isEnableUndo() ? new LinkedList<>() : null;
 	}
 
 	@Override
@@ -95,10 +92,17 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		running = true;
 		interrupted = false;
 
+		memory.enableEventCalls(data.isCallEvents());
+		registers.enableEventCalls(data.isCallEvents());
+
 		thread = new Thread(() -> {
 			runStep(true);
 			synchronized (finishedRunningLock) {
 				running = false;
+
+				memory.enableEventCalls(true);
+				registers.enableEventCalls(true);
+
 				finishedRunningLock.notifyAll();
 				callEvent(new SimulationStopEvent(this));
 			}
@@ -110,7 +114,9 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	@Override
 	public void reset() {
 		super.reset();
-		changes.clear();
+		if (changes != null) {
+			changes.clear();
+		}
 	}
 
 	@Override
@@ -118,6 +124,9 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		if (finished || running) return;
 		running = true;
 		interrupted = false;
+
+		memory.enableEventCalls(data.isCallEvents());
+		registers.enableEventCalls(data.isCallEvents());
 
 		thread = new Thread(() -> {
 			instructions = 0;
@@ -139,6 +148,8 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
 			synchronized (finishedRunningLock) {
 				running = false;
+				memory.enableEventCalls(true);
+				registers.enableEventCalls(true);
 				finishedRunningLock.notifyAll();
 				callEvent(new SimulationStopEvent(this));
 			}
@@ -149,6 +160,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
 	@Override
 	public boolean undoLastStep() {
+		if (!data.isEnableUndo()) return false;
 		stop();
 		waitForExecutionFinish();
 
@@ -167,7 +179,9 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 			return;
 		}
 
-		currentStepChanges = new StepChanges<>();
+		if (data.isEnableUndo()) {
+			currentStepChanges = new StepChanges<>();
+		}
 
 
 		//Fetch and Decode
@@ -186,11 +200,13 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 				instruction.getBasicOrigin().generateExecution(this, instruction).orElse(null);
 
 		//Send before event
-		SingleCycleInstructionExecutionEvent.Before before = callEvent(new SingleCycleInstructionExecutionEvent.Before(this, pc, instruction, execution));
-		if (before.isCancelled()) return;
+		if (data.isCallEvents()) {
+			SingleCycleInstructionExecutionEvent.Before before = callEvent(new SingleCycleInstructionExecutionEvent.Before(this, pc, instruction, execution));
+			if (before.isCancelled()) return;
 
-		//Gets the modifies execution. This may be null.
-		execution = before.getExecution().orElse(null);
+			//Gets the modifies execution. This may be null.
+			execution = before.getExecution().orElse(null);
+		}
 
 		if (execution == null) {
 			throw new InstructionNotFoundException("Couldn't decode instruction " +
@@ -201,17 +217,21 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
 		//Check thread, if interrupted, return to the previous cycle.
 		if (checkInterrupted()) {
-			StepChanges<SingleCycleArchitecture> changes = currentStepChanges;
 			currentStepChanges = null;
-			changes.restore(this);
+			registers.getProgramCounter().setValue(pc);
 			return;
 		}
 
-		callEvent(new SingleCycleInstructionExecutionEvent.After(this, pc, instruction, execution));
+		if (data.isCallEvents()) {
+			callEvent(new SingleCycleInstructionExecutionEvent.After(this, pc, instruction, execution));
 
-		changes.add(currentStepChanges);
-		if (changes.size() > MAX_CHANGES) changes.removeFirst();
-		currentStepChanges = null;
+			if (data.isEnableUndo()) {
+				changes.add(currentStepChanges);
+				if (changes.size() > MAX_CHANGES) changes.removeFirst();
+				currentStepChanges = null;
+			}
+		}
+
 
 		if (pc + 4 > instructionStackBottom && !finished) {
 			finished = true;

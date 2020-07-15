@@ -7,14 +7,12 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.project.mips.MipsProjectData;
 import net.jamsimulator.jams.project.mips.MipsSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationAddEvent;
 import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationRemoveEvent;
 
-import java.util.HashMap;
 import java.util.Set;
 
 public class ConfigurationsList extends VBox {
@@ -72,11 +70,9 @@ public class ConfigurationsList extends VBox {
 					if (!repeat) newName = current;
 					i++;
 				} while (repeat);
-				data.addConfiguration(new MipsSimulationConfiguration(newName, Jams.getArchitectureManager().getDefault(),
-						Jams.getMemoryBuilderManager().getDefault(), new HashMap<>()));
+				data.addConfiguration(new MipsSimulationConfiguration(newName));
 			} else {
-				data.addConfiguration(new MipsSimulationConfiguration(name, Jams.getArchitectureManager().getDefault(),
-						Jams.getMemoryBuilderManager().getDefault(), new HashMap<>()));
+				data.addConfiguration(new MipsSimulationConfiguration(name));
 			}
 		});
 
@@ -95,6 +91,7 @@ public class ConfigurationsList extends VBox {
 	}
 
 	private void select(ConfigurationRepresentation representation) {
+		if(representation == selected) return;
 		if (selected != null) {
 			selected.getStyleClass().remove("mips-configurations-list-entry-selected");
 		}

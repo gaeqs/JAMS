@@ -37,6 +37,7 @@ public class ExecutionButtons extends HBox {
 		undo.getStyleClass().add("bold-button");
 		undo.setTooltip(new Tooltip("Undo last step"));
 		undo.setOnAction(event -> simulation.undoLastStep());
+		undo.setDisable(!simulation.getData().isEnableUndo());
 
 		reset = new Button("", new NearestImageView(resetIcon, 16, 16));
 		reset.getStyleClass().add("bold-button");

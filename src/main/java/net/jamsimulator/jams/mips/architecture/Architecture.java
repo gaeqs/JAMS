@@ -24,15 +24,13 @@
 
 package net.jamsimulator.jams.mips.architecture;
 
-import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
+import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.io.File;
 import java.util.Objects;
 
 /**
@@ -68,12 +66,10 @@ public abstract class Architecture {
 	 * @return the {@link Simulation}.
 	 */
 	public abstract Simulation<? extends Architecture> createSimulation(InstructionSet instructionSet,
-																		File workingDirectory,
 																		Registers registers,
 																		Memory memory,
-																		SimulationSyscallExecutions syscallExecutions,
-																		Console log,
-																		int instructionStackBottom);
+																		int instructionStackBottom,
+																		SimulationData data);
 
 	@Override
 	public boolean equals(Object o) {

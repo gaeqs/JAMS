@@ -20,10 +20,15 @@ public class MipsSimulationConfiguration {
 
 	protected Architecture architecture;
 	protected MemoryBuilder memoryBuilder;
+	protected boolean callEvents, enableUndo;
 	protected Map<Integer, SyscallExecutionBuilder<?>> syscallExecutionBuilders;
 
+	public MipsSimulationConfiguration(String name) {
+		this(name, Jams.getArchitectureManager().getDefault(), Jams.getMemoryBuilderManager().getDefault(), true, true, new HashMap<>());
+	}
+
 	public MipsSimulationConfiguration(String name, Architecture architecture, MemoryBuilder memoryBuilder,
-									   Map<Integer, SyscallExecutionBuilder<?>> syscallExecutionBuilders) {
+									   boolean callEvents, boolean enableUndo, Map<Integer, SyscallExecutionBuilder<?>> syscallExecutionBuilders) {
 		Validate.notNull(name, "Name cannot be null!");
 		Validate.isTrue(!name.isEmpty(), "Name cannot be empty!");
 		Validate.notNull(architecture, "Architecture cannot be null!");
@@ -31,6 +36,8 @@ public class MipsSimulationConfiguration {
 		this.name = name;
 		this.architecture = architecture;
 		this.memoryBuilder = memoryBuilder;
+		this.callEvents = callEvents;
+		this.enableUndo = enableUndo;
 		this.syscallExecutionBuilders = syscallExecutionBuilders;
 	}
 
@@ -44,6 +51,11 @@ public class MipsSimulationConfiguration {
 
 		Optional<MemoryBuilder> memOptional = configuration.getString("memory").flatMap(Jams.getMemoryBuilderManager()::get);
 		memoryBuilder = memOptional.orElseGet(() -> Jams.getMemoryBuilderManager().getDefault());
+
+		Optional<Boolean> callEventsOptional = configuration.get("call_events");
+		callEvents = callEventsOptional.orElse(true);
+		Optional<Boolean> enableUndoOptional = configuration.get("enable_undo");
+		enableUndo = enableUndoOptional.orElse(true);
 
 		syscallExecutionBuilders = new HashMap<>();
 		Optional<Configuration> syscallsOptional = configuration.get("syscalls");
@@ -71,7 +83,6 @@ public class MipsSimulationConfiguration {
 				syscallExecutionBuilders.put(NumericUtils.decodeInteger(key), builder);
 			});
 		}
-
 	}
 
 	public String getName() {
@@ -106,10 +117,29 @@ public class MipsSimulationConfiguration {
 		return syscallExecutionBuilders;
 	}
 
+	public boolean isCallEvents() {
+		return callEvents;
+	}
+
+	public void setCallEvents(boolean callEvents) {
+		this.callEvents = callEvents;
+	}
+
+	public boolean isEnableUndo() {
+		return enableUndo;
+	}
+
+	public void setEnableUndo(boolean enableUndo) {
+		this.enableUndo = enableUndo;
+	}
+
 	public void save(Configuration configuration, String prefix) {
 		prefix = prefix + "." + name;
 		configuration.set(prefix + ".architecture", architecture.getName());
 		configuration.set(prefix + ".memory", memoryBuilder.getName());
+		configuration.set(prefix + ".call_events", callEvents);
+		configuration.set(prefix + ".enable_undo", enableUndo);
+
 		configuration.remove(prefix + "." + name + ".syscalls");
 
 		String syscallsPrefix = prefix + ".syscalls.";
@@ -127,6 +157,8 @@ public class MipsSimulationConfiguration {
 				"name='" + name + '\'' +
 				", architecture=" + architecture +
 				", memoryBuilder=" + memoryBuilder +
+				", callEvents=" + callEvents +
+				", syscallExecutionBuilders=" + syscallExecutionBuilders +
 				'}';
 	}
 

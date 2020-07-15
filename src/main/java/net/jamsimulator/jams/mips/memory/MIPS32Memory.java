@@ -80,6 +80,7 @@ public class MIPS32Memory extends SimpleMemory {
 		MIPS32Memory memory = new MIPS32Memory(sections, bigEndian);
 		memory.savedNextDataAddress = nextDataAddress;
 		memory.nextDataAddress = nextDataAddress;
+		memory.eventCallsEnabled = eventCallsEnabled;
 		return memory;
 	}
 }

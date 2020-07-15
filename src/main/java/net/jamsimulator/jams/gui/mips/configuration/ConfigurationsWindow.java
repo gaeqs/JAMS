@@ -11,11 +11,9 @@ import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.mips.MipsProjectData;
 
-import java.io.IOException;
-
 public class ConfigurationsWindow extends SplitPane {
 
-	public static final int WIDTH = 600, HEIGHT = 400;
+	public static final int WIDTH = 800, HEIGHT = 400;
 
 	private final ConfigurationDisplay display;
 	private final ConfigurationsList list;

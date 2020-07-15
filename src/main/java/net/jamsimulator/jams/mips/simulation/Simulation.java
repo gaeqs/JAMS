@@ -41,9 +41,7 @@ import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationLockEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUnlockEvent;
 import net.jamsimulator.jams.mips.simulation.file.SimulationFiles;
-import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 
-import java.io.File;
 import java.util.*;
 
 /**
@@ -62,16 +60,13 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 	protected final Arch architecture;
 	protected final InstructionSet instructionSet;
-
-	protected final File workingDirectory;
+	protected final SimulationData data;
 
 	protected final Registers registers;
 	protected final Memory memory;
-	protected final SimulationSyscallExecutions syscallExecutions;
 	protected final SimulationFiles files;
 
 	protected int instructionStackBottom;
-	protected final Console console;
 	protected final Set<Integer> breakpoints;
 
 	protected final Map<Integer, AssembledInstruction> instructionCache;
@@ -90,29 +85,28 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 * @param instructionSet         the instruction used by the simulation. This set should be the same as the set used to compile the code.
 	 * @param registers              the registers to use on this simulation.
 	 * @param memory                 the memory to use in this simulation.
-	 * @param syscallExecutions      the syscall executions.
-	 * @param console                the log used to output info.
 	 * @param instructionStackBottom the address of the bottom of the instruction stack.
+	 * @param data                   the immutable data of this simulation.
 	 */
-	public Simulation(Arch architecture, InstructionSet instructionSet, File workingDirectory, Registers registers, Memory memory,
-					  SimulationSyscallExecutions syscallExecutions, Console console, int instructionStackBottom) {
+	public Simulation(Arch architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, SimulationData data) {
 		this.architecture = architecture;
 		this.instructionSet = instructionSet;
-		this.workingDirectory = workingDirectory;
 		this.registers = registers;
 		this.memory = memory;
-		this.syscallExecutions = syscallExecutions;
-		this.console = console;
 		this.instructionStackBottom = instructionStackBottom;
+		this.data = data;
 		this.files = new SimulationFiles(this);
 
 		this.breakpoints = new HashSet<>();
 		this.instructionCache = new HashMap<>();
 
-		memory.registerListeners(this, true);
-		registers.registerListeners(this, true);
-		console.registerListeners(this, true);
-		files.registerListeners(this, true);
+		if (data.isCallEvents() && data.isEnableUndo()) {
+			memory.registerListeners(this, true);
+			registers.registerListeners(this, true);
+			files.registerListeners(this, true);
+		}
+
+		getConsole().registerListeners(this, true);
 
 		lock = new Object();
 		finishedRunningLock = new Object();
@@ -139,16 +133,13 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		return instructionSet;
 	}
 
-
 	/**
-	 * Returns the working directory of this simulation.
-	 * <p>
-	 * The simulation used this directory as the relative root for files.
+	 * Returns a instance with the immutable data of this simulation.
 	 *
-	 * @return the working directory.
+	 * @return the instance.
 	 */
-	public File getWorkingDirectory() {
-		return workingDirectory;
+	public SimulationData getData() {
+		return data;
 	}
 
 	/**
@@ -176,16 +167,6 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	}
 
 	/**
-	 * Returns the {@link SimulationSyscallExecutions syscall execution}s of this simulation.
-	 * These executions are used when the instruction "syscall" is invoked.
-	 *
-	 * @return the {@link SimulationSyscallExecutions syscall execution}s.
-	 */
-	public SimulationSyscallExecutions getSyscallExecutions() {
-		return syscallExecutions;
-	}
-
-	/**
 	 * Returns the open files of this simulation. This small manager allows to open, get and close files.
 	 *
 	 * @return the {@link SimulationFiles file manager}.
@@ -201,7 +182,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 * @return the {@link Console}.
 	 */
 	public Console getConsole() {
-		return console;
+		return data.getConsole();
 	}
 
 	/**
@@ -256,7 +237,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	public String popInputOrLock() {
 		Optional<String> optional = Optional.empty();
 		while (!optional.isPresent()) {
-			optional = console.popInput();
+			optional = data.getConsole().popInput();
 
 			if (!optional.isPresent()) {
 				try {
@@ -282,7 +263,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	public char popCharOrLock() {
 		Optional<Character> optional = Optional.empty();
 		while (!optional.isPresent()) {
-			optional = console.popChar();
+			optional = data.getConsole().popChar();
 
 			if (!optional.isPresent()) {
 				try {
@@ -410,6 +391,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 */
 	public abstract boolean undoLastStep();
 
+
+	//TODO this should be reworked.
 	@Listener
 	private void onMemoryChange(MemoryByteSetEvent.After event) {
 		int address = event.getAddress() >> 2 << 2;

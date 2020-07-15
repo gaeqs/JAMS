@@ -40,6 +40,7 @@ import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 import net.jamsimulator.jams.project.mips.MipsProject;
 import net.jamsimulator.jams.project.mips.MipsSimulationConfiguration;
@@ -86,24 +87,24 @@ public class TextEditorActionCompile extends Action {
 				}
 			}
 
-			MipsSimulationConfiguration selected = project.getData().getSelectedConfiguration().orElse(null);
-			if (selected == null) {
+			MipsSimulationConfiguration configuration = project.getData().getSelectedConfiguration().orElse(null);
+			if (configuration == null) {
 				log.printErrorLn("Configuration not found!");
 				return;
 			}
 
 			MIPS32Assembler assembler = (MIPS32Assembler) project.getData().getAssemblerBuilder()
 					.createAssembler(files, project.getData().getDirectiveSet(), project.getData().getInstructionSet(),
-							new MIPS32Registers(), selected.getMemoryBuilder().createMemory());
+							new MIPS32Registers(), configuration.getMemoryBuilder().createMemory());
 			assembler.assemble();
 
 			int mainLabel = assembler.getGlobalLabelAddress("main").orElse(-1);
-			Console console = new Console();
 
 			SimulationSyscallExecutions executions = new SimulationSyscallExecutions();
-			selected.getSyscallExecutionBuilders().forEach((key, builder) -> executions.bindExecution(key, builder.build()));
+			configuration.getSyscallExecutionBuilders().forEach((key, builder) -> executions.bindExecution(key, builder.build()));
 
-			Simulation<?> simulation = assembler.createSimulation(selected.getArchitecture(), executions, project.getData().getFilesFolder(), console);
+			SimulationData data = new SimulationData(configuration, project.getData().getFilesFolder(), new Console());
+			Simulation<?> simulation = assembler.createSimulation(configuration.getArchitecture(), data);
 
 			project.getProjectTab().ifPresent(projectTab ->
 					projectTab.getProjectTabPane()

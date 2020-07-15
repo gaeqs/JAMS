@@ -1,6 +1,5 @@
 package net.jamsimulator.jams.mips.assembler;
 
-import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
@@ -8,9 +7,8 @@ import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
+import net.jamsimulator.jams.mips.simulation.SimulationData;
 
-import java.io.File;
 import java.util.*;
 
 /**
@@ -106,10 +104,10 @@ public class MIPS32Assembler implements Assembler {
 	}
 
 	@Override
-	public <Arch extends Architecture> Simulation<Arch> createSimulation(Arch architecture, SimulationSyscallExecutions executions, File workingDirectory, Console console) {
+	public <Arch extends Architecture> Simulation<Arch> createSimulation(Arch architecture, SimulationData data) {
 		if (!assembled) throw new IllegalStateException("The program is still not assembled!");
-		Simulation<?> simulation = architecture.createSimulation(instructionSet,
-				workingDirectory, registers.copy(), memory.copy(), executions, console, assemblerData.getCurrentText() - 4);
+		Simulation<?> simulation = architecture.createSimulation(instructionSet, registers.copy(), memory.copy(),
+				assemblerData.getCurrentText() - 4, data);
 		simulation.getRegisters().getProgramCounter().setValue(assemblerData.getFirstText());
 		return (Simulation<Arch>) simulation;
 	}

@@ -182,6 +182,10 @@ public class Register {
 	 */
 	public void setValue(int value) {
 		if (!modifiable) return;
+		if (!registers.eventCallsEnabled) {
+			this.value = value;
+			return;
+		}
 
 		RegisterChangeValueEvent.Before before = registers.callEvent(
 				new RegisterChangeValueEvent.Before(this, this.value, value));

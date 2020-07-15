@@ -27,7 +27,10 @@ package net.jamsimulator.jams.mips.register;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Represents a {@link Register} set. An instance of this class stores all
@@ -44,6 +47,8 @@ public class Registers extends SimpleEventBroadcast {
 	protected Register[] coprocessor1Registers;
 
 	protected Register programCounter;
+
+	protected boolean eventCallsEnabled;
 
 	/**
 	 * Creates a new Register set using the general registers, the coprocessor 0 registers and the coprocessor 1 registers.
@@ -63,6 +68,7 @@ public class Registers extends SimpleEventBroadcast {
 		this.coprocessor0Registers = coprocessor0Registers == null ? new Register[32] : coprocessor0Registers;
 		this.coprocessor1Registers = coprocessor1Registers == null ? new Register[32] : coprocessor1Registers;
 		loadEssentialRegisters();
+		this.eventCallsEnabled = true;
 	}
 
 	/**
@@ -96,13 +102,13 @@ public class Registers extends SimpleEventBroadcast {
 		registers.add(programCounter);
 
 		for (Register register : this.registers) {
-			if(register != null) registers.add(register);
+			if (register != null) registers.add(register);
 		}
 		for (Register register : coprocessor0Registers) {
-			if(register != null) registers.add(register);
+			if (register != null) registers.add(register);
 		}
 		for (Register register : coprocessor1Registers) {
-			if(register != null) registers.add(register);
+			if (register != null) registers.add(register);
 		}
 
 		return Collections.unmodifiableSet(registers);
@@ -116,7 +122,7 @@ public class Registers extends SimpleEventBroadcast {
 	public Set<Register> getGeneralRegisters() {
 		Set<Register> registers = new HashSet<>();
 		for (Register register : this.registers) {
-			if(register != null) registers.add(register);
+			if (register != null) registers.add(register);
 		}
 		return Collections.unmodifiableSet(registers);
 	}
@@ -129,7 +135,7 @@ public class Registers extends SimpleEventBroadcast {
 	public Set<Register> getCoprocessor0Registers() {
 		Set<Register> registers = new HashSet<>();
 		for (Register register : coprocessor0Registers) {
-			if(register != null) registers.add(register);
+			if (register != null) registers.add(register);
 		}
 		return Collections.unmodifiableSet(registers);
 	}
@@ -142,7 +148,7 @@ public class Registers extends SimpleEventBroadcast {
 	public Set<Register> getCoprocessor1Registers() {
 		Set<Register> registers = new HashSet<>();
 		for (Register register : coprocessor1Registers) {
-			if(register != null) registers.add(register);
+			if (register != null) registers.add(register);
 		}
 		return Collections.unmodifiableSet(registers);
 	}
@@ -157,8 +163,8 @@ public class Registers extends SimpleEventBroadcast {
 	 */
 	public Optional<Register> getRegister(String name) {
 		for (Register register : registers) {
-			if(register == null) continue;
-			if(register.hasName(name)) return Optional.of(register);
+			if (register == null) continue;
+			if (register.hasName(name)) return Optional.of(register);
 		}
 		return Optional.empty();
 	}
@@ -183,8 +189,8 @@ public class Registers extends SimpleEventBroadcast {
 	 */
 	public Optional<Register> getCoprocessor0Register(String name) {
 		for (Register register : coprocessor0Registers) {
-			if(register == null) continue;
-			if(register.hasName(name)) return Optional.of(register);
+			if (register == null) continue;
+			if (register.hasName(name)) return Optional.of(register);
 		}
 		return Optional.empty();
 	}
@@ -211,8 +217,8 @@ public class Registers extends SimpleEventBroadcast {
 	 */
 	public Optional<Register> getCoprocessor1Register(String name) {
 		for (Register register : coprocessor1Registers) {
-			if(register == null) continue;
-			if(register.hasName(name)) return Optional.of(register);
+			if (register == null) continue;
+			if (register.hasName(name)) return Optional.of(register);
 		}
 		return Optional.empty();
 	}
@@ -225,6 +231,31 @@ public class Registers extends SimpleEventBroadcast {
 	 */
 	public Optional<Register> getCoprocessor1Register(int identifier) {
 		return Optional.ofNullable(coprocessor1Registers[identifier]);
+	}
+
+	/**
+	 * Enables or disabled event calls.
+	 * <p>
+	 * If this feature is disable registers will work faster, but actions won't be able to be listened.
+	 * <p>
+	 * This state won't be registered by {@link #saveState()}, but it will be copied if you use {@link #copy()}.
+	 *
+	 * @param enable whether this feature should be enabled or disabled.
+	 */
+	public void enableEventCalls(boolean enable) {
+		this.eventCallsEnabled = enable;
+	}
+
+	/**
+	 * Returns whether event calls are enabled.
+	 * <p>
+	 * If this feature is disable registers will work faster, but actions won't be able to be listened.
+	 *
+	 * @return whether this feature is enabled.
+	 * @see #enableEventCalls(boolean)
+	 */
+	public boolean areEventCallsEnabled() {
+		return eventCallsEnabled;
 	}
 
 	/**
@@ -246,6 +277,8 @@ public class Registers extends SimpleEventBroadcast {
 		}
 
 		set.programCounter.setValue(programCounter.getValue());
+
+		set.eventCallsEnabled = eventCallsEnabled;
 		return set;
 	}
 
