@@ -9,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.project.mips.MipsProjectData;
-import net.jamsimulator.jams.project.mips.MipsSimulationConfiguration;
+import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationAddEvent;
 import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationRemoveEvent;
 
@@ -48,7 +48,7 @@ public class ConfigurationsList extends VBox {
 		data.registerListeners(this, true);
 	}
 
-	public void refreshName(MipsSimulationConfiguration configuration) {
+	public void refreshName(MIPSSimulationConfiguration configuration) {
 		contents.getChildren().stream().filter(target -> target instanceof ConfigurationRepresentation &&
 				((ConfigurationRepresentation) target).getConfiguration().equals(configuration))
 				.forEach(target -> ((ConfigurationRepresentation) target).refreshName());
@@ -58,7 +58,7 @@ public class ConfigurationsList extends VBox {
 		add = new Button("+");
 		add.getStyleClass().add("bold-button");
 		add.setOnAction(event -> {
-			Set<MipsSimulationConfiguration> configs = data.getConfigurations();
+			Set<MIPSSimulationConfiguration> configs = data.getConfigurations();
 			String name = "New Configuration";
 			if (configs.stream().anyMatch(target -> target.getName().equals(name))) {
 				String newName = null;
@@ -70,9 +70,9 @@ public class ConfigurationsList extends VBox {
 					if (!repeat) newName = current;
 					i++;
 				} while (repeat);
-				data.addConfiguration(new MipsSimulationConfiguration(newName));
+				data.addConfiguration(new MIPSSimulationConfiguration(newName));
 			} else {
-				data.addConfiguration(new MipsSimulationConfiguration(name));
+				data.addConfiguration(new MIPSSimulationConfiguration(name));
 			}
 		});
 
@@ -103,7 +103,7 @@ public class ConfigurationsList extends VBox {
 		remove.setDisable(selected == null);
 	}
 
-	private void addConfiguration(MipsSimulationConfiguration configuration) {
+	private void addConfiguration(MIPSSimulationConfiguration configuration) {
 		contents.getChildren().add(new ConfigurationRepresentation(configuration));
 	}
 
@@ -125,10 +125,10 @@ public class ConfigurationsList extends VBox {
 
 	private class ConfigurationRepresentation extends HBox {
 
-		private final MipsSimulationConfiguration configuration;
+		private final MIPSSimulationConfiguration configuration;
 		private final Label label;
 
-		public ConfigurationRepresentation(MipsSimulationConfiguration configuration) {
+		public ConfigurationRepresentation(MIPSSimulationConfiguration configuration) {
 			super();
 			getStyleClass().add("mips-configurations-list-entry");
 			this.configuration = configuration;
@@ -139,7 +139,7 @@ public class ConfigurationsList extends VBox {
 			setOnMouseClicked(event -> select(this));
 		}
 
-		public MipsSimulationConfiguration getConfiguration() {
+		public MIPSSimulationConfiguration getConfiguration() {
 			return configuration;
 		}
 

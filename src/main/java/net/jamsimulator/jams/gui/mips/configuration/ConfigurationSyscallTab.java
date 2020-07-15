@@ -18,7 +18,7 @@ import net.jamsimulator.jams.gui.util.propertyeditor.PropertyEditors;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionRunExceptionHandler;
-import net.jamsimulator.jams.project.mips.MipsSimulationConfiguration;
+import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.Spacer;
 
@@ -29,15 +29,15 @@ import java.util.Map;
 
 public class ConfigurationSyscallTab extends VBox {
 
-	private final MipsSimulationConfiguration configuration;
+	private final MIPSSimulationConfiguration configuration;
 	private Button addButton;
 
-	public ConfigurationSyscallTab(MipsSimulationConfiguration configuration) {
+	public ConfigurationSyscallTab(MIPSSimulationConfiguration configuration) {
 		this.configuration = configuration;
 		init();
 	}
 
-	public MipsSimulationConfiguration getConfiguration() {
+	public MIPSSimulationConfiguration getConfiguration() {
 		return configuration;
 	}
 

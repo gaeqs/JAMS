@@ -43,7 +43,7 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 import net.jamsimulator.jams.project.mips.MipsProject;
-import net.jamsimulator.jams.project.mips.MipsSimulationConfiguration;
+import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -87,7 +87,7 @@ public class TextEditorActionCompile extends Action {
 				}
 			}
 
-			MipsSimulationConfiguration configuration = project.getData().getSelectedConfiguration().orElse(null);
+			MIPSSimulationConfiguration configuration = project.getData().getSelectedConfiguration().orElse(null);
 			if (configuration == null) {
 				log.printErrorLn("Configuration not found!");
 				return;

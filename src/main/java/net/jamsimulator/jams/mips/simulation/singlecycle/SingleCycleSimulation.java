@@ -83,7 +83,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	 */
 	public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, SimulationData data) {
 		super(architecture, instructionSet, registers, memory, instructionStackBottom, data);
-		changes = data.isEnableUndo() ? new LinkedList<>() : null;
+		changes = data.isUndoEnabled() ? new LinkedList<>() : null;
 	}
 
 	@Override
@@ -92,8 +92,8 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		running = true;
 		interrupted = false;
 
-		memory.enableEventCalls(data.isCallEvents());
-		registers.enableEventCalls(data.isCallEvents());
+		memory.enableEventCalls(data.canCallEvents());
+		registers.enableEventCalls(data.canCallEvents());
 
 		thread = new Thread(() -> {
 			runStep(true);
@@ -125,8 +125,8 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		running = true;
 		interrupted = false;
 
-		memory.enableEventCalls(data.isCallEvents());
-		registers.enableEventCalls(data.isCallEvents());
+		memory.enableEventCalls(data.canCallEvents());
+		registers.enableEventCalls(data.canCallEvents());
 
 		thread = new Thread(() -> {
 			instructions = 0;
@@ -160,7 +160,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
 	@Override
 	public boolean undoLastStep() {
-		if (!data.isEnableUndo()) return false;
+		if (!data.isUndoEnabled()) return false;
 		stop();
 		waitForExecutionFinish();
 
@@ -179,7 +179,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 			return;
 		}
 
-		if (data.isEnableUndo()) {
+		if (data.isUndoEnabled()) {
 			currentStepChanges = new StepChanges<>();
 		}
 
@@ -200,7 +200,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 				instruction.getBasicOrigin().generateExecution(this, instruction).orElse(null);
 
 		//Send before event
-		if (data.isCallEvents()) {
+		if (data.canCallEvents()) {
 			SingleCycleInstructionExecutionEvent.Before before = callEvent(new SingleCycleInstructionExecutionEvent.Before(this, pc, instruction, execution));
 			if (before.isCancelled()) return;
 
@@ -222,10 +222,10 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 			return;
 		}
 
-		if (data.isCallEvents()) {
+		if (data.canCallEvents()) {
 			callEvent(new SingleCycleInstructionExecutionEvent.After(this, pc, instruction, execution));
 
-			if (data.isEnableUndo()) {
+			if (data.isUndoEnabled()) {
 				changes.add(currentStepChanges);
 				if (changes.size() > MAX_CHANGES) changes.removeFirst();
 				currentStepChanges = null;

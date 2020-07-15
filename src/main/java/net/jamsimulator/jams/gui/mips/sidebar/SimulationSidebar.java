@@ -19,12 +19,11 @@ import net.jamsimulator.jams.gui.mips.configuration.ConfigurationsWindow;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.project.mips.MipsProject;
-import net.jamsimulator.jams.project.mips.MipsSimulationConfiguration;
+import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationAddEvent;
 import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationRemoveEvent;
 import net.jamsimulator.jams.project.mips.event.SelectedMipsSimulationConfigurationChangeEvent;
 
-import javax.swing.*;
 import java.util.Set;
 
 public class SimulationSidebar extends VBox {
@@ -65,7 +64,7 @@ public class SimulationSidebar extends VBox {
 	protected void generateConfigurationHBox() {
 		configBox = new ComboBox<>();
 
-		Set<MipsSimulationConfiguration> configurations = project.getData().getConfigurations();
+		Set<MIPSSimulationConfiguration> configurations = project.getData().getConfigurations();
 		configurations.forEach(config -> configBox.getItems().add(config.getName()));
 		if (project.getData().getSelectedConfiguration().isPresent()) {
 			configBox.getSelectionModel().select(project.getData().getSelectedConfiguration().get().getName());

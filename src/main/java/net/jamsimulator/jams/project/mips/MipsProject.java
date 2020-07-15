@@ -57,7 +57,7 @@ public class MipsProject extends BasicProject {
 
 	@Override
 	public Simulation<?> assemble() throws IOException {
-		MipsSimulationConfiguration configuration = getData().getSelectedConfiguration().orElse(null);
+		MIPSSimulationConfiguration configuration = getData().getSelectedConfiguration().orElse(null);
 		if (configuration == null) return null;
 
 		List<String> files = new ArrayList<>();

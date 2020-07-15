@@ -27,16 +27,16 @@ package net.jamsimulator.jams.project.mips.event;
 import net.jamsimulator.jams.event.Cancellable;
 import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.project.mips.MipsProjectData;
-import net.jamsimulator.jams.project.mips.MipsSimulationConfiguration;
+import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
 
 public class SelectedMipsSimulationConfigurationChangeEvent extends Event {
 
 	protected MipsProjectData data;
-	protected MipsSimulationConfiguration oldConfig, newConfig;
+	protected MIPSSimulationConfiguration oldConfig, newConfig;
 
 	public SelectedMipsSimulationConfigurationChangeEvent(MipsProjectData data,
-														  MipsSimulationConfiguration oldConfig,
-														  MipsSimulationConfiguration newConfig) {
+														  MIPSSimulationConfiguration oldConfig,
+														  MIPSSimulationConfiguration newConfig) {
 		this.data = data;
 		this.oldConfig = oldConfig;
 		this.newConfig = newConfig;
@@ -46,11 +46,11 @@ public class SelectedMipsSimulationConfigurationChangeEvent extends Event {
 		return data;
 	}
 
-	public MipsSimulationConfiguration getOldConfig() {
+	public MIPSSimulationConfiguration getOldConfig() {
 		return oldConfig;
 	}
 
-	public MipsSimulationConfiguration getNewConfig() {
+	public MIPSSimulationConfiguration getNewConfig() {
 		return newConfig;
 	}
 
@@ -59,8 +59,8 @@ public class SelectedMipsSimulationConfigurationChangeEvent extends Event {
 		private boolean cancelled;
 
 		public Before(MipsProjectData data,
-					  MipsSimulationConfiguration oldConfig,
-					  MipsSimulationConfiguration newConfig) {
+					  MIPSSimulationConfiguration oldConfig,
+					  MIPSSimulationConfiguration newConfig) {
 			super(data, oldConfig, newConfig);
 		}
 
@@ -78,8 +78,8 @@ public class SelectedMipsSimulationConfigurationChangeEvent extends Event {
 	public static class After extends SelectedMipsSimulationConfigurationChangeEvent {
 
 		public After(MipsProjectData data,
-					 MipsSimulationConfiguration oldConfig,
-					 MipsSimulationConfiguration newConfig) {
+					 MIPSSimulationConfiguration oldConfig,
+					 MIPSSimulationConfiguration newConfig) {
 			super(data, oldConfig, newConfig);
 		}
 	}

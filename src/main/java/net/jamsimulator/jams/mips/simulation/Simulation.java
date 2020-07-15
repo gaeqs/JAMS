@@ -100,7 +100,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		this.breakpoints = new HashSet<>();
 		this.instructionCache = new HashMap<>();
 
-		if (data.isCallEvents() && data.isEnableUndo()) {
+		if (data.canCallEvents() && data.isUndoEnabled()) {
 			memory.registerListeners(this, true);
 			registers.registerListeners(this, true);
 			files.registerListeners(this, true);

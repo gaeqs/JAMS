@@ -44,8 +44,8 @@ import java.util.Set;
 
 public class MipsProjectData extends ProjectData {
 
-	protected Set<MipsSimulationConfiguration> configurations;
-	protected MipsSimulationConfiguration selectedConfiguration;
+	protected Set<MIPSSimulationConfiguration> configurations;
+	protected MIPSSimulationConfiguration selectedConfiguration;
 
 	protected AssemblerBuilder assemblerBuilder;
 	protected RegistersBuilder registersBuilder;
@@ -59,11 +59,11 @@ public class MipsProjectData extends ProjectData {
 		filesToAssemble = new MIPSFilesToAssemble(project);
 	}
 
-	public Set<MipsSimulationConfiguration> getConfigurations() {
+	public Set<MIPSSimulationConfiguration> getConfigurations() {
 		return Collections.unmodifiableSet(configurations);
 	}
 
-	public boolean addConfiguration(MipsSimulationConfiguration configuration) {
+	public boolean addConfiguration(MIPSSimulationConfiguration configuration) {
 		Validate.notNull(configuration, "Configuration is null!");
 		if (configurations.stream().anyMatch(target -> target.getName().equals(configuration.getName())))
 			return false;
@@ -85,7 +85,7 @@ public class MipsProjectData extends ProjectData {
 
 	public boolean removeConfiguration(String name) {
 		Validate.notNull(name, "Name cannot be null!");
-		MipsSimulationConfiguration configuration = configurations.stream()
+		MIPSSimulationConfiguration configuration = configurations.stream()
 				.filter(target -> target.getName().equals(name)).findAny().orElse(null);
 		if (configuration == null) return false;
 		MipsSimulationConfigurationRemoveEvent.Before before = callEvent(new MipsSimulationConfigurationRemoveEvent.Before(this, configuration));
@@ -95,22 +95,22 @@ public class MipsProjectData extends ProjectData {
 			callEvent(new MipsSimulationConfigurationRemoveEvent.After(this, configuration));
 		}
 		if (configuration == selectedConfiguration) {
-			setSelectedConfiguration(configurations.stream().findAny().map(MipsSimulationConfiguration::getName).orElse(null));
+			setSelectedConfiguration(configurations.stream().findAny().map(MIPSSimulationConfiguration::getName).orElse(null));
 		}
 		return result;
 	}
 
-	public Optional<MipsSimulationConfiguration> getSelectedConfiguration() {
+	public Optional<MIPSSimulationConfiguration> getSelectedConfiguration() {
 		return Optional.ofNullable(selectedConfiguration);
 	}
 
 	public boolean setSelectedConfiguration(String name) {
-		MipsSimulationConfiguration configuration = name == null ? null : configurations.stream()
+		MIPSSimulationConfiguration configuration = name == null ? null : configurations.stream()
 				.filter(target -> target.getName().equals(name)).findAny().orElse(null);
 		if (configuration == null && name != null) return false;
 		if (configuration == selectedConfiguration) return false;
 
-		MipsSimulationConfiguration old = selectedConfiguration;
+		MIPSSimulationConfiguration old = selectedConfiguration;
 		SelectedMipsSimulationConfigurationChangeEvent.Before before =
 				callEvent(new SelectedMipsSimulationConfigurationChangeEvent.Before(this, old, configuration));
 		if (before.isCancelled()) return false;
@@ -164,7 +164,7 @@ public class MipsProjectData extends ProjectData {
 		}
 	}
 
-	public void load(Set<MipsSimulationConfiguration> configurations, String selected,
+	public void load(Set<MIPSSimulationConfiguration> configurations, String selected,
 					 AssemblerBuilder assemblerBuilder, RegistersBuilder registersBuilder,
 					 DirectiveSet directiveSet, InstructionSet instructionSet) {
 		super.load();
@@ -230,7 +230,7 @@ public class MipsProjectData extends ProjectData {
 
 			config.getAll(false).forEach((name, data) -> {
 				if (!(data instanceof Configuration)) return;
-				configurations.add(new MipsSimulationConfiguration(name, (Configuration) data));
+				configurations.add(new MIPSSimulationConfiguration(name, (Configuration) data));
 			});
 		}
 

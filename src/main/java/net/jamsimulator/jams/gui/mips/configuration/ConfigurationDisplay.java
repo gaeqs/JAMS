@@ -6,20 +6,20 @@ import javafx.scene.control.TabPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
 import net.jamsimulator.jams.project.mips.MipsProjectData;
-import net.jamsimulator.jams.project.mips.MipsSimulationConfiguration;
+import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
 
 public class ConfigurationDisplay extends TabPane {
 
 	private final ConfigurationsWindow window;
 	private final MipsProjectData data;
-	private MipsSimulationConfiguration selected;
+	private MIPSSimulationConfiguration selected;
 
 	public ConfigurationDisplay(ConfigurationsWindow window, MipsProjectData data) {
 		this.window = window;
 		this.data = data;
 	}
 
-	public void select(MipsSimulationConfiguration configuration) {
+	public void select(MIPSSimulationConfiguration configuration) {
 		selected = configuration;
 		getTabs().clear();
 		populate();

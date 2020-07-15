@@ -2,7 +2,7 @@ package net.jamsimulator.jams.mips.simulation;
 
 import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
-import net.jamsimulator.jams.project.mips.MipsSimulationConfiguration;
+import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
 
 import java.io.File;
 
@@ -15,24 +15,24 @@ public class SimulationData {
 	protected final SimulationSyscallExecutions syscallExecutions;
 	protected final File workingDirectory;
 	protected final Console console;
-	protected final boolean callEvents, enableUndo;
+	protected final boolean callEvents, undoEnabled;
 
-	public SimulationData(SimulationSyscallExecutions syscallExecutions, File workingDirectory, boolean callEvents, boolean enableUndo, Console console) {
+	public SimulationData(SimulationSyscallExecutions syscallExecutions, File workingDirectory, boolean callEvents, boolean undoEnabled, Console console) {
 		this.syscallExecutions = syscallExecutions;
 		this.workingDirectory = workingDirectory;
 		this.callEvents = callEvents;
-		this.enableUndo = enableUndo;
+		this.undoEnabled = undoEnabled;
 		this.console = console;
 	}
 
-	public SimulationData(MipsSimulationConfiguration configuration, File workingDirectory, Console console) {
+	public SimulationData(MIPSSimulationConfiguration configuration, File workingDirectory, Console console) {
 		this.syscallExecutions = new SimulationSyscallExecutions();
 		configuration.getSyscallExecutionBuilders().forEach((key, builder) ->
 				syscallExecutions.bindExecution(key, builder.build()));
 
 		this.workingDirectory = workingDirectory;
 		this.callEvents = configuration.isCallEvents();
-		this.enableUndo = configuration.isEnableUndo() && callEvents;
+		this.undoEnabled = configuration.isUndoEnabled() && callEvents;
 		this.console = console;
 	}
 
@@ -66,7 +66,7 @@ public class SimulationData {
 	 *
 	 * @return whether the simulation should generate register, memory and instruction events.
 	 */
-	public boolean isCallEvents() {
+	public boolean canCallEvents() {
 		return callEvents;
 	}
 
@@ -80,8 +80,8 @@ public class SimulationData {
 	 *
 	 * @return whether instruction's undoes are enabled.
 	 */
-	public boolean isEnableUndo() {
-		return enableUndo;
+	public boolean isUndoEnabled() {
+		return undoEnabled;
 	}
 
 	/**
