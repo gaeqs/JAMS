@@ -36,6 +36,7 @@ import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
 import net.jamsimulator.jams.utils.FileUtils;
+import net.jamsimulator.jams.utils.KeyCombinationBuilder;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
@@ -180,6 +181,18 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 	}
 
 	protected void initializeAutocompletionPopupListeners() {
+		addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+			try {
+				KeyCodeCombination combination = new KeyCombinationBuilder(event).build();
+				Runnable runnable = getScene().getAccelerators().get(combination);
+				if (runnable != null) {
+					runnable.run();
+					event.consume();
+				}
+			} catch (IllegalArgumentException ignore) {
+			}
+		});
+
 		//AUTO COMPLETION
 		addEventHandler(KeyEvent.KEY_TYPED, event -> {
 			if (autocompletionPopup == null) return;

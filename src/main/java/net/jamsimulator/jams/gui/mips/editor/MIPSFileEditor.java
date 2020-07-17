@@ -124,6 +124,12 @@ public class MIPSFileEditor extends CodeFileEditor {
 	}
 
 	@Override
+	public void reload() {
+		super.reload();
+		index();
+	}
+
+	@Override
 	protected void applyAutoIndent() {
 		addEventHandler(KeyEvent.KEY_PRESSED, event -> {
 			if (event.getCode() == KeyCode.ENTER) {
