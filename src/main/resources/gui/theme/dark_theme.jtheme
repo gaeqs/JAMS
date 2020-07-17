@@ -531,6 +531,15 @@ AnchorPane {
     -fx-background-color: -theme-background-lighter;
 }
 
+/* TOOLTIP */
+.tooltip {
+    -fx-background-color: -theme-background;
+    -fx-border-color: -theme-background-lighter;
+    -fx-border-width: 1;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+
 /* WINDOW BUTTON*/
 .window_button {
     -fx-border-color: transparent;

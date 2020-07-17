@@ -526,7 +526,6 @@ AnchorPane {
 
 .context-menu .separator {
     -fx-background-color: transparent;
-
 }
 
 .context-menu .separator .line {
@@ -540,7 +539,16 @@ AnchorPane {
 }
 
 .slider .thumb {
-    -fx-background-color: -theme-background-lighter;
+    -fx-background-color: -theme-background-lightcer;
+}
+
+/* TOOLTIP */
+.tooltip {
+    -fx-background-color: -theme-background;
+    -fx-border-color: -theme-background-lighter;
+    -fx-border-width: 1;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
 }
 
 /* WINDOW BUTTON*/

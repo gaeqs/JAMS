@@ -15,6 +15,7 @@ import net.jamsimulator.jams.gui.util.ArchitectureComboBox;
 import net.jamsimulator.jams.gui.util.MemoryBuilderComboBox;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
+import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
 import net.jamsimulator.jams.project.mips.MipsProjectData;
 import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
 
@@ -131,6 +132,7 @@ public class ConfigurationGeneralTab extends VBox {
 		});
 
 		Label label = new LanguageLabel(Messages.SIMULATION_CONFIGURATION_CALL_EVENTS);
+		label.setTooltip(new LanguageTooltip(Messages.SIMULATION_CONFIGURATION_CALL_EVENTS_TOOLTIP, LanguageTooltip.DEFAULT_DELAY));
 		label.setOnMouseClicked(event -> checkBox.setSelected(!checkBox.isSelected()));
 
 		box.getChildren().addAll(new Region(), checkBox, label);
@@ -147,6 +149,7 @@ public class ConfigurationGeneralTab extends VBox {
 		checkBox.selectedProperty().addListener((obs, old, val) -> configuration.setUndoEnabled(val));
 
 		Label label = new LanguageLabel(Messages.SIMULATION_CONFIGURATION_ENABLE_UNDO);
+		label.setTooltip(new LanguageTooltip(Messages.SIMULATION_CONFIGURATION_ENABLE_UNDO_TOOLTIP, LanguageTooltip.DEFAULT_DELAY));
 		label.setOnMouseClicked(event -> checkBox.setSelected(!checkBox.isSelected()));
 
 		enableUndoHBox.getChildren().addAll(new Region(), checkBox, label);

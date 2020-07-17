@@ -198,4 +198,148 @@ public class StringUtils {
 		return end ? s + builder : builder + s;
 	}
 
+	public static String parseEscapeCharacters(String string) {
+		boolean escaping = false;
+
+		char[] numberBuffer = new char[3];
+		int numberBufferIndex = 0;
+
+		char[] utfBuffer = new char[4];
+		int utfBufferIndex = 0;
+		boolean utf = false;
+
+		StringBuilder result = new StringBuilder();
+
+		for (char c : string.toCharArray()) {
+			//\XXX parse
+			if (numberBufferIndex > 0) {
+
+				if (c >= '0' && c <= '9') {
+					numberBuffer[numberBufferIndex++] = c;
+					if (numberBufferIndex == 3) {
+						numberBufferIndex = 0;
+						int number = Integer.parseInt(new String(numberBuffer));
+						if (number < 377) {
+							result.append((char) number);
+							continue;
+						}
+					} else continue;
+				}
+
+				result.append('\\');
+				for (int i = 0; i < numberBufferIndex; i++) {
+					result.append(numberBuffer[i]);
+				}
+				numberBufferIndex = 0;
+
+			}
+			//UTF parse
+			else if (utf) {
+				if (c >= '0' && c <= '9'
+						|| c >= 'A' && c <= 'F'
+						|| c >= 'a' && c <= 'f') {
+					utfBuffer[utfBufferIndex++] = c;
+					if (utfBufferIndex == 4) {
+						utf = false;
+						utfBufferIndex = 0;
+						int number = NumericUtils.decodeInteger("0x" + new String(utfBuffer));
+						result.append(new String(new int[]{number}, 0, 1));
+					}
+					continue;
+				}
+
+				result.append("\\u");
+				for (int i = 0; i < utfBufferIndex; i++) {
+					result.append(utfBuffer[i]);
+				}
+				utfBufferIndex = 0;
+				utf = false;
+			}
+			//Escape parse
+			else if (escaping) {
+				escaping = false;
+				switch (c) {
+					case 'b':
+						result.append('\b');
+						break;
+					case 'n':
+						result.append('\n');
+						break;
+					case 't':
+						result.append('\t');
+						break;
+					case 'r':
+						result.append('\r');
+						break;
+					case 'f':
+						result.append('\f');
+						break;
+					case '\'':
+						result.append('\'');
+						break;
+					case '\"':
+						result.append('\"');
+						break;
+					case '\\':
+						result.append('\\');
+						break;
+					case '0':
+					case '1':
+					case '2':
+					case '3':
+						numberBuffer[0] = c;
+						numberBufferIndex = 1;
+						break;
+					case 'u':
+						utf = true;
+						break;
+					default:
+						result.append('\\');
+						result.append(c);
+						break;
+				}
+			}
+			//Other
+			else {
+				if (c == '\\') escaping = true;
+				else result.append(c);
+			}
+		}
+
+		return result.toString();
+	}
+
+	public static String addLineJumps(String string, int maxCharsPerLine) {
+		StringBuilder builder = new StringBuilder();
+		StringBuilder wordBuilder = new StringBuilder();
+		int count = 0;
+
+		for (char c : string.toCharArray()) {
+			if (c == ' ') {
+				if (count >= maxCharsPerLine) {
+					builder.append(wordBuilder);
+					builder.append('\n');
+					wordBuilder = new StringBuilder();
+					count = 0;
+				} else {
+					wordBuilder.append(c);
+					count++;
+				}
+			} else if (c == '\r' || c == '\n') {
+				builder.append(wordBuilder);
+				builder.append(c);
+				wordBuilder = new StringBuilder();
+				count = 0;
+			} else {
+				wordBuilder.append(c);
+				count++;
+			}
+		}
+
+		if (wordBuilder.length() > 0) {
+			builder.append(wordBuilder);
+		}
+
+		return builder.toString();
+	}
 }

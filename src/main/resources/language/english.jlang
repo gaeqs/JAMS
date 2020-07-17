@@ -30,7 +30,9 @@ SIMULATION_CONFIGURATION_NAME=Name:
 SIMULATION_CONFIGURATION_ARCHITECTURE=Architecture:
 SIMULATION_CONFIGURATION_MEMORY=Memory:
 SIMULATION_CONFIGURATION_CALL_EVENTS=Call memory, registers and instructions events.
-SIMULATION_CONFIGURATION_ENABLE_UNDO=Allow to undo instructions
+SIMULATION_CONFIGURATION_CALL_EVENTS_TOOLTIP=Allows the simulation to notify memory, registers and instructions' changes.\n\nIf this option is disabled, the simulation will work faster, but some debugger and plug-ins' options won't work. Events will work when the simulation is stopped.
+SIMULATION_CONFIGURATION_ENABLE_UNDO=Allow to undo steps
+SIMULATION_CONFIGURATION_ENABLE_UNDO_TOOLTIP=Allows you to undo simulation's steps.\n\nIf this option is disabled, the simulation will work faster and it will consume less memory, but you will be unable to undo steps.\n\nThis option requires events to be activated.
 SIMULATION_SYSTEM_CALLS_TAB=System calls
 
 SYSCALL_RUN_EXCEPTION_HANDLER=X Run exception handler
@@ -113,6 +115,12 @@ SYSCALL_EXIT_WITH_VALUE_PROPERTY_REGISTER=Register
 SYSCALL_SLEEP=MARS 32 Sleep
 SYSCALL_SLEEP_PROPERTY_REGISTER=Register
 
+SIMULATION_BUTTON_TOOLTIP_EXECUTE_ALL=Execute all instructions
+SIMULATION_BUTTON_TOOLTIP_STOP=Stop
+SIMULATION_BUTTON_TOOLTIP_EXECUTE_ONE=Execute one step
+SIMULATION_BUTTON_TOOLTIP_UNDO=Undo one step
+SIMULATION_BUTTON_TOOLTIP_RESET=Reset
+
 REGISTERS_NAME=Registers
 CONSOLE_NAME=Console
 
@@ -134,14 +142,21 @@ CONFIG_APPEARANCE=Appearance
 CONFIG_APPEARANCE_REGION_THEME=Theme
 CONFIG_APPEARANCE_REGION_TWEAKS=Tweaks
 CONFIG_APPEARANCE_THEME=Theme:
+CONFIG_APPEARANCE_THEME_TOOLTIP=Themes changes the whole appearance of the application.
 CONFIG_APPEARANCE_GENERAL_FONT=General font:
+CONFIG_APPEARANCE_GENERAL_FONT_TOOLTIP=This font is used on all JAMS except text editors.
 CONFIG_APPEARANCE_CODE_FONT=Editor font:
+CONFIG_APPEARANCE_CODE_FONT_TOOLTIP=This font is used on text editors.
 CONFIG_APPEARANCE_HIDE_TOP_BAR=Hide top bar     (Windows only, requires restart)
+CONFIG_APPEARANCE_HIDE_TOP_BAR_TOOLTIP=This option integrates the main window's bar into the taskbar.
 
 CONFIG_LANGUAGE=Language
 CONFIG_LANGUAGE_REGION_LANGUAGE=Language
 CONFIG_LANGUAGE_DEFAULT=Fallback language:
+CONFIG_LANGUAGE_DEFAULT_TOOLTIP=This language will be used when the selected language doesn't have the required message.\n\nThis language is the English language by default.
 CONFIG_LANGUAGE_SELECTED=Selected language:
+CONFIG_LANGUAGE_SELECTED_TOOLTIP=This language will be used by JAMS to show all its messages.
+CONFIG_MIPS_EDITOR_ADD_CREATED_ASM_FILES_TO_ASSEMBLE_TOOLTIP=Assembly files will be added automatically into the assembly list if this option is enabled.\n\nThis option can be changed when you create an assembly file.
 
 CONFIG_MIPS=MIPS
 CONFIG_MIPS_EDITOR=Editor

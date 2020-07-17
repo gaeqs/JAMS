@@ -52,8 +52,8 @@ public class MIPSSimulationPane extends WorkingPane {
 	}
 
 	private void loadRegisterTabs() {
-		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
-				Icons.SIDEBAR_EXPLORER_PATH, 1024, 1024).orElse(null);
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_REGISTERS,
+				Icons.SIMULATION_REGISTERS_PATH, 1024, 1024).orElse(null);
 
 		registersTabs = new TabPane();
 
@@ -67,22 +67,22 @@ public class MIPSSimulationPane extends WorkingPane {
 
 		registersTabs.getTabs().forEach(tab -> tab.setClosable(false));
 
-		paneSnapshots.add(new PaneSnapshot("Registers", BarType.TOP_RIGHT, registersTabs, explorerIcon, Messages.REGISTERS_NAME));
+		paneSnapshots.add(new PaneSnapshot("Registers", BarType.TOP_RIGHT, registersTabs, icon, Messages.REGISTERS_NAME));
 	}
 
 	private void loadConsole() {
-		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE,
-				Icons.FILE_FILE_PATH, 1024, 1024).orElse(null);
-		paneSnapshots.add(new PaneSnapshot("Console", BarType.BOTTOM, simulation.getConsole(), explorerIcon, Messages.CONSOLE_NAME));
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_CONSOLE,
+				Icons.SIMULATION_CONSOLE_PATH, 1024, 1024).orElse(null);
+		paneSnapshots.add(new PaneSnapshot("Console", BarType.BOTTOM, simulation.getConsole(), icon, Messages.CONSOLE_NAME));
 	}
 
 	private void loadMemoryTab() {
-		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE,
-				Icons.FILE_FILE_PATH, 1024, 1024).orElse(null);
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_MEMORY,
+				Icons.SIMULATION_MEMORY_PATH, 1024, 1024).orElse(null);
 
 		MemoryTable table = new MemoryTable(simulation);
 
-		paneSnapshots.add(new PaneSnapshot("Memory", BarType.TOP_LEFT, table, explorerIcon, Messages.SIMULATION_CONFIGURATION_MEMORY));
+		paneSnapshots.add(new PaneSnapshot("Memory", BarType.TOP_LEFT, table, icon, Messages.SIMULATION_CONFIGURATION_MEMORY));
 	}
 
 

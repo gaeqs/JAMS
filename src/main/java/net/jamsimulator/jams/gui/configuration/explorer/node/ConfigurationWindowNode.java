@@ -30,6 +30,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
+import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
 
 import java.util.Optional;
 
@@ -89,6 +90,9 @@ public class ConfigurationWindowNode<E> extends HBox {
 	protected void init() {
 		setAlignment(Pos.CENTER_LEFT);
 		Label label = languageNode == null ? new Label(relativeNode) : new LanguageLabel(languageNode);
+		if (languageNode != null) {
+			label.setTooltip(new LanguageTooltip(languageNode + "_TOOLTIP", LanguageTooltip.DEFAULT_DELAY));
+		}
 
 		Region region = new Region();
 		region.setPrefWidth(10);

@@ -46,16 +46,22 @@ public class Icons {
 	public static final String FILE_ASSEMBLY = "file_assembly";
 	public static final String FILE_IMAGE = "file_image";
 
+	public static final String MENU_SETTINGS = "menu_settings";
+
 	public static final String SIDEBAR_EXPLORER = "sidebar_explorer";
 
 	public static final String PROJECT_ASSEMBLE = "project_assemble";
 	public static final String PROJECT_ASSEMBLE_GRAY = "project_assemble_gray";
-	public static final String PROJECT_PLAY = "project_play";
-	public static final String PROJECT_STOP = "project_stop";
-	public static final String PROJECT_PLAY_ONE = "project_play_one";
-	public static final String PROJECT_UNDO_ONE = "project_undo_one";
-	public static final String PROJECT_RESET = "project_reset";
 	public static final String PROJECT_SETTINGS = "project_settings";
+
+	public static final String SIMULATION_PLAY = "simulation_play";
+	public static final String SIMULATION_STOP = "simulation_stop";
+	public static final String SIMULATION_PLAY_ONE = "simulation_play_one";
+	public static final String SIMULATION_UNDO_ONE = "simulation_undo_one";
+	public static final String SIMULATION_RESET = "simulation_reset";
+	public static final String SIMULATION_CONSOLE = "simulation_console";
+	public static final String SIMULATION_MEMORY = "simulation_memory";
+	public static final String SIMULATION_REGISTERS = "simulation_registers";
 
 	public static final String TAB_SPLIT_VERTICALLY = "tab_split_vertically";
 	public static final String TAB_SPLIT_HORIZONTALLY = "tab_split_horizontally";
@@ -77,16 +83,22 @@ public class Icons {
 	public static final String FILE_ASSEMBLY_PATH = "gui/icon/file/assembly.png";
 	public static final String FILE_IMAGE_PATH = "gui/icon/file/image.png";
 
+	public static final String MENU_SETTINGS_PATH = "gui/icon/menu/settings.png";
+
 	public static final String SIDEBAR_EXPLORER_PATH = "gui/icon/file/folder.png";
 
 	public static final String PROJECT_ASSEMBLE_PATH = "gui/icon/project/assemble.png";
 	public static final String PROJECT_ASSEMBLE_GRAY_PATH = "gui/icon/project/assemble_gray.png";
-	public static final String PROJECT_PLAY_PATH = "gui/icon/project/play.png";
-	public static final String PROJECT_STOP_PATH = "gui/icon/project/stop.png";
-	public static final String PROJECT_PLAY_ONE_PATH = "gui/icon/project/play_one.png";
-	public static final String PROJECT_UNDO_ONE_PATH = "gui/icon/project/undo_one.png";
-	public static final String PROJECT_RESET_PATH = "gui/icon/project/reset.png";
 	public static final String PROJECT_SETTINGS_PATH = "gui/icon/project/settings.png";
+
+	public static final String SIMULATION_PLAY_PATH = "gui/icon/simulation/play.png";
+	public static final String SIMULATION_STOP_PATH = "gui/icon/simulation/stop.png";
+	public static final String SIMULATION_PLAY_ONE_PATH = "gui/icon/simulation/play_one.png";
+	public static final String SIMULATION_UNDO_ONE_PATH = "gui/icon/simulation/undo_one.png";
+	public static final String SIMULATION_RESET_PATH = "gui/icon/simulation/reset.png";
+	public static final String SIMULATION_CONSOLE_PATH = "gui/icon/simulation/console.png";
+	public static final String SIMULATION_MEMORY_PATH = "gui/icon/simulation/memory.png";
+	public static final String SIMULATION_REGISTERS_PATH = "gui/icon/simulation/registers.png";
 
 	public static final String TAB_SPLIT_VERTICALLY_PATH = "gui/icon/tab/split_vertically.png";
 	public static final String TAB_SPLIT_HORIZONTALLY_PATH = "gui/icon/tab/split_horizontally.png";

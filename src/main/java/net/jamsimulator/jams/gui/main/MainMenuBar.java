@@ -28,12 +28,15 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.Image;
 import javafx.stage.DirectoryChooser;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.configuration.ConfigurationWindow;
+import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.popup.CreateProjectWindow;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageMenu;
@@ -93,7 +96,12 @@ public class MainMenuBar extends MenuBar {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.MENU_SETTINGS, Icons.MENU_SETTINGS_PATH,
+				1024, 1024).orElse(null);
+
 		MenuItem settings = new LanguageMenuItem(Messages.MAIN_MENU_FILE_SETTINGS);
+		settings.setGraphic(new NearestImageView(icon, 16, 16));
 		settings.setOnAction(event -> window.open());
 		file.getItems().add(settings);
 	}

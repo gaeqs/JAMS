@@ -30,7 +30,9 @@ SIMULATION_CONFIGURATION_NAME=Nombre:
 SIMULATION_CONFIGURATION_ARCHITECTURE=Arquitectura:
 SIMULATION_CONFIGURATION_MEMORY=Memoria:
 SIMULATION_CONFIGURATION_CALL_EVENTS=Llamar a eventos de registros, memoria e instrucciones
-SIMULATION_CONFIGURATION_ENABLE_UNDO=Permitir deshacer instrucciones
+SIMULATION_CONFIGURATION_CALL_EVENTS_TOOLTIP=Permite al simulador notificar cambios en la memoria, registros e instrucciones.\n\nSi esta opción está deshabilitada, el simulador funcionará más rápido, pero algunas opciones del depurador o de los plugins no funcionarán. Los eventos si funcionarán cuando el simulador esté parado.
+SIMULATION_CONFIGURATION_ENABLE_UNDO=Permitir deshacer pasos
+SIMULATION_CONFIGURATION_ENABLE_UNDO_TOOLTIP=Permite al usuario deshacer pasos del simulador.\n\nSi esta opción está desactivada, el simulador irá más rápido y consumira menos memoria, pero serás incapaz de deshacer pasos.\n\nEsta opción requiere que los eventos estén activados.
 SIMULATION_SYSTEM_CALLS_TAB=Llamadas al sistema
 
 SYSCALL_RUN_EXCEPTION_HANDLER=X Ejecutar el manejador de excepciones
@@ -113,6 +115,12 @@ SYSCALL_EXIT_WITH_VALUE_PROPERTY_REGISTER=Registro
 SYSCALL_SLEEP=MARS 32 Dormir
 SYSCALL_SLEEP_PROPERTY_REGISTER=Registro
 
+SIMULATION_BUTTON_TOOLTIP_EXECUTE_ALL=Ejecutar todas las instrucciones
+SIMULATION_BUTTON_TOOLTIP_STOP=Parar
+SIMULATION_BUTTON_TOOLTIP_EXECUTE_ONE=Ejecutar un paso
+SIMULATION_BUTTON_TOOLTIP_UNDO=Deshacer un paso
+SIMULATION_BUTTON_TOOLTIP_RESET=Reiniciar
+
 REGISTERS_NAME=Registros
 CONSOLE_NAME=Consola
 
@@ -134,20 +142,26 @@ CONFIG_APPEARANCE=Apariencia
 CONFIG_APPEARANCE_REGION_THEME=Tema
 CONFIG_APPEARANCE_REGION_TWEAKS=Ajustes
 CONFIG_APPEARANCE_THEME=Tema:
-CONFIG_APPEARANCE_THEME=Tema:
+CONFIG_APPEARANCE_THEME_TOOLTIP=Los temas cambian toda la apariencia de la aplicación.
 CONFIG_APPEARANCE_GENERAL_FONT=Fuente general:
+CONFIG_APPEARANCE_GENERAL_FONT_TOOLTIP=Esta fuente es usada por todo JAMS salvo en los editores de texto.
 CONFIG_APPEARANCE_CODE_FONT=Fuente del editor:
+CONFIG_APPEARANCE_CODE_FONT_TOOLTIP=Esta fuente es usada por los editores de texto.
 CONFIG_APPEARANCE_HIDE_TOP_BAR=Esconder barra superior      (Solo para Windows, necesita un reinicio)
+CONFIG_APPEARANCE_HIDE_TOP_BAR_TOOLTIP=Esta opción permite integrar la barra superior de la ventana principal en la barra de tareas.
 
 CONFIG_LANGUAGE=Idioma
 CONFIG_LANGUAGE_REGION_LANGUAGE=Idioma
 CONFIG_LANGUAGE_DEFAULT=Idioma de respaldo:
+CONFIG_LANGUAGE_DEFAULT_TOOLTIP=Este idioma se usará cuando el idioma a usar no tenga el mensaje requerido.\n\nEste idioma es el inglés por defecto.
 CONFIG_LANGUAGE_SELECTED=Idioma a usar:
+CONFIG_LANGUAGE_SELECTED_TOOLTIP=Este es el idioma que JAMS usará en la interfaz.
 
 CONFIG_MIPS=MIPS
 CONFIG_MIPS_EDITOR=Editor
 CONFIG_MIPS_EDITOR_REGION_CREATION=Creación
 CONFIG_MIPS_EDITOR_ADD_CREATED_ASM_FILES_TO_ASSEMBLE=Añadir archivos asm a ensamblar automaticamente cuando son creados
+CONFIG_MIPS_EDITOR_ADD_CREATED_ASM_FILES_TO_ASSEMBLE_TOOLTIP=Si esta opción está activada, los archivos ensamblador que se creen serán automáticamente añadidos a la lista de ensamblaje.\n\nEsta opción puede ser cambiada en el menú de creación del archivo.
 
 EDITOR_MIPS_ERROR_ILLEGAL_LABEL=El nombre de la etiqueta '{TEXT}' es inválido.
 EDITOR_MIPS_ERROR_LABEL_NOT_FOUND=No se ha podido encontrar la etiqueta '{TEXT}'.
