@@ -24,12 +24,11 @@
 
 package net.jamsimulator.jams.gui.action.defaults.explorerelement.folder;
 
-import javafx.scene.Node;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
+import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
@@ -77,5 +76,10 @@ public class FolderActionNewFile extends ContextAction {
 	@Override
 	public boolean supportsExplorerState(Explorer explorer) {
 		return explorer instanceof FolderExplorer && explorer.getSelectedElements().size() == 1;
+	}
+
+	@Override
+	public boolean supportsTextEditorState(CodeFileEditor editor) {
+		return false;
 	}
 }

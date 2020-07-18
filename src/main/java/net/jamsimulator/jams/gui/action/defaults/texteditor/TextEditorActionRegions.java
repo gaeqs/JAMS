@@ -24,38 +24,11 @@
 
 package net.jamsimulator.jams.gui.action.defaults.texteditor;
 
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.action.context.ContextAction;
-import net.jamsimulator.jams.gui.editor.CodeFileEditor;
-import net.jamsimulator.jams.gui.explorer.Explorer;
-import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.gui.action.context.ContextRegion;
 
-public class TextEditorActionCut extends ContextAction {
+public class TextEditorActionRegions {
 
-	public static final String NAME = "TEXT_EDITOR_CUT";
-	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.X, KeyCombination.SHORTCUT_DOWN);
+	public static final ContextRegion CONTEXT = new ContextRegion("context", null, 0);
+	public static final ContextRegion CLIPBOARD = new ContextRegion("clipboard", null, 1);
 
-	public TextEditorActionCut() {
-		super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_CUT, DEFAULT_COMBINATION, TextEditorActionRegions.CLIPBOARD, null);
-	}
-
-	@Override
-	public void run(Object node) {
-		if (node instanceof CodeFileEditor) {
-			((CodeFileEditor) node).cut();
-		}
-	}
-
-	@Override
-	public boolean supportsExplorerState(Explorer explorer) {
-		return false;
-	}
-
-	@Override
-	public boolean supportsTextEditorState(CodeFileEditor editor) {
-		return !editor.getSelectedText().isEmpty();
-	}
 }

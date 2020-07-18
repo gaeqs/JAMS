@@ -28,6 +28,7 @@ import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
+import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
@@ -85,9 +86,14 @@ public class FolderActionRemoveFileFromAssembler extends ContextAction {
 		if (tab == null) return false;
 		Project project = tab.getProject();
 		if (!(project instanceof MipsProject)) return false;
-		MIPSFilesToAssemble files = ((MipsProject) project).getData().getFilesToAssemble();;
+		MIPSFilesToAssemble files = ((MipsProject) project).getData().getFilesToAssemble();
 
 		return elements.stream().allMatch(target -> target instanceof ExplorerFile
 				&& files.getFiles().contains(((ExplorerFile) target).getFile()));
+	}
+
+	@Override
+	public boolean supportsTextEditorState(CodeFileEditor editor) {
+		return false;
 	}
 }

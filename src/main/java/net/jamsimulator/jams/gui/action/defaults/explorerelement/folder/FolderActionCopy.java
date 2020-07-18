@@ -24,12 +24,12 @@
 
 package net.jamsimulator.jams.gui.action.defaults.explorerelement.folder;
 
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
+import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
@@ -76,5 +76,10 @@ public class FolderActionCopy extends ContextAction {
 	@Override
 	public boolean supportsExplorerState(Explorer explorer) {
 		return explorer instanceof FolderExplorer;
+	}
+
+	@Override
+	public boolean supportsTextEditorState(CodeFileEditor editor) {
+		return false;
 	}
 }
