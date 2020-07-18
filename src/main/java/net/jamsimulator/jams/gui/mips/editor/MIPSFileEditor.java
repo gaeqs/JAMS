@@ -158,6 +158,7 @@ public class MIPSFileEditor extends CodeFileEditor {
 
 
 	private void index(PlainTextChange change) {
+		System.out.println(change.getInserted());
 		String added = change.getInserted();
 		String removed = change.getRemoved();
 
