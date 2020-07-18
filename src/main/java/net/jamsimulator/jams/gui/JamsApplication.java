@@ -86,7 +86,6 @@ public class JamsApplication extends Application {
 		} else {
 			scene = new MainScene(mainAnchorPane);
 		}
-		getActionManager().addAcceleratorsToScene(scene, false);
 
 		stage.setScene(scene);
 		stage.setWidth(WIDTH);
@@ -204,11 +203,19 @@ public class JamsApplication extends Application {
 	public static void openContextMenu(ContextMenu menu, Node parent, double x, double y) {
 		Validate.notNull(menu, "Menu cannot be null!");
 		Validate.notNull(parent, "Parent cannot be null!");
-		if (lastContextMenu != null) {
-			lastContextMenu.hide();
-		}
+		hideContextMenu();
 		lastContextMenu = menu;
 		lastContextMenu.show(parent, x, y);
+	}
+
+	/**
+	 * Hides the current context menu, if present.
+	 */
+	public static void hideContextMenu() {
+		if (lastContextMenu != null) {
+			lastContextMenu.hide();
+			lastContextMenu = null;
+		}
 	}
 
 	public static void main(String[] args) {

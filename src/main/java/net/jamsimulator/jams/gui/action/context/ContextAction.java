@@ -27,6 +27,7 @@ package net.jamsimulator.jams.gui.action.context;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
+import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -62,8 +63,17 @@ public abstract class ContextAction extends Action implements ContextRegionable 
 	 * Returns whether this action can be shown in the given {@link Explorer}.
 	 *
 	 * @param explorer the {@link Explorer}.
+	 * @return whether it's supported.
 	 */
 	public abstract boolean supportsExplorerState(Explorer explorer);
+
+	/**
+	 * Returns whether this action can be shown in the given {@link CodeFileEditor}.
+	 *
+	 * @param editor the {@link CodeFileEditor}.
+	 * @return whether it's supported.
+	 */
+	public abstract boolean supportsTextEditorState(CodeFileEditor editor);
 
 	@Override
 	public ContextRegion getRegion() {
@@ -77,7 +87,7 @@ public abstract class ContextAction extends Action implements ContextRegionable 
 	@Override
 	public int compareTo(ContextRegionable o) {
 		int comp = getRegion().compareTo(o.getRegion());
-		if(comp == 0) {
+		if (comp == 0) {
 			return getName().compareTo(o.getName());
 		}
 		return comp;

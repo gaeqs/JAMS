@@ -134,11 +134,12 @@ public class MIPSFileEditor extends CodeFileEditor {
 		addEventHandler(KeyEvent.KEY_PRESSED, event -> {
 			if (event.getCode() == KeyCode.ENTER) {
 				int caretPosition = getCaretPosition();
-				int currentParagraph = getCurrentParagraph();
+				int currentLine = getCaretSelectionBind().getLineIndex().orElse(-1);
+				if(currentLine == -1) return;
 
-				String previous = getParagraph(currentParagraph - 1).getSegments().get(0);
+				String previous = getLine(currentLine - 1).getText();
 
-				MIPSLine line = elements.getLines().get(currentParagraph - 1);
+				MIPSLine line = elements.getLines().get(currentLine - 1);
 				if (line.getLabel().isPresent()) {
 					MIPSLabel label = line.getLabel().get();
 					previous = previous.substring(label.getText().length());
@@ -157,6 +158,7 @@ public class MIPSFileEditor extends CodeFileEditor {
 
 
 	private void index(PlainTextChange change) {
+		System.out.println(change.getInserted());
 		String added = change.getInserted();
 		String removed = change.getRemoved();
 
@@ -167,7 +169,7 @@ public class MIPSFileEditor extends CodeFileEditor {
 			return;
 		}
 
-		boolean refresh = elements.editLine(currentLine, getParagraph(currentLine).getText());
+		boolean refresh = elements.editLine(currentLine, getLine(currentLine).getText());
 
 		//Check next lines.
 		int addedLines = StringUtils.charCount(added, '\n', '\r');
@@ -188,7 +190,7 @@ public class MIPSFileEditor extends CodeFileEditor {
 		int linesToRemove = Math.max(0, removedLines - addedLines);
 
 		for (int i = 0; i < editedLines; i++) {
-			refresh |= elements.editLine(currentLine + i, getParagraph(currentLine + i).getText());
+			refresh |= elements.editLine(currentLine + i, getLine(currentLine + i).getText());
 		}
 
 		if (linesToRemove > 0) {
@@ -197,7 +199,7 @@ public class MIPSFileEditor extends CodeFileEditor {
 			}
 		} else if (linesToAdd > 0) {
 			for (int i = 0; i < linesToAdd; i++) {
-				refresh |= elements.addLine(currentLine + i + editedLines, getParagraph(currentLine + i + editedLines).getText());
+				refresh |= elements.addLine(currentLine + i + editedLines, getLine(currentLine + i + editedLines).getText());
 			}
 		}
 

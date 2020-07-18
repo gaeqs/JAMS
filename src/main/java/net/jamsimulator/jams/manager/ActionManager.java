@@ -341,13 +341,17 @@ public class ActionManager extends SimpleEventBroadcast {
 		actions.add(new TextEditorActionCompile());
 		actions.add(new TextEditorActionCopy());
 		actions.add(new TextEditorActionCut());
+		actions.add(new TextEditorActionDuplicateLine());
 		actions.add(new TextEditorActionNextFile());
 		actions.add(new TextEditorActionPaste());
 		actions.add(new TextEditorActionPreviousFile());
+		actions.add(new TextEditorActionRedo());
 		actions.add(new TextEditorActionReformat());
 		actions.add(new TextEditorActionRefreshFromDisk());
 		actions.add(new TextEditorActionSave());
+		actions.add(new TextEditorActionSelectAll());
 		actions.add(new TextEditorActionShowAutocompletionPopup());
+		actions.add(new TextEditorActionUndo());
 
 		//EXPLORER ELEMENT
 		actions.add(new ExplorerElementActionContractOrSelectParent());

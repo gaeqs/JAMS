@@ -27,16 +27,21 @@ package net.jamsimulator.jams.gui.editor;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.input.*;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.context.ContextAction;
+import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
 import net.jamsimulator.jams.utils.FileUtils;
 import net.jamsimulator.jams.utils.KeyCombinationBuilder;
+import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
@@ -44,6 +49,9 @@ import org.fxmisc.richtext.CodeArea;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -74,7 +82,13 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 		applyIndentRemover();
 		applySaveMarkListener();
 		initializeAutocompletionPopupListeners();
+		initializeActionsListeners();
 		applyZoomListener();
+
+		setOnContextMenuRequested(request -> {
+			createContextMenu(request.getScreenX(), request.getScreenY());
+			request.consume();
+		});
 	}
 
 	public FileEditorTab getTab() {
@@ -85,7 +99,50 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 		return autocompletionPopup;
 	}
 
+	public CodeFileLine getLine(int index) {
+		if (index < 0) return null;
+		List<String> lines = StringUtils.multiSplit(getText(), "\n", "\r");
+
+		int current = 0;
+		int amount = 0;
+		for (String line : lines) {
+			if (current >= index) break;
+			amount += line.length() + 1;
+
+			current++;
+		}
+
+		return new CodeFileLine(index, lines.get(index), amount);
+	}
+
+	public CodeFileLine getLineFromAbsolutePosition(int position) {
+		if (position < 0) return null;
+		List<String> lines = StringUtils.multiSplit(getText(), "\n", "\r");
+
+		int index = 0;
+		int amount = 0;
+		for (String line : lines) {
+			position -= line.length() + 1;
+			if (position < 0) break;
+			amount += line.length() + 1;
+			index++;
+		}
+
+		return new CodeFileLine(index, lines.get(index), amount);
+	}
+
 	public void reformat() {
+	}
+
+	public void duplicateCurrentLine() {
+		CodeFileLine line = getLineFromAbsolutePosition(getCaretPosition());
+		if (line == null) return;
+
+		System.out.println(line);
+
+		int end = line.getStart() + line.getText().length();
+		replaceText(end, end, "\n" + line.getText());
+		System.out.println("EXEC");
 	}
 
 	public void onClose() {
@@ -181,17 +238,6 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 	}
 
 	protected void initializeAutocompletionPopupListeners() {
-		addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-			try {
-				KeyCodeCombination combination = new KeyCombinationBuilder(event).build();
-				Runnable runnable = getScene().getAccelerators().get(combination);
-				if (runnable != null) {
-					runnable.run();
-					event.consume();
-				}
-			} catch (IllegalArgumentException ignore) {
-			}
-		});
 
 		//AUTO COMPLETION
 		addEventHandler(KeyEvent.KEY_TYPED, event -> {
@@ -225,6 +271,25 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 		JamsApplication.getStage().yProperty().addListener(autocompletionMoveListener);
 		JamsApplication.getStage().widthProperty().addListener(autocompletionMoveListener);
 		JamsApplication.getStage().heightProperty().addListener(autocompletionMoveListener);
+	}
+
+	protected void initializeActionsListeners() {
+		addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+			try {
+				KeyCodeCombination combination = new KeyCombinationBuilder(event).build();
+				Runnable runnable = getScene().getAccelerators().get(combination);
+				if (runnable != null) {
+					runnable.run();
+
+
+					KeyCode c = event.getCode();
+					if (c == KeyCode.UP || c == KeyCode.DOWN || c == KeyCode.LEFT || c == KeyCode.RIGHT) return;
+					event.consume();
+				}
+			} catch (IllegalArgumentException ignore) {
+			}
+		});
+		addEventFilter(MouseEvent.MOUSE_CLICKED, event -> JamsApplication.hideContextMenu());
 	}
 
 	protected void applySaveMarkListener() {
@@ -261,6 +326,25 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 		});
 	}
 
+	private void createContextMenu(double screenX, double screenY) {
+		Set<ContextAction> set = getSupportedContextActions();
+		if (set.isEmpty()) return;
+		ContextMenu main = new ContextActionMenuBuilder(this).addAll(set).build();
+		JamsApplication.openContextMenu(main, this, screenX, screenY);
+	}
+
+	private Set<ContextAction> getSupportedContextActions() {
+		Set<Action> actions = JamsApplication.getActionManager().getAll();
+		Set<ContextAction> set = new HashSet<>();
+		for (Action action : actions) {
+			if (action instanceof ContextAction && supportsActionRegion(action.getRegionTag())
+					&& ((ContextAction) action).supportsTextEditorState(this)) {
+				set.add((ContextAction) action);
+			}
+		}
+		return set;
+	}
+
 	private static String read(FileEditorTab tab) {
 		try {
 			return FileUtils.readAll(tab.getFile());
@@ -272,17 +356,17 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 	}
 
 	@Listener
-	public void onThemeChange(SelectedThemeChangeEvent.After event) {
+	private void onThemeChange(SelectedThemeChangeEvent.After event) {
 		event.getNewTheme().apply(this);
 	}
 
 	@Listener
-	public void onThemeChange(GeneralFontChangeEvent.After event) {
+	private void onThemeChange(GeneralFontChangeEvent.After event) {
 		JamsApplication.getThemeManager().getSelected().apply(this);
 	}
 
 	@Listener
-	public void onThemeChange(CodeFontChangeEvent.After event) {
+	private void onThemeChange(CodeFontChangeEvent.After event) {
 		JamsApplication.getThemeManager().getSelected().apply(this);
 	}
 }

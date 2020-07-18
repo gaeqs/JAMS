@@ -27,20 +27,19 @@ package net.jamsimulator.jams.gui.action.defaults.texteditor;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
-import net.jamsimulator.jams.gui.editor.FileEditor;
-import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
+import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.language.Messages;
 
-public class TextEditorActionCopy extends Action {
+public class TextEditorActionCopy extends ContextAction {
 
 	public static final String NAME = "TEXT_EDITOR_COPY";
 	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN);
 
 	public TextEditorActionCopy() {
-		super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_COPY, DEFAULT_COMBINATION);
+		super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_COPY, DEFAULT_COMBINATION, TextEditorActionRegions.CLIPBOARD, null);
 	}
 
 	@Override
@@ -48,5 +47,15 @@ public class TextEditorActionCopy extends Action {
 		if (node instanceof CodeFileEditor) {
 			((CodeFileEditor) node).copy();
 		}
+	}
+
+	@Override
+	public boolean supportsExplorerState(Explorer explorer) {
+		return false;
+	}
+
+	@Override
+	public boolean supportsTextEditorState(CodeFileEditor editor) {
+		return !editor.getSelectedText().isEmpty();
 	}
 }

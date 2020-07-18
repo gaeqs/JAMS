@@ -29,6 +29,7 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.folder.FolderActionRegions;
+import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebar;
@@ -78,5 +79,10 @@ public class MipsFilesToAssembleActionRemove extends ContextAction {
 		List<ExplorerElement> elements = explorer.getSelectedElements();
 		if (elements.isEmpty()) return false;
 		return elements.stream().allMatch(target -> target instanceof FilesToAssembleSidebarElement);
+	}
+
+	@Override
+	public boolean supportsTextEditorState(CodeFileEditor editor) {
+		return false;
 	}
 }

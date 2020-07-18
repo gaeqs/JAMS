@@ -31,13 +31,14 @@ import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
+import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
-import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
+import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
@@ -108,5 +109,10 @@ public class FolderActionAddFileToAssembler extends ContextAction {
 		}
 
 		return !allPresent;
+	}
+
+	@Override
+	public boolean supportsTextEditorState(CodeFileEditor editor) {
+		return false;
 	}
 }

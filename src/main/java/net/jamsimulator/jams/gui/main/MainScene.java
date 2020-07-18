@@ -32,9 +32,6 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionUnbindEvent;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
-import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
-import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
-import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
 
 /**
  * Represents the main scene. This class listens both the {@link net.jamsimulator.jams.manager.ThemeManager} and
@@ -44,26 +41,32 @@ public class MainScene extends ThemedScene {
 
 	public MainScene(Parent root) {
 		super(root);
+		JamsApplication.getActionManager().addAcceleratorsToScene(this, true);
 	}
 
 	public MainScene(Parent root, double width, double height) {
 		super(root, width, height);
+		JamsApplication.getActionManager().addAcceleratorsToScene(this, true);
 	}
 
 	public MainScene(Parent root, Paint fill) {
 		super(root, fill);
+		JamsApplication.getActionManager().addAcceleratorsToScene(this, true);
 	}
 
 	public MainScene(Parent root, double width, double height, Paint fill) {
 		super(root, width, height, fill);
+		JamsApplication.getActionManager().addAcceleratorsToScene(this, true);
 	}
 
 	public MainScene(Parent root, double width, double height, boolean depthBuffer) {
 		super(root, width, height, depthBuffer);
+		JamsApplication.getActionManager().addAcceleratorsToScene(this, true);
 	}
 
 	public MainScene(Parent root, double width, double height, boolean depthBuffer, SceneAntialiasing antiAliasing) {
 		super(root, width, height, depthBuffer, antiAliasing);
+		JamsApplication.getActionManager().addAcceleratorsToScene(this, true);
 	}
 
 	@Listener
