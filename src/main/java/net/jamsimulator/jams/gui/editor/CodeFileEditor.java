@@ -28,6 +28,7 @@ package net.jamsimulator.jams.gui.editor;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.IndexRange;
 import javafx.scene.input.*;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
@@ -55,6 +56,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Represents a code editor.
+ */
 public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrollHandled {
 
 	protected final FileEditorTab tab;
@@ -91,17 +95,43 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 		});
 	}
 
+
+	/**
+	 * Returns the {@link FileEditorTab} holding this editor.
+	 *
+	 * @return the {@link FileEditorTab}
+	 */
 	public FileEditorTab getTab() {
 		return tab;
 	}
 
+
+	/**
+	 * Returns
+	 *
+	 * @return
+	 */
 	public AutocompletionPopup getAutocompletionPopup() {
 		return autocompletionPopup;
 	}
 
+	//region actions
+
+	/**
+	 * Returns the line at the given index.
+	 * <p>
+	 * If the index is negative the first line will be returned.
+	 * If the index exceeds the amount of lines, the last line will be returned.
+	 * If the file is empty, an empty {@link CodeFileLine} will be returned.
+	 *
+	 * @param index the index.
+	 * @return the {@link CodeFileLine}.
+	 */
 	public CodeFileLine getLine(int index) {
-		if (index < 0) return null;
+		if (index < 0) index = 0;
 		List<String> lines = StringUtils.multiSplit(getText(), "\n", "\r");
+
+		if (lines.isEmpty()) return new CodeFileLine(0, "", 0);
 
 		int current = 0;
 		int amount = 0;
@@ -112,12 +142,25 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 			current++;
 		}
 
+		if (index >= lines.size()) index = lines.size() - 1;
+
 		return new CodeFileLine(index, lines.get(index), amount);
 	}
 
+	/**
+	 * Returns the line at the given absolute position.
+	 * <p>
+	 * If the position is negative the first line will be returned.
+	 * If the position exceeds the amount of lines, the last line will be returned.
+	 * If the file is empty, an empty {@link CodeFileLine} will be returned.
+	 *
+	 * @param position the position.
+	 * @return the {@link CodeFileLine}.
+	 */
 	public CodeFileLine getLineFromAbsolutePosition(int position) {
-		if (position < 0) return null;
+		if (position < 0) position = 0;
 		List<String> lines = StringUtils.multiSplit(getText(), "\n", "\r");
+		if (lines.isEmpty()) return new CodeFileLine(0, "", 0);
 
 		int index = 0;
 		int amount = 0;
@@ -128,19 +171,44 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 			index++;
 		}
 
+		if (index >= lines.size()) index = lines.size() - 1;
+
 		return new CodeFileLine(index, lines.get(index), amount);
 	}
 
+	/**
+	 * Reformats the file.
+	 * This method should be overridden by this children's classes.
+	 */
 	public void reformat() {
 	}
 
+	/**
+	 * Duplicates the current line.
+	 * If a selection is made, the selection will be duplicated instead.
+	 */
 	public void duplicateCurrentLine() {
-		CodeFileLine line = getLineFromAbsolutePosition(getCaretPosition());
-		if (line == null) return;
-		int end = line.getStart() + line.getText().length();
-		replaceText(end, end, "\n" + line.getText());
+		IndexRange selection = getSelection();
+		if (selection.getStart() == selection.getEnd()) {
+			int caretPosition = getCaretPosition();
+			CodeFileLine line = getLineFromAbsolutePosition(getCaretPosition());
+			if (line == null) return;
+			int end = line.getStart() + line.getText().length();
+			replaceText(end, end, "\n" + line.getText());
+			moveTo(caretPosition + line.getText().length() + 1);
+		} else {
+			String text = getText(selection);
+			replaceText(selection.getEnd(), selection.getEnd(), text);
+			moveTo(selection.getEnd() + text.length());
+			getCaretSelectionBind().selectRange(selection.getEnd(), selection.getEnd()+text.length());
+		}
 	}
 
+	//endregion
+
+	//region override
+
+	@Override
 	public void onClose() {
 		JamsApplication.getThemeManager().unregisterListeners(this);
 		JamsApplication.getStage().xProperty().removeListener(autocompletionMoveListener);
@@ -189,6 +257,10 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 	public void setZoom(ScaledVirtualized zoom) {
 		this.zoom = zoom;
 	}
+
+	//endregion
+
+	//region configuration
 
 	private void applyOldTextListener() {
 		textProperty().addListener((obs, old, value) -> this.old = old);
@@ -365,4 +437,6 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 	private void onThemeChange(CodeFontChangeEvent.After event) {
 		JamsApplication.getThemeManager().getSelected().apply(this);
 	}
+
+	//endregion
 }
