@@ -53,6 +53,7 @@ public class Jams {
 
 	//JAMS main method.
 	public static void main(String[] args) {
+		System.out.println("JAMS version "+Jams.class.getPackage().getImplementationVersion());
 		mainFolder = FolderUtils.checkMainFolder();
 		TempUtils.loadTemporalFolder();
 

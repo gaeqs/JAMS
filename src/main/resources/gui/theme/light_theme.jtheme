@@ -551,6 +551,11 @@ AnchorPane {
     -fx-background-radius: 0;
 }
 
+/* START WINDOW */
+.start-title {
+    -fx-font-size: 30;
+}
+
 /* WINDOW BUTTON*/
 .window_button {
     -fx-border-color: transparent;

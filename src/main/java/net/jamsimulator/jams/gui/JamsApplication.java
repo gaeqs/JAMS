@@ -44,6 +44,7 @@ import net.jamsimulator.jams.gui.main.MainAnchorPane;
 import net.jamsimulator.jams.gui.main.MainScene;
 import net.jamsimulator.jams.gui.project.ProjectListTabPane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
+import net.jamsimulator.jams.gui.start.StartWindow;
 import net.jamsimulator.jams.manager.ActionManager;
 import net.jamsimulator.jams.manager.ThemeManager;
 import net.jamsimulator.jams.utils.Validate;
@@ -73,7 +74,6 @@ public class JamsApplication extends Application {
 		primaryStage.setTitle("JAMS (Just Another MIPS Simulator)");
 
 		closeListeners = new ArrayList<>();
-		stage.setOnCloseRequest(event -> closeListeners.forEach(target -> target.handle(event)));
 
 		Optional<Boolean> useBorderless = Jams.getMainConfiguration().get("appearance.hide_top_bar");
 		boolean transparent = useBorderless.orElse(false);
@@ -104,9 +104,16 @@ public class JamsApplication extends Application {
 
 
 		getIconManager().getOrLoadSafe(Icons.LOGO, Icons.LOGO_PATH, 250, 250).ifPresent(primaryStage.getIcons()::add);
-		stage.show();
+		if(getProjectsTabPane().getProjects().isEmpty()) {
+			StartWindow.open();
+		} else {
+			stage.show();
+		}
 
-		stage.setOnHidden(event -> onClose());
+		stage.setOnCloseRequest(event -> {
+			closeListeners.forEach(target -> target.handle(event));
+			onClose();
+		});
 		Jams.getMainConfiguration().registerListeners(this, true);
 	}
 
