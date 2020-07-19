@@ -147,8 +147,24 @@ public class MIPSLine {
 	 *
 	 * @return the amount of tabs and spaces.
 	 */
-	public int getTabsAmount() {
+	public int getTabsAmountAfterLabel() {
+		if (instruction == null && directive == null && comment == null) return 0;
+
 		String text = label == null ? this.text : this.text.trim().substring(label.text.length());
+		return calculateTabs(text);
+	}
+
+	/**
+	 * Returns the amount of tabs and spaces this line before the label.
+	 *
+	 * @return the amount of tabs and spaces.
+	 */
+	public int getTabsAmountBeforeLabel() {
+		if (label == null) return 0;
+		return calculateTabs(label.text);
+	}
+
+	private int calculateTabs(String text) {
 		char c;
 		int amount = 0;
 		int index = 0;

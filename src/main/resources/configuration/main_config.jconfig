@@ -20,6 +20,7 @@
     "mips": {
       "use_tabs": true,
       "preserve_tabs": true,
+      "preserve_tabs_before_labels": true,
       "space_after_instruction": "SPACE",
       "space_after_instruction_parameter": "COMMA_AND_SPACE",
       "space_after_directive": "SPACE",

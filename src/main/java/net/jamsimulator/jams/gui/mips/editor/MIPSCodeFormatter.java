@@ -13,6 +13,7 @@ public class MIPSCodeFormatter {
 	private char tabChar;
 	private int tabCharNumber;
 	private boolean preserveTabs;
+	private boolean preserveTabsBeforeLabels;
 
 	private MIPSSpaces afterInstruction;
 	private MIPSSpaces afterInstructionParameter;
@@ -61,8 +62,18 @@ public class MIPSCodeFormatter {
 			if (first) first = false;
 			else builder.append('\n');
 
-			line.getLabel().ifPresent(target -> builder.append(target.getText()));
-			int amount = preserveTabs ? Math.max(tabCharNumber, line.getTabsAmount()) : tabCharNumber;
+			if (preserveTabsBeforeLabels) {
+				int amount = line.getTabsAmountBeforeLabel();
+				while (amount > 0) {
+					builder.append(tabChar);
+					amount -= tabChar == '\t' ? 4 : 1;
+				}
+			}
+
+			line.getLabel().ifPresent(target -> builder.append(target.getLabel()).append(":"));
+
+
+			int amount = preserveTabs ? Math.max(tabCharNumber, line.getTabsAmountAfterLabel()) : tabCharNumber;
 			while (amount > 0) {
 				builder.append(tabChar);
 				amount -= tabChar == '\t' ? 4 : 1;
@@ -115,6 +126,7 @@ public class MIPSCodeFormatter {
 		tabChar = useTabs ? '\t' : ' ';
 		tabCharNumber = 4;
 		preserveTabs = (boolean) c.get("editor.mips.preserve_tabs").orElse(false);
+		preserveTabsBeforeLabels = (boolean) c.get("editor.mips.preserve_tabs_before_labels").orElse(false);
 		afterInstruction = c.getEnum(MIPSSpaces.class, "editor.mips.space_after_instruction").orElse(MIPSSpaces.SPACE);
 		afterInstructionParameter = c.getEnum(MIPSSpaces.class, "editor.mips.space_after_instruction_parameter").orElse(MIPSSpaces.SPACE);
 		afterDirective = c.getEnum(MIPSSpaces.class, "editor.mips.space_after_directive").orElse(MIPSSpaces.SPACE);
