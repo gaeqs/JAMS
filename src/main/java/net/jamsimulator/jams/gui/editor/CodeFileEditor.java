@@ -373,7 +373,8 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 
 
 					KeyCode c = event.getCode();
-					if (c == KeyCode.UP || c == KeyCode.DOWN || c == KeyCode.LEFT || c == KeyCode.RIGHT) return;
+					if (c == KeyCode.UP || c == KeyCode.DOWN || c == KeyCode.LEFT || c == KeyCode.RIGHT
+							|| c == KeyCode.DELETE || c == KeyCode.BACK_SPACE) return;
 					event.consume();
 				}
 			} catch (IllegalArgumentException ignore) {
