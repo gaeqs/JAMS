@@ -26,7 +26,6 @@ package net.jamsimulator.jams.gui.main;
 
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import net.jamsimulator.jams.gui.project.ProjectListTabPane;
 import net.jamsimulator.jams.utils.AnchorUtils;

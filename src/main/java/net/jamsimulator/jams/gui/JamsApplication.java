@@ -106,6 +106,9 @@ public class JamsApplication extends Application {
 		getIconManager().getOrLoadSafe(Icons.LOGO, Icons.LOGO_PATH, 250, 250).ifPresent(primaryStage.getIcons()::add);
 		if(getProjectsTabPane().getProjects().isEmpty()) {
 			StartWindow.open();
+			if(!getProjectsTabPane().getProjects().isEmpty()) {
+				stage.show();
+			}
 		} else {
 			stage.show();
 		}

@@ -50,12 +50,29 @@ import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 
 public class ConfigurationWindow extends SplitPane {
 
 	private static final int WIDTH = 900;
 	private static final int HEIGHT = 600;
+
+	private static ConfigurationWindow INSTANCE;
+
+	public static ConfigurationWindow getInstance() {
+		if (INSTANCE == null) {
+			ConfigurationWindow window;
+			try {
+				Configuration types = new RootConfiguration(new InputStreamReader(Jams.class.getResourceAsStream(
+						"/configuration/main_config_meta.jconfig")));
+				INSTANCE = new ConfigurationWindow(Jams.getMainConfiguration(), types);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return INSTANCE;
+	}
 
 	private Stage stage;
 	private Scene scene;

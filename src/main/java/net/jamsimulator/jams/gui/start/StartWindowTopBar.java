@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.main;
+package net.jamsimulator.jams.gui.start;
 
 import javafx.application.Platform;
 import javafx.scene.control.Button;
@@ -34,30 +34,23 @@ import javafx.stage.Stage;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.window.WindowButtonClose;
-import net.jamsimulator.jams.gui.main.window.WindowButtonMaximize;
 import net.jamsimulator.jams.gui.main.window.WindowButtonMinimize;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
 
-public class TopBar extends AnchorPane {
+public class StartWindowTopBar extends AnchorPane {
 
 
 	private final ImageView view;
-	private final MainMenuBar menuBar;
 	private final HBox windowButtons;
 
-	private boolean transparentMode;
-
-	public TopBar(Stage stage, boolean transparentMode) {
-		getStyleClass().add("top-bar");
-		this.transparentMode = transparentMode;
+	public StartWindowTopBar(Stage stage) {
+		getStyleClass().add("start-top-bar");
 		view = new ImageView(JamsApplication.getIconManager()
 				.getOrLoadSafe(Icons.LOGO, Icons.LOGO_PATH, 250, 250).orElse(null));
 		view.setFitWidth(20);
 		view.setFitHeight(20);
 		AnchorUtils.setAnchor(view, 5, 5, 5, -1);
-
-		menuBar = new MainMenuBar();
 
 		windowButtons = new HBox();
 		generateButtons(stage);
@@ -71,10 +64,6 @@ public class TopBar extends AnchorPane {
 		return view;
 	}
 
-	public MainMenuBar getMenuBar() {
-		return menuBar;
-	}
-
 	public HBox getWindowButtons() {
 		return windowButtons;
 	}
@@ -83,43 +72,25 @@ public class TopBar extends AnchorPane {
 		windowButtons.setSpacing(0);
 
 		Button minimize = new WindowButtonMinimize(stage);
-		Button maximize = new WindowButtonMaximize(stage);
 		Button close = new WindowButtonClose(stage);
+		minimize.getStyleClass().add("start-top-bar-window_button-minimize");
+		close.getStyleClass().add("start-top-bar-window_button-close");
 
 		minimize.setPrefWidth(30);
 		minimize.setPrefHeight(30);
-		maximize.setPrefWidth(30);
-		maximize.setPrefHeight(30);
 		close.setPrefWidth(30);
 		close.setPrefHeight(30);
 
-		windowButtons.getChildren().addAll(minimize, maximize, close);
+		windowButtons.getChildren().addAll(minimize, close);
 
 		Platform.runLater(() -> {
 			close.setBorder(Border.EMPTY);
-			maximize.setBorder(Border.EMPTY);
 			minimize.setBorder(Border.EMPTY);
 		});
 	}
 
-	public boolean isTransparentMode() {
-		return transparentMode;
-	}
-
-	public void setTransparentMode(boolean transparentMode) {
-		if (transparentMode == this.transparentMode) return;
-		this.transparentMode = transparentMode;
-		refresh();
-	}
-
 	private void refresh() {
 		getChildren().clear();
-		AnchorUtils.setAnchor(menuBar, 0, 0, transparentMode ? 25 : 0, transparentMode ? 100 : 0);
-
-		if (transparentMode) {
-			getChildren().addAll(view, menuBar, windowButtons);
-		} else {
-			getChildren().add(menuBar);
-		}
+		getChildren().addAll(view, windowButtons);
 	}
 }

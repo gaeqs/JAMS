@@ -32,6 +32,10 @@ public class Messages {
 	public static final String GENERAL_CANCEL = "GENERAL_CANCEL";
 	public static final String GENERAL_CONFIRMATION = "GENERAL_CONFIRMATION";
 
+	public static final String START_TITLE = "START_TITLE";
+	public static final String START_SUBTITLE = "START_SUBTITLE";
+
+
 	public static final String MAIN_MENU_FILE = "MAIN_MENU_FILE";
 	public static final String MAIN_MENU_FILE_EXIT = "MAIN_MENU_FILE_EXIT";
 	public static final String MAIN_MENU_FILE_SETTINGS = "MAIN_MENU_FILE_SETTINGS";

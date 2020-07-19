@@ -57,11 +57,12 @@ public class SectionTreeDisplay extends Label {
 			builder.append(sections.get(i)).append(" > ");
 		}
 
+		if (builder.length() == 0) return;
 		setText(builder.substring(0, builder.length() - 3));
 	}
 
 	@Listener(priority = -1)
-	private void onLanguageChange (SelectedLanguageChangeEvent.After event) {
+	private void onLanguageChange(SelectedLanguageChangeEvent.After event) {
 		setSection(current);
 	}
 

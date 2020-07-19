@@ -140,11 +140,12 @@ public class CreateProjectWindow extends VBox {
 		background.applyCss();
 		background.layout();
 
-		stage.show();
 		Platform.runLater(() -> {
 			Stage main = JamsApplication.getStage();
 			stage.setX(main.getX() + main.getWidth() / 2 - background.getWidth() / 2);
 			stage.setY(main.getY() + main.getHeight() / 2 - background.getHeight() / 2);
 		});
+
+		stage.showAndWait();
 	}
 }

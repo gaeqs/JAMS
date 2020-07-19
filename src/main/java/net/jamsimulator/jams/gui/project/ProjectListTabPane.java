@@ -24,9 +24,13 @@
 
 package net.jamsimulator.jams.gui.project;
 
+import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.start.StartWindow;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.MipsProject;
 import net.jamsimulator.jams.utils.FileUtils;
@@ -50,6 +54,18 @@ public class ProjectListTabPane extends TabPane {
 	public ProjectListTabPane() {
 		setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
 		openSavedProjects();
+
+		getTabs().addListener((ListChangeListener<? super Tab>) event -> Platform.runLater(() -> {
+			//If empty, open the start window.
+			if(getTabs().isEmpty()) {
+				saveOpenProjects();
+				JamsApplication.getStage().hide();
+				StartWindow.open();
+				if(!getTabs().isEmpty()) {
+					JamsApplication.getStage().show();
+				}
+			}
+		}));
 	}
 
 	/**

@@ -551,16 +551,12 @@ AnchorPane {
     -fx-background-radius: 0;
 }
 
-/* START WINDOW */
-.start-title {
-    -fx-font-size: 30;
-}
-
 /* WINDOW BUTTON*/
 .window_button {
     -fx-border-color: transparent;
     -fx-border-width: 0;
     -fx-background-color: -theme-background;
+    -fx-background-radius: 0;
 }
 
 .window_button:hover {
@@ -587,6 +583,28 @@ AnchorPane {
 
 .window_button-unmaximize {
     -fx-graphic: url("/gui/icon/window/unmaximize_black.png");
+}
+
+/* START WINDOW */
+.start-top-bar {
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.start-top-bar-window_button-minimize {
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.start-top-bar-window_button-close {
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.start-title {
+    -fx-font-size: 30;
+}
+
+.start-subtitle {
+    -fx-font-size: 20;
+    -fx-text-fill: -theme-foreground-darker;
 }
 
 
