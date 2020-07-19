@@ -108,7 +108,7 @@ public class Configuration {
 	 * key "node.data".
 	 * <p>
 	 * This method won't modify the structure of the configuration. If the node that should contain the
-	 * wanted value is not present, the method will immediately return {@column Optional.empty()}.
+	 * wanted value is not present, the method will immediately return {@code Optional.empty()}.
 	 * <p>
 	 * This method will never return {@link Map} instances, but {@link Configuration} objects.
 	 *
@@ -173,7 +173,7 @@ public class Configuration {
 	 * key "node.data".
 	 * <p>
 	 * This method won't modify the structure of the configuration. If the node that should contain the
-	 * wanted value is not present, the method will immediately return {@column Optional.empty()}.
+	 * wanted value is not present, the method will immediately return {@code Optional.empty()}.
 	 * <p>
 	 * This method will never return {@link Map} instances, but {@link Configuration} objects.
 	 *
@@ -184,6 +184,31 @@ public class Configuration {
 	public Optional<String> getString(String key) {
 		Optional<Object> optional = get(key);
 		return optional.map(Object::toString);
+	}
+
+	/**
+	 * Returns the value that matches the given key, if present.
+	 * If the value is not a {@link Enum<T>}, returns {@code Optional.empty()}.
+	 * <p>
+	 * You can get values stored in the child nodes of this configuration using the separator ".".
+	 * For example, if you want to get the value "data" inside the child "node", you must use the
+	 * key "node.data".
+	 * <p>
+	 * This method won't modify the structure of the configuration. If the node that should contain the
+	 * wanted value is not present, the method will immediately return {@code Optional.empty()}.
+	 *
+	 * @param key the key.
+	 * @return the value as a {@link String}, if present.
+	 * @throws ClassCastException whether the value doesn't match the given value type.
+	 */
+	public <T extends Enum<T>> Optional<T> getEnum(Class<T> clazz, String key) {
+		Optional<String> optional = getString(key);
+		if (!optional.isPresent()) return Optional.empty();
+		try {
+			return Optional.of(Enum.valueOf(clazz, optional.get()));
+		} catch (IllegalArgumentException ex) {
+			return Optional.empty();
+		}
 	}
 
 	/**

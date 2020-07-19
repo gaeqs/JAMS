@@ -11,9 +11,20 @@
     "general_font": "JetBrains Mono",
     "code_font": "JetBrains Mono"
   },
-  "mips": {
-    "editor": {
+  "explorer": {
+    "mips": {
       "add_created_asm_files_to_assemble": true
+    }
+  },
+  "editor": {
+    "mips": {
+      "use_tabs": true,
+      "preserve_tabs": true,
+      "space_after_instruction": "SPACE",
+      "space_after_instruction_parameter": "COMMA_AND_SPACE",
+      "space_after_directive": "SPACE",
+      "space_after_directive_parameter": "SPACE",
+      "maximum_blank_lines": 2
     }
   }
 }

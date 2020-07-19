@@ -47,7 +47,8 @@ public class StringUtils {
 			}
 		}
 
-		if (from < length) list.add(string.substring(from));
+		if (from <= length) list.add(string.substring(from));
+		else list.add("");
 		return list;
 	}
 
@@ -82,6 +83,7 @@ public class StringUtils {
 		}
 
 		if (from < length) list.add(string.substring(from));
+		else if (addEmpty) list.add("");
 		return list;
 	}
 
@@ -116,6 +118,7 @@ public class StringUtils {
 		}
 
 		if (from < length) map.put(from, string.substring(from));
+		else if (addEmpty) map.put(length, "");
 		return map;
 	}
 

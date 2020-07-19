@@ -60,7 +60,7 @@ public class NewAssemblyFileWindow extends VBox {
 		if (project != null) {
 			getChildren().add(new Group(check));
 			check.setOnAction(action -> field.requestFocus());
-			Optional<Boolean> optional = Jams.getMainConfiguration().get("mips.editor.add_created_asm_files_to_assemble");
+			Optional<Boolean> optional = Jams.getMainConfiguration().get("explorer.mips.add_created_asm_files_to_assemble");
 			check.setSelected(optional.orElse(false));
 		}
 

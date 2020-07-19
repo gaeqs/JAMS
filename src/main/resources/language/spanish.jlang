@@ -150,18 +150,38 @@ CONFIG_APPEARANCE_CODE_FONT_TOOLTIP=Esta fuente es usada por los editores de tex
 CONFIG_APPEARANCE_HIDE_TOP_BAR=Esconder barra superior      (Solo para Windows, necesita un reinicio)
 CONFIG_APPEARANCE_HIDE_TOP_BAR_TOOLTIP=Esta opción permite integrar la barra superior de la ventana principal en la barra de tareas.
 
+CONFIG_EDITOR=Editor
+CONFIG_EDITOR_MIPS=MIPS
+CONFIG_EDITOR_MIPS_REGION_TABS=Tabuladores
+CONFIG_EDITOR_MIPS_REGION_SPACES=Espacios
+CONFIG_EDITOR_MIPS_REGION_BLANK_LINES=Líneas vacías
+CONFIG_EDITOR_MIPS_USE_TABS=Usar el caracter tabulador
+CONFIG_EDITOR_MIPS_USE_TABS_TOOLTIP=Si esta opción esta activada JAMS usará tabuladores en vez de espacios en el editor de código.
+CONFIG_EDITOR_MIPS_PRESERVE_TABS=Preservar los tabuladores al principio de la línea
+CONFIG_EDITOR_MIPS_PRESERVE_TABS_TOOLTIP=Esta opción permite preservar los tabuladores extras añadidos por el usuario cuando se formatee el código.
+CONFIG_EDITOR_MIPS_SPACE_AFTER_INSTRUCTION=Después de una instrucción:
+CONFIG_EDITOR_MIPS_SPACE_AFTER_INSTRUCTION_TOOLTIP=Esta opción le indica a JAMS qué añadir después de una instrucción.
+CONFIG_EDITOR_MIPS_SPACE_AFTER_INSTRUCTION_PARAMETER=Después del parámetro de una instrucción:
+CONFIG_EDITOR_MIPS_SPACE_AFTER_INSTRUCTION_PARAMETER_TOOLTIP=Esta opción le indica a JAMS qué añadir después de un parámetro de una instrucción.
+CONFIG_EDITOR_MIPS_SPACE_AFTER_DIRECTIVE=Después de una directiva:
+CONFIG_EDITOR_MIPS_SPACE_AFTER_DIRECTIVE_TOOLTIP=Esta opción le indica a JAMS qué añadir después de una directiva.
+CONFIG_EDITOR_MIPS_SPACE_AFTER_DIRECTIVE_PARAMETER=Después del parámetro de una directiva:
+CONFIG_EDITOR_MIPS_SPACE_AFTER_DIRECTIVE_PARAMETER_TOOLTIP=Esta opción le indica a JAMS qué añadir después de un parámetro de una directiva.
+CONFIG_EDITOR_MIPS_MAXIMUM_BLANK_LINES=Líneas en blanco máximas:
+CONFIG_EDITOR_MIPS_MAXIMUM_BLANK_LINES_TOOLTIP=La cantidad de líneas en blanco máximas que JAMS va a dejar al formatear.
+
+CONFIG_EXPLORER=Explorador
+CONFIG_EXPLORER_MIPS=MIPS
+CONFIG_EXPLORER_MIPS_REGION_CREATION=Creación
+CONFIG_EXPLORER_MIPS_ADD_CREATED_ASM_FILES_TO_ASSEMBLE=Añadir archivos asm a ensamblar automaticamente cuando son creados
+CONFIG_EXPLORER_MIPS_ADD_CREATED_ASM_FILES_TO_ASSEMBLE_TOOLTIP=Si esta opción está activada, los archivos ensamblador que se creen serán automáticamente añadidos a la lista de ensamblaje.\n\nEsta opción puede ser cambiada en el menú de creación del archivo.
+
 CONFIG_LANGUAGE=Idioma
 CONFIG_LANGUAGE_REGION_LANGUAGE=Idioma
 CONFIG_LANGUAGE_DEFAULT=Idioma de respaldo:
 CONFIG_LANGUAGE_DEFAULT_TOOLTIP=Este idioma se usará cuando el idioma a usar no tenga el mensaje requerido.\n\nEste idioma es el inglés por defecto.
 CONFIG_LANGUAGE_SELECTED=Idioma a usar:
 CONFIG_LANGUAGE_SELECTED_TOOLTIP=Este es el idioma que JAMS usará en la interfaz.
-
-CONFIG_MIPS=MIPS
-CONFIG_MIPS_EDITOR=Editor
-CONFIG_MIPS_EDITOR_REGION_CREATION=Creación
-CONFIG_MIPS_EDITOR_ADD_CREATED_ASM_FILES_TO_ASSEMBLE=Añadir archivos asm a ensamblar automaticamente cuando son creados
-CONFIG_MIPS_EDITOR_ADD_CREATED_ASM_FILES_TO_ASSEMBLE_TOOLTIP=Si esta opción está activada, los archivos ensamblador que se creen serán automáticamente añadidos a la lista de ensamblaje.\n\nEsta opción puede ser cambiada en el menú de creación del archivo.
 
 EDITOR_MIPS_ERROR_ILLEGAL_LABEL=El nombre de la etiqueta '{TEXT}' es inválido.
 EDITOR_MIPS_ERROR_LABEL_NOT_FOUND=No se ha podido encontrar la etiqueta '{TEXT}'.

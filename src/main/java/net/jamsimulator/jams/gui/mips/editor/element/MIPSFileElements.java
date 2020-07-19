@@ -143,17 +143,19 @@ public class MIPSFileElements {
 	}
 
 	/**
-	 * Returns the index of the file where the given absolute index is located at.
+	 * Returns the index of the file where the given absolute position is located at.
+	 * <p>
+	 * The absolute position is the character position.
 	 *
-	 * @param index the absolute index.
+	 * @param position the absolute position.
 	 * @return the line index or -1 if not found.
 	 */
-	public int lineOf(int index) {
-		if (index == -1) return -1;
-		MIPSLine line;
-		for (int i = 0; i < lines.size(); i++) {
-			line = lines.get(i);
-			if (line.getStart() <= index && line.getStart() + line.getText().length() >= index) return i;
+	public int lineOf(int position) {
+		if (position < 0) return -1;
+		int i = 0;
+		for (MIPSLine line : lines) {
+			if (line.getStart() <= position && line.getStart() + line.getText().length() >= position) return i;
+			i++;
 		}
 		return -1;
 	}

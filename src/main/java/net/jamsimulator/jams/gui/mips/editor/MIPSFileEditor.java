@@ -31,6 +31,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.CodeFileLine;
 import net.jamsimulator.jams.gui.editor.FileEditorTab;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSCodeElement;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
@@ -45,6 +46,7 @@ import org.fxmisc.richtext.model.PlainTextChange;
 import org.reactfx.Subscription;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Optional;
 
 public class MIPSFileEditor extends CodeFileEditor {
@@ -55,7 +57,10 @@ public class MIPSFileEditor extends CodeFileEditor {
 	private final VBox popupVBox;
 	private final MipsProject project;
 
-	private Subscription subscription;
+	private final Subscription subscription;
+
+	private final Object formattingLock = new Object();
+
 
 	public MIPSFileEditor(FileEditorTab tab) {
 		super(tab);
@@ -92,29 +97,31 @@ public class MIPSFileEditor extends CodeFileEditor {
 
 	@Override
 	public void reformat() {
-		subscription.unsubscribe();
-		String reformattedCode = getText(); //elements.getReformattedCode();
-		String text = getText();
-		if (reformattedCode.equals(text)) return;
-		int line = getCurrentParagraph();
-		int column = getCaretColumn();
+		synchronized (formattingLock) {
+			String reformattedCode = new MIPSCodeFormatter(elements).format();
+			String text = getText();
+			if (reformattedCode.equals(text)) return;
+			int oLine = getCurrentParagraph();
+			int oColumn = getCaretColumn();
 
-		replaceText(0, text.length(), reformattedCode);
+			replaceText(0, text.length(), reformattedCode);
 
-		int newSize = getParagraphs().size();
-		line = Math.min(line, newSize - 1);
-		column = Math.min(column, getParagraphLength(line));
-		moveTo(line, column);
+			List<CodeFileLine> lines = getLines();
+
+			int newSize = lines.size();
+			int line = Math.min(oLine, newSize - 1);
+			int column = Math.min(oColumn, lines.get(line).getText().length());
+			moveTo(line, column);
 
 
-		double height = totalHeightEstimateProperty().getValue() == null ? 0 : totalHeightEstimateProperty().getValue();
+			double height = totalHeightEstimateProperty().getValue() == null ? 0 : totalHeightEstimateProperty().getValue();
 
-		double toPixel = height * line / newSize - getLayoutBounds().getHeight() / 2;
-		toPixel = Math.max(0, Math.min(height, toPixel));
+			double toPixel = height * line / newSize - getLayoutBounds().getHeight() / 2;
+			toPixel = Math.max(0, Math.min(height, toPixel));
 
-		scrollPane.scrollYBy(toPixel);
-		index();
-		subscription = multiPlainChanges().subscribe(event -> event.forEach(this::index));
+			scrollPane.scrollYBy(toPixel);
+			index(reformattedCode);
+		}
 	}
 
 	@Override
@@ -134,8 +141,8 @@ public class MIPSFileEditor extends CodeFileEditor {
 		addEventHandler(KeyEvent.KEY_PRESSED, event -> {
 			if (event.getCode() == KeyCode.ENTER) {
 				int caretPosition = getCaretPosition();
-				int currentLine = getCaretSelectionBind().getLineIndex().orElse(-1);
-				if(currentLine == -1) return;
+				int currentLine = elements.lineOf(caretPosition);
+				if (currentLine == -1) return;
 
 				String previous = getLine(currentLine - 1).getText();
 
@@ -158,59 +165,66 @@ public class MIPSFileEditor extends CodeFileEditor {
 
 
 	private void index(PlainTextChange change) {
-		String added = change.getInserted();
-		String removed = change.getRemoved();
+		synchronized (formattingLock) {
+			String added = change.getInserted();
+			String removed = change.getRemoved();
 
-		//Check current line.
-		int currentLine = elements.lineOf(change.getPosition());
-		if (currentLine == -1) {
-			index();
-			return;
-		}
+			//Check current line.
+			int currentLine = elements.lineOf(change.getPosition());
+			if (currentLine == -1) {
+				index();
+				return;
+			}
 
-		boolean refresh = elements.editLine(currentLine, getLine(currentLine).getText());
+			boolean refresh = elements.editLine(currentLine, getLine(currentLine).getText());
 
-		//Check next lines.
-		int addedLines = StringUtils.charCount(added, '\n', '\r');
-		int removedLines = StringUtils.charCount(removed, '\n', '\r');
+			//Check next lines.
+			int addedLines = StringUtils.charCount(added, '\n', '\r');
+			int removedLines = StringUtils.charCount(removed, '\n', '\r');
 
-		if (removedLines == 0 && addedLines == 0) {
+			if (removedLines == 0 && addedLines == 0) {
+				if (refresh && elements.getFilesToAssemble().isPresent()) {
+					elements.getFilesToAssemble().ifPresent(MIPSFilesToAssemble::refreshGlobalLabels);
+				} else {
+					elements.update(this);
+				}
+				return;
+			}
+
+			currentLine++;
+			int editedLines = Math.min(addedLines, removedLines);
+			int linesToAdd = Math.max(0, addedLines - removedLines);
+			int linesToRemove = Math.max(0, removedLines - addedLines);
+
+			for (int i = 0; i < editedLines; i++) {
+				refresh |= elements.editLine(currentLine + i, getLine(currentLine + i).getText());
+			}
+
+			if (linesToRemove > 0) {
+				for (int i = 0; i < linesToRemove; i++) {
+					refresh |= elements.removeLine(currentLine + editedLines);
+				}
+			} else if (linesToAdd > 0) {
+				for (int i = 0; i < linesToAdd; i++) {
+					refresh |= elements.addLine(currentLine + i + editedLines, getLine(currentLine + i + editedLines).getText());
+				}
+			}
+
 			if (refresh && elements.getFilesToAssemble().isPresent()) {
 				elements.getFilesToAssemble().ifPresent(MIPSFilesToAssemble::refreshGlobalLabels);
 			} else {
 				elements.update(this);
 			}
-			return;
-		}
-
-		currentLine++;
-		int editedLines = Math.min(addedLines, removedLines);
-		int linesToAdd = Math.max(0, addedLines - removedLines);
-		int linesToRemove = Math.max(0, removedLines - addedLines);
-
-		for (int i = 0; i < editedLines; i++) {
-			refresh |= elements.editLine(currentLine + i, getLine(currentLine + i).getText());
-		}
-
-		if (linesToRemove > 0) {
-			for (int i = 0; i < linesToRemove; i++) {
-				refresh |= elements.removeLine(currentLine + editedLines);
-			}
-		} else if (linesToAdd > 0) {
-			for (int i = 0; i < linesToAdd; i++) {
-				refresh |= elements.addLine(currentLine + i + editedLines, getLine(currentLine + i + editedLines).getText());
-			}
-		}
-
-		if (refresh && elements.getFilesToAssemble().isPresent()) {
-			elements.getFilesToAssemble().ifPresent(MIPSFilesToAssemble::refreshGlobalLabels);
-		} else {
-			elements.update(this);
 		}
 	}
 
 	private void index() {
 		elements.refreshAll(getText());
+		elements.styleAll(this);
+	}
+
+	private void index(String text) {
+		elements.refreshAll(text);
 		elements.styleAll(this);
 	}
 

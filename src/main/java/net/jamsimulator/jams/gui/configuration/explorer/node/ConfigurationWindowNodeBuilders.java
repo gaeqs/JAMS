@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.configuration.explorer.node;
 
 import javafx.scene.text.Font;
+import net.jamsimulator.jams.gui.mips.editor.MIPSSpaces;
 import net.jamsimulator.jams.gui.theme.Theme;
 import net.jamsimulator.jams.language.Language;
 
@@ -43,6 +44,16 @@ public class ConfigurationWindowNodeBuilders {
 		builderByName.put("boolean", booleanBuilder);
 		buildersByType.put(boolean.class, booleanBuilder);
 		buildersByType.put(Boolean.class, booleanBuilder);
+
+		//INTEGER
+		ConfigurationWindowNodeInteger.Builder integerBuilder = new ConfigurationWindowNodeInteger.Builder();
+		builderByName.put("integer", integerBuilder);
+		buildersByType.put(int.class, integerBuilder);
+		buildersByType.put(Integer.class, integerBuilder);
+
+		//POSITIVE INTEGER
+		ConfigurationWindowNodePositiveInteger.Builder positiveIntegerBuilder = new ConfigurationWindowNodePositiveInteger.Builder();
+		builderByName.put("positive_integer", positiveIntegerBuilder);
 
 		//STRING
 		ConfigurationWindowNodeString.Builder stringBuilder = new ConfigurationWindowNodeString.Builder();
@@ -63,6 +74,11 @@ public class ConfigurationWindowNodeBuilders {
 		ConfigurationWindowNodeFont.Builder fontBuilder = new ConfigurationWindowNodeFont.Builder();
 		builderByName.put("font", fontBuilder);
 		buildersByType.put(Font.class, fontBuilder);
+
+		//MIPS SPACES
+		ConfigurationWindowNodeMIPSSpaces.Builder mipsSpacesBuilder = new ConfigurationWindowNodeMIPSSpaces.Builder();
+		builderByName.put("mips_spaces", mipsSpacesBuilder);
+		buildersByType.put(MIPSSpaces.class, mipsSpacesBuilder);
 	}
 
 

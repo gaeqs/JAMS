@@ -134,6 +134,29 @@ public class MIPSLine {
 	}
 
 	/**
+	 * Returns whether this MIPSLine is empty.
+	 *
+	 * @return whether it's empty.
+	 */
+	public boolean isEmpty() {
+		return comment == null && label == null && directive == null && instruction == null;
+	}
+
+	/**
+	 * Returns the amount of tabs and spaces this line has between the label and the instruction / directive.
+	 *
+	 * @return the amount of tabs and spaces.
+	 */
+	public int getTabsAmount() {
+		String text = label == null ? this.text : this.text.trim().substring(label.text.length());
+		char c;
+		int amount = 0;
+		int index = 0;
+		while (index < text.length() && ((c = text.charAt(index++)) == '\t' || c == ' ')) amount += c == '\t' ? 4 : 1;
+		return amount;
+	}
+
+	/**
 	 * Returns the element located at the given index, if present.
 	 * <p>
 	 * The given index must be an absolute file index, not a relative one.

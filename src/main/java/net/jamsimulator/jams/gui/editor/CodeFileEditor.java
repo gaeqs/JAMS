@@ -50,6 +50,7 @@ import org.fxmisc.richtext.CodeArea;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -116,6 +117,27 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 	}
 
 	//region actions
+
+	/**
+	 * Returns a new {@link List} with all lines of this file inside.
+	 *
+	 * @return the {@link List}.
+	 */
+	public List<CodeFileLine> getLines() {
+		List<String> raw = StringUtils.multiSplit(getText(), "\n", "\r");
+		List<CodeFileLine> lines = new ArrayList<>(raw.size());
+		if (raw.isEmpty()) return lines;
+
+		int current = 0;
+		int amount = 0;
+		for (String line : raw) {
+			lines.add(new CodeFileLine(current, line, amount));
+			amount += line.length() + 1;
+			current++;
+		}
+
+		return lines;
+	}
 
 	/**
 	 * Returns the line at the given index.
@@ -200,7 +222,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 			String text = getText(selection);
 			replaceText(selection.getEnd(), selection.getEnd(), text);
 			moveTo(selection.getEnd() + text.length());
-			getCaretSelectionBind().selectRange(selection.getEnd(), selection.getEnd()+text.length());
+			getCaretSelectionBind().selectRange(selection.getEnd(), selection.getEnd() + text.length());
 		}
 	}
 
