@@ -1,6 +1,7 @@
-package net.jamsimulator.jams.mips.memory.cache;
+package net.jamsimulator.jams.mips.memory.cache.writethrough;
 
 import net.jamsimulator.jams.mips.memory.Memory;
+import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
 import net.jamsimulator.jams.utils.NumericUtils;
 
 public class WriteThroughDirectCache extends WriteThroughCache {
@@ -32,8 +33,8 @@ public class WriteThroughDirectCache extends WriteThroughCache {
 		if (b != null) hits++;
 
 		if (b == null && create) {
-			b = new CacheBlock(tag, new byte[blockSize << 2]);
 			int start = address & ~byteMask;
+			b = new CacheBlock(tag, start, new byte[blockSize << 2]);
 
 			byte[] data = b.getData();
 			for (int i = 0; i < data.length; i++) {

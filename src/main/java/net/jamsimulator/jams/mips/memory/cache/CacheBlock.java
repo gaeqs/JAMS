@@ -1,25 +1,41 @@
 package net.jamsimulator.jams.mips.memory.cache;
 
+import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.MemoryCell;
 
 public class CacheBlock {
 
-	private final int tag;
+	private final int tag, start;
 	private final byte[] data;
 
+	private boolean dirty;
 	private long creationTime, modificationTime;
 
-	public CacheBlock(int tag, byte[] data) {
+	public CacheBlock(int tag, int start, byte[] data) {
 		this.tag = tag;
+		this.start = start;
 		this.data = data;
+		this.dirty = false;
 	}
 
 	public int getTag() {
 		return tag;
 	}
 
+	public int getStart() {
+		return start;
+	}
+
 	public byte[] getData() {
 		return data;
+	}
+
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
 	}
 
 	public long getCreationTime() {
@@ -69,10 +85,16 @@ public class CacheBlock {
 		}
 	}
 
+	public void write(Memory parent) {
+		for (int i = 0; i < data.length; i++) {
+			parent.setByte(start + i, data[i]);
+		}
+	}
+
 	public CacheBlock copy() {
 		byte[] array = new byte[data.length];
 		System.arraycopy(data, 0, array, 0, data.length);
-		CacheBlock copy =  new CacheBlock(tag, array);
+		CacheBlock copy = new CacheBlock(tag, start, array);
 		copy.setCreationTime(creationTime);
 		copy.setModificationTime(modificationTime);
 		return copy;

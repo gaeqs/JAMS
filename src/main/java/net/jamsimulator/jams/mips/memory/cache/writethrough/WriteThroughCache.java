@@ -1,7 +1,10 @@
-package net.jamsimulator.jams.mips.memory.cache;
+package net.jamsimulator.jams.mips.memory.cache.writethrough;
 
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.memory.Memory;
+import net.jamsimulator.jams.mips.memory.cache.Cache;
+import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
+import net.jamsimulator.jams.mips.memory.cache.CacheStats;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.Validate;
 

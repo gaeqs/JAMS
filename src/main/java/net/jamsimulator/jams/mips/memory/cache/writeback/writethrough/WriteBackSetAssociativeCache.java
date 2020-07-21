@@ -1,15 +1,17 @@
-package net.jamsimulator.jams.mips.memory.cache;
+package net.jamsimulator.jams.mips.memory.cache.writeback.writethrough;
 
 import net.jamsimulator.jams.mips.memory.Memory;
+import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
+import net.jamsimulator.jams.mips.memory.cache.CacheReplacementPolicy;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.Validate;
 
-public class WriteThroughSetAssociativeCache extends WriteThroughCache {
+public class WriteBackSetAssociativeCache extends WriteBackCache {
 
 	protected final CacheReplacementPolicy replacementPolicy;
 	protected final int setSize, setsAmount, setShift;
 
-	public WriteThroughSetAssociativeCache(Memory parent, int blockSize, int blocksAmount, int setSize, CacheReplacementPolicy replacementPolicy) {
+	public WriteBackSetAssociativeCache(Memory parent, int blockSize, int blocksAmount, int setSize, CacheReplacementPolicy replacementPolicy) {
 		super(parent, blockSize, blocksAmount, 32 - 2 - NumericUtils.log2(blockSize) - NumericUtils.log2(blocksAmount / setSize));
 		Validate.isTrue(NumericUtils.is2Elev(setSize), "SetSize cannot be expressed as 2^n!");
 		Validate.isTrue(setSize <= blocksAmount, "Set size must be lower or equal to BlockAmount!");
@@ -21,7 +23,7 @@ public class WriteThroughSetAssociativeCache extends WriteThroughCache {
 		this.setShift = 2 + NumericUtils.log2(blockSize);
 	}
 
-	protected WriteThroughSetAssociativeCache(WriteThroughSetAssociativeCache copy) {
+	protected WriteBackSetAssociativeCache(WriteBackSetAssociativeCache copy) {
 		super(copy);
 		replacementPolicy = copy.replacementPolicy;
 		setSize = copy.setSize;
@@ -30,7 +32,7 @@ public class WriteThroughSetAssociativeCache extends WriteThroughCache {
 	}
 
 	@Override
-	protected CacheBlock getBlock(int address, boolean create) {
+	protected CacheBlock getBlock(int address) {
 		int tag = calculateTag(address);
 		int index = calculateSetIndex(address) * setSize;
 
@@ -47,9 +49,18 @@ public class WriteThroughSetAssociativeCache extends WriteThroughCache {
 		}
 
 		if (b != null) hits++;
-		if (b == null && create) {
-			b = new CacheBlock(tag, new byte[blockSize << 2]);
+		if (b == null) {
 			int start = address & ~byteMask;
+			b = new CacheBlock(tag, start, new byte[blockSize << 2]);
+
+			CacheBlock[] set = new CacheBlock[setSize];
+			System.arraycopy(blocks, index, set, 0, setSize);
+			int blockIndex = index + replacementPolicy.getBlockToReplaceIndex(set);
+
+			CacheBlock old = blocks[blockIndex];
+			if(old != null && old.isDirty()) {
+				old.write(parent);
+			}
 
 			byte[] data = b.getData();
 			for (int i = 0; i < data.length; i++) {
@@ -58,9 +69,7 @@ public class WriteThroughSetAssociativeCache extends WriteThroughCache {
 
 			b.setCreationTime(cacheTime);
 
-			CacheBlock[] set = new CacheBlock[setSize];
-			System.arraycopy(blocks, index, set, 0, setSize);
-			blocks[index + replacementPolicy.getBlockToReplaceIndex(set)] = b;
+			blocks[blockIndex] = b;
 		}
 
 		return b;
@@ -69,7 +78,7 @@ public class WriteThroughSetAssociativeCache extends WriteThroughCache {
 
 	@Override
 	public Memory copy() {
-		return new WriteThroughSetAssociativeCache(this);
+		return new WriteBackSetAssociativeCache(this);
 	}
 
 	protected int calculateSetIndex(int address) {
