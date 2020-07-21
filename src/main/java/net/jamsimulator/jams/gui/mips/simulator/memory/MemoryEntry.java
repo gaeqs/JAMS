@@ -32,7 +32,7 @@ public class MemoryEntry {
 
 	public StringProperty p0Property() {
 		if (p0 == null) {
-			d0 = simulation.getMemory().getWord(address);
+			d0 = simulation.getMemory().getWord(address, false, true);
 			p0 = new SimpleStringProperty(null, "p0", String.valueOf(d0));
 		}
 
@@ -41,7 +41,7 @@ public class MemoryEntry {
 
 	public StringProperty p4Property() {
 		if (p4 == null) {
-			d4 = simulation.getMemory().getWord(address);
+			d4 = simulation.getMemory().getWord(address+4, false, true);
 			p4 = new SimpleStringProperty(null, "p4", String.valueOf(d4));
 		}
 
@@ -50,7 +50,7 @@ public class MemoryEntry {
 
 	public StringProperty p8Property() {
 		if (p8 == null) {
-			d8 = simulation.getMemory().getWord(address);
+			d8 = simulation.getMemory().getWord(address+8, false, true);
 			p8 = new SimpleStringProperty(null, "p8", String.valueOf(d8));
 		}
 
@@ -59,7 +59,7 @@ public class MemoryEntry {
 
 	public StringProperty pCProperty() {
 		if (pC == null) {
-			dC = simulation.getMemory().getWord(address);
+			dC = simulation.getMemory().getWord(address+12, false, true);
 			pC = new SimpleStringProperty(null, "pC", String.valueOf(dC));
 		}
 
@@ -67,10 +67,10 @@ public class MemoryEntry {
 	}
 
 	public void refresh(Memory memory) {
-		update(memory.getWord(address), 0, false);
-		update(memory.getWord(address + 4), 4, false);
-		update(memory.getWord(address + 8), 8, false);
-		update(memory.getWord(address + 12), 12, false);
+		update(memory.getWord(address, false, true), 0, false);
+		update(memory.getWord(address + 4, false, true), 4, false);
+		update(memory.getWord(address + 8, false, true), 8, false);
+		update(memory.getWord(address + 12, false, true), 12, false);
 	}
 
 	public void update(int value, int offset, boolean asFloat) {

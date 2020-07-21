@@ -8,6 +8,7 @@ import net.jamsimulator.jams.mips.memory.cache.CacheStats;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.Validate;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -43,7 +44,7 @@ public abstract class WriteThroughCache extends SimpleEventBroadcast implements 
 		this.tagSize = tagSize;
 
 		this.tagShift = 32 - tagSize;
-		this.byteMask = blockSize + 2;
+		this.byteMask = (blockSize - 1) << 2 | 3;
 
 		blocks = new CacheBlock[blocksAmount];
 	}
@@ -61,7 +62,6 @@ public abstract class WriteThroughCache extends SimpleEventBroadcast implements 
 		savedBlocks = null;
 
 		cacheTime = copy.cacheTime;
-
 		for (int i = 0; i < blocks.length; i++) {
 			blocks[i] = copy.blocks[i] == null ? null : copy.blocks[i].copy();
 		}
@@ -94,8 +94,15 @@ public abstract class WriteThroughCache extends SimpleEventBroadcast implements 
 	}
 
 	@Override
-	public void resetStats() {
+	public void resetCache() {
 		operations = hits = 0;
+		Arrays.fill(blocks, null);
+		if (parent instanceof Cache) ((Cache) parent).resetCache();
+	}
+
+	@Override
+	public void flush() {
+
 	}
 
 	@Override
@@ -117,8 +124,8 @@ public abstract class WriteThroughCache extends SimpleEventBroadcast implements 
 
 	@Override
 	public void setByte(int address, byte b) {
-		CacheBlock block = getBlock(address, false);
 		parent.setByte(address, b);
+		CacheBlock block = getBlock(address, false);
 		if (block != null) {
 			block.setModificationTime(cacheTime++);
 			block.setByte(address & byteMask, b);
@@ -134,12 +141,18 @@ public abstract class WriteThroughCache extends SimpleEventBroadcast implements 
 
 	@Override
 	public void setWord(int address, int word) {
-		CacheBlock block = getBlock(address, false);
 		parent.setWord(address, word);
+		CacheBlock block = getBlock(address, false);
 		if (block != null) {
 			block.setModificationTime(cacheTime++);
 			block.setWord(address & byteMask, word, isBigEndian());
 		}
+	}
+
+	@Override
+	public int getWord(int address, boolean callEvents, boolean bypassCaches) {
+		if (bypassCaches) return parent.getWord(address);
+		return getWord(address);
 	}
 
 	@Override

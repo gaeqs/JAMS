@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.mips.memory.cache.writeback.writethrough;
+package net.jamsimulator.jams.mips.memory.cache.writeback;
 
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.CacheBlock;

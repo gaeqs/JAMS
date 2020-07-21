@@ -5,6 +5,7 @@ import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
+import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
@@ -150,5 +151,6 @@ public class MIPS32Assembler implements Assembler {
 		//Reserves static memory.
 		memory.allocateMemory(assemblerData.getCurrentData() - assemblerData.getFirstData());
 		assembled = true;
+		if (memory instanceof Cache) ((Cache) memory).resetCache();
 	}
 }

@@ -73,13 +73,18 @@ public class MIPSInstruction extends MIPSCodeElement {
 
 	@Override
 	public List<String> getStyles() {
-		if(hasErrors()) return Arrays.asList("mips-instruction", "mips-error");
+		if (hasErrors()) return Arrays.asList("mips-instruction", "mips-error");
 		return Collections.singletonList("mips-instruction");
 	}
 
 	@Override
 	public void refreshMetadata(MIPSFileElements elements) {
 		errors.clear();
+
+		if (instruction == null || instruction.isEmpty()) {
+			errors.add(MIPSEditorError.INSTRUCTION_NOT_FOUND);
+			return;
+		}
 
 		MipsProject project = elements.getProject().orElse(null);
 		InstructionSet set = project.getData().getInstructionSet();

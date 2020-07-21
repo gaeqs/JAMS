@@ -81,7 +81,7 @@ public class MemoryTable extends TableView<MemoryEntry> {
 		int address = event.getAddress() >> 4 << 4;
 		MemoryEntry entry = entries.get(address);
 		if (entry == null) return;
-		entry.update(event.getMemory().getWord(address + offset), offset, true);
+		entry.update(event.getMemory().getWord(address + offset, false, true), offset, false);
 	}
 
 
@@ -91,7 +91,7 @@ public class MemoryTable extends TableView<MemoryEntry> {
 		int address = event.getAddress() >> 4 << 4;
 		MemoryEntry entry = entries.get(address);
 		if (entry == null) return;
-		entry.update(event.getValue(), offset, true);
+		entry.update(event.getValue(), offset, false);
 	}
 
 }

@@ -31,6 +31,7 @@ import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundExcep
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
+import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.event.MemoryAllocateMemoryEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
@@ -141,10 +142,16 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
 			long millis = (System.nanoTime() - start) / 1000000;
 
-			getConsole().println();
-			getConsole().printInfoLn(instructions + " instructions executed in " + millis + " millis.");
-			getConsole().printInfoLn((instructions / (((float) millis) / 1000)) + " inst/s");
-			getConsole().println();
+			if (getConsole() != null) {
+				getConsole().println();
+				getConsole().printInfoLn(instructions + " instructions executed in " + millis + " millis.");
+				getConsole().printInfoLn((instructions / (((float) millis) / 1000)) + " inst/s");
+				getConsole().println();
+				if (memory instanceof Cache) {
+					getConsole().printInfoLn(((Cache) memory).getStats());
+					getConsole().println();
+				}
+			}
 
 			synchronized (finishedRunningLock) {
 				running = false;
@@ -189,7 +196,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		AssembledInstruction instruction = fetch(pc);
 
 		if (instruction == null) {
-			int code = memory.getWord(pc);
+			int code = memory.getWord(pc, false, true);
 			currentStepChanges = null;
 			throw new InstructionNotFoundException("Couldn't decode instruction 0x" +
 					StringUtils.addZeros(Integer.toHexString(code), 8) + ". (" + StringUtils.addZeros(Integer.toBinaryString(code), 32) + ")");
@@ -233,12 +240,14 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		}
 
 
-		if (pc + 4 > instructionStackBottom && !finished) {
+		if (registers.getProgramCounter().getValue() > instructionStackBottom && !finished) {
 			finished = true;
-			getConsole().println();
-			getConsole().printWarningLn("Execution finished. Dropped off bottom.");
-			getConsole().println();
-			callEvent(new SimulationFinishedEvent(this));
+			if (getConsole() != null) {
+				getConsole().println();
+				getConsole().printWarningLn("Execution finished. Dropped off bottom.");
+				getConsole().println();
+				callEvent(new SimulationFinishedEvent(this));
+			}
 		}
 	}
 

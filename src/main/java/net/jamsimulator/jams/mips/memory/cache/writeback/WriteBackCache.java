@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.mips.memory.cache.writeback.writethrough;
+package net.jamsimulator.jams.mips.memory.cache.writeback;
 
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.memory.Memory;
@@ -8,6 +8,7 @@ import net.jamsimulator.jams.mips.memory.cache.CacheStats;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.Validate;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -43,7 +44,7 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
 		this.tagSize = tagSize;
 
 		this.tagShift = 32 - tagSize;
-		this.byteMask = blockSize + 2;
+		this.byteMask = (blockSize - 1) << 2 | 3;
 
 		blocks = new CacheBlock[blocksAmount];
 	}
@@ -94,8 +95,20 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
 	}
 
 	@Override
-	public void resetStats() {
+	public void resetCache() {
+		flush();
 		operations = hits = 0;
+		Arrays.fill(blocks, null);
+		if (parent instanceof Cache) ((Cache) parent).resetCache();
+	}
+
+	@Override
+	public void flush() {
+		for (CacheBlock block : blocks) {
+			if(block != null && block.isDirty()) {
+				block.write(parent);
+			}
+		}
 	}
 
 	@Override
@@ -140,6 +153,12 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
 			block.setWord(address & byteMask, word, isBigEndian());
 			block.setDirty(true);
 		}
+	}
+
+	@Override
+	public int getWord(int address, boolean callEvents, boolean bypassCaches) {
+		if (bypassCaches) return parent.getWord(address);
+		return getWord(address);
 	}
 
 	@Override

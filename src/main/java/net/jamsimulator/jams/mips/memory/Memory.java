@@ -88,6 +88,18 @@ public interface Memory extends EventBroadcast {
 	void setWord(int address, int word);
 
 	/**
+	 * THIS METHOD SHOULDN'T BE USED BY INSTRUCTIONS!
+	 * <p>
+	 * Returns the word stored in the given address.
+	 *
+	 * @param address     the address.
+	 * @param callEvents  whether this method should call events. Events won't be called if {@link #areEventCallsEnabled()} is false.
+	 * @param bypassCaches whether this method should bypass all caches.
+	 * @return the word.
+	 */
+	int getWord(int address, boolean callEvents, boolean bypassCaches);
+
+	/**
 	 * Returns the first text address assemblers should use.
 	 *
 	 * @return the first text address.
@@ -157,7 +169,7 @@ public interface Memory extends EventBroadcast {
 	int allocateMemory(int length);
 
 	/**
-	 * Enables or disabled event calls.
+	 * Enables or disables event calls.
 	 * <p>
 	 * If this feature is disable the memory will work faster, but actions won't be able to be listened.
 	 * <p>
@@ -171,6 +183,8 @@ public interface Memory extends EventBroadcast {
 	 * Returns whether event calls are enabled.
 	 * <p>
 	 * If this feature is disable the memory will work faster, but actions won't be able to be listened.
+	 * <p>
+	 * This state won't be registered by {@link #saveState()}, but it will be copied if you use {@link #copy()}.
 	 *
 	 * @return whether this feature is enabled.
 	 * @see #enableEventCalls(boolean)

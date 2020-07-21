@@ -39,8 +39,15 @@ public interface Cache extends Memory {
 	CacheStats getStats();
 
 	/**
-	 * Resets the stats of this cache.
+	 * Resets this cache
+	 * <p>
+	 * This method also flushes any pending change.
 	 */
-	void resetStats();
+	void resetCache();
+
+	/**
+	 * Writes to the next step memory any pending change.
+	 */
+	void flush();
 
 }

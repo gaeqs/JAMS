@@ -106,7 +106,9 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 			files.registerListeners(this, true);
 		}
 
-		getConsole().registerListeners(this, true);
+		if (getConsole() != null) {
+			getConsole().registerListeners(this, true);
+		}
 
 		lock = new Object();
 		finishedRunningLock = new Object();
@@ -315,7 +317,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		AssembledInstruction cached = instructionCache.get(pc);
 		if (cached != null) return cached;
 
-		int data = memory.getWord(pc);
+		int data = memory.getWord(pc, true, true);
+
 		Optional<? extends BasicInstruction<?>> optional = instructionSet.getInstructionByInstructionCode(data);
 		if (!optional.isPresent()) return null;
 		BasicInstruction<?> instruction = optional.get();

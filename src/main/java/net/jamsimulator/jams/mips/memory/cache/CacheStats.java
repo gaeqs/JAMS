@@ -21,4 +21,13 @@ public class CacheStats {
 	public long getMisses() {
 		return misses;
 	}
+
+	@Override
+	public String toString() {
+		return "CacheStats{" +
+				"operations=" + operations +
+				", hits=" + hits +
+				", misses=" + misses +
+				'}';
+	}
 }

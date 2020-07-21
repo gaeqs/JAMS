@@ -38,6 +38,7 @@ public class WriteThroughAssociativeCache extends WriteThroughCache {
 
 		if (b == null && create) {
 			int start = address & ~byteMask;
+
 			b = new CacheBlock(tag, start, new byte[blockSize << 2]);
 
 			byte[] data = b.getData();
@@ -47,7 +48,8 @@ public class WriteThroughAssociativeCache extends WriteThroughCache {
 
 			b.setCreationTime(cacheTime);
 
-			blocks[replacementPolicy.getBlockToReplaceIndex(blocks)] = b;
+			int replacement = replacementPolicy.getBlockToReplaceIndex(blocks);
+			blocks[replacement] = b;
 		}
 
 		return b;

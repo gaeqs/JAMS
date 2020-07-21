@@ -213,23 +213,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 	@Override
 	public int getWord(int address) {
-		if (!eventCallsEnabled) {
-			return getSectionOrThrowException(address).getWord(address, bigEndian);
-		}
-		//Invokes the before event.
-		MemoryWordGetEvent.Before before = callEvent(new MemoryWordGetEvent.Before(this, address));
-
-		//Refresh data.
-		address = before.getAddress();
-
-		if (address % 4 != 0) throw new IllegalArgumentException("Address " + address + " is not aligned.");
-
-		//Gets the section and the word.
-		MemorySection section = getSectionOrThrowException(address);
-		int word = section.getWord(address, bigEndian);
-
-		//Invokes the after event.
-		return callEvent(new MemoryWordGetEvent.After(this, section, address, word)).getValue();
+		return getWord(address, true, false);
 	}
 
 	@Override
@@ -254,6 +238,27 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 		//Invokes the after event.
 		callEvent(new MemoryWordSetEvent.After(this, section, address, word, old));
+	}
+
+	@Override
+	public int getWord(int address, boolean callEvents, boolean bypassCaches) {
+		if (!eventCallsEnabled || !callEvents) {
+			return getSectionOrThrowException(address).getWord(address, bigEndian);
+		}
+		//Invokes the before event.
+		MemoryWordGetEvent.Before before = callEvent(new MemoryWordGetEvent.Before(this, address));
+
+		//Refresh data.
+		address = before.getAddress();
+
+		if (address % 4 != 0) throw new IllegalArgumentException("Address " + address + " is not aligned.");
+
+		//Gets the section and the word.
+		MemorySection section = getSectionOrThrowException(address);
+		int word = section.getWord(address, bigEndian);
+
+		//Invokes the after event.
+		return callEvent(new MemoryWordGetEvent.After(this, section, address, word)).getValue();
 	}
 
 	@Override
