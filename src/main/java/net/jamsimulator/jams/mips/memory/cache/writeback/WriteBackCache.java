@@ -97,7 +97,7 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
 	@Override
 	public void resetCache() {
 		flush();
-		operations = hits = 0;
+		operations = hits = cacheTime = 0;
 		Arrays.fill(blocks, null);
 		if (parent instanceof Cache) ((Cache) parent).resetCache();
 	}
