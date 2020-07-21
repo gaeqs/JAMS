@@ -125,7 +125,7 @@ public class MemoryCell {
 	}
 
 
-	private static int merge(byte b0, byte b1, byte b2, byte b3) {
+	public static int merge(byte b0, byte b1, byte b2, byte b3) {
 		int i = Byte.toUnsignedInt(b3);
 		i <<= 8;
 		i += Byte.toUnsignedInt(b2);
@@ -135,7 +135,7 @@ public class MemoryCell {
 		return i + Byte.toUnsignedInt(b0);
 	}
 
-	private static byte[] split(int i) {
+	public static byte[] split(int i) {
 		byte[] array = new byte[4];
 		array[0] = (byte) (i & 0xFF);
 		i >>>= 8;

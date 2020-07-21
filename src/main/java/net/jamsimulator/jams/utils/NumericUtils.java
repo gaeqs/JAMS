@@ -83,6 +83,37 @@ public class NumericUtils {
 		}
 	}
 
+	/**
+	 * Returns whether the given number can be expressed as 2^n.
+	 *
+	 * @param number the number.
+	 * @return whether the  number can be expressed as 2^n.
+	 */
+	public static boolean is2Elev(int number) {
+		if (number <= 0) return false;
+
+		while (number > 0) {
+			if ((number & 1) == 1) {
+				return (number >> 1) == 0;
+			}
+			number >>= 1;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Executes the mathematical operation log2(n).
+	 * The result will be exact only for 2^n numbers.
+	 *
+	 * @param n the number.
+	 * @return the result.
+	 */
+	public static int log2(int n) {
+		if (n <= 0) throw new IllegalArgumentException();
+		return 31 - Integer.numberOfLeadingZeros(n);
+	}
+
 	public static int decodeInteger(String string) {
 		char c = '+';
 		if (string.startsWith("+"))

@@ -29,16 +29,15 @@ import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.memory.event.*;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Represents a simple memory. A simple memory is formed by several {@link MemorySection},
  * which are responsible of storing data in their {@link MemoryCell}s.
  * <p>
  * Once created you cannot add or remove {@link MemorySection}s.
+ * <p>
+ * This memory should be located at the last hierarchy level.
  *
  * @see EventBroadcast
  * @see MemorySection
@@ -290,6 +289,11 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 	@Override
 	public int getFirstExternalAddress() {
 		return firstExternalAddress;
+	}
+
+	@Override
+	public Optional<Memory> getNextLevelMemory() {
+		return Optional.empty();
 	}
 
 	@Override

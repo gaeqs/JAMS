@@ -26,6 +26,8 @@ package net.jamsimulator.jams.mips.memory;
 
 import net.jamsimulator.jams.event.EventBroadcast;
 
+import java.util.Optional;
+
 /**
  * Represents a memory from a simulator.
  */
@@ -85,7 +87,6 @@ public interface Memory extends EventBroadcast {
 	 */
 	void setWord(int address, int word);
 
-
 	/**
 	 * Returns the first text address assemblers should use.
 	 *
@@ -137,6 +138,15 @@ public interface Memory extends EventBroadcast {
 	 * @return the external kernel data address.
 	 */
 	int getFirstExternalAddress();
+
+	/**
+	 * Returns the memory located at the next hierarchy level, if present.
+	 * <p>
+	 * If this memory is a the last hierarchy level this method returns {@code Optional.empty()}.
+	 *
+	 * @return the memory located at the next hierarchy level.
+	 */
+	Optional<Memory> getNextLevelMemory();
 
 	/**
 	 * Reserves 'length' bytes in the dynamic data section.
