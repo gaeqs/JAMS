@@ -46,10 +46,11 @@ public class SidePaneNode extends AnchorPane implements BarPane {
 	 * @param sidePane the {@link SidePane} handling this side pane node.
 	 * @param top      whether the {@link Sidebar} containing this node is a top {@link Sidebar}.
 	 * @param snapshot the snapshot of the side pane.
+	 * @param sidebar  the sidebar holding this node.
 	 */
-	public SidePaneNode(SidePane sidePane, boolean top, PaneSnapshot snapshot) {
+	public SidePaneNode(SidePane sidePane, boolean top, PaneSnapshot snapshot, Sidebar sidebar) {
 		this.snapshot = snapshot;
-		this.header = new SidePaneNodeHeader(sidePane, snapshot.getName(), top, snapshot.getLanguageNode());
+		this.header = new SidePaneNodeHeader(sidePane, top, this, sidebar);
 
 		AnchorUtils.setAnchor(header, 0, -1, 0, 0);
 

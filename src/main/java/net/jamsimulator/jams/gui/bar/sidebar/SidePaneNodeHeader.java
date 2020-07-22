@@ -25,10 +25,15 @@
 package net.jamsimulator.jams.gui.bar.sidebar;
 
 import javafx.scene.Cursor;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.bar.sidebar.event.SidebarChangeNodeEvent;
+import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
@@ -46,26 +51,27 @@ public class SidePaneNodeHeader extends AnchorPane {
 	public static final Cursor TOP_NULL_CURSOR = Cursor.DEFAULT;
 	public static final Cursor TOP_NOT_NULL_CURSOR = Cursor.N_RESIZE;
 
-	private SidePane sidePane;
+	private final SidePane sidePane;
 
-	private boolean top;
+	private final boolean top;
 
-	private String name;
-	private Label label;
+	private final String name;
+	private final Label label;
+	private final Button closeButton;
 
 	private double relativeDragPosition;
 
 	/**
 	 * Creates the header.
 	 *
-	 * @param sidePane     the {@link SidePane} that handles the wrapped {@link javafx.scene.Node}.
-	 * @param name         the name of the {@link javafx.scene.Node}.
-	 * @param top          whether the {@link Sidebar} containing the {@link javafx.scene.Node} is a top {@link Sidebar}.
-	 * @param languageNode the language node to display or null.
+	 * @param sidePane the {@link SidePane} that handles the wrapped {@link javafx.scene.Node}.
+	 * @param top      whether the {@link Sidebar} containing the {@link javafx.scene.Node} is a top {@link Sidebar}.
+	 * @param node     the node holding this header.
+	 * @param sidebar  the sidebar.
 	 */
-	public SidePaneNodeHeader(SidePane sidePane, String name, boolean top, String languageNode) {
+	public SidePaneNodeHeader(SidePane sidePane, boolean top, SidePaneNode node, Sidebar sidebar) {
 		this.sidePane = sidePane;
-		this.name = name;
+		this.name = node.getSnapshot().getName();
 
 		this.top = top;
 
@@ -76,9 +82,17 @@ public class SidePaneNodeHeader extends AnchorPane {
 			setCursor(sidePane.getTop() == null ? TOP_NULL_CURSOR : TOP_NOT_NULL_CURSOR);
 		}
 
-		label = languageNode == null ? new Label(name) : new LanguageLabel(languageNode);
+		label = node.getSnapshot().getLanguageNode() == null ? new Label(name) : new LanguageLabel(node.getSnapshot().getLanguageNode());
 		AnchorUtils.setAnchor(label, 0, 0, 5, -1);
 		getChildren().add(label);
+
+		Image closeImage = JamsApplication.getIconManager().getOrLoadSafe(Icons.BAR_CLOSE, Icons.BAR_CLOSE_PATH, 1024, 1024).orElse(null);
+		closeButton = new Button("", new NearestImageView(closeImage, 16, 16));
+		closeButton.getStyleClass().add("side-pane-node-header-button");
+		closeButton.setOnAction(event -> sidebar.get(name).ifPresent(SidebarButton::hide));
+		closeButton.setCursor(Cursor.HAND);
+		AnchorUtils.setAnchor(closeButton, 0, 0, -1, 1);
+		getChildren().add(closeButton);
 
 		sidePane.registerListeners(this, true);
 		registerFXEvents();

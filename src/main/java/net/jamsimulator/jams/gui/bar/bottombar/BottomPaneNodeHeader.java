@@ -25,9 +25,15 @@
 package net.jamsimulator.jams.gui.bar.bottombar;
 
 import javafx.scene.Cursor;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
+import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.bar.PaneSnapshot;
+import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
@@ -44,10 +50,11 @@ public class BottomPaneNodeHeader extends AnchorPane {
 	public static final int HEIGHT = 25;
 	public static final Cursor CURSOR = Cursor.N_RESIZE;
 
-	private SplitPane verticalSplitPane;
+	private final SplitPane verticalSplitPane;
 
-	private String name;
-	private Label label;
+	private final String name;
+	private final Label label;
+	private final Button closeButton;
 
 	private double relativeDragPosition;
 
@@ -56,21 +63,30 @@ public class BottomPaneNodeHeader extends AnchorPane {
 	 * Creates the header.
 	 *
 	 * @param verticalSplitPane the {@link SplitPane} that handles the wrapped {@link javafx.scene.Node}.
-	 * @param name              the name of the {@link javafx.scene.Node}.
-	 * @param languageNode      the language node to display or null.
+	 * @param snapshot          the snapshot.
+	 * @param bottomBar         the {@link BottomBar} holding this pane.
 	 */
-	public BottomPaneNodeHeader(SplitPane verticalSplitPane, String name, String languageNode) {
+	public BottomPaneNodeHeader(SplitPane verticalSplitPane, PaneSnapshot snapshot, BottomBar bottomBar) {
 		this.verticalSplitPane = verticalSplitPane;
-		this.name = name;
+		this.name = snapshot.getName();
 
 		getStyleClass().add("bottom-pane-node-header");
 		setPrefHeight(HEIGHT);
 
 		setCursor(CURSOR);
 
-		label = languageNode == null ? new Label(name) : new LanguageLabel(languageNode);
+		label = snapshot.getLanguageNode() == null ? new Label(name) : new LanguageLabel(snapshot.getLanguageNode());
 		AnchorUtils.setAnchor(label, 0, 0, 5, -1);
 		getChildren().add(label);
+
+		Image closeImage = JamsApplication.getIconManager().getOrLoadSafe(Icons.BAR_CLOSE, Icons.BAR_CLOSE_PATH, 1024, 1024).orElse(null);
+		closeButton = new Button("", new NearestImageView(closeImage, 16, 16));
+		closeButton.getStyleClass().add("side-pane-node-header-button");
+		closeButton.setOnAction(event -> bottomBar.get(name).ifPresent(BottomBarButton::hide));
+		closeButton.setCursor(Cursor.HAND);
+		AnchorUtils.setAnchor(closeButton, 0, 0, -1, 1);
+		getChildren().add(closeButton);
+
 		registerFXEvents();
 	}
 

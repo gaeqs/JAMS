@@ -66,6 +66,8 @@ public class Icons {
 	public static final String TAB_SPLIT_VERTICALLY = "tab_split_vertically";
 	public static final String TAB_SPLIT_HORIZONTALLY = "tab_split_horizontally";
 
+	public static final String BAR_CLOSE = "bar_close";
+
 	public static final String LOGO_PATH = "gui/icon/logo.png";
 
 	public static final String WINDOW_CLOSE_PATH = "gui/icon/window/close.png";
@@ -102,6 +104,8 @@ public class Icons {
 
 	public static final String TAB_SPLIT_VERTICALLY_PATH = "gui/icon/tab/split_vertically.png";
 	public static final String TAB_SPLIT_HORIZONTALLY_PATH = "gui/icon/tab/split_horizontally.png";
+
+	public static final String BAR_CLOSE_PATH = "gui/icon/bar/close.png";
 
 
 }

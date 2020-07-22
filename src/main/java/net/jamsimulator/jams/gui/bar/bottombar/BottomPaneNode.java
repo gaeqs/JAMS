@@ -46,10 +46,11 @@ public class BottomPaneNode extends AnchorPane implements BarPane {
 	 *
 	 * @param verticalSplitPane the vertical {@link SplitPane} where the node can be.
 	 * @param snapshot          the {@link PaneSnapshot} holding the node.
+	 * @param bottomBar         the {@link BottomBar}.
 	 */
-	public BottomPaneNode(SplitPane verticalSplitPane, PaneSnapshot snapshot) {
+	public BottomPaneNode(SplitPane verticalSplitPane, PaneSnapshot snapshot, BottomBar bottomBar) {
 		this.snapshot = snapshot;
-		this.header = new BottomPaneNodeHeader(verticalSplitPane, snapshot.getName(), snapshot.getLanguageNode());
+		this.header = new BottomPaneNodeHeader(verticalSplitPane, snapshot, bottomBar);
 
 		AnchorUtils.setAnchor(header, 0, -1, 0, 0);
 		AnchorUtils.setAnchor(snapshot.getNode(), BottomPaneNodeHeader.HEIGHT, 0, 0, 0);

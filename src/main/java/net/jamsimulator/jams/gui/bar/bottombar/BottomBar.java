@@ -130,7 +130,7 @@ public class BottomBar extends HBox implements Bar {
 	@Override
 	public boolean add(int index, PaneSnapshot snapshot) {
 		if (contains(snapshot.getName())) return false;
-		BottomPaneNode bottomPaneNode = new BottomPaneNode(verticalSplitPane, snapshot);
+		BottomPaneNode bottomPaneNode = new BottomPaneNode(verticalSplitPane, snapshot, this);
 		BottomBarButton button = new BottomBarButton(this, bottomPaneNode);
 
 		getChildren().add(index, button);
@@ -179,9 +179,15 @@ public class BottomBar extends HBox implements Bar {
 		if (!optional.isPresent()) return;
 		BarButton button = optional.get();
 
-		if (button.getProjectBar().equals(this) && button instanceof SidebarButton) {
+
+		if (button.getProjectBar().equals(this) && button instanceof BottomBarButton) {
 			getChildren().remove(button);
-			getChildren().add(index, (SidebarButton) button);
+
+			if (index > getChildren().size()) {
+				index = getChildren().size() ;
+			}
+
+			getChildren().add(index, (BottomBarButton) button);
 		} else {
 			button.getProjectBar().remove(name);
 			add(index, button.getSnapshot());

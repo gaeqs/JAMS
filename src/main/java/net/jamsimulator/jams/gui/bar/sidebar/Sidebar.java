@@ -154,7 +154,7 @@ public class Sidebar extends VBox implements Bar {
 	@Override
 	public boolean add(int index, PaneSnapshot snapshot) {
 		if (contains(snapshot.getName())) return false;
-		SidePaneNode sidePaneNode = new SidePaneNode(sidePane, top, snapshot);
+		SidePaneNode sidePaneNode = new SidePaneNode(sidePane, top, snapshot, this);
 		SidebarButton button = new SidebarButton(this, sidePaneNode, left);
 
 		getChildren().add(index, button);
@@ -200,6 +200,11 @@ public class Sidebar extends VBox implements Bar {
 
 		if (button.getProjectBar().equals(this) && button instanceof SidebarButton) {
 			getChildren().remove(button);
+
+			if (index > getChildren().size()) {
+				index = getChildren().size() ;
+			}
+
 			getChildren().add(index, (SidebarButton) button);
 		} else {
 			button.getProjectBar().remove(name);
