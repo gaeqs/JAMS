@@ -5,7 +5,7 @@ import javafx.scene.Node;
 
 public interface PropertyEditor<T> {
 
-	Property<T> getProperty();
+	Property<?> getProperty();
 
 	Node thisInstanceAsNode();
 }

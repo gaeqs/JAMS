@@ -36,7 +36,9 @@ SIMULATION_CONFIGURATION_CALL_EVENTS=Llamar a eventos de registros, memoria e in
 SIMULATION_CONFIGURATION_CALL_EVENTS_TOOLTIP=Permite al simulador notificar cambios en la memoria, registros e instrucciones.\n\nSi esta opción está deshabilitada, el simulador funcionará más rápido, pero algunas opciones del depurador o de los plugins no funcionarán. Los eventos si funcionarán cuando el simulador esté parado.
 SIMULATION_CONFIGURATION_ENABLE_UNDO=Permitir deshacer pasos
 SIMULATION_CONFIGURATION_ENABLE_UNDO_TOOLTIP=Permite al usuario deshacer pasos del simulador.\n\nSi esta opción está desactivada, el simulador irá más rápido y consumira menos memoria, pero serás incapaz de deshacer pasos.\n\nEsta opción requiere que los eventos estén activados.
-SIMULATION_SYSTEM_CALLS_TAB=Llamadas al sistema
+SIMULATION_CONFIGURATION_SYSTEM_CALLS_TAB=Llamadas al sistema
+SIMULATION_CONFIGURATION_CACHES_TAB=Cachés
+
 
 SYSCALL_RUN_EXCEPTION_HANDLER=X Ejecutar el manejador de excepciones
 
@@ -117,6 +119,24 @@ SYSCALL_EXIT_WITH_VALUE_PROPERTY_REGISTER=Registro
 
 SYSCALL_SLEEP=MARS 32 Dormir
 SYSCALL_SLEEP_PROPERTY_REGISTER=Registro
+
+CACHE_DIRECT=Correspondencia directa
+CACHE_DIRECT_PROPERTY_WRITE_BACK=Modo Write-back
+CACHE_DIRECT_PROPERTY_BLOCK_SIZE=Tamaño del bloque (palabras)
+CACHE_DIRECT_PROPERTY_BLOCKS_AMOUNT=Bloques
+
+CACHE_ASSOCIATIVE=Asociativa
+CACHE_ASSOCIATIVE_PROPERTY_WRITE_BACK=Modo Write-back
+CACHE_ASSOCIATIVE_PROPERTY_BLOCK_SIZE=Tamaño del bloque (palabras)
+CACHE_ASSOCIATIVE_PROPERTY_BLOCKS_AMOUNT=Bloques
+CACHE_ASSOCIATIVE_PROPERTY_REPLACEMENT_POLICY=Política de reemplazamiento
+
+CACHE_SET_ASSOCIATIVE=Asociativa por conjuntos
+CACHE_SET_ASSOCIATIVE_PROPERTY_WRITE_BACK=Modo Write-back
+CACHE_SET_ASSOCIATIVE_PROPERTY_BLOCK_SIZE=Tamaño del bloque (palabras)
+CACHE_SET_ASSOCIATIVE_PROPERTY_BLOCKS_AMOUNT=Bloques
+CACHE_SET_ASSOCIATIVE_PROPERTY_SET_SIZE=Tamaño del conjunto
+CACHE_SET_ASSOCIATIVE_PROPERTY_REPLACEMENT_POLICY=Política de reemplazamiento
 
 SIMULATION_BUTTON_TOOLTIP_EXECUTE_ALL=Ejecutar todas las instrucciones
 SIMULATION_BUTTON_TOOLTIP_STOP=Parar

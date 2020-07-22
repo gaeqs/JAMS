@@ -4,7 +4,7 @@
  * Copyright (c) 2020 Gael Rial Costas
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation mipsSimulationConfigurations (the "Software"), to deal
+ * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -22,37 +22,30 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.project.mips.event;
+package net.jamsimulator.jams.mips.memory.cache.event;
 
 import net.jamsimulator.jams.event.Cancellable;
 import net.jamsimulator.jams.event.Event;
-import net.jamsimulator.jams.project.mips.MIPSProjectData;
-import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
+import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 
-public class MipsSimulationConfigurationRemoveEvent extends Event {
+public class CacheBuilderUnregisterEvent extends Event {
 
-	protected MIPSProjectData data;
-	protected MIPSSimulationConfiguration mipsSimulationConfiguration;
+	protected CacheBuilder<?> cacheBuilder;
 
-	public MipsSimulationConfigurationRemoveEvent(MIPSProjectData data, MIPSSimulationConfiguration mipsSimulationConfiguration) {
-		this.data = data;
-		this.mipsSimulationConfiguration = mipsSimulationConfiguration;
+	CacheBuilderUnregisterEvent(CacheBuilder<?> cacheBuilder) {
+		this.cacheBuilder = cacheBuilder;
 	}
 
-	public MIPSProjectData getData() {
-		return data;
+	public CacheBuilder<?> getCacheBuilder() {
+		return cacheBuilder;
 	}
 
-	public MIPSSimulationConfiguration getMipsSimulationConfiguration() {
-		return mipsSimulationConfiguration;
-	}
-
-	public static class Before extends MipsSimulationConfigurationRemoveEvent implements Cancellable {
+	public static class Before extends CacheBuilderUnregisterEvent implements Cancellable {
 
 		private boolean cancelled;
 
-		public Before(MIPSProjectData data, MIPSSimulationConfiguration mipsSimulationConfiguration) {
-			super(data, mipsSimulationConfiguration);
+		public Before(CacheBuilder<?> cacheBuilder) {
+			super(cacheBuilder);
 		}
 
 		@Override
@@ -66,12 +59,11 @@ public class MipsSimulationConfigurationRemoveEvent extends Event {
 		}
 	}
 
-	public static class After extends MipsSimulationConfigurationRemoveEvent {
+	public static class After extends CacheBuilderUnregisterEvent {
 
-		public After(MIPSProjectData data, MIPSSimulationConfiguration mipsSimulationConfiguration) {
-			super(data, mipsSimulationConfiguration);
+		public After(CacheBuilder<?> cacheBuilder) {
+			super(cacheBuilder);
 		}
+
 	}
-
-
 }

@@ -35,7 +35,7 @@ public class FloatPropertyEditor extends TextField implements PropertyEditor<Flo
 	}
 
 	@Override
-	public Property<Float> getProperty() {
+	public Property<? extends Float> getProperty() {
 		return property;
 	}
 

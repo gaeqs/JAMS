@@ -15,7 +15,7 @@ public class BooleanPropertyEditor extends CheckBox implements PropertyEditor<Bo
 	}
 
 	@Override
-	public Property<Boolean> getProperty() {
+	public Property<? extends Boolean> getProperty() {
 		return property;
 	}
 

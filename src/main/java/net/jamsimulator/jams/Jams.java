@@ -45,6 +45,7 @@ public class Jams {
 	private static ArchitectureManager architectureManager;
 	private static AssemblerBuilderManager assemblerBuilderManager;
 	private static MemoryBuilderManager memoryBuilderManager;
+	private static CacheBuilderManager cacheBuilderManager;
 	private static RegistersBuilderManager registersBuilderManager;
 
 	private static InstructionSetManager instructionSetManager;
@@ -64,6 +65,7 @@ public class Jams {
 		architectureManager = ArchitectureManager.INSTANCE;
 		assemblerBuilderManager = AssemblerBuilderManager.INSTANCE;
 		memoryBuilderManager = MemoryBuilderManager.INSTANCE;
+		cacheBuilderManager = CacheBuilderManager.INSTANCE;
 		registersBuilderManager = RegistersBuilderManager.INSTANCE;
 
 		instructionSetManager = InstructionSetManager.INSTANCE;
@@ -139,6 +141,15 @@ public class Jams {
 	 */
 	public static MemoryBuilderManager getMemoryBuilderManager() {
 		return memoryBuilderManager;
+	}
+
+	/**
+	 * Returns the {@link CacheBuilderManager}.
+	 *
+	 * @return the {@link CacheBuilderManager}.
+	 */
+	public static CacheBuilderManager getCacheBuilderManager() {
+		return cacheBuilderManager;
 	}
 
 	/**

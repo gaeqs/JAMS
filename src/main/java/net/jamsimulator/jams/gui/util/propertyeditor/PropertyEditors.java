@@ -18,6 +18,7 @@ public class PropertyEditors {
 		registerEditor(Float.class, p -> new FloatPropertyEditor((Property<Float>) p));
 		registerEditor(Integer.class, p -> new IntegerPropertyEditor((Property<Integer>) p));
 		registerEditor(String.class, p -> new StringPropertyEditor((Property<String>) p));
+		registerEditor(Enum.class, p -> new EnumPropertyEditor((Property<? super Enum<?>>) p));
 	}
 
 	public static void registerEditor(Class<?> clazz, Function<Property<?>, PropertyEditor<?>> editor) {
@@ -26,7 +27,9 @@ public class PropertyEditors {
 	}
 
 	public static <T> Optional<PropertyEditor<T>> getEditor(Property<T> property) {
-		Function<Property<?>, PropertyEditor<?>> function = EDITORS.get(property.getValue().getClass());
+		Class<?> clazz = property.getValue().getClass();
+		if (clazz.isEnum()) clazz = Enum.class;
+		Function<Property<?>, PropertyEditor<?>> function = EDITORS.get(clazz);
 		return Optional.ofNullable((PropertyEditor<T>) function.apply(property));
 	}
 

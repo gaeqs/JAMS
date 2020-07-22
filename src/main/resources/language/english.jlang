@@ -36,7 +36,8 @@ SIMULATION_CONFIGURATION_CALL_EVENTS=Call memory, registers and instructions eve
 SIMULATION_CONFIGURATION_CALL_EVENTS_TOOLTIP=Allows the simulation to notify memory, registers and instructions' changes.\n\nIf this option is disabled, the simulation will work faster, but some debugger and plug-ins' options won't work. Events will work when the simulation is stopped.
 SIMULATION_CONFIGURATION_ENABLE_UNDO=Allow to undo steps
 SIMULATION_CONFIGURATION_ENABLE_UNDO_TOOLTIP=Allows you to undo simulation's steps.\n\nIf this option is disabled, the simulation will work faster and it will consume less memory, but you will be unable to undo steps.\n\nThis option requires events to be activated.
-SIMULATION_SYSTEM_CALLS_TAB=System calls
+SIMULATION_CONFIGURATION_SYSTEM_CALLS_TAB=System calls
+SIMULATION_CONFIGURATION_CACHES_TAB=Caches
 
 SYSCALL_RUN_EXCEPTION_HANDLER=X Run exception handler
 
@@ -117,6 +118,24 @@ SYSCALL_EXIT_WITH_VALUE_PROPERTY_REGISTER=Register
 
 SYSCALL_SLEEP=MARS 32 Sleep
 SYSCALL_SLEEP_PROPERTY_REGISTER=Register
+
+CACHE_DIRECT=Direct mapping
+CACHE_DIRECT_PROPERTY_WRITE_BACK=Write-back mode
+CACHE_DIRECT_PROPERTY_BLOCK_SIZE=Block size (words)
+CACHE_DIRECT_PROPERTY_BLOCKS_AMOUNT=Blocks
+
+CACHE_ASSOCIATIVE=Associative mapping
+CACHE_ASSOCIATIVE_PROPERTY_WRITE_BACK=Write-back mode
+CACHE_ASSOCIATIVE_PROPERTY_BLOCK_SIZE=Block size (words)
+CACHE_ASSOCIATIVE_PROPERTY_BLOCKS_AMOUNT=Blocks
+CACHE_ASSOCIATIVE_PROPERTY_REPLACEMENT_POLICY=Replacement policy
+
+CACHE_SET_ASSOCIATIVE=Set-associative mapping
+CACHE_SET_ASSOCIATIVE_PROPERTY_WRITE_BACK=Write-back mode
+CACHE_SET_ASSOCIATIVE_PROPERTY_BLOCK_SIZE=Block size (words)
+CACHE_SET_ASSOCIATIVE_PROPERTY_BLOCKS_AMOUNT=Blocks
+CACHE_SET_ASSOCIATIVE_PROPERTY_SET_SIZE=Set size
+CACHE_SET_ASSOCIATIVE_PROPERTY_REPLACEMENT_POLICY=Replacement policy
 
 SIMULATION_BUTTON_TOOLTIP_EXECUTE_ALL=Execute all instructions
 SIMULATION_BUTTON_TOOLTIP_STOP=Stop

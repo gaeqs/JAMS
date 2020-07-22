@@ -35,7 +35,7 @@ public class DoublePropertyEditor extends TextField implements PropertyEditor<Do
 	}
 
 	@Override
-	public Property<Double> getProperty() {
+	public Property<? extends Double> getProperty() {
 		return property;
 	}
 

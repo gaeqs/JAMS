@@ -20,7 +20,7 @@ public class StringPropertyEditor extends TextField implements PropertyEditor<St
 	}
 
 	@Override
-	public Property<String> getProperty() {
+	public Property<? extends String> getProperty() {
 		return property;
 	}
 

@@ -51,8 +51,8 @@ public class MipsProject extends BasicProject {
 	}
 
 	@Override
-	public MipsProjectData getData() {
-		return (MipsProjectData) super.getData();
+	public MIPSProjectData getData() {
+		return (MIPSProjectData) super.getData();
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class MipsProject extends BasicProject {
 				getData().getDirectiveSet(),
 				getData().getInstructionSet(),
 				getData().getRegistersBuilder().createRegisters(),
-				configuration.getMemoryBuilder().createMemory());
+				configuration.generateNewMemory());
 
 		assembler.assemble();
 
@@ -93,7 +93,7 @@ public class MipsProject extends BasicProject {
 
 	@Override
 	protected void loadData(String name) {
-		data = new MipsProjectData(this);
+		data = new MIPSProjectData(this);
 		data.load();
 
 		if (name != null) {

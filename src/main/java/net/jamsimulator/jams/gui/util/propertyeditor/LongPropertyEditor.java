@@ -34,7 +34,7 @@ public class LongPropertyEditor extends TextField implements PropertyEditor<Long
 	}
 
 	@Override
-	public Property<Long> getProperty() {
+	public Property<? extends Long> getProperty() {
 		return property;
 	}
 

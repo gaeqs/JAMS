@@ -8,7 +8,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.project.mips.MipsProjectData;
+import net.jamsimulator.jams.project.mips.MIPSProjectData;
 import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationAddEvent;
 import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationRemoveEvent;
@@ -17,7 +17,7 @@ import java.util.Set;
 
 public class ConfigurationsList extends VBox {
 
-	private final MipsProjectData data;
+	private final MIPSProjectData data;
 	private final ConfigurationsWindow window;
 	private final VBox contents;
 
@@ -25,7 +25,7 @@ public class ConfigurationsList extends VBox {
 	protected Button add, remove;
 
 
-	public ConfigurationsList(ConfigurationsWindow window, MipsProjectData data) {
+	public ConfigurationsList(ConfigurationsWindow window, MIPSProjectData data) {
 		getStyleClass().add("mips-configurations-list");
 		this.data = data;
 		this.window = window;

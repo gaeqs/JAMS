@@ -38,12 +38,11 @@ import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.gui.util.log.SimpleLog;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
-import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
-import net.jamsimulator.jams.project.mips.MipsProject;
 import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
+import net.jamsimulator.jams.project.mips.MipsProject;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -94,8 +93,11 @@ public class TextEditorActionCompile extends Action {
 			}
 
 			MIPS32Assembler assembler = (MIPS32Assembler) project.getData().getAssemblerBuilder()
-					.createAssembler(files, project.getData().getDirectiveSet(), project.getData().getInstructionSet(),
-							new MIPS32Registers(), configuration.getMemoryBuilder().createMemory());
+					.createAssembler(files,
+							project.getData().getDirectiveSet(),
+							project.getData().getInstructionSet(),
+							project.getData().getRegistersBuilder().createRegisters(),
+							configuration.generateNewMemory());
 			assembler.assemble();
 
 			int mainLabel = assembler.getGlobalLabelAddress("main").orElse(-1);

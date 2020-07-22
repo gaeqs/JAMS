@@ -9,7 +9,7 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.project.mips.MipsProjectData;
+import net.jamsimulator.jams.project.mips.MIPSProjectData;
 
 public class ConfigurationsWindow extends SplitPane {
 
@@ -18,7 +18,7 @@ public class ConfigurationsWindow extends SplitPane {
 	private final ConfigurationDisplay display;
 	private final ConfigurationsList list;
 
-	public ConfigurationsWindow(MipsProjectData data) {
+	public ConfigurationsWindow(MIPSProjectData data) {
 		display = new ConfigurationDisplay(this, data);
 		list = new ConfigurationsList(this, data);
 
@@ -35,7 +35,7 @@ public class ConfigurationsWindow extends SplitPane {
 		return list;
 	}
 
-	public static void open(MipsProjectData data) {
+	public static void open(MIPSProjectData data) {
 		ConfigurationsWindow window = new ConfigurationsWindow(data);
 
 		Scene scene = new ThemedScene(window);

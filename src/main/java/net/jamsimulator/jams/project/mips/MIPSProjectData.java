@@ -42,7 +42,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class MipsProjectData extends ProjectData {
+public class MIPSProjectData extends ProjectData {
 
 	protected Set<MIPSSimulationConfiguration> configurations;
 	protected MIPSSimulationConfiguration selectedConfiguration;
@@ -54,7 +54,7 @@ public class MipsProjectData extends ProjectData {
 
 	protected final MIPSFilesToAssemble filesToAssemble;
 
-	public MipsProjectData(MipsProject project) {
+	public MIPSProjectData(MipsProject project) {
 		super(project.getFolder());
 		filesToAssemble = new MIPSFilesToAssemble(project);
 	}

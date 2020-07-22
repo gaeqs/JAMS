@@ -36,7 +36,7 @@ public class IntegerPropertyEditor extends TextField implements PropertyEditor<I
 	}
 
 	@Override
-	public Property<Integer> getProperty() {
+	public Property<? extends Integer> getProperty() {
 		return property;
 	}
 

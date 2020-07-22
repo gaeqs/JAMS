@@ -4,15 +4,14 @@ import javafx.beans.property.Property;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.mips.architecture.Architecture;
+import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
+import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class MIPSSimulationConfiguration {
 
@@ -20,14 +19,15 @@ public class MIPSSimulationConfiguration {
 
 	protected Architecture architecture;
 	protected MemoryBuilder memoryBuilder;
+	protected List<CacheBuilder<?>> cacheBuilders;
 	protected boolean callEvents, undoEnabled;
 	protected Map<Integer, SyscallExecutionBuilder<?>> syscallExecutionBuilders;
 
 	public MIPSSimulationConfiguration(String name) {
-		this(name, Jams.getArchitectureManager().getDefault(), Jams.getMemoryBuilderManager().getDefault(), true, true, new HashMap<>());
+		this(name, Jams.getArchitectureManager().getDefault(), Jams.getMemoryBuilderManager().getDefault(), new ArrayList<>(), true, true, new HashMap<>());
 	}
 
-	public MIPSSimulationConfiguration(String name, Architecture architecture, MemoryBuilder memoryBuilder,
+	public MIPSSimulationConfiguration(String name, Architecture architecture, MemoryBuilder memoryBuilder, List<CacheBuilder<?>> cacheBuilders,
 									   boolean callEvents, boolean undoEnabled, Map<Integer, SyscallExecutionBuilder<?>> syscallExecutionBuilders) {
 		Validate.notNull(name, "Name cannot be null!");
 		Validate.isTrue(!name.isEmpty(), "Name cannot be empty!");
@@ -36,6 +36,7 @@ public class MIPSSimulationConfiguration {
 		this.name = name;
 		this.architecture = architecture;
 		this.memoryBuilder = memoryBuilder;
+		this.cacheBuilders = cacheBuilders;
 		this.callEvents = callEvents;
 		this.undoEnabled = undoEnabled;
 		this.syscallExecutionBuilders = syscallExecutionBuilders;
@@ -57,32 +58,8 @@ public class MIPSSimulationConfiguration {
 		Optional<Boolean> undoEnabledOptional = configuration.get("undo_enabled");
 		undoEnabled = undoEnabledOptional.orElse(true);
 
-		syscallExecutionBuilders = new HashMap<>();
-		Optional<Configuration> syscallsOptional = configuration.get("syscalls");
-		if (syscallsOptional.isPresent()) {
-			Configuration syscalls = syscallsOptional.get();
-			syscalls.getAll(false).forEach((key, value) -> {
-				if (!(value instanceof Configuration)) return;
-				Configuration config = (Configuration) value;
-
-				if (!NumericUtils.isInteger(key)) return;
-				SyscallExecutionBuilder<?> builder = Jams.getSyscallExecutionBuilderManager()
-						.get(config.getString("name").orElse("")).orElse(null);
-				if (builder == null) return;
-				builder = builder.makeNewInstance();
-
-				for (Property property : builder.getProperties()) {
-					Object o = config.get(property.getName()).orElse(null);
-					if (o == null) continue;
-					try {
-						property.setValue(o);
-					} catch (Exception ignore) {
-					}
-				}
-
-				syscallExecutionBuilders.put(NumericUtils.decodeInteger(key), builder);
-			});
-		}
+		loadSyscalls(configuration);
+		loadCaches(configuration);
 	}
 
 	public String getName() {
@@ -113,6 +90,20 @@ public class MIPSSimulationConfiguration {
 		this.memoryBuilder = memoryBuilder;
 	}
 
+	public List<CacheBuilder<?>> getCacheBuilders() {
+		return cacheBuilders;
+	}
+
+	public Memory generateNewMemory() {
+		Memory current = memoryBuilder.createMemory();
+		ListIterator<CacheBuilder<?>> iterator = cacheBuilders.listIterator(cacheBuilders.size());
+		while (iterator.hasPrevious()) {
+			current = iterator.previous().build(current);
+		}
+
+		return current;
+	}
+
 	public Map<Integer, SyscallExecutionBuilder<?>> getSyscallExecutionBuilders() {
 		return syscallExecutionBuilders;
 	}
@@ -141,7 +132,6 @@ public class MIPSSimulationConfiguration {
 		configuration.set(prefix + ".undo_enabled", undoEnabled);
 
 		configuration.remove(prefix + "." + name + ".syscalls");
-
 		String syscallsPrefix = prefix + ".syscalls.";
 		syscallExecutionBuilders.forEach((key, builder) -> {
 			configuration.set(syscallsPrefix + key + ".name", builder.getName());
@@ -149,6 +139,17 @@ public class MIPSSimulationConfiguration {
 				configuration.set(syscallsPrefix + key + "." + property.getName(), property.getValue());
 			}
 		});
+
+		configuration.remove(prefix + "." + name + ".caches");
+		String cachesPrefix = prefix + ".caches.";
+		int index = 0;
+		for (CacheBuilder<?> builder : cacheBuilders) {
+			configuration.set(cachesPrefix + index + ".name", builder.getName());
+			for (Property<?> property : builder.getProperties()) {
+				configuration.set(cachesPrefix + index + "." + property.getName(), property.getValue());
+			}
+			index++;
+		}
 	}
 
 	@Override
@@ -173,5 +174,76 @@ public class MIPSSimulationConfiguration {
 	@Override
 	public int hashCode() {
 		return Objects.hash(name);
+	}
+
+
+	private void loadSyscalls(Configuration configuration) {
+		syscallExecutionBuilders = new HashMap<>();
+		Optional<Configuration> syscallsOptional = configuration.get("syscalls");
+		if (syscallsOptional.isPresent()) {
+			Configuration syscalls = syscallsOptional.get();
+			syscalls.getAll(false).forEach((key, value) -> {
+				if (!(value instanceof Configuration)) return;
+				Configuration config = (Configuration) value;
+
+				if (!NumericUtils.isInteger(key)) return;
+				SyscallExecutionBuilder<?> builder = Jams.getSyscallExecutionBuilderManager()
+						.get(config.getString("name").orElse("")).orElse(null);
+				if (builder == null) return;
+				builder = builder.makeNewInstance();
+
+				for (Property property : builder.getProperties()) {
+					Object o = config.get(property.getName()).orElse(null);
+					if (o == null) continue;
+					try {
+						if (property.getValue() instanceof Enum) {
+							property.setValue(Enum.valueOf((Class<Enum>) property.getValue().getClass(), o.toString()));
+						} else {
+							property.setValue(o);
+						}
+					} catch (Exception ignore) {
+					}
+				}
+
+				syscallExecutionBuilders.put(NumericUtils.decodeInteger(key), builder);
+			});
+		}
+	}
+
+	public void loadCaches(Configuration configuration) {
+		cacheBuilders = new ArrayList<>();
+		Optional<Configuration> cachesOptional = configuration.get("caches");
+		if (cachesOptional.isPresent()) {
+			Configuration caches = cachesOptional.get();
+			int index = 0;
+			Optional<?> indexOptional;
+			while ((indexOptional = caches.get(String.valueOf(index))).isPresent()) {
+				if (!(indexOptional.get() instanceof Configuration)) return;
+
+				Configuration config = (Configuration) indexOptional.get();
+
+				CacheBuilder<?> builder = Jams.getCacheBuilderManager()
+						.get(config.getString("name").orElse("")).orElse(null);
+				if (builder == null) return;
+				builder = builder.makeNewInstance();
+
+				for (Property property : builder.getProperties()) {
+					Object o = config.get(property.getName()).orElse(null);
+					if (o == null) continue;
+					try {
+						if (property.getValue() instanceof Enum) {
+							property.setValue(Enum.valueOf((Class<Enum>) property.getValue().getClass(), o.toString()));
+						} else {
+							property.setValue(o);
+						}
+					} catch (Exception ignore) {
+					}
+				}
+
+				cacheBuilders.add(builder);
+
+				index++;
+			}
+		}
 	}
 }

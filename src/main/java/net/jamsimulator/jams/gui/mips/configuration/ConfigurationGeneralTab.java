@@ -16,18 +16,18 @@ import net.jamsimulator.jams.gui.util.MemoryBuilderComboBox;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
-import net.jamsimulator.jams.project.mips.MipsProjectData;
+import net.jamsimulator.jams.project.mips.MIPSProjectData;
 import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
 
 public class ConfigurationGeneralTab extends VBox {
 
 	private final ConfigurationsWindow window;
-	private final MipsProjectData data;
+	private final MIPSProjectData data;
 	private final MIPSSimulationConfiguration configuration;
 
 	private HBox enableUndoHBox;
 
-	public ConfigurationGeneralTab(ConfigurationsWindow window, MipsProjectData data, MIPSSimulationConfiguration configuration) {
+	public ConfigurationGeneralTab(ConfigurationsWindow window, MIPSProjectData data, MIPSSimulationConfiguration configuration) {
 		this.window = window;
 		this.data = data;
 		this.configuration = configuration;
