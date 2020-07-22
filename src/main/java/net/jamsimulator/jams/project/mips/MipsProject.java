@@ -75,7 +75,7 @@ public class MipsProject extends BasicProject {
 
 		assembler.assemble();
 
-		SimulationData simulationData = new SimulationData(configuration, data.getFilesFolder(), new Console());
+		SimulationData simulationData = new SimulationData(configuration, data.getFilesFolder(), new Console(), assembler.getOriginals());
 		return assembler.createSimulation(configuration.getArchitecture(), simulationData);
 	}
 

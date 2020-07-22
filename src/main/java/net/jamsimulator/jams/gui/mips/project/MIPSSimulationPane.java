@@ -29,8 +29,8 @@ public class MIPSSimulationPane extends WorkingPane {
 	protected Simulation<?> simulation;
 	protected TabPane registersTabs;
 
-	public MIPSSimulationPane(Tab parent, ProjectTab projectTab, MipsProject project, Simulation<?> simulation, Assembler assembler) {
-		super(parent, projectTab, new MIPSSimulationCentralPane(simulation, assembler.getOriginals()), new HashSet<>(), false);
+	public MIPSSimulationPane(Tab parent, ProjectTab projectTab, MipsProject project, Simulation<?> simulation) {
+		super(parent, projectTab, new MIPSSimulationCentralPane(simulation), new HashSet<>(), false);
 		this.project = project;
 		this.simulation = simulation;
 

@@ -46,6 +46,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,7 +56,7 @@ class GeneralInstructionTests {
 
 	static Simulation<?> simulation = new SingleCycleSimulation(SingleCycleArchitecture.INSTANCE, new MIPS32InstructionSet(),
 			new MIPS32Registers(), new MIPS32Memory(), 0,
-			new SimulationData(new SimulationSyscallExecutions(), new File(""), true, true, new Console()));
+			new SimulationData(new SimulationSyscallExecutions(), new File(""), new Console(), new HashMap<>(), true, true));
 
 	@Test
 	void testBasicInstruction() {

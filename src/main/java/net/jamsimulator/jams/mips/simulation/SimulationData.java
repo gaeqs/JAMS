@@ -5,6 +5,7 @@ import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * Represents the immutable data of a {@link Simulation}.
@@ -15,25 +16,30 @@ public class SimulationData {
 	protected final SimulationSyscallExecutions syscallExecutions;
 	protected final File workingDirectory;
 	protected final Console console;
+	protected final Map<Integer, String> originalInstructions;
 	protected final boolean callEvents, undoEnabled;
 
-	public SimulationData(SimulationSyscallExecutions syscallExecutions, File workingDirectory, boolean callEvents, boolean undoEnabled, Console console) {
+	public SimulationData(SimulationSyscallExecutions syscallExecutions, File workingDirectory, Console console,
+						  Map<Integer, String> originalInstructions, boolean callEvents, boolean undoEnabled) {
 		this.syscallExecutions = syscallExecutions;
 		this.workingDirectory = workingDirectory;
+		this.console = console;
+		this.originalInstructions = originalInstructions;
 		this.callEvents = callEvents;
 		this.undoEnabled = undoEnabled;
-		this.console = console;
 	}
 
-	public SimulationData(MIPSSimulationConfiguration configuration, File workingDirectory, Console console) {
+	public SimulationData(MIPSSimulationConfiguration configuration, File workingDirectory, Console console, Map<Integer, String> originalInstructions) {
 		this.syscallExecutions = new SimulationSyscallExecutions();
 		configuration.getSyscallExecutionBuilders().forEach((key, builder) ->
 				syscallExecutions.bindExecution(key, builder.build()));
 
 		this.workingDirectory = workingDirectory;
+		this.console = console;
+		this.originalInstructions = originalInstructions;
+
 		this.callEvents = configuration.isCallEvents();
 		this.undoEnabled = configuration.isUndoEnabled() && callEvents;
-		this.console = console;
 	}
 
 	/**
@@ -55,6 +61,20 @@ public class SimulationData {
 	 */
 	public File getWorkingDirectory() {
 		return workingDirectory;
+	}
+
+	/**
+	 * Returns the {@link Console} of this simulation.
+	 * This console is used to print the output of the simulation and to receive data from the user.
+	 *
+	 * @return the {@link Console}.
+	 */
+	public Console getConsole() {
+		return console;
+	}
+
+	public Map<Integer, String> getOriginalInstructions() {
+		return originalInstructions;
 	}
 
 	/**
@@ -82,15 +102,5 @@ public class SimulationData {
 	 */
 	public boolean isUndoEnabled() {
 		return undoEnabled;
-	}
-
-	/**
-	 * Returns the {@link Console} of this simulation.
-	 * This console is used to print the output of the simulation and to receive data from the user.
-	 *
-	 * @return the {@link Console}.
-	 */
-	public Console getConsole() {
-		return console;
 	}
 }

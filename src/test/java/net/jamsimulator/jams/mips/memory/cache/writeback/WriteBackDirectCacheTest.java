@@ -56,7 +56,7 @@ class WriteBackDirectCacheTest {
 		MIPS32Assembler assembler = new MIPS32Assembler(Collections.singletonList(CacheTestsData.PROGRAM), inst, dir, reg, mem);
 		assembler.assemble();
 
-		SimulationData data = new SimulationData(new SimulationSyscallExecutions(), new File(""), false, false, null);
+		SimulationData data = new SimulationData(new SimulationSyscallExecutions(), new File(""), null, assembler.getOriginals(), false, false);
 		Simulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE, data);
 
 		mem = (Cache) simulation.getMemory();

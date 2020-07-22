@@ -152,5 +152,11 @@ public class MIPS32Assembler implements Assembler {
 		memory.allocateMemory(assemblerData.getCurrentData() - assemblerData.getFirstData());
 		assembled = true;
 		if (memory instanceof Cache) ((Cache) memory).resetCache();
+
+		int main = getGlobalLabelAddress("main").orElse(-1);
+		if (main != -1) registers.getProgramCounter().setValue(main);
+
+		registers.saveState();
+		registers.saveState();
 	}
 }

@@ -81,7 +81,7 @@ class AssemblerTest {
 		assembler.assemble();
 		SimulationSyscallExecutions executions = new SimulationSyscallExecutions();
 
-		SimulationData data = new SimulationData(executions, new File(""), true, true, new Console());
+		SimulationData data = new SimulationData(executions, new File(""), new Console(), assembler.getOriginals(), true, true);
 		Simulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE, data);
 
 		assertEquals(0x02508820, simulation.getMemory().getWord(simulation.getRegisters().getProgramCounter().getValue()));

@@ -11,12 +11,12 @@ import java.util.Map;
 public class MIPSSimulationCentralPane extends AnchorPane {
 
 
-	public MIPSSimulationCentralPane(Simulation<?> simulation, Map<Integer, String> originals) {
+	public MIPSSimulationCentralPane(Simulation<?> simulation) {
 		ExecutionButtons buttons = new ExecutionButtons(simulation);
 		AnchorUtils.setAnchor(buttons, 0, -1, 0, 0);
 		buttons.setPrefHeight(30);
 
-		InstructionsTable table = InstructionsTable.createTable(simulation.getArchitecture(), simulation, originals);
+		InstructionsTable table = InstructionsTable.createTable(simulation.getArchitecture(), simulation, simulation.getData().getOriginalInstructions());
 		AnchorUtils.setAnchor(table, 29, 0, 0, 0);
 
 		getChildren().addAll(buttons, table);

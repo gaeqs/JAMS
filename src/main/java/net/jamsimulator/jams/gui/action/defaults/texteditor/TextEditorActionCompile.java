@@ -34,20 +34,10 @@ import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
 import net.jamsimulator.jams.gui.mips.project.MIPSSimulationPane;
 import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
-import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.gui.util.log.SimpleLog;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.mips.simulation.SimulationData;
-import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
-import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.MipsProject;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TextEditorActionCompile extends Action {
 
@@ -70,58 +60,19 @@ public class TextEditorActionCompile extends Action {
 	public static void compileAndShow(MipsProject project) {
 		ProjectTab tab = project.getProjectTab().orElse(null);
 		if (tab == null) return;
+
 		MipsStructurePane pane = (MipsStructurePane) tab.getProjectTabPane().getWorkingPane();
 		pane.getFileDisplayHolder().saveAll(true);
-
 		pane.getBarMap().searchButton("Log").ifPresent(BarButton::show);
-
 		SimpleLog log = pane.getLog();
+
 		try {
-			List<String> files = new ArrayList<>();
-			for (File file : project.getData().getFilesToAssemble().getFiles()) {
-				files.add(String.join("\n", Files.readAllLines(file.toPath())));
-				log.printInfoLn("- FILE: " + file);
-				for (String line : Files.readAllLines(file.toPath())) {
-					log.println(line);
-				}
-			}
+			Simulation<?> simulation = project.assemble();
 
-			MIPSSimulationConfiguration configuration = project.getData().getSelectedConfiguration().orElse(null);
-			if (configuration == null) {
-				log.printErrorLn("Configuration not found!");
-				return;
-			}
+			project.getProjectTab().ifPresent(projectTab -> projectTab.getProjectTabPane()
+					.createProjectPane((t, pt) ->
+							new MIPSSimulationPane(t, pt, project, simulation), true));
 
-			MIPS32Assembler assembler = (MIPS32Assembler) project.getData().getAssemblerBuilder()
-					.createAssembler(files,
-							project.getData().getDirectiveSet(),
-							project.getData().getInstructionSet(),
-							project.getData().getRegistersBuilder().createRegisters(),
-							configuration.generateNewMemory());
-			assembler.assemble();
-
-			int mainLabel = assembler.getGlobalLabelAddress("main").orElse(-1);
-
-			SimulationSyscallExecutions executions = new SimulationSyscallExecutions();
-			configuration.getSyscallExecutionBuilders().forEach((key, builder) -> executions.bindExecution(key, builder.build()));
-
-			SimulationData data = new SimulationData(configuration, project.getData().getFilesFolder(), new Console());
-			Simulation<?> simulation = assembler.createSimulation(configuration.getArchitecture(), data);
-
-			project.getProjectTab().ifPresent(projectTab ->
-					projectTab.getProjectTabPane()
-							.createProjectPane((t, pt) -> new MIPSSimulationPane(t, pt, project, simulation, assembler), true));
-
-			log.println();
-			if (mainLabel == -1) {
-				log.printWarningLn("Global label \"main\" not found. Staring at the start of the text section.");
-			} else {
-				log.printInfoLn("Global label \"main\" found. Starting simulaiton at this location.");
-				simulation.getRegisters().getProgramCounter().setValue(mainLabel);
-			}
-
-			simulation.getRegisters().saveState();
-			simulation.getMemory().saveState();
 
 		} catch (Exception ex) {
 			log.printErrorLn("ERROR:");
