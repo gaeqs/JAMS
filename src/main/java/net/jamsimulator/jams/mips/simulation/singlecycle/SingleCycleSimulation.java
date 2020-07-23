@@ -199,7 +199,9 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 			int code = memory.getWord(pc, false, true);
 			currentStepChanges = null;
 			throw new InstructionNotFoundException("Couldn't decode instruction 0x" +
-					StringUtils.addZeros(Integer.toHexString(code), 8) + ". (" + StringUtils.addZeros(Integer.toBinaryString(code), 32) + ")");
+					StringUtils.addZeros(Integer.toHexString(code), 8) +
+					"at 0x"+StringUtils.addZeros(Integer.toHexString(pc), 8) +
+					". (" + StringUtils.addZeros(Integer.toBinaryString(code), 32) + ")");
 		}
 
 		//Execute, Memory and Write

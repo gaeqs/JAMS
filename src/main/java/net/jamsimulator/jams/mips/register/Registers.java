@@ -276,7 +276,7 @@ public class Registers extends SimpleEventBroadcast {
 			set.coprocessor1Registers[i] = coprocessor1Registers[i] == null ? null : coprocessor1Registers[i].copy(set);
 		}
 
-		set.programCounter.setValue(programCounter.getValue());
+		set.programCounter = programCounter.copy(set);
 
 		set.eventCallsEnabled = eventCallsEnabled;
 		return set;
@@ -316,6 +316,6 @@ public class Registers extends SimpleEventBroadcast {
 	}
 
 	protected void loadEssentialRegisters() {
-		programCounter = new Register(this, -1, 0x00400000, true, "pc");
+		programCounter = new Register(this, -1, 0x04000000, true, "pc");
 	}
 }
