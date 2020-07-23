@@ -30,7 +30,7 @@ import net.jamsimulator.jams.gui.explorer.event.ExplorerAddElementEvent;
 import net.jamsimulator.jams.gui.explorer.event.ExplorerRemoveElementEvent;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
 import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
 
@@ -41,15 +41,15 @@ public class MipsFolderExplorer extends FolderExplorer {
 
 	public static final String EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS = "mips-explorer-file-to-assemble";
 
-	private final MipsProject project;
+	private final MIPSProject project;
 
 	/**
 	 * Creates the mips explorer folder.
 	 *
-	 * @param project    the {@link MipsProject} of this explorer.
+	 * @param project    the {@link MIPSProject} of this explorer.
 	 * @param scrollPane the {@link ScrollPane} handling this explorer.
 	 */
-	public MipsFolderExplorer(MipsProject project, ScrollPane scrollPane) {
+	public MipsFolderExplorer(MIPSProject project, ScrollPane scrollPane) {
 		super(project.getFolder(), scrollPane);
 		this.project = project;
 		project.getData().getFilesToAssemble().registerListeners(this, true);
@@ -64,11 +64,11 @@ public class MipsFolderExplorer extends FolderExplorer {
 	}
 
 	/**
-	 * Returns the {@link MipsProject} of this explorer.
+	 * Returns the {@link MIPSProject} of this explorer.
 	 *
-	 * @return the {@link MipsProject}.
+	 * @return the {@link MIPSProject}.
 	 */
-	public MipsProject getProject() {
+	public MIPSProject getProject() {
 		return project;
 	}
 

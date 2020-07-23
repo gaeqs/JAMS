@@ -32,7 +32,7 @@ import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.start.StartWindow;
 import net.jamsimulator.jams.project.Project;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.FileUtils;
 import org.json.JSONArray;
 
@@ -121,8 +121,8 @@ public class ProjectListTabPane extends TabPane {
 	 */
 	public boolean openProject(Project project) {
 		if (isProjectOpen(project)) return false;
-		if (!(project instanceof MipsProject)) return false;
-		ProjectTab tab = new ProjectTab((MipsProject) project);
+		if (!(project instanceof MIPSProject)) return false;
+		ProjectTab tab = new ProjectTab((MIPSProject) project);
 		project.assignProjectTab(tab);
 		getTabs().add(tab);
 		return true;
@@ -154,7 +154,7 @@ public class ProjectListTabPane extends TabPane {
 			for (Object o : object) {
 				File to = new File(o.toString());
 				if (!to.isDirectory()) continue;
-				openProject(new MipsProject(to));
+				openProject(new MIPSProject(to));
 			}
 
 		} catch (Exception ex) {

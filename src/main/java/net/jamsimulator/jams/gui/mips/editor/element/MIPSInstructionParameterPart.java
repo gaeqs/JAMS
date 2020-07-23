@@ -26,7 +26,7 @@ package net.jamsimulator.jams.gui.mips.editor.element;
 
 import net.jamsimulator.jams.gui.mips.editor.MIPSEditorError;
 import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -97,7 +97,7 @@ public class MIPSInstructionParameterPart extends MIPSCodeElement {
 			return cssClass;
 		}
 
-		public static InstructionParameterPartType getByString(String string, MipsProject project) {
+		public static InstructionParameterPartType getByString(String string, MIPSProject project) {
 			if (NumericUtils.isInteger(string)) return IMMEDIATE;
 
 			if (project == null) {

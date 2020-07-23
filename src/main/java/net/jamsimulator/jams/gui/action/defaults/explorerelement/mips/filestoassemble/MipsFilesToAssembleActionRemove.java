@@ -38,7 +38,7 @@ import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.util.List;
 
@@ -65,8 +65,8 @@ public class MipsFilesToAssembleActionRemove extends ContextAction {
 		ProjectTab tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
 		if (tab == null) return;
 		Project project = tab.getProject();
-		if (!(project instanceof MipsProject)) return;
-		MIPSFilesToAssemble files = ((MipsProject) project).getData().getFilesToAssemble();
+		if (!(project instanceof MIPSProject)) return;
+		MIPSFilesToAssemble files = ((MIPSProject) project).getData().getFilesToAssemble();
 
 		for (ExplorerElement element : elements) {
 			files.removeFile(((FilesToAssembleSidebarElement) element).getFile());

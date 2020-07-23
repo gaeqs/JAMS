@@ -39,7 +39,7 @@ import net.jamsimulator.jams.gui.mips.editor.element.MIPSLabel;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSLine;
 import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.event.MouseOverTextEvent;
 import org.fxmisc.richtext.model.PlainTextChange;
@@ -55,7 +55,7 @@ public class MIPSFileEditor extends CodeFileEditor {
 
 	private final Popup popup;
 	private final VBox popupVBox;
-	private final MipsProject project;
+	private final MIPSProject project;
 
 	private final Subscription subscription;
 
@@ -87,7 +87,7 @@ public class MIPSFileEditor extends CodeFileEditor {
 		index();
 	}
 
-	public Optional<MipsProject> getProject() {
+	public Optional<MIPSProject> getProject() {
 		return Optional.ofNullable(project);
 	}
 

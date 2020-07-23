@@ -27,6 +27,7 @@ package net.jamsimulator.jams.project.mips;
 import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.log.Console;
+import net.jamsimulator.jams.gui.util.log.Log;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
@@ -38,14 +39,14 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MipsProject extends BasicProject {
+public class MIPSProject extends BasicProject {
 
-	public MipsProject(File folder) {
+	public MIPSProject(File folder) {
 		super(folder, false);
 		loadData(null);
 	}
 
-	public MipsProject(String name, File folder) {
+	public MIPSProject(String name, File folder) {
 		super(folder, false);
 		loadData(name);
 	}
@@ -56,13 +57,28 @@ public class MipsProject extends BasicProject {
 	}
 
 	@Override
-	public Simulation<?> assemble() throws IOException {
+	public Simulation<?> assemble(Log log) throws IOException {
 		MIPSSimulationConfiguration configuration = getData().getSelectedConfiguration().orElse(null);
-		if (configuration == null) return null;
+
+		if (configuration == null) {
+			if (log != null) {
+				log.printErrorLn("Error! Configuration not found!");
+			}
+			return null;
+		}
+
+		if (log != null) {
+			log.printInfoLn("Assembling project \"" + data.getName() + "\" using configuration \"" + configuration.getName() + "\".");
+			log.println();
+			log.printInfoLn("Files:");
+		}
 
 		List<String> files = new ArrayList<>();
 
 		for (File target : getData().getFilesToAssemble().getFiles()) {
+			if (log != null) {
+				log.printInfoLn("- " + target.getAbsolutePath());
+			}
 			files.add(String.join("\n", Files.readAllLines(target.toPath())));
 		}
 
@@ -73,7 +89,17 @@ public class MipsProject extends BasicProject {
 				getData().getRegistersBuilder().createRegisters(),
 				configuration.generateNewMemory());
 
+		if (log != null) {
+			log.println();
+			log.printInfoLn("Assembling...");
+		}
+
 		assembler.assemble();
+
+		if (log != null) {
+			log.printInfoLn("Done.");
+		}
+
 
 		SimulationData simulationData = new SimulationData(configuration, data.getFilesFolder(), new Console(), assembler.getOriginals());
 		return assembler.createSimulation(configuration.getArchitecture(), simulationData);

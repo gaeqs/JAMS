@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.mips.editor.element;
 import net.jamsimulator.jams.collection.Bag;
 import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
 import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 import org.fxmisc.richtext.CodeArea;
 
 import java.util.*;
@@ -37,7 +37,7 @@ import java.util.*;
  */
 public class MIPSFileElements {
 
-	private final MipsProject project;
+	private final MIPSProject project;
 	private MIPSFilesToAssemble filesToAssemble;
 
 	private final List<MIPSLine> lines;
@@ -47,7 +47,7 @@ public class MIPSFileElements {
 
 	private final Set<Integer> requiresUpdate;
 
-	public MIPSFileElements(MipsProject project) {
+	public MIPSFileElements(MIPSProject project) {
 		this.project = project;
 
 		this.lines = new ArrayList<>();
@@ -63,7 +63,7 @@ public class MIPSFileElements {
 	 *
 	 * @return the project of this file, if present.
 	 */
-	public Optional<MipsProject> getProject() {
+	public Optional<MIPSProject> getProject() {
 		return Optional.ofNullable(project);
 	}
 

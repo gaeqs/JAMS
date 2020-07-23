@@ -29,7 +29,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.*;
@@ -86,7 +86,7 @@ public class MIPSInstruction extends MIPSCodeElement {
 			return;
 		}
 
-		MipsProject project = elements.getProject().orElse(null);
+		MIPSProject project = elements.getProject().orElse(null);
 		InstructionSet set = project.getData().getInstructionSet();
 
 		RegistersBuilder builder = project.getData().getRegistersBuilder();

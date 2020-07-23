@@ -31,7 +31,7 @@ import net.jamsimulator.jams.gui.mips.editor.element.*;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.HashSet;
@@ -100,7 +100,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 	}
 
 	protected String refreshDirective(String start) {
-		MipsProject project = getDisplay().getProject().orElse(null);
+		MIPSProject project = getDisplay().getProject().orElse(null);
 		if (project == null) return start;
 
 		String directive = start.substring(1);
@@ -110,7 +110,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 	}
 
 	protected String refreshInstruction(String start) {
-		MipsProject project = getDisplay().getProject().orElse(null);
+		MIPSProject project = getDisplay().getProject().orElse(null);
 		if (project == null) return start;
 
 		Stream<Instruction> stream = project.getData().getInstructionSet().getInstructions().stream().filter(target -> target.getMnemonic().startsWith(start.toLowerCase()));
@@ -121,7 +121,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 	}
 
 	protected String refreshDisplayInstructionParameterPart(String start) {
-		MipsProject project = getDisplay().getProject().orElse(null);
+		MIPSProject project = getDisplay().getProject().orElse(null);
 		if (project == null) return start;
 
 		switch (((MIPSInstructionParameterPart) element).getType()) {

@@ -34,7 +34,7 @@ import javafx.stage.Stage;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
@@ -45,7 +45,7 @@ public class NewAssemblyFileWindow extends VBox {
 	public static int WIDTH = 500;
 	public static int HEIGHT = 50;
 
-	private NewAssemblyFileWindow(Stage stage, File folder, MipsProject project) {
+	private NewAssemblyFileWindow(Stage stage, File folder, MIPSProject project) {
 		getStyleClass().add("v-box");
 		Validate.notNull(folder, "Folder cannot be null!");
 		Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
@@ -90,7 +90,7 @@ public class NewAssemblyFileWindow extends VBox {
 		});
 	}
 
-	public static void open(File folder, MipsProject project) {
+	public static void open(File folder, MIPSProject project) {
 		Stage stage = new Stage();
 		PopupWindowHelper.open(stage, new NewAssemblyFileWindow(stage, folder, project), WIDTH, HEIGHT, true);
 	}

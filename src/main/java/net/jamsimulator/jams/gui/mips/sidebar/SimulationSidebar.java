@@ -18,7 +18,7 @@ import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.configuration.ConfigurationsWindow;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationAddEvent;
 import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationRemoveEvent;
@@ -30,19 +30,19 @@ public class SimulationSidebar extends VBox {
 
 	public static final int BUTTONS_SIZE = 20;
 
-	private final MipsProject project;
+	private final MIPSProject project;
 
 	private ComboBox<String> configBox;
 	private Button configButton;
 
-	public SimulationSidebar(MipsProject project) {
+	public SimulationSidebar(MIPSProject project) {
 		setAlignment(Pos.TOP_LEFT);
 		setSpacing(5);
 		this.project = project;
 		init();
 	}
 
-	public MipsProject getProject() {
+	public MIPSProject getProject() {
 		return project;
 	}
 

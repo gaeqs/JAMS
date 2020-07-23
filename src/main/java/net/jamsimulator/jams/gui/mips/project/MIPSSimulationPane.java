@@ -15,21 +15,20 @@ import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
-import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class MIPSSimulationPane extends WorkingPane {
 
-	protected MipsProject project;
+	protected MIPSProject project;
 	protected Simulation<?> simulation;
 	protected TabPane registersTabs;
 
-	public MIPSSimulationPane(Tab parent, ProjectTab projectTab, MipsProject project, Simulation<?> simulation) {
+	public MIPSSimulationPane(Tab parent, ProjectTab projectTab, MIPSProject project, Simulation<?> simulation) {
 		super(parent, projectTab, new MIPSSimulationCentralPane(simulation), new HashSet<>(), false);
 		this.project = project;
 		this.simulation = simulation;
@@ -43,7 +42,7 @@ public class MIPSSimulationPane extends WorkingPane {
 		SplitPane.setResizableWithParent(center, true);
 	}
 
-	public MipsProject getProject() {
+	public MIPSProject getProject() {
 		return project;
 	}
 

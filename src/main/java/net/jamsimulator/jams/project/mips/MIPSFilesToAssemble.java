@@ -53,11 +53,11 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
 
 	public static final String FILE_NAME = "files_to_assemble.json";
 
-	private final MipsProject project;
+	private final MIPSProject project;
 	private final Map<File, MIPSFileElements> files;
 	private final Bag<String> globalLabels;
 
-	public MIPSFilesToAssemble(MipsProject project) {
+	public MIPSFilesToAssemble(MIPSProject project) {
 		this.project = project;
 		files = new HashMap<>();
 		globalLabels = new Bag<>();

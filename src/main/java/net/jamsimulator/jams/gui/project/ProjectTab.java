@@ -31,10 +31,9 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
 import net.jamsimulator.jams.project.Project;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
 import java.util.ArrayList;
@@ -55,7 +54,7 @@ public class ProjectTab extends Tab {
 	 *
 	 * @param project the handled project.
 	 */
-	public ProjectTab(MipsProject project) {
+	public ProjectTab(MIPSProject project) {
 		super(project.getName());
 		setClosable(true);
 		this.project = project;

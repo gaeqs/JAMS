@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.project;
 
 import net.jamsimulator.jams.gui.project.ProjectTab;
+import net.jamsimulator.jams.gui.util.log.Log;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
 import java.io.File;
@@ -62,12 +63,14 @@ public interface Project {
 
 	/**
 	 * Assembles this project, creating a {@link Simulation}.
+	 * <p>
 	 *
+	 * @param log The log debug messages will be print on. This lgo may be null.
 	 * @return the {@link Simulation}.
 	 * @throws IOException                                                       any {@link IOException} occurred on assembly.
 	 * @throws net.jamsimulator.jams.mips.assembler.exception.AssemblerException any assembler exception thrown by the assembler.
 	 */
-	Simulation<?> assemble() throws IOException;
+	Simulation<?> assemble(Log log) throws IOException;
 
 	/**
 	 * Returns the assigned {@link ProjectTab}, if present.

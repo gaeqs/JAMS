@@ -33,7 +33,7 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.LanguageExplorerSection;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
 import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
 
@@ -43,9 +43,9 @@ import java.util.Comparator;
 public class FilesToAssembleSidebar extends Explorer {
 
 	private final Image icon;
-	private final MipsProject project;
+	private final MIPSProject project;
 
-	public FilesToAssembleSidebar(MipsProject project, ScrollPane scrollPane) {
+	public FilesToAssembleSidebar(MIPSProject project, ScrollPane scrollPane) {
 		super(scrollPane, true, true);
 		this.project = project;
 
@@ -62,11 +62,11 @@ public class FilesToAssembleSidebar extends Explorer {
 	}
 
 	/**
-	 * Returns the {@link MipsProject} handling the files.
+	 * Returns the {@link MIPSProject} handling the files.
 	 *
-	 * @return the {@link MipsProject}.
+	 * @return the {@link MIPSProject}.
 	 */
-	public MipsProject getProject() {
+	public MIPSProject getProject() {
 		return project;
 	}
 

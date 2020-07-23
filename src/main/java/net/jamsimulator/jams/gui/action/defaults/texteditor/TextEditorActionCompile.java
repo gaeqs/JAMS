@@ -37,7 +37,7 @@ import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.util.log.SimpleLog;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 
 public class TextEditorActionCompile extends Action {
 
@@ -51,13 +51,13 @@ public class TextEditorActionCompile extends Action {
 	@Override
 	public void run(Object node) {
 		if (node instanceof MIPSFileEditor) {
-			MipsProject project = ((MIPSFileEditor) node).getProject().orElse(null);
+			MIPSProject project = ((MIPSFileEditor) node).getProject().orElse(null);
 			if (project == null) return;
 			compileAndShow(project);
 		}
 	}
 
-	public static void compileAndShow(MipsProject project) {
+	public static void compileAndShow(MIPSProject project) {
 		ProjectTab tab = project.getProjectTab().orElse(null);
 		if (tab == null) return;
 
@@ -67,7 +67,7 @@ public class TextEditorActionCompile extends Action {
 		SimpleLog log = pane.getLog();
 
 		try {
-			Simulation<?> simulation = project.assemble();
+			Simulation<?> simulation = project.assemble(log);
 
 			project.getProjectTab().ifPresent(projectTab -> projectTab.getProjectTabPane()
 					.createProjectPane((t, pt) ->

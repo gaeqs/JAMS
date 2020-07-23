@@ -21,7 +21,7 @@ import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.AnchorUtils;
 import net.jamsimulator.jams.utils.FileUtils;
 
@@ -73,7 +73,7 @@ public class CreateProjectWindow extends VBox {
 		finish.setOnAction(event -> {
 			File folder = new File(pathField.getText());
 			if (!folder.mkdirs()) return;
-			MipsProject project = new MipsProject(nameField.getText(), folder);
+			MIPSProject project = new MIPSProject(nameField.getText(), folder);
 			JamsApplication.getProjectsTabPane().openProject(project);
 			stage.close();
 		});

@@ -41,7 +41,7 @@ import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.log.SimpleLog;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.io.File;
 import java.util.HashSet;
@@ -51,7 +51,7 @@ import java.util.HashSet;
  */
 public class MipsStructurePane extends WorkingPane {
 
-	protected final MipsProject project;
+	protected final MIPSProject project;
 	protected MipsFolderExplorer explorer;
 	protected FilesToAssembleSidebar filesToAssembleSidebar;
 	protected SimulationSidebar simulationSidebar;
@@ -63,9 +63,9 @@ public class MipsStructurePane extends WorkingPane {
 	 *
 	 * @param parent     the {@link Tab} containing this pane.
 	 * @param projectTab the {@link ProjectTab} of the project.
-	 * @param project    the {@link MipsProject} to handle.
+	 * @param project    the {@link MIPSProject} to handle.
 	 */
-	public MipsStructurePane(Tab parent, ProjectTab projectTab, MipsProject project) {
+	public MipsStructurePane(Tab parent, ProjectTab projectTab, MIPSProject project) {
 		super(parent, projectTab, null, new HashSet<>(), false);
 		center = new FileEditorHolder(this);
 		this.project = project;
@@ -81,11 +81,11 @@ public class MipsStructurePane extends WorkingPane {
 	}
 
 	/**
-	 * Returns the {@link MipsProject} handled by this pane.
+	 * Returns the {@link MIPSProject} handled by this pane.
 	 *
-	 * @return the {@link MipsProject}.
+	 * @return the {@link MIPSProject}.
 	 */
-	public MipsProject getProject() {
+	public MIPSProject getProject() {
 		return project;
 	}
 

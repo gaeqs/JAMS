@@ -29,7 +29,7 @@ import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveEqv;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveGlobl;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.*;
@@ -83,7 +83,7 @@ public class MIPSDirective extends MIPSCodeElement {
 	public void refreshMetadata(MIPSFileElements elements) {
 		errors.clear();
 
-		MipsProject project = elements.getProject().orElse(null);
+		MIPSProject project = elements.getProject().orElse(null);
 		if (project == null) return;
 
 		DirectiveSet set = project.getData().getDirectiveSet();

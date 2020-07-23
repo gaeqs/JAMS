@@ -29,7 +29,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
 import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.util.function.BiFunction;
 
@@ -44,7 +44,7 @@ public class ProjectTabPane extends TabPane {
 		setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
 		this.projectTab = projectTab;
 
-		workingPane = createProjectPane((tab, pt) -> new MipsStructurePane(tab, pt, (MipsProject) pt.getProject()), false);
+		workingPane = createProjectPane((tab, pt) -> new MipsStructurePane(tab, pt, (MIPSProject) pt.getProject()), false);
 
 		projectTab.addTabCloseListener(event -> {
 			for (Tab tab : getTabs()) {

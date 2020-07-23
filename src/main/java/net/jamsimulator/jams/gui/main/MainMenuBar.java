@@ -38,7 +38,7 @@ import net.jamsimulator.jams.gui.popup.CreateProjectWindow;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageMenu;
 import net.jamsimulator.jams.language.wrapper.LanguageMenuItem;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.io.File;
 
@@ -75,7 +75,7 @@ public class MainMenuBar extends MenuBar {
 			DirectoryChooser chooser = new DirectoryChooser();
 			File folder = chooser.showDialog(JamsApplication.getStage());
 			if (folder == null || JamsApplication.getProjectsTabPane().isProjectOpen(folder)) return;
-			JamsApplication.getProjectsTabPane().openProject(new MipsProject(folder));
+			JamsApplication.getProjectsTabPane().openProject(new MIPSProject(folder));
 		});
 		file.getItems().add(openProject);
 	}

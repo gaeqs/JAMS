@@ -22,7 +22,7 @@ import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
 import java.io.File;
@@ -106,7 +106,7 @@ public class StartWindow extends AnchorPane {
 			DirectoryChooser chooser = new DirectoryChooser();
 			File folder = chooser.showDialog(JamsApplication.getStage());
 			if (folder == null || JamsApplication.getProjectsTabPane().isProjectOpen(folder)) return;
-			JamsApplication.getProjectsTabPane().openProject(new MipsProject(folder));
+			JamsApplication.getProjectsTabPane().openProject(new MIPSProject(folder));
 			stage.hide();
 		});
 

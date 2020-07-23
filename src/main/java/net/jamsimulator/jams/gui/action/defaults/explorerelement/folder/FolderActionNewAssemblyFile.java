@@ -40,7 +40,7 @@ import net.jamsimulator.jams.gui.popup.NewAssemblyFileWindow;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.Project;
-import net.jamsimulator.jams.project.mips.MipsProject;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.io.File;
 import java.util.Optional;
@@ -78,10 +78,10 @@ public class FolderActionNewAssemblyFile extends ContextAction {
 		}
 
 		Optional<Project> optional = JamsApplication.getProjectsTabPane().getFocusedProject().map(ProjectTab::getProject);
-		if (!optional.isPresent() || !(optional.get() instanceof MipsProject)) {
+		if (!optional.isPresent() || !(optional.get() instanceof MIPSProject)) {
 			NewAssemblyFileWindow.open(folder, null);
 		} else {
-			NewAssemblyFileWindow.open(folder, (MipsProject) optional.get());
+			NewAssemblyFileWindow.open(folder, (MIPSProject) optional.get());
 		}
 	}
 

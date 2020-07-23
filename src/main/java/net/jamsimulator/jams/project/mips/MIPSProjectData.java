@@ -54,7 +54,7 @@ public class MIPSProjectData extends ProjectData {
 
 	protected final MIPSFilesToAssemble filesToAssemble;
 
-	public MIPSProjectData(MipsProject project) {
+	public MIPSProjectData(MIPSProject project) {
 		super(project.getFolder());
 		filesToAssemble = new MIPSFilesToAssemble(project);
 	}
