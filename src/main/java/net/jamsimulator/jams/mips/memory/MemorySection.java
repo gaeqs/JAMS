@@ -42,10 +42,10 @@ public class MemorySection {
 
 	public static final int DEFAULT_CELL_SIZE = 4096;
 
-	private String name;
-	private int firstAddress;
-	private int length;
-	private int cellSize;
+	private final String name;
+	private final int firstAddress;
+	private final int length;
+	private final int cellSize;
 
 	private MemoryCell[] cells;
 

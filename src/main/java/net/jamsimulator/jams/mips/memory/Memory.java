@@ -27,6 +27,7 @@ package net.jamsimulator.jams.mips.memory;
 import net.jamsimulator.jams.event.EventBroadcast;
 
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Represents a memory from a simulator.
@@ -92,8 +93,8 @@ public interface Memory extends EventBroadcast {
 	 * <p>
 	 * Returns the word stored in the given address.
 	 *
-	 * @param address     the address.
-	 * @param callEvents  whether this method should call events. Events won't be called if {@link #areEventCallsEnabled()} is false.
+	 * @param address      the address.
+	 * @param callEvents   whether this method should call events. Events won't be called if {@link #areEventCallsEnabled()} is false.
 	 * @param bypassCaches whether this method should bypass all caches.
 	 * @return the word.
 	 */
@@ -211,11 +212,37 @@ public interface Memory extends EventBroadcast {
 	void restoreSavedState();
 
 	/**
-	 * Returns the name of the memory section that matches the given address.
+	 * Returns all {@link MemorySection}s inside this memory. The returned {@link Set} is unmodifiable.
+	 * <p>
+	 * These sections shouldn't be used to modify the memory. Use the main memory instead.
+	 *
+	 * @return all {@link MemorySection}s inside an unmodifiable {@link Set}.
+	 */
+	Set<MemorySection> getMemorySections();
+
+	/**
+	 * Returns the name of the {@link MemorySection} that matches the given address.
 	 *
 	 * @param address the address.
 	 * @return the name of the memory section.
 	 * @throws IndexOutOfBoundsException if no section contains the address.
 	 */
 	String getMemorySectionName(int address);
+
+	/**
+	 * Returns the {@link MemorySection} that matches the given name, if present.
+	 *
+	 * @param name the name.
+	 * @return the {@link MemorySection}, if present.
+	 */
+	Optional<MemorySection> getMemorySection(String name);
+
+	/**
+	 * Returns the {@link MemorySection} that matches the given address.
+	 *
+	 * @param address the address.
+	 * @return the {@link MemorySection}.
+	 * throws IndexOutOfBoundsException if no section contains the address.
+	 */
+	MemorySection getMemorySection(int address);
 }

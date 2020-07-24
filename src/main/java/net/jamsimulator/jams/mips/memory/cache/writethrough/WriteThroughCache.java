@@ -2,6 +2,7 @@ package net.jamsimulator.jams.mips.memory.cache.writethrough;
 
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.memory.Memory;
+import net.jamsimulator.jams.mips.memory.MemorySection;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
 import net.jamsimulator.jams.mips.memory.cache.CacheStats;
@@ -10,6 +11,7 @@ import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Represents a direct mapping cache.
@@ -233,8 +235,23 @@ public abstract class WriteThroughCache extends SimpleEventBroadcast implements 
 	}
 
 	@Override
+	public Set<MemorySection> getMemorySections() {
+		return parent.getMemorySections();
+	}
+
+	@Override
 	public String getMemorySectionName(int address) {
 		return parent.getMemorySectionName(address);
+	}
+
+	@Override
+	public MemorySection getMemorySection(int address) {
+		return parent.getMemorySection(address);
+	}
+
+	@Override
+	public Optional<MemorySection> getMemorySection(String name) {
+		return parent.getMemorySection(name);
 	}
 
 	protected abstract CacheBlock getBlock(int address, boolean create);

@@ -140,15 +140,6 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		this.eventCallsEnabled = true;
 	}
 
-	/**
-	 * Returns a immutable list with all memory sections.
-	 *
-	 * @return thee immutable list.
-	 */
-	public List<MemorySection> getSections() {
-		return Arrays.asList(sections);
-	}
-
 	@Override
 	public boolean isBigEndian() {
 		return bigEndian;
@@ -375,8 +366,28 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 	}
 
 	@Override
+	public Set<MemorySection> getMemorySections() {
+		List<MemorySection> list = Arrays.asList(sections);
+		return Collections.unmodifiableSet(new HashSet<>(list));
+	}
+
+	@Override
 	public String getMemorySectionName(int address) {
 		return getSectionOrThrowException(address).getName();
+	}
+
+	@Override
+	public Optional<MemorySection> getMemorySection(String name) {
+		if(name == null || name.isEmpty()) return Optional.empty();
+		for (MemorySection section : sections) {
+			if(section.getName().equals(name)) return Optional.of(section);
+		}
+		return Optional.empty();
+	}
+
+	@Override
+	public MemorySection getMemorySection(int address) {
+		return getSectionOrThrowException(address);
 	}
 
 

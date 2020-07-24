@@ -31,7 +31,7 @@ class MIPS32MemoryTest {
 	@Test
 	void testMemoryMap() {
 		MIPS32Memory memory = new MIPS32Memory();
-		memory.getSections().forEach(target -> {
+		memory.getMemorySections().forEach(target -> {
 			System.out.println("Section " + target.getName() + ": from " + Integer.toHexString(target.getFirstAddress())
 					+ " to " + Integer.toHexString(target.getLastAddress()));
 		});
