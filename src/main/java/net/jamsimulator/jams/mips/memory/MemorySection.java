@@ -140,8 +140,8 @@ public class MemorySection {
 			throw new IndexOutOfBoundsException("Address " + address + " out of bounds.");
 		address -= firstAddress;
 		int cellIndex = address / cellSize;
-		MemoryCell cell = getOrCreateCell(cellIndex);
-		return cell.getByte(address - cellIndex * cellSize);
+		MemoryCell cell = cells[cellIndex];
+		return cell == null ? 0 : cell.getByte(address - cellIndex * cellSize);
 	}
 
 	/**
@@ -175,8 +175,8 @@ public class MemorySection {
 			throw new IndexOutOfBoundsException("Address " + address + " out of bounds.");
 		address -= firstAddress;
 		int cellIndex = address / cellSize;
-		MemoryCell cell = getOrCreateCell(cellIndex);
-		return cell.getWord(address - cellIndex * cellSize, bigEndian);
+		MemoryCell cell = cells[cellIndex];
+		return cell == null ? 0 : cell.getWord(address - cellIndex * cellSize, bigEndian);
 	}
 
 	/**

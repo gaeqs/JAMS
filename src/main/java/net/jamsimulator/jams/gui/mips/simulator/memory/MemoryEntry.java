@@ -2,11 +2,8 @@ package net.jamsimulator.jams.gui.mips.simulator.memory;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
-
-import java.nio.charset.StandardCharsets;
 
 public class MemoryEntry {
 
@@ -20,6 +17,10 @@ public class MemoryEntry {
 		this.simulation = simulation;
 		this.address = address;
 		this.representation = representation;
+	}
+
+	public Simulation<?> getSimulation() {
+		return simulation;
 	}
 
 	public int getAddress() {
@@ -36,6 +37,20 @@ public class MemoryEntry {
 		}
 
 		return pAddress;
+	}
+
+	public StringProperty propertyByOffset(int i) {
+		switch (i) {
+			case 0:
+				return p0Property();
+			case 4:
+				return p4Property();
+			case 8:
+				return p8Property();
+			case 12:
+				return pCProperty();
+		}
+		return null;
 	}
 
 	public StringProperty p0Property() {
@@ -100,22 +115,7 @@ public class MemoryEntry {
 	}
 
 	private String represent(int address) {
-		Memory memory = simulation.getMemory();
-		switch (representation) {
-			case HEX:
-				return "0x" + StringUtils.addZeros(Integer.toHexString(memory.getWord(address, false, true)), 8);
-			case INTEGER:
-				return String.valueOf(memory.getWord(address, false, true));
-			case FLOAT:
-				return String.valueOf(Float.intBitsToFloat(memory.getWord(address, false, true)));
-			case CHAR:
-				byte[] array = new byte[4];
-				for (int i = 0; i < 4; i++) {
-					array[i] = memory.getByte(address + i, false, true);
-				}
-				return new String(array, StandardCharsets.US_ASCII);
-		}
-		return "";
+		return representation.represent(simulation.getMemory(), address);
 	}
 
 }

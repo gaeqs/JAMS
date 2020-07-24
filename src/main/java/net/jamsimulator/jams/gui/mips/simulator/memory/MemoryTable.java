@@ -3,7 +3,8 @@ package net.jamsimulator.jams.gui.mips.simulator.memory;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.mips.memory.Memory;
+import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.language.wrapper.LanguageTableColumn;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
@@ -31,17 +32,35 @@ public class MemoryTable extends TableView<MemoryEntry> {
 		setEditable(true);
 		setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 
-		TableColumn<MemoryEntry, String> pAddress = new TableColumn<>("Address");
+		TableColumn<MemoryEntry, String> pAddress = new LanguageTableColumn<>(Messages.MEMORY_ADDRESS);
 		TableColumn<MemoryEntry, String> p0 = new TableColumn<>("+0");
 		TableColumn<MemoryEntry, String> p4 = new TableColumn<>("+4");
 		TableColumn<MemoryEntry, String> p8 = new TableColumn<>("+8");
 		TableColumn<MemoryEntry, String> pC = new TableColumn<>("+C");
 
+		p0.setId("0");
+		p4.setId("4");
+		p8.setId("8");
+		pC.setId("C");
+
+
+		pAddress.setSortable(false);
+		p0.setSortable(false);
+		p4.setSortable(false);
+		p8.setSortable(false);
+		pC.setSortable(false);
+
 		pAddress.setCellValueFactory(p -> p.getValue().addressProperty());
+
 		p0.setCellValueFactory(p -> p.getValue().p0Property());
 		p4.setCellValueFactory(p -> p.getValue().p4Property());
 		p8.setCellValueFactory(p -> p.getValue().p8Property());
 		pC.setCellValueFactory(p -> p.getValue().pCProperty());
+
+		p0.setCellFactory(param -> new MemoryTableCell());
+		p4.setCellFactory(param -> new MemoryTableCell());
+		p8.setCellFactory(param -> new MemoryTableCell());
+		pC.setCellFactory(param -> new MemoryTableCell());
 
 		getColumns().setAll(pAddress, p0, p4, p8, pC);
 
@@ -103,13 +122,11 @@ public class MemoryTable extends TableView<MemoryEntry> {
 	@Listener
 	private void onSimulationStop(SimulationStopEvent event) {
 		simulation.getMemory().registerListeners(this, true);
-		Memory memory = event.getSimulation().getMemory();
 		entries.values().forEach(MemoryEntry::refresh);
 	}
 
 	@Listener
 	private void onSimulationReset(SimulationResetEvent event) {
-		Memory memory = event.getSimulation().getMemory();
 		entries.values().forEach(MemoryEntry::refresh);
 	}
 

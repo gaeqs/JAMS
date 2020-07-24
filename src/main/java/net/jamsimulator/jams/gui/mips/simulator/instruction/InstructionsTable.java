@@ -51,6 +51,12 @@ public class InstructionsTable extends TableView<InstructionEntry> {
 		TableColumn<InstructionEntry, String> instructionColumn = new TableColumn<>("Instruction");
 		TableColumn<InstructionEntry, String> originalColumn = new TableColumn<>("Original");
 
+		breakPointColumn.setSortable(false);
+		addressColumn.setSortable(false);
+		codeColumn.setSortable(false);
+		instructionColumn.setSortable(false);
+		originalColumn.setSortable(false);
+
 
 		breakPointColumn.setCellValueFactory(p -> p.getValue().breakpointProperty());
 		breakPointColumn.setCellFactory(param -> new CheckBoxTableCell<>());

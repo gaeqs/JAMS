@@ -81,6 +81,8 @@ public class Messages {
 	public static final String REGISTERS_COP0 = "REGISTERS_COP0";
 	public static final String REGISTERS_COP1 = "REGISTERS_COP1";
 
+	public static final String MEMORY_ADDRESS = "MEMORY_ADDRESS";
+
 	public static final String CONFIG = "CONFIG";
 
 	public static final String CONFIG_ACTION = "CONFIG_ACTION";
