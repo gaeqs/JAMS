@@ -27,6 +27,7 @@ package net.jamsimulator.jams.mips.memory;
 import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.memory.event.*;
+import net.jamsimulator.jams.utils.StringUtils;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.*;
@@ -163,21 +164,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 	@Override
 	public byte getByte(int address) {
-		if (!eventCallsEnabled) {
-			return getSectionOrThrowException(address).getByte(address);
-		}
-		//Invokes the before event.
-		MemoryByteGetEvent.Before before = callEvent(new MemoryByteGetEvent.Before(this, address));
-
-		//Refresh data.
-		address = before.getAddress();
-
-		//Gets the section and the byte.
-		MemorySection section = getSectionOrThrowException(address);
-		byte b = section.getByte(address);
-
-		//Invokes the after event.
-		return callEvent(new MemoryByteGetEvent.After(this, section, address, b)).getValue();
+		return getByte(address, true, false);
 	}
 
 	@Override
@@ -250,6 +237,25 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 		//Invokes the after event.
 		return callEvent(new MemoryWordGetEvent.After(this, section, address, word)).getValue();
+	}
+
+	@Override
+	public byte getByte(int address, boolean callEvents, boolean bypassCaches) {
+		if (!eventCallsEnabled || !callEvents) {
+			return getSectionOrThrowException(address).getByte(address);
+		}
+		//Invokes the before event.
+		MemoryByteGetEvent.Before before = callEvent(new MemoryByteGetEvent.Before(this, address));
+
+		//Refresh data.
+		address = before.getAddress();
+
+		//Gets the section and the byte.
+		MemorySection section = getSectionOrThrowException(address);
+		byte b = section.getByte(address);
+
+		//Invokes the after event.
+		return callEvent(new MemoryByteGetEvent.After(this, section, address, b)).getValue();
 	}
 
 	@Override
@@ -378,9 +384,9 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 	@Override
 	public Optional<MemorySection> getMemorySection(String name) {
-		if(name == null || name.isEmpty()) return Optional.empty();
+		if (name == null || name.isEmpty()) return Optional.empty();
 		for (MemorySection section : sections) {
-			if(section.getName().equals(name)) return Optional.of(section);
+			if (section.getName().equals(name)) return Optional.of(section);
 		}
 		return Optional.empty();
 	}
@@ -395,6 +401,8 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		for (MemorySection section : sections) {
 			if (section.isInside(address)) return section;
 		}
-		throw new IndexOutOfBoundsException("Memory section not found for address " + address + ".");
+
+		throw new IndexOutOfBoundsException("Memory section not found for address 0x"
+				+ StringUtils.addZeros(Integer.toHexString(address), 8) + ".");
 	}
 }

@@ -3,11 +3,11 @@ package net.jamsimulator.jams.gui.mips.simulator.memory;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 
@@ -15,12 +15,18 @@ import java.util.HashMap;
 
 public class MemoryTable extends TableView<MemoryEntry> {
 
+	public static final int ENTRIES = 0x300;
+
 	private final HashMap<Integer, MemoryEntry> entries;
 
 	protected Simulation<?> simulation;
+	protected int offset;
+	private MemoryRepresentation representation;
 
-	public MemoryTable(Simulation<?> simulation) {
+	public MemoryTable(Simulation<?> simulation, int offset, MemoryRepresentation representation) {
 		this.simulation = simulation;
+		this.offset = offset;
+		this.representation = representation;
 		getStyleClass().add("table-view-horizontal-fit");
 		setEditable(true);
 		setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
@@ -37,21 +43,13 @@ public class MemoryTable extends TableView<MemoryEntry> {
 		p8.setCellValueFactory(p -> p.getValue().p8Property());
 		pC.setCellValueFactory(p -> p.getValue().pCProperty());
 
-
 		getColumns().setAll(pAddress, p0, p4, p8, pC);
+
+		getVisibleLeafColumn(0).setMinWidth(80);
 
 		entries = new HashMap<>();
 
-		int current = MIPS32Memory.HEAP;
-		int end = current + 0xFFFF;
-		MemoryEntry entry;
-		while (current <= end) {
-			entry = new MemoryEntry(simulation, current);
-			entries.put(current, entry);
-			getItems().add(entry);
-			current += 0x10;
-		}
-
+		populate();
 
 		simulation.registerListeners(this, true);
 		if (!simulation.isRunning()) {
@@ -63,6 +61,40 @@ public class MemoryTable extends TableView<MemoryEntry> {
 		return simulation;
 	}
 
+	public int getOffset() {
+		return offset;
+	}
+
+	public void setOffset(int offset) {
+		if (offset == this.offset) return;
+		this.offset = offset;
+		populate();
+	}
+
+	public MemoryRepresentation getRepresentation() {
+		return representation;
+	}
+
+	public void setRepresentation(MemoryRepresentation representation) {
+		if (representation == this.representation) return;
+		this.representation = representation;
+		populate();
+	}
+
+	private void populate() {
+		getItems().clear();
+
+		int current = offset;
+		int end = current + ENTRIES;
+		MemoryEntry entry;
+		while (current < end) {
+			entry = new MemoryEntry(simulation, current, representation);
+			entries.put(current, entry);
+			getItems().add(entry);
+			current += 0x10;
+		}
+	}
+
 	@Listener
 	private void onSimulationStart(SimulationStartEvent event) {
 		simulation.getMemory().unregisterListeners(this);
@@ -72,7 +104,13 @@ public class MemoryTable extends TableView<MemoryEntry> {
 	private void onSimulationStop(SimulationStopEvent event) {
 		simulation.getMemory().registerListeners(this, true);
 		Memory memory = event.getSimulation().getMemory();
-		entries.values().forEach(entry -> entry.refresh(memory));
+		entries.values().forEach(MemoryEntry::refresh);
+	}
+
+	@Listener
+	private void onSimulationReset(SimulationResetEvent event) {
+		Memory memory = event.getSimulation().getMemory();
+		entries.values().forEach(MemoryEntry::refresh);
 	}
 
 	@Listener
@@ -81,7 +119,7 @@ public class MemoryTable extends TableView<MemoryEntry> {
 		int address = event.getAddress() >> 4 << 4;
 		MemoryEntry entry = entries.get(address);
 		if (entry == null) return;
-		entry.update(event.getMemory().getWord(address + offset, false, true), offset, false);
+		entry.update(event.getAddress(), offset);
 	}
 
 
@@ -91,7 +129,7 @@ public class MemoryTable extends TableView<MemoryEntry> {
 		int address = event.getAddress() >> 4 << 4;
 		MemoryEntry entry = entries.get(address);
 		if (entry == null) return;
-		entry.update(event.getValue(), offset, false);
+		entry.update(event.getAddress(), offset);
 	}
 
 }

@@ -164,6 +164,12 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
 	}
 
 	@Override
+	public byte getByte(int address, boolean callEvents, boolean bypassCaches) {
+		if (bypassCaches) return parent.getByte(address);
+		return getByte(address);
+	}
+
+	@Override
 	public int getFirstTextAddress() {
 		return parent.getFirstTextAddress();
 	}

@@ -9,6 +9,7 @@ import net.jamsimulator.jams.gui.bar.BarType;
 import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.simulator.MIPSSimulationCentralPane;
+import net.jamsimulator.jams.gui.mips.simulator.memory.MemoryPane;
 import net.jamsimulator.jams.gui.mips.simulator.memory.MemoryTable;
 import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
 import net.jamsimulator.jams.gui.project.ProjectTab;
@@ -79,9 +80,9 @@ public class MIPSSimulationPane extends WorkingPane {
 		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_MEMORY,
 				Icons.SIMULATION_MEMORY_PATH, 1024, 1024).orElse(null);
 
-		MemoryTable table = new MemoryTable(simulation);
+		MemoryPane pane = new MemoryPane(simulation);
 
-		paneSnapshots.add(new PaneSnapshot("Memory", BarType.TOP_LEFT, table, icon, Messages.SIMULATION_CONFIGURATION_MEMORY));
+		paneSnapshots.add(new PaneSnapshot("Memory", BarType.TOP_LEFT, pane, icon, Messages.MEMORY_NAME));
 	}
 
 

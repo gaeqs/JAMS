@@ -39,6 +39,7 @@ import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationLockEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUnlockEvent;
 import net.jamsimulator.jams.mips.simulation.file.SimulationFiles;
 
@@ -351,6 +352,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		registers.restoreSavedState();
 		memory.restoreSavedState();
 		finished = false;
+
+		callEvent(new SimulationResetEvent(this));
 	}
 
 	/**

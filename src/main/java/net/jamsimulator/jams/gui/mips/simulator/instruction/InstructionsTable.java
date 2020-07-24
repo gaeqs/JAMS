@@ -80,6 +80,10 @@ public class InstructionsTable extends TableView<InstructionEntry> {
 
 		getColumns().setAll(breakPointColumn, addressColumn, codeColumn, instructionColumn, originalColumn);
 
+		getVisibleLeafColumn(0).setMinWidth(40);
+		getVisibleLeafColumn(0).setMaxWidth(40);
+
+
 		int current = MIPS32Memory.TEXT;
 		int end = simulation.getInstructionStackBottom();
 		while (current <= end) {

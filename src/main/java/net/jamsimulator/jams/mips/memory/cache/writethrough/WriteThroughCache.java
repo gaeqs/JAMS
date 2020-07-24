@@ -158,6 +158,12 @@ public abstract class WriteThroughCache extends SimpleEventBroadcast implements 
 	}
 
 	@Override
+	public byte getByte(int address, boolean callEvents, boolean bypassCaches) {
+		if (bypassCaches) return parent.getByte(address);
+		return getByte(address);
+	}
+
+	@Override
 	public int getFirstTextAddress() {
 		return parent.getFirstTextAddress();
 	}

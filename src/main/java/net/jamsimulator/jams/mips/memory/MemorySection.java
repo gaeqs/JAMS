@@ -204,7 +204,7 @@ public class MemorySection {
 	 * @return whether the given address is inside the memory section.
 	 */
 	public boolean isInside(int address) {
-		return address >= firstAddress && address - length < firstAddress;
+		return Integer.compareUnsigned(address, firstAddress) >= 0 && Integer.compareUnsigned(address, firstAddress + length - 1) <= 0;
 	}
 
 	/**

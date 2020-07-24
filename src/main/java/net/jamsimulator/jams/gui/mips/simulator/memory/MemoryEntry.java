@@ -4,27 +4,35 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.utils.StringUtils;
+
+import java.nio.charset.StandardCharsets;
 
 public class MemoryEntry {
 
 	private final Simulation<?> simulation;
-
 	private final int address;
-	private StringProperty pAddress, p0, p4, p8, pC;
-	private int d0, d4, d8, dC;
+	private final MemoryRepresentation representation;
 
-	public MemoryEntry(Simulation<?> simulation, int address) {
+	private StringProperty pAddress, p0, p4, p8, pC;
+
+	public MemoryEntry(Simulation<?> simulation, int address, MemoryRepresentation representation) {
 		this.simulation = simulation;
 		this.address = address;
+		this.representation = representation;
 	}
 
 	public int getAddress() {
 		return address;
 	}
 
+	public MemoryRepresentation getRepresentation() {
+		return representation;
+	}
+
 	public StringProperty addressProperty() {
 		if (pAddress == null) {
-			pAddress = new SimpleStringProperty(null, "address", "0x" + Integer.toHexString(address));
+			pAddress = new SimpleStringProperty(null, "address", "0x" + StringUtils.addZeros(Integer.toHexString(address), 8));
 		}
 
 		return pAddress;
@@ -32,8 +40,7 @@ public class MemoryEntry {
 
 	public StringProperty p0Property() {
 		if (p0 == null) {
-			d0 = simulation.getMemory().getWord(address, false, true);
-			p0 = new SimpleStringProperty(null, "p0", String.valueOf(d0));
+			p0 = new SimpleStringProperty(null, "p0", represent(address));
 		}
 
 		return p0;
@@ -41,8 +48,7 @@ public class MemoryEntry {
 
 	public StringProperty p4Property() {
 		if (p4 == null) {
-			d4 = simulation.getMemory().getWord(address+4, false, true);
-			p4 = new SimpleStringProperty(null, "p4", String.valueOf(d4));
+			p4 = new SimpleStringProperty(null, "p4", represent(address + 4));
 		}
 
 		return p4;
@@ -50,8 +56,7 @@ public class MemoryEntry {
 
 	public StringProperty p8Property() {
 		if (p8 == null) {
-			d8 = simulation.getMemory().getWord(address+8, false, true);
-			p8 = new SimpleStringProperty(null, "p8", String.valueOf(d8));
+			p8 = new SimpleStringProperty(null, "p8", represent(address + 8));
 		}
 
 		return p8;
@@ -59,44 +64,58 @@ public class MemoryEntry {
 
 	public StringProperty pCProperty() {
 		if (pC == null) {
-			dC = simulation.getMemory().getWord(address+12, false, true);
-			pC = new SimpleStringProperty(null, "pC", String.valueOf(dC));
+			pC = new SimpleStringProperty(null, "pC", represent(address + 12));
 		}
 
 		return pC;
 	}
 
-	public void refresh(Memory memory) {
-		update(memory.getWord(address, false, true), 0, false);
-		update(memory.getWord(address + 4, false, true), 4, false);
-		update(memory.getWord(address + 8, false, true), 8, false);
-		update(memory.getWord(address + 12, false, true), 12, false);
+	public void refresh() {
+		update(address, 0);
+		update(address + 4, 4);
+		update(address + 8, 8);
+		update(address + 12, 12);
 	}
 
-	public void update(int value, int offset, boolean asFloat) {
-		String data = asFloat ? String.valueOf(Float.intBitsToFloat(value)) : String.valueOf(value);
+	public void update(int address, int offset) {
+		String data = represent(address);
 		switch (offset) {
 			case 0:
-				d0 = value;
 				if (p0 == null) break;
 				p0.setValue(data);
 				break;
 			case 4:
-				d4 = value;
 				if (p4 == null) break;
 				p4.setValue(data);
 				break;
 			case 8:
-				d8 = value;
 				if (p8 == null) break;
 				p8.setValue(data);
 				break;
 			case 12:
-				dC = value;
 				if (pC == null) break;
 				pC.setValue(data);
 				break;
 		}
+	}
+
+	private String represent(int address) {
+		Memory memory = simulation.getMemory();
+		switch (representation) {
+			case HEX:
+				return "0x" + StringUtils.addZeros(Integer.toHexString(memory.getWord(address, false, true)), 8);
+			case INTEGER:
+				return String.valueOf(memory.getWord(address, false, true));
+			case FLOAT:
+				return String.valueOf(Float.intBitsToFloat(memory.getWord(address, false, true)));
+			case CHAR:
+				byte[] array = new byte[4];
+				for (int i = 0; i < 4; i++) {
+					array[i] = memory.getByte(address + i, false, true);
+				}
+				return new String(array, StandardCharsets.US_ASCII);
+		}
+		return "";
 	}
 
 }

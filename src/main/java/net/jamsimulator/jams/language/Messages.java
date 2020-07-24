@@ -74,6 +74,7 @@ public class Messages {
 	public static final String SIMULATION_BUTTON_TOOLTIP_RESET = "SIMULATION_BUTTON_TOOLTIP_RESET";
 
 	public static final String REGISTERS_NAME = "REGISTERS_NAME";
+	public static final String MEMORY_NAME = "MEMORY_NAME";
 	public static final String CONSOLE_NAME = "CONSOLE_NAME";
 
 	public static final String REGISTERS_GENERAL = "REGISTERS_GENERAL";

@@ -101,6 +101,18 @@ public interface Memory extends EventBroadcast {
 	int getWord(int address, boolean callEvents, boolean bypassCaches);
 
 	/**
+	 * THIS METHOD SHOULDN'T BE USED BY INSTRUCTIONS!
+	 * <p>
+	 * Returns the byte stored in the given address.
+	 *
+	 * @param address      the address.
+	 * @param callEvents   whether this method should call events. Events won't be called if {@link #areEventCallsEnabled()} is false.
+	 * @param bypassCaches whether this method should bypass all caches.
+	 * @return the byte.
+	 */
+	byte getByte(int address, boolean callEvents, boolean bypassCaches);
+
+	/**
 	 * Returns the first text address assemblers should use.
 	 *
 	 * @return the first text address.
