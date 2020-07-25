@@ -11,7 +11,7 @@ public enum MemoryRepresentation {
 
 	HEXADECIMAL((m, a) -> "0x" + StringUtils.addZeros(Integer.toHexString(m.getWord(a, false, true)), 8)),
 	DECIMAL((m, a) -> String.valueOf(m.getWord(a, false, true))),
-	OCTAL((m, a) -> "0o" + StringUtils.addZeros(Integer.toOctalString(m.getWord(a, false, true)), 16)),
+	OCTAL((m, a) -> "0" + Integer.toOctalString(m.getWord(a, false, true))),
 	BINARY((m, a) -> "0b" + StringUtils.addZeros(Integer.toBinaryString(m.getWord(a, false, true)), 32)),
 	FLOAT((m, a) -> String.valueOf(Float.intBitsToFloat(m.getWord(a, false, true)))),
 	DOUBLE((m, a) -> String.valueOf(NumericUtils.intsToDouble(m.getWord(a, false, true), m.getWord(a + 4, false, true)))),
