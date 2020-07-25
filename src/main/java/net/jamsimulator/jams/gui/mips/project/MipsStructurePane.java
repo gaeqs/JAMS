@@ -132,7 +132,7 @@ public class MipsStructurePane extends WorkingPane {
 		});
 
 		paneSnapshots.add(new PaneSnapshot("Explorer", BarType.TOP_LEFT,
-				pane, explorerIcon, Messages.EXPLORER_NAME));
+				pane, explorerIcon, Messages.BAR_EXPLORER_NAME));
 
 		explorer.setFileOpenAction(file -> openFile(file.getFile()));
 	}
@@ -153,7 +153,7 @@ public class MipsStructurePane extends WorkingPane {
 		});
 
 		paneSnapshots.add(new PaneSnapshot("FilesToAssemble", BarType.BOTTOM_LEFT,
-				pane, explorerIcon, Messages.FILES_TO_ASSEMBLE_NAME));
+				pane, explorerIcon, Messages.BAR_FILES_TO_ASSEMBLE_NAME));
 	}
 
 	private void loadSimulationSidebar() {
@@ -165,7 +165,7 @@ public class MipsStructurePane extends WorkingPane {
 		simulationSidebar = new SimulationSidebar(project);
 		pane.setContent(simulationSidebar);
 		paneSnapshots.add(new PaneSnapshot("Simulation", BarType.TOP_RIGHT,
-				pane, icon, Messages.SIMULATION_NAME));
+				pane, icon, Messages.BAR_SIMULATION_NAME));
 	}
 
 	private void loadLogBottomBar() {
@@ -177,7 +177,7 @@ public class MipsStructurePane extends WorkingPane {
 
 		log = new SimpleLog();
 		pane.setContent(log);
-		paneSnapshots.add(new PaneSnapshot("Log", BarType.BOTTOM, pane, icon, Messages.LOG_NAME));
+		paneSnapshots.add(new PaneSnapshot("Log", BarType.BOTTOM, pane, icon, Messages.BAR_LOG_NAME));
 	}
 
 	@Override

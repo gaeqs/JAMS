@@ -6,6 +6,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.singlecycle.SingleCycleInstructionsTable;
+import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.language.wrapper.LanguageTableColumn;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
@@ -45,11 +47,11 @@ public class InstructionsTable extends TableView<InstructionEntry> {
 		setEditable(true);
 		setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 
-		TableColumn<InstructionEntry, Boolean> breakPointColumn = new TableColumn<>("Brk.");
-		TableColumn<InstructionEntry, String> addressColumn = new TableColumn<>("Address");
-		TableColumn<InstructionEntry, String> codeColumn = new TableColumn<>("Code");
-		TableColumn<InstructionEntry, String> instructionColumn = new TableColumn<>("Instruction");
-		TableColumn<InstructionEntry, String> originalColumn = new TableColumn<>("Original");
+		TableColumn<InstructionEntry, Boolean> breakPointColumn = new LanguageTableColumn<>(Messages.INSTRUCTIONS_BREAKPOINT);
+		TableColumn<InstructionEntry, String> addressColumn = new LanguageTableColumn<>(Messages.INSTRUCTIONS_ADDRESS);
+		TableColumn<InstructionEntry, String> codeColumn = new LanguageTableColumn<>(Messages.INSTRUCTIONS_CODE);
+		TableColumn<InstructionEntry, String> instructionColumn = new LanguageTableColumn<>(Messages.INSTRUCTIONS_INSTRUCTION);
+		TableColumn<InstructionEntry, String> originalColumn = new LanguageTableColumn<>(Messages.INSTRUCTIONS_ORIGINAL);
 
 		breakPointColumn.setSortable(false);
 		addressColumn.setSortable(false);

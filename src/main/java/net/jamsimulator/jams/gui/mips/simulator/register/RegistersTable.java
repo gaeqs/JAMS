@@ -4,6 +4,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
 import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.language.wrapper.LanguageTableColumn;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
@@ -24,10 +26,10 @@ public class RegistersTable extends TableView<RegisterPropertyWrapper> {
 		setEditable(true);
 		setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 
-		TableColumn<RegisterPropertyWrapper, Number> identifierColumn = new TableColumn<>("Id");
-		TableColumn<RegisterPropertyWrapper, String> nameColumn = new TableColumn<>("Name");
-		TableColumn<RegisterPropertyWrapper, String> valueColumn = new TableColumn<>("Value");
-		TableColumn<RegisterPropertyWrapper, String> hexColumn = new TableColumn<>("Hex");
+		TableColumn<RegisterPropertyWrapper, Number> identifierColumn = new LanguageTableColumn<>(Messages.REGISTERS_ID);
+		TableColumn<RegisterPropertyWrapper, String> nameColumn = new LanguageTableColumn<>(Messages.REGISTERS_NAME);
+		TableColumn<RegisterPropertyWrapper, String> valueColumn = new LanguageTableColumn<>(Messages.REGISTERS_VALUE);
+		TableColumn<RegisterPropertyWrapper, String> hexColumn = new LanguageTableColumn<>(Messages.REGISTERS_HEX);
 		getColumns().setAll(identifierColumn, nameColumn, valueColumn, hexColumn);
 
 		identifierColumn.setCellValueFactory(p -> p.getValue().identifierProperty());
@@ -69,7 +71,7 @@ public class RegistersTable extends TableView<RegisterPropertyWrapper> {
 		}
 
 		simulation.registerListeners(this, true);
-		if(!simulation.isRunning()) {
+		if (!simulation.isRunning()) {
 			simulation.getRegisters().registerListeners(this, true);
 		}
 	}

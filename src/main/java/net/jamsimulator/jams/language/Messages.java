@@ -48,10 +48,10 @@ public class Messages {
 	public static final String PROJECT_TAB_STRUCTURE = "PROJECT_TAB_STRUCTURE";
 	public static final String PROJECT_TAB_SIMULATION = "PROJECT_TAB_SIMULATION";
 
-	public static final String EXPLORER_NAME = "EXPLORER_NAME";
-	public static final String FILES_TO_ASSEMBLE_NAME = "FILES_TO_ASSEMBLE_NAME";
-	public static final String SIMULATION_NAME = "SIMULATION_NAME";
-	public static final String LOG_NAME = "LOG_NAME";
+	public static final String BAR_EXPLORER_NAME = "BAR_EXPLORER_NAME";
+	public static final String BAR_FILES_TO_ASSEMBLE_NAME = "BAR_FILES_TO_ASSEMBLE_NAME";
+	public static final String BAR_SIMULATION_NAME = "BAR_SIMULATION_NAME";
+	public static final String BAR_LOG_NAME = "BAR_LOG_NAME";
 
 	public static final String SIMULATION_CONFIGURATION_CONFIGURATIONS = "SIMULATION_CONFIGURATION_CONFIGURATIONS";
 	public static final String SIMULATION_CONFIGURATION_INFO = "SIMULATION_CONFIGURATION_INFO";
@@ -73,13 +73,24 @@ public class Messages {
 	public static final String SIMULATION_BUTTON_TOOLTIP_UNDO = "SIMULATION_BUTTON_TOOLTIP_UNDO";
 	public static final String SIMULATION_BUTTON_TOOLTIP_RESET = "SIMULATION_BUTTON_TOOLTIP_RESET";
 
-	public static final String REGISTERS_NAME = "REGISTERS_NAME";
-	public static final String MEMORY_NAME = "MEMORY_NAME";
-	public static final String CONSOLE_NAME = "CONSOLE_NAME";
+	public static final String BAR_REGISTERS_NAME = "BAR_REGISTERS_NAME";
+	public static final String BAR_MEMORY_NAME = "BAR_MEMORY_NAME";
+	public static final String BAR_CONSOLE_NAME = "BAR_CONSOLE_NAME";
+
+	public static final String INSTRUCTIONS_BREAKPOINT = "INSTRUCTIONS_BREAKPOINT";
+	public static final String INSTRUCTIONS_ADDRESS = "INSTRUCTIONS_ADDRESS";
+	public static final String INSTRUCTIONS_CODE = "INSTRUCTIONS_CODE";
+	public static final String INSTRUCTIONS_INSTRUCTION = "INSTRUCTIONS_INSTRUCTION";
+	public static final String INSTRUCTIONS_ORIGINAL = "INSTRUCTIONS_ORIGINAL";
+
 
 	public static final String REGISTERS_GENERAL = "REGISTERS_GENERAL";
 	public static final String REGISTERS_COP0 = "REGISTERS_COP0";
 	public static final String REGISTERS_COP1 = "REGISTERS_COP1";
+	public static final String REGISTERS_ID = "REGISTERS_ID";
+	public static final String REGISTERS_NAME = "REGISTERS_NAME";
+	public static final String REGISTERS_VALUE = "REGISTERS_VALUE";
+	public static final String REGISTERS_HEX = "REGISTERS_HEX";
 
 	public static final String MEMORY_ADDRESS = "MEMORY_ADDRESS";
 

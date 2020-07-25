@@ -73,7 +73,7 @@ public class FilesToAssembleSidebar extends Explorer {
 	@Override
 	protected void generateMainSection() {
 		mainSection = new LanguageExplorerSection(this, null, "Files to assemble",
-				0, Comparator.comparing(ExplorerElement::getName), Messages.FILES_TO_ASSEMBLE_NAME);
+				0, Comparator.comparing(ExplorerElement::getName), Messages.BAR_FILES_TO_ASSEMBLE_NAME);
 		getChildren().add(this.mainSection);
 	}
 

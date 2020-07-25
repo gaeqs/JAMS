@@ -10,7 +10,6 @@ import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.simulator.MIPSSimulationCentralPane;
 import net.jamsimulator.jams.gui.mips.simulator.memory.MemoryPane;
-import net.jamsimulator.jams.gui.mips.simulator.memory.MemoryTable;
 import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
@@ -67,13 +66,13 @@ public class MIPSSimulationPane extends WorkingPane {
 
 		registersTabs.getTabs().forEach(tab -> tab.setClosable(false));
 
-		paneSnapshots.add(new PaneSnapshot("Registers", BarType.TOP_RIGHT, registersTabs, icon, Messages.REGISTERS_NAME));
+		paneSnapshots.add(new PaneSnapshot("Registers", BarType.TOP_RIGHT, registersTabs, icon, Messages.BAR_REGISTERS_NAME));
 	}
 
 	private void loadConsole() {
 		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_CONSOLE,
 				Icons.SIMULATION_CONSOLE_PATH, 1024, 1024).orElse(null);
-		paneSnapshots.add(new PaneSnapshot("Console", BarType.BOTTOM, simulation.getConsole(), icon, Messages.CONSOLE_NAME));
+		paneSnapshots.add(new PaneSnapshot("Console", BarType.BOTTOM, simulation.getConsole(), icon, Messages.BAR_CONSOLE_NAME));
 	}
 
 	private void loadMemoryTab() {
@@ -82,7 +81,7 @@ public class MIPSSimulationPane extends WorkingPane {
 
 		MemoryPane pane = new MemoryPane(simulation);
 
-		paneSnapshots.add(new PaneSnapshot("Memory", BarType.TOP_LEFT, pane, icon, Messages.MEMORY_NAME));
+		paneSnapshots.add(new PaneSnapshot("Memory", BarType.TOP_LEFT, pane, icon, Messages.BAR_MEMORY_NAME));
 	}
 
 
