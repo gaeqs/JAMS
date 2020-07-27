@@ -86,7 +86,7 @@ public class SimulationSidebar extends VBox {
 		Image image = JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_SETTINGS,
 				Icons.PROJECT_SETTINGS_PATH, 1024, 1024).orElse(null);
 
-		configButton = new Button("", new NearestImageView(image, 16, 16));
+		configButton = new Button("", new NearestImageView(image, 25, 25));
 		configButton.getStyleClass().add("bold-button");
 		configButton.setEllipsisString("-");
 		configButton.setOnAction(event -> {
