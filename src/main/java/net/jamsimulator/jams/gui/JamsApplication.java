@@ -238,8 +238,5 @@ public class JamsApplication extends Application {
 		for (ProjectTab project : getProjectsTabPane().getProjects()) {
 			project.getProject().onClose();
 		}
-
-		//Avoids exit lag.
-		new Thread(() -> System.exit(0)).start();
 	}
 }
