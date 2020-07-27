@@ -13,6 +13,7 @@ public enum MemoryRepresentation {
 	DECIMAL((m, a) -> String.valueOf(m.getWord(a, false, true))),
 	OCTAL((m, a) -> "0" + Integer.toOctalString(m.getWord(a, false, true))),
 	BINARY((m, a) -> "0b" + StringUtils.addZeros(Integer.toBinaryString(m.getWord(a, false, true)), 32)),
+	LONG((m, a) -> String.valueOf(NumericUtils.intsToLong(m.getWord(a, false, true), m.getWord(a + 4, false, true)))),
 	FLOAT((m, a) -> String.valueOf(Float.intBitsToFloat(m.getWord(a, false, true)))),
 	DOUBLE((m, a) -> String.valueOf(NumericUtils.intsToDouble(m.getWord(a, false, true), m.getWord(a + 4, false, true)))),
 	CHAR((m, a) -> {

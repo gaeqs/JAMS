@@ -210,6 +210,10 @@ public class NumericUtils {
 		return array;
 	}
 
+	public static long intsToLong(int low, int high) {
+		return ((long) high << 32) + low;
+	}
+
 	private static String toEnglishLessThanOneThousand(int number) {
 		String soFar;
 
