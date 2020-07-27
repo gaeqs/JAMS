@@ -176,7 +176,20 @@ public class Registers extends SimpleEventBroadcast {
 	 * @return the {@link Register}, if present.
 	 */
 	public Optional<Register> getRegister(int identifier) {
+		if (identifier < 0 || identifier > registers.length) return Optional.empty();
 		return Optional.ofNullable(registers[identifier]);
+	}
+
+	/**
+	 * Returns the general {@link Register} whose identifier matches the given int.
+	 * This method is unchecked: returns the register the faster way possible without checking anything before.
+	 * This may cause several exceptions.
+	 *
+	 * @param identifier the identifier.
+	 * @return the register.
+	 */
+	public Register getRegisterUnchecked(int identifier) {
+		return registers[identifier];
 	}
 
 	/**
@@ -206,6 +219,18 @@ public class Registers extends SimpleEventBroadcast {
 		return Optional.ofNullable(coprocessor0Registers[identifier]);
 	}
 
+	/**
+	 * Returns the coprocessor 0 {@link Register} whose identifier matches the given int.
+	 * This method is unchecked: returns the register the faster way possible without checking anything before.
+	 * This may cause several exceptions.
+	 *
+	 * @param identifier the identifier.
+	 * @return the register.
+	 */
+	public Register getCoprocessor0RegisterUnchecked(int identifier) {
+		return coprocessor0Registers[identifier];
+	}
+
 
 	/**
 	 * Get the coprocessor 1 {@link Register} whose name matches the given string, if present.
@@ -231,6 +256,18 @@ public class Registers extends SimpleEventBroadcast {
 	 */
 	public Optional<Register> getCoprocessor1Register(int identifier) {
 		return Optional.ofNullable(coprocessor1Registers[identifier]);
+	}
+
+	/**
+	 * Returns the coprocessor 1 {@link Register} whose identifier matches the given int.
+	 * This method is unchecked: returns the register the faster way possible without checking anything before.
+	 * This may cause several exceptions.
+	 *
+	 * @param identifier the identifier.
+	 * @return the register.
+	 */
+	public Register getCoprocessor1RegisterUnchecked(int identifier) {
+		return coprocessor1Registers[identifier];
 	}
 
 	/**

@@ -44,7 +44,9 @@ import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUnlockEvent;
 import net.jamsimulator.jams.mips.simulation.file.SimulationFiles;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Represents the execution of a set of instructions, including a memory and a register set.
@@ -71,7 +73,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	protected int instructionStackBottom;
 	protected final Set<Integer> breakpoints;
 
-	protected final Map<Integer, InstructionExecution<Arch, ?>> instructionCache;
+	protected InstructionExecution<Arch, ?>[] instructionCache;
 
 	protected Thread thread;
 	protected final Object lock;
@@ -100,7 +102,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		this.files = new SimulationFiles(this);
 
 		this.breakpoints = new HashSet<>();
-		this.instructionCache = new HashMap<>();
+		this.instructionCache = new InstructionExecution[instructionStackBottom - memory.getFirstTextAddress() + 1];
 
 		if (data.canCallEvents() && data.isUndoEnabled()) {
 			memory.registerListeners(this, true);
@@ -315,8 +317,11 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 * @throws IndexOutOfBoundsException if the address if out of bounds.
 	 */
 	public InstructionExecution<Arch, ?> fetch(int pc) {
-		InstructionExecution<Arch, ?> cached = instructionCache.get(pc);
-		if (cached != null) return cached;
+		InstructionExecution<Arch, ?> cached;
+		if (pc <= instructionStackBottom) {
+			cached = instructionCache[pc - memory.getFirstTextAddress()];
+			if (cached != null) return cached;
+		}
 
 		int data = memory.getWord(pc, true, true);
 
@@ -325,7 +330,9 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		BasicInstruction<?> instruction = optional.get();
 		AssembledInstruction assembled = instruction.assembleFromCode(data);
 		cached = assembled.getBasicOrigin().generateExecution(this, assembled).orElse(null);
-		instructionCache.put(pc, cached);
+
+
+		instructionCache[pc - memory.getFirstTextAddress()] = cached;
 		return cached;
 	}
 
@@ -403,18 +410,36 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	@Listener
 	private void onMemoryChange(MemoryByteSetEvent.After event) {
 		int address = event.getAddress() >> 2 << 2;
-		instructionCache.remove(address);
+
+		if (address >= memory.getFirstTextAddress() && address <= instructionStackBottom) {
+			instructionCache[address - memory.getFirstTextAddress()] = null;
+		}
+
 		if (event.getMemorySection().getName().equals("Text") && instructionStackBottom < event.getAddress()) {
 			instructionStackBottom = address;
+
+			InstructionExecution<Arch, ?>[] array =
+					new InstructionExecution[instructionStackBottom - memory.getFirstTextAddress() + 1];
+			System.arraycopy(instructionCache, 0, array, 0, instructionCache.length);
+			instructionCache = array;
 		}
 	}
 
 	@Listener
 	private void onMemoryChange(MemoryWordSetEvent.After event) {
 		int address = event.getAddress();
-		instructionCache.remove(address);
+
+		if (address >= memory.getFirstTextAddress() && address <= instructionStackBottom) {
+			instructionCache[address - memory.getFirstTextAddress()] = null;
+		}
+
 		if (event.getMemorySection().getName().equals("Text") && instructionStackBottom < event.getAddress()) {
 			instructionStackBottom = address;
+
+			InstructionExecution<Arch, ?>[] array =
+					new InstructionExecution[instructionStackBottom - memory.getFirstTextAddress() + 1];
+			System.arraycopy(instructionCache, 0, array, 0, instructionCache.length);
+			instructionCache = array;
 		}
 	}
 

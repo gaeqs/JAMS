@@ -145,9 +145,8 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 				getConsole().println();
 				getConsole().printInfoLn(instructions + " instructions executed in " + millis + " millis.");
 
-				double performance = instructions / (((double) millis) / 1000);
-
-				getConsole().printInfoLn((int) performance + " inst/s");
+				int performance = (int) (instructions / (((double) millis) / 1000));
+				getConsole().printInfoLn(performance + " inst/s");
 				getConsole().println();
 				if (memory instanceof Cache) {
 					getConsole().printInfoLn(((Cache) memory).getStats());

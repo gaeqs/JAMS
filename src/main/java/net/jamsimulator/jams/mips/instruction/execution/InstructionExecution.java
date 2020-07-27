@@ -28,20 +28,21 @@ import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.register.Register;
+import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.Validate;
-
-import java.util.Optional;
 
 public abstract class InstructionExecution<Arch extends Architecture, Inst extends AssembledInstruction> {
 
 	protected final Simulation<Arch> simulation;
+	protected final Registers registers;
 	protected final Inst instruction;
 
 	public InstructionExecution(Simulation<Arch> simulation, Inst instruction) {
 		Validate.notNull(simulation, "Simulation cannot be null!");
 		Validate.notNull(instruction, "Instruction cannot be null!");
 		this.simulation = simulation;
+		this.registers = simulation.getRegisters();
 		this.instruction = instruction;
 	}
 
@@ -90,9 +91,7 @@ public abstract class InstructionExecution<Arch extends Architecture, Inst exten
 	 * @throws RuntimeInstructionException if the register is not present.
 	 */
 	protected Register register(int identifier) {
-		Optional<Register> register = simulation.getRegisters().getRegister(identifier);
-		if (!register.isPresent()) error("Register " + identifier + " not found.");
-		return register.get();
+		return registers.getRegisterUnchecked(identifier);
 	}
 
 	/**
@@ -103,9 +102,7 @@ public abstract class InstructionExecution<Arch extends Architecture, Inst exten
 	 * @throws RuntimeInstructionException if the register is not present.
 	 */
 	protected Register registerCop0(int identifier) {
-		Optional<Register> register = simulation.getRegisters().getCoprocessor0Register(identifier);
-		if (!register.isPresent()) error("Register " + identifier + " not found.");
-		return register.get();
+		return registers.getCoprocessor0RegisterUnchecked(identifier);
 	}
 
 	/**
@@ -116,8 +113,6 @@ public abstract class InstructionExecution<Arch extends Architecture, Inst exten
 	 * @throws RuntimeInstructionException if the register is not present.
 	 */
 	protected Register registerCop1(int identifier) {
-		Optional<Register> register = simulation.getRegisters().getCoprocessor1Register(identifier);
-		if (!register.isPresent()) error("Register " + identifier + " not found.");
-		return register.get();
+		return registers.getCoprocessor1RegisterUnchecked(identifier);
 	}
 }
