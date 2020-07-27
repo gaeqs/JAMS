@@ -26,7 +26,6 @@ package net.jamsimulator.jams.mips.simulation.singlecycle;
 
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
-import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
@@ -145,7 +144,10 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 			if (getConsole() != null) {
 				getConsole().println();
 				getConsole().printInfoLn(instructions + " instructions executed in " + millis + " millis.");
-				getConsole().printInfoLn((instructions / (((float) millis) / 1000)) + " inst/s");
+
+				double performance = instructions / (((double) millis) / 1000);
+
+				getConsole().printInfoLn((int) performance + " inst/s");
 				getConsole().println();
 				if (memory instanceof Cache) {
 					getConsole().printInfoLn(((Cache) memory).getStats());
@@ -193,24 +195,21 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
 		//Fetch and Decode
 		registers.getProgramCounter().setValue(pc + 4);
-		AssembledInstruction instruction = fetch(pc);
+		SingleCycleExecution<?> execution = (SingleCycleExecution<?>) fetch(pc);
 
-		if (instruction == null) {
+		if (execution == null) {
 			int code = memory.getWord(pc, false, true);
 			currentStepChanges = null;
 			throw new InstructionNotFoundException("Couldn't decode instruction 0x" +
 					StringUtils.addZeros(Integer.toHexString(code), 8) +
-					"at 0x"+StringUtils.addZeros(Integer.toHexString(pc), 8) +
+					"at 0x" + StringUtils.addZeros(Integer.toHexString(pc), 8) +
 					". (" + StringUtils.addZeros(Integer.toBinaryString(code), 32) + ")");
 		}
 
-		//Execute, Memory and Write
-		SingleCycleExecution<?> execution = (SingleCycleExecution<?>)
-				instruction.getBasicOrigin().generateExecution(this, instruction).orElse(null);
-
 		//Send before event
 		if (data.canCallEvents()) {
-			SingleCycleInstructionExecutionEvent.Before before = callEvent(new SingleCycleInstructionExecutionEvent.Before(this, pc, instruction, execution));
+			SingleCycleInstructionExecutionEvent.Before before =
+					callEvent(new SingleCycleInstructionExecutionEvent.Before(this, pc, execution.getInstruction(), execution));
 			if (before.isCancelled()) return;
 
 			//Gets the modifies execution. This may be null.
@@ -219,7 +218,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
 		if (execution == null) {
 			throw new InstructionNotFoundException("Couldn't decode instruction " +
-					StringUtils.addZeros(Integer.toHexString(instruction.getCode()), 8) + ".");
+					StringUtils.addZeros(Integer.toHexString(fetch(pc).getInstruction().getCode()), 8) + ".");
 		}
 
 		execution.execute();
@@ -232,7 +231,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		}
 
 		if (data.canCallEvents()) {
-			callEvent(new SingleCycleInstructionExecutionEvent.After(this, pc, instruction, execution));
+			callEvent(new SingleCycleInstructionExecutionEvent.After(this, pc, execution.getInstruction(), execution));
 
 			if (data.isUndoEnabled()) {
 				changes.add(currentStepChanges);

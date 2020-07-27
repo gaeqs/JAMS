@@ -32,6 +32,7 @@ import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
+import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
@@ -70,7 +71,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	protected int instructionStackBottom;
 	protected final Set<Integer> breakpoints;
 
-	protected final Map<Integer, AssembledInstruction> instructionCache;
+	protected final Map<Integer, InstructionExecution<Arch, ?>> instructionCache;
 
 	protected Thread thread;
 	protected final Object lock;
@@ -304,18 +305,17 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	}
 
 	/**
-	 * ¿
-	 * Fetch the {@link AssembledInstruction} located at the given address.
+	 * Fetches the {@link InstructionExecution} located at the given address.
 	 * <p>
 	 * This method may return {@code null} if the instruction cannot be decoded.
 	 *
 	 * @param pc the address to fetch.
-	 * @return the {@link AssembledInstruction} or null.
+	 * @return the {@link InstructionExecution} or null.
 	 * @throws IllegalArgumentException  if the given address is not aligned to words.
 	 * @throws IndexOutOfBoundsException if the address if out of bounds.
 	 */
-	public AssembledInstruction fetch(int pc) {
-		AssembledInstruction cached = instructionCache.get(pc);
+	public InstructionExecution<Arch, ?> fetch(int pc) {
+		InstructionExecution<Arch, ?> cached = instructionCache.get(pc);
 		if (cached != null) return cached;
 
 		int data = memory.getWord(pc, true, true);
@@ -323,7 +323,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		Optional<? extends BasicInstruction<?>> optional = instructionSet.getInstructionByInstructionCode(data);
 		if (!optional.isPresent()) return null;
 		BasicInstruction<?> instruction = optional.get();
-		cached = instruction.assembleFromCode(data);
+		AssembledInstruction assembled = instruction.assembleFromCode(data);
+		cached = assembled.getBasicOrigin().generateExecution(this, assembled).orElse(null);
 		instructionCache.put(pc, cached);
 		return cached;
 	}
