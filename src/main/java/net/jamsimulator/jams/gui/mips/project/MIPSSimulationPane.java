@@ -103,7 +103,7 @@ public class MIPSSimulationPane extends WorkingPane {
 		AnchorUtils.setAnchor(slider, -1, 0, 2, 2);
 		slider.setPrefHeight(20);
 
-		paneSnapshots.add(new PaneSnapshot("Flow", BarType.BOTTOM_LEFT, anchor, icon, null));
+		paneSnapshots.add(new PaneSnapshot("Flow", BarType.BOTTOM_LEFT, anchor, icon, Messages.BAR_FLOW_NAME));
 	}
 
 	@Override
