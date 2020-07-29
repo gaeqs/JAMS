@@ -82,6 +82,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	protected boolean running;
 	protected boolean finished;
 
+	protected long currentCycle;
+
 	/**
 	 * Creates the simulation.
 	 *
@@ -119,6 +121,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 		running = false;
 		finished = false;
+		currentCycle = 0;
 	}
 
 	/**
@@ -210,6 +213,14 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		return instructionStackBottom;
 	}
 
+	/**
+	 * Returns the current cycle of this {@link Simulation}.
+	 *
+	 * @return the current cycle of this {@link Simulation}.
+	 */
+	public long getCurrentCycle() {
+		return currentCycle;
+	}
 
 	public boolean isRunning() {
 		return running;
@@ -360,6 +371,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		registers.restoreSavedState();
 		memory.restoreSavedState();
 		finished = false;
+		currentCycle = 0;
 
 		callEvent(new SimulationResetEvent(this));
 	}

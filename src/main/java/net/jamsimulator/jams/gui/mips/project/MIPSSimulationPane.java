@@ -1,13 +1,13 @@
 package net.jamsimulator.jams.gui.mips.project;
 
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.bar.BarType;
 import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.mips.flow.FlowTable;
 import net.jamsimulator.jams.gui.mips.simulator.MIPSSimulationCentralPane;
 import net.jamsimulator.jams.gui.mips.simulator.memory.MemoryPane;
 import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
@@ -18,6 +18,7 @@ import net.jamsimulator.jams.language.wrapper.LanguageTab;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.project.mips.MIPSProject;
+import net.jamsimulator.jams.utils.AnchorUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,6 +37,7 @@ public class MIPSSimulationPane extends WorkingPane {
 		loadRegisterTabs();
 		loadConsole();
 		loadMemoryTab();
+		loadFlow();
 
 		init();
 
@@ -84,6 +86,25 @@ public class MIPSSimulationPane extends WorkingPane {
 		paneSnapshots.add(new PaneSnapshot("Memory", BarType.TOP_LEFT, pane, icon, Messages.BAR_MEMORY_NAME));
 	}
 
+	private void loadFlow() {
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_FLOW,
+				Icons.SIMULATION_FLOW_PATH, 1024, 1024).orElse(null);
+
+
+		Slider slider = new Slider(5, 100, 40);
+
+		ScrollPane pane = new ScrollPane();
+		FlowTable flow = FlowTable.createFlow(simulation.getArchitecture(), simulation, pane, slider);
+		pane.setContent(flow);
+		pane.setFitToHeight(true);
+
+		AnchorPane anchor = new AnchorPane(pane, slider);
+		AnchorUtils.setAnchor(pane, 0, 20, 0, 0);
+		AnchorUtils.setAnchor(slider, -1, 0, 2, 2);
+		slider.setPrefHeight(20);
+
+		paneSnapshots.add(new PaneSnapshot("Flow", BarType.BOTTOM_LEFT, anchor, icon, null));
+	}
 
 	@Override
 	public String getLanguageNode() {

@@ -43,6 +43,7 @@ import net.jamsimulator.jams.mips.simulation.change.*;
 import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileCloseEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileOpenEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileWriteEvent;
@@ -169,12 +170,19 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	@Override
 	public boolean undoLastStep() {
 		if (!data.isUndoEnabled()) return false;
+
+		if (callEvent(new SimulationUndoStepEvent.Before(this)).isCancelled()) return false;
+
 		stop();
 		waitForExecutionFinish();
 
 		if (changes.isEmpty()) return false;
 		finished = false;
 		changes.removeLast().restore(this);
+		currentCycle--;
+
+		callEvent(new SimulationUndoStepEvent.After(this));
+
 		return true;
 	}
 
@@ -190,6 +198,8 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		if (data.isUndoEnabled()) {
 			currentStepChanges = new StepChanges<>();
 		}
+
+		currentCycle++;
 
 
 		//Fetch and Decode

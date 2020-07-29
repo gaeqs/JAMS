@@ -994,18 +994,9 @@ AnchorPane {
     -fx-background-color: -theme-explorer-element-selected;
 }
 
-/* ----------------------- */
-/* SINGLE CYCLE SIMULATION */
-/* ----------------------- */
-
-/* INSTRUCTION TABLE */
-.table-view .single-cycle-next-instruction {
-    -fx-background-color: #276f2a;
-}
-
-.table-view .single-cycle-current-instruction {
-    -fx-background-color: #aa7524;
-}
+/* ---------- */
+/* SIMULATION */
+/* ---------- */
 
 .console .prompt {
     -fx-background-color: -theme-background-darkest;
@@ -1038,4 +1029,34 @@ AnchorPane {
 
 .console .input:hover {
     -fx-background-color: darkred;
+}
+
+/* INSTRUCTION FLOW */
+.flow-entry-odd {
+    -fx-background-color: -theme-background;
+}
+
+.flow-entry-odd .flow-entry-instruction-label {
+    -fx-background-color: -theme-background;
+}
+
+.flow-entry-even {
+    -fx-background-color: -theme-background-darker;
+}
+
+.flow-entry-even .flow-entry-instruction-label {
+    -fx-background-color: -theme-background-darker;
+}
+
+/* ----------------------- */
+/* SINGLE CYCLE SIMULATION */
+/* ----------------------- */
+
+/* INSTRUCTION TABLE */
+.table-view .single-cycle-next-instruction {
+    -fx-background-color: #276f2a;
+}
+
+.table-view .single-cycle-current-instruction {
+    -fx-background-color: #aa7524;
 }
