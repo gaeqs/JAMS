@@ -3,7 +3,6 @@ package net.jamsimulator.jams.gui.mips.simulator.memory;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
 public class MemoryEntry {
@@ -38,20 +37,6 @@ public class MemoryEntry {
 		}
 
 		return pAddress;
-	}
-
-	public StringProperty propertyByOffset(int i) {
-		switch (i) {
-			case 0:
-				return p0Property();
-			case 4:
-				return p4Property();
-			case 8:
-				return p8Property();
-			case 12:
-				return pCProperty();
-		}
-		return null;
 	}
 
 	public StringProperty p0Property() {

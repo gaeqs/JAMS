@@ -1,6 +1,5 @@
 package net.jamsimulator.jams.gui.mips.simulator.memory;
 
-import javafx.application.Platform;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.StringConverter;
 import net.jamsimulator.jams.utils.NumericUtils;
@@ -18,7 +17,7 @@ public class MemoryTableCell extends TextFieldTableCell<MemoryEntry, String> {
 		setConverter(new StringConverter<String>() {
 			@Override
 			public String toString(String object) {
-				if(getTableRow() == null) return object;
+				if (getTableRow() == null) return object;
 				MemoryEntry entry = getTableRow().getItem();
 				if (entry == null) return object;
 				int value = entry.getSimulation().getMemory()

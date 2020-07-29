@@ -2,7 +2,6 @@ package net.jamsimulator.jams.gui.mips.simulator.memory;
 
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.TextFieldTableCell;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTableColumn;
@@ -63,7 +62,11 @@ public class MemoryTable extends TableView<MemoryEntry> {
 		p8.setCellFactory(param -> new MemoryTableCell(8));
 		pC.setCellFactory(param -> new MemoryTableCell(12));
 
-		getColumns().setAll(pAddress, p0, p4, p8, pC);
+		getColumns().add(pAddress);
+		getColumns().add(p0);
+		getColumns().add(p4);
+		getColumns().add(p8);
+		getColumns().add(pC);
 
 		getVisibleLeafColumn(0).setMinWidth(80);
 
