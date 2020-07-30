@@ -29,7 +29,7 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
-import net.jamsimulator.jams.mips.simulation.singlecycle.SingleCycleSimulation;
+import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleSimulation;
 
 /**
  * Represents the single-cycle architecture.
@@ -38,22 +38,22 @@ import net.jamsimulator.jams.mips.simulation.singlecycle.SingleCycleSimulation;
  * execution of an instruction on the same cycle. This makes this architecture slow,
  * having high seconds per cycle.
  */
-public final class SingleCycleArchitecture extends Architecture {
+public final class MultiCycleArchitecture extends Architecture {
 
-	public static final SingleCycleArchitecture INSTANCE = new SingleCycleArchitecture();
+	public static final MultiCycleArchitecture INSTANCE = new MultiCycleArchitecture();
 
-	public static final String NAME = "Single-cycle";
+	public static final String NAME = "Multi-cycle";
 
-	private SingleCycleArchitecture() {
+	private MultiCycleArchitecture() {
 		super(NAME);
 	}
 
 	@Override
-	public Simulation<SingleCycleArchitecture> createSimulation(InstructionSet instructionSet,
-																Registers registers,
-																Memory memory,
-																int instructionStackBottom,
-																SimulationData data) {
-		return new SingleCycleSimulation(this, instructionSet, registers, memory, instructionStackBottom, data);
+	public Simulation<MultiCycleArchitecture> createSimulation(InstructionSet instructionSet,
+															   Registers registers,
+															   Memory memory,
+															   int instructionStackBottom,
+															   SimulationData data) {
+		return new MultiCycleSimulation(this, instructionSet, registers, memory, instructionStackBottom, data);
 	}
 }

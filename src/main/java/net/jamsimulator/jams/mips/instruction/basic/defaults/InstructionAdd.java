@@ -24,17 +24,18 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionAdd extends BasicRInstruction<InstructionAdd.Assembled> {
@@ -50,6 +51,7 @@ public class InstructionAdd extends BasicRInstruction<InstructionAdd.Assembled> 
 	public InstructionAdd() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -101,6 +103,37 @@ public class InstructionAdd extends BasicRInstruction<InstructionAdd.Assembled> 
 			} catch (ArithmeticException ex) {
 				error("Integer overflow.", ex);
 			}
+		}
+	}
+
+	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
+			super(simulation, instruction);
+		}
+
+		@Override
+		public void decode() {
+			values = new int[]{register(instruction.getSourceRegister()).getValue(), register(instruction.getTargetRegister()).getValue()};
+		}
+
+		@Override
+		public void execute() {
+			try {
+				result = new int[]{Math.addExact(values[0], values[1])};
+			} catch (ArithmeticException ex) {
+				error("Integer overflow.", ex);
+			}
+		}
+
+		@Override
+		public void memory() {
+
+		}
+
+		@Override
+		public void writeBack() {
+			register(instruction.getDestinationRegister()).setValue(result[0]);
 		}
 	}
 }

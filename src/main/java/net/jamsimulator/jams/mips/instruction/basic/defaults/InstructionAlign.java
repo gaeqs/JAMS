@@ -24,12 +24,14 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -51,6 +53,7 @@ public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembl
 	public InstructionAlign() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 
@@ -123,6 +126,38 @@ public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembl
 			int tmpRtHi = rt.getValue() << (bp << 3);
 			int tmpRsLo = rs.getValue() >>> ((4 - bp) << 3);
 			rd.setValue(tmpRtHi | tmpRsLo);
+		}
+	}
+
+	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
+			super(simulation, instruction);
+		}
+
+		@Override
+		public void decode() {
+			Register rt = register(instruction.getTargetRegister());
+			Register rs = register(instruction.getSourceRegister());
+			values = new int[]{rt.getValue(), rs.getValue()};
+		}
+
+		@Override
+		public void execute() {
+			int bp = instruction.getShiftAmount();
+			int tmpRtHi = values[0] << (bp << 3);
+			int tmpRsLo = values[1] >>> ((4 - bp) << 3);
+			result = new int[]{tmpRtHi | tmpRsLo};
+		}
+
+		@Override
+		public void memory() {
+
+		}
+
+		@Override
+		public void writeBack() {
+			register(instruction.getDestinationRegister()).setValue(result[0]);
 		}
 	}
 }

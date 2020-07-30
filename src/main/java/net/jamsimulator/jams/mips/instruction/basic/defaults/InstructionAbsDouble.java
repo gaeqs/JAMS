@@ -24,17 +24,18 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.NumericUtils;
 
@@ -52,6 +53,7 @@ public class InstructionAbsDouble extends BasicRFPUInstruction<InstructionAbsDou
 	public InstructionAbsDouble() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -100,6 +102,40 @@ public class InstructionAbsDouble extends BasicRFPUInstruction<InstructionAbsDou
 
 			registerCop1(instruction.getDestinationRegister()).setValue(ints[0]);
 			registerCop1(instruction.getDestinationRegister() + 1).setValue(ints[1]);
+		}
+	}
+
+	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
+			super(simulation, instruction);
+		}
+
+		@Override
+		public void decode() {
+			if (instruction.getSourceRegister() % 2 != 0) error("Source register identifier is not even.");
+			if (instruction.getDestinationRegister() % 2 != 0) error("Destination register identifier is not even.");
+
+			Register rs0 = registerCop1(instruction.getSourceRegister());
+			Register rs1 = registerCop1(instruction.getSourceRegister() + 1);
+			values = new int[]{rs0.getValue(), rs1.getValue()};
+		}
+
+		@Override
+		public void execute() {
+			double abs = Math.abs(NumericUtils.intsToDouble(values[0], values[1]));
+			result = NumericUtils.doubleToInts(abs);
+		}
+
+		@Override
+		public void memory() {
+
+		}
+
+		@Override
+		public void writeBack() {
+			registerCop1(instruction.getDestinationRegister()).setValue(result[0]);
+			registerCop1(instruction.getDestinationRegister() + 1).setValue(result[1]);
 		}
 	}
 }

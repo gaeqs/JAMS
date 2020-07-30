@@ -24,12 +24,14 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledPCREL19Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicPCREL19Instruction;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -50,6 +52,7 @@ public class InstructionAddiupc extends BasicPCREL19Instruction<InstructionAddiu
 	public InstructionAddiupc() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, PCREL_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -90,6 +93,33 @@ public class InstructionAddiupc extends BasicPCREL19Instruction<InstructionAddiu
 		public void execute() {
 			Register rs = register(instruction.getSourceRegister());
 			rs.setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+		}
+	}
+
+	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
+			super(simulation, instruction);
+		}
+
+		@Override
+		public void decode() {
+			values = new int[0];
+		}
+
+		@Override
+		public void execute() {
+			result = new int[]{pc().getValue() + (instruction.getImmediateAsSigned() << 2)};
+		}
+
+		@Override
+		public void memory() {
+
+		}
+
+		@Override
+		public void writeBack() {
+			register(instruction.getSourceRegister()).setValue(result[0]);
 		}
 	}
 }

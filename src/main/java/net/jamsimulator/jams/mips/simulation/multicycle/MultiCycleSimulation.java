@@ -22,15 +22,14 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.simulation.singlecycle;
+package net.jamsimulator.jams.mips.simulation.multicycle;
 
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
-import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.event.MemoryAllocateMemoryEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
@@ -40,6 +39,8 @@ import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.mips.simulation.change.*;
+import net.jamsimulator.jams.mips.simulation.change.multicycle.MultiCycleSimulationChangeCurrentExecution;
+import net.jamsimulator.jams.mips.simulation.change.multicycle.MultiCycleSimulationChangeStep;
 import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
@@ -47,31 +48,28 @@ import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileCloseEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileOpenEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileWriteEvent;
-import net.jamsimulator.jams.mips.simulation.singlecycle.event.SingleCycleInstructionExecutionEvent;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.LinkedList;
 
 /**
- * Represents the execution of a set of instruction inside a MIPS32 single-cycle computer.
+ * Represents the execution of a set of instruction inside a MIPS32 multi-cycle computer.
  * <p>
- * This architecture executes one instruction per cycle, starting and finishing the
- * execution of an instruction on the same cycle. This makes this architecture slow,
- * having high seconds per cycle.
+ * This architecture executes one instruction per 5 cycles. This makes this architecture slow, having to execute the instruction in several cycles.
  * <p>
- * This is also the easiest architecture to implement.
+ * This architecture is harder to implement than the single-cycle architecture.
  *
- * @see SingleCycleArchitecture
+ * @see MultiCycleArchitecture
  */
-public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
+public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 
 	public static final int MAX_CHANGES = 10000;
 
-	private final LinkedList<StepChanges<SingleCycleArchitecture>> changes;
-	private StepChanges<SingleCycleArchitecture> currentStepChanges;
+	private final LinkedList<StepChanges<MultiCycleArchitecture>> changes;
+	private StepChanges<MultiCycleArchitecture> currentStepChanges;
 
-	private int instructions;
-	private long start;
+	private MultiCycleStep currentStep;
+	private MultiCycleExecution<?> currentExecution;
 
 	/**
 	 * Creates the single-cycle simulation.
@@ -82,9 +80,32 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	 * @param memory                 the memory to use in this simulation.
 	 * @param instructionStackBottom the address of the bottom of the instruction stack.
 	 */
-	public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, SimulationData data) {
+	public MultiCycleSimulation(MultiCycleArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, SimulationData data) {
 		super(architecture, instructionSet, registers, memory, instructionStackBottom, data);
 		changes = data.isUndoEnabled() ? new LinkedList<>() : null;
+		currentStep = MultiCycleStep.FETCH;
+	}
+
+	/**
+	 * Forcibly changes the current {@link MultiCycleStep} of the simulation.
+	 * <p>
+	 * This should only be used to undo steps.
+	 *
+	 * @param step the new {@link MultiCycleStep}.
+	 */
+	public void forceStepChange(MultiCycleStep step) {
+		currentStep = step;
+	}
+
+	/**
+	 * Forcibly changes the current {@link MultiCycleExecution} of the simulation.
+	 * <p>
+	 * This should only be used to undo steps.
+	 *
+	 * @param execution the new {@link MultiCycleExecution}.
+	 */
+	public void forceCurrentExecutionChange(MultiCycleExecution<?> execution) {
+		currentExecution = execution;
 	}
 
 	@Override
@@ -122,6 +143,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		if (changes != null) {
 			changes.clear();
 		}
+		currentStep = MultiCycleStep.FETCH;
 	}
 
 	@Override
@@ -134,33 +156,14 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		registers.enableEventCalls(data.canCallEvents());
 
 		thread = new Thread(() -> {
-			instructions = 0;
-			start = System.nanoTime();
-
 			boolean first = true;
 			try {
 				while (!finished && !checkInterrupted()) {
 					runStep(first);
 					first = false;
-					instructions++;
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
-			}
-
-			long millis = (System.nanoTime() - start) / 1000000;
-
-			if (getConsole() != null) {
-				getConsole().println();
-				getConsole().printInfoLn(instructions + " instructions executed in " + millis + " millis.");
-
-				int performance = (int) (instructions / (((double) millis) / 1000));
-				getConsole().printInfoLn(performance + " inst/s");
-				getConsole().println();
-				if (memory instanceof Cache) {
-					getConsole().printInfoLn(((Cache) memory).getStats());
-					getConsole().println();
-				}
 			}
 
 			synchronized (finishedRunningLock) {
@@ -196,12 +199,6 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
 	private void runStep(boolean first) {
 		if (finished) return;
-		int pc = registers.getProgramCounter().getValue();
-
-		if (breakpoints.contains(pc) && !first) {
-			interrupt();
-			return;
-		}
 
 		if (data.isUndoEnabled()) {
 			currentStepChanges = new StepChanges<>();
@@ -209,12 +206,48 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
 		currentCycle++;
 
+		switch (currentStep) {
+			case FETCH:
+				fetch(first);
+				break;
+			case DECODE:
+				decode();
+				break;
+			case MEMORY:
+				memory();
+				break;
+			case EXECUTE:
+				execute();
+				break;
+			case WRITE_BACK:
+				writeBack();
+				break;
+		}
 
-		//Fetch and Decode
-		registers.getProgramCounter().setValue(pc + 4);
-		SingleCycleExecution<?> execution = (SingleCycleExecution<?>) fetch(pc);
 
-		if (execution == null) {
+		if (data.isUndoEnabled()) {
+			changes.add(currentStepChanges);
+			if (changes.size() > MAX_CHANGES) changes.removeFirst();
+			currentStepChanges = null;
+		}
+	}
+
+	private void fetch(boolean first) {
+		int pc = registers.getProgramCounter().getValue();
+
+		if (breakpoints.contains(pc) && !first) {
+			currentStepChanges = null;
+			interrupt();
+			return;
+		}
+
+		if (currentStepChanges != null) {
+			currentStepChanges.addChange(new MultiCycleSimulationChangeStep(currentStep));
+			currentStepChanges.addChange(new MultiCycleSimulationChangeCurrentExecution(currentExecution));
+		}
+
+		currentExecution = (MultiCycleExecution<?>) fetch(pc);
+		if (currentExecution == null) {
 			int code = memory.getWord(pc, false, true);
 			currentStepChanges = null;
 			throw new InstructionNotFoundException("Couldn't decode instruction 0x" +
@@ -223,40 +256,47 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 					". (" + StringUtils.addZeros(Integer.toBinaryString(code), 32) + ")");
 		}
 
-		//Send before event
-		if (data.canCallEvents()) {
-			SingleCycleInstructionExecutionEvent.Before before =
-					callEvent(new SingleCycleInstructionExecutionEvent.Before(this, pc, execution.getInstruction(), execution));
-			if (before.isCancelled()) return;
+		registers.getProgramCounter().setValue(pc + 4);
+		currentStep = MultiCycleStep.DECODE;
+	}
 
-			//Gets the modifies execution. This may be null.
-			execution = before.getExecution().orElse(null);
+	private void decode() {
+		currentExecution.decode();
+		if (currentStepChanges != null) {
+			currentStepChanges.addChange(new MultiCycleSimulationChangeStep(currentStep));
 		}
+		currentStep = MultiCycleStep.EXECUTE;
+	}
 
-		if (execution == null) {
-			throw new InstructionNotFoundException("Couldn't decode instruction " +
-					StringUtils.addZeros(Integer.toHexString(fetch(pc).getInstruction().getCode()), 8) + ".");
-		}
+	private void execute() {
+		currentExecution.execute();
 
-		execution.execute();
-
-		//Check thread, if interrupted, return to the previous cycle.
+		////Check thread, if interrupted, return to the previous cycle.
 		if (checkInterrupted()) {
 			currentStepChanges = null;
-			registers.getProgramCounter().setValue(pc);
 			return;
 		}
 
-		if (data.canCallEvents()) {
-			callEvent(new SingleCycleInstructionExecutionEvent.After(this, pc, execution.getInstruction(), execution));
-
-			if (data.isUndoEnabled()) {
-				changes.add(currentStepChanges);
-				if (changes.size() > MAX_CHANGES) changes.removeFirst();
-				currentStepChanges = null;
-			}
+		if (currentStepChanges != null) {
+			currentStepChanges.addChange(new MultiCycleSimulationChangeStep(currentStep));
 		}
+		currentStep = MultiCycleStep.MEMORY;
+	}
 
+	private void memory() {
+		currentExecution.memory();
+		if (currentStepChanges != null) {
+			currentStepChanges.addChange(new MultiCycleSimulationChangeStep(currentStep));
+		}
+		currentStep = MultiCycleStep.WRITE_BACK;
+	}
+
+	private void writeBack() {
+		currentExecution.writeBack();
+		if (currentStepChanges != null) {
+			currentStepChanges.addChange(new MultiCycleSimulationChangeStep(currentStep));
+		}
+		currentStep = MultiCycleStep.FETCH;
 
 		if (registers.getProgramCounter().getValue() > instructionStackBottom && !finished) {
 			finished = true;
