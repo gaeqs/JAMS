@@ -93,12 +93,12 @@ public class MemoryPane extends AnchorPane {
 
 
 		previous.setOnAction(event -> {
-			int offset = table.getOffset() - MemoryTable.ENTRIES;
+			int offset = table.getOffset() - (table.getRows() << 4);
 			table.setOffset(offset);
 		});
 
 		next.setOnAction(event -> {
-			int offset = table.getOffset() + MemoryTable.ENTRIES;
+			int offset = table.getOffset() + (table.getRows() << 4);
 			table.setOffset(offset);
 		});
 

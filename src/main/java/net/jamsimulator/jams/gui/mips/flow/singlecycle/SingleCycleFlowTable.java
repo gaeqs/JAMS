@@ -21,7 +21,6 @@ import java.util.LinkedList;
 public class SingleCycleFlowTable extends FlowTable {
 
 	private LinkedList<AssembledInstruction> toAdd;
-	private double size = 40;
 
 	public SingleCycleFlowTable(Simulation<? extends SingleCycleArchitecture> simulation, ScrollPane scrollPane, Slider sizeSlider) {
 		super(simulation, scrollPane, sizeSlider);
@@ -43,7 +42,7 @@ public class SingleCycleFlowTable extends FlowTable {
 	@Listener
 	private void onInstructionExecuted(SingleCycleInstructionExecutionEvent.After event) {
 		//Adding items to a separate list prevents the app to block.
-		if (toAdd.size() == MAX_ITEMS) {
+		if (toAdd.size() == maxItems) {
 			toAdd.remove(0);
 		}
 		toAdd.add(event.getInstruction());
@@ -52,10 +51,10 @@ public class SingleCycleFlowTable extends FlowTable {
 	@Listener
 	private void onSimulationStop(SimulationStopEvent event) {
 		Platform.runLater(() -> {
-			if (toAdd.size() >= MAX_ITEMS) {
+			if (toAdd.size() >= maxItems) {
 				getChildren().clear();
-			} else if (getChildren().size() + toAdd.size() > MAX_ITEMS) {
-				getChildren().remove(0, getChildren().size() + toAdd.size() - MAX_ITEMS);
+			} else if (getChildren().size() + toAdd.size() > maxItems) {
+				getChildren().remove(0, getChildren().size() + toAdd.size() - maxItems);
 
 				int index = 0;
 				for (Node child : getChildren()) {

@@ -124,5 +124,29 @@
         "region": "blank_lines"
       }
     }
+  },
+  "simulation": {
+    "meta": {
+      "language_node": "CONFIG_SIMULATION"
+    },
+    "mips": {
+      "meta": {
+        "language_node": "CONFIG_SIMULATION_MIPS",
+        "regions": {
+          "memory": 0,
+          "flow": 1
+        }
+      },
+      "memory_rows": {
+        "type": "positive_integer",
+        "language_node": "CONFIG_SIMULATION_MIPS_MEMORY_ROWS",
+        "region": "memory"
+      },
+      "flow_max_items": {
+        "type": "positive_integer",
+        "language_node": "CONFIG_SIMULATION_MIPS_FLOW_MAX_ITEMS",
+        "region": "flow"
+      }
+    }
   }
 }

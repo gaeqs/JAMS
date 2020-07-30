@@ -2,6 +2,8 @@ package net.jamsimulator.jams.gui.mips.simulator.memory;
 
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTableColumn;
@@ -16,13 +18,12 @@ import java.util.HashMap;
 
 public class MemoryTable extends TableView<MemoryEntry> {
 
-	public static final int ENTRIES = 0x300;
-
 	private final HashMap<Integer, MemoryEntry> entries;
 
 	protected Simulation<?> simulation;
 	protected int offset;
 	private MemoryRepresentation representation;
+	private int rows;
 
 	public MemoryTable(Simulation<?> simulation, int offset, MemoryRepresentation representation) {
 		this.simulation = simulation;
@@ -72,6 +73,9 @@ public class MemoryTable extends TableView<MemoryEntry> {
 
 		entries = new HashMap<>();
 
+		rows = (int) Jams.getMainConfiguration().get("simulation.mips.memory_rows").orElse(47);
+		Jams.getMainConfiguration().registerListeners(this, true);
+
 		populate();
 
 		simulation.registerListeners(this, true);
@@ -82,6 +86,10 @@ public class MemoryTable extends TableView<MemoryEntry> {
 
 	public Simulation<?> getSimulation() {
 		return simulation;
+	}
+
+	public int getRows() {
+		return rows;
 	}
 
 	public int getOffset() {
@@ -108,9 +116,8 @@ public class MemoryTable extends TableView<MemoryEntry> {
 		getItems().clear();
 
 		int current = offset;
-		int end = current + ENTRIES;
 		MemoryEntry entry;
-		while (current < end) {
+		for (int i = 0; i < rows; i++) {
 			entry = new MemoryEntry(simulation, current, representation);
 			entries.put(current, entry);
 			getItems().add(entry);
@@ -151,6 +158,14 @@ public class MemoryTable extends TableView<MemoryEntry> {
 		MemoryEntry entry = entries.get(address);
 		if (entry == null) return;
 		entry.update(event.getAddress(), offset);
+	}
+
+	@Listener
+	private void onConfigurationNodeChange(ConfigurationNodeChangeEvent.After event) {
+		if (event.getNode().equals("simulation.mips.memory_rows")) {
+			rows = (int) event.getNewValueAs().orElse(rows);
+			populate();
+		}
 	}
 
 }

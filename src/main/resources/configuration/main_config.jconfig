@@ -27,5 +27,11 @@
       "space_after_directive_parameter": "SPACE",
       "maximum_blank_lines": 2
     }
+  },
+  "simulation": {
+    "mips": {
+      "memory_rows": 48,
+      "flow_max_items": 100
+    }
   }
 }

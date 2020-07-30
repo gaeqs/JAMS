@@ -3,6 +3,9 @@ package net.jamsimulator.jams.gui.mips.flow;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.VBox;
+import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
+import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.mips.flow.singlecycle.SingleCycleFlowTable;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
@@ -35,20 +38,23 @@ public class FlowTable extends VBox {
 
 	//endregion
 
-	public static final int MAX_ITEMS = 100;
-
 	protected Simulation<?> simulation;
 	protected ScrollPane scrollPane;
 	protected double stepSize = 40;
+	protected int maxItems;
 
 	public FlowTable(Simulation<?> simulation, ScrollPane scrollPane, Slider sizeSlider) {
 		this.simulation = simulation;
 		this.scrollPane = scrollPane;
 
+		maxItems = (int) Jams.getMainConfiguration().get("simulation.mips.flow_max_items").orElse(100);
+
 		sizeSlider.setValue(stepSize);
 		sizeSlider.valueProperty().addListener((obs, old, val) -> setStepSize(val.doubleValue()));
 
 		getChildren().add(sizeSlider);
+
+		Jams.getMainConfiguration().registerListeners(this, true);
 	}
 
 	public Simulation<?> getSimulation() {
@@ -62,4 +68,15 @@ public class FlowTable extends VBox {
 	public void setStepSize(double stepSize) {
 		this.stepSize = stepSize;
 	}
+
+	@Listener
+	private void onConfigurationNodeChange(ConfigurationNodeChangeEvent.After event) {
+		if (event.getNode().equals("simulation.mips.flow_max_items")) {
+			maxItems = (int) event.getNewValueAs().orElse(maxItems);
+			if (getChildren().size() > maxItems) {
+				getChildren().remove(maxItems, getChildren().size());
+			}
+		}
+	}
+
 }

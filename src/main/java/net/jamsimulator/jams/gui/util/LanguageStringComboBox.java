@@ -35,17 +35,19 @@ public abstract class LanguageStringComboBox extends ComboBox<String> {
 
 	@Listener
 	private void onLanguageChange(DefaultLanguageChangeEvent.After event) {
-		getItems().clear();
-		for (String node : nodes) {
-			getItems().add(Jams.getLanguageManager().getSelected().getOrDefault(node));
+		int selected = getSelectionModel().getSelectedIndex();
+		for (int i = 0; i < nodes.length; i++) {
+			getItems().set(i, Jams.getLanguageManager().getSelected().getOrDefault(nodes[i]));
 		}
+		getSelectionModel().select(selected);
 	}
 
 	@Listener
 	private void onLanguageChange(SelectedLanguageChangeEvent.After event) {
-		getItems().clear();
-		for (String node : nodes) {
-			getItems().add(Jams.getLanguageManager().getSelected().getOrDefault(node));
+		int selected = getSelectionModel().getSelectedIndex();
+		for (int i = 0; i < nodes.length; i++) {
+			getItems().set(i, Jams.getLanguageManager().getSelected().getOrDefault(nodes[i]));
 		}
+		getSelectionModel().select(selected);
 	}
 }

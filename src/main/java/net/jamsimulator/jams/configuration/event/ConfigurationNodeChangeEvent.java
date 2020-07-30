@@ -61,8 +61,24 @@ public class ConfigurationNodeChangeEvent extends Event {
 		return Optional.ofNullable(oldValue);
 	}
 
+	public <T> Optional<T> getOldValueAs() {
+		try {
+			return Optional.ofNullable((T) oldValue);
+		} catch (ClassCastException ex) {
+			return Optional.empty();
+		}
+	}
+
 	public Optional<Object> getNewValue() {
 		return Optional.ofNullable(newValue);
+	}
+
+	public <T> Optional<T> getNewValueAs() {
+		try {
+			return Optional.ofNullable((T) newValue);
+		} catch (ClassCastException ex) {
+			return Optional.empty();
+		}
 	}
 
 	public static class Before extends ConfigurationNodeChangeEvent implements Cancellable {
