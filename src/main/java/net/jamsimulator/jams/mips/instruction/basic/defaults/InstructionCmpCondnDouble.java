@@ -24,14 +24,15 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
-import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.RuntimeInstructionException;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -51,6 +52,7 @@ public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionC
 	public InstructionCmpCondnDouble(FloatCondition condition) {
 		super(String.format(NAME, condition.getName()), String.format(MNEMONIC, condition.getMnemonic()), PARAMETER_TYPES, OPERATION_CODE, condition.getCode(), FMT);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -143,6 +145,61 @@ public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionC
 			boolean condition = instruction.cond4() ^ ((instruction.cond2() && less) || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
 			rd0.setValue(condition ? 0xFFFFFFFF : 0);
 			rd1.setValue(condition ? 0xFFFFFFFF : 0);
+		}
+	}
+
+	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
+			super(simulation, instruction, false, true);
+		}
+
+		@Override
+		public void decode() {
+			if (instruction.getTargetRegister() % 2 != 0) error("Target register identifier is not even.");
+			if (instruction.getSourceRegister() % 2 != 0) error("Source register identifier is not even.");
+			if (instruction.getDestinationRegister() % 2 != 0) error("Destination register identifier is not even.");
+
+			Register rt0 = registerCop1(instruction.getTargetRegister());
+			Register rt1 = registerCop1(instruction.getTargetRegister() + 1);
+			Register rs0 = registerCop1(instruction.getSourceRegister());
+			Register rs1 = registerCop1(instruction.getSourceRegister() + 1);
+			decodeResult = new int[]{rt0.getValue(), rt1.getValue(), rs0.getValue(), rs1.getValue()};
+		}
+
+		@Override
+		public void execute() {
+			double ft = NumericUtils.intsToDouble(decodeResult[0], decodeResult[1]);
+			double fs = NumericUtils.intsToDouble(decodeResult[2], decodeResult[3]);
+
+			boolean less, equal, unordered;
+
+			if (Double.isNaN(fs) || Double.isNaN(ft)) {
+				less = false;
+				equal = false;
+				unordered = true;
+				if (instruction.cond3()) {
+					throw new RuntimeInstructionException("Invalid operation");
+				}
+			} else {
+				less = fs < ft;
+				equal = fs == ft;
+				unordered = false;
+			}
+
+			boolean condition = instruction.cond4() ^ ((instruction.cond2() && less) || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
+			executionResult = new int[]{condition ? 0xFFFFFFFF : 0, condition ? 0xFFFFFFFF : 0};
+		}
+
+		@Override
+		public void memory() {
+
+		}
+
+		@Override
+		public void writeBack() {
+			registerCop1(instruction.getDestinationRegister()).setValue(executionResult[0]);
+			registerCop1(instruction.getDestinationRegister() + 1).setValue(executionResult[1]);
 		}
 	}
 }

@@ -24,12 +24,14 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRIInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRIInstruction;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -49,6 +51,7 @@ public class InstructionBgez extends BasicRIInstruction<InstructionBgez.Assemble
 	public InstructionBgez() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -90,6 +93,35 @@ public class InstructionBgez extends BasicRIInstruction<InstructionBgez.Assemble
 			if (rs.getValue() < 0) return;
 			Register pc = pc();
 			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
+		}
+	}
+
+	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
+			super(simulation, instruction, false, false);
+		}
+
+		@Override
+		public void decode() {
+			Register rs = register(instruction.getSourceRegister());
+			decodeResult = new int[]{rs.getValue()};
+		}
+
+		@Override
+		public void execute() {
+			executionResult = new int[0];
+			if (decodeResult[0] < 0) return;
+			pc().setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+		}
+
+		@Override
+		public void memory() {
+
+		}
+
+		@Override
+		public void writeBack() {
 		}
 	}
 }

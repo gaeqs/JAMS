@@ -24,11 +24,13 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI26Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -47,6 +49,7 @@ public class InstructionBalc extends BasicInstruction<InstructionBalc.Assembled>
 	public InstructionBalc() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -87,6 +90,36 @@ public class InstructionBalc extends BasicInstruction<InstructionBalc.Assembled>
 			Register pc = pc();
 			ra.setValue(pc.getValue());
 			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
+		}
+	}
+
+
+	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
+			super(simulation, instruction, false, true);
+		}
+
+		@Override
+		public void decode() {
+			decodeResult = new int[0];
+		}
+
+		@Override
+		public void execute() {
+			executionResult = new int[]{pc().getValue()};
+			pc().setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+		}
+
+		@Override
+		public void memory() {
+
+		}
+
+		@Override
+		public void writeBack() {
+			Register ra = register(31);
+			ra.setValue(executionResult[0]);
 		}
 	}
 }

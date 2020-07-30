@@ -24,12 +24,14 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -53,6 +55,7 @@ public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Asse
 		this.to = to;
 		this.from = from;
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -97,27 +100,75 @@ public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Asse
 		@Override
 		public void execute() {
 
-			if (instruction.to.requiresEventRegister()) {
+			if (instruction.to.requiresEvenRegister()) {
 				if (instruction.getDestinationRegister() % 2 != 0)
 					error("Destination register identifier is not even.");
 			}
-			if (instruction.from.requiresEventRegister()) {
+			if (instruction.from.requiresEvenRegister()) {
 				if (instruction.getSourceRegister() % 2 != 0)
 					error("Source register identifier is not even.");
 			}
 
 			Register to0 = registerCop1(instruction.getDestinationRegister());
-			Register to1 = instruction.to.requiresEventRegister()
+			Register to1 = instruction.to.requiresEvenRegister()
 					? registerCop1(instruction.getDestinationRegister() + 1)
 					: null;
 
 			Register from0 = registerCop1(instruction.getSourceRegister());
-			Register from1 = instruction.from.requiresEventRegister()
+			Register from1 = instruction.from.requiresEvenRegister()
 					? registerCop1(instruction.getSourceRegister() + 1)
 					: null;
 
 			Number number = instruction.from.from(from0, from1);
 			instruction.to.to(number, to0, to1);
+		}
+	}
+
+
+	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
+			super(simulation, instruction, false, true);
+		}
+
+		@Override
+		public void decode() {
+			if (instruction.to.requiresEvenRegister()) {
+				if (instruction.getDestinationRegister() % 2 != 0)
+					error("Destination register identifier is not even.");
+			}
+			if (instruction.from.requiresEvenRegister()) {
+				if (instruction.getSourceRegister() % 2 != 0)
+					error("Source register identifier is not even.");
+			}
+
+
+			Register from0 = registerCop1(instruction.getSourceRegister());
+			Register from1 = instruction.from.requiresEvenRegister() ? registerCop1(instruction.getSourceRegister() + 1) : null;
+
+			decodeResult = new int[]{from0.getValue(), from1 == null ? 0 : from1.getValue()};
+		}
+
+		@Override
+		public void execute() {
+			Number number = instruction.from.from(decodeResult[0], decodeResult[1]);
+			executionResult = instruction.to.to(number);
+		}
+
+		@Override
+		public void memory() {
+
+		}
+
+		@Override
+		public void writeBack() {
+			Register to0 = registerCop1(instruction.getDestinationRegister());
+			to0.setValue(executionResult[0]);
+
+			if (executionResult.length == 2) {
+				Register to1 = registerCop1(instruction.getDestinationRegister() + 1);
+				to1.setValue(executionResult[1]);
+			}
 		}
 	}
 }

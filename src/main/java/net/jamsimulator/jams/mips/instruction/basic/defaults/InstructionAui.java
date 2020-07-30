@@ -101,17 +101,17 @@ public class InstructionAui extends BasicInstruction<InstructionAui.Assembled> {
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
-			super(simulation, instruction);
+			super(simulation, instruction, false, true);
 		}
 
 		@Override
 		public void decode() {
-			values = new int[]{register(instruction.getSourceRegister()).getValue()};
+			decodeResult = new int[]{register(instruction.getSourceRegister()).getValue()};
 		}
 
 		@Override
 		public void execute() {
-			result = new int[]{values[0] + (instruction.getImmediate() << 16)};
+			executionResult = new int[]{decodeResult[0] + (instruction.getImmediate() << 16)};
 		}
 
 		@Override
@@ -121,7 +121,7 @@ public class InstructionAui extends BasicInstruction<InstructionAui.Assembled> {
 
 		@Override
 		public void writeBack() {
-			register(instruction.getTargetRegister()).setValue(result[0]);
+			register(instruction.getTargetRegister()).setValue(executionResult[0]);
 		}
 	}
 }

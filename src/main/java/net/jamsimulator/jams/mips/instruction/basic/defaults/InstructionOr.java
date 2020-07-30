@@ -24,12 +24,14 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -49,6 +51,7 @@ public class InstructionOr extends BasicRInstruction<InstructionOr.Assembled> {
 	public InstructionOr() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -95,6 +98,35 @@ public class InstructionOr extends BasicRInstruction<InstructionOr.Assembled> {
 			Register rt = register(instruction.getTargetRegister());
 			Register rd = register(instruction.getDestinationRegister());
 			rd.setValue(rs.getValue() | rt.getValue());
+		}
+	}
+
+	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
+			super(simulation, instruction, false, true);
+		}
+
+		@Override
+		public void decode() {
+			Register rs = register(instruction.getSourceRegister());
+			Register rt = register(instruction.getTargetRegister());
+			decodeResult = new int[]{rs.getValue(), rt.getValue()};
+		}
+
+		@Override
+		public void execute() {
+			executionResult = new int[]{decodeResult[0] | decodeResult[1]};
+		}
+
+		@Override
+		public void memory() {
+
+		}
+
+		@Override
+		public void writeBack() {
+			register(instruction.getDestinationRegister()).setValue(executionResult[0]);
 		}
 	}
 }

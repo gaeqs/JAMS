@@ -24,12 +24,14 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI11Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicIFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -49,6 +51,7 @@ public class InstructionMtc0 extends BasicIFPUInstruction<InstructionMtc0.Assemb
 	public InstructionMtc0() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, SUBCODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -94,6 +97,35 @@ public class InstructionMtc0 extends BasicIFPUInstruction<InstructionMtc0.Assemb
 			} catch (ArithmeticException ex) {
 				error("Integer overflow.", ex);
 			}
+		}
+	}
+
+	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
+			super(simulation, instruction, false, true);
+		}
+
+		@Override
+		public void decode() {
+			Register rt = register(instruction.getTargetRegister());
+			decodeResult = new int[]{rt.getValue()};
+		}
+
+		@Override
+		public void execute() {
+			executionResult = new int[]{decodeResult[0]};
+		}
+
+		@Override
+		public void memory() {
+
+		}
+
+		@Override
+		public void writeBack() {
+			Register rd = registerCop0(instruction.getDestinationRegister());
+			rd.setValue(executionResult[0]);
 		}
 	}
 }

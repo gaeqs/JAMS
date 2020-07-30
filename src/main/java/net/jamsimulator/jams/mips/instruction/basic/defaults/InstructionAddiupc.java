@@ -99,17 +99,17 @@ public class InstructionAddiupc extends BasicPCREL19Instruction<InstructionAddiu
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
-			super(simulation, instruction);
+			super(simulation, instruction, false, true);
 		}
 
 		@Override
 		public void decode() {
-			values = new int[0];
+			decodeResult = new int[0];
 		}
 
 		@Override
 		public void execute() {
-			result = new int[]{pc().getValue() + (instruction.getImmediateAsSigned() << 2)};
+			executionResult = new int[]{pc().getValue() + (instruction.getImmediateAsSigned() << 2)};
 		}
 
 		@Override
@@ -119,7 +119,7 @@ public class InstructionAddiupc extends BasicPCREL19Instruction<InstructionAddiu
 
 		@Override
 		public void writeBack() {
-			register(instruction.getSourceRegister()).setValue(result[0]);
+			register(instruction.getSourceRegister()).setValue(executionResult[0]);
 		}
 	}
 }

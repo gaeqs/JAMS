@@ -105,20 +105,20 @@ public class InstructionAddSingle extends BasicRFPUInstruction<InstructionAddSin
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
-			super(simulation, instruction);
+			super(simulation, instruction, false, true);
 		}
 
 		@Override
 		public void decode() {
 			Register rt = registerCop1(instruction.getTargetRegister());
 			Register rs = registerCop1(instruction.getSourceRegister());
-			values = new int[]{rt.getValue(), rs.getValue()};
+			decodeResult = new int[]{rt.getValue(), rs.getValue()};
 		}
 
 		@Override
 		public void execute() {
-			float f = Float.intBitsToFloat(values[0]) + Float.intBitsToFloat(values[1]);
-			result = new int[]{Float.floatToIntBits(f)};
+			float f = Float.intBitsToFloat(decodeResult[0]) + Float.intBitsToFloat(decodeResult[1]);
+			executionResult = new int[]{Float.floatToIntBits(f)};
 		}
 
 		@Override
@@ -128,7 +128,7 @@ public class InstructionAddSingle extends BasicRFPUInstruction<InstructionAddSin
 
 		@Override
 		public void writeBack() {
-			registerCop1(instruction.getDestinationRegister()).setValue(result[0]);
+			registerCop1(instruction.getDestinationRegister()).setValue(executionResult[0]);
 		}
 	}
 }

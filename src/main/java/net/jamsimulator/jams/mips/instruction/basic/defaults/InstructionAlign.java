@@ -132,22 +132,22 @@ public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembl
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
-			super(simulation, instruction);
+			super(simulation, instruction, false, true);
 		}
 
 		@Override
 		public void decode() {
 			Register rt = register(instruction.getTargetRegister());
 			Register rs = register(instruction.getSourceRegister());
-			values = new int[]{rt.getValue(), rs.getValue()};
+			decodeResult = new int[]{rt.getValue(), rs.getValue()};
 		}
 
 		@Override
 		public void execute() {
 			int bp = instruction.getShiftAmount();
-			int tmpRtHi = values[0] << (bp << 3);
-			int tmpRsLo = values[1] >>> ((4 - bp) << 3);
-			result = new int[]{tmpRtHi | tmpRsLo};
+			int tmpRtHi = decodeResult[0] << (bp << 3);
+			int tmpRsLo = decodeResult[1] >>> ((4 - bp) << 3);
+			executionResult = new int[]{tmpRtHi | tmpRsLo};
 		}
 
 		@Override
@@ -157,7 +157,7 @@ public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembl
 
 		@Override
 		public void writeBack() {
-			register(instruction.getDestinationRegister()).setValue(result[0]);
+			register(instruction.getDestinationRegister()).setValue(executionResult[0]);
 		}
 	}
 }

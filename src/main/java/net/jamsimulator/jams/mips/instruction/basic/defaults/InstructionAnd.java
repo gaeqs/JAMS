@@ -105,19 +105,19 @@ public class InstructionAnd extends BasicRInstruction<InstructionAnd.Assembled> 
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
-			super(simulation, instruction);
+			super(simulation, instruction, false, true);
 		}
 
 		@Override
 		public void decode() {
 			Register rt = register(instruction.getTargetRegister());
 			Register rs = register(instruction.getSourceRegister());
-			values = new int[]{rt.getValue(), rs.getValue()};
+			decodeResult = new int[]{rt.getValue(), rs.getValue()};
 		}
 
 		@Override
 		public void execute() {
-			result = new int[]{values[0] & values[1]};
+			executionResult = new int[]{decodeResult[0] & decodeResult[1]};
 		}
 
 		@Override
@@ -127,7 +127,7 @@ public class InstructionAnd extends BasicRInstruction<InstructionAnd.Assembled> 
 
 		@Override
 		public void writeBack() {
-			register(instruction.getDestinationRegister()).setValue(result[0]);
+			register(instruction.getDestinationRegister()).setValue(executionResult[0]);
 		}
 	}
 }

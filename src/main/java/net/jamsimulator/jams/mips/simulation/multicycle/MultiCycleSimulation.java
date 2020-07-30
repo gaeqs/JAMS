@@ -163,6 +163,7 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 					first = false;
 				}
 			} catch (Exception ex) {
+				System.err.println("PC: 0x" + StringUtils.addZeros(Integer.toHexString(registers.getProgramCounter().getValue()), 8));
 				ex.printStackTrace();
 			}
 
@@ -280,7 +281,17 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 		if (currentStepChanges != null) {
 			currentStepChanges.addChange(new MultiCycleSimulationChangeStep(currentStep));
 		}
-		currentStep = MultiCycleStep.MEMORY;
+
+		if (currentExecution.executesMemory()) {
+			currentStep = MultiCycleStep.MEMORY;
+		} else {
+			if (currentExecution.executesWriteBack()) {
+				currentStep = MultiCycleStep.WRITE_BACK;
+			} else {
+				currentStep = MultiCycleStep.FETCH;
+				checkFinished();
+			}
+		}
 	}
 
 	private void memory() {
@@ -288,7 +299,12 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 		if (currentStepChanges != null) {
 			currentStepChanges.addChange(new MultiCycleSimulationChangeStep(currentStep));
 		}
-		currentStep = MultiCycleStep.WRITE_BACK;
+		if (currentExecution.executesWriteBack()) {
+			currentStep = MultiCycleStep.WRITE_BACK;
+		} else {
+			currentStep = MultiCycleStep.FETCH;
+			checkFinished();
+		}
 	}
 
 	private void writeBack() {
@@ -297,7 +313,11 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 			currentStepChanges.addChange(new MultiCycleSimulationChangeStep(currentStep));
 		}
 		currentStep = MultiCycleStep.FETCH;
+		checkFinished();
+	}
 
+
+	private void checkFinished() {
 		if (registers.getProgramCounter().getValue() > instructionStackBottom && !finished) {
 			finished = true;
 			if (getConsole() != null) {

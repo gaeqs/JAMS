@@ -12,7 +12,7 @@ public enum FmtNumbers {
 
 	private final int cvt, fmt, fmt3;
 	private final String name, mnemonic;
-	private final boolean requiresEventRegister;
+	private final boolean requiresEvenRegister;
 
 	FmtNumbers(int cvt, int fmt, int fmt3, String name, String mnemonic, boolean requiresEvenRegister) {
 		this.cvt = cvt;
@@ -20,7 +20,7 @@ public enum FmtNumbers {
 		this.fmt3 = fmt3;
 		this.name = name;
 		this.mnemonic = mnemonic;
-		this.requiresEventRegister = requiresEvenRegister;
+		this.requiresEvenRegister = requiresEvenRegister;
 	}
 
 	public int getCvt() {
@@ -43,22 +43,26 @@ public enum FmtNumbers {
 		return mnemonic;
 	}
 
-	public boolean requiresEventRegister() {
-		return requiresEventRegister;
+	public boolean requiresEvenRegister() {
+		return requiresEvenRegister;
 	}
 
 	public Number from(Register register, Register aux) {
+		return from(register.getValue(), aux == null ? 0 : aux.getValue());
+	}
+
+	public Number from(int val, int aux) {
 		switch (this) {
 			case WORD:
-				return register.getValue();
+				return val;
 			case LONG:
-				long high = aux.getValue();
+				long high = aux;
 				high <<= 32;
-				return high + register.getValue();
+				return high + val;
 			case SINGLE:
-				return Float.intBitsToFloat(register.getValue());
+				return Float.intBitsToFloat(val);
 			case DOUBLE:
-				return NumericUtils.intsToDouble(register.getValue(), aux.getValue());
+				return NumericUtils.intsToDouble(val, aux);
 		}
 		return 0;
 	}
@@ -83,4 +87,17 @@ public enum FmtNumbers {
 		}
 	}
 
+	public int[] to(Number number) {
+		switch (this) {
+			case WORD:
+				return new int[]{number.intValue()};
+			case LONG:
+				return new int[]{number.intValue(), (int) (number.longValue() >> 32)};
+			case SINGLE:
+				return new int[]{Float.floatToIntBits(number.floatValue())};
+			case DOUBLE:
+				return NumericUtils.doubleToInts(number.doubleValue());
+		}
+		return new int[0];
+	}
 }

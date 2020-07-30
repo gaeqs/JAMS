@@ -30,11 +30,24 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public abstract class MultiCycleExecution<Inst extends AssembledInstruction> extends InstructionExecution<MultiCycleArchitecture, Inst> {
 
-	protected int[] values;
-	protected int[] result;
+	protected int[] decodeResult;
+	protected int[] executionResult;
+	protected int[] memoryResult;
 
-	public MultiCycleExecution(Simulation<MultiCycleArchitecture> simulation, Inst instruction) {
+	protected boolean executesMemory, executesWriteBack;
+
+	public MultiCycleExecution(Simulation<MultiCycleArchitecture> simulation, Inst instruction, boolean executesMemory, boolean executesWriteBack) {
 		super(simulation, instruction);
+		this.executesMemory = executesMemory;
+		this.executesWriteBack = executesWriteBack;
+	}
+
+	public boolean executesMemory() {
+		return executesMemory;
+	}
+
+	public boolean executesWriteBack() {
+		return executesWriteBack;
 	}
 
 	public abstract void decode();

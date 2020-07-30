@@ -117,24 +117,28 @@ public class InstructionAddDouble extends BasicRFPUInstruction<InstructionAddDou
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
-			super(simulation, instruction);
+			super(simulation, instruction, false, true);
 		}
 
 		@Override
 		public void decode() {
+			if (instruction.getTargetRegister() % 2 != 0) error("Target register identifier is not even.");
+			if (instruction.getSourceRegister() % 2 != 0) error("Source register identifier is not even.");
+			if (instruction.getDestinationRegister() % 2 != 0) error("Destination register identifier is not even.");
+
 			Register rt0 = registerCop1(instruction.getTargetRegister());
 			Register rt1 = registerCop1(instruction.getTargetRegister() + 1);
 			Register rs0 = registerCop1(instruction.getSourceRegister());
 			Register rs1 = registerCop1(instruction.getSourceRegister() + 1);
-			values = new int[]{rt0.getValue(), rt1.getValue(), rs0.getValue(), rs1.getValue()};
+			decodeResult = new int[]{rt0.getValue(), rt1.getValue(), rs0.getValue(), rs1.getValue()};
 		}
 
 		@Override
 		public void execute() {
-			double target = NumericUtils.intsToDouble(values[0], values[1]);
-			double source = NumericUtils.intsToDouble(values[2], values[3]);
+			double target = NumericUtils.intsToDouble(decodeResult[0], decodeResult[1]);
+			double source = NumericUtils.intsToDouble(decodeResult[2], decodeResult[3]);
 			double destination = target + source;
-			result = NumericUtils.doubleToInts(destination);
+			executionResult = NumericUtils.doubleToInts(destination);
 		}
 
 		@Override
@@ -144,8 +148,8 @@ public class InstructionAddDouble extends BasicRFPUInstruction<InstructionAddDou
 
 		@Override
 		public void writeBack() {
-			registerCop1(instruction.getDestinationRegister()).setValue(result[0]);
-			registerCop1(instruction.getDestinationRegister() + 1).setValue(result[1]);
+			registerCop1(instruction.getDestinationRegister()).setValue(executionResult[0]);
+			registerCop1(instruction.getDestinationRegister() + 1).setValue(executionResult[1]);
 		}
 	}
 }

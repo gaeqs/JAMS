@@ -108,7 +108,7 @@ public class InstructionAbsDouble extends BasicRFPUInstruction<InstructionAbsDou
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
-			super(simulation, instruction);
+			super(simulation, instruction, false, true);
 		}
 
 		@Override
@@ -118,13 +118,13 @@ public class InstructionAbsDouble extends BasicRFPUInstruction<InstructionAbsDou
 
 			Register rs0 = registerCop1(instruction.getSourceRegister());
 			Register rs1 = registerCop1(instruction.getSourceRegister() + 1);
-			values = new int[]{rs0.getValue(), rs1.getValue()};
+			decodeResult = new int[]{rs0.getValue(), rs1.getValue()};
 		}
 
 		@Override
 		public void execute() {
-			double abs = Math.abs(NumericUtils.intsToDouble(values[0], values[1]));
-			result = NumericUtils.doubleToInts(abs);
+			double abs = Math.abs(NumericUtils.intsToDouble(decodeResult[0], decodeResult[1]));
+			executionResult = NumericUtils.doubleToInts(abs);
 		}
 
 		@Override
@@ -134,8 +134,8 @@ public class InstructionAbsDouble extends BasicRFPUInstruction<InstructionAbsDou
 
 		@Override
 		public void writeBack() {
-			registerCop1(instruction.getDestinationRegister()).setValue(result[0]);
-			registerCop1(instruction.getDestinationRegister() + 1).setValue(result[1]);
+			registerCop1(instruction.getDestinationRegister()).setValue(executionResult[0]);
+			registerCop1(instruction.getDestinationRegister() + 1).setValue(executionResult[1]);
 		}
 	}
 }

@@ -98,17 +98,18 @@ public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled>
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
-			super(simulation, instruction);
+			super(simulation, instruction, false, true);
 		}
 
 		@Override
 		public void decode() {
-			values = new int[]{};
+			decodeResult = new int[0];
 		}
 
 		@Override
 		public void execute() {
-			result = new int[]{pc().getValue() + (instruction.getImmediateAsSigned() << 2)};
+			executionResult = new int[]{pc().getValue()};
+			pc().setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
 		}
 
 		@Override
@@ -119,9 +120,7 @@ public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled>
 		@Override
 		public void writeBack() {
 			Register ra = register(31);
-			Register pc = pc();
-			ra.setValue(pc.getValue());
-			pc.setValue(result[0]);
+			ra.setValue(executionResult[0]);
 		}
 	}
 }

@@ -109,18 +109,18 @@ public class InstructionAdd extends BasicRInstruction<InstructionAdd.Assembled> 
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
-			super(simulation, instruction);
+			super(simulation, instruction, false, true);
 		}
 
 		@Override
 		public void decode() {
-			values = new int[]{register(instruction.getSourceRegister()).getValue(), register(instruction.getTargetRegister()).getValue()};
+			decodeResult = new int[]{register(instruction.getSourceRegister()).getValue(), register(instruction.getTargetRegister()).getValue()};
 		}
 
 		@Override
 		public void execute() {
 			try {
-				result = new int[]{Math.addExact(values[0], values[1])};
+				executionResult = new int[]{Math.addExact(decodeResult[0], decodeResult[1])};
 			} catch (ArithmeticException ex) {
 				error("Integer overflow.", ex);
 			}
@@ -133,7 +133,7 @@ public class InstructionAdd extends BasicRInstruction<InstructionAdd.Assembled> 
 
 		@Override
 		public void writeBack() {
-			register(instruction.getDestinationRegister()).setValue(result[0]);
+			register(instruction.getDestinationRegister()).setValue(executionResult[0]);
 		}
 	}
 }
