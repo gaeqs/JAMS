@@ -70,7 +70,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	private final LinkedList<StepChanges<SingleCycleArchitecture>> changes;
 	private StepChanges<SingleCycleArchitecture> currentStepChanges;
 
-	private int instructions;
+	private long instructions;
 	private long start;
 
 	/**
@@ -83,7 +83,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	 * @param instructionStackBottom the address of the bottom of the instruction stack.
 	 */
 	public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, SimulationData data) {
-		super(architecture, instructionSet, registers, memory, instructionStackBottom, data);
+		super(architecture, instructionSet, registers, memory, instructionStackBottom, data, true);
 		changes = data.isUndoEnabled() ? new LinkedList<>() : null;
 	}
 
@@ -179,7 +179,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	public boolean undoLastStep() {
 		if (!data.isUndoEnabled()) return false;
 
-		if (callEvent(new SimulationUndoStepEvent.Before(this)).isCancelled()) return false;
+		if (callEvent(new SimulationUndoStepEvent.Before(this, currentCycle - 1)).isCancelled()) return false;
 
 		stop();
 		waitForExecutionFinish();
@@ -189,7 +189,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		changes.removeLast().restore(this);
 		currentCycle--;
 
-		callEvent(new SimulationUndoStepEvent.After(this));
+		callEvent(new SimulationUndoStepEvent.After(this, currentCycle));
 
 		return true;
 	}
@@ -207,9 +207,6 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 			currentStepChanges = new StepChanges<>();
 		}
 
-		currentCycle++;
-
-
 		//Fetch and Decode
 		registers.getProgramCounter().setValue(pc + 4);
 		SingleCycleExecution<?> execution = (SingleCycleExecution<?>) fetch(pc);
@@ -226,7 +223,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		//Send before event
 		if (data.canCallEvents()) {
 			SingleCycleInstructionExecutionEvent.Before before =
-					callEvent(new SingleCycleInstructionExecutionEvent.Before(this, pc, execution.getInstruction(), execution));
+					callEvent(new SingleCycleInstructionExecutionEvent.Before(this, currentCycle, pc, execution.getInstruction(), execution));
 			if (before.isCancelled()) return;
 
 			//Gets the modifies execution. This may be null.
@@ -248,7 +245,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		}
 
 		if (data.canCallEvents()) {
-			callEvent(new SingleCycleInstructionExecutionEvent.After(this, pc, execution.getInstruction(), execution));
+			callEvent(new SingleCycleInstructionExecutionEvent.After(this, currentCycle, pc, execution.getInstruction(), execution));
 
 			if (data.isUndoEnabled()) {
 				changes.add(currentStepChanges);
@@ -257,6 +254,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 			}
 		}
 
+		currentCycle++;
 
 		if (registers.getProgramCounter().getValue() > instructionStackBottom && !finished) {
 			finished = true;

@@ -5,10 +5,12 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
+import net.jamsimulator.jams.gui.mips.simulator.instruction.multicycle.MultiCycleInstructionsTable;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.singlecycle.SingleCycleInstructionsTable;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTableColumn;
 import net.jamsimulator.jams.mips.architecture.Architecture;
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.simulation.Simulation;
@@ -25,6 +27,8 @@ public class InstructionsTable extends TableView<InstructionEntry> {
 	static {
 		TABLES_PER_ARCHITECTURE.put(SingleCycleArchitecture.INSTANCE,
 				(s, o) -> new SingleCycleInstructionsTable((Simulation<? extends SingleCycleArchitecture>) s, o));
+		TABLES_PER_ARCHITECTURE.put(MultiCycleArchitecture.INSTANCE,
+				(s, o) -> new MultiCycleInstructionsTable((Simulation<? extends MultiCycleArchitecture>) s, o));
 	}
 
 	public static void registerTableView(Architecture architecture,

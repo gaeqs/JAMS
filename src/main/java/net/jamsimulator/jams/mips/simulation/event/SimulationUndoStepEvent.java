@@ -5,13 +5,20 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class SimulationUndoStepEvent extends SimulationEvent {
 
+	private final long undoCycle;
+
 	/**
 	 * Creates the simulation event.
 	 *
 	 * @param simulation the {@link Simulation} tha created this event.
 	 */
-	protected SimulationUndoStepEvent(Simulation<?> simulation) {
+	protected SimulationUndoStepEvent(Simulation<?> simulation, long undoCycle) {
 		super(simulation);
+		this.undoCycle = undoCycle;
+	}
+
+	public long getUndoCycle() {
+		return undoCycle;
 	}
 
 	public static class Before extends SimulationUndoStepEvent implements Cancellable {
@@ -23,8 +30,8 @@ public class SimulationUndoStepEvent extends SimulationEvent {
 		 *
 		 * @param simulation the {@link Simulation} tha created this event.
 		 */
-		public Before(Simulation<?> simulation) {
-			super(simulation);
+		public Before(Simulation<?> simulation, long undoCycle) {
+			super(simulation, undoCycle);
 		}
 
 		@Override
@@ -46,8 +53,8 @@ public class SimulationUndoStepEvent extends SimulationEvent {
 		 *
 		 * @param simulation the {@link Simulation} tha created this event.
 		 */
-		public After(Simulation<?> simulation) {
-			super(simulation);
+		public After(Simulation<?> simulation, long undoCycle) {
+			super(simulation, undoCycle);
 		}
 	}
 }

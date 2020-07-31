@@ -88,8 +88,8 @@ public class InstructionMulDouble extends BasicRFPUInstruction<InstructionMulDou
 
 	public static class SingleCycle extends SingleCycleExecution<Assembled> {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction) {
-			super(simulation, instruction);
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address);
 		}
 
 		@Override
@@ -117,8 +117,8 @@ public class InstructionMulDouble extends BasicRFPUInstruction<InstructionMulDou
 
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
-		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction) {
-			super(simulation, instruction, false, true);
+		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address, false, true);
 		}
 
 		@Override

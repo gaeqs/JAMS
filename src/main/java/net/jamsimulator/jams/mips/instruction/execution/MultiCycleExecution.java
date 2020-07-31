@@ -36,8 +36,8 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
 
 	protected boolean executesMemory, executesWriteBack;
 
-	public MultiCycleExecution(Simulation<MultiCycleArchitecture> simulation, Inst instruction, boolean executesMemory, boolean executesWriteBack) {
-		super(simulation, instruction);
+	public MultiCycleExecution(Simulation<MultiCycleArchitecture> simulation, Inst instruction, int address, boolean executesMemory, boolean executesWriteBack) {
+		super(simulation, instruction, address);
 		this.executesMemory = executesMemory;
 		this.executesWriteBack = executesWriteBack;
 	}

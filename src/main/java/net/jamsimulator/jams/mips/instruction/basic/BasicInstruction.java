@@ -158,13 +158,14 @@ public abstract class BasicInstruction<Inst extends AssembledInstruction> implem
 	 *
 	 * @param simulation  the simulation.
 	 * @param instruction the assembled instruction.
+	 * @param address     the address of the instruction.
 	 * @param <Arch>      the architecture type.
 	 * @return the {@link InstructionExecution}.
 	 */
-	public <Arch extends Architecture> Optional<InstructionExecution<Arch, Inst>> generateExecution(Simulation<Arch> simulation, AssembledInstruction instruction) {
+	public <Arch extends Architecture> Optional<InstructionExecution<Arch, Inst>> generateExecution(Simulation<Arch> simulation, AssembledInstruction instruction, int address) {
 		InstructionExecutionBuilder<Arch, Inst> fun = (InstructionExecutionBuilder<Arch, Inst>) executionBuilders.get(simulation.getArchitecture());
 		if (fun == null) return Optional.empty();
-		InstructionExecution<Arch, Inst> execution = fun.create(simulation, (Inst) instruction);
+		InstructionExecution<Arch, Inst> execution = fun.create(simulation, (Inst) instruction, address);
 		return Optional.ofNullable(execution);
 	}
 
