@@ -128,8 +128,8 @@ public class FlowTable extends VBox {
 			double dx = event.getSceneX() - x;
 			double dy = event.getSceneY() - y;
 			Bounds bounds = scrollPane.getViewportBounds();
-			scrollPane.setHvalue(h - dx / (getWidth() - bounds.getWidth()));
-			scrollPane.setVvalue(v - dy / (getHeight() - bounds.getHeight()));
+			scrollPane.setHvalue(h - dx / (getWidth() * getScaleX() - bounds.getWidth()));
+			scrollPane.setVvalue(v - dy / (getHeight() * getScaleY() - bounds.getHeight()));
 		});
 
 	}
@@ -139,7 +139,8 @@ public class FlowTable extends VBox {
 		if (event.getNode().equals("simulation.mips.flow_max_items")) {
 			maxItems = (int) event.getNewValueAs().orElse(maxItems);
 			if (getChildren().size() > maxItems) {
-				getChildren().remove(maxItems, getChildren().size());
+				getChildren().remove(maxItems, getChildren().size())
+				;
 			}
 		}
 	}
