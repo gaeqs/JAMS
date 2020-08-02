@@ -22,46 +22,32 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.action.defaults.explorerelement;
+package net.jamsimulator.jams.gui.action.defaults.general;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.stage.DirectoryChooser;
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.explorer.Explorer;
-import net.jamsimulator.jams.gui.explorer.ExplorerElement;
-import net.jamsimulator.jams.gui.explorer.ExplorerSection;
+import net.jamsimulator.jams.gui.popup.CreateProjectWindow;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 
-public class ExplorerElementActionContractOrSelectParent extends Action {
+import java.io.File;
 
-	public static final String NAME = "EXPLORER_ELEMENT_CONTRACT_OR_SELECT_PARENT";
-	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.LEFT);
+public class GeneralActionCreateProject extends Action {
 
-	public ExplorerElementActionContractOrSelectParent() {
-		super(NAME, RegionTags.EXPLORER_ELEMENT, Messages.ACTION_EXPLORER_ELEMENT_CONTRACT_OR_SELECT_PARENT, DEFAULT_COMBINATION);
+	public static final String NAME = "GENERAL_CREATE_PROJECT";
+	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN);
+
+	public GeneralActionCreateProject() {
+		super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_CREATE_PROJECT, DEFAULT_COMBINATION);
 	}
 
 	@Override
 	public void run(Object node) {
-		if (!(node instanceof ExplorerElement)) return;
-
-		ExplorerElement element = (ExplorerElement) node;
-
-		if (element instanceof ExplorerSection) {
-			if (((ExplorerSection) element).isExpanded()) {
-				((ExplorerSection) element).contract();
-				return;
-			}
-		}
-
-		Explorer explorer = element.getExplorer();
-		explorer.startKeyboardSelection();
-		element.getParentSection().ifPresent(target -> {
-			explorer.setSelectedElement(target);
-			explorer.updateScrollPosition(target);
-		});
-
+		CreateProjectWindow.open();
 	}
 }

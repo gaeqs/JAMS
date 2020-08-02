@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.action.defaults.explorerelement;
 
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;

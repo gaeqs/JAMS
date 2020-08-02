@@ -30,6 +30,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -202,6 +203,12 @@ public class ConfigurationWindow extends SplitPane {
 					configuration.save(true);
 				} catch (IOException e) {
 					e.printStackTrace();
+				}
+			});
+
+			scene.setOnKeyPressed(event -> {
+				if (event.getCode() == KeyCode.ESCAPE) {
+					stage.close();
 				}
 			});
 
