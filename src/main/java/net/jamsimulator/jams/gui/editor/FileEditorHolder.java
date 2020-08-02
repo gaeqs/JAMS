@@ -22,6 +22,8 @@ public class FileEditorHolder extends SplitPane {
 	private FileEditorHolder first, second;
 	private DraggingSupport draggingSupport;
 
+	private FileEditor lastFocusedEditor;
+
 	/**
 	 * Creates the holder.
 	 *
@@ -125,6 +127,29 @@ public class FileEditorHolder extends SplitPane {
 	 */
 	public Optional<FileEditorHolder> getSecond() {
 		return Optional.ofNullable(second);
+	}
+
+	/**
+	 * Returns the last focused editor inside this holder.
+	 *
+	 * @return the last focused editor, if present.
+	 */
+	public Optional<FileEditor> getLastFocusedEditor() {
+		if (parent != null) return parent.getLastFocusedEditor();
+		return Optional.ofNullable(lastFocusedEditor);
+	}
+
+	/**
+	 * Sets the last focused editor inside this holder. This editor may be null.
+	 *
+	 * @param lastFocusedEditor the editor or null.
+	 */
+	public void setLastFocusedEditor(FileEditor lastFocusedEditor) {
+		if (parent != null) {
+			parent.setLastFocusedEditor(lastFocusedEditor);
+			return;
+		}
+		this.lastFocusedEditor = lastFocusedEditor;
 	}
 
 	/**

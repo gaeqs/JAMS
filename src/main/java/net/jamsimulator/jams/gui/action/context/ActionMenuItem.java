@@ -41,6 +41,8 @@ import java.util.List;
  */
 public class ActionMenuItem extends MenuItem {
 
+	private final ContextAction action;
+
 	/**
 	 * Creates the menu item.
 	 *
@@ -48,14 +50,27 @@ public class ActionMenuItem extends MenuItem {
 	 * @param node   the {@link Node} of the context.
 	 * @param icon   the shown {@link Image icon} or null.
 	 */
-	public ActionMenuItem(Action action, Object node, Image icon) {
+	public ActionMenuItem(ContextAction action, Object node, Image icon, boolean fromMainMenu) {
 		super(Jams.getLanguageManager().getSelected().getOrDefault(action.getLanguageNode().orElse(null)));
+		this.action = action;
 		setGraphic(new NearestImageView(icon, FileType.IMAGE_SIZE, FileType.IMAGE_SIZE));
-		setOnAction(target -> action.run(node));
+		if (fromMainMenu) {
+			setOnAction(target -> action.runFromMenu());
+		} else {
+			setOnAction(target -> action.run(node));
+		}
 		List<KeyCombination> list = JamsApplication.getActionManager().getBindCombinations(action.getName());
 		if (!list.isEmpty()) {
 			setAccelerator(list.get(0));
 		}
 	}
 
+	/**
+	 * Returns the {@link ContextAction} this item will execute.
+	 *
+	 * @return the {@link ContextAction}.
+	 */
+	public ContextAction getAction() {
+		return action;
+	}
 }

@@ -32,6 +32,7 @@ import net.jamsimulator.jams.gui.action.defaults.explorerelement.folder.FolderAc
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
+import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebar;
 import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebarElement;
 import net.jamsimulator.jams.gui.project.ProjectTab;
@@ -50,7 +51,7 @@ public class MipsFilesToAssembleActionRemove extends ContextAction {
 
 	public MipsFilesToAssembleActionRemove() {
 		super(NAME, RegionTags.MIPS_FILE_TO_ASSEMBLE, Messages.ACTION_MIPS_FILES_TO_ASSEMBLE_REMOVE,
-				DEFAULT_COMBINATION, FolderActionRegions.ASSEMBLER, null);
+				DEFAULT_COMBINATION, FolderActionRegions.ASSEMBLER, null, null);
 	}
 
 	@Override
@@ -74,6 +75,11 @@ public class MipsFilesToAssembleActionRemove extends ContextAction {
 	}
 
 	@Override
+	public void runFromMenu() {
+
+	}
+
+	@Override
 	public boolean supportsExplorerState(Explorer explorer) {
 		if (!(explorer instanceof FilesToAssembleSidebar)) return false;
 		List<ExplorerElement> elements = explorer.getSelectedElements();
@@ -83,6 +89,11 @@ public class MipsFilesToAssembleActionRemove extends ContextAction {
 
 	@Override
 	public boolean supportsTextEditorState(CodeFileEditor editor) {
+		return false;
+	}
+
+	@Override
+	public boolean supportsMainMenuState(MainMenuBar bar) {
 		return false;
 	}
 }

@@ -29,6 +29,7 @@ import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
+import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Optional;
@@ -40,6 +41,7 @@ public abstract class ContextAction extends Action implements ContextRegionable 
 
 	private final Image icon;
 	private final ContextRegion contextRegion;
+	private final MainMenuRegion mainMenuRegion;
 
 	/**
 	 * Creates the context action.
@@ -49,15 +51,22 @@ public abstract class ContextAction extends Action implements ContextRegionable 
 	 * @param languageNode       the language node of this action.
 	 * @param defaultCombination the default combination of keys that a user needs to press to execute this action.
 	 * @param contextRegion      the context region this action will be shown on.
+	 * @param mainMenuRegion     the main menu region this action will be shown on. May be null.
 	 * @param icon               the icon this action will show on the context menu or null.
 	 */
 	public ContextAction(String name, String regionTag, String languageNode,
-						 KeyCombination defaultCombination, ContextRegion contextRegion, Image icon) {
+						 KeyCombination defaultCombination, ContextRegion contextRegion, MainMenuRegion mainMenuRegion, Image icon) {
 		super(name, regionTag, languageNode, defaultCombination);
 		Validate.notNull(contextRegion, "Context region cannot be null!");
 		this.contextRegion = contextRegion;
+		this.mainMenuRegion = mainMenuRegion;
 		this.icon = icon;
 	}
+
+	/**
+	 * Executes this action, being invoked from the main menu.
+	 */
+	public abstract void runFromMenu();
 
 	/**
 	 * Returns whether this action can be shown in the given {@link Explorer}.
@@ -75,9 +84,22 @@ public abstract class ContextAction extends Action implements ContextRegionable 
 	 */
 	public abstract boolean supportsTextEditorState(CodeFileEditor editor);
 
+	/**
+	 * Returns whether this action can be shown in the given {@link MainMenuBar}.
+	 *
+	 * @param bar the {@link MainMenuBar}.
+	 * @return whether it's supported.
+	 */
+	public abstract boolean supportsMainMenuState(MainMenuBar bar);
+
 	@Override
 	public ContextRegion getRegion() {
 		return contextRegion;
+	}
+
+	@Override
+	public Optional<MainMenuRegion> getMainMenuRegion() {
+		return Optional.ofNullable(mainMenuRegion);
 	}
 
 	public Optional<Image> getIcon() {

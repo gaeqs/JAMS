@@ -38,6 +38,7 @@ import net.jamsimulator.jams.gui.action.defaults.editortab.EditorTabActionSplitV
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.*;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.folder.*;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.mips.filestoassemble.MipsFilesToAssembleActionRemove;
+import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionCompile;
 import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionCreateProject;
 import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionOpenProject;
 import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionSettings;
@@ -322,9 +323,20 @@ public class ActionManager extends SimpleEventBroadcast {
 				if (regions.containsKey(RegionTags.GENERAL)) regions.get(RegionTags.GENERAL).run(node);
 				else if (regions.containsKey(RegionTags.UNKNOWN)) regions.get(RegionTags.UNKNOWN).run(node);
 			}
-
-
 		}));
+	}
+
+	public boolean executeAction(KeyCombination combination, ActionRegion node) {
+		Map<String, Action> actions = binds.get(combination);
+		if (actions == null) return false;
+
+		for (Map.Entry<String, Action> entry : actions.entrySet()) {
+			if (entry.getKey().equals(RegionTags.GENERAL) || node.supportsActionRegion(entry.getKey())) {
+				entry.getValue().run(node);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -347,7 +359,7 @@ public class ActionManager extends SimpleEventBroadcast {
 		actions.add(new GeneralActionSettings());
 
 		//TEXT EDITOR
-		actions.add(new TextEditorActionCompile());
+		actions.add(new GeneralActionCompile());
 		actions.add(new TextEditorActionCopy());
 		actions.add(new TextEditorActionCut());
 		actions.add(new TextEditorActionDuplicateLine());

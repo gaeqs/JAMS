@@ -29,20 +29,29 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.DirectoryChooser;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.context.ContextAction;
+import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
+import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.explorer.Explorer;
+import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.io.File;
 
-public class GeneralActionOpenProject extends Action {
+public class GeneralActionOpenProject extends ContextAction {
 
 	public static final String NAME = "GENERAL_OPEN_PROJECT";
 	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.O, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN);
 
 	public GeneralActionOpenProject() {
-		super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_OPEN_PROJECT, DEFAULT_COMBINATION);
+		super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_OPEN_PROJECT, DEFAULT_COMBINATION, GeneralActionRegions.PROJECT, MainMenuRegion.FILE, null);
+	}
+
+	@Override
+	public void runFromMenu() {
+		run(null);
 	}
 
 	@Override
@@ -51,5 +60,20 @@ public class GeneralActionOpenProject extends Action {
 		File folder = chooser.showDialog(JamsApplication.getStage());
 		if (folder == null || JamsApplication.getProjectsTabPane().isProjectOpen(folder)) return;
 		JamsApplication.getProjectsTabPane().openProject(new MIPSProject(folder));
+	}
+
+	@Override
+	public boolean supportsExplorerState(Explorer explorer) {
+		return false;
+	}
+
+	@Override
+	public boolean supportsTextEditorState(CodeFileEditor editor) {
+		return false;
+	}
+
+	@Override
+	public boolean supportsMainMenuState(MainMenuBar bar) {
+		return true;
 	}
 }

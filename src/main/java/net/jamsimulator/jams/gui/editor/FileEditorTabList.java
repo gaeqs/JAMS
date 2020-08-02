@@ -207,6 +207,15 @@ public class FileEditorTabList extends TabPane {
 	 * Closes all {@link FileEditorTab} inside this list.
 	 */
 	public void closeAll() {
+
+		Optional<FileEditor> lastFocused = holder.getLastFocusedEditor();
+		if (lastFocused.isPresent()) {
+			if (getTabs().stream().anyMatch(target -> target instanceof FileEditorTab &&
+					lastFocused.get().equals(((FileEditorTab) target).getDisplay()))) {
+				holder.setLastFocusedEditor(null);
+			}
+		}
+
 		getTabs().stream().filter(target -> target instanceof FileEditorTab)
 				.forEach(target -> ((FileEditorTab) target).getDisplay().save());
 		getTabs().clear();
@@ -261,7 +270,14 @@ public class FileEditorTabList extends TabPane {
 				.filter(target -> ((FileEditorTab) target).getFile().equals(file))
 				.map(target -> (FileEditorTab) target)
 				.collect(Collectors.toList());
+
+
+		FileEditor last = holder.getLastFocusedEditor().orElse(null);
 		for (FileEditorTab tab : tabs) {
+			if (last != null && last.equals(tab.getDisplay())) {
+				holder.setLastFocusedEditor(null);
+			}
+
 			tab.getDisplay().save();
 			getTabs().remove(tab);
 		}
@@ -274,6 +290,12 @@ public class FileEditorTabList extends TabPane {
 	 * @param tab the {@link FileEditorTab}.
 	 */
 	void closeFileInternal(FileEditorTab tab) {
+
+		FileEditor last = holder.getLastFocusedEditor().orElse(null);
+		if (last != null && last.equals(tab.getDisplay())) {
+			holder.setLastFocusedEditor(null);
+		}
+
 		tab.getDisplay().save();
 		refreshList();
 	}

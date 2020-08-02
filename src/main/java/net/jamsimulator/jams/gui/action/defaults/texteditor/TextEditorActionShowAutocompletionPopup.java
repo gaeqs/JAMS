@@ -29,9 +29,11 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
+import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.explorer.Explorer;
+import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
 
 public class TextEditorActionShowAutocompletionPopup extends ContextAction {
@@ -40,7 +42,7 @@ public class TextEditorActionShowAutocompletionPopup extends ContextAction {
 	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.SPACE, KeyCombination.SHORTCUT_DOWN);
 
 	public TextEditorActionShowAutocompletionPopup() {
-		super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_SHOW_AUTOCOMPLETION_POPUP, DEFAULT_COMBINATION, TextEditorActionRegions.CONTEXT, null);
+		super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_SHOW_AUTOCOMPLETION_POPUP, DEFAULT_COMBINATION, TextEditorActionRegions.CONTEXT, null, null);
 	}
 
 	@Override
@@ -52,6 +54,11 @@ public class TextEditorActionShowAutocompletionPopup extends ContextAction {
 	}
 
 	@Override
+	public void runFromMenu() {
+
+	}
+
+	@Override
 	public boolean supportsExplorerState(Explorer explorer) {
 		return false;
 	}
@@ -59,5 +66,10 @@ public class TextEditorActionShowAutocompletionPopup extends ContextAction {
 	@Override
 	public boolean supportsTextEditorState(CodeFileEditor editor) {
 		return true;
+	}
+
+	@Override
+	public boolean supportsMainMenuState(MainMenuBar bar) {
+		return false;
 	}
 }

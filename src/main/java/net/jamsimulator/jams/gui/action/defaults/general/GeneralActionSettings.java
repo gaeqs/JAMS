@@ -27,22 +27,51 @@ package net.jamsimulator.jams.gui.action.defaults.general;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.context.ContextAction;
+import net.jamsimulator.jams.gui.action.context.ContextRegion;
+import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
 import net.jamsimulator.jams.gui.configuration.ConfigurationWindow;
+import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.explorer.Explorer;
+import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
 
-public class GeneralActionSettings extends Action {
+public class GeneralActionSettings extends ContextAction {
 
 	public static final String NAME = "GENERAL_SETTINGS";
 	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
 
 	public GeneralActionSettings() {
-		super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_OPEN_PROJECT, DEFAULT_COMBINATION);
+		super(NAME, RegionTags.GENERAL, Messages.MAIN_MENU_FILE_SETTINGS, DEFAULT_COMBINATION, GeneralActionRegions.SETTINGS, MainMenuRegion.FILE,
+				JamsApplication.getIconManager().getOrLoadSafe(Icons.MENU_SETTINGS, Icons.MENU_SETTINGS_PATH, 1024, 1024).orElse(null));
+	}
+
+	@Override
+	public void runFromMenu() {
+		run(null);
 	}
 
 	@Override
 	public void run(Object node) {
 		ConfigurationWindow.getInstance().open();
+	}
+
+	@Override
+	public boolean supportsExplorerState(Explorer explorer) {
+		return false;
+	}
+
+	@Override
+	public boolean supportsTextEditorState(CodeFileEditor editor) {
+		return false;
+	}
+
+	@Override
+	public boolean supportsMainMenuState(MainMenuBar bar) {
+		return true;
 	}
 }

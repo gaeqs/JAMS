@@ -36,6 +36,7 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
+import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
@@ -54,7 +55,7 @@ public class FolderActionAddFileToAssembler extends ContextAction {
 
 	public FolderActionAddFileToAssembler() {
 		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_ADD_FILE_TO_ASSEMBLER,
-				DEFAULT_COMBINATION, FolderActionRegions.ASSEMBLER, null);
+				DEFAULT_COMBINATION, FolderActionRegions.ASSEMBLER, null, null);
 	}
 
 	@Override
@@ -81,6 +82,11 @@ public class FolderActionAddFileToAssembler extends ContextAction {
 		for (ExplorerElement element : elements) {
 			files.addFile(((ExplorerFile) element).getFile(), ((MipsStructurePane) pane).getFileDisplayHolder(), true);
 		}
+	}
+
+	@Override
+	public void runFromMenu() {
+
 	}
 
 	@Override
@@ -113,6 +119,11 @@ public class FolderActionAddFileToAssembler extends ContextAction {
 
 	@Override
 	public boolean supportsTextEditorState(CodeFileEditor editor) {
+		return false;
+	}
+
+	@Override
+	public boolean supportsMainMenuState(MainMenuBar bar) {
 		return false;
 	}
 }

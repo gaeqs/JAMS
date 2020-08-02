@@ -10,6 +10,7 @@ import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditorTab;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
 
 public class EditorTabActionSplitHorizontally extends ContextAction {
@@ -20,7 +21,7 @@ public class EditorTabActionSplitHorizontally extends ContextAction {
 
 	public EditorTabActionSplitHorizontally() {
 		super(NAME, RegionTags.EDITOR_TAB, Messages.ACTION_EDITOR_TAB_SPLIT_HORIZONTALLY,
-				DEFAULT_COMBINATION, EditorTagRegions.SPLIT, loadIcon());
+				DEFAULT_COMBINATION, EditorTagRegions.SPLIT, null, loadIcon());
 	}
 
 	@Override
@@ -36,12 +37,22 @@ public class EditorTabActionSplitHorizontally extends ContextAction {
 	}
 
 	@Override
+	public void runFromMenu() {
+
+	}
+
+	@Override
 	public boolean supportsExplorerState(Explorer explorer) {
 		return false;
 	}
 
 	@Override
 	public boolean supportsTextEditorState(CodeFileEditor editor) {
+		return false;
+	}
+
+	@Override
+	public boolean supportsMainMenuState(MainMenuBar bar) {
 		return false;
 	}
 

@@ -27,27 +27,46 @@ package net.jamsimulator.jams.gui.action.defaults.general;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.stage.DirectoryChooser;
-import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.context.ContextAction;
+import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
+import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.explorer.Explorer;
+import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.popup.CreateProjectWindow;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.project.mips.MIPSProject;
 
-import java.io.File;
-
-public class GeneralActionCreateProject extends Action {
+public class GeneralActionCreateProject extends ContextAction {
 
 	public static final String NAME = "GENERAL_CREATE_PROJECT";
 	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN);
 
 	public GeneralActionCreateProject() {
-		super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_CREATE_PROJECT, DEFAULT_COMBINATION);
+		super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_CREATE_PROJECT, DEFAULT_COMBINATION, GeneralActionRegions.PROJECT, MainMenuRegion.FILE, null);
+	}
+
+	@Override
+	public void runFromMenu() {
+		run(null);
 	}
 
 	@Override
 	public void run(Object node) {
 		CreateProjectWindow.open();
+	}
+
+	@Override
+	public boolean supportsExplorerState(Explorer explorer) {
+		return false;
+	}
+
+	@Override
+	public boolean supportsTextEditorState(CodeFileEditor editor) {
+		return false;
+	}
+
+	@Override
+	public boolean supportsMainMenuState(MainMenuBar bar) {
+		return true;
 	}
 }

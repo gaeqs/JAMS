@@ -94,6 +94,12 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 			createContextMenu(request.getScreenX(), request.getScreenY());
 			request.consume();
 		});
+
+		focusedProperty().addListener((obs, old, val) -> {
+			if(val) {
+				getTab().getList().getHolder().setLastFocusedEditor(this);
+			}
+		});
 	}
 
 
@@ -367,10 +373,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 		addEventFilter(KeyEvent.KEY_PRESSED, event -> {
 			try {
 				KeyCodeCombination combination = new KeyCombinationBuilder(event).build();
-				Runnable runnable = getScene().getAccelerators().get(combination);
-				if (runnable != null) {
-					runnable.run();
-
+				if (JamsApplication.getActionManager().executeAction(combination, this)) {
 
 					KeyCode c = event.getCode();
 					if (c == KeyCode.UP || c == KeyCode.DOWN || c == KeyCode.LEFT || c == KeyCode.RIGHT

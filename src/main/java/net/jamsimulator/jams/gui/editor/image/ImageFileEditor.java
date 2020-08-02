@@ -39,6 +39,12 @@ public class ImageFileEditor extends NearestImageView implements FileEditor {
 	public ImageFileEditor(FileEditorTab tab) throws MalformedURLException, IllegalArgumentException {
 		super(new Image(tab.getFile().toURI().toURL().toString()));
 		this.tab = tab;
+
+		focusedProperty().addListener((obs, old, val) -> {
+			if(val) {
+				getTab().getList().getHolder().setLastFocusedEditor(this);
+			}
+		});
 	}
 
 	@Override

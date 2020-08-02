@@ -29,6 +29,7 @@ import net.jamsimulator.jams.gui.action.context.ContextRegion;
 public class TextEditorActionRegions {
 
 	public static final ContextRegion CONTEXT = new ContextRegion("context", null, 0);
-	public static final ContextRegion CLIPBOARD = new ContextRegion("clipboard", null, 1);
+	public static final ContextRegion UNDO_REDO = new ContextRegion("undo-redo", null, 1);
+	public static final ContextRegion CLIPBOARD = new ContextRegion("clipboard", null, 2);
 
 }

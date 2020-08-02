@@ -34,6 +34,8 @@ import java.util.Optional;
  */
 public class ContextRegion implements Comparable<ContextRegion> {
 
+	public static final ContextRegion EMPTY = new ContextRegion("empty", null, Integer.MAX_VALUE);
+
 	private final String name;
 	private final ContextSubmenu submenu;
 

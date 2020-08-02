@@ -12,7 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.action.defaults.texteditor.TextEditorActionCompile;
+import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionCompile;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.configuration.ConfigurationsWindow;
@@ -108,8 +108,8 @@ public class SimulationSidebar extends VBox {
 		box.getChildren().add(assemble);
 
 		assemble.setOnAction(event -> {
-			JamsApplication.getActionManager().get(TextEditorActionCompile.NAME).ifPresent(action -> {
-				TextEditorActionCompile.compileAndShow(project);
+			JamsApplication.getActionManager().get(GeneralActionCompile.NAME).ifPresent(action -> {
+				GeneralActionCompile.compileAndShow(project);
 			});
 		});
 

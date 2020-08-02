@@ -24,23 +24,26 @@
 
 package net.jamsimulator.jams.gui.main;
 
+import javafx.application.Platform;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.image.Image;
-import javafx.stage.DirectoryChooser;
+import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.configuration.ConfigurationWindow;
-import net.jamsimulator.jams.gui.image.NearestImageView;
-import net.jamsimulator.jams.gui.image.icon.Icons;
-import net.jamsimulator.jams.gui.popup.CreateProjectWindow;
-import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.language.wrapper.LanguageMenu;
-import net.jamsimulator.jams.language.wrapper.LanguageMenuItem;
-import net.jamsimulator.jams.project.mips.MIPSProject;
+import net.jamsimulator.jams.gui.action.Action;
+import net.jamsimulator.jams.gui.action.context.ActionMenuItem;
+import net.jamsimulator.jams.gui.action.context.ContextAction;
+import net.jamsimulator.jams.gui.action.context.ContextActionMainMenuBuilder;
+import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
+import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
+import net.jamsimulator.jams.gui.action.event.ActionUnbindEvent;
+import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
+import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 
-import java.io.File;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The main {@link MenuBar}.
@@ -48,45 +51,68 @@ import java.io.File;
 public class MainMenuBar extends MenuBar {
 
 	public MainMenuBar() {
-		loadDefaults();
+		refresh();
+		Jams.getLanguageManager().registerListeners(this, true);
+		JamsApplication.getActionManager().registerListeners(this, true);
 	}
 
-	private void loadDefaults() {
-		Menu file = new LanguageMenu(Messages.MAIN_MENU_FILE);
-		getMenus().add(file);
+	public void refresh() {
+		getMenus().clear();
+		Set<MainMenuRegion> set = new HashSet<>();
 
-		loadCreateProjectButton(file);
-		loadOpenProjectButton(file);
-		file.getItems().add(new SeparatorMenuItem());
-		loadSettingsButton(file);
+		for (Action action : JamsApplication.getActionManager().getAll()) {
+			if (!(action instanceof ContextAction)) continue;
+			if (!((ContextAction) action).getMainMenuRegion().isPresent()) continue;
+			set.add(((ContextAction) action).getMainMenuRegion().get());
+		}
+
+		set.stream().sorted(Comparator.comparingInt(MainMenuRegion::getPriority)).forEach(this::createMenu);
 	}
 
-	private void loadCreateProjectButton(Menu file) {
-		MenuItem createProject = new LanguageMenuItem(Messages.MAIN_MENU_FILE_CREATE_PROJECT);
+	private void createMenu(MainMenuRegion region) {
+		Set<ContextAction> set = getSupportedContextActions(region);
+		if (set.isEmpty()) return;
+		Menu main = new ContextActionMainMenuBuilder(region.getLanguageNode()).addAll(set).build();
 
-		createProject.setOnAction(event -> CreateProjectWindow.open());
-
-		file.getItems().add(createProject);
-	}
-
-	private void loadOpenProjectButton(Menu file) {
-		MenuItem openProject = new LanguageMenuItem(Messages.MAIN_MENU_FILE_OPEN_PROJECT);
-		openProject.setOnAction(event -> {
-			DirectoryChooser chooser = new DirectoryChooser();
-			File folder = chooser.showDialog(JamsApplication.getStage());
-			if (folder == null || JamsApplication.getProjectsTabPane().isProjectOpen(folder)) return;
-			JamsApplication.getProjectsTabPane().openProject(new MIPSProject(folder));
+		main.setOnShowing(event -> {
+			for (MenuItem item : main.getItems()) {
+				if (item instanceof ActionMenuItem) {
+					item.setDisable(!((ActionMenuItem) item).getAction().supportsMainMenuState(this));
+				}
+			}
 		});
-		file.getItems().add(openProject);
+
+		getMenus().add(main);
 	}
 
-	private void loadSettingsButton(Menu file) {
-		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.MENU_SETTINGS, Icons.MENU_SETTINGS_PATH,
-				1024, 1024).orElse(null);
+	private Set<ContextAction> getSupportedContextActions(MainMenuRegion region) {
+		Set<Action> actions = JamsApplication.getActionManager().getAll();
+		Set<ContextAction> set = new HashSet<>();
+		for (Action action : actions) {
+			if (action instanceof ContextAction && region.equals(((ContextAction) action).getMainMenuRegion().orElse(null))) {
+				set.add((ContextAction) action);
+			}
+		}
+		return set;
+	}
 
-		MenuItem settings = new LanguageMenuItem(Messages.MAIN_MENU_FILE_SETTINGS);
-		settings.setGraphic(new NearestImageView(icon, 16, 16));
-		settings.setOnAction(event -> ConfigurationWindow.getInstance().open());
-		file.getItems().add(settings);
+	@Listener
+	private void onLanguageChange(DefaultLanguageChangeEvent.After event) {
+		Platform.runLater(this::refresh);
+	}
+
+	@Listener
+	private void onLanguageChange(SelectedLanguageChangeEvent.After event) {
+		Platform.runLater(this::refresh);
+	}
+
+	@Listener
+	private void onActionBind(ActionBindEvent.After event) {
+		Platform.runLater(this::refresh);
+	}
+
+	@Listener
+	private void onActionUnbind(ActionUnbindEvent.After event) {
+		Platform.runLater(this::refresh);
 	}
 }

@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.gui.action.context;
 
+import java.util.Optional;
+
 /**
  * Represents a {@link javafx.scene.control.Menu} element that supports {@link ContextRegion}s.
  */
@@ -35,6 +37,13 @@ public interface ContextRegionable extends Comparable<ContextRegionable> {
 	 * @return the region.
 	 */
 	ContextRegion getRegion();
+
+	/**
+	 * Returns the main menu region of this element, if present.
+	 *
+	 * @return the {@link MainMenuRegion}.
+	 */
+	Optional<MainMenuRegion> getMainMenuRegion();
 
 	/**
 	 * Returns the name of this element.

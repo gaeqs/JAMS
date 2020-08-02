@@ -27,12 +27,14 @@ package net.jamsimulator.jams.gui.action.defaults.explorerelement.folder;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
+import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
+import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
 
 import java.awt.*;
@@ -47,7 +49,7 @@ public class FolderActionShowInFiles extends ContextAction {
 
 	public FolderActionShowInFiles() {
 		super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_SHOW_IN_FILES,
-				DEFAULT_COMBINATION, FolderActionRegions.SHOW, null);
+				DEFAULT_COMBINATION, FolderActionRegions.SHOW, null, null);
 	}
 
 	@Override
@@ -79,12 +81,22 @@ public class FolderActionShowInFiles extends ContextAction {
 	}
 
 	@Override
+	public void runFromMenu() {
+
+	}
+
+	@Override
 	public boolean supportsExplorerState(Explorer explorer) {
 		return explorer instanceof FolderExplorer && explorer.getSelectedElements().size() == 1;
 	}
 
 	@Override
 	public boolean supportsTextEditorState(CodeFileEditor editor) {
+		return false;
+	}
+
+	@Override
+	public boolean supportsMainMenuState(MainMenuBar bar) {
 		return false;
 	}
 }

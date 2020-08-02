@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.action.defaults.texteditor;
+package net.jamsimulator.jams.gui.action.defaults.general;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -39,13 +39,13 @@ import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 
-public class TextEditorActionCompile extends Action {
+public class GeneralActionCompile extends Action {
 
-	public static final String NAME = "TEXT_EDITOR_COMPILE";
+	public static final String NAME = "GENERAL_COMPILE";
 	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
 
-	public TextEditorActionCompile() {
-		super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_COMPILE, DEFAULT_COMBINATION);
+	public GeneralActionCompile() {
+		super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_COMPILE, DEFAULT_COMBINATION);
 	}
 
 	@Override

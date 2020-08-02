@@ -24,21 +24,32 @@
 
 package net.jamsimulator.jams.gui.action.defaults.texteditor;
 
+import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.gui.action.Action;
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.context.ContextAction;
+import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.FileEditor;
+import net.jamsimulator.jams.gui.editor.FileEditorHolder;
+import net.jamsimulator.jams.gui.explorer.Explorer;
+import net.jamsimulator.jams.gui.main.MainMenuBar;
+import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
+import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
 
-public class TextEditorActionRedo extends Action {
+import java.util.Optional;
+
+public class TextEditorActionRedo extends ContextAction {
 
 	public static final String NAME = "TEXT_EDITOR_REDO";
 	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN);
 
 	public TextEditorActionRedo() {
-		super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_REDO, DEFAULT_COMBINATION);
+		super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_REDO, DEFAULT_COMBINATION, TextEditorActionRegions.UNDO_REDO, MainMenuRegion.EDIT, null);
 	}
 
 	@Override
@@ -46,5 +57,43 @@ public class TextEditorActionRedo extends Action {
 		if (node instanceof CodeFileEditor) {
 			((CodeFileEditor) node).redo();
 		}
+	}
+
+	@Override
+	public void runFromMenu() {
+		Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
+		if (!optionalProject.isPresent()) return;
+		Node pane = optionalProject.get().getProjectTabPane().getSelectionModel().getSelectedItem().getContent();
+		if (!(pane instanceof MipsStructurePane)) return;
+
+		FileEditorHolder holder = ((MipsStructurePane) pane).getFileDisplayHolder();
+		Optional<FileEditor> optionalEditor = holder.getLastFocusedEditor();
+		if (optionalEditor.isPresent() && optionalEditor.get() instanceof CodeFileEditor) {
+			((CodeFileEditor) optionalEditor.get()).redo();
+		}
+	}
+
+	@Override
+	public boolean supportsExplorerState(Explorer explorer) {
+		return false;
+	}
+
+	@Override
+	public boolean supportsTextEditorState(CodeFileEditor editor) {
+		return editor.getUndoManager().isRedoAvailable();
+	}
+
+	@Override
+	public boolean supportsMainMenuState(MainMenuBar bar) {
+		Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
+		if (!optionalProject.isPresent()) return false;
+		Node pane = optionalProject.get().getProjectTabPane().getSelectionModel().getSelectedItem().getContent();
+		if (!(pane instanceof MipsStructurePane)) return false;
+
+		FileEditorHolder holder = ((MipsStructurePane) pane).getFileDisplayHolder();
+		Optional<FileEditor> optionalEditor = holder.getLastFocusedEditor();
+		if (!optionalEditor.isPresent() || !(optionalEditor.get() instanceof CodeFileEditor)) return false;
+
+		return ((CodeFileEditor) optionalEditor.get()).getUndoManager().isRedoAvailable();
 	}
 }

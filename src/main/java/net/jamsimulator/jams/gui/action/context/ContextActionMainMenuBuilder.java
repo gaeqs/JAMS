@@ -25,40 +25,36 @@
 package net.jamsimulator.jams.gui.action.context;
 
 import javafx.collections.ObservableList;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.utils.Validate;
+import net.jamsimulator.jams.language.wrapper.LanguageMenu;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.TreeSet;
 
-public class ContextActionMenuBuilder {
+public class ContextActionMainMenuBuilder {
 
-	private final Object node;
 	private final ActionMainMenu menu;
 
-	public ContextActionMenuBuilder(Object node) {
-		Validate.notNull(node, "Node cannot be null!");
-		this.node = node;
-		menu = new ActionMainMenu(node);
+	public ContextActionMainMenuBuilder(String languageNode) {
+		menu = new ActionMainMenu(languageNode);
 	}
 
-	public ContextActionMenuBuilder addAll(Collection<? extends ContextAction> actions) {
+	public ContextActionMainMenuBuilder addAll(Collection<? extends ContextAction> actions) {
 		actions.forEach(this::add);
 		return this;
 	}
 
-	public ContextActionMenuBuilder add(ContextAction action) {
+	public ContextActionMainMenuBuilder add(ContextAction action) {
 		ActionMenu menu = check(action.getRegion());
 		menu.add(action);
 		return this;
 	}
 
-	public ContextMenu build() {
+	public Menu build() {
 		menu.refresh();
 		return menu;
 	}
@@ -75,7 +71,7 @@ public class ContextActionMenuBuilder {
 		ActionMenu parent = check(submenu.getRegion());
 		Optional<ActionSubmenu> optional = parent.get(submenu);
 		if (optional.isPresent()) return optional.get();
-		ActionSubmenu newSubmenu = new ActionSubmenu(submenu, node);
+		ActionSubmenu newSubmenu = new ActionSubmenu(submenu);
 		parent.add(newSubmenu);
 		return newSubmenu;
 	}
@@ -90,13 +86,12 @@ public class ContextActionMenuBuilder {
 	}
 
 
-	private static class ActionMainMenu extends ContextMenu implements ActionMenu {
+	private static class ActionMainMenu extends LanguageMenu implements ActionMenu {
 
-		private final Object node;
 		private final TreeSet<ContextRegionable> elements;
 
-		public ActionMainMenu(Object node) {
-			this.node = node;
+		public ActionMainMenu(String languageNode) {
+			super(languageNode);
 			this.elements = new TreeSet<>(((o1, o2) -> {
 				int val = o1.compareTo(o2);
 				if (val == 0) return -1;
@@ -118,7 +113,7 @@ public class ContextActionMenuBuilder {
 
 		@Override
 		public void refresh() {
-			ContextActionMenuBuilder.refresh(getItems(), elements, node);
+			ContextActionMainMenuBuilder.refresh(getItems(), elements);
 			elements.stream().filter(target -> target instanceof ActionMenu)
 					.forEach(target -> ((ActionMenu) target).refresh());
 		}
@@ -127,15 +122,13 @@ public class ContextActionMenuBuilder {
 	private static class ActionSubmenu extends Menu implements ActionMenu, ContextRegionable {
 
 		private final ContextSubmenu submenu;
-		private final Object node;
 		private final TreeSet<ContextRegionable> elements;
 
-		public ActionSubmenu(ContextSubmenu submenu, Object node) {
+		public ActionSubmenu(ContextSubmenu submenu) {
 			super(submenu.getLanguageNode().isPresent()
 					? Jams.getLanguageManager().getSelected().getOrDefault(submenu.getLanguageNode().get())
 					: submenu.getName());
 			this.submenu = submenu;
-			this.node = node;
 			this.elements = new TreeSet<>(((o1, o2) -> {
 				int val = o1.compareTo(o2);
 				if (val == 0) return -1;
@@ -162,7 +155,7 @@ public class ContextActionMenuBuilder {
 
 		@Override
 		public void refresh() {
-			ContextActionMenuBuilder.refresh(getItems(), elements, node);
+			ContextActionMainMenuBuilder.refresh(getItems(), elements);
 			elements.stream().filter(target -> target instanceof ActionMenu)
 					.forEach(target -> ((ActionMenu) target).refresh());
 		}
@@ -189,7 +182,7 @@ public class ContextActionMenuBuilder {
 	}
 
 
-	private static void refresh(ObservableList<MenuItem> items, TreeSet<ContextRegionable> elements, Object node) {
+	private static void refresh(ObservableList<MenuItem> items, TreeSet<ContextRegionable> elements) {
 		items.clear();
 		ContextRegion current = null;
 		for (ContextRegionable element : elements) {
@@ -203,7 +196,7 @@ public class ContextActionMenuBuilder {
 			}
 
 			if (element instanceof ContextAction) {
-				items.add(new ActionMenuItem((ContextAction) element, node, ((ContextAction) element).getIcon().orElse(null), false));
+				items.add(new ActionMenuItem((ContextAction) element, null, ((ContextAction) element).getIcon().orElse(null), true));
 			} else if (element instanceof ActionSubmenu) {
 				items.add((ActionSubmenu) element);
 			}
