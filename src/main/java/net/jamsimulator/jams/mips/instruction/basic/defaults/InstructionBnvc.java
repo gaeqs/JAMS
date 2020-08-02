@@ -24,11 +24,13 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -47,6 +49,7 @@ public class InstructionBnvc extends BasicInstruction<InstructionBnvc.Assembled>
 	public InstructionBnvc() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -88,8 +91,8 @@ public class InstructionBnvc extends BasicInstruction<InstructionBnvc.Assembled>
 
 	public static class SingleCycle extends SingleCycleExecution<Assembled> {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction) {
-			super(simulation, instruction);
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address);
 		}
 
 		@Override
@@ -104,6 +107,42 @@ public class InstructionBnvc extends BasicInstruction<InstructionBnvc.Assembled>
 			}
 			Register pc = pc();
 			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
+		}
+	}
+
+	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address, false, false);
+		}
+
+		@Override
+		public void decode() {
+			Register rs = register(instruction.getSourceRegister());
+			Register rt = register(instruction.getTargetRegister());
+			decodeResult = new int[]{rs.getValue(), rt.getValue()};
+		}
+
+		@Override
+		public void execute() {
+			executionResult = new int[0];
+
+			try {
+				Math.addExact(decodeResult[0], decodeResult[1]);
+			} catch (ArithmeticException ex) {
+				return;
+			}
+
+			pc().setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+		}
+
+		@Override
+		public void memory() {
+
+		}
+
+		@Override
+		public void writeBack() {
 		}
 	}
 }

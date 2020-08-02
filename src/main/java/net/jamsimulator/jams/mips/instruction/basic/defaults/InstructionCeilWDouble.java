@@ -24,12 +24,14 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -51,6 +53,7 @@ public class InstructionCeilWDouble extends BasicRFPUInstruction<InstructionCeil
 	public InstructionCeilWDouble() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -82,8 +85,8 @@ public class InstructionCeilWDouble extends BasicRFPUInstruction<InstructionCeil
 
 	public static class SingleCycle extends SingleCycleExecution<Assembled> {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction) {
-			super(simulation, instruction);
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address);
 		}
 
 		@Override
@@ -94,6 +97,39 @@ public class InstructionCeilWDouble extends BasicRFPUInstruction<InstructionCeil
 			double d = NumericUtils.intsToDouble(rs0.getValue(), rs1.getValue());
 			int i = (int) Math.ceil(d);
 			registerCop1(instruction.getDestinationRegister()).setValue(i);
+		}
+	}
+
+	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address, false, true);
+		}
+
+		@Override
+		public void decode() {
+			if (instruction.getSourceRegister() % 2 != 0) error("Source register identifier is not even.");
+			if (instruction.getDestinationRegister() % 2 != 0) error("Destination register identifier is not even.");
+
+			Register rs0 = registerCop1(instruction.getSourceRegister());
+			Register rs1 = registerCop1(instruction.getSourceRegister() + 1);
+			decodeResult = new int[]{rs0.getValue(), rs1.getValue()};
+		}
+
+		@Override
+		public void execute() {
+			int ceil = (int) Math.ceil(NumericUtils.intsToDouble(decodeResult[0], decodeResult[1]));
+			executionResult = new int[]{ceil};
+		}
+
+		@Override
+		public void memory() {
+
+		}
+
+		@Override
+		public void writeBack() {
+			registerCop1(instruction.getDestinationRegister()).setValue(executionResult[0]);
 		}
 	}
 }

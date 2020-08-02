@@ -24,12 +24,14 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledPCREL16Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicPCREL16Instruction;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -50,6 +52,7 @@ public class InstructionAluipc extends BasicPCREL16Instruction<InstructionAluipc
 	public InstructionAluipc() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, PCREL_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -81,8 +84,8 @@ public class InstructionAluipc extends BasicPCREL16Instruction<InstructionAluipc
 
 	public static class SingleCycle extends SingleCycleExecution<Assembled> {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction) {
-			super(simulation, instruction);
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address);
 		}
 
 		@Override
@@ -91,6 +94,34 @@ public class InstructionAluipc extends BasicPCREL16Instruction<InstructionAluipc
 
 			int result = ~0x0FFFF & (pc().getValue() + (instruction.getImmediate() << 16));
 			rs.setValue(result);
+		}
+	}
+
+
+	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address, false, true);
+		}
+
+		@Override
+		public void decode() {
+			decodeResult = new int[0];
+		}
+
+		@Override
+		public void execute() {
+			executionResult = new int[]{~0x0FFFF & (pc().getValue() + (instruction.getImmediate() << 16))};
+		}
+
+		@Override
+		public void memory() {
+
+		}
+
+		@Override
+		public void writeBack() {
+			register(instruction.getSourceRegister()).setValue(executionResult[0]);
 		}
 	}
 }

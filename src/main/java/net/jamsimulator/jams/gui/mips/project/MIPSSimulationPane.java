@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.mips.project;
 
+import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
@@ -13,6 +14,7 @@ import net.jamsimulator.jams.gui.mips.simulator.memory.MemoryPane;
 import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
+import net.jamsimulator.jams.gui.util.ScalableNode;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
 import net.jamsimulator.jams.mips.register.Register;
@@ -91,15 +93,15 @@ public class MIPSSimulationPane extends WorkingPane {
 				Icons.SIMULATION_FLOW_PATH, 1024, 1024).orElse(null);
 
 
-		Slider slider = new Slider(5, 100, 40);
+		Slider slider = new Slider(10, 100, 40);
 
-		ScrollPane pane = new ScrollPane();
-		FlowTable flow = FlowTable.createFlow(simulation.getArchitecture(), simulation, pane, slider);
-		pane.setContent(flow);
-		pane.setFitToHeight(true);
+		ScrollPane scroll = new ScrollPane();
+		FlowTable flow = FlowTable.createFlow(simulation.getArchitecture(), simulation, scroll, slider);
+		scroll.setContent(new ScalableNode(flow, scroll));
+		scroll.setFitToHeight(true);
 
-		AnchorPane anchor = new AnchorPane(pane, slider);
-		AnchorUtils.setAnchor(pane, 0, 20, 0, 0);
+		AnchorPane anchor = new AnchorPane(scroll, slider);
+		AnchorUtils.setAnchor(scroll, 0, 20, 0, 0);
 		AnchorUtils.setAnchor(slider, -1, 0, 2, 2);
 		slider.setPrefHeight(20);
 

@@ -94,7 +94,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 * @param instructionStackBottom the address of the bottom of the instruction stack.
 	 * @param data                   the immutable data of this simulation.
 	 */
-	public Simulation(Arch architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, SimulationData data) {
+	public Simulation(Arch architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, SimulationData data, boolean useCache) {
 		this.architecture = architecture;
 		this.instructionSet = instructionSet;
 		this.registers = registers;
@@ -104,7 +104,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		this.files = new SimulationFiles(this);
 
 		this.breakpoints = new HashSet<>();
-		this.instructionCache = new InstructionExecution[instructionStackBottom - memory.getFirstTextAddress() + 1];
+
+		this.instructionCache = useCache ? new InstructionExecution[instructionStackBottom - memory.getFirstTextAddress() + 1] : null;
 
 		if (data.canCallEvents() && data.isUndoEnabled()) {
 			memory.registerListeners(this, true);
@@ -329,7 +330,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 */
 	public InstructionExecution<Arch, ?> fetch(int pc) {
 		InstructionExecution<Arch, ?> cached;
-		if (pc <= instructionStackBottom) {
+		if (instructionCache != null && pc <= instructionStackBottom) {
 			cached = instructionCache[pc - memory.getFirstTextAddress()];
 			if (cached != null) return cached;
 		}
@@ -340,10 +341,12 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		if (!optional.isPresent()) return null;
 		BasicInstruction<?> instruction = optional.get();
 		AssembledInstruction assembled = instruction.assembleFromCode(data);
-		cached = assembled.getBasicOrigin().generateExecution(this, assembled).orElse(null);
+		cached = assembled.getBasicOrigin().generateExecution(this, assembled, pc).orElse(null);
 
 
-		instructionCache[pc - memory.getFirstTextAddress()] = cached;
+		if (instructionCache != null) {
+			instructionCache[pc - memory.getFirstTextAddress()] = cached;
+		}
 		return cached;
 	}
 

@@ -30,6 +30,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public interface InstructionExecutionBuilder<Arch extends Architecture, Inst extends AssembledInstruction> {
 
-	InstructionExecution<Arch, Inst> create(Simulation<Arch> simulation, Inst instruction);
+	InstructionExecution<Arch, Inst> create(Simulation<Arch> simulation, Inst instruction, int address);
 
 }

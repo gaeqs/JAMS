@@ -30,7 +30,7 @@
 
     <groupId>org.example</groupId>
     <artifactId>JAMS</artifactId>
-    <version>0.2-ALPHA</version>
+    <version>0.3-ALPHA</version>
     <packaging>jar</packaging>
 
     <properties>

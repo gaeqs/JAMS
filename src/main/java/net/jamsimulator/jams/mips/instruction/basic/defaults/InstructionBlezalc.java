@@ -24,11 +24,13 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -47,6 +49,7 @@ public class InstructionBlezalc extends BasicInstruction<InstructionBlezalc.Asse
 	public InstructionBlezalc() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -85,8 +88,8 @@ public class InstructionBlezalc extends BasicInstruction<InstructionBlezalc.Asse
 
 	public static class SingleCycle extends SingleCycleExecution<Assembled> {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction) {
-			super(simulation, instruction);
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address);
 		}
 
 		@Override
@@ -97,6 +100,38 @@ public class InstructionBlezalc extends BasicInstruction<InstructionBlezalc.Asse
 			Register pc = pc();
 			ra.setValue(pc.getValue());
 			pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
+		}
+	}
+
+	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address, false, true);
+		}
+
+		@Override
+		public void decode() {
+			Register rt = register(instruction.getTargetRegister());
+			decodeResult = new int[]{rt.getValue()};
+		}
+
+		@Override
+		public void execute() {
+			executionResult = new int[]{pc().getValue()};
+			if (decodeResult[0] > 0) return;
+			pc().setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+		}
+
+		@Override
+		public void memory() {
+
+		}
+
+		@Override
+		public void writeBack() {
+			if (decodeResult[0] > 0) return;
+			Register ra = register(31);
+			ra.setValue(executionResult[0]);
 		}
 	}
 }

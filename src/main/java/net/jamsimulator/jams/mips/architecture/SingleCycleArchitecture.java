@@ -42,7 +42,7 @@ public final class SingleCycleArchitecture extends Architecture {
 
 	public static final SingleCycleArchitecture INSTANCE = new SingleCycleArchitecture();
 
-	public static final String NAME = "Single Cycle";
+	public static final String NAME = "Single-cycle";
 
 	private SingleCycleArchitecture() {
 		super(NAME);

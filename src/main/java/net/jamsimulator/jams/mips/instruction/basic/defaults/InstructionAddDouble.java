@@ -24,12 +24,14 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -51,6 +53,7 @@ public class InstructionAddDouble extends BasicRFPUInstruction<InstructionAddDou
 	public InstructionAddDouble() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -85,8 +88,8 @@ public class InstructionAddDouble extends BasicRFPUInstruction<InstructionAddDou
 
 	public static class SingleCycle extends SingleCycleExecution<Assembled> {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction) {
-			super(simulation, instruction);
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address);
 		}
 
 		@Override
@@ -108,6 +111,45 @@ public class InstructionAddDouble extends BasicRFPUInstruction<InstructionAddDou
 			int[] ints = NumericUtils.doubleToInts(destination);
 			rd0.setValue(ints[0]);
 			rd1.setValue(ints[1]);
+		}
+	}
+
+	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address, false, true);
+		}
+
+		@Override
+		public void decode() {
+			if (instruction.getTargetRegister() % 2 != 0) error("Target register identifier is not even.");
+			if (instruction.getSourceRegister() % 2 != 0) error("Source register identifier is not even.");
+			if (instruction.getDestinationRegister() % 2 != 0) error("Destination register identifier is not even.");
+
+			Register rt0 = registerCop1(instruction.getTargetRegister());
+			Register rt1 = registerCop1(instruction.getTargetRegister() + 1);
+			Register rs0 = registerCop1(instruction.getSourceRegister());
+			Register rs1 = registerCop1(instruction.getSourceRegister() + 1);
+			decodeResult = new int[]{rt0.getValue(), rt1.getValue(), rs0.getValue(), rs1.getValue()};
+		}
+
+		@Override
+		public void execute() {
+			double target = NumericUtils.intsToDouble(decodeResult[0], decodeResult[1]);
+			double source = NumericUtils.intsToDouble(decodeResult[2], decodeResult[3]);
+			double destination = target + source;
+			executionResult = NumericUtils.doubleToInts(destination);
+		}
+
+		@Override
+		public void memory() {
+
+		}
+
+		@Override
+		public void writeBack() {
+			registerCop1(instruction.getDestinationRegister()).setValue(executionResult[0]);
+			registerCop1(instruction.getDestinationRegister() + 1).setValue(executionResult[1]);
 		}
 	}
 }

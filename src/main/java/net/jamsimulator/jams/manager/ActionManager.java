@@ -38,6 +38,9 @@ import net.jamsimulator.jams.gui.action.defaults.editortab.EditorTabActionSplitV
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.*;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.folder.*;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.mips.filestoassemble.MipsFilesToAssembleActionRemove;
+import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionCreateProject;
+import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionOpenProject;
+import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionSettings;
 import net.jamsimulator.jams.gui.action.defaults.texteditor.*;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionRegisterEvent;
@@ -311,12 +314,13 @@ public class ActionManager extends SimpleEventBroadcast {
 
 			if (node instanceof ActionRegion) {
 				regions.forEach((region, action) -> {
-					if (((ActionRegion) node).supportsActionRegion(region)) {
+					if (region.equals(RegionTags.GENERAL) || ((ActionRegion) node).supportsActionRegion(region)) {
 						action.run(node);
 					}
 				});
 			} else {
-				if (regions.containsKey(RegionTags.UNKNOWN)) regions.get(RegionTags.UNKNOWN).run(node);
+				if (regions.containsKey(RegionTags.GENERAL)) regions.get(RegionTags.GENERAL).run(node);
+				else if (regions.containsKey(RegionTags.UNKNOWN)) regions.get(RegionTags.UNKNOWN).run(node);
 			}
 
 
@@ -337,6 +341,11 @@ public class ActionManager extends SimpleEventBroadcast {
 	}
 
 	private void loadDefaultActions() {
+		//GENERAL
+		actions.add(new GeneralActionCreateProject());
+		actions.add(new GeneralActionOpenProject());
+		actions.add(new GeneralActionSettings());
+
 		//TEXT EDITOR
 		actions.add(new TextEditorActionCompile());
 		actions.add(new TextEditorActionCopy());
@@ -404,7 +413,7 @@ public class ActionManager extends SimpleEventBroadcast {
 
 			String string;
 			KeyCombination combination;
-			for (Object o : (List) value) {
+			for (Object o : (List<?>) value) {
 				string = o.toString();
 				if (string.isEmpty()) continue;
 				try {

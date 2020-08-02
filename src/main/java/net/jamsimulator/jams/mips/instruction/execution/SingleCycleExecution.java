@@ -30,8 +30,8 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public abstract class SingleCycleExecution<Inst extends AssembledInstruction> extends InstructionExecution<SingleCycleArchitecture, Inst> {
 
-	public SingleCycleExecution(Simulation<SingleCycleArchitecture> simulation, Inst instruction) {
-		super(simulation, instruction);
+	public SingleCycleExecution(Simulation<SingleCycleArchitecture> simulation, Inst instruction, int address) {
+		super(simulation, instruction, address);
 	}
 
 	public abstract void execute();

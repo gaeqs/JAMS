@@ -86,7 +86,7 @@ class GeneralInstructionTests {
 
 
 		InstructionExecution<?, ?> execution = instructions[0].getBasicOrigin()
-				.generateExecution(simulation, instructions[0]).orElse(null);
+				.generateExecution(simulation, instructions[0], 0).orElse(null);
 
 		assertTrue(execution instanceof SingleCycleExecution, "Execution is not a single cycle execution.");
 
@@ -111,7 +111,7 @@ class GeneralInstructionTests {
 
 		InstructionAdd add = new InstructionAdd();
 		AssembledInstruction instruction = add.assembleBasic(parameters);
-		InstructionExecution<?, ?> execution = add.generateExecution(simulation, instruction).orElse(null);
+		InstructionExecution<?, ?> execution = add.generateExecution(simulation, instruction, 0).orElse(null);
 
 		assertTrue(execution instanceof SingleCycleExecution, "Execution is not a single cycle execution.");
 

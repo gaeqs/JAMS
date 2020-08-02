@@ -12,7 +12,7 @@ public class SingleCycleSimulationEvent extends SimulationEvent {
 	/**
 	 * Creates the single-cycle simulation event.
 	 *
-	 * @param simulation the {@link Simulation} tha created this event.
+	 * @param simulation the {@link SingleCycleSimulation} that has created this event.
 	 */
 	public SingleCycleSimulationEvent(SingleCycleSimulation simulation) {
 		super(simulation);

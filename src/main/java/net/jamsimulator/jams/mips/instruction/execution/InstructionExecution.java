@@ -38,20 +38,42 @@ public abstract class InstructionExecution<Arch extends Architecture, Inst exten
 	protected final Registers registers;
 	protected final Inst instruction;
 
-	public InstructionExecution(Simulation<Arch> simulation, Inst instruction) {
+	protected final int address;
+
+	public InstructionExecution(Simulation<Arch> simulation, Inst instruction, int address) {
 		Validate.notNull(simulation, "Simulation cannot be null!");
 		Validate.notNull(instruction, "Instruction cannot be null!");
 		this.simulation = simulation;
 		this.registers = simulation.getRegisters();
 		this.instruction = instruction;
+		this.address = address;
 	}
 
+	/**
+	 * Returns the {@link Simulation} executing this instruction.
+	 *
+	 * @return the {@link Simulation}.
+	 */
 	public Simulation<Arch> getSimulation() {
 		return simulation;
 	}
 
+	/**
+	 * Returns the execution instruction.
+	 *
+	 * @return the instruction.
+	 */
 	public Inst getInstruction() {
 		return instruction;
+	}
+
+	/**
+	 * Returns the address of the executing instruction.
+	 *
+	 * @return the address.
+	 */
+	public int getAddress() {
+		return address;
 	}
 
 	/**
@@ -62,7 +84,6 @@ public abstract class InstructionExecution<Arch extends Architecture, Inst exten
 	protected void error(String message) {
 		throw new RuntimeInstructionException(message);
 	}
-
 
 	/**
 	 * Throws a {@link RuntimeInstructionException} with the given message.

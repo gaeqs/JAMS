@@ -24,11 +24,13 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -48,6 +50,7 @@ public class InstructionSw extends BasicInstruction<InstructionSw.Assembled> {
 	public InstructionSw() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -81,8 +84,8 @@ public class InstructionSw extends BasicInstruction<InstructionSw.Assembled> {
 
 	public static class SingleCycle extends SingleCycleExecution<Assembled> {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction) {
-			super(simulation, instruction);
+		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address);
 		}
 
 		@Override
@@ -91,6 +94,35 @@ public class InstructionSw extends BasicInstruction<InstructionSw.Assembled> {
 			Register rt = register(instruction.getTargetRegister());
 			int address = base.getValue() + instruction.getImmediateAsSigned();
 			simulation.getMemory().setWord(address, rt.getValue());
+		}
+	}
+
+	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address, true, false);
+		}
+
+		@Override
+		public void decode() {
+			Register base = register(instruction.getSourceRegister());
+			Register rt = register(instruction.getTargetRegister());
+			decodeResult = new int[]{base.getValue(), rt.getValue()};
+		}
+
+		@Override
+		public void execute() {
+			int address = decodeResult[0] + instruction.getImmediateAsSigned();
+			executionResult = new int[]{address, decodeResult[1]};
+		}
+
+		@Override
+		public void memory() {
+			simulation.getMemory().setWord(executionResult[0], executionResult[1]);
+		}
+
+		@Override
+		public void writeBack() {
 		}
 	}
 }

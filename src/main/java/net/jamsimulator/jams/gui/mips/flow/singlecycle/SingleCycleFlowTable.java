@@ -59,7 +59,7 @@ public class SingleCycleFlowTable extends FlowTable {
 				int index = 0;
 				for (Node child : getChildren()) {
 					if (child instanceof SingleCycleFlowEntry) {
-						((SingleCycleFlowEntry) child).setIndex(index++, stepSize);
+						((SingleCycleFlowEntry) child).refresh(index++, stepSize);
 					}
 				}
 			}
@@ -70,7 +70,8 @@ public class SingleCycleFlowTable extends FlowTable {
 			SingleCycleFlowEntry entry;
 			while (!toAdd.isEmpty()) {
 				instruction = toAdd.pop();
-				entry = new SingleCycleFlowEntry(getChildren().size(), instruction, scrollPane, start, stepSize);
+				entry = new SingleCycleFlowEntry(getChildren().size(), scrollPane, this,
+						instruction, start, stepSize);
 				getChildren().add(getChildren().size(), entry);
 			}
 		});
@@ -92,7 +93,7 @@ public class SingleCycleFlowTable extends FlowTable {
 		int index = 0;
 		for (Node child : getChildren()) {
 			if (child instanceof SingleCycleFlowEntry) {
-				((SingleCycleFlowEntry) child).setIndex(index++, stepSize);
+				((SingleCycleFlowEntry) child).refresh(index++, stepSize);
 			}
 		}
 	}
