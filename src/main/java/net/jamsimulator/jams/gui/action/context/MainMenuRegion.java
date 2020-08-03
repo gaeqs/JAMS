@@ -8,6 +8,7 @@ public class MainMenuRegion {
 
 	public static MainMenuRegion FILE = new MainMenuRegion("file", "MAIN_MENU_FILE", 0);
 	public static MainMenuRegion EDIT = new MainMenuRegion("edit", "MAIN_MENU_EDIT", 1);
+	public static MainMenuRegion MIPS = new MainMenuRegion("mips", "MAIN_MENU_MIPS", 2);
 
 	private final String name;
 	private final String languageNode;

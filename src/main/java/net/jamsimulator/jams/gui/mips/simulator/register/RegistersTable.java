@@ -4,6 +4,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
 import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.gui.ActionRegion;
+import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTableColumn;
 import net.jamsimulator.jams.mips.register.Register;
@@ -16,7 +18,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Set;
 
-public class RegistersTable extends TableView<RegisterPropertyWrapper> {
+public class RegistersTable extends TableView<RegisterPropertyWrapper> implements ActionRegion {
 
 	private final HashMap<Register, RegisterPropertyWrapper> registers;
 
@@ -74,6 +76,11 @@ public class RegistersTable extends TableView<RegisterPropertyWrapper> {
 		if (!simulation.isRunning()) {
 			simulation.getRegisters().registerListeners(this, true);
 		}
+	}
+
+	@Override
+	public boolean supportsActionRegion(String region) {
+		return RegionTags.MIPS_SIMULATION.equals(region);
 	}
 
 	@Listener

@@ -42,6 +42,7 @@ import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionCompile;
 import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionCreateProject;
 import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionOpenProject;
 import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionSettings;
+import net.jamsimulator.jams.gui.action.defaults.simulation.*;
 import net.jamsimulator.jams.gui.action.defaults.texteditor.*;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionRegisterEvent;
@@ -313,16 +314,22 @@ public class ActionManager extends SimpleEventBroadcast {
 		binds.forEach((combination, regions) -> scene.getAccelerators().put(combination, () -> {
 			Node node = scene.getFocusOwner();
 
-			if (node instanceof ActionRegion) {
-				regions.forEach((region, action) -> {
-					if (region.equals(RegionTags.GENERAL) || ((ActionRegion) node).supportsActionRegion(region)) {
-						action.run(node);
+			Node current = node;
+
+			while (current != null) {
+				if (current instanceof ActionRegion) {
+					for (Map.Entry<String, Action> entry : regions.entrySet()) {
+						if (entry.getKey().equals(RegionTags.GENERAL) || ((ActionRegion) current).supportsActionRegion(entry.getKey())) {
+							entry.getValue().run(current);
+							return;
+						}
 					}
-				});
-			} else {
-				if (regions.containsKey(RegionTags.GENERAL)) regions.get(RegionTags.GENERAL).run(node);
-				else if (regions.containsKey(RegionTags.UNKNOWN)) regions.get(RegionTags.UNKNOWN).run(node);
+				}
+				current = current.getParent();
 			}
+
+			if (regions.containsKey(RegionTags.GENERAL)) regions.get(RegionTags.GENERAL).run(node);
+			else if (regions.containsKey(RegionTags.UNKNOWN)) regions.get(RegionTags.UNKNOWN).run(node);
 		}));
 	}
 
@@ -403,6 +410,13 @@ public class ActionManager extends SimpleEventBroadcast {
 		actions.add(new FolderActionRemoveFileFromAssembler());
 
 		actions.add(new MipsFilesToAssembleActionRemove());
+
+		//SIMULATION
+		actions.add(new SimulationActionExecuteAllInstructions());
+		actions.add(new SimulationActionExecuteOneStep());
+		actions.add(new SimulationActionReset());
+		actions.add(new SimulationActionStop());
+		actions.add(new SimulationActionUndoOneStep());
 	}
 
 	private List<Action> loadBinds() {

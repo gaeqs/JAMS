@@ -5,6 +5,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import net.jamsimulator.jams.gui.ActionRegion;
+import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.util.LanguageStringComboBox;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.Memory;
@@ -19,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class MemoryPane extends AnchorPane {
+public class MemoryPane extends AnchorPane implements ActionRegion {
 
 	private final ComboBox<String> offsetSelection;
 	private ComboBox<String> representationSelection;
@@ -103,6 +105,11 @@ public class MemoryPane extends AnchorPane {
 		});
 
 		buttonsHBox.getChildren().addAll(previous, next);
+	}
+
+	@Override
+	public boolean supportsActionRegion(String region) {
+		return RegionTags.MIPS_SIMULATION.equals(region);
 	}
 
 }

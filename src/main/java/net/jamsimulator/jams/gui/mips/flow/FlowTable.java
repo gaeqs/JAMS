@@ -7,6 +7,8 @@ import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.gui.ActionRegion;
+import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.mips.flow.multicycle.MultiCycleFlowTable;
 import net.jamsimulator.jams.gui.mips.flow.singlecycle.SingleCycleFlowTable;
 import net.jamsimulator.jams.mips.architecture.Architecture;
@@ -23,7 +25,7 @@ import java.util.Map;
  * <p>
  * This class must be extended to provide specific functionalities.
  */
-public class FlowTable extends VBox {
+public class FlowTable extends VBox implements ActionRegion {
 
 	//region static
 
@@ -110,6 +112,11 @@ public class FlowTable extends VBox {
 		if (selected != null) {
 			selected.getStyleClass().add("flow-entry-selected");
 		}
+	}
+
+	@Override
+	public boolean supportsActionRegion(String region) {
+		return RegionTags.MIPS_SIMULATION.equals(region);
 	}
 
 	//MOUSE SCROLL VARIABLES

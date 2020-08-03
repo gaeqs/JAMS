@@ -4,6 +4,10 @@ import net.jamsimulator.jams.gui.action.context.ContextRegion;
 
 public class GeneralActionRegions {
 
+	//FILE
 	public static final ContextRegion PROJECT = new ContextRegion("project", null, 0);
 	public static final ContextRegion SETTINGS = new ContextRegion("settings", null, 1);
+
+	//MIPS
+	public static final ContextRegion MIPS_PRIORITY = new ContextRegion("mips_priority", null, 0);
 }

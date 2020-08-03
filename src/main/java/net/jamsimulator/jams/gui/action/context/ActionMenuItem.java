@@ -27,7 +27,10 @@ package net.jamsimulator.jams.gui.action.context;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.JamsApplication;
@@ -61,7 +64,23 @@ public class ActionMenuItem extends MenuItem {
 		}
 		List<KeyCombination> list = JamsApplication.getActionManager().getBindCombinations(action.getName());
 		if (!list.isEmpty()) {
-			setAccelerator(list.get(0));
+			String text = list.get(0).toString();
+			setAccelerator(new KeyCombination() {
+				@Override
+				public boolean match(KeyEvent event) {
+					return false;
+				}
+
+				@Override
+				public String toString() {
+					return text;
+				}
+
+				@Override
+				public String getDisplayText() {
+					return text;
+				}
+			});
 		}
 	}
 

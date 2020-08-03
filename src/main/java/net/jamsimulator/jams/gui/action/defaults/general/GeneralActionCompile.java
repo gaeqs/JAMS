@@ -27,9 +27,15 @@ package net.jamsimulator.jams.gui.action.defaults.general;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.gui.action.Action;
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.context.ContextAction;
+import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
 import net.jamsimulator.jams.gui.bar.BarButton;
+import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.explorer.Explorer;
+import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
 import net.jamsimulator.jams.gui.mips.project.MIPSSimulationPane;
 import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
@@ -39,13 +45,16 @@ import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 
-public class GeneralActionCompile extends Action {
+import java.util.Optional;
+
+public class GeneralActionCompile extends ContextAction {
 
 	public static final String NAME = "GENERAL_COMPILE";
 	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
 
 	public GeneralActionCompile() {
-		super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_COMPILE, DEFAULT_COMBINATION);
+		super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_COMPILE, DEFAULT_COMBINATION, GeneralActionRegions.MIPS_PRIORITY, MainMenuRegion.MIPS,
+				JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_ASSEMBLE, Icons.PROJECT_ASSEMBLE_PATH, 1024, 1024).orElse(null));
 	}
 
 	@Override
@@ -54,6 +63,13 @@ public class GeneralActionCompile extends Action {
 			MIPSProject project = ((MIPSFileEditor) node).getProject().orElse(null);
 			if (project == null) return;
 			compileAndShow(project);
+		} else {
+			Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
+			if (!optionalProject.isPresent()) return;
+			ProjectTab tab = optionalProject.get();
+			if (tab.getProject() instanceof MIPSProject) {
+				compileAndShow((MIPSProject) tab.getProject());
+			}
 		}
 	}
 
@@ -94,5 +110,31 @@ public class GeneralActionCompile extends Action {
 		}
 
 		return builder + s;
+	}
+
+	@Override
+	public void runFromMenu() {
+		Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
+		if (!optionalProject.isPresent()) return;
+		ProjectTab tab = optionalProject.get();
+		if (tab.getProject() instanceof MIPSProject) {
+			compileAndShow((MIPSProject) tab.getProject());
+		}
+	}
+
+	@Override
+	public boolean supportsExplorerState(Explorer explorer) {
+		return false;
+	}
+
+	@Override
+	public boolean supportsTextEditorState(CodeFileEditor editor) {
+		return false;
+	}
+
+	@Override
+	public boolean supportsMainMenuState(MainMenuBar bar) {
+		Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
+		return optionalProject.isPresent();
 	}
 }

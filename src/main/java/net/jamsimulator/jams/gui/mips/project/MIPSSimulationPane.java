@@ -1,10 +1,11 @@
 package net.jamsimulator.jams.gui.mips.project;
 
-import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
+import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.bar.BarType;
 import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.image.icon.Icons;
@@ -25,7 +26,7 @@ import net.jamsimulator.jams.utils.AnchorUtils;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MIPSSimulationPane extends WorkingPane {
+public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 
 	protected MIPSProject project;
 	protected Simulation<?> simulation;
@@ -117,5 +118,10 @@ public class MIPSSimulationPane extends WorkingPane {
 	public void onClose() {
 		super.onClose();
 		simulation.stop();
+	}
+
+	@Override
+	public boolean supportsActionRegion(String region) {
+		return RegionTags.MIPS_SIMULATION.equals(region);
 	}
 }
