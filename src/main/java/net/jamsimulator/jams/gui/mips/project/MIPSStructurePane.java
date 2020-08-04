@@ -29,6 +29,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.bar.BarType;
 import net.jamsimulator.jams.gui.bar.PaneSnapshot;
@@ -36,7 +37,6 @@ import net.jamsimulator.jams.gui.editor.FileEditorHolder;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.explorer.MipsFolderExplorer;
 import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebar;
-import net.jamsimulator.jams.gui.mips.sidebar.SimulationSidebar;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.log.SimpleLog;
@@ -49,12 +49,13 @@ import java.util.HashSet;
 /**
  * This class represent the working pane of a project.
  */
-public class MipsStructurePane extends WorkingPane {
+public class MIPSStructurePane extends WorkingPane {
 
 	protected final MIPSProject project;
+	protected final MIPSStructurePaneButtons paneButtons;
+
 	protected MipsFolderExplorer explorer;
 	protected FilesToAssembleSidebar filesToAssembleSidebar;
-	protected SimulationSidebar simulationSidebar;
 
 	protected SimpleLog log;
 
@@ -65,14 +66,15 @@ public class MipsStructurePane extends WorkingPane {
 	 * @param projectTab the {@link ProjectTab} of the project.
 	 * @param project    the {@link MIPSProject} to handle.
 	 */
-	public MipsStructurePane(Tab parent, ProjectTab projectTab, MIPSProject project) {
+	public MIPSStructurePane(Tab parent, ProjectTab projectTab, MIPSProject project) {
 		super(parent, projectTab, null, new HashSet<>(), false);
 		center = new FileEditorHolder(this);
 		this.project = project;
 
+		paneButtons = new MIPSStructurePaneButtons(this);
+
 		loadExplorer();
 		loadFilesToAssembleSidebar();
-		loadSimulationSidebar();
 		loadLogBottomBar();
 
 		init();
@@ -156,18 +158,6 @@ public class MipsStructurePane extends WorkingPane {
 				pane, explorerIcon, Messages.BAR_FILES_TO_ASSEMBLE_NAME));
 	}
 
-	private void loadSimulationSidebar() {
-		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_ASSEMBLE_GRAY,
-				Icons.PROJECT_ASSEMBLE_GRAY_PATH, 1024, 1024).orElse(null);
-		ScrollPane pane = new ScrollPane();
-		pane.setFitToWidth(true);
-		pane.setFitToHeight(true);
-		simulationSidebar = new SimulationSidebar(project);
-		pane.setContent(simulationSidebar);
-		paneSnapshots.add(new PaneSnapshot("Simulation", BarType.TOP_RIGHT,
-				pane, icon, Messages.BAR_SIMULATION_NAME));
-	}
-
 	private void loadLogBottomBar() {
 		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE,
 				Icons.FILE_FILE_PATH, 1024, 1024).orElse(null);
@@ -183,6 +173,12 @@ public class MipsStructurePane extends WorkingPane {
 	@Override
 	public String getLanguageNode() {
 		return Messages.PROJECT_TAB_STRUCTURE;
+	}
+
+	@Override
+	public void populateHBox(HBox buttonsHBox) {
+		buttonsHBox.getChildren().clear();
+		buttonsHBox.getChildren().addAll(paneButtons.getNodes());
 	}
 
 	@Override

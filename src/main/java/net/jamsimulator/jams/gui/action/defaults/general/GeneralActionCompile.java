@@ -38,7 +38,7 @@ import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
 import net.jamsimulator.jams.gui.mips.project.MIPSSimulationPane;
-import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
+import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.util.log.SimpleLog;
 import net.jamsimulator.jams.language.Messages;
@@ -77,7 +77,7 @@ public class GeneralActionCompile extends ContextAction {
 		ProjectTab tab = project.getProjectTab().orElse(null);
 		if (tab == null) return;
 
-		MipsStructurePane pane = (MipsStructurePane) tab.getProjectTabPane().getWorkingPane();
+		MIPSStructurePane pane = (MIPSStructurePane) tab.getProjectTabPane().getWorkingPane();
 		pane.getFileDisplayHolder().saveAll(true);
 		pane.getBarMap().searchButton("Log").ifPresent(BarButton::show);
 		SimpleLog log = pane.getLog();

@@ -3,6 +3,7 @@ package net.jamsimulator.jams.gui.mips.project;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
@@ -118,6 +119,11 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 	public void onClose() {
 		super.onClose();
 		simulation.stop();
+	}
+
+	@Override
+	public void populateHBox(HBox buttonsHBox) {
+		buttonsHBox.getChildren().clear();
 	}
 
 	@Override

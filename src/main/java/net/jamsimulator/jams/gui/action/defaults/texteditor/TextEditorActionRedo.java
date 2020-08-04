@@ -37,7 +37,7 @@ import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditorHolder;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
-import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
+import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
 
@@ -64,9 +64,9 @@ public class TextEditorActionRedo extends ContextAction {
 		Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
 		if (!optionalProject.isPresent()) return;
 		Node pane = optionalProject.get().getProjectTabPane().getSelectionModel().getSelectedItem().getContent();
-		if (!(pane instanceof MipsStructurePane)) return;
+		if (!(pane instanceof MIPSStructurePane)) return;
 
-		FileEditorHolder holder = ((MipsStructurePane) pane).getFileDisplayHolder();
+		FileEditorHolder holder = ((MIPSStructurePane) pane).getFileDisplayHolder();
 		Optional<FileEditor> optionalEditor = holder.getLastFocusedEditor();
 		if (optionalEditor.isPresent() && optionalEditor.get() instanceof CodeFileEditor) {
 			((CodeFileEditor) optionalEditor.get()).redo();
@@ -88,9 +88,9 @@ public class TextEditorActionRedo extends ContextAction {
 		Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
 		if (!optionalProject.isPresent()) return false;
 		Node pane = optionalProject.get().getProjectTabPane().getSelectionModel().getSelectedItem().getContent();
-		if (!(pane instanceof MipsStructurePane)) return false;
+		if (!(pane instanceof MIPSStructurePane)) return false;
 
-		FileEditorHolder holder = ((MipsStructurePane) pane).getFileDisplayHolder();
+		FileEditorHolder holder = ((MIPSStructurePane) pane).getFileDisplayHolder();
 		Optional<FileEditor> optionalEditor = holder.getLastFocusedEditor();
 		if (!optionalEditor.isPresent() || !(optionalEditor.get() instanceof CodeFileEditor)) return false;
 

@@ -24,13 +24,15 @@
 
 package net.jamsimulator.jams.gui.project;
 
+import javafx.application.Platform;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
-import net.jamsimulator.jams.gui.mips.project.MipsStructurePane;
+import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 public class ProjectTabPane extends TabPane {
@@ -39,12 +41,10 @@ public class ProjectTabPane extends TabPane {
 
 	private final WorkingPane workingPane;
 
-	public ProjectTabPane(ProjectTab projectTab) {
+	public ProjectTabPane(ProjectTab projectTab, BiConsumer<Tab, Tab> onSelect) {
 		getStyleClass().add("project-tab-pane");
 		setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
 		this.projectTab = projectTab;
-
-		workingPane = createProjectPane((tab, pt) -> new MipsStructurePane(tab, pt, (MIPSProject) pt.getProject()), false);
 
 		projectTab.addTabCloseListener(event -> {
 			for (Tab tab : getTabs()) {
@@ -52,6 +52,11 @@ public class ProjectTabPane extends TabPane {
 					((ProjectPane) tab.getContent()).onClose();
 			}
 		});
+
+		Platform.runLater(() -> getChildren().remove(0));
+		getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> onSelect.accept(old, val));
+
+		workingPane = createProjectPane((tab, pt) -> new MIPSStructurePane(tab, pt, (MIPSProject) pt.getProject()), false);
 	}
 
 	public WorkingPane getWorkingPane() {

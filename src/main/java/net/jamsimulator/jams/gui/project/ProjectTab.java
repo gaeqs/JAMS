@@ -24,13 +24,16 @@
 
 package net.jamsimulator.jams.gui.project;
 
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.MIPSProject;
@@ -46,8 +49,8 @@ public class ProjectTab extends Tab {
 
 	private final Project project;
 	private final ProjectTabPane projectTabPane;
-
 	private final List<EventHandler<Event>> closeListeners;
+	private final HBox buttonsHBox;
 
 	/**
 	 * Creates the folder project's tab.
@@ -61,17 +64,43 @@ public class ProjectTab extends Tab {
 		closeListeners = new ArrayList<>();
 
 		AnchorPane pane = new AnchorPane();
+		pane.getStyleClass().add("project-tab-anchor-pane");
 
 		//Black line separator
 		Separator separator = new Separator(Orientation.HORIZONTAL);
 		AnchorUtils.setAnchor(separator, 0, -1, 0, 0);
 		pane.getChildren().add(separator);
 
-		projectTabPane = new ProjectTabPane(this);
-		AnchorUtils.setAnchor(projectTabPane, 1, 0, 0, 0);
-		pane.getChildren().add(projectTabPane);
-		setContent(pane);
+		projectTabPane = new ProjectTabPane(this, (old, tab) -> {
+			if (old != null) {
+				pane.getChildren().remove(old.getContent());
+			}
+			if (tab != null) {
+				Platform.runLater(() -> {
+					AnchorUtils.setAnchor(tab.getContent(), 27, 0, 0, 0);
+					pane.getChildren().add(tab.getContent());
 
+					if (tab.getContent() instanceof ProjectPane) {
+						((ProjectPane) tab.getContent()).populateHBox(getButtonsHBox());
+					}
+				});
+			}
+		});
+
+		AnchorUtils.setAnchor(projectTabPane, 0, 0, 0, 300);
+		pane.getChildren().add(projectTabPane);
+
+		buttonsHBox = new HBox();
+		AnchorUtils.setAnchor(buttonsHBox, 0, -1, -1, 0);
+		buttonsHBox.getStyleClass().add("buttons-hbox");
+		buttonsHBox.setAlignment(Pos.CENTER_RIGHT);
+		buttonsHBox.setSpacing(2);
+		buttonsHBox.setPrefHeight(28);
+		buttonsHBox.setPrefWidth(300);
+		pane.getChildren().add(buttonsHBox);
+
+
+		setContent(pane);
 
 		setOnClosed(event -> {
 			closeListeners.forEach(target -> target.handle(event));
@@ -96,6 +125,17 @@ public class ProjectTab extends Tab {
 	 */
 	public ProjectTabPane getProjectTabPane() {
 		return projectTabPane;
+	}
+
+	/**
+	 * Returns the HBox containing some pane buttons.
+	 * <p>
+	 * This HBox is shown at the right of the project tab pane.
+	 *
+	 * @return the HBox.
+	 */
+	public HBox getButtonsHBox() {
+		return buttonsHBox;
 	}
 
 	/**

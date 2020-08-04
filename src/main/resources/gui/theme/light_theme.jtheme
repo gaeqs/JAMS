@@ -617,10 +617,17 @@ AnchorPane {
     -fx-background-color: -theme-background-darker-2;
 }
 
+.project-tab-anchor-pane {
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.buttons-hbox {
+    -fx-background-color: -theme-background-darker-2;
+}
+
 /*SIDEBAR*/
 .sidebar {
     -fx-background-color: -theme-background-darker-2;
-    -fx-border-color: -theme-background-darker;
 }
 
 .sidebar-left {

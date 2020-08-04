@@ -587,10 +587,28 @@ AnchorPane {
     -fx-background-color: -theme-background-darker-2;
 }
 
+.project-tab-anchor-pane {
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.buttons-hbox {
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.buttons-hbox-button {
+    -fx-padding: 0;
+    -fx-background-color: -theme-background-darker-2;
+    -fx-border-color: transparent;
+    -fx-background-insets: 2;
+    -fx-background-radius: 5;
+    -fx-text-fill: -theme-background-darker-2;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
 /*SIDEBAR*/
 .sidebar {
     -fx-background-color: -theme-background-darker-2;
-    -fx-border-color: -theme-background-darker;
 }
 
 .sidebar-left {
