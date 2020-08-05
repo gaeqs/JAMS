@@ -11,7 +11,8 @@ import net.jamsimulator.jams.gui.bar.BarType;
 import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.flow.FlowTable;
-import net.jamsimulator.jams.gui.mips.simulator.MIPSSimulationCentralPane;
+import net.jamsimulator.jams.gui.mips.simulator.execution.ExecutionButtons;
+import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionsTable;
 import net.jamsimulator.jams.gui.mips.simulator.memory.MemoryPane;
 import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
 import net.jamsimulator.jams.gui.project.ProjectTab;
@@ -32,11 +33,15 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 	protected MIPSProject project;
 	protected Simulation<?> simulation;
 	protected TabPane registersTabs;
+	protected final ExecutionButtons executionButtons;
+
 
 	public MIPSSimulationPane(Tab parent, ProjectTab projectTab, MIPSProject project, Simulation<?> simulation) {
-		super(parent, projectTab, new MIPSSimulationCentralPane(simulation), new HashSet<>(), false);
+		super(parent, projectTab, InstructionsTable.createTable(simulation.getArchitecture(),
+				simulation, simulation.getData().getOriginalInstructions()), new HashSet<>(), false);
 		this.project = project;
 		this.simulation = simulation;
+		this.executionButtons = new ExecutionButtons(simulation);
 
 		loadRegisterTabs();
 		loadConsole();
@@ -124,6 +129,7 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 	@Override
 	public void populateHBox(HBox buttonsHBox) {
 		buttonsHBox.getChildren().clear();
+		buttonsHBox.getChildren().addAll(executionButtons.getNodes());
 	}
 
 	@Override
