@@ -330,7 +330,7 @@ AnchorPane {
 
 /* COMBO BOX */
 .combo-box-base {
-    -fx-background-color: -theme-background;
+    -fx-background-color: -theme-background-darker;
     -fx-border-color: transparent;
 }
 
