@@ -89,6 +89,7 @@ public class Messages {
 	public static final String REGISTERS_COP0 = "REGISTERS_COP0";
 	public static final String REGISTERS_COP1 = "REGISTERS_COP1";
 	public static final String REGISTERS_ID = "REGISTERS_ID";
+	public static final String REGISTERS_SELECTION = "REGISTERS_SELECTION";
 	public static final String REGISTERS_NAME = "REGISTERS_NAME";
 	public static final String REGISTERS_VALUE = "REGISTERS_VALUE";
 	public static final String REGISTERS_HEX = "REGISTERS_HEX";

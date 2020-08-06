@@ -123,7 +123,19 @@ public abstract class InstructionExecution<Arch extends Architecture, Inst exten
 	 * @throws RuntimeInstructionException if the register is not present.
 	 */
 	protected Register registerCop0(int identifier) {
-		return registers.getCoprocessor0RegisterUnchecked(identifier);
+		return registers.getCoprocessor0RegisterUnchecked(identifier, 0);
+	}
+
+	/**
+	 * Returns the COP0 register that matches the given identifier.
+	 *
+	 * @param identifier the identifier.
+	 * @param sel        the sub-index.
+	 * @return the register.
+	 * @throws RuntimeInstructionException if the register is not present.
+	 */
+	protected Register registerCop0(int identifier, int sel) {
+		return registers.getCoprocessor0RegisterUnchecked(identifier, sel);
 	}
 
 	/**

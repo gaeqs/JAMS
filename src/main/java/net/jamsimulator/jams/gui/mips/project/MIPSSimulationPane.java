@@ -14,6 +14,7 @@ import net.jamsimulator.jams.gui.mips.flow.FlowTable;
 import net.jamsimulator.jams.gui.mips.simulator.execution.ExecutionButtons;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionsTable;
 import net.jamsimulator.jams.gui.mips.simulator.memory.MemoryPane;
+import net.jamsimulator.jams.gui.mips.simulator.register.COP0RegistersTable;
 import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
@@ -72,7 +73,7 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 		general.add(simulation.getRegisters().getProgramCounter());
 
 		registersTabs.getTabs().add(new LanguageTab(Messages.REGISTERS_GENERAL, new RegistersTable(simulation, general, false)));
-		registersTabs.getTabs().add(new LanguageTab(Messages.REGISTERS_COP0, new RegistersTable(simulation, simulation.getRegisters().getCoprocessor0Registers(), false)));
+		registersTabs.getTabs().add(new LanguageTab(Messages.REGISTERS_COP0, new COP0RegistersTable(simulation, simulation.getRegisters().getCoprocessor0Registers(), false)));
 		registersTabs.getTabs().add(new LanguageTab(Messages.REGISTERS_COP1, new RegistersTable(simulation, simulation.getRegisters().getCoprocessor1Registers(), true)));
 
 		registersTabs.getTabs().forEach(tab -> tab.setClosable(false));

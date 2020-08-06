@@ -41,13 +41,13 @@ import java.util.Set;
  */
 public class Register {
 
-	private final Registers registers;
+	protected final Registers registers;
 
-	private final int identifier;
-	private final Set<String> names;
-	private int value;
-	private final boolean modifiable;
-	private int defaultValue;
+	protected final int identifier;
+	protected final Set<String> names;
+	protected int value;
+	protected final boolean modifiable;
+	protected int defaultValue;
 
 	/**
 	 * Creates a register using a identifier and a list of names.
