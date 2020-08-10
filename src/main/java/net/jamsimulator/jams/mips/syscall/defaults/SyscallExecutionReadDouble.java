@@ -34,7 +34,7 @@ public class SyscallExecutionReadDouble implements SyscallExecution {
 		boolean done = false;
 		while (!done) {
 			String value = simulation.popInputOrLock();
-			if (simulation.checkInterrupted()) return;
+			if (simulation.checkThreadInterrupted()) return;
 
 			try {
 				double input = Double.parseDouble(value);

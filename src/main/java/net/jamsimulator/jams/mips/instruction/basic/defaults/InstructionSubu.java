@@ -34,21 +34,22 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
-import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
+import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
-public class InstructionBreak extends BasicRInstruction<InstructionBreak.Assembled> {
+public class InstructionSubu extends BasicRInstruction<InstructionSubu.Assembled> {
 
-	public static final String NAME = "Breakpoint";
-	public static final String MNEMONIC = "break";
+	public static final String NAME = "Subtraction without overflow";
+	public static final String MNEMONIC = "subu";
 	public static final int OPERATION_CODE = 0;
-	public static final int FUNCTION_CODE = 0b001101;
+	public static final int FUNCTION_CODE = 0b100011;
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[0];
+	private static final ParameterType[] PARAMETER_TYPES
+			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER};
 
-	public InstructionBreak() {
+	public InstructionSubu() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
@@ -56,7 +57,9 @@ public class InstructionBreak extends BasicRInstruction<InstructionBreak.Assembl
 
 	@Override
 	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new Assembled(origin, this);
+		return new Assembled(parameters[1].getRegister(),
+				parameters[2].getRegister(),
+				parameters[0].getRegister(), origin, this);
 	}
 
 	@Override
@@ -66,9 +69,10 @@ public class InstructionBreak extends BasicRInstruction<InstructionBreak.Assembl
 
 	public static class Assembled extends AssembledRInstruction {
 
-		public Assembled(Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-			super(InstructionBreak.OPERATION_CODE, 0, 0, 0, 0,
-					InstructionBreak.FUNCTION_CODE, origin, basicOrigin);
+		public Assembled(int sourceRegister, int targetRegister, int destinationRegister,
+						 Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(InstructionSubu.OPERATION_CODE, sourceRegister, targetRegister, destinationRegister, 0,
+					InstructionSubu.FUNCTION_CODE, origin, basicOrigin);
 		}
 
 		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -77,7 +81,9 @@ public class InstructionBreak extends BasicRInstruction<InstructionBreak.Assembl
 
 		@Override
 		public String parametersToString(String registersStart) {
-			return "";
+			return registersStart + getDestinationRegister()
+					+ ", " + registersStart + getSourceRegister()
+					+ ", " + registersStart + getTargetRegister();
 		}
 	}
 
@@ -89,23 +95,34 @@ public class InstructionBreak extends BasicRInstruction<InstructionBreak.Assembl
 
 		@Override
 		public void execute() {
-			throw new RuntimeInstructionException(InterruptCause.BREAKPOINT_EXCEPTION);
+			Register rt = register(instruction.getTargetRegister());
+			Register rs = register(instruction.getSourceRegister());
+			Register rd = register(instruction.getDestinationRegister());
+
+			try {
+				rd.setValue(rs.getValue() - rt.getValue());
+			} catch (ArithmeticException ex) {
+				error(InterruptCause.ARITHMETIC_OVERFLOW_EXCEPTION, ex);
+			}
 		}
 	}
 
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address, false, false);
+			super(simulation, instruction, address, false, true);
 		}
 
 		@Override
 		public void decode() {
+			Register rs = register(instruction.getSourceRegister());
+			Register rt = register(instruction.getTargetRegister());
+			decodeResult = new int[]{rs.getValue(), rt.getValue()};
 		}
 
 		@Override
 		public void execute() {
-			throw new RuntimeInstructionException(InterruptCause.BREAKPOINT_EXCEPTION);
+			executionResult = new int[]{decodeResult[0] - decodeResult[1]};
 		}
 
 		@Override
@@ -115,6 +132,7 @@ public class InstructionBreak extends BasicRInstruction<InstructionBreak.Assembl
 
 		@Override
 		public void writeBack() {
+			register(instruction.getDestinationRegister()).setValue(executionResult[0]);
 		}
 	}
 }

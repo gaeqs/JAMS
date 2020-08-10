@@ -91,8 +91,8 @@ public class InstructionCeilLDouble extends BasicRFPUInstruction<InstructionCeil
 
 		@Override
 		public void execute() {
-			if (instruction.getSourceRegister() % 2 != 0) error("Source register identifier is not even.");
-			if (instruction.getDestinationRegister() % 2 != 0) error("Destination register identifier is not even.");
+			if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
+			if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
 
 			Register rs0 = registerCop1(instruction.getSourceRegister());
 			Register rs1 = registerCop1(instruction.getSourceRegister() + 1);
@@ -114,8 +114,8 @@ public class InstructionCeilLDouble extends BasicRFPUInstruction<InstructionCeil
 
 		@Override
 		public void decode() {
-			if (instruction.getSourceRegister() % 2 != 0) error("Source register identifier is not even.");
-			if (instruction.getDestinationRegister() % 2 != 0) error("Destination register identifier is not even.");
+			if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
+			if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
 
 			Register rs0 = registerCop1(instruction.getSourceRegister());
 			Register rs1 = registerCop1(instruction.getSourceRegister() + 1);

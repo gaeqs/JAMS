@@ -174,6 +174,27 @@ public class Register {
 	}
 
 	/**
+	 * Returns the bit at the given position.
+	 *
+	 * @param position the position.
+	 * @return the bit.
+	 */
+	public boolean getBit(int position) {
+		return ((value >> position) & 1) == 1;
+	}
+
+	/**
+	 * Returns the n-bits located at the given posiiton.
+	 *
+	 * @param from   the start of the array.
+	 * @param length the length.
+	 * @return the bits.
+	 */
+	public int getSection(int from, int length) {
+		return (value >> from) & ((1 << length) - 1);
+	}
+
+	/**
 	 * Sets the value stored in the register.
 	 * If this register is not modifiable this method will do nothing.
 	 *
@@ -183,7 +204,7 @@ public class Register {
 	public void setValue(int value) {
 		if (!modifiable) return;
 		if (!registers.eventCallsEnabled) {
-			this.value = value;
+			setValue0(value);
 			return;
 		}
 
@@ -192,9 +213,20 @@ public class Register {
 		if (before.isCancelled()) return;
 
 		int old = this.value;
-		this.value = before.getNewValue();
+		setValue0(before.getNewValue());
 
 		registers.callEvent(new RegisterChangeValueEvent.After(this, old, this.value));
+	}
+
+	/**
+	 * Sets the new value, without any event call.
+	 * <p>
+	 * This event is called by {@link #setValue(int)} to se the new register's value.
+	 *
+	 * @param value the value.
+	 */
+	protected void setValue0(int value) {
+		this.value = value;
 	}
 
 	/**

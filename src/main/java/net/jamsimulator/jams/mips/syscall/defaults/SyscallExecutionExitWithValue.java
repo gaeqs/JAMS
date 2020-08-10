@@ -25,9 +25,11 @@ public class SyscallExecutionExitWithValue implements SyscallExecution {
 		if (register == null) throw new IllegalStateException("Register " + this.register + " not found");
 
 		simulation.exit();
-		simulation.getConsole().println();
-		simulation.getConsole().printDoneLn("Execution finished with code " + register.getValue());
-		simulation.getConsole().println();
+		if(simulation .getConsole() != null) {
+			simulation.getConsole().println();
+			simulation.getConsole().printDoneLn("Execution finished with code " + register.getValue());
+			simulation.getConsole().println();
+		}
 	}
 
 	public static class Builder extends SyscallExecutionBuilder<SyscallExecutionExitWithValue> {

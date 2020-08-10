@@ -26,9 +26,11 @@ package net.jamsimulator.jams.mips.simulation.singlecycle;
 
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
-import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.interrupt.InterruptCause;
+import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
+import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.event.MemoryAllocateMemoryEvent;
@@ -48,7 +50,6 @@ import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileCloseEvent
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileOpenEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileWriteEvent;
 import net.jamsimulator.jams.mips.simulation.singlecycle.event.SingleCycleInstructionExecutionEvent;
-import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.LinkedList;
 
@@ -88,35 +89,6 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	}
 
 	@Override
-	public void nextStep() {
-		if (finished || running) return;
-		running = true;
-		interrupted = false;
-
-		memory.enableEventCalls(data.canCallEvents());
-		registers.enableEventCalls(data.canCallEvents());
-
-		thread = new Thread(() -> {
-			try {
-				runStep(true);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-			synchronized (finishedRunningLock) {
-				running = false;
-
-				memory.enableEventCalls(true);
-				registers.enableEventCalls(true);
-
-				finishedRunningLock.notifyAll();
-				callEvent(new SimulationStopEvent(this));
-			}
-		});
-		callEvent(new SimulationStartEvent(this));
-		thread.start();
-	}
-
-	@Override
 	public void reset() {
 		super.reset();
 		if (changes != null) {
@@ -139,7 +111,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
 			boolean first = true;
 			try {
-				while (!finished && !checkInterrupted()) {
+				while (!finished && !checkThreadInterrupted()) {
 					runStep(first);
 					first = false;
 					instructions++;
@@ -179,7 +151,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	public boolean undoLastStep() {
 		if (!data.isUndoEnabled()) return false;
 
-		if (callEvent(new SimulationUndoStepEvent.Before(this, currentCycle - 1)).isCancelled()) return false;
+		if (callEvent(new SimulationUndoStepEvent.Before(this, cycles - 1)).isCancelled()) return false;
 
 		stop();
 		waitForExecutionFinish();
@@ -187,19 +159,20 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		if (changes.isEmpty()) return false;
 		finished = false;
 		changes.removeLast().restore(this);
-		currentCycle--;
+		cycles--;
 
-		callEvent(new SimulationUndoStepEvent.After(this, currentCycle));
+		callEvent(new SimulationUndoStepEvent.After(this, cycles));
 
 		return true;
 	}
 
-	private void runStep(boolean first) {
+	@Override
+	protected void runStep(boolean first) {
 		if (finished) return;
 		int pc = registers.getProgramCounter().getValue();
 
 		if (breakpoints.contains(pc) && !first) {
-			interrupt();
+			interruptThread();
 			return;
 		}
 
@@ -207,45 +180,52 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 			currentStepChanges = new StepChanges<>();
 		}
 
-		//Fetch and Decode
 		registers.getProgramCounter().setValue(pc + 4);
-		SingleCycleExecution<?> execution = (SingleCycleExecution<?>) fetch(pc);
 
-		if (execution == null) {
-			int code = memory.getWord(pc, false, true);
-			currentStepChanges = null;
-			throw new InstructionNotFoundException("Couldn't decode instruction 0x" +
-					StringUtils.addZeros(Integer.toHexString(code), 8) +
-					" at 0x" + StringUtils.addZeros(Integer.toHexString(pc), 8) +
-					". (" + StringUtils.addZeros(Integer.toBinaryString(code), 32) + ")");
+		SingleCycleExecution<?> execution = null;
+		try {
+			//Fetch and Decode
+			execution = (SingleCycleExecution<?>) fetch(pc);
+
+			if (execution == null) {
+				currentStepChanges = null;
+				throw new RuntimeAddressException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION, pc);
+			}
+
+			//Send before event
+			if (data.canCallEvents()) {
+				SingleCycleInstructionExecutionEvent.Before before =
+						callEvent(new SingleCycleInstructionExecutionEvent.Before(this, cycles, pc, execution.getInstruction(), execution));
+				if (before.isCancelled()) return;
+
+				//Gets the modifies execution. This may be null.
+				execution = before.getExecution().orElse(null);
+			}
+
+			if (execution == null) {
+				currentStepChanges = null;
+				throw new RuntimeAddressException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION, pc);
+			}
+
+			execution.execute();
+
+		} catch (RuntimeInstructionException ex) {
+			if (!checkThreadInterrupted()) {
+				manageMIPSInterrupt(ex, pc);
+			}
 		}
-
-		//Send before event
-		if (data.canCallEvents()) {
-			SingleCycleInstructionExecutionEvent.Before before =
-					callEvent(new SingleCycleInstructionExecutionEvent.Before(this, currentCycle, pc, execution.getInstruction(), execution));
-			if (before.isCancelled()) return;
-
-			//Gets the modifies execution. This may be null.
-			execution = before.getExecution().orElse(null);
-		}
-
-		if (execution == null) {
-			throw new InstructionNotFoundException("Couldn't decode instruction " +
-					StringUtils.addZeros(Integer.toHexString(fetch(pc).getInstruction().getCode()), 8) + ".");
-		}
-
-		execution.execute();
 
 		//Check thread, if interrupted, return to the previous cycle.
-		if (checkInterrupted()) {
+		if (checkThreadInterrupted()) {
 			currentStepChanges = null;
 			registers.getProgramCounter().setValue(pc);
 			return;
 		}
 
+		addCycleCount();
+
 		if (data.canCallEvents()) {
-			callEvent(new SingleCycleInstructionExecutionEvent.After(this, currentCycle, pc, execution.getInstruction(), execution));
+			callEvent(new SingleCycleInstructionExecutionEvent.After(this, cycles, pc, execution == null ? null : execution.getInstruction(), execution));
 
 			if (data.isUndoEnabled()) {
 				changes.add(currentStepChanges);
@@ -254,16 +234,14 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 			}
 		}
 
-		currentCycle++;
-
 		if (registers.getProgramCounter().getValue() > instructionStackBottom && !finished) {
 			finished = true;
 			if (getConsole() != null) {
 				getConsole().println();
 				getConsole().printWarningLn("Execution finished. Dropped off bottom.");
 				getConsole().println();
-				callEvent(new SimulationFinishedEvent(this));
 			}
+			callEvent(new SimulationFinishedEvent(this));
 		}
 	}
 

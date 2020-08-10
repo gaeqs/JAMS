@@ -28,7 +28,7 @@ public class SyscallExecutionSleep implements SyscallExecution {
 		try {
 			Thread.sleep(register.getValue());
 		} catch (InterruptedException e) {
-			simulation.interrupt();
+			simulation.interruptThread();
 		}
 	}
 

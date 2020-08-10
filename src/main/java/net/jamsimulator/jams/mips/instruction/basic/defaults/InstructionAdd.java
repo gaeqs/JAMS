@@ -33,6 +33,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
+import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
@@ -101,7 +102,7 @@ public class InstructionAdd extends BasicRInstruction<InstructionAdd.Assembled> 
 			try {
 				rd.setValue(Math.addExact(rs.getValue(), rt.getValue()));
 			} catch (ArithmeticException ex) {
-				error("Integer overflow.", ex);
+				error(InterruptCause.ARITHMETIC_OVERFLOW_EXCEPTION, ex);
 			}
 		}
 	}
@@ -122,7 +123,7 @@ public class InstructionAdd extends BasicRInstruction<InstructionAdd.Assembled> 
 			try {
 				executionResult = new int[]{Math.addExact(decodeResult[0], decodeResult[1])};
 			} catch (ArithmeticException ex) {
-				error("Integer overflow.", ex);
+				error(InterruptCause.ARITHMETIC_OVERFLOW_EXCEPTION, ex);
 			}
 		}
 

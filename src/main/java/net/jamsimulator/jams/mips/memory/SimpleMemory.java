@@ -26,6 +26,8 @@ package net.jamsimulator.jams.mips.memory;
 
 import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
+import net.jamsimulator.jams.mips.interrupt.InterruptCause;
+import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
 import net.jamsimulator.jams.mips.memory.event.*;
 import net.jamsimulator.jams.utils.StringUtils;
 import net.jamsimulator.jams.utils.Validate;
@@ -208,7 +210,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		address = before.getAddress();
 		word = before.getValue();
 
-		if (address % 4 != 0) throw new IllegalArgumentException("Address " + address + " is not aligned.");
+		if (address % 4 != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_STORE_EXCEPTION, address);
 
 		//Gets the section and sets the word.
 		MemorySection section = getSectionOrThrowException(address);
@@ -229,7 +231,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		//Refresh data.
 		address = before.getAddress();
 
-		if (address % 4 != 0) throw new IllegalArgumentException("Address " + address + " is not aligned.");
+		if (address % 4 != 0)throw new RuntimeAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
 
 		//Gets the section and the word.
 		MemorySection section = getSectionOrThrowException(address);

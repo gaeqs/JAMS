@@ -29,7 +29,7 @@ public class SyscallExecutionReadCharacter implements SyscallExecution {
 		if (register == null) throw new IllegalStateException("Register " + this.register + " not found");
 
 		char value = simulation.popCharOrLock();
-		if (simulation.checkInterrupted()) return;
+		if (simulation.checkThreadInterrupted()) return;
 
 		register.setValue(value);
 

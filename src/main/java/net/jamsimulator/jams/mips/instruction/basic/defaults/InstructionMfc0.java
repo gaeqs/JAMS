@@ -91,12 +91,7 @@ public class InstructionMfc0 extends BasicIFPUInstruction<InstructionMfc0.Assemb
 		public void execute() {
 			Register rt = register(instruction.getTargetRegister());
 			Register rd = registerCop0(instruction.getDestinationRegister());
-
-			try {
-				rt.setValue(rd.getValue());
-			} catch (ArithmeticException ex) {
-				error("Integer overflow.", ex);
-			}
+			rt.setValue(rd.getValue());
 		}
 	}
 

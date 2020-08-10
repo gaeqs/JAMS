@@ -34,15 +34,17 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
+import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
+import net.jamsimulator.jams.mips.register.COP0Register;
+import net.jamsimulator.jams.mips.register.COP0RegistersBits;
 import net.jamsimulator.jams.mips.register.Registers;
-import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
-import net.jamsimulator.jams.mips.simulation.event.SimulationLockEvent;
-import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
-import net.jamsimulator.jams.mips.simulation.event.SimulationUnlockEvent;
+import net.jamsimulator.jams.mips.simulation.event.*;
 import net.jamsimulator.jams.mips.simulation.file.SimulationFiles;
+import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -82,7 +84,13 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	protected boolean running;
 	protected boolean finished;
 
-	protected long currentCycle;
+	protected long cycles;
+
+	protected COP0Register badAddressRegister;
+	protected COP0Register countRegister;
+	protected COP0Register statusRegister;
+	protected COP0Register causeRegister;
+	protected COP0Register epcRegister;
 
 	/**
 	 * Creates the simulation.
@@ -122,7 +130,13 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 		running = false;
 		finished = false;
-		currentCycle = 0;
+		cycles = 0;
+
+		badAddressRegister = (COP0Register) registers.getCoprocessor0RegisterUnchecked(8, 0);
+		countRegister = (COP0Register) registers.getCoprocessor0RegisterUnchecked(9, 0);
+		statusRegister = (COP0Register) registers.getCoprocessor0RegisterUnchecked(12, 0);
+		causeRegister = (COP0Register) registers.getCoprocessor0RegisterUnchecked(13, 0);
+		epcRegister = (COP0Register) registers.getCoprocessor0RegisterUnchecked(14, 0);
 	}
 
 	/**
@@ -216,13 +230,29 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 	/**
 	 * Returns the current cycle of this {@link Simulation}.
+	 * This is also the amount of executed cycles.
 	 *
 	 * @return the current cycle of this {@link Simulation}.
 	 */
-	public long getCurrentCycle() {
-		return currentCycle;
+	public long getCycles() {
+		return cycles;
 	}
 
+	/**
+	 * Sets the amount oc cycles of this {@link Simulation}.
+	 * This field may be used when the Register {@code Count} is updated.
+	 *
+	 * @param cycles the amount of cycles.
+	 */
+	public void setCycles(int cycles) {
+		this.cycles = cycles;
+	}
+
+	/**
+	 * Returns whether this simulation is executing code.
+	 *
+	 * @return whether this simulatin is executing code.
+	 */
 	public boolean isRunning() {
 		return running;
 	}
@@ -264,7 +294,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 						lock.wait();
 					}
 				} catch (InterruptedException ex) {
-					interrupt();
+					interruptThread();
 					return null;
 				}
 			}
@@ -290,7 +320,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 						lock.wait();
 					}
 				} catch (InterruptedException ex) {
-					interrupt();
+					interruptThread();
 					return 0;
 				}
 			}
@@ -301,8 +331,10 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	/**
 	 * Marks the execution of this simulation as interrupted.
 	 * This method should be only called by the execution thread.
+	 * <p>
+	 * This will not make a MIPS32 interrupt!
 	 */
-	public void interrupt() {
+	public void interruptThread() {
 		interrupted = true;
 	}
 
@@ -310,10 +342,12 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 * Checks whether the execution thread was interrupted.
 	 * If true, the "interrupted" flag of the execution is marked as true.
 	 * This method should be only called by the execution thread.
+	 * <p>
+	 * This has nothing to do with MIPS32 interrupts!
 	 *
 	 * @return whether the execution was interrupted.
 	 */
-	public boolean checkInterrupted() {
+	public boolean checkThreadInterrupted() {
 		if (Thread.interrupted()) interrupted = true;
 		return interrupted;
 	}
@@ -330,7 +364,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 */
 	public InstructionExecution<Arch, ?> fetch(int pc) {
 		InstructionExecution<Arch, ?> cached;
-		if (instructionCache != null && pc <= instructionStackBottom) {
+		if (instructionCache != null && Integer.compareUnsigned(pc, instructionStackBottom) < 0) {
 			cached = instructionCache[pc - memory.getFirstTextAddress()];
 			if (cached != null) return cached;
 		}
@@ -344,10 +378,72 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		cached = assembled.getBasicOrigin().generateExecution(this, assembled, pc).orElse(null);
 
 
-		if (instructionCache != null) {
+		if (instructionCache != null && Integer.compareUnsigned(pc, instructionStackBottom) < 0) {
 			instructionCache[pc - memory.getFirstTextAddress()] = cached;
 		}
 		return cached;
+	}
+
+
+	/**
+	 * Increases the cycle count by one.
+	 * This also modifies the register {@code Count} if enabled.
+	 */
+	public void addCycleCount() {
+		cycles++;
+		if (countRegister != null && (causeRegister == null || !causeRegister.getBit(COP0RegistersBits.CAUSE_DC))) {
+			countRegister.setValue(countRegister.getValue() + 1);
+		}
+	}
+
+	/**
+	 * Returns whether MIPS interrupts are enabled.
+	 *
+	 * @return whether MIPS interrupts are enabled.
+	 */
+	public boolean areMIPSInterruptsEnabled() {
+		return statusRegister.getSection(COP0RegistersBits.STATUS_IE, 3) == 1;
+	}
+
+	/**
+	 * Sets whether MIPS interrupts are enabled.
+	 * This method only sets the {@code IE} field of the registert {@code Status}.
+	 *
+	 * @param enable whether interrupts are enabled.
+	 */
+	public void enableMIPSInterrupts(boolean enable) {
+		statusRegister.modifyBits(enable ? 1 : 0, COP0RegistersBits.STATUS_IE, 1);
+	}
+
+	public boolean isKernelMode() {
+		return !statusRegister.getBit(COP0RegistersBits.STATUS_UM);
+	}
+
+	public void manageMIPSInterrupt(RuntimeInstructionException exception, int pc) {
+		if (!areMIPSInterruptsEnabled()) return;
+		statusRegister.modifyBits(1, COP0RegistersBits.STATUS_EXL, 1);
+		epcRegister.setValue(pc);
+
+		if (exception instanceof RuntimeAddressException) {
+			badAddressRegister.modifyBits(((RuntimeAddressException) exception).getBadAddress(), 0, 32);
+		}
+
+		//Modify cause register
+		causeRegister.modifyBits(0, COP0RegistersBits.CAUSE_BD, 1);
+		causeRegister.modifyBits(exception.getInterruptCause().getValue(), COP0RegistersBits.CAUSE_EX_CODE, 5);
+
+		registers.getProgramCounter().setValue(0x80000180);
+
+		if (memory.getWord(0x80000180, false, true) == 0) {
+			finished = true;
+			if (getConsole() != null) {
+				getConsole().println();
+				getConsole().printErrorLn("Execution finished. Runtime exception at 0x" + StringUtils.addZeros(Integer.toHexString(pc), 8)
+						+ ": Code " + exception.getInterruptCause().getValue() + " (" + exception.getInterruptCause() + ")");
+				getConsole().println();
+			}
+			callEvent(new SimulationFinishedEvent(this));
+		}
 	}
 
 	/**
@@ -374,7 +470,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		registers.restoreSavedState();
 		memory.restoreSavedState();
 		finished = false;
-		currentCycle = 0;
+		cycles = 0;
 
 		callEvent(new SimulationResetEvent(this));
 	}
@@ -400,7 +496,33 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 *
 	 * @throws InstructionNotFoundException when an instruction couldn't be decoded or when the bottom of the instruction stack is reached.
 	 */
-	public abstract void nextStep();
+	public void nextStep() {
+		if (finished || running) return;
+		running = true;
+		interrupted = false;
+
+		memory.enableEventCalls(data.canCallEvents());
+		registers.enableEventCalls(data.canCallEvents());
+
+		thread = new Thread(() -> {
+			try {
+				runStep(true);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			synchronized (finishedRunningLock) {
+				running = false;
+
+				memory.enableEventCalls(true);
+				registers.enableEventCalls(true);
+
+				finishedRunningLock.notifyAll();
+				callEvent(new SimulationStopEvent(this));
+			}
+		});
+		callEvent(new SimulationStartEvent(this));
+		thread.start();
+	}
 
 	/**
 	 * Executes steps until the bottom of the instruction stack is reached.
@@ -408,6 +530,13 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 * @throws InstructionNotFoundException when an instruction couldn't be decoded.
 	 */
 	public abstract void executeAll();
+
+	/**
+	 * Executes the next step of the simulation.
+	 *
+	 * @param first whether this is the first step made by this execution.
+	 */
+	protected abstract void runStep(boolean first);
 
 	/**
 	 * Undoes the last step made by this simulation.

@@ -133,6 +133,7 @@ class MIPS32DefaultInstructions {
 		basicInstructions.add(new InstructionSub());
 		basicInstructions.add(new InstructionSubSingle());
 		basicInstructions.add(new InstructionSubDouble());
+		basicInstructions.add(new InstructionSubu());
 
 		basicInstructions.add(new InstructionSw());
 

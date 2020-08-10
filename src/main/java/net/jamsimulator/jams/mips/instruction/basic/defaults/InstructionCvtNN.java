@@ -102,11 +102,11 @@ public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Asse
 
 			if (instruction.to.requiresEvenRegister()) {
 				if (instruction.getDestinationRegister() % 2 != 0)
-					error("Destination register identifier is not even.");
+					evenFloatRegisterException();
 			}
 			if (instruction.from.requiresEvenRegister()) {
 				if (instruction.getSourceRegister() % 2 != 0)
-					error("Source register identifier is not even.");
+					evenFloatRegisterException();
 			}
 
 			Register to0 = registerCop1(instruction.getDestinationRegister());
@@ -135,11 +135,11 @@ public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Asse
 		public void decode() {
 			if (instruction.to.requiresEvenRegister()) {
 				if (instruction.getDestinationRegister() % 2 != 0)
-					error("Destination register identifier is not even.");
+					evenFloatRegisterException();
 			}
 			if (instruction.from.requiresEvenRegister()) {
 				if (instruction.getSourceRegister() % 2 != 0)
-					error("Source register identifier is not even.");
+					evenFloatRegisterException();
 			}
 
 

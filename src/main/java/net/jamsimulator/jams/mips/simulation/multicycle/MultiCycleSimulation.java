@@ -26,9 +26,11 @@ package net.jamsimulator.jams.mips.simulation.multicycle;
 
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.interrupt.InterruptCause;
+import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
+import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.event.MemoryAllocateMemoryEvent;
@@ -123,35 +125,6 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 	}
 
 	@Override
-	public void nextStep() {
-		if (finished || running) return;
-		running = true;
-		interrupted = false;
-
-		memory.enableEventCalls(data.canCallEvents());
-		registers.enableEventCalls(data.canCallEvents());
-
-		thread = new Thread(() -> {
-			try {
-				runStep(true);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-			synchronized (finishedRunningLock) {
-				running = false;
-
-				memory.enableEventCalls(true);
-				registers.enableEventCalls(true);
-
-				finishedRunningLock.notifyAll();
-				callEvent(new SimulationStopEvent(this));
-			}
-		});
-		callEvent(new SimulationStartEvent(this));
-		thread.start();
-	}
-
-	@Override
 	public void reset() {
 		super.reset();
 		if (changes != null) {
@@ -159,6 +132,12 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 		}
 		executedInstructions = 0;
 		currentStep = MultiCycleStep.FETCH;
+	}
+
+	@Override
+	public void manageMIPSInterrupt(RuntimeInstructionException exception, int pc) {
+		currentStep = MultiCycleStep.FETCH;
+		super.manageMIPSInterrupt(exception, pc);
 	}
 
 	@Override
@@ -176,7 +155,7 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 
 			boolean first = true;
 			try {
-				while (!finished && !checkInterrupted()) {
+				while (!finished && !checkThreadInterrupted()) {
 					runStep(first);
 					first = false;
 					cycles++;
@@ -217,7 +196,7 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 	public boolean undoLastStep() {
 		if (!data.isUndoEnabled()) return false;
 
-		if (callEvent(new SimulationUndoStepEvent.Before(this, currentCycle - 1)).isCancelled()) return false;
+		if (callEvent(new SimulationUndoStepEvent.Before(this, cycles - 1)).isCancelled()) return false;
 
 		stop();
 		waitForExecutionFinish();
@@ -230,14 +209,15 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 		}
 
 		changes.removeLast().restore(this);
-		currentCycle--;
+		cycles--;
 
-		callEvent(new SimulationUndoStepEvent.After(this, currentCycle));
+		callEvent(new SimulationUndoStepEvent.After(this, cycles));
 
 		return true;
 	}
 
-	private void runStep(boolean first) {
+	@Override
+	protected void runStep(boolean first) {
 		if (finished) return;
 
 		if (data.isUndoEnabled()) {
@@ -247,7 +227,7 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 		if (data.canCallEvents()) {
 			//If fetch, call the event on the fetch section.
 			if (currentStep != MultiCycleStep.FETCH) {
-				MultiCycleStepEvent.Before before = callEvent(new MultiCycleStepEvent.Before(this, currentCycle, executedInstructions,
+				MultiCycleStepEvent.Before before = callEvent(new MultiCycleStepEvent.Before(this, cycles, executedInstructions,
 						currentExecution.getAddress(), currentStep, currentExecution.getInstruction(), currentExecution));
 				if (before.isCancelled()) return;
 			}
@@ -256,30 +236,36 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 		MultiCycleStep executingStep = currentStep;
 		long executedInstructionsLocal = executedInstructions;
 
-		switch (executingStep) {
-			case FETCH:
-				fetch(first);
-				break;
-			case DECODE:
-				decode();
-				break;
-			case MEMORY:
-				memory();
-				break;
-			case EXECUTE:
-				execute();
-				break;
-			case WRITE_BACK:
-				writeBack();
-				break;
+		try {
+			switch (executingStep) {
+				case FETCH:
+					fetch(first);
+					break;
+				case DECODE:
+					decode();
+					break;
+				case MEMORY:
+					memory();
+					break;
+				case EXECUTE:
+					execute();
+					break;
+				case WRITE_BACK:
+					writeBack();
+					break;
+			}
+		} catch (RuntimeInstructionException ex) {
+			if (!checkThreadInterrupted()) {
+				manageMIPSInterrupt(ex, registers.getProgramCounter().getValue() - 4);
+			}
 		}
 
-		if (checkInterrupted()) {
+		if (checkThreadInterrupted()) {
 			currentStepChanges = null;
 			return;
 		}
 
-		currentCycle++;
+		addCycleCount();
 
 		if (data.isUndoEnabled() && currentStepChanges != null) {
 			changes.add(currentStepChanges);
@@ -288,7 +274,7 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 		}
 
 		if (data.canCallEvents()) {
-			callEvent(new MultiCycleStepEvent.After(this, currentCycle - 1, executedInstructionsLocal, currentExecution.getAddress(),
+			callEvent(new MultiCycleStepEvent.After(this, cycles - 1, executedInstructionsLocal, currentExecution.getAddress(),
 					executingStep, currentExecution.getInstruction(), currentExecution));
 		}
 	}
@@ -298,57 +284,54 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 
 		if (breakpoints.contains(pc) && !first) {
 			currentStepChanges = null;
-			interrupt();
+			interruptThread();
 			return;
 		}
 
-		MultiCycleExecution<?> newExecution = (MultiCycleExecution<?>) fetch(pc);
-
-		if (data.canCallEvents()) {
-			MultiCycleStepEvent.Before before = callEvent(new MultiCycleStepEvent.Before(this, currentCycle, executedInstructions,
-					pc, currentStep, newExecution.getInstruction(), newExecution));
-			if (before.isCancelled()) return;
-			newExecution = before.getExecution().orElse(null);
-		}
+		registers.getProgramCounter().setValue(pc + 4);
 
 		if (currentStepChanges != null) {
 			currentStepChanges.addChange(new MultiCycleSimulationChangeStep(currentStep));
 			currentStepChanges.addChange(new MultiCycleSimulationChangeCurrentExecution(currentExecution));
 		}
 
+		MultiCycleExecution<?> newExecution = (MultiCycleExecution<?>) fetch(pc);
+
+		if (data.canCallEvents()) {
+			MultiCycleStepEvent.Before before = callEvent(new MultiCycleStepEvent.Before(this, cycles, executedInstructions,
+					pc, currentStep, newExecution.getInstruction(), newExecution));
+			if (before.isCancelled()) return;
+			newExecution = before.getExecution().orElse(null);
+		}
 		currentExecution = newExecution;
 		if (currentExecution == null) {
-			int code = memory.getWord(pc, false, true);
 			currentStepChanges = null;
-			throw new InstructionNotFoundException("Couldn't decode instruction 0x" +
-					StringUtils.addZeros(Integer.toHexString(code), 8) +
-					" at 0x" + StringUtils.addZeros(Integer.toHexString(pc), 8) +
-					". (" + StringUtils.addZeros(Integer.toBinaryString(code), 32) + ")");
+			throw new RuntimeAddressException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION, pc);
 		}
 
-		registers.getProgramCounter().setValue(pc + 4);
 		currentStep = MultiCycleStep.DECODE;
 	}
 
 	private void decode() {
-		currentExecution.decode();
 		if (currentStepChanges != null) {
 			currentStepChanges.addChange(new MultiCycleSimulationChangeStep(currentStep));
 		}
+		currentExecution.decode();
 		currentStep = MultiCycleStep.EXECUTE;
 	}
 
 	private void execute() {
-		currentExecution.execute();
-
-		////Check thread, if interrupted, return to the previous cycle.
-		if (checkInterrupted()) {
-			currentStepChanges = null;
-			return;
-		}
 
 		if (currentStepChanges != null) {
 			currentStepChanges.addChange(new MultiCycleSimulationChangeStep(currentStep));
+		}
+
+		currentExecution.execute();
+
+		////Check thread, if interrupted, return to the previous cycle.
+		if (checkThreadInterrupted()) {
+			currentStepChanges = null;
+			return;
 		}
 
 		if (currentExecution.executesMemory()) {
@@ -365,10 +348,10 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 	}
 
 	private void memory() {
-		currentExecution.memory();
 		if (currentStepChanges != null) {
 			currentStepChanges.addChange(new MultiCycleSimulationChangeStep(currentStep));
 		}
+		currentExecution.memory();
 		if (currentExecution.executesWriteBack()) {
 			currentStep = MultiCycleStep.WRITE_BACK;
 		} else {
@@ -396,8 +379,8 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 				getConsole().println();
 				getConsole().printWarningLn("Execution finished. Dropped off bottom.");
 				getConsole().println();
-				callEvent(new SimulationFinishedEvent(this));
 			}
+			callEvent(new SimulationFinishedEvent(this));
 		}
 	}
 

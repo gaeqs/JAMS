@@ -22,26 +22,23 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.instruction.exception;
+package net.jamsimulator.jams.mips.interrupt;
 
-public class RuntimeInstructionException extends RuntimeException {
+public class RuntimeAddressException extends RuntimeInstructionException {
 
-	public RuntimeInstructionException() {
-	}
+	private final int badAddress;
 
-	public RuntimeInstructionException(String message) {
-		super(message);
-	}
-
-	public RuntimeInstructionException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
-	public RuntimeInstructionException(Throwable cause) {
+	public RuntimeAddressException(InterruptCause cause, int badAddress) {
 		super(cause);
+		this.badAddress = badAddress;
 	}
 
-	public RuntimeInstructionException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
+	public RuntimeAddressException(InterruptCause cause, int badAddress, Throwable throwable) {
+		super(cause, throwable);
+		this.badAddress = badAddress;
+	}
+
+	public int getBadAddress() {
+		return badAddress;
 	}
 }

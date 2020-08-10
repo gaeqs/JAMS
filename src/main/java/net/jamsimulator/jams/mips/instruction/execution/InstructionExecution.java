@@ -26,7 +26,8 @@ package net.jamsimulator.jams.mips.instruction.execution;
 
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.instruction.exception.RuntimeInstructionException;
+import net.jamsimulator.jams.mips.interrupt.InterruptCause;
+import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
@@ -77,22 +78,26 @@ public abstract class InstructionExecution<Arch extends Architecture, Inst exten
 	}
 
 	/**
-	 * Throws a {@link RuntimeInstructionException} with the given message.
+	 * Throws a {@link RuntimeInstructionException} with the given cause.
 	 *
-	 * @param message the message.
+	 * @param cause the cause.
 	 */
-	protected void error(String message) {
-		throw new RuntimeInstructionException(message);
+	protected void error(InterruptCause cause) {
+		throw new RuntimeInstructionException(cause);
+	}
+
+	protected void evenFloatRegisterException() {
+		throw new RuntimeInstructionException(InterruptCause.FLOATING_POINT_EXCEPTION);
 	}
 
 	/**
-	 * Throws a {@link RuntimeInstructionException} with the given message.
+	 * Throws a {@link RuntimeInstructionException} with the given cause.
 	 *
-	 * @param message the message.
-	 * @param ex      the cause.
+	 * @param cause the cause.
+	 * @param ex    the cause.
 	 */
-	protected void error(String message, Exception ex) {
-		throw new RuntimeInstructionException(message, ex);
+	protected void error(InterruptCause cause, Exception ex) {
+		throw new RuntimeInstructionException(cause, ex);
 	}
 
 	/**

@@ -38,7 +38,7 @@ public class SyscallExecutionReadString implements SyscallExecution {
 
 
 		String value = simulation.popInputOrLock();
-		if (simulation.checkInterrupted()) return;
+		if (simulation.checkThreadInterrupted()) return;
 
 		Memory memory = simulation.getMemory();
 		byte[] bytes = value.getBytes(StandardCharsets.US_ASCII);

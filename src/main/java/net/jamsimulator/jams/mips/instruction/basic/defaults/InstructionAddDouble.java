@@ -94,9 +94,9 @@ public class InstructionAddDouble extends BasicRFPUInstruction<InstructionAddDou
 
 		@Override
 		public void execute() {
-			if (instruction.getTargetRegister() % 2 != 0) error("Target register identifier is not even.");
-			if (instruction.getSourceRegister() % 2 != 0) error("Source register identifier is not even.");
-			if (instruction.getDestinationRegister() % 2 != 0) error("Destination register identifier is not even.");
+			if (instruction.getTargetRegister() % 2 != 0) evenFloatRegisterException();
+			if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
+			if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
 
 			Register rt0 = registerCop1(instruction.getTargetRegister());
 			Register rt1 = registerCop1(instruction.getTargetRegister() + 1);
@@ -122,9 +122,9 @@ public class InstructionAddDouble extends BasicRFPUInstruction<InstructionAddDou
 
 		@Override
 		public void decode() {
-			if (instruction.getTargetRegister() % 2 != 0) error("Target register identifier is not even.");
-			if (instruction.getSourceRegister() % 2 != 0) error("Source register identifier is not even.");
-			if (instruction.getDestinationRegister() % 2 != 0) error("Destination register identifier is not even.");
+			if (instruction.getTargetRegister() % 2 != 0) evenFloatRegisterException();
+			if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
+			if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
 
 			Register rt0 = registerCop1(instruction.getTargetRegister());
 			Register rt1 = registerCop1(instruction.getTargetRegister() + 1);

@@ -16,9 +16,12 @@ public class SyscallExecutionExit implements SyscallExecution {
 
 	@Override
 	public void execute(Simulation<?> simulation) {
-		simulation.getConsole().println();
-		simulation.getConsole().printDoneLn("Execution finished successfully");
-		simulation.getConsole().println();
+		simulation.exit();
+		if(simulation .getConsole() != null) {
+			simulation.getConsole().println();
+			simulation.getConsole().printDoneLn("Execution finished successfully");
+			simulation.getConsole().println();
+		}
 		simulation.callEvent(new SimulationFinishedEvent(simulation));
 	}
 

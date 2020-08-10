@@ -31,7 +31,8 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
-import net.jamsimulator.jams.mips.instruction.exception.RuntimeInstructionException;
+import net.jamsimulator.jams.mips.interrupt.InterruptCause;
+import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -123,7 +124,7 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
 				equal = false;
 				unordered = true;
 				if (instruction.cond3()) {
-					throw new RuntimeInstructionException("Invalid operation");
+					throw new RuntimeInstructionException(InterruptCause.FLOATING_POINT_EXCEPTION);
 				}
 			} else {
 				less = fs < ft;
@@ -161,7 +162,7 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
 				equal = false;
 				unordered = true;
 				if (instruction.cond3()) {
-					throw new RuntimeInstructionException("Invalid operation");
+					throw new RuntimeInstructionException(InterruptCause.FLOATING_POINT_EXCEPTION);
 				}
 			} else {
 				less = fs < ft;
