@@ -83,8 +83,8 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	 * @param memory                 the memory to use in this simulation.
 	 * @param instructionStackBottom the address of the bottom of the instruction stack.
 	 */
-	public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, SimulationData data) {
-		super(architecture, instructionSet, registers, memory, instructionStackBottom, data, true);
+	public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, SimulationData data) {
+		super(architecture, instructionSet, registers, memory, instructionStackBottom, kernelStackBottom, data, true);
 		changes = data.isUndoEnabled() ? new LinkedList<>() : null;
 	}
 
@@ -234,7 +234,11 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 			}
 		}
 
-		if (registers.getProgramCounter().getValue() > instructionStackBottom && !finished) {
+		boolean check = isKernelMode()
+				? Integer.compareUnsigned(registers.getProgramCounter().getValue(), kernelStackBottom) > 0
+				: Integer.compareUnsigned(registers.getProgramCounter().getValue(), instructionStackBottom) > 0;
+
+		if (check && !finished) {
 			finished = true;
 			if (getConsole() != null) {
 				getConsole().println();

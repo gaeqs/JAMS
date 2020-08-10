@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GeneralInstructionTests {
 
 	static Simulation<?> simulation = new SingleCycleSimulation(SingleCycleArchitecture.INSTANCE, new MIPS32InstructionSet(),
-			new MIPS32Registers(), new MIPS32Memory(), 0,
+			new MIPS32Registers(), new MIPS32Memory(), 0, 0,
 			new SimulationData(new SimulationSyscallExecutions(), new File(""), new Console(), new HashMap<>(), true, true));
 
 	@Test

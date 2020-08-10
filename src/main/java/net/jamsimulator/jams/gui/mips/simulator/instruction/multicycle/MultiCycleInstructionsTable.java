@@ -21,8 +21,8 @@ public class MultiCycleInstructionsTable extends InstructionsTable {
 
 	private final Register pc;
 
-	public MultiCycleInstructionsTable(Simulation<? extends MultiCycleArchitecture> simulation, Map<Integer, String> originals) {
-		super(simulation, originals);
+	public MultiCycleInstructionsTable(Simulation<? extends MultiCycleArchitecture> simulation, Map<Integer, String> originals, boolean kernel) {
+		super(simulation, originals, kernel);
 		if (!(simulation instanceof MultiCycleSimulation))
 			throw new IllegalArgumentException("Simulation must be a MultiCycleSimulation.");
 		simulation.registerListeners(this, true);

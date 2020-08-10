@@ -25,8 +25,8 @@ public class SingleCycleInstructionsTable extends InstructionsTable {
 
 	private final Register pc;
 
-	public SingleCycleInstructionsTable(Simulation<? extends SingleCycleArchitecture> simulation, Map<Integer, String> originals) {
-		super(simulation, originals);
+	public SingleCycleInstructionsTable(Simulation<? extends SingleCycleArchitecture> simulation, Map<Integer, String> originals, boolean kernel) {
+		super(simulation, originals, kernel);
 		simulation.registerListeners(this, true);
 		pc = simulation.getRegisters().getProgramCounter();
 		if (!simulation.isRunning()) {

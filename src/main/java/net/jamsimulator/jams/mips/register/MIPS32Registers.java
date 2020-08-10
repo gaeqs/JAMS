@@ -212,11 +212,6 @@ public class MIPS32Registers extends Registers {
 		coprocessor0Registers[31][5] = new COP0Register(this, 31, 5, 0xFFFFFFFF, "KScratch4", "31.5");
 		coprocessor0Registers[31][6] = new COP0Register(this, 31, 6, 0xFFFFFFFF, "KScratch5", "31.6");
 		coprocessor0Registers[31][7] = new COP0Register(this, 31, 7, 0xFFFFFFFF, "KScratch6", "31.7");
-
-		//coprocessor0Registers[8] = new Register(this, 8, "8");
-		//coprocessor0Registers[12] = new Register(this, 12, 0x0000ff11, true, "12");
-		//coprocessor0Registers[13] = new Register(this, 13, "13");
-		//coprocessor0Registers[14] = new Register(this, 14, "14");
 	}
 
 	protected void loadCoprocessor1Registers() {

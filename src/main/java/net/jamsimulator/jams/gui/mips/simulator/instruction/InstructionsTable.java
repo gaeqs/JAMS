@@ -14,38 +14,38 @@ import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import org.reactfx.util.TriFunction;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiFunction;
 
 public class InstructionsTable extends TableView<InstructionEntry> {
 
-	public static Map<Architecture, BiFunction<Simulation<?>,
-			Map<Integer, String>, InstructionsTable>> TABLES_PER_ARCHITECTURE = new HashMap<>();
+	public static Map<Architecture, TriFunction<Simulation<?>,
+			Map<Integer, String>, Boolean, InstructionsTable>> TABLES_PER_ARCHITECTURE = new HashMap<>();
 
 	static {
 		TABLES_PER_ARCHITECTURE.put(SingleCycleArchitecture.INSTANCE,
-				(s, o) -> new SingleCycleInstructionsTable((Simulation<? extends SingleCycleArchitecture>) s, o));
+				(s, o, k) -> new SingleCycleInstructionsTable((Simulation<? extends SingleCycleArchitecture>) s, o, k));
 		TABLES_PER_ARCHITECTURE.put(MultiCycleArchitecture.INSTANCE,
-				(s, o) -> new MultiCycleInstructionsTable((Simulation<? extends MultiCycleArchitecture>) s, o));
+				(s, o, k) -> new MultiCycleInstructionsTable((Simulation<? extends MultiCycleArchitecture>) s, o, k));
 	}
 
 	public static void registerTableView(Architecture architecture,
-										 BiFunction<Simulation<?>, Map<Integer, String>, InstructionsTable> builder) {
+										 TriFunction<Simulation<?>, Map<Integer, String>, Boolean, InstructionsTable> builder) {
 		TABLES_PER_ARCHITECTURE.put(architecture, builder);
 	}
 
-	public static InstructionsTable createTable(Architecture architecture, Simulation<?> simulation, Map<Integer, String> originals) {
-		BiFunction<Simulation<?>, Map<Integer, String>, InstructionsTable> builder =
+	public static InstructionsTable createTable(Architecture architecture, Simulation<?> simulation, Map<Integer, String> originals, boolean kernel) {
+		TriFunction<Simulation<?>, Map<Integer, String>, Boolean, InstructionsTable> builder =
 				TABLES_PER_ARCHITECTURE.get(architecture);
-		if (builder == null) return new InstructionsTable(simulation, originals);
-		return builder.apply(simulation, originals);
+		if (builder == null) return new InstructionsTable(simulation, originals, kernel);
+		return builder.apply(simulation, originals, kernel);
 	}
 
 	protected Simulation<?> simulation;
 
-	public InstructionsTable(Simulation<?> simulation, Map<Integer, String> originals) {
+	public InstructionsTable(Simulation<?> simulation, Map<Integer, String> originals, boolean kernel) {
 		this.simulation = simulation;
 		getStyleClass().add("table-view-horizontal-fit");
 		setEditable(true);
@@ -96,8 +96,8 @@ public class InstructionsTable extends TableView<InstructionEntry> {
 		getVisibleLeafColumn(0).setMaxWidth(40);
 
 
-		int current = MIPS32Memory.TEXT;
-		int end = simulation.getInstructionStackBottom();
+		int current = kernel ? MIPS32Memory.EXCEPTION_HANDLER : MIPS32Memory.TEXT;
+		int end = kernel ? simulation.getKernelStackBottom() : simulation.getInstructionStackBottom();
 		while (current <= end) {
 			getItems().add(new InstructionEntry(simulation, current, originals.getOrDefault(current, "")));
 			current += 4;

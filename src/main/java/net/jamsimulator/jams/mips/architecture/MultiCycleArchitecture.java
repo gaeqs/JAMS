@@ -53,7 +53,8 @@ public final class MultiCycleArchitecture extends Architecture {
 															   Registers registers,
 															   Memory memory,
 															   int instructionStackBottom,
+															   int kernelStackBottom,
 															   SimulationData data) {
-		return new MultiCycleSimulation(this, instructionSet, registers, memory, instructionStackBottom, data);
+		return new MultiCycleSimulation(this, instructionSet, registers, memory, instructionStackBottom, kernelStackBottom, data);
 	}
 }

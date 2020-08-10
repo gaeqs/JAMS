@@ -78,6 +78,9 @@ public class Messages {
 	public static final String BAR_CONSOLE_NAME = "BAR_CONSOLE_NAME";
 	public static final String BAR_FLOW_NAME = "BAR_FLOW_NAME";
 
+	public static final String INSTRUCTIONS_USER = "INSTRUCTIONS_USER";
+	public static final String INSTRUCTIONS_KERNEL = "INSTRUCTIONS_KERNEL";
+
 	public static final String INSTRUCTIONS_BREAKPOINT = "INSTRUCTIONS_BREAKPOINT";
 	public static final String INSTRUCTIONS_ADDRESS = "INSTRUCTIONS_ADDRESS";
 	public static final String INSTRUCTIONS_CODE = "INSTRUCTIONS_CODE";

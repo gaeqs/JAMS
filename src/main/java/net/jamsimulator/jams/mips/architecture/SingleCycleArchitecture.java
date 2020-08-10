@@ -53,7 +53,8 @@ public final class SingleCycleArchitecture extends Architecture {
 																Registers registers,
 																Memory memory,
 																int instructionStackBottom,
+																int kernelStackBottom,
 																SimulationData data) {
-		return new SingleCycleSimulation(this, instructionSet, registers, memory, instructionStackBottom, data);
+		return new SingleCycleSimulation(this, instructionSet, registers, memory, instructionStackBottom, kernelStackBottom, data);
 	}
 }

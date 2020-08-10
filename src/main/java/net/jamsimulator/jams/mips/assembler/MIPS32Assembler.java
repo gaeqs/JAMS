@@ -6,11 +6,9 @@ import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
-import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.*;
 
@@ -116,7 +114,8 @@ public class MIPS32Assembler implements Assembler {
 		Registers registers = getRegisters().copy();
 
 		Simulation<?> simulation = architecture.createSimulation(instructionSet, registers, memory,
-				assemblerData.getCurrentText() - 4, data);
+				assemblerData.getCurrentText() - 4,
+				assemblerData.getCurrentKText() - 4, data);
 		return (Simulation<Arch>) simulation;
 	}
 

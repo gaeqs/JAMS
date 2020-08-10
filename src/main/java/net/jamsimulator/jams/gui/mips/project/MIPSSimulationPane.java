@@ -21,6 +21,7 @@ import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.ScalableNode;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
+import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.project.mips.MIPSProject;
@@ -38,11 +39,26 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 
 
 	public MIPSSimulationPane(Tab parent, ProjectTab projectTab, MIPSProject project, Simulation<?> simulation) {
-		super(parent, projectTab, InstructionsTable.createTable(simulation.getArchitecture(),
-				simulation, simulation.getData().getOriginalInstructions()), new HashSet<>(), false);
+		super(parent, projectTab, null, new HashSet<>(), false);
 		this.project = project;
 		this.simulation = simulation;
 		this.executionButtons = new ExecutionButtons(simulation);
+
+
+		InstructionsTable table = InstructionsTable.createTable(simulation.getArchitecture(), simulation, simulation.getData().getOriginalInstructions(), false);
+		if (Integer.compareUnsigned(simulation.getKernelStackBottom(), MIPS32Memory.EXCEPTION_HANDLER) > 0) {
+			InstructionsTable kernel = InstructionsTable.createTable(simulation.getArchitecture(), simulation, simulation.getData().getOriginalInstructions(), true);
+
+			TabPane pane = new TabPane();
+			Tab userTab = new LanguageTab(Messages.INSTRUCTIONS_USER, table);
+			Tab kernelTab = new LanguageTab(Messages.INSTRUCTIONS_KERNEL, kernel);
+			userTab.setClosable(false);
+			kernelTab.setClosable(false);
+			pane.getTabs().addAll(userTab, kernelTab);
+			center = pane;
+		} else {
+			center = table;
+		}
 
 		loadRegisterTabs();
 		loadConsole();

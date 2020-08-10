@@ -36,11 +36,13 @@ import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
 import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
+import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.COP0Register;
 import net.jamsimulator.jams.mips.register.COP0RegistersBits;
+import net.jamsimulator.jams.mips.register.COP0StatusRegister;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.event.*;
 import net.jamsimulator.jams.mips.simulation.file.SimulationFiles;
@@ -72,7 +74,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	protected final Memory memory;
 	protected final SimulationFiles files;
 
-	protected int instructionStackBottom;
+	protected int instructionStackBottom, kernelStackBottom;
 	protected final Set<Integer> breakpoints;
 
 	protected InstructionExecution<Arch, ?>[] instructionCache;
@@ -88,7 +90,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 	protected COP0Register badAddressRegister;
 	protected COP0Register countRegister;
-	protected COP0Register statusRegister;
+	protected COP0StatusRegister statusRegister;
 	protected COP0Register causeRegister;
 	protected COP0Register epcRegister;
 
@@ -102,12 +104,13 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 * @param instructionStackBottom the address of the bottom of the instruction stack.
 	 * @param data                   the immutable data of this simulation.
 	 */
-	public Simulation(Arch architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, SimulationData data, boolean useCache) {
+	public Simulation(Arch architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, SimulationData data, boolean useCache) {
 		this.architecture = architecture;
 		this.instructionSet = instructionSet;
 		this.registers = registers;
 		this.memory = memory;
 		this.instructionStackBottom = instructionStackBottom;
+		this.kernelStackBottom = kernelStackBottom;
 		this.data = data;
 		this.files = new SimulationFiles(this);
 
@@ -134,7 +137,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 		badAddressRegister = (COP0Register) registers.getCoprocessor0RegisterUnchecked(8, 0);
 		countRegister = (COP0Register) registers.getCoprocessor0RegisterUnchecked(9, 0);
-		statusRegister = (COP0Register) registers.getCoprocessor0RegisterUnchecked(12, 0);
+		statusRegister = (COP0StatusRegister) registers.getCoprocessor0RegisterUnchecked(12, 0);
 		causeRegister = (COP0Register) registers.getCoprocessor0RegisterUnchecked(13, 0);
 		epcRegister = (COP0Register) registers.getCoprocessor0RegisterUnchecked(14, 0);
 	}
@@ -226,6 +229,16 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 */
 	public int getInstructionStackBottom() {
 		return instructionStackBottom;
+	}
+
+	/**
+	 * Returns the instruction stack bottom address for the kernel text.
+	 * This value may be modifiable if any instruction cell is modified in the {@link Memory}.
+	 *
+	 * @return the instruction stack bottom address for the kernel text.
+	 */
+	public int getKernelStackBottom() {
+		return kernelStackBottom;
 	}
 
 	/**
@@ -432,9 +445,9 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		causeRegister.modifyBits(0, COP0RegistersBits.CAUSE_BD, 1);
 		causeRegister.modifyBits(exception.getInterruptCause().getValue(), COP0RegistersBits.CAUSE_EX_CODE, 5);
 
-		registers.getProgramCounter().setValue(0x80000180);
+		registers.getProgramCounter().setValue(MIPS32Memory.EXCEPTION_HANDLER);
 
-		if (memory.getWord(0x80000180, false, true) == 0) {
+		if (memory.getWord(MIPS32Memory.EXCEPTION_HANDLER, false, true) == 0) {
 			finished = true;
 			if (getConsole() != null) {
 				getConsole().println();

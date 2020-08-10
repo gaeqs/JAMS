@@ -42,6 +42,8 @@ public class MIPS32Memory extends SimpleMemory {
 	public static final int STATIC_DATA = 0x10010000;
 	public static final int HEAP = 0x10010000;
 
+	public static final int EXCEPTION_HANDLER = 0x80000180;
+
 	public static final String KERNEL_RESERVED_1_NAME = "Kernel reserved 1";
 	public static final String TEXT_NAME = "Text";
 	public static final String DATA_NAME = "Data";

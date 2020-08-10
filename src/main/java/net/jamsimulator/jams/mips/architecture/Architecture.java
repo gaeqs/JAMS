@@ -69,6 +69,7 @@ public abstract class Architecture {
 																		Registers registers,
 																		Memory memory,
 																		int instructionStackBottom,
+																		int kernelStackBottom,
 																		SimulationData data);
 
 	@Override

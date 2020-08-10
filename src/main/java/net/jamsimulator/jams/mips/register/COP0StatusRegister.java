@@ -24,15 +24,21 @@ public class COP0StatusRegister extends COP0Register {
 	@Override
 	protected void setValue0(int value) {
 		super.setValue0(value);
-		modifyBits(getSection(COP0RegistersBits.STATUS_EXL, 2) == 0 ? 1 : 0, COP0RegistersBits.STATUS_UM, 1);
+
+		boolean userMode = getSection(COP0RegistersBits.STATUS_EXL, 2) == 0;
+		if (getBit(COP0RegistersBits.STATUS_UM) != userMode) {
+			int mask = 1 << COP0RegistersBits.STATUS_UM;
+			this.value &= ~mask;
+			if(userMode) {
+				this.value |= mask;
+			}
+		}
 	}
 
 	@Override
-	public void modifyBits(int value, int from, int length) {
-		super.modifyBits(value, from, length);
-		if (from <= COP0RegistersBits.STATUS_EXL && length + from > COP0RegistersBits.STATUS_EXL ||
-				from <= COP0RegistersBits.STATUS_ERL && length + from > COP0RegistersBits.STATUS_ERL) {
-			modifyBits(getSection(COP0RegistersBits.STATUS_EXL, 2) == 0 ? 1 : 0, COP0RegistersBits.STATUS_UM, 1);
-		}
+	public COP0Register copy(Registers registers) {
+		COP0StatusRegister register = new COP0StatusRegister(registers, identifier, selection, value, softwareWriteMask, cop0Name, names);
+		register.defaultValue = defaultValue;
+		return register;
 	}
 }
