@@ -110,6 +110,8 @@ class MIPS32DefaultInstructions {
 		basicInstructions.add(new InstructionDivSingle());
 		basicInstructions.add(new InstructionDivDouble());
 
+		basicInstructions.add(new InstructionEret());
+
 		basicInstructions.add(new InstructionJ());
 
 		basicInstructions.add(new InstructionLw());
