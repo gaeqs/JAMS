@@ -194,9 +194,9 @@ public class MIPS32Registers extends Registers {
 		coprocessor0Registers[23][6] = new COP0Register(this, 23, 6, 0xFFFFFFFF, "Debug2", "23.6");
 
 		coprocessor0Registers[24] = new Register[4];
-		coprocessor0Registers[23][0] = new COP0Register(this, 23, 0, 0xFFFFFFFF, "DEPC", "23");
-		coprocessor0Registers[23][2] = new COP0Register(this, 23, 2, 0xFFFFFFFF, "TraceContol3", "23.2");
-		coprocessor0Registers[23][3] = new COP0Register(this, 23, 3, 0xFFFFFFFF, "UserTraceData2", "23.3");
+		coprocessor0Registers[24][0] = new COP0Register(this, 23, 0, 0xFFFFFFFF, "DEPC", "23");
+		coprocessor0Registers[24][2] = new COP0Register(this, 23, 2, 0xFFFFFFFF, "TraceContol3", "23.2");
+		coprocessor0Registers[24][3] = new COP0Register(this, 23, 3, 0xFFFFFFFF, "UserTraceData2", "23.3");
 
 		coprocessor0Registers[26] = new Register[1];
 		coprocessor0Registers[26][0] = new COP0Register(this, 26, 0, 0xFFFFFFFF, "ErrCtl", "26");
