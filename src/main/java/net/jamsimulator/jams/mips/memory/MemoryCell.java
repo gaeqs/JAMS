@@ -37,7 +37,7 @@ import java.util.Arrays;
  */
 public class MemoryCell {
 
-	private byte[] data;
+	private final byte[] data;
 
 	/**
 	 * Creates a memory cell using a length.
