@@ -29,6 +29,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -72,20 +73,26 @@ public class ProjectTab extends Tab {
 		pane.getChildren().add(separator);
 
 		projectTabPane = new ProjectTabPane(this, (old, tab) -> {
-			if (old != null) {
-				pane.getChildren().remove(old.getContent());
-			}
 			if (tab != null) {
 				Platform.runLater(() -> {
-					AnchorUtils.setAnchor(tab.getContent(), 27, 0, 0, 0);
-					pane.getChildren().add(tab.getContent());
-
+					Node node = tab.getContent();
 					if (tab.getContent() instanceof ProjectPane) {
-						((ProjectPane) tab.getContent()).populateHBox(getButtonsHBox());
+						((ProjectPane) node).populateHBox(getButtonsHBox());
+					}
+
+					AnchorUtils.setAnchor(node, 27, 0, 0, 0);
+					if (!pane.getChildren().contains(node)) {
+						pane.getChildren().add(node);
+					} else {
+						node.toFront();
+						node.setVisible(true);
 					}
 				});
 			}
-		});
+			if (old != null) {
+				old.getContent().setVisible(false);
+			}
+		}, tab -> pane.getChildren().remove(tab.getContent()));
 
 		AnchorUtils.setAnchor(projectTabPane, 0, 0, 0, 300);
 		pane.getChildren().add(projectTabPane);

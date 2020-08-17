@@ -34,6 +34,7 @@ import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 public class ProjectTabPane extends TabPane {
 
@@ -41,10 +42,13 @@ public class ProjectTabPane extends TabPane {
 
 	private final WorkingPane workingPane;
 
-	public ProjectTabPane(ProjectTab projectTab, BiConsumer<Tab, Tab> onSelect) {
+	private final Consumer<Tab> onClose;
+
+	public ProjectTabPane(ProjectTab projectTab, BiConsumer<Tab, Tab> onSelect, Consumer<Tab> onClose) {
 		getStyleClass().add("project-tab-pane");
 		setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
 		this.projectTab = projectTab;
+		this.onClose = onClose;
 
 		projectTab.addTabCloseListener(event -> {
 			for (Tab tab : getTabs()) {
@@ -74,7 +78,10 @@ public class ProjectTabPane extends TabPane {
 		tab.setNode(pane.getLanguageNode());
 		tab.setContent((Pane) pane);
 
-		tab.setOnClosed(event -> pane.onClose());
+		tab.setOnClosed(event -> {
+			pane.onClose();
+			if(onClose != null) onClose.accept(tab);
+		});
 		return pane;
 	}
 }
