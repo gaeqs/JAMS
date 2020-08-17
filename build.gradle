@@ -1,0 +1,65 @@
+plugins {
+    id 'java'
+}
+
+group 'com.degoos'
+version '0.3-ALPHA'
+
+def projectId = "JAMS"
+def javafxVersion = '14.0.2.1'
+def javafxDependencies = ['javafx-base', 'javafx-controls', 'javafx-media', 'javafx-graphics', 'javafx-fxml']
+
+compileJava.options.encoding = 'UTF-8'
+
+repositories {
+    jcenter()
+    maven {
+        url "https://jitpack.io"
+    }
+}
+
+configurations {
+    jarLib
+}
+
+//Adds resources to jar
+sourceSets {
+    main {
+        resources {
+            srcDir "src/main/resouces"
+        }
+    }
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
+
+    javafxDependencies.each {
+        implementation group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'win'
+        jarLib group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'win'
+        jarLib group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'mac'
+        jarLib group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'linux'
+    }
+
+    implementation group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
+    implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.5'
+    implementation group: 'org.json', name: 'json', version: '20200518'
+
+    jarLib group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
+    jarLib group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.5'
+    jarLib group: 'org.json', name: 'json', version: '20200518'
+}
+
+jar {
+    manifest.attributes "Main-Class": "net.jamsimulator.jams.Jams"
+    manifest.attributes "Specification-Title": projectId
+    manifest.attributes "Specification-Version": archiveVersion
+    manifest.attributes "Specification-Vendor": group
+    manifest.attributes "Implementation-Title": projectId
+    manifest.attributes "Implementation-Version": archiveVersion
+    manifest.attributes "Implementation-Vendor": group
+
+    from {
+        configurations.jarLib.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
