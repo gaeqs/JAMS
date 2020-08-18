@@ -11,7 +11,8 @@ It supports multiple themes and languages.
 > Currently on an alpha state, JAMS is aimed to support multiple architectures and instruction sets, allowing other developers to expand JAMS through plugins.
 
 ## Dependencies
-- JavaFX 8. (JavaFX 11 is used for standalone builds.)
+- Java 14.
+- JavaFX 14.
 - [RichTextFX](https://github.com/FXMisc/RichTextFX)
 - [FX-BorderlessScene](https://www.google.com/search?client=firefox-b-d&q=FX-BorderlessScene)
 - [JSON](https://mvnrepository.com/artifact/org.json/json)
@@ -31,8 +32,23 @@ It supports multiple themes and languages.
 
 JAMS has been succesfully built and tested on Ubuntu 18.04/20.04 and Windows 10 using Intellij IDEA.
 
+To run the app inside the IDE use:
 ```bash
 git clone https://github.com/gaeqs/JAMS JAMS
-mvn clean install
+gradle clean run
 ```
-The built jar should be found at target/JAMS-X.X-X.jar.
+
+To make a fat-jar build use:
+```bash
+//Clean is not required.
+gradle bundle
+```
+
+The built jar should be found at build/libs/JAMS-X.X-X.jar.
+
+To package the app use:
+```bash
+gradle clean jpackage
+```
+
+The packet app should be found at build/jpackage/JAMS-X.jar.

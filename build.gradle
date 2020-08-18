@@ -4,9 +4,7 @@ plugins {
     id 'org.beryx.jlink' version '2.21.2'
 }
 
-group 'com.degoos'
-version '0.3-ALPHA'
-
+def projectGroup = 'com.degoos';
 def projectId = "JAMS"
 def projectMainClass = "net.jamsimulator.jams.Jams"
 
@@ -14,15 +12,13 @@ def javafxVersion = '14.0.2.1'
 def javafxDependencies = ['javafx-base', 'javafx-controls', 'javafx-media', 'javafx-graphics', 'javafx-fxml']
 def bundleLibs = false
 
-application.mainClassName = projectMainClass
+group projectGroup
+version '0.3-ALPHA'
 
 repositories {
     jcenter()
     maven {
         url "https://jitpack.io"
-    }
-    flatDir {
-        dirs 'libs'
     }
 }
 
@@ -30,32 +26,26 @@ configurations {
     jarLib
 }
 
-//Adds resources to jar
-sourceSets {
-    main {
-        resources {
-            srcDir "src/main/resouces"
-        }
-    }
-}
-
 javafx {
     version = javafxVersion
     modules = ['javafx.base', 'javafx.controls', 'javafx.media', 'javafx.graphics', 'javafx.fxml']
 }
 
+application {
+    mainModule.set("JAMS.main")
+    mainClass.set(projectMainClass)
+}
+
 dependencies {
+    implementation group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
+    implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.5'
+    implementation group: 'org.json', name: 'json', version: '20200518'
 
     javafxDependencies.each {
-        //implementation group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'win'
         jarLib group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'win'
         jarLib group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'mac'
         jarLib group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'linux'
     }
-
-    implementation group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
-    implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.5'
-    implementation group: 'org.json', name: 'json', version: '20200518'
 
     jarLib group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
     jarLib group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.5'
@@ -74,15 +64,14 @@ jar {
         attributes "Main-Class": projectMainClass
         attributes "Specification-Title": projectId
         attributes "Specification-Version": archiveVersion
-        attributes "Specification-Vendor": group
+        attributes "Specification-Vendor": projectGroup
         attributes "Implementation-Title": projectId
         attributes "Implementation-Version": archiveVersion
-        attributes "Implementation-Vendor": group
+        attributes "Implementation-Vendor": projectGroup
     }
 
     doFirst {
         if (bundleLibs) {
-            println "Adding libs..."
             from {
                 configurations.jarLib.collect { it.isDirectory() ? it : zipTree(it) }
             }
@@ -102,26 +91,22 @@ task bundle {
 }
 
 jlink {
-    addExtraDependencies("javafx")
     options.addAll(['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages'])
-    mainClass.set(projectMainClass)
     launcher {
         name = 'JAMS'
-        jvmArgs = ['-Dlog4j.configurationFile=./log4j2.xml']
+        jvmArgs = ['-Dlogback.configurationFile=./logback.xml']
     }
-
+    addExtraDependencies("javafx")
     jpackage {
         def ver = normalizeAppVersion(version as String)
+        jvmArgs = ['-splash:$APPDIR/logo.png']
         imageOptions = ["--verbose", "--app-version", ver]
-        installerOptions = ['--app-version', ver]
-        imageOptions = ['--icon', 'src/main/resources/gui/icon/logo.ico']
+        installerOptions = ['--app-version', ver,
+                            '--file-associations', 'src/main/resources/associations.properties']
+        imageOptions = ['--win-console', '--icon', 'src/main/resources/gui/icon/logo.ico']
         if (org.gradle.internal.os.OperatingSystem.current().windows) {
             installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu']
         }
-    }
-
-    customImage {
-        appModules = ['javafx.base', 'javafx.controls', 'javafx.graphics']
     }
 }
 
@@ -136,5 +121,13 @@ static String normalizeAppVersion(final String appVersion) {
         return appVersion.replaceAll('-SNAPSHOT$', '').replaceAll('-ALPHA$', '')
     } else {
         return appVersion
+    }
+}
+
+tasks.jpackageImage.doLast {
+    copy {
+        from "src/main/resources/gui/icon"
+        include "logo.png"
+        into "build/jpackage/$project.name/app"
     }
 }

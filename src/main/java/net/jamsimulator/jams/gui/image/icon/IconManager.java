@@ -25,8 +25,10 @@
 package net.jamsimulator.jams.gui.image.icon;
 
 import javafx.scene.image.Image;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.utils.Validate;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -146,7 +148,8 @@ public class IconManager {
 		Optional<Image> icon = getIcon(name);
 		if (icon.isPresent()) return icon.get();
 
-		Image image = new Image(path, width, height, false, false);
+		InputStream stream = Jams.class.getResourceAsStream(path);
+		Image image = new Image(stream, width, height, false, false);
 
 		if (image.isError()) throw image.getException();
 		icons.put(name, image);
@@ -171,6 +174,7 @@ public class IconManager {
 			return Optional.of(getOrLoad(name, path, width, height));
 		} catch (Exception ex) {
 			System.err.println("Error while loading an icon (" + path + "): " + ex.getMessage());
+			ex.printStackTrace();
 			return Optional.empty();
 		}
 	}
