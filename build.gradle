@@ -4,7 +4,7 @@ plugins {
     id 'org.beryx.jlink' version '2.21.2'
 }
 
-def projectGroup = 'com.degoos'
+def projectGroup = 'net.jamsimulator'
 def projectId = "JAMS"
 def projectMainClass = "net.jamsimulator.jams.Jams"
 
