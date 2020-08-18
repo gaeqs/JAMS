@@ -1,21 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <annotationProcessing>
-      <profile name="Maven default annotation processors profile" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <module name="JAMS" />
-      </profile>
-    </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="JAMS" target="9" />
-    </bytecodeTargetLevel>
+    <bytecodeTargetLevel target="14" />
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="JAMS" options="" />
+      <module name="JAMS.main" options="--add-exports richtextfx.fat/org.reactfx=JAMS --add-exports richtextfx.fat/org.reactfx.value=JAMS --add-exports richtextfx.fat/org.reactfx.collection=JAMS --add-exports richtextfx.fat/org.reactfx.util=JAMS" />
     </option>
   </component>
 </project>

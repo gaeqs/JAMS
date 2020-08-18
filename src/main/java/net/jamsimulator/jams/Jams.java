@@ -28,12 +28,17 @@ import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.manager.*;
 import net.jamsimulator.jams.utils.ConfigurationUtils;
+import net.jamsimulator.jams.utils.FileUtils;
 import net.jamsimulator.jams.utils.FolderUtils;
 import net.jamsimulator.jams.utils.TempUtils;
+import org.json.JSONObject;
 
 import java.io.File;
+import java.io.InputStream;
 
 public class Jams {
+
+	private static String VERSION;
 
 	private static File mainFolder;
 
@@ -54,6 +59,8 @@ public class Jams {
 
 	//JAMS main method.
 	public static void main(String[] args) {
+		loadVersion();
+		System.out.println("Loading JAMS version " + getVersion());
 		mainFolder = FolderUtils.checkMainFolder();
 		TempUtils.loadTemporalFolder();
 
@@ -75,8 +82,13 @@ public class Jams {
 		JamsApplication.main(args);
 	}
 
+	/**
+	 * Returns the version of this instance of JAMS.
+	 *
+	 * @return the version of JAMS.
+	 */
 	public static String getVersion() {
-		return String.valueOf(Jams.class.getPackage().getImplementationVersion());
+		return VERSION;
 	}
 
 	/**
@@ -186,5 +198,16 @@ public class Jams {
 	 */
 	public static SyscallExecutionBuilderManager getSyscallExecutionBuilderManager() {
 		return syscallExecutionBuilderManager;
+	}
+
+	private static void loadVersion() {
+		InputStream stream = Jams.class.getResourceAsStream("/info.json");
+		try {
+			JSONObject object = new JSONObject(FileUtils.readAll(stream));
+			VERSION = object.getString("version");
+		} catch (Exception e) {
+			e.printStackTrace();
+			VERSION = "NULL";
+		}
 	}
 }

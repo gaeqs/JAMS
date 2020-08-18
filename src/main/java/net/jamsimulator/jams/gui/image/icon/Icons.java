@@ -69,45 +69,45 @@ public class Icons {
 
 	public static final String BAR_CLOSE = "bar_close";
 
-	public static final String LOGO_PATH = "gui/icon/logo.png";
+	public static final String LOGO_PATH = "/gui/icon/logo.png";
 
-	public static final String WINDOW_CLOSE_PATH = "gui/icon/window/close.png";
-	public static final String WINDOW_MAXIMIZE_PATH = "gui/icon/window/maximize.png";
-	public static final String WINDOW_MINIMIZE_PATH = "gui/icon/window/minimize.png";
-	public static final String WINDOW_UNMAXIMIZE_PATH = "gui/icon/window/unmaximize.png";
+	public static final String WINDOW_CLOSE_PATH = "/gui/icon/window/close.png";
+	public static final String WINDOW_MAXIMIZE_PATH = "/gui/icon/window/maximize.png";
+	public static final String WINDOW_MINIMIZE_PATH = "/gui/icon/window/minimize.png";
+	public static final String WINDOW_UNMAXIMIZE_PATH = "/gui/icon/window/unmaximize.png";
 
-	public static final String EXPLORER_SECTION_COLLAPSED_PATH = "gui/icon/explorer/section_collapsed.png";
-	public static final String EXPLORER_SECTION_EXPANDED_PATH = "gui/icon/explorer/section_expanded.png";
+	public static final String EXPLORER_SECTION_COLLAPSED_PATH = "/gui/icon/explorer/section_collapsed.png";
+	public static final String EXPLORER_SECTION_EXPANDED_PATH = "/gui/icon/explorer/section_expanded.png";
 
-	public static final String FILE_FOLDER_PATH = "gui/icon/file/folder.png";
-	public static final String FILE_FILE_PATH = "gui/icon/file/file.png";
-	public static final String FILE_UNKNOWN_PATH = "gui/icon/file/unknown.png";
-	public static final String FILE_TEXT_PATH = "gui/icon/file/text.png";
-	public static final String FILE_ASSEMBLY_PATH = "gui/icon/file/assembly.png";
-	public static final String FILE_IMAGE_PATH = "gui/icon/file/image.png";
+	public static final String FILE_FOLDER_PATH = "/gui/icon/file/folder.png";
+	public static final String FILE_FILE_PATH = "/gui/icon/file/file.png";
+	public static final String FILE_UNKNOWN_PATH = "/gui/icon/file/unknown.png";
+	public static final String FILE_TEXT_PATH = "/gui/icon/file/text.png";
+	public static final String FILE_ASSEMBLY_PATH = "/gui/icon/file/assembly.png";
+	public static final String FILE_IMAGE_PATH = "/gui/icon/file/image.png";
 
-	public static final String MENU_SETTINGS_PATH = "gui/icon/menu/settings.png";
+	public static final String MENU_SETTINGS_PATH = "/gui/icon/menu/settings.png";
 
-	public static final String SIDEBAR_EXPLORER_PATH = "gui/icon/file/folder.png";
+	public static final String SIDEBAR_EXPLORER_PATH = "/gui/icon/file/folder.png";
 
-	public static final String PROJECT_ASSEMBLE_PATH = "gui/icon/project/assemble.png";
-	public static final String PROJECT_ASSEMBLE_GRAY_PATH = "gui/icon/project/assemble_gray.png";
-	public static final String PROJECT_SETTINGS_PATH = "gui/icon/project/settings.png";
+	public static final String PROJECT_ASSEMBLE_PATH = "/gui/icon/project/assemble.png";
+	public static final String PROJECT_ASSEMBLE_GRAY_PATH = "/gui/icon/project/assemble_gray.png";
+	public static final String PROJECT_SETTINGS_PATH = "/gui/icon/project/settings.png";
 
-	public static final String SIMULATION_PLAY_PATH = "gui/icon/simulation/play.png";
-	public static final String SIMULATION_STOP_PATH = "gui/icon/simulation/stop.png";
-	public static final String SIMULATION_PLAY_ONE_PATH = "gui/icon/simulation/play_one.png";
-	public static final String SIMULATION_UNDO_ONE_PATH = "gui/icon/simulation/undo_one.png";
-	public static final String SIMULATION_RESET_PATH = "gui/icon/simulation/reset.png";
-	public static final String SIMULATION_CONSOLE_PATH = "gui/icon/simulation/console.png";
-	public static final String SIMULATION_MEMORY_PATH = "gui/icon/simulation/memory.png";
-	public static final String SIMULATION_REGISTERS_PATH = "gui/icon/simulation/registers.png";
-	public static final String SIMULATION_FLOW_PATH = "gui/icon/simulation/flow.png";
+	public static final String SIMULATION_PLAY_PATH = "/gui/icon/simulation/play.png";
+	public static final String SIMULATION_STOP_PATH = "/gui/icon/simulation/stop.png";
+	public static final String SIMULATION_PLAY_ONE_PATH = "/gui/icon/simulation/play_one.png";
+	public static final String SIMULATION_UNDO_ONE_PATH = "/gui/icon/simulation/undo_one.png";
+	public static final String SIMULATION_RESET_PATH = "/gui/icon/simulation/reset.png";
+	public static final String SIMULATION_CONSOLE_PATH = "/gui/icon/simulation/console.png";
+	public static final String SIMULATION_MEMORY_PATH = "/gui/icon/simulation/memory.png";
+	public static final String SIMULATION_REGISTERS_PATH = "/gui/icon/simulation/registers.png";
+	public static final String SIMULATION_FLOW_PATH = "/gui/icon/simulation/flow.png";
 
-	public static final String TAB_SPLIT_VERTICALLY_PATH = "gui/icon/tab/split_vertically.png";
-	public static final String TAB_SPLIT_HORIZONTALLY_PATH = "gui/icon/tab/split_horizontally.png";
+	public static final String TAB_SPLIT_VERTICALLY_PATH = "/gui/icon/tab/split_vertically.png";
+	public static final String TAB_SPLIT_HORIZONTALLY_PATH = "/gui/icon/tab/split_horizontally.png";
 
-	public static final String BAR_CLOSE_PATH = "gui/icon/bar/close.png";
+	public static final String BAR_CLOSE_PATH = "/gui/icon/bar/close.png";
 
 
 }
