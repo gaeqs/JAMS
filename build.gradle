@@ -11,9 +11,10 @@ def projectMainClass = "net.jamsimulator.jams.Jams"
 def javafxVersion = '14.0.2.1'
 def javafxDependencies = ['javafx-base', 'javafx-controls', 'javafx-media', 'javafx-graphics', 'javafx-fxml']
 def bundleLibs = false
+def winConsole = false;
 
 group projectGroup
-version '0.3-ALPHA'
+version '0.4-ALPHA'
 
 repositories {
     jcenter()
@@ -59,6 +60,13 @@ compileJava {
     options.incremental = true
 }
 
+processResources {
+    from('src/main/resources') {
+        include '*.json'
+        filter { String line -> line.replace("\${VERSION}", project.version) }
+    }
+}
+
 jar {
     manifest {
         attributes "Main-Class": projectMainClass
@@ -99,17 +107,21 @@ jlink {
     addExtraDependencies("javafx")
     jpackage {
         def ver = normalizeAppVersion(version as String)
-        jvmArgs = ['-splash:$APPDIR/logo.png']
+
+        //Splash is bugged in windows.
+        //jvmArgs = ['-splash:$APPDIR/logo.png']
+
         imageOptions = ["--verbose", "--app-version", ver]
         installerOptions = ['--app-version', ver,
                             '--vendor', 'jamsimulator.net',
                             '--file-associations', 'src/main/resources/associations.properties']
         imageOptions = ['--icon', 'src/main/resources/gui/icon/logo.ico']
         if (org.gradle.internal.os.OperatingSystem.current().windows) {
-            imageOptions += ['--win-console']
+            if(winConsole) {
+                imageOptions += ['--win-console']
+            }
             installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu']
-        }
-        else if (org.gradle.internal.os.OperatingSystem.current().linux) {
+        } else if (org.gradle.internal.os.OperatingSystem.current().linux) {
             installerOptions += ['--linux-menu-group', 'programming']
             installerType = "deb"
         }

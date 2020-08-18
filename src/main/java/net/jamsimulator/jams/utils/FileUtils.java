@@ -68,6 +68,22 @@ public class FileUtils {
 		return builder.toString();
 	}
 
+	public static String readAll(InputStream stream) throws IOException {
+		Validate.notNull(stream, "Stream cannot be null!");
+
+		StringBuilder builder = new StringBuilder();
+		Reader reader = new InputStreamReader(stream);
+
+		int c;
+		while ((c = reader.read()) != -1) {
+			builder.append((char) c);
+		}
+
+		reader.close();
+
+		return builder.toString();
+	}
+
 	public static void writeAll(File file, String text) throws IOException {
 		Validate.notNull(file, "File cannot be null!");
 		Validate.isTrue(!file.exists() || file.isFile(), "File must not exist or be a file!");
