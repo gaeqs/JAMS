@@ -102,10 +102,16 @@ jlink {
         jvmArgs = ['-splash:$APPDIR/logo.png']
         imageOptions = ["--verbose", "--app-version", ver]
         installerOptions = ['--app-version', ver,
+                            '--vendor', 'jamsimulator.net',
                             '--file-associations', 'src/main/resources/associations.properties']
-        imageOptions = ['--win-console', '--icon', 'src/main/resources/gui/icon/logo.ico']
+        imageOptions = ['--icon', 'src/main/resources/gui/icon/logo.ico']
         if (org.gradle.internal.os.OperatingSystem.current().windows) {
+            imageOptions += ['--win-console']
             installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu']
+        }
+        else if (org.gradle.internal.os.OperatingSystem.current().linux) {
+            installerOptions += ['--linux-menu-group', 'programming']
+            installerType = "deb"
         }
     }
 }
