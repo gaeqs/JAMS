@@ -1,20 +1,12 @@
 module JAMS {
-
-	requires java.base;
-
-	requires javafx.fxml;
-	requires javafx.base;
-	requires javafx.graphics;
-	requires javafx.media;
-	requires javafx.controls;
-
-	requires java.management;
-	requires java.instrument;
 	requires java.desktop;
-
-	//requires  FX.BorderlessScene;
-	requires richtextfx.fat;
+	requires javafx.controls;
+	requires org.fxmisc.richtext;
+	requires reactfx;
+	requires flowless;
 	requires org.json;
+	requires FX.BorderlessScene;
 
 	exports net.jamsimulator.jams;
+	exports net.jamsimulator.jams.gui;
 }

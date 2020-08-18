@@ -1,13 +1,20 @@
 plugins {
     id 'java'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+    id 'org.beryx.jlink' version '2.21.2'
 }
 
 group 'com.degoos'
 version '0.3-ALPHA'
 
 def projectId = "JAMS"
+def projectMainClass = "net.jamsimulator.jams.Jams"
+
 def javafxVersion = '14.0.2.1'
 def javafxDependencies = ['javafx-base', 'javafx-controls', 'javafx-media', 'javafx-graphics', 'javafx-fxml']
+def bundleLibs = false
+
+application.mainClassName = projectMainClass
 
 repositories {
     jcenter()
@@ -32,48 +39,39 @@ sourceSets {
     }
 }
 
+javafx {
+    version = javafxVersion
+    modules = ['javafx.base', 'javafx.controls', 'javafx.media', 'javafx.graphics', 'javafx.fxml']
+}
+
 dependencies {
 
     javafxDependencies.each {
-        implementation group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'win'
+        //implementation group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'win'
         jarLib group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'win'
         jarLib group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'mac'
         jarLib group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'linux'
     }
 
-    implementation files('libs/richtextfx-fat-0.10.5.jar')
-    jarLib files('libs/richtextfx-fat-0.10.5.jar')
-
     implementation group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
-    //implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.5'
+    implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.5'
     implementation group: 'org.json', name: 'json', version: '20200518'
 
     jarLib group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
-    //jarLib group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.5'
+    jarLib group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.5'
     jarLib group: 'org.json', name: 'json', version: '20200518'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
 }
 
-ext.moduleName = "";
-
 compileJava {
-    modularity.inferModulePath = true;
-
     options.encoding = 'UTF-8'
     options.incremental = true
-
-    options.compilerArgs.addAll(["--add-exports", "richtextfx.fat/org.reactfx=JAMS"])
-    options.compilerArgs.addAll(["--add-exports", "richtextfx.fat/org.reactfx.util=JAMS"])
-    options.compilerArgs.addAll(["--add-exports", "richtextfx.fat/org.reactfx.collection=JAMS"])
-    options.compilerArgs.addAll(["--add-exports", "richtextfx.fat/org.reactfx.value=JAMS"])
-    options.compilerArgs.addAll(["--add-exports", "FX.BorderlessScene/org.reactfx.value=JAMS"])
-
 }
 
 jar {
     manifest {
-        attributes "Main-Class": "net.jamsimulator.jams.Jams"
+        attributes "Main-Class": projectMainClass
         attributes "Specification-Title": projectId
         attributes "Specification-Version": archiveVersion
         attributes "Specification-Vendor": group
@@ -82,7 +80,61 @@ jar {
         attributes "Implementation-Vendor": group
     }
 
-    from {
-        configurations.jarLib.collect { it.isDirectory() ? it : zipTree(it) }
+    doFirst {
+        if (bundleLibs) {
+            println "Adding libs..."
+            from {
+                configurations.jarLib.collect { it.isDirectory() ? it : zipTree(it) }
+            }
+        }
+    }
+}
+
+task bundle {
+    dependsOn clean
+    group = "build"
+
+    doLast {
+        bundleLibs = true
+    }
+
+    finalizedBy build
+}
+
+jlink {
+    addExtraDependencies("javafx")
+    options.addAll(['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages'])
+    mainClass.set(projectMainClass)
+    launcher {
+        name = 'JAMS'
+        jvmArgs = ['-Dlog4j.configurationFile=./log4j2.xml']
+    }
+
+    jpackage {
+        def ver = normalizeAppVersion(version as String)
+        imageOptions = ["--verbose", "--app-version", ver]
+        installerOptions = ['--app-version', ver]
+        imageOptions = ['--icon', 'src/main/resources/gui/icon/logo.ico']
+        if (org.gradle.internal.os.OperatingSystem.current().windows) {
+            installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu']
+        }
+    }
+
+    customImage {
+        appModules = ['javafx.base', 'javafx.controls', 'javafx.graphics']
+    }
+}
+
+static String normalizeAppVersion(final String appVersion) {
+    if (org.gradle.internal.os.OperatingSystem.current().linux) {
+        // Replace '-' with '.' for rpmbuild
+        return appVersion.replace('-', '.')
+    } else if (org.gradle.internal.os.OperatingSystem.current().windows) {
+        // This is a hack attempt to assure the version conforms to MSI productVersion string rules
+        // See https://docs.microsoft.com/en-us/windows/win32/msi/productversion
+        // For now, we'll just remove '-SNAPSHOT' if present.
+        return appVersion.replaceAll('-SNAPSHOT$', '').replaceAll('-ALPHA$', '')
+    } else {
+        return appVersion
     }
 }
