@@ -9,12 +9,13 @@ def projectId = "JAMS"
 def javafxVersion = '14.0.2.1'
 def javafxDependencies = ['javafx-base', 'javafx-controls', 'javafx-media', 'javafx-graphics', 'javafx-fxml']
 
-compileJava.options.encoding = 'UTF-8'
-
 repositories {
     jcenter()
     maven {
         url "https://jitpack.io"
+    }
+    flatDir {
+        dirs 'libs'
     }
 }
 
@@ -32,7 +33,6 @@ sourceSets {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
 
     javafxDependencies.each {
         implementation group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'win'
@@ -41,23 +41,46 @@ dependencies {
         jarLib group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'linux'
     }
 
+    implementation files('libs/richtextfx-fat-0.10.5.jar')
+    jarLib files('libs/richtextfx-fat-0.10.5.jar')
+
     implementation group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
-    implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.5'
+    //implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.5'
     implementation group: 'org.json', name: 'json', version: '20200518'
 
     jarLib group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
-    jarLib group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.5'
+    //jarLib group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.5'
     jarLib group: 'org.json', name: 'json', version: '20200518'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
+}
+
+ext.moduleName = "";
+
+compileJava {
+    modularity.inferModulePath = true;
+
+    options.encoding = 'UTF-8'
+    options.incremental = true
+
+    options.compilerArgs.addAll(["--add-exports", "richtextfx.fat/org.reactfx=JAMS"])
+    options.compilerArgs.addAll(["--add-exports", "richtextfx.fat/org.reactfx.util=JAMS"])
+    options.compilerArgs.addAll(["--add-exports", "richtextfx.fat/org.reactfx.collection=JAMS"])
+    options.compilerArgs.addAll(["--add-exports", "richtextfx.fat/org.reactfx.value=JAMS"])
+    options.compilerArgs.addAll(["--add-exports", "FX.BorderlessScene/org.reactfx.value=JAMS"])
+
 }
 
 jar {
-    manifest.attributes "Main-Class": "net.jamsimulator.jams.Jams"
-    manifest.attributes "Specification-Title": projectId
-    manifest.attributes "Specification-Version": archiveVersion
-    manifest.attributes "Specification-Vendor": group
-    manifest.attributes "Implementation-Title": projectId
-    manifest.attributes "Implementation-Version": archiveVersion
-    manifest.attributes "Implementation-Vendor": group
+    manifest {
+        attributes "Main-Class": "net.jamsimulator.jams.Jams"
+        attributes "Specification-Title": projectId
+        attributes "Specification-Version": archiveVersion
+        attributes "Specification-Vendor": group
+        attributes "Implementation-Title": projectId
+        attributes "Implementation-Version": archiveVersion
+        attributes "Implementation-Vendor": group
+    }
 
     from {
         configurations.jarLib.collect { it.isDirectory() ? it : zipTree(it) }

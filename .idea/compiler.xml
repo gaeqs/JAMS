@@ -6,6 +6,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="JAMS" options="" />
+      <module name="JAMS.main" options="--add-exports richtextfx.fat/org.reactfx=JAMS --add-exports richtextfx.fat/org.reactfx.value=JAMS --add-exports richtextfx.fat/org.reactfx.collection=JAMS --add-exports richtextfx.fat/org.reactfx.util=JAMS" />
     </option>
   </component>
 </project>
