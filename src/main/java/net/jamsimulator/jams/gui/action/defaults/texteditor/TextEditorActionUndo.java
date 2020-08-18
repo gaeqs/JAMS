@@ -80,8 +80,7 @@ public class TextEditorActionUndo extends ContextAction {
 
 	@Override
 	public boolean supportsTextEditorState(CodeFileEditor editor) {
-		//TODO MODULE
-		return true;//return editor.getUndoManager().isUndoAvailable();
+		return editor.getUndoManager().isUndoAvailable();
 	}
 
 	@Override
@@ -95,8 +94,6 @@ public class TextEditorActionUndo extends ContextAction {
 		Optional<FileEditor> optionalEditor = holder.getLastFocusedEditor();
 		if (!optionalEditor.isPresent() || !(optionalEditor.get() instanceof CodeFileEditor)) return false;
 
-
-		//TODO MODULE
-		return true;//((CodeFileEditor) optionalEditor.get()).getUndoManager().isUndoAvailable();
+		return ((CodeFileEditor) optionalEditor.get()).getUndoManager().isUndoAvailable();
 	}
 }

@@ -80,8 +80,7 @@ public class TextEditorActionRedo extends ContextAction {
 
 	@Override
 	public boolean supportsTextEditorState(CodeFileEditor editor) {
-		//TODO MODULE
-		return true;//return editor.getUndoManager().isRedoAvailable();
+		return editor.getUndoManager().isRedoAvailable();
 	}
 
 	@Override
@@ -94,8 +93,6 @@ public class TextEditorActionRedo extends ContextAction {
 		FileEditorHolder holder = ((MIPSStructurePane) pane).getFileDisplayHolder();
 		Optional<FileEditor> optionalEditor = holder.getLastFocusedEditor();
 		if (!optionalEditor.isPresent() || !(optionalEditor.get() instanceof CodeFileEditor)) return false;
-
-		//TODO MODULE
-		return true;//return ((CodeFileEditor) optionalEditor.get()).getUndoManager().isRedoAvailable();
+		return ((CodeFileEditor) optionalEditor.get()).getUndoManager().isRedoAvailable();
 	}
 }

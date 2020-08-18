@@ -1,5 +1,7 @@
 package net.jamsimulator.jams.mips.syscall.defaults;
 
+import net.jamsimulator.jams.mips.interrupt.InterruptCause;
+import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
@@ -12,7 +14,7 @@ public class SyscallExecutionRunExceptionHandler implements SyscallExecution {
 
 	@Override
 	public void execute(Simulation<?> simulation) {
-		//TODO
+		throw new RuntimeInstructionException(InterruptCause.SYSCALL_EXCEPTION);
 	}
 
 	public static class Builder extends SyscallExecutionBuilder<SyscallExecutionRunExceptionHandler> {
