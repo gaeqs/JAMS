@@ -29,6 +29,7 @@ import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
+import net.jamsimulator.jams.utils.StringUtils;
 
 public class LanguageLabel extends Label {
 
@@ -47,7 +48,8 @@ public class LanguageLabel extends Label {
 
 	private void refreshMessage() {
 		if (node == null) return;
-		setText(Jams.getLanguageManager().getSelected().getOrDefault(node));
+		String parsed = StringUtils.parseEscapeCharacters(Jams.getLanguageManager().getSelected().getOrDefault(node));
+		setText(StringUtils.addLineJumps(parsed, 70));
 	}
 
 	@Listener

@@ -58,7 +58,6 @@ public class LanguageTooltip extends Tooltip {
 	private void refreshMessage() {
 		if (node == null) return;
 		String parsed = StringUtils.parseEscapeCharacters(Jams.getLanguageManager().getSelected().getOrDefault(node));
-
 		setText(StringUtils.addLineJumps(parsed, 70));
 	}
 

@@ -30,6 +30,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.SceneAntialiasing;
 import javafx.scene.control.ContextMenu;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -84,7 +85,7 @@ public class JamsApplication extends Application {
 			scene = new BorderlessMainScene(stage, mainAnchorPane);
 			((BorderlessScene) scene).setMoveControl(mainAnchorPane.getTopBar().getMenuBar());
 		} else {
-			scene = new MainScene(mainAnchorPane);
+			scene = new MainScene(mainAnchorPane, -1, -1, true);
 		}
 
 		stage.setScene(scene);
@@ -104,9 +105,9 @@ public class JamsApplication extends Application {
 
 
 		getIconManager().getOrLoadSafe(Icons.LOGO, Icons.LOGO_PATH, 250, 250).ifPresent(primaryStage.getIcons()::add);
-		if(getProjectsTabPane().getProjects().isEmpty()) {
+		if (getProjectsTabPane().getProjects().isEmpty()) {
 			StartWindow.open();
-			if(!getProjectsTabPane().getProjects().isEmpty()) {
+			if (!getProjectsTabPane().getProjects().isEmpty()) {
 				stage.show();
 			}
 		} else {

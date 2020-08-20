@@ -56,6 +56,7 @@ public class ConfigurationWindowExplorer extends Explorer {
 				"Configuration", Messages.CONFIG,
 				0, configurationWindow.getConfiguration(), configurationWindow.getMeta(), new HashMap<>());
 		getChildren().add(mainSection);
+		mainSection.expand();
 	}
 
 	@Override

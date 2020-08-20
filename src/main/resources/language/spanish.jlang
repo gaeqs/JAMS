@@ -190,8 +190,10 @@ CONFIG_APPEARANCE_GENERAL_FONT=Fuente general:
 CONFIG_APPEARANCE_GENERAL_FONT_TOOLTIP=Esta fuente es usada por todo JAMS salvo en los editores de texto.
 CONFIG_APPEARANCE_CODE_FONT=Fuente del editor:
 CONFIG_APPEARANCE_CODE_FONT_TOOLTIP=Esta fuente es usada por los editores de texto.
-CONFIG_APPEARANCE_HIDE_TOP_BAR=Esconder barra superior      (Solo para Windows, necesita un reinicio)
+CONFIG_APPEARANCE_HIDE_TOP_BAR=Esconder barra superior\t(Solo para Windows, necesita un reinicio)
 CONFIG_APPEARANCE_HIDE_TOP_BAR_TOOLTIP=Esta opción permite integrar la barra superior de la ventana principal en la barra de tareas.
+CONFIG_APPEARANCE_ANTIALIASING=Antialiasing\t(Requires restart)
+CONFIG_APPEARANCE_ANTIALIASING_TOOLTIP=Activa el antialiasing en todas las escenas.
 
 CONFIG_EDITOR=Editor
 CONFIG_EDITOR_MIPS=MIPS

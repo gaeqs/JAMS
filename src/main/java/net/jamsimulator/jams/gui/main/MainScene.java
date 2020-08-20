@@ -25,8 +25,6 @@
 package net.jamsimulator.jams.gui.main;
 
 import javafx.scene.Parent;
-import javafx.scene.SceneAntialiasing;
-import javafx.scene.paint.Paint;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
@@ -49,23 +47,8 @@ public class MainScene extends ThemedScene {
 		JamsApplication.getActionManager().addAcceleratorsToScene(this, true);
 	}
 
-	public MainScene(Parent root, Paint fill) {
-		super(root, fill);
-		JamsApplication.getActionManager().addAcceleratorsToScene(this, true);
-	}
-
-	public MainScene(Parent root, double width, double height, Paint fill) {
-		super(root, width, height, fill);
-		JamsApplication.getActionManager().addAcceleratorsToScene(this, true);
-	}
-
 	public MainScene(Parent root, double width, double height, boolean depthBuffer) {
 		super(root, width, height, depthBuffer);
-		JamsApplication.getActionManager().addAcceleratorsToScene(this, true);
-	}
-
-	public MainScene(Parent root, double width, double height, boolean depthBuffer, SceneAntialiasing antiAliasing) {
-		super(root, width, height, depthBuffer, antiAliasing);
 		JamsApplication.getActionManager().addAcceleratorsToScene(this, true);
 	}
 

@@ -9,7 +9,8 @@
     "theme": "Dark Theme",
     "hide_top_bar": false,
     "general_font": "JetBrains Mono",
-    "code_font": "JetBrains Mono"
+    "code_font": "JetBrains Mono",
+    "antialiasing": true
   },
   "explorer": {
     "mips": {

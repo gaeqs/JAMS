@@ -44,6 +44,11 @@
       "type": "boolean",
       "language_node": "CONFIG_APPEARANCE_HIDE_TOP_BAR",
       "region": "tweaks"
+    },
+    "antialiasing": {
+      "type": "boolean",
+      "language_node": "CONFIG_APPEARANCE_ANTIALIASING",
+      "region": "tweaks"
     }
   },
   "action": {

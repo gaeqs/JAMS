@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.theme;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
-import javafx.scene.paint.Paint;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
@@ -37,32 +37,17 @@ import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
 public class ThemedScene extends Scene {
 
 	public ThemedScene(Parent root) {
-		super(root);
+		super(root, -1, -1, true, getSceneAntialiasing());
 		initializeJamsListeners();
 	}
 
 	public ThemedScene(Parent root, double width, double height) {
-		super(root, width, height);
-		initializeJamsListeners();
-	}
-
-	public ThemedScene(Parent root, Paint fill) {
-		super(root, fill);
-		initializeJamsListeners();
-	}
-
-	public ThemedScene(Parent root, double width, double height, Paint fill) {
-		super(root, width, height, fill);
+		super(root, width, height, true, getSceneAntialiasing());
 		initializeJamsListeners();
 	}
 
 	public ThemedScene(Parent root, double width, double height, boolean depthBuffer) {
-		super(root, width, height, depthBuffer);
-		initializeJamsListeners();
-	}
-
-	public ThemedScene(Parent root, double width, double height, boolean depthBuffer, SceneAntialiasing antiAliasing) {
-		super(root, width, height, depthBuffer, antiAliasing);
+		super(root, width, height, depthBuffer, getSceneAntialiasing());
 		initializeJamsListeners();
 	}
 
@@ -85,6 +70,12 @@ public class ThemedScene extends Scene {
 	@Listener
 	public void onThemeChange(CodeFontChangeEvent.After event) {
 		JamsApplication.getThemeManager().getSelected().apply(this);
+	}
+
+
+	private static SceneAntialiasing getSceneAntialiasing() {
+		return (boolean) Jams.getMainConfiguration().get("appearance.antialiasing").orElse(false)
+				? SceneAntialiasing.BALANCED : SceneAntialiasing.DISABLED;
 	}
 
 }

@@ -189,8 +189,10 @@ CONFIG_APPEARANCE_GENERAL_FONT=General font:
 CONFIG_APPEARANCE_GENERAL_FONT_TOOLTIP=This font is used on all JAMS except text editors.
 CONFIG_APPEARANCE_CODE_FONT=Editor font:
 CONFIG_APPEARANCE_CODE_FONT_TOOLTIP=This font is used on text editors.
-CONFIG_APPEARANCE_HIDE_TOP_BAR=Hide top bar     (Windows only, requires restart)
+CONFIG_APPEARANCE_HIDE_TOP_BAR=Hide top bar\t(Windows only, requires restart)
 CONFIG_APPEARANCE_HIDE_TOP_BAR_TOOLTIP=This option integrates the main window's bar into the taskbar.
+CONFIG_APPEARANCE_ANTIALIASING=Antialiasing\t(Requires restart)
+CONFIG_APPEARANCE_ANTIALIASING_TOOLTIP=Enables the antialiasing in all scenes.
 
 CONFIG_EDITOR=Editor
 CONFIG_EDITOR_MIPS=MIPS

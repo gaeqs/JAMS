@@ -45,6 +45,7 @@ public class ActionExplorerRegion extends ExplorerSection {
 	public ActionExplorerRegion(ActionsExplorer explorer, ExplorerSection parent, String region) {
 		super(explorer, parent, region, 1, Comparator.comparing(ExplorerElement::getName));
 		((ExplorerSectionLanguageRepresentation) representation).setLanguageNode(ActionManager.LANGUAGE_REGION_NODE_PREFIX + region);
+		representation.getStyleClass().addAll("action-explorer-element", "action-explorer-representation");
 	}
 
 	public void setSmallRepresentation(boolean representation) {
@@ -71,7 +72,7 @@ public class ActionExplorerRegion extends ExplorerSection {
 
 	@Override
 	protected ExplorerSectionRepresentation loadRepresentation() {
-		ExplorerSectionRepresentation representation =  new ExplorerSectionLanguageRepresentation(this, hierarchyLevel, null);
+		ExplorerSectionRepresentation representation = new ExplorerSectionLanguageRepresentation(this, hierarchyLevel, null);
 		representation.getIcon().setImage(Jams.getFileTypeManager().getFolderType().getIcon());
 		return representation;
 	}
