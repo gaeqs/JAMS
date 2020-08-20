@@ -77,7 +77,20 @@
   },
   "editor": {
     "meta": {
-      "language_node": "CONFIG_EDITOR"
+      "language_node": "CONFIG_EDITOR",
+      "regions": {
+        "mouse_control": 0
+      }
+    },
+    "zoom_using_mouse_wheel": {
+      "type": "boolean",
+      "language_node": "CONFIG_EDITOR_ZOOM_USING_MOUSE_WHEEL",
+      "region": "mouse_control"
+    },
+    "reset_zoom_using_middle_button": {
+      "type": "boolean",
+      "language_node": "CONFIG_EDITOR_RESET_ZOOM_USING_MIDDLE_BUTTON",
+      "region": "mouse_control"
     },
     "mips": {
       "meta": {

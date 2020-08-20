@@ -18,6 +18,8 @@
     }
   },
   "editor": {
+    "zoom_using_mouse_wheel": true,
+    "reset_zoom_using_middle_button": true,
     "mips": {
       "use_tabs": true,
       "preserve_tabs": true,

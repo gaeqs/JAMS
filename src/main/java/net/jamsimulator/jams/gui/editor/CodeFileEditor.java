@@ -30,6 +30,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
 import javafx.scene.input.*;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.Action;
@@ -96,7 +97,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 		});
 
 		focusedProperty().addListener((obs, old, val) -> {
-			if(val) {
+			if (val) {
 				getTab().getList().getHolder().setLastFocusedEditor(this);
 			}
 		});
@@ -114,9 +115,9 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 
 
 	/**
-	 * Returns
+	 * Returns the {@link AutocompletionPopup} used in this editor.
 	 *
-	 * @return
+	 * @return the {@link AutocompletionPopup}.
 	 */
 	public AutocompletionPopup getAutocompletionPopup() {
 		return autocompletionPopup;
@@ -395,7 +396,9 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 
 	protected void applyZoomListener() {
 		addEventFilter(ScrollEvent.SCROLL, event -> {
-			if (event.isControlDown()) {
+			if (event.isControlDown()
+					&& (boolean) Jams.getMainConfiguration().get("editor.zoom_using_mouse_wheel").orElse(true)) {
+
 				double current = zoom.getZoom().getX();
 				if (event.getDeltaY() < 0) {
 					if (current > 0.4) {
@@ -412,7 +415,8 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 
 		//RESET
 		addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-			if (event.isControlDown() && event.getButton() == MouseButton.MIDDLE) {
+			if (event.isControlDown() && event.getButton() == MouseButton.MIDDLE
+					&& (boolean) Jams.getMainConfiguration().get("editor.reset_zoom_using_middle_button").orElse(true)) {
 				zoom.getZoom().setX(1);
 				zoom.getZoom().setY(1);
 				zoom.getZoom().setZ(1);
