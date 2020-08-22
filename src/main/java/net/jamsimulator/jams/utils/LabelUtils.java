@@ -30,7 +30,7 @@ import java.util.List;
 public class LabelUtils {
 
 	private static final List<String> illegalCharacters = Arrays.asList(" ", ",", "/", "\\", ";", "!", "|", "\"", "@",
-			"·", "#", "~", "½", "&", "¬", "(", ")", "[", "]", "{", "}", "=", "'", "=", "?", "¿", "^", "*",
+			"·", "#", "~", "½", "&", "¬", "[", "]", "{", "}", "=", "'", "=", "?", "¿", "^", "*",
 			"+", "´", "¨");
 
 	public static boolean isLabelLegal(String label) {
