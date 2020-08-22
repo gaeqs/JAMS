@@ -30,7 +30,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
 import javafx.scene.control.ContextMenu;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -50,6 +49,7 @@ import net.jamsimulator.jams.manager.ActionManager;
 import net.jamsimulator.jams.manager.ThemeManager;
 import net.jamsimulator.jams.utils.Validate;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -235,6 +235,13 @@ public class JamsApplication extends Application {
 
 
 	private static void onClose() {
+		//Save main configuration.
+		try {
+			Jams.getMainConfiguration().save(true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		getProjectsTabPane().saveOpenProjects();
 		for (ProjectTab project : getProjectsTabPane().getProjects()) {
 			project.getProject().onClose();

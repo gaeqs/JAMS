@@ -209,6 +209,7 @@ public class Sidebar extends VBox implements Bar {
 		} else {
 			button.getProjectBar().remove(name);
 			add(index, button.getSnapshot());
+			barMap.callPutEvent(this, button);
 		}
 
 	}

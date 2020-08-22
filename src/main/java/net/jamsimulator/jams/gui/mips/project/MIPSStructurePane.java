@@ -24,12 +24,14 @@
 
 package net.jamsimulator.jams.gui.mips.project;
 
+import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.bar.BarType;
 import net.jamsimulator.jams.gui.bar.PaneSnapshot;
@@ -45,11 +47,14 @@ import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.Optional;
 
 /**
  * This class represent the working pane of a project.
  */
 public class MIPSStructurePane extends WorkingPane {
+
+	public static final String BAR_CONFIGURATION_NODE = "invisible.bar.structure.";
 
 	protected final MIPSProject project;
 	protected final MIPSStructurePaneButtons paneButtons;
@@ -80,6 +85,8 @@ public class MIPSStructurePane extends WorkingPane {
 		init();
 
 		SplitPane.setResizableWithParent(center, true);
+
+		barMap.setOnPut((type, button) -> Jams.getMainConfiguration().set(BAR_CONFIGURATION_NODE + button.getName(), type));
 	}
 
 	/**
@@ -119,7 +126,7 @@ public class MIPSStructurePane extends WorkingPane {
 	}
 
 	private void loadExplorer() {
-		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
 				Icons.SIDEBAR_EXPLORER_PATH, 1024, 1024).orElse(null);
 
 		ScrollPane pane = new ScrollPane();
@@ -133,14 +140,13 @@ public class MIPSStructurePane extends WorkingPane {
 			pane.setVvalue(pane.getVvalue() - deltaY);
 		});
 
-		paneSnapshots.add(new PaneSnapshot("Explorer", BarType.TOP_LEFT,
-				pane, explorerIcon, Messages.BAR_EXPLORER_NAME));
+		manageBarAddition("explorer", pane, icon, Messages.BAR_EXPLORER_NAME, BarType.TOP_LEFT);
 
 		explorer.setFileOpenAction(file -> openFile(file.getFile()));
 	}
 
 	private void loadFilesToAssembleSidebar() {
-		Image explorerIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
 				Icons.SIDEBAR_EXPLORER_PATH, 1024, 1024).orElse(null);
 
 		ScrollPane pane = new ScrollPane();
@@ -154,8 +160,7 @@ public class MIPSStructurePane extends WorkingPane {
 			pane.setVvalue(pane.getVvalue() - deltaY);
 		});
 
-		paneSnapshots.add(new PaneSnapshot("FilesToAssemble", BarType.BOTTOM_LEFT,
-				pane, explorerIcon, Messages.BAR_FILES_TO_ASSEMBLE_NAME));
+		manageBarAddition("files_to_assemble", pane, icon, Messages.BAR_FILES_TO_ASSEMBLE_NAME, BarType.BOTTOM_LEFT);
 	}
 
 	private void loadLogBottomBar() {
@@ -167,7 +172,18 @@ public class MIPSStructurePane extends WorkingPane {
 
 		log = new SimpleLog();
 		pane.setContent(log);
-		paneSnapshots.add(new PaneSnapshot("Log", BarType.BOTTOM, pane, icon, Messages.BAR_LOG_NAME));
+		manageBarAddition("log", pane, icon, Messages.BAR_LOG_NAME, BarType.BOTTOM);
+	}
+
+
+	private void manageBarAddition(String name, Node node, Image icon, String languageNode, BarType bar) {
+		Optional<BarType> optional = Jams.getMainConfiguration().getEnum(BarType.class, BAR_CONFIGURATION_NODE + name);
+		if (optional.isPresent()) {
+			bar = optional.get();
+		} else {
+			Jams.getMainConfiguration().set(BAR_CONFIGURATION_NODE + name, bar);
+		}
+		paneSnapshots.add(new PaneSnapshot(name, bar, node, icon, languageNode));
 	}
 
 	@Override

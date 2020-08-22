@@ -108,7 +108,9 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
 
 	protected void manageChildrenAddition(String name, Object value) {
 		if (value instanceof Configuration) {
-			manageSectionAddition(name, (Configuration) value);
+			if(!name.equals("invisible")) {
+				manageSectionAddition(name, (Configuration) value);
+			}
 		} else {
 			manageBasicObjectAddition(name, value);
 		}

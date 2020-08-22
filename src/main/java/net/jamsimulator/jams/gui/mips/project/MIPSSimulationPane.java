@@ -1,9 +1,11 @@
 package net.jamsimulator.jams.gui.mips.project;
 
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
@@ -28,9 +30,12 @@ import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
+
+	public static final String BAR_CONFIGURATION_NODE = "invisible.bar.simulation.";
 
 	protected MIPSProject project;
 	protected Simulation<?> simulation;
@@ -68,6 +73,8 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 		init();
 
 		SplitPane.setResizableWithParent(center, true);
+
+		barMap.setOnPut((type, button) -> Jams.getMainConfiguration().set(BAR_CONFIGURATION_NODE + button.getName(), type));
 	}
 
 	public MIPSProject getProject() {
@@ -94,13 +101,14 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 
 		registersTabs.getTabs().forEach(tab -> tab.setClosable(false));
 
-		paneSnapshots.add(new PaneSnapshot("Registers", BarType.TOP_RIGHT, registersTabs, icon, Messages.BAR_REGISTERS_NAME));
+		manageBarAddition("registers", registersTabs, icon, Messages.BAR_REGISTERS_NAME, BarType.TOP_RIGHT);
 	}
 
 	private void loadConsole() {
 		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_CONSOLE,
 				Icons.SIMULATION_CONSOLE_PATH, 1024, 1024).orElse(null);
-		paneSnapshots.add(new PaneSnapshot("Console", BarType.BOTTOM, simulation.getConsole(), icon, Messages.BAR_CONSOLE_NAME));
+
+		manageBarAddition("console", simulation.getConsole(), icon, Messages.BAR_CONSOLE_NAME, BarType.BOTTOM);
 	}
 
 	private void loadMemoryTab() {
@@ -109,7 +117,7 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 
 		MemoryPane pane = new MemoryPane(simulation);
 
-		paneSnapshots.add(new PaneSnapshot("Memory", BarType.TOP_LEFT, pane, icon, Messages.BAR_MEMORY_NAME));
+		manageBarAddition("memory", pane, icon, Messages.BAR_MEMORY_NAME, BarType.TOP_LEFT);
 	}
 
 	private void loadFlow() {
@@ -129,8 +137,20 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 		AnchorUtils.setAnchor(slider, -1, 0, 2, 2);
 		slider.setPrefHeight(20);
 
-		paneSnapshots.add(new PaneSnapshot("Flow", BarType.BOTTOM_LEFT, anchor, icon, Messages.BAR_FLOW_NAME));
+		manageBarAddition("flow", anchor, icon, Messages.BAR_FLOW_NAME, BarType.BOTTOM_LEFT);
 	}
+
+
+	private void manageBarAddition(String name, Node node, Image icon, String languageNode, BarType bar) {
+		Optional<BarType> optional = Jams.getMainConfiguration().getEnum(BarType.class, BAR_CONFIGURATION_NODE + name);
+		if (optional.isPresent()) {
+			bar = optional.get();
+		} else {
+			Jams.getMainConfiguration().set(BAR_CONFIGURATION_NODE + name, bar);
+		}
+		paneSnapshots.add(new PaneSnapshot(name, bar, node, icon, languageNode));
+	}
+
 
 	@Override
 	public String getLanguageNode() {

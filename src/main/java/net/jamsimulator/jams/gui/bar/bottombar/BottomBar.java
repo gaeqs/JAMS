@@ -191,6 +191,7 @@ public class BottomBar extends HBox implements Bar {
 		} else {
 			button.getProjectBar().remove(name);
 			add(index, button.getSnapshot());
+			barMap.callPutEvent(this, button);
 		}
 
 	}
