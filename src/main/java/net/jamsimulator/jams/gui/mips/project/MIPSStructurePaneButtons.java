@@ -7,7 +7,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionCompile;
+import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionAssemble;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.configuration.ConfigurationsWindow;
@@ -64,7 +64,7 @@ public class MIPSStructurePaneButtons {
 
 		Button assemble = new FixedButton("", new NearestImageView(icon, 18, 18), 28, 28);
 		assemble.getStyleClass().add("buttons-hbox-button");
-		assemble.setOnAction(event -> GeneralActionCompile.compileAndShow(structurePane.project));
+		assemble.setOnAction(event -> GeneralActionAssemble.compileAndShow(structurePane.project));
 		nodes.add(assemble);
 	}
 

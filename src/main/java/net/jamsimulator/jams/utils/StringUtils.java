@@ -122,6 +122,25 @@ public class StringUtils {
 		return map;
 	}
 
+	public static int indexOf(String string, char... chars) {
+		char[] array = string.toCharArray();
+		for (int i = 0; i < array.length; i++) {
+			for (char match : chars) {
+				if (array[i] == match) return i;
+			}
+		}
+		return -1;
+	}
+
+	public static int indexOf(String string, int start, char... chars) {
+		char[] array = string.toCharArray();
+		for (int i = start; i < array.length; i++) {
+			for (char match : chars) {
+				if (array[i] == match) return i;
+			}
+		}
+		return -1;
+	}
 
 	public static int getCommentIndex(String string) {
 		char c;

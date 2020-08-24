@@ -82,6 +82,16 @@ public class InstructionSet {
 	}
 
 	/**
+	 * Returns a new {@link Set} with all {@link Instruction}s that match the given mnemonic.
+	 *
+	 * @param mnemonic the mnemonic.
+	 * @return the {@link Set}.
+	 */
+	public Set<Instruction> getInstructionByMnemonic(String mnemonic) {
+		return instructions.stream().filter(target -> target.getMnemonic().equalsIgnoreCase(mnemonic)).collect(Collectors.toSet());
+	}
+
+	/**
 	 * Returns the {@link Instruction} that matches the given mnemonic and parameter types, if present.
 	 *
 	 * @param mnemonic   the given mnemonic.
@@ -162,6 +172,35 @@ public class InstructionSet {
 	public boolean registerInstruction(Instruction instruction) {
 		Validate.notNull(instruction, "The given instruction cannot be null!");
 		return instructions.add(instruction);
+	}
+
+	/**
+	 * Sorts the given list by the best instruction.
+	 *
+	 * @param list the list.
+	 */
+	public static void sort(List<? extends Instruction> list) {
+		list.sort(COMPARATOR);
+	}
+
+	public static int bestInstructionOf(List<? extends Instruction> list) {
+		if (list.isEmpty()) throw new IllegalArgumentException("List is empty");
+		Instruction best = list.get(0);
+		int bestI = 0;
+
+		int i = 1;
+		var it = list.iterator();
+		Instruction current;
+		it.next();
+		while (it.hasNext()) {
+			current = it.next();
+			if (COMPARATOR.compare(best, current) > 0) {
+				best = current;
+				bestI = i;
+			}
+			i++;
+		}
+		return bestI;
 	}
 
 	private static class CompatibleInstructionComparator implements Comparator<Instruction> {

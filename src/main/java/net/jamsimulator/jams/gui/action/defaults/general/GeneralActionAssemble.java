@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.action.defaults.general;
 
+import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -47,13 +48,13 @@ import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.util.Optional;
 
-public class GeneralActionCompile extends ContextAction {
+public class GeneralActionAssemble extends ContextAction {
 
-	public static final String NAME = "GENERAL_COMPILE";
+	public static final String NAME = "GENERAL_ASSEMBLE";
 	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
 
-	public GeneralActionCompile() {
-		super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_COMPILE, DEFAULT_COMBINATION, GeneralActionRegions.MIPS_PRIORITY, MainMenuRegion.MIPS,
+	public GeneralActionAssemble() {
+		super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_ASSEMBLE, DEFAULT_COMBINATION, GeneralActionRegions.MIPS_PRIORITY, MainMenuRegion.MIPS,
 				JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_ASSEMBLE, Icons.PROJECT_ASSEMBLE_PATH, 1024, 1024).orElse(null));
 	}
 
@@ -77,45 +78,35 @@ public class GeneralActionCompile extends ContextAction {
 		ProjectTab tab = project.getProjectTab().orElse(null);
 		if (tab == null) return;
 
-		MIPSStructurePane pane = (MIPSStructurePane) tab.getProjectTabPane().getWorkingPane();
-		pane.getFileDisplayHolder().saveAll(true);
-		pane.getBarMap().searchButton("Log").ifPresent(BarButton::show);
-		SimpleLog log = pane.getLog();
+		Thread thread = new Thread(() -> {
+			MIPSStructurePane pane = (MIPSStructurePane) tab.getProjectTabPane().getWorkingPane();
+			pane.getFileDisplayHolder().saveAll(true);
+			pane.getBarMap().searchButton("Log").ifPresent(BarButton::show);
+			SimpleLog log = pane.getLog();
 
-		try {
-			Simulation<?> simulation = project.assemble(log);
+			try {
+				Simulation<?> simulation = project.assemble(log);
 
-			project.getProjectTab().ifPresent(projectTab -> projectTab.getProjectTabPane()
-					.createProjectPane((t, pt) ->
-							new MIPSSimulationPane(t, pt, project, simulation), true));
+				Platform.runLater(() ->
+						project.getProjectTab().ifPresent(projectTab -> projectTab.getProjectTabPane()
+								.createProjectPane((t, pt) ->
+										new MIPSSimulationPane(t, pt, project, simulation), true)));
 
+			} catch (Exception ex) {
+				log.printErrorLn("ERROR:");
+				log.printErrorLn(ex.getMessage());
+				ex.printStackTrace();
+			}
+		});
 
-		} catch (Exception ex) {
-			log.printErrorLn("ERROR:");
-			log.printErrorLn(ex.getMessage());
-			ex.printStackTrace();
-		}
-	}
-
-	private static String toHexFill(int i) {
-		return addZeros(Integer.toHexString(i), 8);
-	}
-
-	private static String addZeros(String s, int to) {
-		StringBuilder builder = new StringBuilder();
-		int max = Math.max(0, to - s.length());
-
-		for (int i = 0; i < max; i++) {
-			builder.append("0");
-		}
-
-		return builder + s;
+		thread.setName("Assembler");
+		thread.start();
 	}
 
 	@Override
 	public void runFromMenu() {
 		Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
-		if (!optionalProject.isPresent()) return;
+		if (optionalProject.isEmpty()) return;
 		ProjectTab tab = optionalProject.get();
 		if (tab.getProject() instanceof MIPSProject) {
 			compileAndShow((MIPSProject) tab.getProject());

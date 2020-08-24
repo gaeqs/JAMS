@@ -30,6 +30,7 @@ import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,30 +41,32 @@ import java.util.stream.Collectors;
 public enum ParameterType {
 
 	//SORTED BY PRIORITY
-	COPROCESSOR_0_REGISTER("$8", new ParameterMatcherCoprocessor0Register()),
-	REGISTER("$t1", new ParameterMatcherRegister()),
-	EVEN_FLOAT_REGISTER("$f2", new ParameterMatcherEvenFloatRegister()),
-	FLOAT_REGISTER("$f1", new ParameterMatcherFloatRegister()),
-	UNSIGNED_5_BIT("5", new ParameterMatcherUnsigned5Bit()),
-	SIGNED_16_BIT("-16000", new ParameterMatcherSigned16Bit()),
-	UNSIGNED_16_BIT("16000", new ParameterMatcherUnsigned16Bit()),
-	SIGNED_32_BIT("-32000000", new ParameterMatcherSigned32Bit()),
+	COPROCESSOR_0_REGISTER("$8", new ParameterMatcherCoprocessor0Register(), false),
+	REGISTER("$t1", new ParameterMatcherRegister(), false),
+	EVEN_FLOAT_REGISTER("$f2", new ParameterMatcherEvenFloatRegister(), false),
+	FLOAT_REGISTER("$f1", new ParameterMatcherFloatRegister(), false),
+	UNSIGNED_5_BIT("5", new ParameterMatcherUnsigned5Bit(), false),
+	SIGNED_16_BIT("-16000", new ParameterMatcherSigned16Bit(), false),
+	UNSIGNED_16_BIT("16000", new ParameterMatcherUnsigned16Bit(), false),
+	SIGNED_32_BIT("-32000000", new ParameterMatcherSigned32Bit(), false),
 
-	SIGNED_16_BIT_REGISTER_SHIFT("-16000($t1)", new ParameterMatcherSigned16BitRegisterShift()),
-	UNSIGNED_16_BIT_REGISTER_SHIFT("16000($t1)", new ParameterMatcherUnsigned16BitRegisterShift()),
-	SIGNED_32_BIT_REGISTER_SHIFT("-32000000($t1)", new ParameterMatcherSigned32BitRegisterShift()),
-	LABEL("label", new ParameterMatcherLabel()),
-	LABEL_REGISTER_SHIFT("label($t1)", new ParameterMatcherLabelRegisterShift()),
-	LABEL_SIGNED_32_BIT_SHIFT("label+32000000", new ParameterMatcherLabelSigned32BitShift()),
-	LABEL_SIGNED_32_BIT_SHIFT_REGISTER_SHIFT("label+32000000($t2)", new ParameterMatcherLabelSigned32BitShiftRegisterShift());
+	SIGNED_16_BIT_REGISTER_SHIFT("-16000($t1)", new ParameterMatcherSigned16BitRegisterShift(), false),
+	UNSIGNED_16_BIT_REGISTER_SHIFT("16000($t1)", new ParameterMatcherUnsigned16BitRegisterShift(), false),
+	SIGNED_32_BIT_REGISTER_SHIFT("-32000000($t1)", new ParameterMatcherSigned32BitRegisterShift(), false),
+	LABEL("label", new ParameterMatcherLabel(), true),
+	LABEL_REGISTER_SHIFT("label($t1)", new ParameterMatcherLabelRegisterShift(), true),
+	LABEL_SIGNED_32_BIT_SHIFT("label+32000000", new ParameterMatcherLabelSigned32BitShift(), true),
+	LABEL_SIGNED_32_BIT_SHIFT_REGISTER_SHIFT("label+32000000($t2)", new ParameterMatcherLabelSigned32BitShiftRegisterShift(), true);
 
 
-	private String example;
-	private ParameterMatcher matcher;
+	private final String example;
+	private final ParameterMatcher matcher;
+	private final boolean hasLabel;
 
-	ParameterType(String example, ParameterMatcher matcher) {
+	ParameterType(String example, ParameterMatcher matcher, boolean hasLabel) {
 		this.example = example;
 		this.matcher = matcher;
+		this.hasLabel = hasLabel;
 	}
 
 	/**
@@ -73,6 +76,15 @@ public enum ParameterType {
 	 */
 	public String getExample() {
 		return example;
+	}
+
+	/**
+	 * Returns whether this parameter type contains a label.
+	 *
+	 * @return whether it contains a label.
+	 */
+	public boolean hasLabel() {
+		return hasLabel;
 	}
 
 	/**
@@ -117,7 +129,10 @@ public enum ParameterType {
 	 * @return the best parameter type, if present.
 	 */
 	public static Optional<ParameterType> getParameterMatch(String parameter, Registers set) {
-		return Arrays.stream(values()).filter(target -> target.match(parameter, set)).findFirst();
+		for (ParameterType value : values()) {
+			if (value.match(parameter, set)) return Optional.of(value);
+		}
+		return Optional.empty();
 	}
 
 	/**
@@ -128,7 +143,11 @@ public enum ParameterType {
 	 * @return the mutable list.
 	 */
 	public static List<ParameterType> getCompatibleParameterTypes(String parameter, Registers set) {
-		return Arrays.stream(values()).filter(target -> target.match(parameter, set)).collect(Collectors.toList());
+		LinkedList<ParameterType> types = new LinkedList<>();
+		for (ParameterType value : values()) {
+			if (value.match(parameter, set)) types.add(value);
+		}
+		return types;
 	}
 
 
@@ -140,6 +159,10 @@ public enum ParameterType {
 	 * @return the mutable list.
 	 */
 	public static List<ParameterType> getCompatibleParameterTypes(String parameter, RegistersBuilder builder) {
-		return Arrays.stream(values()).filter(target -> target.match(parameter, builder)).collect(Collectors.toList());
+		LinkedList<ParameterType> types = new LinkedList<>();
+		for (ParameterType value : values()) {
+			if (value.match(parameter, builder)) types.add(value);
+		}
+		return types;
 	}
 }

@@ -38,7 +38,7 @@ import net.jamsimulator.jams.gui.action.defaults.editortab.EditorTabActionSplitV
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.*;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.folder.*;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.mips.filestoassemble.MipsFilesToAssembleActionRemove;
-import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionCompile;
+import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionAssemble;
 import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionCreateProject;
 import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionOpenProject;
 import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionSettings;
@@ -366,7 +366,7 @@ public class ActionManager extends SimpleEventBroadcast {
 		actions.add(new GeneralActionSettings());
 
 		//TEXT EDITOR
-		actions.add(new GeneralActionCompile());
+		actions.add(new GeneralActionAssemble());
 		actions.add(new TextEditorActionCopy());
 		actions.add(new TextEditorActionCut());
 		actions.add(new TextEditorActionDuplicateLine());

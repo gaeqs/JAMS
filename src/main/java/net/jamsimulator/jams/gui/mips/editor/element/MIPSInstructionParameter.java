@@ -27,6 +27,7 @@ package net.jamsimulator.jams.gui.mips.editor.element;
 import net.jamsimulator.jams.gui.mips.editor.MIPSEditorError;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -71,11 +72,40 @@ public class MIPSInstructionParameter {
 
 
 	private void parseText(int start, MIPSFileElements elements) {
-		Map<Integer, String> parts = StringUtils.multiSplitIgnoreInsideStringWithIndex(text, false, "+", "(", ")");
 
-		//Adds all parts.
-		parts.forEach((index, string) -> this.parts.add(
-				new MIPSInstructionParameterPart(elements,
-						start + index, start + index + string.length(), string)));
+		StringBuilder builder = new StringBuilder();
+		int index = 0;
+		for (char c : text.toCharArray()) {
+			if (c == '+') {
+				addPart(builder.toString(), start, elements);
+				builder = new StringBuilder();
+				start += index + 1;
+			} else {
+				builder.append(c);
+			}
+			index++;
+		}
+		addPart(builder.toString(), start, elements);
+	}
+
+	private void addPart(String string, int start, MIPSFileElements elements) {
+		Optional<MIPSProject> project = elements.getProject();
+		if (project.isEmpty()) {
+			parts.add(new MIPSInstructionParameterPart(elements, start, start + string.length(), string));
+			return;
+		}
+
+
+		if (string.indexOf('(') != -1 || string.indexOf(')') != -1) {
+			List<ParameterType> types = ParameterType.getCompatibleParameterTypes(string, project.get().getData().getRegistersBuilder());
+			if (types.size() == 1 && types.get(0) == ParameterType.LABEL) {
+				parts.add(new MIPSInstructionParameterPart(elements, start, start + string.length(), string));
+				return;
+			}
+		}
+
+		Map<Integer, String> parts = StringUtils.multiSplitIgnoreInsideStringWithIndex(string, false, "+", "(", ")");
+		parts.forEach((index, part) -> this.parts.add(new MIPSInstructionParameterPart(elements,
+				start + index, start + index + part.length(), part)));
 	}
 }

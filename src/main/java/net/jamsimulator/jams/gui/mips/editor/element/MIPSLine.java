@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.mips.editor.element;
 
+import net.jamsimulator.jams.utils.LabelUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
@@ -271,8 +272,9 @@ public class MIPSLine {
 		}
 
 		//LABEL
-		int labelIndex = parsing.indexOf(":");
+		int labelIndex = LabelUtils.getLabelFinishIndex(parsing);
 		if (labelIndex != -1) {
+
 			label = new MIPSLabel(pStart, pStart + labelIndex, parsing.substring(0, labelIndex + 1));
 			pStart = pStart + labelIndex + 1;
 			parsing = parsing.substring(labelIndex + 1);

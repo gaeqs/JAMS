@@ -29,13 +29,46 @@ import java.util.List;
 
 public class LabelUtils {
 
-	private static final List<String> illegalCharacters = Arrays.asList(" ", ",", "/", "\\", ";", "!", "|", "\"", "@",
-			"·", "#", "~", "½", "&", "¬", "[", "]", "{", "}", "=", "'", "=", "?", "¿", "^", "*",
-			"+", "´", "¨");
+	private static final List<String> illegalCharacters = Arrays.asList("\\", ";", "\"", "#", "'");
 
+	/**
+	 * Returns whether this label is valid.
+	 * The given string must not contain the final character ':'.
+	 *
+	 * @param label the string.
+	 * @return whether the label represented by the given string is valid.
+	 */
 	public static boolean isLabelLegal(String label) {
 		if (label.isEmpty()) return false;
+
+		//Special case: ':' is not allowed, but "::" is.
+		int colon = -2;
+
+		do {
+			colon = label.indexOf(':', colon + 2);
+			if (colon == -1) break;
+			if (label.length() <= colon + 1 || label.charAt(colon + 1) != ':') {
+				return false;
+			}
+		} while (label.length() > colon + 2);
+
 		return illegalCharacters.stream().noneMatch(label::contains);
 	}
 
+	/**
+	 * Returns the final position of the label inside the given line.
+	 * If no labels are found, this method returns -1.
+	 * <p>
+	 * The returned label may be illegal. Use {@link #isLabelLegal(String)} to check if the returned label is legal.
+	 *
+	 * @param line the line containing the label.
+	 * @return the last position of the label, inclusive. (The last position must be the ':' character.)
+	 */
+	public static int getLabelFinishIndex(String line) {
+		int labelIndex = -2;
+		do {
+			labelIndex = line.indexOf(":", labelIndex + 2);
+		} while (line.length() > labelIndex + 1 && line.charAt(labelIndex + 1) == ':');
+		return labelIndex;
+	}
 }

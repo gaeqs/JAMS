@@ -30,6 +30,7 @@ import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 import net.jamsimulator.jams.project.mips.MIPSProject;
+import net.jamsimulator.jams.utils.InstructionUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.*;
@@ -103,6 +104,48 @@ public class MIPSInstruction extends MIPSCodeElement {
 	}
 
 	private void parseText(MIPSFileElements elements) {
+		String raw = text;
+		String trim = raw.trim();
+		int mnemonicIndex = StringUtils.indexOf(trim, ' ', ',', '\t');
+
+		if (mnemonicIndex == -1) {
+			instruction = trim;
+			startIndex += text.indexOf(instruction);
+			endIndex = startIndex + instruction.length() + 1;
+			return;
+		}
+
+		instruction = trim.substring(0, mnemonicIndex);
+		startIndex += text.indexOf(instruction);
+		endIndex = startIndex + instruction.length() + 1;
+
+		raw = trim.substring(mnemonicIndex + 1);
+
+		MIPSProject project = elements.getProject().orElse(null);
+		if (project == null) return;
+
+		var instructionSet = project.getData().getInstructionSet();
+		var registerBuilder = project.getData().getRegistersBuilder();
+
+		var parameterCache = new ArrayList<String>();
+
+		var instructions = instructionSet.getInstructionByMnemonic(instruction);
+		var best = InstructionUtils.getBestInstruction(instructions, parameterCache, registerBuilder, raw).orElse(null);
+
+		if (best == null) {
+			//DO SIMPLE SPLIT
+			generateParametersBySplit(elements);
+		} else {
+			int index = 0;
+			for (String parameter : parameterCache) {
+				index = raw.indexOf(parameter, index);
+				parameters.add(new MIPSInstructionParameter(elements, endIndex + index, parameter));
+				index += parameter.length();
+			}
+		}
+	}
+
+	private void generateParametersBySplit(MIPSFileElements elements) {
 		Map<Integer, String> parts = StringUtils.multiSplitIgnoreInsideStringWithIndex(text, false, " ", ",", "\t");
 		if (parts.isEmpty()) return;
 
@@ -111,16 +154,12 @@ public class MIPSInstruction extends MIPSCodeElement {
 				.sorted(Comparator.comparingInt(Map.Entry::getKey)).collect(Collectors.toList());
 
 		//The first entry is the instruction itself.
-		Map.Entry<Integer, String> first = stringParameters.get(0);
-		instruction = first.getValue();
+		int start = startIndex - stringParameters.get(0).getKey();
 		stringParameters.remove(0);
 
 		//Adds all parameters.
 		for (Map.Entry<Integer, String> entry : stringParameters) {
-			parameters.add(new MIPSInstructionParameter(elements, startIndex + entry.getKey(), entry.getValue()));
+			parameters.add(new MIPSInstructionParameter(elements, start + entry.getKey(), entry.getValue()));
 		}
-
-		startIndex += first.getKey();
-		endIndex = startIndex + instruction.length();
 	}
 }

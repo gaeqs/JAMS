@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.util.log;
 
+import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -39,78 +40,78 @@ public class SimpleLog extends HBox implements Log {
 
 	@Override
 	public void print(Object object) {
-		display.appendText(object == null ? "null" : object.toString());
+		Platform.runLater(() -> display.appendText(object == null ? "null" : object.toString()));
 	}
 
 	@Override
 	public void println(Object object) {
-		display.appendText((object == null ? "null" : object.toString()) + '\n');
+		Platform.runLater(() -> display.appendText((object == null ? "null" : object.toString()) + '\n'));
 	}
 
 	@Override
 	public void printError(Object object) {
-		int length = display.getLength();
-		print(object);
-		display.setStyle(length, display.getLength(), Collections.singleton("log_error"));
+		printAndStyle(object, "log_error");
 	}
 
 	@Override
 	public void printErrorLn(Object object) {
-		int length = display.getLength();
-		println(object);
-		display.setStyle(length, display.getLength(), Collections.singleton("log_error"));
+		printAndStyleLn(object, "log_error");
 	}
 
 	@Override
 	public void printInfo(Object object) {
-		int length = display.getLength();
-		print(object);
-		display.setStyle(length, display.getLength(), Collections.singleton("log_info"));
+		printAndStyle(object, "log_info");
 	}
 
 	@Override
 	public void printInfoLn(Object object) {
-		int length = display.getLength();
-		println(object);
-		display.setStyle(length, display.getLength(), Collections.singleton("log_info"));
+		printAndStyleLn(object, "log_info");
 	}
 
 	@Override
 	public void printWarning(Object object) {
-		int length = display.getLength();
-		print(object);
-		display.setStyle(length, display.getLength(), Collections.singleton("log_warning"));
+		printAndStyle(object, "log_warning");
 	}
 
 	@Override
 	public void printWarningLn(Object object) {
-		int length = display.getLength();
-		println(object);
-		display.setStyle(length, display.getLength(), Collections.singleton("log_warning"));
+		printAndStyleLn(object, "log_warning");
 	}
 
 	@Override
 	public void printDone(Object object) {
-		int length = display.getLength();
-		print(object);
-		display.setStyle(length, display.getLength(), Collections.singleton("log_done"));
+		printAndStyle(object, "log_done");
 	}
 
 	@Override
 	public void printDoneLn(Object object) {
-		int length = display.getLength();
-		println(object);
-		display.setStyle(length, display.getLength(), Collections.singleton("log_done"));
+		printAndStyleLn(object, "log_done");
 	}
 
 	@Override
 	public void println() {
-		display.appendText("\n");
+		println("");
 	}
 
 	@Override
 	public void clear() {
-		display.clear();
+		Platform.runLater(display::clear);
+	}
+
+	private void printAndStyle(Object object, String style) {
+		Platform.runLater(() -> {
+			int from = display.getLength();
+			display.appendText(object == null ? "null" : object.toString());
+			display.setStyle(from, display.getLength(), Collections.singleton(style));
+		});
+	}
+
+	private void printAndStyleLn(Object object, String style) {
+		Platform.runLater(() -> {
+			int from = display.getLength();
+			display.appendText((object == null ? "null" : object.toString()) + '\n');
+			display.setStyle(from, display.getLength(), Collections.singleton(style));
+		});
 	}
 
 	protected void applyZoomListener(VirtualizedScrollPane<ScaledVirtualized<CodeArea>> scroll) {

@@ -82,6 +82,8 @@ public class MIPSProject extends BasicProject {
 			files.add(String.join("\n", Files.readAllLines(target.toPath())));
 		}
 
+		long nanos = System.nanoTime();
+
 		Assembler assembler = getData().getAssemblerBuilder().createAssembler(
 				files,
 				getData().getDirectiveSet(),
@@ -97,7 +99,7 @@ public class MIPSProject extends BasicProject {
 		assembler.assemble();
 
 		if (log != null) {
-			log.printInfoLn("Done.");
+			log.printDoneLn("Assembly successful in "+ (System.nanoTime() - nanos) / 1000000 + " millis.");
 		}
 
 

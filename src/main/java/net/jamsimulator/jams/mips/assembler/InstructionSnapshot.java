@@ -4,13 +4,15 @@ import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
-import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Registers;
-import net.jamsimulator.jams.utils.StringUtils;
+import net.jamsimulator.jams.utils.InstructionUtils;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.OptionalInt;
+import java.util.Set;
 
 public class InstructionSnapshot {
 
@@ -18,7 +20,6 @@ public class InstructionSnapshot {
 	private final String raw, original;
 
 
-	private String mnemonic;
 	private List<String> parameters;
 	private Instruction instruction;
 
@@ -31,8 +32,7 @@ public class InstructionSnapshot {
 
 	public int scan(MIPS32Assembler assembler) {
 		assembler.addOriginalInstruction(line, address, original);
-		decode();
-		return scanInstruction(assembler.getRegisters(), assembler.getInstructionSet());
+		return decode(assembler);
 	}
 
 	public void assemble(MIPS32AssemblingFile file) {
@@ -54,37 +54,33 @@ public class InstructionSnapshot {
 		}
 	}
 
-	private void decode() {
+	private int decode(MIPS32Assembler assembler) {
 		int mnemonicIndex = raw.indexOf(' ');
 		int tabIndex = raw.indexOf("\t");
 		if (mnemonicIndex == -1) mnemonicIndex = tabIndex;
 		else if (tabIndex != -1) mnemonicIndex = Math.min(mnemonicIndex, tabIndex);
 
+		String mnemonic;
+		String parameters;
 		if (mnemonicIndex == -1) {
 			mnemonic = raw;
-			parameters = Collections.emptyList();
-			return;
+			parameters = "";
+		} else {
+			mnemonic = raw.substring(0, mnemonicIndex);
+			parameters = this.raw.substring(mnemonicIndex + 1).trim();
 		}
 
-		mnemonic = raw.substring(0, mnemonicIndex);
-		String raw = this.raw.substring(mnemonicIndex + 1);
-		parameters = StringUtils.multiSplitIgnoreInsideString(raw, false, " ", ",", "\t");
+		var instructions = assembler.getInstructionSet().getInstructionByMnemonic(mnemonic);
+		return scanInstruction(assembler.getRegisters(), instructions, parameters, mnemonic);
 	}
 
-	private int scanInstruction(Registers registers, InstructionSet instructionSet) {
-		List<ParameterType>[] types = new List[parameters.size()];
-		int parameterIndex = 0;
-		for (String parameter : parameters) {
-			List<ParameterType> list = ParameterType.getCompatibleParameterTypes(parameter, registers);
-			if (list.isEmpty()) throw new AssemblerException(line, "Bad parameter " + parameter);
-			types[parameterIndex++] = list;
-		}
+	private int scanInstruction(Registers registers, Set<Instruction> instructions, String rawParameters, String mnemonic) {
+		parameters = new LinkedList<>();
+		instruction = InstructionUtils.getBestInstruction(instructions, parameters, registers, rawParameters).orElse(null);
 
-		Optional<Instruction> optional = instructionSet.getBestCompatibleInstruction(mnemonic, types);
-		if (!optional.isPresent())
-			throw new AssemblerException(line, "Instruction " + mnemonic + " with the given parameters not found.\n"
-					+ Arrays.toString(types));
-		instruction = optional.get();
+		if (instruction == null) {
+			throw new AssemblerException(line, "Instruction " + mnemonic + " with the given parameters not found.\n" + rawParameters);
+		}
 
 		return instruction instanceof PseudoInstruction
 				? ((PseudoInstruction) instruction).getInstructionAmount(parameters) << 2
@@ -101,9 +97,8 @@ public class InstructionSnapshot {
 
 			//Parse label
 			if (result.isHasLabel()) {
-
 				OptionalInt optional = file.getLabelAddress(result.getLabel());
-				if (!optional.isPresent()) {
+				if (optional.isEmpty()) {
 					throw new AssemblerException(line, "Label " + result.getLabel() + " not found.");
 				}
 

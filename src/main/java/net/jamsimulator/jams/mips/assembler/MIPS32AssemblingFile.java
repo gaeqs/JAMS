@@ -136,7 +136,8 @@ public class MIPS32AssemblingFile {
 		MIPS32AssemblerData data = assembler.getAssemblerData();
 		line = sanityLine(line);
 
-		int labelIndex = line.indexOf(':');
+		int labelIndex = LabelUtils.getLabelFinishIndex(line);
+
 		String label = null;
 		int labelAddress = data.getCurrent();
 		if (labelIndex != -1) {
