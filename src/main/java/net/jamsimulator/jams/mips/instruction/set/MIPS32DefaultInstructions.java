@@ -113,6 +113,7 @@ class MIPS32DefaultInstructions {
 		basicInstructions.add(new InstructionEret());
 
 		basicInstructions.add(new InstructionJ());
+		basicInstructions.add(new InstructionJal());
 
 		basicInstructions.add(new InstructionLb());
 		basicInstructions.add(new InstructionLw());
@@ -186,6 +187,7 @@ class MIPS32DefaultInstructions {
 		pseudoInstructions.add(new PseudoInstructionDivRRI32());
 
 		pseudoInstructions.add(new PseudoInstructionJL());
+		pseudoInstructions.add(new PseudoInstructionJalL());
 
 		pseudoInstructions.add(new PseudoInstructionLaRL());
 		pseudoInstructions.add(new PseudoInstructionLiRI16());
