@@ -134,14 +134,21 @@ class MIPS32DefaultInstructions {
 		basicInstructions.add(new InstructionOr());
 		basicInstructions.add(new InstructionOri());
 
+		basicInstructions.add(new InstructionSll());
+		basicInstructions.add(new InstructionSllv());
+
+		basicInstructions.add(new InstructionSlt());
+		basicInstructions.add(new InstructionSlti());
+		basicInstructions.add(new InstructionSltiu());
+		basicInstructions.add(new InstructionSltu());
+
+		basicInstructions.add(new InstructionSrl());
+		basicInstructions.add(new InstructionSrlv());
+
 		basicInstructions.add(new InstructionSub());
 		basicInstructions.add(new InstructionSubSingle());
 		basicInstructions.add(new InstructionSubDouble());
 		basicInstructions.add(new InstructionSubu());
-		basicInstructions.add(new InstructionSll());
-		basicInstructions.add(new InstructionSllv());
-		basicInstructions.add(new InstructionSrl());
-		basicInstructions.add(new InstructionSrlv());
 
 		basicInstructions.add(new InstructionSb());
 		basicInstructions.add(new InstructionSw());
