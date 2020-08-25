@@ -137,10 +137,12 @@ public class MIPSInstruction extends MIPSCodeElement {
 			generateParametersBySplit(elements);
 		} else {
 			int index = 0;
+			int i = 0;
 			for (String parameter : parameterCache) {
 				index = raw.indexOf(parameter, index);
-				parameters.add(new MIPSInstructionParameter(elements, endIndex + index, parameter));
+				parameters.add(new MIPSInstructionParameter(elements, endIndex + index, parameter, best.getParameters()[i]));
 				index += parameter.length();
+				i++;
 			}
 		}
 	}
@@ -159,7 +161,7 @@ public class MIPSInstruction extends MIPSCodeElement {
 
 		//Adds all parameters.
 		for (Map.Entry<Integer, String> entry : stringParameters) {
-			parameters.add(new MIPSInstructionParameter(elements, start + entry.getKey(), entry.getValue()));
+			parameters.add(new MIPSInstructionParameter(elements, start + entry.getKey(), entry.getValue(), null));
 		}
 	}
 }

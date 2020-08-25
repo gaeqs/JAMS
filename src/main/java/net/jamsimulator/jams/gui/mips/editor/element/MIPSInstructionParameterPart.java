@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.mips.editor.element;
 
 import net.jamsimulator.jams.gui.mips.editor.MIPSEditorError;
+import net.jamsimulator.jams.mips.parameter.ParameterPartType;
 import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.NumericUtils;
@@ -38,9 +39,14 @@ public class MIPSInstructionParameterPart extends MIPSCodeElement {
 
 	private InstructionParameterPartType type;
 
-	public MIPSInstructionParameterPart(MIPSFileElements elements, int startIndex, int endIndex, String text) {
+	public MIPSInstructionParameterPart(MIPSFileElements elements, int startIndex, int endIndex, String text, ParameterPartType type) {
 		super(startIndex, endIndex, text);
-		this.type = InstructionParameterPartType.getByString(text, elements.getProject().orElse(null));
+
+		if (type == null) {
+			this.type = InstructionParameterPartType.getByString(text, elements.getProject().orElse(null));
+		} else {
+			this.type = InstructionParameterPartType.getByStringAndType(text, type);
+		}
 	}
 
 	public InstructionParameterPartType getType() {
@@ -95,6 +101,15 @@ public class MIPSInstructionParameterPart extends MIPSCodeElement {
 
 		public String getCssClass() {
 			return cssClass;
+		}
+
+		public static InstructionParameterPartType getByStringAndType(String string, ParameterPartType type) {
+			return switch (type) {
+				case REGISTER -> REGISTER;
+				case IMMEDIATE -> IMMEDIATE;
+				case LABEL -> LABEL;
+				case STRING -> STRING;
+			};
 		}
 
 		public static InstructionParameterPartType getByString(String string, MIPSProject project) {

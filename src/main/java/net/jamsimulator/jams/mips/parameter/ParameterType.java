@@ -26,14 +26,13 @@ package net.jamsimulator.jams.mips.parameter;
 
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.parameter.parse.matcher.*;
+import net.jamsimulator.jams.mips.parameter.split.*;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Represents a parameter type. A parameter may be a register, a number, a label or a combination.
@@ -41,31 +40,57 @@ import java.util.stream.Collectors;
 public enum ParameterType {
 
 	//SORTED BY PRIORITY
-	COPROCESSOR_0_REGISTER("$8", new ParameterMatcherCoprocessor0Register(), false),
-	REGISTER("$t1", new ParameterMatcherRegister(), false),
-	EVEN_FLOAT_REGISTER("$f2", new ParameterMatcherEvenFloatRegister(), false),
-	FLOAT_REGISTER("$f1", new ParameterMatcherFloatRegister(), false),
-	UNSIGNED_5_BIT("5", new ParameterMatcherUnsigned5Bit(), false),
-	SIGNED_16_BIT("-16000", new ParameterMatcherSigned16Bit(), false),
-	UNSIGNED_16_BIT("16000", new ParameterMatcherUnsigned16Bit(), false),
-	SIGNED_32_BIT("-32000000", new ParameterMatcherSigned32Bit(), false),
+	COPROCESSOR_0_REGISTER("$8", new ParameterMatcherCoprocessor0Register(), SimpleParameterSplitter.INSTANCE, ParameterPartType.REGISTER, false),
+	REGISTER("$t1", new ParameterMatcherRegister(), SimpleParameterSplitter.INSTANCE, ParameterPartType.REGISTER, false),
+	EVEN_FLOAT_REGISTER("$f2", new ParameterMatcherEvenFloatRegister(), SimpleParameterSplitter.INSTANCE, ParameterPartType.REGISTER, false),
+	FLOAT_REGISTER("$f1", new ParameterMatcherFloatRegister(), SimpleParameterSplitter.INSTANCE, ParameterPartType.REGISTER, false),
+	UNSIGNED_5_BIT("5", new ParameterMatcherUnsigned5Bit(), SimpleParameterSplitter.INSTANCE, ParameterPartType.IMMEDIATE, false),
+	SIGNED_16_BIT("-16000", new ParameterMatcherSigned16Bit(), SimpleParameterSplitter.INSTANCE, ParameterPartType.IMMEDIATE, false),
+	UNSIGNED_16_BIT("16000", new ParameterMatcherUnsigned16Bit(), SimpleParameterSplitter.INSTANCE, ParameterPartType.IMMEDIATE, false),
+	SIGNED_32_BIT("-32000000", new ParameterMatcherSigned32Bit(), SimpleParameterSplitter.INSTANCE, ParameterPartType.IMMEDIATE, false),
 
-	SIGNED_16_BIT_REGISTER_SHIFT("-16000($t1)", new ParameterMatcherSigned16BitRegisterShift(), false),
-	UNSIGNED_16_BIT_REGISTER_SHIFT("16000($t1)", new ParameterMatcherUnsigned16BitRegisterShift(), false),
-	SIGNED_32_BIT_REGISTER_SHIFT("-32000000($t1)", new ParameterMatcherSigned32BitRegisterShift(), false),
-	LABEL("label", new ParameterMatcherLabel(), true),
-	LABEL_REGISTER_SHIFT("label($t1)", new ParameterMatcherLabelRegisterShift(), true),
-	LABEL_SIGNED_32_BIT_SHIFT("label+32000000", new ParameterMatcherLabelSigned32BitShift(), true),
-	LABEL_SIGNED_32_BIT_SHIFT_REGISTER_SHIFT("label+32000000($t2)", new ParameterMatcherLabelSigned32BitShiftRegisterShift(), true);
+	SIGNED_16_BIT_REGISTER_SHIFT("-16000($t1)", new ParameterMatcherSigned16BitRegisterShift(), ParenthesisParameterSplitter.INSTANCE,
+			new ParameterPartType[]{ParameterPartType.IMMEDIATE, ParameterPartType.REGISTER}, false),
+
+	UNSIGNED_16_BIT_REGISTER_SHIFT("16000($t1)", new ParameterMatcherUnsigned16BitRegisterShift(), ParenthesisParameterSplitter.INSTANCE,
+			new ParameterPartType[]{ParameterPartType.IMMEDIATE, ParameterPartType.REGISTER}, false),
+
+	SIGNED_32_BIT_REGISTER_SHIFT("-32000000($t1)", new ParameterMatcherSigned32BitRegisterShift(), ParenthesisParameterSplitter.INSTANCE,
+			new ParameterPartType[]{ParameterPartType.IMMEDIATE, ParameterPartType.REGISTER}, false),
+
+	LABEL("label", new ParameterMatcherLabel(), SimpleParameterSplitter.INSTANCE, ParameterPartType.LABEL, true),
+	LABEL_REGISTER_SHIFT("label($t1)", new ParameterMatcherLabelRegisterShift(), ParenthesisParameterSplitter.INSTANCE,
+			new ParameterPartType[]{ParameterPartType.LABEL, ParameterPartType.REGISTER}, true),
+
+	LABEL_SIGNED_32_BIT_SHIFT("label+32000000", new ParameterMatcherLabelSigned32BitShift(), new CharParameterSplitter('+'),
+			new ParameterPartType[]{ParameterPartType.LABEL, ParameterPartType.IMMEDIATE}, true),
+
+	LABEL_SIGNED_32_BIT_SHIFT_REGISTER_SHIFT("label+32000000($t2)", new ParameterMatcherLabelSigned32BitShiftRegisterShift(),
+			new CharParenthesisParameterSplitter('+'),
+			new ParameterPartType[]{ParameterPartType.LABEL, ParameterPartType.IMMEDIATE, ParameterPartType.REGISTER}, true);
 
 
 	private final String example;
 	private final ParameterMatcher matcher;
+	protected final ParameterSplitter splitter;
+
+	private final ParameterPartType[] parts;
+
 	private final boolean hasLabel;
 
-	ParameterType(String example, ParameterMatcher matcher, boolean hasLabel) {
+	ParameterType(String example, ParameterMatcher matcher, ParameterSplitter splitter, ParameterPartType part, boolean hasLabel) {
 		this.example = example;
 		this.matcher = matcher;
+		this.splitter = splitter;
+		this.parts = new ParameterPartType[]{part};
+		this.hasLabel = hasLabel;
+	}
+
+	ParameterType(String example, ParameterMatcher matcher, ParameterSplitter splitter, ParameterPartType[] parts, boolean hasLabel) {
+		this.example = example;
+		this.matcher = matcher;
+		this.splitter = splitter;
+		this.parts = parts;
 		this.hasLabel = hasLabel;
 	}
 
@@ -85,6 +110,14 @@ public enum ParameterType {
 	 */
 	public boolean hasLabel() {
 		return hasLabel;
+	}
+
+	public ParameterPartType getPart(int index) {
+		return parts[index];
+	}
+
+	public int getAmountOfParts () {
+		return parts.length;
 	}
 
 	/**
@@ -109,6 +142,20 @@ public enum ParameterType {
 		return matcher.match(parameter, builder);
 	}
 
+	/**
+	 * Splits the parameter into its respective parts.
+	 * <p>
+	 * This splitter only work with valid parameters.
+	 * Use {@link #match(String, Registers)} to check if a parameter is valid.
+	 * <p>
+	 * This method returns an array of ints with the start and length of each part.
+	 *
+	 * @param parameter the parameter to split.
+	 * @return the array.
+	 */
+	public int[] split(String parameter) {
+		return splitter.split(parameter);
+	}
 
 	/**
 	 * Parses the given parameter.

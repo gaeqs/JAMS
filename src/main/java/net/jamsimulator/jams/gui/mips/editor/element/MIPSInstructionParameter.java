@@ -40,10 +40,12 @@ public class MIPSInstructionParameter {
 	private final String text;
 	private final List<MIPSInstructionParameterPart> parts;
 
-	public MIPSInstructionParameter(MIPSFileElements elements, int start, String text) {
+	public MIPSInstructionParameter(MIPSFileElements elements, int start, String text, ParameterType hint) {
 		this.text = text;
 		this.parts = new ArrayList<>();
-		parseText(start, elements);
+
+		if (hint != null) parseTextWithHint(start, elements, hint);
+		else parseTextSimple(start, elements);
 	}
 
 	public String getText() {
@@ -70,14 +72,26 @@ public class MIPSInstructionParameter {
 		return types;
 	}
 
+	private void parseTextWithHint(int start, MIPSFileElements elements, ParameterType hint) {
+		int[] indices = hint.split(text);
+		int amount = hint.getAmountOfParts();
 
-	private void parseText(int start, MIPSFileElements elements) {
+		int partStart;
+		int partEnd;
+		for (int i = 0; i < amount; i++) {
+			partStart = start + indices[i << 1];
+			partEnd = partStart + indices[(i << 1) + 1];
+			parts.add(new MIPSInstructionParameterPart(elements, partStart, partEnd,
+					text.substring(partStart - start, partEnd - start), hint.getPart(i)));
+		}
+	}
 
+	private void parseTextSimple(int start, MIPSFileElements elements) {
 		StringBuilder builder = new StringBuilder();
 		int index = 0;
 		for (char c : text.toCharArray()) {
 			if (c == '+') {
-				addPart(builder.toString(), start, elements);
+				addPartSimple(builder.toString(), start, elements);
 				builder = new StringBuilder();
 				start += index + 1;
 			} else {
@@ -85,13 +99,13 @@ public class MIPSInstructionParameter {
 			}
 			index++;
 		}
-		addPart(builder.toString(), start, elements);
+		addPartSimple(builder.toString(), start, elements);
 	}
 
-	private void addPart(String string, int start, MIPSFileElements elements) {
+	private void addPartSimple(String string, int start, MIPSFileElements elements) {
 		Optional<MIPSProject> project = elements.getProject();
 		if (project.isEmpty()) {
-			parts.add(new MIPSInstructionParameterPart(elements, start, start + string.length(), string));
+			parts.add(new MIPSInstructionParameterPart(elements, start, start + string.length(), string, null));
 			return;
 		}
 
@@ -99,13 +113,13 @@ public class MIPSInstructionParameter {
 		if (string.indexOf('(') != -1 || string.indexOf(')') != -1) {
 			List<ParameterType> types = ParameterType.getCompatibleParameterTypes(string, project.get().getData().getRegistersBuilder());
 			if (types.size() == 1 && types.get(0) == ParameterType.LABEL) {
-				parts.add(new MIPSInstructionParameterPart(elements, start, start + string.length(), string));
+				parts.add(new MIPSInstructionParameterPart(elements, start, start + string.length(), string, null));
 				return;
 			}
 		}
 
 		Map<Integer, String> parts = StringUtils.multiSplitIgnoreInsideStringWithIndex(string, false, "+", "(", ")");
 		parts.forEach((index, part) -> this.parts.add(new MIPSInstructionParameterPart(elements,
-				start + index, start + index + part.length(), part)));
+				start + index, start + index + part.length(), part, null)));
 	}
 }
