@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.editor;
 
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -132,7 +133,7 @@ public class FileEditorTab extends Tab implements ActionRegion {
 	public void setSaveMark(boolean saveMark) {
 		if (saveMark == this.saveMark) return;
 		this.saveMark = saveMark;
-		name.setText(saveMark ? file.getName() + " *" : file.getName());
+		Platform.runLater(() -> name.setText(saveMark ? file.getName() + " *" : file.getName()));
 	}
 
 	public void openInNewHolder(boolean horizontal) {
