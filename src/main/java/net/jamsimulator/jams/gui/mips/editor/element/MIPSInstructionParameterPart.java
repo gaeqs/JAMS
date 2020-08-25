@@ -45,7 +45,7 @@ public class MIPSInstructionParameterPart extends MIPSCodeElement {
 		if (type == null) {
 			this.type = InstructionParameterPartType.getByString(text, elements.getProject().orElse(null));
 		} else {
-			this.type = InstructionParameterPartType.getByStringAndType(text, type);
+			this.type = InstructionParameterPartType.getByStringAndType(type);
 		}
 	}
 
@@ -103,7 +103,7 @@ public class MIPSInstructionParameterPart extends MIPSCodeElement {
 			return cssClass;
 		}
 
-		public static InstructionParameterPartType getByStringAndType(String string, ParameterPartType type) {
+		public static InstructionParameterPartType getByStringAndType(ParameterPartType type) {
 			return switch (type) {
 				case REGISTER -> REGISTER;
 				case IMMEDIATE -> IMMEDIATE;
