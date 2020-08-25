@@ -137,6 +137,10 @@ class MIPS32DefaultInstructions {
 		basicInstructions.add(new InstructionSubSingle());
 		basicInstructions.add(new InstructionSubDouble());
 		basicInstructions.add(new InstructionSubu());
+		basicInstructions.add(new InstructionSll());
+		basicInstructions.add(new InstructionSllv());
+		basicInstructions.add(new InstructionSrl());
+		basicInstructions.add(new InstructionSrlv());
 
 		basicInstructions.add(new InstructionSb());
 		basicInstructions.add(new InstructionSw());
@@ -202,6 +206,8 @@ class MIPS32DefaultInstructions {
 
 		pseudoInstructions.add(new PseudoInstructionMulRRI16());
 		pseudoInstructions.add(new PseudoInstructionMulRRI32());
+
+		pseudoInstructions.add(new PseudoInstructionNop());
 
 		pseudoInstructions.add(new PseudoInstructionSbRL());
 		pseudoInstructions.add(new PseudoInstructionSbRLr());
