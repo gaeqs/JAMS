@@ -28,6 +28,7 @@ import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.utils.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 
@@ -53,7 +54,9 @@ public class DirectiveAscii extends Directive {
 
 		int start = data.getCurrent();
 
-		for (byte b : s.substring(1, s.length() - 1).getBytes(StandardCharsets.US_ASCII)) {
+		s = StringUtils.parseEscapeCharacters(s.substring(1, s.length() - 1));
+
+		for (byte b : s.getBytes(StandardCharsets.US_ASCII)) {
 			file.getAssembler().getMemory().setByte(data.getCurrent(), b);
 			data.addCurrent(1);
 		}
