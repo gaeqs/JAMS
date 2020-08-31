@@ -71,10 +71,17 @@ public abstract class AutocompletionPopup extends Popup {
 
 
 		scroll = new ScrollPane(content);
+
 		scroll.setFitToHeight(true);
 		scroll.setFitToWidth(true);
-		getContent().add(scroll);
 		scroll.setMaxHeight(200);
+
+		getContent().add(scroll);
+
+		content.setOnKeyPressed(this::managePressEvent);
+		content.setOnKeyTyped(this::manageTypeEvent);
+		scroll.setOnKeyPressed(this::managePressEvent);
+		scroll.setOnKeyTyped(this::manageTypeEvent);
 	}
 
 	/**
@@ -141,6 +148,20 @@ public abstract class AutocompletionPopup extends Popup {
 	}
 
 	/**
+	 * Selects the element at the given index.
+	 *
+	 * @param index the element.
+	 */
+	public void select(int index, boolean updatePosition) {
+		while (index < 0) index += elements.size();
+		selectedIndex = index % elements.size();
+		refreshSelected();
+		if (updatePosition) {
+			updateScrollPosition();
+		}
+	}
+
+	/**
 	 * Adds the given elements to this popup.
 	 *
 	 * @param collection               the elements.
@@ -180,7 +201,7 @@ public abstract class AutocompletionPopup extends Popup {
 		T next;
 		while (iterator.hasNext()) {
 			next = iterator.next();
-			label = new AutocompletionPopupElement(StringUtils.addExtraSpaces(conversion.apply(next)),
+			label = new AutocompletionPopupElement(this, elements.size(), StringUtils.addExtraSpaces(conversion.apply(next)),
 					autocompletionConversion.apply(next));
 			elements.add(label);
 		}
@@ -244,7 +265,12 @@ public abstract class AutocompletionPopup extends Popup {
 
 			return o1.getName().compareTo(o2.getName());
 		});
-		content.getChildren().addAll(elements);
+
+		var i = 0;
+		for (AutocompletionPopupElement element : elements) {
+			element.setIndex(i++);
+			content.getChildren().add(element);
+		}
 	}
 
 	/**
