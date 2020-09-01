@@ -24,14 +24,15 @@
 
 package net.jamsimulator.jams.gui.editor.popup;
 
+import javafx.application.Platform;
 import javafx.geometry.Bounds;
+import javafx.scene.control.IndexRange;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
-import net.jamsimulator.jams.utils.CharacterCodes;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -78,10 +79,11 @@ public abstract class AutocompletionPopup extends Popup {
 
 		getContent().add(scroll);
 
-		content.setOnKeyPressed(this::managePressEvent);
-		content.setOnKeyTyped(this::manageTypeEvent);
-		scroll.setOnKeyPressed(this::managePressEvent);
-		scroll.setOnKeyTyped(this::manageTypeEvent);
+		scroll.setOnKeyPressed(event -> {
+			managePressEvent(event);
+			event.consume();
+		});
+		scroll.setOnKeyTyped(event -> requestFocus());
 	}
 
 	/**
@@ -239,24 +241,6 @@ public abstract class AutocompletionPopup extends Popup {
 
 	//region EVENTS
 
-	/**
-	 * Manages a {@link CodeFileEditor}'s press event.
-	 *
-	 * @param event the event.
-	 */
-	public void managePressEvent(KeyEvent event) {
-		if (event.isControlDown() || event.isAltDown() || event.isMetaDown() || event.isShortcutDown()) return;
-
-		byte b = event.getCharacter().getBytes()[0];
-
-		if (b == CharacterCodes.ENTER) return;
-		if (b == CharacterCodes.ESCAPE || b == CharacterCodes.SPACE) hide();
-		else {
-			if (!isShowing() && b == CharacterCodes.BACKSPACE) return;
-			execute(0, false);
-		}
-	}
-
 	public void sortAndShowElements(String hint) {
 		content.getChildren().clear();
 		elements.sort((o1, o2) -> {
@@ -274,33 +258,73 @@ public abstract class AutocompletionPopup extends Popup {
 	}
 
 	/**
+	 * Manages a {@link CodeFileEditor}'s press event.
+	 *
+	 * @param event the event.
+	 */
+	public boolean managePressEvent(KeyEvent event) {
+		return manageKeyEvent(event);
+	}
+
+	/**
 	 * Manages a {@link CodeFileEditor}'s press event. This should be called on the filter stage.
 	 *
 	 * @param event the event.
 	 * @return whether the event should be cancelled.
 	 */
 	public boolean manageTypeEvent(KeyEvent event) {
-		if (!isShowing()) return false;
-		if (event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.LEFT
-				|| event.getCode() == KeyCode.BACK_SPACE) {
-			execute(event.getCode() == KeyCode.RIGHT ? 1 : -1, false);
-			return false;
-		}
-		if (event.getCode() == KeyCode.UP) {
-			moveUp();
-			return true;
-		}
-		if (event.getCode() == KeyCode.DOWN) {
-			moveDown();
-			return true;
-		}
-		if (event.getCode() == KeyCode.ENTER) {
-			autocomplete();
-			hide();
-			return true;
-		}
+		return manageKeyEvent(event);
+	}
 
-		return false;
+	private boolean manageKeyEvent(KeyEvent event) {
+		if (event.getCode() == KeyCode.UNDEFINED) return true;
+		if (event.isControlDown() || event.isAltDown() || event.isMetaDown() || event.isShortcutDown()) return false;
+
+		return switch (event.getCode()) {
+			case RIGHT, LEFT -> {
+				var right = event.getCode() == KeyCode.RIGHT;
+				execute(right ? 1 : -1, false);
+				display.moveTo(display.getCaretPosition() + (right ? 1 : -1));
+				yield true;
+			}
+			case BACK_SPACE -> {
+				execute(-1, false);
+
+				IndexRange selection = display.getSelection();
+				if (selection.getLength() == 0) {
+					display.deletePreviousChar();
+				} else {
+					display.replaceSelection("");
+				}
+
+				yield true;
+			}
+			case UP -> {
+				if (!isShowing()) yield false;
+				moveUp();
+				yield true;
+			}
+			case DOWN -> {
+				if (!isShowing()) yield false;
+				moveDown();
+				yield true;
+			}
+			case ENTER, TAB -> {
+				if (!isShowing()) yield false;
+				autocomplete();
+				hide();
+				yield true;
+			}
+			case ESCAPE, SPACE -> {
+				System.out.println("HIDE");
+				hide();
+				yield true;
+			}
+			default -> {
+				Platform.runLater(() -> execute(0, false));
+				yield false;
+			}
+		};
 	}
 
 	//endregion

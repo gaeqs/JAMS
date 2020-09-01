@@ -57,7 +57,6 @@ public class AutocompletionPopupElement extends HBox {
 
 		setOnMouseClicked(event -> {
 			this.popup.select(this.index, false);
-			this.popup.getDisplay().requestFocus();
 			event.consume();
 		});
 	}

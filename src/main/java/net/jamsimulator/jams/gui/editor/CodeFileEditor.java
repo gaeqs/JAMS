@@ -339,13 +339,13 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 		//AUTO COMPLETION
 		addEventHandler(KeyEvent.KEY_TYPED, event -> {
 			if (autocompletionPopup == null) return;
-			autocompletionPopup.managePressEvent(event);
+			if(autocompletionPopup.manageTypeEvent(event)) event.consume();
 		});
 
 		//AUTOCOMPLETION MOVEMENT
 		addEventFilter(KeyEvent.KEY_PRESSED, event -> {
 			if (autocompletionPopup == null) return;
-			if (autocompletionPopup.manageTypeEvent(event)) event.consume();
+			if (autocompletionPopup.managePressEvent(event)) event.consume();
 		});
 
 		//FOCUS
