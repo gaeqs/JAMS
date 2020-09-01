@@ -83,7 +83,13 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 	@Override
 	public void refreshContents(int caretPosition) {
 		elements.clear();
-		String start = element.getSimpleText();
+
+		var to = caretPosition - element.getStartIndex();
+		var start = element.getSimpleText();
+
+		if (to > 0 && to < start.length()) {
+			start = start.substring(0, caretPosition - element.getStartIndex());
+		}
 
 		if (element instanceof MIPSDirective)
 			start = refreshDirective(start);

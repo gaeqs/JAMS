@@ -282,14 +282,16 @@ public abstract class AutocompletionPopup extends Popup {
 
 		return switch (event.getCode()) {
 			case RIGHT, LEFT -> {
+				if (!isShowing()) yield false;
 				var right = event.getCode() == KeyCode.RIGHT;
 				execute(right ? 1 : -1, false);
 				display.moveTo(display.getCaretPosition() + (right ? 1 : -1));
 				yield true;
 			}
 			case BACK_SPACE -> {
-				execute(-1, false);
+				if (!isShowing()) yield false;
 
+				execute(-1, false);
 				IndexRange selection = display.getSelection();
 				if (selection.getLength() == 0) {
 					display.deletePreviousChar();
@@ -316,7 +318,6 @@ public abstract class AutocompletionPopup extends Popup {
 				yield true;
 			}
 			case ESCAPE, SPACE -> {
-				System.out.println("HIDE");
 				hide();
 				yield true;
 			}
