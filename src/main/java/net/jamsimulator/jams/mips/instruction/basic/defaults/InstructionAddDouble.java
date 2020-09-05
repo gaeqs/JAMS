@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
@@ -54,6 +55,7 @@ public class InstructionAddDouble extends BasicRFPUInstruction<InstructionAddDou
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -126,30 +128,34 @@ public class InstructionAddDouble extends BasicRFPUInstruction<InstructionAddDou
 			if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
 			if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
 
-			Register rt0 = registerCop1(instruction.getTargetRegister());
-			Register rt1 = registerCop1(instruction.getTargetRegister() + 1);
-			Register rs0 = registerCop1(instruction.getSourceRegister());
-			Register rs1 = registerCop1(instruction.getSourceRegister() + 1);
-			decodeResult = new int[]{rt0.getValue(), rt1.getValue(), rs0.getValue(), rs1.getValue()};
+			requiresCOP1(instruction.getTargetRegister());
+			requiresCOP1(instruction.getTargetRegister() + 1);
+			requiresCOP1(instruction.getSourceRegister());
+			requiresCOP1(instruction.getSourceRegister() + 1);
+			lockCOP1(instruction.getDestinationRegister());
+			lockCOP1(instruction.getDestinationRegister() + 1);
 		}
 
 		@Override
 		public void execute() {
-			double target = NumericUtils.intsToDouble(decodeResult[0], decodeResult[1]);
-			double source = NumericUtils.intsToDouble(decodeResult[2], decodeResult[3]);
+			double target = NumericUtils.intsToDouble(value(instruction.getTargetRegister()), value(instruction.getTargetRegister() + 1));
+			double source = NumericUtils.intsToDouble(value(instruction.getSourceRegister()), value(instruction.getSourceRegister() + 1));
 			double destination = target + source;
 			executionResult = NumericUtils.doubleToInts(destination);
+			forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
+			forwardCOP1(instruction.getDestinationRegister() + 1, executionResult[1], false);
 		}
 
 		@Override
 		public void memory() {
-
+			forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
+			forwardCOP1(instruction.getDestinationRegister() + 1, executionResult[1], true);
 		}
 
 		@Override
 		public void writeBack() {
-			registerCop1(instruction.getDestinationRegister()).setValue(executionResult[0]);
-			registerCop1(instruction.getDestinationRegister() + 1).setValue(executionResult[1]);
+			setAndUnlockCOP1(instruction.getDestinationRegister(), executionResult[0]);
+			setAndUnlockCOP1(instruction.getDestinationRegister() + 1, executionResult[1]);
 		}
 	}
 }

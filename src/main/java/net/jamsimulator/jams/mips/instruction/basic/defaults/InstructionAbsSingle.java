@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
@@ -53,6 +54,7 @@ public class InstructionAbsSingle extends BasicRFPUInstruction<InstructionAbsSin
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -105,22 +107,25 @@ public class InstructionAbsSingle extends BasicRFPUInstruction<InstructionAbsSin
 
 		@Override
 		public void decode() {
-			decodeResult = new int[]{registerCop1(instruction.getSourceRegister()).getValue()};
+			requiresCOP1(instruction.getSourceRegister());
+			lockCOP1(instruction.getDestinationRegister());
 		}
 
 		@Override
 		public void execute() {
-			executionResult = new int[]{Float.floatToIntBits(Math.abs(Float.intBitsToFloat(decodeResult[0])))};
+			var abs = Math.abs(Float.intBitsToFloat(valueCOP1(instruction.getSourceRegister())));
+			executionResult = new int[]{Float.floatToIntBits(abs)};
+			forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
 		}
 
 		@Override
 		public void memory() {
-
+			forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
 		}
 
 		@Override
 		public void writeBack() {
-			registerCop1(instruction.getDestinationRegister()).setValue(executionResult[0]);
+			setAndUnlockCOP1(instruction.getDestinationRegister(), executionResult[0]);
 		}
 	}
 }

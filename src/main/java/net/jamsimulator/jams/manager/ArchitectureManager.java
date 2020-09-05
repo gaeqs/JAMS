@@ -27,6 +27,7 @@ package net.jamsimulator.jams.manager;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.event.ArchitectureRegisterEvent;
 import net.jamsimulator.jams.mips.architecture.event.ArchitectureUnregisterEvent;
@@ -158,6 +159,7 @@ public class ArchitectureManager extends SimpleEventBroadcast {
 	private void addDefaults() {
 		architectures.add(defaultArchitecture = SingleCycleArchitecture.INSTANCE);
 		architectures.add(MultiCycleArchitecture.INSTANCE);
+		architectures.add(PipelinedArchitecture.INSTANCE);
 	}
 
 }

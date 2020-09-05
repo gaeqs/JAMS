@@ -375,7 +375,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 * @throws IllegalArgumentException  if the given address is not aligned to words.
 	 * @throws IndexOutOfBoundsException if the address if out of bounds.
 	 */
-	public InstructionExecution<Arch, ?> fetch(int pc) {
+	public InstructionExecution<? super Arch, ?> fetch(int pc) {
 		InstructionExecution<Arch, ?> cached;
 		if (instructionCache != null && Integer.compareUnsigned(pc, instructionStackBottom) < 0) {
 			cached = instructionCache[pc - memory.getFirstTextAddress()];

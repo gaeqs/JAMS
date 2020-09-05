@@ -24,13 +24,11 @@
 
 package net.jamsimulator.jams.mips.register;
 
+import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Represents a register. A register stores a 32-bit value. If {@link #isModifiable()} is true,
@@ -49,6 +47,8 @@ public class Register {
 	protected final boolean modifiable;
 	protected int defaultValue;
 
+	private List<InstructionExecution<?, ?>> lockedBy;
+
 	/**
 	 * Creates a register using a identifier and a list of names.
 	 *
@@ -65,6 +65,7 @@ public class Register {
 		this.names.addAll(Arrays.asList(names));
 		this.value = defaultValue = 0;
 		this.modifiable = true;
+		this.lockedBy = new ArrayList<>(5);
 	}
 
 	/**
@@ -83,6 +84,7 @@ public class Register {
 		this.names.addAll(names);
 		this.value = defaultValue = 0;
 		this.modifiable = true;
+		this.lockedBy = new ArrayList<>(5);
 	}
 
 	/**
@@ -104,6 +106,7 @@ public class Register {
 		this.names.addAll(Arrays.asList(names));
 		this.value = defaultValue = value;
 		this.modifiable = modifiable;
+		this.lockedBy = new ArrayList<>(5);
 	}
 
 	/**
@@ -125,6 +128,7 @@ public class Register {
 		this.names.addAll(names);
 		this.value = defaultValue = value;
 		this.modifiable = modifiable;
+		this.lockedBy = new ArrayList<>(5);
 	}
 
 	/**
@@ -162,6 +166,23 @@ public class Register {
 	 */
 	public boolean hasName(String name) {
 		return names.contains(name);
+	}
+
+
+	public boolean isLocked() {
+		return lockedBy.size() > 0;
+	}
+
+	public boolean isLocked(InstructionExecution<?, ?> execution) {
+		return lockedBy.indexOf(execution) > 0;
+	}
+
+	public void lock(InstructionExecution<?, ?> execution) {
+		lockedBy.add(execution);
+	}
+
+	public void unlock(InstructionExecution<?, ?> execution) {
+		lockedBy.remove(execution);
 	}
 
 	/**
