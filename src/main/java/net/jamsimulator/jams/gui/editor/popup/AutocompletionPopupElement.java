@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.editor.popup;
 
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
@@ -32,20 +33,59 @@ import javafx.scene.layout.HBox;
  */
 public class AutocompletionPopupElement extends HBox {
 
+	private final AutocompletionPopup popup;
+
+	private int index;
 	private final String name;
 	private final String autocompletion;
 
 	/**
 	 * Creates the element.
 	 *
+	 * @param popup          the {@link AutocompletionPopup} where this element is inside of.
+	 * @param index          the index of this element inside the popup.
 	 * @param name           the name the {@link AutocompletionPopup} is showing.
 	 * @param autocompletion the replacement to place when the autocompletion is finished.
 	 */
-	public AutocompletionPopupElement(String name, String autocompletion) {
+	public AutocompletionPopupElement(AutocompletionPopup popup, int index, String name, String autocompletion) {
 		getStyleClass().add("autocompletion-popup-element");
+		this.popup = popup;
+		this.index = index;
 		this.name = name;
 		this.autocompletion = autocompletion;
 		getChildren().add(new Label(name));
+
+		setOnMouseClicked(event -> {
+			this.popup.select(this.index, false);
+			event.consume();
+		});
+	}
+
+	/**
+	 * Returns the {@link AutocompletionPopup} where this element is inside of.
+	 *
+	 * @return the {@link AutocompletionPopup}.
+	 */
+	public AutocompletionPopup getPopup() {
+		return popup;
+	}
+
+	/**
+	 * Returns the index of this element.
+	 *
+	 * @return the index.
+	 */
+	public int getIndex() {
+		return index;
+	}
+
+	/**
+	 * Updates the index of this element.
+	 *
+	 * @param index the index.
+	 */
+	public void setIndex(int index) {
+		this.index = index;
 	}
 
 	/**

@@ -24,14 +24,15 @@
 
 package net.jamsimulator.jams.gui.editor.popup;
 
+import javafx.application.Platform;
 import javafx.geometry.Bounds;
+import javafx.scene.control.IndexRange;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
-import net.jamsimulator.jams.utils.CharacterCodes;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -71,10 +72,18 @@ public abstract class AutocompletionPopup extends Popup {
 
 
 		scroll = new ScrollPane(content);
+
 		scroll.setFitToHeight(true);
 		scroll.setFitToWidth(true);
-		getContent().add(scroll);
 		scroll.setMaxHeight(200);
+
+		getContent().add(scroll);
+
+		scroll.setOnKeyPressed(event -> {
+			managePressEvent(event);
+			event.consume();
+		});
+		scroll.setOnKeyTyped(event -> requestFocus());
 	}
 
 	/**
@@ -141,6 +150,20 @@ public abstract class AutocompletionPopup extends Popup {
 	}
 
 	/**
+	 * Selects the element at the given index.
+	 *
+	 * @param index the element.
+	 */
+	public void select(int index, boolean updatePosition) {
+		while (index < 0) index += elements.size();
+		selectedIndex = index % elements.size();
+		refreshSelected();
+		if (updatePosition) {
+			updateScrollPosition();
+		}
+	}
+
+	/**
 	 * Adds the given elements to this popup.
 	 *
 	 * @param collection               the elements.
@@ -180,7 +203,7 @@ public abstract class AutocompletionPopup extends Popup {
 		T next;
 		while (iterator.hasNext()) {
 			next = iterator.next();
-			label = new AutocompletionPopupElement(StringUtils.addExtraSpaces(conversion.apply(next)),
+			label = new AutocompletionPopupElement(this, elements.size(), StringUtils.addExtraSpaces(conversion.apply(next)),
 					autocompletionConversion.apply(next));
 			elements.add(label);
 		}
@@ -218,24 +241,6 @@ public abstract class AutocompletionPopup extends Popup {
 
 	//region EVENTS
 
-	/**
-	 * Manages a {@link CodeFileEditor}'s press event.
-	 *
-	 * @param event the event.
-	 */
-	public void managePressEvent(KeyEvent event) {
-		if (event.isControlDown() || event.isAltDown() || event.isMetaDown() || event.isShortcutDown()) return;
-
-		byte b = event.getCharacter().getBytes()[0];
-
-		if (b == CharacterCodes.ENTER) return;
-		if (b == CharacterCodes.ESCAPE || b == CharacterCodes.SPACE) hide();
-		else {
-			if (!isShowing() && b == CharacterCodes.BACKSPACE) return;
-			execute(0, false);
-		}
-	}
-
 	public void sortAndShowElements(String hint) {
 		content.getChildren().clear();
 		elements.sort((o1, o2) -> {
@@ -244,7 +249,21 @@ public abstract class AutocompletionPopup extends Popup {
 
 			return o1.getName().compareTo(o2.getName());
 		});
-		content.getChildren().addAll(elements);
+
+		var i = 0;
+		for (AutocompletionPopupElement element : elements) {
+			element.setIndex(i++);
+			content.getChildren().add(element);
+		}
+	}
+
+	/**
+	 * Manages a {@link CodeFileEditor}'s press event.
+	 *
+	 * @param event the event.
+	 */
+	public boolean managePressEvent(KeyEvent event) {
+		return manageKeyEvent(event);
 	}
 
 	/**
@@ -254,27 +273,59 @@ public abstract class AutocompletionPopup extends Popup {
 	 * @return whether the event should be cancelled.
 	 */
 	public boolean manageTypeEvent(KeyEvent event) {
-		if (!isShowing()) return false;
-		if (event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.LEFT
-				|| event.getCode() == KeyCode.BACK_SPACE) {
-			execute(event.getCode() == KeyCode.RIGHT ? 1 : -1, false);
-			return false;
-		}
-		if (event.getCode() == KeyCode.UP) {
-			moveUp();
-			return true;
-		}
-		if (event.getCode() == KeyCode.DOWN) {
-			moveDown();
-			return true;
-		}
-		if (event.getCode() == KeyCode.ENTER) {
-			autocomplete();
-			hide();
-			return true;
-		}
+		return manageKeyEvent(event);
+	}
 
-		return false;
+	private boolean manageKeyEvent(KeyEvent event) {
+		if (event.getCode() == KeyCode.UNDEFINED) return true;
+		if (event.isControlDown() || event.isAltDown() || event.isMetaDown() || event.isShortcutDown()) return false;
+
+		return switch (event.getCode()) {
+			case RIGHT, LEFT -> {
+				if (!isShowing()) yield false;
+				var right = event.getCode() == KeyCode.RIGHT;
+				execute(right ? 1 : -1, false);
+				display.moveTo(display.getCaretPosition() + (right ? 1 : -1));
+				yield true;
+			}
+			case BACK_SPACE -> {
+				if (!isShowing()) yield false;
+
+				execute(-1, false);
+				IndexRange selection = display.getSelection();
+				if (selection.getLength() == 0) {
+					display.deletePreviousChar();
+				} else {
+					display.replaceSelection("");
+				}
+
+				yield true;
+			}
+			case UP -> {
+				if (!isShowing()) yield false;
+				moveUp();
+				yield true;
+			}
+			case DOWN -> {
+				if (!isShowing()) yield false;
+				moveDown();
+				yield true;
+			}
+			case ENTER, TAB -> {
+				if (!isShowing()) yield false;
+				autocomplete();
+				hide();
+				yield true;
+			}
+			case ESCAPE, SPACE -> {
+				hide();
+				yield true;
+			}
+			default -> {
+				Platform.runLater(() -> execute(0, false));
+				yield false;
+			}
+		};
 	}
 
 	//endregion

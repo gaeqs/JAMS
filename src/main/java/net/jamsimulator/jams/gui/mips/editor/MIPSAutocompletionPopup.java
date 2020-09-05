@@ -83,7 +83,13 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 	@Override
 	public void refreshContents(int caretPosition) {
 		elements.clear();
-		String start = element.getSimpleText();
+
+		var to = caretPosition - element.getStartIndex();
+		var start = element.getSimpleText();
+
+		if (to > 0 && to < start.length()) {
+			start = start.substring(0, caretPosition - element.getStartIndex());
+		}
 
 		if (element instanceof MIPSDirective)
 			start = refreshDirective(start);
@@ -131,6 +137,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 				mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
 				addElements(labels.stream().filter(target -> target.startsWith(start)), s -> s, s -> s);
 			case REGISTER:
+			case IMMEDIATE:
 				Set<String> names = project.getData().getRegistersBuilder().getRegistersNames();
 				Set<Character> starts = project.getData().getRegistersBuilder().getValidRegistersStarts();
 
@@ -140,7 +147,6 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 
 				return start;
 			case STRING:
-			case IMMEDIATE:
 			default:
 				return start;
 		}
