@@ -115,14 +115,23 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address, false, false);
+			super(simulation, instruction, address, false, true);
 		}
 
 		@Override
 		public void decode() {
-			Register rs = register(instruction.getSourceRegister());
-			Register rt = register(instruction.getTargetRegister());
-			decodeResult = new int[]{rs.getValue(), rt.getValue()};
+			requires(instruction.getSourceRegister());
+			requires(instruction.getTargetRegister());
+			lock(pc());
+
+			if (solveBranchOnDecode()) {
+				try {
+					Math.addExact(value(instruction.getSourceRegister()), value(instruction.getTargetRegister()));
+					unlock(pc());
+				} catch (ArithmeticException ex) {
+					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+				}
+			}
 		}
 
 		@Override
@@ -131,8 +140,8 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 
 			try {
 				Math.addExact(decodeResult[0], decodeResult[1]);
-				return;
 			} catch (ArithmeticException ex) {
+				return;
 			}
 
 			pc().setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
@@ -145,6 +154,14 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 
 		@Override
 		public void writeBack() {
+			if (!solveBranchOnDecode()) {
+				try {
+					Math.addExact(value(instruction.getSourceRegister()), value(instruction.getTargetRegister()));
+					unlock(pc());
+				} catch (ArithmeticException ex) {
+					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+				}
+			}
 		}
 	}
 }

@@ -107,20 +107,23 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address, false, false);
+			super(simulation, instruction, address, false, true);
 		}
 
 		@Override
 		public void decode() {
-			Register rt = register(instruction.getTargetRegister());
-			decodeResult = new int[]{rt.getValue()};
+			requires(instruction.getTargetRegister());
+			lock(pc());
+
+			if (solveBranchOnDecode()) {
+				if (value(instruction.getTargetRegister()) <= 0) {
+					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+				} else unlock(pc());
+			}
 		}
 
 		@Override
 		public void execute() {
-			executionResult = new int[0];
-			if (decodeResult[0] > 0) return;
-			pc().setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
 		}
 
 		@Override
@@ -130,6 +133,11 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 
 		@Override
 		public void writeBack() {
+			if (!solveBranchOnDecode()) {
+				if (value(instruction.getTargetRegister()) <= 0) {
+					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+				} else unlock(pc());
+			}
 		}
 	}
 }

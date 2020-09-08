@@ -20,7 +20,7 @@ public class MIPSSimulationConfiguration {
 	protected Architecture architecture;
 	protected MemoryBuilder memoryBuilder;
 	protected List<CacheBuilder<?>> cacheBuilders;
-	protected boolean callEvents, undoEnabled;
+	protected boolean callEvents, undoEnabled, branchOnDecode, enableForwarding;
 	protected Map<Integer, SyscallExecutionBuilder<?>> syscallExecutionBuilders;
 
 	public MIPSSimulationConfiguration(String name) {
@@ -57,6 +57,11 @@ public class MIPSSimulationConfiguration {
 		callEvents = callEventsOptional.orElse(true);
 		Optional<Boolean> undoEnabledOptional = configuration.get("undo_enabled");
 		undoEnabled = undoEnabledOptional.orElse(true);
+
+		Optional<Boolean> branchOnDecodeOptional = configuration.get("branch_on_decode");
+		branchOnDecode = branchOnDecodeOptional.orElse(true);
+		Optional<Boolean> forwardingEnabledOptional = configuration.get("forwarding_enabled");
+		enableForwarding = forwardingEnabledOptional.orElse(true);
 
 		loadSyscalls(configuration);
 		loadCaches(configuration);
@@ -108,11 +113,11 @@ public class MIPSSimulationConfiguration {
 		return syscallExecutionBuilders;
 	}
 
-	public boolean isCallEvents() {
+	public boolean shouldCallEvents() {
 		return callEvents;
 	}
 
-	public void setCallEvents(boolean callEvents) {
+	public void setShouldCallEvents(boolean callEvents) {
 		this.callEvents = callEvents;
 	}
 
@@ -124,12 +129,30 @@ public class MIPSSimulationConfiguration {
 		this.undoEnabled = undoEnabled;
 	}
 
+	public boolean isForwardingEnabled() {
+		return enableForwarding;
+	}
+
+	public void setForwardingEnabled(boolean enableForwarding) {
+		this.enableForwarding = enableForwarding;
+	}
+
+	public boolean shouldSolveBranchOnDecode() {
+		return branchOnDecode;
+	}
+
+	public void setSolveBranchOnDecode(boolean branchOnDecode) {
+		this.branchOnDecode = branchOnDecode;
+	}
+
 	public void save(Configuration configuration, String prefix) {
 		prefix = prefix + "." + name;
 		configuration.set(prefix + ".architecture", architecture.getName());
 		configuration.set(prefix + ".memory", memoryBuilder.getName());
 		configuration.set(prefix + ".call_events", callEvents);
 		configuration.set(prefix + ".undo_enabled", undoEnabled);
+		configuration.set(prefix + ".branch_on_decode", branchOnDecode);
+		configuration.set(prefix + ".forwarding_enabled", enableForwarding);
 
 		configuration.remove(prefix + "." + name + ".syscalls");
 		String syscallsPrefix = prefix + ".syscalls.";
@@ -154,11 +177,15 @@ public class MIPSSimulationConfiguration {
 
 	@Override
 	public String toString() {
-		return "MipsSimulationConfiguration{" +
+		return "MIPSSimulationConfiguration{" +
 				"name='" + name + '\'' +
 				", architecture=" + architecture +
 				", memoryBuilder=" + memoryBuilder +
+				", cacheBuilders=" + cacheBuilders +
 				", callEvents=" + callEvents +
+				", undoEnabled=" + undoEnabled +
+				", branchOnDecode=" + branchOnDecode +
+				", enableForwarding=" + enableForwarding +
 				", syscallExecutionBuilders=" + syscallExecutionBuilders +
 				'}';
 	}

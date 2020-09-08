@@ -25,8 +25,8 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI21Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
@@ -51,7 +51,7 @@ public class InstructionBeqzc extends BasicInstruction<InstructionBeqzc.Assemble
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -106,20 +106,23 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address, false, false);
+			super(simulation, instruction, address, false, true);
 		}
 
 		@Override
 		public void decode() {
-			Register rs = register(instruction.getDestinationRegister());
-			decodeResult = new int[]{rs.getValue()};
+			requires(instruction.getDestinationRegister());
+			lock(pc());
+
+			if (solveBranchOnDecode()) {
+				if (value(instruction.getDestinationRegister()) == 0) {
+					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+				} else unlock(pc());
+			}
 		}
 
 		@Override
 		public void execute() {
-			executionResult = new int[0];
-			if (decodeResult[0] != 0) return;
-			pc().setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
 		}
 
 		@Override
@@ -129,6 +132,11 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 
 		@Override
 		public void writeBack() {
+			if (!solveBranchOnDecode()) {
+				if (value(instruction.getDestinationRegister()) == 0) {
+					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+				} else unlock(pc());
+			}
 		}
 	}
 }

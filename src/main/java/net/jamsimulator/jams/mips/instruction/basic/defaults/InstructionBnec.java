@@ -119,16 +119,19 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 
 		@Override
 		public void decode() {
-			Register rs = register(instruction.getSourceRegister());
-			Register rt = register(instruction.getTargetRegister());
-			decodeResult = new int[]{rs.getValue(), rt.getValue()};
+			requires(instruction.getSourceRegister());
+			requires(instruction.getTargetRegister());
+			lock(pc());
+
+			if (solveBranchOnDecode()) {
+				if (value(instruction.getTargetRegister()) != value(instruction.getSourceRegister())) {
+					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+				} else unlock(pc());
+			}
 		}
 
 		@Override
 		public void execute() {
-			executionResult = new int[0];
-			if (decodeResult[0] == decodeResult[1]) return;
-			pc().setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
 		}
 
 		@Override
@@ -138,6 +141,11 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 
 		@Override
 		public void writeBack() {
+			if (!solveBranchOnDecode()) {
+				if (value(instruction.getTargetRegister()) != value(instruction.getSourceRegister())) {
+					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+				} else unlock(pc());
+			}
 		}
 	}
 }

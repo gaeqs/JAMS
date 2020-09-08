@@ -29,6 +29,7 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.pipelined.ForwardingSupporter;
+import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
 import net.jamsimulator.jams.mips.simulation.pipelined.exception.RAWHazardException;
 
 public abstract class MultiCycleExecution<Inst extends AssembledInstruction> extends InstructionExecution<MultiCycleArchitecture, Inst> {
@@ -39,7 +40,7 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
 
 	protected boolean executesMemory, executesWriteBack;
 
-	public MultiCycleExecution(Simulation<MultiCycleArchitecture> simulation, Inst instruction, int address, boolean executesMemory, boolean executesWriteBack) {
+	public MultiCycleExecution(Simulation<? extends MultiCycleArchitecture> simulation, Inst instruction, int address, boolean executesMemory, boolean executesWriteBack) {
 		super(simulation, instruction, address);
 		this.executesMemory = executesMemory;
 		this.executesWriteBack = executesWriteBack;
@@ -51,6 +52,10 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
 
 	public boolean executesWriteBack() {
 		return executesWriteBack;
+	}
+
+	public boolean solveBranchOnDecode() {
+		return simulation.getData().shouldSolveBranchesOnDecode();
 	}
 
 	//region requires
@@ -73,7 +78,7 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
 
 	public void requires(Register register) {
 		var supportsForwarding = simulation instanceof ForwardingSupporter
-				&& ((ForwardingSupporter) simulation).isForwardingSupported();
+				&& simulation.getData().isForwardingEnabled();
 
 		if (register.isLocked() && !supportsForwarding) {
 			throw new RAWHazardException();
@@ -213,6 +218,13 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
 	}
 
 	//endregion
+
+	public void jump(int address) {
+		setAndUnlock(pc(), address);
+		if (simulation instanceof PipelinedSimulation) {
+			((PipelinedSimulation) simulation).getPipeline().removeFetch();
+		}
+	}
 
 	public abstract void decode();
 

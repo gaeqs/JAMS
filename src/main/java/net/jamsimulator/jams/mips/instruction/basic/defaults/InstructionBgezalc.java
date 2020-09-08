@@ -25,8 +25,8 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
@@ -51,7 +51,7 @@ public class InstructionBgezalc extends BasicInstruction<InstructionBgezalc.Asse
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -113,27 +113,50 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 
 		@Override
 		public void decode() {
-			Register rt = register(instruction.getTargetRegister());
-			decodeResult = new int[]{rt.getValue()};
+			requires(instruction.getTargetRegister());
+			lock(pc());
+			lock(31);
+
+			decodeResult = new int[]{pc().getValue(), 0};
+
+			if (solveBranchOnDecode()) {
+				if (value(instruction.getTargetRegister()) >= 0) {
+					decodeResult[1] = 1;
+					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+				} else {
+					unlock(31);
+					unlock(pc());
+				}
+			}
 		}
 
 		@Override
 		public void execute() {
-			executionResult = new int[]{pc().getValue()};
-			if (decodeResult[0] < 0) return;
-			pc().setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+			if (solveBranchOnDecode() && decodeResult[1] == 1) {
+				forward(31, decodeResult[0], false);
+			}
 		}
 
 		@Override
 		public void memory() {
-
+			if (solveBranchOnDecode() && decodeResult[1] == 1) {
+				forward(31, decodeResult[0], true);
+			}
 		}
 
 		@Override
 		public void writeBack() {
-			if (decodeResult[0] < 0) return;
-			Register ra = register(31);
-			ra.setValue(executionResult[0]);
+			if (!solveBranchOnDecode()) {
+				if (value(instruction.getTargetRegister()) >= 0) {
+					setAndUnlock(31, decodeResult[0]);
+					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+				} else {
+					unlock(31);
+					unlock(pc());
+				}
+			} else if (decodeResult[1] == 1) {
+				setAndUnlock(31, decodeResult[0]);
+			}
 		}
 	}
 }

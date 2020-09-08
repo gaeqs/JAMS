@@ -111,11 +111,6 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 	}
 
 	@Override
-	public boolean isForwardingSupported() {
-		return true;
-	}
-
-	@Override
 	public void reset() {
 		super.reset();
 		if (changes != null) {

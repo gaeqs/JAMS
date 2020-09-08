@@ -25,8 +25,8 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction;
@@ -53,7 +53,7 @@ public class InstructionBitswap extends BasicRInstruction<InstructionBitswap.Ass
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 
@@ -119,23 +119,24 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 
 		@Override
 		public void decode() {
-			Register rt = register(instruction.getTargetRegister());
-			decodeResult = new int[]{rt.getValue()};
+			requires(instruction.getTargetRegister());
+			lock(instruction.getDestinationRegister());
 		}
 
 		@Override
 		public void execute() {
-			executionResult = new int[]{Integer.reverseBytes(decodeResult[0])};
+			executionResult = new int[]{Integer.reverseBytes(value(instruction.getTargetRegister()))};
+			forward(instruction.getTargetRegister(), executionResult[0], false);
 		}
 
 		@Override
 		public void memory() {
-
+			forward(instruction.getTargetRegister(), executionResult[0], true);
 		}
 
 		@Override
 		public void writeBack() {
-			register(instruction.getDestinationRegister()).setValue(executionResult[0]);
+			setAndUnlock(instruction.getDestinationRegister(), executionResult[0]);
 		}
 	}
 }

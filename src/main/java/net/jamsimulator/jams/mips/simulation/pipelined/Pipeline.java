@@ -83,6 +83,12 @@ public class Pipeline {
 		exceptions[step.ordinal()] = ex;
 	}
 
+	public void removeFetch() {
+		instructions[0] = null;
+		pcs[0] = 0;
+		exceptions[0] = null;
+	}
+
 	public Pipeline clone() {
 		Pipeline clone = new Pipeline(simulation, 0);
 		System.arraycopy(instructions, 0, clone.instructions, 0, instructions.length);

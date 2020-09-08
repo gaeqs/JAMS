@@ -4,6 +4,4 @@ public interface ForwardingSupporter {
 
 	PipelineForwarding getForwarding();
 
-	boolean isForwardingSupported();
-
 }
