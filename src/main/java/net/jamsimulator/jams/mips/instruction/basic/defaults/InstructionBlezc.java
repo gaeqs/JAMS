@@ -117,7 +117,7 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 
 			if (solveBranchOnDecode()) {
 				if (value(instruction.getTargetRegister()) <= 0) {
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}
@@ -135,7 +135,7 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 		public void writeBack() {
 			if (!solveBranchOnDecode()) {
 				if (value(instruction.getTargetRegister()) <= 0) {
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}

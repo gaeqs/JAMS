@@ -94,7 +94,7 @@ public class InstructionAddiupc extends BasicPCREL19Instruction<InstructionAddiu
 		@Override
 		public void execute() {
 			Register rs = register(instruction.getSourceRegister());
-			rs.setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+			rs.setValue(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 		}
 	}
 
@@ -111,7 +111,7 @@ public class InstructionAddiupc extends BasicPCREL19Instruction<InstructionAddiu
 
 		@Override
 		public void execute() {
-			executionResult = new int[]{pc().getValue() + (instruction.getImmediateAsSigned() << 2)};
+			executionResult = new int[]{getAddress() + 4 + (instruction.getImmediateAsSigned() << 2)};
 			forward(instruction.getSourceRegister(), executionResult[0], false);
 		}
 

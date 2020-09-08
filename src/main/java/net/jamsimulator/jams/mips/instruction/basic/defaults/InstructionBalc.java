@@ -106,16 +106,16 @@ public class InstructionBalc extends BasicInstruction<InstructionBalc.Assembled>
 		public void decode() {
 			lock(31);
 			lock(pc());
-			decodeResult = new int[]{pc().getValue()};
+			decodeResult = new int[]{getAddress() + 4 };
 			if (solveBranchOnDecode()) {
-				jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+				jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 			}
 		}
 
 		@Override
 		public void execute() {
 			if (!solveBranchOnDecode()) {
-				executionResult = new int[]{pc().getValue() + (instruction.getImmediateAsSigned() << 2)};
+				executionResult = new int[]{getAddress() + 4  + (instruction.getImmediateAsSigned() << 2)};
 			} else {
 				forward(31, decodeResult[0], false);
 			}

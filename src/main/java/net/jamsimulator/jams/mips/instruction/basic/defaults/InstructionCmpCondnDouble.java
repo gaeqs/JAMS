@@ -56,7 +56,7 @@ public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionC
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -164,17 +164,18 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 			if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
 			if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
 
-			Register rt0 = registerCop1(instruction.getTargetRegister());
-			Register rt1 = registerCop1(instruction.getTargetRegister() + 1);
-			Register rs0 = registerCop1(instruction.getSourceRegister());
-			Register rs1 = registerCop1(instruction.getSourceRegister() + 1);
-			decodeResult = new int[]{rt0.getValue(), rt1.getValue(), rs0.getValue(), rs1.getValue()};
+			requiresCOP1(instruction.getTargetRegister());
+			requiresCOP1(instruction.getTargetRegister() + 1);
+			requiresCOP1(instruction.getSourceRegister());
+			requiresCOP1(instruction.getSourceRegister() + 1);
+			lockCOP1(instruction.getDestinationRegister());
+			lockCOP1(instruction.getDestinationRegister() + 1);
 		}
 
 		@Override
 		public void execute() {
-			double ft = NumericUtils.intsToDouble(decodeResult[0], decodeResult[1]);
-			double fs = NumericUtils.intsToDouble(decodeResult[2], decodeResult[3]);
+			double ft = NumericUtils.intsToDouble(valueCOP1(instruction.getTargetRegister()), valueCOP1(instruction.getTargetRegister() + 1));
+			double fs = NumericUtils.intsToDouble(valueCOP1(instruction.getSourceRegister()), valueCOP1(instruction.getSourceRegister() + 1));
 
 			boolean less, equal, unordered;
 
@@ -193,17 +194,21 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 
 			boolean condition = instruction.cond4() ^ ((instruction.cond2() && less) || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
 			executionResult = new int[]{condition ? 0xFFFFFFFF : 0, condition ? 0xFFFFFFFF : 0};
+
+			forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
+			forwardCOP1(instruction.getDestinationRegister() + 1, executionResult[1], false);
 		}
 
 		@Override
 		public void memory() {
-
+			forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
+			forwardCOP1(instruction.getDestinationRegister() + 1, executionResult[1], true);
 		}
 
 		@Override
 		public void writeBack() {
-			registerCop1(instruction.getDestinationRegister()).setValue(executionResult[0]);
-			registerCop1(instruction.getDestinationRegister() + 1).setValue(executionResult[1]);
+			setAndUnlockCOP1(instruction.getDestinationRegister(), executionResult[0]);
+			setAndUnlockCOP1(instruction.getDestinationRegister() + 1, executionResult[1]);
 		}
 	}
 }

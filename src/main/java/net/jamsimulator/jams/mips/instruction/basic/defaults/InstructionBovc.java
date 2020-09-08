@@ -129,7 +129,7 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 					Math.addExact(value(instruction.getSourceRegister()), value(instruction.getTargetRegister()));
 					unlock(pc());
 				} catch (ArithmeticException ex) {
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				}
 			}
 		}
@@ -144,7 +144,7 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 				return;
 			}
 
-			pc().setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+			pc().setValue(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 		}
 
 		@Override
@@ -159,7 +159,7 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 					Math.addExact(value(instruction.getSourceRegister()), value(instruction.getTargetRegister()));
 					unlock(pc());
 				} catch (ArithmeticException ex) {
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				}
 			}
 		}

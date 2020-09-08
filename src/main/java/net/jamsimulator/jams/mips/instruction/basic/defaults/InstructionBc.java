@@ -106,7 +106,7 @@ public class InstructionBc extends BasicInstruction<InstructionBc.Assembled> {
 		public void decode() {
 			lock(pc());
 			if (solveBranchOnDecode()) {
-				jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+				jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 			}
 		}
 
@@ -122,7 +122,7 @@ public class InstructionBc extends BasicInstruction<InstructionBc.Assembled> {
 		@Override
 		public void writeBack() {
 			if (!solveBranchOnDecode()) {
-				jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+				jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 			}
 		}
 	}

@@ -25,17 +25,17 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
-import net.jamsimulator.jams.mips.interrupt.InterruptCause;
-import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
+import net.jamsimulator.jams.mips.interrupt.InterruptCause;
+import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
@@ -54,7 +54,7 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
 		super(String.format(NAME, condition.getName()), String.format(MNEMONIC, condition.getMnemonic()), PARAMETER_TYPES, OPERATION_CODE, condition.getCode(), FMT);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -147,15 +147,15 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 
 		@Override
 		public void decode() {
-			Register rt = registerCop1(instruction.getTargetRegister());
-			Register rs = registerCop1(instruction.getSourceRegister());
-			decodeResult = new int[]{rt.getValue(), rs.getValue()};
+			requiresCOP1(instruction.getTargetRegister());
+			requiresCOP1(instruction.getSourceRegister());
+			lockCOP1(instruction.getDestinationRegister());
 		}
 
 		@Override
 		public void execute() {
-			float fs = Float.intBitsToFloat(decodeResult[1]);
-			float ft = Float.intBitsToFloat(decodeResult[0]);
+			float fs = Float.intBitsToFloat(valueCOP1(instruction.getSourceRegister()));
+			float ft = Float.intBitsToFloat(valueCOP1(instruction.getTargetRegister()));
 
 			boolean less, equal, unordered;
 
@@ -174,16 +174,17 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 
 			boolean condition = instruction.cond4() ^ ((instruction.cond2() && less) || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
 			executionResult = new int[]{condition ? 0xFFFFFFFF : 0};
+			forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
 		}
 
 		@Override
 		public void memory() {
-
+			forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
 		}
 
 		@Override
 		public void writeBack() {
-			registerCop1(instruction.getDestinationRegister()).setValue(executionResult[0]);
+			setAndUnlockCOP1(instruction.getDestinationRegister(), executionResult[0]);
 		}
 	}
 }

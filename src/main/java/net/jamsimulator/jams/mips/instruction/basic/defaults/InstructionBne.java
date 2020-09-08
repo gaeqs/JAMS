@@ -114,7 +114,7 @@ public class InstructionBne extends BasicInstruction<InstructionBne.Assembled> {
 
 			if (solveBranchOnDecode()) {
 				if (value(instruction.getTargetRegister()) != value(instruction.getSourceRegister())) {
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}
@@ -132,7 +132,7 @@ public class InstructionBne extends BasicInstruction<InstructionBne.Assembled> {
 		public void writeBack() {
 			if (!solveBranchOnDecode()) {
 				if (value(instruction.getTargetRegister()) != value(instruction.getSourceRegister())) {
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}

@@ -119,9 +119,10 @@ public class InstructionAddSingle extends BasicRFPUInstruction<InstructionAddSin
 
 		@Override
 		public void execute() {
-			float f = Float.intBitsToFloat(valueCOP1(instruction.getTargetRegister()))
-					+ Float.intBitsToFloat(valueCOP1(instruction.getSourceRegister()));
-			executionResult = new int[]{Float.floatToIntBits(f)};
+			var source = Float.intBitsToFloat(valueCOP1(instruction.getSourceRegister()));
+			var target = Float.intBitsToFloat(valueCOP1(instruction.getTargetRegister()));
+			var destination = source + target;
+			executionResult = new int[]{Float.floatToIntBits(destination)};
 			forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
 		}
 

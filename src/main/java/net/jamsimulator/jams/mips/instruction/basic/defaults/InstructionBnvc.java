@@ -127,7 +127,7 @@ public class InstructionBnvc extends BasicInstruction<InstructionBnvc.Assembled>
 			if (solveBranchOnDecode()) {
 				try {
 					Math.addExact(value(instruction.getSourceRegister()), value(instruction.getTargetRegister()));
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} catch (ArithmeticException ex) {
 					unlock(pc());
 				}
@@ -144,7 +144,7 @@ public class InstructionBnvc extends BasicInstruction<InstructionBnvc.Assembled>
 				return;
 			}
 
-			pc().setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+			pc().setValue(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 		}
 
 		@Override
@@ -157,7 +157,7 @@ public class InstructionBnvc extends BasicInstruction<InstructionBnvc.Assembled>
 			if (!solveBranchOnDecode()) {
 				try {
 					Math.addExact(value(instruction.getSourceRegister()), value(instruction.getTargetRegister()));
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} catch (ArithmeticException ex) {
 					unlock(pc());
 				}

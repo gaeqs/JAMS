@@ -120,7 +120,7 @@ public class InstructionBltc extends BasicInstruction<InstructionBltc.Assembled>
 
 			if (solveBranchOnDecode()) {
 				if (value(instruction.getSourceRegister()) < value(instruction.getTargetRegister())) {
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}
@@ -138,7 +138,7 @@ public class InstructionBltc extends BasicInstruction<InstructionBltc.Assembled>
 		public void writeBack() {
 			if (!solveBranchOnDecode()) {
 				if (value(instruction.getSourceRegister()) < value(instruction.getTargetRegister())) {
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}

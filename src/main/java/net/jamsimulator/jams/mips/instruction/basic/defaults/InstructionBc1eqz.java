@@ -112,7 +112,7 @@ public class InstructionBc1eqz extends BasicIFPUInstruction<InstructionBc1eqz.As
 
 			if (solveBranchOnDecode()) {
 				if ((value(instruction.getTargetRegister()) & 1) == 0) {
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 
@@ -134,7 +134,7 @@ public class InstructionBc1eqz extends BasicIFPUInstruction<InstructionBc1eqz.As
 		public void writeBack() {
 			if (!solveBranchOnDecode()) {
 				if ((value(instruction.getTargetRegister()) & 1) == 0) {
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}

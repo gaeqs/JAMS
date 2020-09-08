@@ -117,12 +117,12 @@ public class InstructionBgezalc extends BasicInstruction<InstructionBgezalc.Asse
 			lock(pc());
 			lock(31);
 
-			decodeResult = new int[]{pc().getValue(), 0};
+			decodeResult = new int[]{getAddress() + 4 , 0};
 
 			if (solveBranchOnDecode()) {
 				if (value(instruction.getTargetRegister()) >= 0) {
 					decodeResult[1] = 1;
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else {
 					unlock(31);
 					unlock(pc());
@@ -149,7 +149,7 @@ public class InstructionBgezalc extends BasicInstruction<InstructionBgezalc.Asse
 			if (!solveBranchOnDecode()) {
 				if (value(instruction.getTargetRegister()) >= 0) {
 					setAndUnlock(31, decodeResult[0]);
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else {
 					unlock(31);
 					unlock(pc());

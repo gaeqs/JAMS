@@ -111,7 +111,7 @@ public class InstructionBgez extends BasicRIInstruction<InstructionBgez.Assemble
 
 			if (solveBranchOnDecode()) {
 				if (value(instruction.getSourceRegister()) >= 0) {
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}
@@ -129,7 +129,7 @@ public class InstructionBgez extends BasicRIInstruction<InstructionBgez.Assemble
 		public void writeBack() {
 			if (!solveBranchOnDecode()) {
 				if (value(instruction.getSourceRegister()) >= 0) {
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}

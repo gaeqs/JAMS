@@ -116,7 +116,7 @@ public class InstructionBeqzc extends BasicInstruction<InstructionBeqzc.Assemble
 
 			if (solveBranchOnDecode()) {
 				if (value(instruction.getDestinationRegister()) == 0) {
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}
@@ -134,7 +134,7 @@ public class InstructionBeqzc extends BasicInstruction<InstructionBeqzc.Assemble
 		public void writeBack() {
 			if (!solveBranchOnDecode()) {
 				if (value(instruction.getDestinationRegister()) == 0) {
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}

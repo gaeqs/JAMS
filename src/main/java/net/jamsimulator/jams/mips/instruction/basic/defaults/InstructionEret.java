@@ -25,8 +25,8 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction;
@@ -53,7 +53,7 @@ public class InstructionEret extends BasicRInstruction<InstructionEret.Assembled
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -106,34 +106,62 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address, false, false);
+			super(simulation, instruction, address, false, true);
 		}
 
 		@Override
 		public void decode() {
-			decodeResult = new int[0];
+			requiresCOP0(12, 0);
+			requiresCOP0(14, 0);
+			requiresCOP0(30, 0);
+			lock(pc());
+			lockCOP0(12, 0);
+
+			if (solveBranchOnDecode()) {
+				solve();
+			}
 		}
 
 		@Override
 		public void execute() {
-			COP0Register status = (COP0Register) registerCop0(12, 0);
-			int temp;
-			if (status.getBit(COP0RegistersBits.STATUS_ERL)) {
-				temp = registerCop0(30, 0).getValue();
-				status.modifyBits(0, COP0RegistersBits.STATUS_ERL, 1);
-			} else {
-				temp = registerCop0(14, 0).getValue();
-				status.modifyBits(0, COP0RegistersBits.STATUS_EXL, 1);
+			if (solveBranchOnDecode()) {
+				forwardCOP0(12, 0, valueCOP0(12, 0), false);
+				forwardCOP0(14, 0, valueCOP0(14, 0), false);
+				forwardCOP0(30, 0, valueCOP0(30, 0), false);
 			}
-			pc().setValue(temp);
 		}
 
 		@Override
 		public void memory() {
+			if (solveBranchOnDecode()) {
+				forwardCOP0(12, 0, valueCOP0(12, 0), true);
+				forwardCOP0(14, 0, valueCOP0(14, 0), true);
+				forwardCOP0(30, 0, valueCOP0(30, 0), true);
+			}
 		}
 
 		@Override
 		public void writeBack() {
+			if (!solveBranchOnDecode()) {
+				solve();
+			}
+			unlockCOP0(12, 0);
+			unlockCOP0(14, 0);
+			unlockCOP0(30, 0);
+		}
+
+		private void solve() {
+			valueCOP0(12, 0);
+			COP0Register status = (COP0Register) registerCop0(12, 0);
+			int temp;
+			if (status.getBit(COP0RegistersBits.STATUS_ERL)) {
+				temp = valueCOP0(30, 0);
+				status.modifyBits(0, COP0RegistersBits.STATUS_ERL, 1);
+			} else {
+				temp = valueCOP0(14, 0);
+				status.modifyBits(0, COP0RegistersBits.STATUS_EXL, 1);
+			}
+			jump(temp);
 		}
 	}
 }

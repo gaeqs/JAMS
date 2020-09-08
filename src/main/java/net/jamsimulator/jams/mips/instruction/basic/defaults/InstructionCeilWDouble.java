@@ -25,8 +25,8 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
@@ -55,7 +55,7 @@ public class InstructionCeilWDouble extends BasicRFPUInstruction<InstructionCeil
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -113,25 +113,30 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 			if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
 			if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
 
-			Register rs0 = registerCop1(instruction.getSourceRegister());
-			Register rs1 = registerCop1(instruction.getSourceRegister() + 1);
-			decodeResult = new int[]{rs0.getValue(), rs1.getValue()};
+			requiresCOP1(instruction.getSourceRegister());
+			requiresCOP1(instruction.getSourceRegister() + 1);
+			lockCOP1(instruction.getDestinationRegister());
+			lockCOP1(instruction.getDestinationRegister() + 1);
 		}
 
 		@Override
 		public void execute() {
-			int ceil = (int) Math.ceil(NumericUtils.intsToDouble(decodeResult[0], decodeResult[1]));
+			var id = instruction.getSourceRegister();
+			var to = instruction.getDestinationRegister();
+			var ceil = (int) Math.ceil(NumericUtils.intsToDouble(valueCOP1(id), valueCOP1(id + 1)));
 			executionResult = new int[]{ceil};
+			forwardCOP1(to, executionResult[0], false);
 		}
 
 		@Override
 		public void memory() {
-
+			var to = instruction.getDestinationRegister();
+			forwardCOP1(to, executionResult[0], true);
 		}
 
 		@Override
 		public void writeBack() {
-			registerCop1(instruction.getDestinationRegister()).setValue(executionResult[0]);
+			setAndUnlockCOP1(instruction.getDestinationRegister(), executionResult[0]);
 		}
 	}
 }

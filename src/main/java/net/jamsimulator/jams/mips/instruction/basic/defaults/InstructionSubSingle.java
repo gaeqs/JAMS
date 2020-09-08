@@ -25,8 +25,8 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
@@ -54,7 +54,7 @@ public class InstructionSubSingle extends BasicRFPUInstruction<InstructionSubSin
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -111,25 +111,28 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 
 		@Override
 		public void decode() {
-			Register rt = registerCop1(instruction.getTargetRegister());
-			Register rs = registerCop1(instruction.getSourceRegister());
-			decodeResult = new int[]{rs.getValue(), rt.getValue()};
+			requiresCOP1(instruction.getTargetRegister());
+			requiresCOP1(instruction.getSourceRegister());
+			lockCOP1(instruction.getDestinationRegister());
 		}
 
 		@Override
 		public void execute() {
-			float f = Float.intBitsToFloat(decodeResult[0]) - Float.intBitsToFloat(decodeResult[1]);
-			executionResult = new int[]{Float.floatToIntBits(f)};
+			var source = Float.intBitsToFloat(valueCOP1(instruction.getSourceRegister()));
+			var target = Float.intBitsToFloat(valueCOP1(instruction.getTargetRegister()));
+			var destination = source - target;
+			executionResult = new int[]{Float.floatToIntBits(destination)};
+			forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
 		}
 
 		@Override
 		public void memory() {
-
+			forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
 		}
 
 		@Override
 		public void writeBack() {
-			registerCop1(instruction.getDestinationRegister()).setValue(executionResult[0]);
+			setAndUnlockCOP1(instruction.getDestinationRegister(), executionResult[0]);
 		}
 	}
 }

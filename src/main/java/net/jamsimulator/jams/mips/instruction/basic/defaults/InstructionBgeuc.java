@@ -120,7 +120,7 @@ public class InstructionBgeuc extends BasicInstruction<InstructionBgeuc.Assemble
 
 			if (solveBranchOnDecode()) {
 				if (Integer.compareUnsigned(value(instruction.getSourceRegister()), value(instruction.getTargetRegister())) >= 0) {
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}
@@ -138,7 +138,7 @@ public class InstructionBgeuc extends BasicInstruction<InstructionBgeuc.Assemble
 		public void writeBack() {
 			if (!solveBranchOnDecode()) {
 				if (Integer.compareUnsigned(value(instruction.getSourceRegister()), value(instruction.getTargetRegister())) >= 0) {
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}

@@ -94,7 +94,7 @@ public class InstructionAluipc extends BasicPCREL16Instruction<InstructionAluipc
 		public void execute() {
 			Register rs = register(instruction.getSourceRegister());
 
-			int result = ~0x0FFFF & (pc().getValue() + (instruction.getImmediate() << 16));
+			int result = ~0x0FFFF & (getAddress() + 4  + (instruction.getImmediate() << 16));
 			rs.setValue(result);
 		}
 	}
@@ -113,7 +113,7 @@ public class InstructionAluipc extends BasicPCREL16Instruction<InstructionAluipc
 
 		@Override
 		public void execute() {
-			executionResult = new int[]{~0x0FFFF & (pc().getValue() + (instruction.getImmediate() << 16))};
+			executionResult = new int[]{~0x0FFFF & (getAddress() + 4  + (instruction.getImmediate() << 16))};
 			forward(instruction.getSourceRegister(), executionResult[0], false);
 		}
 

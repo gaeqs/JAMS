@@ -100,7 +100,7 @@ public class InstructionBgec extends BasicInstruction<InstructionBgec.Assembled>
 			Register rt = register(instruction.getTargetRegister());
 			Register rs = register(instruction.getSourceRegister());
 			if (rs.getValue() < rt.getValue()) return;
-			pc().setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+			pc().setValue(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 		}
 	}
 
@@ -118,7 +118,7 @@ public class InstructionBgec extends BasicInstruction<InstructionBgec.Assembled>
 
 			if (solveBranchOnDecode()) {
 				if (value(instruction.getSourceRegister()) >= value(instruction.getTargetRegister())) {
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}
@@ -136,7 +136,7 @@ public class InstructionBgec extends BasicInstruction<InstructionBgec.Assembled>
 		public void writeBack() {
 			if (!solveBranchOnDecode()) {
 				if (value(instruction.getSourceRegister()) >= value(instruction.getTargetRegister())) {
-					jump(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}
