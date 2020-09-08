@@ -136,15 +136,6 @@ public class InstructionBnvc extends BasicInstruction<InstructionBnvc.Assembled>
 
 		@Override
 		public void execute() {
-			executionResult = new int[0];
-
-			try {
-				Math.addExact(decodeResult[0], decodeResult[1]);
-			} catch (ArithmeticException ex) {
-				return;
-			}
-
-			pc().setValue(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 		}
 
 		@Override

@@ -104,22 +104,28 @@ public class Pipeline {
 	}
 
 	private void shift0(int pc, int amount) {
-		int i;
-		for (i = instructions.length - 2; i >= 0 && amount >= instructions.length - i - 1; i--) {
-			instructions[i + 1] = instructions[i];
-			pcs[i + 1] = pcs[i];
-			exceptions[i + 1] = exceptions[i];
+		if (amount == 0) return;
+		if (amount == 1) {
+			instructions[instructions.length - 1] = null;
+			pcs[instructions.length - 1] = 0;
+			exceptions[instructions.length - 1] = null;
 		}
 
-		if (amount >= instructions.length) {
-			instructions[0] = null;
-			pcs[0] = pc;
-			exceptions[0] = null;
-		} else {
-			instructions[i] = null;
-			pcs[i] = 0;
-			exceptions[i] = null;
+		int i = 1;
+		int index = instructions.length - 2;
+
+		while (i < amount && index >= 0) {
+			instructions[index + 1] = instructions[index];
+			pcs[index + 1] = pcs[index];
+			exceptions[index + 1] = exceptions[index];
+
+			i++;
+			index--;
 		}
+
+		instructions[index + 1] = null;
+		pcs[index + 1] = index == -1 ? pc : 0;
+		exceptions[index + 1] = null;
 	}
 
 }

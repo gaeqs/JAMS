@@ -159,38 +159,36 @@ public class ConfigurationGeneralTab extends VBox {
 	}
 
 	private void generateEnableForwardingCheckBox() {
-		enableUndoHBox = new HBox();
-		enableUndoHBox.setSpacing(5);
-		enableUndoHBox.setDisable(!configuration.isForwardingEnabled());
+		var box = new HBox();
+		box.setSpacing(5);
 
 		CheckBox checkBox = new CheckBox();
-		checkBox.setSelected(configuration.isUndoEnabled());
+		checkBox.setSelected(configuration.isForwardingEnabled());
 		checkBox.selectedProperty().addListener((obs, old, val) -> configuration.setForwardingEnabled(val));
 
 		Label label = new LanguageLabel(Messages.SIMULATION_CONFIGURATION_ENABLE_FORWARDING);
 		label.setTooltip(new LanguageTooltip(Messages.SIMULATION_CONFIGURATION_ENABLE_FORWARDING_TOOLTIP, LanguageTooltip.DEFAULT_DELAY));
 		label.setOnMouseClicked(event -> checkBox.setSelected(!checkBox.isSelected()));
 
-		enableUndoHBox.getChildren().addAll(new Region(), checkBox, label);
-		getChildren().add(enableUndoHBox);
+		box.getChildren().addAll(new Region(), checkBox, label);
+		getChildren().add(box);
 	}
 
 
 	private void generateSolveBranchOnDecodeCheckBox() {
-		enableUndoHBox = new HBox();
-		enableUndoHBox.setSpacing(5);
-		enableUndoHBox.setDisable(!configuration.shouldSolveBranchOnDecode());
+		var box = new HBox();
+		box.setSpacing(5);
 
 		CheckBox checkBox = new CheckBox();
-		checkBox.setSelected(configuration.isUndoEnabled());
+		checkBox.setSelected(configuration.shouldSolveBranchOnDecode());
 		checkBox.selectedProperty().addListener((obs, old, val) -> configuration.setSolveBranchOnDecode(val));
 
 		Label label = new LanguageLabel(Messages.SIMULATION_CONFIGURATION_SOLVE_BRANCH_ON_DECODE);
 		label.setTooltip(new LanguageTooltip(Messages.SIMULATION_CONFIGURATION_SOLVE_BRANCH_ON_DECODE_TOOLTIP, LanguageTooltip.DEFAULT_DELAY));
 		label.setOnMouseClicked(event -> checkBox.setSelected(!checkBox.isSelected()));
 
-		enableUndoHBox.getChildren().addAll(new Region(), checkBox, label);
-		getChildren().add(enableUndoHBox);
+		box.getChildren().addAll(new Region(), checkBox, label);
+		getChildren().add(box);
 	}
 
 

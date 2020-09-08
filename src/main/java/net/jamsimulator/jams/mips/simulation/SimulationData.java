@@ -43,6 +43,7 @@ public class SimulationData {
 		this.callEvents = configuration.shouldCallEvents();
 		this.undoEnabled = configuration.isUndoEnabled() && callEvents;
 		this.enableForwarding = configuration.isForwardingEnabled();
+
 		this.solveBranchOnDecode = configuration.shouldSolveBranchOnDecode();
 	}
 

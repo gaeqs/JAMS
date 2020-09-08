@@ -25,8 +25,8 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI11Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
@@ -47,18 +47,18 @@ public class InstructionMfc0 extends BasicIFPUInstruction<InstructionMfc0.Assemb
 	public static final int SUBCODE = 0b00000;
 
 	private static final ParameterType[] PARAMETER_TYPES
-			= new ParameterType[]{ParameterType.REGISTER, ParameterType.COPROCESSOR_0_REGISTER};
+			= new ParameterType[]{ParameterType.REGISTER, ParameterType.COPROCESSOR_0_REGISTER, ParameterType.UNSIGNED_5_BIT};
 
 	public InstructionMfc0() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, SUBCODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
 	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new Assembled(parameters[0].getRegister(), parameters[1].getRegister(), origin, this);
+		return new Assembled(parameters[0].getRegister(), parameters[1].getRegister(), parameters[2].getImmediate() & 0b111, origin, this);
 	}
 
 	@Override
@@ -68,8 +68,8 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 
 	public static class Assembled extends AssembledI11Instruction {
 
-		public Assembled(int targetRegister, int destinationRegister, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-			super(OPERATION_CODE, SUBCODE, targetRegister, destinationRegister, 0, origin, basicOrigin);
+		public Assembled(int targetRegister, int destinationRegister, int selection, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+			super(OPERATION_CODE, SUBCODE, targetRegister, destinationRegister, selection, origin, basicOrigin);
 		}
 
 		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -79,7 +79,8 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 		@Override
 		public String parametersToString(String registersStart) {
 			return registersStart + getTargetRegister()
-					+ ", " + registersStart + getDestinationRegister();
+					+ ", " + registersStart + getDestinationRegister()
+					+ ", " + getImmediate();
 		}
 	}
 
@@ -105,24 +106,24 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 
 		@Override
 		public void decode() {
-			Register rd = registerCop0(instruction.getDestinationRegister());
-			decodeResult = new int[]{rd.getValue()};
+			requiresCOP0(instruction.getDestinationRegister());
+			lock(instruction.getTargetRegister());
 		}
 
 		@Override
 		public void execute() {
-			executionResult = new int[]{decodeResult[0]};
+			executionResult = new int[]{valueCOP0(instruction.getDestinationRegister(), instruction.getImmediate())};
+			forward(instruction.getTargetRegister(), executionResult[0], false);
 		}
 
 		@Override
 		public void memory() {
-
+			forward(instruction.getTargetRegister(), executionResult[0], true);
 		}
 
 		@Override
 		public void writeBack() {
-			Register rt = register(instruction.getTargetRegister());
-			rt.setValue(executionResult[0]);
+			setAndUnlock(instruction.getTargetRegister(), executionResult[0]);
 		}
 	}
 }

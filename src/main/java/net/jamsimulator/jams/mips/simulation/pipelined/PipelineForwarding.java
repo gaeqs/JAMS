@@ -20,11 +20,12 @@ public class PipelineForwarding {
 	}
 
 	public OptionalInt get(Register register) {
-		if (register.equals(execution)) {
-			return OptionalInt.of(executionValue);
-		}
 		if (register.equals(memory)) {
 			return OptionalInt.of(memoryValue);
+		}
+
+		if (register.equals(execution)) {
+			return OptionalInt.of(executionValue);
 		}
 
 		return OptionalInt.empty();

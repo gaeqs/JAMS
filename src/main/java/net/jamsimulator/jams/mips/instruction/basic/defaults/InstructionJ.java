@@ -101,7 +101,7 @@ public class InstructionJ extends BasicInstruction<InstructionJ.Assembled> {
 		public void decode() {
 			lock(pc());
 			if (solveBranchOnDecode()) {
-				pc().setValue(instruction.getAbsoluteAddress(getAddress() + 4 ));
+				jump(instruction.getAbsoluteAddress(getAddress() + 4 ));
 			}
 		}
 
@@ -117,7 +117,7 @@ public class InstructionJ extends BasicInstruction<InstructionJ.Assembled> {
 		@Override
 		public void writeBack() {
 			if (!solveBranchOnDecode()) {
-				pc().setValue(instruction.getAbsoluteAddress(getAddress() + 4 ));
+				jump(instruction.getAbsoluteAddress(getAddress() + 4 ));
 			}
 		}
 	}

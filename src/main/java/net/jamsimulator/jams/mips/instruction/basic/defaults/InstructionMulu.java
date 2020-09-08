@@ -112,24 +112,25 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 
 		@Override
 		public void decode() {
-			Register rs = register(instruction.getSourceRegister());
-			Register rt = register(instruction.getTargetRegister());
-			decodeResult = new int[]{rs.getValue(), rt.getValue()};
+			requires(instruction.getSourceRegister());
+			requires(instruction.getTargetRegister());
+			lock(instruction.getDestinationRegister());
 		}
 
 		@Override
 		public void execute() {
-			executionResult = new int[]{decodeResult[0] * decodeResult[1]};
+			executionResult = new int[]{value(instruction.getSourceRegister()) * value(instruction.getTargetRegister())};
+			forward(instruction.getDestinationRegister(), executionResult[0], false);
 		}
 
 		@Override
 		public void memory() {
-
+			forward(instruction.getDestinationRegister(), executionResult[0], true);
 		}
 
 		@Override
 		public void writeBack() {
-			register(instruction.getDestinationRegister()).setValue(executionResult[0]);
+			setAndUnlock(instruction.getDestinationRegister(), executionResult[0]);
 		}
 	}
 }

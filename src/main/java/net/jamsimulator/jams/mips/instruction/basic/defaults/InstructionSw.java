@@ -25,8 +25,8 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
@@ -52,7 +52,7 @@ public class InstructionSw extends BasicInstruction<InstructionSw.Assembled> {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -107,15 +107,14 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 
 		@Override
 		public void decode() {
-			Register base = register(instruction.getSourceRegister());
-			Register rt = register(instruction.getTargetRegister());
-			decodeResult = new int[]{base.getValue(), rt.getValue()};
+			requires(instruction.getSourceRegister());
+			requires(instruction.getTargetRegister());
 		}
 
 		@Override
 		public void execute() {
-			int address = decodeResult[0] + instruction.getImmediateAsSigned();
-			executionResult = new int[]{address, decodeResult[1]};
+			int address = value(instruction.getSourceRegister()) + instruction.getImmediateAsSigned();
+			executionResult = new int[]{address, value(instruction.getTargetRegister())};
 		}
 
 		@Override
@@ -126,5 +125,6 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 		@Override
 		public void writeBack() {
 		}
+
 	}
 }

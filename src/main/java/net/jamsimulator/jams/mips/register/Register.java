@@ -26,6 +26,8 @@ package net.jamsimulator.jams.mips.register;
 
 import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
+import net.jamsimulator.jams.mips.register.event.RegisterLockEvent;
+import net.jamsimulator.jams.mips.register.event.RegisterUnlockEvent;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.*;
@@ -47,7 +49,7 @@ public class Register {
 	protected final boolean modifiable;
 	protected int defaultValue;
 
-	private List<InstructionExecution<?, ?>> lockedBy;
+	private final List<InstructionExecution<?, ?>> lockedBy;
 
 	/**
 	 * Creates a register using a identifier and a list of names.
@@ -174,15 +176,60 @@ public class Register {
 	}
 
 	public boolean isLocked(InstructionExecution<?, ?> execution) {
-		return lockedBy.indexOf(execution) > 0;
+		if (lockedBy.size() == 0) return false;
+		var index = lockedBy.indexOf(execution);
+		return index == -1 || index > 0;
 	}
 
 	public void lock(InstructionExecution<?, ?> execution) {
-		lockedBy.add(execution);
+		if (registers.eventCallsEnabled) {
+			var before = registers.callEvent(new RegisterLockEvent.Before(this, execution));
+			if (before.isCancelled()) return;
+			lockedBy.add(execution);
+			registers.callEvent(new RegisterLockEvent.After(this, execution));
+		} else {
+			lockedBy.add(execution);
+		}
 	}
 
 	public void unlock(InstructionExecution<?, ?> execution) {
-		lockedBy.remove(execution);
+		if (registers.eventCallsEnabled) {
+			var before = registers.callEvent(new RegisterUnlockEvent.Before(this, execution));
+			if (before.isCancelled()) return;
+			lockedBy.remove(execution);
+			registers.callEvent(new RegisterUnlockEvent.After(this, execution));
+		} else {
+			lockedBy.remove(execution);
+		}
+	}
+
+	/**
+	 * This method should be use exclusively to undo steps.
+	 * This method doesn't call any event.
+	 * <p>
+	 * Locks this register and sets the execution at the first position.
+	 *
+	 * @param execution the execution.
+	 */
+	public void lockFirst(InstructionExecution<?, ?> execution) {
+		lockedBy.add(0, execution);
+	}
+
+	/**
+	 * This method should be use exclusively to undo steps.
+	 * This method doesn't call any event.
+	 * <p>
+	 * Unlocks this register, removing the last occurrence of the given execution.
+	 *
+	 * @param execution the execution.
+	 */
+	public void unlockMostRecent(InstructionExecution<?, ?> execution) {
+		for (int i = lockedBy.size() - 1; i >= 0; i--) {
+			if (execution.equals(lockedBy.get(i))) {
+				lockedBy.remove(i);
+				return;
+			}
+		}
 	}
 
 	/**
@@ -273,6 +320,7 @@ public class Register {
 	 */
 	public void reset() {
 		setValue(defaultValue);
+		lockedBy.clear();
 	}
 
 	/**

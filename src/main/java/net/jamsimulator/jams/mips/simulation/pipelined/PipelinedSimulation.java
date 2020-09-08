@@ -40,6 +40,8 @@ import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
+import net.jamsimulator.jams.mips.register.event.RegisterLockEvent;
+import net.jamsimulator.jams.mips.register.event.RegisterUnlockEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.mips.simulation.change.*;
@@ -209,7 +211,7 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 		}
 
 		//BREAKPOINTS
-		if (breakpoints.contains(pipeline.getPc(MultiCycleStep.FETCH)) && !first) {
+		if (breakpoints.contains(pipeline.getPc(MultiCycleStep.DECODE)) && !first) {
 			if (currentStepChanges != null) {
 				currentStepChanges = null;
 			}
@@ -220,7 +222,6 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 		if (currentStepChanges != null) {
 			currentStepChanges.addChange(new PipelinedSimulationChangePipeline(pipeline.clone()));
 		}
-		registers.getProgramCounter().setValue(registers.getProgramCounter().getValue() + 4);
 
 		int amount = 0;
 		try {
@@ -228,19 +229,22 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 			amount++;
 			memory();
 			amount++;
-			if (execute()) return;
-			amount++;
-			decode();
-			amount++;
-			if (fetch()) return;
-			amount++;
+			if (!execute()) {
+				amount++;
+				decode();
+				amount++;
+				if (!fetch()) {
+					amount++;
+				}
+			}
 		} catch (RAWHazardException ignore) {
 		}
 
 		if (checkThreadInterrupted()) {
 			if (currentStepChanges != null) {
-				currentStepChanges.restore(this);
+				var temp = currentStepChanges;
 				currentStepChanges = null;
+				temp.restore(this);
 			}
 			return;
 		}
@@ -257,16 +261,22 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 	}
 
 	private boolean fetch() {
-		int pc = pipeline.getPc(MultiCycleStep.FETCH);
+		var pc = registers.getProgramCounter();
+		if (pc.isLocked()) return true;
+
+		var pcv = pipeline.getPc(MultiCycleStep.FETCH);
+		if (pcv == 0) return false;
+
+		pc.setValue(pcv + 4);
 
 		boolean check = isKernelMode()
-				? Integer.compareUnsigned(pc, kernelStackBottom) > 0
-				: Integer.compareUnsigned(pc, instructionStackBottom) > 0;
+				? Integer.compareUnsigned(pcv, kernelStackBottom) > 0
+				: Integer.compareUnsigned(pcv, instructionStackBottom) > 0;
 
 		if (!check) {
-			MultiCycleExecution<?> newExecution = (MultiCycleExecution<?>) fetch(pc);
+			MultiCycleExecution<?> newExecution = (MultiCycleExecution<?>) fetch(pcv);
 			if (newExecution == null) {
-				pipeline.setException(MultiCycleStep.FETCH, new RuntimeAddressException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION, pc));
+				pipeline.setException(MultiCycleStep.FETCH, new RuntimeAddressException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION, pcv));
 			} else {
 				pipeline.fetch(newExecution);
 			}
@@ -316,12 +326,15 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 	}
 
 	private void memory() {
+		var execution = pipeline.get(MultiCycleStep.MEMORY);
+		if (execution == null) return;
 		try {
-			var execution = pipeline.get(MultiCycleStep.MEMORY);
-			if (execution == null) return;
 			execution.memory();
 		} catch (RuntimeInstructionException ex) {
 			pipeline.setException(MultiCycleStep.MEMORY, ex);
+		} catch (Exception ex) {
+			System.err.println("Found exception at 0x" + StringUtils.addZeros(Integer.toHexString(execution.getAddress()), 8));
+			System.err.println("Instruction " + execution.getInstruction().getBasicOrigin().getMnemonic());
 		}
 	}
 
@@ -363,6 +376,18 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 	private void onRegisterChange(RegisterChangeValueEvent.After event) {
 		if (currentStepChanges == null) return;
 		currentStepChanges.addChange(new SimulationChangeRegister(event.getRegister(), event.getOldValue()));
+	}
+
+	@Listener
+	private void onRegisterLock(RegisterLockEvent.After event) {
+		if (currentStepChanges == null) return;
+		currentStepChanges.addChange(new SimulationChangeRegisterLock(event.getRegister(), event.getExecution()));
+	}
+
+	@Listener
+	private void onRegisterUnlock(RegisterUnlockEvent.After event) {
+		if (currentStepChanges == null) return;
+		currentStepChanges.addChange(new SimulationChangeRegisterUnlock(event.getRegister(), event.getExecution()));
 	}
 
 	@Listener

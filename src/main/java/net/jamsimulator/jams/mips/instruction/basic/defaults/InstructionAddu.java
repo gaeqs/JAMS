@@ -118,7 +118,7 @@ public class InstructionAddu extends BasicRInstruction<InstructionAddu.Assembled
 
 		@Override
 		public void execute() {
-			executionResult = new int[]{value(instruction.getTargetRegister()), value(instruction.getSourceRegister())};
+			executionResult = new int[]{value(instruction.getTargetRegister()) + value(instruction.getSourceRegister())};
 			forward(instruction.getTargetRegister(), executionResult[0], false);
 		}
 
