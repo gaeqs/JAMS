@@ -4,6 +4,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
@@ -30,6 +31,14 @@ public class SyscallExecutionPrintCharacter implements SyscallExecution {
 		char value = (char) register.getValue();
 		simulation.getConsole().print(value);
 		if (lineJump) simulation.getConsole().println();
+	}
+
+	@Override
+	public void executeMultiCycle(MultiCycleExecution<?> execution) {
+		var character = (char) execution.value(register);
+		var console = execution.getSimulation().getConsole();
+		console.print(character);
+		if (lineJump) console.println();
 	}
 
 	public static class Builder extends SyscallExecutionBuilder<SyscallExecutionPrintCharacter> {

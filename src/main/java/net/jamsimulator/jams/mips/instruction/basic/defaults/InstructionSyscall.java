@@ -105,7 +105,7 @@ public class InstructionSyscall extends BasicRInstruction<InstructionSyscall.Ass
 
 		@Override
 		public void execute() {
-			simulation.getData().getSyscallExecutions().executeSyscall(simulation);
+			simulation.getData().getSyscallExecutions().executeSyscallMultiCycle(this);
 		}
 
 		@Override

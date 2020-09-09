@@ -2,6 +2,7 @@ package net.jamsimulator.jams.mips.syscall.defaults;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
@@ -29,6 +30,17 @@ public class SyscallExecutionCloseFile implements SyscallExecution {
 			simulation.getFiles().close(idRegister.getValue());
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void executeMultiCycle(MultiCycleExecution<?> execution) {
+		var id = execution.value(idRegister);
+
+		try {
+			execution.getSimulation().getFiles().close(id);
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
 	}
 

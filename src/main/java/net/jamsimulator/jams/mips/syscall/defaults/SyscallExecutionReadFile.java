@@ -2,6 +2,7 @@ package net.jamsimulator.jams.mips.syscall.defaults;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
@@ -37,7 +38,7 @@ public class SyscallExecutionReadFile implements SyscallExecution {
 		if (resultRegister == null) throw new IllegalStateException("Register " + this.resultRegister + " not found");
 
 		Optional<SimulationFile> optional = simulation.getFiles().get(idRegister.getValue());
-		if (!optional.isPresent()) {
+		if (optional.isEmpty()) {
 			resultRegister.setValue(-1);
 			return;
 		}
@@ -57,6 +58,35 @@ public class SyscallExecutionReadFile implements SyscallExecution {
 
 		} catch (RuntimeException ex) {
 			resultRegister.setValue(-1);
+		}
+	}
+
+	@Override
+	public void executeMultiCycle(MultiCycleExecution<?> execution) {
+		var simulation = execution.getSimulation();
+
+		var id = execution.value(idRegister);
+		var address = execution.value(addressRegister);
+		var maxBytes = execution.value(maxBytesRegister);
+
+		Optional<SimulationFile> optional = simulation.getFiles().get(id);
+		if (optional.isEmpty()) {
+			execution.setAndUnlock(resultRegister, -1);
+			return;
+		}
+
+		SimulationFile file = optional.get();
+
+		try {
+			byte[] read = file.read(maxBytes);
+			Memory memory = simulation.getMemory();
+			for (byte b : read) {
+				memory.setByte(address++, b);
+			}
+
+			execution.setAndUnlock(resultRegister, read.length);
+		} catch (RuntimeException ex) {
+			execution.setAndUnlock(resultRegister, -1);
 		}
 	}
 

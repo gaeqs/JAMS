@@ -81,7 +81,7 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
 				&& simulation.getData().isForwardingEnabled();
 
 		if (register.isLocked() && !supportsForwarding) {
-			throw new RAWHazardException();
+			throw new RAWHazardException(register);
 		}
 	}
 
@@ -115,7 +115,7 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
 			if (optional.isPresent()) return optional.getAsInt();
 		}
 
-		throw new RAWHazardException();
+		throw new RAWHazardException(register);
 	}
 
 	//endregion value

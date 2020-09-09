@@ -196,7 +196,7 @@ public class Register {
 		if (registers.eventCallsEnabled) {
 			var before = registers.callEvent(new RegisterUnlockEvent.Before(this, execution));
 			if (before.isCancelled()) return;
-			lockedBy.remove(execution);
+			if (!lockedBy.remove(execution)) return;
 			registers.callEvent(new RegisterUnlockEvent.After(this, execution));
 		} else {
 			lockedBy.remove(execution);

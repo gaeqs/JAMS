@@ -46,6 +46,7 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.mips.simulation.change.*;
 import net.jamsimulator.jams.mips.simulation.change.pipelined.PipelinedSimulationChangePipeline;
+import net.jamsimulator.jams.mips.simulation.change.pipelined.PipelinedSimulationExitRequest;
 import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
@@ -73,6 +74,7 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 	public static final int MAX_CHANGES = 10000;
 
 	private long executedInstructions;
+	private boolean exitRequested;
 
 	private final LinkedList<StepChanges<PipelinedArchitecture>> changes;
 	private StepChanges<PipelinedArchitecture> currentStepChanges;
@@ -96,6 +98,7 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 
 		pipeline = new Pipeline(this, registers.getProgramCounter().getValue());
 		forwarding = new PipelineForwarding();
+		exitRequested = false;
 	}
 
 	/**
@@ -113,12 +116,27 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 	}
 
 	@Override
+	public void requestExit() {
+		if (currentStepChanges != null) {
+			currentStepChanges.addChange(new PipelinedSimulationExitRequest());
+		}
+		pipeline.removeFetch();
+		pipeline.removeDecode();
+		exitRequested = true;
+	}
+
+	public void removeExitRequest() {
+		exitRequested = false;
+	}
+
+	@Override
 	public void reset() {
 		super.reset();
 		if (changes != null) {
 			changes.clear();
 		}
 		executedInstructions = 0;
+		exitRequested = false;
 		pipeline.reset(registers.getProgramCounter().getValue());
 	}
 
@@ -223,6 +241,11 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 			currentStepChanges.addChange(new PipelinedSimulationChangePipeline(pipeline.clone()));
 		}
 
+		var pcv = pipeline.getPc(MultiCycleStep.FETCH);
+		boolean check = exitRequested || (isKernelMode()
+				? Integer.compareUnsigned(pcv, kernelStackBottom) > 0
+				: Integer.compareUnsigned(pcv, instructionStackBottom) > 0);
+
 		int amount = 0;
 		try {
 			writeBack();
@@ -233,8 +256,10 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 				amount++;
 				decode();
 				amount++;
-				if (!fetch()) {
-					amount++;
+				if (!check) {
+					if (!fetch()) {
+						amount++;
+					}
 				}
 			}
 		} catch (RAWHazardException ignore) {
@@ -249,7 +274,8 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 			return;
 		}
 
-		pipeline.shift(registers.getProgramCounter().getValue(), amount);
+		pipeline.shift(exitRequested ? 0 : registers.getProgramCounter().getValue(), amount);
+		if (check) checkExit();
 
 		addCycleCount();
 
@@ -260,37 +286,31 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 		}
 	}
 
+	private void checkExit() {
+		if (pipeline.isEmpty()) {
+			finished = true;
+			if (getConsole() != null && !exitRequested) {
+				getConsole().println();
+				getConsole().printWarningLn("Execution finished. Dropped off bottom.");
+				getConsole().println();
+			}
+			callEvent(new SimulationFinishedEvent(this));
+		}
+	}
+
 	private boolean fetch() {
 		var pc = registers.getProgramCounter();
 		if (pc.isLocked()) return true;
 
 		var pcv = pipeline.getPc(MultiCycleStep.FETCH);
+
 		if (pcv == 0) return false;
-
 		pc.setValue(pcv + 4);
-
-		boolean check = isKernelMode()
-				? Integer.compareUnsigned(pcv, kernelStackBottom) > 0
-				: Integer.compareUnsigned(pcv, instructionStackBottom) > 0;
-
-		if (!check) {
-			MultiCycleExecution<?> newExecution = (MultiCycleExecution<?>) fetch(pcv);
-			if (newExecution == null) {
-				pipeline.setException(MultiCycleStep.FETCH, new RuntimeAddressException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION, pcv));
-			} else {
-				pipeline.fetch(newExecution);
-			}
-
+		MultiCycleExecution<?> newExecution = (MultiCycleExecution<?>) fetch(pcv);
+		if (newExecution == null) {
+			pipeline.setException(MultiCycleStep.FETCH, new RuntimeAddressException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION, pcv));
 		} else {
-			if (pipeline.isEmpty()) {
-				finished = true;
-				if (getConsole() != null) {
-					getConsole().println();
-					getConsole().printWarningLn("Execution finished. Dropped off bottom.");
-					getConsole().println();
-				}
-				callEvent(new SimulationFinishedEvent(this));
-			}
+			pipeline.fetch(newExecution);
 		}
 
 		return false;
@@ -317,8 +337,9 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 
 		if (checkThreadInterrupted()) {
 			if (currentStepChanges != null) {
-				currentStepChanges.restore(this);
+				var temp = currentStepChanges;
 				currentStepChanges = null;
+				temp.restore(this);
 			}
 			return true;
 		}

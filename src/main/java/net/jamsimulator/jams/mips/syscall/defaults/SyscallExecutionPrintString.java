@@ -4,6 +4,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.gui.util.log.Console;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
@@ -29,9 +31,15 @@ public class SyscallExecutionPrintString implements SyscallExecution {
 	public void execute(Simulation<?> simulation) {
 		Register register = simulation.getRegisters().getRegister(this.register).orElse(null);
 		if (register == null) throw new IllegalStateException("Register " + this.register + " not found");
+		print(simulation.getMemory(), simulation.getConsole(), register.getValue());
+	}
 
-		Memory memory = simulation.getMemory();
-		int address = register.getValue();
+	@Override
+	public void executeMultiCycle(MultiCycleExecution<?> execution) {
+		print(execution.getSimulation().getMemory(), execution.getSimulation().getConsole(), execution.value(register));
+	}
+
+	private void print(Memory memory, Console console, int address) {
 		char[] chars = new char[maxChars];
 		int amount = 0;
 		char c;
@@ -41,10 +49,10 @@ public class SyscallExecutionPrintString implements SyscallExecution {
 
 		if (amount > 0) {
 			String string = new String(chars, 0, amount);
-			simulation.getConsole().print(string);
+			console.print(string);
 		}
 
-		if (lineJump) simulation.getConsole().println();
+		if (lineJump) console.println();
 	}
 
 	public static class Builder extends SyscallExecutionBuilder<SyscallExecutionPrintString> {

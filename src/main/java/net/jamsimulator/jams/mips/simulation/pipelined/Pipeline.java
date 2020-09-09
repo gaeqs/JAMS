@@ -52,8 +52,8 @@ public class Pipeline {
 	}
 
 	public boolean isEmpty() {
-		for (MultiCycleExecution<?> instruction : instructions) {
-			if (instruction != null) return false;
+		for (int pc : pcs) {
+			if (pc != 0) return false;
 		}
 		return true;
 	}
@@ -87,6 +87,12 @@ public class Pipeline {
 		instructions[0] = null;
 		pcs[0] = 0;
 		exceptions[0] = null;
+	}
+
+	public void removeDecode() {
+		instructions[1] = null;
+		pcs[1] = 0;
+		exceptions[1] = null;
 	}
 
 	public Pipeline clone() {

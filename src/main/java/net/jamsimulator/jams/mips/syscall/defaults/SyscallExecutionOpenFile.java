@@ -2,6 +2,7 @@ package net.jamsimulator.jams.mips.syscall.defaults;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
@@ -55,21 +56,22 @@ public class SyscallExecutionOpenFile implements SyscallExecution {
 		boolean write, append;
 
 		switch (flagRegister.getValue()) {
-			case 0:
+			case 0 -> {
 				write = false;
 				append = false;
-				break;
-			case 1:
+			}
+			case 1 -> {
 				write = true;
 				append = false;
-				break;
-			case 9:
+			}
+			case 9 -> {
 				write = true;
 				append = true;
-				break;
-			default:
+			}
+			default -> {
 				resultRegister.setValue(-1);
 				return;
+			}
 		}
 
 		try {
@@ -78,6 +80,55 @@ public class SyscallExecutionOpenFile implements SyscallExecution {
 			resultRegister.setValue(-1);
 		}
 
+	}
+
+	@Override
+	public void executeMultiCycle(MultiCycleExecution<?> execution) {
+		var nameAddress = execution.value(nameRegister);
+		var flag = execution.value(flagRegister);
+		var mode = execution.value(modeRegister);
+
+
+		var name = getString(execution.getSimulation(), nameAddress);
+		if (name.isEmpty()) {
+			execution.setAndUnlock(resultRegister, -1);
+			return;
+		}
+
+		File file;
+		Path path = Paths.get(name);
+		if (path.isAbsolute()) {
+			file = path.toFile();
+		} else {
+			file = new File(execution.getSimulation().getData().getWorkingDirectory(), name);
+		}
+
+		boolean write, append;
+
+		switch (flag) {
+			case 0 -> {
+				write = false;
+				append = false;
+			}
+			case 1 -> {
+				write = true;
+				append = false;
+			}
+			case 9 -> {
+				write = true;
+				append = true;
+			}
+			default -> {
+				execution.setAndUnlock(resultRegister, -1);
+				return;
+			}
+		}
+
+		try {
+			execution.setAndUnlock(resultRegister, execution.getSimulation().getFiles().open(file, write, append));
+		} catch (IOException ex) {
+			execution.setAndUnlock(resultRegister, -1);
+		}
 	}
 
 	private String getString(Simulation<?> simulation, int address) {

@@ -111,13 +111,10 @@ public class InstructionBc1nez extends BasicIFPUInstruction<InstructionBc1nez.As
 			lock(pc());
 
 			if (solveBranchOnDecode()) {
-				if ((value(instruction.getTargetRegister()) & 1) != 0) {
+				if ((valueCOP1(instruction.getTargetRegister()) & 1) != 0) {
 					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
-
-			Register rt = registerCop1(instruction.getTargetRegister());
-			decodeResult = new int[]{rt.getValue()};
 		}
 
 		@Override
@@ -133,7 +130,7 @@ public class InstructionBc1nez extends BasicIFPUInstruction<InstructionBc1nez.As
 		@Override
 		public void writeBack() {
 			if (!solveBranchOnDecode()) {
-				if ((value(instruction.getTargetRegister()) & 1) != 0) {
+				if ((valueCOP1(instruction.getTargetRegister()) & 1) != 0) {
 					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}

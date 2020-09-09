@@ -125,6 +125,11 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 	}
 
 	@Override
+	public void requestExit() {
+		exit();
+	}
+
+	@Override
 	public void reset() {
 		super.reset();
 		if (changes != null) {

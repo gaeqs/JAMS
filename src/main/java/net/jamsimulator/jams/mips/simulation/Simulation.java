@@ -281,6 +281,11 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	}
 
 	/**
+	 * Request a simulation exit. This method doesn't exit the simulation automatically.
+	 */
+	public abstract void requestExit();
+
+	/**
 	 * Returns whether this simulation has finished its execution.
 	 *
 	 * @return whether this simulation has finished its execution.

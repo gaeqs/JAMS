@@ -4,6 +4,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
@@ -46,6 +47,34 @@ public class SyscallExecutionReadString implements SyscallExecution {
 		int address = addressReg.getValue();
 		int amount = 0;
 
+		while (amount < maxChars - 1 && amount < bytes.length) {
+
+			memory.setByte(address, bytes[amount]);
+
+			amount++;
+			address++;
+		}
+		memory.setByte(address, (byte) 0);
+
+		simulation.getConsole().printDone(value);
+		if (lineJump) simulation.getConsole().println();
+	}
+
+	@Override
+	public void executeMultiCycle(MultiCycleExecution<?> execution) {
+		var simulation = execution.getSimulation();
+		var maxChars = execution.value(maxCharsRegister);
+		if (maxChars < 1) return;
+
+		var address = execution.value(addressRegister);
+
+		String value = simulation.popInputOrLock();
+		if (simulation.checkThreadInterrupted()) return;
+
+		Memory memory = simulation.getMemory();
+		byte[] bytes = value.getBytes(StandardCharsets.US_ASCII);
+
+		int amount = 0;
 		while (amount < maxChars - 1 && amount < bytes.length) {
 
 			memory.setByte(address, bytes[amount]);
