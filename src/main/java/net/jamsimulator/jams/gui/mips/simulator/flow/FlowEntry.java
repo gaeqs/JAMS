@@ -1,6 +1,5 @@
-package net.jamsimulator.jams.gui.mips.flow;
+package net.jamsimulator.jams.gui.mips.simulator.flow;
 
-import javafx.geometry.Bounds;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;

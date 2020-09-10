@@ -5,13 +5,20 @@ import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
 
 public class PipelineShiftEvent extends PipelinedSimulationEvent {
 
+	protected final long cycle;
 	protected final Pipeline pipeline;
 	protected int toFetch;
 
 	private PipelineShiftEvent(PipelinedSimulation simulation, Pipeline pipeline, int toFetch) {
 		super(simulation);
+		this.cycle = simulation.getCycles();
 		this.pipeline = pipeline;
 		this.toFetch = toFetch;
+	}
+
+
+	public long getCycle() {
+		return cycle;
 	}
 
 	public Pipeline getPipeline() {

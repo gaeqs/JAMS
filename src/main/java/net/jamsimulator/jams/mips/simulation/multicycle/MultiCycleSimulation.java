@@ -314,6 +314,7 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 			throw new RuntimeAddressException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION, pc);
 		}
 
+		newExecution.setInstructionId(executedInstructions);
 		currentStep = MultiCycleStep.DECODE;
 	}
 

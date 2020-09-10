@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.mips.flow.singlecycle;
+package net.jamsimulator.jams.gui.mips.simulator.flow.singlecycle;
 
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -7,7 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.mips.flow.FlowTable;
+import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.simulation.Simulation;

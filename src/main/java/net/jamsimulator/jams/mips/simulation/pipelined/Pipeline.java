@@ -6,6 +6,8 @@ import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 import net.jamsimulator.jams.mips.simulation.pipelined.event.PipelineShiftEvent;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class Pipeline {
@@ -22,6 +24,14 @@ public class Pipeline {
 		pcs = new int[MultiCycleStep.values().length];
 		exceptions = new RuntimeInstructionException[MultiCycleStep.values().length];
 		pcs[0] = initialPc;
+	}
+
+	public Map<MultiCycleStep, MultiCycleExecution<?>> getAll() {
+		var map = new HashMap<MultiCycleStep, MultiCycleExecution<?>>();
+		for (int i = 0; i < instructions.length; i++) {
+			if (instructions[i] != null) map.put(MultiCycleStep.values()[i], instructions[i]);
+		}
+		return map;
 	}
 
 	public MultiCycleExecution<?> get(MultiCycleStep step) {

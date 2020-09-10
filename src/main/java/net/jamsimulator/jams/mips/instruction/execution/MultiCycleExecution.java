@@ -37,6 +37,7 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
 	protected int[] decodeResult;
 	protected int[] executionResult;
 	protected int[] memoryResult;
+	protected long instructionId;
 
 	protected boolean executesMemory, executesWriteBack;
 
@@ -44,6 +45,27 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
 		super(simulation, instruction, address);
 		this.executesMemory = executesMemory;
 		this.executesWriteBack = executesWriteBack;
+	}
+
+	/**
+	 * Returns the multi-cycle id of this instruction.
+	 * This is used by the flow section.
+	 *
+	 * @return the id.
+	 */
+	public long getInstructionId() {
+		return instructionId;
+	}
+
+	/**
+	 * THIS METHOD CAN BE USED ONLY BY SIMULATIONS!
+	 * <p>
+	 * Sets the multi-cycle id of this instruction.
+	 *
+	 * @param instructionId the id.
+	 */
+	public void setInstructionId(long instructionId) {
+		this.instructionId = instructionId;
 	}
 
 	public boolean executesMemory() {

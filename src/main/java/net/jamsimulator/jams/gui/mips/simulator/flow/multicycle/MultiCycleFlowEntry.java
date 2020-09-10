@@ -1,11 +1,10 @@
-package net.jamsimulator.jams.gui.mips.flow.multicycle;
+package net.jamsimulator.jams.gui.mips.simulator.flow.multicycle;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.AnchorPane;
-import net.jamsimulator.jams.gui.mips.flow.FlowEntry;
-import net.jamsimulator.jams.gui.mips.flow.FlowTable;
+import net.jamsimulator.jams.gui.mips.simulator.flow.FlowEntry;
+import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 import net.jamsimulator.jams.utils.AnchorUtils;

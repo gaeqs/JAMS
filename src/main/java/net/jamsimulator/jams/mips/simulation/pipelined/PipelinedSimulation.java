@@ -73,7 +73,7 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 
 	public static final int MAX_CHANGES = 10000;
 
-	private long executedInstructions;
+	private long instructionsStarted, instructionsFinished;
 	private boolean exitRequested;
 
 	private final LinkedList<StepChanges<PipelinedArchitecture>> changes;
@@ -93,7 +93,8 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 	 */
 	public PipelinedSimulation(PipelinedArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, SimulationData data) {
 		super(architecture, instructionSet, registers, memory, instructionStackBottom, kernelStackBottom, data, false);
-		executedInstructions = 0;
+		instructionsStarted = 0;
+		instructionsFinished = 0;
 		changes = data.isUndoEnabled() ? new LinkedList<>() : null;
 
 		pipeline = new Pipeline(this, registers.getProgramCounter().getValue());
@@ -132,10 +133,11 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 	@Override
 	public void reset() {
 		super.reset();
+		instructionsStarted = 0;
+		instructionsFinished = 0;
 		if (changes != null) {
 			changes.clear();
 		}
-		executedInstructions = 0;
 		exitRequested = false;
 		pipeline.reset(registers.getProgramCounter().getValue());
 	}
@@ -208,11 +210,18 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 		stop();
 		waitForExecutionFinish();
 
+		var oldFetch = pipeline.get(MultiCycleStep.FETCH);
+
 		if (changes.isEmpty()) return false;
 		finished = false;
 
 		changes.removeLast().restore(this);
 		cycles--;
+
+		var newFetch = pipeline.get(MultiCycleStep.FETCH);
+
+		if (pipeline.get(MultiCycleStep.WRITE_BACK) != null) instructionsFinished--;
+		if (oldFetch != null && oldFetch != newFetch) instructionsStarted--;
 
 		callEvent(new SimulationUndoStepEvent.After(this, cycles));
 
@@ -310,7 +319,9 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 		if (newExecution == null) {
 			pipeline.setException(MultiCycleStep.FETCH, new RuntimeAddressException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION, pcv));
 		} else {
+			newExecution.setInstructionId(instructionsStarted);
 			pipeline.fetch(newExecution);
+			instructionsStarted++;
 		}
 
 		return false;
@@ -372,6 +383,7 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 			var execution = pipeline.get(MultiCycleStep.WRITE_BACK);
 			if (execution == null) return;
 			execution.writeBack();
+			instructionsFinished++;
 		} catch (RuntimeInstructionException ex) {
 			if (getConsole() != null) {
 				getConsole().printWarningLn("Found exception '" + ex.getMessage() + "' when the instruction was on WriteBack.");

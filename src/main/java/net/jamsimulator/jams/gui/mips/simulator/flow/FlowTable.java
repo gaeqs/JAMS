@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.mips.flow;
+package net.jamsimulator.jams.gui.mips.simulator.flow;
 
 import javafx.geometry.Bounds;
 import javafx.scene.control.ScrollPane;
@@ -9,10 +9,12 @@ import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.mips.flow.multicycle.MultiCycleFlowTable;
-import net.jamsimulator.jams.gui.mips.flow.singlecycle.SingleCycleFlowTable;
+import net.jamsimulator.jams.gui.mips.simulator.flow.multicycle.MultiCycleFlowTable;
+import net.jamsimulator.jams.gui.mips.simulator.flow.pipelined.PipelinedFlowTable;
+import net.jamsimulator.jams.gui.mips.simulator.flow.singlecycle.SingleCycleFlowTable;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import org.reactfx.util.TriFunction;
@@ -36,6 +38,8 @@ public class FlowTable extends VBox implements ActionRegion {
 				new SingleCycleFlowTable((Simulation<? extends SingleCycleArchitecture>) s, p, sl));
 		FLOW_PER_ARCHITECTURE.put(MultiCycleArchitecture.INSTANCE, (s, p, sl) ->
 				new MultiCycleFlowTable((Simulation<? extends MultiCycleArchitecture>) s, p, sl));
+		FLOW_PER_ARCHITECTURE.put(PipelinedArchitecture.INSTANCE, (s, p, sl) ->
+				new PipelinedFlowTable((Simulation<? extends MultiCycleArchitecture>) s, p, sl));
 	}
 
 	public static void registerFlow(Architecture architecture, TriFunction<Simulation<?>, ScrollPane, Slider, FlowTable> builder) {
