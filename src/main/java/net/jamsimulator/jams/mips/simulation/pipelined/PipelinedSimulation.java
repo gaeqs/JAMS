@@ -250,10 +250,7 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 			currentStepChanges.addChange(new PipelinedSimulationChangePipeline(pipeline.clone()));
 		}
 
-		var pcv = pipeline.getPc(MultiCycleStep.FETCH);
-		boolean check = exitRequested || (isKernelMode()
-				? Integer.compareUnsigned(pcv, kernelStackBottom) > 0
-				: Integer.compareUnsigned(pcv, instructionStackBottom) > 0);
+		var check = false;
 
 		int amount = 0;
 		try {
@@ -265,6 +262,12 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 				amount++;
 				decode();
 				amount++;
+
+				var pcv = pipeline.getPc(MultiCycleStep.FETCH);
+				check = exitRequested || (isKernelMode()
+						? Integer.compareUnsigned(pcv, kernelStackBottom) > 0
+						: Integer.compareUnsigned(pcv, instructionStackBottom) > 0);
+
 				if (!check) {
 					if (!fetch()) {
 						amount++;
