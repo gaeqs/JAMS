@@ -45,8 +45,8 @@ public class PipelinedFlowEntry extends FlowEntry {
 		return startingCycle;
 	}
 
-	public void addStep(long cycle, MultiCycleStep step, double stepSize, long firstCycle) {
-		Label label = new Label(step.getTag());
+	public void addStep(long cycle, MultiCycleStep step, double stepSize, long firstCycle, boolean raw) {
+		Label label = new Label(raw ? "RAW" : step.getTag());
 		label.getStyleClass().add(step.getStyle());
 		label.setPrefWidth(stepSize);
 		label.setAlignment(Pos.CENTER);
@@ -66,7 +66,7 @@ public class PipelinedFlowEntry extends FlowEntry {
 		return false;
 	}
 
-	public boolean isEmpty () {
+	public boolean isEmpty() {
 		return labels.isEmpty();
 	}
 

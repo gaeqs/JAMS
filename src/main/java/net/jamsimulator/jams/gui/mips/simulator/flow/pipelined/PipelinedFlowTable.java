@@ -60,10 +60,9 @@ public class PipelinedFlowTable extends FlowTable {
 		if (toAdd.isEmpty()) return;
 		String start = String.valueOf(simulation.getRegisters().getValidRegistersStarts().stream().findAny().get());
 
-		Pipeline pipeline;
 		while (!toAdd.isEmpty()) {
 			var event = toAdd.pop();
-			pipeline = pipelines.pop();
+			var pipeline = pipelines.pop();
 			pipeline.getAll().forEach((step, instruction) -> {
 
 				var entry = entries.get(instruction.getInstructionId());
@@ -79,7 +78,8 @@ public class PipelinedFlowTable extends FlowTable {
 					}
 				}
 
-				entry.addStep(event.getCycle(), step, stepSize, firstCycle);
+				var raw = 5 - event.getShiftAmount() > step.ordinal();
+				entry.addStep(event.getCycle(), step, stepSize, firstCycle, raw);
 			});
 		}
 

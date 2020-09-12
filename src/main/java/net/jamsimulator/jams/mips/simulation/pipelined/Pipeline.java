@@ -17,6 +17,7 @@ public class Pipeline {
 	private final MultiCycleExecution<?>[] instructions;
 	private final int[] pcs;
 	private final RuntimeInstructionException[] exceptions;
+	private int lastShiftedAmount;
 
 	public Pipeline(PipelinedSimulation simulation, int initialPc) {
 		this.simulation = simulation;
@@ -68,6 +69,10 @@ public class Pipeline {
 		return true;
 	}
 
+	public int getLastShiftedAmount() {
+		return lastShiftedAmount;
+	}
+
 	public void reset(int initialPc) {
 		Arrays.fill(instructions, null);
 		Arrays.fill(pcs, 0);
@@ -77,9 +82,9 @@ public class Pipeline {
 
 	public void shift(int pc, int amount) {
 		if (simulation.getData().canCallEvents()) {
-			simulation.callEvent(new PipelineShiftEvent.Before(simulation, this, pc));
+			simulation.callEvent(new PipelineShiftEvent.Before(simulation, this, pc, amount));
 			shift0(pc, amount);
-			simulation.callEvent(new PipelineShiftEvent.After(simulation, this, pc));
+			simulation.callEvent(new PipelineShiftEvent.After(simulation, this, pc, amount));
 		} else {
 			shift0(pc, amount);
 		}
@@ -110,6 +115,7 @@ public class Pipeline {
 		System.arraycopy(instructions, 0, clone.instructions, 0, instructions.length);
 		System.arraycopy(pcs, 0, clone.pcs, 0, pcs.length);
 		System.arraycopy(exceptions, 0, clone.exceptions, 0, exceptions.length);
+		clone.lastShiftedAmount = lastShiftedAmount;
 		return clone;
 	}
 
@@ -117,9 +123,11 @@ public class Pipeline {
 		System.arraycopy(clone.instructions, 0, instructions, 0, instructions.length);
 		System.arraycopy(clone.pcs, 0, pcs, 0, pcs.length);
 		System.arraycopy(clone.exceptions, 0, exceptions, 0, exceptions.length);
+		lastShiftedAmount = clone.lastShiftedAmount;
 	}
 
 	private void shift0(int pc, int amount) {
+		lastShiftedAmount = amount;
 		if (amount == 0) return;
 		if (amount == 1) {
 			instructions[instructions.length - 1] = null;
