@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Represents the instructions' pipeline of a {@link PipelinedSimulation}.
+ */
 public class Pipeline {
 
 	private final PipelinedSimulation simulation;
@@ -19,6 +22,12 @@ public class Pipeline {
 	private final RuntimeInstructionException[] exceptions;
 	private int lastShiftedAmount;
 
+	/**
+	 * Creates the pipeline.
+	 *
+	 * @param simulation the {@link PipelinedSimulation} of this pipeline.
+	 * @param initialPc  the address of the first instruction to fetch.
+	 */
 	public Pipeline(PipelinedSimulation simulation, int initialPc) {
 		this.simulation = simulation;
 		instructions = new MultiCycleExecution[MultiCycleStep.values().length];
@@ -27,6 +36,14 @@ public class Pipeline {
 		pcs[0] = initialPc;
 	}
 
+	/**
+	 * Returns a {@link Map} containing all instructions inside this pipeline.
+	 * <p>
+	 * The returned {@link Map} is created at the execution of this method, as
+	 * instructions are stored inside an array in the implementation of the pipeline.
+	 *
+	 * @return the {@link Map}.
+	 */
 	public Map<MultiCycleStep, MultiCycleExecution<?>> getAll() {
 		var map = new HashMap<MultiCycleStep, MultiCycleExecution<?>>();
 		for (int i = 0; i < instructions.length; i++) {
@@ -35,26 +52,77 @@ public class Pipeline {
 		return map;
 	}
 
+	/**
+	 * Returns the {@link MultiCycleExecution instruction} located at the given {@link MultiCycleStep step}.
+	 * <p>
+	 * The instruction may be null.
+	 *
+	 * @param step the {@link MultiCycleStep step}.
+	 * @return the {@link MultiCycleExecution instruction} or {@code null}.
+	 */
 	public MultiCycleExecution<?> get(MultiCycleStep step) {
 		return instructions[step.ordinal()];
 	}
 
+	/**
+	 * Returns the {@link MultiCycleExecution instruction} located at the given {@link MultiCycleStep}, if present.
+	 *
+	 * @param step the {@link MultiCycleStep step}.
+	 * @return the {@link MultiCycleExecution instruction} or {@code Optional.empty()} if not present.
+	 */
 	public Optional<MultiCycleExecution<?>> getSafe(MultiCycleStep step) {
 		return Optional.ofNullable(instructions[step.ordinal()]);
 	}
 
+	/**
+	 * Returns the address of the {@link MultiCycleExecution instruction}
+	 * located at the given {@link MultiCycleStep step}.
+	 * <p>
+	 * If the instruction is null, this method returns 0.
+	 *
+	 * @param step the {@link MultiCycleStep step}.
+	 * @return the address.
+	 */
 	public int getPc(MultiCycleStep step) {
 		return pcs[step.ordinal()];
 	}
 
+	/**
+	 * Returns the {@link RuntimeInstructionException} of the {@link MultiCycleExecution instruction}
+	 * located at the given {@link MultiCycleStep step}.
+	 * <p>
+	 * This exception may be null if no exceptions were thrown or whether the instruction is {@code null}.
+	 *
+	 * @param step the {@link MultiCycleStep step}.
+	 * @return the {@link RuntimeInstructionException} or null.
+	 */
 	public RuntimeInstructionException getException(MultiCycleStep step) {
 		return exceptions[step.ordinal()];
 	}
 
+	/**
+	 * Returns the {@link RuntimeInstructionException} of the {@link MultiCycleExecution instruction}
+	 * located at the given {@link MultiCycleStep step} if present.
+	 * <p>
+	 * This exception may be {@code Optional.empty()} if no exceptions were thrown
+	 * or whether the instruction is {@code null}.
+	 *
+	 * @param step the {@link MultiCycleStep step}.
+	 * @return the {@link RuntimeInstructionException} if present.
+	 */
 	public Optional<RuntimeInstructionException> getExceptionSafe(MultiCycleStep step) {
 		return Optional.ofNullable(exceptions[step.ordinal()]);
 	}
 
+	/**
+	 * Returns the {@link MultiCycleStep step} of the {@link MultiCycleExecution instruction} that
+	 * matches the given address.
+	 * <p>
+	 * This step may be null if no {@link MultiCycleExecution instruction} matches the address.
+	 *
+	 * @param pc the address.
+	 * @return the {@link MultiCycleStep step}.
+	 */
 	public MultiCycleStep getStepOf(int pc) {
 		for (int i = 0; i < pcs.length; i++) {
 			if (pc == pcs[i]) return MultiCycleStep.values()[i];
@@ -62,6 +130,11 @@ public class Pipeline {
 		return null;
 	}
 
+	/**
+	 * Returns whether the pipeline has no instructions inside.
+	 *
+	 * @return whether the pipeline has no instructions inside.
+	 */
 	public boolean isEmpty() {
 		for (int pc : pcs) {
 			if (pc != 0) return false;
@@ -69,17 +142,40 @@ public class Pipeline {
 		return true;
 	}
 
+	/**
+	 * Returns the amount of shifted {@link MultiCycleExecution instruction}s on the last shift.
+	 *
+	 * @return the amount.
+	 * @see #shift(int, int)
+	 */
 	public int getLastShiftedAmount() {
 		return lastShiftedAmount;
 	}
 
+	/**
+	 * Resets the pipeline, removing any {@link MultiCycleExecution instruction}.
+	 *
+	 * @param initialPc the address of the first instruction to fetch.
+	 */
 	public void reset(int initialPc) {
 		Arrays.fill(instructions, null);
 		Arrays.fill(pcs, 0);
 		Arrays.fill(exceptions, null);
 		pcs[0] = initialPc;
+		lastShiftedAmount = 0;
 	}
 
+	/**
+	 * Shifts the {@link MultiCycleExecution instruction}s inside this pipeline to their next step.
+	 * <p>
+	 * Starting at the WriteBack step, this method will shift the given amount of instructions.
+	 * <p>
+	 * If {@code amount} is 0, no instructions will be shifted.
+	 * If {@code amount} is 5, all instructions will be shifted.
+	 *
+	 * @param pc     the address of the next instruction to fetch. This value will only be used if {@code amount} is 5.
+	 * @param amount the amount of instructions to move.
+	 */
 	public void shift(int pc, int amount) {
 		if (simulation.getData().canCallEvents()) {
 			simulation.callEvent(new PipelineShiftEvent.Before(simulation, this, pc, amount));
@@ -90,26 +186,55 @@ public class Pipeline {
 		}
 	}
 
+	/**
+	 * Fetches the given {@link MultiCycleExecution instruction}, placing it inside the pipeline.
+	 *
+	 * @param execution the {@link MultiCycleExecution instruction} to fetch.
+	 */
 	public void fetch(MultiCycleExecution<?> execution) {
 		instructions[0] = execution;
 	}
 
+	/**
+	 * Sets the given {@link RuntimeInstructionException} to the {@link MultiCycleExecution instruction}
+	 * located at the given {@link MultiCycleStep step}.
+	 * <p>
+	 * This method will override the stored {@link RuntimeInstructionException}.
+	 *
+	 * @param step the {@link MultiCycleStep step}.
+	 * @param ex   the {@link RuntimeInstructionException}.
+	 */
 	public void setException(MultiCycleStep step, RuntimeInstructionException ex) {
 		exceptions[step.ordinal()] = ex;
 	}
 
+	/**
+	 * Removes the {@link MultiCycleExecution instruction} to fetch.
+	 * <p>
+	 * This method is used when a branch jumps and forwarding is enabled or when an exit syscall is executed.
+	 */
 	public void removeFetch() {
 		instructions[0] = null;
 		pcs[0] = 0;
 		exceptions[0] = null;
 	}
 
+	/**
+	 * Removes the {@link MultiCycleExecution instruction} at the decode step.
+	 * <p>
+	 * This method is used when an exit syscall is executed.
+	 */
 	public void removeDecode() {
 		instructions[1] = null;
 		pcs[1] = 0;
 		exceptions[1] = null;
 	}
 
+	/**
+	 * Clones this pipeline.
+	 *
+	 * @return the cloned pipeline.
+	 */
 	public Pipeline clone() {
 		Pipeline clone = new Pipeline(simulation, 0);
 		System.arraycopy(instructions, 0, clone.instructions, 0, instructions.length);
@@ -119,6 +244,12 @@ public class Pipeline {
 		return clone;
 	}
 
+	/**
+	 * Matches the data of the given pipeline.
+	 *
+	 * @param clone the pipeline to match
+	 *
+	 */
 	public void restore(Pipeline clone) {
 		System.arraycopy(clone.instructions, 0, instructions, 0, instructions.length);
 		System.arraycopy(clone.pcs, 0, pcs, 0, pcs.length);
