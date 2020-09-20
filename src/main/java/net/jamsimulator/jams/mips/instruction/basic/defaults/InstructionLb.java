@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
@@ -51,6 +52,7 @@ public class InstructionLb extends BasicInstruction<InstructionLb.Assembled> {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -106,25 +108,25 @@ public class InstructionLb extends BasicInstruction<InstructionLb.Assembled> {
 
 		@Override
 		public void decode() {
-			Register base = register(instruction.getSourceRegister());
-			decodeResult = new int[]{base.getValue()};
+			requires(instruction.getSourceRegister());
+			lock(instruction.getTargetRegister());
 		}
 
 		@Override
 		public void execute() {
-			int address = decodeResult[0] + instruction.getImmediateAsSigned();
+			var address = value(instruction.getSourceRegister()) + instruction.getImmediateAsSigned();
 			executionResult = new int[]{address};
 		}
 
 		@Override
 		public void memory() {
 			memoryResult = new int[]{simulation.getMemory().getByte(executionResult[0])};
+			forward(instruction.getTargetRegister(), memoryResult[0], true);
 		}
 
 		@Override
 		public void writeBack() {
-			Register rt = register(instruction.getTargetRegister());
-			rt.setValue(memoryResult[0]);
+			setAndUnlock(instruction.getTargetRegister(), memoryResult[0]);
 		}
 	}
 }

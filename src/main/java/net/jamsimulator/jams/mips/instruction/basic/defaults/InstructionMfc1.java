@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI11Instruction;
@@ -52,6 +53,7 @@ public class InstructionMfc1 extends BasicIFPUInstruction<InstructionMfc1.Assemb
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, SUBCODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -103,24 +105,24 @@ public class InstructionMfc1 extends BasicIFPUInstruction<InstructionMfc1.Assemb
 
 		@Override
 		public void decode() {
-			Register rd = registerCop1(instruction.getDestinationRegister());
-			decodeResult = new int[]{rd.getValue()};
+			requiresCOP1(instruction.getDestinationRegister());
+			lock(instruction.getTargetRegister());
 		}
 
 		@Override
 		public void execute() {
-			executionResult = new int[]{decodeResult[0]};
+			executionResult = new int[]{valueCOP1(instruction.getDestinationRegister())};
+			forward(instruction.getTargetRegister(), executionResult[0], false);
 		}
 
 		@Override
 		public void memory() {
-
+			forward(instruction.getTargetRegister(), executionResult[0], true);
 		}
 
 		@Override
 		public void writeBack() {
-			Register rt = register(instruction.getTargetRegister());
-			rt.setValue(executionResult[0]);
+			setAndUnlock(instruction.getTargetRegister(), executionResult[0]);
 		}
 	}
 }

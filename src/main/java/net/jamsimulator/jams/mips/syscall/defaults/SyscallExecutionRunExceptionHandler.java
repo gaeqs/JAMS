@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.syscall.defaults;
 
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.simulation.Simulation;
@@ -14,6 +15,11 @@ public class SyscallExecutionRunExceptionHandler implements SyscallExecution {
 
 	@Override
 	public void execute(Simulation<?> simulation) {
+		throw new RuntimeInstructionException(InterruptCause.SYSCALL_EXCEPTION);
+	}
+
+	@Override
+	public void executeMultiCycle(MultiCycleExecution<?> execution) {
 		throw new RuntimeInstructionException(InterruptCause.SYSCALL_EXCEPTION);
 	}
 

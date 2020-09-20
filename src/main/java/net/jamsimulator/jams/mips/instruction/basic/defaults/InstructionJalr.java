@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
@@ -52,6 +53,7 @@ public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -94,12 +96,8 @@ public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled
 			Register rs = register(instruction.getSourceRegister());
 			Register rd = register(instruction.getDestinationRegister());
 
-			int temp = rs.getValue();
-
-			//TODO DELAY SLOT
-			rd.setValue(pc().getValue());
-
-			pc().setValue(temp);
+			pc().setValue(rs.getValue());
+			rd.setValue(getAddress() + 4);
 		}
 	}
 
@@ -111,24 +109,38 @@ public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled
 
 		@Override
 		public void decode() {
-			decodeResult = new int[]{pc().getValue(), register(instruction.getSourceRegister()).getValue()};
+			requires(instruction.getSourceRegister());
+			lock(pc());
+			lock(instruction.getDestinationRegister());
+
+			if (solveBranchOnDecode()) {
+				jump(value(instruction.getSourceRegister()));
+			}
 		}
 
 		@Override
 		public void execute() {
-			executionResult = new int[]{decodeResult[0]};
-			pc().setValue(executionResult[1]);
+			if (solveBranchOnDecode()) {
+				//We save the source value before any modification.
+				executionResult = new int[]{value(instruction.getSourceRegister())};
+
+				forward(instruction.getDestinationRegister(), getAddress() + 4, false);
+			}
 		}
 
 		@Override
 		public void memory() {
-
+			if (solveBranchOnDecode()) {
+				forward(instruction.getDestinationRegister(), getAddress() + 4, true);
+			}
 		}
 
 		@Override
 		public void writeBack() {
-			//TODO DELAY SLOT
-			register(31).setValue(executionResult[0]);
+			if (!solveBranchOnDecode()) {
+				jump(executionResult[0]);
+			}
+			setAndUnlock(instruction.getDestinationRegister(), getAddress() + 4);
 		}
 	}
 }

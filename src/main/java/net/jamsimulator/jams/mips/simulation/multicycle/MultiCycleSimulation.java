@@ -125,6 +125,11 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 	}
 
 	@Override
+	public void requestExit() {
+		exit();
+	}
+
+	@Override
 	public void reset() {
 		super.reset();
 		if (changes != null) {
@@ -309,6 +314,7 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 			throw new RuntimeAddressException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION, pc);
 		}
 
+		newExecution.setInstructionId(executedInstructions);
 		currentStep = MultiCycleStep.DECODE;
 	}
 

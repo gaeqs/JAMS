@@ -4,6 +4,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
@@ -43,7 +44,27 @@ public class SyscallExecutionReadFloat implements SyscallExecution {
 			} catch (NumberFormatException ignore) {
 			}
 		}
+	}
 
+	@Override
+	public void executeMultiCycle(MultiCycleExecution<?> execution) {
+		var simulation = execution.getSimulation();
+
+		boolean done = false;
+		while (!done) {
+			String value = simulation.popInputOrLock();
+			if (simulation.checkThreadInterrupted()) return;
+
+			try {
+				float input = Float.parseFloat(value);
+				execution.setAndUnlock(register, Float.floatToIntBits(input));
+
+				simulation.getConsole().printDone(value);
+				if (lineJump) simulation.getConsole().println();
+				done = true;
+			} catch (NumberFormatException ignore) {
+			}
+		}
 	}
 
 	public static class Builder extends SyscallExecutionBuilder<SyscallExecutionReadFloat> {

@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.mips.flow.multicycle;
+package net.jamsimulator.jams.gui.mips.simulator.flow.multicycle;
 
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -7,7 +7,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.mips.flow.FlowTable;
+import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
+import net.jamsimulator.jams.gui.mips.simulator.flow.SegmentedFlowEntry;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
@@ -22,7 +23,7 @@ import java.util.Map;
 public class MultiCycleFlowTable extends FlowTable {
 
 	private LinkedList<MultiCycleStepEvent.After> toAdd;
-	private Map<Long, MultiCycleFlowEntry> entries;
+	private Map<Long, SegmentedFlowEntry> entries;
 
 	private long firstCycle;
 
@@ -58,28 +59,28 @@ public class MultiCycleFlowTable extends FlowTable {
 		String start = String.valueOf(simulation.getRegisters().getValidRegistersStarts().stream().findAny().get());
 
 		MultiCycleStepEvent.After event;
-		MultiCycleFlowEntry entry;
+		SegmentedFlowEntry entry;
 		while (!toAdd.isEmpty()) {
 			event = toAdd.pop();
 			entry = entries.get(event.getInstructionNumber());
 			if (entry == null) {
-				entry = new MultiCycleFlowEntry(getChildren().size(), scrollPane, this,
+				entry = new SegmentedFlowEntry(getChildren().size(), this,
 						event.getInstruction(), start, event.getInstructionNumber(), event.getCycle());
 				entries.put(event.getInstructionNumber(), entry);
 				getChildren().add(entry);
 			}
 
 			if (entries.size() > maxItems) {
-				MultiCycleFlowEntry toRemove = (MultiCycleFlowEntry) getChildren().remove(0);
+				SegmentedFlowEntry toRemove = (SegmentedFlowEntry) getChildren().remove(0);
 				entries.remove(toRemove.getInstructionNumber());
 			}
 
-			entry.addStep(event.getCycle(), event.getExecutedStep(), stepSize, firstCycle);
+			entry.addStep(event.getCycle(), event.getExecutedStep(), stepSize, firstCycle, false);
 		}
 
 
 		long localCycle = firstCycle;
-		firstCycle = ((MultiCycleFlowEntry) getChildren().get(0)).getStartingCycle();
+		firstCycle = ((SegmentedFlowEntry) getChildren().get(0)).getStartingCycle();
 
 		if (localCycle != firstCycle) {
 			refresh();
@@ -114,8 +115,8 @@ public class MultiCycleFlowTable extends FlowTable {
 
 	@Listener
 	private void onSimulationUndo(SimulationUndoStepEvent.After event) {
-		MultiCycleFlowEntry cycle = ((MultiCycleFlowEntry) getChildren().get(getChildren().size() - 1));
-		if (cycle.removeCycle(event.getUndoCycle())) {
+		SegmentedFlowEntry cycle = ((SegmentedFlowEntry) getChildren().get(getChildren().size() - 1));
+		if (cycle.removeCycle(event.getUndoCycle()) && cycle.isEmpty()) {
 			entries.remove(cycle.getInstructionNumber());
 			getChildren().remove(getChildren().size() - 1);
 		}
@@ -124,8 +125,8 @@ public class MultiCycleFlowTable extends FlowTable {
 	private void refresh() {
 		int index = 0;
 		for (Node child : getChildren()) {
-			if (child instanceof MultiCycleFlowEntry) {
-				((MultiCycleFlowEntry) child).refresh(index++, stepSize, firstCycle);
+			if (child instanceof SegmentedFlowEntry) {
+				((SegmentedFlowEntry) child).refresh(index++, stepSize, firstCycle);
 			}
 		}
 	}

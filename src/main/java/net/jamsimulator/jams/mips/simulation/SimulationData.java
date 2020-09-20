@@ -17,16 +17,18 @@ public class SimulationData {
 	protected final File workingDirectory;
 	protected final Console console;
 	protected final Map<Integer, String> originalInstructions;
-	protected final boolean callEvents, undoEnabled;
+	protected final boolean callEvents, undoEnabled, enableForwarding, solveBranchOnDecode;
 
 	public SimulationData(SimulationSyscallExecutions syscallExecutions, File workingDirectory, Console console,
-						  Map<Integer, String> originalInstructions, boolean callEvents, boolean undoEnabled) {
+						  Map<Integer, String> originalInstructions, boolean callEvents, boolean undoEnabled, boolean enableForwarding, boolean solveBranchOnDecode) {
 		this.syscallExecutions = syscallExecutions;
 		this.workingDirectory = workingDirectory;
 		this.console = console;
 		this.originalInstructions = originalInstructions;
 		this.callEvents = callEvents;
 		this.undoEnabled = undoEnabled;
+		this.enableForwarding = enableForwarding;
+		this.solveBranchOnDecode = solveBranchOnDecode;
 	}
 
 	public SimulationData(MIPSSimulationConfiguration configuration, File workingDirectory, Console console, Map<Integer, String> originalInstructions) {
@@ -38,8 +40,11 @@ public class SimulationData {
 		this.console = console;
 		this.originalInstructions = originalInstructions;
 
-		this.callEvents = configuration.isCallEvents();
+		this.callEvents = configuration.shouldCallEvents();
 		this.undoEnabled = configuration.isUndoEnabled() && callEvents;
+		this.enableForwarding = configuration.isForwardingEnabled();
+
+		this.solveBranchOnDecode = configuration.shouldSolveBranchOnDecode();
 	}
 
 	/**
@@ -102,5 +107,23 @@ public class SimulationData {
 	 */
 	public boolean isUndoEnabled() {
 		return undoEnabled;
+	}
+
+	/**
+	 * Allows instructions to forward data on a pipelined architecture.
+	 *
+	 * @return whether instructions can forward data.
+	 */
+	public boolean isForwardingEnabled() {
+		return enableForwarding;
+	}
+
+	/**
+	 * Allows to solve branches on decode. This only works on architectures with multiple steps.
+	 *
+	 * @return whether branches should be solved on the decode step.
+	 */
+	public boolean shouldSolveBranchesOnDecode() {
+		return solveBranchOnDecode;
 	}
 }

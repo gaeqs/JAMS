@@ -38,23 +38,27 @@ import net.jamsimulator.jams.mips.simulation.singlecycle.SingleCycleSimulation;
  * execution of an instruction on the same cycle. This makes this architecture slow,
  * having high seconds per cycle.
  */
-public final class SingleCycleArchitecture extends Architecture {
+public class SingleCycleArchitecture extends Architecture {
 
 	public static final SingleCycleArchitecture INSTANCE = new SingleCycleArchitecture();
 
 	public static final String NAME = "Single-cycle";
 
-	private SingleCycleArchitecture() {
+	protected SingleCycleArchitecture(String name) {
+		super(name);
+	}
+
+	protected SingleCycleArchitecture() {
 		super(NAME);
 	}
 
 	@Override
-	public Simulation<SingleCycleArchitecture> createSimulation(InstructionSet instructionSet,
-																Registers registers,
-																Memory memory,
-																int instructionStackBottom,
-																int kernelStackBottom,
-																SimulationData data) {
+	public Simulation<? extends SingleCycleArchitecture> createSimulation(InstructionSet instructionSet,
+																		  Registers registers,
+																		  Memory memory,
+																		  int instructionStackBottom,
+																		  int kernelStackBottom,
+																		  SimulationData data) {
 		return new SingleCycleSimulation(this, instructionSet, registers, memory, instructionStackBottom, kernelStackBottom, data);
 	}
 }

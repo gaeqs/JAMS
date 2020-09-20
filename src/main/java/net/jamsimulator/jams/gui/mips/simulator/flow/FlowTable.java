@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.mips.flow;
+package net.jamsimulator.jams.gui.mips.simulator.flow;
 
 import javafx.geometry.Bounds;
 import javafx.scene.control.ScrollPane;
@@ -9,10 +9,12 @@ import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.mips.flow.multicycle.MultiCycleFlowTable;
-import net.jamsimulator.jams.gui.mips.flow.singlecycle.SingleCycleFlowTable;
+import net.jamsimulator.jams.gui.mips.simulator.flow.multicycle.MultiCycleFlowTable;
+import net.jamsimulator.jams.gui.mips.simulator.flow.pipelined.PipelinedFlowTable;
+import net.jamsimulator.jams.gui.mips.simulator.flow.singlecycle.SingleCycleFlowTable;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import org.reactfx.util.TriFunction;
@@ -29,21 +31,43 @@ public class FlowTable extends VBox implements ActionRegion {
 
 	//region static
 
-	public static Map<Architecture, TriFunction<Simulation<?>, ScrollPane, Slider, FlowTable>> FLOW_PER_ARCHITECTURE = new HashMap<>();
+	private static final Map<Architecture, TriFunction<Simulation<?>, ScrollPane, Slider, FlowTable>> FLOW_PER_ARCHITECTURE = new HashMap<>();
 
 	static {
 		FLOW_PER_ARCHITECTURE.put(SingleCycleArchitecture.INSTANCE, (s, p, sl) ->
 				new SingleCycleFlowTable((Simulation<? extends SingleCycleArchitecture>) s, p, sl));
 		FLOW_PER_ARCHITECTURE.put(MultiCycleArchitecture.INSTANCE, (s, p, sl) ->
 				new MultiCycleFlowTable((Simulation<? extends MultiCycleArchitecture>) s, p, sl));
+		FLOW_PER_ARCHITECTURE.put(PipelinedArchitecture.INSTANCE, (s, p, sl) ->
+				new PipelinedFlowTable((Simulation<? extends MultiCycleArchitecture>) s, p, sl));
 	}
 
+	/**
+	 * Registers a flow table builder for the given {@link Architecture}.
+	 *
+	 * @param architecture the {@link Architecture}.
+	 * @param builder      the builder.
+	 */
 	public static void registerFlow(Architecture architecture, TriFunction<Simulation<?>, ScrollPane, Slider, FlowTable> builder) {
 		FLOW_PER_ARCHITECTURE.put(architecture, builder);
 	}
 
-	public static FlowTable createFlow(Architecture architecture, Simulation<?> simulation, ScrollPane pane, Slider slider) {
-		TriFunction<Simulation<?>, ScrollPane, Slider, FlowTable> builder = FLOW_PER_ARCHITECTURE.get(architecture);
+	/**
+	 * Creates a flow table for the given {@link Simulation}.
+	 * <p>
+	 * If the simulation's {@link Architecture} has no flow table registered,
+	 * an empty flow table will be created.
+	 * <p>
+	 * Use {@link #registerFlow(Architecture, TriFunction)} to register a flow table.
+	 *
+	 * @param simulation the simulation.
+	 * @param pane       the {@link ScrollPane} where this flow table will be inside of.
+	 * @param slider     the {@link Slider} that controls the size of the entries.
+	 * @return the flow table.
+	 */
+	public static FlowTable createFlow(Simulation<?> simulation, ScrollPane pane, Slider slider) {
+		TriFunction<Simulation<?>, ScrollPane, Slider, FlowTable> builder =
+				FLOW_PER_ARCHITECTURE.get(simulation.getArchitecture());
 		if (builder == null) return new FlowTable(simulation, pane, slider);
 		return builder.apply(simulation, pane, slider);
 	}
@@ -57,6 +81,13 @@ public class FlowTable extends VBox implements ActionRegion {
 
 	protected FlowEntry selected;
 
+	/**
+	 * Creates the flow table.
+	 *
+	 * @param simulation the simulation.
+	 * @param scrollPane the {@link ScrollPane} where this flow table will be inside of.
+	 * @param sizeSlider the {@link Slider} that controls the size of the entries.
+	 */
 	public FlowTable(Simulation<?> simulation, ScrollPane scrollPane, Slider sizeSlider) {
 		this.simulation = simulation;
 		this.scrollPane = scrollPane;
@@ -119,6 +150,8 @@ public class FlowTable extends VBox implements ActionRegion {
 		return RegionTags.MIPS_SIMULATION.equals(region);
 	}
 
+	//region mouse scrolling
+
 	//MOUSE SCROLL VARIABLES
 	private double x, y;
 	private double h, v;
@@ -151,5 +184,7 @@ public class FlowTable extends VBox implements ActionRegion {
 			}
 		}
 	}
+
+	//endregion
 
 }

@@ -89,6 +89,11 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 	}
 
 	@Override
+	public void requestExit() {
+		exit();
+	}
+
+	@Override
 	public void reset() {
 		super.reset();
 		if (changes != null) {

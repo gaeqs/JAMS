@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
@@ -49,6 +50,7 @@ public class InstructionJal extends BasicInstruction<InstructionJal.Assembled> {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -85,9 +87,8 @@ public class InstructionJal extends BasicInstruction<InstructionJal.Assembled> {
 
 		@Override
 		public void execute() {
-			//TODO DELAY SLOT
-			register(31).setValue(pc().getValue());
-			pc().setValue(instruction.getAbsoluteAddress(pc().getValue()));
+			register(31).setValue(getAddress() + 4);
+			pc().setValue(instruction.getAbsoluteAddress(getAddress() + 4));
 		}
 	}
 
@@ -99,24 +100,34 @@ public class InstructionJal extends BasicInstruction<InstructionJal.Assembled> {
 
 		@Override
 		public void decode() {
-			decodeResult = new int[]{pc().getValue()};
+			lock(pc());
+			lock(31);
+
+			if (solveBranchOnDecode()) {
+				jump(instruction.getAbsoluteAddress(getAddress() + 4));
+			}
 		}
 
 		@Override
 		public void execute() {
-			executionResult = new int[]{decodeResult[0]};
-			pc().setValue(instruction.getAbsoluteAddress(pc().getValue()));
+			if (solveBranchOnDecode()) {
+				forward(31, getAddress() + 4, false);
+			}
 		}
 
 		@Override
 		public void memory() {
-
+			if (solveBranchOnDecode()) {
+				forward(31, getAddress() + 4, true);
+			}
 		}
 
 		@Override
 		public void writeBack() {
-			//TODO DELAY SLOT
-			register(31).setValue(executionResult[0]);
+			if (!solveBranchOnDecode()) {
+				jump(instruction.getAbsoluteAddress(getAddress() + 4));
+			}
+			setAndUnlock(31, getAddress() + 4);
 		}
 	}
 }

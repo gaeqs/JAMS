@@ -1,9 +1,9 @@
 package net.jamsimulator.jams.mips.syscall.defaults;
 
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
@@ -24,10 +24,23 @@ public class SyscallExecutionExitWithValue implements SyscallExecution {
 		Register register = simulation.getRegisters().getRegister(this.register).orElse(null);
 		if (register == null) throw new IllegalStateException("Register " + this.register + " not found");
 
-		simulation.exit();
-		if(simulation .getConsole() != null) {
+		simulation.requestExit();
+		if (simulation.getConsole() != null) {
 			simulation.getConsole().println();
 			simulation.getConsole().printDoneLn("Execution finished with code " + register.getValue());
+			simulation.getConsole().println();
+		}
+	}
+
+	@Override
+	public void executeMultiCycle(MultiCycleExecution<?> execution) {
+		var value = execution.value(register);
+		var simulation = execution.getSimulation();
+
+		simulation.exit();
+		if (simulation.getConsole() != null) {
+			simulation.getConsole().println();
+			simulation.getConsole().printDoneLn("Execution finished with code " + value);
 			simulation.getConsole().println();
 		}
 	}

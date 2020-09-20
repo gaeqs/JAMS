@@ -35,13 +35,13 @@ import net.jamsimulator.jams.utils.Validate;
 
 public abstract class InstructionExecution<Arch extends Architecture, Inst extends AssembledInstruction> {
 
-	protected final Simulation<Arch> simulation;
+	protected final Simulation<? extends Arch> simulation;
 	protected final Registers registers;
 	protected final Inst instruction;
 
 	protected final int address;
 
-	public InstructionExecution(Simulation<Arch> simulation, Inst instruction, int address) {
+	public InstructionExecution(Simulation<? extends Arch> simulation, Inst instruction, int address) {
 		Validate.notNull(simulation, "Simulation cannot be null!");
 		Validate.notNull(instruction, "Instruction cannot be null!");
 		this.simulation = simulation;
@@ -55,7 +55,7 @@ public abstract class InstructionExecution<Arch extends Architecture, Inst exten
 	 *
 	 * @return the {@link Simulation}.
 	 */
-	public Simulation<Arch> getSimulation() {
+	public Simulation<? extends Arch> getSimulation() {
 		return simulation;
 	}
 

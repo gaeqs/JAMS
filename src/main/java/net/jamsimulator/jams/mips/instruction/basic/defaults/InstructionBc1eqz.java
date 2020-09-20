@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledIFPUInstruction;
@@ -53,6 +54,7 @@ public class InstructionBc1eqz extends BasicIFPUInstruction<InstructionBc1eqz.As
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, BASE_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -100,20 +102,24 @@ public class InstructionBc1eqz extends BasicIFPUInstruction<InstructionBc1eqz.As
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address, false, false);
+			super(simulation, instruction, address, false, !simulation.getData().shouldSolveBranchesOnDecode());
 		}
 
 		@Override
 		public void decode() {
-			Register rt = registerCop1(instruction.getTargetRegister());
-			decodeResult = new int[]{rt.getValue()};
+			requiresCOP1(instruction.getTargetRegister());
+			lock(pc());
+
+			if (solveBranchOnDecode()) {
+				if ((valueCOP1(instruction.getTargetRegister()) & 1) == 0) {
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+				} else unlock(pc());
+			}
 		}
 
 		@Override
 		public void execute() {
-			executionResult = new int[0];
-			if ((decodeResult[0] & 1) != 0) return;
-			pc().setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+
 		}
 
 		@Override
@@ -123,6 +129,11 @@ public class InstructionBc1eqz extends BasicIFPUInstruction<InstructionBc1eqz.As
 
 		@Override
 		public void writeBack() {
+			if (!solveBranchOnDecode()) {
+				if ((valueCOP1(instruction.getTargetRegister()) & 1) == 0) {
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+				} else unlock(pc());
+			}
 		}
 	}
 }

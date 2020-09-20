@@ -12,8 +12,8 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.bar.BarType;
 import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.image.icon.Icons;
-import net.jamsimulator.jams.gui.mips.flow.FlowTable;
 import net.jamsimulator.jams.gui.mips.simulator.execution.ExecutionButtons;
+import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionsTable;
 import net.jamsimulator.jams.gui.mips.simulator.memory.MemoryPane;
 import net.jamsimulator.jams.gui.mips.simulator.register.COP0RegistersTable;
@@ -128,7 +128,7 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 		Slider slider = new Slider(10, 100, 40);
 
 		ScrollPane scroll = new ScrollPane();
-		FlowTable flow = FlowTable.createFlow(simulation.getArchitecture(), simulation, scroll, slider);
+		FlowTable flow = FlowTable.createFlow(simulation, scroll, slider);
 		scroll.setContent(new ScalableNode(flow, scroll));
 		scroll.setFitToHeight(true);
 

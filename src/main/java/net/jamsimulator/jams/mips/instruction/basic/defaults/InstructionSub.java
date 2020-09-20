@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
@@ -53,6 +54,7 @@ public class InstructionSub extends BasicRInstruction<InstructionSub.Assembled> 
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -115,24 +117,30 @@ public class InstructionSub extends BasicRInstruction<InstructionSub.Assembled> 
 
 		@Override
 		public void decode() {
-			Register rs = register(instruction.getSourceRegister());
-			Register rt = register(instruction.getTargetRegister());
-			decodeResult = new int[]{rs.getValue(), rt.getValue()};
+			requires(instruction.getSourceRegister());
+			requires(instruction.getTargetRegister());
+			lock(instruction.getDestinationRegister());
 		}
 
 		@Override
 		public void execute() {
-			executionResult = new int[]{Math.subtractExact(decodeResult[0], decodeResult[1])};
+			try {
+				var result = Math.subtractExact(value(instruction.getSourceRegister()), value(instruction.getTargetRegister()));
+				executionResult = new int[]{result};
+				forward(instruction.getDestinationRegister(), result, false);
+			} catch (ArithmeticException ex) {
+				error(InterruptCause.ARITHMETIC_OVERFLOW_EXCEPTION, ex);
+			}
 		}
 
 		@Override
 		public void memory() {
-
+			forward(instruction.getDestinationRegister(), executionResult[0], true);
 		}
 
 		@Override
 		public void writeBack() {
-			register(instruction.getDestinationRegister()).setValue(executionResult[0]);
+			setAndUnlock(instruction.getDestinationRegister(), executionResult[0]);
 		}
 	}
 }

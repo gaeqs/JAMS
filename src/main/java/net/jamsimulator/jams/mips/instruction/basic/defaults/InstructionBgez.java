@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
@@ -52,6 +53,7 @@ public class InstructionBgez extends BasicRIInstruction<InstructionBgez.Assemble
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -99,20 +101,23 @@ public class InstructionBgez extends BasicRIInstruction<InstructionBgez.Assemble
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address, false, false);
+			super(simulation, instruction, address, false, !simulation.getData().shouldSolveBranchesOnDecode());
 		}
 
 		@Override
 		public void decode() {
-			Register rs = register(instruction.getSourceRegister());
-			decodeResult = new int[]{rs.getValue()};
+			requires(instruction.getSourceRegister());
+			lock(pc());
+
+			if (solveBranchOnDecode()) {
+				if (value(instruction.getSourceRegister()) >= 0) {
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+				} else unlock(pc());
+			}
 		}
 
 		@Override
 		public void execute() {
-			executionResult = new int[0];
-			if (decodeResult[0] < 0) return;
-			pc().setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
 		}
 
 		@Override
@@ -122,6 +127,11 @@ public class InstructionBgez extends BasicRIInstruction<InstructionBgez.Assemble
 
 		@Override
 		public void writeBack() {
+			if (!solveBranchOnDecode()) {
+				if (value(instruction.getSourceRegister()) >= 0) {
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+				} else unlock(pc());
+			}
 		}
 	}
 }

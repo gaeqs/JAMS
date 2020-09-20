@@ -4,6 +4,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
@@ -50,6 +51,30 @@ public class SyscallExecutionPrintDouble implements SyscallExecution {
 
 		simulation.getConsole().print(toPrint);
 		if (lineJump) simulation.getConsole().println();
+	}
+
+	@Override
+	public void executeMultiCycle(MultiCycleExecution<?> execution) {
+		if (register % 2 != 0) {
+			throw new IllegalStateException("Register " + register + " has not an even identifier!");
+		}
+
+		var value1 = execution.valueCOP1(register);
+		var value2 = execution.valueCOP1(register + 1);
+
+		String toPrint;
+		if (printHex) {
+			long value = (((long) value2) << 32) + value1;
+			toPrint = "0x" + Long.toHexString(value);
+		} else {
+			double value = NumericUtils.intsToDouble(value1, value2);
+			toPrint = String.valueOf(value);
+		}
+
+		var console = execution.getSimulation().getConsole();
+
+		console.print(toPrint);
+		if (lineJump) console.println();
 	}
 
 	public static class Builder extends SyscallExecutionBuilder<SyscallExecutionPrintDouble> {

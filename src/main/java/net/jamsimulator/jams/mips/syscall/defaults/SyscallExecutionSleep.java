@@ -2,6 +2,7 @@ package net.jamsimulator.jams.mips.syscall.defaults;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationLockEvent;
@@ -27,6 +28,18 @@ public class SyscallExecutionSleep implements SyscallExecution {
 		simulation.callEvent(new SimulationLockEvent(simulation));
 		try {
 			Thread.sleep(register.getValue());
+		} catch (InterruptedException e) {
+			simulation.interruptThread();
+		}
+	}
+
+	@Override
+	public void executeMultiCycle(MultiCycleExecution<?> execution) {
+		var simulation = execution.getSimulation();
+		var amount = execution.value(register);
+		simulation.callEvent(new SimulationLockEvent(simulation));
+		try {
+			Thread.sleep(amount);
 		} catch (InterruptedException e) {
 			simulation.interruptThread();
 		}

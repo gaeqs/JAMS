@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.syscall;
 
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionRunExceptionHandler;
@@ -32,6 +33,13 @@ public class SimulationSyscallExecutions {
 
 		SyscallExecution execution = executions.getOrDefault(v0.getValue(), defaultExecution);
 		execution.execute(simulation);
+	}
+
+
+	public void executeSyscallMultiCycle(MultiCycleExecution<?> execution) {
+		var value = execution.value(2);
+		var syscall = executions.getOrDefault(value, defaultExecution);
+		syscall.executeMultiCycle(execution);
 	}
 
 }

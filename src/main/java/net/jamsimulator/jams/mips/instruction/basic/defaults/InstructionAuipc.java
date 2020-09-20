@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
@@ -53,6 +54,7 @@ public class InstructionAuipc extends BasicPCREL16Instruction<InstructionAuipc.A
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, PCREL_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -92,7 +94,7 @@ public class InstructionAuipc extends BasicPCREL16Instruction<InstructionAuipc.A
 		public void execute() {
 			Register rs = register(instruction.getSourceRegister());
 
-			int result = pc().getValue() + (instruction.getImmediate() << 16);
+			int result = getAddress() + 4  + (instruction.getImmediate() << 16);
 			rs.setValue(result);
 		}
 	}
@@ -105,22 +107,23 @@ public class InstructionAuipc extends BasicPCREL16Instruction<InstructionAuipc.A
 
 		@Override
 		public void decode() {
-			decodeResult = new int[0];
+			lock(instruction.getSourceRegister());
 		}
 
 		@Override
 		public void execute() {
-			executionResult = new int[]{pc().getValue() + (instruction.getImmediate() << 16)};
+			executionResult = new int[]{getAddress() + 4  + (instruction.getImmediate() << 16)};
+			forward(instruction.getSourceRegister(), executionResult[0], false);
 		}
 
 		@Override
 		public void memory() {
-
+			forward(instruction.getSourceRegister(), executionResult[0], true);
 		}
 
 		@Override
 		public void writeBack() {
-			register(instruction.getSourceRegister()).setValue(executionResult[0]);
+			setAndUnlock(instruction.getSourceRegister(), executionResult[0]);
 		}
 	}
 }

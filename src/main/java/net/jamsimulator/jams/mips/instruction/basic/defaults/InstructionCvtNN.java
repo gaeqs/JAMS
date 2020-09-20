@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
@@ -44,18 +45,19 @@ public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Asse
 	public static final String MNEMONIC = "cvt.%s.%s";
 	public static final int OPERATION_CODE = 0b010001;
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER};
-
 	private final FmtNumbers to, from;
 
 	public InstructionCvtNN(FmtNumbers to, FmtNumbers from) {
 		super(String.format(NAME, from.getName(), to.getName()),
 				String.format(MNEMONIC, to.getMnemonic(), from.getMnemonic()),
-				PARAMETER_TYPES, OPERATION_CODE, to.getCvt(), from.getFmt());
+				new ParameterType[]{to.requiresEvenRegister() ? ParameterType.EVEN_FLOAT_REGISTER : ParameterType.FLOAT_REGISTER,
+						from.requiresEvenRegister() ? ParameterType.EVEN_FLOAT_REGISTER : ParameterType.FLOAT_REGISTER},
+				OPERATION_CODE, to.getCvt(), from.getFmt());
 		this.to = to;
 		this.from = from;
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -133,41 +135,48 @@ public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Asse
 
 		@Override
 		public void decode() {
-			if (instruction.to.requiresEvenRegister()) {
-				if (instruction.getDestinationRegister() % 2 != 0)
-					evenFloatRegisterException();
-			}
+			if (instruction.to.requiresEvenRegister() && instruction.getDestinationRegister() % 2 != 0)
+				evenFloatRegisterException();
+			if (instruction.from.requiresEvenRegister() && instruction.getSourceRegister() % 2 != 0)
+				evenFloatRegisterException();
+
+			requiresCOP1(instruction.getSourceRegister());
 			if (instruction.from.requiresEvenRegister()) {
-				if (instruction.getSourceRegister() % 2 != 0)
-					evenFloatRegisterException();
+				requiresCOP1(instruction.getSourceRegister() + 1);
 			}
 
-
-			Register from0 = registerCop1(instruction.getSourceRegister());
-			Register from1 = instruction.from.requiresEvenRegister() ? registerCop1(instruction.getSourceRegister() + 1) : null;
-
-			decodeResult = new int[]{from0.getValue(), from1 == null ? 0 : from1.getValue()};
+			lockCOP1(instruction.getDestinationRegister());
+			if (instruction.to.requiresEvenRegister()) {
+				lockCOP1(instruction.getDestinationRegister() + 1);
+			}
 		}
 
 		@Override
 		public void execute() {
-			Number number = instruction.from.from(decodeResult[0], decodeResult[1]);
+			var extension = instruction.from.requiresEvenRegister()
+					? valueCOP1(instruction.getSourceRegister() + 1) : 0;
+			Number number = instruction.from.from(valueCOP1(instruction.getSourceRegister()), extension);
 			executionResult = instruction.to.to(number);
+
+			forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
+			if (instruction.to.requiresEvenRegister()) {
+				forwardCOP1(instruction.getDestinationRegister(), executionResult[1], false);
+			}
 		}
 
 		@Override
 		public void memory() {
-
+			forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
+			if (instruction.to.requiresEvenRegister()) {
+				forwardCOP1(instruction.getDestinationRegister(), executionResult[1], true);
+			}
 		}
 
 		@Override
 		public void writeBack() {
-			Register to0 = registerCop1(instruction.getDestinationRegister());
-			to0.setValue(executionResult[0]);
-
-			if (executionResult.length == 2) {
-				Register to1 = registerCop1(instruction.getDestinationRegister() + 1);
-				to1.setValue(executionResult[1]);
+			setAndUnlockCOP1(instruction.getDestinationRegister(), executionResult[0]);
+			if (instruction.to.requiresEvenRegister()) {
+				setAndUnlockCOP1(instruction.getDestinationRegister() + 1, executionResult[1]);
 			}
 		}
 	}

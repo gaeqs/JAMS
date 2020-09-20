@@ -38,23 +38,27 @@ import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleSimulation;
  * execution of an instruction on the same cycle. This makes this architecture slow,
  * having high seconds per cycle.
  */
-public final class MultiCycleArchitecture extends Architecture {
+public class MultiCycleArchitecture extends Architecture {
 
 	public static final MultiCycleArchitecture INSTANCE = new MultiCycleArchitecture();
 
 	public static final String NAME = "Multi-cycle";
 
-	private MultiCycleArchitecture() {
+	protected MultiCycleArchitecture(String name) {
+		super(name);
+	}
+
+	protected MultiCycleArchitecture() {
 		super(NAME);
 	}
 
 	@Override
-	public Simulation<MultiCycleArchitecture> createSimulation(InstructionSet instructionSet,
-															   Registers registers,
-															   Memory memory,
-															   int instructionStackBottom,
-															   int kernelStackBottom,
-															   SimulationData data) {
+	public Simulation<? extends MultiCycleArchitecture> createSimulation(InstructionSet instructionSet,
+																		 Registers registers,
+																		 Memory memory,
+																		 int instructionStackBottom,
+																		 int kernelStackBottom,
+																		 SimulationData data) {
 		return new MultiCycleSimulation(this, instructionSet, registers, memory, instructionStackBottom, kernelStackBottom, data);
 	}
 }

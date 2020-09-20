@@ -46,6 +46,8 @@ public class ConfigurationGeneralTab extends VBox {
 
 		generateCallEventsCheckBox();
 		generateEnableUndoCheckBox();
+		generateEnableForwardingCheckBox();
+		generateSolveBranchOnDecodeCheckBox();
 	}
 
 	private void generateNameHBox() {
@@ -125,9 +127,9 @@ public class ConfigurationGeneralTab extends VBox {
 		box.setSpacing(5);
 
 		CheckBox checkBox = new CheckBox();
-		checkBox.setSelected(configuration.isCallEvents());
+		checkBox.setSelected(configuration.shouldCallEvents());
 		checkBox.selectedProperty().addListener((obs, old, val) -> {
-			configuration.setCallEvents(val);
+			configuration.setShouldCallEvents(val);
 			enableUndoHBox.setDisable(!val);
 		});
 
@@ -142,7 +144,7 @@ public class ConfigurationGeneralTab extends VBox {
 	private void generateEnableUndoCheckBox() {
 		enableUndoHBox = new HBox();
 		enableUndoHBox.setSpacing(5);
-		enableUndoHBox.setDisable(!configuration.isCallEvents());
+		enableUndoHBox.setDisable(!configuration.shouldCallEvents());
 
 		CheckBox checkBox = new CheckBox();
 		checkBox.setSelected(configuration.isUndoEnabled());
@@ -155,5 +157,39 @@ public class ConfigurationGeneralTab extends VBox {
 		enableUndoHBox.getChildren().addAll(new Region(), checkBox, label);
 		getChildren().add(enableUndoHBox);
 	}
+
+	private void generateEnableForwardingCheckBox() {
+		var box = new HBox();
+		box.setSpacing(5);
+
+		CheckBox checkBox = new CheckBox();
+		checkBox.setSelected(configuration.isForwardingEnabled());
+		checkBox.selectedProperty().addListener((obs, old, val) -> configuration.setForwardingEnabled(val));
+
+		Label label = new LanguageLabel(Messages.SIMULATION_CONFIGURATION_ENABLE_FORWARDING);
+		label.setTooltip(new LanguageTooltip(Messages.SIMULATION_CONFIGURATION_ENABLE_FORWARDING_TOOLTIP, LanguageTooltip.DEFAULT_DELAY));
+		label.setOnMouseClicked(event -> checkBox.setSelected(!checkBox.isSelected()));
+
+		box.getChildren().addAll(new Region(), checkBox, label);
+		getChildren().add(box);
+	}
+
+
+	private void generateSolveBranchOnDecodeCheckBox() {
+		var box = new HBox();
+		box.setSpacing(5);
+
+		CheckBox checkBox = new CheckBox();
+		checkBox.setSelected(configuration.shouldSolveBranchOnDecode());
+		checkBox.selectedProperty().addListener((obs, old, val) -> configuration.setSolveBranchOnDecode(val));
+
+		Label label = new LanguageLabel(Messages.SIMULATION_CONFIGURATION_SOLVE_BRANCH_ON_DECODE);
+		label.setTooltip(new LanguageTooltip(Messages.SIMULATION_CONFIGURATION_SOLVE_BRANCH_ON_DECODE_TOOLTIP, LanguageTooltip.DEFAULT_DELAY));
+		label.setOnMouseClicked(event -> checkBox.setSelected(!checkBox.isSelected()));
+
+		box.getChildren().addAll(new Region(), checkBox, label);
+		getChildren().add(box);
+	}
+
 
 }

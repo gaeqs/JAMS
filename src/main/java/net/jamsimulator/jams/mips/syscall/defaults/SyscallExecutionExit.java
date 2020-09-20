@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.mips.syscall.defaults;
 
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
@@ -16,13 +17,18 @@ public class SyscallExecutionExit implements SyscallExecution {
 
 	@Override
 	public void execute(Simulation<?> simulation) {
-		simulation.exit();
-		if(simulation .getConsole() != null) {
+		simulation.requestExit();
+		if (simulation.getConsole() != null) {
 			simulation.getConsole().println();
 			simulation.getConsole().printDoneLn("Execution finished successfully");
 			simulation.getConsole().println();
 		}
 		simulation.callEvent(new SimulationFinishedEvent(simulation));
+	}
+
+	@Override
+	public void executeMultiCycle(MultiCycleExecution<?> execution) {
+		execute(execution.getSimulation());
 	}
 
 	public static class Builder extends SyscallExecutionBuilder<SyscallExecutionExit> {

@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
@@ -52,6 +53,7 @@ public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled>
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -103,24 +105,36 @@ public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled>
 
 		@Override
 		public void decode() {
-			decodeResult = new int[0];
+			lock(31);
+			lock(pc());
+			decodeResult = new int[]{getAddress() + 4 };
+			if (solveBranchOnDecode()) {
+				jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+			}
 		}
 
 		@Override
 		public void execute() {
-			executionResult = new int[]{pc().getValue()};
-			pc().setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
+			if (!solveBranchOnDecode()) {
+				executionResult = new int[]{getAddress() + 4  + (instruction.getImmediateAsSigned() << 2)};
+			} else {
+				forward(31, decodeResult[0], false);
+			}
 		}
 
 		@Override
 		public void memory() {
-
+			if (solveBranchOnDecode()) {
+				forward(31, decodeResult[0], true);
+			}
 		}
 
 		@Override
 		public void writeBack() {
-			Register ra = register(31);
-			ra.setValue(executionResult[0]);
+			setAndUnlock(31, decodeResult[0]);
+			if (!solveBranchOnDecode()) {
+				jump(executionResult[0]);
+			}
 		}
 	}
 }

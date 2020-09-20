@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
@@ -50,6 +51,7 @@ public class InstructionBeqc extends BasicInstruction<InstructionBeqc.Assembled>
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -110,21 +112,24 @@ public class InstructionBeqc extends BasicInstruction<InstructionBeqc.Assembled>
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address, false, false);
+			super(simulation, instruction, address, false, !simulation.getData().shouldSolveBranchesOnDecode());
 		}
 
 		@Override
 		public void decode() {
-			Register rs = register(instruction.getSourceRegister());
-			Register rt = register(instruction.getTargetRegister());
-			decodeResult = new int[]{rs.getValue(), rt.getValue()};
+			requires(instruction.getSourceRegister());
+			requires(instruction.getTargetRegister());
+			lock(pc());
+
+			if (solveBranchOnDecode()) {
+				if (value(instruction.getTargetRegister()) == value(instruction.getSourceRegister())) {
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+				} else unlock(pc());
+			}
 		}
 
 		@Override
 		public void execute() {
-			executionResult = new int[0];
-			if (decodeResult[0] != decodeResult[1]) return;
-			pc().setValue(pc().getValue() + (instruction.getImmediateAsSigned() << 2));
 		}
 
 		@Override
@@ -134,6 +139,11 @@ public class InstructionBeqc extends BasicInstruction<InstructionBeqc.Assembled>
 
 		@Override
 		public void writeBack() {
+			if (!solveBranchOnDecode()) {
+				if (value(instruction.getTargetRegister()) == value(instruction.getSourceRegister())) {
+					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+				} else unlock(pc());
+			}
 		}
 	}
 }

@@ -4,6 +4,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
@@ -50,7 +51,30 @@ public class SyscallExecutionReadDouble implements SyscallExecution {
 			} catch (NumberFormatException ignore) {
 			}
 		}
+	}
 
+	@Override
+	public void executeMultiCycle(MultiCycleExecution<?> execution) {
+		var simulation = execution.getSimulation();
+		boolean done = false;
+		while (!done) {
+			String value = simulation.popInputOrLock();
+			if (simulation.checkThreadInterrupted()) return;
+
+			try {
+				double input = Double.parseDouble(value);
+
+				int[] ints = NumericUtils.doubleToInts(input);
+
+				execution.setAndUnlockCOP1(register, ints[0]);
+				execution.setAndUnlockCOP1(register + 1, ints[1]);
+
+				simulation.getConsole().printDone(value);
+				if (lineJump) simulation.getConsole().println();
+				done = true;
+			} catch (NumberFormatException ignore) {
+			}
+		}
 	}
 
 	public static class Builder extends SyscallExecutionBuilder<SyscallExecutionReadDouble> {
