@@ -8,6 +8,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
+import net.jamsimulator.jams.gui.mips.simulator.flow.SegmentedFlowEntry;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
@@ -24,7 +25,7 @@ public class PipelinedFlowTable extends FlowTable {
 
 	private LinkedList<PipelineShiftEvent.Before> toAdd;
 	private LinkedList<Pipeline> pipelines;
-	private Map<Long, PipelinedFlowEntry> entries;
+	private Map<Long, SegmentedFlowEntry> entries;
 
 	private long firstCycle;
 
@@ -67,13 +68,13 @@ public class PipelinedFlowTable extends FlowTable {
 
 				var entry = entries.get(instruction.getInstructionId());
 				if (entry == null) {
-					entry = new PipelinedFlowEntry(getChildren().size(), scrollPane, this, instruction.getInstruction(),
+					entry = new SegmentedFlowEntry(getChildren().size(), this, instruction.getInstruction(),
 							start, instruction.getInstructionId(), event.getCycle());
 					entries.put(instruction.getInstructionId(), entry);
 					getChildren().add(entry);
 
 					if (entries.size() > maxItems) {
-						PipelinedFlowEntry toRemove = (PipelinedFlowEntry) getChildren().remove(0);
+						SegmentedFlowEntry toRemove = (SegmentedFlowEntry) getChildren().remove(0);
 						entries.remove(toRemove.getInstructionNumber());
 					}
 				}
@@ -85,7 +86,7 @@ public class PipelinedFlowTable extends FlowTable {
 
 
 		long localCycle = firstCycle;
-		firstCycle = ((PipelinedFlowEntry) getChildren().get(0)).getStartingCycle();
+		firstCycle = ((SegmentedFlowEntry) getChildren().get(0)).getStartingCycle();
 
 		if (localCycle != firstCycle) {
 			refresh();
@@ -118,14 +119,12 @@ public class PipelinedFlowTable extends FlowTable {
 	@Listener
 	private void onSimulationUndo(SimulationUndoStepEvent.After event) {
 		var index = getChildren().size() - 1;
-		PipelinedFlowEntry entry;
+		SegmentedFlowEntry entry;
 		while (index >= 0) {
-			entry = ((PipelinedFlowEntry) getChildren().get(index));
-			if (entry.removeCycle(event.getUndoCycle())) {
-				if (entry.isEmpty()) {
-					entries.remove(entry.getInstructionNumber());
-					getChildren().remove(index);
-				}
+			entry = ((SegmentedFlowEntry) getChildren().get(index));
+			if (entry.removeCycle(event.getUndoCycle()) && entry.isEmpty()) {
+				entries.remove(entry.getInstructionNumber());
+				getChildren().remove(index);
 			}
 			index--;
 		}
@@ -134,8 +133,8 @@ public class PipelinedFlowTable extends FlowTable {
 	private void refresh() {
 		int index = 0;
 		for (Node child : getChildren()) {
-			if (child instanceof PipelinedFlowEntry) {
-				((PipelinedFlowEntry) child).refresh(index++, stepSize, firstCycle);
+			if (child instanceof SegmentedFlowEntry) {
+				((SegmentedFlowEntry) child).refresh(index++, stepSize, firstCycle);
 			}
 		}
 	}
