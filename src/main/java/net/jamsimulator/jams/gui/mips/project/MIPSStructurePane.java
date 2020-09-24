@@ -41,6 +41,7 @@ import net.jamsimulator.jams.gui.mips.explorer.MipsFolderExplorer;
 import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebar;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
+import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.gui.util.log.SimpleLog;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.mips.MIPSProject;
@@ -129,7 +130,7 @@ public class MIPSStructurePane extends WorkingPane {
 		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
 				Icons.SIDEBAR_EXPLORER_PATH, 1024, 1024).orElse(null);
 
-		ScrollPane pane = new ScrollPane();
+		ScrollPane pane = new PixelScrollPane();
 		pane.setFitToHeight(true);
 		pane.setFitToWidth(true);
 		explorer = new MipsFolderExplorer(project, pane);
@@ -149,7 +150,7 @@ public class MIPSStructurePane extends WorkingPane {
 		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
 				Icons.SIDEBAR_EXPLORER_PATH, 1024, 1024).orElse(null);
 
-		ScrollPane pane = new ScrollPane();
+		ScrollPane pane = new PixelScrollPane();
 		pane.setFitToHeight(true);
 		pane.setFitToWidth(true);
 		filesToAssembleSidebar = new FilesToAssembleSidebar(project, pane);
@@ -166,7 +167,7 @@ public class MIPSStructurePane extends WorkingPane {
 	private void loadLogBottomBar() {
 		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE,
 				Icons.FILE_FILE_PATH, 1024, 1024).orElse(null);
-		ScrollPane pane = new ScrollPane();
+		ScrollPane pane = new PixelScrollPane();
 		pane.setFitToWidth(true);
 		pane.setFitToHeight(true);
 

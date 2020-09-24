@@ -31,6 +31,10 @@ public class ScalableNode extends Group {
 		}
 	}
 
+	public Node getNode() {
+		return node;
+	}
+
 	public double scaleX() {
 		return node.getScaleX();
 	}

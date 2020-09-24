@@ -47,6 +47,7 @@ import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowSecti
 import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNode;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
+import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 
@@ -93,7 +94,7 @@ public class ConfigurationWindow extends SplitPane {
 		this.configuration = configuration;
 		this.meta = meta;
 
-		explorerScrollPane = new ScrollPane();
+		explorerScrollPane = new PixelScrollPane();
 		explorerScrollPane.setFitToHeight(true);
 		explorerScrollPane.setFitToWidth(true);
 		this.explorer = new ConfigurationWindowExplorer(this, explorerScrollPane);

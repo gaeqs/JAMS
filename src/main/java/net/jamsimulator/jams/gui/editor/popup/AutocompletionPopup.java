@@ -33,6 +33,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -71,7 +72,7 @@ public abstract class AutocompletionPopup extends Popup {
 		elements = new ArrayList<>();
 
 
-		scroll = new ScrollPane(content);
+		scroll = new PixelScrollPane(content);
 
 		scroll.setFitToHeight(true);
 		scroll.setFitToWidth(true);

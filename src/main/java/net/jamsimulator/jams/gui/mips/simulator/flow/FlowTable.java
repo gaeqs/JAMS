@@ -1,6 +1,5 @@
 package net.jamsimulator.jams.gui.mips.simulator.flow;
 
-import javafx.geometry.Bounds;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.VBox;
@@ -99,7 +98,6 @@ public class FlowTable extends VBox implements ActionRegion {
 
 		getChildren().add(sizeSlider);
 
-		initSwipeListeners();
 		Jams.getMainConfiguration().registerListeners(this, true);
 	}
 
@@ -150,41 +148,14 @@ public class FlowTable extends VBox implements ActionRegion {
 		return RegionTags.MIPS_SIMULATION.equals(region);
 	}
 
-	//region mouse scrolling
-
-	//MOUSE SCROLL VARIABLES
-	private double x, y;
-	private double h, v;
-
-	private void initSwipeListeners() {
-		setOnMousePressed(event -> {
-			x = event.getSceneX();
-			y = event.getSceneY();
-			h = scrollPane.getHvalue();
-			v = scrollPane.getVvalue();
-		});
-
-		setOnMouseDragged(event -> {
-			double dx = event.getSceneX() - x;
-			double dy = event.getSceneY() - y;
-			Bounds bounds = scrollPane.getViewportBounds();
-			scrollPane.setHvalue(h - dx / (getWidth() * getScaleX() - bounds.getWidth()));
-			scrollPane.setVvalue(v - dy / (getHeight() * getScaleY() - bounds.getHeight()));
-		});
-
-	}
-
 	@Listener
 	private void onConfigurationNodeChange(ConfigurationNodeChangeEvent.After event) {
 		if (event.getNode().equals("simulation.mips.flow_max_items")) {
 			maxItems = (int) event.getNewValueAs().orElse(maxItems);
 			if (getChildren().size() > maxItems) {
-				getChildren().remove(maxItems, getChildren().size())
-				;
+				getChildren().remove(maxItems, getChildren().size());
 			}
 		}
 	}
-
-	//endregion
 
 }

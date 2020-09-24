@@ -38,6 +38,7 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.gui.explorer.ExplorerSectionLanguageRepresentation;
 import net.jamsimulator.jams.gui.explorer.ExplorerSectionRepresentation;
+import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTextField;
 
@@ -65,7 +66,7 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
 	public ConfigurationWindowSectionActions(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name,
 											 String languageNode, int hierarchyLevel, Configuration configuration, Configuration meta, Map<String, Integer> regions) {
 		super(explorer, parent, name, languageNode, hierarchyLevel, configuration, meta, regions);
-		scrollPane = new ScrollPane();
+		scrollPane = new PixelScrollPane();
 		scrollPane.setFitToHeight(true);
 		scrollPane.setFitToWidth(true);
 

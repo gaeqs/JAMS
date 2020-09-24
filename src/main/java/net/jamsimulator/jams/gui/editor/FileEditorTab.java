@@ -43,6 +43,7 @@ import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.project.WorkingPane;
+import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.utils.AnchorUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.Virtualized;
@@ -91,7 +92,7 @@ public class FileEditorTab extends Tab implements ActionRegion {
 				((VirtualScrollHandled) element).setZoom(scale);
 			}
 		} else {
-			ScrollPane scroll = new ScrollPane(element);
+			ScrollPane scroll = new PixelScrollPane(element);
 			AnchorUtils.setAnchor(scroll, 0, 0, 0, 0);
 			pane.getChildren().addAll(scroll);
 		}

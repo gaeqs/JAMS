@@ -8,6 +8,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.project.mips.MIPSProjectData;
 import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationAddEvent;
@@ -35,7 +36,7 @@ public class ConfigurationsList extends VBox {
 		contents = new VBox();
 		contents.getStyleClass().add("mips-configurations-list");
 
-		ScrollPane contentsScroll = new ScrollPane(contents);
+		ScrollPane contentsScroll = new PixelScrollPane(contents);
 		contentsScroll.setFitToHeight(true);
 		contentsScroll.setFitToWidth(true);
 
@@ -91,7 +92,7 @@ public class ConfigurationsList extends VBox {
 	}
 
 	private void select(ConfigurationRepresentation representation) {
-		if(representation == selected) return;
+		if (representation == selected) return;
 		if (selected != null) {
 			selected.getStyleClass().remove("mips-configurations-list-entry-selected");
 		}

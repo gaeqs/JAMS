@@ -20,6 +20,7 @@ import net.jamsimulator.jams.gui.mips.simulator.register.COP0RegistersTable;
 import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
+import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.gui.util.ScalableNode;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
@@ -127,10 +128,11 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 
 		Slider slider = new Slider(10, 100, 40);
 
-		ScrollPane scroll = new ScrollPane();
+		ScrollPane scroll = new PixelScrollPane();
 		FlowTable flow = FlowTable.createFlow(simulation, scroll, slider);
 		scroll.setContent(new ScalableNode(flow, scroll));
 		scroll.setFitToHeight(true);
+		scroll.setPannable(true);
 
 		AnchorPane anchor = new AnchorPane(scroll, slider);
 		AnchorUtils.setAnchor(scroll, 0, 20, 0, 0);

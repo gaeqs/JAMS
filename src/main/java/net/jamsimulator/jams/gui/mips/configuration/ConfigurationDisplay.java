@@ -3,6 +3,7 @@ package net.jamsimulator.jams.gui.mips.configuration;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
 import net.jamsimulator.jams.project.mips.MIPSProjectData;
@@ -45,7 +46,8 @@ public class ConfigurationDisplay extends TabPane {
 		tab.setClosable(false);
 		getTabs().add(tab);
 
-		ScrollPane scrollPane = new ScrollPane(new ConfigurationSyscallTab(selected));
+		var scrollPane = new PixelScrollPane(new ConfigurationSyscallTab(selected));
+
 		scrollPane.setFitToHeight(true);
 		scrollPane.setFitToWidth(true);
 
@@ -57,7 +59,7 @@ public class ConfigurationDisplay extends TabPane {
 		tab.setClosable(false);
 		getTabs().add(tab);
 
-		ScrollPane scrollPane = new ScrollPane(new ConfigurationCacheTab(selected));
+		ScrollPane scrollPane = new PixelScrollPane(new ConfigurationCacheTab(selected));
 		scrollPane.setFitToHeight(true);
 		scrollPane.setFitToWidth(true);
 

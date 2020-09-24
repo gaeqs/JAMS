@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
+import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.gui.util.log.event.ConsoleInputEvent;
 import net.jamsimulator.jams.utils.AnchorUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
@@ -237,7 +238,7 @@ public class Console extends HBox implements Log, EventBroadcast {
 		inputsDisplay = new VBox();
 		inputsDisplay.getStyleClass().add("inputs");
 
-		ScrollPane inputsScroll = new ScrollPane(inputsDisplay);
+		ScrollPane inputsScroll = new PixelScrollPane(inputsDisplay);
 		inputsScroll.setPadding(new Insets(0));
 		inputsScroll.setFitToWidth(true);
 		inputsScroll.setFitToHeight(true);
