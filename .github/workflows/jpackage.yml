@@ -9,7 +9,7 @@ on:
     types: [published]
 
 jobs:
-  gradle:
+  jpackage:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
