@@ -23,6 +23,6 @@ jobs:
         run: gradle jpackage
       - name: Uploading assets...
         uses: AButler/upload-release-assets@v2.0
-          with:
-            files: 'build/jpackage/*'
-            repo-token: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: 'build/jpackage/*'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
