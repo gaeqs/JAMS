@@ -21,6 +21,9 @@ jobs:
           java-version: 14
       - name: Executing JPackage
         run: gradle jpackage
+      - name: Compressing...
+        if: ${{ matrix.os == 'macos-latest' }}
+        run: zip -r build/jpackage/app.zip build/jpackage
       - name: Uploading assets...
         uses: AButler/upload-release-assets@v2.0
         with:
