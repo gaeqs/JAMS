@@ -124,6 +124,8 @@ jlink {
         } else if (org.gradle.internal.os.OperatingSystem.current().linux) {
             installerOptions += ['--linux-menu-group', 'programming']
             installerType = "deb"
+        } else if (org.gradle.internal.os.OperatingSystem.current().macOsX) {
+            installerType = "dmg"
         }
     }
 }
