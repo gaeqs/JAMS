@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 14
-      - name: Executing JPackage
+      - name: Creating fatjar...
         run: gradle bundle
       - name: Uploading assets...
         if: ${{ matrix.os != 'macos-latest' }}
