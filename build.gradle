@@ -117,18 +117,17 @@ jlink {
                             '--vendor', 'jamsimulator.net',
                             '--file-associations', 'src/main/resources/associations.properties']
         imageOptions = ['--icon', 'src/main/resources/gui/icon/logo.ico']
-
         if (org.gradle.internal.os.OperatingSystem.current().windows) {
-            if (winConsole) {
+            if(winConsole) {
                 imageOptions += ['--win-console']
             }
             installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu']
         } else if (org.gradle.internal.os.OperatingSystem.current().linux) {
             installerOptions += ['--linux-menu-group', 'programming']
             installerType = "deb"
+        } else if (org.gradle.internal.os.OperatingSystem.current().macOsX) {
+            installerType = "app"
         }
-
-        installerOptions += '--verbose'
     }
 }
 
