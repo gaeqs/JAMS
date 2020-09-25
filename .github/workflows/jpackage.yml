@@ -31,8 +31,8 @@ jobs:
           files: 'build/JAMS-macos.zip'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Uploading assets (windows and linux)...
-          if: ${{ matrix.os != 'macos-latest' }}
-          uses: AButler/upload-release-assets@v2.0
-          with:
-            files: 'build/jpackage/*'
-            repo-token: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ matrix.os != 'macos-latest' }}
+        uses: AButler/upload-release-assets@v2.0
+        with:
+          files: 'build/jpackage/*'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
