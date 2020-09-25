@@ -4,9 +4,10 @@
 name: Java CI with Gradle
 
 on:
-  push:
-    tags:
-      - '*'
+  release:
+    branches: [ master ]
+    types: [published, created, edited]
+
 jobs:
   gradle:
     strategy:
@@ -20,11 +21,8 @@ jobs:
           java-version: 14
       - name: Executing JPackage
         run: gradle jpackage
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/jpackage/*
-          tag: ${{ github.ref }}
-          overwrite: true
-          file_glob: true
+      - name: Uploading assets...
+        uses: AButler/upload-release-assets@v2.0
+          with:
+            files: 'build/jpackage/*'
+            repo-token: ${{ secrets.GITHUB_TOKEN }}
