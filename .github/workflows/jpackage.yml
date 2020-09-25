@@ -6,7 +6,7 @@ name: Java CI with Gradle
 on:
   release:
     branches: [ master ]
-    types: [published, created, edited]
+    types: [published]
 
 jobs:
   gradle:
