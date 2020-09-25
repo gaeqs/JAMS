@@ -15,7 +15,7 @@ def winConsole = false;
 
 group projectGroup
 version '0.5-ALPHA'
-0
+
 repositories {
     jcenter()
     maven {
