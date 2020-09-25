@@ -21,11 +21,18 @@ jobs:
           java-version: 14
       - name: Executing JPackage
         run: gradle jpackage
-      - name: Compressing...
+      - name: Compressing (macos)...
         if: ${{ matrix.os == 'macos-latest' }}
-        run: zip -r build/jpackage/app.zip build/jpackage
-      - name: Uploading assets...
+        run: zip -r build/JAMS-macos.zip build/jpackage
+      - name: Uploading assets (macos)...
+        if: ${{ matrix.os == 'macos-latest' }}
         uses: AButler/upload-release-assets@v2.0
         with:
-          files: 'build/jpackage/*'
+          files: 'build/JAMS-macos.zip'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Uploading assets (windows and linux)...
+          if: ${{ matrix.os != 'macos-latest' }}
+          uses: AButler/upload-release-assets@v2.0
+          with:
+            files: 'build/jpackage/*'
+            repo-token: ${{ secrets.GITHUB_TOKEN }}
