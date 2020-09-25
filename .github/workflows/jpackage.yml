@@ -18,11 +18,5 @@ jobs:
     - uses: actions/setup-java@v1
       with:
         java-version: 14
-    - uses: eskatos/gradle-command-action@v1
-      with:
-        arguments: jpackage
-      id: gradle
-    - uses: example/action-that-comments-on-the-pr@v0
-      if: failure()
-      with:
-        comment: Build failed ${{ steps.gradle.outputs.build-scan-url }}
+    - name: Executing JPackage
+      run: ./gradlew jpackage
