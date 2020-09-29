@@ -17,21 +17,24 @@ public class SimulationData {
 	protected final File workingDirectory;
 	protected final Console console;
 	protected final Map<Integer, String> originalInstructions;
+	protected final Map<String, Integer> labels;
 	protected final boolean callEvents, undoEnabled, enableForwarding, solveBranchOnDecode;
 
 	public SimulationData(SimulationSyscallExecutions syscallExecutions, File workingDirectory, Console console,
-						  Map<Integer, String> originalInstructions, boolean callEvents, boolean undoEnabled, boolean enableForwarding, boolean solveBranchOnDecode) {
+						  Map<Integer, String> originalInstructions, Map<String, Integer> labels, boolean callEvents, boolean undoEnabled, boolean enableForwarding, boolean solveBranchOnDecode) {
 		this.syscallExecutions = syscallExecutions;
 		this.workingDirectory = workingDirectory;
 		this.console = console;
 		this.originalInstructions = originalInstructions;
+		this.labels = labels;
 		this.callEvents = callEvents;
 		this.undoEnabled = undoEnabled;
 		this.enableForwarding = enableForwarding;
 		this.solveBranchOnDecode = solveBranchOnDecode;
 	}
 
-	public SimulationData(MIPSSimulationConfiguration configuration, File workingDirectory, Console console, Map<Integer, String> originalInstructions) {
+	public SimulationData(MIPSSimulationConfiguration configuration, File workingDirectory, Console console,
+						  Map<Integer, String> originalInstructions, Map<String, Integer> labels) {
 		this.syscallExecutions = new SimulationSyscallExecutions();
 		configuration.getSyscallExecutionBuilders().forEach((key, builder) ->
 				syscallExecutions.bindExecution(key, builder.build()));
@@ -39,6 +42,7 @@ public class SimulationData {
 		this.workingDirectory = workingDirectory;
 		this.console = console;
 		this.originalInstructions = originalInstructions;
+		this.labels = labels;
 
 		this.callEvents = configuration.shouldCallEvents();
 		this.undoEnabled = configuration.isUndoEnabled() && callEvents;
@@ -80,6 +84,10 @@ public class SimulationData {
 
 	public Map<Integer, String> getOriginalInstructions() {
 		return originalInstructions;
+	}
+
+	public Map<String, Integer> getLabels() {
+		return labels;
 	}
 
 	/**

@@ -85,4 +85,14 @@ public interface Assembler {
 	 */
 	Map<Integer, String> getOriginals();
 
+	/**
+	 * Returns an unmodifiable map that links labels to their addresses.
+	 * <p>
+	 * Global labels are represented as {LABEL}.
+	 * Local labels are represented as {FILE}/{LABEL}.
+	 *
+	 * @return the unmodifiable map.
+	 */
+	Map<String, Integer> getLabelsWithFileNames();
+
 }

@@ -36,8 +36,7 @@ import net.jamsimulator.jams.project.BasicProject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class MIPSProject extends BasicProject {
 
@@ -73,13 +72,16 @@ public class MIPSProject extends BasicProject {
 			log.printInfoLn("Files:");
 		}
 
-		List<String> files = new ArrayList<>();
+		var rootPath = folder.toPath();
+		var files = new HashMap<String, String>();
 
 		for (File target : getData().getFilesToAssemble().getFiles()) {
 			if (log != null) {
 				log.printInfoLn("- " + target.getAbsolutePath());
 			}
-			files.add(String.join("\n", Files.readAllLines(target.toPath())));
+
+			var name = rootPath.relativize(target.toPath()).toString();
+			files.put(name, String.join("\n", Files.readAllLines(target.toPath())));
 		}
 
 		long nanos = System.nanoTime();
@@ -99,11 +101,12 @@ public class MIPSProject extends BasicProject {
 		assembler.assemble();
 
 		if (log != null) {
-			log.printDoneLn("Assembly successful in "+ (System.nanoTime() - nanos) / 1000000 + " millis.");
+			log.printDoneLn("Assembly successful in " + (System.nanoTime() - nanos) / 1000000 + " millis.");
 		}
 
+		var simulationData = new SimulationData(configuration, data.getFilesFolder(), new Console(),
+				assembler.getOriginals(), assembler.getLabelsWithFileNames());
 
-		SimulationData simulationData = new SimulationData(configuration, data.getFilesFolder(), new Console(), assembler.getOriginals());
 		return assembler.createSimulation(configuration.getArchitecture(), simulationData);
 	}
 

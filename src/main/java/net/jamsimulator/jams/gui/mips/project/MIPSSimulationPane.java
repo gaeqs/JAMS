@@ -15,6 +15,7 @@ import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.simulator.execution.ExecutionButtons;
 import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionsTable;
+import net.jamsimulator.jams.gui.mips.simulator.label.LabelTable;
 import net.jamsimulator.jams.gui.mips.simulator.memory.MemoryPane;
 import net.jamsimulator.jams.gui.mips.simulator.register.COP0RegistersTable;
 import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
@@ -70,6 +71,7 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 		loadConsole();
 		loadMemoryTab();
 		loadFlow();
+		loadLabels();
 
 		init();
 
@@ -140,6 +142,14 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 		slider.setPrefHeight(20);
 
 		manageBarAddition("flow", anchor, icon, Messages.BAR_FLOW_NAME, BarType.BOTTOM_LEFT);
+	}
+
+	private void loadLabels() {
+		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE,
+				Icons.FILE_FILE_PATH, 1024, 1024).orElse(null);
+		var pane = new LabelTable(simulation);
+
+		manageBarAddition("labels", pane, icon, Messages.BAR_LABELS_NAME, BarType.BOTTOM_RIGHT);
 	}
 
 
