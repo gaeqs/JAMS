@@ -48,9 +48,9 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
 	}
 
 	public void select(int address) {
-		var offset = address % (table.getRows() << 4);
+		var offset = Integer.remainderUnsigned(address, (table.getRows() << 4));
 		var start = address - offset;
-		var row = offset / 16;
+		var row = offset >>> 4;
 
 		table.setOffset(start);
 		table.getSelectionModel().select(row);
