@@ -63,7 +63,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	protected Comparator<ExplorerElement> comparator;
 
 	protected VBox contents;
-	protected boolean expanded;
+	protected boolean expanded, hideRepresentation;
 
 	//HIERARCHY
 	protected int hierarchyLevel;
@@ -148,7 +148,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	 * This also contracts children explorer section.
 	 */
 	public void contract() {
-		if (!expanded) return;
+		if (!expanded || hideRepresentation) return;
 		contents.getChildren().clear();
 		expanded = false;
 
@@ -169,6 +169,23 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		expanded = true;
 		representation.refreshStatusIcon();
 		explorer.refreshWidth();
+	}
+
+	/**
+	 * Hides the representation of this section.
+	 * <p>
+	 * This action cannot be undone, and this section won't be able to contact.
+	 */
+	public void hideRepresentation() {
+		hideRepresentation = true;
+		if (!expanded) {
+			addAllFilesToContents();
+			expanded = true;
+		}
+		explorer.refreshWidth();
+
+		removeOneHierarchyLevel();
+		loadElements();
 	}
 
 	/**
@@ -529,7 +546,11 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 
 	protected void loadElements() {
 		getChildren().clear();
-		getChildren().add(representation);
+
+		if (!hideRepresentation) {
+			getChildren().add(representation);
+		}
+
 		getChildren().add(contents);
 	}
 
@@ -580,6 +601,22 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 				((ExplorerSection) element).selectAll();
 			} else {
 				explorer.addOrRemoveSelectedElement(element);
+			}
+		}
+	}
+
+	protected void removeOneHierarchyLevel() {
+		hierarchyLevel--;
+
+		if (representation.separator != null) {
+			representation.separator.setHierarchyLevel(hierarchyLevel);
+		}
+
+		for (ExplorerElement element : elements) {
+			if (element instanceof ExplorerSection) {
+				((ExplorerSection) element).removeOneHierarchyLevel();
+			} else if (element instanceof ExplorerBasicElement) {
+				((ExplorerBasicElement) element).removeOneHierarchyLevel();
 			}
 		}
 	}

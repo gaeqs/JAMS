@@ -101,7 +101,7 @@ public class ExplorerSectionLanguageRepresentation extends ExplorerSectionRepres
 			icon.setFitWidth(val == null ? 0 : FileType.IMAGE_SIZE);
 		});
 
-		ExplorerSeparatorRegion separator = new ExplorerSeparatorRegion(true, hierarchyLevel);
+		separator = new ExplorerSeparatorRegion(true, hierarchyLevel);
 
 		getChildren().addAll(separator, statusIcon, icon);
 		setSpacing(ExplorerBasicElement.SPACING);

@@ -34,7 +34,19 @@ public class ExplorerSeparatorRegion extends Region {
 	public static final int HIERARCHY_SEPARATOR_SIZE_FILE = 38;
 	public static final int HIERARCHY_SEPARATOR_SIZE_FOLDER = 20;
 
+	private final boolean folder;
+
 	public ExplorerSeparatorRegion(boolean folder, int hierarchyLevel) {
+		this.folder = folder;
+		setHierarchyLevel(hierarchyLevel);
+	}
+
+	public ExplorerSeparatorRegion(double width) {
+		folder = false;
+		setPrefWidth(width);
+	}
+
+	public void setHierarchyLevel(int hierarchyLevel) {
 		double width;
 		if (folder)
 			width = HIERARCHY_SEPARATOR_SIZE_FOLDER * hierarchyLevel;
@@ -42,10 +54,6 @@ public class ExplorerSeparatorRegion extends Region {
 			width = HIERARCHY_SEPARATOR_SIZE_FOLDER * (hierarchyLevel - 1) + HIERARCHY_SEPARATOR_SIZE_FILE;
 		setPrefWidth(width);
 		setMinWidth(width);
-	}
-
-	public ExplorerSeparatorRegion(double width) {
-		setPrefWidth(width);
 	}
 
 }

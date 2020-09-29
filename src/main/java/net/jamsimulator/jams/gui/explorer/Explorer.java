@@ -153,6 +153,15 @@ public abstract class Explorer extends VBox implements EventBroadcast {
 	}
 
 	/**
+	 * Hides the representation of the main section of this explorer.
+	 * <p>
+	 * This action cannot be undone.
+	 */
+	public void hideMainSectionRepresentation() {
+		mainSection.hideRepresentation();
+	}
+
+	/**
 	 * Sets the selected element of the explorer.
 	 *
 	 * @param element the selected element.

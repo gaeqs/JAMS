@@ -218,6 +218,11 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 		JamsApplication.openContextMenu(main, this, screenX, screenY);
 	}
 
+	protected void removeOneHierarchyLevel() {
+		hierarchyLevel--;
+		separator.setHierarchyLevel(hierarchyLevel);
+	}
+
 	private Set<ContextAction> getSupportedContextActions() {
 		Explorer explorer = getExplorer();
 		Set<Action> actions = JamsApplication.getActionManager().getAll();

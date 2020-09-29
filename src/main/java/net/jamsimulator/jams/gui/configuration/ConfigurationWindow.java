@@ -97,7 +97,8 @@ public class ConfigurationWindow extends SplitPane {
 		explorerScrollPane = new PixelScrollPane();
 		explorerScrollPane.setFitToHeight(true);
 		explorerScrollPane.setFitToWidth(true);
-		this.explorer = new ConfigurationWindowExplorer(this, explorerScrollPane);
+		explorer = new ConfigurationWindowExplorer(this, explorerScrollPane);
+		explorer.hideMainSectionRepresentation();
 		explorerScrollPane.setContent(explorer);
 
 		explorerScrollPane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
