@@ -104,6 +104,9 @@ public class Messages {
 
 	public static final String MEMORY_ADDRESS = "MEMORY_ADDRESS";
 
+	public static final String LABELS_NAME = "LABELS_NAME";
+	public static final String LABELS_ADDRESS = "LABELS_ADDRESS";
+
 	public static final String CONFIG = "CONFIG";
 
 	public static final String CONFIG_ACTION = "CONFIG_ACTION";

@@ -145,8 +145,8 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 	}
 
 	private void loadLabels() {
-		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE,
-				Icons.FILE_FILE_PATH, 1024, 1024).orElse(null);
+		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_LABELS,
+				Icons.SIMULATION_LABELS_PATH, 1024, 1024).orElse(null);
 		var pane = new LabelTable(simulation);
 
 		manageBarAddition("labels", pane, icon, Messages.BAR_LABELS_NAME, BarType.BOTTOM_RIGHT);

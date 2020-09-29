@@ -176,6 +176,9 @@ REGISTERS_HEX=Hex
 
 MEMORY_ADDRESS=Dirección
 
+LABELS_NAME=Nombre
+LABELS_ADDRESS=Dirección
+
 CONFIG=Configuración
 
 CONFIG_ACTION=Acciones

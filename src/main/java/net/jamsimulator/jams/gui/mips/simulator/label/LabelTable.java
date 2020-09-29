@@ -12,8 +12,8 @@ public class LabelTable extends TableView<LabelEntry> {
 		setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 		getStyleClass().add("table-view-horizontal-fit");
 
-		var nameColumn = new LanguageTableColumn<LabelEntry, String>(Messages.REGISTERS_NAME);
-		var addressColumn = new LanguageTableColumn<LabelEntry, String>(Messages.INSTRUCTIONS_ADDRESS);
+		var nameColumn = new LanguageTableColumn<LabelEntry, String>(Messages.LABELS_NAME);
+		var addressColumn = new LanguageTableColumn<LabelEntry, String>(Messages.LABELS_ADDRESS);
 
 		nameColumn.setEditable(false);
 		addressColumn.setEditable(false);
