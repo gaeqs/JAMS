@@ -106,6 +106,8 @@ public class Messages {
 
 	public static final String LABELS_NAME = "LABELS_NAME";
 	public static final String LABELS_ADDRESS = "LABELS_ADDRESS";
+	public static final String LABELS_CONTEXT_SHOW_IN_MEMORY = "LABELS_CONTEXT_SHOW_IN_MEMORY";
+	public static final String LABELS_CONTEXT_SHOW_IN_INSTRUCTION = "LABELS_CONTEXT_SHOW_IN_INSTRUCTION";
 
 	public static final String CONFIG = "CONFIG";
 

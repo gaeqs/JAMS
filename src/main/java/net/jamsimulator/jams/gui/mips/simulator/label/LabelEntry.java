@@ -7,10 +7,16 @@ public class LabelEntry {
 
 	private final StringProperty name;
 	private final StringProperty address;
+	private final int addressInt;
 
-	public LabelEntry(String name, String address) {
+	public LabelEntry(String name, String address, int addressInt) {
 		this.name = new SimpleStringProperty(name);
 		this.address = new SimpleStringProperty(address);
+		this.addressInt = addressInt;
+	}
+
+	public int getAddressInt() {
+		return addressInt;
 	}
 
 	public StringProperty nameProperty() {
