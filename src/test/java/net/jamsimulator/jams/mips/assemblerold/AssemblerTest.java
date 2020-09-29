@@ -39,7 +39,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -47,7 +49,7 @@ class AssemblerTest {
 
 	@Test
 	void testCompiler() {
-		List<String> files = new ArrayList<>();
+		Map<String, String> files = new HashMap<>();
 		List<String> program = new ArrayList<>();
 
 		program.add(".data");
@@ -71,7 +73,7 @@ class AssemblerTest {
 		program.add("lw $t1, sum");
 		program.add("lw $s0, wordTest2");
 
-		files.add(String.join("\n", program));
+		files.put("test.asm", String.join("\n", program));
 
 		MIPS32Assembler assembler = new MIPS32Assembler(
 				files,
@@ -81,7 +83,7 @@ class AssemblerTest {
 		assembler.assemble();
 		SimulationSyscallExecutions executions = new SimulationSyscallExecutions();
 
-		SimulationData data = new SimulationData(executions, new File(""), new Console(), assembler.getOriginals(), true, true, true, true);
+		SimulationData data = new SimulationData(executions, new File(""), new Console(), assembler.getOriginals(), assembler.getLabelsWithFileNames(), true, true, true, true);
 		Simulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE, data);
 
 		assertEquals(0x02508820, simulation.getMemory().getWord(simulation.getRegisters().getProgramCounter().getValue()));

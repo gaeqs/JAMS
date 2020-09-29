@@ -83,10 +83,10 @@ class WriteBackAssociativeCacheTest {
 		Registers reg = new MIPS32Registers();
 		Cache mem = new WriteBackAssociativeCache(new MIPS32Memory(), 4, 8, CacheReplacementPolicy.LRU);
 
-		MIPS32Assembler assembler = new MIPS32Assembler(Collections.singletonList(CacheTestsData.PROGRAM), inst, dir, reg, mem);
+		MIPS32Assembler assembler = new MIPS32Assembler(Collections.singletonMap("test.asm", CacheTestsData.PROGRAM), inst, dir, reg, mem);
 		assembler.assemble();
 
-		SimulationData data = new SimulationData(new SimulationSyscallExecutions(), new File(""), null, assembler.getOriginals(), false, false, true, true);
+		SimulationData data = new SimulationData(new SimulationSyscallExecutions(), new File(""), null, assembler.getOriginals(), assembler.getLabelsWithFileNames(), false, false, true, true);
 		Simulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE, data);
 
 		mem = (Cache) simulation.getMemory();

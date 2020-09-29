@@ -77,6 +77,8 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
 		box.getChildren().add(searchbar);
 
 		actionsExplorer = new ActionsExplorer(scrollPane, false);
+		actionsExplorer.hideMainSectionRepresentation();
+
 		scrollPane.setContent(actionsExplorer);
 
 		scrollPane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
