@@ -129,6 +129,7 @@ public class InstructionSub extends BasicRInstruction<InstructionSub.Assembled> 
 				executionResult = new int[]{result};
 				forward(instruction.getDestinationRegister(), result, false);
 			} catch (ArithmeticException ex) {
+				executionResult = new int[]{0};
 				error(InterruptCause.ARITHMETIC_OVERFLOW_EXCEPTION, ex);
 			}
 		}

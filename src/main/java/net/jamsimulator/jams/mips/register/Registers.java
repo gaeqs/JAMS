@@ -280,6 +280,29 @@ public class Registers extends SimpleEventBroadcast {
 	}
 
 	/**
+	 * Unlocks all registers in a pipelined simulation.
+	 */
+	public void unlockAllRegisters() {
+		programCounter.unlock();
+
+		for (Register register : registers) {
+			if (register != null) register.unlock();
+		}
+
+		for (Register[] array : coprocessor0Registers) {
+			if (array != null) {
+				for (Register register : array) {
+					if (register != null) register.unlock();
+				}
+			}
+		}
+
+		for (Register register : coprocessor1Registers) {
+			if (register != null) register.unlock();
+		}
+	}
+
+	/**
 	 * Enables or disabled event calls.
 	 * <p>
 	 * If this feature is disable registers will work faster, but actions won't be able to be listened.

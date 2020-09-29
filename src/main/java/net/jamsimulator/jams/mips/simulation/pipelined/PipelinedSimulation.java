@@ -32,6 +32,7 @@ import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
 import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
+import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.event.MemoryAllocateMemoryEvent;
@@ -145,7 +146,8 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 
 	@Override
 	public void manageMIPSInterrupt(RuntimeInstructionException exception, int pc) {
-		pipeline.reset(registers.getProgramCounter().getValue());
+		pipeline.reset(MIPS32Memory.EXCEPTION_HANDLER);
+		registers.unlockAllRegisters();
 		super.manageMIPSInterrupt(exception, pc);
 	}
 
@@ -349,6 +351,7 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 			pipeline.setException(MultiCycleStep.EXECUTE, ex);
 		}
 
+
 		if (checkThreadInterrupted()) {
 			if (currentStepChanges != null) {
 				var temp = currentStepChanges;
@@ -370,6 +373,8 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 		} catch (Exception ex) {
 			System.err.println("Found exception at 0x" + StringUtils.addZeros(Integer.toHexString(execution.getAddress()), 8));
 			System.err.println("Instruction " + execution.getInstruction().getBasicOrigin().getMnemonic());
+			System.err.println("Exception "+ex);
+			ex.printStackTrace();
 		}
 	}
 
@@ -377,7 +382,6 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 
 		RuntimeInstructionException exception = pipeline.getException(MultiCycleStep.WRITE_BACK);
 		if (exception != null) {
-			exception.printStackTrace();
 			manageMIPSInterrupt(exception, pipeline.getPc(MultiCycleStep.WRITE_BACK));
 			return;
 		}

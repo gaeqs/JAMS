@@ -203,6 +203,10 @@ public class Register {
 		}
 	}
 
+	public void unlock () {
+		lockedBy.clear();
+	}
+
 	/**
 	 * This method should be use exclusively to undo steps.
 	 * This method doesn't call any event.
