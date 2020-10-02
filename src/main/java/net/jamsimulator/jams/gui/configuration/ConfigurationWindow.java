@@ -87,6 +87,8 @@ public class ConfigurationWindow extends SplitPane {
 
 	private final SectionTreeDisplay sectionTreeDisplay;
 	private final VBox sectionDisplay;
+
+	private final ScrollPane basicSectionContentsScroll;
 	private final VBox basicSectionContents;
 
 	public ConfigurationWindow(RootConfiguration configuration, Configuration meta) {
@@ -106,14 +108,19 @@ public class ConfigurationWindow extends SplitPane {
 			explorerScrollPane.setVvalue(explorerScrollPane.getVvalue() - deltaY);
 		});
 
-		this.sectionTreeDisplay = new SectionTreeDisplay();
+		sectionTreeDisplay = new SectionTreeDisplay();
 
-		this.sectionDisplay = new VBox();
-		this.sectionDisplay.getStyleClass().add("configuration-window-display");
+		sectionDisplay = new VBox();
+		sectionDisplay.getStyleClass().add("configuration-window-display");
 
-		this.basicSectionContents = new VBox();
-		this.basicSectionContents.setPadding(new Insets(5, 0, 0, 5));
-		this.basicSectionContents.getStyleClass().add("configuration-window-display-contents");
+		basicSectionContentsScroll = new ScrollPane();
+		basicSectionContentsScroll.setFitToWidth(true);
+		basicSectionContentsScroll.setFitToHeight(true);
+
+		basicSectionContents = new VBox();
+		basicSectionContents.setPadding(new Insets(5, 0, 0, 5));
+		basicSectionContents.getStyleClass().add("configuration-window-display-contents");
+		basicSectionContentsScroll.setContent(basicSectionContents);
 
 		sectionDisplay.getChildren().add(sectionTreeDisplay);
 
@@ -174,7 +181,7 @@ public class ConfigurationWindow extends SplitPane {
 		}
 
 
-		sectionDisplay.getChildren().add(basicSectionContents);
+		sectionDisplay.getChildren().add(basicSectionContentsScroll);
 	}
 
 	public void open() {
