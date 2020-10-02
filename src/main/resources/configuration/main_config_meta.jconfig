@@ -59,7 +59,20 @@
   },
   "explorer": {
     "meta": {
-      "language_node": "CONFIG_EXPLORER"
+      "language_node": "CONFIG_EXPLORER",
+      "regions": {
+        "size": 0
+      }
+    },
+    "section_separator_width": {
+      "type": "double",
+      "language_node": "CONFIG_EXPLORER_SECTION_SEPARATOR_WIDTH",
+      "region": "size"
+    },
+    "element_separator_width": {
+      "type": "double",
+      "language_node": "CONFIG_EXPLORER_ELEMENT_SEPARATOR_WIDTH",
+      "region": "size"
     },
     "mips": {
       "meta": {

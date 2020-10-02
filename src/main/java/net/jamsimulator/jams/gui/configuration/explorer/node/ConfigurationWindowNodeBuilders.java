@@ -40,13 +40,13 @@ public class ConfigurationWindowNodeBuilders {
 
 	static {
 		//BOOLEAN
-		ConfigurationWindowNodeBoolean.Builder booleanBuilder = new ConfigurationWindowNodeBoolean.Builder();
+		var booleanBuilder = new ConfigurationWindowNodeBoolean.Builder();
 		builderByName.put("boolean", booleanBuilder);
 		buildersByType.put(boolean.class, booleanBuilder);
 		buildersByType.put(Boolean.class, booleanBuilder);
 
 		//INTEGER
-		ConfigurationWindowNodeInteger.Builder integerBuilder = new ConfigurationWindowNodeInteger.Builder();
+		var integerBuilder = new ConfigurationWindowNodeInteger.Builder();
 		builderByName.put("integer", integerBuilder);
 		buildersByType.put(int.class, integerBuilder);
 		buildersByType.put(Integer.class, integerBuilder);
@@ -55,28 +55,40 @@ public class ConfigurationWindowNodeBuilders {
 		ConfigurationWindowNodePositiveInteger.Builder positiveIntegerBuilder = new ConfigurationWindowNodePositiveInteger.Builder();
 		builderByName.put("positive_integer", positiveIntegerBuilder);
 
+		//FLOAT
+		var floatBuilder = new ConfigurationWindowNodeFloat.Builder();
+		builderByName.put("float", floatBuilder);
+		buildersByType.put(float.class, floatBuilder);
+		buildersByType.put(Float.class, floatBuilder);
+
+		//Double
+		var doubleBuilder = new ConfigurationWindowNodeDouble.Builder();
+		builderByName.put("double", doubleBuilder);
+		buildersByType.put(double.class, doubleBuilder);
+		buildersByType.put(Double.class, doubleBuilder);
+
 		//STRING
-		ConfigurationWindowNodeString.Builder stringBuilder = new ConfigurationWindowNodeString.Builder();
+		var stringBuilder = new ConfigurationWindowNodeString.Builder();
 		builderByName.put("string", stringBuilder);
 		buildersByType.put(String.class, stringBuilder);
 
 		//LANGUAGES
-		ConfigurationWindowNodeLanguage.Builder languageBuilder = new ConfigurationWindowNodeLanguage.Builder();
+		var languageBuilder = new ConfigurationWindowNodeLanguage.Builder();
 		builderByName.put("language", languageBuilder);
 		buildersByType.put(Language.class, languageBuilder);
 
 		//THEMES
-		ConfigurationWindowNodeTheme.Builder themeBuilder = new ConfigurationWindowNodeTheme.Builder();
+		var themeBuilder = new ConfigurationWindowNodeTheme.Builder();
 		builderByName.put("theme", themeBuilder);
 		buildersByType.put(Theme.class, themeBuilder);
 
 		//FONTS
-		ConfigurationWindowNodeFont.Builder fontBuilder = new ConfigurationWindowNodeFont.Builder();
+		var fontBuilder = new ConfigurationWindowNodeFont.Builder();
 		builderByName.put("font", fontBuilder);
 		buildersByType.put(Font.class, fontBuilder);
 
 		//MIPS SPACES
-		ConfigurationWindowNodeMIPSSpaces.Builder mipsSpacesBuilder = new ConfigurationWindowNodeMIPSSpaces.Builder();
+		var mipsSpacesBuilder = new ConfigurationWindowNodeMIPSSpaces.Builder();
 		builderByName.put("mips_spaces", mipsSpacesBuilder);
 		buildersByType.put(MIPSSpaces.class, mipsSpacesBuilder);
 	}

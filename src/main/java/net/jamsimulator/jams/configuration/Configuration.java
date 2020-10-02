@@ -144,6 +144,45 @@ public class Configuration {
 	}
 
 	/**
+	 * Returns the number that matches the given key, if present.
+	 * <p>
+	 * You can get values stored in the child nodes of this configuration using the separator ".".
+	 * For example, if you want to get the value "data" inside the child "node", you must use the
+	 * key "node.data".
+	 * <p>
+	 * This method won't modify the structure of the configuration. If the node that should contain the
+	 * wanted value is not present, the method will immediately return {@code Optional.empty()}.
+	 *
+	 * @param key the key.
+	 * @return the number, if present and matches the type.
+	 */
+	public Optional<Number> getNumber(String key) {
+		return get(key);
+	}
+
+	/**
+	 * Returns the value that matches the given key or the value given if not present.
+	 * <p>
+	 * You can get values stored in the child nodes of this configuration using the separator ".".
+	 * For example, if you want to get the value "data" inside the child "node", you must use the
+	 * key "node.data".
+	 * <p>
+	 * This method won't modify the structure of the configuration. If the node that should contain the
+	 * wanted value is not present, the method will immediately return {@code Optional.empty()}.
+	 * <p>
+	 * This method will never return {@link Map} instances, but {@link Configuration} objects.
+	 *
+	 * @param key    the key.
+	 * @param orElse the value returned if no element was found.
+	 * @param <T>    the value type.
+	 * @return the value if present and matches the type. Else, returns the given element.
+	 */
+	public <T> T getOrElse(String key, T orElse) {
+		Optional<T> optional = get(key);
+		return optional.orElse(orElse);
+	}
+
+	/**
 	 * Returns the configuration that matches the given key, if present.
 	 * <p>
 	 * If no configuration is present, one new configuration will be created, replacing

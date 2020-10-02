@@ -26,15 +26,16 @@ package net.jamsimulator.jams.gui.configuration.explorer.node;
 
 import javafx.scene.control.TextField;
 import net.jamsimulator.jams.configuration.Configuration;
-import net.jamsimulator.jams.utils.NumericUtils;
 
-public class ConfigurationWindowNodePositiveInteger extends ConfigurationWindowNode<Integer> {
+import java.util.Optional;
+
+public class ConfigurationWindowNodeDouble extends ConfigurationWindowNode<Double> {
 
 	protected TextField field;
 	private String oldText;
 
-	public ConfigurationWindowNodePositiveInteger(Configuration configuration, String relativeNode,
-												  String languageNode, String region, Integer defaultValue) {
+	public ConfigurationWindowNodeDouble(Configuration configuration, String relativeNode,
+										 String languageNode, String region, Double defaultValue) {
 		super(configuration, relativeNode, languageNode, region, defaultValue);
 	}
 
@@ -51,11 +52,7 @@ public class ConfigurationWindowNodePositiveInteger extends ConfigurationWindowN
 		Runnable run = () -> {
 			if (oldText.equals(field.getText())) return;
 			try {
-				int number = NumericUtils.decodeInteger(field.getText());
-				if (number < 0) {
-					field.setText(oldText);
-					return;
-				}
+				double number = Double.parseDouble(field.getText());
 				saveValue(number);
 				oldText = field.getText();
 			} catch (NumberFormatException ex) {
@@ -72,27 +69,26 @@ public class ConfigurationWindowNodePositiveInteger extends ConfigurationWindowN
 	}
 
 	@Override
-	public Integer getValue() {
-		return Math.max(configuration.getNumber(relativeNode).orElse(defaultValue).intValue(), 0);
+	public Double getValue() {
+		return configuration.getNumber(relativeNode).orElse(defaultValue).doubleValue();
 	}
 
 	@Override
-	public void setValue(Integer value) {
-		int positive = Math.max(value, 0);
-		saveValue(positive);
-		field.setText(String.valueOf(positive));
+	public void setValue(Double value) {
+		saveValue(value);
+		field.setText(String.valueOf(value));
 	}
 
 	@Override
-	protected void saveValue(Integer value) {
+	protected void saveValue(Double value) {
 		super.saveValue(value);
 	}
 
-	static class Builder implements ConfigurationWindowNodeBuilder<Integer> {
+	static class Builder implements ConfigurationWindowNodeBuilder<Double> {
 
 		@Override
-		public ConfigurationWindowNode<Integer> create(Configuration configuration, String relativeNode, String languageNode, String region) {
-			return new ConfigurationWindowNodePositiveInteger(configuration, relativeNode, languageNode, region, 0);
+		public ConfigurationWindowNode<Double> create(Configuration configuration, String relativeNode, String languageNode, String region) {
+			return new ConfigurationWindowNodeDouble(configuration, relativeNode, languageNode, region, 0.0);
 		}
 	}
 }

@@ -13,6 +13,8 @@
     "antialiasing": true
   },
   "explorer": {
+    "section_separator_width": 20.0,
+    "element_separator_width": 38.0,
     "mips": {
       "add_created_asm_files_to_assemble": true
     }

@@ -71,8 +71,7 @@ public class ConfigurationWindowNodeInteger extends ConfigurationWindowNode<Inte
 
     @Override
     public Integer getValue() {
-	   Optional<Integer> optional = configuration.get(relativeNode);
-	   return optional.orElse(defaultValue);
+		return configuration.getNumber(relativeNode).orElse(defaultValue).intValue();
     }
 
     @Override
