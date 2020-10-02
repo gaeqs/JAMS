@@ -181,8 +181,12 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 			throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
 		index--;
 
-		if (index == -1)
+		if (index == -1) {
+			if (parent.hideRepresentation) {
+				return Optional.empty();
+			}
 			return Optional.of(parent);
+		}
 
 		ExplorerElement element = parent.getElementByIndex(index).get();
 		while (element instanceof ExplorerSection && ((ExplorerSection) element).isExpanded()) {

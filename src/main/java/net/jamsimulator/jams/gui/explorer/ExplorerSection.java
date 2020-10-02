@@ -189,6 +189,16 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	}
 
 	/**
+	 * Returns whether the representation of this section is hidden.
+	 *
+	 * @return whether the representation of this section is hidden.
+	 * @see #hideRepresentation()
+	 */
+	public boolean isRepresentationHidden() {
+		return hideRepresentation;
+	}
+
+	/**
 	 * Contracts or expands the section depending the whether the section is contracted or expanded.
 	 *
 	 * @see #isExpanded()
@@ -489,8 +499,12 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 			throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
 		index--;
 
-		if (index == -1)
+		if (index == -1) {
+			if (parent.hideRepresentation) {
+				return Optional.empty();
+			}
 			return Optional.of(parent);
+		}
 
 		ExplorerElement element = parent.getElementByIndex(index).get();
 		while (element instanceof ExplorerSection && ((ExplorerSection) element).isExpanded()) {
