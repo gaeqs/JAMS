@@ -253,9 +253,9 @@ CONFIG_LANGUAGE_SELECTED_TOOLTIP=Este es el idioma que JAMS usará en la interfa
 
 CONFIG_SIMULATION=Simulación
 CONFIG_SIMULATION_MIPS=MIPS
-CONFIG_SIMULATION_MIPS_REGION_MEMORY=Memoria
-CONFIG_SIMULATION_MIPS_MEMORY_ROWS=Filas:
-CONFIG_SIMULATION_MIPS_MEMORY_ROWS_TOOLTIP=El número de filas que la memoria puede mostrar al mismo tiempo.
+CONFIG_SIMULATION_REGION_MEMORY=Memoria
+CONFIG_SIMULATION_MEMORY_ROWS=Filas:
+CONFIG_SIMULATION_MEMORY_ROWS_TOOLTIP=El número de filas que la memoria puede mostrar al mismo tiempo.
 CONFIG_SIMULATION_MIPS_REGION_FLOW=Flujo
 CONFIG_SIMULATION_MIPS_FLOW_MAX_ITEMS=Entradas máximas:
 CONFIG_SIMULATION_MIPS_FLOW_MAX_ITEMS_TOOLTIP=La cantidad de entradas que el panel de flujo puede representar al mismo tiempo.

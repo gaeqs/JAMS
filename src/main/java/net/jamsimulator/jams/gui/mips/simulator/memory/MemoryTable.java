@@ -18,6 +18,8 @@ import java.util.HashMap;
 
 public class MemoryTable extends TableView<MemoryEntry> {
 
+	public static final String MEMORY_ROWS_CONFIGURATION_NODE = "simulation.memory_rows";
+
 	private final HashMap<Integer, MemoryEntry> entries;
 
 	protected Simulation<?> simulation;
@@ -73,7 +75,7 @@ public class MemoryTable extends TableView<MemoryEntry> {
 
 		entries = new HashMap<>();
 
-		rows = (int) Jams.getMainConfiguration().get("simulation.mips.memory_rows").orElse(47);
+		rows = (int) Jams.getMainConfiguration().get(MEMORY_ROWS_CONFIGURATION_NODE).orElse(47);
 		Jams.getMainConfiguration().registerListeners(this, true);
 
 		populate();
@@ -162,7 +164,7 @@ public class MemoryTable extends TableView<MemoryEntry> {
 
 	@Listener
 	private void onConfigurationNodeChange(ConfigurationNodeChangeEvent.After event) {
-		if (event.getNode().equals("simulation.mips.memory_rows")) {
+		if (event.getNode().equals(MEMORY_ROWS_CONFIGURATION_NODE)) {
 			rows = (int) event.getNewValueAs().orElse(rows);
 			populate();
 		}

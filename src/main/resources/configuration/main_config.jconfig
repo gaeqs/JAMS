@@ -34,8 +34,8 @@
     }
   },
   "simulation": {
+    "memory_rows": 48,
     "mips": {
-      "memory_rows": 48,
       "flow_max_items": 100
     }
   }

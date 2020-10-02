@@ -158,20 +158,22 @@
   },
   "simulation": {
     "meta": {
-      "language_node": "CONFIG_SIMULATION"
+      "language_node": "CONFIG_SIMULATION",
+      "regions": {
+        "memory": 0
+      }
+    },
+    "memory_rows": {
+      "type": "positive_integer",
+      "language_node": "CONFIG_SIMULATION_MEMORY_ROWS",
+      "region": "memory"
     },
     "mips": {
       "meta": {
         "language_node": "CONFIG_SIMULATION_MIPS",
         "regions": {
-          "memory": 0,
           "flow": 1
         }
-      },
-      "memory_rows": {
-        "type": "positive_integer",
-        "language_node": "CONFIG_SIMULATION_MIPS_MEMORY_ROWS",
-        "region": "memory"
       },
       "flow_max_items": {
         "type": "positive_integer",
