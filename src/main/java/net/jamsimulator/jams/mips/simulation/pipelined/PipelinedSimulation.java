@@ -274,6 +274,8 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 					if (!fetch()) {
 						amount++;
 					}
+				} else {
+					amount++;
 				}
 			}
 		} catch (RAWHazardException ignore) {
@@ -288,8 +290,13 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 			return;
 		}
 
-		pipeline.shift(exitRequested ? 0 : registers.getProgramCounter().getValue(), amount);
-		if (check) checkExit();
+		var pcv = registers.getProgramCounter().getValue();
+		var nextCheck = check || (isKernelMode()
+				? Integer.compareUnsigned(pcv, kernelStackBottom) > 0
+				: Integer.compareUnsigned(pcv, instructionStackBottom) > 0);
+
+		pipeline.shift(nextCheck ? 0 : pcv, amount);
+		if (nextCheck) checkExit();
 
 		addCycleCount();
 
@@ -373,7 +380,7 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 		} catch (Exception ex) {
 			System.err.println("Found exception at 0x" + StringUtils.addZeros(Integer.toHexString(execution.getAddress()), 8));
 			System.err.println("Instruction " + execution.getInstruction().getBasicOrigin().getMnemonic());
-			System.err.println("Exception "+ex);
+			System.err.println("Exception " + ex);
 			ex.printStackTrace();
 		}
 	}
