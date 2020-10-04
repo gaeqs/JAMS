@@ -99,5 +99,14 @@ public class SyscallExecutionPrintDouble implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionPrintDouble> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionPrintDouble> copy() {
+			var builder = new Builder();
+			builder.hexProperty.setValue(hexProperty.getValue());
+			builder.lineJump.setValue(lineJump.getValue());
+			builder.register.setValue(register.getValue());
+			return builder;
+		}
 	}
 }

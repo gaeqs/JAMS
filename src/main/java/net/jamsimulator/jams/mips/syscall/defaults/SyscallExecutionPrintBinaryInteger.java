@@ -63,5 +63,13 @@ public class SyscallExecutionPrintBinaryInteger implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionPrintBinaryInteger> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionPrintBinaryInteger> copy() {
+			var builder = new Builder();
+			builder.lineJump.setValue(lineJump.getValue());
+			builder.register.setValue(register.getValue());
+			return builder;
+		}
 	}
 }

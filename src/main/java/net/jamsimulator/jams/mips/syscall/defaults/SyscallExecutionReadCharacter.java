@@ -70,5 +70,13 @@ public class SyscallExecutionReadCharacter implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionReadCharacter> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionReadCharacter> copy() {
+			var builder = new Builder();
+			builder.lineJump.setValue(lineJump.getValue());
+			builder.register.setValue(register.getValue());
+			return builder;
+		}
 	}
 }

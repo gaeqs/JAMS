@@ -63,5 +63,12 @@ public class SyscallExecutionSleep implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionSleep> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionSleep> copy() {
+			var builder = new Builder();
+			builder.register.setValue(register.getValue());
+			return builder;
+		}
 	}
 }

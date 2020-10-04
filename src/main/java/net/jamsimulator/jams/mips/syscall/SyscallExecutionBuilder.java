@@ -34,6 +34,8 @@ public abstract class SyscallExecutionBuilder<Exe extends SyscallExecution> {
 
 	public abstract SyscallExecutionBuilder<Exe> makeNewInstance();
 
+	public abstract SyscallExecutionBuilder<Exe> copy();
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

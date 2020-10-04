@@ -42,6 +42,24 @@ public class MIPSSimulationConfiguration {
 		this.syscallExecutionBuilders = syscallExecutionBuilders;
 	}
 
+	public MIPSSimulationConfiguration(String name, MIPSSimulationConfiguration configuration) {
+		Validate.notNull(name, "Name cannot be null!");
+		Validate.notNull(configuration, "Configuration cannot be null!");
+		this.name = name;
+		this.architecture = configuration.architecture;
+		this.memoryBuilder = configuration.memoryBuilder;
+
+		this.cacheBuilders = new ArrayList<>();
+		configuration.cacheBuilders.forEach(cache -> cacheBuilders.add(cache.copy()));
+		this.callEvents = configuration.callEvents;
+		this.undoEnabled = configuration.undoEnabled;
+		this.branchOnDecode = configuration.branchOnDecode;
+		this.enableForwarding = configuration.enableForwarding;
+
+		this.syscallExecutionBuilders = new HashMap<>();
+		configuration.syscallExecutionBuilders.forEach((key, builder) -> syscallExecutionBuilders.put(key, builder.copy()));
+	}
+
 	public MIPSSimulationConfiguration(String name, Configuration configuration) {
 		Validate.notNull(name, "Name cannot be null!");
 		Validate.isTrue(!name.isEmpty(), "Name cannot be empty!");

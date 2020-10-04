@@ -87,5 +87,13 @@ public class SyscallExecutionReadFloat implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionReadFloat> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionReadFloat> copy() {
+			var builder = new Builder();
+			builder.lineJump.setValue(lineJump.getValue());
+			builder.register.setValue(register.getValue());
+			return builder;
+		}
 	}
 }

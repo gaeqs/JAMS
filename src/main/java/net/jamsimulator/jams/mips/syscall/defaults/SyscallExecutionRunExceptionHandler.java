@@ -38,5 +38,10 @@ public class SyscallExecutionRunExceptionHandler implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionRunExceptionHandler> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionRunExceptionHandler> copy() {
+			return new Builder();
+		}
 	}
 }

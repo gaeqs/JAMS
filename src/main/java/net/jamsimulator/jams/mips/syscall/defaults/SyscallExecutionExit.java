@@ -46,5 +46,10 @@ public class SyscallExecutionExit implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionExit> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionExit> copy() {
+			return new Builder();
+		}
 	}
 }

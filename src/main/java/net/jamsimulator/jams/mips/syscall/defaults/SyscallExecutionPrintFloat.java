@@ -69,5 +69,14 @@ public class SyscallExecutionPrintFloat implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionPrintFloat> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionPrintFloat> copy() {
+			var builder = new Builder();
+			builder.hexProperty.setValue(hexProperty.getValue());
+			builder.lineJump.setValue(lineJump.getValue());
+			builder.register.setValue(register.getValue());
+			return builder;
+		}
 	}
 }

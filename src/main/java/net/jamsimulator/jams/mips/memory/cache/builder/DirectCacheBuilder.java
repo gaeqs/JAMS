@@ -48,4 +48,13 @@ public class DirectCacheBuilder extends CacheBuilder<Cache> {
 	public CacheBuilder<Cache> makeNewInstance() {
 		return new DirectCacheBuilder();
 	}
+
+	@Override
+	public CacheBuilder<Cache> copy() {
+		var builder = new DirectCacheBuilder();
+		builder.writeBack.setValue(writeBack.getValue());
+		builder.blockSize.setValue(blockSize.getValue());
+		builder.blocksAmount.setValue(blocksAmount.getValue());
+		return builder;
+	}
 }

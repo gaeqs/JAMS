@@ -63,5 +63,13 @@ public class SyscallExecutionPrintUnsignedInteger implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionPrintUnsignedInteger> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionPrintUnsignedInteger> copy() {
+			var builder = new Builder();
+			builder.lineJump.setValue(lineJump.getValue());
+			builder.register.setValue(register.getValue());
+			return builder;
+		}
 	}
 }

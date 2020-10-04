@@ -68,6 +68,10 @@ public class Icons {
 	public static final String TAB_SPLIT_VERTICALLY = "tab_split_vertically";
 	public static final String TAB_SPLIT_HORIZONTALLY = "tab_split_horizontally";
 
+	public static final String CONTROL_ADD = "control_add";
+	public static final String CONTROL_REMOVE = "control_remove";
+	public static final String CONTROL_COPY = "control_copy";
+
 	public static final String BAR_CLOSE = "bar_close";
 
 	public static final String LOGO_PATH = "/gui/icon/logo.png";
@@ -108,6 +112,10 @@ public class Icons {
 
 	public static final String TAB_SPLIT_VERTICALLY_PATH = "/gui/icon/tab/split_vertically.png";
 	public static final String TAB_SPLIT_HORIZONTALLY_PATH = "/gui/icon/tab/split_horizontally.png";
+
+	public static final String CONTROL_ADD_PATH = "/gui/icon/controls/add.png";
+	public static final String CONTROL_REMOVE_PATH = "/gui/icon/controls/remove.png";
+	public static final String CONTROL_COPY_PATH = "/gui/icon/controls/copy.png";
 
 	public static final String BAR_CLOSE_PATH = "/gui/icon/bar/close.png";
 

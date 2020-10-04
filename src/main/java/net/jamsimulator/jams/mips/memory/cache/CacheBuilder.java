@@ -35,6 +35,8 @@ public abstract class CacheBuilder<C extends Cache> {
 
 	public abstract CacheBuilder<C> makeNewInstance();
 
+	public abstract CacheBuilder<C> copy();
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

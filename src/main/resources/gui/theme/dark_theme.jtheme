@@ -997,19 +997,10 @@ AnchorPane {
 }
 
 /* MIPS CONFIGURATIONS */
-.mips-configurations-list {
-    -fx-background-color: -theme-background-darker-2;
-}
-
-.mips-configurations-list-buttons {
-    -fx-background-color: -theme-background;
-}
-
-.mips-configurations-list-entry {
-}
-
-.mips-configurations-list-entry-selected {
-    -fx-background-color: -theme-explorer-element-selected;
+.mips-configurations-window-name-field {
+    -fx-alignment: center-left;
+    -fx-spacing: 5;
+    -fx-padding: 5 5 5 5;
 }
 
 /* ---------- */

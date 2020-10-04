@@ -292,11 +292,18 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 			if (explorer.filter.test((ExplorerBasicElement) element)) {
 				filteredElements.add(element);
 			}
+			if(hideRepresentation) {
+				((ExplorerBasicElement) element).removeOneHierarchyLevel();
+			}
 		} else if (element instanceof ExplorerSection) {
 			if (((ExplorerSection) element).applyFilter()) {
 				filteredElements.add(element);
 			}
+			if(hideRepresentation) {
+				((ExplorerSection) element).removeOneHierarchyLevel();
+			}
 		}
+
 
 		refreshAllElements();
 		representation.refreshStatusIcon();

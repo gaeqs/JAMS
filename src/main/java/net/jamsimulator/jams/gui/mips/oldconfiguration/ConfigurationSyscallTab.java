@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.mips.configuration;
+package net.jamsimulator.jams.gui.mips.oldconfiguration;
 
 import javafx.application.Platform;
 import javafx.beans.property.Property;

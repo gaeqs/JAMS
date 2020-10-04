@@ -88,5 +88,13 @@ public class SyscallExecutionReadInteger implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionReadInteger> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionReadInteger> copy() {
+			var builder = new Builder();
+			builder.lineJump.setValue(lineJump.getValue());
+			builder.register.setValue(register.getValue());
+			return builder;
+		}
 	}
 }

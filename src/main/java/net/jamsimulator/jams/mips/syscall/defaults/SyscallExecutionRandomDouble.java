@@ -70,5 +70,13 @@ public class SyscallExecutionRandomDouble implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionRandomDouble> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionRandomDouble> copy() {
+			var builder = new Builder();
+			builder.generatorRegister.setValue(generatorRegister.getValue());
+			builder.valueRegister.setValue(valueRegister.getValue());
+			return builder;
+		}
 	}
 }

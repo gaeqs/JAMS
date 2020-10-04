@@ -66,5 +66,14 @@ public class SyscallExecutionPrintInteger implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionPrintInteger> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionPrintInteger> copy() {
+			var builder = new Builder();
+			builder.hexProperty.setValue(hexProperty.getValue());
+			builder.lineJump.setValue(lineJump.getValue());
+			builder.register.setValue(register.getValue());
+			return builder;
+		}
 	}
 }

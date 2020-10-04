@@ -10,7 +10,7 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionAssemble;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
-import net.jamsimulator.jams.gui.mips.configuration.ConfigurationsWindow;
+import net.jamsimulator.jams.gui.mips.configuration.MIPSConfigurationWindow;
 import net.jamsimulator.jams.gui.util.FixedButton;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
@@ -74,7 +74,7 @@ public class MIPSStructurePaneButtons {
 
 		Button configButton = new FixedButton("", new NearestImageView(icon, 18, 18), 28, 28);
 		configButton.getStyleClass().add("buttons-hbox-button");
-		configButton.setOnAction(event -> ConfigurationsWindow.open(structurePane.getProject().getData()));
+		configButton.setOnAction(event -> MIPSConfigurationWindow.open(structurePane.getProject().getData()));
 		nodes.add(configButton);
 	}
 

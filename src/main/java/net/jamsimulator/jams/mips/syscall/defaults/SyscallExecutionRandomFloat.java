@@ -59,5 +59,13 @@ public class SyscallExecutionRandomFloat implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionRandomFloat> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionRandomFloat> copy() {
+			var builder = new Builder();
+			builder.generatorRegister.setValue(generatorRegister.getValue());
+			builder.valueRegister.setValue(valueRegister.getValue());
+			return builder;
+		}
 	}
 }

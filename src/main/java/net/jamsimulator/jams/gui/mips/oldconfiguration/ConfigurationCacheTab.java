@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.mips.configuration;
+package net.jamsimulator.jams.gui.mips.oldconfiguration;
 
 import javafx.application.Platform;
 import javafx.beans.property.Property;
@@ -16,7 +16,6 @@ import net.jamsimulator.jams.gui.util.propertyeditor.PropertyEditors;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 import net.jamsimulator.jams.mips.memory.cache.builder.DirectCacheBuilder;
-import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionRunExceptionHandler;
 import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.utils.Spacer;
 

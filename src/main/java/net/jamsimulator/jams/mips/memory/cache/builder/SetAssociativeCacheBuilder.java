@@ -59,4 +59,15 @@ public class SetAssociativeCacheBuilder extends CacheBuilder<Cache> {
 	public CacheBuilder<Cache> makeNewInstance() {
 		return new SetAssociativeCacheBuilder();
 	}
+
+	@Override
+	public CacheBuilder<Cache> copy() {
+		var builder = new SetAssociativeCacheBuilder();
+		builder.writeBack.setValue(writeBack.getValue());
+		builder.blockSize.setValue(blockSize.getValue());
+		builder.blocksAmount.setValue(blocksAmount.getValue());
+		builder.setSize.setValue(setSize.getValue());
+		builder.replacementPolicy.setValue(replacementPolicy.getValue());
+		return builder;
+	}
 }

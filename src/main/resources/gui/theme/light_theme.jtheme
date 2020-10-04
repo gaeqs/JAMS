@@ -1017,6 +1017,14 @@ AnchorPane {
     -fx-background-color: #779eb0;
 }
 
+/* MIPS CONFIGURATIONS */
+.mips-configurations-window-name-field {
+    -fx-alignment: center-left;
+    -fx-spacing: 5;
+    -fx-padding: 5 5 5 5;
+}
+
+
 /* ---------- */
 /* SIMULATION */
 /* ---------- */

@@ -114,5 +114,15 @@ public class SyscallExecutionReadFile implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionReadFile> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionReadFile> copy() {
+			var builder = new Builder();
+			builder.idRegister.setValue(idRegister.getValue());
+			builder.addressRegister.setValue(addressRegister.getValue());
+			builder.maxBytesRegister.setValue(maxBytesRegister.getValue());
+			builder.resultRegister.setValue(resultRegister.getValue());
+			return builder;
+		}
 	}
 }

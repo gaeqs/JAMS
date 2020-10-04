@@ -58,5 +58,13 @@ public class SyscallExecutionSetSeed implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionSetSeed> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionSetSeed> copy() {
+			var builder = new Builder();
+			builder.generatorRegister.setValue(generatorRegister.getValue());
+			builder.seedRegister.setValue(seedRegister.getValue());
+			return builder;
+		}
 	}
 }

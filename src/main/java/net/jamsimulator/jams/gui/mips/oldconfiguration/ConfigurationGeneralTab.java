@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.mips.configuration;
+package net.jamsimulator.jams.gui.mips.oldconfiguration;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

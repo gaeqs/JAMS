@@ -63,5 +63,14 @@ public class SyscallExecutionRandomRangedInteger implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionRandomRangedInteger> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionRandomRangedInteger> copy() {
+			var builder = new Builder();
+			builder.generatorRegister.setValue(generatorRegister.getValue());
+			builder.rangeRegister.setValue(rangeRegister.getValue());
+			builder.valueRegister.setValue(valueRegister.getValue());
+			return builder;
+		}
 	}
 }

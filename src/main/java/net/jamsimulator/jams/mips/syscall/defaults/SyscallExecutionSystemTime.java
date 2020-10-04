@@ -59,5 +59,13 @@ public class SyscallExecutionSystemTime implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionSystemTime> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionSystemTime> copy() {
+			var builder = new Builder();
+			builder.low.setValue(low.getValue());
+			builder.high.setValue(high.getValue());
+			return builder;
+		}
 	}
 }

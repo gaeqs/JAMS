@@ -110,5 +110,14 @@ public class SyscallExecutionReadString implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionReadString> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionReadString> copy() {
+			var builder = new Builder();
+			builder.lineJump.setValue(lineJump.getValue());
+			builder.addressRegister.setValue(addressRegister.getValue());
+			builder.maxCharsRegister.setValue(maxCharsRegister.getValue());
+			return builder;
+		}
 	}
 }
