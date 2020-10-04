@@ -32,7 +32,7 @@ public class SyscallExecutionPrintFloat implements SyscallExecution {
 			throw new IllegalStateException("Floating point register " + this.register + " not found");
 
 		int value = register.getValue();
-		String toPrint = printHex ? "0x" + Integer.toHexString(value) : String.valueOf(Float.intBitsToFloat(value));
+		String toPrint = printHex ? Integer.toHexString(value) : String.valueOf(Float.intBitsToFloat(value));
 		simulation.getConsole().print(toPrint);
 		if (lineJump) simulation.getConsole().println();
 	}
@@ -42,7 +42,7 @@ public class SyscallExecutionPrintFloat implements SyscallExecution {
 		var value = execution.valueCOP1(register);
 		var console = execution.getSimulation().getConsole();
 
-		String toPrint = printHex ? "0x" + Integer.toHexString(value) : String.valueOf(Float.intBitsToFloat(value));
+		String toPrint = printHex ? Integer.toHexString(value) : String.valueOf(Float.intBitsToFloat(value));
 		console.print(toPrint);
 		if (lineJump) console.println();
 	}

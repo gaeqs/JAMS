@@ -43,7 +43,7 @@ public class SyscallExecutionPrintDouble implements SyscallExecution {
 		String toPrint;
 		if (printHex) {
 			long value = (((long) register2.getValue()) << 32) + register1.getValue();
-			toPrint = "0x" + Long.toHexString(value);
+			toPrint = Long.toHexString(value);
 		} else {
 			double value = NumericUtils.intsToDouble(register1.getValue(), register2.getValue());
 			toPrint = String.valueOf(value);
@@ -65,7 +65,7 @@ public class SyscallExecutionPrintDouble implements SyscallExecution {
 		String toPrint;
 		if (printHex) {
 			long value = (((long) value2) << 32) + value1;
-			toPrint = "0x" + Long.toHexString(value);
+			toPrint = Long.toHexString(value);
 		} else {
 			double value = NumericUtils.intsToDouble(value1, value2);
 			toPrint = String.valueOf(value);
