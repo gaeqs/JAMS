@@ -14,9 +14,10 @@ public class MIPSConfigurationsList extends AnchorPane {
 	public MIPSConfigurationsList(MIPSConfigurationWindow window) {
 		this.window = window;
 		controls = new MIPSConfigurationListControls(this);
-		contents = new MIPSConfigurationsListContents(null, window);
 
-		var scroll = new ScrollPane(contents);
+		var scroll = new ScrollPane();
+		contents = new MIPSConfigurationsListContents(scroll, window);
+		scroll.setContent(contents);
 		scroll.setFitToHeight(true);
 		scroll.setFitToWidth(true);
 
