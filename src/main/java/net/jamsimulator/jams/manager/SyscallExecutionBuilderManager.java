@@ -146,6 +146,11 @@ public class SyscallExecutionBuilderManager extends SimpleEventBroadcast {
 		builders.add(new SyscallExecutionPrintHexadecimalInteger.Builder());
 		builders.add(new SyscallExecutionPrintBinaryInteger.Builder());
 		builders.add(new SyscallExecutionPrintUnsignedInteger.Builder());
+		builders.add(new SyscallExecutionSetSeed.Builder());
+		builders.add(new SyscallExecutionRandomInteger.Builder());
+		builders.add(new SyscallExecutionRandomRangedInteger.Builder());
+		builders.add(new SyscallExecutionRandomFloat.Builder());
+		builders.add(new SyscallExecutionRandomDouble.Builder());
 	}
 
 }

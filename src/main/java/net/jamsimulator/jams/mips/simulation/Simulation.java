@@ -46,6 +46,7 @@ import net.jamsimulator.jams.mips.register.COP0StatusRegister;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.event.*;
 import net.jamsimulator.jams.mips.simulation.file.SimulationFiles;
+import net.jamsimulator.jams.mips.simulation.random.NumberGenerators;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.HashSet;
@@ -76,6 +77,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 	protected int instructionStackBottom, kernelStackBottom;
 	protected final Set<Integer> breakpoints;
+
+	protected final NumberGenerators numberGenerators;
 
 	protected InstructionExecution<Arch, ?>[] instructionCache;
 
@@ -115,6 +118,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		this.files = new SimulationFiles(this);
 
 		this.breakpoints = new HashSet<>();
+
+		this.numberGenerators = new NumberGenerators();
 
 		this.instructionCache = useCache ? new InstructionExecution[instructionStackBottom - memory.getFirstTextAddress() + 1] : null;
 
@@ -219,6 +224,14 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 */
 	public Set<Integer> getBreakpoints() {
 		return breakpoints;
+	}
+
+	/**
+	 * Returns the collection containing all number generators of this simulation.
+	 * @return the collection.
+	 */
+	public NumberGenerators getNumberGenerators() {
+		return numberGenerators;
 	}
 
 	/**
