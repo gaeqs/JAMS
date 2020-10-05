@@ -32,7 +32,7 @@ public class MIPSSimulationConfigurationPresets {
 		PRESETS.add(new MIPSSimulationConfigurationNodePreset(CALL_EVENTS, Boolean.class, 90,
 				Messages.SIMULATION_CONFIGURATION_CALL_EVENTS, true, null));
 		PRESETS.add(new MIPSSimulationConfigurationNodePreset(UNDO_ENABLED, Boolean.class, 90,
-				Messages.SIMULATION_CONFIGURATION_ENABLE_UNDO, true, null,
+				Messages.SIMULATION_CONFIGURATION_ENABLE_UNDO, true,
 				Map.of(CALL_EVENTS, new Object[]{true})));
 		PRESETS.add(new MIPSSimulationConfigurationNodePreset(FORWARDING_ENABLED, Boolean.class, 80,
 				Messages.SIMULATION_CONFIGURATION_ENABLE_FORWARDING, true,

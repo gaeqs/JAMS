@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.gui.mips.configuration;
 
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
@@ -13,6 +14,9 @@ public class MIPSConfigurationsList extends AnchorPane {
 
 	public MIPSConfigurationsList(MIPSConfigurationWindow window) {
 		this.window = window;
+
+		SplitPane.setResizableWithParent(this, false);
+
 		controls = new MIPSConfigurationListControls(this);
 
 		var scroll = new ScrollPane();
