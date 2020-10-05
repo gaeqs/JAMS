@@ -6,7 +6,7 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerBasicElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
-import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
+import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationAddEvent;
 import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationRemoveEvent;
 

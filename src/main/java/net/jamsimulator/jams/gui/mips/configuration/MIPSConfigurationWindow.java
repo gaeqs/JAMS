@@ -12,7 +12,7 @@ import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.mips.MIPSProjectData;
-import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
+import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 
 public class MIPSConfigurationWindow extends SplitPane {
 

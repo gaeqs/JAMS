@@ -1,9 +1,9 @@
-package net.jamsimulator.jams.project.mips;
+package net.jamsimulator.jams.project.mips.configuration;
 
 import javafx.beans.property.Property;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
-import net.jamsimulator.jams.mips.architecture.Architecture;
+import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
@@ -17,28 +17,28 @@ public class MIPSSimulationConfiguration {
 
 	protected String name;
 
-	protected Architecture architecture;
-	protected MemoryBuilder memoryBuilder;
+	protected Map<MIPSSimulationConfigurationNodePreset, Object> nodes;
+	protected Map<String, Object> rawValues;
+
 	protected List<CacheBuilder<?>> cacheBuilders;
-	protected boolean callEvents, undoEnabled, branchOnDecode, enableForwarding;
 	protected Map<Integer, SyscallExecutionBuilder<?>> syscallExecutionBuilders;
 
 	public MIPSSimulationConfiguration(String name) {
-		this(name, Jams.getArchitectureManager().getDefault(), Jams.getMemoryBuilderManager().getDefault(), new ArrayList<>(), true, true, new HashMap<>());
+		this(name, new ArrayList<>(), new HashMap<>());
 	}
 
-	public MIPSSimulationConfiguration(String name, Architecture architecture, MemoryBuilder memoryBuilder, List<CacheBuilder<?>> cacheBuilders,
-									   boolean callEvents, boolean undoEnabled, Map<Integer, SyscallExecutionBuilder<?>> syscallExecutionBuilders) {
+	public MIPSSimulationConfiguration(String name, List<CacheBuilder<?>> cacheBuilders, Map<Integer, SyscallExecutionBuilder<?>> syscallExecutionBuilders) {
 		Validate.notNull(name, "Name cannot be null!");
 		Validate.isTrue(!name.isEmpty(), "Name cannot be empty!");
-		Validate.notNull(architecture, "Architecture cannot be null!");
-		Validate.notNull(memoryBuilder, "Memory builder cannot be null!");
+
 		this.name = name;
-		this.architecture = architecture;
-		this.memoryBuilder = memoryBuilder;
+
+		this.nodes = new HashMap<>();
+		this.rawValues = new HashMap<>();
+
+		MIPSSimulationConfigurationPresets.forEachPreset(preset -> nodes.put(preset, preset.getDefaultValue()));
+
 		this.cacheBuilders = cacheBuilders;
-		this.callEvents = callEvents;
-		this.undoEnabled = undoEnabled;
 		this.syscallExecutionBuilders = syscallExecutionBuilders;
 	}
 
@@ -46,15 +46,12 @@ public class MIPSSimulationConfiguration {
 		Validate.notNull(name, "Name cannot be null!");
 		Validate.notNull(configuration, "Configuration cannot be null!");
 		this.name = name;
-		this.architecture = configuration.architecture;
-		this.memoryBuilder = configuration.memoryBuilder;
+
+		this.nodes = new HashMap<>(configuration.nodes);
+		this.rawValues = new HashMap<>();
 
 		this.cacheBuilders = new ArrayList<>();
 		configuration.cacheBuilders.forEach(cache -> cacheBuilders.add(cache.copy()));
-		this.callEvents = configuration.callEvents;
-		this.undoEnabled = configuration.undoEnabled;
-		this.branchOnDecode = configuration.branchOnDecode;
-		this.enableForwarding = configuration.enableForwarding;
 
 		this.syscallExecutionBuilders = new HashMap<>();
 		configuration.syscallExecutionBuilders.forEach((key, builder) -> syscallExecutionBuilders.put(key, builder.copy()));
@@ -65,21 +62,20 @@ public class MIPSSimulationConfiguration {
 		Validate.isTrue(!name.isEmpty(), "Name cannot be empty!");
 		this.name = name;
 
-		Optional<Architecture> archOptional = configuration.getString("architecture").flatMap(Jams.getArchitectureManager()::get);
-		architecture = archOptional.orElseGet(() -> Jams.getArchitectureManager().getDefault());
+		this.nodes = new HashMap<>();
+		this.rawValues = new HashMap<>();
 
-		Optional<MemoryBuilder> memOptional = configuration.getString("memory").flatMap(Jams.getMemoryBuilderManager()::get);
-		memoryBuilder = memOptional.orElseGet(() -> Jams.getMemoryBuilderManager().getDefault());
-
-		Optional<Boolean> callEventsOptional = configuration.get("call_events");
-		callEvents = callEventsOptional.orElse(true);
-		Optional<Boolean> undoEnabledOptional = configuration.get("undo_enabled");
-		undoEnabled = undoEnabledOptional.orElse(true);
-
-		Optional<Boolean> branchOnDecodeOptional = configuration.get("branch_on_decode");
-		branchOnDecode = branchOnDecodeOptional.orElse(true);
-		Optional<Boolean> forwardingEnabledOptional = configuration.get("forwarding_enabled");
-		enableForwarding = forwardingEnabledOptional.orElse(true);
+		Configuration nodesConfiguration = configuration.getOrCreateConfiguration("node");
+		nodesConfiguration.getAll(false).forEach((key, value) -> {
+			var preset = MIPSSimulationConfigurationPresets.getPreset(key).orElse(null);
+			if (preset != null) {
+				var optional = nodesConfiguration.getAndConvert(preset.getName(), preset.getType());
+				nodes.put(preset, optional.orElseGet(preset::getDefaultValue));
+			} else {
+				System.out.println("Raw value " + key + " found. Value: " + value);
+				rawValues.put(key, value);
+			}
+		});
 
 		loadSyscalls(configuration);
 		loadCaches(configuration);
@@ -95,22 +91,50 @@ public class MIPSSimulationConfiguration {
 		this.name = name;
 	}
 
-	public Architecture getArchitecture() {
-		return architecture;
+	public Map<MIPSSimulationConfigurationNodePreset, Object> getNodes() {
+		return new HashMap<>(nodes);
 	}
 
-	public void setArchitecture(Architecture architecture) {
-		Validate.notNull(architecture, "Architecture cannot be null!");
-		this.architecture = architecture;
+	public <T> T getNodeValue(String node) {
+		var preset = MIPSSimulationConfigurationPresets.getPreset(node);
+		try {
+			if (preset.isEmpty()) {
+				return (T) rawValues.get(node);
+			}
+
+			if (rawValues.containsKey(node)) {
+				Object value = rawValues.remove(node);
+
+				if (!preset.get().getType().isInstance(value)) {
+					var optional = ValueConverters.getByType(preset.get().getType());
+
+					if (optional.isPresent()) {
+						value = optional.get().fromString(value.toString());
+						if (value == null) value = preset.get().getDefaultValue();
+					} else {
+						value = preset.get().getDefaultValue();
+					}
+				}
+
+				nodes.put(preset.get(), value);
+			}
+
+			return (T) nodes.getOrDefault(preset.get(), preset.get().getDefaultValue());
+		} catch (ClassCastException ex) {
+			ex.printStackTrace();
+			return null;
+		}
 	}
 
-	public MemoryBuilder getMemoryBuilder() {
-		return memoryBuilder;
-	}
-
-	public void setMemoryBuilder(MemoryBuilder memoryBuilder) {
-		Validate.notNull(memoryBuilder, "Memory builder cannot be null!");
-		this.memoryBuilder = memoryBuilder;
+	public boolean setNodeValue(String node, Object value) {
+		var preset = MIPSSimulationConfigurationPresets.getPreset(node);
+		if (preset.isEmpty()) {
+			rawValues.put(node, value);
+		} else {
+			if (!preset.get().getType().isInstance(value)) return false;
+			nodes.put(preset.get(), value);
+		}
+		return true;
 	}
 
 	public List<CacheBuilder<?>> getCacheBuilders() {
@@ -118,7 +142,8 @@ public class MIPSSimulationConfiguration {
 	}
 
 	public Memory generateNewMemory() {
-		Memory current = memoryBuilder.createMemory();
+		MemoryBuilder builder = getNodeValue("memory");
+		Memory current = builder.createMemory();
 		ListIterator<CacheBuilder<?>> iterator = cacheBuilders.listIterator(cacheBuilders.size());
 		while (iterator.hasPrevious()) {
 			current = iterator.previous().build(current);
@@ -131,46 +156,13 @@ public class MIPSSimulationConfiguration {
 		return syscallExecutionBuilders;
 	}
 
-	public boolean shouldCallEvents() {
-		return callEvents;
-	}
-
-	public void setShouldCallEvents(boolean callEvents) {
-		this.callEvents = callEvents;
-	}
-
-	public boolean isUndoEnabled() {
-		return undoEnabled;
-	}
-
-	public void setUndoEnabled(boolean undoEnabled) {
-		this.undoEnabled = undoEnabled;
-	}
-
-	public boolean isForwardingEnabled() {
-		return enableForwarding;
-	}
-
-	public void setForwardingEnabled(boolean enableForwarding) {
-		this.enableForwarding = enableForwarding;
-	}
-
-	public boolean shouldSolveBranchOnDecode() {
-		return branchOnDecode;
-	}
-
-	public void setSolveBranchOnDecode(boolean branchOnDecode) {
-		this.branchOnDecode = branchOnDecode;
-	}
-
 	public void save(Configuration configuration, String prefix) {
 		prefix = prefix + "." + name;
-		configuration.set(prefix + ".architecture", architecture.getName());
-		configuration.set(prefix + ".memory", memoryBuilder.getName());
-		configuration.set(prefix + ".call_events", callEvents);
-		configuration.set(prefix + ".undo_enabled", undoEnabled);
-		configuration.set(prefix + ".branch_on_decode", branchOnDecode);
-		configuration.set(prefix + ".forwarding_enabled", enableForwarding);
+
+		String nodePrefix = prefix + ".node.";
+
+		rawValues.forEach((key, value) -> configuration.set(nodePrefix + key, value));
+		nodes.forEach((key, value) -> configuration.convertAndSet(nodePrefix + key.getName(), value, key.getType()));
 
 		configuration.remove(prefix + "." + name + ".syscalls");
 		String syscallsPrefix = prefix + ".syscalls.";
@@ -197,13 +189,9 @@ public class MIPSSimulationConfiguration {
 	public String toString() {
 		return "MIPSSimulationConfiguration{" +
 				"name='" + name + '\'' +
-				", architecture=" + architecture +
-				", memoryBuilder=" + memoryBuilder +
+				", presets=" + nodes +
+				", rawValues=" + rawValues +
 				", cacheBuilders=" + cacheBuilders +
-				", callEvents=" + callEvents +
-				", undoEnabled=" + undoEnabled +
-				", branchOnDecode=" + branchOnDecode +
-				", enableForwarding=" + enableForwarding +
 				", syscallExecutionBuilders=" + syscallExecutionBuilders +
 				'}';
 	}

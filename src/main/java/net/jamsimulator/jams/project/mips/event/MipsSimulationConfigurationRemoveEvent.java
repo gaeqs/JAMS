@@ -27,7 +27,7 @@ package net.jamsimulator.jams.project.mips.event;
 import net.jamsimulator.jams.event.Cancellable;
 import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.project.mips.MIPSProjectData;
-import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
+import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 
 public class MipsSimulationConfigurationRemoveEvent extends Event {
 

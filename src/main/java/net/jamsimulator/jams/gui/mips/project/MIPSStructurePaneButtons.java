@@ -13,7 +13,7 @@ import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.configuration.MIPSConfigurationWindow;
 import net.jamsimulator.jams.gui.util.FixedButton;
 import net.jamsimulator.jams.project.mips.MIPSProject;
-import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
+import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationAddEvent;
 import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationRemoveEvent;
 import net.jamsimulator.jams.project.mips.event.SelectedMipsSimulationConfigurationChangeEvent;

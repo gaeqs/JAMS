@@ -167,10 +167,10 @@ public class ConfigurationWindow extends SplitPane {
 	private void displayNormalSection(ConfigurationWindowSection section) {
 		basicSectionContents.getChildren().clear();
 
-		List<ConfigurationWindowNode<?>> nodes = section.getNodes();
+		List<ConfigurationWindowNode> nodes = section.getNodes();
 		String currentRegion = null;
 
-		for (ConfigurationWindowNode<?> node : nodes) {
+		for (ConfigurationWindowNode node : nodes) {
 			if (currentRegion == null || !currentRegion.equals(node.getRegion())) {
 				currentRegion = node.getRegion();
 				if (currentRegion != null) {

@@ -101,7 +101,7 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
 	 *
 	 * @return the unmodifiable {@link List}.
 	 */
-	public List<ConfigurationWindowNode<?>> getNodes() {
+	public List<ConfigurationWindowNode> getNodes() {
 		return null;
 	}
 

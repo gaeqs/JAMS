@@ -32,6 +32,8 @@ import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.project.BasicProject;
+import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
+import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurationPresets;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,7 +109,7 @@ public class MIPSProject extends BasicProject {
 		var simulationData = new SimulationData(configuration, data.getFilesFolder(), new Console(),
 				assembler.getOriginals(), assembler.getLabelsWithFileNames());
 
-		return assembler.createSimulation(configuration.getArchitecture(), simulationData);
+		return assembler.createSimulation(configuration.getNodeValue(MIPSSimulationConfigurationPresets.ARCHITECTURE), simulationData);
 	}
 
 	@Override

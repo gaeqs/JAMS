@@ -2,7 +2,8 @@ package net.jamsimulator.jams.mips.simulation;
 
 import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
-import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
+import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
+import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurationPresets;
 
 import java.io.File;
 import java.util.Map;
@@ -44,11 +45,10 @@ public class SimulationData {
 		this.originalInstructions = originalInstructions;
 		this.labels = labels;
 
-		this.callEvents = configuration.shouldCallEvents();
-		this.undoEnabled = configuration.isUndoEnabled() && callEvents;
-		this.enableForwarding = configuration.isForwardingEnabled();
-
-		this.solveBranchOnDecode = configuration.shouldSolveBranchOnDecode();
+		this.callEvents = configuration.getNodeValue(MIPSSimulationConfigurationPresets.CALL_EVENTS);
+		this.undoEnabled = (boolean) configuration.getNodeValue(MIPSSimulationConfigurationPresets.UNDO_ENABLED) && callEvents;
+		this.enableForwarding = configuration.getNodeValue(MIPSSimulationConfigurationPresets.FORWARDING_ENABLED);
+		this.solveBranchOnDecode = configuration.getNodeValue(MIPSSimulationConfigurationPresets.BRANCH_ON_DECODE);
 	}
 
 	/**

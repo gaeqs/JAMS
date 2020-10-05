@@ -29,29 +29,43 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import net.jamsimulator.jams.configuration.Configuration;
+import net.jamsimulator.jams.gui.util.converter.ValueConverter;
+import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.gui.util.value.*;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
+import net.jamsimulator.jams.utils.Validate;
 
-import java.util.Optional;
-
-public class ConfigurationWindowNode<E> extends HBox {
+public class ConfigurationWindowNode extends HBox {
 
 	protected Configuration configuration;
 	protected String relativeNode;
 	protected String languageNode;
 	protected String region;
-	protected E defaultValue;
+
+	protected ValueEditor<?> editor;
+	protected ValueConverter<?> converter;
 
 
 	public ConfigurationWindowNode(Configuration configuration, String relativeNode,
-								   String languageNode, String region, E defaultValue) {
+								   String languageNode, String region, String type) {
 		getStyleClass().add("configuration-window-node");
 		this.configuration = configuration;
 		this.relativeNode = relativeNode;
 		this.languageNode = languageNode;
 		this.region = region;
-		this.defaultValue = defaultValue;
-		init();
+
+		editor = ValueEditors.getByName(type).map(ValueEditor.Builder::build).orElse(null);
+		Validate.notNull(editor, "Editor cannot be null! Type: " + type);
+		converter = loadConverter(type);
+		Validate.notNull(converter, "Converter cannot be null! Type: " + type);
+
+		init(type);
+
+		configuration.getString(relativeNode).flatMap(converter::fromStringSafe)
+				.ifPresent(v -> editor.setCurrentValueUnsafe(v));
+
+		editor.addListener(value -> converter.save(configuration, relativeNode, value));
 	}
 
 	public Configuration getConfiguration() {
@@ -70,24 +84,7 @@ public class ConfigurationWindowNode<E> extends HBox {
 		return region;
 	}
 
-	public E getDefaultValue() {
-		return defaultValue;
-	}
-
-	public E getValue() {
-		Optional<E> optional = configuration.get(relativeNode);
-		return optional.orElse(defaultValue);
-	}
-
-	public void setValue(E value) {
-		saveValue(value);
-	}
-
-	protected void saveValue(E value) {
-		configuration.set(relativeNode, value);
-	}
-
-	protected void init() {
+	protected void init(String type) {
 		setAlignment(Pos.CENTER_LEFT);
 		Label label = languageNode == null ? new Label(relativeNode) : new LanguageLabel(languageNode);
 		if (languageNode != null) {
@@ -97,6 +94,23 @@ public class ConfigurationWindowNode<E> extends HBox {
 		Region region = new Region();
 		region.setPrefWidth(10);
 
-		getChildren().addAll(region, label);
+		if (type.equals(BooleanValueEditor.NAME)) {
+			label.setOnMouseClicked(click -> editor.setCurrentValueUnsafe(!((boolean) editor.getCurrentValue())));
+			getChildren().addAll(region, editor.getAsNode(), label);
+		} else {
+			getChildren().addAll(region, label, editor.getAsNode());
+		}
 	}
+
+	protected ValueConverter<?> loadConverter(String type) {
+		if (type.equals(FontValueEditor.NAME)) {
+			type = StringValueEditor.NAME;
+		} else if (type.equals(PositiveIntegerValueEditor.NAME)) {
+			type = IntegerValueEditor.NAME;
+		}
+
+		return ValueConverters.getByName(type).orElse(null);
+	}
+
+
 }
