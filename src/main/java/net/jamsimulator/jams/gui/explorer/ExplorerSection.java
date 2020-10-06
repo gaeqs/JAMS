@@ -62,7 +62,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	protected List<ExplorerElement> elements, filteredElements;
 	protected Comparator<ExplorerElement> comparator;
 
-	protected VBox contents;
+	public VBox contents;
 	protected boolean expanded, hideRepresentation;
 
 	//HIERARCHY
@@ -107,7 +107,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		loadListeners();
 		setOnContextMenuRequested(request -> {
 			if (!representation.selected) {
-				explorer.setSelectedElement(this);
+				explorer.selectElementAlone(this);
 			}
 			createContextMenu(request.getScreenX(), request.getScreenY());
 			request.consume();
@@ -292,14 +292,14 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 			if (explorer.filter.test((ExplorerBasicElement) element)) {
 				filteredElements.add(element);
 			}
-			if(hideRepresentation) {
+			if (hideRepresentation) {
 				((ExplorerBasicElement) element).removeOneHierarchyLevel();
 			}
 		} else if (element instanceof ExplorerSection) {
 			if (((ExplorerSection) element).applyFilter()) {
 				filteredElements.add(element);
 			}
-			if(hideRepresentation) {
+			if (hideRepresentation) {
 				((ExplorerSection) element).removeOneHierarchyLevel();
 			}
 		}
@@ -328,6 +328,9 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		elements.remove(element);
 		boolean result = filteredElements.remove(element);
 		if (result) {
+			if (element.isSelected()) {
+				explorer.deselectElement(element);
+			}
 			refreshAllElements();
 			representation.refreshStatusIcon();
 			explorer.refreshWidth();
@@ -407,6 +410,30 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 			}
 		}
 		return property;
+	}
+
+	/**
+	 * Removes, sorts and adds all elements to the view.
+	 */
+	public void refreshAllElements() {
+		//Clears, sorts and adds the files.
+		contents.getChildren().clear();
+		filteredElements.sort(comparator);
+		if (expanded) addAllFilesToContents();
+	}
+
+	/**
+	 * Removes all elements from this section.
+	 */
+	public void clear() {
+		for (ExplorerElement element : elements) {
+			if (element.isSelected()) {
+				explorer.deselectElement(element);
+			}
+		}
+		elements.clear();
+		filteredElements.clear();
+		contents.getChildren().clear();
 	}
 
 	protected boolean applyFilter() {
@@ -580,13 +607,6 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 
 		//Only invoked when the element is focused.
 		addEventHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
-	}
-
-	protected void refreshAllElements() {
-		//Clears, sorts and adds the files.
-		contents.getChildren().clear();
-		filteredElements.sort(comparator);
-		if (expanded) addAllFilesToContents();
 	}
 
 	protected void addAllFilesToContents() {

@@ -60,8 +60,8 @@ public class ConfigurationWindowExplorer extends Explorer {
 	}
 
 	@Override
-	public void setSelectedElement(ExplorerElement element) {
-		super.setSelectedElement(element);
+	public void selectElementAlone(ExplorerElement element) {
+		super.selectElementAlone(element);
 		if (element instanceof ConfigurationWindowSection) {
 			configurationWindow.display((ConfigurationWindowSection) element);
 		}

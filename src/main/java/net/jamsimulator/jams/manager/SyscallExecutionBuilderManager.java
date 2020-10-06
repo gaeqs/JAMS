@@ -26,7 +26,12 @@ package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
+import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundle;
+import net.jamsimulator.jams.mips.syscall.bundle.defaults.MARSSyscallExecutionBuilderBundle;
+import net.jamsimulator.jams.mips.syscall.bundle.defaults.SPIMSyscallExecutionBuilderBundle;
 import net.jamsimulator.jams.mips.syscall.defaults.*;
+import net.jamsimulator.jams.mips.syscall.event.SyscallExecutionBuilderBundleRegisterEvent;
+import net.jamsimulator.jams.mips.syscall.event.SyscallExecutionBuilderBundleUnregisterEvent;
 import net.jamsimulator.jams.mips.syscall.event.SyscallExecutionBuilderRegisterEvent;
 import net.jamsimulator.jams.mips.syscall.event.SyscallExecutionBuilderUnregisterEvent;
 import net.jamsimulator.jams.utils.Validate;
@@ -49,9 +54,11 @@ public class SyscallExecutionBuilderManager extends SimpleEventBroadcast {
 	public static final SyscallExecutionBuilderManager INSTANCE = new SyscallExecutionBuilderManager();
 
 	private final Set<SyscallExecutionBuilder<?>> builders;
+	private final Set<SyscallExecutionBuilderBundle> bundles;
 
 	private SyscallExecutionBuilderManager() {
 		builders = new HashSet<>();
+		bundles = new HashSet<>();
 		addDefaults();
 	}
 
@@ -66,7 +73,17 @@ public class SyscallExecutionBuilderManager extends SimpleEventBroadcast {
 	}
 
 	/**
-	 * Returns a unmodifiable {@link Set} with all {@link SyscallExecutionBuilder}s
+	 * Returns the {@link SyscallExecutionBuilderBundle} that matches the given name, if present.
+	 *
+	 * @param name the given name.
+	 * @return the {@link SyscallExecutionBuilderBundle}, if present.
+	 */
+	public Optional<SyscallExecutionBuilderBundle> getBundle(String name) {
+		return bundles.stream().filter(target -> target.getName().equalsIgnoreCase(name)).findFirst();
+	}
+
+	/**
+	 * Returns an unmodifiable {@link Set} with all {@link SyscallExecutionBuilder}s
 	 * registered in this manager.
 	 * <p>
 	 * Any attempt to modify this {@link Set} result in an {@link UnsupportedOperationException}.
@@ -76,6 +93,19 @@ public class SyscallExecutionBuilderManager extends SimpleEventBroadcast {
 	 */
 	public Set<SyscallExecutionBuilder<?>> getAll() {
 		return Collections.unmodifiableSet(builders);
+	}
+
+	/**
+	 * Returns an unmodifiable {@link Set} with all {@link SyscallExecutionBuilderBundle}s registered
+	 * in this manager.
+	 * <p>
+	 * Any attempt to modify this {@link Set} result in an {@link UnsupportedOperationException}.
+	 *
+	 * @return the unmodifiable {@link Set}.
+	 * @see Collections#unmodifiableSet(Set)
+	 */
+	public Set<SyscallExecutionBuilderBundle> getAllBundles() {
+		return Collections.unmodifiableSet(bundles);
 	}
 
 	/**
@@ -100,8 +130,26 @@ public class SyscallExecutionBuilderManager extends SimpleEventBroadcast {
 	}
 
 	/**
+	 * Attempts to register the given {@link SyscallExecutionBuilderBundle} into the manager.
+	 * This will fail if a {@link SyscallExecutionBuilderBundle} with the same name already exists within this manager.
+	 *
+	 * @param bundle the bundle to register.
+	 * @return whether the bundle was registered.
+	 */
+	public boolean registerBundle(SyscallExecutionBuilderBundle bundle) {
+		Validate.notNull(bundle, "Bundle cannot be null!");
+		if (bundles.contains(bundle)) return false;
+
+		var before = callEvent(new SyscallExecutionBuilderBundleRegisterEvent.Before(bundle));
+		if (before.isCancelled()) return false;
+		if (!bundles.add(bundle)) return false;
+
+		callEvent(new SyscallExecutionBuilderBundleRegisterEvent.After(bundle));
+		return true;
+	}
+
+	/**
 	 * Attempts to unregister the {@link SyscallExecutionBuilder} that matches the given name.
-	 * This will fail if the {@link SyscallExecutionBuilder} to unregister is the default one.
 	 *
 	 * @param name the given name.
 	 * @return whether the operation was successful.
@@ -117,6 +165,25 @@ public class SyscallExecutionBuilderManager extends SimpleEventBroadcast {
 		if (before.isCancelled()) return false;
 		if (!builders.remove(builder)) return false;
 		callEvent(new SyscallExecutionBuilderUnregisterEvent.After(builder));
+		return true;
+	}
+
+	/**
+	 * Attempts to unregister the {@link SyscallExecutionBuilderBundle} that matches the given name.
+	 *
+	 * @param name the given name.
+	 * @return whether the operation was successful.
+	 */
+	public boolean unregisterBundle(String name) {
+		var bundle = bundles.stream().filter(target ->
+				target.getName().equalsIgnoreCase(name)).findAny().orElse(null);
+		if (bundle == null) return false;
+
+		var before = callEvent(new SyscallExecutionBuilderBundleUnregisterEvent.Before(bundle));
+		if (before.isCancelled()) return false;
+		if (!bundles.remove(bundle)) return false;
+
+		callEvent(new SyscallExecutionBuilderBundleUnregisterEvent.After(bundle));
 		return true;
 	}
 
@@ -151,6 +218,12 @@ public class SyscallExecutionBuilderManager extends SimpleEventBroadcast {
 		builders.add(new SyscallExecutionRandomRangedInteger.Builder());
 		builders.add(new SyscallExecutionRandomFloat.Builder());
 		builders.add(new SyscallExecutionRandomDouble.Builder());
+
+
+		//BUNDLES
+		bundles.add(new SyscallExecutionBuilderBundle("Empty"));
+		bundles.add(new SPIMSyscallExecutionBuilderBundle());
+		bundles.add(new MARSSyscallExecutionBuilderBundle());
 	}
 
 }

@@ -30,6 +30,8 @@ import net.jamsimulator.jams.gui.theme.Theme;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
+import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
+import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,16 +53,19 @@ public class ValueEditors {
 		var booleanEditor = new BooleanValueEditor.Builder();
 		editorByName.put(BooleanValueEditor.NAME, booleanEditor);
 		editorByType.put(Boolean.class, booleanEditor);
+		editorByType.put(boolean.class, booleanEditor);
 
 		//DOUBLE
 		var doubleEditor = new DoubleValueEditor.Builder();
 		editorByName.put(DoubleValueEditor.NAME, doubleEditor);
 		editorByType.put(Double.class, doubleEditor);
+		editorByType.put(double.class, doubleEditor);
 
 		//FLOAT
 		var floatEditor = new FloatValueEditor.Builder();
 		editorByName.put(FloatValueEditor.NAME, floatEditor);
 		editorByType.put(Float.class, floatEditor);
+		editorByType.put(float.class, floatEditor);
 
 		//FONT
 		var fontEditor = new FontValueEditor.Builder();
@@ -71,6 +76,7 @@ public class ValueEditors {
 		var integerEditor = new IntegerValueEditor.Builder();
 		editorByName.put(IntegerValueEditor.NAME, integerEditor);
 		editorByType.put(Integer.class, integerEditor);
+		editorByType.put(int.class, integerEditor);
 
 		//LANGUAGES
 		var languageEditor = new LanguageValueEditor.Builder();
@@ -95,6 +101,16 @@ public class ValueEditors {
 		var stringEditor = new StringValueEditor.Builder();
 		editorByName.put(StringValueEditor.NAME, stringEditor);
 		editorByType.put(String.class, stringEditor);
+
+		//SYSCALL EXECUTION BUILDER BUNDLE
+		var syscallExecutionBuilderBundleEditor = new SyscallExecutionBuilderBundleValueEditor.Builder();
+		editorByName.put(SyscallExecutionBuilderBundleValueEditor.NAME, syscallExecutionBuilderBundleEditor);
+		editorByType.put(SyscallExecutionBuilderBundle.class, syscallExecutionBuilderBundleEditor);
+
+		//SYSCALL EXECUTION BUILDER
+		var syscallExecutionBuilderEditor = new SyscallExecutionBuilderValueEditor.Builder();
+		editorByName.put(SyscallExecutionBuilderValueEditor.NAME, syscallExecutionBuilderEditor);
+		editorByType.put(SyscallExecutionBuilder.class, syscallExecutionBuilderEditor);
 
 		//THEME
 		var themeEditor = new ThemeValueEditor.Builder();

@@ -75,7 +75,7 @@ public interface ExplorerElement extends ActionRegion {
 	 * Selects this element.
 	 * <p>
 	 * This method only marks this element as selected.
-	 * If you want to select this element use {@link Explorer#setSelectedElement(ExplorerElement)}.
+	 * If you want to select this element use {@link Explorer#selectElementAlone(ExplorerElement)}.
 	 *
 	 * @see #isSelected().
 	 */

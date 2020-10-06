@@ -42,6 +42,10 @@ public class LanguageTooltip extends Tooltip {
 
 	private String node;
 
+	public LanguageTooltip(String node) {
+		this(node, DEFAULT_DELAY);
+	}
+
 	public LanguageTooltip(String node, int showDelay) {
 		this.node = node;
 		hackTooltipStartTiming(this, showDelay);

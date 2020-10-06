@@ -51,7 +51,7 @@ public class ExplorerElementActionSelectPrevious extends Action {
 		Explorer explorer = element.getExplorer();
 		explorer.startKeyboardSelection();
 		element.getPrevious().ifPresent(target -> {
-			explorer.setSelectedElement(target);
+			explorer.selectElementAlone(target);
 			explorer.updateScrollPosition(target);
 		});
 	}

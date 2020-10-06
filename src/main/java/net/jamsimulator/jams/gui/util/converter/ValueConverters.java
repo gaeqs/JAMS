@@ -30,6 +30,8 @@ import net.jamsimulator.jams.gui.theme.Theme;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
+import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
+import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +47,7 @@ public class ValueConverters {
 		var actionConverter = new ActionValueConverter();
 		converterByName.put(ActionValueConverter.NAME, actionConverter);
 		converterByType.put(Action.class, actionConverter);
-		
+
 		//ARCHITECTURE
 		var architectureConverter = new ArchitectureValueConverter();
 		converterByName.put(ArchitectureValueConverter.NAME, architectureConverter);
@@ -70,7 +72,7 @@ public class ValueConverters {
 		var integerConverter = new IntegerValueConverter();
 		converterByName.put(IntegerValueConverter.NAME, integerConverter);
 		converterByType.put(Integer.class, integerConverter);
-		
+
 		//LANGUAGES
 		var languageConverter = new LanguageValueConverter();
 		converterByName.put(LanguageValueConverter.NAME, languageConverter);
@@ -91,7 +93,17 @@ public class ValueConverters {
 		var stringConverter = new StringValueConverter();
 		converterByName.put(StringValueConverter.NAME, stringConverter);
 		converterByType.put(String.class, stringConverter);
-		
+
+		//SYSCALL EXECUTION BUILDER
+		var syscallExecutionBuilderConverter = new SyscallExecutionBuilderValueConverter();
+		converterByName.put(SyscallExecutionBuilderValueConverter.NAME, syscallExecutionBuilderConverter);
+		converterByType.put(SyscallExecutionBuilder.class, syscallExecutionBuilderConverter);
+
+		//SYSCALL EXECUTION BUILDER BUNDLE
+		var syscallExecutionBuilderBundleConverter = new SyscallExecutionBuilderBundleValueConverter();
+		converterByName.put(SyscallExecutionBuilderBundleValueConverter.NAME, syscallExecutionBuilderBundleConverter);
+		converterByType.put(SyscallExecutionBuilderBundle.class, syscallExecutionBuilderBundleConverter);
+
 		//THEME
 		var themeConverter = new ThemeValueConverter();
 		converterByName.put(ThemeValueConverter.NAME, themeConverter);

@@ -8,6 +8,8 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
+import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundle;
+import net.jamsimulator.jams.mips.syscall.bundle.defaults.MARSSyscallExecutionBuilderBundle;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -24,7 +26,9 @@ public class MIPSSimulationConfiguration {
 	protected Map<Integer, SyscallExecutionBuilder<?>> syscallExecutionBuilders;
 
 	public MIPSSimulationConfiguration(String name) {
-		this(name, new ArrayList<>(), new HashMap<>());
+		this(name, new ArrayList<>(), Jams.getSyscallExecutionBuilderManager()
+				.getBundle(MARSSyscallExecutionBuilderBundle.NAME)
+				.map(SyscallExecutionBuilderBundle::buildBundle).orElseGet(HashMap::new));
 	}
 
 	public MIPSSimulationConfiguration(String name, List<CacheBuilder<?>> cacheBuilders, Map<Integer, SyscallExecutionBuilder<?>> syscallExecutionBuilders) {
@@ -160,6 +164,7 @@ public class MIPSSimulationConfiguration {
 		prefix = prefix + "." + name;
 
 		String nodePrefix = prefix + ".node.";
+
 
 		rawValues.forEach((key, value) -> configuration.set(nodePrefix + key, value));
 		nodes.forEach((key, value) -> configuration.convertAndSet(nodePrefix + key.getName(), value, key.getType()));

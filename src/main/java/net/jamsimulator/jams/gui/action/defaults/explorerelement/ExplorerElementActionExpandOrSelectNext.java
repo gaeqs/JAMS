@@ -59,7 +59,7 @@ public class ExplorerElementActionExpandOrSelectNext extends Action {
 		Explorer explorer = element.getExplorer();
 		explorer.startKeyboardSelection();
 		element.getNext().ifPresent(target -> {
-			explorer.setSelectedElement(target);
+			explorer.selectElementAlone(target);
 			explorer.updateScrollPosition(target);
 		});
 

@@ -7,6 +7,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.util.value.ValueEditors;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
+import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurationNodePreset;
@@ -18,7 +19,7 @@ import java.util.List;
 public class MIPSConfigurationDisplayGeneralTab extends VBox {
 
 	private final MIPSSimulationConfiguration configuration;
-	private List<Representation> representations;
+	private final List<Representation> representations;
 
 	public MIPSConfigurationDisplayGeneralTab(MIPSSimulationConfiguration configuration) {
 		setPadding(new Insets(5));
@@ -29,6 +30,7 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
 		Architecture architecture = configuration.getNodeValue(MIPSSimulationConfigurationPresets.ARCHITECTURE);
 
 		representations = new ArrayList<>();
+
 
 		configuration.getNodes().forEach((preset, value) -> {
 			var representation = new Representation(preset, value);
@@ -73,6 +75,7 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
 
 			this.preset = preset;
 			var label = new LanguageLabel(preset.getLanguageNode());
+			label.setTooltip(new LanguageTooltip(preset.getName() + "_TOOLTIP"));
 			var editor = ValueEditors.getByTypeUnsafe(preset.getType()).build();
 
 			if (value instanceof Boolean) {

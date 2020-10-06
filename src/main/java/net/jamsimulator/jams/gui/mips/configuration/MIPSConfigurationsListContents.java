@@ -32,12 +32,12 @@ public class MIPSConfigurationsListContents extends Explorer {
 
 		var representation = new Representation(mainSection, configuration);
 		mainSection.addElement(representation);
-		setSelectedElement(representation);
+		selectElementAlone(representation);
 	}
 
 	public void selectFirst () {
 		if (!mainSection.isEmpty()) {
-			mainSection.getElementByIndex(0).ifPresent(this::setSelectedElement);
+			mainSection.getElementByIndex(0).ifPresent(this::selectElementAlone);
 		}
 	}
 
@@ -53,16 +53,12 @@ public class MIPSConfigurationsListContents extends Explorer {
 		getChildren().add(mainSection);
 	}
 
-	private void onSelect(Representation representation) {
-		window.display(representation.configuration);
-	}
-
 	@Listener
 	private void onConfigurationAdd(MipsSimulationConfigurationAddEvent.After event) {
 		boolean wasEmpty = mainSection.isEmpty();
 		var representation = new Representation(mainSection, event.getMipsSimulationConfiguration());
 		mainSection.addElement(representation);
-		if (wasEmpty) setSelectedElement(representation);
+		if (wasEmpty) selectElementAlone(representation);
 	}
 
 	@Listener
@@ -87,7 +83,7 @@ public class MIPSConfigurationsListContents extends Explorer {
 		@Override
 		public void select() {
 			super.select();
-			onSelect(this);
+			window.display(configuration);
 		}
 	}
 

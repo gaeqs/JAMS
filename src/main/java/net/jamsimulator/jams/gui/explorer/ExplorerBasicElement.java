@@ -86,7 +86,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 
 		setOnContextMenuRequested(request -> {
 			if (!selected) {
-				getExplorer().setSelectedElement(this);
+				getExplorer().selectElementAlone(this);
 			}
 			createContextMenu(request.getScreenX(), request.getScreenY());
 			request.consume();
@@ -96,8 +96,10 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 	}
 
 	public double getRepresentationWidth() {
-		return separator.getWidth() + icon.getFitWidth()
-				+ label.getWidth() + ExplorerBasicElement.SPACING * 2;
+		return (separator == null ? 0 : separator.getWidth())
+				+ (icon == null ? 0 : icon.getFitWidth())
+				+ (label == null ? 0 : label.getWidth())
+				+ ExplorerBasicElement.SPACING * 2;
 	}
 
 	/**
@@ -224,7 +226,9 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 
 	protected void removeOneHierarchyLevel() {
 		hierarchyLevel--;
-		separator.setHierarchyLevel(hierarchyLevel);
+		if (separator != null) {
+			separator.setHierarchyLevel(hierarchyLevel);
+		}
 	}
 
 	private Set<ContextAction> getSupportedContextActions() {

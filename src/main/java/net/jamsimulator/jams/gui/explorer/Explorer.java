@@ -83,7 +83,7 @@ public abstract class Explorer extends VBox implements EventBroadcast {
 	/**
 	 * Returns whether this explorer supports multiple selections.
 	 * <p>
-	 * If false, all selection methods will behave like {@link #setSelectedElement(ExplorerElement)}.
+	 * If false, all selection methods will behave like {@link #selectElementAlone(ExplorerElement)}.
 	 *
 	 * @return whether this explorer supports multiple selections.
 	 */
@@ -139,7 +139,7 @@ public abstract class Explorer extends VBox implements EventBroadcast {
 		keyboardSelection = true;
 		//Keyboard selections must start with a single selected element.
 		if (selectedElements.size() > 1) {
-			setSelectedElement(selectedElements.getLast());
+			selectElementAlone(selectedElements.getLast());
 		}
 	}
 
@@ -166,12 +166,22 @@ public abstract class Explorer extends VBox implements EventBroadcast {
 	 *
 	 * @param element the selected element.
 	 */
-	public void setSelectedElement(ExplorerElement element) {
+	public void selectElementAlone(ExplorerElement element) {
 		selectedElements.forEach(ExplorerElement::deselect);
 		selectedElements.clear();
 
 		selectedElements.add(element);
 		element.select();
+	}
+
+	/**
+	 * Deselects the given element.
+	 *
+	 * @param element the element.
+	 */
+	public void deselectElement(ExplorerElement element) {
+		element.deselect();
+		selectedElements.remove(element);
 	}
 
 	/**
@@ -181,19 +191,18 @@ public abstract class Explorer extends VBox implements EventBroadcast {
 	 * Else, the method selects it.
 	 * <p>
 	 * If {@link #supportsMultiSelection()} is false, this method
-	 * behaves like {@link #setSelectedElement(ExplorerElement)}.
+	 * behaves like {@link #selectElementAlone(ExplorerElement)}.
 	 *
 	 * @param element the {@link ExplorerElement} to select or deselect.
 	 */
 	public void addOrRemoveSelectedElement(ExplorerElement element) {
 		if (!multiSelection) {
-			setSelectedElement(element);
+			selectElementAlone(element);
 			return;
 		}
 		if (selectedElements.contains(element)) {
 			//REMOVE
-			element.deselect();
-			selectedElements.remove(element);
+			deselectElement(element);
 		} else {
 			//ADD
 			element.select();
@@ -208,19 +217,19 @@ public abstract class Explorer extends VBox implements EventBroadcast {
 	 * Any other selected {@link ExplorerElement}s will be deselected.
 	 * <p>
 	 * If {@link #supportsMultiSelection()} is false, this method
-	 * behaves like {@link #setSelectedElement(ExplorerElement)}.
+	 * behaves like {@link #selectElementAlone(ExplorerElement)}.
 	 *
 	 * @param element the given {@link ExplorerElement}.
 	 */
 	public void selectTo(ExplorerElement element) {
 		if (!multiSelection || selectedElements.isEmpty()) {
-			setSelectedElement(element);
+			selectElementAlone(element);
 			return;
 		}
 
 		ExplorerElement last = selectedElements.getLast();
 		if (last == element) {
-			setSelectedElement(element);
+			selectElementAlone(element);
 			return;
 		}
 
@@ -249,7 +258,7 @@ public abstract class Explorer extends VBox implements EventBroadcast {
 	 * <p>
 	 * If shift is down, {@link #selectTo(ExplorerElement)} is invoked.
 	 * If control is down, {@link #addOrRemoveSelectedElement(ExplorerElement)} is invoked.
-	 * If none of both keys are down, {@link #setSelectedElement(ExplorerElement)} is invoked.
+	 * If none of both keys are down, {@link #selectElementAlone(ExplorerElement)} is invoked.
 	 *
 	 * @param event   the {@link MouseEvent}.
 	 * @param element the {@link ExplorerElement} to select.
@@ -262,7 +271,7 @@ public abstract class Explorer extends VBox implements EventBroadcast {
 		} else if (event.isControlDown()) {
 			addOrRemoveSelectedElement(element);
 		} else {
-			setSelectedElement(element);
+			selectElementAlone(element);
 		}
 	}
 

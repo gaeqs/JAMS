@@ -180,7 +180,7 @@ public class ExplorerSectionRepresentation extends HBox {
 
 	protected void loadListeners() {
 		statusIcon.setOnMouseClicked(event -> {
-			section.getExplorer().setSelectedElement(section);
+			section.getExplorer().selectElementAlone(section);
 			section.expandOrContract();
 			event.consume();
 		});

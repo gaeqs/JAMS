@@ -4,6 +4,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
+import net.jamsimulator.jams.gui.mips.configuration.syscall.MIPSConfigurationDisplaySyscallTab;
+import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
@@ -49,25 +51,31 @@ public class MIPSConfigurationDisplay extends AnchorPane {
 		getChildren().add(tabPane);
 
 		loadGeneralTab(tabPane);
+		loadSyscallsTab(tabPane);
 
-		var syscalls = new LanguageTab(Messages.SIMULATION_CONFIGURATION_SYSTEM_CALLS_TAB);
 		var caches = new LanguageTab(Messages.SIMULATION_CONFIGURATION_CACHES_TAB);
 
-		syscalls.setClosable(false);
 		caches.setClosable(false);
 
-		tabPane.getTabs().addAll(syscalls, caches);
+		tabPane.getTabs().addAll(caches);
 	}
 
 	private void loadGeneralTab(TabPane tabPane) {
 		Tab tab = new LanguageTab(Messages.SIMULATION_CONFIGURATION_GENERAL);
 		tab.setClosable(false);
 
-		ScrollPane scrollPane = new ScrollPane(new MIPSConfigurationDisplayGeneralTab(configuration));
+		ScrollPane scrollPane = new PixelScrollPane(new MIPSConfigurationDisplayGeneralTab(configuration));
 		scrollPane.setFitToWidth(true);
 		scrollPane.setFitToHeight(true);
 
 		tab.setContent(scrollPane);
+		tabPane.getTabs().add(tab);
+	}
+
+	private void loadSyscallsTab(TabPane tabPane) {
+		Tab tab = new LanguageTab(Messages.SIMULATION_CONFIGURATION_SYSTEM_CALLS_TAB);
+		tab.setClosable(false);
+		tab.setContent(new MIPSConfigurationDisplaySyscallTab(configuration));
 		tabPane.getTabs().add(tab);
 	}
 }

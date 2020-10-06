@@ -123,7 +123,7 @@ public class ExplorerFile extends ExplorerBasicElement {
 
 		addEventHandler(MouseEvent.DRAG_DETECTED, event -> {
 			if (!selected) {
-				getExplorer().setSelectedElement(this);
+				getExplorer().selectElementAlone(this);
 			}
 			Dragboard db = startDragAndDrop(TransferMode.COPY);
 			List<ExplorerElement> selectedElements = getExplorer().getSelectedElements();

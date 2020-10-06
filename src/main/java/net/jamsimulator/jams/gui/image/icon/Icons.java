@@ -71,6 +71,7 @@ public class Icons {
 	public static final String CONTROL_ADD = "control_add";
 	public static final String CONTROL_REMOVE = "control_remove";
 	public static final String CONTROL_COPY = "control_copy";
+	public static final String CONTROL_SORT = "control_sort";
 
 	public static final String BAR_CLOSE = "bar_close";
 
@@ -116,6 +117,7 @@ public class Icons {
 	public static final String CONTROL_ADD_PATH = "/gui/icon/controls/add.png";
 	public static final String CONTROL_REMOVE_PATH = "/gui/icon/controls/remove.png";
 	public static final String CONTROL_COPY_PATH = "/gui/icon/controls/copy.png";
+	public static final String CONTROL_SORT_PATH = "/gui/icon/controls/sort.png";
 
 	public static final String BAR_CLOSE_PATH = "/gui/icon/bar/close.png";
 

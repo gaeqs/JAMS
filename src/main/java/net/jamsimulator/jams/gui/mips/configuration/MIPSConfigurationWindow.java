@@ -48,8 +48,12 @@ public class MIPSConfigurationWindow extends SplitPane {
 
 	public void display(MIPSSimulationConfiguration configuration) {
 		if (display != null) {
-			if(display.getConfiguration().equals(configuration)) return;
+			if (display.getConfiguration().equals(configuration)) return;
 			displayGroup.getChildren().remove(display);
+		}
+		if (configuration == null) {
+			display = null;
+			return;
 		}
 		display = new MIPSConfigurationDisplay(this, configuration);
 		displayGroup.getChildren().add(display);
@@ -80,6 +84,8 @@ public class MIPSConfigurationWindow extends SplitPane {
 				.ifPresent(stage.getIcons()::add);
 
 		JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);
+
+		stage.setOnCloseRequest(event -> data.save());
 
 		stage.show();
 	}

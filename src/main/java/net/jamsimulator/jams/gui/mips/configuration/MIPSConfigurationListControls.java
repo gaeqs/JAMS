@@ -6,6 +6,8 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 
 import java.util.Set;
@@ -32,6 +34,7 @@ public class MIPSConfigurationListControls extends HBox {
 				Icons.CONTROL_ADD_PATH, 1024, 1024).orElse(null);
 
 		var button = new Button(null, new NearestImageView(icon, 16, 16));
+		button.setTooltip(new LanguageTooltip(Messages.GENERAL_ADD));
 		button.getStyleClass().add("bold-button");
 
 		button.setOnAction(event -> {
@@ -60,6 +63,7 @@ public class MIPSConfigurationListControls extends HBox {
 				Icons.CONTROL_REMOVE_PATH, 1024, 1024).orElse(null);
 
 		var button = new Button(null, new NearestImageView(icon, 16, 16));
+		button.setTooltip(new LanguageTooltip(Messages.GENERAL_REMOVE));
 		button.getStyleClass().add("bold-button");
 
 		button.setOnAction(event -> {
@@ -70,7 +74,9 @@ public class MIPSConfigurationListControls extends HBox {
 				data.removeConfiguration(element.getName());
 			}
 
-			list.getContents().getMainSection().getElementByIndex(0).ifPresent(list.getContents()::setSelectedElement);
+			list.getContents().getMainSection().getElementByIndex(0).ifPresentOrElse(
+					list.getContents()::selectElementAlone,
+					() -> list.getWindow().display(null));
 		});
 
 		getChildren().add(button);
@@ -81,6 +87,7 @@ public class MIPSConfigurationListControls extends HBox {
 				Icons.CONTROL_COPY_PATH, 1024, 1024).orElse(null);
 
 		var button = new Button(null, new NearestImageView(icon, 16, 16));
+		button.setTooltip(new LanguageTooltip(Messages.GENERAL_COPY));
 		button.getStyleClass().add("bold-button");
 
 		button.setOnAction(event -> {

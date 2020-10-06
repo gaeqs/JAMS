@@ -219,7 +219,7 @@ public class ExplorerFolder extends ExplorerSection {
 
 		addEventHandler(MouseEvent.DRAG_DETECTED, event -> {
 			if (!isSelected()) {
-				getExplorer().setSelectedElement(this);
+				getExplorer().selectElementAlone(this);
 			}
 			Dragboard db = startDragAndDrop(TransferMode.COPY);
 			List<ExplorerElement> selectedElements = getExplorer().getSelectedElements();
