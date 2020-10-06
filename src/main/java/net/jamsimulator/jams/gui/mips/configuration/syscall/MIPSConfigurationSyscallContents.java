@@ -174,6 +174,10 @@ public class MIPSConfigurationSyscallContents extends Explorer {
 
 			var builders = syscallTab.getConfiguration().getSyscallExecutionBuilders();
 			builders.put(syscallId, builder);
+
+			if(selected) {
+				syscallTab.display(builder);
+			}
 		}
 	}
 

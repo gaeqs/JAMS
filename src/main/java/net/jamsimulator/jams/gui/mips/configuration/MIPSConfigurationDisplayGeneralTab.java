@@ -75,7 +75,7 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
 
 			this.preset = preset;
 			var label = new LanguageLabel(preset.getLanguageNode());
-			label.setTooltip(new LanguageTooltip(preset.getName() + "_TOOLTIP"));
+			label.setTooltip(new LanguageTooltip(preset.getLanguageNode() + "_TOOLTIP"));
 			var editor = ValueEditors.getByTypeUnsafe(preset.getType()).build();
 
 			if (value instanceof Boolean) {
