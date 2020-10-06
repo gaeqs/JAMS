@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public class SyscallExecutionBuilderValueConverter extends ValueConverter<SyscallExecutionBuilder<?>> {
 
-	public static final String NAME = "SyscallExecutionBuilder";
+	public static final String NAME = "syscall_execution_builder";
 
 	@Override
 	public String toString(SyscallExecutionBuilder<?> value) {

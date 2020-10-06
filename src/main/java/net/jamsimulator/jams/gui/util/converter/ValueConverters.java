@@ -30,6 +30,7 @@ import net.jamsimulator.jams.gui.theme.Theme;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
+import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundle;
 
@@ -57,21 +58,30 @@ public class ValueConverters {
 		var booleanConverter = new BooleanValueConverter();
 		converterByName.put(BooleanValueConverter.NAME, booleanConverter);
 		converterByType.put(Boolean.class, booleanConverter);
+		converterByType.put(boolean.class, booleanConverter);
+
+		//CacheBuilder
+		var cacheBuilderConverter = new CacheBuilderValueConverter();
+		converterByName.put(CacheBuilderValueConverter.NAME, cacheBuilderConverter);
+		converterByType.put(CacheBuilder.class, cacheBuilderConverter);
 
 		//DOUBLE
 		var doubleConverter = new DoubleValueConverter();
 		converterByName.put(DoubleValueConverter.NAME, doubleConverter);
 		converterByType.put(Double.class, doubleConverter);
+		converterByType.put(double.class, doubleConverter);
 
 		//FLOAT
 		var floatConverter = new FloatValueConverter();
 		converterByName.put(FloatValueConverter.NAME, floatConverter);
 		converterByType.put(Float.class, floatConverter);
+		converterByType.put(float.class, floatConverter);
 
 		//INTEGER
 		var integerConverter = new IntegerValueConverter();
 		converterByName.put(IntegerValueConverter.NAME, integerConverter);
 		converterByType.put(Integer.class, integerConverter);
+		converterByType.put(int.class, integerConverter);
 
 		//LANGUAGES
 		var languageConverter = new LanguageValueConverter();

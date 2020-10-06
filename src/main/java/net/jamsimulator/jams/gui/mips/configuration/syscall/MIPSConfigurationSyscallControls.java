@@ -89,6 +89,10 @@ public class MIPSConfigurationSyscallControls extends AnchorPane {
 					contents.selectElementAlone(previous.get());
 				} else {
 					contents.getMainSection().getElementByIndex(0).ifPresent(contents::selectElementAlone);
+
+					if (contents.getMainSection().isEmpty()) {
+						syscallTab.display(null);
+					}
 				}
 			}
 		});

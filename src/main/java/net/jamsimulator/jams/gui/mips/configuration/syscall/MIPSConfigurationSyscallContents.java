@@ -48,7 +48,7 @@ public class MIPSConfigurationSyscallContents extends Explorer {
 		var representation = new Representation(mainSection, id, builder);
 		mainSection.addElement(representation);
 		representations.add(representation);
-		if(wasEmpty) {
+		if (wasEmpty) {
 			selectElementAlone(representation);
 		}
 	}
@@ -62,18 +62,21 @@ public class MIPSConfigurationSyscallContents extends Explorer {
 		mainSection.refreshAllElements();
 	}
 
-	public void reload () {
+	public void reload() {
 		representations.clear();
 		mainSection.clear();
 		var data = syscallTab.getConfiguration().getSyscallExecutionBuilders();
 		data.forEach(this::add);
+		if(mainSection.isEmpty()) {
+			syscallTab.display(null);
+		}
 	}
 
 	@Override
 	protected void generateMainSection() {
 		mainSection = new ExplorerSection(this, null, "", 0, (o1, o2) -> {
-			if(!(o1 instanceof Representation)) return -1;
-			if(!(o2 instanceof Representation)) return 1;
+			if (!(o1 instanceof Representation)) return -1;
+			if (!(o2 instanceof Representation)) return 1;
 			return ((Representation) o1).getSyscallId() - ((Representation) o2).getSyscallId();
 		});
 
@@ -170,13 +173,13 @@ public class MIPSConfigurationSyscallContents extends Explorer {
 		}
 
 		private void manageSyscallChange(SyscallExecutionBuilder<?> builder) {
-			this.builder = builder;
+			this.builder = builder.makeNewInstance();
 
 			var builders = syscallTab.getConfiguration().getSyscallExecutionBuilders();
-			builders.put(syscallId, builder);
+			builders.put(syscallId, this.builder);
 
-			if(selected) {
-				syscallTab.display(builder);
+			if (selected) {
+				syscallTab.display(this.builder);
 			}
 		}
 	}

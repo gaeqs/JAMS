@@ -4,6 +4,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
+import net.jamsimulator.jams.gui.mips.configuration.cache.MIPSConfigurationDisplayCacheTab;
 import net.jamsimulator.jams.gui.mips.configuration.syscall.MIPSConfigurationDisplaySyscallTab;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.language.Messages;
@@ -52,12 +53,7 @@ public class MIPSConfigurationDisplay extends AnchorPane {
 
 		loadGeneralTab(tabPane);
 		loadSyscallsTab(tabPane);
-
-		var caches = new LanguageTab(Messages.SIMULATION_CONFIGURATION_CACHES_TAB);
-
-		caches.setClosable(false);
-
-		tabPane.getTabs().addAll(caches);
+		loadCacheTab(tabPane);
 	}
 
 	private void loadGeneralTab(TabPane tabPane) {
@@ -76,6 +72,13 @@ public class MIPSConfigurationDisplay extends AnchorPane {
 		Tab tab = new LanguageTab(Messages.SIMULATION_CONFIGURATION_SYSTEM_CALLS_TAB);
 		tab.setClosable(false);
 		tab.setContent(new MIPSConfigurationDisplaySyscallTab(configuration));
+		tabPane.getTabs().add(tab);
+	}
+
+	private void loadCacheTab(TabPane tabPane) {
+		Tab tab = new LanguageTab(Messages.SIMULATION_CONFIGURATION_CACHES_TAB);
+		tab.setClosable(false);
+		tab.setContent(new MIPSConfigurationDisplayCacheTab(configuration));
 		tabPane.getTabs().add(tab);
 	}
 }

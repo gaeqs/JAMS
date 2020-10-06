@@ -30,6 +30,7 @@ import net.jamsimulator.jams.gui.theme.Theme;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
+import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundle;
 
@@ -54,6 +55,11 @@ public class ValueEditors {
 		editorByName.put(BooleanValueEditor.NAME, booleanEditor);
 		editorByType.put(Boolean.class, booleanEditor);
 		editorByType.put(boolean.class, booleanEditor);
+
+		//CacheBuilder
+		var cacheBuilderEditor = new CacheBuilderValueEditor.Builder();
+		editorByName.put(CacheBuilderValueEditor.NAME, cacheBuilderEditor);
+		editorByType.put(CacheBuilder.class, cacheBuilderEditor);
 
 		//DOUBLE
 		var doubleEditor = new DoubleValueEditor.Builder();
