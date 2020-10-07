@@ -29,39 +29,30 @@ import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.project.mips.MIPSProjectData;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 
-public class SelectedMipsSimulationConfigurationChangeEvent extends Event {
+public class MIPSSimulationConfigurationAddEvent extends Event {
 
 	protected MIPSProjectData data;
-	protected MIPSSimulationConfiguration oldConfig, newConfig;
+	protected MIPSSimulationConfiguration mipsSimulationConfiguration;
 
-	public SelectedMipsSimulationConfigurationChangeEvent(MIPSProjectData data,
-														  MIPSSimulationConfiguration oldConfig,
-														  MIPSSimulationConfiguration newConfig) {
+	public MIPSSimulationConfigurationAddEvent(MIPSProjectData data, MIPSSimulationConfiguration mipsSimulationConfiguration) {
 		this.data = data;
-		this.oldConfig = oldConfig;
-		this.newConfig = newConfig;
+		this.mipsSimulationConfiguration = mipsSimulationConfiguration;
 	}
 
 	public MIPSProjectData getData() {
 		return data;
 	}
 
-	public MIPSSimulationConfiguration getOldConfig() {
-		return oldConfig;
+	public MIPSSimulationConfiguration getMipsSimulationConfiguration() {
+		return mipsSimulationConfiguration;
 	}
 
-	public MIPSSimulationConfiguration getNewConfig() {
-		return newConfig;
-	}
-
-	public static class Before extends SelectedMipsSimulationConfigurationChangeEvent implements Cancellable {
+	public static class Before extends MIPSSimulationConfigurationAddEvent implements Cancellable {
 
 		private boolean cancelled;
 
-		public Before(MIPSProjectData data,
-					  MIPSSimulationConfiguration oldConfig,
-					  MIPSSimulationConfiguration newConfig) {
-			super(data, oldConfig, newConfig);
+		public Before(MIPSProjectData data, MIPSSimulationConfiguration mipsSimulationConfiguration) {
+			super(data, mipsSimulationConfiguration);
 		}
 
 		@Override
@@ -75,12 +66,10 @@ public class SelectedMipsSimulationConfigurationChangeEvent extends Event {
 		}
 	}
 
-	public static class After extends SelectedMipsSimulationConfigurationChangeEvent {
+	public static class After extends MIPSSimulationConfigurationAddEvent {
 
-		public After(MIPSProjectData data,
-					 MIPSSimulationConfiguration oldConfig,
-					 MIPSSimulationConfiguration newConfig) {
-			super(data, oldConfig, newConfig);
+		public After(MIPSProjectData data, MIPSSimulationConfiguration mipsSimulationConfiguration) {
+			super(data, mipsSimulationConfiguration);
 		}
 	}
 

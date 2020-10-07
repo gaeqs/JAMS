@@ -31,6 +31,8 @@ public abstract class CacheBuilder<C extends Cache> {
 		return properties;
 	}
 
+	public abstract int getSizeInBytes();
+
 	public abstract C build(Memory parent);
 
 	public abstract CacheBuilder<C> makeNewInstance();

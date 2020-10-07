@@ -6,7 +6,12 @@ import javafx.scene.control.ComboBox;
 import javafx.util.StringConverter;
 import net.jamsimulator.jams.utils.ReflectionUtils;
 
+import java.util.function.Consumer;
+
 public class EnumPropertyEditor extends ComboBox<Enum<?>> implements PropertyEditor<Enum<?>> {
+
+	private Consumer<Enum<?>> listener = p -> {
+	};
 
 	private final Property<? super Enum<?>> property;
 
@@ -35,7 +40,10 @@ public class EnumPropertyEditor extends ComboBox<Enum<?>> implements PropertyEdi
 				}
 			});
 
-			setOnAction(event -> property.setValue(getSelectionModel().getSelectedItem()));
+			setOnAction(event -> {
+				property.setValue(getSelectionModel().getSelectedItem());
+				listener.accept(getSelectionModel().getSelectedItem());
+			});
 
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
@@ -50,5 +58,10 @@ public class EnumPropertyEditor extends ComboBox<Enum<?>> implements PropertyEdi
 	@Override
 	public Node thisInstanceAsNode() {
 		return this;
+	}
+
+	@Override
+	public void addListener(Consumer<Enum<?>> consumer) {
+		listener = listener.andThen(consumer);
 	}
 }

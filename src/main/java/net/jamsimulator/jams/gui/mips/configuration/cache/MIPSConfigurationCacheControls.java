@@ -11,6 +11,7 @@ import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
+import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
 
@@ -45,7 +46,8 @@ public class MIPSConfigurationCacheControls extends AnchorPane {
 		button.getStyleClass().add("bold-button");
 
 		button.setOnAction(event -> {
-			var builder = Jams.getCacheBuilderManager().getAll().stream().findAny().orElse(null);
+			var builder = Jams.getCacheBuilderManager().getAll().stream().findAny()
+					.map(CacheBuilder::makeNewInstance).orElse(null);
 
 			cacheTab.getConfiguration().getCacheBuilders().add(builder);
 			cacheTab.getContents().add(builder);
@@ -73,6 +75,8 @@ public class MIPSConfigurationCacheControls extends AnchorPane {
 
 				var previous = element.getPrevious();
 				contents.remove((MIPSConfigurationCacheContents.Representation) element);
+				cacheTab.getConfiguration().getCacheBuilders()
+						.remove(((MIPSConfigurationCacheContents.Representation) element).getIndex());
 
 				if (previous.isPresent()) {
 					contents.selectElementAlone(previous.get());

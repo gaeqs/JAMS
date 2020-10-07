@@ -160,8 +160,14 @@
     "meta": {
       "language_node": "CONFIG_SIMULATION",
       "regions": {
-        "memory": 0
+        "assembly": 0,
+        "memory": 1
       }
+    },
+    "open_log_on_assemble": {
+      "type": "boolean",
+      "language_node": "CONFIG_SIMULATION_OPEN_LOG_ON_ASSEMBLE",
+      "region": "assembly"
     },
     "memory_rows": {
       "type": "positive_integer",

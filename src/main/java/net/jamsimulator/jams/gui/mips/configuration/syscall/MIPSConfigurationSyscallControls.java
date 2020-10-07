@@ -13,6 +13,7 @@ import net.jamsimulator.jams.gui.util.value.ValueEditors;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
+import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundle;
 import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionRunExceptionHandler;
 import net.jamsimulator.jams.utils.AnchorUtils;
@@ -56,7 +57,8 @@ public class MIPSConfigurationSyscallControls extends AnchorPane {
 
 		button.setOnAction(event -> {
 			int id = syscallTab.getContents().getBiggestId() + 1;
-			var builder = Jams.getSyscallExecutionBuilderManager().get(SyscallExecutionRunExceptionHandler.NAME).orElse(null);
+			var builder = Jams.getSyscallExecutionBuilderManager()
+					.get(SyscallExecutionRunExceptionHandler.NAME).map(SyscallExecutionBuilder::makeNewInstance).orElse(null);
 
 			syscallTab.getConfiguration().getSyscallExecutionBuilders().put(id, builder);
 			syscallTab.getContents().add(id, builder);
@@ -84,6 +86,8 @@ public class MIPSConfigurationSyscallControls extends AnchorPane {
 
 				var previous = element.getPrevious();
 				contents.remove((MIPSConfigurationSyscallContents.Representation) element);
+				syscallTab.getConfiguration().getSyscallExecutionBuilders()
+						.remove(((MIPSConfigurationSyscallContents.Representation) element).getSyscallId());
 
 				if (previous.isPresent()) {
 					contents.selectElementAlone(previous.get());

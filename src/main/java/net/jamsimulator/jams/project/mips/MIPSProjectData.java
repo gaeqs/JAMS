@@ -32,9 +32,9 @@ import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 import net.jamsimulator.jams.project.ProjectData;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
-import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationAddEvent;
-import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationRemoveEvent;
-import net.jamsimulator.jams.project.mips.event.SelectedMipsSimulationConfigurationChangeEvent;
+import net.jamsimulator.jams.project.mips.event.MIPSSimulationConfigurationAddEvent;
+import net.jamsimulator.jams.project.mips.event.MIPSSimulationConfigurationRemoveEvent;
+import net.jamsimulator.jams.project.mips.event.SelectedMIPSSimulationConfigurationChangeEvent;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.IOException;
@@ -69,12 +69,12 @@ public class MIPSProjectData extends ProjectData {
 		if (configurations.stream().anyMatch(target -> target.getName().equals(configuration.getName())))
 			return false;
 
-		MipsSimulationConfigurationAddEvent.Before before = callEvent(new MipsSimulationConfigurationAddEvent.Before(this, configuration));
+		MIPSSimulationConfigurationAddEvent.Before before = callEvent(new MIPSSimulationConfigurationAddEvent.Before(this, configuration));
 		if (before.isCancelled()) return false;
 
 		boolean result = configurations.add(configuration);
 		if (result) {
-			callEvent(new MipsSimulationConfigurationAddEvent.After(this, configuration));
+			callEvent(new MIPSSimulationConfigurationAddEvent.After(this, configuration));
 		}
 
 		if (selectedConfiguration == null) {
@@ -89,11 +89,11 @@ public class MIPSProjectData extends ProjectData {
 		MIPSSimulationConfiguration configuration = configurations.stream()
 				.filter(target -> target.getName().equals(name)).findAny().orElse(null);
 		if (configuration == null) return false;
-		MipsSimulationConfigurationRemoveEvent.Before before = callEvent(new MipsSimulationConfigurationRemoveEvent.Before(this, configuration));
+		MIPSSimulationConfigurationRemoveEvent.Before before = callEvent(new MIPSSimulationConfigurationRemoveEvent.Before(this, configuration));
 		if (before.isCancelled()) return false;
 		boolean result = configurations.remove(configuration);
 		if (result) {
-			callEvent(new MipsSimulationConfigurationRemoveEvent.After(this, configuration));
+			callEvent(new MIPSSimulationConfigurationRemoveEvent.After(this, configuration));
 		}
 		if (configuration == selectedConfiguration) {
 			setSelectedConfiguration(configurations.stream().findAny().map(MIPSSimulationConfiguration::getName).orElse(null));
@@ -112,12 +112,12 @@ public class MIPSProjectData extends ProjectData {
 		if (configuration == selectedConfiguration) return false;
 
 		MIPSSimulationConfiguration old = selectedConfiguration;
-		SelectedMipsSimulationConfigurationChangeEvent.Before before =
-				callEvent(new SelectedMipsSimulationConfigurationChangeEvent.Before(this, old, configuration));
+		SelectedMIPSSimulationConfigurationChangeEvent.Before before =
+				callEvent(new SelectedMIPSSimulationConfigurationChangeEvent.Before(this, old, configuration));
 		if (before.isCancelled()) return false;
 		selectedConfiguration = configuration;
 
-		callEvent(new SelectedMipsSimulationConfigurationChangeEvent.After(this, old, configuration));
+		callEvent(new SelectedMIPSSimulationConfigurationChangeEvent.After(this, old, configuration));
 
 		return true;
 	}

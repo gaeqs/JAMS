@@ -4,7 +4,12 @@ import javafx.beans.property.Property;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 
+import java.util.function.Consumer;
+
 public class StringPropertyEditor extends TextField implements PropertyEditor<String> {
+
+	private Consumer<String> listener = p -> {
+	};
 
 	private final Property<String> property;
 
@@ -15,6 +20,7 @@ public class StringPropertyEditor extends TextField implements PropertyEditor<St
 		focusedProperty().addListener((obs, old, val) -> {
 			if (val) return;
 			property.setValue(getText());
+			listener.accept(getText());
 		});
 		setPrefWidth(60);
 	}
@@ -27,5 +33,10 @@ public class StringPropertyEditor extends TextField implements PropertyEditor<St
 	@Override
 	public Node thisInstanceAsNode() {
 		return this;
+	}
+
+	@Override
+	public void addListener(Consumer<String> consumer) {
+		listener = listener.andThen(consumer);
 	}
 }

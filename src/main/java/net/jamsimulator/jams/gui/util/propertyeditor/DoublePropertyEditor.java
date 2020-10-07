@@ -4,7 +4,12 @@ import javafx.beans.property.Property;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 
+import java.util.function.Consumer;
+
 public class DoublePropertyEditor extends TextField implements PropertyEditor<Double> {
+
+	private Consumer<Double> listener = p -> {
+	};
 
 	private final Property<Double> property;
 	private String oldText;
@@ -20,6 +25,7 @@ public class DoublePropertyEditor extends TextField implements PropertyEditor<Do
 			try {
 				double number = Double.parseDouble(getText());
 				property.setValue(number);
+				listener.accept(number);
 				oldText = getText();
 			} catch (NumberFormatException ex) {
 				setText(oldText);
@@ -42,5 +48,10 @@ public class DoublePropertyEditor extends TextField implements PropertyEditor<Do
 	@Override
 	public Node thisInstanceAsNode() {
 		return this;
+	}
+
+	@Override
+	public void addListener(Consumer<Double> consumer) {
+		listener = listener.andThen(consumer);
 	}
 }

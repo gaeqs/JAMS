@@ -4,7 +4,12 @@ import javafx.beans.property.Property;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 
+import java.util.function.Consumer;
+
 public class LongPropertyEditor extends TextField implements PropertyEditor<Long> {
+
+	private Consumer<Long> listener = p -> {
+	};
 
 	private final Property<Long> property;
 	private String oldText;
@@ -19,6 +24,7 @@ public class LongPropertyEditor extends TextField implements PropertyEditor<Long
 			try {
 				long number = Long.parseLong(getText());
 				property.setValue(number);
+				listener.accept(number);
 				oldText = getText();
 			} catch (NumberFormatException ex) {
 				setText(oldText);
@@ -41,5 +47,10 @@ public class LongPropertyEditor extends TextField implements PropertyEditor<Long
 	@Override
 	public Node thisInstanceAsNode() {
 		return this;
+	}
+
+	@Override
+	public void addListener(Consumer<Long> consumer) {
+		listener = listener.andThen(consumer);
 	}
 }

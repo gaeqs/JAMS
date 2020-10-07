@@ -34,6 +34,7 @@
     }
   },
   "simulation": {
+    "open_log_on_assemble": true,
     "memory_rows": 48,
     "mips": {
       "flow_max_items": 100

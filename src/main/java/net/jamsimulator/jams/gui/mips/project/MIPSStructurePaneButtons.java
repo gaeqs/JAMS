@@ -14,9 +14,10 @@ import net.jamsimulator.jams.gui.mips.configuration.MIPSConfigurationWindow;
 import net.jamsimulator.jams.gui.util.FixedButton;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
-import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationAddEvent;
-import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationRemoveEvent;
-import net.jamsimulator.jams.project.mips.event.SelectedMipsSimulationConfigurationChangeEvent;
+import net.jamsimulator.jams.project.mips.event.MIPSSimulationConfigurationAddEvent;
+import net.jamsimulator.jams.project.mips.event.MIPSSimulationConfigurationRefreshEvent;
+import net.jamsimulator.jams.project.mips.event.MIPSSimulationConfigurationRemoveEvent;
+import net.jamsimulator.jams.project.mips.event.SelectedMIPSSimulationConfigurationChangeEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +28,11 @@ public class MIPSStructurePaneButtons {
 	private final List<Node> nodes;
 
 	private ComboBox<String> configBox;
+	private final MIPSProject project;
 
 	public MIPSStructurePaneButtons(MIPSStructurePane structurePane) {
 		nodes = new ArrayList<>();
+		project = structurePane.getProject();
 
 		loadAssembleButton(structurePane);
 		loadConfigurationComboBox(structurePane);
@@ -45,6 +48,7 @@ public class MIPSStructurePaneButtons {
 	private void loadConfigurationComboBox(MIPSStructurePane structurePane) {
 		MIPSProject project = structurePane.project;
 		configBox = new ComboBox<>();
+		configBox.setMaxWidth(200);
 
 		Set<MIPSSimulationConfiguration> configurations = project.getData().getConfigurations();
 		configurations.forEach(config -> configBox.getItems().add(config.getName()));
@@ -79,20 +83,30 @@ public class MIPSStructurePaneButtons {
 	}
 
 	@Listener
-	private void onConfigurationAdd(MipsSimulationConfigurationAddEvent.After event) {
+	private void onConfigurationAdd(MIPSSimulationConfigurationAddEvent.After event) {
 		configBox.getItems().add(event.getMipsSimulationConfiguration().getName());
 	}
 
 	@Listener
-	private void onConfigurationRemove(MipsSimulationConfigurationRemoveEvent.After event) {
+	private void onConfigurationRemove(MIPSSimulationConfigurationRemoveEvent.After event) {
 		configBox.getItems().remove(event.getMipsSimulationConfiguration().getName());
 	}
 
 	@Listener
-	private void onConfigurationChange(SelectedMipsSimulationConfigurationChangeEvent.After event) {
+	private void onConfigurationChange(SelectedMIPSSimulationConfigurationChangeEvent.After event) {
 		if (event.getNewConfig() == null) {
 			return;
 		}
 		configBox.getSelectionModel().select(event.getNewConfig().getName());
+	}
+
+	@Listener
+	private void onRefresh(MIPSSimulationConfigurationRefreshEvent event) {
+		configBox.getItems().clear();
+		Set<MIPSSimulationConfiguration> configurations = project.getData().getConfigurations();
+		configurations.forEach(config -> configBox.getItems().add(config.getName()));
+		if (project.getData().getSelectedConfiguration().isPresent()) {
+			configBox.getSelectionModel().select(project.getData().getSelectedConfiguration().get().getName());
+		}
 	}
 }

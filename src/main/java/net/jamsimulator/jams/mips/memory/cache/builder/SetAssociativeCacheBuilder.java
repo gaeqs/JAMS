@@ -31,6 +31,11 @@ public class SetAssociativeCacheBuilder extends CacheBuilder<Cache> {
 	}
 
 	@Override
+	public int getSizeInBytes() {
+		return  blocksAmount.get() * (blockSize.get() << 2);
+	}
+
+	@Override
 	public Cache build(Memory parent) {
 		int logSetSize = NumericUtils.log2(setSize.get());
 

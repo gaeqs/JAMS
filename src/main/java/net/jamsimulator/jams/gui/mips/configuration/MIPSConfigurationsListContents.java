@@ -7,8 +7,8 @@ import net.jamsimulator.jams.gui.explorer.ExplorerBasicElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
-import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationAddEvent;
-import net.jamsimulator.jams.project.mips.event.MipsSimulationConfigurationRemoveEvent;
+import net.jamsimulator.jams.project.mips.event.MIPSSimulationConfigurationAddEvent;
+import net.jamsimulator.jams.project.mips.event.MIPSSimulationConfigurationRemoveEvent;
 
 import java.util.Comparator;
 
@@ -35,7 +35,7 @@ public class MIPSConfigurationsListContents extends Explorer {
 		selectElementAlone(representation);
 	}
 
-	public void selectFirst () {
+	public void selectFirst() {
 		if (!mainSection.isEmpty()) {
 			mainSection.getElementByIndex(0).ifPresent(this::selectElementAlone);
 		}
@@ -54,7 +54,7 @@ public class MIPSConfigurationsListContents extends Explorer {
 	}
 
 	@Listener
-	private void onConfigurationAdd(MipsSimulationConfigurationAddEvent.After event) {
+	private void onConfigurationAdd(MIPSSimulationConfigurationAddEvent.After event) {
 		boolean wasEmpty = mainSection.isEmpty();
 		var representation = new Representation(mainSection, event.getMipsSimulationConfiguration());
 		mainSection.addElement(representation);
@@ -62,7 +62,7 @@ public class MIPSConfigurationsListContents extends Explorer {
 	}
 
 	@Listener
-	private void onConfigurationRemove(MipsSimulationConfigurationRemoveEvent.After event) {
+	private void onConfigurationRemove(MIPSSimulationConfigurationRemoveEvent.After event) {
 		mainSection.removeElementIf(target -> target instanceof Representation
 				&& ((Representation) target).configuration.equals(event.getMipsSimulationConfiguration()));
 	}

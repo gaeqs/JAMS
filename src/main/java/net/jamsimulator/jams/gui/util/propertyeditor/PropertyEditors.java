@@ -6,9 +6,13 @@ import net.jamsimulator.jams.utils.Validate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class PropertyEditors {
+
+	private Consumer<Boolean> listener = p -> {
+	};
 
 	private static final Map<Class<?>, Function<Property<?>, PropertyEditor<?>>> EDITORS = new HashMap<>();
 

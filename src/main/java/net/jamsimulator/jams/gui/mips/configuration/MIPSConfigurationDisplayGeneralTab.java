@@ -5,7 +5,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import net.jamsimulator.jams.gui.configuration.ConfigurationRegionDisplay;
 import net.jamsimulator.jams.gui.util.value.ValueEditors;
+import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
 import net.jamsimulator.jams.mips.architecture.Architecture;
@@ -32,6 +34,7 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
 		representations = new ArrayList<>();
 
 
+		getChildren().add(new ConfigurationRegionDisplay(Messages.SIMULATION_CONFIGURATION_GENERAL_REGION));
 		configuration.getNodes().forEach((preset, value) -> {
 			var representation = new Representation(preset, value);
 			representation.refreshView(architecture);

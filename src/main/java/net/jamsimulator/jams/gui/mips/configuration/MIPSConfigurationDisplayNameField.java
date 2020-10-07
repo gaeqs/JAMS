@@ -7,6 +7,7 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
+import net.jamsimulator.jams.project.mips.event.MIPSSimulationConfigurationRefreshEvent;
 
 public class MIPSConfigurationDisplayNameField extends HBox {
 
@@ -23,6 +24,7 @@ public class MIPSConfigurationDisplayNameField extends HBox {
 			}
 			configuration.setName(field.getText());
 			window.getList().getContents().refreshName(configuration);
+			window.getProjectData().callEvent(new MIPSSimulationConfigurationRefreshEvent());
 		};
 
 		field.setOnAction(handler);

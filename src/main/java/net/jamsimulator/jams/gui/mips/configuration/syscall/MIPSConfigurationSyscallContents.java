@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.mips.configuration.syscall;
 
+import javafx.beans.property.Property;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Region;
@@ -67,7 +68,7 @@ public class MIPSConfigurationSyscallContents extends Explorer {
 		mainSection.clear();
 		var data = syscallTab.getConfiguration().getSyscallExecutionBuilders();
 		data.forEach(this::add);
-		if(mainSection.isEmpty()) {
+		if (mainSection.isEmpty()) {
 			syscallTab.display(null);
 		}
 	}
@@ -108,6 +109,9 @@ public class MIPSConfigurationSyscallContents extends Explorer {
 
 			idEditor.setCurrentValueUnsafe(syscallId);
 			syscallEditor.setCurrentValueUnsafe(builder);
+
+			idEditor.addListener(this::manageIdChange);
+			syscallEditor.addListener(this::manageSyscallChange);
 		}
 
 		public int getSyscallId() {
@@ -140,10 +144,6 @@ public class MIPSConfigurationSyscallContents extends Explorer {
 			((Region) idEditor).setPrefWidth(50);
 			((Region) idEditor).setMinWidth(50);
 			((Region) syscallNode).setPrefWidth(1000000);
-
-
-			idEditor.addListener(this::manageIdChange);
-			syscallEditor.addListener(this::manageSyscallChange);
 
 			idNode.focusedProperty().addListener((obs, old, val) -> {
 				if (val) {

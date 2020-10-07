@@ -201,20 +201,6 @@ public class MIPSSimulationConfiguration {
 				'}';
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		MIPSSimulationConfiguration that = (MIPSSimulationConfiguration) o;
-		return name.equals(that.name);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(name);
-	}
-
-
 	private void loadSyscalls(Configuration configuration) {
 		syscallExecutionBuilders = new HashMap<>();
 		Optional<Configuration> syscallsOptional = configuration.get("syscalls");

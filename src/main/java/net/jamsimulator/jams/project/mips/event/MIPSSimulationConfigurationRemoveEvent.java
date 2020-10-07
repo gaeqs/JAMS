@@ -29,12 +29,12 @@ import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.project.mips.MIPSProjectData;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 
-public class MipsSimulationConfigurationAddEvent extends Event {
+public class MIPSSimulationConfigurationRemoveEvent extends Event {
 
 	protected MIPSProjectData data;
 	protected MIPSSimulationConfiguration mipsSimulationConfiguration;
 
-	public MipsSimulationConfigurationAddEvent(MIPSProjectData data, MIPSSimulationConfiguration mipsSimulationConfiguration) {
+	public MIPSSimulationConfigurationRemoveEvent(MIPSProjectData data, MIPSSimulationConfiguration mipsSimulationConfiguration) {
 		this.data = data;
 		this.mipsSimulationConfiguration = mipsSimulationConfiguration;
 	}
@@ -47,7 +47,7 @@ public class MipsSimulationConfigurationAddEvent extends Event {
 		return mipsSimulationConfiguration;
 	}
 
-	public static class Before extends MipsSimulationConfigurationAddEvent implements Cancellable {
+	public static class Before extends MIPSSimulationConfigurationRemoveEvent implements Cancellable {
 
 		private boolean cancelled;
 
@@ -66,7 +66,7 @@ public class MipsSimulationConfigurationAddEvent extends Event {
 		}
 	}
 
-	public static class After extends MipsSimulationConfigurationAddEvent {
+	public static class After extends MIPSSimulationConfigurationRemoveEvent {
 
 		public After(MIPSProjectData data, MIPSSimulationConfiguration mipsSimulationConfiguration) {
 			super(data, mipsSimulationConfiguration);

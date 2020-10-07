@@ -103,6 +103,10 @@ public class ValueEditors {
 		var positiveIntegerEditor = new PositiveIntegerValueEditor.Builder();
 		editorByName.put(PositiveIntegerValueEditor.NAME, positiveIntegerEditor);
 
+		//POW 2 INTEGER
+		var pow2 = new Pow2ValueEditor.Builder();
+		editorByName.put(Pow2ValueEditor.NAME, pow2);
+
 		//STRING
 		var stringEditor = new StringValueEditor.Builder();
 		editorByName.put(StringValueEditor.NAME, stringEditor);
