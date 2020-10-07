@@ -26,7 +26,7 @@ jobs:
         run: zip -r build/jpackage/JAMS-standalone-linux.zip build/jpackage/JAMS
       - name: Compressing standalone apps (windows)...
         if: ${{ matrix.os == 'windows-latest' }}
-        run: tar -cvzf build/jpackage/JAMS-standalone-windows.tar build/jpackage/JAMS
+        run: tar -cf build/jpackage/JAMS-standalone-windows.zip build/jpackage/JAMS
       - name: Compressing installer (macos)...
         if: ${{ matrix.os == 'macos-latest' }}
         run: zip -r build/JAMS-macos.zip build/jpackage
