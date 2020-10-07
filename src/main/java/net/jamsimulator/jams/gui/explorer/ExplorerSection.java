@@ -62,8 +62,8 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	protected List<ExplorerElement> elements, filteredElements;
 	protected Comparator<ExplorerElement> comparator;
 
-	protected VBox contents;
-	protected boolean expanded;
+	public VBox contents;
+	protected boolean expanded, hideRepresentation;
 
 	//HIERARCHY
 	protected int hierarchyLevel;
@@ -107,7 +107,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		loadListeners();
 		setOnContextMenuRequested(request -> {
 			if (!representation.selected) {
-				explorer.setSelectedElement(this);
+				explorer.selectElementAlone(this);
 			}
 			createContextMenu(request.getScreenX(), request.getScreenY());
 			request.consume();
@@ -148,7 +148,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 	 * This also contracts children explorer section.
 	 */
 	public void contract() {
-		if (!expanded) return;
+		if (!expanded || hideRepresentation) return;
 		contents.getChildren().clear();
 		expanded = false;
 
@@ -169,6 +169,33 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		expanded = true;
 		representation.refreshStatusIcon();
 		explorer.refreshWidth();
+	}
+
+	/**
+	 * Hides the representation of this section.
+	 * <p>
+	 * This action cannot be undone, and this section won't be able to contact.
+	 */
+	public void hideRepresentation() {
+		hideRepresentation = true;
+		if (!expanded) {
+			addAllFilesToContents();
+			expanded = true;
+		}
+		explorer.refreshWidth();
+
+		removeOneHierarchyLevel();
+		loadElements();
+	}
+
+	/**
+	 * Returns whether the representation of this section is hidden.
+	 *
+	 * @return whether the representation of this section is hidden.
+	 * @see #hideRepresentation()
+	 */
+	public boolean isRepresentationHidden() {
+		return hideRepresentation;
 	}
 
 	/**
@@ -265,11 +292,18 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 			if (explorer.filter.test((ExplorerBasicElement) element)) {
 				filteredElements.add(element);
 			}
+			if (hideRepresentation) {
+				((ExplorerBasicElement) element).removeOneHierarchyLevel();
+			}
 		} else if (element instanceof ExplorerSection) {
 			if (((ExplorerSection) element).applyFilter()) {
 				filteredElements.add(element);
 			}
+			if (hideRepresentation) {
+				((ExplorerSection) element).removeOneHierarchyLevel();
+			}
 		}
+
 
 		refreshAllElements();
 		representation.refreshStatusIcon();
@@ -294,6 +328,9 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 		elements.remove(element);
 		boolean result = filteredElements.remove(element);
 		if (result) {
+			if (element.isSelected()) {
+				explorer.deselectElement(element);
+			}
 			refreshAllElements();
 			representation.refreshStatusIcon();
 			explorer.refreshWidth();
@@ -373,6 +410,30 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 			}
 		}
 		return property;
+	}
+
+	/**
+	 * Removes, sorts and adds all elements to the view.
+	 */
+	public void refreshAllElements() {
+		//Clears, sorts and adds the files.
+		contents.getChildren().clear();
+		filteredElements.sort(comparator);
+		if (expanded) addAllFilesToContents();
+	}
+
+	/**
+	 * Removes all elements from this section.
+	 */
+	public void clear() {
+		for (ExplorerElement element : elements) {
+			if (element.isSelected()) {
+				explorer.deselectElement(element);
+			}
+		}
+		elements.clear();
+		filteredElements.clear();
+		contents.getChildren().clear();
 	}
 
 	protected boolean applyFilter() {
@@ -472,8 +533,12 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 			throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
 		index--;
 
-		if (index == -1)
+		if (index == -1) {
+			if (parent.hideRepresentation) {
+				return Optional.empty();
+			}
 			return Optional.of(parent);
+		}
 
 		ExplorerElement element = parent.getElementByIndex(index).get();
 		while (element instanceof ExplorerSection && ((ExplorerSection) element).isExpanded()) {
@@ -529,7 +594,11 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 
 	protected void loadElements() {
 		getChildren().clear();
-		getChildren().add(representation);
+
+		if (!hideRepresentation) {
+			getChildren().add(representation);
+		}
+
 		getChildren().add(contents);
 	}
 
@@ -538,13 +607,6 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 
 		//Only invoked when the element is focused.
 		addEventHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
-	}
-
-	protected void refreshAllElements() {
-		//Clears, sorts and adds the files.
-		contents.getChildren().clear();
-		filteredElements.sort(comparator);
-		if (expanded) addAllFilesToContents();
 	}
 
 	protected void addAllFilesToContents() {
@@ -580,6 +642,22 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 				((ExplorerSection) element).selectAll();
 			} else {
 				explorer.addOrRemoveSelectedElement(element);
+			}
+		}
+	}
+
+	protected void removeOneHierarchyLevel() {
+		hierarchyLevel--;
+
+		if (representation.separator != null) {
+			representation.separator.setHierarchyLevel(hierarchyLevel);
+		}
+
+		for (ExplorerElement element : elements) {
+			if (element instanceof ExplorerSection) {
+				((ExplorerSection) element).removeOneHierarchyLevel();
+			} else if (element instanceof ExplorerBasicElement) {
+				((ExplorerBasicElement) element).removeOneHierarchyLevel();
 			}
 		}
 	}

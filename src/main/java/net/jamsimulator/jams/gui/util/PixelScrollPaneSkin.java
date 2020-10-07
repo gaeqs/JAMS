@@ -5,7 +5,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.skin.ScrollPaneSkin;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Region;
-import net.jamsimulator.jams.utils.MathUtils;
+import net.jamsimulator.jams.utils.NumericUtils;
 
 /**
  * This is the skin that makes a {@link PixelScrollPaneSkin} to behave properly.
@@ -118,21 +118,21 @@ public class PixelScrollPaneSkin extends ScrollPaneSkin {
 
 	private void incrementVertical() {
 		var v = getVerticalScrollBar();
-		v.setValue(MathUtils.clamp(v.getMin(), v.getValue() + getRelativeVerticalIncrement(), v.getMax()));
+		v.setValue(NumericUtils.clamp(v.getMin(), v.getValue() + getRelativeVerticalIncrement(), v.getMax()));
 	}
 
 	private void decrementVertical() {
 		var v = getVerticalScrollBar();
-		v.setValue(MathUtils.clamp(v.getMin(), v.getValue() - getRelativeVerticalIncrement(), v.getMax()));
+		v.setValue(NumericUtils.clamp(v.getMin(), v.getValue() - getRelativeVerticalIncrement(), v.getMax()));
 	}
 
 	private void incrementHorizontal() {
 		var h = getHorizontalScrollBar();
-		h.setValue(MathUtils.clamp(h.getMin(), h.getValue() + getRelativeHorizontalIncrement(), h.getMax()));
+		h.setValue(NumericUtils.clamp(h.getMin(), h.getValue() + getRelativeHorizontalIncrement(), h.getMax()));
 	}
 
 	private void decrementHorizontal() {
 		var h = getHorizontalScrollBar();
-		h.setValue(MathUtils.clamp(h.getMin(), h.getValue() - getRelativeHorizontalIncrement(), h.getMax()));
+		h.setValue(NumericUtils.clamp(h.getMin(), h.getValue() - getRelativeHorizontalIncrement(), h.getMax()));
 	}
 }

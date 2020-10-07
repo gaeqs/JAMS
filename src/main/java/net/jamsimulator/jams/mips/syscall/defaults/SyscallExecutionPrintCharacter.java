@@ -61,5 +61,13 @@ public class SyscallExecutionPrintCharacter implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionPrintCharacter> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionPrintCharacter> copy() {
+			var builder = new Builder();
+			builder.lineJump.setValue(lineJump.getValue());
+			builder.register.setValue(register.getValue());
+			return builder;
+		}
 	}
 }

@@ -14,7 +14,9 @@ import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.simulator.execution.ExecutionButtons;
 import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
+import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionTableGroup;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionsTable;
+import net.jamsimulator.jams.gui.mips.simulator.label.LabelTable;
 import net.jamsimulator.jams.gui.mips.simulator.memory.MemoryPane;
 import net.jamsimulator.jams.gui.mips.simulator.register.COP0RegistersTable;
 import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
@@ -41,7 +43,10 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 	protected MIPSProject project;
 	protected Simulation<?> simulation;
 	protected TabPane registersTabs;
+
 	protected final ExecutionButtons executionButtons;
+	protected final InstructionTableGroup instructionTableGroup;
+	protected MemoryPane memoryPane;
 
 
 	public MIPSSimulationPane(Tab parent, ProjectTab projectTab, MIPSProject project, Simulation<?> simulation) {
@@ -51,25 +56,28 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 		this.executionButtons = new ExecutionButtons(simulation);
 
 
-		InstructionsTable table = InstructionsTable.createTable(simulation.getArchitecture(), simulation, simulation.getData().getOriginalInstructions(), false);
+		InstructionsTable user = InstructionsTable.createTable(simulation.getArchitecture(), simulation, simulation.getData().getOriginalInstructions(), false);
 		if (Integer.compareUnsigned(simulation.getKernelStackBottom(), MIPS32Memory.EXCEPTION_HANDLER) > 0) {
 			InstructionsTable kernel = InstructionsTable.createTable(simulation.getArchitecture(), simulation, simulation.getData().getOriginalInstructions(), true);
 
 			TabPane pane = new TabPane();
-			Tab userTab = new LanguageTab(Messages.INSTRUCTIONS_USER, table);
+			Tab userTab = new LanguageTab(Messages.INSTRUCTIONS_USER, user);
 			Tab kernelTab = new LanguageTab(Messages.INSTRUCTIONS_KERNEL, kernel);
 			userTab.setClosable(false);
 			kernelTab.setClosable(false);
 			pane.getTabs().addAll(userTab, kernelTab);
 			center = pane;
+			instructionTableGroup = new InstructionTableGroup(user, kernel, userTab, kernelTab, pane);
 		} else {
-			center = table;
+			center = user;
+			instructionTableGroup = new InstructionTableGroup(user);
 		}
 
 		loadRegisterTabs();
 		loadConsole();
 		loadMemoryTab();
 		loadFlow();
+		loadLabels();
 
 		init();
 
@@ -84,6 +92,14 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 
 	public Simulation<?> getSimulation() {
 		return simulation;
+	}
+
+	public InstructionTableGroup getInstructionTableGroup() {
+		return instructionTableGroup;
+	}
+
+	public MemoryPane getMemoryPane() {
+		return memoryPane;
 	}
 
 	private void loadRegisterTabs() {
@@ -116,9 +132,9 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_MEMORY,
 				Icons.SIMULATION_MEMORY_PATH, 1024, 1024).orElse(null);
 
-		MemoryPane pane = new MemoryPane(simulation);
+		memoryPane = new MemoryPane(simulation);
 
-		manageBarAddition("memory", pane, icon, Messages.BAR_MEMORY_NAME, BarType.TOP_LEFT);
+		manageBarAddition("memory", memoryPane, icon, Messages.BAR_MEMORY_NAME, BarType.TOP_LEFT);
 	}
 
 	private void loadFlow() {
@@ -140,6 +156,14 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 		slider.setPrefHeight(20);
 
 		manageBarAddition("flow", anchor, icon, Messages.BAR_FLOW_NAME, BarType.BOTTOM_LEFT);
+	}
+
+	private void loadLabels() {
+		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_LABELS,
+				Icons.SIMULATION_LABELS_PATH, 1024, 1024).orElse(null);
+		var pane = new LabelTable(this);
+
+		manageBarAddition("labels", pane, icon, Messages.BAR_LABELS_NAME, BarType.BOTTOM_RIGHT);
 	}
 
 

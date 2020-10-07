@@ -156,6 +156,22 @@ public class NumericUtils {
 		return 31 - Integer.numberOfLeadingZeros(n);
 	}
 
+	/**
+	 * Clamps the given value.
+	 *
+	 * @param min the minimum value.
+	 * @param val the value.
+	 * @param max the maximum value.
+	 * @return the clamped value.
+	 */
+	public static double clamp(double min, double val, double max) {
+		if (val < min) {
+			return min;
+		} else {
+			return Math.min(val, max);
+		}
+	}
+
 	public static int decodeInteger(String string) {
 		char c = '+';
 		if (string.startsWith("+"))

@@ -62,13 +62,30 @@ public class LabelUtils {
 	 * The returned label may be illegal. Use {@link #isLabelLegal(String)} to check if the returned label is legal.
 	 *
 	 * @param line the line containing the label.
-	 * @return the last position of the label, inclusive. (The last position must be the ':' character.)
+	 * @return the last position of the label, inclusive, or -1 if not found. (The last position will be the ':' character.)
 	 */
 	public static int getLabelFinishIndex(String line) {
-		int labelIndex = -2;
-		do {
-			labelIndex = line.indexOf(":", labelIndex + 2);
-		} while (line.length() > labelIndex + 1 && line.charAt(labelIndex + 1) == ':');
-		return labelIndex;
+		var insideString = false;
+		var insideChar = false;
+
+		var chars = line.toCharArray();
+		for (int i = 0; i < chars.length; i++) {
+			switch (chars[i]) {
+				case '"' -> {
+					if (insideChar) continue;
+					insideString = !insideString;
+				}
+				case '\'' -> {
+					if (insideString) continue;
+					insideChar = !insideChar;
+				}
+				case ':' -> {
+					if (insideChar || insideString) continue;
+					if (chars.length == i + 1 || chars[i + 1] != ':') return i;
+				}
+			}
+		}
+
+		return -1;
 	}
 }

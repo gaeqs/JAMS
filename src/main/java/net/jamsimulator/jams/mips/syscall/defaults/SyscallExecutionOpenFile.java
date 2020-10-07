@@ -166,5 +166,15 @@ public class SyscallExecutionOpenFile implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionOpenFile> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionOpenFile> copy() {
+			var builder = new Builder();
+			builder.nameRegister.setValue(nameRegister.getValue());
+			builder.flagRegister.setValue(flagRegister.getValue());
+			builder.modeRegister.setValue(modeRegister.getValue());
+			builder.resultRegister.setValue(resultRegister.getValue());
+			return builder;
+		}
 	}
 }

@@ -28,6 +28,7 @@ import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
@@ -81,11 +82,15 @@ public class GeneralActionAssemble extends ContextAction {
 		Thread thread = new Thread(() -> {
 			MIPSStructurePane pane = (MIPSStructurePane) tab.getProjectTabPane().getWorkingPane();
 			pane.getFileDisplayHolder().saveAll(true);
-			pane.getBarMap().searchButton("Log").ifPresent(BarButton::show);
+
+			if(Jams.getMainConfiguration().getOrElse("simulation.open_log_on_assemble", true)) {
+				pane.getBarMap().searchButton("log").ifPresent(BarButton::show);
+			}
 			SimpleLog log = pane.getLog();
 
 			try {
 				Simulation<?> simulation = project.assemble(log);
+				if(simulation == null) return;
 
 				Platform.runLater(() ->
 						project.getProjectTab().ifPresent(projectTab -> projectTab.getProjectTabPane()

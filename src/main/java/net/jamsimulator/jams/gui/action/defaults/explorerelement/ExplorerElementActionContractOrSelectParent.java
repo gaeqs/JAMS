@@ -59,7 +59,8 @@ public class ExplorerElementActionContractOrSelectParent extends Action {
 		Explorer explorer = element.getExplorer();
 		explorer.startKeyboardSelection();
 		element.getParentSection().ifPresent(target -> {
-			explorer.setSelectedElement(target);
+			if (target.isRepresentationHidden()) return;
+			explorer.selectElementAlone(target);
 			explorer.updateScrollPosition(target);
 		});
 

@@ -77,5 +77,14 @@ public class SyscallExecutionPrintString implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionPrintString> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionPrintString> copy() {
+			var builder = new Builder();
+			builder.maxChars.setValue(maxChars.getValue());
+			builder.lineJump.setValue(lineJump.getValue());
+			builder.register.setValue(register.getValue());
+			return builder;
+		}
 	}
 }

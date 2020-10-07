@@ -62,5 +62,12 @@ public class SyscallExecutionCloseFile implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionCloseFile> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionCloseFile> copy() {
+			var builder = new Builder();
+			builder.idRegister.setValue(idRegister.getValue());
+			return builder;
+		}
 	}
 }

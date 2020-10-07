@@ -115,5 +115,15 @@ public class SyscallExecutionWriteFile implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionWriteFile> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionWriteFile> copy() {
+			var builder = new Builder();
+			builder.idRegister.setValue(idRegister.getValue());
+			builder.addressRegister.setValue(addressRegister.getValue());
+			builder.amountRegister.setValue(amountRegister.getValue());
+			builder.resultRegister.setValue(resultRegister.getValue());
+			return builder;
+		}
 	}
 }

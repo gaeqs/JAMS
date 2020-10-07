@@ -63,9 +63,15 @@ public class Icons {
 	public static final String SIMULATION_MEMORY = "simulation_memory";
 	public static final String SIMULATION_REGISTERS = "simulation_registers";
 	public static final String SIMULATION_FLOW = "simulation_flow";
+	public static final String SIMULATION_LABELS = "simulation_labels";
 
 	public static final String TAB_SPLIT_VERTICALLY = "tab_split_vertically";
 	public static final String TAB_SPLIT_HORIZONTALLY = "tab_split_horizontally";
+
+	public static final String CONTROL_ADD = "control_add";
+	public static final String CONTROL_REMOVE = "control_remove";
+	public static final String CONTROL_COPY = "control_copy";
+	public static final String CONTROL_SORT = "control_sort";
 
 	public static final String BAR_CLOSE = "bar_close";
 
@@ -103,9 +109,15 @@ public class Icons {
 	public static final String SIMULATION_MEMORY_PATH = "/gui/icon/simulation/memory.png";
 	public static final String SIMULATION_REGISTERS_PATH = "/gui/icon/simulation/registers.png";
 	public static final String SIMULATION_FLOW_PATH = "/gui/icon/simulation/flow.png";
+	public static final String SIMULATION_LABELS_PATH = "/gui/icon/simulation/labels.png";
 
 	public static final String TAB_SPLIT_VERTICALLY_PATH = "/gui/icon/tab/split_vertically.png";
 	public static final String TAB_SPLIT_HORIZONTALLY_PATH = "/gui/icon/tab/split_horizontally.png";
+
+	public static final String CONTROL_ADD_PATH = "/gui/icon/controls/add.png";
+	public static final String CONTROL_REMOVE_PATH = "/gui/icon/controls/remove.png";
+	public static final String CONTROL_COPY_PATH = "/gui/icon/controls/copy.png";
+	public static final String CONTROL_SORT_PATH = "/gui/icon/controls/sort.png";
 
 	public static final String BAR_CLOSE_PATH = "/gui/icon/bar/close.png";
 

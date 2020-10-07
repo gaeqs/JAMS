@@ -59,5 +59,13 @@ public class SyscallExecutionAllocateMemory implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionAllocateMemory> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionAllocateMemory> copy() {
+			var builder = new Builder();
+			builder.amountRegister.setValue(amountRegister.getValue());
+			builder.addressRegister.setValue(addressRegister.getValue());
+			return builder;
+		}
 	}
 }

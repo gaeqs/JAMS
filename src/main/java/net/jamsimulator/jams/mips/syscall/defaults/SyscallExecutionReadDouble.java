@@ -97,5 +97,13 @@ public class SyscallExecutionReadDouble implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionReadDouble> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionReadDouble> copy() {
+			var builder = new Builder();
+			builder.lineJump.setValue(lineJump.getValue());
+			builder.register.setValue(register.getValue());
+			return builder;
+		}
 	}
 }

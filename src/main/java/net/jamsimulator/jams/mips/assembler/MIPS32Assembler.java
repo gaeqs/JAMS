@@ -32,7 +32,7 @@ public class MIPS32Assembler implements Assembler {
 
 	private boolean assembled = false;
 
-	public MIPS32Assembler(List<String> rawFiles, InstructionSet instructionSet, DirectiveSet directiveSet, Registers registers, Memory memory) {
+	public MIPS32Assembler(Map<String, String> rawFiles, InstructionSet instructionSet, DirectiveSet directiveSet, Registers registers, Memory memory) {
 		this.files = new ArrayList<>();
 
 		this.assemblerData = new MIPS32AssemblerData(memory);
@@ -45,7 +45,7 @@ public class MIPS32Assembler implements Assembler {
 		this.globalLabels = new HashMap<>();
 		this.originalInstructions = new HashMap<>();
 
-		rawFiles.forEach(target -> files.add(new MIPS32AssemblingFile(target, this)));
+		rawFiles.forEach((name, data) -> files.add(new MIPS32AssemblingFile(name, data, this)));
 	}
 
 
@@ -142,6 +142,15 @@ public class MIPS32Assembler implements Assembler {
 	@Override
 	public Map<Integer, String> getOriginals() {
 		return Collections.unmodifiableMap(originalInstructions);
+	}
+
+	@Override
+	public Map<String, Integer> getLabelsWithFileNames() {
+		var map = new HashMap<>(globalLabels);
+		files.forEach(file -> file.getLabels().forEach((label, address) ->
+				map.put(file.getName() + "/" + label, address)));
+
+		return Collections.unmodifiableMap(map);
 	}
 
 	@Override

@@ -4,7 +4,12 @@ import javafx.beans.property.Property;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 
+import java.util.function.Consumer;
+
 public class FloatPropertyEditor extends TextField implements PropertyEditor<Float> {
+
+	private Consumer<Float> listener = p -> {
+	};
 
 	private final Property<Float> property;
 	private String oldText;
@@ -20,6 +25,7 @@ public class FloatPropertyEditor extends TextField implements PropertyEditor<Flo
 			try {
 				float number = Float.parseFloat(getText());
 				property.setValue(number);
+				listener.accept(number);
 				oldText = getText();
 			} catch (NumberFormatException ex) {
 				setText(oldText);
@@ -42,5 +48,10 @@ public class FloatPropertyEditor extends TextField implements PropertyEditor<Flo
 	@Override
 	public Node thisInstanceAsNode() {
 		return this;
+	}
+
+	@Override
+	public void addListener(Consumer<Float> consumer) {
+		listener = listener.andThen(consumer);
 	}
 }

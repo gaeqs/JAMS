@@ -5,7 +5,12 @@ import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import net.jamsimulator.jams.utils.NumericUtils;
 
+import java.util.function.Consumer;
+
 public class IntegerPropertyEditor extends TextField implements PropertyEditor<Integer> {
+
+	private Consumer<Integer> listener = p -> {
+	};
 
 	private final Property<Integer> property;
 	private String oldText;
@@ -21,6 +26,7 @@ public class IntegerPropertyEditor extends TextField implements PropertyEditor<I
 			try {
 				int number = NumericUtils.decodeInteger(getText());
 				property.setValue(number);
+				listener.accept(number);
 				oldText = getText();
 			} catch (NumberFormatException ex) {
 				setText(oldText);
@@ -43,5 +49,10 @@ public class IntegerPropertyEditor extends TextField implements PropertyEditor<I
 	@Override
 	public Node thisInstanceAsNode() {
 		return this;
+	}
+
+	@Override
+	public void addListener(Consumer<Integer> consumer) {
+		listener = listener.andThen(consumer);
 	}
 }

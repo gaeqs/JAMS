@@ -24,7 +24,9 @@
 
 package net.jamsimulator.jams.configuration;
 
+import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
+import net.jamsimulator.jams.gui.util.converter.ValueConverter;
 import net.jamsimulator.jams.utils.CollectionUtils;
 import net.jamsimulator.jams.utils.Validate;
 import org.json.JSONObject;
@@ -32,10 +34,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Represents a configuration node. This class is use to manage configuration data easily.
@@ -44,6 +43,23 @@ import java.util.Optional;
  * node of a {@link RootConfiguration}.
  */
 public class Configuration {
+
+	public static final Set<Class<?>> NATIVE_CLASSES = Set.of(
+			Byte.class,
+			Short.class,
+			Integer.class,
+			Long.class,
+			Float.class,
+			Double.class,
+			Character.class,
+			Boolean.class,
+			String.class,
+			List.class,
+			Map.class);
+
+	public static boolean isObjectNativelySupported(Object o) {
+		return NATIVE_CLASSES.stream().anyMatch(target -> target.isInstance(o));
+	}
 
 	protected String name;
 	protected Map<String, Object> map;
@@ -141,6 +157,111 @@ public class Configuration {
 		} catch (ClassCastException ex) {
 			return Optional.empty();
 		}
+	}
+
+	/**
+	 * Returns the value that matches the given key, if present, and converts it with the
+	 * {@link ValueConverter}
+	 * that matches the given name.
+	 * <p>
+	 * You can get values stored in the child nodes of this configuration using the separator ".".
+	 * For example, if you want to get the value "data" inside the child "node", you must use the
+	 * key "node.data".
+	 * <p>
+	 * This method won't modify the structure of the configuration. If the node that should contain the
+	 * wanted value is not present, the method will immediately return {@code Optional.empty()}.
+	 * <p>
+	 * This method will never return {@link Map} instances, but {@link Configuration} objects.
+	 *
+	 * @param key the key.
+	 * @param <T> the value type.
+	 * @return the value, if present and matches the type.
+	 */
+	public <T> Optional<T> getAndConvert(String key, String converter) {
+		var c = ValueConverters.getByName(converter);
+		try {
+			if (c.isEmpty()) {
+				Optional<Object> optional = get(key);
+				if (optional.isEmpty()) return Optional.empty();
+				return Optional.of((T) optional.get());
+			} else {
+				return (Optional<T>) c.get().load(this, key);
+			}
+		} catch (ClassCastException ex) {
+			return Optional.empty();
+		}
+	}
+
+	/**
+	 * Returns the value that matches the given key, if present, and converts it with the
+	 * {@link ValueConverter}
+	 * that matches the given type.
+	 * <p>
+	 * You can get values stored in the child nodes of this configuration using the separator ".".
+	 * For example, if you want to get the value "data" inside the child "node", you must use the
+	 * key "node.data".
+	 * <p>
+	 * This method won't modify the structure of the configuration. If the node that should contain the
+	 * wanted value is not present, the method will immediately return {@code Optional.empty()}.
+	 * <p>
+	 * This method will never return {@link Map} instances, but {@link Configuration} objects.
+	 *
+	 * @param key the key.
+	 * @param <T> the value type.
+	 * @return the value, if present and matches the type.
+	 */
+	public <T> Optional<T> getAndConvert(String key, Class<?> type) {
+		var c = ValueConverters.getByType(type);
+		try {
+			if (c.isEmpty()) {
+				Optional<Object> optional = get(key);
+				if (optional.isEmpty()) return Optional.empty();
+				return Optional.of((T) optional.get());
+			} else {
+				return (Optional<T>) c.get().load(this, key);
+			}
+		} catch (ClassCastException ex) {
+			return Optional.empty();
+		}
+	}
+
+	/**
+	 * Returns the number that matches the given key, if present.
+	 * <p>
+	 * You can get values stored in the child nodes of this configuration using the separator ".".
+	 * For example, if you want to get the value "data" inside the child "node", you must use the
+	 * key "node.data".
+	 * <p>
+	 * This method won't modify the structure of the configuration. If the node that should contain the
+	 * wanted value is not present, the method will immediately return {@code Optional.empty()}.
+	 *
+	 * @param key the key.
+	 * @return the number, if present and matches the type.
+	 */
+	public Optional<Number> getNumber(String key) {
+		return get(key);
+	}
+
+	/**
+	 * Returns the value that matches the given key or the value given if not present.
+	 * <p>
+	 * You can get values stored in the child nodes of this configuration using the separator ".".
+	 * For example, if you want to get the value "data" inside the child "node", you must use the
+	 * key "node.data".
+	 * <p>
+	 * This method won't modify the structure of the configuration. If the node that should contain the
+	 * wanted value is not present, the method will immediately return {@code Optional.empty()}.
+	 * <p>
+	 * This method will never return {@link Map} instances, but {@link Configuration} objects.
+	 *
+	 * @param key    the key.
+	 * @param orElse the value returned if no element was found.
+	 * @param <T>    the value type.
+	 * @return the value if present and matches the type. Else, returns the given element.
+	 */
+	public <T> T getOrElse(String key, T orElse) {
+		Optional<T> optional = get(key);
+		return optional.orElse(orElse);
 	}
 
 	/**
@@ -292,6 +413,38 @@ public class Configuration {
 
 		current.put(array[array.length - 1], value);
 		root.callEvent(new ConfigurationNodeChangeEvent.After(this, absoluteKey, old, value));
+	}
+
+	/**
+	 * Sets the converted given value into the given key.
+	 * The value is converted by the
+	 * {@link ValueConverter}
+	 * that matches the given type.
+	 * <p>
+	 * If the converted is not found or it's not valid this method returns false.
+	 * <p>
+	 * You can store values into the child nodes of this configuration using the separator ".".
+	 * For example, if you want to store the value "data" inside the child "node", you must use the
+	 * key "node.data".
+	 * <p>
+	 * This method modifies the structure of the configuration: it will make new {@link Map}s
+	 * or override previous values that are not {@link Map}s to store the given object.
+	 * <p>
+	 * This method will never store {@link Configuration} or {@link Map} instances, but a deep copy of the {@link Map}s.
+	 *
+	 * @param key   the key.
+	 * @param value the value.
+	 */
+	public boolean convertAndSet(String key, Object value, Class<?> converter) {
+		if (isObjectNativelySupported(value)) {
+			set(key, value);
+			return true;
+		}
+
+		var c = ValueConverters.getByType(converter);
+		if (c.isEmpty() || !c.get().conversionClass().isInstance(value)) return false;
+		c.get().save(this, key, value);
+		return true;
 	}
 
 	/**

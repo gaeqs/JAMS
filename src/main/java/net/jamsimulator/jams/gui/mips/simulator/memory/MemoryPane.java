@@ -47,6 +47,17 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
 		getChildren().addAll(offsetSelection, representationSelection, table, buttonsHBox);
 	}
 
+	public void select(int address) {
+		var offset = Integer.remainderUnsigned(address, (table.getRows() << 4));
+		var start = address - offset;
+		var row = offset >>> 4;
+
+		table.setOffset(start);
+		table.getSelectionModel().select(row);
+		table.scrollTo(row);
+
+	}
+
 	private void initOffsetComboBox(Memory memory) {
 		List<String> list = new ArrayList<>();
 		for (MemorySection section : memory.getMemorySections()) {

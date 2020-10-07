@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.bar.sidebar;
 
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
@@ -113,15 +114,15 @@ public class SidebarButton extends ToggleButton implements BarButton {
 	public boolean show() {
 		Optional<BarPane> optional = sidebar.getCurrent();
 		if (optional.isPresent() && optional.get().equals(pane)) return false;
-		selectedProperty().set(true);
+		Platform.runLater(() -> selectedProperty().set(true));
 		return true;
 	}
 
 	@Override
 	public boolean hide() {
 		Optional<BarPane> optional = sidebar.getCurrent();
-		if (!optional.isPresent() || !optional.get().equals(pane)) return false;
-		selectedProperty().set(false);
+		if (optional.isEmpty() || !optional.get().equals(pane)) return false;
+		Platform.runLater(() -> selectedProperty().set(false));
 		return true;
 	}
 

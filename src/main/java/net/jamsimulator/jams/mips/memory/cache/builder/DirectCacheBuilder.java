@@ -26,6 +26,12 @@ public class DirectCacheBuilder extends CacheBuilder<Cache> {
 	}
 
 	@Override
+	public int getSizeInBytes() {
+		return blocksAmount.get() * (blockSize.get() << 2);
+	}
+
+
+	@Override
 	public Cache build(Memory parent) {
 		int logSize = NumericUtils.log2(blockSize.get());
 		int logAmount = NumericUtils.log2(blocksAmount.get());
@@ -47,5 +53,14 @@ public class DirectCacheBuilder extends CacheBuilder<Cache> {
 	@Override
 	public CacheBuilder<Cache> makeNewInstance() {
 		return new DirectCacheBuilder();
+	}
+
+	@Override
+	public CacheBuilder<Cache> copy() {
+		var builder = new DirectCacheBuilder();
+		builder.writeBack.setValue(writeBack.getValue());
+		builder.blockSize.setValue(blockSize.getValue());
+		builder.blocksAmount.setValue(blocksAmount.getValue());
+		return builder;
 	}
 }

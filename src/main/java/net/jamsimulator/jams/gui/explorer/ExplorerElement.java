@@ -73,6 +73,9 @@ public interface ExplorerElement extends ActionRegion {
 
 	/**
 	 * Selects this element.
+	 * <p>
+	 * This method only marks this element as selected.
+	 * If you want to select this element use {@link Explorer#selectElementAlone(ExplorerElement)}.
 	 *
 	 * @see #isSelected().
 	 */
@@ -80,6 +83,10 @@ public interface ExplorerElement extends ActionRegion {
 
 	/**
 	 * Deselects this element.
+	 * <p>
+	 * This method only marks this element as not selected.
+	 * If you want to deselect this element use {@link Explorer#deselectAll()}
+	 * or {@link Explorer#addOrRemoveSelectedElement(ExplorerElement)}.
 	 *
 	 * @see #isSelected() .
 	 */

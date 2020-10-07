@@ -25,27 +25,72 @@
 package net.jamsimulator.jams.gui.explorer;
 
 import javafx.scene.layout.Region;
+import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
+import net.jamsimulator.jams.event.Listener;
 
 /**
  * Small class used to add padding to an {@link Explorer}.
  */
 public class ExplorerSeparatorRegion extends Region {
 
-	public static final int HIERARCHY_SEPARATOR_SIZE_FILE = 38;
-	public static final int HIERARCHY_SEPARATOR_SIZE_FOLDER = 20;
+	public static final String HIERARCHY_SEPARATOR_SECTION_NODE = "explorer.section_separator_width";
+	public static final String HIERARCHY_SEPARATOR_ELEMENT_NODE = "explorer.element_separator_width";
 
-	public ExplorerSeparatorRegion(boolean folder, int hierarchyLevel) {
+	private final boolean section;
+
+	private int hierarchyLevel;
+	private boolean hasHierarchyLevel;
+
+	public ExplorerSeparatorRegion(boolean section, int hierarchyLevel) {
+		this.section = section;
+		this.hierarchyLevel = hierarchyLevel;
+		this.hasHierarchyLevel = true;
+		setHierarchyLevel(hierarchyLevel);
+		Jams.getMainConfiguration().registerListeners(this, true);
+	}
+
+	public ExplorerSeparatorRegion(double width) {
+		section = false;
+		hierarchyLevel = -1;
+		hasHierarchyLevel = false;
+		setPrefWidth(width);
+	}
+
+	public void setHierarchyLevel(int hierarchyLevel) {
+		if (!hasHierarchyLevel) {
+			Jams.getMainConfiguration().registerListeners(this, true);
+		}
+
+		hasHierarchyLevel = true;
+		this.hierarchyLevel = hierarchyLevel;
+
+		updateLevel();
+	}
+
+	private void updateLevel() {
+		var config = Jams.getMainConfiguration();
+
 		double width;
-		if (folder)
-			width = HIERARCHY_SEPARATOR_SIZE_FOLDER * hierarchyLevel;
-		else
-			width = HIERARCHY_SEPARATOR_SIZE_FOLDER * (hierarchyLevel - 1) + HIERARCHY_SEPARATOR_SIZE_FILE;
+
+		double folderWidth = config.getNumber(HIERARCHY_SEPARATOR_SECTION_NODE).orElse(0.0).doubleValue();
+		if (section) {
+			width = folderWidth * hierarchyLevel;
+		} else {
+			double fileWidth = config.getNumber(HIERARCHY_SEPARATOR_ELEMENT_NODE).orElse(0.0).doubleValue();
+			width = folderWidth * (hierarchyLevel - 1) + fileWidth;
+		}
+
 		setPrefWidth(width);
 		setMinWidth(width);
 	}
 
-	public ExplorerSeparatorRegion(double width) {
-		setPrefWidth(width);
+	@Listener
+	private void onConfigurationNodeChange(ConfigurationNodeChangeEvent.After event) {
+		if (event.getNode().equals(HIERARCHY_SEPARATOR_ELEMENT_NODE)
+				|| event.getNode().equals(HIERARCHY_SEPARATOR_SECTION_NODE)) {
+			updateLevel();
+		}
 	}
 
 }

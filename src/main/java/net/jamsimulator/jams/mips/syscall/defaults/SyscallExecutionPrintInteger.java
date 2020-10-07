@@ -30,7 +30,7 @@ public class SyscallExecutionPrintInteger implements SyscallExecution {
 		Register register = simulation.getRegisters().getRegister(this.register).orElse(null);
 		if (register == null) throw new IllegalStateException("Register " + this.register + " not found");
 		int value = register.getValue();
-		String toPrint = printHex ? "0x" + Integer.toHexString(value) : String.valueOf(value);
+		String toPrint = printHex ? Integer.toHexString(value) : String.valueOf(value);
 		simulation.getConsole().print(toPrint);
 		if (lineJump) simulation.getConsole().println();
 	}
@@ -39,7 +39,7 @@ public class SyscallExecutionPrintInteger implements SyscallExecution {
 	public void executeMultiCycle(MultiCycleExecution<?> execution) {
 		var value = execution.value(register);
 		var console = execution.getSimulation().getConsole();
-		String toPrint = printHex ? "0x" + Integer.toHexString(value) : String.valueOf(value);
+		String toPrint = printHex ? Integer.toHexString(value) : String.valueOf(value);
 		console.print(toPrint);
 		if (lineJump) console.println();
 	}
@@ -65,6 +65,15 @@ public class SyscallExecutionPrintInteger implements SyscallExecution {
 		@Override
 		public SyscallExecutionBuilder<SyscallExecutionPrintInteger> makeNewInstance() {
 			return new Builder();
+		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionPrintInteger> copy() {
+			var builder = new Builder();
+			builder.hexProperty.setValue(hexProperty.getValue());
+			builder.lineJump.setValue(lineJump.getValue());
+			builder.register.setValue(register.getValue());
+			return builder;
 		}
 	}
 }

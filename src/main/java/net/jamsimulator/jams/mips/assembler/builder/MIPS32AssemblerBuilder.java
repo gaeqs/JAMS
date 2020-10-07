@@ -30,7 +30,7 @@ import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
 
-import java.util.List;
+import java.util.Map;
 
 public class MIPS32AssemblerBuilder extends AssemblerBuilder {
 
@@ -45,7 +45,7 @@ public class MIPS32AssemblerBuilder extends AssemblerBuilder {
 	}
 
 	@Override
-	public MIPS32Assembler createAssembler(List<String> rawFiles, DirectiveSet directiveSet, InstructionSet instructionSet,
+	public MIPS32Assembler createAssembler(Map<String, String> rawFiles, DirectiveSet directiveSet, InstructionSet instructionSet,
 										   Registers registerSet, Memory memory) {
 		return new MIPS32Assembler(rawFiles, instructionSet, directiveSet, registerSet, memory);
 	}

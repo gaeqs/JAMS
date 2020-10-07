@@ -86,7 +86,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 
 		setOnContextMenuRequested(request -> {
 			if (!selected) {
-				getExplorer().setSelectedElement(this);
+				getExplorer().selectElementAlone(this);
 			}
 			createContextMenu(request.getScreenX(), request.getScreenY());
 			request.consume();
@@ -96,8 +96,10 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 	}
 
 	public double getRepresentationWidth() {
-		return separator.getWidth() + icon.getFitWidth()
-				+ label.getWidth() + ExplorerBasicElement.SPACING * 2;
+		return (separator == null ? 0 : separator.getWidth())
+				+ (icon == null ? 0 : icon.getFitWidth())
+				+ (label == null ? 0 : label.getWidth())
+				+ ExplorerBasicElement.SPACING * 2;
 	}
 
 	/**
@@ -181,8 +183,12 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 			throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
 		index--;
 
-		if (index == -1)
+		if (index == -1) {
+			if (parent.hideRepresentation) {
+				return Optional.empty();
+			}
 			return Optional.of(parent);
+		}
 
 		ExplorerElement element = parent.getElementByIndex(index).get();
 		while (element instanceof ExplorerSection && ((ExplorerSection) element).isExpanded()) {
@@ -216,6 +222,13 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
 		if (set.isEmpty()) return;
 		ContextMenu main = new ContextActionMenuBuilder(this).addAll(set).build();
 		JamsApplication.openContextMenu(main, this, screenX, screenY);
+	}
+
+	protected void removeOneHierarchyLevel() {
+		hierarchyLevel--;
+		if (separator != null) {
+			separator.setHierarchyLevel(hierarchyLevel);
+		}
 	}
 
 	private Set<ContextAction> getSupportedContextActions() {

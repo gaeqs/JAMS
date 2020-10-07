@@ -27,8 +27,6 @@ package net.jamsimulator.jams.gui.configuration.explorer;
 import javafx.scene.Node;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNode;
-import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNodeBuilder;
-import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNodeBuilders;
 import net.jamsimulator.jams.gui.configuration.explorer.section.ConfigurationWindowSpecialSectionBuilder;
 import net.jamsimulator.jams.gui.configuration.explorer.section.ConfigurationWindowSpecialSectionBuilders;
 import net.jamsimulator.jams.gui.explorer.Explorer;
@@ -41,7 +39,7 @@ import java.util.*;
 public class ConfigurationWindowSection extends LanguageExplorerSection {
 
 	protected Configuration configuration, meta;
-	protected List<ConfigurationWindowNode<?>> nodes;
+	protected List<ConfigurationWindowNode> nodes;
 	protected Map<String, Integer> regions;
 
 	/**
@@ -73,7 +71,7 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
 	 *
 	 * @return the unmodifiable {@link List}.
 	 */
-	public List<ConfigurationWindowNode<?>> getNodes() {
+	public List<ConfigurationWindowNode> getNodes() {
 		nodes.sort(Comparator.comparingInt(o -> o.getRegion() == null ? Integer.MAX_VALUE : regions.getOrDefault(o.getRegion(), Integer.MAX_VALUE)));
 		return Collections.unmodifiableList(nodes);
 	}
@@ -108,7 +106,7 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
 
 	protected void manageChildrenAddition(String name, Object value) {
 		if (value instanceof Configuration) {
-			if(!name.equals("invisible")) {
+			if (!name.equals("invisible")) {
 				manageSectionAddition(name, (Configuration) value);
 			}
 		} else {
@@ -151,24 +149,18 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
 
 	protected void manageBasicObjectAddition(String name, Object value) {
 		Optional<Configuration> metaOptional = meta == null ? Optional.empty() : meta.get(name);
-		Optional<ConfigurationWindowNodeBuilder<?>> builder;
 		String languageNode = null;
 		String region = null;
+		String type = "string";
 
 		if (metaOptional.isPresent()) {
 			ConfigurationMetadata meta = new ConfigurationMetadata(metaOptional.get());
-
 			languageNode = meta.getLanguageNode();
 			region = meta.getRegion();
-
-			builder = ConfigurationWindowNodeBuilders.getByName(meta.getType());
-			if (builder.isPresent()) {
-				nodes.add(builder.get().create(configuration, name, languageNode, region));
-				return;
-			}
+			type = meta.getType();
 		}
-		builder = ConfigurationWindowNodeBuilders.getByType(value.getClass());
-		if (builder.isPresent())
-			nodes.add(builder.get().create(configuration, name, languageNode, region));
+
+		var node = new ConfigurationWindowNode(configuration, name, languageNode, region, type);
+		nodes.add(node);
 	}
 }

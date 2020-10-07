@@ -29,7 +29,6 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
-import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
@@ -68,7 +67,7 @@ public class FolderActionDelete extends ContextAction {
 				}
 			}
 		}
-		((ExplorerElement) node).getParentSection().ifPresent(explorer::setSelectedElement);
+		((ExplorerElement) node).getParentSection().ifPresent(explorer::selectElementAlone);
 	}
 
 	@Override

@@ -14,7 +14,7 @@ def bundleLibs = false
 def winConsole = false;
 
 group projectGroup
-version '0.5-ALPHA'
+version '0.6-ALPHA'
 
 repositories {
     jcenter()

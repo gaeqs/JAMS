@@ -63,5 +63,12 @@ public class SyscallExecutionExitWithValue implements SyscallExecution {
 		public SyscallExecutionBuilder<SyscallExecutionExitWithValue> makeNewInstance() {
 			return new Builder();
 		}
+
+		@Override
+		public SyscallExecutionBuilder<SyscallExecutionExitWithValue> copy() {
+			var builder = new Builder();
+			builder.register.setValue(register.getValue());
+			return builder;
+		}
 	}
 }

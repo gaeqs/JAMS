@@ -77,6 +77,8 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
 		box.getChildren().add(searchbar);
 
 		actionsExplorer = new ActionsExplorer(scrollPane, false);
+		actionsExplorer.hideMainSectionRepresentation();
+
 		scrollPane.setContent(actionsExplorer);
 
 		scrollPane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
@@ -99,7 +101,7 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
 	 *
 	 * @return the unmodifiable {@link List}.
 	 */
-	public List<ConfigurationWindowNode<?>> getNodes() {
+	public List<ConfigurationWindowNode> getNodes() {
 		return null;
 	}
 

@@ -30,6 +30,11 @@ public class AssociativeCacheBuilder extends CacheBuilder<Cache> {
 	}
 
 	@Override
+	public int getSizeInBytes() {
+		return blocksAmount.get() * (blockSize.get() << 2);
+	}
+
+	@Override
 	public Cache build(Memory parent) {
 		int logSize = NumericUtils.log2(blockSize.get());
 		int logAmount = NumericUtils.log2(blocksAmount.get());
@@ -51,5 +56,15 @@ public class AssociativeCacheBuilder extends CacheBuilder<Cache> {
 	@Override
 	public CacheBuilder<Cache> makeNewInstance() {
 		return new AssociativeCacheBuilder();
+	}
+
+	@Override
+	public CacheBuilder<Cache> copy() {
+		var builder = new AssociativeCacheBuilder();
+		builder.writeBack.setValue(writeBack.getValue());
+		builder.blockSize.setValue(blockSize.getValue());
+		builder.blocksAmount.setValue(blocksAmount.getValue());
+		builder.replacementPolicy.setValue(replacementPolicy.getValue());
+		return builder;
 	}
 }

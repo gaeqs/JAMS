@@ -11,6 +11,8 @@ import java.util.*;
  */
 public class MIPS32AssemblingFile {
 
+	private final String name;
+
 	private final List<String> lines;
 	private final MIPS32Assembler assembler;
 
@@ -22,11 +24,13 @@ public class MIPS32AssemblingFile {
 	private final Set<String> convertToGlobalLabel;
 
 
-	public MIPS32AssemblingFile(String rawData, MIPS32Assembler assembler) {
-		this(StringUtils.multiSplit(rawData, "\n", "\r"), assembler);
+	public MIPS32AssemblingFile(String name, String rawData, MIPS32Assembler assembler) {
+		this(name, StringUtils.multiSplit(rawData, "\n", "\r"), assembler);
 	}
 
-	public MIPS32AssemblingFile(List<String> lines, MIPS32Assembler assembler) {
+	public MIPS32AssemblingFile(String name, List<String> lines, MIPS32Assembler assembler) {
+		this.name = name;
+
 		this.lines = lines;
 		this.assembler = assembler;
 
@@ -36,6 +40,15 @@ public class MIPS32AssemblingFile {
 
 		this.labels = new HashMap<>();
 		this.convertToGlobalLabel = new HashSet<>();
+	}
+
+	/**
+	 * Returns the name of this file.
+	 *
+	 * @return the name of this file.
+	 */
+	public String getName() {
+		return name;
 	}
 
 	/**
@@ -78,6 +91,15 @@ public class MIPS32AssemblingFile {
 		if (labels.containsKey(label)) {
 			assembler.addGlobalLabel(executingLine, label, labels.remove(label));
 		}
+	}
+
+	/**
+	 * Returns an unmodifiable map with all labels inside this file.
+	 *
+	 * @return the map.
+	 */
+	public Map<String, Integer> getLabels() {
+		return Collections.unmodifiableMap(labels);
 	}
 
 	/**

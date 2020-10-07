@@ -2,7 +2,8 @@ package net.jamsimulator.jams.mips.simulation;
 
 import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
-import net.jamsimulator.jams.project.mips.MIPSSimulationConfiguration;
+import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
+import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurationPresets;
 
 import java.io.File;
 import java.util.Map;
@@ -17,21 +18,24 @@ public class SimulationData {
 	protected final File workingDirectory;
 	protected final Console console;
 	protected final Map<Integer, String> originalInstructions;
+	protected final Map<String, Integer> labels;
 	protected final boolean callEvents, undoEnabled, enableForwarding, solveBranchOnDecode;
 
 	public SimulationData(SimulationSyscallExecutions syscallExecutions, File workingDirectory, Console console,
-						  Map<Integer, String> originalInstructions, boolean callEvents, boolean undoEnabled, boolean enableForwarding, boolean solveBranchOnDecode) {
+						  Map<Integer, String> originalInstructions, Map<String, Integer> labels, boolean callEvents, boolean undoEnabled, boolean enableForwarding, boolean solveBranchOnDecode) {
 		this.syscallExecutions = syscallExecutions;
 		this.workingDirectory = workingDirectory;
 		this.console = console;
 		this.originalInstructions = originalInstructions;
+		this.labels = labels;
 		this.callEvents = callEvents;
 		this.undoEnabled = undoEnabled;
 		this.enableForwarding = enableForwarding;
 		this.solveBranchOnDecode = solveBranchOnDecode;
 	}
 
-	public SimulationData(MIPSSimulationConfiguration configuration, File workingDirectory, Console console, Map<Integer, String> originalInstructions) {
+	public SimulationData(MIPSSimulationConfiguration configuration, File workingDirectory, Console console,
+						  Map<Integer, String> originalInstructions, Map<String, Integer> labels) {
 		this.syscallExecutions = new SimulationSyscallExecutions();
 		configuration.getSyscallExecutionBuilders().forEach((key, builder) ->
 				syscallExecutions.bindExecution(key, builder.build()));
@@ -39,12 +43,12 @@ public class SimulationData {
 		this.workingDirectory = workingDirectory;
 		this.console = console;
 		this.originalInstructions = originalInstructions;
+		this.labels = labels;
 
-		this.callEvents = configuration.shouldCallEvents();
-		this.undoEnabled = configuration.isUndoEnabled() && callEvents;
-		this.enableForwarding = configuration.isForwardingEnabled();
-
-		this.solveBranchOnDecode = configuration.shouldSolveBranchOnDecode();
+		this.callEvents = configuration.getNodeValue(MIPSSimulationConfigurationPresets.CALL_EVENTS);
+		this.undoEnabled = (boolean) configuration.getNodeValue(MIPSSimulationConfigurationPresets.UNDO_ENABLED) && callEvents;
+		this.enableForwarding = configuration.getNodeValue(MIPSSimulationConfigurationPresets.FORWARDING_ENABLED);
+		this.solveBranchOnDecode = configuration.getNodeValue(MIPSSimulationConfigurationPresets.BRANCH_ON_DECODE);
 	}
 
 	/**
@@ -80,6 +84,10 @@ public class SimulationData {
 
 	public Map<Integer, String> getOriginalInstructions() {
 		return originalInstructions;
+	}
+
+	public Map<String, Integer> getLabels() {
+		return labels;
 	}
 
 	/**

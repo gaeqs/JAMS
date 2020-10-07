@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.bar.bottombar;
 
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
@@ -32,6 +33,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.bar.BarButton;
+import net.jamsimulator.jams.gui.bar.BarPane;
 import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.bar.sidebar.SidebarButton;
 import net.jamsimulator.jams.gui.image.NearestImageView;
@@ -107,15 +109,15 @@ public class BottomBarButton extends ToggleButton implements BarButton {
 	public boolean show() {
 		Optional<BottomPaneNode> optional = bottomBar.getCurrent();
 		if (optional.isPresent() && optional.get().equals(pane)) return false;
-		selectedProperty().set(true);
+		Platform.runLater(() -> selectedProperty().set(true));
 		return true;
 	}
 
 	@Override
 	public boolean hide() {
 		Optional<BottomPaneNode> optional = bottomBar.getCurrent();
-		if (!optional.isPresent() || !optional.get().equals(pane)) return false;
-		selectedProperty().set(false);
+		if (optional.isEmpty() || !optional.get().equals(pane)) return false;
+		Platform.runLater(() -> selectedProperty().set(false));
 		return true;
 	}
 

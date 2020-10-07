@@ -5,6 +5,11 @@ GENERAL_OK=Ok
 GENERAL_FINISH=Terminar
 GENERAL_CANCEL=Cancelar
 GENERAL_CONFIRMATION=Confirmación
+GENERAL_ADD=Añadir
+GENERAL_REMOVE=Eliminar
+GENERAL_COPY=Copiar
+GENERAL_PASTE=Pegar
+GENERAL_SORT=Ordenar
 
 START_TITLE=JAMS
 START_SUBTITLE=Versión {VERSION}
@@ -31,9 +36,12 @@ BAR_LOG_NAME=Log
 SIMULATION_CONFIGURATION_CONFIGURATIONS=Configuraciones:
 SIMULATION_CONFIGURATION_INFO=Ajustes de las configuraciones
 SIMULATION_CONFIGURATION_GENERAL=General
+SIMULATION_CONFIGURATION_GENERAL_REGION=Datos generales
 SIMULATION_CONFIGURATION_NAME=Nombre:
 SIMULATION_CONFIGURATION_ARCHITECTURE=Arquitectura:
+SIMULATION_CONFIGURATION_ARCHITECTURE_TOOLTIP=La arquitectura que el simulador usará.\n\nAlgunas opciones solo están disponibles en arquitecturas específicas.
 SIMULATION_CONFIGURATION_MEMORY=Memoria:
+SIMULATION_CONFIGURATION_MEMORY_TOOLTIP=La memoria que el simulador usará.
 SIMULATION_CONFIGURATION_CALL_EVENTS=Llamar a eventos de registros, memoria e instrucciones
 SIMULATION_CONFIGURATION_CALL_EVENTS_TOOLTIP=Permite al simulador notificar cambios en la memoria, registros e instrucciones.\n\nSi esta opción está deshabilitada, el simulador funcionará más rápido, pero algunas opciones del depurador o de los plugins no funcionarán. Los eventos si funcionarán cuando el simulador esté parado.
 SIMULATION_CONFIGURATION_ENABLE_UNDO=Permitir deshacer pasos
@@ -43,7 +51,12 @@ SIMULATION_CONFIGURATION_ENABLE_FORWARDING_TOOLTIP=Permite a las instrucciones a
 SIMULATION_CONFIGURATION_SOLVE_BRANCH_ON_DECODE=Resolver saltos en la fase de decodificación
 SIMULATION_CONFIGURATION_SOLVE_BRANCH_ON_DECODE_TOOLTIP=Permite resolver saltos en la fase de decodificación. Esta opción solo funciona en arquitecturas con varias etapas.
 SIMULATION_CONFIGURATION_SYSTEM_CALLS_TAB=Llamadas al sistema
+SIMULATION_CONFIGURATION_SYSTEM_CALLS_TAB_LOAD_BUNDLE=Cargar conjunto
+SIMULATION_CONFIGURATION_SYSTEM_CALLS_TAB_PROPERTIES=Propiedades de la llamada
 SIMULATION_CONFIGURATION_CACHES_TAB=Cachés
+SIMULATION_CONFIGURATION_CACHES_TAB_PROPERTIES=Propiedades de la caché
+SIMULATION_CONFIGURATION_CACHES_TAB_INFO=Información de la caché
+SIMULATION_CONFIGURATION_CACHES_TAB_SIZE=Tamaño de la caché:
 
 
 SYSCALL_RUN_EXCEPTION_HANDLER=X Ejecutar el manejador de excepciones
@@ -123,8 +136,45 @@ SYSCALL_CLOSE_FILE_PROPERTY_ID_REGISTER=Registro de id
 SYSCALL_EXIT_WITH_VALUE=MIPS 17 Salir con valor
 SYSCALL_EXIT_WITH_VALUE_PROPERTY_REGISTER=Registro
 
+SYSCALL_SYSTEM_TIME=MARS 30 Hora del sistema
+SYSCALL_SYSTEM_TIME_PROPERTY_LOW_REGISTER=Registro del valor bajo
+SYSCALL_SYSTEM_TIME_PROPERTY_HIGH_REGISTER=Registro del valor alto
+
 SYSCALL_SLEEP=MARS 32 Dormir
 SYSCALL_SLEEP_PROPERTY_REGISTER=Registro
+
+SYSCALL_PRINT_HEXADECIMAL_INTEGER=MARS 34 Imprimir número hexadecimal
+SYSCALL_PRINT_HEXADECIMAL_INTEGER_PROPERTY_LINE_JUMP=Añadir salto de línea
+SYSCALL_PRINT_HEXADECIMAL_INTEGER_PROPERTY_REGISTER=Registro
+
+SYSCALL_PRINT_BINARY_INTEGER=MARS 35 Imprimir número binario
+SYSCALL_PRINT_BINARY_INTEGER_PROPERTY_LINE_JUMP=Añadir salto de línea
+SYSCALL_PRINT_BINARY_INTEGER_PROPERTY_REGISTER=Registro
+
+SYSCALL_PRINT_UNSIGNED_INTEGER=MARS 36 Imprimir número sin signo
+SYSCALL_PRINT_UNSIGNED_INTEGER_PROPERTY_LINE_JUMP=Añadir salto de línea
+SYSCALL_PRINT_UNSIGNED_INTEGER_PROPERTY_REGISTER=Registro
+
+SYSCALL_SET_SEED=MARS 40 Asignar semilla
+SYSCALL_SET_SEED_PROPERTY_GENERATOR_REGISTER=Registro del generador
+SYSCALL_SET_SEED_PROPERTY_SEED_REGISTER=Registro de la semilla
+
+SYSCALL_RANDOM_INTEGER=MARS 41 Entero aleatorio
+SYSCALL_RANDOM_INTEGER_PROPERTY_GENERATOR_REGISTER=Registro del generador
+SYSCALL_RANDOM_INTEGER_PROPERTY_VALUE_REGISTER=Registro del valor
+
+SYSCALL_RANDOM_RANGED_INTEGER=MARS 42 Entero aleatorio con rango
+SYSCALL_RANDOM_RANGED_INTEGER_PROPERTY_GENERATOR_REGISTER=Registro del generador
+SYSCALL_RANDOM_RANGED_INTEGER_PROPERTY_RANGE_REGISTER=Registro del rango
+SYSCALL_RANDOM_RANGED_INTEGER_PROPERTY_VALUE_REGISTER=Registro del valor
+
+SYSCALL_RANDOM_FLOAT=MARS 43 Float aleatorio
+SYSCALL_RANDOM_FLOAT_PROPERTY_GENERATOR_REGISTER=Registro del generador
+SYSCALL_RANDOM_FLOAT_PROPERTY_VALUE_REGISTER=Registro del valor
+
+SYSCALL_RANDOM_DOUBLE=MARS 44 Double aleatorio
+SYSCALL_RANDOM_DOUBLE_PROPERTY_GENERATOR_REGISTER=Registro del generador
+SYSCALL_RANDOM_DOUBLE_PROPERTY_VALUE_REGISTER=Registro del valor
 
 CACHE_DIRECT=Correspondencia directa
 CACHE_DIRECT_PROPERTY_WRITE_BACK=Modo Write-back
@@ -154,6 +204,7 @@ BAR_REGISTERS_NAME=Registros
 BAR_MEMORY_NAME=Memoria
 BAR_FLOW_NAME=Flujo
 BAR_CONSOLE_NAME=Consola
+BAR_LABELS_NAME=Etiquetas
 
 INSTRUCTIONS_USER=Texto
 INSTRUCTIONS_KERNEL=Kernel
@@ -174,6 +225,11 @@ REGISTERS_VALUE=Valor
 REGISTERS_HEX=Hex
 
 MEMORY_ADDRESS=Dirección
+
+LABELS_NAME=Nombre
+LABELS_ADDRESS=Dirección
+LABELS_CONTEXT_SHOW_IN_MEMORY=Mostrar en memoria
+LABELS_CONTEXT_SHOW_IN_INSTRUCTION=Mostrar en la tabla de instrucciones
 
 CONFIG=Configuración
 
@@ -229,6 +285,11 @@ CONFIG_EDITOR_MIPS_MAXIMUM_BLANK_LINES_TOOLTIP=La cantidad de líneas en blanco 
 
 CONFIG_EXPLORER=Explorador
 CONFIG_EXPLORER_MIPS=MIPS
+CONFIG_EXPLORER_REGION_SIZE=Tamaño
+CONFIG_EXPLORER_SECTION_SEPARATOR_WIDTH=Ancho por nivel de herencia para secciones
+CONFIG_EXPLORER_SECTION_SEPARATOR_WIDTH_TOOLTIP=Esta opción permite editar el ancho que una sección se moverá por cada nivel de herencia.
+CONFIG_EXPLORER_ELEMENT_SEPARATOR_WIDTH=Ancho por nivel de herencia para elementos
+CONFIG_EXPLORER_ELEMENT_SEPARATOR_WIDTH_TOOLTIP=Esta opción permite editar el ancho que un elemento se moverá por cada nivel de herencia.
 CONFIG_EXPLORER_MIPS_REGION_CREATION=Creación
 CONFIG_EXPLORER_MIPS_ADD_CREATED_ASM_FILES_TO_ASSEMBLE=Añadir archivos asm a ensamblar automaticamente cuando son creados
 CONFIG_EXPLORER_MIPS_ADD_CREATED_ASM_FILES_TO_ASSEMBLE_TOOLTIP=Si esta opción está activada, los archivos ensamblador que se creen serán automáticamente añadidos a la lista de ensamblaje.\n\nEsta opción puede ser cambiada en el menú de creación del archivo.
@@ -242,9 +303,11 @@ CONFIG_LANGUAGE_SELECTED_TOOLTIP=Este es el idioma que JAMS usará en la interfa
 
 CONFIG_SIMULATION=Simulación
 CONFIG_SIMULATION_MIPS=MIPS
-CONFIG_SIMULATION_MIPS_REGION_MEMORY=Memoria
-CONFIG_SIMULATION_MIPS_MEMORY_ROWS=Filas:
-CONFIG_SIMULATION_MIPS_MEMORY_ROWS_TOOLTIP=El número de filas que la memoria puede mostrar al mismo tiempo.
+CONFIG_SIMULATION_REGION_ASSEMBLY=Ensamblador
+CONFIG_SIMULATION_OPEN_LOG_ON_ASSEMBLE=Abrir la ventana de log al ensamblar.
+CONFIG_SIMULATION_REGION_MEMORY=Memoria
+CONFIG_SIMULATION_MEMORY_ROWS=Filas:
+CONFIG_SIMULATION_MEMORY_ROWS_TOOLTIP=El número de filas que la memoria puede mostrar al mismo tiempo.
 CONFIG_SIMULATION_MIPS_REGION_FLOW=Flujo
 CONFIG_SIMULATION_MIPS_FLOW_MAX_ITEMS=Entradas máximas:
 CONFIG_SIMULATION_MIPS_FLOW_MAX_ITEMS_TOOLTIP=La cantidad de entradas que el panel de flujo puede representar al mismo tiempo.

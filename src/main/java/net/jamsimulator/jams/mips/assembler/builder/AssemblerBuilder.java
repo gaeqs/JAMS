@@ -32,6 +32,7 @@ import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -77,7 +78,7 @@ public abstract class AssemblerBuilder {
 	 * @param memory         the memory.
 	 * @return the new {@link Assembler}.
 	 */
-	public abstract Assembler createAssembler(List<String> rawFiles, DirectiveSet directiveSet,
+	public abstract Assembler createAssembler(Map<String, String> rawFiles, DirectiveSet directiveSet,
 											  InstructionSet instructionSet, Registers registerSet, Memory memory);
 
 	@Override

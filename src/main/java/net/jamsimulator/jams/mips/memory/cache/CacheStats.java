@@ -28,6 +28,7 @@ public class CacheStats {
 				"operations=" + operations +
 				", hits=" + hits +
 				", misses=" + misses +
+				", hit rate=" + hits / (double) operations +
 				'}';
 	}
 }
