@@ -103,8 +103,8 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 	}
 
 	private void loadRegisterTabs() {
-		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_REGISTERS,
-				Icons.SIMULATION_REGISTERS_PATH, 1024, 1024).orElse(null);
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_REGISTERS
+		).orElse(null);
 
 		registersTabs = new TabPane();
 
@@ -122,15 +122,15 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 	}
 
 	private void loadConsole() {
-		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_CONSOLE,
-				Icons.SIMULATION_CONSOLE_PATH, 1024, 1024).orElse(null);
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_CONSOLE
+		).orElse(null);
 
 		manageBarAddition("console", simulation.getConsole(), icon, Messages.BAR_CONSOLE_NAME, BarType.BOTTOM);
 	}
 
 	private void loadMemoryTab() {
-		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_MEMORY,
-				Icons.SIMULATION_MEMORY_PATH, 1024, 1024).orElse(null);
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_MEMORY
+		).orElse(null);
 
 		memoryPane = new MemoryPane(simulation);
 
@@ -138,8 +138,8 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 	}
 
 	private void loadFlow() {
-		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_FLOW,
-				Icons.SIMULATION_FLOW_PATH, 1024, 1024).orElse(null);
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_FLOW
+		).orElse(null);
 
 
 		Slider slider = new Slider(10, 100, 40);
@@ -159,8 +159,8 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 	}
 
 	private void loadLabels() {
-		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_LABELS,
-				Icons.SIMULATION_LABELS_PATH, 1024, 1024).orElse(null);
+		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_LABELS
+		).orElse(null);
 		var pane = new LabelTable(this);
 
 		manageBarAddition("labels", pane, icon, Messages.BAR_LABELS_NAME, BarType.BOTTOM_RIGHT);

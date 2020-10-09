@@ -102,11 +102,11 @@ public class ExplorerSectionRepresentation extends HBox {
 		if (section.isEmpty()) {
 			icon = null;
 		} else if (section.isExpanded()) {
-			icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_EXPANDED,
-					Icons.EXPLORER_SECTION_EXPANDED_PATH, 1024, 1024).orElse(null);
+			icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_EXPANDED
+			).orElse(null);
 		} else {
-			icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_COLLAPSED,
-					Icons.EXPLORER_SECTION_COLLAPSED_PATH, 1024, 1024).orElse(null);
+			icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_COLLAPSED
+			).orElse(null);
 		}
 		statusIcon.setImage(icon);
 		if (icon == null) {

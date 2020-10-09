@@ -26,12 +26,12 @@ public class ExecutionButtons {
 
 	public ExecutionButtons(Simulation<?> simulation) {
 		nodes = new ArrayList<>();
-		Image runOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY_ONE, Icons.SIMULATION_PLAY_ONE_PATH,
-				1024, 1024).orElse(null);
-		Image undoOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_UNDO_ONE, Icons.SIMULATION_UNDO_ONE_PATH,
-				1024, 1024).orElse(null);
-		Image resetIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_RESET, Icons.SIMULATION_RESET_PATH,
-				1024, 1024).orElse(null);
+		Image runOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY_ONE
+		).orElse(null);
+		Image undoOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_UNDO_ONE
+		).orElse(null);
+		Image resetIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_RESET
+		).orElse(null);
 
 		runOrStop = new FixedButton("", new NearestImageView(null, 16, 16), 28, 28);
 		changeToRunAll(simulation);
@@ -80,8 +80,8 @@ public class ExecutionButtons {
 
 	private void changeToRunAll(Simulation<?> simulation) {
 		Platform.runLater(() -> {
-			Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY, Icons.SIMULATION_PLAY_PATH,
-					1024, 1024).orElse(null);
+			Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY
+			).orElse(null);
 			((NearestImageView) runOrStop.getGraphic()).setImage(runAllIcon);
 			runOrStop.getStyleClass().add("buttons-hbox-button");
 			runOrStop.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_EXECUTE_ALL, LanguageTooltip.DEFAULT_DELAY));
@@ -91,8 +91,8 @@ public class ExecutionButtons {
 
 	private void changeToStop(Simulation<?> simulation) {
 		Platform.runLater(() -> {
-			Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_STOP, Icons.SIMULATION_STOP_PATH,
-					1024, 1024).orElse(null);
+			Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_STOP
+			).orElse(null);
 
 			((NearestImageView) runOrStop.getGraphic()).setImage(runAllIcon);
 			runOrStop.getStyleClass().add("buttons-hbox-button");

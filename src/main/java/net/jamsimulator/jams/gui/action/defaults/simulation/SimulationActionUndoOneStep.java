@@ -50,7 +50,7 @@ public class SimulationActionUndoOneStep extends ContextAction {
 
 	public SimulationActionUndoOneStep() {
 		super(NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_UNDO_ONE_STEP, DEFAULT_COMBINATION, SImulationActionRegions.MIPS, MainMenuRegion.MIPS,
-				JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_UNDO_ONE, Icons.SIMULATION_UNDO_ONE_PATH, 1024, 1024).orElse(null));
+				JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_UNDO_ONE).orElse(null));
 	}
 
 	@Override

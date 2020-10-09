@@ -50,7 +50,7 @@ public class SimulationActionExecuteOneStep extends ContextAction {
 
 	public SimulationActionExecuteOneStep() {
 		super(NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_EXECUTE_ONE_STEP, DEFAULT_COMBINATION, SImulationActionRegions.MIPS, MainMenuRegion.MIPS,
-				JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY_ONE, Icons.SIMULATION_PLAY_ONE_PATH, 1024, 1024).orElse(null));
+				JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY_ONE).orElse(null));
 	}
 
 	@Override

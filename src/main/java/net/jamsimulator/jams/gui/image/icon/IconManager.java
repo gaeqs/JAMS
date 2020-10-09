@@ -41,9 +41,11 @@ import java.util.Optional;
  */
 public class IconManager {
 
+	public static final int SIZE = 40;
+
 	public static IconManager INSTANCE = new IconManager();
 
-	private Map<String, Image> icons;
+	private final Map<String, Image> icons;
 
 	private IconManager() {
 		icons = new HashMap<>();
@@ -52,11 +54,11 @@ public class IconManager {
 	/**
 	 * Returns the icon that matches the given name, if present.
 	 *
-	 * @param name the given name.
+	 * @param data the given data.
 	 * @return the icon, if present.
 	 */
-	public Optional<Image> getIcon(String name) {
-		return Optional.ofNullable(icons.get(name));
+	public Optional<Image> getIcon(IconData data) {
+		return Optional.ofNullable(icons.get(data.getName()));
 	}
 
 	/**
@@ -69,8 +71,7 @@ public class IconManager {
 	 * <p>
 	 * The image will be scaled using the given width and height.
 	 *
-	 * @param name    the name of the icon.
-	 * @param path    the path of the icon.
+	 * @param data    the data of the icon.
 	 * @param replace whether the method should replace the already existing icon, if present.
 	 * @param width   the width of the image.
 	 * @param height  the height of the image.
@@ -78,13 +79,13 @@ public class IconManager {
 	 * @throws Exception any exception thrown by the image loader.
 	 * @see Image#getException()
 	 */
-	public boolean register(String name, String path, boolean replace, int width, int height) throws Exception {
-		Validate.notNull(name, "Name cannot be null!");
-		Validate.notNull(path, "Path cannot be null!");
-		if (icons.containsKey(name) && !replace) return false;
-		Image image = new Image(path, width, height, false, true);
+	public boolean register(IconData data, boolean replace, int width, int height) throws Exception {
+		Validate.notNull(data.getName(), "Name cannot be null!");
+		Validate.notNull(data.getUrl(), "Path cannot be null!");
+		if (icons.containsKey(data.getName()) && !replace) return false;
+		Image image = new Image(data.getUrl(), width, height, false, true);
 		if (image.isError()) throw image.getException();
-		icons.put(name, image);
+		icons.put(data.getName(), image);
 		return true;
 	}
 
@@ -108,21 +109,20 @@ public class IconManager {
 	}
 
 	/**
-	 * Calls the method {@link #register(String, String, boolean, int, int)}. If it throws an exception
+	 * Calls the method {@link #register(IconData, boolean, int, int)}. If it throws an exception
 	 * am error message will be sent and this method will return false.
 	 * <p>
-	 * If no exceptions are thrown the method will return the output of {@link #register(String, String, boolean, int, int)}.
+	 * If no exceptions are thrown the method will return the output of {@link #register(IconData, boolean, int, int)}.
 	 *
-	 * @param name    the name of the icon.
-	 * @param path    the path of the icon.
+	 * @param data    the data of the icon.
 	 * @param replace whether the method should replace the already existing icon, if present.
 	 * @param width   the width of the image.
 	 * @param height  the height of the image.
-	 * @return false if an exception was thrown or the output of {@link #register(String, String, boolean, int, int)}
+	 * @return false if an exception was thrown or the output of {@link #register(IconData, boolean, int, int)}
 	 */
-	public boolean registerSafe(String name, String path, boolean replace, int width, int height) {
+	public boolean registerSafe(IconData data, boolean replace, int width, int height) {
 		try {
-			return register(name, path, replace, width, height);
+			return register(data, replace, width, height);
 		} catch (Exception ex) {
 			System.err.println("Error while loading an icon " + ex.getMessage());
 			return false;
@@ -135,45 +135,38 @@ public class IconManager {
 	 * <p>
 	 * If the load fails, this method will throw the exception thrown by the image loader.
 	 *
-	 * @param name   the name of the icon.
-	 * @param path   the path of the icon.
-	 * @param width  the width of the loaded image.
-	 * @param height the height of the loaded image.
+	 * @param data the data of the icon.
 	 * @return the icon.
 	 * @throws Exception any exception thrown by the image loader.
 	 */
-	public Image getOrLoad(String name, String path, int width, int height) throws Exception {
-		Validate.notNull(name, "Name cannot be null!");
-		Validate.notNull(path, "Path cannot be null!");
-		Optional<Image> icon = getIcon(name);
+	public Image getOrLoad(IconData data) throws Exception {
+		Validate.notNull(data, "Name cannot be null!");
+		Optional<Image> icon = getIcon(data);
 		if (icon.isPresent()) return icon.get();
 
-		InputStream stream = Jams.class.getResourceAsStream(path);
-		Image image = new Image(stream, width, height, false, false);
+		InputStream stream = Jams.class.getResourceAsStream(data.getUrl());
+		Image image = new Image(stream, SIZE, SIZE, false, false);
 
 		if (image.isError()) throw image.getException();
-		icons.put(name, image);
+		icons.put(data.getName(), image);
 
 		return image;
 	}
 
 	/**
-	 * Calls the method {@link #getOrLoad(String, String, int, int)} . If it throws an exception
+	 * Calls the method {@link #getOrLoad(IconData)} . If it throws an exception
 	 * am error message will be sent and this method will return an empty {@link Optional}.
 	 * <p>
 	 * If no exceptions are thrown the method will return the {@link Optional} wrapping the icon.
 	 *
-	 * @param name   the name of the icon.
-	 * @param path   the path of the icon.
-	 * @param width  the width of the loaded image.
-	 * @param height the height of the loaded image.
+	 * @param data the data of the icon.
 	 * @return the icon, or empty if an exception was thrown.
 	 */
-	public Optional<Image> getOrLoadSafe(String name, String path, int width, int height) {
+	public Optional<Image> getOrLoadSafe(IconData data) {
 		try {
-			return Optional.of(getOrLoad(name, path, width, height));
+			return Optional.of(getOrLoad(data));
 		} catch (Exception ex) {
-			System.err.println("Error while loading an icon (" + path + "): " + ex.getMessage());
+			System.err.println("Error while loading an icon (" + data + "): " + ex.getMessage());
 			ex.printStackTrace();
 			return Optional.empty();
 		}

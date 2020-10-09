@@ -126,7 +126,7 @@ public class CreateProjectWindow extends VBox {
 	public static void open() {
 		Stage stage = new Stage();
 		stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.MAIN_MENU_FILE_CREATE_PROJECT_TITLE));
-		JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO, Icons.LOGO_PATH, 250, 250).ifPresent(stage.getIcons()::add);
+		JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO).ifPresent(stage.getIcons()::add);
 		stage.setResizable(false);
 		CreateProjectWindow node = new CreateProjectWindow(stage);
 

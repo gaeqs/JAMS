@@ -37,16 +37,28 @@ import java.util.List;
 
 public class MIPSInstructionParameterPart extends MIPSCodeElement {
 
+	private final int parameterIndex, index;
 	private InstructionParameterPartType type;
 
-	public MIPSInstructionParameterPart(MIPSFileElements elements, int startIndex, int endIndex, String text, ParameterPartType type) {
+	public MIPSInstructionParameterPart(MIPSFileElements elements, int startIndex, int endIndex, String text, int parameterIndex, int index, ParameterPartType type) {
 		super(startIndex, endIndex, text);
+
+		this.parameterIndex = parameterIndex;
+		this.index = index;
 
 		if (type == null) {
 			this.type = InstructionParameterPartType.getByString(text, elements.getProject().orElse(null));
 		} else {
 			this.type = InstructionParameterPartType.getByStringAndType(type);
 		}
+	}
+
+	public int getParameterIndex() {
+		return parameterIndex;
+	}
+
+	public int getIndex() {
+		return index;
 	}
 
 	public InstructionParameterPartType getType() {

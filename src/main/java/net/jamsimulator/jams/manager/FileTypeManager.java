@@ -192,13 +192,12 @@ public class FileTypeManager extends SimpleEventBroadcast {
 	}
 
 	private void loadDefaults() {
-		unknownType = new TextFileType("Unknown", Icons.FILE_UNKNOWN, Icons.FILE_UNKNOWN_PATH);
-		folderType = new TextFileType("Folder", Icons.FILE_FOLDER, Icons.FILE_FOLDER_PATH);
+		unknownType = new TextFileType("Unknown", Icons.FILE_UNKNOWN);
+		folderType = new TextFileType("Folder", Icons.FILE_FOLDER);
 
-		register(new TextFileType("Text", Icons.FILE_TEXT, Icons.FILE_TEXT_PATH, "txt"));
+		register(new TextFileType("Text", Icons.FILE_TEXT, "txt"));
 		register(new AssemblyFileType());
-		register(new ImageFileType("Image", Icons.FILE_IMAGE, Icons.FILE_IMAGE_PATH,
-				"png", "gif", "jpg", "jpeg", "tiff"));
+		register(new ImageFileType("Image", Icons.FILE_IMAGE, "png", "gif", "jpg", "jpeg", "tiff"));
 	}
 
 }

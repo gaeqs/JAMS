@@ -204,7 +204,8 @@ public abstract class AutocompletionPopup extends Popup {
 		T next;
 		while (iterator.hasNext()) {
 			next = iterator.next();
-			label = new AutocompletionPopupElement(this, elements.size(), StringUtils.addExtraSpaces(conversion.apply(next)),
+			label = new AutocompletionPopupElement(this, elements.size(),
+					StringUtils.addExtraSpaces(conversion.apply(next)),
 					autocompletionConversion.apply(next));
 			elements.add(label);
 		}

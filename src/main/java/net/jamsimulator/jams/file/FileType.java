@@ -28,6 +28,7 @@ import javafx.scene.image.Image;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditorTab;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.icon.IconManager;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -51,27 +52,24 @@ public abstract class FileType {
 	private final Set<String> extensions;
 
 	private Image icon;
-	private final String iconName;
-	private final String iconPath;
+	private final IconData iconData;
 
 	/**
 	 * Creates a file type.
 	 *
 	 * @param name       the name.
-	 * @param iconName   the name of the icon.
-	 * @param iconPath   the path of the icon.
+	 * @param iconData   the name of the icon.
 	 * @param extensions the extensions.
 	 * @see IconManager
 	 */
-	public FileType(String name, String iconName, String iconPath, String... extensions) {
+	public FileType(String name, IconData iconData, String... extensions) {
 		Validate.notNull(name, "Name cannot be null!");
 		Validate.hasNoNulls(extensions, "There must be no null extensions!");
 		this.name = name;
 		this.extensions = new HashSet<>();
 		this.extensions.addAll(Arrays.asList(extensions));
 
-		this.iconName = iconName;
-		this.iconPath = iconPath;
+		this.iconData = iconData;
 		//Lazy initialization.
 		this.icon = null;
 	}
@@ -123,7 +121,7 @@ public abstract class FileType {
 	public Image getIcon() {
 		if (icon == null) {
 			IconManager manager = JamsApplication.getIconManager();
-			icon = manager.getOrLoadSafe(iconName, iconPath, 1024, 1024).orElse(null);
+			icon = manager.getOrLoadSafe(iconData).orElse(null);
 		}
 		return icon;
 	}

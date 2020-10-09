@@ -50,7 +50,7 @@ public class SimulationActionStop extends ContextAction {
 
 	public SimulationActionStop() {
 		super(NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_STOP, DEFAULT_COMBINATION, SImulationActionRegions.MIPS, MainMenuRegion.MIPS,
-				JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_STOP, Icons.SIMULATION_STOP_PATH, 1024, 1024).orElse(null));
+				JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_STOP).orElse(null));
 	}
 
 	@Override

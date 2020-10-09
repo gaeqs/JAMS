@@ -56,7 +56,7 @@ public class GeneralActionAssemble extends ContextAction {
 
 	public GeneralActionAssemble() {
 		super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_ASSEMBLE, DEFAULT_COMBINATION, GeneralActionRegions.MIPS_PRIORITY, MainMenuRegion.MIPS,
-				JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_ASSEMBLE, Icons.PROJECT_ASSEMBLE_PATH, 1024, 1024).orElse(null));
+				JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_ASSEMBLE).orElse(null));
 	}
 
 	@Override

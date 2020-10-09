@@ -52,7 +52,7 @@ public class TopBar extends AnchorPane {
 		getStyleClass().add("top-bar");
 		this.transparentMode = transparentMode;
 		view = new ImageView(JamsApplication.getIconManager()
-				.getOrLoadSafe(Icons.LOGO, Icons.LOGO_PATH, 250, 250).orElse(null));
+				.getOrLoadSafe(Icons.LOGO).orElse(null));
 		view.setFitWidth(20);
 		view.setFitHeight(20);
 		AnchorUtils.setAnchor(view, 5, 5, 5, -1);

@@ -29,97 +29,56 @@ package net.jamsimulator.jams.gui.image.icon;
  */
 public class Icons {
 
-	public static final String LOGO = "logo";
+	public static final IconData LOGO = new IconData("logo", "/gui/icon/logo.png");
 
-	public static final String WINDOW_CLOSE = "window_close";
-	public static final String WINDOW_MAXIMIZE = "window_maximize";
-	public static final String WINDOW_MINIMIZE = "window_minimize";
-	public static final String WINDOW_UNMAXIMIZE = "window_unmaximize";
+	public static final IconData WINDOW_CLOSE = new IconData("window_close", "/gui/icon/window/close.png");
+	public static final IconData WINDOW_MAXIMIZE = new IconData("window_maximize", "/gui/icon/window/maximize.png");
+	public static final IconData WINDOW_MINIMIZE = new IconData("window_minimize", "/gui/icon/window/minimize.png");
+	public static final IconData WINDOW_UNMAXIMIZE = new IconData("window_unmaximize", "/gui/icon/window/unmaximize.png");
 
-	public static final String EXPLORER_FOLDER_EXPANDED = "explorer_folder_expanded";
-	public static final String EXPLORER_FOLDER_COLLAPSED = "explorer_folder_collapsed";
+	public static final IconData EXPLORER_FOLDER_EXPANDED = new IconData("explorer_folder_expanded", "/gui/icon/explorer/section_expanded.png");
+	public static final IconData EXPLORER_FOLDER_COLLAPSED = new IconData("explorer_folder_collapsed", "/gui/icon/explorer/section_collapsed.png");
 
-	public static final String FILE_FOLDER = "file_folder";
-	public static final String FILE_FILE = "file_file";
-	public static final String FILE_UNKNOWN = "file_unknown";
-	public static final String FILE_TEXT = "file_text";
-	public static final String FILE_ASSEMBLY = "file_assembly";
-	public static final String FILE_IMAGE = "file_image";
+	public static final IconData FILE_FOLDER = new IconData("file_folder", "/gui/icon/file/folder.png");
+	public static final IconData FILE_FILE = new IconData("file_file", "/gui/icon/file/file.png");
+	public static final IconData FILE_UNKNOWN = new IconData("file_unknown", "/gui/icon/file/unknown.png");
+	public static final IconData FILE_TEXT = new IconData("file_text", "/gui/icon/file/text.png");
+	public static final IconData FILE_ASSEMBLY = new IconData("file_assembly", "/gui/icon/file/assembly.png");
+	public static final IconData FILE_IMAGE = new IconData("file_image", "/gui/icon/file/image.png");
 
-	public static final String MENU_SETTINGS = "menu_settings";
+	public static final IconData MENU_SETTINGS = new IconData("menu_settings", "/gui/icon/menu/settings.png");
 
-	public static final String SIDEBAR_EXPLORER = "sidebar_explorer";
+	public static final IconData SIDEBAR_EXPLORER = new IconData("sidebar_explorer", "/gui/icon/file/folder.png");
 
-	public static final String PROJECT_ASSEMBLE = "project_assemble";
-	public static final String PROJECT_ASSEMBLE_GRAY = "project_assemble_gray";
-	public static final String PROJECT_SETTINGS = "project_settings";
+	public static final IconData PROJECT_ASSEMBLE = new IconData("project_assemble", "/gui/icon/project/assemble.png");
+	public static final IconData PROJECT_ASSEMBLE_GRAY = new IconData("project_assemble_gray", "/gui/icon/project/assemble_gray.png");
+	public static final IconData PROJECT_SETTINGS = new IconData("project_settings", "/gui/icon/project/settings.png");
 
-	public static final String SIMULATION_PLAY = "simulation_play";
-	public static final String SIMULATION_STOP = "simulation_stop";
-	public static final String SIMULATION_PLAY_ONE = "simulation_play_one";
-	public static final String SIMULATION_UNDO_ONE = "simulation_undo_one";
-	public static final String SIMULATION_RESET = "simulation_reset";
-	public static final String SIMULATION_CONSOLE = "simulation_console";
-	public static final String SIMULATION_MEMORY = "simulation_memory";
-	public static final String SIMULATION_REGISTERS = "simulation_registers";
-	public static final String SIMULATION_FLOW = "simulation_flow";
-	public static final String SIMULATION_LABELS = "simulation_labels";
+	public static final IconData SIMULATION_PLAY = new IconData("simulation_play", "/gui/icon/simulation/play.png");
+	public static final IconData SIMULATION_STOP = new IconData("simulation_stop", "/gui/icon/simulation/stop.png");
+	public static final IconData SIMULATION_PLAY_ONE = new IconData("simulation_play_one", "/gui/icon/simulation/play_one.png");
+	public static final IconData SIMULATION_UNDO_ONE = new IconData("simulation_undo_one", "/gui/icon/simulation/undo_one.png");
+	public static final IconData SIMULATION_RESET = new IconData("simulation_reset", "/gui/icon/simulation/reset.png");
+	public static final IconData SIMULATION_CONSOLE = new IconData("simulation_console", "/gui/icon/simulation/console.png");
+	public static final IconData SIMULATION_MEMORY = new IconData("simulation_memory", "/gui/icon/simulation/memory.png");
+	public static final IconData SIMULATION_REGISTERS = new IconData("simulation_registers", "/gui/icon/simulation/registers.png");
+	public static final IconData SIMULATION_FLOW = new IconData("simulation_flow", "/gui/icon/simulation/flow.png");
+	public static final IconData SIMULATION_LABELS = new IconData("simulation_labels", "/gui/icon/simulation/labels.png");
 
-	public static final String TAB_SPLIT_VERTICALLY = "tab_split_vertically";
-	public static final String TAB_SPLIT_HORIZONTALLY = "tab_split_horizontally";
+	public static final IconData AUTOCOMPLETION_DIRECTIVE = new IconData("autocompletion_directive", "/gui/icon/autocompletion/directive.png");
+	public static final IconData AUTOCOMPLETION_INSTRUCTION = new IconData("autocompletion_instruction", "/gui/icon/autocompletion/instruction.png");
+	public static final IconData AUTOCOMPLETION_LABEL = new IconData("autocompletion_label", "/gui/icon/autocompletion/label.png");
+	public static final IconData AUTOCOMPLETION_REGISTER = new IconData("autocompletion_register", "/gui/icon/autocompletion/register.png");
 
-	public static final String CONTROL_ADD = "control_add";
-	public static final String CONTROL_REMOVE = "control_remove";
-	public static final String CONTROL_COPY = "control_copy";
-	public static final String CONTROL_SORT = "control_sort";
+	public static final IconData TAB_SPLIT_VERTICALLY = new IconData("tab_split_vertically", "/gui/icon/tab/split_vertically.png");
+	public static final IconData TAB_SPLIT_HORIZONTALLY = new IconData("tab_split_horizontally", "/gui/icon/tab/split_horizontally.png");
 
-	public static final String BAR_CLOSE = "bar_close";
+	public static final IconData CONTROL_ADD = new IconData("control_add", "/gui/icon/controls/add.png");
+	public static final IconData CONTROL_REMOVE = new IconData("control_remove", "/gui/icon/controls/remove.png");
+	public static final IconData CONTROL_COPY = new IconData("control_copy", "/gui/icon/controls/copy.png");
+	public static final IconData CONTROL_SORT = new IconData("control_sort", "/gui/icon/controls/sort.png");
 
-	public static final String LOGO_PATH = "/gui/icon/logo.png";
-
-	public static final String WINDOW_CLOSE_PATH = "/gui/icon/window/close.png";
-	public static final String WINDOW_MAXIMIZE_PATH = "/gui/icon/window/maximize.png";
-	public static final String WINDOW_MINIMIZE_PATH = "/gui/icon/window/minimize.png";
-	public static final String WINDOW_UNMAXIMIZE_PATH = "/gui/icon/window/unmaximize.png";
-
-	public static final String EXPLORER_SECTION_COLLAPSED_PATH = "/gui/icon/explorer/section_collapsed.png";
-	public static final String EXPLORER_SECTION_EXPANDED_PATH = "/gui/icon/explorer/section_expanded.png";
-
-	public static final String FILE_FOLDER_PATH = "/gui/icon/file/folder.png";
-	public static final String FILE_FILE_PATH = "/gui/icon/file/file.png";
-	public static final String FILE_UNKNOWN_PATH = "/gui/icon/file/unknown.png";
-	public static final String FILE_TEXT_PATH = "/gui/icon/file/text.png";
-	public static final String FILE_ASSEMBLY_PATH = "/gui/icon/file/assembly.png";
-	public static final String FILE_IMAGE_PATH = "/gui/icon/file/image.png";
-
-	public static final String MENU_SETTINGS_PATH = "/gui/icon/menu/settings.png";
-
-	public static final String SIDEBAR_EXPLORER_PATH = "/gui/icon/file/folder.png";
-
-	public static final String PROJECT_ASSEMBLE_PATH = "/gui/icon/project/assemble.png";
-	public static final String PROJECT_ASSEMBLE_GRAY_PATH = "/gui/icon/project/assemble_gray.png";
-	public static final String PROJECT_SETTINGS_PATH = "/gui/icon/project/settings.png";
-
-	public static final String SIMULATION_PLAY_PATH = "/gui/icon/simulation/play.png";
-	public static final String SIMULATION_STOP_PATH = "/gui/icon/simulation/stop.png";
-	public static final String SIMULATION_PLAY_ONE_PATH = "/gui/icon/simulation/play_one.png";
-	public static final String SIMULATION_UNDO_ONE_PATH = "/gui/icon/simulation/undo_one.png";
-	public static final String SIMULATION_RESET_PATH = "/gui/icon/simulation/reset.png";
-	public static final String SIMULATION_CONSOLE_PATH = "/gui/icon/simulation/console.png";
-	public static final String SIMULATION_MEMORY_PATH = "/gui/icon/simulation/memory.png";
-	public static final String SIMULATION_REGISTERS_PATH = "/gui/icon/simulation/registers.png";
-	public static final String SIMULATION_FLOW_PATH = "/gui/icon/simulation/flow.png";
-	public static final String SIMULATION_LABELS_PATH = "/gui/icon/simulation/labels.png";
-
-	public static final String TAB_SPLIT_VERTICALLY_PATH = "/gui/icon/tab/split_vertically.png";
-	public static final String TAB_SPLIT_HORIZONTALLY_PATH = "/gui/icon/tab/split_horizontally.png";
-
-	public static final String CONTROL_ADD_PATH = "/gui/icon/controls/add.png";
-	public static final String CONTROL_REMOVE_PATH = "/gui/icon/controls/remove.png";
-	public static final String CONTROL_COPY_PATH = "/gui/icon/controls/copy.png";
-	public static final String CONTROL_SORT_PATH = "/gui/icon/controls/sort.png";
-
-	public static final String BAR_CLOSE_PATH = "/gui/icon/bar/close.png";
+	public static final IconData BAR_CLOSE = new IconData("bar_close", "/gui/icon/bar/close.png");
 
 
 }

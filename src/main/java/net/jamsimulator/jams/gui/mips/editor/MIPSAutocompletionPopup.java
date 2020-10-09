@@ -26,7 +26,10 @@ package net.jamsimulator.jams.gui.mips.editor;
 
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
+import javafx.scene.image.Image;
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
+import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.editor.element.*;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.instruction.Instruction;
@@ -34,11 +37,17 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.StringUtils;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
 public class MIPSAutocompletionPopup extends AutocompletionPopup {
+
+	private static final Image ICON_INSTRUCTION = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_INSTRUCTION).orElse(null);
+	private static final Image ICON_DIRECTIVE = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_DIRECTIVE).orElse(null);
+	private static final Image ICON_LABEL = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_LABEL).orElse(null);
+	private static final Image ICON_REGISTER = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_REGISTER).orElse(null);
 
 	private final MIPSFileElements mipsElements;
 	private MIPSCodeElement element;
@@ -130,26 +139,45 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 		MIPSProject project = getDisplay().getProject().orElse(null);
 		if (project == null) return start;
 
-		switch (((MIPSInstructionParameterPart) element).getType()) {
-			case LABEL:
-			case GLOBAL_LABEL:
-				Set<String> labels = new HashSet<>(mipsElements.getLabels());
-				mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
-				addElements(labels.stream().filter(target -> target.startsWith(start)), s -> s, s -> s);
-			case REGISTER:
-			case IMMEDIATE:
-				Set<String> names = project.getData().getRegistersBuilder().getRegistersNames();
-				Set<Character> starts = project.getData().getRegistersBuilder().getValidRegistersStarts();
+		var part = (MIPSInstructionParameterPart) element;
 
-				starts.forEach(c -> addElements(names.stream()
-						.filter(target -> target.startsWith(start)
-								|| (c + target).startsWith(start)), s -> c + s, s -> c + s));
+		int partIndex = part.getIndex();
+		int parameterIndex = part.getParameterIndex();
 
-				return start;
-			case STRING:
-			default:
-				return start;
+		var line = getDisplay().getElements().getLineWithPosition(element.getStartIndex());
+		var compatibleInstructions = line.getInstruction()
+				.map(target -> target.getCompatibleInstructions(mipsElements,  parameterIndex))
+				.orElse(Collections.emptySet());
+
+		boolean hasLabels = false, hasRegisters = false;
+
+		for (Instruction instruction : compatibleInstructions) {
+			switch (instruction.getParameters()[parameterIndex].getPart(partIndex)) {
+				case LABEL:
+					if (hasLabels) break;
+					Set<String> labels = new HashSet<>(mipsElements.getLabels());
+					mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
+					addElements(labels.stream().filter(target -> target.startsWith(start)), s -> s, s -> s);
+					hasLabels = true;
+					break;
+				case REGISTER:
+				case IMMEDIATE:
+					if (hasRegisters) break;
+					Set<String> names = project.getData().getRegistersBuilder().getRegistersNames();
+					Set<Character> starts = project.getData().getRegistersBuilder().getValidRegistersStarts();
+
+					starts.forEach(c -> addElements(names.stream()
+							.filter(target -> target.startsWith(start)
+									|| (c + target).startsWith(start)), s -> c + s, s -> c + s));
+
+					hasRegisters = true;
+					break;
+				case STRING:
+				default:
+					break;
+			}
 		}
+		return start;
 	}
 
 	protected String parseParameters(ParameterType[] types) {

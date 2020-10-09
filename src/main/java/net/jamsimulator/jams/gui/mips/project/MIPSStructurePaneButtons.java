@@ -63,8 +63,8 @@ public class MIPSStructurePaneButtons {
 	}
 
 	private void loadAssembleButton(MIPSStructurePane structurePane) {
-		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_ASSEMBLE, Icons.PROJECT_ASSEMBLE_PATH,
-				1024, 1024).orElse(null);
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_ASSEMBLE
+		).orElse(null);
 
 		Button assemble = new FixedButton("", new NearestImageView(icon, 18, 18), 28, 28);
 		assemble.getStyleClass().add("buttons-hbox-button");
@@ -73,8 +73,8 @@ public class MIPSStructurePaneButtons {
 	}
 
 	private void loadConfigurationSettingsButton(MIPSStructurePane structurePane) {
-		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_SETTINGS,
-				Icons.PROJECT_SETTINGS_PATH, 1024, 1024).orElse(null);
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_SETTINGS
+		).orElse(null);
 
 		Button configButton = new FixedButton("", new NearestImageView(icon, 18, 18), 28, 28);
 		configButton.getStyleClass().add("buttons-hbox-button");

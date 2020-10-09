@@ -160,6 +160,16 @@ public class MIPSFileElements {
 		return -1;
 	}
 
+	/**
+	 * Returns the line that contains the given index position.
+	 *
+	 * @param position the position.
+	 * @return the line.
+	 */
+	public MIPSLine getLineWithPosition(int position) {
+		return lines.get(lineOf(position));
+	}
+
 	public boolean removeLine(int index) {
 		if (index < 0 || index >= lines.size()) throw new IndexOutOfBoundsException("Index out of bounds");
 		MIPSLine line = lines.remove(index);
