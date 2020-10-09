@@ -41,6 +41,7 @@ public class MIPS32Memory extends SimpleMemory {
 	public static final int EXTERNAL = DATA;
 	public static final int STATIC_DATA = 0x10010000;
 	public static final int HEAP = 0x10010000;
+	public static final int STACK = 0x7fffeffc;
 
 	public static final int EXCEPTION_HANDLER = 0x80000180;
 
