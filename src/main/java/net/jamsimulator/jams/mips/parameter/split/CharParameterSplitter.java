@@ -10,7 +10,7 @@ public class CharParameterSplitter implements ParameterSplitter {
 
 	@Override
 	public int[] split(String string) {
-		int index = string.indexOf(c);
+		int index = string.lastIndexOf(c);
 		return new int[]{0, index, index + 1, string.length() - index - 1};
 	}
 }

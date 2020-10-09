@@ -251,8 +251,8 @@ public class MIPSLine {
 			}
 		}
 
-		if (textLength > lastEnd) {
-			spansBuilder.add(Collections.emptyList(), textLength - lastEnd);
+		if (textLength + start > lastEnd) {
+			spansBuilder.add(Collections.emptyList(), textLength + start - lastEnd);
 		}
 		area.setStyleSpans(line, 0, spansBuilder.create());
 	}

@@ -38,7 +38,7 @@ public class ParameterMatcherLabelRegisterShift implements ParameterMatcher {
 		//Gets the label and the register
 		if (value.length() < 5 || !value.contains("(") || !value.endsWith(")"))
 			throw new ParameterParseException("Bad parameter format: " + value + ".");
-		int parenthesisIndex = value.indexOf('(');
+		int parenthesisIndex = value.lastIndexOf('(');
 		//Parses
 		String register = value.substring(parenthesisIndex + 1, value.length() - 1);
 		ParameterParseResult result = ParameterType.REGISTER.parse(register, registerSet);
@@ -49,7 +49,7 @@ public class ParameterMatcherLabelRegisterShift implements ParameterMatcher {
 	public boolean match(String value, Registers registerSet) {
 		//Gets the label and the register
 		if (value.length() < 5 || !value.contains("(") || !value.endsWith(")")) return false;
-		int parenthesisIndex = value.indexOf('(');
+		int parenthesisIndex = value.lastIndexOf('(');
 		String register = value.substring(parenthesisIndex + 1, value.length() - 1);
 		//If the register is not valid, return false.
 		if (!ParameterType.REGISTER.match(register, registerSet)) return false;
@@ -61,7 +61,7 @@ public class ParameterMatcherLabelRegisterShift implements ParameterMatcher {
 	public boolean match(String value, RegistersBuilder builder) {
 		//Gets the label and the register
 		if (value.length() < 5 || !value.contains("(") || !value.endsWith(")")) return false;
-		int parenthesisIndex = value.indexOf('(');
+		int parenthesisIndex = value.lastIndexOf('(');
 		String register = value.substring(parenthesisIndex + 1, value.length() - 1);
 		//If the register is not valid, return false.
 		if (!ParameterType.REGISTER.match(register, builder)) return false;

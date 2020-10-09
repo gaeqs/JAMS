@@ -35,16 +35,26 @@ import java.util.*;
 public class MIPSInstructionParameter {
 
 	private final int index;
+	private final int start;
 	private final String text;
 	private final List<MIPSInstructionParameterPart> parts;
 
 	public MIPSInstructionParameter(MIPSFileElements elements, int start, String text, int index, ParameterType hint) {
 		this.index = index;
+		this.start = start;
 		this.text = text;
 		this.parts = new ArrayList<>();
 
 		if (hint != null) parseTextWithHint(start, elements, hint);
 		else parseTextSimple(start, elements);
+	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public int getStart() {
+		return start;
 	}
 
 	public String getText() {
@@ -80,8 +90,11 @@ public class MIPSInstructionParameter {
 		for (int i = 0; i < amount; i++) {
 			partStart = start + indices[i << 1];
 			partEnd = partStart + indices[(i << 1) + 1];
+
+			if(partStart > partEnd) continue;
+
 			parts.add(new MIPSInstructionParameterPart(elements, partStart, partEnd,
-					text.substring(partStart - start, partEnd - start), index, i, hint.getPart(i)));
+					text.substring(partStart - start, partEnd - start), this, i, hint.getPart(i)));
 		}
 	}
 
@@ -104,20 +117,35 @@ public class MIPSInstructionParameter {
 	private void addPartSimple(String string, int start, MIPSFileElements elements) {
 		Optional<MIPSProject> project = elements.getProject();
 		if (project.isEmpty()) {
-			parts.add(new MIPSInstructionParameterPart(elements, start, start + string.length(), string, index, 0, null));
+			parts.add(new MIPSInstructionParameterPart(elements, start, start + string.length(), string, this, 0, null));
 			return;
 		}
-
 
 		if (string.indexOf('(') != -1 || string.indexOf(')') != -1) {
 			List<ParameterType> types = ParameterType.getCompatibleParameterTypes(string, project.get().getData().getRegistersBuilder());
 			if (types.size() == 1 && types.get(0) == ParameterType.LABEL) {
-				parts.add(new MIPSInstructionParameterPart(elements, start, start + string.length(), string, index, 0, null));
+				parts.add(new MIPSInstructionParameterPart(elements, start, start + string.length(), string, this, 0, null));
 				return;
 			}
 		}
 
-		Map<Integer, String> parts = StringUtils.multiSplitIgnoreInsideStringWithIndex(string, false, "+", "(", ")");
+		var parts = new HashMap<Integer, String>();
+
+		int lastAddition = string.lastIndexOf('+');
+		if (lastAddition >= 0) {
+			parts.put(0, string.substring(0, lastAddition));
+			string = string.substring(lastAddition + 1);
+		}
+
+		int lastParenthesis = string.lastIndexOf('(');
+		if (lastParenthesis >= 0 && lastParenthesis < string.lastIndexOf(')')) {
+			parts.put(lastAddition + 1, string.substring(0, lastParenthesis));
+			string = string.substring(lastParenthesis + 1, string.lastIndexOf(')'));
+		}
+
+		if (!string.isEmpty()) {
+			parts.put(lastAddition + lastParenthesis + 2, string);
+		}
 
 		List<Map.Entry<Integer, String>> sorted = new ArrayList<>(parts.entrySet());
 		sorted.sort(Comparator.comparingInt(Map.Entry::getKey));
@@ -128,7 +156,7 @@ public class MIPSInstructionParameter {
 					start + entry.getKey(),
 					start + entry.getKey() + entry.getValue().length(),
 					entry.getValue(),
-					index,
+					this,
 					i++,
 					null));
 		}

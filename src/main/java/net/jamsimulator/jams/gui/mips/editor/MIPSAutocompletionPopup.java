@@ -40,6 +40,7 @@ import net.jamsimulator.jams.utils.StringUtils;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 public class MIPSAutocompletionPopup extends AutocompletionPopup {
@@ -120,7 +121,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 
 		String directive = start.substring(1);
 		addElements(project.getData().getDirectiveSet().getDirectives().stream().filter(target -> target.getName().startsWith(directive)),
-				Directive::getName, d -> "." + d.getName());
+				Directive::getName, d -> "." + d.getName(), 0, ICON_DIRECTIVE);
 		return directive;
 	}
 
@@ -131,7 +132,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 		Stream<Instruction> stream = project.getData().getInstructionSet().getInstructions().stream().filter(target -> target.getMnemonic().startsWith(start.toLowerCase()));
 		addElements(stream, i -> i.getMnemonic() + " \t"
 				+ StringUtils.addSpaces(parseParameters(i.getParameters()), 25, true)
-				+ i.getName(), Instruction::getMnemonic);
+				+ i.getName(), Instruction::getMnemonic, 0, ICON_INSTRUCTION);
 		return start;
 	}
 
@@ -141,38 +142,45 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 
 		var part = (MIPSInstructionParameterPart) element;
 
-		int partIndex = part.getIndex();
-		int parameterIndex = part.getParameterIndex();
+		var parameter = part.getParameter();
+		int parameterIndex = part.getParameter().getIndex();
 
 		var line = getDisplay().getElements().getLineWithPosition(element.getStartIndex());
 		var compatibleInstructions = line.getInstruction()
-				.map(target -> target.getCompatibleInstructions(mipsElements,  parameterIndex))
+				.map(target -> target.getCompatibleInstructions(mipsElements, parameterIndex))
 				.orElse(Collections.emptySet());
 
 		boolean hasLabels = false, hasRegisters = false;
 
 		for (Instruction instruction : compatibleInstructions) {
-			switch (instruction.getParameters()[parameterIndex].getPart(partIndex)) {
+			var partStartIndex = new AtomicInteger();
+			var partType = instruction.getParameters()[parameterIndex]
+					.getPartAt(display.getCaretPosition() - parameter.getStart(), parameter.getText(), partStartIndex);
+
+			var partStart = parameter.getText().substring(partStartIndex.get(),
+					getDisplay().getCaretPosition() - parameter.getStart()).toLowerCase();
+
+			switch (partType) {
 				case LABEL:
 					if (hasLabels) break;
 					Set<String> labels = new HashSet<>(mipsElements.getLabels());
 					mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
-					addElements(labels.stream().filter(target -> target.startsWith(start)), s -> s, s -> s);
+					addElements(labels.stream().filter(target -> target.toLowerCase().startsWith(partStart)), s -> s, s -> s, partStartIndex.get(), ICON_LABEL);
 					hasLabels = true;
 					break;
 				case REGISTER:
-				case IMMEDIATE:
 					if (hasRegisters) break;
 					Set<String> names = project.getData().getRegistersBuilder().getRegistersNames();
 					Set<Character> starts = project.getData().getRegistersBuilder().getValidRegistersStarts();
 
 					starts.forEach(c -> addElements(names.stream()
-							.filter(target -> target.startsWith(start)
-									|| (c + target).startsWith(start)), s -> c + s, s -> c + s));
+							.filter(target -> target.toLowerCase().startsWith(partStart)
+									|| (c + target.toLowerCase()).startsWith(partStart)), s -> c + s, s -> c + s, partStartIndex.get(), ICON_REGISTER));
 
 					hasRegisters = true;
 					break;
 				case STRING:
+				case IMMEDIATE:
 				default:
 					break;
 			}
@@ -201,6 +209,6 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 
 		boolean addSpace = element instanceof MIPSInstruction || element instanceof MIPSDirective;
 
-		display.replaceText(element.getStartIndex(), caretPosition, addSpace ? replacement + " " : replacement);
+		display.replaceText(element.getStartIndex() + selected.getOffset(), caretPosition, addSpace ? replacement + " " : replacement);
 	}
 }

@@ -33,6 +33,7 @@ import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Represents a parameter type. A parameter may be a register, a number, a label or a combination.
@@ -58,16 +59,17 @@ public enum ParameterType {
 	SIGNED_32_BIT_REGISTER_SHIFT("-32000000($t1)", new ParameterMatcherSigned32BitRegisterShift(), ParenthesisParameterSplitter.INSTANCE,
 			new ParameterPartType[]{ParameterPartType.IMMEDIATE, ParameterPartType.REGISTER}, false),
 
-	LABEL("label", new ParameterMatcherLabel(), SimpleParameterSplitter.INSTANCE, ParameterPartType.LABEL, true),
+	LABEL_SIGNED_32_BIT_SHIFT_REGISTER_SHIFT("label+32000000($t2)", new ParameterMatcherLabelSigned32BitShiftRegisterShift(),
+			new CharParenthesisParameterSplitter('+'),
+			new ParameterPartType[]{ParameterPartType.LABEL, ParameterPartType.IMMEDIATE, ParameterPartType.REGISTER}, true),
+
 	LABEL_REGISTER_SHIFT("label($t1)", new ParameterMatcherLabelRegisterShift(), ParenthesisParameterSplitter.INSTANCE,
 			new ParameterPartType[]{ParameterPartType.LABEL, ParameterPartType.REGISTER}, true),
 
 	LABEL_SIGNED_32_BIT_SHIFT("label+32000000", new ParameterMatcherLabelSigned32BitShift(), new CharParameterSplitter('+'),
 			new ParameterPartType[]{ParameterPartType.LABEL, ParameterPartType.IMMEDIATE}, true),
 
-	LABEL_SIGNED_32_BIT_SHIFT_REGISTER_SHIFT("label+32000000($t2)", new ParameterMatcherLabelSigned32BitShiftRegisterShift(),
-			new CharParenthesisParameterSplitter('+'),
-			new ParameterPartType[]{ParameterPartType.LABEL, ParameterPartType.IMMEDIATE, ParameterPartType.REGISTER}, true);
+	LABEL("label", new ParameterMatcherLabel(), SimpleParameterSplitter.INSTANCE, ParameterPartType.LABEL, true);
 
 
 	private final String example;
@@ -116,7 +118,38 @@ public enum ParameterType {
 		return parts[index];
 	}
 
-	public int getAmountOfParts () {
+	public ParameterPartType getPartAt(int index, String parameter, AtomicInteger start) {
+		if (parts.length == 1) return parts[0];
+		int offset = 0;
+
+
+		for (int i = 0; i < parts.length - 1; i++) {
+			var next = parts[i+1];
+			switch (next) {
+				case IMMEDIATE -> {
+					int charIndex = parameter.lastIndexOf('+', parameter.length() - offset);
+					if (charIndex == -1 || charIndex >= index) {
+						start.set(offset);
+						return parts[i];
+					}
+					offset = charIndex + 1;
+				}
+				case REGISTER -> {
+					int charIndex = parameter.lastIndexOf('(', parameter.length() - offset);
+					if (charIndex == -1 || charIndex >= index) {
+						start.set(offset);
+						return parts[i];
+					}
+					offset = charIndex + 1;
+				}
+			}
+		}
+
+		start.set(offset);
+		return parts[parts.length - 1];
+	}
+
+	public int getAmountOfParts() {
 		return parts.length;
 	}
 

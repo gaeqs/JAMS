@@ -37,13 +37,14 @@ import java.util.List;
 
 public class MIPSInstructionParameterPart extends MIPSCodeElement {
 
-	private final int parameterIndex, index;
+	private final MIPSInstructionParameter parameter;
+	private final int index;
 	private InstructionParameterPartType type;
 
-	public MIPSInstructionParameterPart(MIPSFileElements elements, int startIndex, int endIndex, String text, int parameterIndex, int index, ParameterPartType type) {
+	public MIPSInstructionParameterPart(MIPSFileElements elements, int startIndex, int endIndex, String text, MIPSInstructionParameter parameter, int index, ParameterPartType type) {
 		super(startIndex, endIndex, text);
 
-		this.parameterIndex = parameterIndex;
+		this.parameter = parameter;
 		this.index = index;
 
 		if (type == null) {
@@ -53,8 +54,8 @@ public class MIPSInstructionParameterPart extends MIPSCodeElement {
 		}
 	}
 
-	public int getParameterIndex() {
-		return parameterIndex;
+	public MIPSInstructionParameter getParameter() {
+		return parameter;
 	}
 
 	public int getIndex() {

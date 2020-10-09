@@ -28,6 +28,7 @@ import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
@@ -173,8 +174,8 @@ public abstract class AutocompletionPopup extends Popup {
 	 * @param <T>                      the type of the elements.
 	 */
 	public <T> void addElements(Collection<T> collection, Function<T, String> conversion,
-								Function<T, String> autocompletionConversion) {
-		addElements(collection.iterator(), conversion, autocompletionConversion);
+								Function<T, String> autocompletionConversion, int offset, Image icon) {
+		addElements(collection.iterator(), conversion, autocompletionConversion, offset, icon);
 	}
 
 	/**
@@ -186,8 +187,8 @@ public abstract class AutocompletionPopup extends Popup {
 	 * @param <T>                      the type of the elements.
 	 */
 	public <T> void addElements(Stream<T> collection, Function<T, String> conversion,
-								Function<T, String> autocompletionConversion) {
-		addElements(collection.iterator(), conversion, autocompletionConversion);
+								Function<T, String> autocompletionConversion, int offset, Image icon) {
+		addElements(collection.iterator(), conversion, autocompletionConversion, offset, icon);
 	}
 
 	/**
@@ -199,14 +200,14 @@ public abstract class AutocompletionPopup extends Popup {
 	 * @param <T>                      the type of the elements.
 	 */
 	public <T> void addElements(Iterator<T> iterator, Function<T, String> conversion,
-								Function<T, String> autocompletionConversion) {
+								Function<T, String> autocompletionConversion, int offset, Image icon) {
 		AutocompletionPopupElement label;
 		T next;
 		while (iterator.hasNext()) {
 			next = iterator.next();
 			label = new AutocompletionPopupElement(this, elements.size(),
 					StringUtils.addExtraSpaces(conversion.apply(next)),
-					autocompletionConversion.apply(next));
+					autocompletionConversion.apply(next), offset, icon);
 			elements.add(label);
 		}
 	}
