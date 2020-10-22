@@ -55,7 +55,7 @@ public class MIPSDirective extends MIPSCodeElement {
 		return parameters;
 	}
 
-	public boolean isGlobl() {
+	public boolean isGlobal() {
 		return directive.equalsIgnoreCase("." + DirectiveGlobl.NAME);
 	}
 
@@ -110,8 +110,11 @@ public class MIPSDirective extends MIPSCodeElement {
 		boolean eqv = isEqv();
 
 		//Adds all parameters.
+		int index = 0;
 		for (Map.Entry<Integer, String> entry : stringParameters) {
 			parameters.add(new MIPSDirectiveParameter(
+					this,
+					index++,
 					startIndex + entry.getKey(),
 					startIndex + entry.getKey() + entry.getValue().length(), entry.getValue(), eqv));
 		}

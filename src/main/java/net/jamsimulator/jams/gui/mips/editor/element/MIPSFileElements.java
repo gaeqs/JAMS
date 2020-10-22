@@ -105,6 +105,10 @@ public class MIPSFileElements {
 		return labels;
 	}
 
+	public boolean isLabelDeclared(String label) {
+		return labels.contains(label) || filesToAssemble != null && filesToAssemble.getGlobalLabels().contains(label);
+	}
+
 	/**
 	 * Returns the labels that should be set as global labels.
 	 *
@@ -247,7 +251,7 @@ public class MIPSFileElements {
 				line = new MIPSLine(this, start, builder.toString());
 
 				line.getLabel().ifPresent(label -> labels.add(label.getLabel()));
-				if (line.getDirective().isPresent() && line.getDirective().get().isGlobl()) {
+				if (line.getDirective().isPresent() && line.getDirective().get().isGlobal()) {
 					line.getDirective().get().getParameters().forEach(target -> {
 						setAsGlobalLabel.add(target.text);
 					});
@@ -266,7 +270,7 @@ public class MIPSFileElements {
 			line = new MIPSLine(this, start, builder.toString());
 
 			line.getLabel().ifPresent(label -> labels.add(label.getLabel()));
-			if (line.getDirective().isPresent() && line.getDirective().get().isGlobl()) {
+			if (line.getDirective().isPresent() && line.getDirective().get().isGlobal()) {
 				line.getDirective().get().getParameters().forEach(target -> {
 					setAsGlobalLabel.add(target.text);
 				});
@@ -377,7 +381,7 @@ public class MIPSFileElements {
 		}
 
 		//DIRECTIVE
-		if (line.getDirective().isPresent() && line.getDirective().get().isGlobl()) {
+		if (line.getDirective().isPresent() && line.getDirective().get().isGlobal()) {
 			line.getDirective().get().getParameters().forEach(target -> {
 				if (add) setAsGlobalLabel.add(target.text);
 				else setAsGlobalLabel.remove(target.text);

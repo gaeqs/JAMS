@@ -24,17 +24,21 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
+import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.LabelUtils;
 
 public class DirectiveGlobl extends Directive {
 
 	public static final String NAME = "globl";
+	private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.LABEL};
+
 
 	public DirectiveGlobl() {
-		super(NAME);
+		super(NAME, PARAMETERS, true, false);
 	}
 
 	@Override
@@ -57,5 +61,10 @@ public class DirectiveGlobl extends Directive {
 	@Override
 	public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address) {
 
+	}
+
+	@Override
+	public boolean isParameterValidInContext(int index, String value, MIPSFileElements context) {
+		return isParameterValid(index, value) && context.isLabelDeclared(value);
 	}
 }

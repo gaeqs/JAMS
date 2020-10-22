@@ -132,7 +132,9 @@ public class MIPSInstructionParameterPart extends MIPSCodeElement {
 				if (string.startsWith("$")) return REGISTER;
 			} else {
 				if (project.getData().getRegistersBuilder().getValidRegistersStarts()
-						.stream().anyMatch(target -> string.startsWith(target.toString()))) return REGISTER;
+						.stream().anyMatch(target -> string.startsWith(target.toString()))) {
+					return REGISTER;
+				}
 			}
 
 			if (StringUtils.isStringOrChar(string)) return STRING;

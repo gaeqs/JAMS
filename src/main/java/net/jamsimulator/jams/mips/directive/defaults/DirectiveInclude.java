@@ -24,9 +24,11 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
+import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,9 +38,10 @@ import java.util.List;
 public class DirectiveInclude extends Directive {
 
 	public static final String NAME = "include";
+	private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.ANY};
 
 	public DirectiveInclude() {
-		super(NAME);
+		super(NAME, PARAMETERS, false, false);
 	}
 
 	@Override
@@ -63,5 +66,10 @@ public class DirectiveInclude extends Directive {
 	@Override
 	public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address) {
 
+	}
+
+	@Override
+	public boolean isParameterValidInContext(int index, String value, MIPSFileElements context) {
+		return isParameterValid(index, value);
 	}
 }

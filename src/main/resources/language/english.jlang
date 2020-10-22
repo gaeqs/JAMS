@@ -317,6 +317,7 @@ EDITOR_MIPS_ERROR_LABEL_NOT_FOUND=Couldn't found label '{TEXT}'.
 EDITOR_MIPS_ERROR_DUPLICATE_LABEL=Found duplicated label '{TEXT}'.
 EDITOR_MIPS_ERROR_DUPLICATE_GLOBAL_LABEL=Found duplicated global label '{TEXT}' on file '{FILE}'.
 EDITOR_MIPS_ERROR_DIRECTIVE_NOT_FOUND=Couldn't found directive '{TEXT}'.
+EDITOR_MIPS_ERROR_INVALID_DIRECTIVE_PARAMETER=The parameter '{TEXT}' is invalid.
 EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=Couldn't found instruction '{TEXT}' with the given parameters.
 EDITOR_MIPS_ERROR_INVALID_INSTRUCTION_PARAMETER=The parameter '{TEXT}' is invalid.
 

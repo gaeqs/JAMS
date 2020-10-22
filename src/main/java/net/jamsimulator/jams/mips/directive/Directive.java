@@ -24,9 +24,12 @@
 
 package net.jamsimulator.jams.mips.directive;
 
+import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
+import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.Validate;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -37,10 +40,16 @@ public abstract class Directive {
 
 	private final String name;
 
+	private final DirectiveParameterType[] parameters;
+	private final boolean repeatLastParameter, optionalParameters;
 
-	public Directive(String name) {
+	public Directive(String name, DirectiveParameterType[] parameters, boolean repeatLastParameter, boolean optionalParameters) {
 		Validate.notNull(name, "Name cannot be null!");
+		Validate.hasNoNulls(parameters, "The parameters array cannot contain null elements!");
 		this.name = name;
+		this.parameters = parameters;
+		this.repeatLastParameter = repeatLastParameter;
+		this.optionalParameters = optionalParameters;
 	}
 
 	/**
@@ -50,6 +59,48 @@ public abstract class Directive {
 	 */
 	public String getName() {
 		return name;
+	}
+
+	/**
+	 * Returns an unmodifiable array with all {@link DirectiveParameterType parameter types} of this directive.
+	 *
+	 * @return the array.
+	 */
+	public DirectiveParameterType[] getParameters() {
+		return Arrays.copyOf(parameters, parameters.length);
+	}
+
+	/**
+	 * Returns whether the last parameter of this directive can be repeated.
+	 * <p>
+	 * If true, this directive can have an undefined amount of parameters of the same type.
+	 *
+	 * @return whether the last parameter of this directive can be repeated.
+	 */
+	public boolean canRepeatLastParameter() {
+		return repeatLastParameter;
+	}
+
+	/**
+	 * Returns when the parameters of this directive are optional.
+	 *
+	 * @return when the parameters of this directive are optional.
+	 */
+	public boolean areParametersOptional() {
+		return optionalParameters;
+	}
+
+	/**
+	 * Returns whether the parameter at the given index is valid for this directive.
+	 *
+	 * @param index the index of the parameter.
+	 * @param value the parameter.
+	 * @return whether the parameter is valid.
+	 */
+	public boolean isParameterValid(int index, String value) {
+		//Check if parameter is out of bounds.
+		if (index < 0 || index >= parameters.length && !repeatLastParameter) return false;
+		return parameters[Math.min(index, parameters.length - 1)].matches(value);
 	}
 
 	/**
@@ -73,6 +124,7 @@ public abstract class Directive {
 	 */
 	public abstract void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address);
 
+	public abstract boolean isParameterValidInContext(int index, String value, MIPSFileElements context);
 
 	@Override
 	public boolean equals(Object o) {

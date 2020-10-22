@@ -25,7 +25,9 @@
 package net.jamsimulator.jams.gui.mips.editor.element;
 
 import net.jamsimulator.jams.gui.mips.editor.MIPSEditorError;
-import net.jamsimulator.jams.utils.NumericUtils;
+import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.Arrays;
@@ -34,11 +36,15 @@ import java.util.List;
 
 public class MIPSDirectiveParameter extends MIPSCodeElement {
 
+	protected final MIPSDirective directive;
+	protected final int index;
 	private final boolean string;
 	private final boolean eqv;
 
-	public MIPSDirectiveParameter(int startIndex, int endIndex, String text, boolean eqv) {
+	public MIPSDirectiveParameter(MIPSDirective directive, int index, int startIndex, int endIndex, String text, boolean eqv) {
 		super(startIndex, endIndex, text);
+		this.directive = directive;
+		this.index = index;
 		this.string = StringUtils.isStringOrChar(text);
 		this.eqv = eqv;
 	}
@@ -58,11 +64,22 @@ public class MIPSDirectiveParameter extends MIPSCodeElement {
 	@Override
 	public void refreshMetadata(MIPSFileElements elements) {
 		errors.clear();
-		if (eqv || string || NumericUtils.isInteger(text)) return;
 
-		if (!elements.getLabels().contains(text)) {
-			errors.add(MIPSEditorError.LABEL_NOT_FOUND);
+		MIPSProject project = elements.getProject().orElse(null);
+		if (project == null) return;
+		DirectiveSet set = project.getData().getDirectiveSet();
+		Directive directive = set.getDirective(this.directive.getSimpleText().substring(1)).orElse(null);
+		if (directive == null) return;
+
+		if (!directive.isParameterValidInContext(index, text, elements)) {
+			errors.add(MIPSEditorError.INVALID_DIRECTIVE_PARAMETER);
 		}
+
+		//if (eqv || string || NumericUtils.isInteger(text)) return;
+//
+		//if (!elements.getLabels().contains(text)) {
+		//	errors.add(MIPSEditorError.LABEL_NOT_FOUND);
+		//}
 	}
 
 }

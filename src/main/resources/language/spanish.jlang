@@ -317,6 +317,7 @@ EDITOR_MIPS_ERROR_LABEL_NOT_FOUND=No se ha podido encontrar la etiqueta '{TEXT}'
 EDITOR_MIPS_ERROR_DUPLICATE_LABEL=La etiqueta '{TEXT}' está duplicada.
 EDITOR_MIPS_ERROR_DUPLICATE_GLOBAL_LABEL=La etiqueta '{TEXT}' está duplicada en el archivo '{FILE}'.
 EDITOR_MIPS_ERROR_DIRECTIVE_NOT_FOUND=No se ha podido encontrar la directiva '{TEXT}'.
+EDITOR_MIPS_ERROR_INVALID_DIRECTIVE_PARAMETER=El parámetro '{TEXT} tiene un formato incorrecto.
 EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=No se ha podido encontrar la instrucción '{TEXT}' con los parámetros indicados.
 EDITOR_MIPS_ERROR_INVALID_INSTRUCTION_PARAMETER=El parámetro '{TEXT} tiene un formato incorrecto.
 

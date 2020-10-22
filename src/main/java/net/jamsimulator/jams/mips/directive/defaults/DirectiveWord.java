@@ -24,19 +24,22 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
+import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.utils.NumericUtils;
 
 public class DirectiveWord extends Directive {
 
 	public static final String NAME = "word";
+	private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.INT_OR_LABEL};
 
 	public DirectiveWord() {
-		super(NAME);
+		super(NAME, PARAMETERS, true, false);
 	}
 
 	@Override
@@ -61,5 +64,10 @@ public class DirectiveWord extends Directive {
 			memory.setWord(address, value);
 			address += 4;
 		}
+	}
+
+	@Override
+	public boolean isParameterValidInContext(int index, String value, MIPSFileElements context) {
+		return isParameterValid(index, value) && NumericUtils.isInteger(value) || context.isLabelDeclared(value);
 	}
 }

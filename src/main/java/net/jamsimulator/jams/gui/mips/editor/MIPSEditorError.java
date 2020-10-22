@@ -54,6 +54,11 @@ public enum MIPSEditorError {
 	 */
 	DIRECTIVE_NOT_FOUND,
 
+	/**
+	 * Used when a directive's parameter has an invalid format or context.
+	 */
+	INVALID_DIRECTIVE_PARAMETER,
+
 	//DIRECTIVE PARAMETERS
 
 	//INSTRUCTIONS
@@ -64,7 +69,7 @@ public enum MIPSEditorError {
 
 	//INSTRUCTION PARAMETERS
 	/**
-	 * Used when an instruction's parameter has an invalid format.
+	 * Used when an instruction's parameter has an invalid format or context.
 	 */
 	INVALID_INSTRUCTION_PARAMETER
 }

@@ -24,19 +24,23 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
+import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.SelectedMemorySegment;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.utils.NumericUtils;
 
 public class DirectiveText extends Directive {
 
 	public static final String NAME = "text";
+	private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.INT};
+
 
 	public DirectiveText() {
-		super(NAME);
+		super(NAME, PARAMETERS, false, true);
 	}
 
 	@Override
@@ -64,5 +68,10 @@ public class DirectiveText extends Directive {
 	@Override
 	public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address) {
 
+	}
+
+	@Override
+	public boolean isParameterValidInContext(int index, String value, MIPSFileElements context) {
+		return isParameterValid(index, value);
 	}
 }
