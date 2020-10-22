@@ -62,12 +62,33 @@ public abstract class Directive {
 	}
 
 	/**
+	 * Returns whether this directive may have parameters.
+	 *
+	 * @return whether this directive may have parameters.
+	 */
+	public boolean hasParameters() {
+		return parameters.length > 0;
+	}
+
+	/**
 	 * Returns an unmodifiable array with all {@link DirectiveParameterType parameter types} of this directive.
 	 *
 	 * @return the array.
 	 */
 	public DirectiveParameterType[] getParameters() {
 		return Arrays.copyOf(parameters, parameters.length);
+	}
+
+	/**
+	 * Returns the {@link DirectiveParameterType} for the parameter of the given index.
+	 *
+	 * @param index the index of the parameter.
+	 * @return the type, or null if not found.
+	 */
+	public DirectiveParameterType getParameterTypeFor(int index) {
+		//Check if parameter is out of bounds.
+		if (index < 0 || index >= parameters.length && !repeatLastParameter) return null;
+		return parameters[Math.min(index, parameters.length - 1)];
 	}
 
 	/**
@@ -98,9 +119,8 @@ public abstract class Directive {
 	 * @return whether the parameter is valid.
 	 */
 	public boolean isParameterValid(int index, String value) {
-		//Check if parameter is out of bounds.
-		if (index < 0 || index >= parameters.length && !repeatLastParameter) return false;
-		return parameters[Math.min(index, parameters.length - 1)].matches(value);
+		var type = getParameterTypeFor(index);
+		return type != null && type.matches(value);
 	}
 
 	/**

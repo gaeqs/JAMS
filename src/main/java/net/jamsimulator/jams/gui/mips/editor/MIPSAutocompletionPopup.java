@@ -73,21 +73,21 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 			return;
 		}
 
-		refreshContents(caretPosition);
-		if (isEmpty()) {
-			hide();
-			return;
-		}
-		if (autocompleteIfOne && size() == 1) {
-			hide();
-			autocomplete();
-		} else {
-			Platform.runLater(() -> {
+		Platform.runLater(() -> {
+			refreshContents(caretPosition);
+			if (isEmpty()) {
+				hide();
+				return;
+			}
+			if (autocompleteIfOne && size() == 1) {
+				hide();
+				autocomplete();
+			} else {
 				Bounds bounds = display.getCaretBounds().orElse(null);
 				if (bounds == null) return;
 				show(display, bounds.getMinX(), bounds.getMinY() + 20);
-			});
-		}
+			}
+		});
 	}
 
 	@Override
@@ -103,7 +103,9 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 
 		if (element instanceof MIPSDirective)
 			start = refreshDirective(start);
-		else if (element instanceof MIPSInstruction)
+		else if (element instanceof MIPSDirectiveParameter) {
+			start = refreshDisplayDirectiveParameter(start);
+		} else if (element instanceof MIPSInstruction)
 			start = refreshInstruction(start);
 		else if (element instanceof MIPSInstructionParameterPart)
 			start = refreshDisplayInstructionParameterPart(start);
@@ -187,6 +189,27 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 		}
 		return start;
 	}
+
+	protected String refreshDisplayDirectiveParameter(String start) {
+		MIPSProject project = getDisplay().getProject().orElse(null);
+		if (project == null) return start;
+
+		var parameter = (MIPSDirectiveParameter) element;
+
+		var offset = getDisplay().getCaretPosition() - parameter.getStartIndex();
+		var parameterStart = parameter.getText().substring(0, offset).toLowerCase();
+
+		switch (parameter.getType()) {
+			case LABEL, INT_OR_LABEL -> {
+				Set<String> labels = new HashSet<>(mipsElements.getLabels());
+				mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
+				addElements(labels.stream().filter(target -> target.toLowerCase().startsWith(parameterStart)), s -> s, s -> s, 0, ICON_LABEL);
+			}
+		}
+
+		return start;
+	}
+
 
 	protected String parseParameters(ParameterType[] types) {
 		StringBuilder builder = new StringBuilder();

@@ -284,7 +284,7 @@ public class MIPSLine {
 		String trim = parsing.trim();
 		if (trim.isEmpty()) return;
 		if (trim.charAt(0) == '.') {
-			directive = new MIPSDirective(pStart, pEnd, parsing);
+			directive = new MIPSDirective(elements, pStart, pEnd, parsing);
 		} else {
 			instruction = new MIPSInstruction(elements, pStart, pEnd, parsing);
 		}

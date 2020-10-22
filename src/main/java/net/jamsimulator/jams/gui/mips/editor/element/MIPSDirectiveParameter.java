@@ -25,9 +25,7 @@
 package net.jamsimulator.jams.gui.mips.editor.element;
 
 import net.jamsimulator.jams.gui.mips.editor.MIPSEditorError;
-import net.jamsimulator.jams.mips.directive.Directive;
-import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
-import net.jamsimulator.jams.project.mips.MIPSProject;
+import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.Arrays;
@@ -49,6 +47,13 @@ public class MIPSDirectiveParameter extends MIPSCodeElement {
 		this.eqv = eqv;
 	}
 
+	public DirectiveParameterType getType() {
+		if (directive != null) {
+			return directive.getDirective().getParameterTypeFor(index);
+		}
+		return DirectiveParameterType.getAllCandidates(text).stream().findAny().orElse(null);
+	}
+
 	@Override
 	public String getSimpleText() {
 		return text;
@@ -64,11 +69,7 @@ public class MIPSDirectiveParameter extends MIPSCodeElement {
 	@Override
 	public void refreshMetadata(MIPSFileElements elements) {
 		errors.clear();
-
-		MIPSProject project = elements.getProject().orElse(null);
-		if (project == null) return;
-		DirectiveSet set = project.getData().getDirectiveSet();
-		Directive directive = set.getDirective(this.directive.getSimpleText().substring(1)).orElse(null);
+		var directive = this.directive.getDirective();
 		if (directive == null) return;
 
 		if (!directive.isParameterValidInContext(index, text, elements)) {

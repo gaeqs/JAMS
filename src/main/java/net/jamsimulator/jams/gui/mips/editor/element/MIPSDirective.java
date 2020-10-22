@@ -37,17 +37,22 @@ import java.util.stream.Collectors;
 
 public class MIPSDirective extends MIPSCodeElement {
 
-	private String directive;
+	private String simpleText;
+	private Directive directive;
 	private final List<MIPSDirectiveParameter> parameters;
 
-	public MIPSDirective(int startIndex, int endIndex, String text) {
+	public MIPSDirective(MIPSFileElements elements, int startIndex, int endIndex, String text) {
 		super(startIndex, endIndex, text);
 		parameters = new ArrayList<>();
-		parseText();
+		parseText(elements);
 	}
 
 	@Override
 	public String getSimpleText() {
+		return simpleText;
+	}
+
+	public Directive getDirective() {
 		return directive;
 	}
 
@@ -56,11 +61,11 @@ public class MIPSDirective extends MIPSCodeElement {
 	}
 
 	public boolean isGlobal() {
-		return directive.equalsIgnoreCase("." + DirectiveGlobl.NAME);
+		return simpleText.equalsIgnoreCase("." + DirectiveGlobl.NAME);
 	}
 
 	public boolean isEqv() {
-		return directive.equalsIgnoreCase("." + DirectiveEqv.NAME);
+		return simpleText.equalsIgnoreCase("." + DirectiveEqv.NAME);
 	}
 
 	public String getEqvKey() {
@@ -83,18 +88,13 @@ public class MIPSDirective extends MIPSCodeElement {
 	public void refreshMetadata(MIPSFileElements elements) {
 		errors.clear();
 
-		MIPSProject project = elements.getProject().orElse(null);
-		if (project == null) return;
-
-		DirectiveSet set = project.getData().getDirectiveSet();
-		Directive directive = set.getDirective(this.directive.substring(1)).orElse(null);
 		if (directive == null) {
 			errors.add(MIPSEditorError.DIRECTIVE_NOT_FOUND);
 		}
 	}
 
 
-	private void parseText() {
+	private void parseText(MIPSFileElements elements) {
 		Map<Integer, String> parts = StringUtils.multiSplitIgnoreInsideStringWithIndex(text, false, " ", ",", "\t");
 		if (parts.isEmpty()) return;
 
@@ -104,8 +104,15 @@ public class MIPSDirective extends MIPSCodeElement {
 
 		//The first entry is the directive itself.
 		Map.Entry<Integer, String> first = stringParameters.get(0);
-		directive = first.getValue();
+		simpleText = first.getValue();
 		stringParameters.remove(0);
+
+		MIPSProject project = elements.getProject().orElse(null);
+		if (project != null) {
+			DirectiveSet set = project.getData().getDirectiveSet();
+			directive = set.getDirective(this.simpleText.substring(1)).orElse(null);
+		} else directive = null;
+
 
 		boolean eqv = isEqv();
 
@@ -120,6 +127,6 @@ public class MIPSDirective extends MIPSCodeElement {
 		}
 
 		startIndex += first.getKey();
-		endIndex = startIndex + directive.length();
+		endIndex = startIndex + simpleText.length();
 	}
 }
