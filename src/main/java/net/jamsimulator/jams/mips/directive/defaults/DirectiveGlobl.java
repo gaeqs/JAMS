@@ -38,7 +38,7 @@ public class DirectiveGlobl extends Directive {
 
 
 	public DirectiveGlobl() {
-		super(NAME, PARAMETERS, false, false);
+		super(NAME, PARAMETERS, true, false);
 	}
 
 	@Override

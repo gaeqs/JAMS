@@ -2,10 +2,10 @@ package net.jamsimulator.jams.gui.util.value;
 
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
-import net.jamsimulator.jams.gui.util.converter.ActionValueConverter;
+import javafx.scene.control.ListCell;
+import net.jamsimulator.jams.gui.mips.editor.MIPSSpaces;
 import net.jamsimulator.jams.gui.util.converter.MIPSSpacesValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverters;
-import net.jamsimulator.jams.gui.mips.editor.MIPSSpaces;
 
 import java.util.function.Consumer;
 
@@ -17,6 +17,8 @@ public class MIPSSpacesValueEditor extends ComboBox<MIPSSpaces> implements Value
 	};
 
 	public MIPSSpacesValueEditor() {
+		setCellFactory(param -> new MIPSSpacesListCell());
+		setButtonCell(new MIPSSpacesListCell());
 		setConverter(ValueConverters.getByTypeUnsafe(MIPSSpaces.class));
 		getItems().addAll(MIPSSpaces.values());
 		getSelectionModel().select(0);
@@ -48,6 +50,15 @@ public class MIPSSpacesValueEditor extends ComboBox<MIPSSpaces> implements Value
 		@Override
 		public ValueEditor<MIPSSpaces> build() {
 			return new MIPSSpacesValueEditor();
+		}
+
+	}
+
+
+	private static class MIPSSpacesListCell extends ListCell<MIPSSpaces> {
+
+		public MIPSSpacesListCell() {
+			itemProperty().addListener((obs, old, val) -> setText(val == null ? null : val.getDisplayValue()));
 		}
 
 	}
