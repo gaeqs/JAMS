@@ -62,6 +62,11 @@ public class FileEditorTab extends Tab implements ActionRegion {
 	private final Label name;
 	private boolean saveMark;
 
+	private final AnchorPane anchorPane;
+	private final VirtualizedScrollPane scroll;
+	private final ScaledVirtualized scale;
+	private final ScrollPane simpleScroll;
+
 	public FileEditorTab(FileEditorTabList list, File file) {
 		this.list = list;
 		this.file = file;
@@ -74,30 +79,39 @@ public class FileEditorTab extends Tab implements ActionRegion {
 		name = new Label(file.getName(), view);
 		setGraphic(name);
 
-		if (display == null) return;
+		if (display == null) {
+			anchorPane = null;
+			scroll = null;
+			scale = null;
+			simpleScroll = null;
+			return;
+		}
 
 		Node element = (Node) display;
-		AnchorPane pane = new AnchorPane();
+		anchorPane = new AnchorPane();
 		if (element instanceof Region) {
-			((Region) element).prefWidthProperty().bind(pane.widthProperty());
-			((Region) element).prefHeightProperty().bind(pane.heightProperty());
+			((Region) element).prefWidthProperty().bind(anchorPane.widthProperty());
+			((Region) element).prefHeightProperty().bind(anchorPane.heightProperty());
 		}
 		if (display instanceof Region && display instanceof Virtualized) {
-			ScaledVirtualized scale = new ScaledVirtualized(element);
-			VirtualizedScrollPane scroll = new VirtualizedScrollPane(scale);
+			scale = new ScaledVirtualized(element);
+			scroll = new VirtualizedScrollPane(scale);
+			simpleScroll = null;
 			AnchorUtils.setAnchor(scroll, 0, 0, 0, 0);
-			pane.getChildren().addAll(scroll);
+			anchorPane.getChildren().addAll(scroll);
 			if (element instanceof VirtualScrollHandled) {
 				((VirtualScrollHandled) element).setScrollPane(scroll);
 				((VirtualScrollHandled) element).setZoom(scale);
 			}
 		} else {
-			ScrollPane scroll = new PixelScrollPane(element);
-			AnchorUtils.setAnchor(scroll, 0, 0, 0, 0);
-			pane.getChildren().addAll(scroll);
+			scroll = null;
+			scale = null;
+			simpleScroll = new PixelScrollPane(element);
+			AnchorUtils.setAnchor(simpleScroll, 0, 0, 0, 0);
+			anchorPane.getChildren().addAll(simpleScroll);
 		}
 
-		setContent(pane);
+		setContent(anchorPane);
 
 		setOnClosed(target -> {
 			this.list.closeFileInternal(this);
@@ -143,6 +157,7 @@ public class FileEditorTab extends Tab implements ActionRegion {
 
 	public void layoutDisplay() {
 		list.requestLayout();
+		if (anchorPane != null) anchorPane.requestLayout();
 		((Region) getContent()).requestLayout();
 		((Region) getGraphic()).requestLayout();
 	}
