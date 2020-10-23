@@ -165,15 +165,9 @@ public class MIPSStructurePane extends WorkingPane {
 	}
 
 	private void loadLogBottomBar() {
-		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE
-		).orElse(null);
-		ScrollPane pane = new PixelScrollPane();
-		pane.setFitToWidth(true);
-		pane.setFitToHeight(true);
-
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE).orElse(null);
 		log = new SimpleLog();
-		pane.setContent(log);
-		manageBarAddition("log", pane, icon, Messages.BAR_LOG_NAME, BarType.BOTTOM);
+		manageBarAddition("log", log, icon, Messages.BAR_LOG_NAME, BarType.BOTTOM);
 	}
 
 

@@ -213,7 +213,7 @@ public class MIPS32AssemblingFile {
 		while (!labelsToAdd.isEmpty()) checkLabel(index, labelsToAdd.poll(), labelAddress);
 	}
 
-	private void checkLabel(int index, String label, int address) {
+	public void checkLabel(int index, String label, int address) {
 		if (label == null) return;
 
 		if (!LabelUtils.isLabelLegal(label)) {

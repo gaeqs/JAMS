@@ -141,6 +141,12 @@ public class FileEditorTab extends Tab implements ActionRegion {
 		list.getHolder().openInNewHolder(this, horizontal);
 	}
 
+	public void layoutDisplay() {
+		list.requestLayout();
+		((Region) getContent()).requestLayout();
+		((Region) getGraphic()).requestLayout();
+	}
+
 	private Set<ContextAction> getSupportedContextActions() {
 		Set<Action> actions = JamsApplication.getActionManager().getAll();
 		Set<ContextAction> set = new HashSet<>();

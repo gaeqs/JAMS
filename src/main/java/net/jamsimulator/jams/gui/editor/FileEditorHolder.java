@@ -275,14 +275,15 @@ public class FileEditorHolder extends SplitPane {
 
 			first.parent = this;
 			second.parent = this;
+			list = null;
 
 			getItems().add(first);
 			getItems().add(second);
 			setOrientation(horizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL);
 			SplitPane.setResizableWithParent(first, false);
 			SplitPane.setResizableWithParent(second, false);
-			list = null;
 			refreshSupport();
+			setDividerPosition(0, 0.5);
 		} else {
 			(first == null ? second : first).openInNewHolder(display, horizontal);
 		}
@@ -326,7 +327,9 @@ public class FileEditorHolder extends SplitPane {
 	}
 
 	private void refreshSupport() {
-		if (list != null) draggingSupport.addSupport(list);
+		if (list != null && draggingSupport != null) {
+			draggingSupport.addSupport(list);
+		}
 		if (first != null) {
 			first.draggingSupport = draggingSupport;
 			first.refreshSupport();

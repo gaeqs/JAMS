@@ -122,6 +122,7 @@ public class MIPSFileEditor extends CodeFileEditor {
 			scrollPane.scrollYBy(toPixel);
 			index(reformattedCode);
 			tab.setSaveMark(true);
+			tab.layoutDisplay();
 		}
 	}
 

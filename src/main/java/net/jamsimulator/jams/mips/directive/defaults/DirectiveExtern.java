@@ -31,7 +31,6 @@ import net.jamsimulator.jams.mips.assembler.SelectedMemorySegment;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
-import net.jamsimulator.jams.utils.LabelUtils;
 import net.jamsimulator.jams.utils.NumericUtils;
 
 public class DirectiveExtern extends Directive {
@@ -48,8 +47,6 @@ public class DirectiveExtern extends Directive {
 		if (parameters.length != 2)
 			throw new AssemblerException(lineNumber, "." + NAME + " must have two parameter.");
 
-		if (!LabelUtils.isLabelLegal(parameters[0]))
-			throw new AssemblerException("Label " + parameters[0] + " is not legal.");
 		if (!NumericUtils.isInteger(parameters[1]))
 			throw new AssemblerException(parameters[1] + " is not a number.");
 		int i = NumericUtils.decodeInteger(parameters[1]);
@@ -62,6 +59,7 @@ public class DirectiveExtern extends Directive {
 		data.align(0);
 		int start = data.getCurrent();
 		data.addCurrent(i);
+		file.checkLabel(lineNumber, parameters[0], start);
 		file.setAsGlobalLabel(lineNumber, parameters[0]);
 		data.setSelected(old);
 		return start;
