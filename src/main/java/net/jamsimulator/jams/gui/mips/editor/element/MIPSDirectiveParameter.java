@@ -117,7 +117,8 @@ public class MIPSDirectiveParameter extends MIPSCodeElement {
 		var directive = this.directive.getDirective();
 		if (directive instanceof DirectiveLab || directive instanceof DirectiveExtern) {
 			if (index == 0) {
-				registerLabel(text, directive instanceof DirectiveExtern);
+				globalLabel = directive instanceof DirectiveExtern;
+				registerLabel(text, globalLabel);
 				registeredLabel = true;
 			}
 		} else {
