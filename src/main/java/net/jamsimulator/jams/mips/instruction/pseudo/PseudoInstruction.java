@@ -67,6 +67,11 @@ public abstract class PseudoInstruction implements Instruction {
 	}
 
 	@Override
+	public boolean hasParameters() {
+		return parameters.length > 0;
+	}
+
+	@Override
 	public boolean match(String mnemonic, ParameterType[] parameters) {
 		return this.mnemonic.equals(mnemonic) && Arrays.equals(this.parameters, parameters);
 	}

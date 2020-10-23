@@ -71,6 +71,16 @@ public abstract class Directive {
 	}
 
 	/**
+	 * Returns the amount of parameters this directive has.
+	 * This doesn't count whether this directive can repeat the last parameter.
+	 *
+	 * @return the amount of parameters.
+	 */
+	public int getParametersAmount() {
+		return parameters.length;
+	}
+
+	/**
 	 * Returns an unmodifiable array with all {@link DirectiveParameterType parameter types} of this directive.
 	 *
 	 * @return the array.

@@ -27,6 +27,7 @@ package net.jamsimulator.jams.gui.mips.editor;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.image.icon.Icons;
@@ -121,9 +122,13 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 		MIPSProject project = getDisplay().getProject().orElse(null);
 		if (project == null) return start;
 
+		var space = Jams.getMainConfiguration()
+				.getEnum(MIPSSpaces.class, "editor.mips.space_after_directive")
+				.orElse(MIPSSpaces.SPACE).getValue();
+
 		String directive = start.substring(1);
 		addElements(project.getData().getDirectiveSet().getDirectives().stream().filter(target -> target.getName().startsWith(directive)),
-				Directive::getName, d -> "." + d.getName(), 0, ICON_DIRECTIVE);
+				Directive::getName, d -> "." + d.getName() + (d.hasParameters() ? space : ""), 0, ICON_DIRECTIVE);
 		return directive;
 	}
 
@@ -131,10 +136,15 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 		MIPSProject project = getDisplay().getProject().orElse(null);
 		if (project == null) return start;
 
+
+		var space = Jams.getMainConfiguration()
+				.getEnum(MIPSSpaces.class, "editor.mips.space_after_instruction")
+				.orElse(MIPSSpaces.SPACE).getValue();
+
 		Stream<Instruction> stream = project.getData().getInstructionSet().getInstructions().stream().filter(target -> target.getMnemonic().startsWith(start.toLowerCase()));
 		addElements(stream, i -> i.getMnemonic() + " \t"
 				+ StringUtils.addSpaces(parseParameters(i.getParameters()), 25, true)
-				+ i.getName(), Instruction::getMnemonic, 0, ICON_INSTRUCTION);
+				+ i.getName(), i -> i.getMnemonic() + (i.hasParameters() ? space : ""), 0, ICON_INSTRUCTION);
 		return start;
 	}
 
@@ -143,7 +153,6 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 		if (project == null) return start;
 
 		var part = (MIPSInstructionParameterPart) element;
-
 		var parameter = part.getParameter();
 		int parameterIndex = part.getParameter().getIndex();
 
@@ -195,6 +204,16 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 		if (project == null) return start;
 
 		var parameter = (MIPSDirectiveParameter) element;
+		var directive = parameter.getDirective().getDirective();
+
+		//Checks whether and what space should add.
+		var shouldAddSpace = directive != null
+				&& (directive.canRepeatLastParameter() || directive.getParametersAmount() - 1 > parameter.getIndex());
+		var space = shouldAddSpace
+				? Jams.getMainConfiguration()
+				.getEnum(MIPSSpaces.class, "editor.mips.space_after_directive_parameter")
+				.orElse(MIPSSpaces.SPACE).getValue()
+				: "";
 
 		var offset = getDisplay().getCaretPosition() - parameter.getStartIndex();
 		var parameterStart = parameter.getText().substring(0, offset).toLowerCase();
@@ -203,7 +222,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 			case LABEL, INT_OR_LABEL -> {
 				Set<String> labels = new HashSet<>(mipsElements.getLabels());
 				mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
-				addElements(labels.stream().filter(target -> target.toLowerCase().startsWith(parameterStart)), s -> s, s -> s, 0, ICON_LABEL);
+				addElements(labels.stream().filter(target -> target.toLowerCase().startsWith(parameterStart)), s -> s, s -> s + space, 0, ICON_LABEL);
 			}
 		}
 
@@ -230,8 +249,6 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 		if (element == null) return;
 		if (element.getText().substring(0, caretPosition - element.getStartIndex()).equals(replacement)) return;
 
-		boolean addSpace = element instanceof MIPSInstruction || element instanceof MIPSDirective;
-
-		display.replaceText(element.getStartIndex() + selected.getOffset(), caretPosition, addSpace ? replacement + " " : replacement);
+		display.replaceText(element.getStartIndex() + selected.getOffset(), caretPosition, replacement);
 	}
 }

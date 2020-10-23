@@ -47,11 +47,19 @@ public class MIPSDirectiveParameter extends MIPSCodeElement {
 		this.eqv = eqv;
 	}
 
+	public int getIndex() {
+		return index;
+	}
+
 	public DirectiveParameterType getType() {
 		if (directive != null) {
 			return directive.getDirective().getParameterTypeFor(index);
 		}
 		return DirectiveParameterType.getAllCandidates(text).stream().findAny().orElse(null);
+	}
+
+	public MIPSDirective getDirective() {
+		return directive;
 	}
 
 	@Override

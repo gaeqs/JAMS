@@ -23,6 +23,11 @@ public enum MIPSSpaces {
 		return displayValue;
 	}
 
+	public static Optional<MIPSSpaces> getByName(String value) {
+		return Arrays.stream(values()).filter(target -> target.name().equals(value)).findAny();
+	}
+
+
 	public static Optional<MIPSSpaces> getByValue(String value) {
 		return Arrays.stream(values()).filter(target -> target.getValue().equals(value)).findAny();
 	}
