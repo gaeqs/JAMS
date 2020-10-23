@@ -47,6 +47,10 @@ public enum DirectiveParameterType {
 		return matcher.matches(value);
 	}
 
+	public boolean mayBeLabel() {
+		return this == LABEL || this == INT_OR_LABEL;
+	}
+
 	/**
 	 * Returns all directive parameter types that matches the given parameter.
 	 *

@@ -44,6 +44,8 @@ public class MIPSLine {
 	private MIPSInstruction instruction;
 	private MIPSDirective directive;
 	private MIPSComment comment;
+	private Map<String, Boolean> registeredLabels;
+	private Collection<String> usedLabels;
 
 	//Cached elements
 	private SortedSet<MIPSCodeElement> elements;
@@ -135,6 +137,29 @@ public class MIPSLine {
 	}
 
 	/**
+	 * Returns an unmodifiable {@link Map} containing all registered labels in this line.
+	 * <p>
+	 * All labels are linked to a {@code boolean} representing whether the label is global.
+	 * This only represents if the label is a global label by default (registered by an .extern directive, for example).
+	 * These labels may be transformed to global by a .globl directive. These changes won't be registered by this map.
+	 *
+	 * @return all registered labels.
+	 */
+	public Map<String, Boolean> getRegisteredLabels() {
+		return registeredLabels == null ? Collections.emptyMap() : Collections.unmodifiableMap(registeredLabels);
+	}
+
+	/**
+	 * Returns an unmodifiable {@link Collection} containing all registered used in this line.
+	 * Label registration doesn't count as a use.
+	 *
+	 * @return all used labels.
+	 */
+	public Collection<String> getUsedLabels() {
+		return usedLabels == null ? Collections.emptyList() : Collections.unmodifiableCollection(usedLabels);
+	}
+
+	/**
 	 * Returns whether this MIPSLine is empty.
 	 *
 	 * @return whether it's empty.
@@ -163,14 +188,6 @@ public class MIPSLine {
 	public int getTabsAmountBeforeLabel() {
 		if (label == null) return 0;
 		return calculateTabs(label.text);
-	}
-
-	private int calculateTabs(String text) {
-		char c;
-		int amount = 0;
-		int index = 0;
-		while (index < text.length() && ((c = text.charAt(index++)) == '\t' || c == ' ')) amount += c == '\t' ? 4 : 1;
-		return amount;
 	}
 
 	/**
@@ -257,6 +274,28 @@ public class MIPSLine {
 		area.setStyleSpans(line, 0, spansBuilder.create());
 	}
 
+	/**
+	 * Registers the given label in the line.
+	 *
+	 * @param label  the label.
+	 * @param global whether the registered label is global.
+	 * @see #getRegisteredLabels()
+	 */
+	protected void registerLabel(String label, boolean global) {
+		if (registeredLabels == null) registeredLabels = new HashMap<>();
+		registeredLabels.put(label, global);
+	}
+
+	/**
+	 * Adds this label to the used labels collection.
+	 *
+	 * @param label the label.
+	 * @see #getUsedLabels()
+	 */
+	protected void markUsedLabel(String label) {
+		if (usedLabels == null) usedLabels = new ArrayList<>(1);
+		usedLabels.add(label);
+	}
 
 	private void parseLine(MIPSFileElements elements) {
 		String parsing = text;
@@ -266,7 +305,7 @@ public class MIPSLine {
 		//COMMENT
 		int commentIndex = StringUtils.getCommentIndex(parsing);
 		if (commentIndex != -1) {
-			comment = new MIPSComment(pStart + commentIndex, pEnd, parsing.substring(commentIndex));
+			comment = new MIPSComment(this, pStart + commentIndex, pEnd, parsing.substring(commentIndex));
 			pEnd = start + commentIndex;
 			parsing = parsing.substring(0, commentIndex);
 		}
@@ -275,7 +314,7 @@ public class MIPSLine {
 		int labelIndex = LabelUtils.getLabelFinishIndex(parsing);
 		if (labelIndex != -1) {
 
-			label = new MIPSLabel(pStart, pStart + labelIndex, parsing.substring(0, labelIndex + 1));
+			label = new MIPSLabel(this, pStart, pStart + labelIndex, parsing.substring(0, labelIndex + 1));
 			pStart = pStart + labelIndex + 1;
 			parsing = parsing.substring(labelIndex + 1);
 		}
@@ -284,9 +323,9 @@ public class MIPSLine {
 		String trim = parsing.trim();
 		if (trim.isEmpty()) return;
 		if (trim.charAt(0) == '.') {
-			directive = new MIPSDirective(elements, pStart, pEnd, parsing);
+			directive = new MIPSDirective(this, elements, pStart, pEnd, parsing);
 		} else {
-			instruction = new MIPSInstruction(elements, pStart, pEnd, parsing);
+			instruction = new MIPSInstruction(this, elements, pStart, pEnd, parsing);
 		}
 	}
 
@@ -298,5 +337,20 @@ public class MIPSLine {
 		spansBuilder.add(element.getStyles(), element.getSimpleText().length());
 
 		return element.getStartIndex() + element.getSimpleText().length();
+	}
+
+	/**
+	 * Calculates the amount of spaces and tabs that contains the start of this line.
+	 * Tabs are counted as 4 spaces.
+	 *
+	 * @param text the text.
+	 * @return the amount of spaces and tabs.
+	 */
+	private static int calculateTabs(String text) {
+		char c;
+		int amount = 0;
+		int index = 0;
+		while (index < text.length() && ((c = text.charAt(index++)) == '\t' || c == ' ')) amount += c == '\t' ? 4 : 1;
+		return amount;
 	}
 }

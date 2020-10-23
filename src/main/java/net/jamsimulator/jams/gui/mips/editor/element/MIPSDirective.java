@@ -41,8 +41,8 @@ public class MIPSDirective extends MIPSCodeElement {
 	private Directive directive;
 	private final List<MIPSDirectiveParameter> parameters;
 
-	public MIPSDirective(MIPSFileElements elements, int startIndex, int endIndex, String text) {
-		super(startIndex, endIndex, text);
+	public MIPSDirective(MIPSLine line, MIPSFileElements elements, int startIndex, int endIndex, String text) {
+		super(line, startIndex, endIndex, text);
 		parameters = new ArrayList<>();
 		parseText(elements);
 	}
@@ -113,17 +113,15 @@ public class MIPSDirective extends MIPSCodeElement {
 			directive = set.getDirective(this.simpleText.substring(1)).orElse(null);
 		} else directive = null;
 
-
-		boolean eqv = isEqv();
-
 		//Adds all parameters.
 		int index = 0;
 		for (Map.Entry<Integer, String> entry : stringParameters) {
 			parameters.add(new MIPSDirectiveParameter(
+					line,
 					this,
 					index++,
 					startIndex + entry.getKey(),
-					startIndex + entry.getKey() + entry.getValue().length(), entry.getValue(), eqv));
+					startIndex + entry.getKey() + entry.getValue().length(), entry.getValue()));
 		}
 
 		startIndex += first.getKey();

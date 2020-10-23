@@ -39,6 +39,8 @@ import java.util.Objects;
  */
 public abstract class MIPSCodeElement {
 
+	protected final MIPSLine line;
+
 	protected int startIndex;
 	protected int endIndex;
 	protected final String text;
@@ -54,14 +56,24 @@ public abstract class MIPSCodeElement {
 	 * @param endIndex   the end index.
 	 * @param text       the text.
 	 */
-	public MIPSCodeElement(int startIndex, int endIndex, String text) {
+	public MIPSCodeElement(MIPSLine line, int startIndex, int endIndex, String text) {
 		if (startIndex > endIndex) {
 			throw new IllegalArgumentException("Start index (" + startIndex + ") is bigger than the end index (" + endIndex + ").");
 		}
+		this.line = line;
 		this.startIndex = startIndex;
 		this.endIndex = endIndex;
 		this.text = text;
 		this.errors = new ArrayList<>();
+	}
+
+	/**
+	 * Returns the line of this element.
+	 *
+	 * @return the {@link MIPSLine}.
+	 */
+	public MIPSLine getLine() {
+		return line;
 	}
 
 	/**
@@ -146,6 +158,25 @@ public abstract class MIPSCodeElement {
 	 * @param elements the {@link MIPSFileElements}.
 	 */
 	public abstract void refreshMetadata(MIPSFileElements elements);
+
+	/**
+	 * Registers the given label in the line.
+	 *
+	 * @param label  the label.
+	 * @param global whether the label is global.
+	 */
+	protected void registerLabel(String label, boolean global) {
+		line.registerLabel(label, global);
+	}
+
+	/**
+	 * Adds this label to the used labels collection.
+	 *
+	 * @param label the label.
+	 */
+	protected void markUsedLabel(String label) {
+		line.markUsedLabel(label);
+	}
 
 	@Override
 	public boolean equals(Object o) {

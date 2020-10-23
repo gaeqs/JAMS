@@ -41,8 +41,8 @@ public class MIPSInstructionParameterPart extends MIPSCodeElement {
 	private final int index;
 	private InstructionParameterPartType type;
 
-	public MIPSInstructionParameterPart(MIPSFileElements elements, int startIndex, int endIndex, String text, MIPSInstructionParameter parameter, int index, ParameterPartType type) {
-		super(startIndex, endIndex, text);
+	public MIPSInstructionParameterPart(MIPSLine line, MIPSFileElements elements, int startIndex, int endIndex, String text, MIPSInstructionParameter parameter, int index, ParameterPartType type) {
+		super(line, startIndex, endIndex, text);
 
 		this.parameter = parameter;
 		this.index = index;

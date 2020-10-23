@@ -36,9 +36,10 @@ public class MIPSLabel extends MIPSCodeElement {
 
 	private boolean global;
 
-	public MIPSLabel(int startIndex, int endIndex, String text) {
-		super(startIndex, endIndex, text);
+	public MIPSLabel(MIPSLine line, int startIndex, int endIndex, String text) {
+		super(line, startIndex, endIndex, text);
 		global = false;
+		registerLabel(getLabel(), false);
 	}
 
 

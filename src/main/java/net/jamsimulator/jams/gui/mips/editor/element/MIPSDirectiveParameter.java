@@ -25,7 +25,10 @@
 package net.jamsimulator.jams.gui.mips.editor.element;
 
 import net.jamsimulator.jams.gui.mips.editor.MIPSEditorError;
+import net.jamsimulator.jams.mips.directive.defaults.DirectiveExtern;
+import net.jamsimulator.jams.mips.directive.defaults.DirectiveLab;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
+import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.Arrays;
@@ -37,14 +40,15 @@ public class MIPSDirectiveParameter extends MIPSCodeElement {
 	protected final MIPSDirective directive;
 	protected final int index;
 	private final boolean string;
-	private final boolean eqv;
+	private boolean registeredLabel, globalLabel;
 
-	public MIPSDirectiveParameter(MIPSDirective directive, int index, int startIndex, int endIndex, String text, boolean eqv) {
-		super(startIndex, endIndex, text);
+	public MIPSDirectiveParameter(MIPSLine line, MIPSDirective directive, int index, int startIndex, int endIndex, String text) {
+		super(line, startIndex, endIndex, text);
 		this.directive = directive;
 		this.index = index;
 		this.string = StringUtils.isStringOrChar(text);
-		this.eqv = eqv;
+		this.registeredLabel = false;
+		registerLabelsIfRequired();
 	}
 
 	public int getIndex() {
@@ -69,7 +73,14 @@ public class MIPSDirectiveParameter extends MIPSCodeElement {
 
 	@Override
 	public List<String> getStyles() {
-		String style = string ? "mips-directive-parameter-string" : "mips-directive-parameter";
+		String style;
+
+		if (registeredLabel) {
+			style = globalLabel ? "mips-global-label" : "mips-label";
+		} else {
+			style = string ? "mips-directive-parameter-string" : "mips-directive-parameter";
+		}
+
 		if (hasErrors()) return Arrays.asList(style, "mips-error");
 		return Collections.singletonList(style);
 	}
@@ -84,11 +95,36 @@ public class MIPSDirectiveParameter extends MIPSCodeElement {
 			errors.add(MIPSEditorError.INVALID_DIRECTIVE_PARAMETER);
 		}
 
-		//if (eqv || string || NumericUtils.isInteger(text)) return;
-//
-		//if (!elements.getLabels().contains(text)) {
-		//	errors.add(MIPSEditorError.LABEL_NOT_FOUND);
-		//}
+		if (registeredLabel) {
+			if (elements.getLabels().amount(text) > 1) {
+				errors.add(MIPSEditorError.DUPLICATE_LABEL);
+			} else {
+				MIPSFilesToAssemble filesToAssemble = elements.getFilesToAssemble().orElse(null);
+				if (filesToAssemble == null) return;
+
+				globalLabel = elements.getSetAsGlobalLabel().contains(text);
+
+				int amount = filesToAssemble.getGlobalLabels().amount(text);
+				if (globalLabel) amount--;
+				if (amount > 0) {
+					errors.add(MIPSEditorError.DUPLICATE_GLOBAL_LABEL);
+				}
+			}
+		}
 	}
 
+	private void registerLabelsIfRequired() {
+		var directive = this.directive.getDirective();
+		if (directive instanceof DirectiveLab || directive instanceof DirectiveExtern) {
+			if (index == 0) {
+				registerLabel(text, directive instanceof DirectiveExtern);
+				registeredLabel = true;
+			}
+		} else {
+			var type = directive.getParameterTypeFor(index);
+			if (type != null && type.mayBeLabel()) {
+				markUsedLabel(text);
+			}
+		}
+	}
 }
