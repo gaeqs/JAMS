@@ -25,44 +25,46 @@
 package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
-import net.jamsimulator.jams.mips.assembler.SelectedMemorySegment;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
-import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.utils.NumericUtils;
 
-public class DirectiveKText extends Directive {
+public class DirectiveDWord extends Directive {
 
-	public static final String NAME = "ktext";
-	private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.INT};
+	public static final String NAME = "dword";
+	private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.DOUBLE};
 
-	public DirectiveKText() {
-		super(NAME, PARAMETERS, false, true);
+	public DirectiveDWord() {
+		super(NAME, PARAMETERS, true, false);
 	}
 
 	@Override
 	public int execute(int lineNumber, String line, String[] parameters, MIPS32AssemblingFile file) {
-		int current = file.getAssembler().getAssemblerData().getCurrent();
-		if (parameters.length == 1) {
-			int address;
-			try {
-				address = NumericUtils.decodeInteger(parameters[0]);
-			} catch (NumberFormatException ex) {
-				throw new AssemblerException(lineNumber, "." + NAME + "'s first parameter must be a number!");
-			}
+		if (parameters.length < 1)
+			throw new AssemblerException(lineNumber, "." + NAME + " must have at least one parameter.");
 
-			if (!file.getAssembler().getMemory().getMemorySectionName(address).equals(MIPS32Memory.KERNEL_TEXT_NAME)) {
-				throw new AssemblerException(lineNumber, "Given address is not inside the kernel text memory section");
-			}
+		for (String parameter : parameters) {
+			if (!NumericUtils.isLong(parameter))
+				throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a long.");
+		}
 
-			file.getAssembler().getAssemblerData().setCurrentKText(address);
+		MIPS32AssemblerData data = file.getAssembler().getAssemblerData();
+		data.align(3);
+		int start = data.getCurrent();
+		for (String parameter : parameters) {
+			long l = Long.parseLong(parameter);
 
-		} else if (parameters.length != 0)
-			throw new AssemblerException(lineNumber, "." + NAME + " directive must have one or zero parameters.");
-		file.getAssembler().getAssemblerData().setSelected(SelectedMemorySegment.KERNEL_TEXT);
-		return current;
+			int low = (int) l;
+			int high = (int) (l >> 32);
+
+			file.getAssembler().getMemory().setWord(data.getCurrent(), low);
+			file.getAssembler().getMemory().setWord(data.getCurrent() + 4, high);
+			data.addCurrent(8);
+		}
+		return start;
 	}
 
 	@Override

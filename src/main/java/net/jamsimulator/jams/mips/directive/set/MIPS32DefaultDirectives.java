@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.directive.set;
 
 import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.directive.defaults.DirectiveSet;
 import net.jamsimulator.jams.mips.directive.defaults.*;
 
 import java.util.HashSet;
@@ -35,22 +36,45 @@ class MIPS32DefaultDirectives {
 	static Set<Directive> directives = new HashSet<>();
 
 	static {
+		directives.add(new DirectiveAlias());
 		directives.add(new DirectiveAlign());
 		directives.add(new DirectiveAscii());
 		directives.add(new DirectiveAsciiz());
+		directives.add(new DirectiveAsm0());
+		directives.add(new DirectiveBgnb());
 		directives.add(new DirectiveByte());
 		directives.add(new DirectiveData());
 		directives.add(new DirectiveDouble());
+		directives.add(new DirectiveDWord());
+		directives.add(new DirectiveEnd());
+		directives.add(new DirectiveEndb());
+		directives.add(new DirectiveEndr());
+		directives.add(new DirectiveEnt());
 		directives.add(new DirectiveEqv());
+		directives.add(new DirectiveErr());
 		directives.add(new DirectiveExtern());
+		directives.add(new DirectiveFile());
+		directives.add(new DirectiveFloat());
+		directives.add(new DirectiveFrame());
 		directives.add(new DirectiveFloat());
 		directives.add(new DirectiveGlobl());
 		directives.add(new DirectiveHalf());
 		directives.add(new DirectiveInclude());
 		directives.add(new DirectiveKData());
 		directives.add(new DirectiveKText());
+		directives.add(new DirectiveLab());
+		directives.add(new DirectiveLcomm());
+		directives.add(new DirectiveLivereg());
+		directives.add(new DirectiveLoc());
+		directives.add(new DirectiveMask());
+		directives.add(new DirectiveNoAlias());
+		directives.add(new DirectiveOption());
+		directives.add(new DirectiveRepeat());
+		directives.add(new DirectiveSet());
 		directives.add(new DirectiveSpace());
 		directives.add(new DirectiveText());
+		directives.add(new DirectiveVerstamp());
+		directives.add(new DirectiveVReg());
 		directives.add(new DirectiveWord());
 	}
 

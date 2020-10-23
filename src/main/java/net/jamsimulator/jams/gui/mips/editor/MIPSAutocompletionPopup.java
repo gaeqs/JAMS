@@ -201,7 +201,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 
 	protected String refreshDisplayDirectiveParameter(String start) {
 		MIPSProject project = getDisplay().getProject().orElse(null);
-		if (project == null) return start;
+		if (project == null || element == null) return start;
 
 		var parameter = (MIPSDirectiveParameter) element;
 		var directive = parameter.getDirective().getDirective();

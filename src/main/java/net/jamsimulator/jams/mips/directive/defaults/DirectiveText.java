@@ -45,6 +45,7 @@ public class DirectiveText extends Directive {
 
 	@Override
 	public int execute(int lineNumber, String line, String[] parameters, MIPS32AssemblingFile file) {
+		int current = file.getAssembler().getAssemblerData().getCurrent();
 		if (parameters.length == 1) {
 			int address;
 			try {
@@ -62,7 +63,7 @@ public class DirectiveText extends Directive {
 		} else if (parameters.length != 0)
 			throw new AssemblerException(lineNumber, "." + NAME + " directive must have one or zero parameters.");
 		file.getAssembler().getAssemblerData().setSelected(SelectedMemorySegment.TEXT);
-		return -1;
+		return current;
 	}
 
 	@Override

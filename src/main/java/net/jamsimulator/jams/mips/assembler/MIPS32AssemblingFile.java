@@ -23,6 +23,8 @@ public class MIPS32AssemblingFile {
 	private final Map<String, Integer> labels;
 	private final Set<String> convertToGlobalLabel;
 
+	private final Queue<String> labelsToAdd;
+
 
 	public MIPS32AssemblingFile(String name, String rawData, MIPS32Assembler assembler) {
 		this(name, StringUtils.multiSplit(rawData, "\n", "\r"), assembler);
@@ -40,6 +42,7 @@ public class MIPS32AssemblingFile {
 
 		this.labels = new HashMap<>();
 		this.convertToGlobalLabel = new HashSet<>();
+		this.labelsToAdd = new LinkedList<>();
 	}
 
 	/**
@@ -135,6 +138,8 @@ public class MIPS32AssemblingFile {
 			scanLine(index, line);
 			index++;
 		}
+		int current = assembler.getAssemblerData().getCurrent();
+		while (!labelsToAdd.isEmpty()) checkLabel(lines.size(), labelsToAdd.poll(), current);
 	}
 
 	/**
@@ -153,6 +158,16 @@ public class MIPS32AssemblingFile {
 		directives.forEach(target -> target.executeLabelRequiredSteps(this));
 	}
 
+	/**
+	 * Puts the given label on the label queue.
+	 * All labels inside the queue will be used when an instruction or directive that has a memory address is found.
+	 *
+	 * @param label the label.
+	 */
+	public void addLabelToQueue(String label) {
+		labelsToAdd.add(label);
+	}
+
 	private void scanLine(int index, String line) {
 		String original = line;
 		MIPS32AssemblerData data = assembler.getAssemblerData();
@@ -168,14 +183,16 @@ public class MIPS32AssemblingFile {
 		}
 
 		if (line.isEmpty()) {
-			checkLabel(index, label, labelAddress);
+			if (label != null) {
+				labelsToAdd.add(label);
+			}
 			return;
 		}
 
 		if (line.startsWith(".")) {
 			DirectiveSnapshot snapshot = new DirectiveSnapshot(index, labelAddress, line);
 			snapshot.scan(assembler);
-			labelAddress = snapshot.executeNonLabelRequiredSteps(this);
+			labelAddress = snapshot.executeNonLabelRequiredSteps(this, labelAddress);
 			directives.add(snapshot);
 		} else {
 			data.align(2);
@@ -185,7 +202,15 @@ public class MIPS32AssemblingFile {
 			data.addCurrent(snapshot.scan(assembler));
 		}
 
+		if (labelAddress == -1) {
+			if (label != null) {
+				labelsToAdd.add(label);
+			}
+			return;
+		}
+
 		checkLabel(index, label, labelAddress);
+		while (!labelsToAdd.isEmpty()) checkLabel(index, labelsToAdd.poll(), labelAddress);
 	}
 
 	private void checkLabel(int index, String label, int address) {

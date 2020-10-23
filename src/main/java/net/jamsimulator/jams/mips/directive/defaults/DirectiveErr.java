@@ -26,48 +26,27 @@ package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
-import net.jamsimulator.jams.mips.assembler.SelectedMemorySegment;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
-import net.jamsimulator.jams.mips.memory.MIPS32Memory;
-import net.jamsimulator.jams.utils.NumericUtils;
 
-public class DirectiveKText extends Directive {
+public class DirectiveErr extends Directive {
 
-	public static final String NAME = "ktext";
-	private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.INT};
+	public static final String NAME = "err";
+	private static final DirectiveParameterType[] PARAMETERS = {};
 
-	public DirectiveKText() {
-		super(NAME, PARAMETERS, false, true);
+	public DirectiveErr() {
+		super(NAME, PARAMETERS, false, false);
 	}
 
 	@Override
 	public int execute(int lineNumber, String line, String[] parameters, MIPS32AssemblingFile file) {
-		int current = file.getAssembler().getAssemblerData().getCurrent();
-		if (parameters.length == 1) {
-			int address;
-			try {
-				address = NumericUtils.decodeInteger(parameters[0]);
-			} catch (NumberFormatException ex) {
-				throw new AssemblerException(lineNumber, "." + NAME + "'s first parameter must be a number!");
-			}
-
-			if (!file.getAssembler().getMemory().getMemorySectionName(address).equals(MIPS32Memory.KERNEL_TEXT_NAME)) {
-				throw new AssemblerException(lineNumber, "Given address is not inside the kernel text memory section");
-			}
-
-			file.getAssembler().getAssemblerData().setCurrentKText(address);
-
-		} else if (parameters.length != 0)
-			throw new AssemblerException(lineNumber, "." + NAME + " directive must have one or zero parameters.");
-		file.getAssembler().getAssemblerData().setSelected(SelectedMemorySegment.KERNEL_TEXT);
-		return current;
+		throw new AssemblerException("Error directive found at line " + lineNumber);
 	}
 
 	@Override
 	public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address) {
-
+		throw new AssemblerException("Error directive found at line " + lineNumber);
 	}
 
 	@Override
