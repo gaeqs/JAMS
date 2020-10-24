@@ -10,7 +10,7 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
  */
 public class SimulationChangeMemoryWord extends SimulationChange<Architecture> {
 
-	private final Memory memory;
+	private Memory memory;
 	private final int address, old;
 	private final long operations, hits;
 
@@ -26,6 +26,10 @@ public class SimulationChangeMemoryWord extends SimulationChange<Architecture> {
 		} else {
 			operations = hits = 0;
 		}
+	}
+
+	public void setMemory(Memory memory) {
+		this.memory = memory;
 	}
 
 	@Override

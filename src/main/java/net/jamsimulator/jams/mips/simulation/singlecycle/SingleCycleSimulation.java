@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.mips.simulation.singlecycle;
 
-import javafx.application.Platform;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
@@ -115,6 +114,27 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 		if (changes != null) {
 			changes.clear();
 		}
+	}
+
+	@Override
+	public boolean resetCaches() {
+		if (!super.resetCaches()) return false;
+		if (!data.isUndoEnabled()) return true;
+
+		//Gets the last memory level.
+		var last = memory;
+		Optional<Memory> current = Optional.of(memory);
+		while (current.isPresent()) {
+			current = current.get().getNextLevelMemory();
+			if (current.isPresent()) {
+				last = current.get();
+			}
+		}
+
+		for (StepChanges<?> change : changes) {
+			change.removeCacheChanges(last);
+		}
+		return true;
 	}
 
 	@Override

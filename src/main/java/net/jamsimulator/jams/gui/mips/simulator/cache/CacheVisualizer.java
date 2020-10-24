@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.gui.mips.simulator.cache;
 
 import javafx.scene.chart.PieChart;
+import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
@@ -29,8 +30,17 @@ public class CacheVisualizer extends AnchorPane {
 		chart.getData().addAll(hitRate, missRate);
 		refresh();
 
-		AnchorUtils.setAnchor(chart, 0, 0, 0, 0);
+		AnchorUtils.setAnchor(chart, 0, 30, 0, 0);
 		getChildren().add(chart);
+
+
+		var resetButton = new Button("Reset");
+		AnchorUtils.setAnchor(resetButton, -1, 5, 5, 5);
+		resetButton.setOnAction(event -> {
+			simulation.resetCaches();
+			refresh();
+		});
+		getChildren().add(resetButton);
 
 		simulation.registerListeners(this, true);
 	}

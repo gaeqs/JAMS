@@ -6,6 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.configuration.ConfigurationRegionDisplay;
+import net.jamsimulator.jams.gui.util.value.ValueEditor;
 import net.jamsimulator.jams.gui.util.value.ValueEditors;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
@@ -16,6 +17,7 @@ import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurat
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurationPresets;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class MIPSConfigurationDisplayGeneralTab extends VBox {
@@ -40,31 +42,26 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
 			representation.refreshView(architecture);
 			representations.add(representation);
 		});
-
 		representations.sort((o1, o2) -> o2.getPreset().getPriority() - o1.getPreset().getPriority());
 		representations.stream().filter(Node::isVisible).forEach(getChildren()::add);
+		representations.forEach(target -> target.refreshEnabled(representations));
 	}
 
 	private void update(MIPSSimulationConfigurationNodePreset preset, Object value) {
 		configuration.setNodeValue(preset.getName(), value);
-
-		var name = preset.getName();
-
 		if (preset.getType() == Architecture.class) {
 			getChildren().clear();
 			getChildren().add(new ConfigurationRegionDisplay(Messages.SIMULATION_CONFIGURATION_GENERAL_REGION));
 			for (Representation representation : representations) {
 				representation.refreshView((Architecture) value);
-				representation.refreshEnabled(preset.getName(), value);
 				if (representation.isVisible()) {
 					getChildren().add(representation);
 				}
+				representation.refreshEnabled(representations);
 			}
 		} else {
-			for (Node child : getChildren()) {
-				if (child instanceof Representation) {
-					((Representation) child).refreshEnabled(name, value);
-				}
+			for (Representation representation : representations) {
+				representation.refreshEnabled(representations);
 			}
 		}
 	}
@@ -72,6 +69,7 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
 	private class Representation extends HBox {
 
 		private final MIPSSimulationConfigurationNodePreset preset;
+		private final ValueEditor<?> editor;
 
 		public Representation(MIPSSimulationConfigurationNodePreset preset, Object value) {
 			setSpacing(5);
@@ -80,7 +78,7 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
 			this.preset = preset;
 			var label = new LanguageLabel(preset.getLanguageNode());
 			label.setTooltip(new LanguageTooltip(preset.getLanguageNode() + "_TOOLTIP"));
-			var editor = ValueEditors.getByTypeUnsafe(preset.getType()).build();
+			editor = ValueEditors.getByTypeUnsafe(preset.getType()).build();
 
 			if (value instanceof Boolean) {
 				label.setOnMouseClicked(event -> editor.setCurrentValueUnsafe(!(boolean) editor.getCurrentValue()));
@@ -101,8 +99,9 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
 			setVisible(preset.supportArchitecture(architecture));
 		}
 
-		public void refreshEnabled(String node, Object value) {
-			setDisabled(!preset.supportsNode(node, value));
+		public void refreshEnabled(Collection<Representation> representations) {
+			setDisabled(representations.stream().anyMatch(target ->
+					!preset.supportsNode(target.preset.getName(), target.editor.getCurrentValue())));
 		}
 
 	}

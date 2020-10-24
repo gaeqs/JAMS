@@ -159,6 +159,26 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 		pipeline.reset(registers.getProgramCounter().getValue());
 	}
 
+	@Override
+	public boolean resetCaches() {
+		if (!super.resetCaches()) return false;
+		if (!data.isUndoEnabled()) return true;
+
+		//Gets the last memory level.
+		var last = memory;
+		Optional<Memory> current = Optional.of(memory);
+		while (current.isPresent()) {
+			current = current.get().getNextLevelMemory();
+			if (current.isPresent()) {
+				last = current.get();
+			}
+		}
+
+		for (StepChanges<?> change : changes) {
+			change.removeCacheChanges(last);
+		}
+		return true;
+	}
 
 	@Override
 	public void manageMIPSInterrupt(RuntimeInstructionException exception, int pc) {
@@ -468,8 +488,8 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 		}
 
 		@Listener
-		private void onCacheOperation (CacheOperationEvent event) {
-			if(currentStepChanges == null) return;
+		private void onCacheOperation(CacheOperationEvent event) {
+			if (currentStepChanges == null) return;
 			currentStepChanges.addChange(new SimulationChangeCacheOperation(event.getCache(), event.isHit(),
 					event.getBlockIndex(), event.getOldBlock()));
 		}

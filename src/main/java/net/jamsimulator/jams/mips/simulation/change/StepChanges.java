@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.mips.simulation.change;
 
 import net.jamsimulator.jams.mips.architecture.Architecture;
+import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
 import java.util.LinkedList;
@@ -27,6 +28,18 @@ public class StepChanges<Arch extends Architecture> {
 		synchronized (lock) {
 			changes.forEach(target -> target.restore(simulation));
 			changes.clear();
+		}
+	}
+
+	public void removeCacheChanges(Memory last) {
+		synchronized (lock) {
+			var iterator = changes.iterator();
+			while (iterator.hasNext()) {
+				var next = iterator.next();
+				if (next instanceof SimulationChangeCacheOperation) iterator.remove();
+				if (next instanceof SimulationChangeMemoryByte) ((SimulationChangeMemoryByte) next).setMemory(last);
+				if (next instanceof SimulationChangeMemoryWord) ((SimulationChangeMemoryWord) next).setMemory(last);
+			}
 		}
 	}
 
