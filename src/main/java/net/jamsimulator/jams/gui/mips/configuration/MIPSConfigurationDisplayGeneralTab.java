@@ -52,6 +52,7 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
 
 		if (preset.getType() == Architecture.class) {
 			getChildren().clear();
+			getChildren().add(new ConfigurationRegionDisplay(Messages.SIMULATION_CONFIGURATION_GENERAL_REGION));
 			for (Representation representation : representations) {
 				representation.refreshView((Architecture) value);
 				representation.refreshEnabled(preset.getName(), value);

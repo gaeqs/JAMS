@@ -28,6 +28,8 @@ import net.jamsimulator.jams.event.Cancellable;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.MemorySection;
 
+import java.util.Optional;
+
 /**
  * Represents a event invoked when a byte is stored in a {@link Memory}.
  */
@@ -94,8 +96,8 @@ public class MemoryByteSetEvent extends MemoryEvent {
 			this.oldValue = oldValue;
 		}
 
-		public MemorySection getMemorySection() {
-			return memorySection;
+		public Optional<MemorySection> getMemorySection() {
+			return Optional.ofNullable(memorySection);
 		}
 
 		public byte getOldValue() {

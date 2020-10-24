@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.memory;
 
 import net.jamsimulator.jams.event.EventBroadcast;
+import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
 
 import java.util.Optional;
 import java.util.Set;

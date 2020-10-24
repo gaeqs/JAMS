@@ -33,6 +33,7 @@ import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
 import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
+import net.jamsimulator.jams.mips.memory.cache.event.CacheOperationEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryAllocateMemoryEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
@@ -55,6 +56,7 @@ import net.jamsimulator.jams.mips.simulation.multicycle.event.MultiCycleStepEven
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.LinkedList;
+import java.util.Optional;
 
 /**
  * Represents the execution of a set of instruction inside a MIPS32 multi-cycle computer.
@@ -77,6 +79,10 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 	private MultiCycleStep currentStep;
 	private MultiCycleExecution<?> currentExecution;
 
+	//Hard reference. Do not convert to local variable.
+	@SuppressWarnings("FieldCanBeLocal")
+	private final Listeners listeners;
+
 	/**
 	 * Creates the single-cycle simulation.
 	 *
@@ -91,6 +97,16 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 		executedInstructions = 0;
 		changes = data.isUndoEnabled() ? new LinkedList<>() : null;
 		currentStep = MultiCycleStep.FETCH;
+
+		listeners = new Listeners();
+
+		registers.registerListeners(listeners, true);
+		files.registerListeners(listeners, true);
+		Optional<Memory> current = Optional.of(memory);
+		while (current.isPresent()) {
+			current.get().registerListeners(listeners, true);
+			current = current.get().getNextLevelMemory();
+		}
 	}
 
 	/**
@@ -396,52 +412,64 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 
 	//region change listeners
 
-	@Listener
-	private void onMemoryChange(MemoryWordSetEvent.After event) {
-		if (currentStepChanges == null) return;
-		currentStepChanges.addChange(new SimulationChangeMemoryWord(event.getAddress(), event.getOldValue()));
-	}
+	public class Listeners {
 
-	@Listener
-	private void onMemoryChange(MemoryByteSetEvent.After event) {
-		if (currentStepChanges == null) return;
-		currentStepChanges.addChange(new SimulationChangeMemoryByte(event.getAddress(), event.getOldValue()));
-	}
 
-	@Listener
-	private void onRegisterChange(RegisterChangeValueEvent.After event) {
-		if (currentStepChanges == null) return;
-		currentStepChanges.addChange(new SimulationChangeRegister(event.getRegister(), event.getOldValue()));
-	}
+		@Listener
+		private void onMemoryChange(MemoryWordSetEvent.After event) {
+			if (currentStepChanges == null) return;
+			currentStepChanges.addChange(new SimulationChangeMemoryWord(event.getMemory(), event.getAddress(), event.getOldValue()));
+		}
 
-	@Listener
-	private void onEndiannessChange(MemoryEndiannessChange.After event) {
-		if (currentStepChanges == null) return;
-		currentStepChanges.addChange(new SimulationChangeMemoryEndianness(!event.isNewEndiannessBigEndian()));
-	}
+		@Listener
+		private void onMemoryChange(MemoryByteSetEvent.After event) {
+			if (currentStepChanges == null) return;
+			currentStepChanges.addChange(new SimulationChangeMemoryByte(event.getMemory(), event.getAddress(), event.getOldValue()));
+		}
 
-	@Listener
-	private void onReserve(MemoryAllocateMemoryEvent.After event) {
-		if (currentStepChanges == null) return;
-		currentStepChanges.addChange(new SimulationChangeAllocatedMemory(event.getOldCurrentData()));
-	}
+		@Listener
+		private void onRegisterChange(RegisterChangeValueEvent.After event) {
+			if (currentStepChanges == null) return;
+			currentStepChanges.addChange(new SimulationChangeRegister(event.getRegister(), event.getOldValue()));
+		}
 
-	@Listener
-	private void onFileOpen(SimulationFileOpenEvent.After event) {
-		if (currentStepChanges == null) return;
-		currentStepChanges.addChange(new SimulationChangeFileOpen(event.getSimulationFile().getId()));
-	}
+		@Listener
+		private void onEndiannessChange(MemoryEndiannessChange.After event) {
+			if (currentStepChanges == null) return;
+			currentStepChanges.addChange(new SimulationChangeMemoryEndianness(!event.isNewEndiannessBigEndian()));
+		}
 
-	@Listener
-	private void onFileClose(SimulationFileCloseEvent.After event) {
-		if (currentStepChanges == null) return;
-		currentStepChanges.addChange(new SimulationChangeFileClose(event.getFile()));
-	}
+		@Listener
+		private void onReserve(MemoryAllocateMemoryEvent.After event) {
+			if (currentStepChanges == null) return;
+			currentStepChanges.addChange(new SimulationChangeAllocatedMemory(event.getOldCurrentData()));
+		}
 
-	@Listener
-	private void onFileWrite(SimulationFileWriteEvent.After event) {
-		if (currentStepChanges == null) return;
-		currentStepChanges.addChange(new SimulationChangeFileWrite(event.getFile(), event.getData().length));
+		@Listener
+		private void onCacheOperation (CacheOperationEvent event) {
+			if(currentStepChanges == null) return;
+			currentStepChanges.addChange(new SimulationChangeCacheOperation(event.getCache(), event.isHit(),
+					event.getBlockIndex(), event.getOldBlock()));
+		}
+
+		@Listener
+		private void onFileOpen(SimulationFileOpenEvent.After event) {
+			if (currentStepChanges == null) return;
+			currentStepChanges.addChange(new SimulationChangeFileOpen(event.getSimulationFile().getId()));
+		}
+
+		@Listener
+		private void onFileClose(SimulationFileCloseEvent.After event) {
+			if (currentStepChanges == null) return;
+			currentStepChanges.addChange(new SimulationChangeFileClose(event.getFile()));
+		}
+
+		@Listener
+		private void onFileWrite(SimulationFileWriteEvent.After event) {
+			if (currentStepChanges == null) return;
+			currentStepChanges.addChange(new SimulationChangeFileWrite(event.getFile(), event.getData().length));
+		}
+
 	}
 
 	//endregion

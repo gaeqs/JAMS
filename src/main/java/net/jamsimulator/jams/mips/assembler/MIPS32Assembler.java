@@ -111,6 +111,8 @@ public class MIPS32Assembler implements Assembler {
 		Memory memory = getMemory().copy();
 		memory.saveState();
 
+		memory.restoreSavedState();
+
 		Registers registers = getRegisters().copy();
 
 		Simulation<?> simulation = architecture.createSimulation(instructionSet, registers, memory,
@@ -166,7 +168,15 @@ public class MIPS32Assembler implements Assembler {
 		//Reserves static memory.
 		memory.allocateMemory(assemblerData.getCurrentData() - assemblerData.getFirstData());
 		assembled = true;
-		if (memory instanceof Cache) ((Cache) memory).resetCache();
+
+		//Reset all caches.
+		Optional<Memory> current = Optional.of(memory);
+		while (current.isPresent()) {
+			if (current.get() instanceof Cache) {
+				((Cache) current.get()).resetCache();
+			}
+			current = current.get().getNextLevelMemory();
+		}
 
 		int main = getGlobalLabelAddress("main").orElse(-1);
 		if (main != -1) registers.getProgramCounter().setValue(main);

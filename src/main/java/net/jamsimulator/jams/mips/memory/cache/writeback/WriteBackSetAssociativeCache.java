@@ -3,6 +3,7 @@ package net.jamsimulator.jams.mips.memory.cache.writeback;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
 import net.jamsimulator.jams.mips.memory.cache.CacheReplacementPolicy;
+import net.jamsimulator.jams.mips.memory.cache.event.CacheOperationEvent;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -32,7 +33,7 @@ public class WriteBackSetAssociativeCache extends WriteBackCache {
 	}
 
 	@Override
-	protected CacheBlock getBlock(int address) {
+	protected CacheBlock getBlock(int address, boolean callEvent) {
 		int tag = calculateTag(address);
 		int index = calculateSetIndex(address) * setSize;
 
@@ -40,25 +41,29 @@ public class WriteBackSetAssociativeCache extends WriteBackCache {
 
 		CacheBlock b = null;
 		CacheBlock current;
+		int blockIndex = index;
 		for (int i = 0; i < setSize; i++) {
 			current = blocks[index + i];
 			if (current != null && current.getTag() == tag) {
 				b = current;
 				break;
 			}
+			blockIndex++;
 		}
 
+		var isHit = b != null;
+		CacheBlock old = b;
 		if (b != null) hits++;
-		if (b == null) {
+		else {
 			int start = address & ~byteMask;
 			b = new CacheBlock(tag, start, new byte[blockSize << 2]);
 
 			CacheBlock[] set = new CacheBlock[setSize];
 			System.arraycopy(blocks, index, set, 0, setSize);
-			int blockIndex = index + replacementPolicy.getBlockToReplaceIndex(set);
+			blockIndex = index + replacementPolicy.getBlockToReplaceIndex(set);
 
-			CacheBlock old = blocks[blockIndex];
-			if(old != null && old.isDirty()) {
+			old = blocks[blockIndex];
+			if (old != null && old.isDirty()) {
 				old.write(parent);
 			}
 
@@ -70,6 +75,10 @@ public class WriteBackSetAssociativeCache extends WriteBackCache {
 			b.setCreationTime(cacheTime);
 
 			blocks[blockIndex] = b;
+		}
+
+		if (callEvent) {
+			callEvent(new CacheOperationEvent(this, operations - 1, isHit, old, b, blockIndex));
 		}
 
 		return b;

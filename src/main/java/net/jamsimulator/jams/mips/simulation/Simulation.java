@@ -228,6 +228,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 	/**
 	 * Returns the collection containing all number generators of this simulation.
+	 *
 	 * @return the collection.
 	 */
 	public NumberGenerators getNumberGenerators() {
@@ -590,7 +591,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 			instructionCache[address - memory.getFirstTextAddress()] = null;
 		}
 
-		if (event.getMemorySection().getName().equals("Text") && instructionStackBottom < event.getAddress()) {
+		var memorySection = event.getMemorySection().orElse(null);
+		if (memorySection != null && memorySection.getName().equals("Text") && instructionStackBottom < event.getAddress()) {
 			instructionStackBottom = address;
 
 			InstructionExecution<Arch, ?>[] array =
@@ -607,8 +609,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		if (address >= memory.getFirstTextAddress() && address <= instructionStackBottom) {
 			instructionCache[address - memory.getFirstTextAddress()] = null;
 		}
-
-		if (event.getMemorySection().getName().equals("Text") && instructionStackBottom < event.getAddress()) {
+		var memorySection = event.getMemorySection().orElse(null);
+		if (memorySection != null && memorySection.getName().equals("Text") && instructionStackBottom < event.getAddress()) {
 			instructionStackBottom = address;
 
 			InstructionExecution<Arch, ?>[] array =

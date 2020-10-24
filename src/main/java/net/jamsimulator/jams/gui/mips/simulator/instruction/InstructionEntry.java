@@ -50,7 +50,7 @@ public class InstructionEntry {
 		if (breakpointProperty == null) {
 			breakpointProperty = new SimpleBooleanProperty(null, "breakpoint", false);
 			breakpointProperty.addListener((obs, old, val) -> {
-				if(val) {
+				if (val) {
 					simulation.getBreakpoints().add(address);
 				} else {
 					simulation.getBreakpoints().remove(address);
@@ -63,7 +63,7 @@ public class InstructionEntry {
 	public StringProperty codeProperty() {
 
 		if (codeProperty == null) {
-			code = simulation.getMemory().getWord(address);
+			code = simulation.getMemory().getWord(address, false, true);
 			codeProperty = new SimpleStringProperty("0x" + StringUtils.addZeros(Integer.toHexString(code), 8));
 
 			codeProperty.addListener((obs, old, val) -> {

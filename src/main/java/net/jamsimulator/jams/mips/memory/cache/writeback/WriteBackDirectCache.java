@@ -2,6 +2,7 @@ package net.jamsimulator.jams.mips.memory.cache.writeback;
 
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
+import net.jamsimulator.jams.mips.memory.cache.event.CacheOperationEvent;
 import net.jamsimulator.jams.utils.NumericUtils;
 
 public class WriteBackDirectCache extends WriteBackCache {
@@ -22,7 +23,7 @@ public class WriteBackDirectCache extends WriteBackCache {
 	}
 
 	@Override
-	protected CacheBlock getBlock(int address) {
+	protected CacheBlock getBlock(int address, boolean callEvent) {
 		int tag = calculateTag(address);
 		int index = calculateBlockIndex(address);
 
@@ -30,14 +31,15 @@ public class WriteBackDirectCache extends WriteBackCache {
 		CacheBlock b = blocks[index];
 		if (b == null || b.getTag() != tag) b = null;
 
+		var isHit = b != null;
+		CacheBlock old = b;
 		if (b != null) hits++;
-
-		if (b == null) {
+		else {
 			int start = address & ~byteMask;
 			b = new CacheBlock(tag, start, new byte[blockSize << 2]);
 
-			CacheBlock old = blocks[index];
-			if(old != null && old.isDirty()) {
+			old = blocks[index];
+			if (old != null && old.isDirty()) {
 				old.write(parent);
 			}
 
@@ -48,6 +50,10 @@ public class WriteBackDirectCache extends WriteBackCache {
 			b.setCreationTime(cacheTime);
 
 			blocks[index] = b;
+		}
+
+		if (callEvent) {
+			callEvent(new CacheOperationEvent(this, operations - 1, isHit, old, b, index));
 		}
 
 		return b;

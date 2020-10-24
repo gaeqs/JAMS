@@ -12,6 +12,7 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.bar.BarType;
 import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.mips.simulator.cache.CacheVisualizer;
 import net.jamsimulator.jams.gui.mips.simulator.execution.ExecutionButtons;
 import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionTableGroup;
@@ -27,6 +28,7 @@ import net.jamsimulator.jams.gui.util.ScalableNode;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
+import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.project.mips.MIPSProject;
@@ -78,6 +80,7 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 		loadMemoryTab();
 		loadFlow();
 		loadLabels();
+		loadCacheVisualizer();
 
 		init();
 
@@ -159,11 +162,19 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 	}
 
 	private void loadLabels() {
-		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_LABELS
-		).orElse(null);
+		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_LABELS).orElse(null);
 		var pane = new LabelTable(this);
 
 		manageBarAddition("labels", pane, icon, Messages.BAR_LABELS_NAME, BarType.BOTTOM_RIGHT);
+	}
+
+	private void loadCacheVisualizer() {
+		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_LABELS).orElse(null);
+		var memory = simulation.getMemory();
+		if (memory instanceof Cache) {
+			var visualizer = new CacheVisualizer(simulation, (Cache) memory);
+			manageBarAddition("cache_visualizer", visualizer, icon, Messages.BAR_LABELS_NAME, BarType.BOTTOM_RIGHT);
+		}
 	}
 
 

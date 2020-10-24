@@ -2,6 +2,7 @@ package net.jamsimulator.jams.mips.memory.cache.writethrough;
 
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
+import net.jamsimulator.jams.mips.memory.cache.event.CacheOperationEvent;
 import net.jamsimulator.jams.utils.NumericUtils;
 
 public class WriteThroughDirectCache extends WriteThroughCache {
@@ -22,7 +23,7 @@ public class WriteThroughDirectCache extends WriteThroughCache {
 	}
 
 	@Override
-	protected CacheBlock getBlock(int address, boolean create) {
+	protected CacheBlock getBlock(int address, boolean create, boolean callEvent) {
 		int tag = calculateTag(address);
 		int index = calculateBlockIndex(address);
 
@@ -30,9 +31,10 @@ public class WriteThroughDirectCache extends WriteThroughCache {
 		CacheBlock b = blocks[index];
 		if (b == null || b.getTag() != tag) b = null;
 
+		var isHit = b != null;
+		CacheBlock old = b;
 		if (b != null) hits++;
-
-		if (b == null && create) {
+		else if (create) {
 			int start = address & ~byteMask;
 			b = new CacheBlock(tag, start, new byte[blockSize << 2]);
 
@@ -43,7 +45,12 @@ public class WriteThroughDirectCache extends WriteThroughCache {
 
 			b.setCreationTime(cacheTime);
 
+			old = blocks[index];
 			blocks[index] = b;
+		} else index = -1;
+
+		if (callEvent) {
+			callEvent(new CacheOperationEvent(this, operations - 1, isHit, old, b, index));
 		}
 
 		return b;

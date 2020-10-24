@@ -27,6 +27,8 @@ package net.jamsimulator.jams.mips.memory.event;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.MemorySection;
 
+import java.util.Optional;
+
 /**
  * Represents a event invoked when a byte is get from a {@link Memory}.
  */
@@ -71,8 +73,8 @@ public class MemoryByteGetEvent extends MemoryEvent {
 			this.memorySection = memorySection;
 		}
 
-		public MemorySection getMemorySection() {
-			return memorySection;
+		public Optional<MemorySection> getMemorySection() {
+			return Optional.ofNullable(memorySection);
 		}
 
 		public byte getValue() {

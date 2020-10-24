@@ -3,6 +3,7 @@ package net.jamsimulator.jams.mips.memory.cache.writeback;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
 import net.jamsimulator.jams.mips.memory.cache.CacheReplacementPolicy;
+import net.jamsimulator.jams.mips.memory.cache.event.CacheOperationEvent;
 import net.jamsimulator.jams.utils.NumericUtils;
 
 public class WriteBackAssociativeCache extends WriteBackCache {
@@ -21,28 +22,32 @@ public class WriteBackAssociativeCache extends WriteBackCache {
 	}
 
 	@Override
-	protected CacheBlock getBlock(int address) {
+	protected CacheBlock getBlock(int address, boolean callEvent) {
 		int tag = calculateTag(address);
 
 		operations++;
 
 		CacheBlock b = null;
+		int blockIndex = 0;
 		for (CacheBlock block : blocks) {
 			if (block != null && block.getTag() == tag) {
 				b = block;
 				break;
 			}
+			blockIndex++;
 		}
 
-		if (b != null) hits++;
+		var isHit = b != null;
+		CacheBlock old = b;
 
-		if (b == null) {
+		if (b != null) hits++;
+		else {
 			int start = address & ~byteMask;
 			b = new CacheBlock(tag, start, new byte[blockSize << 2]);
 
-			int blockIndex = replacementPolicy.getBlockToReplaceIndex(blocks);
+			blockIndex = replacementPolicy.getBlockToReplaceIndex(blocks);
 
-			CacheBlock old = blocks[blockIndex];
+			old = blocks[blockIndex];
 			if (old != null && old.isDirty()) {
 				old.write(parent);
 			}
@@ -55,6 +60,10 @@ public class WriteBackAssociativeCache extends WriteBackCache {
 			b.setCreationTime(cacheTime);
 
 			blocks[blockIndex] = b;
+		}
+
+		if (callEvent) {
+			callEvent(new CacheOperationEvent(this, operations - 1, isHit, old, b, blockIndex));
 		}
 
 		return b;

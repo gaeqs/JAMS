@@ -1,11 +1,17 @@
 package net.jamsimulator.jams.mips.memory.cache.writethrough;
 
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
+import net.jamsimulator.jams.mips.interrupt.InterruptCause;
+import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.MemorySection;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
 import net.jamsimulator.jams.mips.memory.cache.CacheStats;
+import net.jamsimulator.jams.mips.memory.event.MemoryByteGetEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryWordGetEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -119,48 +125,121 @@ public abstract class WriteThroughCache extends SimpleEventBroadcast implements 
 
 	@Override
 	public byte getByte(int address) {
-		CacheBlock block = getBlock(address, true);
-		block.setModificationTime(cacheTime++);
-		return block.getByte(address & byteMask);
+		return getByte(address, true, false);
 	}
 
 	@Override
 	public void setByte(int address, byte b) {
 		parent.setByte(address, b);
-		CacheBlock block = getBlock(address, false);
+		CacheBlock block = getBlock(address, false, areEventCallsEnabled());
 		if (block != null) {
+			if (!areEventCallsEnabled()) {
+				block.setModificationTime(cacheTime++);
+				block.setByte(address & byteMask, b);
+				return;
+			}
+
+			//Invokes the before event.
+			var before = callEvent(new MemoryByteSetEvent.Before(this, address, b));
+			if (before.isCancelled()) return;
+
+			//Refresh data.
+			address = before.getAddress();
+			b = before.getValue();
+
+			//Gets the section and sets the byte.
 			block.setModificationTime(cacheTime++);
-			block.setByte(address & byteMask, b);
+			byte old = block.setByte(address & byteMask, b);
+
+			//Invokes the after event.
+			callEvent(new MemoryByteSetEvent.After(this, null, address, b, old));
 		}
 	}
 
 	@Override
 	public int getWord(int address) {
-		CacheBlock block = getBlock(address, true);
-		block.setModificationTime(cacheTime++);
-		return block.getWord(address & byteMask, isBigEndian());
+		return getWord(address, true, false);
 	}
 
 	@Override
 	public void setWord(int address, int word) {
 		parent.setWord(address, word);
-		CacheBlock block = getBlock(address, false);
+		CacheBlock block = getBlock(address, false, areEventCallsEnabled());
 		if (block != null) {
+			if (!areEventCallsEnabled()) {
+				block.setModificationTime(cacheTime++);
+				block.setWord(address & byteMask, word, isBigEndian());
+				return;
+			}
+
+			//Invokes the before event.
+			var before = callEvent(new MemoryWordSetEvent.Before(this, address, word));
+			if (before.isCancelled()) return;
+
+			//Refresh data.
+			address = before.getAddress();
+			word = before.getValue();
+
+			//Gets the section and sets the word.
 			block.setModificationTime(cacheTime++);
-			block.setWord(address & byteMask, word, isBigEndian());
+			int old = block.setWord(address & byteMask, word, isBigEndian());
+
+			//Invokes the after event.
+			callEvent(new MemoryWordSetEvent.After(this, null, address, word, old));
 		}
 	}
 
 	@Override
 	public int getWord(int address, boolean callEvents, boolean bypassCaches) {
-		if (bypassCaches) return parent.getWord(address);
-		return getWord(address);
+		if (address % 4 != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
+		if (bypassCaches) return parent.getWord(address, callEvents, true);
+		boolean events = callEvents && areEventCallsEnabled();
+
+		CacheBlock block = getBlock(address, true, events);
+
+		if (!events) {
+			block.setModificationTime(cacheTime++);
+			return block.getWord(address & byteMask, isBigEndian());
+		}
+
+		//Invokes the before event.
+		var before = callEvent(new MemoryWordGetEvent.Before(this, address));
+
+		//Refresh data.
+		address = before.getAddress();
+
+		//Gets the section and the word.
+		block.setModificationTime(cacheTime++);
+		int word = block.getWord(address & byteMask, isBigEndian());
+
+		//Invokes the after event.
+		return callEvent(new MemoryWordGetEvent.After(this, null, address, word)).getValue();
 	}
 
 	@Override
 	public byte getByte(int address, boolean callEvents, boolean bypassCaches) {
-		if (bypassCaches) return parent.getByte(address);
-		return getByte(address);
+		if (bypassCaches) return parent.getByte(address, callEvents, true);
+		boolean events = callEvents && areEventCallsEnabled();
+
+		CacheBlock block = getBlock(address, true, events);
+
+		if (!events) {
+			block.setModificationTime(cacheTime++);
+			return block.getByte(address & byteMask);
+		}
+
+		//Invokes the before event.
+		var before = callEvent(new MemoryByteGetEvent.Before(this, address));
+
+		//Refresh data.
+		address = before.getAddress();
+
+		//Gets the section and the byte.
+		block.setModificationTime(cacheTime++);
+		byte b = block.getByte(address & byteMask);
+
+		//Invokes the after event.
+		return callEvent(new MemoryByteGetEvent.After(this, null, address, b)).getValue();
 	}
 
 	@Override
@@ -241,6 +320,21 @@ public abstract class WriteThroughCache extends SimpleEventBroadcast implements 
 	}
 
 	@Override
+	public void undoOperation(boolean hit, int blockIndex, CacheBlock old) {
+		operations--;
+		if (hit) hits--;
+		if (blockIndex != -1) {
+			blocks[blockIndex] = old;
+		}
+	}
+
+	@Override
+	public void forceStats(long operations, long hits) {
+		this.operations = operations;
+		this.hits = hits;
+	}
+
+	@Override
 	public Set<MemorySection> getMemorySections() {
 		return parent.getMemorySections();
 	}
@@ -260,7 +354,7 @@ public abstract class WriteThroughCache extends SimpleEventBroadcast implements 
 		return parent.getMemorySection(name);
 	}
 
-	protected abstract CacheBlock getBlock(int address, boolean create);
+	protected abstract CacheBlock getBlock(int address, boolean create, boolean callEvent);
 
 	protected int calculateTag(int address) {
 		return address >> tagShift;

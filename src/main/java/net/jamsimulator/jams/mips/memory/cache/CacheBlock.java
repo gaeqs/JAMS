@@ -58,8 +58,10 @@ public class CacheBlock {
 		return data[address];
 	}
 
-	public void setByte(int address, byte b) {
+	public byte setByte(int address, byte b) {
+		byte old = data[address];
 		data[address] = b;
+		return old;
 	}
 
 	public int getWord(int address, boolean bigEndian) {
@@ -70,7 +72,8 @@ public class CacheBlock {
 		return bigEndian ? MemoryCell.merge(b3, b2, b1, b0) : MemoryCell.merge(b0, b1, b2, b3);
 	}
 
-	public void setWord(int address, int word, boolean bigEndian) {
+	public int setWord(int address, int word, boolean bigEndian) {
+		var old = getWord(address, bigEndian);
 		byte[] array = MemoryCell.split(word);
 		if (bigEndian) {
 			data[address++] = array[3];
@@ -83,6 +86,7 @@ public class CacheBlock {
 			data[address++] = array[2];
 			data[address] = array[3];
 		}
+		return old;
 	}
 
 	public void write(Memory parent) {
