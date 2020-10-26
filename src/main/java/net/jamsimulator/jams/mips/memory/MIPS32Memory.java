@@ -31,7 +31,7 @@ package net.jamsimulator.jams.mips.memory;
 public class MIPS32Memory extends SimpleMemory {
 
 	public static final int KERNEL_RESERVED_1 = 0;
-	public static final int TEXT = 0x04000000;
+	public static final int TEXT = 0x00400000;
 	public static final int DATA = 0x10000000;
 	public static final int KERNEL_TEXT = 0x80000000;
 	public static final int KERNEL_DATA = 0x90000000;

@@ -131,6 +131,11 @@ jlink {
     }
 }
 
+test {
+    useJUnitPlatform()
+    testLogging.showStandardStreams = true
+}
+
 static String normalizeAppVersion(final String appVersion) {
     if (org.gradle.internal.os.OperatingSystem.current().linux) {
         // Replace '-' with '.' for rpmbuild

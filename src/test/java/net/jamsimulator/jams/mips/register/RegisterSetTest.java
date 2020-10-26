@@ -24,12 +24,13 @@
 
 package net.jamsimulator.jams.mips.register;
 
+import net.jamsimulator.jams.mips.memory.MIPS32Memory;
+import net.jamsimulator.jams.utils.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RegisterSetTest {
 
@@ -37,7 +38,8 @@ class RegisterSetTest {
 
 	@Test
 	void getProgramCounter() {
-		assertEquals(0x00400000, registerSet.getProgramCounter().getValue(), "Bad program counter.");
+		assertEquals(MIPS32Memory.TEXT, registerSet.getProgramCounter().getValue(), "Bad program counter 0x"
+				+ StringUtils.addZeros(Integer.toHexString(registerSet.getProgramCounter().getValue()), 8) + ".");
 	}
 
 	@Test
@@ -55,7 +57,8 @@ class RegisterSetTest {
 		assertTrue(optional.isPresent(), "Register not found.");
 		Register register = optional.get();
 		register.setValue(20);
-		assertEquals(20, register.getValue(), "Bad register value.");
+		//It cannot be the same because of the mask.
+		assertNotEquals(20, register.getValue(), "Bad register value.");
 	}
 
 	@Test

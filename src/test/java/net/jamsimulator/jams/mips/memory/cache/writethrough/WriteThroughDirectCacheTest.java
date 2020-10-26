@@ -28,7 +28,7 @@ class WriteThroughDirectCacheTest {
 	@Test
 	void bytes() {
 		Memory memory = new MIPS32Memory();
-		WriteThroughDirectCache cache = new WriteThroughDirectCache(memory, 4, 4);
+		WriteThroughDirectCache cache = new WriteThroughDirectCache(null, memory, 4, 4);
 		cache.setByte(memory.getFirstDataAddress(), (byte) 10);
 		assertEquals(1, cache.getStats().getMisses(), "Cache didn't miss!");
 		byte b = cache.getByte(memory.getFirstDataAddress());
@@ -38,7 +38,7 @@ class WriteThroughDirectCacheTest {
 	@Test
 	void words() {
 		Memory memory = new MIPS32Memory();
-		WriteThroughDirectCache cache = new WriteThroughDirectCache(memory, 4, 4);
+		WriteThroughDirectCache cache = new WriteThroughDirectCache(null, memory, 4, 4);
 		cache.setWord(memory.getFirstDataAddress(), 23573);
 		assertEquals(1, cache.getStats().getMisses(), "Cache didn't miss!");
 		int w = cache.getWord(memory.getFirstDataAddress());
@@ -51,7 +51,7 @@ class WriteThroughDirectCacheTest {
 		InstructionSet inst = new MIPS32InstructionSet();
 		DirectiveSet dir = new MIPS32DirectiveSet();
 		Registers reg = new MIPS32Registers();
-		Cache mem = new WriteThroughDirectCache(new MIPS32Memory(), 4, 8);
+		Cache mem = new WriteThroughDirectCache(null, new MIPS32Memory(), 4, 8);
 
 		MIPS32Assembler assembler = new MIPS32Assembler(Collections.singletonMap("test.asm", CacheTestsData.PROGRAM), inst, dir, reg, mem);
 		assembler.assemble();

@@ -41,7 +41,9 @@ class EventGeneratorTest {
 		caller.callEvent(testEvent);
 
 		assertTrue(received0, "Listeners not called.");
-		assertTrue(received2, "Test 2 not called.");
+
+		//Test2 shouldn't be called.
+		assertFalse(received2, "Test 2 is called.");
 	}
 
 

@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.register;
 
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
+import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Collections;
@@ -392,6 +393,6 @@ public class Registers extends SimpleEventBroadcast {
 	}
 
 	protected void loadEssentialRegisters() {
-		programCounter = new Register(this, -1, 0x04000000, true, "pc");
+		programCounter = new Register(this, -1, MIPS32Memory.TEXT, true, "pc");
 	}
 }

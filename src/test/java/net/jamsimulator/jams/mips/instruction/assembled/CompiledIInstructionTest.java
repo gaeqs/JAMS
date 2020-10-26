@@ -43,7 +43,7 @@ class CompiledIInstructionTest {
 
 	@Test
 	void getOperationCode() {
-		assertEquals(8, instruction.getOperationCode(), "Bad OP code.");
+		assertEquals(InstructionAddiu.OPERATION_CODE, instruction.getOperationCode(), "Bad OP code.");
 	}
 
 	@Test
@@ -58,11 +58,11 @@ class CompiledIInstructionTest {
 
 	@Test
 	void getTargetRegister() {
-		assertEquals(9, instruction.getTargetRegister(), "Bad target register.");
+		assertEquals(9, instruction.getSourceRegister(), "Bad target register.");
 	}
 
 	@Test
 	void getSourceRegister() {
-		assertEquals(10, instruction.getSourceRegister(), "Bad source register.");
+		assertEquals(10, instruction.getTargetRegister(), "Bad source register.");
 	}
 }
