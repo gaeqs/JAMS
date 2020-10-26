@@ -221,10 +221,6 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 				int performance = (int) (cycles / (((double) millis) / 1000));
 				getConsole().printInfoLn(performance + " cycle/s");
 				getConsole().println();
-				if (memory instanceof Cache) {
-					getConsole().printInfoLn(((Cache) memory).getStats());
-					getConsole().println();
-				}
 			}
 
 			synchronized (finishedRunningLock) {

@@ -32,7 +32,6 @@ import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
 import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.cache.event.CacheOperationEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryAllocateMemoryEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
@@ -170,10 +169,6 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 				int performance = (int) (instructions / (((double) millis) / 1000));
 				getConsole().printInfoLn(performance + " inst/s");
 				getConsole().println();
-				if (memory instanceof Cache) {
-					getConsole().printInfoLn(((Cache) memory).getStats());
-					getConsole().println();
-				}
 			}
 
 			synchronized (finishedRunningLock) {
