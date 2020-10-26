@@ -92,9 +92,7 @@ public class CacheLogVisualizer extends AnchorPane {
 			contents.getChildren().clear();
 			var list = messages.get(visualizer.getSelectedCache());
 			if (list == null) return;
-			list.forEach(event -> {
-				contents.getChildren().add(new CacheLogMessage(event, even = !even));
-			});
+			list.forEach(event -> contents.getChildren().add(new CacheLogMessage(event, even = !even)));
 		});
 	}
 
@@ -127,9 +125,9 @@ public class CacheLogVisualizer extends AnchorPane {
 				if (event.getNewBlock() != null) {
 					if (event.getOldBlock() != null) {
 						change.setText("\t0x" + StringUtils.addZeros(Integer.toHexString(event.getOldBlock().getTag()), 8)
-								+ " -> 0x" + StringUtils.addZeros(Integer.toHexString(event.getNewBlock().getTag()), 8));
+								+ " → 0x" + StringUtils.addZeros(Integer.toHexString(event.getNewBlock().getTag()), 8));
 					} else {
-						change.setText("\t-> 0x" + StringUtils.addZeros(Integer.toHexString(event.getNewBlock().getTag()), 8));
+						change.setText("\t→ 0x" + StringUtils.addZeros(Integer.toHexString(event.getNewBlock().getTag()), 8));
 					}
 				}
 
