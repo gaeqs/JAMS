@@ -31,6 +31,7 @@ import net.jamsimulator.jams.project.mips.MIPSProject;
 import org.fxmisc.richtext.CodeArea;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Represents a collection of assembly elements within an {@link net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile}.
@@ -105,6 +106,10 @@ public class MIPSFileElements {
 		return labels;
 	}
 
+	public boolean isLabelDeclared(String label) {
+		return labels.contains(label) || filesToAssemble != null && filesToAssemble.getGlobalLabels().contains(label);
+	}
+
 	/**
 	 * Returns the labels that should be set as global labels.
 	 *
@@ -158,6 +163,16 @@ public class MIPSFileElements {
 			i++;
 		}
 		return -1;
+	}
+
+	/**
+	 * Returns the line that contains the given index position.
+	 *
+	 * @param position the position.
+	 * @return the line.
+	 */
+	public MIPSLine getLineWithPosition(int position) {
+		return lines.get(lineOf(position));
 	}
 
 	public boolean removeLine(int index) {
@@ -236,8 +251,12 @@ public class MIPSFileElements {
 			if (c == '\n' || c == '\r') {
 				line = new MIPSLine(this, start, builder.toString());
 
-				line.getLabel().ifPresent(label -> labels.add(label.getLabel()));
-				if (line.getDirective().isPresent() && line.getDirective().get().isGlobl()) {
+				line.getRegisteredLabels().forEach((label, global) -> {
+					labels.add(label);
+					if (global) setAsGlobalLabel.add(label);
+				});
+
+				if (line.getDirective().isPresent() && line.getDirective().get().isGlobal()) {
 					line.getDirective().get().getParameters().forEach(target -> {
 						setAsGlobalLabel.add(target.text);
 					});
@@ -255,8 +274,12 @@ public class MIPSFileElements {
 		if (end >= start) {
 			line = new MIPSLine(this, start, builder.toString());
 
-			line.getLabel().ifPresent(label -> labels.add(label.getLabel()));
-			if (line.getDirective().isPresent() && line.getDirective().get().isGlobl()) {
+			line.getRegisteredLabels().forEach((label, global) -> {
+				labels.add(label);
+				if (global) setAsGlobalLabel.add(label);
+			});
+
+			if (line.getDirective().isPresent() && line.getDirective().get().isGlobal()) {
 				line.getDirective().get().getParameters().forEach(target -> {
 					setAsGlobalLabel.add(target.text);
 				});
@@ -331,15 +354,13 @@ public class MIPSFileElements {
 	 */
 	public void searchForUpdates(Collection<String> labelsToCheck) {
 		int i = 0;
-		Set<String> used;
+		Collection<String> used;
 		for (MIPSLine mipsLine : lines) {
-			if (mipsLine.getInstruction().isPresent()) {
-				used = mipsLine.getInstruction().get().getUsedLabels();
-				for (String label : labelsToCheck) {
-					if (used.contains(label)) {
-						requiresUpdate.add(i);
-						break;
-					}
+			used = mipsLine.getUsedLabels();
+			for (String label : labelsToCheck) {
+				if (used.contains(label)) {
+					requiresUpdate.add(i);
+					break;
 				}
 			}
 			if (mipsLine.getLabel().isPresent()) {
@@ -354,30 +375,33 @@ public class MIPSFileElements {
 
 	private boolean checkLabels(MIPSLine line, boolean add) {
 		List<String> labelsToCheck = new ArrayList<>();
-		boolean globalLabelUpdated = false;
+		AtomicBoolean globalLabelUpdated = new AtomicBoolean(false);
 
-		//LABEL
-		if (line.getLabel().isPresent()) {
-			String label = line.getLabel().get().getLabel();
+		//LABELS
+		line.getRegisteredLabels().forEach((label, global) -> {
 			if (add) labels.add(label);
 			else labels.remove(label);
 			labelsToCheck.add(label);
 
-			globalLabelUpdated = setAsGlobalLabel.contains(label);
-		}
+			if (global) {
+				if (add) setAsGlobalLabel.add(label);
+				else setAsGlobalLabel.remove(label);
+			}
+			globalLabelUpdated.set(globalLabelUpdated.get() || global || setAsGlobalLabel.contains(label));
+		});
 
 		//DIRECTIVE
-		if (line.getDirective().isPresent() && line.getDirective().get().isGlobl()) {
+		if (line.getDirective().isPresent() && line.getDirective().get().isGlobal()) {
 			line.getDirective().get().getParameters().forEach(target -> {
 				if (add) setAsGlobalLabel.add(target.text);
 				else setAsGlobalLabel.remove(target.text);
 				labelsToCheck.add(target.text);
 			});
-			globalLabelUpdated |= !line.getDirective().get().getParameters().isEmpty();
+			globalLabelUpdated.set(globalLabelUpdated.get() || !line.getDirective().get().getParameters().isEmpty());
 		}
 
 		searchForUpdates(labelsToCheck);
-		return globalLabelUpdated;
+		return globalLabelUpdated.get();
 	}
 
 }

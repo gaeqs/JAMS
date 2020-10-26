@@ -30,8 +30,8 @@ public class MIPSConfigurationListControls extends HBox {
 	}
 
 	private void generateAddButton() {
-		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.CONTROL_ADD,
-				Icons.CONTROL_ADD_PATH, 1024, 1024).orElse(null);
+		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.CONTROL_ADD
+		).orElse(null);
 
 		var button = new Button(null, new NearestImageView(icon, 16, 16));
 		button.setTooltip(new LanguageTooltip(Messages.GENERAL_ADD));
@@ -59,8 +59,8 @@ public class MIPSConfigurationListControls extends HBox {
 	}
 
 	private void generateRemoveButton() {
-		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.CONTROL_REMOVE,
-				Icons.CONTROL_REMOVE_PATH, 1024, 1024).orElse(null);
+		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.CONTROL_REMOVE
+		).orElse(null);
 
 		var button = new Button(null, new NearestImageView(icon, 16, 16));
 		button.setTooltip(new LanguageTooltip(Messages.GENERAL_REMOVE));
@@ -83,8 +83,8 @@ public class MIPSConfigurationListControls extends HBox {
 	}
 
 	private void generateCopyButton() {
-		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.CONTROL_COPY,
-				Icons.CONTROL_COPY_PATH, 1024, 1024).orElse(null);
+		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.CONTROL_COPY
+		).orElse(null);
 
 		var button = new Button(null, new NearestImageView(icon, 16, 16));
 		button.setTooltip(new LanguageTooltip(Messages.GENERAL_COPY));

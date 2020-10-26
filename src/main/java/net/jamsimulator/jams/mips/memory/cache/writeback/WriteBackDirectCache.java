@@ -2,14 +2,16 @@ package net.jamsimulator.jams.mips.memory.cache.writeback;
 
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
+import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
+import net.jamsimulator.jams.mips.memory.cache.event.CacheOperationEvent;
 import net.jamsimulator.jams.utils.NumericUtils;
 
 public class WriteBackDirectCache extends WriteBackCache {
 
 	protected final int indexShift, indexMask;
 
-	public WriteBackDirectCache(Memory parent, int blockSize, int blocksAmount) {
-		super(parent, blockSize, blocksAmount, 32 - 2 - NumericUtils.log2(blockSize) - NumericUtils.log2(blocksAmount));
+	public WriteBackDirectCache(CacheBuilder<?> builder, Memory parent, int blockSize, int blocksAmount) {
+		super(builder, parent, blockSize, blocksAmount, 32 - 2 - NumericUtils.log2(blockSize) - NumericUtils.log2(blocksAmount));
 		this.indexShift = 2 + NumericUtils.log2(blockSize);
 		this.indexMask = blocksAmount - 1;
 	}
@@ -22,7 +24,7 @@ public class WriteBackDirectCache extends WriteBackCache {
 	}
 
 	@Override
-	protected CacheBlock getBlock(int address) {
+	protected CacheBlock getBlock(int address, boolean callEvent) {
 		int tag = calculateTag(address);
 		int index = calculateBlockIndex(address);
 
@@ -30,14 +32,15 @@ public class WriteBackDirectCache extends WriteBackCache {
 		CacheBlock b = blocks[index];
 		if (b == null || b.getTag() != tag) b = null;
 
+		var isHit = b != null;
+		CacheBlock old = b;
 		if (b != null) hits++;
-
-		if (b == null) {
+		else {
 			int start = address & ~byteMask;
 			b = new CacheBlock(tag, start, new byte[blockSize << 2]);
 
-			CacheBlock old = blocks[index];
-			if(old != null && old.isDirty()) {
+			old = blocks[index];
+			if (old != null && old.isDirty()) {
 				old.write(parent);
 			}
 
@@ -48,6 +51,10 @@ public class WriteBackDirectCache extends WriteBackCache {
 			b.setCreationTime(cacheTime);
 
 			blocks[index] = b;
+		}
+
+		if (callEvent) {
+			callEvent(new CacheOperationEvent(this, operations - 1, isHit, old, b, index));
 		}
 
 		return b;

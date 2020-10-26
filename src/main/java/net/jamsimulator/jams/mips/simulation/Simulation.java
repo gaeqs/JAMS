@@ -38,6 +38,7 @@ import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
 import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.Memory;
+import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.COP0Register;
@@ -83,7 +84,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	protected InstructionExecution<Arch, ?>[] instructionCache;
 
 	protected Thread thread;
-	protected final Object lock;
+	protected final Object inputLock;
 	protected final Object finishedRunningLock;
 	protected boolean interrupted;
 	protected boolean running;
@@ -133,7 +134,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 			getConsole().registerListeners(this, true);
 		}
 
-		lock = new Object();
+		inputLock = new Object();
 		finishedRunningLock = new Object();
 
 		running = false;
@@ -228,6 +229,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 	/**
 	 * Returns the collection containing all number generators of this simulation.
+	 *
 	 * @return the collection.
 	 */
 	public NumberGenerators getNumberGenerators() {
@@ -321,8 +323,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 			if (!optional.isPresent()) {
 				try {
 					callEvent(new SimulationLockEvent(this));
-					synchronized (lock) {
-						lock.wait();
+					synchronized (inputLock) {
+						inputLock.wait();
 					}
 				} catch (InterruptedException ex) {
 					interruptThread();
@@ -347,8 +349,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 			if (!optional.isPresent()) {
 				try {
 					callEvent(new SimulationLockEvent(this));
-					synchronized (lock) {
-						lock.wait();
+					synchronized (inputLock) {
+						inputLock.wait();
 					}
 				} catch (InterruptedException ex) {
 					interruptThread();
@@ -556,6 +558,27 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	}
 
 	/**
+	 * Resets all the caches working with this simulation.
+	 * This also removes all cycle changes: the undo feature won't undo a reset!
+	 * <p>
+	 * This method won't work if the simulation is running!
+	 *
+	 * @return whether the operation was successful.
+	 */
+	public boolean resetCaches() {
+		if (running) return false;
+		Optional<Memory> current = Optional.of(memory);
+		while (current.isPresent()) {
+			if (current.get() instanceof Cache) {
+				((Cache) current.get()).resetCache();
+			}
+			current = current.get().getNextLevelMemory();
+		}
+		callEvent(new SimulationCachesResetEvent(this));
+		return true;
+	}
+
+	/**
 	 * Executes steps until the bottom of the instruction stack is reached.
 	 *
 	 * @throws InstructionNotFoundException when an instruction couldn't be decoded.
@@ -590,7 +613,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 			instructionCache[address - memory.getFirstTextAddress()] = null;
 		}
 
-		if (event.getMemorySection().getName().equals("Text") && instructionStackBottom < event.getAddress()) {
+		var memorySection = event.getMemorySection().orElse(null);
+		if (memorySection != null && memorySection.getName().equals("Text") && instructionStackBottom < event.getAddress()) {
 			instructionStackBottom = address;
 
 			InstructionExecution<Arch, ?>[] array =
@@ -607,8 +631,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		if (address >= memory.getFirstTextAddress() && address <= instructionStackBottom) {
 			instructionCache[address - memory.getFirstTextAddress()] = null;
 		}
-
-		if (event.getMemorySection().getName().equals("Text") && instructionStackBottom < event.getAddress()) {
+		var memorySection = event.getMemorySection().orElse(null);
+		if (memorySection != null && memorySection.getName().equals("Text") && instructionStackBottom < event.getAddress()) {
 			instructionStackBottom = address;
 
 			InstructionExecution<Arch, ?>[] array =
@@ -621,8 +645,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	@Listener
 	private void onInput(ConsoleInputEvent.After event) {
 		callEvent(new SimulationUnlockEvent(this));
-		synchronized (lock) {
-			lock.notifyAll();
+		synchronized (inputLock) {
+			inputLock.notifyAll();
 		}
 	}
 

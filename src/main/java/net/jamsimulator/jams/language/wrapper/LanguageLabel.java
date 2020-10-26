@@ -34,9 +34,11 @@ import net.jamsimulator.jams.utils.StringUtils;
 public class LanguageLabel extends Label {
 
 	private String node;
+	private final String[] replacements;
 
-	public LanguageLabel(String node) {
+	public LanguageLabel(String node, String... replacements) {
 		this.node = node;
+		this.replacements = replacements;
 		Jams.getLanguageManager().registerListeners(this, true);
 		refreshMessage();
 	}
@@ -48,7 +50,12 @@ public class LanguageLabel extends Label {
 
 	private void refreshMessage() {
 		if (node == null) return;
-		String parsed = StringUtils.parseEscapeCharacters(Jams.getLanguageManager().getSelected().getOrDefault(node));
+		var parsed = StringUtils.parseEscapeCharacters(Jams.getLanguageManager().getSelected().getOrDefault(node));
+
+		for (int i = 0; i < replacements.length - 1; i += 2) {
+			parsed = parsed.replace(replacements[i], replacements[i + 1]);
+		}
+
 		setText(StringUtils.addLineJumps(parsed, 70));
 	}
 

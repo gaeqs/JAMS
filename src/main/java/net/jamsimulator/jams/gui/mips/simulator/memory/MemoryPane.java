@@ -64,6 +64,7 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
 			list.add("0x" + StringUtils.addZeros(Integer.toHexString(section.getFirstAddress()), 8) + " - " + section.getName());
 		}
 		list.add("0x" + StringUtils.addZeros(Integer.toHexString(MIPS32Memory.HEAP), 8) + " - Heap");
+		list.add("0x" + StringUtils.addZeros(Integer.toHexString(MIPS32Memory.STACK), 8) + " - Stack");
 
 		list.sort(String::compareTo);
 		offsetSelection.getItems().addAll(list);
@@ -73,6 +74,8 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
 			String name = offsetSelection.getSelectionModel().getSelectedItem().substring(13);
 			if (name.equals("Heap")) {
 				table.setOffset(MIPS32Memory.HEAP);
+			} if (name.equals("Stack")) {
+				table.setOffset(MIPS32Memory.STACK);
 			} else {
 				Optional<MemorySection> section = memory.getMemorySection(name);
 				section.ifPresent(memorySection -> table.setOffset(memorySection.getFirstAddress()));

@@ -47,7 +47,7 @@ public class StartWindowTopBar extends AnchorPane {
 	public StartWindowTopBar(Stage stage) {
 		getStyleClass().add("start-top-bar");
 		view = new ImageView(JamsApplication.getIconManager()
-				.getOrLoadSafe(Icons.LOGO, Icons.LOGO_PATH, 250, 250).orElse(null));
+				.getOrLoadSafe(Icons.LOGO).orElse(null));
 		view.setFitWidth(20);
 		view.setFitHeight(20);
 		AnchorUtils.setAnchor(view, 5, 5, 5, -1);

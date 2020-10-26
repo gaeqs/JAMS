@@ -37,16 +37,29 @@ import java.util.List;
 
 public class MIPSInstructionParameterPart extends MIPSCodeElement {
 
+	private final MIPSInstructionParameter parameter;
+	private final int index;
 	private InstructionParameterPartType type;
 
-	public MIPSInstructionParameterPart(MIPSFileElements elements, int startIndex, int endIndex, String text, ParameterPartType type) {
-		super(startIndex, endIndex, text);
+	public MIPSInstructionParameterPart(MIPSLine line, MIPSFileElements elements, int startIndex, int endIndex, String text, MIPSInstructionParameter parameter, int index, ParameterPartType type) {
+		super(line, startIndex, endIndex, text);
+
+		this.parameter = parameter;
+		this.index = index;
 
 		if (type == null) {
 			this.type = InstructionParameterPartType.getByString(text, elements.getProject().orElse(null));
 		} else {
 			this.type = InstructionParameterPartType.getByStringAndType(type);
 		}
+	}
+
+	public MIPSInstructionParameter getParameter() {
+		return parameter;
+	}
+
+	public int getIndex() {
+		return index;
 	}
 
 	public InstructionParameterPartType getType() {
@@ -119,7 +132,9 @@ public class MIPSInstructionParameterPart extends MIPSCodeElement {
 				if (string.startsWith("$")) return REGISTER;
 			} else {
 				if (project.getData().getRegistersBuilder().getValidRegistersStarts()
-						.stream().anyMatch(target -> string.startsWith(target.toString()))) return REGISTER;
+						.stream().anyMatch(target -> string.startsWith(target.toString()))) {
+					return REGISTER;
+				}
 			}
 
 			if (StringUtils.isStringOrChar(string)) return STRING;

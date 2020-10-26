@@ -46,8 +46,8 @@ public class DirectCacheBuilder extends CacheBuilder<Cache> {
 		}
 
 		return writeBack.get()
-				? new WriteBackDirectCache(parent, 1 << logSize, 1 << logAmount)
-				: new WriteThroughDirectCache(parent, 1 << logSize, 1 << logAmount);
+				? new WriteBackDirectCache(this, parent, 1 << logSize, 1 << logAmount)
+				: new WriteThroughDirectCache(this, parent, 1 << logSize, 1 << logAmount);
 	}
 
 	@Override

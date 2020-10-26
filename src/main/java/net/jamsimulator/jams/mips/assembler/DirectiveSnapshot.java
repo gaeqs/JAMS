@@ -29,8 +29,10 @@ public class DirectiveSnapshot {
 		scanDirective(assembler);
 	}
 
-	public int executeNonLabelRequiredSteps(MIPS32AssemblingFile file) {
-		return address = directive.execute(line, raw, parameters, file);
+	public int executeNonLabelRequiredSteps(MIPS32AssemblingFile file, int labelAddress) {
+		int result = address = directive.execute(line, raw, parameters, file);
+		if (result == -1) address = labelAddress;
+		return result;
 	}
 
 	public void executeLabelRequiredSteps(MIPS32AssemblingFile file) {

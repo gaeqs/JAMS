@@ -5,10 +5,9 @@ import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
-import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
-import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
+import net.jamsimulator.jams.mips.memory.cache.Cache;
 
-public class CacheLanguageListCell extends ListCell<CacheBuilder> {
+public class CacheLanguageListCell extends ListCell<Cache> {
 
 	private String node;
 
@@ -18,7 +17,7 @@ public class CacheLanguageListCell extends ListCell<CacheBuilder> {
 		refreshMessage();
 
 		itemProperty().addListener((obs, old, val) -> {
-			setNode(val == null ? null : val.getLanguageNode());
+			setNode(val == null ? null : val.getBuilder().getLanguageNode());
 		});
 	}
 
@@ -29,7 +28,11 @@ public class CacheLanguageListCell extends ListCell<CacheBuilder> {
 
 	private void refreshMessage() {
 		if (node == null) return;
-		setText(Jams.getLanguageManager().getSelected().getOrDefault(node));
+
+		var cache = itemProperty().get();
+		var extra = cache.getBlocksAmount() + " / " + cache.getBlockSize();
+
+		setText(Jams.getLanguageManager().getSelected().getOrDefault(node) + " " + extra);
 	}
 
 	@Listener

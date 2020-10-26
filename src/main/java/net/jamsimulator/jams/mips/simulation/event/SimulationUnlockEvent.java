@@ -6,7 +6,7 @@ public class SimulationUnlockEvent extends SimulationEvent {
 	/**
 	 * Creates the simulation event.
 	 *
-	 * @param simulation the {@link Simulation} tha created this event.
+	 * @param simulation the {@link Simulation} thatcreated this event.
 	 */
 	public SimulationUnlockEvent(Simulation<?> simulation) {
 		super(simulation);

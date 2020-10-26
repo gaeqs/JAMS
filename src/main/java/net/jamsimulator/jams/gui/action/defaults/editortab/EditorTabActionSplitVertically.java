@@ -57,7 +57,7 @@ public class EditorTabActionSplitVertically extends ContextAction {
 	}
 
 	private static Image loadIcon() {
-		return JamsApplication.getIconManager().getOrLoadSafe(Icons.TAB_SPLIT_VERTICALLY,
-				Icons.TAB_SPLIT_VERTICALLY_PATH, 1024, 1024).orElse(null);
+		return JamsApplication.getIconManager().getOrLoadSafe(Icons.TAB_SPLIT_VERTICALLY
+		).orElse(null);
 	}
 }

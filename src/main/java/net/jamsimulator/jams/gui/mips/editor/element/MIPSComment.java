@@ -29,8 +29,8 @@ import java.util.List;
 
 public class MIPSComment extends MIPSCodeElement {
 
-	public MIPSComment(int startIndex, int endIndex, String text) {
-		super(startIndex, endIndex, text);
+	public MIPSComment(MIPSLine line, int startIndex, int endIndex, String text) {
+		super(line, startIndex, endIndex, text);
 	}
 
 	@Override

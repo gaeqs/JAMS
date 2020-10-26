@@ -11,10 +11,10 @@ def projectMainClass = "net.jamsimulator.jams.Jams"
 def javafxVersion = '14.0.2.1'
 def javafxDependencies = ['javafx-base', 'javafx-controls', 'javafx-media', 'javafx-graphics', 'javafx-fxml']
 def bundleLibs = false
-def winConsole = false;
+def winConsole = false
 
 group projectGroup
-version '0.6-ALPHA'
+version '0.7-ALPHA'
 
 repositories {
     jcenter()

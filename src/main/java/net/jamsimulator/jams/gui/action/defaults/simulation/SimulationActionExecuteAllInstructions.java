@@ -50,7 +50,7 @@ public class SimulationActionExecuteAllInstructions extends ContextAction {
 
 	public SimulationActionExecuteAllInstructions() {
 		super(NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_EXECUTE_ALL_INSTRUCTIONS, DEFAULT_COMBINATION, SImulationActionRegions.MIPS, MainMenuRegion.MIPS,
-				JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY, Icons.SIMULATION_PLAY_PATH, 1024, 1024).orElse(null));
+				JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY).orElse(null));
 	}
 
 	@Override

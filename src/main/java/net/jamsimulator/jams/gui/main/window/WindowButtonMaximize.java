@@ -35,8 +35,8 @@ public class WindowButtonMaximize extends WindowButton {
 
 	public WindowButtonMaximize(Stage stage) {
 		super(stage, null);
-		this.maximized = JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_UNMAXIMIZE, Icons.WINDOW_UNMAXIMIZE_PATH, 12, 12).orElse(null);
-		this.windowed = JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_MAXIMIZE, Icons.WINDOW_MAXIMIZE_PATH, 12, 12).orElse(null);
+		this.maximized = JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_UNMAXIMIZE).orElse(null);
+		this.windowed = JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_MAXIMIZE).orElse(null);
 
 		imageView.setImage(stage.isMaximized() ? maximized : windowed);
 

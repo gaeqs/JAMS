@@ -66,9 +66,9 @@ public class NumericUtils {
 			" nineteen"
 	};
 
-	private static int[] ROMAN_NUMBERS_VALUES = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+	private final static int[] ROMAN_NUMBERS_VALUES = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
 
-	private static String[] ROMAN_NUMBERS = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+	private final static String[] ROMAN_NUMBERS = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
 
 
 	public static boolean isInteger(String string) {
@@ -253,64 +253,29 @@ public class NumericUtils {
 			return "zero";
 		}
 
-		String snumber = Long.toString(number);
-
 		// pad with "0"
 		String mask = "000000000000";
 		DecimalFormat df = new DecimalFormat(mask);
-		snumber = df.format(number);
+		String stringNumber = df.format(number);
 
 		// XXXnnnnnnnnn
-		int billions = Integer.parseInt(snumber.substring(0, 3));
+		int billions = Integer.parseInt(stringNumber.substring(0, 3));
 		// nnnXXXnnnnnn
-		int millions = Integer.parseInt(snumber.substring(3, 6));
+		int millions = Integer.parseInt(stringNumber.substring(3, 6));
 		// nnnnnnXXXnnn
-		int hundredThousands = Integer.parseInt(snumber.substring(6, 9));
+		int hundredThousands = Integer.parseInt(stringNumber.substring(6, 9));
 		// nnnnnnnnnXXX
-		int thousands = Integer.parseInt(snumber.substring(9, 12));
+		int thousands = Integer.parseInt(stringNumber.substring(9, 12));
 
-		String tradBillions;
-		switch (billions) {
-			case 0:
-				tradBillions = "";
-				break;
-			case 1:
-				tradBillions = toEnglishLessThanOneThousand(billions)
-						+ " billion ";
-				break;
-			default:
-				tradBillions = toEnglishLessThanOneThousand(billions)
-						+ " billion ";
-		}
-		String result = tradBillions;
+		String result = billions == 0 ? "" : toEnglishLessThanOneThousand(billions) + " billion ";
+		result += millions == 0 ? "" : toEnglishLessThanOneThousand(millions) + " million ";
 
-		String tradMillions;
-		switch (millions) {
-			case 0:
-				tradMillions = "";
-				break;
-			case 1:
-				tradMillions = toEnglishLessThanOneThousand(millions) + " million ";
-				break;
-			default:
-				tradMillions = toEnglishLessThanOneThousand(millions)
-						+ " million ";
-		}
-		result = result + tradMillions;
-
-		String tradHundredThousands;
-		switch (hundredThousands) {
-			case 0:
-				tradHundredThousands = "";
-				break;
-			case 1:
-				tradHundredThousands = "one thousand ";
-				break;
-			default:
-				tradHundredThousands = toEnglishLessThanOneThousand(hundredThousands)
-						+ " thousand ";
-		}
-		result = result + tradHundredThousands;
+		result += switch (hundredThousands) {
+			case 0 -> "";
+			case 1 -> "one thousand ";
+			default -> toEnglishLessThanOneThousand(hundredThousands)
+					+ " thousand ";
+		};
 
 		String tradThousand;
 		tradThousand = toEnglishLessThanOneThousand(thousands);
@@ -332,9 +297,7 @@ public class NumericUtils {
 		if (milliards > 20) {
 			roman.append(milliards).append("xM+");
 		} else {
-			for (int i = 0; i < milliards; i++) {
-				roman.append("M");
-			}
+			roman.append("M".repeat(Math.max(0, milliards)));
 		}
 
 		number %= 1000;

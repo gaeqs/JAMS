@@ -25,8 +25,15 @@
 package net.jamsimulator.jams.gui.editor.popup;
 
 import javafx.application.Platform;
+import javafx.scene.Group;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
+import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.icon.Icons;
+
+import java.awt.*;
 
 /**
  * Represents an element inside a {@link AutocompletionPopup}.
@@ -39,6 +46,8 @@ public class AutocompletionPopupElement extends HBox {
 	private final String name;
 	private final String autocompletion;
 
+	private final int offset;
+
 	/**
 	 * Creates the element.
 	 *
@@ -47,13 +56,16 @@ public class AutocompletionPopupElement extends HBox {
 	 * @param name           the name the {@link AutocompletionPopup} is showing.
 	 * @param autocompletion the replacement to place when the autocompletion is finished.
 	 */
-	public AutocompletionPopupElement(AutocompletionPopup popup, int index, String name, String autocompletion) {
+	public AutocompletionPopupElement(AutocompletionPopup popup, int index, String name, String autocompletion, int offset, Image icon) {
 		getStyleClass().add("autocompletion-popup-element");
+		setMinWidth(500);
 		this.popup = popup;
 		this.index = index;
 		this.name = name;
 		this.autocompletion = autocompletion;
-		getChildren().add(new Label(name));
+		this.offset = offset;
+
+		getChildren().addAll(new NearestImageView(icon, 16, 16), new Label(name));
 
 		setOnMouseClicked(event -> {
 			this.popup.select(this.index, false);
@@ -104,5 +116,9 @@ public class AutocompletionPopupElement extends HBox {
 	 */
 	public String getAutocompletion() {
 		return autocompletion;
+	}
+
+	public int getOffset() {
+		return offset;
 	}
 }

@@ -230,6 +230,12 @@ public class FileEditorTabList extends TabPane {
 				.forEach(display -> ((FileEditorTab) display).getDisplay().save());
 	}
 
+
+	public void layoutAllDisplays() {
+		getTabs().stream().filter(target -> target instanceof FileEditorTab)
+				.forEach(display -> ((FileEditorTab) display).layoutDisplay());
+	}
+
 	/**
 	 * Opens the given file.
 	 *

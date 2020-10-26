@@ -24,10 +24,12 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
+import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.nio.charset.StandardCharsets;
@@ -35,33 +37,32 @@ import java.nio.charset.StandardCharsets;
 public class DirectiveAsciiz extends Directive {
 
 	public static final String NAME = "asciiz";
+	private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.STRING};
 
 	public DirectiveAsciiz() {
-		super(NAME);
+		super(NAME, PARAMETERS, true, false);
 	}
 
 	@Override
 	public int execute(int lineNumber, String line, String[] parameters, MIPS32AssemblingFile file) {
-		if (parameters.length != 1)
-			throw new AssemblerException(lineNumber, "." + NAME + " must have one string parameter.");
-
-		String s = parameters[0];
-		if (!s.startsWith("\"") && !s.endsWith("\""))
-			throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + s + "' is not a string.");
+		if (parameters.length < 1)
+			throw new AssemblerException(lineNumber, "." + NAME + " must have at least one string parameter.");
 
 		MIPS32AssemblerData data = file.getAssembler().getAssemblerData();
 		data.align(0);
-
 		int start = data.getCurrent();
 
-		s = StringUtils.parseEscapeCharacters(s.substring(1, s.length() - 1));
-
-		for (byte b : s.getBytes(StandardCharsets.US_ASCII)) {
-			file.getAssembler().getMemory().setByte(data.getCurrent(), b);
+		for (String s : parameters) {
+			if (!s.startsWith("\"") && !s.endsWith("\""))
+				throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + s + "' is not a string.");
+			s = StringUtils.parseEscapeCharacters(s.substring(1, s.length() - 1));
+			for (byte b : s.getBytes(StandardCharsets.US_ASCII)) {
+				file.getAssembler().getMemory().setByte(data.getCurrent(), b);
+				data.addCurrent(1);
+			}
+			file.getAssembler().getMemory().setByte(data.getCurrent(), (byte) 0);
 			data.addCurrent(1);
 		}
-		file.getAssembler().getMemory().setByte(data.getCurrent(), (byte) 0);
-		data.addCurrent(1);
 		return start;
 	}
 
@@ -69,5 +70,10 @@ public class DirectiveAsciiz extends Directive {
 	@Override
 	public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address) {
 
+	}
+
+	@Override
+	public boolean isParameterValidInContext(int index, String value, MIPSFileElements context) {
+		return isParameterValid(index, value);
 	}
 }

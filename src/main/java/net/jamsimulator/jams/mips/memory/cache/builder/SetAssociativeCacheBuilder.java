@@ -32,7 +32,7 @@ public class SetAssociativeCacheBuilder extends CacheBuilder<Cache> {
 
 	@Override
 	public int getSizeInBytes() {
-		return  blocksAmount.get() * (blockSize.get() << 2);
+		return blocksAmount.get() * (blockSize.get() << 2);
 	}
 
 	@Override
@@ -56,8 +56,8 @@ public class SetAssociativeCacheBuilder extends CacheBuilder<Cache> {
 		}
 
 		return writeBack.get()
-				? new WriteBackSetAssociativeCache(parent, 1 << logSize, 1 << logAmount, 1 << logSetSize, replacementPolicy.get())
-				: new WriteThroughSetAssociativeCache(parent, 1 << logSize, 1 << logAmount, 1 << logSetSize, replacementPolicy.get());
+				? new WriteBackSetAssociativeCache(this, parent, 1 << logSize, 1 << logAmount, 1 << logSetSize, replacementPolicy.get())
+				: new WriteThroughSetAssociativeCache(this, parent, 1 << logSize, 1 << logAmount, 1 << logSetSize, replacementPolicy.get());
 	}
 
 	@Override

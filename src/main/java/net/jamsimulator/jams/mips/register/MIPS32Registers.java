@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.mips.register;
 
+import net.jamsimulator.jams.mips.memory.MIPS32Memory;
+
 import java.util.Collections;
 import java.util.Set;
 
@@ -64,7 +66,7 @@ public class MIPS32Registers extends Registers {
 		registers[id] = new Register(this, id, "k1", String.valueOf(id++));
 
 		registers[id] = new Register(this, id, 0x10008000, true, "gp", String.valueOf(id++));
-		registers[id] = new Register(this, id, 0x7fffeffc, true, "sp", String.valueOf(id++));
+		registers[id] = new Register(this, id, MIPS32Memory.STACK, true, "sp", String.valueOf(id++));
 		registers[id] = new Register(this, id, 0, true, "fp", String.valueOf(id++));
 		registers[id] = new Register(this, id, "ra", String.valueOf(id));
 	}

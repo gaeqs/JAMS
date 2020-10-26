@@ -82,6 +82,7 @@ public class LabelUtils {
 				case ':' -> {
 					if (insideChar || insideString) continue;
 					if (chars.length == i + 1 || chars[i + 1] != ':') return i;
+					i++;
 				}
 			}
 		}

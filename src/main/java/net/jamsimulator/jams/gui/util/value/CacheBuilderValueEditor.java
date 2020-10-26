@@ -8,7 +8,7 @@ import net.jamsimulator.jams.gui.util.converter.CacheBuilderValueConverter;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
-import net.jamsimulator.jams.language.wrapper.CacheLanguageListCell;
+import net.jamsimulator.jams.language.wrapper.CacheBuilderLanguageListCell;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 import net.jamsimulator.jams.mips.memory.cache.event.CacheBuilderRegisterEvent;
 import net.jamsimulator.jams.mips.memory.cache.event.CacheBuilderUnregisterEvent;
@@ -43,8 +43,8 @@ public class CacheBuilderValueEditor extends ComboBox<CacheBuilder> implements V
 	};
 
 	public CacheBuilderValueEditor() {
-		setCellFactory(list -> new CacheLanguageListCell());
-		setButtonCell(new CacheLanguageListCell());
+		setCellFactory(list -> new CacheBuilderLanguageListCell());
+		setButtonCell(new CacheBuilderLanguageListCell());
 
 		getItems().setAll(SORTED_BUILDERS);
 		getSelectionModel().select(Jams.getCacheBuilderManager().get(SyscallExecutionRunExceptionHandler.NAME).orElse(null));

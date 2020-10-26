@@ -10,6 +10,7 @@ import net.jamsimulator.jams.language.wrapper.LanguageTableColumn;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.event.SimulationCachesResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
@@ -140,6 +141,11 @@ public class MemoryTable extends TableView<MemoryEntry> {
 
 	@Listener
 	private void onSimulationReset(SimulationResetEvent event) {
+		entries.values().forEach(MemoryEntry::refresh);
+	}
+
+	@Listener
+	private void onSimulationCachesReset(SimulationCachesResetEvent event) {
 		entries.values().forEach(MemoryEntry::refresh);
 	}
 

@@ -89,6 +89,13 @@ public interface Instruction {
 	ParameterType[] getParameters();
 
 	/**
+	 * Returns whether this instruction has any parameter.
+	 *
+	 * @return whether this instruction has at least one parameter.
+	 */
+	boolean hasParameters();
+
+	/**
 	 * Returns whether the instruction matches the given mnemonic and parameter types.
 	 *
 	 * @param mnemonic   the given mnemonic.

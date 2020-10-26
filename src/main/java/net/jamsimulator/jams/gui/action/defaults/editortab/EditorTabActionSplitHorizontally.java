@@ -57,7 +57,7 @@ public class EditorTabActionSplitHorizontally extends ContextAction {
 	}
 
 	private static Image loadIcon() {
-		return JamsApplication.getIconManager().getOrLoadSafe(Icons.TAB_SPLIT_HORIZONTALLY,
-				Icons.TAB_SPLIT_HORIZONTALLY_PATH, 1024, 1024).orElse(null);
+		return JamsApplication.getIconManager().getOrLoadSafe(Icons.TAB_SPLIT_HORIZONTALLY
+		).orElse(null);
 	}
 }

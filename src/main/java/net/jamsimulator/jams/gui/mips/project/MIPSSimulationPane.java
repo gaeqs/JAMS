@@ -12,6 +12,7 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.bar.BarType;
 import net.jamsimulator.jams.gui.bar.PaneSnapshot;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.mips.simulator.cache.CacheVisualizer;
 import net.jamsimulator.jams.gui.mips.simulator.execution.ExecutionButtons;
 import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionTableGroup;
@@ -27,6 +28,7 @@ import net.jamsimulator.jams.gui.util.ScalableNode;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
+import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.project.mips.MIPSProject;
@@ -78,6 +80,7 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 		loadMemoryTab();
 		loadFlow();
 		loadLabels();
+		loadCacheVisualizer();
 
 		init();
 
@@ -103,8 +106,8 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 	}
 
 	private void loadRegisterTabs() {
-		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_REGISTERS,
-				Icons.SIMULATION_REGISTERS_PATH, 1024, 1024).orElse(null);
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_REGISTERS
+		).orElse(null);
 
 		registersTabs = new TabPane();
 
@@ -122,15 +125,15 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 	}
 
 	private void loadConsole() {
-		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_CONSOLE,
-				Icons.SIMULATION_CONSOLE_PATH, 1024, 1024).orElse(null);
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_CONSOLE
+		).orElse(null);
 
 		manageBarAddition("console", simulation.getConsole(), icon, Messages.BAR_CONSOLE_NAME, BarType.BOTTOM);
 	}
 
 	private void loadMemoryTab() {
-		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_MEMORY,
-				Icons.SIMULATION_MEMORY_PATH, 1024, 1024).orElse(null);
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_MEMORY
+		).orElse(null);
 
 		memoryPane = new MemoryPane(simulation);
 
@@ -138,8 +141,8 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 	}
 
 	private void loadFlow() {
-		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_FLOW,
-				Icons.SIMULATION_FLOW_PATH, 1024, 1024).orElse(null);
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_FLOW
+		).orElse(null);
 
 
 		Slider slider = new Slider(10, 100, 40);
@@ -159,11 +162,19 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 	}
 
 	private void loadLabels() {
-		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_LABELS,
-				Icons.SIMULATION_LABELS_PATH, 1024, 1024).orElse(null);
+		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_LABELS).orElse(null);
 		var pane = new LabelTable(this);
 
 		manageBarAddition("labels", pane, icon, Messages.BAR_LABELS_NAME, BarType.BOTTOM_RIGHT);
+	}
+
+	private void loadCacheVisualizer() {
+		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_CACHES).orElse(null);
+		var memory = simulation.getMemory();
+		if (memory instanceof Cache) {
+			var visualizer = new CacheVisualizer(simulation);
+			manageBarAddition("cache_visualizer", visualizer, icon, Messages.BAR_CACHES_NAME, BarType.BOTTOM_LEFT);
+		}
 	}
 
 

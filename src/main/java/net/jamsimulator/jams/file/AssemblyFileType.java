@@ -34,7 +34,7 @@ public class AssemblyFileType extends FileType {
 	public static final String NAME = "Assembly";
 
 	public AssemblyFileType() {
-		super(NAME, Icons.FILE_ASSEMBLY, Icons.FILE_ASSEMBLY_PATH, "asm", "s");
+		super(NAME, Icons.FILE_ASSEMBLY, "asm", "s");
 	}
 
 	@Override

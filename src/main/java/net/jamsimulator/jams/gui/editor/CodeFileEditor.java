@@ -98,7 +98,12 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 
 		focusedProperty().addListener((obs, old, val) -> {
 			if (val) {
-				getTab().getList().getHolder().setLastFocusedEditor(this);
+				var t = getTab();
+				if (t != null) {
+					var holder = t.getList().getHolder();
+					if (holder == null) return;
+					holder.setLastFocusedEditor(this);
+				}
 			}
 		});
 	}
@@ -249,8 +254,10 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 	@Override
 	public void save() {
 		try {
+			if (tab == null) return;
 			FileUtils.writeAll(tab.getFile(), original = getText());
 			tab.setSaveMark(false);
+			tab.layoutDisplay();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -260,6 +267,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 	public void reload() {
 		replaceText(0, getText().length(), original = read(tab));
 		tab.setSaveMark(false);
+		tab.layoutDisplay();
 	}
 
 	@Override
@@ -339,7 +347,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 		//AUTO COMPLETION
 		addEventHandler(KeyEvent.KEY_TYPED, event -> {
 			if (autocompletionPopup == null) return;
-			if(autocompletionPopup.manageTypeEvent(event)) event.consume();
+			if (autocompletionPopup.manageTypeEvent(event)) event.consume();
 		});
 
 		//AUTOCOMPLETION MOVEMENT
@@ -390,7 +398,10 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 	protected void applySaveMarkListener() {
 		addEventHandler(KeyEvent.KEY_TYPED, event -> {
 			if (event.getCharacter().isEmpty()) return;
-			tab.setSaveMark(!getText().equals(original));
+			if (tab != null) {
+				tab.setSaveMark(!getText().equals(original));
+				tab.layoutDisplay();
+			}
 		});
 	}
 
@@ -444,6 +455,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 	}
 
 	private static String read(FileEditorTab tab) {
+		if (tab == null) return "";
 		try {
 			return FileUtils.readAll(tab.getFile());
 		} catch (IOException ex) {

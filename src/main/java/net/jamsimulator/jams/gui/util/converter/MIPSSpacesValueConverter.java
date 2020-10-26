@@ -15,7 +15,7 @@ public class MIPSSpacesValueConverter extends ValueConverter<MIPSSpaces> {
 
 	@Override
 	public Optional<MIPSSpaces> fromStringSafe(String value) {
-		return MIPSSpaces.getByValue(value);
+		return MIPSSpaces.getByName(value);
 	}
 
 	@Override

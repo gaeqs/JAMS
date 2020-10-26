@@ -11,7 +11,7 @@ public class SimulationFinishedEvent extends SimulationEvent {
 	/**
 	 * Creates the simulation event.
 	 *
-	 * @param simulation the {@link Simulation} tha created this event.
+	 * @param simulation the {@link Simulation} thatcreated this event.
 	 */
 	public SimulationFinishedEvent(Simulation<?> simulation) {
 		super(simulation);

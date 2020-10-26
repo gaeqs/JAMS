@@ -198,6 +198,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 	@Override
 	public void setWord(int address, int word) {
+		if (address % 4 != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_STORE_EXCEPTION, address);
 		if (!eventCallsEnabled) {
 			getSectionOrThrowException(address).setWord(address, word, bigEndian);
 			return;
@@ -210,8 +211,6 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		address = before.getAddress();
 		word = before.getValue();
 
-		if (address % 4 != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_STORE_EXCEPTION, address);
-
 		//Gets the section and sets the word.
 		MemorySection section = getSectionOrThrowException(address);
 		int old = section.setWord(address, word, bigEndian);
@@ -222,6 +221,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 	@Override
 	public int getWord(int address, boolean callEvents, boolean bypassCaches) {
+		if (address % 4 != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
 		if (!eventCallsEnabled || !callEvents) {
 			return getSectionOrThrowException(address).getWord(address, bigEndian);
 		}
@@ -230,8 +230,6 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 		//Refresh data.
 		address = before.getAddress();
-
-		if (address % 4 != 0)throw new RuntimeAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
 
 		//Gets the section and the word.
 		MemorySection section = getSectionOrThrowException(address);

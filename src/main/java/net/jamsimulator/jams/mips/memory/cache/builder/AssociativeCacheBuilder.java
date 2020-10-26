@@ -49,8 +49,8 @@ public class AssociativeCacheBuilder extends CacheBuilder<Cache> {
 		}
 
 		return writeBack.get()
-				? new WriteBackAssociativeCache(parent, 1 << logSize, 1 << logAmount, replacementPolicy.get())
-				: new WriteThroughAssociativeCache(parent, 1 << logSize, 1 << logAmount, replacementPolicy.get());
+				? new WriteBackAssociativeCache(this, parent, 1 << logSize, 1 << logAmount, replacementPolicy.get())
+				: new WriteThroughAssociativeCache(this, parent, 1 << logSize, 1 << logAmount, replacementPolicy.get());
 	}
 
 	@Override

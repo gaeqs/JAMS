@@ -9,8 +9,8 @@ public class ParenthesisParameterSplitter implements ParameterSplitter {
 
 	@Override
 	public int[] split(String string) {
-		int first = string.indexOf('(');
-		int second = string.indexOf(')');
+		int first = string.lastIndexOf('(');
+		int second = string.lastIndexOf(')');
 
 		return new int[]{0, first, first + 1, second - first - 1};
 	}

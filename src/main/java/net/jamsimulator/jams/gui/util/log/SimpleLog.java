@@ -25,15 +25,14 @@ public class SimpleLog extends HBox implements Log {
 		clear.setOnAction(event -> clear());
 		clear.getStyleClass().add("bold-button");
 		buttons.getChildren().add(clear);
-
 		getChildren().add(buttons);
 
-		VirtualizedScrollPane<ScaledVirtualized<CodeArea>> scroll = new VirtualizedScrollPane<>(new ScaledVirtualized<>(new CodeArea()));
-		getChildren().add(scroll);
-
-		display = (CodeArea) scroll.getContent().getChildrenUnmodifiable().get(0);
+		display = new CodeArea();
+		VirtualizedScrollPane<ScaledVirtualized<CodeArea>> scroll = new VirtualizedScrollPane<>(new ScaledVirtualized<>(display));
 		display.setEditable(false);
 		applyZoomListener(scroll);
+		display.getStyleClass().add("display");
+		getChildren().add(scroll);
 
 		display.prefWidthProperty().bind(widthProperty().subtract(buttons.widthProperty()));
 	}

@@ -28,10 +28,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
-import net.jamsimulator.jams.gui.action.context.ContextRegion;
 import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
 import net.jamsimulator.jams.gui.configuration.ConfigurationWindow;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
@@ -47,7 +45,7 @@ public class GeneralActionSettings extends ContextAction {
 
 	public GeneralActionSettings() {
 		super(NAME, RegionTags.GENERAL, Messages.MAIN_MENU_FILE_SETTINGS, DEFAULT_COMBINATION, GeneralActionRegions.SETTINGS, MainMenuRegion.FILE,
-				JamsApplication.getIconManager().getOrLoadSafe(Icons.MENU_SETTINGS, Icons.MENU_SETTINGS_PATH, 1024, 1024).orElse(null));
+				JamsApplication.getIconManager().getOrLoadSafe(Icons.MENU_SETTINGS).orElse(null));
 	}
 
 	@Override

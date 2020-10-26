@@ -10,7 +10,7 @@ public class SimulationUndoStepEvent extends SimulationEvent {
 	/**
 	 * Creates the simulation event.
 	 *
-	 * @param simulation the {@link Simulation} tha created this event.
+	 * @param simulation the {@link Simulation} thatcreated this event.
 	 */
 	protected SimulationUndoStepEvent(Simulation<?> simulation, long undoCycle) {
 		super(simulation);
@@ -28,7 +28,7 @@ public class SimulationUndoStepEvent extends SimulationEvent {
 		/**
 		 * Creates the simulation event.
 		 *
-		 * @param simulation the {@link Simulation} tha created this event.
+		 * @param simulation the {@link Simulation} thatcreated this event.
 		 */
 		public Before(Simulation<?> simulation, long undoCycle) {
 			super(simulation, undoCycle);
@@ -51,7 +51,7 @@ public class SimulationUndoStepEvent extends SimulationEvent {
 		/**
 		 * Creates the simulation event.
 		 *
-		 * @param simulation the {@link Simulation} tha created this event.
+		 * @param simulation the {@link Simulation} thatcreated this event.
 		 */
 		public After(Simulation<?> simulation, long undoCycle) {
 			super(simulation, undoCycle);

@@ -41,16 +41,18 @@ public class LanguageTooltip extends Tooltip {
 	public static final int DEFAULT_DELAY = 200;
 
 	private String node;
+	private final String[] replacements;
 
-	public LanguageTooltip(String node) {
-		this(node, DEFAULT_DELAY);
+	public LanguageTooltip(String node, String... replacements) {
+		this(node, DEFAULT_DELAY, replacements);
 	}
 
-	public LanguageTooltip(String node, int showDelay) {
+	public LanguageTooltip(String node, int showDelay, String... replacements) {
 		this.node = node;
+		this.replacements = replacements;
 		hackTooltipStartTiming(this, showDelay);
-		Jams.getLanguageManager().registerListeners(this, true);
 		refreshMessage();
+		Jams.getLanguageManager().registerListeners(this, true);
 	}
 
 	public void setNode(String node, int showDelay) {
@@ -61,7 +63,12 @@ public class LanguageTooltip extends Tooltip {
 
 	private void refreshMessage() {
 		if (node == null) return;
-		String parsed = StringUtils.parseEscapeCharacters(Jams.getLanguageManager().getSelected().getOrDefault(node));
+		var parsed = StringUtils.parseEscapeCharacters(Jams.getLanguageManager().getSelected().getOrDefault(node));
+
+		for (int i = 0; i < replacements.length - 1; i += 2) {
+			parsed = parsed.replace(replacements[i], replacements[i + 1]);
+		}
+
 		setText(StringUtils.addLineJumps(parsed, 70));
 	}
 

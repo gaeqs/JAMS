@@ -50,7 +50,7 @@ public class SimulationActionReset extends ContextAction {
 
 	public SimulationActionReset() {
 		super(NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_RESET, DEFAULT_COMBINATION, SImulationActionRegions.MIPS, MainMenuRegion.MIPS,
-				JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_RESET, Icons.SIMULATION_RESET_PATH, 1024, 1024).orElse(null));
+				JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_RESET).orElse(null));
 	}
 
 	@Override

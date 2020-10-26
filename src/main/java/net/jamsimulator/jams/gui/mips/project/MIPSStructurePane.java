@@ -127,8 +127,8 @@ public class MIPSStructurePane extends WorkingPane {
 	}
 
 	private void loadExplorer() {
-		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
-				Icons.SIDEBAR_EXPLORER_PATH, 1024, 1024).orElse(null);
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER
+		).orElse(null);
 
 		ScrollPane pane = new PixelScrollPane();
 		pane.setFitToHeight(true);
@@ -147,8 +147,8 @@ public class MIPSStructurePane extends WorkingPane {
 	}
 
 	private void loadFilesToAssembleSidebar() {
-		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER,
-				Icons.SIDEBAR_EXPLORER_PATH, 1024, 1024).orElse(null);
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER
+		).orElse(null);
 
 		ScrollPane pane = new PixelScrollPane();
 		pane.setFitToHeight(true);
@@ -165,15 +165,9 @@ public class MIPSStructurePane extends WorkingPane {
 	}
 
 	private void loadLogBottomBar() {
-		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE,
-				Icons.FILE_FILE_PATH, 1024, 1024).orElse(null);
-		ScrollPane pane = new PixelScrollPane();
-		pane.setFitToWidth(true);
-		pane.setFitToHeight(true);
-
+		Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE).orElse(null);
 		log = new SimpleLog();
-		pane.setContent(log);
-		manageBarAddition("log", pane, icon, Messages.BAR_LOG_NAME, BarType.BOTTOM);
+		manageBarAddition("log", log, icon, Messages.BAR_LOG_NAME, BarType.BOTTOM);
 	}
 
 

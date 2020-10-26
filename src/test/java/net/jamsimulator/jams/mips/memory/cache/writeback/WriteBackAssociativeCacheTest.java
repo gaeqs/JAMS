@@ -59,7 +59,7 @@ class WriteBackAssociativeCacheTest {
 
 	void bytes(CacheReplacementPolicy policy) {
 		Memory memory = new MIPS32Memory();
-		WriteBackAssociativeCache cache = new WriteBackAssociativeCache(memory, 4, 4, policy);
+		WriteBackAssociativeCache cache = new WriteBackAssociativeCache(null, memory, 4, 4, policy);
 		cache.setByte(memory.getFirstDataAddress(), (byte) 10);
 		assertEquals(1, cache.getStats().getMisses(), "Cache didn't miss!");
 		byte b = cache.getByte(memory.getFirstDataAddress());
@@ -68,7 +68,7 @@ class WriteBackAssociativeCacheTest {
 
 	void words(CacheReplacementPolicy policy) {
 		Memory memory = new MIPS32Memory();
-		WriteBackAssociativeCache cache = new WriteBackAssociativeCache(memory, 4, 4, policy);
+		WriteBackAssociativeCache cache = new WriteBackAssociativeCache(null, memory, 4, 4, policy);
 		cache.setWord(memory.getFirstDataAddress(), 23573);
 		assertEquals(1, cache.getStats().getMisses(), "Cache didn't miss!");
 		int w = cache.getWord(memory.getFirstDataAddress());
@@ -81,7 +81,7 @@ class WriteBackAssociativeCacheTest {
 		InstructionSet inst = new MIPS32InstructionSet();
 		DirectiveSet dir = new MIPS32DirectiveSet();
 		Registers reg = new MIPS32Registers();
-		Cache mem = new WriteBackAssociativeCache(new MIPS32Memory(), 4, 8, CacheReplacementPolicy.LRU);
+		Cache mem = new WriteBackAssociativeCache(null, new MIPS32Memory(), 4, 8, CacheReplacementPolicy.LRU);
 
 		MIPS32Assembler assembler = new MIPS32Assembler(Collections.singletonMap("test.asm", CacheTestsData.PROGRAM), inst, dir, reg, mem);
 		assembler.assemble();

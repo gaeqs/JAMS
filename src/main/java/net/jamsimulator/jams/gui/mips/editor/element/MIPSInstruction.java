@@ -40,16 +40,14 @@ public class MIPSInstruction extends MIPSCodeElement {
 
 	private String instruction;
 	private final List<MIPSInstructionParameter> parameters;
-	private final Set<String> usedLabels;
 
-	public MIPSInstruction(MIPSFileElements elements, int startIndex, int endIndex, String text) {
-		super(startIndex, endIndex, text);
+	public MIPSInstruction(MIPSLine line, MIPSFileElements elements, int startIndex, int endIndex, String text) {
+		super(line, startIndex, endIndex, text);
 		this.parameters = new ArrayList<>();
 		parseText(elements);
 
-		usedLabels = new HashSet<>();
 		for (MIPSInstructionParameter parameter : parameters) {
-			parameter.getLabelParameterPart().ifPresent(usedLabels::add);
+			parameter.getLabelParameterPart().ifPresent(this::markUsedLabel);
 		}
 	}
 
@@ -62,8 +60,32 @@ public class MIPSInstruction extends MIPSCodeElement {
 		return parameters;
 	}
 
-	public Set<String> getUsedLabels() {
-		return usedLabels;
+	public Set<Instruction> getCompatibleInstructions(MIPSFileElements elements, int upTo) {
+		MIPSProject project = elements.getProject().orElse(null);
+		if (project == null) return Collections.emptySet();
+
+		var instructionSet = project.getData().getInstructionSet();
+		var registerBuilder = project.getData().getRegistersBuilder();
+
+		var instructions = instructionSet.getInstructionByMnemonic(instruction);
+
+		int i = 0;
+		Instruction current;
+		for (MIPSInstructionParameter parameter : parameters) {
+			if (i == upTo) return instructions;
+			var iterator = instructions.iterator();
+			while (iterator.hasNext()) {
+				current = iterator.next();
+				if (current.getParameters().length <= i
+						|| !current.getParameters()[i].match(parameter.getText(), registerBuilder)) {
+					iterator.remove();
+				}
+			}
+
+			i++;
+		}
+
+		return instructions;
 	}
 
 	@Override
@@ -140,7 +162,7 @@ public class MIPSInstruction extends MIPSCodeElement {
 			int i = 0;
 			for (String parameter : parameterCache) {
 				index = raw.indexOf(parameter, index);
-				parameters.add(new MIPSInstructionParameter(elements, endIndex + index, parameter, best.getParameters()[i]));
+				parameters.add(new MIPSInstructionParameter(line, elements, endIndex + index, parameter, i, best.getParameters()[i]));
 				index += parameter.length();
 				i++;
 			}
@@ -160,8 +182,9 @@ public class MIPSInstruction extends MIPSCodeElement {
 		stringParameters.remove(0);
 
 		//Adds all parameters.
+		int i = 0;
 		for (Map.Entry<Integer, String> entry : stringParameters) {
-			parameters.add(new MIPSInstructionParameter(elements, start + entry.getKey(), entry.getValue(), null));
+			parameters.add(new MIPSInstructionParameter(line, elements, start + entry.getKey(), entry.getValue(), i++, null));
 		}
 	}
 }

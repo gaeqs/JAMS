@@ -86,7 +86,7 @@ public class SidePaneNodeHeader extends AnchorPane {
 		AnchorUtils.setAnchor(label, 0, 0, 5, -1);
 		getChildren().add(label);
 
-		Image closeImage = JamsApplication.getIconManager().getOrLoadSafe(Icons.BAR_CLOSE, Icons.BAR_CLOSE_PATH, 1024, 1024).orElse(null);
+		Image closeImage = JamsApplication.getIconManager().getOrLoadSafe(Icons.BAR_CLOSE).orElse(null);
 		closeButton = new Button("", new NearestImageView(closeImage, 16, 16));
 		closeButton.getStyleClass().add("side-pane-node-header-button");
 		closeButton.setOnAction(event -> sidebar.get(name).ifPresent(SidebarButton::hide));

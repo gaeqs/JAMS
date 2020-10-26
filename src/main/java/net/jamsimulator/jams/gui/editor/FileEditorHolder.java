@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.editor;
 
+import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import net.jamsimulator.jams.gui.project.WorkingPane;
@@ -275,14 +276,16 @@ public class FileEditorHolder extends SplitPane {
 
 			first.parent = this;
 			second.parent = this;
+			list = null;
 
 			getItems().add(first);
 			getItems().add(second);
 			setOrientation(horizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL);
 			SplitPane.setResizableWithParent(first, false);
 			SplitPane.setResizableWithParent(second, false);
-			list = null;
 			refreshSupport();
+			setDividerPosition(0, 0.5);
+			Platform.runLater(this::layoutAllDisplays);
 		} else {
 			(first == null ? second : first).openInNewHolder(display, horizontal);
 		}
@@ -326,7 +329,9 @@ public class FileEditorHolder extends SplitPane {
 	}
 
 	private void refreshSupport() {
-		if (list != null) draggingSupport.addSupport(list);
+		if (list != null && draggingSupport != null) {
+			draggingSupport.addSupport(list);
+		}
 		if (first != null) {
 			first.draggingSupport = draggingSupport;
 			first.refreshSupport();
@@ -335,5 +340,11 @@ public class FileEditorHolder extends SplitPane {
 			second.draggingSupport = draggingSupport;
 			second.refreshSupport();
 		}
+	}
+
+	private void layoutAllDisplays() {
+		if (list != null) list.layoutAllDisplays();
+		if (first != null) first.layoutAllDisplays();
+		if (second != null) second.layoutAllDisplays();
 	}
 }

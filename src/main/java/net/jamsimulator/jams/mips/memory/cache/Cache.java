@@ -8,6 +8,12 @@ import net.jamsimulator.jams.mips.memory.Memory;
 public interface Cache extends Memory {
 
 	/**
+	 * Returns the {@link CacheBuilder} of this cache.
+	 * @return the {@link CacheBuilder} of this cache.
+	 */
+	CacheBuilder<?> getBuilder();
+
+	/**
 	 * Returns the amount of blocks inside this cache.
 	 *
 	 * @return the amount of blocks.
@@ -49,5 +55,27 @@ public interface Cache extends Memory {
 	 * Writes to the next step memory any pending change.
 	 */
 	void flush();
+
+	/**
+	 * This method should be used only by undo operations.
+	 * <p>
+	 * Removes an operation and sets the given block at the given index.
+	 * If the parameter hit is true, this method removes one hit too.
+	 *
+	 * @param hit        whether a hit should be substracted.
+	 * @param blockIndex the block index.
+	 * @param old        the old {@link CacheBlock}.
+	 */
+	void undoOperation(boolean hit, int blockIndex, CacheBlock old);
+
+	/**
+	 * This method should be used only by undo operations.
+	 * <p>
+	 * Sets the stats of this cache.
+	 *
+	 * @param operations the operations.
+	 * @param hits       the hits.
+	 */
+	void forceStats(long operations, long hits);
 
 }
