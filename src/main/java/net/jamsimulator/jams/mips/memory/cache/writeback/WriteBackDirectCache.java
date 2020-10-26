@@ -2,6 +2,7 @@ package net.jamsimulator.jams.mips.memory.cache.writeback;
 
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
+import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 import net.jamsimulator.jams.mips.memory.cache.event.CacheOperationEvent;
 import net.jamsimulator.jams.utils.NumericUtils;
 
@@ -9,8 +10,8 @@ public class WriteBackDirectCache extends WriteBackCache {
 
 	protected final int indexShift, indexMask;
 
-	public WriteBackDirectCache(Memory parent, int blockSize, int blocksAmount) {
-		super(parent, blockSize, blocksAmount, 32 - 2 - NumericUtils.log2(blockSize) - NumericUtils.log2(blocksAmount));
+	public WriteBackDirectCache(CacheBuilder<?> builder, Memory parent, int blockSize, int blocksAmount) {
+		super(builder, parent, blockSize, blocksAmount, 32 - 2 - NumericUtils.log2(blockSize) - NumericUtils.log2(blocksAmount));
 		this.indexShift = 2 + NumericUtils.log2(blockSize);
 		this.indexMask = blocksAmount - 1;
 	}

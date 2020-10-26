@@ -93,6 +93,7 @@ public class Messages {
 	public static final String BAR_CONSOLE_NAME = "BAR_CONSOLE_NAME";
 	public static final String BAR_FLOW_NAME = "BAR_FLOW_NAME";
 	public static final String BAR_LABELS_NAME = "BAR_LABELS_NAME";
+	public static final String BAR_CACHES_NAME = "BAR_CACHES_NAME";
 
 	public static final String INSTRUCTIONS_USER = "INSTRUCTIONS_USER";
 	public static final String INSTRUCTIONS_KERNEL = "INSTRUCTIONS_KERNEL";
@@ -119,6 +120,20 @@ public class Messages {
 	public static final String LABELS_ADDRESS = "LABELS_ADDRESS";
 	public static final String LABELS_CONTEXT_SHOW_IN_MEMORY = "LABELS_CONTEXT_SHOW_IN_MEMORY";
 	public static final String LABELS_CONTEXT_SHOW_IN_INSTRUCTION = "LABELS_CONTEXT_SHOW_IN_INSTRUCTION";
+
+	public static final String CACHES_HITS = "CACHES_HITS";
+	public static final String CACHES_MISSES = "CACHES_MISSES";
+	public static final String CACHE_STATS = "CACHE_STATS";
+	public static final String CACHES_STATS_OPERATIONS = "CACHES_STATS_OPERATIONS";
+	public static final String CACHES_STATS_HITS = "CACHES_STATS_HITS";
+	public static final String CACHES_STATS_MISSES = "CACHES_STATS_MISSES";
+	public static final String CACHES_RESET = "CACHES_RESET";
+	public static final String CACHES_LOG = "CACHES_LOG";
+	public static final String CACHES_LOG_HIT = "CACHES_LOG_HIT";
+	public static final String CACHES_LOG_MISS = "CACHES_LOG_MISS";
+	public static final String CACHES_LOG_INDEX = "CACHES_LOG_INDEX";
+	public static final String CACHES_LOG_CLEAR = "CACHES_LOG_CLEAR";
+	public static final String CACHES_LOG_CLEAR_ALL = "CACHES_LOG_CLEAR_ALL";
 
 	public static final String CONFIG = "CONFIG";
 

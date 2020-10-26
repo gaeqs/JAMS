@@ -7,6 +7,7 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.MemorySection;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
+import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 import net.jamsimulator.jams.mips.memory.cache.CacheStats;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteGetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
@@ -26,6 +27,8 @@ import java.util.Set;
  */
 public abstract class WriteBackCache extends SimpleEventBroadcast implements Cache {
 
+	protected final CacheBuilder<?> builder;
+
 	protected final Memory parent;
 	protected final int blockSize, blocksAmount, tagSize;
 
@@ -40,11 +43,12 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
 	protected long operations, hits;
 	protected long savedOperations, savedHits;
 
-	public WriteBackCache(Memory parent, int blockSize, int blocksAmount, int tagSize) {
+	public WriteBackCache(CacheBuilder<?> builder, Memory parent, int blockSize, int blocksAmount, int tagSize) {
 		Validate.notNull(parent, "Parent cannot be null!");
 		Validate.isTrue(NumericUtils.is2Elev(blockSize), "BlockSize cannot be expressed as 2^n!");
 		Validate.isTrue(NumericUtils.is2Elev(blocksAmount), "BlockAmount cannot be expressed as 2^n!");
 
+		this.builder = builder;
 		this.parent = parent;
 		this.blockSize = blockSize;
 		this.blocksAmount = blocksAmount;
@@ -58,6 +62,7 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
 	}
 
 	protected WriteBackCache(WriteBackCache copy) {
+		builder = copy.builder;
 		parent = copy.parent.copy();
 		blockSize = copy.blockSize;
 		blocksAmount = copy.blocksAmount;
@@ -80,6 +85,11 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
 
 		savedOperations = 0;
 		savedHits = 0;
+	}
+
+	@Override
+	public CacheBuilder<?> getBuilder() {
+		return builder;
 	}
 
 	@Override

@@ -169,11 +169,11 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 	}
 
 	private void loadCacheVisualizer() {
-		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_LABELS).orElse(null);
+		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_CACHES).orElse(null);
 		var memory = simulation.getMemory();
 		if (memory instanceof Cache) {
-			var visualizer = new CacheVisualizer(simulation, (Cache) memory);
-			manageBarAddition("cache_visualizer", visualizer, icon, Messages.BAR_LABELS_NAME, BarType.BOTTOM_RIGHT);
+			var visualizer = new CacheVisualizer(simulation);
+			manageBarAddition("cache_visualizer", visualizer, icon, Messages.BAR_CACHES_NAME, BarType.BOTTOM_LEFT);
 		}
 	}
 

@@ -1,80 +1,131 @@
 package net.jamsimulator.jams.gui.mips.simulator.cache;
 
-import javafx.scene.chart.PieChart;
-import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.gui.util.PixelScrollPane;
+import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.language.wrapper.CacheLanguageListCell;
+import net.jamsimulator.jams.language.wrapper.LanguageTab;
+import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
+import net.jamsimulator.jams.mips.memory.cache.event.CacheOperationEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
 import net.jamsimulator.jams.utils.AnchorUtils;
-import net.jamsimulator.jams.utils.Validate;
 
+import java.util.Optional;
+
+/**
+ * Main class for the Cache Visualizer pane.
+ */
 public class CacheVisualizer extends AnchorPane {
 
-	private final PieChart chart;
-	private final PieChart.Data hitRate;
-	private final PieChart.Data missRate;
-	private Cache cache;
+	private final Simulation<?> simulation;
+	private final ComboBox<Cache> cacheComboBox;
+	private final CacheStatsVisualizer statsVisualizer;
+	private final CacheLogVisualizer logVisualizer;
 
-	public CacheVisualizer(Simulation<?> simulation, Cache cache) {
-		Validate.notNull(cache, "Cache cannot be null!");
-		this.cache = cache;
+	public CacheVisualizer(Simulation<?> simulation) {
+		this.simulation = simulation;
 
-		this.chart = new PieChart();
-		this.hitRate = new PieChart.Data("Hit rate", 0);
-		this.missRate = new PieChart.Data("Miss rate", 0);
+		cacheComboBox = new ComboBox<>();
+		loadCacheComboBox(simulation.getMemory());
 
-		chart.getData().addAll(hitRate, missRate);
-		refresh();
+		statsVisualizer = new CacheStatsVisualizer(this);
+		logVisualizer = new CacheLogVisualizer(this);
 
-		AnchorUtils.setAnchor(chart, 0, 30, 0, 0);
-		getChildren().add(chart);
-
-
-		var resetButton = new Button("Reset");
-		AnchorUtils.setAnchor(resetButton, -1, 5, 5, 5);
-		resetButton.setOnAction(event -> {
-			simulation.resetCaches();
-			refresh();
-		});
-		getChildren().add(resetButton);
+		loadTabs();
 
 		simulation.registerListeners(this, true);
 	}
 
-	public void setCache(Cache cache) {
-		Validate.notNull(cache, "Cache cannot be null!");
-		this.cache = cache;
-		refresh();
+	public Simulation<?> getSimulation() {
+		return simulation;
+	}
+
+	public Cache getSelectedCache() {
+		return cacheComboBox.getSelectionModel().getSelectedItem();
+	}
+
+	private void loadCacheComboBox(Memory memory) {
+		cacheComboBox.setCellFactory(f -> new CacheLanguageListCell());
+		cacheComboBox.setButtonCell(new CacheLanguageListCell());
+
+		Optional<Memory> current = Optional.of(memory);
+		while (current.isPresent()) {
+			if (current.get() instanceof Cache) {
+				cacheComboBox.getItems().add((Cache) current.get());
+				current.get().registerListeners(this, true);
+			}
+			current = current.get().getNextLevelMemory();
+		}
+
+		cacheComboBox.getSelectionModel().select(0);
+		cacheComboBox.getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> refresh());
+
+		AnchorUtils.setAnchor(cacheComboBox, 0, -1, 5, 5);
+		getChildren().add(cacheComboBox);
+	}
+
+	protected void loadTabs() {
+		var tabPane = new TabPane();
+
+		var statsScroll = new PixelScrollPane(statsVisualizer);
+		statsScroll.setFitToWidth(true);
+		statsScroll.setFitToHeight(true);
+		var statsTab = new LanguageTab(Messages.CACHE_STATS, statsScroll);
+		statsTab.setClosable(false);
+		tabPane.getTabs().add(statsTab);
+
+
+		var logTab = new LanguageTab(Messages.CACHES_LOG, logVisualizer);
+		logTab.setClosable(false);
+		tabPane.getTabs().add(logTab);
+
+		AnchorUtils.setAnchor(tabPane, 30, 0, 0, 0);
+		getChildren().add(tabPane);
 	}
 
 	private void refresh() {
-		var stats = cache.getStats();
-		var rate = stats.getHits() / (double) stats.getOperations();
-		if (Double.isNaN(rate)) rate = 1;
-		System.out.println("RATE: " + rate + " - " + stats);
-		hitRate.setPieValue(rate);
-		missRate.setPieValue(1 - rate);
-		System.out.println("REFRESHING");
+		statsVisualizer.refresh();
+		logVisualizer.refresh();
+	}
+
+	@Listener
+	private void onSimulationStart(SimulationStartEvent event) {
+		statsVisualizer.onStart();
+		logVisualizer.onStart();
 	}
 
 	@Listener
 	private void onSimulationStop(SimulationStopEvent event) {
 		refresh();
+		statsVisualizer.onStop();
+		logVisualizer.onStop();
 	}
 
 	@Listener
 	private void onSimulationUndo(SimulationUndoStepEvent.After event) {
 		refresh();
+		statsVisualizer.onStop();
+		logVisualizer.onStop();
 	}
 
 	@Listener
 	private void onSimulationReset(SimulationResetEvent event) {
 		refresh();
+		statsVisualizer.onStop();
+		logVisualizer.onStop();
 	}
 
+	@Listener
+	private void onCacheOperation(CacheOperationEvent event) {
+		logVisualizer.manageCacheEvent(event);
+	}
 
 }

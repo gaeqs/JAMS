@@ -8,6 +8,12 @@ import net.jamsimulator.jams.mips.memory.Memory;
 public interface Cache extends Memory {
 
 	/**
+	 * Returns the {@link CacheBuilder} of this cache.
+	 * @return the {@link CacheBuilder} of this cache.
+	 */
+	CacheBuilder<?> getBuilder();
+
+	/**
 	 * Returns the amount of blocks inside this cache.
 	 *
 	 * @return the amount of blocks.

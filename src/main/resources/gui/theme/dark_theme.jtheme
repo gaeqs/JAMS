@@ -464,14 +464,35 @@ AnchorPane {
     -fx-border-color: transparent;
     -fx-border-width: 0;
 }
+
 /* Using -fx-background-color instead of -fx-pie-color. This removes the light effect */
-.default-color0.chart-pie { -fx-background-color: #2f75cb; }
-.default-color1.chart-pie { -fx-background-color: #cb2f41; }
-.default-color2.chart-pie { -fx-background-color: #59cb2f; }
-.default-color3.chart-pie { -fx-background-color: #cbb62f; }
-.default-color4.chart-pie { -fx-background-color: #a12fcb; }
-.default-color5.chart-pie { -fx-background-color: #2fcb87; }
-.default-color6.chart-pie { -fx-background-color: #2f32cb; }
+.default-color0.chart-pie {
+    -fx-background-color: #2f75cb;
+}
+
+.default-color1.chart-pie {
+    -fx-background-color: #cb2f41;
+}
+
+.default-color2.chart-pie {
+    -fx-background-color: #59cb2f;
+}
+
+.default-color3.chart-pie {
+    -fx-background-color: #cbb62f;
+}
+
+.default-color4.chart-pie {
+    -fx-background-color: #a12fcb;
+}
+
+.default-color5.chart-pie {
+    -fx-background-color: #2fcb87;
+}
+
+.default-color6.chart-pie {
+    -fx-background-color: #2f32cb;
+}
 
 .chart-pie-label {
     -fx-fill: -theme-foreground;
@@ -1150,4 +1171,22 @@ AnchorPane {
 
 .flow-entry .multi-cycle-write-back {
     -fx-background-color: #665857;
+}
+
+/*CACHES*/
+
+.cache-log-message-even {
+    -fx-background-color: -theme-background-darker;
+}
+
+.cache-log-message-odd {
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.cache-log-message .hit {
+    -fx-text-fill: #b5f874;
+}
+
+.cache-log-message .miss {
+    -fx-text-fill: #e59d9c;
 }

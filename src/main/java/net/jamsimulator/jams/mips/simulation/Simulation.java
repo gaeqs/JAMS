@@ -574,6 +574,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 			}
 			current = current.get().getNextLevelMemory();
 		}
+		callEvent(new SimulationCachesResetEvent(this));
 		return true;
 	}
 

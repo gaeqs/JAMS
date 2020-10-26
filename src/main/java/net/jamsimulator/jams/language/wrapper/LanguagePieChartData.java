@@ -24,21 +24,22 @@
 
 package net.jamsimulator.jams.language.wrapper;
 
-import javafx.scene.control.Label;
+import javafx.scene.chart.PieChart;
+import javafx.scene.layout.Region;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 import net.jamsimulator.jams.utils.StringUtils;
 
-public class LanguageLabel extends Label {
+public class LanguagePieChartData extends Region {
 
+	private final PieChart.Data data;
 	private String node;
-	private final String[] replacements;
 
-	public LanguageLabel(String node, String... replacements) {
+	public LanguagePieChartData(PieChart.Data data, String node) {
+		this.data = data;
 		this.node = node;
-		this.replacements = replacements;
 		Jams.getLanguageManager().registerListeners(this, true);
 		refreshMessage();
 	}
@@ -50,13 +51,8 @@ public class LanguageLabel extends Label {
 
 	private void refreshMessage() {
 		if (node == null) return;
-		var parsed = StringUtils.parseEscapeCharacters(Jams.getLanguageManager().getSelected().getOrDefault(node));
-
-		for (int i = 0; i < replacements.length - 1; i += 2) {
-			parsed = parsed.replace(replacements[i], replacements[i + 1]);
-		}
-
-		setText(StringUtils.addLineJumps(parsed, 70));
+		String parsed = StringUtils.parseEscapeCharacters(Jams.getLanguageManager().getSelected().getOrDefault(node));
+		data.setName(StringUtils.addLineJumps(parsed, 70));
 	}
 
 	@Listener

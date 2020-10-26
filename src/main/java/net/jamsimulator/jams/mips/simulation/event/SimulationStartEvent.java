@@ -10,7 +10,7 @@ public class SimulationStartEvent extends SimulationEvent {
 	/**
 	 * Creates the simulation event.
 	 *
-	 * @param simulation the {@link Simulation} tha created this event.
+	 * @param simulation the {@link Simulation} thatcreated this event.
 	 */
 	public SimulationStartEvent(Simulation<?> simulation) {
 		super(simulation);

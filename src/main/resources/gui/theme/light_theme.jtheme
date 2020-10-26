@@ -1151,3 +1151,12 @@ AnchorPane {
 .flow-entry .multi-cycle-write-back {
     -fx-background-color: #ebcbca;
 }
+
+/*CACHES*/
+.cache-log-message .hit {
+    -fx-text-fill: #59773d;
+}
+
+.cache-log-message .miss {
+    -fx-text-fill: #674845;
+}
