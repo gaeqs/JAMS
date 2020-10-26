@@ -67,9 +67,23 @@ public class MIPSSimulationConfiguration {
 		this.name = name;
 
 		this.nodes = new HashMap<>();
-		this.rawValues = new HashMap<>();
 
-		Configuration nodesConfiguration = configuration.getOrCreateConfiguration("node");
+		var nodesConfiguration = configuration.getOrCreateConfiguration("node");
+		var foundNodes = new HashMap<>(nodesConfiguration.getAll(false));
+
+		MIPSSimulationConfigurationPresets.getPresets().forEach(preset -> {
+			var optional = nodesConfiguration.getAndConvert(preset.getName(), preset.getType());
+			if (optional.isEmpty()) {
+				nodes.put(preset, preset.getDefaultValue());
+			} else {
+				foundNodes.remove(preset.getName());
+				nodes.put(preset, optional.get());
+			}
+		});
+
+		this.rawValues = foundNodes;
+
+
 		nodesConfiguration.getAll(false).forEach((key, value) -> {
 			var preset = MIPSSimulationConfigurationPresets.getPreset(key).orElse(null);
 			if (preset != null) {
@@ -164,8 +178,6 @@ public class MIPSSimulationConfiguration {
 		prefix = prefix + "." + name;
 
 		String nodePrefix = prefix + ".node.";
-
-
 		rawValues.forEach((key, value) -> configuration.set(nodePrefix + key, value));
 		nodes.forEach((key, value) -> configuration.convertAndSet(nodePrefix + key.getName(), value, key.getType()));
 
