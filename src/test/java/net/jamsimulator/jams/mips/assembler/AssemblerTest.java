@@ -22,16 +22,13 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.assemblerold;
+package net.jamsimulator.jams.mips.assembler;
 
-import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
-import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
 import net.jamsimulator.jams.mips.directive.set.MIPS32DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.MIPS32InstructionSet;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
@@ -48,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class AssemblerTest {
 
 	@Test
-	void testCompiler() {
+	void testAssemble() {
 		Map<String, String> files = new HashMap<>();
 		List<String> program = new ArrayList<>();
 
@@ -91,10 +88,8 @@ class AssemblerTest {
 		System.out.println("Extern next address: " + (assembler.getAssemblerData().getCurrentExtern() - MIPS32Memory.DATA));
 
 		System.out.println("Starting simulation");
-		Register pc = simulation.getRegisters().getProgramCounter();
-		while (pc.getValue() < assembler.getAssemblerData().getCurrentText()) {
-			simulation.nextStep();
-		}
+		simulation.executeAll();
+		simulation.waitForExecutionFinish();
 		System.out.println("Simulation end");
 		System.out.println("$t1: " + simulation.getRegisters().getRegister("t1").get().getValue());
 		System.out.println("$s0: 0x" + Integer.toHexString(simulation.getRegisters().getRegister("s0").get().getValue()));
