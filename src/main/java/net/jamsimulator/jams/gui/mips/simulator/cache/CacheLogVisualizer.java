@@ -33,9 +33,9 @@ public class CacheLogVisualizer extends AnchorPane {
 
 	private final VBox contents;
 	private final Button clearButton, clearAllButton;
+	private final HashMap<Cache, Integer> added;
 
 	private Cache currentCache;
-	private HashMap<Cache, Integer> added;
 
 	public CacheLogVisualizer(CacheVisualizer visualizer) {
 		currentCache = visualizer.getSelectedCache();
@@ -71,11 +71,17 @@ public class CacheLogVisualizer extends AnchorPane {
 		getChildren().addAll(scroll, buttonsHBox);
 	}
 
+	/**
+	 * Called when the simulation is started.
+	 */
 	void onStart() {
 		clearButton.setDisable(true);
 		clearAllButton.setDisable(true);
 	}
 
+	/**
+	 * Called when the simulation is stopped or reset.
+	 */
 	void onStop() {
 		clearButton.setDisable(false);
 		clearAllButton.setDisable(false);
@@ -84,6 +90,11 @@ public class CacheLogVisualizer extends AnchorPane {
 	//Even register, for colored table.
 	private boolean even = true;
 
+	/**
+	 * Adds the given {@link CacheOperationEvent} to the log.
+	 *
+	 * @param event the event.
+	 */
 	public void manageCacheEvent(CacheOperationEvent event) {
 		var list = messages.computeIfAbsent(event.getCache(), k -> new LinkedList<>());
 		list.add(event);
@@ -95,6 +106,9 @@ public class CacheLogVisualizer extends AnchorPane {
 		}
 	}
 
+	/**
+	 * Refreshes the data of the log visualizer.
+	 */
 	public void refresh() {
 		Platform.runLater(() -> {
 			//If the current cache is the selected one, just add the new elements.

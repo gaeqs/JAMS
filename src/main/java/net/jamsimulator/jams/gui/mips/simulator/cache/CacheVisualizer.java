@@ -30,6 +30,11 @@ public class CacheVisualizer extends AnchorPane {
 	private final CacheStatsVisualizer statsVisualizer;
 	private final CacheLogVisualizer logVisualizer;
 
+	/**
+	 * Creates the cache visualizer.
+	 *
+	 * @param simulation the {@link Simulation} containing the cache.
+	 */
 	public CacheVisualizer(Simulation<?> simulation) {
 		this.simulation = simulation;
 
@@ -44,14 +49,30 @@ public class CacheVisualizer extends AnchorPane {
 		simulation.registerListeners(this, true);
 	}
 
+	/**
+	 * Returns the {@link Simulation} containing the caches of this visualizer.
+	 *
+	 * @return the {@link Simulation}.
+	 */
 	public Simulation<?> getSimulation() {
 		return simulation;
 	}
 
+	/**
+	 * Returns the selected {@link Cache} of the visualizer.
+	 *
+	 * @return the selected {@link Cache}.
+	 */
 	public Cache getSelectedCache() {
 		return cacheComboBox.getSelectionModel().getSelectedItem();
 	}
 
+	/**
+	 * Loads the cache combo box.
+	 * This box allows to select any cache of the simulation.
+	 *
+	 * @param memory the {@link Simulation}'s memory.
+	 */
 	private void loadCacheComboBox(Memory memory) {
 		cacheComboBox.setCellFactory(f -> new CacheLanguageListCell());
 		cacheComboBox.setButtonCell(new CacheLanguageListCell());

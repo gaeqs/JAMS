@@ -26,12 +26,9 @@ public class ExecutionButtons {
 
 	public ExecutionButtons(Simulation<?> simulation) {
 		nodes = new ArrayList<>();
-		Image runOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY_ONE
-		).orElse(null);
-		Image undoOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_UNDO_ONE
-		).orElse(null);
-		Image resetIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_RESET
-		).orElse(null);
+		Image runOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY_ONE).orElse(null);
+		Image undoOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_UNDO_ONE).orElse(null);
+		Image resetIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_RESET).orElse(null);
 
 		runOrStop = new FixedButton("", new NearestImageView(null, 16, 16), 28, 28);
 		changeToRunAll(simulation);

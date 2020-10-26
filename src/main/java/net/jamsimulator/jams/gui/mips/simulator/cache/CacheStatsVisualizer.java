@@ -10,7 +10,6 @@ import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.language.wrapper.LanguagePieChartData;
-import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.utils.AnchorUtils;
 
 /**
@@ -23,8 +22,8 @@ public class CacheStatsVisualizer extends AnchorPane {
 	private final PieChart.Data hitRate;
 	private final PieChart.Data missRate;
 
-	private Button resetButton;
-	private Label operationsCount, hitsCount, missesCount;
+	private final Button resetButton;
+	private final Label operationsCount, hitsCount, missesCount;
 
 	public CacheStatsVisualizer(CacheVisualizer visualizer) {
 		this.visualizer = visualizer;
@@ -35,26 +34,44 @@ public class CacheStatsVisualizer extends AnchorPane {
 				new LanguagePieChartData(hitRate, Messages.CACHES_HITS),
 				new LanguagePieChartData(missRate, Messages.CACHES_MISSES));
 
-		//Chart creation
+		//Chart creation.
 		var chart = new PieChart();
 		chart.getData().addAll(hitRate, missRate);
 		chart.setLegendVisible(false);
 		AnchorUtils.setAnchor(chart, 0, 70, 0, 0);
 		getChildren().add(chart);
 
-		loadStats(visualizer.getSelectedCache());
+		//Stats.
+		operationsCount = new Label();
+		hitsCount = new Label();
+		missesCount = new Label();
+		loadStats();
+
+		//Reset button.
+		resetButton = new LanguageButton(Messages.CACHES_RESET);
 		loadResetButton();
+
+		//Refresh all data
 		refresh();
 	}
 
+	/**
+	 * Called when the simulation is started.
+	 */
 	void onStart() {
 		resetButton.setDisable(true);
 	}
 
-	void onStop () {
+	/**
+	 * Called when the simulation is stopped or reset.
+	 */
+	void onStop() {
 		resetButton.setDisable(false);
 	}
 
+	/**
+	 * Refreshes the data of the stats visualizer.
+	 */
 	void refresh() {
 		Platform.runLater(() -> {
 			var cache = visualizer.getSelectedCache();
@@ -70,15 +87,13 @@ public class CacheStatsVisualizer extends AnchorPane {
 		});
 	}
 
-	private void loadStats(Cache cache) {
+	/**
+	 * Loads the stats section of the visualizer.
+	 */
+	private void loadStats() {
 		var operations = new LanguageLabel(Messages.CACHES_STATS_OPERATIONS);
 		var hits = new LanguageLabel(Messages.CACHES_STATS_HITS);
 		var misses = new LanguageLabel(Messages.CACHES_STATS_MISSES);
-
-		var stats = cache.getStats();
-		operationsCount = new Label(String.valueOf(stats.getOperations()));
-		hitsCount = new Label(String.valueOf(stats.getHits()));
-		missesCount = new Label(String.valueOf(stats.getMisses()));
 
 		var opHBox = new HBox(operations, operationsCount);
 		var hitsHBox = new HBox(hits, hitsCount);
@@ -100,8 +115,10 @@ public class CacheStatsVisualizer extends AnchorPane {
 		getChildren().add(missesHBox);
 	}
 
+	/**
+	 * Loads the reset button.
+	 */
 	private void loadResetButton() {
-		resetButton = new LanguageButton(Messages.CACHES_RESET);
 		AnchorUtils.setAnchor(resetButton, -1, 5, 5, 5);
 		resetButton.setOnAction(event -> {
 			visualizer.getSimulation().resetCaches();
