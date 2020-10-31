@@ -24,17 +24,19 @@
 
 package net.jamsimulator.jams.mips.memory.builder;
 
-import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
+import net.jamsimulator.jams.mips.memory.Memory;
 
 public class MIPS32MemoryBuilder extends MemoryBuilder {
 
 	public static final String NAME = "MIPS32";
 
+	public static final MIPS32MemoryBuilder INSTANCE = new MIPS32MemoryBuilder();
+
 	/**
 	 * Creates a MIPS32 memory builder.
 	 */
-	public MIPS32MemoryBuilder() {
+	private MIPS32MemoryBuilder() {
 		super(NAME);
 	}
 

@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.manager;
 
-import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundle;
 import net.jamsimulator.jams.mips.syscall.bundle.defaults.MARSSyscallExecutionBuilderBundle;
@@ -44,32 +43,20 @@ import java.util.Set;
 /**
  * This singleton stores all {@link SyscallExecutionBuilder}s that projects may use.
  * <p>
- * To register an {@link SyscallExecutionBuilder} use {@link #register(SyscallExecutionBuilder)}.
- * To unregister an {@link SyscallExecutionBuilder} use {@link #unregister(String)}.
+ * To register an {@link SyscallExecutionBuilder} use {@link #add(SyscallExecutionBuilder)}.
+ * To unregister an {@link SyscallExecutionBuilder} use {@link #remove(Object)}.
  * An {@link SyscallExecutionBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public class SyscallExecutionBuilderManager extends SimpleEventBroadcast {
+public class SyscallExecutionBuilderManager extends Manager<SyscallExecutionBuilder<?>> {
 
 	public static final SyscallExecutionBuilderManager INSTANCE = new SyscallExecutionBuilderManager();
 
-	private final Set<SyscallExecutionBuilder<?>> builders;
-	private final Set<SyscallExecutionBuilderBundle> bundles;
+	private Set<SyscallExecutionBuilderBundle> bundles;
 
 	private SyscallExecutionBuilderManager() {
-		builders = new HashSet<>();
-		bundles = new HashSet<>();
-		addDefaults();
-	}
-
-	/**
-	 * Returns the {@link SyscallExecutionBuilder} that matches the given name, if present.
-	 *
-	 * @param name the given name.
-	 * @return the {@link SyscallExecutionBuilder}, if present.
-	 */
-	public Optional<SyscallExecutionBuilder<?>> get(String name) {
-		return builders.stream().filter(target -> target.getName().equalsIgnoreCase(name)).findFirst();
+		super(SyscallExecutionBuilderRegisterEvent.Before::new, SyscallExecutionBuilderRegisterEvent.After::new,
+				SyscallExecutionBuilderUnregisterEvent.Before::new, SyscallExecutionBuilderUnregisterEvent.After::new);
 	}
 
 	/**
@@ -80,19 +67,6 @@ public class SyscallExecutionBuilderManager extends SimpleEventBroadcast {
 	 */
 	public Optional<SyscallExecutionBuilderBundle> getBundle(String name) {
 		return bundles.stream().filter(target -> target.getName().equalsIgnoreCase(name)).findFirst();
-	}
-
-	/**
-	 * Returns an unmodifiable {@link Set} with all {@link SyscallExecutionBuilder}s
-	 * registered in this manager.
-	 * <p>
-	 * Any attempt to modify this {@link Set} result in an {@link UnsupportedOperationException}.
-	 *
-	 * @return the unmodifiable {@link Set};
-	 * @see Collections#unmodifiableSet(Set)
-	 */
-	public Set<SyscallExecutionBuilder<?>> getAll() {
-		return Collections.unmodifiableSet(builders);
 	}
 
 	/**
@@ -109,34 +83,13 @@ public class SyscallExecutionBuilderManager extends SimpleEventBroadcast {
 	}
 
 	/**
-	 * Attempts to register the given {@link SyscallExecutionBuilder} into the manager.
-	 * This will fail if a {@link SyscallExecutionBuilder} with the same name already exists within this manager.
-	 *
-	 * @param builder the builder to register.
-	 * @return whether the builder was registered.
-	 */
-	public boolean register(SyscallExecutionBuilder<?> builder) {
-		Validate.notNull(builder, "Builder cannot be null!");
-
-		if (builders.contains(builder)) return false;
-
-		SyscallExecutionBuilderRegisterEvent.Before before =
-				callEvent(new SyscallExecutionBuilderRegisterEvent.Before(builder));
-		if (before.isCancelled()) return false;
-
-		if (!builders.add(builder)) return false;
-		callEvent(new SyscallExecutionBuilderRegisterEvent.After(builder));
-		return true;
-	}
-
-	/**
 	 * Attempts to register the given {@link SyscallExecutionBuilderBundle} into the manager.
 	 * This will fail if a {@link SyscallExecutionBuilderBundle} with the same name already exists within this manager.
 	 *
 	 * @param bundle the bundle to register.
 	 * @return whether the bundle was registered.
 	 */
-	public boolean registerBundle(SyscallExecutionBuilderBundle bundle) {
+	public boolean addBundle(SyscallExecutionBuilderBundle bundle) {
 		Validate.notNull(bundle, "Bundle cannot be null!");
 		if (bundles.contains(bundle)) return false;
 
@@ -149,81 +102,65 @@ public class SyscallExecutionBuilderManager extends SimpleEventBroadcast {
 	}
 
 	/**
-	 * Attempts to unregister the {@link SyscallExecutionBuilder} that matches the given name.
+	 * Attempts to unregister the given {@link SyscallExecutionBuilderBundle}.
 	 *
-	 * @param name the given name.
+	 * @param o the bundle.
 	 * @return whether the operation was successful.
 	 */
-	public boolean unregister(String name) {
-		SyscallExecutionBuilder<?> builder = builders.stream()
-				.filter(target -> target.getName().equals(name))
-				.findAny().orElse(null);
-		if (builder == null) return false;
-
-		SyscallExecutionBuilderUnregisterEvent.Before before =
-				callEvent(new SyscallExecutionBuilderUnregisterEvent.Before(builder));
-		if (before.isCancelled()) return false;
-		if (!builders.remove(builder)) return false;
-		callEvent(new SyscallExecutionBuilderUnregisterEvent.After(builder));
-		return true;
+	public boolean removeBundle(Object o) {
+		if (o == null) return false;
+		try {
+			var before = callEvent(
+					new SyscallExecutionBuilderBundleUnregisterEvent.Before((SyscallExecutionBuilderBundle) o));
+			if (before.isCancelled()) return false;
+			if (bundles.remove(o)) {
+				callEvent(new SyscallExecutionBuilderBundleUnregisterEvent.After((SyscallExecutionBuilderBundle) o));
+				return true;
+			}
+			return false;
+		} catch (ClassCastException ex) {
+			return false;
+		}
 	}
 
-	/**
-	 * Attempts to unregister the {@link SyscallExecutionBuilderBundle} that matches the given name.
-	 *
-	 * @param name the given name.
-	 * @return whether the operation was successful.
-	 */
-	public boolean unregisterBundle(String name) {
-		var bundle = bundles.stream().filter(target ->
-				target.getName().equalsIgnoreCase(name)).findAny().orElse(null);
-		if (bundle == null) return false;
+	@Override
+	protected void loadDefaultElements() {
+		add(new SyscallExecutionRunExceptionHandler.Builder());
+		add(new SyscallExecutionPrintInteger.Builder());
+		add(new SyscallExecutionPrintFloat.Builder());
+		add(new SyscallExecutionPrintDouble.Builder());
+		add(new SyscallExecutionPrintString.Builder());
+		add(new SyscallExecutionReadInteger.Builder());
+		add(new SyscallExecutionReadFloat.Builder());
+		add(new SyscallExecutionReadDouble.Builder());
+		add(new SyscallExecutionReadString.Builder());
+		add(new SyscallExecutionAllocateMemory.Builder());
+		add(new SyscallExecutionExit.Builder());
+		add(new SyscallExecutionPrintCharacter.Builder());
+		add(new SyscallExecutionReadCharacter.Builder());
+		add(new SyscallExecutionOpenFile.Builder());
+		add(new SyscallExecutionReadFile.Builder());
+		add(new SyscallExecutionWriteFile.Builder());
+		add(new SyscallExecutionCloseFile.Builder());
+		add(new SyscallExecutionExitWithValue.Builder());
 
-		var before = callEvent(new SyscallExecutionBuilderBundleUnregisterEvent.Before(bundle));
-		if (before.isCancelled()) return false;
-		if (!bundles.remove(bundle)) return false;
+		add(new SyscallExecutionSystemTime.Builder());
+		add(new SyscallExecutionSleep.Builder());
 
-		callEvent(new SyscallExecutionBuilderBundleUnregisterEvent.After(bundle));
-		return true;
-	}
-
-	private void addDefaults() {
-		builders.add(new SyscallExecutionRunExceptionHandler.Builder());
-		builders.add(new SyscallExecutionPrintInteger.Builder());
-		builders.add(new SyscallExecutionPrintFloat.Builder());
-		builders.add(new SyscallExecutionPrintDouble.Builder());
-		builders.add(new SyscallExecutionPrintString.Builder());
-		builders.add(new SyscallExecutionReadInteger.Builder());
-		builders.add(new SyscallExecutionReadFloat.Builder());
-		builders.add(new SyscallExecutionReadDouble.Builder());
-		builders.add(new SyscallExecutionReadString.Builder());
-		builders.add(new SyscallExecutionAllocateMemory.Builder());
-		builders.add(new SyscallExecutionExit.Builder());
-		builders.add(new SyscallExecutionPrintCharacter.Builder());
-		builders.add(new SyscallExecutionReadCharacter.Builder());
-		builders.add(new SyscallExecutionOpenFile.Builder());
-		builders.add(new SyscallExecutionReadFile.Builder());
-		builders.add(new SyscallExecutionWriteFile.Builder());
-		builders.add(new SyscallExecutionCloseFile.Builder());
-		builders.add(new SyscallExecutionExitWithValue.Builder());
-
-		builders.add(new SyscallExecutionSystemTime.Builder());
-		builders.add(new SyscallExecutionSleep.Builder());
-
-		builders.add(new SyscallExecutionPrintHexadecimalInteger.Builder());
-		builders.add(new SyscallExecutionPrintBinaryInteger.Builder());
-		builders.add(new SyscallExecutionPrintUnsignedInteger.Builder());
-		builders.add(new SyscallExecutionSetSeed.Builder());
-		builders.add(new SyscallExecutionRandomInteger.Builder());
-		builders.add(new SyscallExecutionRandomRangedInteger.Builder());
-		builders.add(new SyscallExecutionRandomFloat.Builder());
-		builders.add(new SyscallExecutionRandomDouble.Builder());
-
+		add(new SyscallExecutionPrintHexadecimalInteger.Builder());
+		add(new SyscallExecutionPrintBinaryInteger.Builder());
+		add(new SyscallExecutionPrintUnsignedInteger.Builder());
+		add(new SyscallExecutionSetSeed.Builder());
+		add(new SyscallExecutionRandomInteger.Builder());
+		add(new SyscallExecutionRandomRangedInteger.Builder());
+		add(new SyscallExecutionRandomFloat.Builder());
+		add(new SyscallExecutionRandomDouble.Builder());
 
 		//BUNDLES
-		bundles.add(new SyscallExecutionBuilderBundle("Empty"));
-		bundles.add(new SPIMSyscallExecutionBuilderBundle());
-		bundles.add(new MARSSyscallExecutionBuilderBundle());
+		bundles = new HashSet<>();
+		addBundle(new SyscallExecutionBuilderBundle("Empty"));
+		addBundle(new SPIMSyscallExecutionBuilderBundle());
+		addBundle(new MARSSyscallExecutionBuilderBundle());
 	}
 
 }

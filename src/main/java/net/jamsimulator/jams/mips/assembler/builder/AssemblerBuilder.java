@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.assembler.builder;
 
+import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
@@ -31,7 +32,6 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -42,7 +42,7 @@ import java.util.Objects;
  * If a plugin want to add a custom assembler to JAMS, it should create a child of this class and register
  * it on the {@link net.jamsimulator.jams.manager.AssemblerBuilderManager}.
  */
-public abstract class AssemblerBuilder {
+public abstract class AssemblerBuilder implements Labeled {
 
 	private final String name;
 
@@ -63,6 +63,7 @@ public abstract class AssemblerBuilder {
 	 *
 	 * @return the name of this assembler builder.
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}

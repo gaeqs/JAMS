@@ -1,13 +1,14 @@
 package net.jamsimulator.jams.mips.syscall;
 
 import javafx.beans.property.Property;
+import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class SyscallExecutionBuilder<Exe extends SyscallExecution> {
+public abstract class SyscallExecutionBuilder<Exe extends SyscallExecution> implements Labeled {
 
 	protected final String name;
 	protected final List<Property<?>> properties;
@@ -18,6 +19,7 @@ public abstract class SyscallExecutionBuilder<Exe extends SyscallExecution> {
 		this.properties = properties == null ? Collections.emptyList() : properties;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}

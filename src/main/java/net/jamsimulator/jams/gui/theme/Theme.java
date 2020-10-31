@@ -28,6 +28,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.theme.exception.ThemeFailedLoadException;
+import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.utils.TempUtils;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -37,7 +38,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
-public class Theme {
+public class Theme implements Labeled {
 
 	private final String name;
 	private final String css;
@@ -84,6 +85,7 @@ public class Theme {
 		}
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}

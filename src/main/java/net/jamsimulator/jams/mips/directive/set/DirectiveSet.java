@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.directive.set;
 
+import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -35,7 +36,7 @@ import java.util.Set;
 /**
  * Represents the collection of {@link Directive}s a MIPS program may use.
  */
-public class DirectiveSet {
+public class DirectiveSet implements Labeled {
 
 	protected final String name;
 	protected final Set<Directive> directives;
@@ -53,6 +54,7 @@ public class DirectiveSet {
 	 *
 	 * @return the name.
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}

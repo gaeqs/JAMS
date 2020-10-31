@@ -24,108 +24,35 @@
 
 package net.jamsimulator.jams.manager;
 
-import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 import net.jamsimulator.jams.mips.memory.cache.builder.AssociativeCacheBuilder;
 import net.jamsimulator.jams.mips.memory.cache.builder.DirectCacheBuilder;
 import net.jamsimulator.jams.mips.memory.cache.builder.SetAssociativeCacheBuilder;
 import net.jamsimulator.jams.mips.memory.cache.event.CacheBuilderRegisterEvent;
 import net.jamsimulator.jams.mips.memory.cache.event.CacheBuilderUnregisterEvent;
-import net.jamsimulator.jams.utils.Validate;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This singleton stores all {@link CacheBuilder}s that projects may use.
  * <p>
- * To register an {@link CacheBuilder} use {@link #register(CacheBuilder)}.
- * To unregister an {@link CacheBuilder} use {@link #unregister(String)}.
+ * To register an {@link CacheBuilder} use {@link #add(CacheBuilder)}.
+ * To unregister an {@link CacheBuilder} use {@link #remove(Object)}.
  * An {@link CacheBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public class CacheBuilderManager extends SimpleEventBroadcast {
+public class CacheBuilderManager extends Manager<CacheBuilder<?>> {
 
 	public static final CacheBuilderManager INSTANCE = new CacheBuilderManager();
 
-	private final Set<CacheBuilder<?>> builders;
-
-
 	private CacheBuilderManager() {
-		builders = new HashSet<>();
-		addDefaults();
+		super(CacheBuilderRegisterEvent.Before::new, CacheBuilderRegisterEvent.After::new,
+				CacheBuilderUnregisterEvent.Before::new, CacheBuilderUnregisterEvent.After::new);
 	}
 
-	/**
-	 * Returns the {@link CacheBuilder} that matches the given name, if present.
-	 *
-	 * @param name the given name.
-	 * @return the {@link CacheBuilder}, if present.
-	 */
-	public Optional<CacheBuilder<?>> get(String name) {
-		return builders.stream().filter(target -> target.getName().equalsIgnoreCase(name)).findFirst();
-	}
-
-	/**
-	 * Returns a unmodifiable {@link Set} with all {@link CacheBuilder}s
-	 * registered in this manager.
-	 * <p>
-	 * Any attempt to modify this {@link Set} result in an {@link UnsupportedOperationException}.
-	 *
-	 * @return the unmodifiable {@link Set};
-	 * @see Collections#unmodifiableSet(Set)
-	 */
-	public Set<CacheBuilder<?>> getAll() {
-		return Collections.unmodifiableSet(builders);
-	}
-
-	/**
-	 * Attempts to register the given {@link CacheBuilder} into the manager.
-	 * This will fail if a {@link CacheBuilder} with the same name already exists within this manager.
-	 *
-	 * @param builder the builder to register.
-	 * @return whether the builder was registered.
-	 */
-	public boolean register(CacheBuilder<?> builder) {
-		Validate.notNull(builder, "Builder cannot be null!");
-
-		if (builders.contains(builder)) return false;
-
-		CacheBuilderRegisterEvent.Before before = callEvent(new CacheBuilderRegisterEvent.Before(builder));
-		if (before.isCancelled()) return false;
-
-		if (!builders.add(builder)) return false;
-		callEvent(new CacheBuilderRegisterEvent.After(builder));
-		return true;
-	}
-
-	/**
-	 * Attempts to unregister the {@link CacheBuilder} that matches the given name.
-	 * This will fail if the {@link CacheBuilder} to unregister is the default one.
-	 *
-	 * @param name the given name.
-	 * @return whether the operation was successful.
-	 */
-	public boolean unregister(String name) {
-		CacheBuilder<?> builder = builders.stream()
-				.filter(target -> target.getName().equals(name))
-				.findAny().orElse(null);
-		if (builder == null) return false;
-
-		CacheBuilderUnregisterEvent.Before before =
-				callEvent(new CacheBuilderUnregisterEvent.Before(builder));
-		if (before.isCancelled()) return false;
-		if (!builders.remove(builder)) return false;
-		callEvent(new CacheBuilderUnregisterEvent.After(builder));
-		return true;
-	}
-
-	private void addDefaults() {
-		builders.add(new AssociativeCacheBuilder());
-		builders.add(new DirectCacheBuilder());
-		builders.add(new SetAssociativeCacheBuilder());
+	@Override
+	protected void loadDefaultElements() {
+		add(new AssociativeCacheBuilder());
+		add(new DirectCacheBuilder());
+		add(new SetAssociativeCacheBuilder());
 	}
 
 }

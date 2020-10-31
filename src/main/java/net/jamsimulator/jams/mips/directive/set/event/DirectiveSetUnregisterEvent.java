@@ -22,18 +22,48 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.instruction.set;
+package net.jamsimulator.jams.mips.directive.set.event;
 
-public class MIPS32InstructionSet extends InstructionSet {
+import net.jamsimulator.jams.event.Cancellable;
+import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 
-	public static final String NAME = "MIPS32";
+public class DirectiveSetUnregisterEvent extends Event {
 
-	public static final MIPS32InstructionSet INSTANCE = new MIPS32InstructionSet();
+	protected DirectiveSet directiveSet;
 
-	private MIPS32InstructionSet() {
-		super(NAME);
-		instructions.addAll(MIPS32DefaultInstructions.basicInstructions);
-		instructions.addAll(MIPS32DefaultInstructions.pseudoInstructions);
+	DirectiveSetUnregisterEvent(DirectiveSet directiveSet) {
+		this.directiveSet = directiveSet;
 	}
 
+	public DirectiveSet getDirectiveSet() {
+		return directiveSet;
+	}
+
+	public static class Before extends DirectiveSetUnregisterEvent implements Cancellable {
+
+		private boolean cancelled;
+
+		public Before(DirectiveSet directiveSet) {
+			super(directiveSet);
+		}
+
+		@Override
+		public boolean isCancelled() {
+			return cancelled;
+		}
+
+		@Override
+		public void setCancelled(boolean cancelled) {
+			this.cancelled = cancelled;
+		}
+	}
+
+	public static class After extends DirectiveSetUnregisterEvent {
+
+		public After(DirectiveSet directiveSet) {
+			super(directiveSet);
+		}
+
+	}
 }

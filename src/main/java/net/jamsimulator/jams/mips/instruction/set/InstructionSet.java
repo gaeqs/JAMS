@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.instruction.set;
 
+import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
@@ -47,7 +48,7 @@ import java.util.stream.Collectors;
  * @see Instruction
  * @see BasicInstruction
  */
-public class InstructionSet {
+public class InstructionSet implements Labeled {
 
 	protected static final CompatibleInstructionComparator COMPARATOR = new CompatibleInstructionComparator();
 
@@ -59,11 +60,7 @@ public class InstructionSet {
 		instructions = new HashSet<>();
 	}
 
-	/**
-	 * Returns the name of this instruction set.
-	 *
-	 * @return the name of this instruction set.
-	 */
+	@Override
 	public String getName() {
 		return name;
 	}

@@ -577,7 +577,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 
 	private Set<ContextAction> getSupportedContextActions() {
 		Explorer explorer = getExplorer();
-		Set<Action> actions = JamsApplication.getActionManager().getAll();
+		Set<Action> actions = JamsApplication.getActionManager();
 		Set<ContextAction> set = new HashSet<>();
 		for (Action action : actions) {
 			if (action instanceof ContextAction && supportsActionRegion(action.getRegionTag())

@@ -29,7 +29,6 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
-import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
@@ -58,27 +57,25 @@ import java.util.stream.Collectors;
 /**
  * This singleton stores all {@link Action}s that JAMS may use.
  * <p>
- * To register an {@link Action} use {@link #register(Action)}.
- * To unregister am {@link Action} use {@link #unregister(String)}.
+ * To register an {@link Action} use {@link #add(Action)}.
+ * To unregister am {@link Action} use {@link #remove(Object)}.
  * <p>
  * To bind an {@link Action} to a {@link KeyCombination} use {@link #bind(KeyCombination, String)}.
  * To unbind them use {@link #unbind(KeyCombination, String)}.
  */
-public class ActionManager extends SimpleEventBroadcast {
+public class ActionManager extends Manager<Action> {
 
 	public static final String ACTIONS_SECTION = "action";
-
 	public static final String LANGUAGE_REGION_NODE_PREFIX = "ACTION_REGION_";
 
 	public static final ActionManager INSTANCE = new ActionManager();
 
-	private final Set<Action> actions;
 	private final Map<KeyCombination, Map<String, Action>> binds;
 
-	private ActionManager() {
-		this.actions = new HashSet<>();
+	public ActionManager() {
+		super(ActionRegisterEvent.Before::new, ActionRegisterEvent.After::new,
+				ActionUnregisterEvent.Before::new, ActionUnregisterEvent.After::new);
 		this.binds = new HashMap<>();
-		loadDefaultActions();
 		if (loadDefaultBinds(loadBinds())) {
 			save();
 
@@ -90,66 +87,15 @@ public class ActionManager extends SimpleEventBroadcast {
 		}
 	}
 
-	/**
-	 * Returns the {@link Action} that matches the given name, if present.
-	 *
-	 * @param name the name.
-	 * @return the {@link Action}, if present.
-	 */
-	public Optional<Action> get(String name) {
-		Validate.notNull(name, "Name cannot be null!");
-		return actions.stream().filter(target -> target.getName().equals(name)).findAny();
-	}
+	@Override
+	protected void onElementRemoval(Action action) {
 
-	/**
-	 * Returns a unmodifiable {@link Set} with all {@link Action}s
-	 * registered in this manager.
-	 * <p>
-	 * Any attempt to modify this {@link Set} result in an {@link UnsupportedOperationException}.
-	 *
-	 * @return the unmodifiable {@link Set};
-	 * @see Collections#unmodifiableSet(Set)
-	 */
-	public Set<Action> getAll() {
-		return Collections.unmodifiableSet(actions);
-	}
-
-	/**
-	 * Registers the given {@link Action}.
-	 * This will fail if an {@link Action} with the same name already exists within this manager.
-	 *
-	 * @param action the {@link Action}.
-	 * @return whether the {@link Action} was registered.
-	 */
-	public boolean register(Action action) {
-		Validate.notNull(action, "Action cannot be null!");
-
-		if (actions.contains(action)) return false;
-
-		ActionRegisterEvent.Before before = callEvent(new ActionRegisterEvent.Before(action));
-		if (before.isCancelled()) return false;
-		if (!actions.add(action)) return false;
-		callEvent(new ActionRegisterEvent.After(action));
-		return true;
-	}
-
-	/**
-	 * Attempts to unregister the {@link Action} that matches the given name.
-	 * This will unbind all {@link KeyCombination}s bind to this {@link Action}.
-	 *
-	 * @param name the given name.
-	 * @return whether the operation was successful.
-	 */
-	public boolean unregister(String name) {
-		Validate.notNull(name, "Name cannot be null!");
-		Action action = get(name).orElse(null);
-		if (action == null) return false;
-		ActionUnregisterEvent.Before before = callEvent(new ActionUnregisterEvent.Before(action));
-		if (before.isCancelled()) return false;
-		getBindCombinations(name).forEach(key -> unbind(key, action.getRegionTag()));
-		actions.remove(action);
-		callEvent(new ActionUnregisterEvent.After(action));
-		return true;
+		binds.forEach((combination, regions) -> {
+			var current = regions.get(action.getRegionTag());
+			if (current.equals(action)) {
+				unbind(combination, action.getRegionTag());
+			}
+		});
 	}
 
 	/**
@@ -294,8 +240,6 @@ public class ActionManager extends SimpleEventBroadcast {
 
 
 		map.remove(region);
-		if (map.isEmpty()) binds.remove(combination);
-		if (map.isEmpty()) binds.remove(combination);
 		callEvent(new ActionUnbindEvent.After(action, combination));
 		return true;
 	}
@@ -355,68 +299,69 @@ public class ActionManager extends SimpleEventBroadcast {
 	public void save() {
 		Configuration root = Jams.getMainConfiguration().getOrCreateConfiguration(ACTIONS_SECTION);
 		root.clear();
-		actions.forEach(action -> root.set(action.getName(), getBindCombinations(action.getName()).stream()
+		forEach(action -> root.set(action.getName(), getBindCombinations(action.getName()).stream()
 				.map(KeyCombination::getName).collect(Collectors.toList())));
 	}
 
-	private void loadDefaultActions() {
+	@Override
+	protected void loadDefaultElements() {
 		//GENERAL
-		actions.add(new GeneralActionCreateProject());
-		actions.add(new GeneralActionOpenProject());
-		actions.add(new GeneralActionSettings());
+		add(new GeneralActionCreateProject());
+		add(new GeneralActionOpenProject());
+		add(new GeneralActionSettings());
 
 		//TEXT EDITOR
-		actions.add(new GeneralActionAssemble());
-		actions.add(new TextEditorActionCopy());
-		actions.add(new TextEditorActionCut());
-		actions.add(new TextEditorActionDuplicateLine());
-		actions.add(new TextEditorActionNextFile());
-		actions.add(new TextEditorActionPaste());
-		actions.add(new TextEditorActionPreviousFile());
-		actions.add(new TextEditorActionRedo());
-		actions.add(new TextEditorActionReformat());
-		actions.add(new TextEditorActionRefreshFromDisk());
-		actions.add(new TextEditorActionSave());
-		actions.add(new TextEditorActionSelectAll());
-		actions.add(new TextEditorActionShowAutocompletionPopup());
-		actions.add(new TextEditorActionUndo());
+		add(new GeneralActionAssemble());
+		add(new TextEditorActionCopy());
+		add(new TextEditorActionCut());
+		add(new TextEditorActionDuplicateLine());
+		add(new TextEditorActionNextFile());
+		add(new TextEditorActionPaste());
+		add(new TextEditorActionPreviousFile());
+		add(new TextEditorActionRedo());
+		add(new TextEditorActionReformat());
+		add(new TextEditorActionRefreshFromDisk());
+		add(new TextEditorActionSave());
+		add(new TextEditorActionSelectAll());
+		add(new TextEditorActionShowAutocompletionPopup());
+		add(new TextEditorActionUndo());
 
 		//EXPLORER ELEMENT
-		actions.add(new ExplorerElementActionContractOrSelectParent());
-		actions.add(new ExplorerElementActionExpandOrSelectNext());
-		actions.add(new ExplorerElementActionSelectAll());
-		actions.add(new ExplorerElementActionSelectNext());
-		actions.add(new ExplorerElementActionSelectNextMultiple());
-		actions.add(new ExplorerElementActionSelectPrevious());
-		actions.add(new ExplorerElementActionSelectPreviousMultiple());
+		add(new ExplorerElementActionContractOrSelectParent());
+		add(new ExplorerElementActionExpandOrSelectNext());
+		add(new ExplorerElementActionSelectAll());
+		add(new ExplorerElementActionSelectNext());
+		add(new ExplorerElementActionSelectNextMultiple());
+		add(new ExplorerElementActionSelectPrevious());
+		add(new ExplorerElementActionSelectPreviousMultiple());
 
 		//FOLDER EXPLORER ELEMENT
-		actions.add(new FolderActionCopy());
-		actions.add(new FolderActionDelete());
-		actions.add(new FolderActionPaste());
+		add(new FolderActionCopy());
+		add(new FolderActionDelete());
+		add(new FolderActionPaste());
 
-		actions.add(new FolderActionShowInFiles());
+		add(new FolderActionShowInFiles());
 
-		actions.add(new FolderActionNewFile());
-		actions.add(new FolderActionNewAssemblyFile());
-		actions.add(new FolderActionNewFolder());
+		add(new FolderActionNewFile());
+		add(new FolderActionNewAssemblyFile());
+		add(new FolderActionNewFolder());
 
 		//TAB
-		actions.add(new EditorTabActionSplitHorizontally());
-		actions.add(new EditorTabActionSplitVertically());
+		add(new EditorTabActionSplitHorizontally());
+		add(new EditorTabActionSplitVertically());
 
 		// MIPS EXPLORER ELEMENT
-		actions.add(new FolderActionAddFileToAssembler());
-		actions.add(new FolderActionRemoveFileFromAssembler());
+		add(new FolderActionAddFileToAssembler());
+		add(new FolderActionRemoveFileFromAssembler());
 
-		actions.add(new MipsFilesToAssembleActionRemove());
+		add(new MipsFilesToAssembleActionRemove());
 
 		//SIMULATION
-		actions.add(new SimulationActionExecuteAllInstructions());
-		actions.add(new SimulationActionExecuteOneStep());
-		actions.add(new SimulationActionReset());
-		actions.add(new SimulationActionStop());
-		actions.add(new SimulationActionUndoOneStep());
+		add(new SimulationActionExecuteAllInstructions());
+		add(new SimulationActionExecuteOneStep());
+		add(new SimulationActionReset());
+		add(new SimulationActionStop());
+		add(new SimulationActionUndoOneStep());
 	}
 
 	private List<Action> loadBinds() {
@@ -458,7 +403,7 @@ public class ActionManager extends SimpleEventBroadcast {
 	private boolean loadDefaultBinds(List<Action> presentActions) {
 		boolean requiresSave = false;
 
-		for (Action action : actions) {
+		for (Action action : this) {
 			if (!action.getDefaultCodeCombination().isPresent() || presentActions.contains(action)) continue;
 			if (getBindAction(action.getRegionTag(), action.getDefaultCodeCombination().get()).isPresent()) continue;
 

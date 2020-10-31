@@ -22,18 +22,48 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.instruction.set;
+package net.jamsimulator.jams.mips.instruction.set.event;
 
-public class MIPS32InstructionSet extends InstructionSet {
+import net.jamsimulator.jams.event.Cancellable;
+import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 
-	public static final String NAME = "MIPS32";
+public class InstructionSetRegisterEvent extends Event {
 
-	public static final MIPS32InstructionSet INSTANCE = new MIPS32InstructionSet();
+	protected InstructionSet instructionSet;
 
-	private MIPS32InstructionSet() {
-		super(NAME);
-		instructions.addAll(MIPS32DefaultInstructions.basicInstructions);
-		instructions.addAll(MIPS32DefaultInstructions.pseudoInstructions);
+	InstructionSetRegisterEvent(InstructionSet InstructionSet) {
+		this.instructionSet = InstructionSet;
 	}
 
+	public InstructionSet getInstructionSet() {
+		return instructionSet;
+	}
+
+	public static class Before extends InstructionSetRegisterEvent implements Cancellable {
+
+		private boolean cancelled;
+
+		public Before(InstructionSet InstructionSet) {
+			super(InstructionSet);
+		}
+
+		@Override
+		public boolean isCancelled() {
+			return cancelled;
+		}
+
+		@Override
+		public void setCancelled(boolean cancelled) {
+			this.cancelled = cancelled;
+		}
+	}
+
+	public static class After extends InstructionSetRegisterEvent {
+
+		public After(InstructionSet InstructionSet) {
+			super(InstructionSet);
+		}
+
+	}
 }

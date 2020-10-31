@@ -36,11 +36,12 @@ public class MIPS32AssemblerBuilder extends AssemblerBuilder {
 
 	public static final String NAME = "MIPS32";
 
+	public static final MIPS32AssemblerBuilder INSTANCE = new MIPS32AssemblerBuilder();
 
 	/**
 	 * Creates a MIPS32 builder.
 	 */
-	public MIPS32AssemblerBuilder() {
+	private MIPS32AssemblerBuilder() {
 		super(NAME);
 	}
 

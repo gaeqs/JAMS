@@ -28,7 +28,9 @@ public class MIPS32DirectiveSet extends DirectiveSet {
 
 	public static final String NAME = "MIPS32";
 
-	public MIPS32DirectiveSet() {
+	public static final MIPS32DirectiveSet INSTANCE = new MIPS32DirectiveSet();
+
+	private MIPS32DirectiveSet() {
 		super(NAME);
 		directives.addAll(MIPS32DefaultDirectives.directives);
 	}

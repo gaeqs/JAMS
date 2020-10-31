@@ -60,7 +60,7 @@ public class MainMenuBar extends MenuBar {
 		getMenus().clear();
 		Set<MainMenuRegion> set = new HashSet<>();
 
-		for (Action action : JamsApplication.getActionManager().getAll()) {
+		for (Action action : JamsApplication.getActionManager()) {
 			if (!(action instanceof ContextAction)) continue;
 			if (!((ContextAction) action).getMainMenuRegion().isPresent()) continue;
 			set.add(((ContextAction) action).getMainMenuRegion().get());
@@ -86,7 +86,7 @@ public class MainMenuBar extends MenuBar {
 	}
 
 	private Set<ContextAction> getSupportedContextActions(MainMenuRegion region) {
-		Set<Action> actions = JamsApplication.getActionManager().getAll();
+		Set<Action> actions = JamsApplication.getActionManager();
 		Set<ContextAction> set = new HashSet<>();
 		for (Action action : actions) {
 			if (action instanceof ContextAction && region.equals(((ContextAction) action).getMainMenuRegion().orElse(null))) {

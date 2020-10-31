@@ -163,7 +163,7 @@ public class FileEditorTab extends Tab implements ActionRegion {
 	}
 
 	private Set<ContextAction> getSupportedContextActions() {
-		Set<Action> actions = JamsApplication.getActionManager().getAll();
+		Set<Action> actions = JamsApplication.getActionManager();
 		Set<ContextAction> set = new HashSet<>();
 		for (Action action : actions) {
 			if (action instanceof ContextAction && supportsActionRegion(action.getRegionTag())) {

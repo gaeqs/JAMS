@@ -26,6 +26,7 @@ package net.jamsimulator.jams.language;
 
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.language.exception.LanguageFailedLoadException;
+import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.*;
@@ -35,7 +36,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-public class Language {
+public class Language implements Labeled {
 
 	public static final String MESSAGE_SEPARATOR = "=";
 
@@ -73,6 +74,7 @@ public class Language {
 		}
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}

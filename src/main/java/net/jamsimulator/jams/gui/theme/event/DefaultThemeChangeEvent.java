@@ -22,18 +22,58 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.instruction.set;
+package net.jamsimulator.jams.gui.theme.event;
 
-public class MIPS32InstructionSet extends InstructionSet {
+import net.jamsimulator.jams.event.Cancellable;
+import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.gui.theme.Theme;
 
-	public static final String NAME = "MIPS32";
+public class DefaultThemeChangeEvent extends Event {
 
-	public static final MIPS32InstructionSet INSTANCE = new MIPS32InstructionSet();
+	protected Theme oldTheme;
+	protected Theme newTheme;
 
-	private MIPS32InstructionSet() {
-		super(NAME);
-		instructions.addAll(MIPS32DefaultInstructions.basicInstructions);
-		instructions.addAll(MIPS32DefaultInstructions.pseudoInstructions);
+	DefaultThemeChangeEvent(Theme oldTheme, Theme newTheme) {
+		this.oldTheme = oldTheme;
+		this.newTheme = newTheme;
 	}
 
+	public Theme getOldTheme() {
+		return oldTheme;
+	}
+
+	public Theme getNewTheme() {
+		return newTheme;
+	}
+
+	public static class Before extends DefaultThemeChangeEvent implements Cancellable {
+
+		private boolean cancelled;
+
+		public Before(Theme oldTheme, Theme newTheme) {
+			super(oldTheme, newTheme);
+		}
+
+		public void setNewTheme(Theme Theme) {
+			this.newTheme = Theme;
+		}
+
+		@Override
+		public boolean isCancelled() {
+			return cancelled;
+		}
+
+		@Override
+		public void setCancelled(boolean cancelled) {
+			this.cancelled = cancelled;
+		}
+	}
+
+	public static class After extends DefaultThemeChangeEvent {
+
+		public After(Theme oldTheme, Theme newTheme) {
+			super(oldTheme, newTheme);
+		}
+
+	}
 }

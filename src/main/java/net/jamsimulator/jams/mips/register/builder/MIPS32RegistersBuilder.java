@@ -42,6 +42,8 @@ public class MIPS32RegistersBuilder extends RegistersBuilder {
 	private static final Set<String> COP0_NAMES = new HashSet<>();
 	private static final Set<String> COP1_NAMES = new HashSet<>();
 
+	public static final MIPS32RegistersBuilder INSTANCE = new MIPS32RegistersBuilder();
+
 	static {
 		NAMES.add("zero");
 		NAMES.add("at");
@@ -82,7 +84,7 @@ public class MIPS32RegistersBuilder extends RegistersBuilder {
 	}
 
 
-	public MIPS32RegistersBuilder() {
+	private MIPS32RegistersBuilder() {
 		super(NAME, NAMES, GENERAL_NAMES, COP0_NAMES, COP1_NAMES, MIPS32Registers.VALID_REGISTERS_START);
 	}
 

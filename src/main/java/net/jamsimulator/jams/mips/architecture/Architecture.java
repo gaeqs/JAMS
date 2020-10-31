@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.architecture;
 
+import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
@@ -39,7 +40,7 @@ import java.util.Objects;
  * Each architecture is made by different elements and can run instructions
  * in a completely different way.
  */
-public abstract class Architecture {
+public abstract class Architecture implements Labeled {
 
 	private final String name;
 
@@ -53,6 +54,7 @@ public abstract class Architecture {
 	 *
 	 * @return the name.
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}

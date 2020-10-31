@@ -90,7 +90,7 @@ public class ActionsExplorerMainSection extends LanguageExplorerSection {
 
 	protected void generateRegions() {
 		regions = new HashMap<>();
-		JamsApplication.getActionManager().getAll().forEach(this::addAction);
+		JamsApplication.getActionManager().forEach(this::addAction);
 	}
 
 	public void setSmallRepresentation(boolean smallRepresentation) {
