@@ -33,6 +33,7 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
 import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
@@ -452,7 +453,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		return !statusRegister.getBit(COP0RegistersBits.STATUS_UM);
 	}
 
-	public void manageMIPSInterrupt(RuntimeInstructionException exception, int pc) {
+	public void manageMIPSInterrupt(RuntimeInstructionException exception, InstructionExecution<?, ?> execution, int pc) {
 		if (!areMIPSInterruptsEnabled()) return;
 		statusRegister.modifyBits(1, COP0RegistersBits.STATUS_EXL, 1);
 		epcRegister.setValue(pc);
@@ -462,7 +463,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		}
 
 		//Modify cause register
-		causeRegister.modifyBits(0, COP0RegistersBits.CAUSE_BD, 1);
+		var delaySlot = execution instanceof MultiCycleExecution && ((MultiCycleExecution<?>) execution).isInDelaySlot();
+		causeRegister.modifyBits(delaySlot ? 1 : 0, COP0RegistersBits.CAUSE_BD, 1);
 		causeRegister.modifyBits(exception.getInterruptCause().getValue(), COP0RegistersBits.CAUSE_EX_CODE, 5);
 
 		registers.getProgramCounter().setValue(MIPS32Memory.EXCEPTION_HANDLER);

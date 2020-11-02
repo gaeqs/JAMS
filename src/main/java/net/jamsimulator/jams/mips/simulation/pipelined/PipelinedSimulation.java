@@ -28,6 +28,7 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
+import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
@@ -181,10 +182,10 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 	}
 
 	@Override
-	public void manageMIPSInterrupt(RuntimeInstructionException exception, int pc) {
+	public void manageMIPSInterrupt(RuntimeInstructionException exception, InstructionExecution<?, ?> execution, int pc) {
 		pipeline.reset(MIPS32Memory.EXCEPTION_HANDLER);
 		registers.unlockAllRegisters();
-		super.manageMIPSInterrupt(exception, pc);
+		super.manageMIPSInterrupt(exception, execution, pc);
 	}
 
 	@Override
@@ -441,16 +442,16 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 	}
 
 	private void writeBack() {
+		var execution = pipeline.get(MultiCycleStep.WRITE_BACK);
+		if (execution == null) return;
 
 		RuntimeInstructionException exception = pipeline.getException(MultiCycleStep.WRITE_BACK);
 		if (exception != null) {
-			manageMIPSInterrupt(exception, pipeline.getPc(MultiCycleStep.WRITE_BACK));
+			manageMIPSInterrupt(exception, execution, pipeline.getPc(MultiCycleStep.WRITE_BACK));
 			return;
 		}
 
 		try {
-			var execution = pipeline.get(MultiCycleStep.WRITE_BACK);
-			if (execution == null) return;
 			execution.writeBack();
 			instructionsFinished++;
 		} catch (RuntimeInstructionException ex) {

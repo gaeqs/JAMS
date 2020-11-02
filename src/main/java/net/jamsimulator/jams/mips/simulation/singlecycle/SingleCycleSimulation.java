@@ -246,7 +246,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
 		} catch (RuntimeInstructionException ex) {
 			if (!checkThreadInterrupted()) {
-				manageMIPSInterrupt(ex, pc);
+				manageMIPSInterrupt(ex, execution, pc);
 			}
 		}
 

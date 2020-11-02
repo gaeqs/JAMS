@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.simulation.multicycle;
 
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
+import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
@@ -177,9 +178,9 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 	}
 
 	@Override
-	public void manageMIPSInterrupt(RuntimeInstructionException exception, int pc) {
+	public void manageMIPSInterrupt(RuntimeInstructionException exception, InstructionExecution<?, ?> execution, int pc) {
 		currentStep = MultiCycleStep.FETCH;
-		super.manageMIPSInterrupt(exception, pc);
+		super.manageMIPSInterrupt(exception, execution, pc);
 	}
 
 	@Override
@@ -294,7 +295,7 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 			}
 		} catch (RuntimeInstructionException ex) {
 			if (!checkThreadInterrupted()) {
-				manageMIPSInterrupt(ex, registers.getProgramCounter().getValue() - 4);
+				manageMIPSInterrupt(ex, currentExecution, registers.getProgramCounter().getValue() - 4);
 			}
 		}
 
