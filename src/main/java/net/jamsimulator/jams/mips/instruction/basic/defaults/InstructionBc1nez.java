@@ -32,6 +32,7 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledIFPUInstruction
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicIFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -40,7 +41,7 @@ import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
-public class InstructionBc1nez extends BasicIFPUInstruction<InstructionBc1nez.Assembled> {
+public class InstructionBc1nez extends BasicIFPUInstruction<InstructionBc1nez.Assembled> implements ControlTransferInstruction {
 
 	public static final String NAME = "Branch if COP1 register bit 0 not equal to zero";
 	public static final String MNEMONIC = "bc1nez";
@@ -65,6 +66,11 @@ public class InstructionBc1nez extends BasicIFPUInstruction<InstructionBc1nez.As
 	@Override
 	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new Assembled(instructionCode, this, this);
+	}
+
+	@Override
+	public boolean isCompact() {
+		return false;
 	}
 
 	public static class Assembled extends AssembledIFPUInstruction {
@@ -112,7 +118,7 @@ public class InstructionBc1nez extends BasicIFPUInstruction<InstructionBc1nez.As
 
 			if (solveBranchOnDecode()) {
 				if ((valueCOP1(instruction.getTargetRegister()) & 1) != 0) {
-					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}
@@ -131,7 +137,7 @@ public class InstructionBc1nez extends BasicIFPUInstruction<InstructionBc1nez.As
 		public void writeBack() {
 			if (!solveBranchOnDecode()) {
 				if ((valueCOP1(instruction.getTargetRegister()) & 1) != 0) {
-					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}

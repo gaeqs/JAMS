@@ -31,6 +31,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -39,7 +40,7 @@ import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
-public class InstructionBeq extends BasicInstruction<InstructionBeq.Assembled> {
+public class InstructionBeq extends BasicInstruction<InstructionBeq.Assembled> implements ControlTransferInstruction {
 
 	public static final String NAME = "Branch on equal";
 	public static final String MNEMONIC = "beq";
@@ -63,6 +64,11 @@ public class InstructionBeq extends BasicInstruction<InstructionBeq.Assembled> {
 	@Override
 	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new Assembled(instructionCode, this, this);
+	}
+
+	@Override
+	public boolean isCompact() {
+		return false;
 	}
 
 	public static class Assembled extends AssembledI16Instruction {
@@ -114,7 +120,7 @@ public class InstructionBeq extends BasicInstruction<InstructionBeq.Assembled> {
 
 			if (solveBranchOnDecode()) {
 				if (value(instruction.getTargetRegister()) == value(instruction.getSourceRegister())) {
-					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}
@@ -132,7 +138,7 @@ public class InstructionBeq extends BasicInstruction<InstructionBeq.Assembled> {
 		public void writeBack() {
 			if (!solveBranchOnDecode()) {
 				if (value(instruction.getTargetRegister()) == value(instruction.getSourceRegister())) {
-					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}

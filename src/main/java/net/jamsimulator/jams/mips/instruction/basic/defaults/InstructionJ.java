@@ -31,6 +31,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledJInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -38,7 +39,7 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
-public class InstructionJ extends BasicInstruction<InstructionJ.Assembled> {
+public class InstructionJ extends BasicInstruction<InstructionJ.Assembled> implements ControlTransferInstruction {
 
 	public static final String NAME = "Jump";
 	public static final String MNEMONIC = "j";
@@ -61,6 +62,11 @@ public class InstructionJ extends BasicInstruction<InstructionJ.Assembled> {
 	@Override
 	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new Assembled(instructionCode, this, this);
+	}
+
+	@Override
+	public boolean isCompact() {
+		return false;
 	}
 
 	public static class Assembled extends AssembledJInstruction {
@@ -87,7 +93,7 @@ public class InstructionJ extends BasicInstruction<InstructionJ.Assembled> {
 
 		@Override
 		public void execute() {
-			pc().setValue(instruction.getAbsoluteAddress(getAddress() + 4 ));
+			pc().setValue(instruction.getAbsoluteAddress(getAddress() + 4));
 		}
 	}
 
@@ -101,7 +107,7 @@ public class InstructionJ extends BasicInstruction<InstructionJ.Assembled> {
 		public void decode() {
 			lock(pc());
 			if (solveBranchOnDecode()) {
-				jump(instruction.getAbsoluteAddress(getAddress() + 4 ));
+				jump(instruction.getAbsoluteAddress(getAddress()));
 			}
 		}
 
@@ -117,7 +123,7 @@ public class InstructionJ extends BasicInstruction<InstructionJ.Assembled> {
 		@Override
 		public void writeBack() {
 			if (!solveBranchOnDecode()) {
-				jump(instruction.getAbsoluteAddress(getAddress() + 4 ));
+				jump(instruction.getAbsoluteAddress(getAddress()));
 			}
 		}
 	}

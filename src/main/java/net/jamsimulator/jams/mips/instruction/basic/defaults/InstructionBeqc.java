@@ -31,6 +31,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -39,7 +40,7 @@ import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
-public class InstructionBeqc extends BasicInstruction<InstructionBeqc.Assembled> {
+public class InstructionBeqc extends BasicInstruction<InstructionBeqc.Assembled> implements ControlTransferInstruction {
 
 	public static final String NAME = "Branch on equal compact";
 	public static final String MNEMONIC = "beqc";
@@ -71,6 +72,11 @@ public class InstructionBeqc extends BasicInstruction<InstructionBeqc.Assembled>
 		int rs = instructionCode >> Assembled.SOURCE_REGISTER_SHIFT & Assembled.SOURCE_REGISTER_MASK;
 		int rt = instructionCode >> Assembled.TARGET_REGISTER_SHIFT & Assembled.TARGET_REGISTER_MASK;
 		return super.match(instructionCode) && rs < rt && rs != 0;
+	}
+
+	@Override
+	public boolean isCompact() {
+		return true;
 	}
 
 	public static class Assembled extends AssembledI16Instruction {
@@ -123,7 +129,7 @@ public class InstructionBeqc extends BasicInstruction<InstructionBeqc.Assembled>
 
 			if (solveBranchOnDecode()) {
 				if (value(instruction.getTargetRegister()) == value(instruction.getSourceRegister())) {
-					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}
@@ -141,7 +147,7 @@ public class InstructionBeqc extends BasicInstruction<InstructionBeqc.Assembled>
 		public void writeBack() {
 			if (!solveBranchOnDecode()) {
 				if (value(instruction.getTargetRegister()) == value(instruction.getSourceRegister())) {
-					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}

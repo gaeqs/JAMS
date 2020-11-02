@@ -27,6 +27,7 @@ package net.jamsimulator.jams.mips.simulation.pipelined;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
+import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
@@ -34,7 +35,6 @@ import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
 import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.cache.event.CacheOperationEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryAllocateMemoryEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
@@ -356,14 +356,22 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 		if (pc.isLocked()) return true;
 
 		var pcv = pipeline.getPc(MultiCycleStep.FETCH);
-
 		if (pcv == 0) return false;
-		pc.setValue(pcv + 4);
+
+		//Fetches the stored execution, but it can be a execution in a delay slot. That's why the new PC is not pcv + 4.
+		pc.setValue(pc.getValue() + 4);
+
 		MultiCycleExecution<?> newExecution = (MultiCycleExecution<?>) fetch(pcv);
 		if (newExecution == null) {
 			pipeline.setException(MultiCycleStep.FETCH, new RuntimeAddressException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION, pcv));
 		} else {
+
+			var onDecode = pipeline.get(MultiCycleStep.DECODE);
+			boolean isInDelaySlot = data.areDelaySlotsEnabled()
+					&& onDecode != null && onDecode.getInstruction().getBasicOrigin() instanceof ControlTransferInstruction;
+
 			newExecution.setInstructionId(instructionsStarted);
+			newExecution.setInDelaySlot(isInDelaySlot);
 			pipeline.fetch(newExecution);
 			instructionsStarted++;
 		}
@@ -375,6 +383,13 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 		try {
 			var execution = pipeline.get(MultiCycleStep.DECODE);
 			if (execution == null) return;
+
+			//Release 6: If a control transfer instruction (CTI) is executed in the delay slot of a branch or jump,
+			//Release 6 implementations are required to signal a Reserved Instruction exception.
+			if (execution.isInDelaySlot() && execution.getInstruction().getBasicOrigin() instanceof ControlTransferInstruction) {
+				throw new RuntimeInstructionException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION);
+			}
+
 			execution.decode();
 		} catch (RuntimeInstructionException ex) {
 			pipeline.setException(MultiCycleStep.DECODE, ex);
@@ -385,6 +400,10 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 		try {
 			var execution = pipeline.get(MultiCycleStep.EXECUTE);
 			if (execution == null) return false;
+
+			//Don't execute if there's a exception. This may cause an unhandled exception.
+			if (pipeline.getException(MultiCycleStep.EXECUTE) != null) return false;
+
 			execution.execute();
 		} catch (RuntimeInstructionException ex) {
 			pipeline.setException(MultiCycleStep.EXECUTE, ex);
@@ -405,6 +424,10 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 	private void memory() {
 		var execution = pipeline.get(MultiCycleStep.MEMORY);
 		if (execution == null) return;
+
+		//Don't execute if there's a exception. This may cause an unhandled exception.
+		if (pipeline.getException(MultiCycleStep.MEMORY) != null) return;
+
 		try {
 			execution.memory();
 		} catch (RuntimeInstructionException ex) {

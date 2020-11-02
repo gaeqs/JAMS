@@ -31,6 +31,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -39,7 +40,7 @@ import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
-public class InstructionBltzc extends BasicInstruction<InstructionBltzc.Assembled> {
+public class InstructionBltzc extends BasicInstruction<InstructionBltzc.Assembled> implements ControlTransferInstruction {
 
 	public static final String NAME = "Branch and link on lower than zero compact";
 	public static final String MNEMONIC = "bltzc";
@@ -69,6 +70,11 @@ public class InstructionBltzc extends BasicInstruction<InstructionBltzc.Assemble
 		int rs = instructionCode >> AssembledI16Instruction.SOURCE_REGISTER_SHIFT & AssembledI16Instruction.SOURCE_REGISTER_MASK;
 		int rt = instructionCode >> AssembledI16Instruction.TARGET_REGISTER_SHIFT & AssembledI16Instruction.TARGET_REGISTER_MASK;
 		return super.match(instructionCode) && rs == rt && rs != 0;
+	}
+
+	@Override
+	public boolean isCompact() {
+		return true;
 	}
 
 	public static class Assembled extends AssembledI16Instruction {
@@ -117,7 +123,7 @@ public class InstructionBltzc extends BasicInstruction<InstructionBltzc.Assemble
 
 			if (solveBranchOnDecode()) {
 				if (value(instruction.getTargetRegister()) < 0) {
-					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}
@@ -135,7 +141,7 @@ public class InstructionBltzc extends BasicInstruction<InstructionBltzc.Assemble
 		public void writeBack() {
 			if (!solveBranchOnDecode()) {
 				if (value(instruction.getTargetRegister()) < 0) {
-					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}
