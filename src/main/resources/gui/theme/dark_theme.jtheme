@@ -12,7 +12,7 @@ Dark Theme
     -theme-background-darkest: derive(-theme-background, -30%);
     -theme-header: #3B4754;
     -theme-menu-item-hover: #4D6EAF;
-    -theme-explorer-element-selected: #4D6EAF;
+    -theme-element-selected: #4D6EAF;
 }
 
 /*REMOVE FOCUS INDICATOR (BLUE BORDER)*/
@@ -86,16 +86,17 @@ AnchorPane {
 .tab-pane .tab-header-area .tab {
     -fx-background-radius: 0;
     -fx-background-color: -theme-background;
-    -fx-border-color: transparent;
-    -fx-padding: 2 4 2 4;
+    -fx-padding: 2 4 0 4;
+    -fx-border-width: 0 2 3 0;
+    -fx-border-color: -theme-background;
 }
 
 .tab-pane .tab-header-area .tab:selected {
-    -fx-background-color: -theme-background-lighter;
+    -fx-border-color: -theme-background -theme-background -theme-background-pressed -theme-background;
 }
 
 .tab-pane .tab-header-area .tab:showing {
-    -fx-background-color: -theme-background-lighter;
+    -fx-border-color: -theme-background -theme-background -theme-background-pressed -theme-background;
 }
 
 .tab-pane .tab-header-area .tab .tab-label {
@@ -371,7 +372,7 @@ AnchorPane {
 }
 
 .table-view .filler {
-    -fx-background-color: -theme-background-darker;
+    -fx-background-color: -theme-background-darkest;
 }
 
 .table-view .column-header {
@@ -585,18 +586,18 @@ AnchorPane {
 }
 
 /* WINDOW BUTTON*/
-.window_button {
+.window-button {
     -fx-border-color: transparent;
     -fx-border-width: 0;
     -fx-background-color: -theme-background;
     -fx-background-radius: 0;
 }
 
-.window_button:hover {
-    -fx-background-color: -theme-background-lighter;
+.window-button:hover {
+    -fx-background-color: -theme-background-lighºter;
 }
 
-.window_button:pressed {
+.window-button:pressed {
     -fx-background-color: -theme-background-pressed;
 }
 
@@ -605,11 +606,11 @@ AnchorPane {
     -fx-background-color: -theme-background-darker-2;
 }
 
-.start-top-bar-window_button-minimize {
+.start-top-bar-window-button-minimize {
     -fx-background-color: -theme-background-darker-2;
 }
 
-.start-top-bar-window_button-close {
+.start-top-bar-window-button-close {
     -fx-background-color: -theme-background-darker-2;
 }
 
@@ -627,12 +628,26 @@ AnchorPane {
     -fx-background-color: -theme-background-darker-2;
 }
 
+.project-tab-pane .tab-header-area {
+    -fx-background-color: -theme-background-darker-2;
+
+}
+
 .project-tab-pane .tab-header-area .tab-header-background {
     -fx-background-color: -theme-background-darker-2;
 }
 
 .project-tab-anchor-pane {
     -fx-background-color: -theme-background-darker-2;
+}
+
+.project-tab-pane .tab-header-area .tab {
+    -fx-background-color: -theme-background-darker-2;
+    -fx-border-color: -theme-background-darker-2;
+}
+
+.project-tab-pane .tab-header-area .tab:selected {
+    -fx-border-color: -theme-background-darker-2 -theme-background-darker-2 -theme-background-pressed -theme-background-darker-2;
 }
 
 .buttons-hbox {
@@ -722,8 +737,6 @@ AnchorPane {
 /*BOTTOM BAR*/
 .bottom-bar {
     -fx-background-color: -theme-background-darker-2;
-    -fx-border-color: -theme-background-darker;
-    -fx-border-width: 1 0 0 0;
 }
 
 /*BOTTOM BAR BUTTON*/
@@ -770,7 +783,7 @@ AnchorPane {
 }
 
 .selected-explorer-element {
-    -fx-background-color: -theme-explorer-element-selected;
+    -fx-background-color: -theme-element-selected;
 }
 
 .explorer-jams-folder {
@@ -778,7 +791,7 @@ AnchorPane {
 }
 
 .explorer-jams-folder.selected-explorer-element {
-    -fx-background-color: -theme-explorer-element-selected;
+    -fx-background-color: -theme-element-selected;
 }
 
 /* CONFIG */
@@ -799,7 +812,7 @@ AnchorPane {
 }
 
 .configuration-window-section .selected-explorer-element {
-    -fx-background-color: -theme-explorer-element-selected;
+    -fx-background-color: -theme-element-selected;
 }
 
 .configuration-window-display {
@@ -849,11 +862,16 @@ AnchorPane {
 
 /* FILE DISPLAY LIST */
 .file-editor-list {
-    -fx-background-color: -theme-background;
+    -fx-background-color: -theme-background-darkest;
 }
 
 .file-editor-list .tab-header-area .tab-header-background {
     -fx-background-color: -theme-background;
+}
+
+.file-editor-list .tab-header-area .tab:selected {
+    -fx-background-color: -theme-background-lighter;
+    -fx-border-color: -theme-background-lighter -theme-background-lighter -theme-background-pressed -theme-background-lighter;
 }
 
 .draggable-file-editor-list:hover {
@@ -944,7 +962,7 @@ AnchorPane {
 }
 
 .autocompletion-popup-element-selected {
-    -fx-background-color: -theme-explorer-element-selected;
+    -fx-background-color: -theme-element-selected;
 }
 
 /* LOG */

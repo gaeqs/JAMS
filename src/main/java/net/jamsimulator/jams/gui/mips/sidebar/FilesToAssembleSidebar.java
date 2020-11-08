@@ -57,8 +57,7 @@ public class FilesToAssembleSidebar extends Explorer {
 			mainSection.addElement(new FilesToAssembleSidebarElement(mainSection, file, this, icon));
 		}
 
-		mainSection.expand();
-		mainSection.getRepresentation().getIcon().setImage(Jams.getFileTypeManager().getFolderType().getIcon());
+		hideMainSectionRepresentation();
 	}
 
 	/**

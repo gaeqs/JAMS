@@ -37,6 +37,7 @@ import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
 import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
+import net.jamsimulator.jams.utils.FileUtils;
 import net.jamsimulator.jams.utils.Validate;
 import org.json.JSONArray;
 
@@ -44,7 +45,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -86,13 +86,7 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
 		elements.setFilesToAssemble(this);
 
 		try {
-			List<String> lines = Files.readAllLines(file.toPath());
-			StringBuilder builder = new StringBuilder();
-			for (String line : lines) {
-				builder.append(line).append('\n');
-			}
-
-			String text = builder.toString();
+			String text = FileUtils.readAll(file);
 			if (!text.isEmpty()) {
 				text = text.substring(0, text.length() - 1);
 			}
@@ -133,7 +127,7 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
 		Validate.notNull(holder, "List cannot be null!");
 
 		Optional<FileEditorTab> tab = holder.getFileDisplayTab(file, true);
-		if (!tab.isPresent() || !(tab.get().getDisplay() instanceof MIPSFileEditor)) {
+		if (tab.isEmpty() || !(tab.get().getDisplay() instanceof MIPSFileEditor)) {
 			addFile(file, refreshGlobalLabels);
 			return;
 		}
@@ -189,7 +183,7 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
 		File file = new File(folder, FILE_NAME);
 		if (!file.isFile()) return;
 
-		String value = String.join("\n", Files.readAllLines(file.toPath()));
+		String value = FileUtils.readAll(file);
 
 		JSONArray array = new JSONArray(value);
 		for (Object element : array) {

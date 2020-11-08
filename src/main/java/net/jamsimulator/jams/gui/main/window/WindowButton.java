@@ -35,7 +35,7 @@ import net.jamsimulator.jams.gui.image.NearestImageView;
 public class WindowButton extends Button {
 
 	public static final double FIT = 12;
-	public static final String STYLE_CLASS = "window_button";
+	public static final String STYLE_CLASS = "window-button";
 
 	protected final Stage stage;
 	protected final ImageView imageView;

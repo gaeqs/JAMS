@@ -32,7 +32,7 @@ public class WindowButtonMinimize extends WindowButton {
 
 	public WindowButtonMinimize(Stage stage) {
 		super(stage, JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_MINIMIZE).orElse(null));
-		getStyleClass().add("window_button-minimize");
+		getStyleClass().add("window-button-minimize");
 		setOnAction(event -> onAction());
 	}
 

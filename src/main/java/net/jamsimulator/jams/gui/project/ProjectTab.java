@@ -27,10 +27,8 @@ package net.jamsimulator.jams.gui.project;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Separator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
@@ -60,17 +58,13 @@ public class ProjectTab extends Tab {
 	 */
 	public ProjectTab(MIPSProject project) {
 		super(project.getName());
+		getStyleClass().add("project-tab");
 		setClosable(true);
 		this.project = project;
 		closeListeners = new ArrayList<>();
 
 		AnchorPane pane = new AnchorPane();
 		pane.getStyleClass().add("project-tab-anchor-pane");
-
-		//Black line separator
-		Separator separator = new Separator(Orientation.HORIZONTAL);
-		AnchorUtils.setAnchor(separator, 0, -1, 0, 0);
-		pane.getChildren().add(separator);
 
 		projectTabPane = new ProjectTabPane(this, (old, tab) -> {
 			if (tab != null) {
@@ -80,7 +74,7 @@ public class ProjectTab extends Tab {
 						((ProjectPane) node).populateHBox(getButtonsHBox());
 					}
 
-					AnchorUtils.setAnchor(node, 27, 0, 0, 0);
+					AnchorUtils.setAnchor(node, 28, 0, 0, 0);
 					if (!pane.getChildren().contains(node)) {
 						pane.getChildren().add(node);
 					} else {
@@ -89,7 +83,7 @@ public class ProjectTab extends Tab {
 					}
 				});
 			}
-			if (old != null) {
+			if (old != null && old != tab) {
 				old.getContent().setVisible(false);
 			}
 		}, tab -> pane.getChildren().remove(tab.getContent()));

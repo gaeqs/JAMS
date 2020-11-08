@@ -114,10 +114,11 @@ public class JamsApplication extends Application {
 			stage.show();
 		}
 
-		stage.setOnCloseRequest(event -> {
+		stage.setOnHidden(event -> {
 			closeListeners.forEach(target -> target.handle(event));
 			onClose();
 		});
+
 		Jams.getMainConfiguration().registerListeners(this, true);
 	}
 

@@ -44,6 +44,7 @@ public class MainAnchorPane extends AnchorPane {
 	 */
 	public MainAnchorPane(Stage stage, boolean transparent) {
 		getStyleClass().add("anchor-pane");
+		getStyleClass().add("main-anchor-pane");
 		generateTopMenuBar(stage, transparent);
 		generateProjectsTabPane();
 	}

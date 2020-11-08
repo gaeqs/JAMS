@@ -31,6 +31,7 @@ import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.NumericUtils;
+import net.jamsimulator.jams.utils.StringUtils;
 
 public class DirectiveByte extends Directive {
 
@@ -50,11 +51,15 @@ public class DirectiveByte extends Directive {
 		for (int i = 0; i < parameters.length; i++) {
 			parameter = parameters[i];
 
-			if (parameter.startsWith("'") && parameter.endsWith("'") && parameter.length() == 3) {
-				parameters[i] = parameter = String.valueOf((int) parameter.charAt(1));
-			}
-			if (!NumericUtils.isByte(parameter))
+			if (parameter.startsWith("'") && parameter.endsWith("'")) {
+				var c = StringUtils.parseEscapeCharacters(parameter.substring(1, parameter.length() - 1));
+				if (c.length() != 1) {
+					throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a char.");
+				}
+				parameters[i] = String.valueOf((int) c.charAt(0));
+			} else if (!NumericUtils.isByte(parameter)) {
 				throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a signed byte.");
+			}
 		}
 
 		MIPS32AssemblerData data = file.getAssembler().getAssemblerData();
