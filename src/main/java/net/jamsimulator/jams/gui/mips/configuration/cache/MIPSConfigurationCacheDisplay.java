@@ -71,7 +71,7 @@ public class MIPSConfigurationCacheDisplay extends VBox {
 	}
 
 	private void refreshSize() {
-		sizeLabel.setText(builder.getSizeInBytes() + "B");
+		sizeLabel.setText(builder.getSizeInBytes() + " B");
 	}
 
 }

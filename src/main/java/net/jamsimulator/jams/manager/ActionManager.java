@@ -37,10 +37,7 @@ import net.jamsimulator.jams.gui.action.defaults.editortab.EditorTabActionSplitV
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.*;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.folder.*;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.mips.filestoassemble.MipsFilesToAssembleActionRemove;
-import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionAssemble;
-import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionCreateProject;
-import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionOpenProject;
-import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionSettings;
+import net.jamsimulator.jams.gui.action.defaults.general.*;
 import net.jamsimulator.jams.gui.action.defaults.simulation.*;
 import net.jamsimulator.jams.gui.action.defaults.texteditor.*;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
@@ -309,6 +306,7 @@ public class ActionManager extends Manager<Action> {
 		add(new GeneralActionCreateProject());
 		add(new GeneralActionOpenProject());
 		add(new GeneralActionSettings());
+		add(new GeneralActionAbout());
 
 		//TEXT EDITOR
 		add(new GeneralActionAssemble());

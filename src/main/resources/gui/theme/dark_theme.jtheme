@@ -665,6 +665,12 @@ AnchorPane {
     -fx-font-weight: bold;
 }
 
+/*ABOUT*/
+.about-text {
+    -fx-font-size: 18px;
+    -fx-text-alignment: center;
+}
+
 /*SIDEBAR*/
 .sidebar {
     -fx-background-color: -theme-background-darker-2;

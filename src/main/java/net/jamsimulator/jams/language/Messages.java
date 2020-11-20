@@ -50,6 +50,8 @@ public class Messages {
 	public static final String MAIN_MENU_FILE_CREATE_PROJECT_NAME = "MAIN_MENU_FILE_CREATE_PROJECT_NAME";
 	public static final String MAIN_MENU_FILE_CREATE_PROJECT_PATH = "MAIN_MENU_FILE_CREATE_PROJECT_PATH";
 
+	public static final String MAIN_MENU_HELP_ABOUT = "MAIN_MENU_HELP_ABOUT";
+
 	public static final String PROJECT_TAB_STRUCTURE = "PROJECT_TAB_STRUCTURE";
 	public static final String PROJECT_TAB_SIMULATION = "PROJECT_TAB_SIMULATION";
 
@@ -216,5 +218,7 @@ public class Messages {
 	public static final String ACTION_MIPS_SIMULATION_RESET = "ACTION_MIPS_SIMULATION_RESET";
 	public static final String ACTION_MIPS_SIMULATION_STOP = "ACTION_MIPS_SIMULATION_STOP";
 	public static final String ACTION_MIPS_SIMULATION_UNDO_ONE_STEP = "ACTION_MIPS_SIMULATION_UNDO_ONE_STEP";
+
+	public static final String ABOUT = "ABOUT";
 
 }

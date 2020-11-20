@@ -10,4 +10,7 @@ public class GeneralActionRegions {
 
 	//MIPS
 	public static final ContextRegion MIPS_PRIORITY = new ContextRegion("mips_priority", null, 0);
+
+	//HELP
+	public static final ContextRegion ABOUT = new ContextRegion("about", null, Integer.MAX_VALUE);
 }
