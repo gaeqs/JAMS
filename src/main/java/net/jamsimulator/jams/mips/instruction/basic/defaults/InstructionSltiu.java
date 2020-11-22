@@ -46,7 +46,7 @@ public class InstructionSltiu extends BasicInstruction<InstructionSltiu.Assemble
 	public static final int OPERATION_CODE = 0b001011;
 
 	private static final ParameterType[] PARAMETER_TYPES
-			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
+			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.UNSIGNED_16_BIT};
 
 	public InstructionSltiu() {
 		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);

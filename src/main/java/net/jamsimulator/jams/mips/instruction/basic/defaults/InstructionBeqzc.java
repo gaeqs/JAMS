@@ -57,7 +57,7 @@ public class InstructionBeqzc extends BasicInstruction<InstructionBeqzc.Assemble
 
 	@Override
 	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new Assembled(parameters[1].getRegister(), parameters[2].getImmediate(), origin, this);
+		return new Assembled(parameters[0].getRegister(), parameters[1].getImmediate(), origin, this);
 	}
 
 	@Override
