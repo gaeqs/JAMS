@@ -222,19 +222,15 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 			//Fetch and Decode
 			execution = (SingleCycleExecution<?>) fetch(pc);
 
-			if (execution == null) {
-				currentStepChanges = null;
-				throw new RuntimeAddressException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION, pc);
-			}
-
 			//Send before event
 			if (data.canCallEvents()) {
 				SingleCycleInstructionExecutionEvent.Before before =
-						callEvent(new SingleCycleInstructionExecutionEvent.Before(this, cycles, pc, execution.getInstruction(), execution));
+						callEvent(new SingleCycleInstructionExecutionEvent.Before(this, cycles, pc, execution == null ? null : execution.getInstruction(), execution));
 				if (before.isCancelled()) return;
 
 				//Gets the modifies execution. This may be null.
 				execution = before.getExecution().orElse(null);
+
 			}
 
 			if (execution == null) {

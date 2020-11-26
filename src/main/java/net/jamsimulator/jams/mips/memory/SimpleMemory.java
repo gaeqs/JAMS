@@ -50,6 +50,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 
 	protected MemorySection[] sections;
+	protected int[] firstAddresses;
 	protected MemorySection[] savedSections;
 
 	protected boolean bigEndian;
@@ -89,7 +90,12 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		for (MemorySection section : sections) {
 			this.sections[i++] = section;
 		}
-		Arrays.sort(this.sections, (Comparator.comparingInt(MemorySection::getFirstAddress)));
+		Arrays.sort(this.sections, (o1, o2) -> Integer.compareUnsigned(o1.getFirstAddress(), o2.getFirstAddress()));
+
+		this.firstAddresses = new int[this.sections.length];
+		for (i = 0; i < this.sections.length; i++) {
+			firstAddresses[i] = this.sections[i].getFirstAddress();
+		}
 
 		this.eventCallsEnabled = true;
 	}
@@ -118,7 +124,12 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		this.savedNextDataAddress = firstDataAddress;
 
 		System.arraycopy(sections, 0, this.sections, 0, sections.length);
-		Arrays.sort(this.sections, (Comparator.comparingInt(MemorySection::getFirstAddress)));
+		Arrays.sort(this.sections, (o1, o2) -> Integer.compareUnsigned(o1.getFirstAddress(), o2.getFirstAddress()));
+
+		this.firstAddresses = new int[this.sections.length];
+		for (int i = 0; i < this.sections.length; i++) {
+			firstAddresses[i] = this.sections[i].getFirstAddress();
+		}
 
 		this.eventCallsEnabled = true;
 	}
@@ -141,6 +152,13 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		this.savedNextDataAddress = firstDataAddress;
 
 		this.eventCallsEnabled = true;
+
+		Arrays.sort(this.sections, (o1, o2) -> Integer.compareUnsigned(o1.getFirstAddress(), o2.getFirstAddress()));
+
+		this.firstAddresses = new int[this.sections.length];
+		for (int i = 0; i < this.sections.length; i++) {
+			firstAddresses[i] = this.sections[i].getFirstAddress();
+		}
 	}
 
 	@Override
@@ -398,8 +416,10 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 
 	private MemorySection getSectionOrThrowException(int address) {
-		for (MemorySection section : sections) {
-			if (section.isInside(address)) return section;
+		//Optimized for loop.
+		for (int i = 0, length = firstAddresses.length; i < length; i++) {
+			if (Integer.compareUnsigned(firstAddresses[i], address) > 0)
+				return sections[i - 1];
 		}
 
 		throw new IndexOutOfBoundsException("Memory section not found for address 0x"

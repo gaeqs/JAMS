@@ -59,7 +59,7 @@ public class AboutWindow extends AnchorPane {
 		stage.setX(main.getX() + main.getWidth() / 2 - (WIDTH >> 1));
 		stage.setY(main.getY() + main.getHeight() / 2 - (HEIGHT >> 1));
 
-		stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.CONFIG));
+		stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.MAIN_MENU_HELP_ABOUT));
 		JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO)
 				.ifPresent(stage.getIcons()::add);
 

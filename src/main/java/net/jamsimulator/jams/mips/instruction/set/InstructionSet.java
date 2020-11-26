@@ -55,9 +55,17 @@ public class InstructionSet implements Labeled {
 	protected final String name;
 	protected final Set<Instruction> instructions;
 
+	/*
+		This HashMap maps the operation code of an instruction with its BasicInstruction instance.
+		This map is used by getInstructionByInstructionCode(int instructionCode) for a faster
+		search algorithm.
+	 */
+	protected final Map<Integer, Set<BasicInstruction<?>>> basicInstructionsOnly;
+
 	public InstructionSet(String name) {
 		this.name = name;
 		instructions = new HashSet<>();
+		basicInstructionsOnly = new HashMap<>();
 	}
 
 	@Override
@@ -133,22 +141,12 @@ public class InstructionSet implements Labeled {
 	 * @return the {@link BasicInstruction}, if present.
 	 */
 	public Optional<? extends BasicInstruction<?>> getInstructionByInstructionCode(int instructionCode) {
-		return instructions.stream().filter(target -> target instanceof BasicInstruction)
-				.map(target -> (BasicInstruction<?>) target).filter(target -> target.match(instructionCode)).findFirst();
-	}
-
-	/**
-	 * Returns the first {@link BasicInstruction} that matches the given operation code. If there are several
-	 * instructions with the given operation code but with different function codes the method will
-	 * return the one with the function code 0.
-	 *
-	 * @param operationCode the given operation code.
-	 * @return the {@link BasicInstruction}, if present.
-	 */
-	public Optional<? extends BasicInstruction<?>> getInstructionByOperationCode(int operationCode) {
-		return instructions.stream().filter(target -> target instanceof BasicInstruction)
-				.map(target -> (BasicInstruction<?>) target)
-				.filter(target -> target.match(operationCode)).findFirst();
+		var set = basicInstructionsOnly.get(instructionCode >>> AssembledInstruction.OPERATION_CODE_SHIFT);
+		if (set == null || set.isEmpty()) return Optional.empty();
+		for (BasicInstruction<?> basic : set) {
+			if (basic.match(instructionCode)) return Optional.of(basic);
+		}
+		return Optional.empty();
 	}
 
 
@@ -168,6 +166,12 @@ public class InstructionSet implements Labeled {
 	 */
 	public boolean registerInstruction(Instruction instruction) {
 		Validate.notNull(instruction, "The given instruction cannot be null!");
+
+		if (instruction instanceof BasicInstruction) {
+			BasicInstruction<?> basic = (BasicInstruction<?>) instruction;
+			basicInstructionsOnly.computeIfAbsent(basic.getOperationCode(), k -> new HashSet<>()).add(basic);
+		}
+
 		return instructions.add(instruction);
 	}
 

@@ -42,7 +42,7 @@ public class MIPSSimulationConfigurationPresets {
 				Messages.SIMULATION_CONFIGURATION_SOLVE_BRANCH_ON_DECODE, true,
 				Set.of(PipelinedArchitecture.INSTANCE), null));
 		PRESETS.add(new MIPSSimulationConfigurationNodePreset(DELAY_SLOTS_ENABLED, Boolean.class, 79,
-				Messages.SIMULATION_CONFIGURATION_ENABLE_DELAY_SLOTS, true,
+				Messages.SIMULATION_CONFIGURATION_ENABLE_DELAY_SLOTS, false,
 				Set.of(PipelinedArchitecture.INSTANCE), Map.of(BRANCH_ON_DECODE, new Object[]{true})));
 	}
 
