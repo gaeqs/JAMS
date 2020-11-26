@@ -180,6 +180,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 			}
 		});
 		callEvent(new SimulationStartEvent(this));
+		thread.setPriority(Thread.MAX_PRIORITY);
 		thread.start();
 	}
 

@@ -556,6 +556,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 			}
 		});
 		callEvent(new SimulationStartEvent(this));
+		thread.setPriority(Thread.MAX_PRIORITY);
 		thread.start();
 	}
 

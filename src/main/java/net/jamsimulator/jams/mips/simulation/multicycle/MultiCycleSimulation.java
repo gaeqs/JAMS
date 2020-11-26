@@ -228,6 +228,7 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 			}
 		});
 		callEvent(new SimulationStartEvent(this));
+		thread.setPriority(Thread.MAX_PRIORITY);
 		thread.start();
 	}
 
