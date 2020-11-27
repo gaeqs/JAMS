@@ -124,7 +124,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		this.numberGenerators = new NumberGenerators();
 
 		// 1 Instruction = 4 Bytes.
-		this.instructionCache = useCache ? new InstructionExecution[(instructionStackBottom - memory.getFirstTextAddress()) / 4 + 1] : null;
+		this.instructionCache = useCache ? new InstructionExecution[((instructionStackBottom - memory.getFirstTextAddress()) >> 2) + 1] : null;
 
 		if (data.canCallEvents() && data.isUndoEnabled()) {
 			memory.registerListeners(this, true);
