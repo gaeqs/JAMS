@@ -107,7 +107,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 		else if (element instanceof MIPSDirectiveParameter) {
 			start = refreshDisplayDirectiveParameter(start);
 		} else if (element instanceof MIPSInstruction)
-			start = refreshInstruction(start);
+			start = refreshInstructionAndDirectives(start);
 		else if (element instanceof MIPSInstructionParameterPart)
 			start = refreshDisplayInstructionParameterPart(start);
 
@@ -132,7 +132,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 		return directive;
 	}
 
-	protected String refreshInstruction(String start) {
+	protected String refreshInstructionAndDirectives(String start) {
 		MIPSProject project = getDisplay().getProject().orElse(null);
 		if (project == null) return start;
 
@@ -141,11 +141,21 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 				.getEnum(MIPSSpaces.class, "editor.mips.space_after_instruction")
 				.orElse(MIPSSpaces.SPACE).getValue();
 
-		Stream<Instruction> stream = project.getData().getInstructionSet().getInstructions().stream().filter(target -> target.getMnemonic().startsWith(start.toLowerCase()));
+		Stream<Instruction> stream = project.getData().getInstructionSet().getInstructions().stream()
+				.filter(target -> target.getMnemonic().startsWith(start.toLowerCase()));
+
+
+
 		addElements(stream, i -> i.getMnemonic() + " \t"
 				+ StringUtils.addSpaces(parseParameters(i.getParameters()), 25, true)
 				+ i.getName(), i -> i.getMnemonic() + (i.hasParameters() ? space : ""), 0, ICON_INSTRUCTION);
-		return start;
+
+		//Add directives too!
+		String directive = start.startsWith(".") ? start.substring(1) : start;
+		addElements(project.getData().getDirectiveSet().getDirectives().stream().filter(target -> target.getName().startsWith(directive)),
+				Directive::getName, d -> "." + d.getName() + (d.hasParameters() ? space : ""), 0, ICON_DIRECTIVE);
+
+		return directive;
 	}
 
 	protected String refreshDisplayInstructionParameterPart(String start) {
