@@ -42,7 +42,6 @@ import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionBne extends BasicInstruction<InstructionBne.Assembled> implements ControlTransferInstruction {
 
-	public static final String NAME = "Branch on not equal";
 	public static final String MNEMONIC = "bne";
 	public static final int OPERATION_CODE = 0b000101;
 
@@ -50,7 +49,7 @@ public class InstructionBne extends BasicInstruction<InstructionBne.Assembled> i
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
 
 	public InstructionBne() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

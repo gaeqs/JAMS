@@ -41,7 +41,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembled> {
 
-	public static final String NAME = "Concatenate two GRPs extracting a contiguous subset at a byte position";
 	public static final String MNEMONIC = "align";
 	public static final int OPERATION_CODE = 0b011111;
 	public static final int FUNCTION_CODE = 0b100000;
@@ -52,7 +51,7 @@ public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembl
 			ParameterType.REGISTER, ParameterType.UNSIGNED_5_BIT};
 
 	public InstructionAlign() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

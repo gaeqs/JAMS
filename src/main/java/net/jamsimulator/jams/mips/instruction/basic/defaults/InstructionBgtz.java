@@ -43,7 +43,6 @@ import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionBgtz extends BasicRIInstruction<InstructionBgtz.Assembled> implements ControlTransferInstruction {
 
-	public static final String NAME = "Branch on greater than zero";
 	public static final String MNEMONIC = "bgtz";
 	public static final int OPERATION_CODE = 0b000111;
 	public static final int FUNCTION_CODE = 0b00000;
@@ -51,7 +50,7 @@ public class InstructionBgtz extends BasicRIInstruction<InstructionBgtz.Assemble
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
 
 	public InstructionBgtz() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

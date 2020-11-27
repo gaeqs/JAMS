@@ -37,8 +37,6 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionLiRI32 extends PseudoInstruction {
 
-
-	public static final String NAME = "Load immediate";
 	public static final String MNEMONIC = "li";
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.SIGNED_32_BIT};
@@ -52,7 +50,7 @@ public class PseudoInstructionLiRI32 extends PseudoInstruction {
 	private static final ParameterParseResult AT = ParameterParseResult.builder().register(1).build();
 
 	public PseudoInstructionLiRI32() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES);
+		super(MNEMONIC, PARAMETER_TYPES);
 	}
 
 	@Override

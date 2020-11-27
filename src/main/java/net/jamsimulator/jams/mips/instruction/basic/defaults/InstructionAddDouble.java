@@ -42,7 +42,6 @@ import net.jamsimulator.jams.utils.NumericUtils;
 
 public class InstructionAddDouble extends BasicRFPUInstruction<InstructionAddDouble.Assembled> {
 
-	public static final String NAME = "Addition (double)";
 	public static final String MNEMONIC = "add.d";
 	public static final int OPERATION_CODE = 0b010001;
 	public static final int FMT = 0b10001;
@@ -52,7 +51,7 @@ public class InstructionAddDouble extends BasicRFPUInstruction<InstructionAddDou
 			= new ParameterType[]{ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER};
 
 	public InstructionAddDouble() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

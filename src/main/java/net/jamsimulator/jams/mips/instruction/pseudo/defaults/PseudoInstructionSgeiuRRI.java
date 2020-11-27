@@ -38,8 +38,6 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionSgeiuRRI extends PseudoInstruction {
 
-
-	public static final String NAME = "Set on greater than or equal immediate unsigned";
 	public static final String MNEMONIC = "sgeiu";
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.UNSIGNED_16_BIT};
@@ -57,7 +55,7 @@ public class PseudoInstructionSgeiuRRI extends PseudoInstruction {
 	private static final ParameterParseResult AT = ParameterParseResult.builder().register(1).build();
 
 	public PseudoInstructionSgeiuRRI() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES);
+		super(MNEMONIC, PARAMETER_TYPES);
 	}
 
 	@Override

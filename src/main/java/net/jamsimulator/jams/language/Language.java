@@ -133,7 +133,7 @@ public class Language implements Labeled {
 		String node;
 		String message;
 		while ((line = reader.readLine()) != null) {
-			if (line.isEmpty()) continue;
+			if (line.isEmpty() || line.startsWith("//")) continue;
 			index = line.indexOf(MESSAGE_SEPARATOR);
 			if (index == -1 || index == line.length() - 1) {
 				System.err.println("Error while loading Language " + name + ": bad line format: " + line);

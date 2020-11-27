@@ -42,7 +42,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled> implements ControlTransferInstruction {
 
-	public static final String NAME = "Jump and link register";
 	public static final String MNEMONIC = "jalr";
 	public static final int OPERATION_CODE = 0;
 	public static final int FUNCTION_CODE = 0b001001;
@@ -51,7 +50,7 @@ public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER};
 
 	public InstructionJalr() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

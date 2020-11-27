@@ -43,7 +43,7 @@ public class PseudoInstructionSgtiuRRI extends PseudoInstruction {
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.UNSIGNED_16_BIT};
 
 	public PseudoInstructionSgtiuRRI() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES);
+		super(MNEMONIC, PARAMETER_TYPES);
 	}
 
 	@Override

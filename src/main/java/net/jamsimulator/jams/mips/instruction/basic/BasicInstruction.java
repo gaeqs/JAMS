@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.instruction.basic;
 
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
@@ -42,22 +43,19 @@ import java.util.*;
  */
 public abstract class BasicInstruction<Inst extends AssembledInstruction> implements Instruction {
 
-	private final String name;
 	private final String mnemonic;
 	private final int operationCode;
 	private final ParameterType[] parameters;
 	private final Map<Architecture, InstructionExecutionBuilder<? extends Architecture, Inst>> executionBuilders;
 
 	/**
-	 * Creates a basic instruction using a name, a mnemonic, a parameter types array and an operation code.
+	 * Creates a basic instruction using a mnemonic, a parameter types array and an operation code.
 	 *
-	 * @param name          the name.
 	 * @param mnemonic      the mnemonic.
 	 * @param parameters    the parameter types.
 	 * @param operationCode the operation code.
 	 */
-	public BasicInstruction(String name, String mnemonic, ParameterType[] parameters, int operationCode) {
-		this.name = name;
+	public BasicInstruction(String mnemonic, ParameterType[] parameters, int operationCode) {
 		this.mnemonic = mnemonic;
 		this.parameters = parameters;
 		this.operationCode = operationCode;
@@ -67,7 +65,8 @@ public abstract class BasicInstruction<Inst extends AssembledInstruction> implem
 
 	@Override
 	public String getName() {
-		return name;
+		var sufix = mnemonic.toUpperCase().replace('.', '_');
+		return Jams.getLanguageManager().getSelected().getOrDefault("INSTRUCTION_" + sufix);
 	}
 
 	@Override

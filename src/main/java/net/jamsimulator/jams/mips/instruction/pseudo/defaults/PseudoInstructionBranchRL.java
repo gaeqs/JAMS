@@ -38,8 +38,8 @@ public class PseudoInstructionBranchRL extends PseudoInstruction {
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.LABEL};
 	private static final ParameterType[] BASIC_PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
 
-	public PseudoInstructionBranchRL(String name, String mnemonic) {
-		super(name, mnemonic, PARAMETER_TYPES);
+	public PseudoInstructionBranchRL(String mnemonic) {
+		super(mnemonic, PARAMETER_TYPES);
 	}
 
 	@Override

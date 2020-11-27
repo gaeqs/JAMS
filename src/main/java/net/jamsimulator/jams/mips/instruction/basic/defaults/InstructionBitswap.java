@@ -41,7 +41,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionBitswap extends BasicRInstruction<InstructionBitswap.Assembled> {
 
-	public static final String NAME = "Swaps bits in each byte";
 	public static final String MNEMONIC = "bitswap";
 	public static final int OPERATION_CODE = 0b011111;
 	public static final int FUNCTION_CODE = 0b100000;
@@ -50,7 +49,7 @@ public class InstructionBitswap extends BasicRInstruction<InstructionBitswap.Ass
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER};
 
 	public InstructionBitswap() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

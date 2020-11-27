@@ -36,7 +36,6 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionJrR extends PseudoInstruction {
 
-	public static final String NAME = "Jump register";
 	public static final String MNEMONIC = "jr";
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER};
@@ -46,7 +45,7 @@ public class PseudoInstructionJrR extends PseudoInstruction {
 	private static final ParameterParseResult ZERO = ParameterParseResult.builder().register(0).build();
 
 	public PseudoInstructionJrR() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES);
+		super(MNEMONIC, PARAMETER_TYPES);
 	}
 
 	@Override

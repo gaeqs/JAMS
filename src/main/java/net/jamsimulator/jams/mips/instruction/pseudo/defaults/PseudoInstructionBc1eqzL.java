@@ -36,14 +36,14 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionBc1eqzL extends PseudoInstruction {
 
-	public static final String NAME = InstructionBc1eqz.NAME;
+
 	public static final String MNEMONIC = InstructionBc1eqz.MNEMONIC;
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.FLOAT_REGISTER, ParameterType.LABEL};
 	private static final ParameterType[] BASIC_PARAMETER_TYPES = new ParameterType[]{ParameterType.FLOAT_REGISTER, ParameterType.SIGNED_16_BIT};
 
 	public PseudoInstructionBc1eqzL() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES);
+		super(MNEMONIC, PARAMETER_TYPES);
 	}
 
 	@Override

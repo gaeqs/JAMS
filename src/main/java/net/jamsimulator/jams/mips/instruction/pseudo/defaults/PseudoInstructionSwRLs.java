@@ -37,8 +37,6 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionSwRLs extends PseudoInstruction {
 
-
-	public static final String NAME = InstructionSw.NAME;
 	public static final String MNEMONIC = InstructionSw.MNEMONIC;
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.LABEL_SIGNED_32_BIT_SHIFT};
@@ -52,7 +50,7 @@ public class PseudoInstructionSwRLs extends PseudoInstruction {
 	private static final ParameterParseResult AT = ParameterParseResult.builder().register(1).build();
 
 	public PseudoInstructionSwRLs() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES);
+		super(MNEMONIC, PARAMETER_TYPES);
 	}
 
 	@Override

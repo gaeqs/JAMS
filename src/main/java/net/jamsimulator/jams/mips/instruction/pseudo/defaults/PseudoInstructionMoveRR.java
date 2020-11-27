@@ -36,8 +36,6 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionMoveRR extends PseudoInstruction {
 
-
-	public static final String NAME = "Value movement";
 	public static final String MNEMONIC = "move";
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER};
@@ -48,7 +46,7 @@ public class PseudoInstructionMoveRR extends PseudoInstruction {
 	private static final ParameterParseResult ZERO = ParameterParseResult.builder().register(0).build();
 
 	public PseudoInstructionMoveRR() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES);
+		super(MNEMONIC, PARAMETER_TYPES);
 	}
 
 	@Override

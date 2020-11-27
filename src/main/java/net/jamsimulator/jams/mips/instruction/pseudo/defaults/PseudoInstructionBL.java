@@ -36,7 +36,6 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionBL extends PseudoInstruction {
 
-	public static final String NAME = "Unconditional branch";
 	public static final String MNEMONIC = "b";
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.LABEL};
@@ -46,7 +45,7 @@ public class PseudoInstructionBL extends PseudoInstruction {
 	private static final ParameterParseResult ZERO = ParameterParseResult.builder().register(0).build();
 
 	public PseudoInstructionBL() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES);
+		super(MNEMONIC, PARAMETER_TYPES);
 	}
 
 	@Override

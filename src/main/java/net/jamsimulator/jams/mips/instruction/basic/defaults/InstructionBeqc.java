@@ -42,14 +42,13 @@ import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionBeqc extends BasicInstruction<InstructionBeqc.Assembled> implements ControlTransferInstruction {
 
-	public static final String NAME = "Branch on equal compact";
 	public static final String MNEMONIC = "beqc";
 	public static final int OPERATION_CODE = 0b001000;
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
 
 	public InstructionBeqc() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

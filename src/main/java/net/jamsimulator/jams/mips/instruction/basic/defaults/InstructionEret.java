@@ -43,7 +43,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionEret extends BasicRInstruction<InstructionEret.Assembled> implements ControlTransferInstruction {
 
-	public static final String NAME = "Exception return";
 	public static final String MNEMONIC = "eret";
 	public static final int OPERATION_CODE = 0b010000;
 	public static final int FUNCTION_CODE = 0b011000;
@@ -51,7 +50,7 @@ public class InstructionEret extends BasicRInstruction<InstructionEret.Assembled
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[0];
 
 	public InstructionEret() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

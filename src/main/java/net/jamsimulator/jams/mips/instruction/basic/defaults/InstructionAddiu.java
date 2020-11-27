@@ -41,7 +41,6 @@ import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionAddiu extends BasicInstruction<InstructionAddiu.Assembled> {
 
-	public static final String NAME = "Immediate addition without overflow";
 	public static final String MNEMONIC = "addiu";
 	public static final int OPERATION_CODE = 0b001001;
 
@@ -49,7 +48,7 @@ public class InstructionAddiu extends BasicInstruction<InstructionAddiu.Assemble
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
 
 	public InstructionAddiu() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

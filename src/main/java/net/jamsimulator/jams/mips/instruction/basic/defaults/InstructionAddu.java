@@ -41,7 +41,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionAddu extends BasicRInstruction<InstructionAddu.Assembled> {
 
-	public static final String NAME = "Addition without overflow";
 	public static final String MNEMONIC = "addu";
 	public static final int OPERATION_CODE = 0;
 	public static final int FUNCTION_CODE = 0b100001;
@@ -50,7 +49,7 @@ public class InstructionAddu extends BasicRInstruction<InstructionAddu.Assembled
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER};
 
 	public InstructionAddu() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

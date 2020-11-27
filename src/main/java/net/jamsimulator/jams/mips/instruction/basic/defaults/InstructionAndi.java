@@ -41,7 +41,6 @@ import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionAndi extends BasicInstruction<InstructionAndi.Assembled> {
 
-	public static final String NAME = "Immediate and";
 	public static final String MNEMONIC = "andi";
 	public static final int OPERATION_CODE = 0b001100;
 
@@ -49,7 +48,7 @@ public class InstructionAndi extends BasicInstruction<InstructionAndi.Assembled>
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
 
 	public InstructionAndi() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

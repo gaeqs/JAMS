@@ -40,7 +40,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionSyscall extends BasicRInstruction<InstructionSyscall.Assembled> {
 
-	public static final String NAME = "System call";
 	public static final String MNEMONIC = "syscall";
 	public static final int OPERATION_CODE = 0;
 	public static final int FUNCTION_CODE = 0b001100;
@@ -48,7 +47,7 @@ public class InstructionSyscall extends BasicRInstruction<InstructionSyscall.Ass
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[0];
 
 	public InstructionSyscall() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

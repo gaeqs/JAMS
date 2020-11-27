@@ -39,17 +39,16 @@ public abstract class BasicRSOPInstruction<Inst extends AssembledInstruction> ex
 	private final int sopCode;
 
 	/**
-	 * Creates a basic instruction using a name, a mnemonic, a parameter types array and an operation code.
+	 * Creates a basic instruction using a mnemonic, a parameter types array and an operation code.
 	 *
-	 * @param name          the name.
 	 * @param mnemonic      the mnemonic.
 	 * @param parameters    the parameter types.
 	 * @param operationCode the operation code.
 	 * @param functionCode  the function code.
 	 */
-	public BasicRSOPInstruction(String name, String mnemonic, ParameterType[] parameters, int operationCode,
+	public BasicRSOPInstruction(String mnemonic, ParameterType[] parameters, int operationCode,
 								int functionCode, int sopCode) {
-		super(name, mnemonic, parameters, operationCode);
+		super(mnemonic, parameters, operationCode);
 		this.functionCode = functionCode;
 		this.sopCode = sopCode;
 	}

@@ -41,7 +41,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionMulSingle extends BasicRFPUInstruction<InstructionMulSingle.Assembled> {
 
-	public static final String NAME = "Multiplication (single)";
 	public static final String MNEMONIC = "mul.s";
 	public static final int OPERATION_CODE = 0b010001;
 	public static final int FMT = 0b10000;
@@ -51,7 +50,7 @@ public class InstructionMulSingle extends BasicRFPUInstruction<InstructionMulSin
 			= new ParameterType[]{ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER};
 
 	public InstructionMulSingle() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

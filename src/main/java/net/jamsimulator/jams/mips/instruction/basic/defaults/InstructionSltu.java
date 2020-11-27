@@ -41,7 +41,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionSltu extends BasicRInstruction<InstructionSltu.Assembled> {
 
-	public static final String NAME = "Set on less than unsigned";
 	public static final String MNEMONIC = "sltu";
 	public static final int OPERATION_CODE = 0;
 	public static final int FUNCTION_CODE = 0b101011;
@@ -50,7 +49,7 @@ public class InstructionSltu extends BasicRInstruction<InstructionSltu.Assembled
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER};
 
 	public InstructionSltu() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

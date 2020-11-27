@@ -41,7 +41,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionMfc0 extends BasicIFPUInstruction<InstructionMfc0.Assembled> {
 
-	public static final String NAME = "Move from coprocessor 0";
 	public static final String MNEMONIC = "mfc0";
 	public static final int OPERATION_CODE = 0b010000;
 	public static final int SUBCODE = 0b00000;
@@ -50,7 +49,7 @@ public class InstructionMfc0 extends BasicIFPUInstruction<InstructionMfc0.Assemb
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.COPROCESSOR_0_REGISTER, ParameterType.UNSIGNED_5_BIT};
 
 	public InstructionMfc0() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, SUBCODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, SUBCODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

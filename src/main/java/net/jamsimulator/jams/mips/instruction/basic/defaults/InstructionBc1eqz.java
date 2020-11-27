@@ -43,7 +43,6 @@ import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionBc1eqz extends BasicIFPUInstruction<InstructionBc1eqz.Assembled> implements ControlTransferInstruction {
 
-	public static final String NAME = "Branch if COP1 register bit 0 equal to zero";
 	public static final String MNEMONIC = "bc1eqz";
 	public static final int OPERATION_CODE = 0b010001;
 	public static final int BASE_CODE = 0b01001;
@@ -52,7 +51,7 @@ public class InstructionBc1eqz extends BasicIFPUInstruction<InstructionBc1eqz.As
 			= new ParameterType[]{ParameterType.FLOAT_REGISTER, ParameterType.SIGNED_16_BIT};
 
 	public InstructionBc1eqz() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, BASE_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, BASE_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

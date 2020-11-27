@@ -42,14 +42,13 @@ import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionBgezc extends BasicInstruction<InstructionBgezc.Assembled> implements ControlTransferInstruction {
 
-	public static final String NAME = "Branch and link on greater than or equal to zero compact";
 	public static final String MNEMONIC = "bgezc";
 	public static final int OPERATION_CODE = 0b010110;
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
 
 	public InstructionBgezc() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

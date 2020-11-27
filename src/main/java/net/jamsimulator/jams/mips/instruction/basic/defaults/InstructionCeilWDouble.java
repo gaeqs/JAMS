@@ -42,7 +42,6 @@ import net.jamsimulator.jams.utils.NumericUtils;
 
 public class InstructionCeilWDouble extends BasicRFPUInstruction<InstructionCeilWDouble.Assembled> {
 
-	public static final String NAME = "Ceiling double to word";
 	public static final String MNEMONIC = "ceil.w.d";
 	public static final int OPERATION_CODE = 0b010001;
 	public static final int FMT = 0b10001;
@@ -52,7 +51,7 @@ public class InstructionCeilWDouble extends BasicRFPUInstruction<InstructionCeil
 			= new ParameterType[]{ParameterType.FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER};
 
 	public InstructionCeilWDouble() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

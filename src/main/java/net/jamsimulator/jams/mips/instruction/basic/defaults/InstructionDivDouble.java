@@ -42,7 +42,6 @@ import net.jamsimulator.jams.utils.NumericUtils;
 
 public class InstructionDivDouble extends BasicRFPUInstruction<InstructionDivDouble.Assembled> {
 
-	public static final String NAME = "Division (double)";
 	public static final String MNEMONIC = "div.d";
 	public static final int OPERATION_CODE = 0b010001;
 	public static final int FMT = 0b10001;
@@ -52,7 +51,7 @@ public class InstructionDivDouble extends BasicRFPUInstruction<InstructionDivDou
 			= new ParameterType[]{ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER};
 
 	public InstructionDivDouble() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
 
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);

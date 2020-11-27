@@ -38,17 +38,16 @@ public abstract class BasicPCREL19Instruction<Inst extends AssembledInstruction>
 	private final int pcRelFunction;
 
 	/**
-	 * Creates a basic instruction using a name, a mnemonic, a parameter types array and an operation code.
+	 * Creates a basic instruction using a mnemonic, a parameter types array and an operation code.
 	 *
-	 * @param name          the name.
 	 * @param mnemonic      the mnemonic.
 	 * @param parameters    the parameter types.
 	 * @param operationCode the operation code.
 	 * @param pcRelFunction the pc relative function code.
 	 */
-	public BasicPCREL19Instruction(String name, String mnemonic, ParameterType[] parameters, int operationCode,
+	public BasicPCREL19Instruction(String mnemonic, ParameterType[] parameters, int operationCode,
 								   int pcRelFunction) {
-		super(name, mnemonic, parameters, operationCode);
+		super(mnemonic, parameters, operationCode);
 		this.pcRelFunction = pcRelFunction;
 	}
 

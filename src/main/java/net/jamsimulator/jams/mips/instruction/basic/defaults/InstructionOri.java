@@ -41,7 +41,6 @@ import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionOri extends BasicInstruction<InstructionOri.Assembled> {
 
-	public static final String NAME = "Or immediate";
 	public static final String MNEMONIC = "ori";
 	public static final int OPERATION_CODE = 0b001101;
 
@@ -49,7 +48,7 @@ public class InstructionOri extends BasicInstruction<InstructionOri.Assembled> {
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
 
 	public InstructionOri() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

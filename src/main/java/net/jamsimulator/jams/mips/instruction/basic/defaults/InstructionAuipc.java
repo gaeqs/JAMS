@@ -42,7 +42,6 @@ import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionAuipc extends BasicPCREL16Instruction<InstructionAuipc.Assembled> {
 
-	public static final String NAME = "Add upper immediate to PC";
 	public static final String MNEMONIC = "auipc";
 	public static final int OPERATION_CODE = 0b111011;
 	public static final int PCREL_CODE = 0b11110;
@@ -51,7 +50,7 @@ public class InstructionAuipc extends BasicPCREL16Instruction<InstructionAuipc.A
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
 
 	public InstructionAuipc() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, PCREL_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, PCREL_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
