@@ -123,7 +123,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 		this.numberGenerators = new NumberGenerators();
 
-		this.instructionCache = useCache ? new InstructionExecution[instructionStackBottom - memory.getFirstTextAddress() + 1] : null;
+		// 1 Instruction = 4 Bytes.
+		this.instructionCache = useCache ? new InstructionExecution[(instructionStackBottom - memory.getFirstTextAddress()) / 4 + 1] : null;
 
 		if (data.canCallEvents() && data.isUndoEnabled()) {
 			memory.registerListeners(this, true);
@@ -324,6 +325,10 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 			if (!optional.isPresent()) {
 				try {
 					callEvent(new SimulationLockEvent(this));
+
+					//Flushes the console. This call is important.
+					getConsole().flush();
+
 					synchronized (inputLock) {
 						inputLock.wait();
 					}
@@ -344,12 +349,16 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 */
 	public char popCharOrLock() {
 		Optional<Character> optional = Optional.empty();
-		while (!optional.isPresent()) {
+		while (optional.isEmpty()) {
 			optional = data.getConsole().popChar();
 
-			if (!optional.isPresent()) {
+			if (optional.isEmpty()) {
 				try {
 					callEvent(new SimulationLockEvent(this));
+
+					//Flushes the console. This call is important.
+					getConsole().flush();
+
 					synchronized (inputLock) {
 						inputLock.wait();
 					}
@@ -553,6 +562,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 				finishedRunningLock.notifyAll();
 				callEvent(new SimulationStopEvent(this));
+				getConsole().flush();
 			}
 		});
 		callEvent(new SimulationStartEvent(this));

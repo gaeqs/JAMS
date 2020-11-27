@@ -230,6 +230,7 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
 				registers.enableEventCalls(true);
 				finishedRunningLock.notifyAll();
 				callEvent(new SimulationStopEvent(this));
+				getConsole().flush();
 			}
 		});
 		callEvent(new SimulationStartEvent(this));

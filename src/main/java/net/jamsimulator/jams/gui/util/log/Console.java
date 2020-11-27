@@ -40,12 +40,15 @@ public class Console extends HBox implements Log, EventBroadcast {
 
 	protected SimpleEventBroadcast broadcast;
 
+	protected LinkedList<Pair> buffer;
+
 	public Console() {
 		super();
 		getStyleClass().add("console");
 
 		inputs = new LinkedList<>();
 		broadcast = new SimpleEventBroadcast();
+		buffer = new LinkedList<>();
 
 		loadButtons();
 		loadDisplay();
@@ -96,12 +99,12 @@ public class Console extends HBox implements Log, EventBroadcast {
 
 	@Override
 	public void print(Object object) {
-		Platform.runLater(() -> display.appendText(object == null ? "null" : object.toString()));
+		printAndStyle(object, null);
 	}
 
 	@Override
 	public void println(Object object) {
-		Platform.runLater(() -> display.appendText((object == null ? "null" : object.toString()) + '\n'));
+		printAndStyleLn(object, null);
 	}
 
 	@Override
@@ -154,20 +157,26 @@ public class Console extends HBox implements Log, EventBroadcast {
 		Platform.runLater(() -> display.clear());
 	}
 
-	private void printAndStyle(Object object, String style) {
+	public void flush() {
 		Platform.runLater(() -> {
-			int from = display.getLength();
-			display.appendText(object == null ? "null" : object.toString());
-			display.setStyle(from, display.getLength(), Collections.singleton(style));
+			Pair pair;
+			while (!buffer.isEmpty()) {
+				pair = buffer.pop();
+				int from = display.getLength();
+				display.appendText(pair.text);
+				if(pair.style != null) {
+					display.setStyle(from, display.getLength(), Collections.singleton(pair.style));
+				}
+			}
 		});
 	}
 
+	private void printAndStyle(Object object, String style) {
+		buffer.add(new Pair(object == null ? "null" : object.toString(), style));
+	}
+
 	private void printAndStyleLn(Object object, String style) {
-		Platform.runLater(() -> {
-			int from = display.getLength();
-			display.appendText((object == null ? "null" : object.toString()) + '\n');
-			display.setStyle(from, display.getLength(), Collections.singleton(style));
-		});
+		buffer.add(new Pair(object == null ? "null\n" : object.toString() + '\n', style));
 	}
 
 	protected void applyZoomListener(VirtualizedScrollPane<ScaledVirtualized<CodeArea>> scroll) {
@@ -306,5 +315,14 @@ public class Console extends HBox implements Log, EventBroadcast {
 	@Override
 	public <T extends Event> T callEvent(T event) {
 		return broadcast.callEvent(event, this);
+	}
+
+	private static class Pair {
+		String text, style;
+
+		public Pair(String text, String style) {
+			this.text = text;
+			this.style = style;
+		}
 	}
 }

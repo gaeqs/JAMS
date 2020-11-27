@@ -225,6 +225,7 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 				registers.enableEventCalls(true);
 				finishedRunningLock.notifyAll();
 				callEvent(new SimulationStopEvent(this));
+				getConsole().flush();
 			}
 		});
 		callEvent(new SimulationStartEvent(this));
