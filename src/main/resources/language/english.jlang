@@ -498,6 +498,7 @@ INSTRUCTION_SLLV=Shift word left logical variable
 INSTRUCTION_SLT=Set on less than
 INSTRUCTION_SLTI=Set on less than immediate
 INSTRUCTION_SLTIU=Set on less than immediate unsigned
+INSTRUCTION_SLTU=Set on less than unsigned
 INSTRUCTION_SRL=Shift word right logical
 INSTRUCTION_SRLV=Shift word right logical variable
 INSTRUCTION_SUB=Subtraction

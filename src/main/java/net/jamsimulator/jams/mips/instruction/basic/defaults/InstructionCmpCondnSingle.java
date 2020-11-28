@@ -44,7 +44,7 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionCmpCondnSingle.Assembled> {
 
-	public static final String NAME_SUFIX = "CMP_D";
+	public static final String NAME_SUFIX = "CMP_S";
 	public static final String MNEMONIC = "cmp.%s.s";
 	public static final int OPERATION_CODE = 0b010001;
 	public static final int FMT = 0b10100;
