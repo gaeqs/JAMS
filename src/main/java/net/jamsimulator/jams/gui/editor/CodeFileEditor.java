@@ -359,29 +359,34 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 		//AUTO COMPLETION
 		addEventHandler(KeyEvent.KEY_TYPED, event -> {
 			if (autocompletionPopup != null && autocompletionPopup.manageTypeEvent(event)) event.consume();
-			if(documentationPopup != null) documentationPopup.hide();
+			if (documentationPopup != null) documentationPopup.hide();
 		});
 
 		//AUTOCOMPLETION MOVEMENT
 		addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-			if (autocompletionPopup != null && autocompletionPopup.managePressEvent(event)) event.consume();
+			if (autocompletionPopup != null && autocompletionPopup.managePressEvent(event)) {
+				event.consume();
+				if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT) {
+					if (documentationPopup != null) documentationPopup.hide();
+				}
+			}
 		});
 
 		//FOCUS
 		focusedProperty().addListener((obs, old, val) -> {
 			if (autocompletionPopup != null) autocompletionPopup.hide();
-			if(documentationPopup != null) documentationPopup.hide();
+			if (documentationPopup != null) documentationPopup.hide();
 		});
 		//CLICK
 		addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 			if (autocompletionPopup != null) autocompletionPopup.hide();
-			if(documentationPopup != null) documentationPopup.hide();
+			if (documentationPopup != null) documentationPopup.hide();
 		});
 
 		//MOVE
 		autocompletionMoveListener = (obs, old, val) -> {
 			if (autocompletionPopup != null) autocompletionPopup.hide();
-			if(documentationPopup != null) documentationPopup.hide();
+			if (documentationPopup != null) documentationPopup.hide();
 		};
 		JamsApplication.getStage().xProperty().addListener(autocompletionMoveListener);
 		JamsApplication.getStage().yProperty().addListener(autocompletionMoveListener);

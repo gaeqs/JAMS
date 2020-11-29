@@ -544,7 +544,7 @@ abs.d fd, fs
 
 
 <b>Description:</b>
-FPR[fd] \<- abs(FRP[fs])
+FPR[fd] <- abs(FRP[fs])
 
 Places the absolute value of <i>fs</i> in <i>fd</i>. The operand and result are values in double precision floating point.
 
@@ -553,8 +553,11 @@ The fields <i>fs</i> and <i>fd</i> must be even FPRs. If the fields are not vali
 The operand must be a value in double precision floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
 
 <b>Operation:</b>
-fmt \<- double
+fmt <- double
 StoreFPR(fd, fmt, AbsoluteValue(ValueFPR(fs, fmt)))
+
+<b>Exceptions:</b>
+None
 \END
 
 INSTRUCTION_ABS_S_DOCUMENTATION.=<u>Floating point absolute value</u>
@@ -568,7 +571,7 @@ abs.s fd, fs
 
 
 <b>Description:</b>
-FPR[fd] \<- abs(FRP[fs])
+FPR[fd] <- abs(FRP[fs])
 
 Places the absolute value of <i>fs</i> in <i>fd</i>. The operand and result are values in floating point.
 
@@ -576,8 +579,11 @@ Places the absolute value of <i>fs</i> in <i>fd</i>. The operand and result are 
 The operand must be a value in floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
 
 <b>Operation:</b>
-fmt \<- float
+fmt <- float
 StoreFPR(fd, fmt, AbsoluteValue(ValueFPR(fs, fmt)))
+
+<b>Exceptions:</b>
+None
 \END
 
 INSTRUCTION_ADD_DOCUMENTATION.=<u>Addition</u>
@@ -591,29 +597,281 @@ add rd, rs, rt
 
 
 <b>Description:</b>
-GPR[rd] \<- GPR[rs] + GPR[rt]
+GPR[rd] <- GPR[rs] + GPR[rt]
 
 The 32-bit word value in GPR <i>rt</i> is added to the 32-bit value in GPR <i>rs</i> to produce a 32-bit result.
  - If the adition results in 32-bit 2's complement arithmetic overflow, the destination register is not modified and an Integer Overflow exception occurs.
- - If the addition does not overflow, the 32-bit result is placed into GPR <i>rd</i>.
+ - If the addition does not overflow, the 32-bit result is placed intoto GPR <i>rd</i>.
 
 <b>Restrictions:</b>
 None
 
 <b>Operation:</b>
-temp \<- (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (GPR[rt]<sub>31</sub> || GPR[rt]<sub>31..0</sub>)
+temp <- (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (GPR[rt]<sub>31</sub> || GPR[rt]<sub>31..0</sub>)
 if temp<sub>32</sub> != temp<sub>31</sub> then
     SignalException(IntegerOverflow)
 else
-    GPR[rd] \<- temp
+    GPR[rd] <- temp
 endif
 
 <b>Exceptions:</b>
 Integer Overflow
 
 <b>Programming Notes:</b>
-<i>addu</i> performs the same arithmetic operation but does not trap on overflow.
+<black>addu</black> performs the same arithmetic operation but does not trap on overflow.
 \END
+
+INSTRUCTION_ADD_D_DOCUMENTATION.=<u>Double precision floating point addition</u>
+
+<b>Format:</b>
+add.d fd, fs, ft
+
+| COP1      fmt      ft     fs      fd      ABS   |
+|010001    10001   00000                   000000 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+FPR[fd] <- FRP[fs] + FPR[ft]
+
+The value in FPR <i>ft</i> is added to the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
+The operands and result are values in double precision floating point.
+
+<b>Restrictions:</b>
+The fields <i>fs</i>, <i>ft</i> and <i>fd</i> must be even FPRs. If the fields are not valid, the result is <black>UNPREDICTABLE</black>.
+The operand must be a value in double precision floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+fmt <- double
+StoreFPR(fd, fmt, ValueFPR(fs, fmt) +<sub>fmt</sub> ValueFPR(ft, fmt))
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_ADD_S_DOCUMENTATION.=<u>Floating point addition</u>
+
+<b>Format:</b>
+add.s fd, fs, ft
+
+| COP1      fmt      ft     fs      fd      ABS   |
+|010001    10000   00000                   000000 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+FPR[fd] <- FRP[fs] + FPR[ft]
+
+The value in FPR <i>ft</i> is added to the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
+The operands and result are values in floating point.
+
+<b>Restrictions:</b>
+The operand must be a value in floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+fmt <- float
+StoreFPR(fd, fmt, ValueFPR(fs, fmt) +<sub>fmt</sub> ValueFPR(ft, fmt))
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_ADDIU_DOCUMENTATION.=<u>Immediate unsigned addition</u>
+
+<b>Format:</b>
+addiu rt, rs, immediate
+
+| ADDIU      rs     rt     immediate |
+|001001                              |
+|  6         5      5         16     |
+
+
+<b>Description:</b>
+GPR[rt] <- GPR[rs] + immediate
+
+The 16-bit signed <i>immediate</i> is added to the 32-bit value in GRP <i>rs</i> and the 32-bit arithmetic result is placed into GPR <i>rt</i>.
+No Integer Overflow exception occurs under any circumstances.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+temp <- GPR[rs] + sign_extend(immediate)
+GPR[rt] <- temp
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+The term <i>unsigned</i> in the instruction name is a misnomer; this operation is a 32-bit modulo arithmetic that does not trap on overflow. This instruction is appropiate for unsigned arithmetic, such as address arithmetic, or integer arithmetic environments that ignore overflow, such as the C language arithmetic.
+\END
+
+INSTRUCTION_ADDIUPC_DOCUMENTATION.=<u>Immediate unsigned addition to PC</u>
+
+<b>Format:</b>
+addiupc rs, immediate
+
+| PCREL      rs   ADDIUPC   immediate |
+|111011              00               |
+|  6         5       2         19     |
+
+
+<b>Description:</b>
+GPR[rs] <- PC + sign_extend(immediate << 2)
+
+This instruction performs a PC-relative address calculation. The 19-bit <i>immediate</i> is shifted left by 2 bits, sign-extended and added to the address of the instruction.
+The result is placed into GPR <i>rs</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+GPR[rs] <- PC + sign_extend(immediate << 2)
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+The term <i>unsigned</i> in the instruction name is a misnomer. <i>Unsigned</i> here means <i>non-trapping</i>. It does not trap on a signed 32-bit overflow. <black>addiupc</black> corresponds to unsigned <black>addiu</black>, which does not trap on overflow.
+\END
+
+INSTRUCTION_ADDU_DOCUMENTATION.=<u>Unsigned addition</u>
+
+<b>Format:</b>
+addu rd, rs, rt
+
+|SPECIAL     rs      rt     rd      0       ADD   |
+|000000                                    100001 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd] <- GPR[rs] + GPR[rt]
+
+The 32-bit word value in GPR <i>rt</i> is added to the 32-bit value in GPR <i>rs</i> to produce a 32-bit result.
+The 32-bit result is placed into GPR <i>rd</i>.
+No Integer Overflow exception occurs under any circumstances.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+temp <- GPR[rs] + GPR[rt]
+GPR[rd] <- temp
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+The term <i>unsigned</i> in the instruction name is a misnomer; this operation is a 32-bit modulo arithmetic that does not trap on overflow. This instruction is appropiate for unsigned arithmetic, such as address arithmetic, or integer arithmetic environments that ignore overflow, such as the C language arithmetic.
+\END
+
+INSTRUCTION_ALIGN_DOCUMENTATION.=<u>Concatenate two GRPs extracting a contiguous subset at a byte position</u>
+
+<b>Format:</b>
+align rd, rs, rt, bp
+
+|SPECIAL3    rs    rt    rd    ALIGN   bp   BSGFL  |
+| 011111                        010         100000 |
+|   6        5     5     5       3     2      6    |
+
+
+<b>Description:</b>
+GPR[rd] <- (GPR[rt] << 8 * bp) or (GPR[rs] >> 8 * (4 - bp))
+
+The input registers GPR <i>rt</i> and GPR <i>rs</i> are concatenated, and a register width contiguous subset is extracted, which is specified by the byte pointer <i>bp</i>.
+The <black>align</black> instruction operates on 32-bit words, and has a 2-bit byte position field <i>bp</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+tmp_rt_hi <- unsigned_word(GPR[rt]) << 8 * bp
+tmp_rs_lo <- unsigned_word(GPR[rs]) >> 8 * (4 - bp)
+GPR[rd] <- tmp_rt_hi or tmp_rs_lo
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_ALUIPC_DOCUMENTATION.=<u>Aligned add upper immediate on PC</u>
+
+<b>Format:</b>
+aluipc rs, immediate
+
+| PCREL     rs     ALUIPC   immediate |
+|111011            11111              |
+|  6        5        5         16     |
+
+
+<b>Description:</b>
+GPR[rs] <- not 0x0FFFF and PC + sign_extend(immediate << 16)
+
+This instruction performs a PC-relative address calculation. The 16-bit <i>immediate</i> is shifted left by 16 bits, sign-extended and added to the address of the instruction.
+The low 16 bits of the result are cleard. The result is placed into GPR <i>rs</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+GPR[rs] <- not 0x0FFFF and PC + sign_extend(immediate << 16)
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_AND_DOCUMENTATION.=<u>And</u>
+
+<b>Format:</b>
+and rd, rs, rt
+
+|SPECIAL     rs      rt     rd      0       AND   |
+|000000                                    100100 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd] <- GPR[rs] and GPR[rt]
+
+Performs a bitwise logical AND using the values inside GPR <i>rs</i> and GPR <i>rt</i>.
+The result is placed into GPR <i>rd</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+GPR[rd] <- GPR[rs] and GPR[rt]
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_ANDI_DOCUMENTATION.=<u>Immediate and</u>
+
+<b>Format:</b>
+andi rt, rs, immediate
+
+| ANDI      rs     rt     immediate |
+|001100                             |
+|  6        5      5         16     |
+
+
+<b>Description:</b>
+GPR[rt] <- GPR[rs] and zero_extend(immediate)
+
+The 16-bit <i>immediate</i> is zero-extended to the left and combined with the value of GPR <i>rs</i> in a bitwise logical AND operation.
+The result is placed into GPR <i>rt</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+GPR[rt] <- GPR[rs] and zero_extend(immediate)
+
+<b>Exceptions:</b>
+None
+\END
+
 
 FLOAT_CONDITION_AF=Always false
 FLOAT_CONDITION_UN=Unordered

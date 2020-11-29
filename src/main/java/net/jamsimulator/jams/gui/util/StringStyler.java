@@ -5,6 +5,7 @@ import org.fxmisc.richtext.StyleClassedTextArea;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class StringStyler {
 
@@ -18,6 +19,7 @@ public class StringStyler {
 		int close;
 		char[] charArray = string.toCharArray();
 
+		String tag;
 		int from = 0;
 		char c;
 		for (int index = 0, charArrayLength = charArray.length; index < charArrayLength; index++) {
@@ -28,14 +30,21 @@ public class StringStyler {
 			} else if (c == '<') {
 				close = string.indexOf('>', index);
 				if (close == -1) {
-					throw new IllegalArgumentException("Bad string format");
+					builder.append(c);
+					continue;
+				}
+
+				tag = string.substring(index + 1, close);
+				if(!CurrentStyle.isValid(tag)) {
+					builder.append(c);
+					continue;
 				}
 
 				//Create style
 				styles.add(new Entry(new IndexRange(from, builder.length()), currentStyle.getStyles()));
 
 				//Check
-				currentStyle.update(string.substring(index + 1, close));
+				currentStyle.update(tag);
 				from = builder.length();
 				index = close;
 			} else {
@@ -53,6 +62,8 @@ public class StringStyler {
 	}
 
 	private static class CurrentStyle {
+
+		private static final Set<String> tags = Set.of("b", "code", "black", "u", "i", "sub");
 
 		private boolean bold;
 		private boolean code;
@@ -73,13 +84,13 @@ public class StringStyler {
 			return list;
 		}
 
-		public void update(String tagText) {
+		public void update(String tag) {
 			boolean value = true;
-			if (tagText.startsWith("/")) {
+			if (tag.startsWith("/")) {
 				value = false;
-				tagText = tagText.substring(1);
+				tag = tag.substring(1);
 			}
-			switch (tagText) {
+			switch (tag) {
 				case "b" -> bold = value;
 				case "code" -> code = value;
 				case "black" -> black = value;
@@ -87,6 +98,11 @@ public class StringStyler {
 				case "i" -> italic = value;
 				case "sub" -> sub = value;
 			}
+		}
+
+		public static boolean isValid (String tag) {
+			if (tag.startsWith("/")) tag = tag.substring(1);
+			return tags.contains(tag);
 		}
 
 

@@ -422,9 +422,9 @@ INSTRUCTION_ADDIUPC=Suma de inmediato y PC sin desbordamiento
 INSTRUCTION_ADD_S=Suma (coma flotante)
 INSTRUCTION_ADDU=Suma sin desbordamiento
 INSTRUCTION_ALIGN=Concatenar dos registros generales, extrayendo un subconjunto contiguo a una posición de byte
-INSTRUCTION_ALUIPC=Suma alineada del inmediato con los bits superiores del PC.
+INSTRUCTION_ALUIPC=Suma alineada del inmediato con los bits superiores del PC
 INSTRUCTION_AND=And
-INSTRUCTION_ANDI=And inmediato
+INSTRUCTION_ANDI=And con inmediato
 INSTRUCTION_AUI=Suma del inmediato con los bits superiores
 INSTRUCTION_AUIPC=Suma del inmediato con los bits superiores del PC
 INSTRUCTION_BAL=Ramificación y enlace
@@ -442,8 +442,8 @@ INSTRUCTION_BGEZ=Ramificación si es mayor o igual que cero
 INSTRUCTION_BGEZALC=Ramificación compacta y enlace si es mayor o igual que cero
 INSTRUCTION_BGEZC=Ramificación compacta si es mayor o igual que cero
 INSTRUCTION_BGTZ=Ramificación si es mayor que cero
-INSTRUCTION_BGTZALC=Ramificación compacta y enlace si es mayor que cero.
-INSTRUCTION_BGTZC=Ramificación compacta si es mayor que cero.
+INSTRUCTION_BGTZALC=Ramificación compacta y enlace si es mayor que cero
+INSTRUCTION_BGTZC=Ramificación compacta si es mayor que cero
 INSTRUCTION_BITSWAP=Intercambiar bits en cada byte
 INSTRUCTION_BLEZ=Ramificación si es menor o igual que cero
 INSTRUCTION_BLEZALC=Ramificación compacta y enlace si es menor o igual que cero
@@ -492,7 +492,7 @@ INSTRUCTION_MUL_D=Multiplicación (coma flotante doble)
 INSTRUCTION_MUL_S=Multiplicación (coma flotante)
 INSTRUCTION_MULU=Multiplicación sin signo devolviendo la parte menos significante
 INSTRUCTION_OR=Or
-INSTRUCTION_ORI=Or inmediato
+INSTRUCTION_ORI=Or con inmediato
 INSTRUCTION_SB=Guardar byte
 INSTRUCTION_SLL=Desplazar a la izquierda de manera lógica
 INSTRUCTION_SLLV=Desplazar a la izquierda de manera lógica dependiendo de una variable
@@ -544,7 +544,7 @@ abs.d fd, fs
 
 
 <b>Descripción:</b>
-FPR[fd] \<- abs(FRP[fs])
+FPR[fd] <- abs(FRP[fs])
 
 Asigna el valor absoluto de <i>fs</i> a <i>fd</i>. Tanto el operando como el resultado son valores en coma flotante de precisión doble.
 
@@ -553,8 +553,11 @@ Los registros <i>fs</i> y <i>fd</i> deben ser FPRs pares. Si los registros no so
 El operando debe ser un valor en coma flotante de precisión doble. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
 
 <b>Operación:</b>
-fmt \<- double
+fmt <- double
 StoreFPR(fd, fmt, AbsoluteValue(ValueFPR(fs, fmt)))
+
+<b>Excepciones:</b>
+Ninguna
 \END
 
 INSTRUCTION_ABS_S_DOCUMENTATION.=<u>Valor absoluto en coma flotante</u>
@@ -568,7 +571,7 @@ abs.s fd, fs
 
 
 <b>Descripción:</b>
-FPR[fd] \<- abs(FRP[fs])
+FPR[fd] <- abs(FRP[fs])
 
 Asigna el valor absoluto de <i>fs</i> a <i>fd</i>. Tanto el operando como el resultado son valores en coma flotante.
 
@@ -576,8 +579,11 @@ Asigna el valor absoluto de <i>fs</i> a <i>fd</i>. Tanto el operando como el res
 El operando debe ser un valor en coma flotante. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
 
 <b>Operación:</b>
-fmt \<- float
+fmt <- float
 StoreFPR(fd, fmt, AbsoluteValue(ValueFPR(fs, fmt)))
+
+<b>Excepciones:</b>
+Ninguna
 \END
 
 INSTRUCTION_ADD_DOCUMENTATION.=<u>Suma</u>
@@ -591,7 +597,7 @@ add rd, rs, rt
 
 
 <b>Descripción:</b>
-GPR[rd] \<- GPR[rs] + GPR[rt]
+GPR[rd] <- GPR[rs] + GPR[rt]
 
 La palabra de 32 bits del registro <i>rt</i> es sumada a la palabra de 32 bits del registro <i>rs</i> para producir un resultado de 32 bits.
  - Si la suma resulta en un desbordamiento aritmético en complemento a 2 de 32 bits, el registro destino no es modificado y la excepción Integer Overflow es lanzada.
@@ -601,18 +607,269 @@ La palabra de 32 bits del registro <i>rt</i> es sumada a la palabra de 32 bits d
 Ninguna
 
 <b>Operación:</b>
-temp \<- (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (GPR[rt]<sub>31</sub> || GPR[rt]<sub>31..0</sub>)
+temp <- (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (GPR[rt]<sub>31</sub> || GPR[rt]<sub>31..0</sub>)
 if temp<sub>32</sub> != temp<sub>31</sub> then
     SignalException(IntegerOverflow)
 else
-    GPR[rd] \<- temp
+    GPR[rd] <- temp
 endif
 
 <b>Excepciones:</b>
 Integer Overflow
 
 <b>Notas del programador:</b>
-<i>addu</i> ejecuta la misma operación aritmética pero no lanza una excepción al desbordar.
+<black>addu</black> ejecuta la misma operación aritmética pero no lanza una excepción al desbordar.
+\END
+
+INSTRUCTION_ADD_D_DOCUMENTATION.=<u>Suma en coma flotante de precisión doble</u>
+
+<b>Formato:</b>
+add.d fd, fs, ft
+
+| COP1      fmt      ft     fs      fd      ABS   |
+|010001    10001   00000                   000000 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+FPR[fd] <- FRP[fs] + FPR[ft]
+
+El valor en el registro <i>ft</i> es añadido al valor en el registro <i>fs</i>. El resultado es calculado en precisión infinita, usando el redondeo proporcionado por <i>Java</i>, y asignado al registro <i>fd</i>.
+Los operando y el resultado son valores en coma flotante de precisión doble.
+
+<b>Restricciones:</b>
+Los registros <i>fs</i>, <i>ft</i> y <i>fd</i> deben ser FPRs pares. Si los registros no son válidos, el resultado es <black>IMPREDECIBLE</black>.
+El operando debe ser un valor en coma flotante de precisión doble. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operación:</b>
+fmt <- double
+StoreFPR(fd, fmt, ValueFPR(fs, fmt) +<sub>fmt</sub> ValueFPR(ft, fmt))
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_ADD_S_DOCUMENTATION.=<u>Suma en coma flotante</u>
+
+<b>Formato:</b>
+add.s fd, fs, ft
+
+| COP1      fmt      ft     fs      fd      ABS   |
+|010001    10000   00000                   000000 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+FPR[fd] <- FRP[fs] + FPR[ft]
+
+El valor en el registro <i>ft</i> es añadido al valor en el registro <i>fs</i>. El resultado es calculado en precisión infinita, usando el redondeo proporcionado por <i>Java</i>, y asignado al registro <i>fd</i>.
+Los operando y el resultado son valores en coma flotante.
+
+<b>Restricciones:</b>
+El operando debe ser un valor en coma flotante. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operación:</b>
+fmt <- float
+StoreFPR(fd, fmt, ValueFPR(fs, fmt) +<sub>fmt</sub> ValueFPR(ft, fmt))
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_ADDIU_DOCUMENTATION.=<u>Suma con inmediato sin signo</u>
+
+<b>Formato:</b>
+addiu rt, rs, inmediato
+
+| ADDIU      rs     rt     inmediato |
+|001001                              |
+|  6         5      5         16     |
+
+
+<b>Descripción:</b>
+GPR[rt] <- GPR[rs] + inmediato
+
+El valor con signo de 16 bits <i>inmediato</i> es sumado al valor de 32 bits del registro <i>rs</i> y el resultado de 32 bits es asignado al registro <i>rt</i>.
+Ninguna excepción de desbordamiento ocurre en ninguna de las circunstancias.
+
+<b>Restricciones:</b>
+None
+
+<b>Operación:</b>
+temp <- GPR[rs] + sign_extend(inmediato)
+GPR[rt] <- temp
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+El término <i>sin signo</i> en esta instrucción es parcialmente incorrecto; esta instrucción ejecuta una operación aritmética de 32 bits que no lanza una excepción al desbordar. Esta instrucción es apropiada para aritmética sin signo, o entornos aritméticos que ignoran el desbordamiento, como puede ser la aritmética del lenguaje C.
+\END
+
+INSTRUCTION_ADDIUPC_DOCUMENTATION.=<u>Suma de inmediato y PC sin singo</u>
+
+<b>Formato:</b>
+addiupc rs, inmediato
+
+| PCREL      rs   ADDIUPC   inmediato |
+|111011              00               |
+|  6         5       2         19     |
+
+
+<b>Descripción:</b>
+GPR[rs] <- PC + sign_extend(inmediato << 2)
+
+Esta instrucción ejecuta el cálculo de una dirección relativa al PC. El <i>inmediato</i> de 19 bits es desplazado a la izquierda 2 bits, extendido con signo y sumado con la dirección de la instrucción.
+El resultado es asignado al registro <i>rs</i>.
+
+<b>Restricciones:</b>
+None
+
+<b>Operación:</b>
+GPR[rs] <- PC + sign_extend(inmediato << 2)
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+El término <i>sin signo</i> es parcialmente incorrecto. <i>Sin signo</i> aquí significa <i>ignorando desbordamientos</i>. Esta instrucción no lanza una excepción cuando la suma produce un desbordamiento. <black>addiupc</black> corresponde a la instrucción <black>addiu</black>, la cual no lanza excepciones al desbordar.
+\END
+
+INSTRUCTION_ADDU_DOCUMENTATION.=<u>Suma sin signo</u>
+
+<b>Formato:</b>
+addu rd, rs, rt
+
+|SPECIAL     rs      rt     rd      0       ADD   |
+|000000                                    100001 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- GPR[rs] + GPR[rt]
+
+La palabra de 32 bits del registro <i>rt</i> es sumada a la palabra de 32 bits del registro <i>rs</i> para producir un resultado de 32 bits.
+El resultado es asignado al registro <i>rd</i>.
+Ninguna excepción de desbordamiento ocurre en ninguna de las circunstancias.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+temp <- GPR[rs] + GPR[rt]
+GPR[rd] <- temp
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+El término <i>sin signo</i> en esta instrucción es parcialmente incorrecto; esta instrucción ejecuta una operación aritmética de 32 bits que no lanza una excepción al desbordar. Esta instrucción es apropiada para aritmética sin signo, o entornos aritméticos que ignoran el desbordamiento, como puede ser la aritmética del lenguaje C.
+\END
+
+INSTRUCTION_ALIGN_DOCUMENTATION.=<u>Concatenar dos registros generales, extrayendo un subconjunto contiguo a una posición de byte</u>
+
+<b>Formato:</b>
+align rd, rs, rt, bp
+
+|SPECIAL3    rs    rt    rd    ALIGN   bp   BSGFL  |
+| 011111                        010         100000 |
+|   6        5     5     5       3     2      6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- (GPR[rt] << 8 * bp) or (GPR[rs] >> 8 * (4 - bp))
+
+El registro <i>rt</i> y el registro <i>rs</i> son concatenados, y un subconjunto del tamaño de un registro es extraido, el cual está especificado por el puntero a byte <i>bp</i>.
+La instrucción <black>align</black> opera con palabras de 32 bits, y tiene una celda de 2 bits <i>bp</i> representando el puntero a byte.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+tmp_rt_hi <- unsigned_word(GPR[rt]) << 8 * bp
+tmp_rs_lo <- unsigned_word(GPR[rs]) >> 8 * (4 - bp)
+GPR[rd] <- tmp_rt_hi or tmp_rs_lo
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_ALUIPC_DOCUMENTATION.=<u>Suma alineada del inmediato con los bits superiores del PC</u>
+
+<b>Formato:</b>
+aluipc rs, inmediato
+
+| PCREL     rs     ALUIPC   inmediato |
+|111011            11111              |
+|  6        5        5         16     |
+
+
+<b>Descrpción:</b>
+GPR[rs] <- not 0x0FFFF and PC + sign_extend(inmediato << 16)
+
+Esta instrucción ejecuta el cálculo de una dirección relativa al PC. El <i>inmediato</i> de 16 bits es desplazado a la izquierda 16 bits, extendido con signo y sumado con la dirección de la instrucción.
+Los 16 bits menos significantes son pustos a 0. El resultado es asignado al registro <i>rs</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+GPR[rs] <- not 0x0FFFF and PC + sign_extend(inmediato << 16)
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_AND_DOCUMENTATION.=<u>And</u>
+
+<b>Formato:</b>
+and rd, rs, rt
+
+|SPECIAL     rs      rt     rd      0       AND   |
+|000000                                    100100 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- GPR[rs] and GPR[rt]
+
+Realiza la operación lógica AND usando los valores dentro de los registros <i>rs</i> y <i>rt</i>.
+El resultado es asignado al registro <i>rd</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+GPR[rd] <- GPR[rs] and GPR[rt]
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_ANDI_DOCUMENTATION.=<u>And con inmediato</u>
+
+<b>Formato:</b>
+andi rt, rs, inmediato
+
+| ANDI      rs     rt     inmediato |
+|001100                             |
+|  6        5      5         16     |
+
+
+<b>Descripción:</b>
+GPR[rt] <- GPR[rs] and zero_extend(inmediato)
+
+El <i>inmediato</i> de 16 bits es extendido a la izquierda con ceros y combinado con el valor del registro <i>rs</i> usando la operación lógica AND.
+El resultado es asignado al registro <i>rt</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+GPR[rt] <- GPR[rs] and zero_extend(immediate)
+
+<b>Excepciones:</b>
+Ninguna
 \END
 
 FLOAT_CONDITION_AF=Siempre falso
