@@ -30,6 +30,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
 import javafx.scene.input.*;
+import javafx.stage.Popup;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
@@ -38,6 +39,7 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
+import net.jamsimulator.jams.gui.editor.popup.DocumentationPopup;
 import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
@@ -69,6 +71,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 	protected ScaledVirtualized zoom;
 
 	protected AutocompletionPopup autocompletionPopup;
+	protected DocumentationPopup documentationPopup;
 	private ChangeListener<? super Number> autocompletionMoveListener;
 
 	public CodeFileEditor(FileEditorTab tab) {
@@ -126,6 +129,15 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 	 */
 	public AutocompletionPopup getAutocompletionPopup() {
 		return autocompletionPopup;
+	}
+
+	/**
+	 * Returns the {@link Popup} showing the current documentation.
+	 *
+	 * @return the popup.
+	 */
+	public DocumentationPopup getDocumentationPopup() {
+		return documentationPopup;
 	}
 
 	//region actions
@@ -346,31 +358,30 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 
 		//AUTO COMPLETION
 		addEventHandler(KeyEvent.KEY_TYPED, event -> {
-			if (autocompletionPopup == null) return;
-			if (autocompletionPopup.manageTypeEvent(event)) event.consume();
+			if (autocompletionPopup != null && autocompletionPopup.manageTypeEvent(event)) event.consume();
+			if(documentationPopup != null) documentationPopup.hide();
 		});
 
 		//AUTOCOMPLETION MOVEMENT
 		addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-			if (autocompletionPopup == null) return;
-			if (autocompletionPopup.managePressEvent(event)) event.consume();
+			if (autocompletionPopup != null && autocompletionPopup.managePressEvent(event)) event.consume();
 		});
 
 		//FOCUS
 		focusedProperty().addListener((obs, old, val) -> {
-			if (autocompletionPopup == null) return;
-			autocompletionPopup.hide();
+			if (autocompletionPopup != null) autocompletionPopup.hide();
+			if(documentationPopup != null) documentationPopup.hide();
 		});
 		//CLICK
 		addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-			if (autocompletionPopup == null) return;
-			autocompletionPopup.hide();
+			if (autocompletionPopup != null) autocompletionPopup.hide();
+			if(documentationPopup != null) documentationPopup.hide();
 		});
 
 		//MOVE
 		autocompletionMoveListener = (obs, old, val) -> {
-			if (autocompletionPopup == null) return;
-			autocompletionPopup.hide();
+			if (autocompletionPopup != null) autocompletionPopup.hide();
+			if(documentationPopup != null) documentationPopup.hide();
 		};
 		JamsApplication.getStage().xProperty().addListener(autocompletionMoveListener);
 		JamsApplication.getStage().yProperty().addListener(autocompletionMoveListener);

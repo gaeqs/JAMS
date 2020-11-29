@@ -57,6 +57,12 @@ public abstract class PseudoInstruction implements Instruction {
 	}
 
 	@Override
+	public String getDocumentation() {
+		var sufix = mnemonic.toUpperCase().replace('.', '_');
+		return Jams.getLanguageManager().getSelected().getOrDefault("INSTRUCTION_" + sufix + "_DOCUMENTATION");
+	}
+
+	@Override
 	public String getMnemonic() {
 		return mnemonic;
 	}

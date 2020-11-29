@@ -322,6 +322,7 @@ public class ActionManager extends Manager<Action> {
 		add(new TextEditorActionSave());
 		add(new TextEditorActionSelectAll());
 		add(new TextEditorActionShowAutocompletionPopup());
+		add(new TextEditorActionShowDocumentationPopup());
 		add(new TextEditorActionUndo());
 
 		//EXPLORER ELEMENT

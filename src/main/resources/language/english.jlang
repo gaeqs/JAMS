@@ -351,6 +351,7 @@ ACTION_REGION_TEXT_EDITOR=Text editor
 ACTION_TEXT_EDITOR_REFORMAT=Reformat code
 ACTION_TEXT_EDITOR_SAVE=Save file
 ACTION_TEXT_EDITOR_SHOW_AUTOCOMPLETION_POPUP=Show autocompletion popup
+ACTION_TEXT_EDITOR_SHOW_DOCUMENTATION_POPUP=Show documentation popup
 ACTION_TEXT_EDITOR_PREVIOUS_FILE=Move to the previous file
 ACTION_TEXT_EDITOR_NEXT_FILE=Move to the next file
 ACTION_TEXT_EDITOR_REFRESH_FROM_DISK=Refresh from disk
@@ -529,6 +530,90 @@ INSTRUCTION_SLE=Set on lower than or equal
 INSTRUCTION_SLEI=Set on lower than or equal immediate
 INSTRUCTION_SLEIU=Set on lower than or equal immediate unsigned
 INSTRUCTION_SLEU=Set on lower than or equal unsigned
+
+//INSTRUCTIONS DOCUMENTATION
+
+INSTRUCTION_ABS_D_DOCUMENTATION.=<u>Double precision floating point absolute value</u>
+
+<b>Format:</b>
+abs.d fd, fs
+
+| COP1      fmt      0      fs      fd      ABS   |
+|010001    10001   00000                   000101 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+FPR[fd] \<- abs(FRP[fs])
+
+Places the absolute value of <i>fs</i> in <i>fd</i>. The operand and result are values in double precision floating point.
+
+<b>Restrictions:</b>
+The fields <i>fs</i> and <i>fd</i> must be even FPRs. If the fields are not valid, the result is <black>UNPREDICTABLE</black>.
+The operand must be a value in double precision floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+fmt \<- double
+StoreFPR(fd, fmt, AbsoluteValue(ValueFPR(fs, fmt)))
+\END
+
+INSTRUCTION_ABS_S_DOCUMENTATION.=<u>Floating point absolute value</u>
+
+<b>Format:</b>
+abs.s fd, fs
+
+| COP1      fmt      0      fs      fd      ABS   |
+|010001    10000   00000                   000101 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+FPR[fd] \<- abs(FRP[fs])
+
+Places the absolute value of <i>fs</i> in <i>fd</i>. The operand and result are values in floating point.
+
+<b>Restrictions:</b>
+The operand must be a value in floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+fmt \<- float
+StoreFPR(fd, fmt, AbsoluteValue(ValueFPR(fs, fmt)))
+\END
+
+INSTRUCTION_ADD_DOCUMENTATION.=<u>Addition</u>
+
+<b>Format:</b>
+add rd, rs, rt<
+
+|SPECIAL     rs      rt     rd      0       ADD   |
+|000000                                    100000 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd] \<- GPR[rs] + GPR[rt]
+
+The 32-bit word value in GPR <i>rt</i> is added to the 32-bit value in GPR <i>rs</i> to produce a 32-bit result.
+ - If the adition results in 32-bit 2's complement arithmetic overflow, the destination register is not modified and an Integer Overflow exception occurs.
+ - If the addition does not overflow, the 32-bit result is placed into GPR <i>rd</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+temp \<- (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (GPR[rt]<sub>31</sub> || GPR[rt]<sub>31..0</sub>)
+if temp<sub>32</sub> != temp<sub>31</sub> then
+    SignalException(IntegerOverflow)
+else
+    GPR[rd] \<- temp
+endif
+
+<b>Exceptions:</b>
+Integer Overflow
+
+<b>Programming Notes:</b>
+<i>addu</i> performs the same arithmetic operation but does not trap on overflow.
+\END
 
 FLOAT_CONDITION_AF=Always false
 FLOAT_CONDITION_UN=Unordered

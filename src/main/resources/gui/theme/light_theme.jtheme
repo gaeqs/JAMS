@@ -1,4 +1,5 @@
 Light Theme
+Light Theme
 * {
     -theme-foreground: #222222;
     -theme-foreground-darker: derive(-theme-foreground, 20%);
@@ -934,7 +935,7 @@ AnchorPane {
 }
 
 /*Default text*/
-.code-area .text {
+.styled-text-area .text {
     -fx-fill: -theme-foreground;
     -fx-font-family: "{FONT_CODE}";
     -fx-font-size: 13.5;

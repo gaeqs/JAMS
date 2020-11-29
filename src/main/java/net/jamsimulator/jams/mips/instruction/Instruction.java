@@ -69,6 +69,16 @@ public interface Instruction {
 	String getName();
 
 	/**
+	 * Returns the documentation of the instruction.
+	 * This string is a HTML-like formatted text containing a complete description of the instruction.
+	 * <p>
+	 * This documentation depends on the current language of JAMS.
+	 *
+	 * @return the documentation.
+	 */
+	String getDocumentation ();
+
+	/**
 	 * Returns the MIPS mnemonic of the instruction. This is the static short MIPS name of the instruction,
 	 * and it's used to filter and check the instruction in compile time.
 	 * <p>

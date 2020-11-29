@@ -79,6 +79,7 @@ public class MIPSFileEditor extends CodeFileEditor {
 		}
 
 		autocompletionPopup = new MIPSAutocompletionPopup(this);
+		documentationPopup = new MipsDocumentationPopup(this, (MIPSAutocompletionPopup) autocompletionPopup);
 
 		initializePopupListeners();
 		applyLabelTabRemover();

@@ -70,6 +70,12 @@ public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionC
 	}
 
 	@Override
+	public String getDocumentation() {
+		var name = Jams.getLanguageManager().getSelected().getOrDefault("INSTRUCTION_" + NAME_SUFIX + "_DOCUMENTATION");
+		return name.replace("{TYPE}", condition.getName());
+	}
+
+	@Override
 	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
 		return new Assembled(parameters[2].getRegister(), parameters[1].getRegister(), parameters[0].getRegister(), getFunctionCode(), origin, this);
 	}

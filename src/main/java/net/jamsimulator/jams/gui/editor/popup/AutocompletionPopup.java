@@ -31,12 +31,18 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
+import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.event.EventBroadcast;
+import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.popup.event.AutocompletionPopupSelectElementEvent;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.utils.StringUtils;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -49,7 +55,9 @@ import java.util.stream.Stream;
  * <p>
  * It contains the default style and controls.
  */
-public abstract class AutocompletionPopup extends Popup {
+public abstract class AutocompletionPopup extends Popup implements EventBroadcast {
+
+	private final SimpleEventBroadcast broadcast;
 
 	protected final CodeFileEditor display;
 	protected final VBox content;
@@ -67,6 +75,7 @@ public abstract class AutocompletionPopup extends Popup {
 	 * @param display the code display where this popup is displayed.
 	 */
 	public AutocompletionPopup(CodeFileEditor display) {
+		this.broadcast = new SimpleEventBroadcast();
 		this.display = display;
 		content = new VBox();
 		content.getStyleClass().add("autocompletion-popup");
@@ -86,6 +95,14 @@ public abstract class AutocompletionPopup extends Popup {
 			event.consume();
 		});
 		scroll.setOnKeyTyped(event -> requestFocus());
+
+		var oldDispatcher = getEventDispatcher();
+		setEventDispatcher((event, tail) -> {
+			if(event instanceof MouseEvent) {
+				return oldDispatcher.dispatchEvent(event, tail);
+			}
+			return display.getEventDispatcher().dispatchEvent(event, tail);
+		});
 	}
 
 	/**
@@ -205,7 +222,7 @@ public abstract class AutocompletionPopup extends Popup {
 		T next;
 		while (iterator.hasNext()) {
 			next = iterator.next();
-			label = new AutocompletionPopupElement(this, elements.size(),
+			label = new AutocompletionPopupElement(this, next, elements.size(),
 					StringUtils.addExtraSpaces(conversion.apply(next)),
 					autocompletionConversion.apply(next), offset, icon);
 			elements.add(label);
@@ -221,6 +238,7 @@ public abstract class AutocompletionPopup extends Popup {
 		}
 		selected = (AutocompletionPopupElement) content.getChildren().get(selectedIndex);
 		selected.getStyleClass().add("autocompletion-popup-element-selected");
+		callEvent(new AutocompletionPopupSelectElementEvent(selected));
 	}
 
 
@@ -357,5 +375,34 @@ public abstract class AutocompletionPopup extends Popup {
 	 */
 	public abstract void autocomplete();
 
+
+	//region BROADCAST
+
+	@Override
+	public boolean registerListener(Object instance, Method method, boolean useWeakReferences) {
+		return broadcast.registerListener(instance, method, useWeakReferences);
+	}
+
+	@Override
+	public int registerListeners(Object instance, boolean useWeakReferences) {
+		return broadcast.registerListeners(instance, useWeakReferences);
+	}
+
+	@Override
+	public boolean unregisterListener(Object instance, Method method) {
+		return broadcast.unregisterListener(instance, method);
+	}
+
+	@Override
+	public int unregisterListeners(Object instance) {
+		return broadcast.unregisterListeners(instance);
+	}
+
+	@Override
+	public <T extends Event> T callEvent(T event) {
+		return broadcast.callEvent(event, this);
+	}
+
+	//endregion
 
 }

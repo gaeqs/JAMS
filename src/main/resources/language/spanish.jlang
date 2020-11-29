@@ -351,6 +351,7 @@ ACTION_REGION_TEXT_EDITOR=Editor de texto
 ACTION_TEXT_EDITOR_REFORMAT=Reestructurar código
 ACTION_TEXT_EDITOR_SAVE=Guardar archivo
 ACTION_TEXT_EDITOR_SHOW_AUTOCOMPLETION_POPUP=Mostrar autocompletador
+ACTION_TEXT_EDITOR_SHOW_DOCUMENTATION_POPUP=Mostrar documentación
 ACTION_TEXT_EDITOR_PREVIOUS_FILE=Ir al anterior archivo
 ACTION_TEXT_EDITOR_NEXT_FILE=Ir al siguiente archivo
 ACTION_TEXT_EDITOR_REFRESH_FROM_DISK=Recargar desde el disco
@@ -529,6 +530,90 @@ INSTRUCTION_SLE=Asignar si menor o igual que valor
 INSTRUCTION_SLEI=Asignar si menor o igual que inmediato
 INSTRUCTION_SLEIU=Asignar si menor o igual que inmediato sin signo
 INSTRUCTION_SLEU=Asignar si menor o igual que sin signo
+
+//INSTRUCTIONS DOCUMENTATION
+
+INSTRUCTION_ABS_D_DOCUMENTATION.=<u>Valor absoluto en coma flotante de precisión doble</u>
+
+<b>Formato:</b>
+abs.d fd, fs
+
+| COP1      fmt      0      fs      fd      ABS   |
+|010001    10001   00000                   000101 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+FPR[fd] \<- abs(FRP[fs])
+
+Asigna el valor absoluto de <i>fs</i> a <i>fd</i>. Tanto el operando como el resultado son valores en coma flotante de precisión doble.
+
+<b>Restricciones:</b>
+Los registros <i>fs</i> y <i>fd</i> deben ser FPRs pares. Si los registros no son válidos, el resultado es <black>IMPREDECIBLE</black>.
+El operando debe ser un valor en coma flotante de precisión doble. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operación:</b>
+fmt \<- double
+StoreFPR(fd, fmt, AbsoluteValue(ValueFPR(fs, fmt)))
+\END
+
+INSTRUCTION_ABS_S_DOCUMENTATION.=<u>Valor absoluto en coma flotante</u>
+
+<b>Formato:</b>
+abs.s fd, fs
+
+| COP1      fmt      0      fs      fd      ABS   |
+|010001    10000   00000                   000101 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+FPR[fd] \<- abs(FRP[fs])
+
+Asigna el valor absoluto de <i>fs</i> a <i>fd</i>. Tanto el operando como el resultado son valores en coma flotante.
+
+<b>Restricciones:</b>
+El operando debe ser un valor en coma flotante. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operación:</b>
+fmt \<- float
+StoreFPR(fd, fmt, AbsoluteValue(ValueFPR(fs, fmt)))
+\END
+
+INSTRUCTION_ADD_DOCUMENTATION.=<u>Suma</u>
+
+<b>Formato:</b>
+add rd, rs, rt
+
+|SPECIAL     rs      rt     rd      0       ADD   |
+|000000                                    100000 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+GPR[rd] \<- GPR[rs] + GPR[rt]
+
+La palabra de 32 bits del registro <i>rt</i> es sumada a la palabra de 32 bits del registro <i>rs</i> para producir un resultado de 32 bits.
+ - Si la suma resulta en un desbordamiento aritmético en complemento a 2 de 32 bits, el registro destino no es modificado y la excepción Integer Overflow es lanzada.
+ - Si la suma no produce un desbordamiento, el resultado es insertado en el registro GPR <i>rd</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+temp \<- (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (GPR[rt]<sub>31</sub> || GPR[rt]<sub>31..0</sub>)
+if temp<sub>32</sub> != temp<sub>31</sub> then
+    SignalException(IntegerOverflow)
+else
+    GPR[rd] \<- temp
+endif
+
+<b>Excepciones:</b>
+Integer Overflow
+
+<b>Notas del programador:</b>
+<i>addu</i> ejecuta la misma operación aritmética pero no lanza una excepción al desbordar.
+\END
 
 FLOAT_CONDITION_AF=Siempre falso
 FLOAT_CONDITION_UN=Sin orden

@@ -913,7 +913,7 @@ AnchorPane {
 }
 
 /*Default text*/
-.code-area .text {
+.styled-text-area .text {
     -fx-fill: -theme-foreground;
     -fx-font-family: "{FONT_CODE}";
     -fx-font-size: 13.5;
@@ -969,6 +969,44 @@ AnchorPane {
 
 .autocompletion-popup-element-selected {
     -fx-background-color: -theme-element-selected;
+}
+
+/* MIPS DOCUMENTATION */
+
+.documentation * {
+    -fx-background-color: -theme-background;
+    -fx-padding: 8 0 5 10;
+}
+
+.documentation .text {
+    -fx-font-family: "{FONT_GENERAL}";
+}
+
+.documentation .code {
+    -fx-font-family: "{FONT_CODE}";
+    -fx-font-size: 14.5;
+}
+
+.documentation .bold {
+    -fx-font-weight: bold;
+}
+
+.documentation .underline {
+    -rtfx-underline-color: -theme-foreground;
+    -rtfx-underline-width: 1px
+}
+
+.documentation .italic {
+    -fx-font-style: italic;
+}
+
+.documentation .sub {
+    -fx-font-size: 9;
+}
+
+.documentation .black {
+    -fx-fill: -theme-foreground-darker;
+    -fx-font-weight: bolder;
 }
 
 /* LOG */
@@ -1053,6 +1091,7 @@ AnchorPane {
     -fx-border-color: -theme-background-lighter;
     -fx-border-width: 1px;
 }
+
 
 /* MIPS EXPLORER */
 .mips-explorer-file-to-assemble {
