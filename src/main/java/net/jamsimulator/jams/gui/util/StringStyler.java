@@ -63,7 +63,7 @@ public class StringStyler {
 
 		public List<String> getStyles() {
 			var list = new LinkedList<String>();
-			list = new LinkedList<>();S
+			list = new LinkedList<>();
 			if (bold) list.add("bold");
 			if (code) list.add("code");
 			if (black) list.add("black");
