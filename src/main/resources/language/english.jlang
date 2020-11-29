@@ -583,7 +583,7 @@ StoreFPR(fd, fmt, AbsoluteValue(ValueFPR(fs, fmt)))
 INSTRUCTION_ADD_DOCUMENTATION.=<u>Addition</u>
 
 <b>Format:</b>
-add rd, rs, rt<
+add rd, rs, rt
 
 |SPECIAL     rs      rt     rd      0       ADD   |
 |000000                                    100000 |
