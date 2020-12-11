@@ -872,6 +872,61 @@ GPR[rt] <- GPR[rs] and zero_extend(immediate)
 None
 \END
 
+INSTRUCTION_AUI_DOCUMENTATION.=<u>Add immediate to upper bits</u>
+
+<b>Format:</b>
+aui rt, rs, immediate
+
+| AUI       rs     rt     immediate |
+|001111                             |
+|  6        5      5         16     |
+
+
+<b>Description:</b>
+GPR[rt] <- GPR[rs] + sign_extend(immediate << 16)
+
+The 16-bit <i>immediate</i> is shifted left 16 bits, sign-extended and added to the GPR <i>rs</i>.
+The result is placed into GPR <i>rt</i>.
+In MIPS32r6, <black>lui</black> is an assembly idiom for <black>aui</black> with <i>rs</i> = 0.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+GPR[rt] <- GPR[rs] + sign_extend(immediate << 16)
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+<black>aui</black> can be used to synthesize large constants in situations where it is not convenient to load a large constant from memory.
+\END
+
+INSTRUCTION_AUIPC_DOCUMENTATION.=<u>Add immediate to PC upper bits</u>
+
+<b>Format:</b>
+auipc rs, immediate
+
+| PCREL    rs    AUIPC    immediate |
+|111011          11110              |
+|  6       5       5         16     |
+
+
+<b>Description:</b>
+GPR[rs] <- PC + (immediate << 16)
+
+This instruction performs a PC-relative address calculation. The 16-bit <i>immediate</i> is shifted left by 16 bits and added to the address of the instruction.
+The result is placed into GPR <i>rs</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+GPR[rs] <- PC + (immediate << 16)
+
+<b>Exceptions:</b>
+None
+\END
 
 FLOAT_CONDITION_AF=Always false
 FLOAT_CONDITION_UN=Unordered

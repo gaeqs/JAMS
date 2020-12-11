@@ -872,6 +872,64 @@ GPR[rt] <- GPR[rs] and zero_extend(immediate)
 Ninguna
 \END
 
+INSTRUCTION_AUI_DOCUMENTATION.=<u>Suma del inmediato con los bits superiores</u>
+
+<b>Formato:</b>
+aui rt, rs, inmediato
+
+| AUI       rs     rt     inmediato |
+|001111                             |
+|  6        5      5         16     |
+
+
+<b>Descripción:</b>
+GPR[rt] <- GPR[rs] + sign_extend(inmediato << 16)
+
+
+El <i>inmediato</i> de 16 bits es desplazado a la izquierda unos 16 bits, extendido con signo y sumado al registro <i>rs</i>
+El resultado es insertado en el registro <i>rt</i>
+En MIPS32r6, <black>lui</black> es un alias de <black>aui</black> con <i>rs</i> = 0.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+GPR[rt] <- GPR[rs] + sign_extend(inmediato << 16)
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+<black>aui</black> puede ser usado para sintetizar grandes constantes en situaciones donde no es conveniente cargar una constante de memoria.
+\END
+
+INSTRUCTION_AUIPC_DOCUMENTATION.=<u>Suma del inmediato con los bits superiores del PC</u>
+
+<b>Formato:</b>
+auipc rs, inmediato
+
+| PCREL    rs    AUIPC    inmediato |
+|111011          11110              |
+|  6       5       5         16     |
+
+
+<b>Descripción:</b>
+GPR[rs] <- PC + (inmediato << 16)
+
+
+Esta instrucción ejecuta el cálculo de una dirección relativa al PC. El <i>inmediato</i> de 16 bits es desplazado a la izquierda 16 bits y sumado con la dirección de la instrucción.
+El resultado es asignado al registro <i>rs</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+GPR[rs] <- PC + (inmediato << 16)
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
 FLOAT_CONDITION_AF=Siempre falso
 FLOAT_CONDITION_UN=Sin orden
 FLOAT_CONDITION_EQ=Igual
