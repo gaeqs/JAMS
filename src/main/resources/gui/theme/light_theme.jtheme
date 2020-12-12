@@ -1,5 +1,4 @@
 Light Theme
-Light Theme
 * {
     -theme-foreground: #222222;
     -theme-foreground-darker: derive(-theme-foreground, 20%);
@@ -322,12 +321,16 @@ AnchorPane {
 
 .list-view .list-cell:even {
     -fx-text-fill: -theme-foreground;
-    -fx-background-color: -theme-background-lighter;
+    -fx-background-color: -theme-background-darker;
 }
 
 .list-view .list-cell:odd {
     -fx-text-fill: -theme-foreground;
-    -fx-background-color: -theme-background-pressed;
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.list-view .corner {
+    -fx-background-color: -theme-background;
 }
 
 /* COMBO BOX */
@@ -1224,19 +1227,14 @@ AnchorPane {
 }
 
 /*CACHES*/
-
-.cache-log-message-even {
-    -fx-background-color: -theme-background-darker;
-}
-
-.cache-log-message-odd {
-    -fx-background-color: -theme-background-darker-2;
-}
-
 .cache-log-message .hit {
     -fx-text-fill: #4b6630;
 }
 
 .cache-log-message .miss {
     -fx-text-fill: #664645;
+}
+
+.cache-log-message .label {
+    -fx-font-size: 13px;
 }

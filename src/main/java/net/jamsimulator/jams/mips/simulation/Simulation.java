@@ -408,8 +408,16 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	public InstructionExecution<? super Arch, ?> fetch(int pc) {
 		InstructionExecution<Arch, ?> cached;
 		if (instructionCache != null && Integer.compareUnsigned(pc, instructionStackBottom) < 0) {
-			cached = instructionCache[pc - memory.getFirstTextAddress()];
-			if (cached != null) return cached;
+			try {
+				cached = instructionCache[(pc - memory.getFirstTextAddress()) >> 2];
+				if (cached != null) return cached;
+			} catch (Exception e) {
+				System.out.println("0x" + Integer.toHexString(pc));
+				System.out.println("0x" + Integer.toHexString(memory.getFirstTextAddress()));
+				System.out.println(pc - memory.getFirstTextAddress());
+				System.out.println(instructionCache.length);
+				throw e;
+			}
 		}
 
 		int data = memory.getWord(pc, true, true);
@@ -422,7 +430,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 
 		if (instructionCache != null && Integer.compareUnsigned(pc, instructionStackBottom) < 0) {
-			instructionCache[pc - memory.getFirstTextAddress()] = cached;
+			instructionCache[(pc - memory.getFirstTextAddress()) >> 2] = cached;
 		}
 		return cached;
 	}
@@ -623,7 +631,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		int address = event.getAddress() >> 2 << 2;
 
 		if (address >= memory.getFirstTextAddress() && address <= instructionStackBottom) {
-			instructionCache[address - memory.getFirstTextAddress()] = null;
+			instructionCache[(address - memory.getFirstTextAddress()) >> 2] = null;
 		}
 
 		var memorySection = event.getMemorySection().orElse(null);
@@ -631,7 +639,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 			instructionStackBottom = address;
 
 			InstructionExecution<Arch, ?>[] array =
-					new InstructionExecution[instructionStackBottom - memory.getFirstTextAddress() + 1];
+					new InstructionExecution[((instructionStackBottom - memory.getFirstTextAddress()) >> 2) + 1];
 			System.arraycopy(instructionCache, 0, array, 0, instructionCache.length);
 			instructionCache = array;
 		}
@@ -642,14 +650,14 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		int address = event.getAddress();
 
 		if (address >= memory.getFirstTextAddress() && address <= instructionStackBottom) {
-			instructionCache[address - memory.getFirstTextAddress()] = null;
+			instructionCache[(address - memory.getFirstTextAddress()) >> 2] = null;
 		}
 		var memorySection = event.getMemorySection().orElse(null);
 		if (memorySection != null && memorySection.getName().equals("Text") && instructionStackBottom < event.getAddress()) {
 			instructionStackBottom = address;
 
 			InstructionExecution<Arch, ?>[] array =
-					new InstructionExecution[instructionStackBottom - memory.getFirstTextAddress() + 1];
+					new InstructionExecution[((instructionStackBottom - memory.getFirstTextAddress()) >> 2) + 1];
 			System.arraycopy(instructionCache, 0, array, 0, instructionCache.length);
 			instructionCache = array;
 		}
