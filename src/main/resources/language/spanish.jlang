@@ -600,7 +600,7 @@ add rd, rs, rt
 GPR[rd] <- GPR[rs] + GPR[rt]
 
 La palabra de 32 bits del registro <i>rt</i> es sumada a la palabra de 32 bits del registro <i>rs</i> para producir un resultado de 32 bits.
- - Si la suma resulta en un desbordamiento aritmético en complemento a 2 de 32 bits, el registro destino no es modificado y la excepción Integer Overflow es lanzada.
+ - Si la suma resulta en un desbordamiento aritmético en complemento a 2 de 32 bits, el registro destino no es modificado y la excepción <black>Integer Overflow</black> es lanzada.
  - Si la suma no produce un desbordamiento, el resultado es insertado en el registro GPR <i>rd</i>.
 
 <b>Restricciones:</b>
@@ -928,6 +928,39 @@ GPR[rs] <- PC + (inmediato << 16)
 
 <b>Excepciones:</b>
 Ninguna
+\END
+
+INSTRUCTION_BAL_DOCUMENTATION.=<u>Ramificación y enlace</u>
+
+<b>Formato:</b>
+b desplazamiento
+
+|REGIMM             BAL    desplazamiento  |
+|000001    00000   10001                   |
+|  6         5       5           16        |
+
+
+<b>Descripción:</b>
+Inserta la dirección de retorno en el registro <i>31</i>. Ésta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+Un desplazamiento de 18 bits (La celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumada a la dirección de la siguiente instrucción parra formar una dirección efectiva de retorno.
+
+<b>Restrictions:</b>
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+<b>Operación:</b>
+<black>I:</black>
+desp <- sign_extend(desplazamiento || 00)
+GPR[31] <- PC + 4
+
+<black>I+1:</black>
+PC <- PC + desp
+
+<b>Excepciones:</b>
+None
+
+<b>Notas del programador:</b>
+<black>bal</black> sin un retorno correspondiente no debe ser usado para leer el PC. Hacerlo puede causar una pérdida de rendimiento en procesadores con un predictor de dirección de retorno.
 \END
 
 FLOAT_CONDITION_AF=Siempre falso

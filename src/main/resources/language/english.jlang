@@ -600,7 +600,7 @@ add rd, rs, rt
 GPR[rd] <- GPR[rs] + GPR[rt]
 
 The 32-bit word value in GPR <i>rt</i> is added to the 32-bit value in GPR <i>rs</i> to produce a 32-bit result.
- - If the adition results in 32-bit 2's complement arithmetic overflow, the destination register is not modified and an Integer Overflow exception occurs.
+ - If the adition results in 32-bit 2's complement arithmetic overflow, the destination register is not modified and an <black>Integer Overflow</black> exception occurs.
  - If the addition does not overflow, the 32-bit result is placed intoto GPR <i>rd</i>.
 
 <b>Restrictions:</b>
@@ -690,7 +690,7 @@ addiu rt, rs, immediate
 GPR[rt] <- GPR[rs] + immediate
 
 The 16-bit signed <i>immediate</i> is added to the 32-bit value in GRP <i>rs</i> and the 32-bit arithmetic result is placed into GPR <i>rt</i>.
-No Integer Overflow exception occurs under any circumstances.
+No <black>Integer Overflow</black> exception occurs under any circumstances.
 
 <b>Restrictions:</b>
 None
@@ -750,7 +750,7 @@ GPR[rd] <- GPR[rs] + GPR[rt]
 
 The 32-bit word value in GPR <i>rt</i> is added to the 32-bit value in GPR <i>rs</i> to produce a 32-bit result.
 The 32-bit result is placed into GPR <i>rd</i>.
-No Integer Overflow exception occurs under any circumstances.
+No <black>Integer Overflow</black> exception occurs under any circumstances.
 
 <b>Restrictions:</b>
 None
@@ -926,6 +926,39 @@ GPR[rs] <- PC + (immediate << 16)
 
 <b>Exceptions:</b>
 None
+\END
+
+INSTRUCTION_BAL_DOCUMENTATION.=<u>Branch and link</u>
+
+<b>Format:</b>
+b offset
+
+|REGIMM             BAL      offset  |
+|000001    00000   10001             |
+|  6         5       5        16     |
+
+
+<b>Description:</b>
+Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Operation:</b>
+<black>I:</black>
+target_offset <- sign_extend(offset || 00)
+GPR[31] <- PC + 4
+
+<black>I+1:</black>
+PC <- PC + target_offset
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+<black>bal</black> without a corresponding return should NOT be used to read the PC. Doing so is likely to cause a performance loss on processors with a return address predictor.
 \END
 
 FLOAT_CONDITION_AF=Always false
