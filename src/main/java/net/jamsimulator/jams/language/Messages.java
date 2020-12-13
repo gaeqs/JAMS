@@ -125,19 +125,19 @@ public class Messages {
 	public static final String LABELS_CONTEXT_SHOW_IN_MEMORY = "LABELS_CONTEXT_SHOW_IN_MEMORY";
 	public static final String LABELS_CONTEXT_SHOW_IN_INSTRUCTION = "LABELS_CONTEXT_SHOW_IN_INSTRUCTION";
 
-	public static final String CACHES_HITS = "CACHES_HITS";
-	public static final String CACHES_MISSES = "CACHES_MISSES";
+	public static final String CACHE_HITS = "CACHE_HITS";
+	public static final String CACHE_MISSES = "CACHE_MISSES";
 	public static final String CACHE_STATS = "CACHE_STATS";
-	public static final String CACHES_STATS_OPERATIONS = "CACHES_STATS_OPERATIONS";
-	public static final String CACHES_STATS_HITS = "CACHES_STATS_HITS";
-	public static final String CACHES_STATS_MISSES = "CACHES_STATS_MISSES";
-	public static final String CACHES_RESET = "CACHES_RESET";
-	public static final String CACHES_LOG = "CACHES_LOG";
-	public static final String CACHES_LOG_HIT = "CACHES_LOG_HIT";
-	public static final String CACHES_LOG_MISS = "CACHES_LOG_MISS";
-	public static final String CACHES_LOG_INDEX = "CACHES_LOG_INDEX";
-	public static final String CACHES_LOG_CLEAR = "CACHES_LOG_CLEAR";
-	public static final String CACHES_LOG_CLEAR_ALL = "CACHES_LOG_CLEAR_ALL";
+	public static final String CACHE_STATS_OPERATIONS = "CACHE_STATS_OPERATIONS";
+	public static final String CACHE_STATS_HITS = "CACHE_STATS_HITS";
+	public static final String CACHE_STATS_MISSES = "CACHE_STATS_MISSES";
+	public static final String CACHE_RESET = "CACHE_RESET";
+	public static final String CACHE_LOG = "CACHE_LOG";
+	public static final String CACHE_LOG_HIT = "CACHE_LOG_HIT";
+	public static final String CACHE_LOG_MISS = "CACHE_LOG_MISS";
+	public static final String CACHE_LOG_INDEX = "CACHE_LOG_INDEX";
+	public static final String CACHE_LOG_CLEAR = "CACHE_LOG_CLEAR";
+	public static final String CACHE_LOG_CLEAR_ALL = "CACHE_LOG_CLEAR_ALL";
 
 	public static final String CONFIG = "CONFIG";
 

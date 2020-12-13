@@ -31,8 +31,8 @@ public class CacheStatsVisualizer extends AnchorPane {
 		this.missRate = new PieChart.Data("Miss rate", 0);
 
 		getChildren().addAll(
-				new LanguagePieChartData(hitRate, Messages.CACHES_HITS),
-				new LanguagePieChartData(missRate, Messages.CACHES_MISSES));
+				new LanguagePieChartData(hitRate, Messages.CACHE_HITS),
+				new LanguagePieChartData(missRate, Messages.CACHE_MISSES));
 
 		//Chart creation.
 		var chart = new PieChart();
@@ -48,7 +48,7 @@ public class CacheStatsVisualizer extends AnchorPane {
 		loadStats();
 
 		//Reset button.
-		resetButton = new LanguageButton(Messages.CACHES_RESET);
+		resetButton = new LanguageButton(Messages.CACHE_RESET);
 		loadResetButton();
 
 		//Refresh all data
@@ -91,9 +91,9 @@ public class CacheStatsVisualizer extends AnchorPane {
 	 * Loads the stats section of the visualizer.
 	 */
 	private void loadStats() {
-		var operations = new LanguageLabel(Messages.CACHES_STATS_OPERATIONS);
-		var hits = new LanguageLabel(Messages.CACHES_STATS_HITS);
-		var misses = new LanguageLabel(Messages.CACHES_STATS_MISSES);
+		var operations = new LanguageLabel(Messages.CACHE_STATS_OPERATIONS);
+		var hits = new LanguageLabel(Messages.CACHE_STATS_HITS);
+		var misses = new LanguageLabel(Messages.CACHE_STATS_MISSES);
 
 		var opHBox = new HBox(operations, operationsCount);
 		var hitsHBox = new HBox(hits, hitsCount);

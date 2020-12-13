@@ -104,7 +104,7 @@ public class CacheVisualizer extends AnchorPane {
 		tabPane.getTabs().add(statsTab);
 
 
-		var logTab = new LanguageTab(Messages.CACHES_LOG, logVisualizer);
+		var logTab = new LanguageTab(Messages.CACHE_LOG, logVisualizer);
 		logTab.setClosable(false);
 		tabPane.getTabs().add(logTab);
 

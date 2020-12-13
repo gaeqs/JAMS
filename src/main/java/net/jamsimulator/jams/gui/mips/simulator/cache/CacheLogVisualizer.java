@@ -48,8 +48,8 @@ public class CacheLogVisualizer extends AnchorPane {
 		messages = new HashMap<>();
 		this.visualizer = visualizer;
 
-		clearButton = new LanguageButton(Messages.CACHES_LOG_CLEAR);
-		clearAllButton = new LanguageButton(Messages.CACHES_LOG_CLEAR_ALL);
+		clearButton = new LanguageButton(Messages.CACHE_LOG_CLEAR);
+		clearAllButton = new LanguageButton(Messages.CACHE_LOG_CLEAR_ALL);
 		clearButton.setOnAction(event -> messages.remove(visualizer.getSelectedCache()).clear());
 		clearAllButton.setOnAction(event -> {
 			messages.values().forEach(List::clear);
@@ -144,7 +144,7 @@ public class CacheLogVisualizer extends AnchorPane {
 				var hitOrMiss = new Label("■ " + item.operation);
 				//I guess they never miss.
 				hitOrMiss.getStyleClass().add(item.hit ? "hit" : "miss");
-				hitOrMiss.setTooltip(new LanguageTooltip(item.hit ? Messages.CACHES_LOG_HIT : Messages.CACHES_LOG_MISS,
+				hitOrMiss.setTooltip(new LanguageTooltip(item.hit ? Messages.CACHE_LOG_HIT : Messages.CACHE_LOG_MISS,
 						"{OPERATION}", String.valueOf(item.operation)));
 
 
@@ -152,7 +152,7 @@ public class CacheLogVisualizer extends AnchorPane {
 				var tag = !item.hasOldBlock
 						? "-"
 						: "0x" + StringUtils.addZeros(Integer.toHexString(item.oldBlockTag), 8);
-				var label = new LanguageLabel(Messages.CACHES_LOG_INDEX, "{INDEX}",
+				var label = new LanguageLabel(Messages.CACHE_LOG_INDEX, "{INDEX}",
 						String.valueOf(item.blockIndex), "{TAG}", tag);
 
 				var hBox = new HBox(new Group(hitOrMiss), new Group(label));

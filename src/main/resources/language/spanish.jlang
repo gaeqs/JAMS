@@ -237,19 +237,19 @@ LABELS_ADDRESS=Dirección
 LABELS_CONTEXT_SHOW_IN_MEMORY=Mostrar en memoria
 LABELS_CONTEXT_SHOW_IN_INSTRUCTION=Mostrar en la tabla de instrucciones
 
-CACHES_HITS=Aciertos
-CACHES_MISSES=Fallos
+CACHE_HITS=Aciertos
+CACHE_MISSES=Fallos
 CACHE_STATS=Estadísticas
-CACHES_STATS_OPERATIONS=Operaciones:
-CACHES_STATS_HITS=Aciertos:
-CACHES_STATS_MISSES=Fallos:
-CACHES_RESET=Reiniciar cachés
-CACHES_LOG=Registro
-CACHES_LOG_HIT=Operación {OPERATION}. Acierto.
-CACHES_LOG_MISS=Operación {OPERATION}. Fallo.
-CACHES_LOG_INDEX=Índice {INDEX} ({TAG})
-CACHES_LOG_CLEAR=Borrar registro
-CACHES_LOG_CLEAR_ALL=Eliminar registros
+CACHE_STATS_OPERATIONS=Operaciones:
+CACHE_STATS_HITS=Aciertos:
+CACHE_STATS_MISSES=Fallos:
+CACHE_RESET=Reiniciar cachés
+CACHE_LOG=Registro
+CACHE_LOG_HIT=Operación {OPERATION}. Acierto.
+CACHE_LOG_MISS=Operación {OPERATION}. Fallo.
+CACHE_LOG_INDEX=Índice {INDEX} ({TAG})
+CACHE_LOG_CLEAR=Borrar registro
+CACHE_LOG_CLEAR_ALL=Eliminar registros
 
 CONFIG=Configuración
 
