@@ -317,8 +317,8 @@ CONFIG_EXPLORER_MIPS_ADD_CREATED_ASM_FILES_TO_ASSEMBLE_TOOLTIP=Si esta opción e
 CONFIG_LANGUAGE=Idioma
 CONFIG_LANGUAGE_REGION_LANGUAGE=Idioma
 CONFIG_LANGUAGE_DEFAULT=Idioma de respaldo:
-CONFIG_LANGUAGE_DEFAULT_TOOLTIP=Este idioma se usará cuando el idioma a usar no tenga el mensaje requerido.\n\nEste idioma es el inglés por defecto.
-CONFIG_LANGUAGE_SELECTED=Idioma a usar:
+CONFIG_LANGUAGE_DEFAULT_TOOLTIP=Este idioma se usará cuando el idioma usado no tenga el mensaje requerido.\n\nEste idioma es el inglés por defecto.
+CONFIG_LANGUAGE_SELECTED=Idioma principal:
 CONFIG_LANGUAGE_SELECTED_TOOLTIP=Este es el idioma que JAMS usará en la interfaz.
 
 CONFIG_SIMULATION=Simulación
