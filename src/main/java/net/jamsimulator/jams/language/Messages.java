@@ -139,6 +139,8 @@ public class Messages {
 	public static final String CACHE_LOG_CLEAR = "CACHE_LOG_CLEAR";
 	public static final String CACHE_LOG_CLEAR_ALL = "CACHE_LOG_CLEAR_ALL";
 
+	public static final String FLOW_CYCLE = "FLOW_CYCLE";
+
 	public static final String CONFIG = "CONFIG";
 
 	public static final String CONFIG_ACTION = "CONFIG_ACTION";

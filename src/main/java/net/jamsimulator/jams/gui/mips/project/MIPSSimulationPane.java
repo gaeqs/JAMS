@@ -145,20 +145,8 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 		).orElse(null);
 
 
-		Slider slider = new Slider(10, 100, 40);
-
-		ScrollPane scroll = new PixelScrollPane();
-		FlowTable flow = FlowTable.createFlow(simulation, scroll, slider);
-		scroll.setContent(new ScalableNode(flow, scroll));
-		scroll.setFitToHeight(true);
-		scroll.setPannable(true);
-
-		AnchorPane anchor = new AnchorPane(scroll, slider);
-		AnchorUtils.setAnchor(scroll, 0, 20, 0, 0);
-		AnchorUtils.setAnchor(slider, -1, 0, 2, 2);
-		slider.setPrefHeight(20);
-
-		manageBarAddition("flow", anchor, icon, Messages.BAR_FLOW_NAME, BarType.BOTTOM_LEFT);
+		FlowTable flow = FlowTable.createFlow(simulation);
+		manageBarAddition("flow", flow, icon, Messages.BAR_FLOW_NAME, BarType.BOTTOM_LEFT);
 	}
 
 	private void loadLabels() {

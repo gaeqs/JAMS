@@ -44,6 +44,11 @@ public class SegmentedFlowEntry extends FlowEntry {
 		return startingCycle;
 	}
 
+	public long getLastCycle() {
+		if(labels.isEmpty()) return startingCycle;
+		return startingCycle + labels.size() - 1;
+	}
+
 	/**
 	 * Adds an step to this entry.
 	 *

@@ -4,8 +4,6 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Slider;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
 import net.jamsimulator.jams.gui.mips.simulator.flow.SegmentedFlowEntry;
@@ -29,8 +27,8 @@ public class PipelinedFlowTable extends FlowTable {
 
 	private long firstCycle;
 
-	public PipelinedFlowTable(Simulation<? extends MultiCycleArchitecture> simulation, ScrollPane scrollPane, Slider sizeSlider) {
-		super(simulation, scrollPane, sizeSlider);
+	public PipelinedFlowTable(Simulation<? extends MultiCycleArchitecture> simulation) {
+		super(simulation);
 
 		firstCycle = 0;
 
@@ -40,8 +38,8 @@ public class PipelinedFlowTable extends FlowTable {
 			entries = new HashMap<>();
 			simulation.registerListeners(this, true);
 		} else {
-			setAlignment(Pos.CENTER);
-			getChildren().add(new Label("Events are disabled."));
+			flows.setAlignment(Pos.CENTER);
+			flows.getChildren().add(new Label("Events are disabled."));
 		}
 	}
 
@@ -68,13 +66,13 @@ public class PipelinedFlowTable extends FlowTable {
 
 				var entry = entries.get(instruction.getInstructionId());
 				if (entry == null) {
-					entry = new SegmentedFlowEntry(getChildren().size(), this, instruction.getInstruction(),
+					entry = new SegmentedFlowEntry(flows.getChildren().size(), this, instruction.getInstruction(),
 							start, instruction.getInstructionId(), event.getCycle());
 					entries.put(instruction.getInstructionId(), entry);
-					getChildren().add(entry);
+					flows.getChildren().add(entry);
 
 					if (entries.size() > maxItems) {
-						SegmentedFlowEntry toRemove = (SegmentedFlowEntry) getChildren().remove(0);
+						SegmentedFlowEntry toRemove = (SegmentedFlowEntry) flows.getChildren().remove(0);
 						entries.remove(toRemove.getInstructionNumber());
 					}
 				}
@@ -86,10 +84,34 @@ public class PipelinedFlowTable extends FlowTable {
 
 
 		long localCycle = firstCycle;
-		firstCycle = ((SegmentedFlowEntry) getChildren().get(0)).getStartingCycle();
+		firstCycle = ((SegmentedFlowEntry) flows.getChildren().get(0)).getStartingCycle();
 
 		if (localCycle != firstCycle) {
 			refresh();
+		}
+
+		refreshVisualizer();
+	}
+
+	@Override
+	public long getFirstCycle() {
+		return firstCycle;
+	}
+
+	@Override
+	public long getLastCycle() {
+		if (flows.getChildren().isEmpty()) return 0;
+
+		var last = (SegmentedFlowEntry) flows.getChildren().get(flows.getChildren().size() - 1);
+		return last.getLastCycle();
+	}
+
+	public void refresh() {
+		int index = 0;
+		for (Node child : flows.getChildren()) {
+			if (child instanceof SegmentedFlowEntry) {
+				((SegmentedFlowEntry) child).refresh(index++, stepSize, firstCycle);
+			}
 		}
 	}
 
@@ -112,30 +134,23 @@ public class PipelinedFlowTable extends FlowTable {
 
 	@Listener
 	private void onSimulationReset(SimulationResetEvent event) {
-		getChildren().clear();
+		flows.getChildren().clear();
 		entries.clear();
+		refreshVisualizer();
 	}
 
 	@Listener
 	private void onSimulationUndo(SimulationUndoStepEvent.After event) {
-		var index = getChildren().size() - 1;
+		var index = flows.getChildren().size() - 1;
 		SegmentedFlowEntry entry;
 		while (index >= 0) {
-			entry = ((SegmentedFlowEntry) getChildren().get(index));
+			entry = ((SegmentedFlowEntry) flows.getChildren().get(index));
 			if (entry.removeCycle(event.getUndoCycle()) && entry.isEmpty()) {
 				entries.remove(entry.getInstructionNumber());
-				getChildren().remove(index);
+				flows.getChildren().remove(index);
 			}
 			index--;
 		}
-	}
-
-	private void refresh() {
-		int index = 0;
-		for (Node child : getChildren()) {
-			if (child instanceof SegmentedFlowEntry) {
-				((SegmentedFlowEntry) child).refresh(index++, stepSize, firstCycle);
-			}
-		}
+		refreshVisualizer();
 	}
 }

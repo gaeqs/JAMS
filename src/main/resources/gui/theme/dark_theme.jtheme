@@ -1176,6 +1176,10 @@ AnchorPane {
     -fx-background-color: -theme-background-lighter;
 }
 
+.flow-current-cycle-label {
+    -fx-background-color: -theme-background;
+}
+
 /* ----------------------- */
 /* SINGLE CYCLE SIMULATION */
 /* ----------------------- */

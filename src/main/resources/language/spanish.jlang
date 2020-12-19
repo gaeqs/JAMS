@@ -251,6 +251,8 @@ CACHE_LOG_INDEX=Índice {INDEX} ({TAG})
 CACHE_LOG_CLEAR=Borrar registro
 CACHE_LOG_CLEAR_ALL=Eliminar registros
 
+FLOW_CYCLE=Ciclo: {CYCLE}
+
 CONFIG=Configuración
 
 CONFIG_ACTION=Acciones
