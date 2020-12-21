@@ -81,22 +81,22 @@ public class MemoryEntry {
 	public void update(int address, int offset) {
 		String data = represent(address);
 		switch (offset) {
-			case 0:
+			case 0 -> {
 				if (p0 == null) break;
 				p0.setValue(data);
-				break;
-			case 4:
+			}
+			case 4 -> {
 				if (p4 == null) break;
 				p4.setValue(data);
-				break;
-			case 8:
+			}
+			case 8 -> {
 				if (p8 == null) break;
 				p8.setValue(data);
-				break;
-			case 12:
+			}
+			case 12 -> {
 				if (pC == null) break;
 				pC.setValue(data);
-				break;
+			}
 		}
 	}
 

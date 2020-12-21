@@ -4,7 +4,6 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.util.function.BiFunction;
 
 public enum MemoryRepresentation {
@@ -17,14 +16,17 @@ public enum MemoryRepresentation {
 	FLOAT((m, a) -> String.valueOf(Float.intBitsToFloat(m.getWord(a, false, true)))),
 	DOUBLE((m, a) -> String.valueOf(NumericUtils.intsToDouble(m.getWord(a, false, true), m.getWord(a + 4, false, true)))),
 	CHAR((m, a) -> {
-		byte[] array = new byte[4];
+		char[] array = new char[4];
+		int current;
 		for (int i = 0; i < 4; i++) {
-			array[i] = m.getByte(a + i, false, true);
+			current = m.getByte(a + i, false, true);
+			if (current < 0) current += 256;
+			array[i] = (char) current;
 		}
-		return new String(array, StandardCharsets.US_ASCII);
+		return new String(array);
 	}),
 	RGB((m, a) -> getRGBAsString(m.getWord(a, false, true))),
-	RGBA((m, a) ->  getRGBAAsString(m.getWord(a, false, true))),
+	RGBA((m, a) -> getRGBAAsString(m.getWord(a, false, true))),
 	ENGLISH((m, a) -> NumericUtils.toEnglish(m.getWord(a, false, true))),
 	ROMAN((m, a) -> NumericUtils.toRoman(m.getWord(a, false, true)));
 
@@ -38,7 +40,7 @@ public enum MemoryRepresentation {
 		return "NUMBER_FORMAT_" + name();
 	}
 
-	public boolean isColor () {
+	public boolean isColor() {
 		return this == RGB || this == RGBA;
 	}
 

@@ -42,9 +42,10 @@ public class SyscallExecutionPrintString implements SyscallExecution {
 	private void print(Memory memory, Console console, int address) {
 		char[] chars = new char[maxChars];
 		int amount = 0;
-		char c;
-		while ((c = (char) memory.getByte(address++)) != '\0' && amount < maxChars) {
-			chars[amount++] = c;
+		int c;
+		while ((c = memory.getByte(address++)) != '\0' && amount < maxChars) {
+			if (c < 0) c += 256;
+			chars[amount++] = (char) c;
 		}
 
 		if (amount > 0) {

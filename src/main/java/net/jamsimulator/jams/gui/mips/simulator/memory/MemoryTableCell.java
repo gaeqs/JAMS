@@ -14,7 +14,7 @@ public class MemoryTableCell extends TextFieldTableCell<MemoryEntry, String> {
 
 		this.offset = offset;
 
-		setConverter(new StringConverter<String>() {
+		setConverter(new StringConverter<>() {
 			@Override
 			public String toString(String object) {
 				if (getTableRow() == null) return object;
@@ -35,9 +35,16 @@ public class MemoryTableCell extends TextFieldTableCell<MemoryEntry, String> {
 					entry.getSimulation().getMemory().setWord(entry.getAddress() + offset, value);
 					return string;
 				} catch (NumberFormatException ex) {
-
-					return getTableRow().getItem().getRepresentation()
-							.represent(entry.getSimulation().getMemory(), entry.getAddress() + offset);
+					if (string.length() > 4) {
+						return getTableRow().getItem().getRepresentation()
+								.represent(entry.getSimulation().getMemory(), entry.getAddress() + offset);
+					} else {
+						int i = 0;
+						for (char c : string.toCharArray()) {
+							entry.getSimulation().getMemory().setByte(entry.getAddress() + offset + i++, (byte) c);
+						}
+						return string;
+					}
 				}
 			}
 		});
