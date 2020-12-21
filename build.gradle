@@ -107,7 +107,6 @@ jlink {
     addExtraDependencies("javafx")
     jpackage {
         def ver = normalizeAppVersion(version as String)
-        appVersion = ver
 
         //Splash is bugged in windows.
         //jvmArgs = ['-splash:$APPDIR/logo.png']
