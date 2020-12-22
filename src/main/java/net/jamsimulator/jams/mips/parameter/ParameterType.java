@@ -49,6 +49,7 @@ public enum ParameterType {
 	SIGNED_16_BIT("-16000", new ParameterMatcherSigned16Bit(), SimpleParameterSplitter.INSTANCE, ParameterPartType.IMMEDIATE, false),
 	UNSIGNED_16_BIT("16000", new ParameterMatcherUnsigned16Bit(), SimpleParameterSplitter.INSTANCE, ParameterPartType.IMMEDIATE, false),
 	SIGNED_32_BIT("-32000000", new ParameterMatcherSigned32Bit(), SimpleParameterSplitter.INSTANCE, ParameterPartType.IMMEDIATE, false),
+	FLOAT("0.1", new ParameterMatcherFloat(), SimpleParameterSplitter.INSTANCE, ParameterPartType.IMMEDIATE, false),
 
 	SIGNED_16_BIT_REGISTER_SHIFT("-16000($t1)", new ParameterMatcherSigned16BitRegisterShift(), ParenthesisParameterSplitter.INSTANCE,
 			new ParameterPartType[]{ParameterPartType.IMMEDIATE, ParameterPartType.REGISTER}, false),

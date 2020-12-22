@@ -518,6 +518,7 @@ INSTRUCTION_JR=Saltar al valor del registro
 INSTRUCTION_LA=Cargar dirección
 INSTRUCTION_LI=Cargar inmediato
 INSTRUCTION_LUI=Cargar inmediato en los bits más significantes
+INSTRUCTION_LIF=Cargar float inmediato
 INSTRUCTION_MOVE=Mover valor
 INSTRUCTION_NOP=Operación nula
 INSTRUCTION_SGE=Asignar si menor o igual que valor

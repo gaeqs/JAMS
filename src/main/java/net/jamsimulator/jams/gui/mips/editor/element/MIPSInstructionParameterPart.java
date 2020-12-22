@@ -126,7 +126,7 @@ public class MIPSInstructionParameterPart extends MIPSCodeElement {
 		}
 
 		public static InstructionParameterPartType getByString(String string, MIPSProject project) {
-			if (NumericUtils.isInteger(string)) return IMMEDIATE;
+			if (NumericUtils.isInteger(string) || NumericUtils.isFloat(string)) return IMMEDIATE;
 
 			if (project == null) {
 				if (string.startsWith("$")) return REGISTER;

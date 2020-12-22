@@ -518,6 +518,7 @@ INSTRUCTION_JR=Jump register
 INSTRUCTION_LA=Load address
 INSTRUCTION_LI=Load immediate
 INSTRUCTION_LUI=Load upper immediate
+INSTRUCTION_LIF=Load immediate float
 INSTRUCTION_MOVE=Value movement
 INSTRUCTION_NOP=No operation
 INSTRUCTION_SGE=Set on greater than or equal
