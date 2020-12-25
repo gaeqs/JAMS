@@ -1127,7 +1127,43 @@ Ninguna
 <b>Notas del programador:</b>
 Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
 <black>beq $zero, $zero, desplazamiento</black>, expresado como <black>b desplazamiento</black>, es el equivalente en ensablador para denotar un salto incondicional.
+\END
 
+INSTRUCTION_BGEZ_DOCUMENTATION.=<u>Ramificación si es mayor o igual que cero</u>
+
+<b>Formato:</b>
+bgez rs, offset
+
+|REGIMM     rs    BGEZ    desplazamiento  |
+|000001          00001                    |
+|  6        5      5            16        |
+
+
+<b>Descripción:</b>
+if GPR[rs] > 0 then branch
+
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Si el contenido del registro <i>rs</i> es mayor o igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+<b>Restricciones:</b>
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+<b>Operación:</b>
+<black>I:</black>
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rs] >= 0
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+<black>beq $zero, $zero, desplazamiento</black>, expresado como <black>b desplazamiento</black>, es el equivalente en ensablador para denotar un salto incondicional.
 \END
 
 FLOAT_CONDITION_AF=Siempre falso

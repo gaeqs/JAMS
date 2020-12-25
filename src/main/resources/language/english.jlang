@@ -1063,6 +1063,7 @@ bc1nez ft, offset
 
 <b>Description:</b>
 if FPR[ft] & 1 != 0 then branch
+
 The condition is true if and ofly if bit 0 of the FPR <i>ft</i> is not zero.
 If the condition is false, the branch is not taken and execution continues with the next instruction.
 An 18-bit signed offset (the 26-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
@@ -1097,6 +1098,7 @@ beq rs, rt, offset
 
 <b>Description:</b>
 if GPR[rs] = GPR[rt] then branch
+
 An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
 If the contents of GPR <i>rt</i> and GPR <i>rs</i> are equal, branch to the effective target address.
 
@@ -1119,7 +1121,43 @@ None
 <b>Programming Notes:</b>
 With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
 <black>beq $zero, $zero, offset</black>, expressed as <black>b offset</black>, is the assembly idiom used to denote an unconditional branch.
+\END
 
+INSTRUCTION_BGEZ_DOCUMENTATION.=<u>Branch on equal compact</u>
+
+<b>Format:</b>
+bgez rs, offset
+
+|REGIMM     rs    BGEZ    offset  |
+|000001          00001            |
+|  6        5      5       16     |
+
+
+<b>Description:</b>
+if GPR[rs] > 0 then branch
+
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rs</i> are greater than or equal to zero, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Operation:</b>
+<black>I:</black>
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rs] >= 0
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+<black>beq $zero, $zero, offset</black>, expressed as <black>b offset</black>, is the assembly idiom used to denote an unconditional branch.
 \END
 
 FLOAT_CONDITION_AF=Always false
