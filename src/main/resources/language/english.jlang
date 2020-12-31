@@ -1157,7 +1157,250 @@ None
 
 <b>Programming Notes:</b>
 With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
-<black>beq $zero, $zero, offset</black>, expressed as <black>b offset</black>, is the assembly idiom used to denote an unconditional branch.
+\END
+
+INSTRUCTION_BLEZALC_DOCUMENTATION.=<u>Branch and link on less than or equal to zero compact</u>
+
+<b>Format:</b>
+blezalc rt, offset
+
+| POP06          rt != 0   offset  |
+|000110   00000                    |
+|  6        5       5        16    |
+
+
+<b>Description:</b>
+Compact branch and link if GPR[rt] <= 0.
+
+Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rt</i> are less than or equal to zero, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+GPR <i>31</i> must not be used by the sorce register, because such instructions don't have the same effect when re-executed. The result of executing such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the branch delay slot.
+
+<b>Operation:</b>
+<black>I:</black>
+GPR[31] <- PC + 4
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rt] <= 0
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+\END
+
+INSTRUCTION_BGEZALC_DOCUMENTATION.=<u>Branch and link on greater than or equal to zero compact</u>
+
+<b>Format:</b>
+bgezalc rt, offset
+
+| POP06     rs      rt     offset  |
+|000110    rs = rt != 0            |
+|  6        5       5        16    |
+
+
+<b>Description:</b>
+Compact branch and link if GPR[rt] >= 0.
+
+Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rt</i> are greater than or equal to zero, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+GPR <i>31</i> must not be used by the sorce register, because such instructions don't have the same effect when re-executed. The result of executing such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the branch delay slot.
+
+<b>Operation:</b>
+<black>I:</black>
+GPR[31] <- PC + 4
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rt] >= 0
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+\END
+
+INSTRUCTION_BGTZALC_DOCUMENTATION.=<u>Branch and link on greater than zero compact</u>
+
+<b>Format:</b>
+bgtzalc rt, offset
+
+| POP07          rt != 0   offset  |
+|000111   00000                    |
+|  6        5       5        16    |
+
+
+<b>Description:</b>
+Compact branch and link if GPR[rt] > 0.
+
+Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rt</i> are greater than zero, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+GPR <i>31</i> must not be used by the sorce register, because such instructions don't have the same effect when re-executed. The result of executing such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the branch delay slot.
+
+<b>Operation:</b>
+<black>I:</black>
+GPR[31] <- PC + 4
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rt] > 0
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+\END
+
+INSTRUCTION_BLTZALC_DOCUMENTATION.=<u>Branch and link on less than zero compact</u>
+
+<b>Format:</b>
+bltzalc rt, offset
+
+| POP07     rs      rt     offset  |
+|000111    rs = rt != 0            |
+|  6        5       5        16    |
+
+
+<b>Description:</b>
+Compact branch and link if GPR[rt] < 0.
+
+Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rt</i> are lower than zero, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+GPR <i>31</i> must not be used by the sorce register, because such instructions don't have the same effect when re-executed. The result of executing such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the branch delay slot.
+
+<b>Operation:</b>
+<black>I:</black>
+GPR[31] <- PC + 4
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rt] < 0
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+\END
+
+INSTRUCTION_BEQZALC_DOCUMENTATION.=<u>Branch and link on equal to zero compact</u>
+
+<b>Format:</b>
+beqzalc rt, offset
+
+| POP10     rs     rt != 0    offset  |
+|001000       rs < rt                 |
+|  6        5         5         16    |
+
+
+<b>Description:</b>
+Compact branch and link if GPR[rt] = 0.
+
+Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rt</i> are equal to zero, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+GPR <i>31</i> must not be used by the sorce register, because such instructions don't have the same effect when re-executed. The result of executing such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the branch delay slot.
+
+<b>Operation:</b>
+<black>I:</black>
+GPR[31] <- PC + 4
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rt] = 0
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+\END
+
+INSTRUCTION_BNEZALC_DOCUMENTATION.=<u>Branch and link on not equal to zero compact</u>
+
+<b>Format:</b>
+bnezalc rt, offset
+
+| POP30     rs     rt != 0    offset  |
+|011000       rs < rt                 |
+|  6        5         5         16    |
+
+
+<b>Description:</b>
+Compact branch and link if GPR[rt] != 0.
+
+Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rt</i> are not equal to zero, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+GPR <i>31</i> must not be used by the sorce register, because such instructions don't have the same effect when re-executed. The result of executing such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the branch delay slot.
+
+<b>Operation:</b>
+<black>I:</black>
+GPR[31] <- PC + 4
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rt] != 0
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
 \END
 
 FLOAT_CONDITION_AF=Always false

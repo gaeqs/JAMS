@@ -1166,6 +1166,236 @@ Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KByte
 <black>beq $zero, $zero, desplazamiento</black>, expresado como <black>b desplazamiento</black>, es el equivalente en ensablador para denotar un salto incondicional.
 \END
 
+
+INSTRUCTION_BLEZALC_DOCUMENTATION.=<u>Ramificación compacta y enlace si es menor o igual que cero</u>
+
+<b>Formato:</b>
+blezalc rt, desplazamiento
+
+| POP06          rt != 0   desplazamiento  |
+|000110   00000                            |
+|  6        5       5            16        |
+
+
+<b>Descripción:</b>
+Enlace y ramificación compacta si GPR[rt] <= 0.
+Inserta la dirección de retorno en el registro <i>31</i>. Ésta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Si el contenido del registro <i>rt</i> es menor o igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+<b>Restricciones:</b>
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+El registro <i>31</i> no debe ser usado por el registro <i>rs</i>, ya que las instrucciones no tendrán el mismo efecto al volver a ser ejecutatas. El resultado de ejecutar dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al gestor de excepciones returnar la ejecución volviendo a ejecutar la ramificación cuando una excepción es lanzada en el hueco de retardo.
+
+<b>Operación:</b>
+<black>I:</black>
+GPR[31] <- PC + 4
+target_offset <- sign_extend(desplazamiento || 00)
+condition <- GPR[rt] <= 0
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+\END
+
+INSTRUCTION_BGEZALC_DOCUMENTATION.=<u>Ramificación compacta y enlace si es mayor o igual que cero</u>
+
+<b>Formato:</b>
+bgezalc rt, desplazamiento
+
+| POP06     rs      rt     desplazamiento  |
+|000110    rs = rt != 0                    |
+|  6        5       5            16        |
+
+
+<b>Descripción:</b>
+Enlace y ramificación compacta si GPR[rt] >= 0.
+Inserta la dirección de retorno en el registro <i>31</i>. Ésta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Si el contenido del registro <i>rt</i> es mayor o igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+<b>Restricciones:</b>
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+El registro <i>31</i> no debe ser usado por el registro <i>rs</i>, ya que las instrucciones no tendrán el mismo efecto al volver a ser ejecutatas. El resultado de ejecutar dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al gestor de excepciones returnar la ejecución volviendo a ejecutar la ramificación cuando una excepción es lanzada en el hueco de retardo.
+
+<b>Operación:</b>
+<black>I:</black>
+GPR[31] <- PC + 4
+target_offset <- sign_extend(desplazamiento || 00)
+condition <- GPR[rt] >= 0
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+\END
+
+INSTRUCTION_BGTZALC_DOCUMENTATION.=<u>Ramificación compacta y enlace si es mayor que cero</u>
+
+<b>Formato:</b>
+bgtzalc rt, desplazamiento
+
+| POP07          rt != 0   desplazamiento  |
+|000111   00000                            |
+|  6        5       5            16        |
+
+
+<b>Descripción:</b>
+Enlace y ramificación compacta si GPR[rt] > 0.
+Inserta la dirección de retorno en el registro <i>31</i>. Ésta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Si el contenido del registro <i>rt</i> es mayor que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+<b>Restricciones:</b>
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+El registro <i>31</i> no debe ser usado por el registro <i>rs</i>, ya que las instrucciones no tendrán el mismo efecto al volver a ser ejecutatas. El resultado de ejecutar dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al gestor de excepciones returnar la ejecución volviendo a ejecutar la ramificación cuando una excepción es lanzada en el hueco de retardo.
+
+<b>Operación:</b>
+<black>I:</black>
+GPR[31] <- PC + 4
+target_offset <- sign_extend(desplazamiento || 00)
+condition <- GPR[rt] > 0
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+\END
+
+INSTRUCTION_BLTZALC_DOCUMENTATION.=<u>Ramificación compacta y enlace si es menor que cero</u>
+
+<b>Formato:</b>
+bltzalc rt, desplazamiento
+
+| POP07     rs      rt     desplazamiento  |
+|000111    rs = rt != 0                    |
+|  6        5       5            16        |
+
+
+<b>Descripción:</b>
+Enlace y ramificación compacta si GPR[rt] < 0.
+Inserta la dirección de retorno en el registro <i>31</i>. Ésta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Si el contenido del registro <i>rt</i> es menor que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+<b>Restricciones:</b>
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+El registro <i>31</i> no debe ser usado por el registro <i>rs</i>, ya que las instrucciones no tendrán el mismo efecto al volver a ser ejecutatas. El resultado de ejecutar dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al gestor de excepciones returnar la ejecución volviendo a ejecutar la ramificación cuando una excepción es lanzada en el hueco de retardo.
+
+<b>Operación:</b>
+<black>I:</black>
+GPR[31] <- PC + 4
+target_offset <- sign_extend(desplazamiento || 00)
+condition <- GPR[rt] < 0
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+\END
+
+INSTRUCTION_BEQZALC_DOCUMENTATION.=<u>Ramificación compacta y enlace si es igual que cero</u>
+
+<b>Formato:</b>
+beqzalc rt, desplazamiento
+
+| POP10     rs     rt != 0   desplazamiento  |
+|001000       rs < rt                        |
+|  6        5         5            16        |
+
+
+<b>Descripción:</b>
+Enlace y ramificación compacta si GPR[rt] = 0.
+Inserta la dirección de retorno en el registro <i>31</i>. Ésta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Si el contenido del registro <i>rt</i> es igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+<b>Restricciones:</b>
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+El registro <i>31</i> no debe ser usado por el registro <i>rs</i>, ya que las instrucciones no tendrán el mismo efecto al volver a ser ejecutatas. El resultado de ejecutar dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al gestor de excepciones returnar la ejecución volviendo a ejecutar la ramificación cuando una excepción es lanzada en el hueco de retardo.
+
+<b>Operación:</b>
+<black>I:</black>
+GPR[31] <- PC + 4
+target_offset <- sign_extend(desplazamiento || 00)
+condition <- GPR[rt] = 0
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+\END
+
+INSTRUCTION_BNEZALC_DOCUMENTATION.=<u>Ramificación compacta y enlace si no es igual que cero</u>
+
+
+<b>Formato:</b>
+bnezalc rt, desplazamiento
+
+| POP30     rs     rt != 0   desplazamiento  |
+|011000       rs < rt                        |
+|  6        5         5            16        |
+
+
+<b>Descripción:</b>
+Enlace y ramificación compacta si GPR[rt] != 0.
+Inserta la dirección de retorno en el registro <i>31</i>. Ésta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Si el contenido del registro <i>rt</i> no es igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+<b>Restricciones:</b>
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+El registro <i>31</i> no debe ser usado por el registro <i>rs</i>, ya que las instrucciones no tendrán el mismo efecto al volver a ser ejecutatas. El resultado de ejecutar dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al gestor de excepciones returnar la ejecución volviendo a ejecutar la ramificación cuando una excepción es lanzada en el hueco de retardo.
+
+<b>Operación:</b>
+<black>I:</black>
+GPR[31] <- PC + 4
+target_offset <- sign_extend(desplazamiento || 00)
+condition <- GPR[rt] != 0
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+\END
+
 FLOAT_CONDITION_AF=Siempre falso
 FLOAT_CONDITION_UN=Sin orden
 FLOAT_CONDITION_EQ=Igual
