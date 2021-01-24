@@ -1403,6 +1403,316 @@ None
 With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
 \END
 
+INSTRUCTION_BLEZC_DOCUMENTATION.=<u>Branch on less than or equal to zero compact</u>
+
+<b>Format:</b>
+blezc rt, offset
+
+| POP26     rs     rt != 0    offset  |
+|010110   00000                       |
+|  6        5         5         16    |
+
+
+<b>Description:</b>
+Compact branch if GPR[rt] <= 0.
+
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rt</i> less than or equal to zero, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Operation:</b>
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rt] <= 0
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_BGEZC_DOCUMENTATION.=<u>Branch on greater than or equal to zero compact</u>
+
+<b>Format:</b>
+bgezc rt, offset
+
+| POP26  rs != 0   rt != 0    offset  |
+|010110       rs = rt                 |
+|  6        5         5         16    |
+
+
+<b>Description:</b>
+Compact branch if GPR[rt] >= 0.
+
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rt</i> greater than or equal to zero, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Operation:</b>
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rt] >= 0
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_BGTZC_DOCUMENTATION.=<u>Branch on greater than zero compact</u>
+
+<b>Format:</b>
+bgtzc rt, offset
+
+| POP27     rs     rt != 0    offset  |
+|010111   00000                       |
+|  6        5         5         16    |
+
+
+<b>Description:</b>
+Compact branch if GPR[rt] > 0.
+
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rt</i> greater than zero, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Operation:</b>
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rt] > 0
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_BLTZC_DOCUMENTATION.=<u>Branch on less than zero compact</u>
+
+<b>Format:</b>
+bltzc rt, offset
+
+| POP27  rs != 0   rt != 0    offset  |
+|010111       rs = rt                 |
+|  6        5         5         16    |
+
+
+<b>Description:</b>
+Compact branch if GPR[rt] < 0.
+
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rt</i> less than zero, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Operation:</b>
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rt] < 0
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_BGEC_DOCUMENTATION.=<u>Branch on greater than or equal compact</u>
+
+<b>Format:</b>
+bgec rs, rt, offset
+
+| POP26  rs != 0   rt != 0    offset  |
+|010110       rs != rt                |
+|  6        5         5         16    |
+
+
+<b>Description:</b>
+Compact branch if GPR[rs] >= GPR[rt].
+
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rs</i> are greater than or equal to the contents of GPR <i>rt</i>, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Operation:</b>
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rs] >= GPR[rt]
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_BLTC_DOCUMENTATION.=<u>Branch on less than or equal compact</u>
+
+<b>Format:</b>
+bltc rs, rt, offset
+
+| POP27  rs != 0   rt != 0    offset  |
+|010111       rs != rt                |
+|  6        5         5         16    |
+
+
+<b>Description:</b>
+Compact branch if GPR[rs] < GPR[rt].
+
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rs</i> are less than the contents of GPR <i>rt</i>, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Operation:</b>
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rt] < GPR[rt]
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_BGEUC_DOCUMENTATION.=<u>Branch on greater than or equal unsigned compact</u>
+
+<b>Format:</b>
+bgeuc rs, rt, offset
+
+| POP06  rs != 0   rt != 0    offset  |
+|000110       rs != rt                |
+|  6        5         5         16    |
+
+
+<b>Description:</b>
+Compact branch if GPR[rs] >= GPR[rt].
+
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rs</i> are greater than or equal to the contents of GPR <i>rt</i>, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Operation:</b>
+target_offset <- sign_extend(offset || 00)
+condition <- unsigned_word(GPR[rt]) >= unsigned_word(GPR[rt])
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_BLTUC_DOCUMENTATION.=<u>Branch on less than or equal unsigned compact</u>
+
+<b>Format:</b>
+bltuc rs, rt, offset
+
+| POP07  rs != 0   rt != 0    offset  |
+|000111       rs != rt                |
+|  6        5         5         16    |
+
+
+<b>Description:</b>
+Compact branch if GPR[rs] < GPR[rt].
+
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rs</i> are less than the contents of GPR <i>rt</i>, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Operation:</b>
+target_offset <- sign_extend(offset || 00)
+condition <- unsigned_word(GPR[rt]) < unsigned_word(GPR[rt])
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_BEQC_DOCUMENTATION.=<u>Branch on equal compact</u>
+
+<b>Format:</b>
+beqc rs, rt, offset
+
+| POP10  rs != 0   rt != 0    offset  |
+|001000       rs < rt                 |
+|  6        5         5         16    |
+
+
+<b>Description:</b>
+Compact branch if GPR[rs] = GPR[rt].
+
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rs</i> are equal to the contents of GPR <i>rt</i>, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Operation:</b>
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rt] = GPR[rt]
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_BNEC_DOCUMENTATION.=<u>Branch on not equal compact</u>
+
+<b>Format:</b>
+bnec rs, rt, offset
+
+| POP30  rs != 0   rt != 0    offset  |
+|011000       rs < rt                 |
+|  6        5         5         16    |
+
+
+<b>Description:</b>
+Compact branch if GPR[rs] != GPR[rt].
+
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rs</i> are not equal to the contents of GPR <i>rt</i>, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Operation:</b>
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rt] != GPR[rt]
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+\END
+
 FLOAT_CONDITION_AF=Always false
 FLOAT_CONDITION_UN=Unordered
 FLOAT_CONDITION_EQ=Equal
