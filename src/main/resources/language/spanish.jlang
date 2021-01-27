@@ -629,7 +629,7 @@ INSTRUCTION_ADD_D_DOCUMENTATION.=<u>Suma en coma flotante de precisión doble</u
 <b>Formato:</b>
 add.d fd, fs, ft
 
-| COP1      fmt      ft     fs      fd      ABS   |
+| COP1      fmt      0      fs      fd      ABS   |
 |010001    10001   00000                   000000 |
 |  6         5       5      5       5        6    |
 
@@ -657,7 +657,7 @@ INSTRUCTION_ADD_S_DOCUMENTATION.=<u>Suma en coma flotante</u>
 <b>Formato:</b>
 add.s fd, fs, ft
 
-| COP1      fmt      ft     fs      fd      ABS   |
+| COP1      fmt      0      fs      fd      ABS   |
 |010001    10000   00000                   000000 |
 |  6         5       5      5       5        6    |
 
@@ -938,7 +938,7 @@ INSTRUCTION_BAL_DOCUMENTATION.=<u>Ramificación y enlace</u>
 <b>Formato:</b>
 b desplazamiento
 
-|REGIMM             BAL    desplazamiento  |
+|REGIMM      0      BAL    desplazamiento  |
 |000001    00000   10001                   |
 |  6         5       5           16        |
 
@@ -1140,7 +1140,7 @@ bgez rs, offset
 
 
 <b>Descripción:</b>
-if GPR[rs] > 0 then branch
+Ramificación compacta si GPR[rs] >= 0.
 
 Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> es mayor o igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
@@ -1163,7 +1163,6 @@ Ninguna
 
 <b>Notas del programador:</b>
 Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
-<black>beq $zero, $zero, desplazamiento</black>, expresado como <black>b desplazamiento</black>, es el equivalente en ensablador para denotar un salto incondicional.
 \END
 
 
@@ -1172,7 +1171,7 @@ INSTRUCTION_BLEZALC_DOCUMENTATION.=<u>Ramificación compacta y enlace si es meno
 <b>Formato:</b>
 blezalc rt, desplazamiento
 
-| POP06          rt != 0   desplazamiento  |
+| POP06     0    rt != 0   desplazamiento  |
 |000110   00000                            |
 |  6        5       5            16        |
 
@@ -1248,7 +1247,7 @@ INSTRUCTION_BGTZALC_DOCUMENTATION.=<u>Ramificación compacta y enlace si es mayo
 <b>Formato:</b>
 bgtzalc rt, desplazamiento
 
-| POP07          rt != 0   desplazamiento  |
+| POP07     0    rt != 0   desplazamiento  |
 |000111   00000                            |
 |  6        5       5            16        |
 
@@ -1401,7 +1400,7 @@ INSTRUCTION_BLEZC_DOCUMENTATION.=<u>Ramificación compacta si es menor o igual q
 <b>Formato:</b>
 blezc rt, offset
 
-| POP26     rs     rt != 0    desplazamiento  |
+| POP26     0      rt != 0    desplazamiento  |
 |010110   00000                               |
 |  6        5         5             16        |
 
@@ -1427,7 +1426,7 @@ endif
 Ninguna
 \END
 
-INSTRUCTION_BGEZC_DOCUMENTATION.=<u>Branch on greater than or equal to zero compact</u>
+INSTRUCTION_BGEZC_DOCUMENTATION.=<u>Ramificación compacta si es mayor o igual que cero</u>
 
 <b>Formato:</b>
 bgezc rt, offset
@@ -1438,7 +1437,7 @@ bgezc rt, offset
 
 
 <b>Descripción:</b>
-Enlace compacto si GPR[rt] >= 0.
+Ramificación compacta si GPR[rt] >= 0.
 
 Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
 Si el contenido del registro <i>rt</i> es mayor o igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
@@ -1458,18 +1457,18 @@ endif
 Ninguna
 \END
 
-INSTRUCTION_BGTZC_DOCUMENTATION.=<u>Branch on greater than zero compact</u>
+INSTRUCTION_BGTZC_DOCUMENTATION.=<u>Ramificación compacta si es mayor que cero</u>
 
 <b>Formato:</b>
 bgtzc rt, offset
 
-| POP27     rs     rt != 0    desplazamiento  |
+| POP27     0      rt != 0    desplazamiento  |
 |010111   00000                               |
 |  6        5         5             16        |
 
 
 <b>Descripción:</b>
-Enlace compacto si GPR[rt] > 0.
+Ramificación compacta si GPR[rt] > 0.
 
 Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
 Si el contenido del registro <i>rt</i> es mayor que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
@@ -1490,7 +1489,7 @@ Ninguna
 \END
 
 
-INSTRUCTION_BLTZC_DOCUMENTATION.=<u>Branch on less than zero compact</u>
+INSTRUCTION_BLTZC_DOCUMENTATION.=<u>Ramificación compacta si es menor que cero</u>
 
 <b>Formato:</b>
 bltzc rt, offset
@@ -1501,7 +1500,7 @@ bltzc rt, offset
 
 
 <b>Descripción:</b>
-Enlace compacto si GPR[rt] < 0.
+Ramificación compacta si GPR[rt] < 0.
 
 Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
 Si el contenido del registro <i>rt</i> es menor que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
@@ -1521,7 +1520,7 @@ endif
 Ninguna
 \END
 
-INSTRUCTION_BGEC_DOCUMENTATION.=<u>Branch on greater than or equal compact</u>
+INSTRUCTION_BGEC_DOCUMENTATION.=<u>Ramificación compacta si es mayor o igual</u>
 
 <b>Formato:</b>
 bgec rs, rt, offset
@@ -1532,7 +1531,7 @@ bgec rs, rt, offset
 
 
 <b>Descripción:</b>
-Enlace compacto si GPR[rs] >= GPR[rt].
+Ramificación compacta si GPR[rs] >= GPR[rt].
 
 Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> es mayor o igual que el contenido del registro <i>rt</i>, la instrucción ejecuta la ramificación a la dirección efectiva.
@@ -1552,7 +1551,7 @@ endif
 Ninguna
 \END
 
-INSTRUCTION_BLTC_DOCUMENTATION.=<u>Branch on less than or equal compact</u>
+INSTRUCTION_BLTC_DOCUMENTATION.=<u>Ramificación compacta si es menor</u>
 
 <b>Formato:</b>
 bltc rs, rt, offset
@@ -1563,7 +1562,7 @@ bltc rs, rt, offset
 
 
 <b>Descripción:</b>
-Enlace compacto si GPR[rs] < GPR[rt].
+Ramificación compacta si GPR[rs] < GPR[rt].
 
 Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> es menor que el contenido del registro <i>rt</i>, la instrucción ejecuta la ramificación a la dirección efectiva.
@@ -1583,7 +1582,7 @@ endif
 Ninguna
 \END
 
-INSTRUCTION_BGEUC_DOCUMENTATION.=<u>Branch on greater than or equal unsigned compact</u>
+INSTRUCTION_BGEUC_DOCUMENTATION.=<u>Ramificación compacta si es mayor o igual sin signo</u>
 
 <b>Formato:</b>
 bgeuc rs, rt, offset
@@ -1594,7 +1593,7 @@ bgeuc rs, rt, offset
 
 
 <b>Descripción:</b>
-Enlace compacto si GPR[rs] >= GPR[rt].
+Ramificación compacta si GPR[rs] >= GPR[rt].
 
 Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> es mayor o igual que el contenido del registro <i>rt</i>, la instrucción ejecuta la ramificación a la dirección efectiva.
@@ -1614,7 +1613,7 @@ endif
 Ninguna
 \END
 
-INSTRUCTION_BLTUC_DOCUMENTATION.=<u>Branch on less than or equal unsigned compact</u>
+INSTRUCTION_BLTUC_DOCUMENTATION.=<u>Ramificación compacta si es menor sin signo</u>
 
 <b>Formato:</b>
 bltuc rs, rt, offset
@@ -1625,7 +1624,7 @@ bltuc rs, rt, offset
 
 
 <b>Descripción:</b>
-Enlace compacto si GPR[rs] < GPR[rt].
+Ramificación compacta si GPR[rs] < GPR[rt].
 
 Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> es menor que el contenido del registro <i>rt</i>, la instrucción ejecuta la ramificación a la dirección efectiva.
@@ -1645,7 +1644,7 @@ endif
 Ninguna
 \END
 
-INSTRUCTION_BEQC_DOCUMENTATION.=<u>Branch on equal compact</u>
+INSTRUCTION_BEQC_DOCUMENTATION.=<u>Ramificación compacta si es igual</u>
 
 <b>Formato:</b>
 beqc rs, rt, offset
@@ -1656,7 +1655,7 @@ beqc rs, rt, offset
 
 
 <b>Descripción:</b>
-Enlace compacto si GPR[rs] = GPR[rt].
+Ramificación compacta si GPR[rs] = GPR[rt].
 
 Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> es igual que el contenido del registro <i>rt</i>, la instrucción ejecuta la ramificación a la dirección efectiva.
@@ -1676,7 +1675,7 @@ endif
 Ninguna
 \END
 
-INSTRUCTION_BNEC_DOCUMENTATION.=<u>Branch on not equal compact</u>
+INSTRUCTION_BNEC_DOCUMENTATION.=<u>Ramificación compacta si no es igual</u>
 
 <b>Formato:</b>
 bnec rs, rt, offset
@@ -1687,7 +1686,7 @@ bnec rs, rt, offset
 
 
 <b>Descripción:</b>
-Enlace compacto si GPR[rs] != GPR[rt].
+Ramificación compacta si GPR[rs] != GPR[rt].
 
 Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> no es igual que el contenido del registro <i>rt</i>, la instrucción ejecuta la ramificación a la dirección efectiva.
@@ -1702,6 +1701,145 @@ condition <- GPR[rt] != GPR[rt]
 if condition then
     PC <- PC + target_offset
 endif
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_BEQZC_DOCUMENTATION.=<u>Ramificación compacta si es igual a cero</u>
+
+<b>Formato:</b>
+beqzc rs, offset
+
+| POP66   BEQZC    desplazamiento  |
+|110110  rs != 0                   |
+|  6        5            16        |
+
+
+<b>Descripción:</b>
+Ramificación compacta si GPR[rs] == 0.
+
+Un desplazamiento de 23 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Si el contenido del registro <i>rs</i> es igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+<b>Restricciones:</b>
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+<b>Operación:</b>
+target_offset <- sign_extend(desplazamiento || 00)
+condition <- GPR[rt] == 0
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_BNEZC_DOCUMENTATION.=<u>Ramificación compacta si no es igual a cero</u>
+
+<b>Formato:</b>
+bnezc rs, offset
+
+| POP76   BEQZC    desplazamiento  |
+|111110  rs != 0                   |
+|  6        5            16        |
+
+
+<b>Descripción:</b>
+Ramificación compacta si GPR[rs] != 0.
+
+Un desplazamiento de 23 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Si el contenido del registro <i>rs</i> no es igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+<b>Restricciones:</b>
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+<b>Operación:</b>
+target_offset <- sign_extend(desplazamiento || 00)
+condition <- GPR[rt] != 0
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_BGTZ_DOCUMENTATION.=<u>Ramificación si es mayor que cero</u>
+
+<b>Formato:</b>
+bgtz rs, offset
+
+| BGTZ      rs     0      desplazamiento  |
+|000111          00000                    |
+|  6        5      5            16        |
+
+
+<b>Descripción:</b>
+Ramificación compacta si GPR[rs] > 0.
+
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Si el contenido del registro <i>rs</i> es mayor que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+<b>Restricciones:</b>
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+<b>Operación:</b>
+<black>I:</black>
+target_offset <- sign_extend(desplazamiento || 00)
+condition <- GPR[rs] > 0
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+\END
+
+INSTRUCTION_BITSWAP_DOCUMENTATION.=<u>Intercambiar bits en cada byte</u>
+
+<b>Formato:</b>
+bitswap rd, rt
+
+|SPECIAL3    0    rt    rd    BITSWAP   BSGFL  |
+| 011111   00000               00000    100000 |
+|   6        5     5     5       5        6    |
+
+
+<b>Descripción:</b>
+GPR[rd].byte[i] <- reverse_bits(GPR[rt].byte[i]), for all bytes i
+
+Se intercambian los bits de cada byte del registro <i>rt</i> y se guarda el resultado en la misma posición del byte en el registro <i>rd</i>.
+Esta instrucción es opera en los 4 bytes de una palabra de 32 bits.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+Bit
+function reverse_bits (in)
+    out<sub>7</sub> <- in<sub>0</sub>
+    out<sub>6</sub> <- in<sub>1</sub>
+    out<sub>5</sub> <- in<sub>2</sub>
+    out<sub>4</sub> <- in<sub>3</sub>
+    out<sub>3</sub> <- in<sub>4</sub>
+    out<sub>2</sub> <- in<sub>5</sub>
+    out<sub>1</sub> <- in<sub>6</sub>
+    out<sub>0</sub> <- in<sub>7</sub>
+    return out
+end function
+
+for i in 0 to 3 do
+    GPR[rd].byte[i] <- reverse_bits(GPR[rt].byte[i])
+endfor
 
 <b>Excepciones:</b>
 Ninguna

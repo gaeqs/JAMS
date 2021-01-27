@@ -629,7 +629,7 @@ INSTRUCTION_ADD_D_DOCUMENTATION.=<u>Double precision floating point addition</u>
 <b>Format:</b>
 add.d fd, fs, ft
 
-| COP1      fmt      ft     fs      fd      ABS   |
+| COP1      fmt      0      fs      fd      ABS   |
 |010001    10001   00000                   000000 |
 |  6         5       5      5       5        6    |
 
@@ -657,7 +657,7 @@ INSTRUCTION_ADD_S_DOCUMENTATION.=<u>Floating point addition</u>
 <b>Format:</b>
 add.s fd, fs, ft
 
-| COP1      fmt      ft     fs      fd      ABS   |
+| COP1      fmt      0      fs      fd      ABS   |
 |010001    10000   00000                   000000 |
 |  6         5       5      5       5        6    |
 
@@ -936,7 +936,7 @@ INSTRUCTION_BAL_DOCUMENTATION.=<u>Branch and link</u>
 <b>Format:</b>
 b offset
 
-|REGIMM             BAL      offset  |
+|REGIMM      0      BAL      offset  |
 |000001    00000   10001             |
 |  6         5       5        16     |
 
@@ -1123,18 +1123,18 @@ With the 18-bit signed instruction offset, the conditional branch range is ±128
 <black>beq $zero, $zero, offset</black>, expressed as <black>b offset</black>, is the assembly idiom used to denote an unconditional branch.
 \END
 
-INSTRUCTION_BGEZ_DOCUMENTATION.=<u>Branch on equal compact</u>
+INSTRUCTION_BGEZ_DOCUMENTATION.=<u>Branch on greater than or equal to zero</u>
 
 <b>Format:</b>
 bgez rs, offset
 
 |REGIMM     rs    BGEZ    offset  |
 |000001          00001            |
-|  6        5      5       16     |
+|  6        5      5        16    |
 
 
 <b>Description:</b>
-if GPR[rs] > 0 then branch
+if GPR[rs] >= 0 then branch
 
 An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
 If the contents of GPR <i>rs</i> are greater than or equal to zero, branch to the effective target address.
@@ -1164,7 +1164,7 @@ INSTRUCTION_BLEZALC_DOCUMENTATION.=<u>Branch and link on less than or equal to z
 <b>Format:</b>
 blezalc rt, offset
 
-| POP06          rt != 0   offset  |
+| POP06     0    rt != 0   offset  |
 |000110   00000                    |
 |  6        5       5        16    |
 
@@ -1244,7 +1244,7 @@ INSTRUCTION_BGTZALC_DOCUMENTATION.=<u>Branch and link on greater than zero compa
 <b>Format:</b>
 bgtzalc rt, offset
 
-| POP07          rt != 0   offset  |
+| POP07     0    rt != 0   offset  |
 |000111   00000                    |
 |  6        5       5        16    |
 
@@ -1408,7 +1408,7 @@ INSTRUCTION_BLEZC_DOCUMENTATION.=<u>Branch on less than or equal to zero compact
 <b>Format:</b>
 blezc rt, offset
 
-| POP26     rs     rt != 0    offset  |
+| POP26     0      rt != 0    offset  |
 |010110   00000                       |
 |  6        5         5         16    |
 
@@ -1470,7 +1470,7 @@ INSTRUCTION_BGTZC_DOCUMENTATION.=<u>Branch on greater than zero compact</u>
 <b>Format:</b>
 bgtzc rt, offset
 
-| POP27     rs     rt != 0    offset  |
+| POP27     0      rt != 0    offset  |
 |010111   00000                       |
 |  6        5         5         16    |
 
@@ -1708,6 +1708,145 @@ condition <- GPR[rt] != GPR[rt]
 if condition then
     PC <- PC + target_offset
 endif
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_BEQZC_DOCUMENTATION.=<u>Branch on equal to zero compact</u>
+
+<b>Format:</b>
+beqzc rs, offset
+
+| POP66   BEQZC    offset  |
+|110110  rs != 0           |
+|  6        5        16    |
+
+
+<b>Description:</b>
+Compact branch if GPR[rs] == 0.
+
+An 23-bit signed offset (the 21-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rs</i> are equal to zero, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Operation:</b>
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rt] == 0
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_BNEZC_DOCUMENTATION.=<u>Branch on not equal to zero compact</u>
+
+<b>Format:</b>
+bnezc rs, offset
+
+| POP76   BNEZC    offset  |
+|111110  rs != 0           |
+|  6        5        16    |
+
+
+<b>Description:</b>
+Compact branch if GPR[rs] != 0.
+
+An 23-bit signed offset (the 21-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rs</i> are not equal to zero, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Operation:</b>
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rt] != 0
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_BGTZ_DOCUMENTATION.=<u>Branch on greater than zero</u>
+
+<b>Format:</b>
+bgtz rs, offset
+
+| BGTZ      rs     0      offset  |
+|000111          00000            |
+|  6        5      5        16    |
+
+
+<b>Description:</b>
+if GPR[rs] > 0 then branch
+
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+If the contents of GPR <i>rs</i> are greater than zero, branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Operation:</b>
+<black>I:</black>
+target_offset <- sign_extend(offset || 00)
+condition <- GPR[rs] > 0
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+\END
+
+INSTRUCTION_BITSWAP_DOCUMENTATION.=<u>Swap bits in each byte</u>
+
+<b>Format:</b>
+bitswap rd, rt
+
+|SPECIAL3    0    rt    rd    BITSWAP   BSGFL  |
+| 011111   00000               00000    100000 |
+|   6        5     5     5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd].byte[i] <- reverse_bits(GPR[rt].byte[i]), for all bytes i
+
+Each byte in GPR <i>rt</i> has its bytes reversed and moved to the same position in GPR <i>rd</i>.
+This instruction operates on all 4 bytes of a 32-bit word.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+
+function reverse_bits (in)
+    out<sub>7</sub> <- in<sub>0</sub>
+    out<sub>6</sub> <- in<sub>1</sub>
+    out<sub>5</sub> <- in<sub>2</sub>
+    out<sub>4</sub> <- in<sub>3</sub>
+    out<sub>3</sub> <- in<sub>4</sub>
+    out<sub>2</sub> <- in<sub>5</sub>
+    out<sub>1</sub> <- in<sub>6</sub>
+    out<sub>0</sub> <- in<sub>7</sub>
+    return out
+end function
+
+for i in 0 to 3 do
+    GPR[rd].byte[i] <- reverse_bits(GPR[rt].byte[i])
+endfor
 
 <b>Exceptions:</b>
 None

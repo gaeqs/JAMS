@@ -38,104 +38,105 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.utils.NumericUtils;
 
 public class InstructionBitswap extends BasicRInstruction<InstructionBitswap.Assembled> {
 
-	public static final String MNEMONIC = "bitswap";
-	public static final int OPERATION_CODE = 0b011111;
-	public static final int FUNCTION_CODE = 0b100000;
-	public static final int SPECIAL_CODE = 0b00000;
+    public static final String MNEMONIC = "bitswap";
+    public static final int OPERATION_CODE = 0b011111;
+    public static final int FUNCTION_CODE = 0b100000;
+    public static final int SPECIAL_CODE = 0b00000;
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER};
+    private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER};
 
-	public InstructionBitswap() {
-		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
-		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
-		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
-	}
-
-
-	@Override
-	public boolean match(int instructionCode) {
-		return super.match(instructionCode) &&
-				((instructionCode >> Assembled.SHIFT_AMOUNT_SHIFT) & Assembled.SHIFT_AMOUNT_MASK) == SPECIAL_CODE;
-	}
-
-	@Override
-	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new Assembled(parameters[1].getRegister(), parameters[0].getRegister(), origin, this);
-	}
-
-	@Override
-	public AssembledInstruction assembleFromCode(int instructionCode) {
-		return new Assembled(instructionCode, this, this);
-	}
-
-	public static class Assembled extends AssembledRInstruction {
-
-		public Assembled(int targetRegister, int destinationRegister, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-			super(OPERATION_CODE, 0, targetRegister, destinationRegister, SPECIAL_CODE, FUNCTION_CODE, origin, basicOrigin);
-		}
-
-		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-			super(instructionCode, origin, basicOrigin);
-		}
+    public InstructionBitswap() {
+        super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+        addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+        addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+        addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+    }
 
 
-		@Override
-		public int getShiftAmount() {
-			return super.getShiftAmount() & SHIFT_AMOUNT_MASK;
-		}
+    @Override
+    public boolean match(int instructionCode) {
+        return super.match(instructionCode) &&
+                ((instructionCode >> Assembled.SHIFT_AMOUNT_SHIFT) & Assembled.SHIFT_AMOUNT_MASK) == SPECIAL_CODE;
+    }
 
-		@Override
-		public String parametersToString(String registersStart) {
-			return registersStart + getDestinationRegister()
-					+ ", " + registersStart + getDestinationRegister()
-					+ ", " + registersStart + getTargetRegister();
-		}
-	}
+    @Override
+    public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
+        return new Assembled(parameters[1].getRegister(), parameters[0].getRegister(), origin, this);
+    }
 
-	public static class SingleCycle extends SingleCycleExecution<Assembled> {
+    @Override
+    public AssembledInstruction assembleFromCode(int instructionCode) {
+        return new Assembled(instructionCode, this, this);
+    }
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address);
-		}
+    public static class Assembled extends AssembledRInstruction {
 
-		@Override
-		public void execute() {
-			Register rt = register(instruction.getTargetRegister());
-			Register rd = register(instruction.getDestinationRegister());
-			rd.setValue(Integer.reverseBytes(rt.getValue()));
-		}
-	}
+        public Assembled(int targetRegister, int destinationRegister, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(OPERATION_CODE, 0, targetRegister, destinationRegister, SPECIAL_CODE, FUNCTION_CODE, origin, basicOrigin);
+        }
 
-	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+        public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(instructionCode, origin, basicOrigin);
+        }
 
-		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address, false, true);
-		}
 
-		@Override
-		public void decode() {
-			requires(instruction.getTargetRegister());
-			lock(instruction.getDestinationRegister());
-		}
+        @Override
+        public int getShiftAmount() {
+            return super.getShiftAmount() & SHIFT_AMOUNT_MASK;
+        }
 
-		@Override
-		public void execute() {
-			executionResult = new int[]{Integer.reverseBytes(value(instruction.getTargetRegister()))};
-			forward(instruction.getTargetRegister(), executionResult[0], false);
-		}
+        @Override
+        public String parametersToString(String registersStart) {
+            return registersStart + getDestinationRegister()
+                    + ", " + registersStart + getDestinationRegister()
+                    + ", " + registersStart + getTargetRegister();
+        }
+    }
 
-		@Override
-		public void memory() {
-			forward(instruction.getTargetRegister(), executionResult[0], true);
-		}
+    public static class SingleCycle extends SingleCycleExecution<Assembled> {
 
-		@Override
-		public void writeBack() {
-			setAndUnlock(instruction.getDestinationRegister(), executionResult[0]);
-		}
-	}
+        public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
+            super(simulation, instruction, address);
+        }
+
+        @Override
+        public void execute() {
+            Register rt = register(instruction.getTargetRegister());
+            Register rd = register(instruction.getDestinationRegister());
+            rd.setValue(NumericUtils.swapBits(rt.getValue()));
+        }
+    }
+
+    public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+        public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+            super(simulation, instruction, address, false, true);
+        }
+
+        @Override
+        public void decode() {
+            requires(instruction.getTargetRegister());
+            lock(instruction.getDestinationRegister());
+        }
+
+        @Override
+        public void execute() {
+            executionResult = new int[]{NumericUtils.swapBits(value(instruction.getTargetRegister()))};
+            forward(instruction.getTargetRegister(), executionResult[0], false);
+        }
+
+        @Override
+        public void memory() {
+            forward(instruction.getTargetRegister(), executionResult[0], true);
+        }
+
+        @Override
+        public void writeBack() {
+            setAndUnlock(instruction.getDestinationRegister(), executionResult[0]);
+        }
+    }
 }
