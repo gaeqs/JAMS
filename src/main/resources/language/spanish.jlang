@@ -1029,7 +1029,7 @@ bc1eqz ft, desplazamiento
 
 
 <b>Descripción:</b>
-if FPR[ft] & 1 = 0 then branch
+Ramificación si FPR[ft] & 1 = 0
 
 La condición es verdadera si y solo si el bit 0 del registro <i>ft</i> es cero.
 Si la condición es falsa, la ramificación no es tomada y la ejecución continua con la siguiente instrucción.
@@ -1066,7 +1066,7 @@ bc1nez ft, desplazamiento
 
 
 <b>Descripción:</b>
-if FPR[ft] & 1 != 0 then branch
+Ramificación si FPR[ft] & 1 != 0
 
 La condición es verdadera si y solo si el bit 0 del registro <i>ft</i> no es cero.
 Si la condición es falsa, la ramificación no es tomada y la ejecución continua con la siguiente instrucción.
@@ -1103,7 +1103,7 @@ beq rs, rt, desplazamiento
 
 
 <b>Descripción:</b>
-if GPR[rs] = GPR[rt] then branch
+Ramificación si GPR[rs] = GPR[rt]
 
 Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
 Si el contenido de los registros <i>rt</i> y <i>rs</i> son iguales, la instrucción ejecuta la ramificación a la dirección efectiva.
@@ -1815,7 +1815,7 @@ bitswap rd, rt
 
 
 <b>Descripción:</b>
-GPR[rd].byte[i] <- reverse_bits(GPR[rt].byte[i]), for all bytes i
+GPR[rd].byte[i] <- reverse_bits(GPR[rt].byte[i]), para todos los bytes i
 
 Se intercambian los bits de cada byte del registro <i>rt</i> y se guarda el resultado en la misma posición del byte en el registro <i>rd</i>.
 Esta instrucción es opera en los 4 bytes de una palabra de 32 bits.
@@ -1843,6 +1843,205 @@ endfor
 
 <b>Excepciones:</b>
 Ninguna
+\END
+
+INSTRUCTION_BLEZ_DOCUMENTATION.=<u>Ramificación si es menor o igual que cero</u>
+
+<b>Formato:</b>
+bgtz rs, offset
+
+| BLEZ      rs     0      desplazamiento  |
+|000110          00000                    |
+|  6        5      5            16        |
+
+
+<b>Descripción:</b>
+Ramificación compacta si GPR[rs] <= 0.
+
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Si el contenido del registro <i>rs</i> es menor o igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+<b>Restricciones:</b>
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+<b>Operación:</b>
+<black>I:</black>
+target_offset <- sign_extend(desplazamiento || 00)
+condition <- GPR[rs] <= 0
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+\END
+
+INSTRUCTION_BLTZ_DOCUMENTATION.=<u>Ramificación si es menor que cero</u>
+
+<b>Formato:</b>
+bltz rs, offset
+
+|REGIMM     rs    BLTZ    desplazamiento  |
+|000001          00000                    |
+|  6        5      5            16        |
+
+
+<b>Descripción:</b>
+Ramificación compacta si GPR[rs] < 0.
+
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Si el contenido del registro <i>rs</i> es menor cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+<b>Restricciones:</b>
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+<b>Operación:</b>
+<black>I:</black>
+target_offset <- sign_extend(desplazamiento || 00)
+condition <- GPR[rs] < 0
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+\END
+
+INSTRUCTION_BNE_DOCUMENTATION.=<u>Ramificación si no es igual</u>
+
+<b>Formato:</b>
+bne rs, rt, desplazamiento
+
+| BNE       rs     rt     desplazamiento  |
+|000101                                   |
+|  6        5      5            16        |
+
+
+<b>Descripción:</b>
+Ramificación si GPR[rs] != GPR[rt]
+
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Si el contenido de los registros <i>rt</i> y <i>rs</i> no son iguales, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+<b>Restricciones:</b>
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+<b>Operación:</b>
+<black>I:</black>
+target_offset <- sign_extend(desplazamiento || 00)
+condition <- GPR[rs] != GPR[rt]
+<black>I+1:</black>
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+\END
+
+INSTRUCTION_BOVC_DOCUMENTATION.=<u>Ramificación si la suma desborda</u>
+
+<b>Formato:</b>
+bovc rs, rt, offset
+
+| POP10     rs        rt      desplazamiento  |
+|001000       rs >= rt                        |
+|  6        5         5             16        |
+
+
+<b>Descripción:</b>
+Ramificación compacta si GPR[rs] + GPR[rt] desborda
+
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Si el contenido del registro <i>rt</i> mas el contenido del registro <i>rs</i> desborda, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+<b>Restricciones:</b>
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+<b>Operación:</b>
+target_offset <- sign_extend(desplazamiento || 00)
+temp_d = GPR[rs] + GPR[rt]
+condition <- temp_d<sub>32</sub> != temp_d<sub>31</sub>
+
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_BNVC_DOCUMENTATION.=<u>Ramificación si la suma no desborda</u>
+
+<b>Formato:</b>
+bnvc rs, rt, offset
+
+| POP30     rs        rt      desplazamiento  |
+|011000       rs >= rt                        |
+|  6        5         5             16        |
+
+
+<b>Descripción:</b>
+Ramificación compacta si GPR[rs] + GPR[rt] no desborda
+
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Si el contenido del registro <i>rt</i> mas el contenido del registro <i>rs</i> no desborda, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+<b>Restricciones:</b>
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+<b>Operación:</b>
+target_offset <- sign_extend(desplazamiento || 00)
+temp_d = GPR[rs] + GPR[rt]
+condition <- temp_d<sub>32</sub> = temp_d<sub>31</sub>
+
+if condition then
+    PC <- PC + target_offset
+endif
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_BREAK_DOCUMENTATION.=<u>Punto de ruptura</u>
+
+<b>Formato:</b>
+break
+
+|SPECIAL    0       BREAK  |
+|000000                    |
+|  6        20     001101  |
+
+
+<b>Descripción:</b>
+Punto de ruptura
+
+Una excepción Breakpoint es lanzada, transfiriendo el control al manejador de excepciones de manera inmediata e incondicional.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+SignalException(Breakpoint)
+
+<b>Excepciones:</b>
+Breakpoint
 \END
 
 FLOAT_CONDITION_AF=Siempre falso
