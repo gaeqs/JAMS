@@ -110,12 +110,10 @@ public class InstructionCeilWDouble extends BasicRFPUInstruction<InstructionCeil
 		@Override
 		public void decode() {
 			if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
-			if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
 
 			requiresCOP1(instruction.getSourceRegister());
 			requiresCOP1(instruction.getSourceRegister() + 1);
 			lockCOP1(instruction.getDestinationRegister());
-			lockCOP1(instruction.getDestinationRegister() + 1);
 		}
 
 		@Override

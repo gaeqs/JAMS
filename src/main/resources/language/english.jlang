@@ -547,7 +547,7 @@ abs.d fd, fs
 
 
 <b>Description:</b>
-FPR[fd] <- abs(FRP[fs])
+FPR[fd] <- abs(FPR[fs])
 
 Places the absolute value of <i>fs</i> in <i>fd</i>. The operand and result are values in double precision floating point.
 
@@ -574,7 +574,7 @@ abs.s fd, fs
 
 
 <b>Description:</b>
-FPR[fd] <- abs(FRP[fs])
+FPR[fd] <- abs(FPR[fs])
 
 Places the absolute value of <i>fs</i> in <i>fd</i>. The operand and result are values in floating point.
 
@@ -635,7 +635,7 @@ add.d fd, fs, ft
 
 
 <b>Description:</b>
-FPR[fd] <- FRP[fs] + FPR[ft]
+FPR[fd] <- FPR[fs] + FPR[ft]
 
 The value in FPR <i>ft</i> is added to the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
 The operands and result are values in double precision floating point.
@@ -663,7 +663,7 @@ add.s fd, fs, ft
 
 
 <b>Description:</b>
-FPR[fd] <- FRP[fs] + FPR[ft]
+FPR[fd] <- FPR[fs] + FPR[ft]
 
 The value in FPR <i>ft</i> is added to the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
 The operands and result are values in floating point.
@@ -2049,6 +2049,126 @@ SignalException(Breakpoint)
 
 <b>Exceptions:</b>
 Breakpoint
+\END
+
+INSTRUCTION_CEIL_L_D_DOCUMENTATION.=<u>Ceiling double to long</u>
+
+<b>Format:</b>
+ceil.l.d fd, fs
+
+| COP1      fmt      0      fs      fd     CEIL.L |
+|010001    10001   00000                   001010 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+FPR[fd] <- convert_and_round(FPR[fs])
+
+The double precission floating point value of FPR <i>fs</i> is converted to a ceiled 64-bit word.
+The result is placed in FPR <i>fd</i>.
+
+When the source value is <black>Infinity</black>, <black>NaN</black> or is outside of a 64-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
+
+<b>Restrictions:</b>
+The fields <i>fs</i> and <i>fd</i> must be even FPRs. If the fields are not valid, the result is <black>UNPREDICTABLE</black>.
+The operand must be a value in double precision floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+fmt <- double
+StoreFPR(fd, L, ConvertFmt(ValueFPR(fs, fmt), fmt, L))
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_CEIL_W_D_DOCUMENTATION.=<u>Ceiling double to word</u>
+
+<b>Format:</b>
+ceil.w.d fd, fs
+
+| COP1      fmt      0      fs      fd     CEIL.W |
+|010001    10001   00000                   001110 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+FPR[fd] <- convert_and_round(FPR[fs])
+
+The double precission floating point value of FPR <i>fs</i> is converted to a ceiled 32-bit word.
+The result is placed in FPR <i>fd</i>.
+
+When the source value is <black>Infinity</black>, <black>NaN</black> or is outside of a 32-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
+
+<b>Restrictions:</b>
+The field <i>fs</i> must be a even FPR. If the field is not valid, the result is <black>UNPREDICTABLE</black>.
+The operand must be a value in double precision floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+fmt <- double
+StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
+
+<b>Exceptions:</b>
+None
+\END
+
+
+INSTRUCTION_CEIL_L_S_DOCUMENTATION.=<u>Ceiling float to long</u>
+
+<b>Format:</b>
+ceil.l.s fd, fs
+
+| COP1      fmt      0      fs      fd     CEIL.L |
+|010001    10000   00000                   001010 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+FPR[fd] <- convert_and_round(FPR[fs])
+
+The floating point value of FPR <i>fs</i> is converted to a ceiled 64-bit word.
+The result is placed in FPR <i>fd</i>.
+
+When the source value is <black>Infinity</black>, <black>NaN</black> or is outside of a 64-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
+
+<b>Restrictions:</b>
+The field <i>fd</i> must be a even FPR. If the field is not valid, the result is <black>UNPREDICTABLE</black>.
+The operand must be a value in floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+fmt <- float
+StoreFPR(fd, L, ConvertFmt(ValueFPR(fs, fmt), fmt, L))
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_CEIL_W_S_DOCUMENTATION.=<u>Ceiling float to word</u>
+
+<b>Format:</b>
+ceil.w.s fd, fs
+
+| COP1      fmt      0      fs      fd     CEIL.W |
+|010001    10000   00000                   001110 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+FPR[fd] <- convert_and_round(FPR[fs])
+
+The floating point value of FPR <i>fs</i> is converted to a ceiled 32-bit word.
+The result is placed in FPR <i>fd</i>.
+
+When the source value is <black>Infinity</black>, <black>NaN</black> or is outside of a 32-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
+
+<b>Restrictions:</b>
+The operand must be a value in floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+fmt <- float
+StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
+
+<b>Exceptions:</b>
+None
 \END
 
 FLOAT_CONDITION_AF=Always false

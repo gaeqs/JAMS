@@ -2044,6 +2044,126 @@ SignalException(Breakpoint)
 Breakpoint
 \END
 
+INSTRUCTION_CEIL_L_D_DOCUMENTATION.=<u>Función techo de coma flotante doble a doble palabra</u>
+
+<b>Formato:</b>
+ceil.l.d fd, fs
+
+| COP1      fmt      0      fs      fd     CEIL.L |
+|010001    10001   00000                   001010 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+FPR[fd] <- convert_and_round(FPR[fs])
+
+El valor en coma flotante de precisión doble guardado en <i>fs</i> es transformado en una palabra de 64 bits, redondeando hacia arriba.
+El resultado es asignado a <i>fd</i>.
+
+Cuando el valor en <i>fs</i> es <black>Infinito</black>, <black>NaN</black> o está fuera del rango de una palabra de 64 bits, el resultado no puede ser representado correctamente. Estos casos son tratados por la máquina virtual de Java.
+
+<b>Restricciones:</b>
+Los registros <i>fs</i> y <i>fd</i> deben ser FPRs pares. Si los registros no son válidos, el resultado es <black>IMPREDECIBLE</black>.
+El operando debe ser un valor en coma flotante de precisión doble. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operación:</b>
+fmt <- double
+StoreFPR(fd, L, ConvertFmt(ValueFPR(fs, fmt), fmt, L))
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_CEIL_W_D_DOCUMENTATION.=<u>CFunción techo de coma flotante doble a palabra</u>
+
+<b>Formato:</b>
+ceil.w.d fd, fs
+
+| COP1      fmt      0      fs      fd     CEIL.W |
+|010001    10001   00000                   001110 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+FPR[fd] <- convert_and_round(FPR[fs])
+
+El valor en coma flotante de precisión doble guardado en <i>fs</i> es transformado en una palabra de 32 bits, redondeando hacia arriba.
+El resultado es asignado a <i>fd</i>.
+
+Cuando el valor en <i>fs</i> es <black>Infinito</black>, <black>NaN</black> o está fuera del rango de una palabra de 32 bits, el resultado no puede ser representado correctamente. Estos casos son tratados por la máquina virtual de Java.
+
+<b>Restricciones:</b>
+El registro <i>fs</i> debe ser un FPR par. El registro no es válido, el resultado es <black>IMPREDECIBLE</black>.
+El operando debe ser un valor en coma flotante de precisión doble. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operación:</b>
+fmt <- double
+StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+
+INSTRUCTION_CEIL_L_S_DOCUMENTATION.=<u>Función techo de coma flotante a doble palabra</u>
+
+<b>Formato:</b>
+ceil.l.s fd, fs
+
+| COP1      fmt      0      fs      fd     CEIL.L |
+|010001    10000   00000                   001010 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+FPR[fd] <- convert_and_round(FPR[fs])
+
+El valor en coma flotante guardado en <i>fs</i> es transformado en una palabra de 64 bits, redondeando hacia arriba.
+El resultado es asignado a <i>fd</i>.
+
+Cuando el valor en <i>fs</i> es <black>Infinito</black>, <black>NaN</black> o está fuera del rango de una palabra de 64 bits, el resultado no puede ser representado correctamente. Estos casos son tratados por la máquina virtual de Java.
+
+<b>Restricciones:</b>
+El registro <i>fd</i> debe ser un FPR par. El registro no es válido, el resultado es <black>IMPREDECIBLE</black>.
+El operando debe ser un valor en coma flotante. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operación:</b>
+fmt <- float
+StoreFPR(fd, L, ConvertFmt(ValueFPR(fs, fmt), fmt, L))
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_CEIL_W_S_DOCUMENTATION.=<u>Función techo de coma flotante a palabra</u>
+
+<b>Formato:</b>
+ceil.w.s fd, fs
+
+| COP1      fmt      0      fs      fd     CEIL.W |
+|010001    10000   00000                   001110 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+FPR[fd] <- convert_and_round(FPR[fs])
+
+El valor en coma flotante guardado en <i>fs</i> es transformado en una palabra de 32, redondeando hacia arriba.
+El resultado es asignado a <i>fd</i>.
+
+Cuando el valor en <i>fs</i> es <black>Infinito</black>, <black>NaN</black> o está fuera del rango de una palabra de 32 bits, el resultado no puede ser representado correctamente. Estos casos son tratados por la máquina virtual de Java.
+
+<b>Restricciones:</b>
+El operando debe ser un valor en coma flotante. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operación:</b>
+fmt <- float
+StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
 FLOAT_CONDITION_AF=Siempre falso
 FLOAT_CONDITION_UN=Sin orden
 FLOAT_CONDITION_EQ=Igual
