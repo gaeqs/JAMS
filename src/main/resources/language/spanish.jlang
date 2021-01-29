@@ -2164,6 +2164,74 @@ StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
 Ninguna
 \END
 
+
+INSTRUCTION_CLO_DOCUMENTATION.=<u>Conteo de los primeros unos en una palabra</u>
+
+<b>Formato:</b>
+clo rd, rs
+
+|SPECIAL     rs      0      rd      1       CLO   |
+|000000            00000          00001    010001 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- count_leading_ones(GPR[rs])
+
+Los bits guardados en el registro <i>rs</i> son escaneados desde el más significante al menos significante. El conteo de los primeros unos en la palabra es guardado en el registro <i>rd</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+
+temp <- 32
+for i in 31 to 0
+    if GPR[rs]<sub>i</sub> = 0 then
+        temp <- 31 - i
+        break
+    endif
+endfor
+GPR[rd] <- temp
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+
+INSTRUCTION_CLZ_DOCUMENTATION.=<u>Conteo de los primeros ceros en una palabra</u>
+
+<b>Formato:</b>
+clz rd, rs
+
+|SPECIAL     rs      0      rd      1       CLZ   |
+|000000            00000          00001    010000 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- count_leading_zeros(GPR[rs])
+
+Los bits guardados en el registro <i>rs</i> son escaneados desde el más significante al menos significante. El conteo de los primeros ceros en la palabra es guardado en el registro <i>rd</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+
+temp <- 32
+for i in 31 to 0
+    if GPR[rs]<sub>i</sub> = 1 then
+        temp <- 31 - i
+        break
+    endif
+endfor
+GPR[rd] <- temp
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
 FLOAT_CONDITION_AF=Siempre falso
 FLOAT_CONDITION_UN=Sin orden
 FLOAT_CONDITION_EQ=Igual
