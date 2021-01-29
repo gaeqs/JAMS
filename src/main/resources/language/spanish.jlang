@@ -2343,6 +2343,35 @@ StoreFPR(fd, fmt, extend_bit.fmt(condition))
 Floating Point Exception
 \END
 
+INSTRUCTION_CVT_DOCUMENTATION.=<u>Convertir número de {FROM} a {TO}</u>
+
+<b>Formato:</b>
+cvt.{TO_MNEMONIC}.{FROM_MNEMONIC} fd, fs
+
+| COP1      fmt      0      fs      fd      CVT.{TO_MNEMONIC}  |
+|010001    {FROM_FMT}   00000                   {TO_CVT}  |
+|  6         5       5      5       5        6     |
+
+
+<b>Descripción:</b>
+FPR[fd] <- convert_and_round(FPR[fs])
+
+El valor en el registro <i>fs</i> en el formato {FROM} es convertido a un valor en el formato {TO}.
+El resultado es asignado al registro <i>fd</i>.
+
+<b>Restricciones:</b>
+Aquellos valores cuyo formato depende de dos registros deben ser colocados en un registro par. Si esto no se cumple, el resultado es <black>IMPREDECIBLE</black>.
+El operando debe estár en su formado correspondiente. Si esto no se cumple, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operación:</b>
+from <- {FROM_MNEMONIC}
+to <- {TO_MNEMONIC}
+StoreFPR(fd, to, ConvertFmt(ValueFPR(fs, from), from, to))
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
 FLOAT_CONDITION_AF=Siempre falso
 FLOAT_CONDITION_UN=Sin orden
 FLOAT_CONDITION_EQ=Igual
@@ -2366,8 +2395,8 @@ FLOAT_CONDITION_SOR=Ordenado con señal
 FLOAT_CONDITION_SUNE=Desordenado o no igual con señal
 FLOAT_CONDITION_SNE=No igual ordenado con señal
 
-FMT_SINGLE=Coma flotante
-FMT_DOUBLE=Coma flotante doble
+FMT_SINGLE=coma flotante
+FMT_DOUBLE=coma flotante doble
 FMT_WORD=palabra
 FMT_LONG=doble palabra
 

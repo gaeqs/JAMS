@@ -39,6 +39,7 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Assembled> {
 
@@ -69,8 +70,13 @@ public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Asse
 
 	@Override
 	public String getDocumentation() {
-		var name = Jams.getLanguageManager().getSelected().getOrDefault("INSTRUCTION_" + NAME_SUFIX + "_DOCUMENTATION");
-		return name.replace("{FROM}", from.getName()).replace("{TO}", to.getName());
+		var documentation = Jams.getLanguageManager().getSelected().getOrDefault("INSTRUCTION_" + NAME_SUFIX + "_DOCUMENTATION");
+		return documentation.replace("{FROM}", from.getName())
+				.replace("{TO}", to.getName())
+				.replace("{FROM_MNEMONIC}", from.getMnemonic())
+				.replace("{TO_MNEMONIC}", to.getMnemonic())
+				.replace("{FROM_FMT}", StringUtils.addZeros(Integer.toBinaryString(from.getFmt()), 5))
+				.replace("{TO_CVT}", StringUtils.addZeros(Integer.toBinaryString(to.getCvt()), 6));
 	}
 
 	@Override
