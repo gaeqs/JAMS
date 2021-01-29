@@ -2238,6 +2238,117 @@ GPR[rd] <- temp
 None
 \END
 
+INSTRUCTION_CMP_D_DOCUMENTATION.=<u>Floating point compare ({TYPE}) (double)</u>
+
+<b>Format:</b>
+cmp.{MNEMONIC}.d fd, fs, ft
+
+| COP1    CMP.c.D   ft   fs   fd   0   {MNEMONIC}\t|
+|000001    10101                   0   {CODE}\t|
+|  6         5      5    5    5    1     5     \t|
+
+
+<b>Description:</b>
+FPR[fd] <- FPR[fs] compare_cond FPR[ft] where compare_cond = {TYPE}.
+
+The value in FPR <i>fs</i> is compared to the value in FPR <i>ft</i>.
+The FPR <i>fd</i> is filled with zeros if the result is false or ones of the result is true.
+
+Each bit 2 to 0 in the condition repesents a check. If one of these bits is active the check linked to it will be executed.
+The result is true when any of these checks return true.
+
+The checks linked to the bits are the next:
+- Bit 0: unordered.
+- Bit 1: equal.
+- Bit 2: less than.
+
+If bit 4 is active the result is negated.
+If bit 3 is active and any of the operands are <black>NaN</black>, a Floating Point Exception will be thrown.
+
+<b>Restrictions:</b>
+The fields <i>fs</i>, <i>ft</i> and <i>fd</i> must be even FPRs. If the fields are not valid, the result is <black>UNPREDICTABLE</black>.
+Operands must be values in double precision floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+fmt <- double
+fsv <- ValueFPR(fs, fmt)
+ftv <- ValueFPR(ft, fmt)
+
+if is_NaN(fsv) or is_NaN(ftv) then
+    less <- false
+    equal <- false
+    unordered <- true
+    if cond<sub>3</sub> then
+        SignalException(FloatingPointException)
+    endif
+else
+    less <- fsv <<sub>fmt</sub> ftv
+    less <- fsv =<sub>fmt</sub> ftv
+    unordered <- false
+endif
+
+condition <- cond<sub>4</sub> xor ((cond<sub>2</sub> and less) or (cond<sub>1</sub> and equal) or (cond<sub>0</sub> and unordered))
+StoreFPR(fd, fmt, extend_bit.fmt(condition))
+
+<b>Exceptions:</b>
+Floating Point Exception
+\END
+
+INSTRUCTION_CMP_S_DOCUMENTATION.=<u>Floating point compare ({TYPE}) (single)</u>
+
+<b>Format:</b>
+cmp.{MNEMONIC}.s fd, fs, ft
+
+| COP1    CMP.c.S   ft   fs   fd   0   {MNEMONIC}\t|
+|000001    10100                   0   {CODE}\t|
+|  6         5      5    5    5    1     5     \t|
+
+
+<b>Description:</b>
+FPR[fd] <- FPR[fs] compare_cond FPR[ft] where compare_cond = {TYPE}.
+
+The value in FPR <i>fs</i> is compared to the value in FPR <i>ft</i>.
+The FPR <i>fd</i> is filled with zeros if the result is false or ones of the result is true.
+
+Each bit 2 to 0 in the condition repesents a check. If one of these bits is active the check linked to it will be executed.
+The result is true when any of these checks return true.
+
+The checks linked to the bits are the next:
+- Bit 0: unordered.
+- Bit 1: equal.
+- Bit 2: less than.
+
+If bit 4 is active the result is negated.
+If bit 3 is active and any of the operands are <black>NaN</black>, a Floating Point Exception will be thrown.
+
+<b>Restrictions:</b>
+Operands must be values in floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+fmt <- float
+fsv <- ValueFPR(fs, fmt)
+ftv <- ValueFPR(ft, fmt)
+
+if is_NaN(fsv) or is_NaN(ftv) then
+    less <- false
+    equal <- false
+    unordered <- true
+    if cond<sub>3</sub> then
+        SignalException(FloatingPointException)
+    endif
+else
+    less <- fsv <<sub>fmt</sub> ftv
+    less <- fsv =<sub>fmt</sub> ftv
+    unordered <- false
+endif
+
+condition <- cond<sub>4</sub> xor ((cond<sub>2</sub> and less) or (cond<sub>1</sub> and equal) or (cond<sub>0</sub> and unordered))
+StoreFPR(fd, fmt, extend_bit.fmt(condition))
+
+<b>Exceptions:</b>
+Floating Point Exception
+\END
+
 FLOAT_CONDITION_AF=Always false
 FLOAT_CONDITION_UN=Unordered
 FLOAT_CONDITION_EQ=Equal

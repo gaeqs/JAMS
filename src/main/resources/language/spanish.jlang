@@ -2232,6 +2232,117 @@ GPR[rd] <- temp
 Ninguna
 \END
 
+INSTRUCTION_CMP_D_DOCUMENTATION.=<u>Comparación en coma flotante doble ({TYPE})</u>
+
+<b>Formato:</b>
+cmp.{MNEMONIC}.d fd, fs, ft
+
+| COP1    CMP.c.D   ft   fs   fd   0   {MNEMONIC}\t|
+|000001    10101                   0   {CODE}\t|
+|  6         5      5    5    5    1     5     \t|
+
+
+<b>Descripción:</b>
+FPR[fd] <- FPR[fs] compare_cond FPR[ft] donde compare_cond = {TYPE}.
+
+El valor guardado en el registro <i>fs</i> es comparado con el valor en el registro <i>it</i>.
+El registro <i>fd</i> es rellenado con unos o con zeros, dependiendo de si el resultado es verdadero o falso.
+
+Los bits del 2 al 0 en la condición representan cada uno una condición. Si uno de estos bits está activado la condición correspondiente será evaluada.
+El resultado es verdadero cuando alguna de estas condiciones de verdadero.
+
+Las condiciones vinculadas a cada bit son las siguientes:
+- Bit 0: desordenado.
+- Bit 1: igualdad.
+- Bit 2: menor que.
+
+Si el bit 4 está activado el resultado es negado.
+Si el bit 3 está activado y alguno de los operandos es <black>NaN</black>, una excepción Floating Point Exception será lanzada.
+
+<b>Restrictions:</b>
+Los registros <i>fs</i>, <i>ft</i> y <i>fd</i> deben ser FPRs pares. Si los registros no son válidos, el resultado es <black>IMPREDECIBLE</black>.
+Los operandos deben ser valores en coma flotante de precisión doble. Si no los son, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operation:</b>
+fmt <- double
+fsv <- ValueFPR(fs, fmt)
+ftv <- ValueFPR(ft, fmt)
+
+if is_NaN(fsv) or is_NaN(ftv) then
+    less <- false
+    equal <- false
+    unordered <- true
+    if cond<sub>3</sub> then
+        SignalException(FloatingPointException)
+    endif
+else
+    less <- fsv <<sub>fmt</sub> ftv
+    less <- fsv =<sub>fmt</sub> ftv
+    unordered <- false
+endif
+
+condition <- cond<sub>4</sub> xor ((cond<sub>2</sub> and less) or (cond<sub>1</sub> and equal) or (cond<sub>0</sub> and unordered))
+StoreFPR(fd, fmt, extend_bit.fmt(condition))
+
+<b>Exceptions:</b>
+Floating Point Exception
+\END
+
+INSTRUCTION_CMP_S_DOCUMENTATION.=<u>Comparación en coma flotante ({TYPE})</u>
+
+<b>Formato:</b>
+cmp.{MNEMONIC}.s fd, fs, ft
+
+| COP1    CMP.c.S   ft   fs   fd   0   {MNEMONIC}\t|
+|000001    10100                   0   {CODE}\t|
+|  6         5      5    5    5    1     5     \t|
+
+
+<b>Descripción:</b>
+FPR[fd] <- FPR[fs] compare_cond FPR[ft] donde compare_cond = {TYPE}.
+
+El valor guardado en el registro <i>fs</i> es comparado con el valor en el registro <i>it</i>.
+El registro <i>fd</i> es rellenado con unos o con zeros, dependiendo de si el resultado es verdadero o falso.
+
+Los bits del 2 al 0 en la condición representan cada uno una condición. Si uno de estos bits está activado la condición correspondiente será evaluada.
+El resultado es verdadero cuando alguna de estas condiciones de verdadero.
+
+Las condiciones vinculadas a cada bit son las siguientes:
+- Bit 0: desordenado.
+- Bit 1: igualdad.
+- Bit 2: menor que.
+
+Si el bit 4 está activado el resultado es negado.
+Si el bit 3 está activado y alguno de los operandos es <black>NaN</black>, una excepción Floating Point Exception será lanzada.
+
+<b>Restrictions:</b>
+Los operandos deben ser valores en coma flotante de precisión doble. Si no los son, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operation:</b>
+fmt <- float
+fsv <- ValueFPR(fs, fmt)
+ftv <- ValueFPR(ft, fmt)
+
+if is_NaN(fsv) or is_NaN(ftv) then
+    less <- false
+    equal <- false
+    unordered <- true
+    if cond<sub>3</sub> then
+        SignalException(FloatingPointException)
+    endif
+else
+    less <- fsv <<sub>fmt</sub> ftv
+    less <- fsv =<sub>fmt</sub> ftv
+    unordered <- false
+endif
+
+condition <- cond<sub>4</sub> xor ((cond<sub>2</sub> and less) or (cond<sub>1</sub> and equal) or (cond<sub>0</sub> and unordered))
+StoreFPR(fd, fmt, extend_bit.fmt(condition))
+
+<b>Exceptions:</b>
+Floating Point Exception
+\END
+
 FLOAT_CONDITION_AF=Siempre falso
 FLOAT_CONDITION_UN=Sin orden
 FLOAT_CONDITION_EQ=Igual

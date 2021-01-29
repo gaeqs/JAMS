@@ -42,189 +42,192 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.NumericUtils;
+import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionCmpCondnDouble.Assembled> {
 
-	public static final String NAME_SUFIX = "CMP_D";
-	public static final String MNEMONIC = "cmp.%s.d";
-	public static final int OPERATION_CODE = 0b010001;
-	public static final int FMT = 0b10101;
+    public static final String NAME_SUFIX = "CMP_D";
+    public static final String MNEMONIC = "cmp.%s.d";
+    public static final int OPERATION_CODE = 0b010001;
+    public static final int FMT = 0b10101;
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER};
+    private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER};
 
-	private final FloatCondition condition;
+    private final FloatCondition condition;
 
-	public InstructionCmpCondnDouble(FloatCondition condition) {
-		super(String.format(MNEMONIC, condition.getMnemonic()), PARAMETER_TYPES, OPERATION_CODE, condition.getCode(), FMT);
-		this.condition = condition;
-		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
-		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
-	}
+    public InstructionCmpCondnDouble(FloatCondition condition) {
+        super(String.format(MNEMONIC, condition.getMnemonic()), PARAMETER_TYPES, OPERATION_CODE, condition.getCode(), FMT);
+        this.condition = condition;
+        addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+        addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+        addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+        addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+    }
 
-	@Override
-	public String getName() {
-		var name = Jams.getLanguageManager().getSelected().getOrDefault("INSTRUCTION_" + NAME_SUFIX);
-		return name.replace("{TYPE}", condition.getName());
-	}
+    @Override
+    public String getName() {
+        var name = Jams.getLanguageManager().getSelected().getOrDefault("INSTRUCTION_" + NAME_SUFIX);
+        return name.replace("{TYPE}", condition.getName());
+    }
 
-	@Override
-	public String getDocumentation() {
-		var name = Jams.getLanguageManager().getSelected().getOrDefault("INSTRUCTION_" + NAME_SUFIX + "_DOCUMENTATION");
-		return name.replace("{TYPE}", condition.getName());
-	}
+    @Override
+    public String getDocumentation() {
+        var documentation = StringUtils.parseEscapeCharacters(Jams.getLanguageManager().getSelected().getOrDefault("INSTRUCTION_" + NAME_SUFIX + "_DOCUMENTATION"));
+        return documentation.replace("{TYPE}", condition.getName())
+                .replace("{MNEMONIC}", condition.getMnemonic())
+                .replace("{CODE}", StringUtils.addZeros(Integer.toBinaryString(condition.getCode()), 5));
+    }
 
-	@Override
-	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new Assembled(parameters[2].getRegister(), parameters[1].getRegister(), parameters[0].getRegister(), getFunctionCode(), origin, this);
-	}
+    @Override
+    public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
+        return new Assembled(parameters[2].getRegister(), parameters[1].getRegister(), parameters[0].getRegister(), getFunctionCode(), origin, this);
+    }
 
-	@Override
-	public AssembledInstruction assembleFromCode(int instructionCode) {
-		return new Assembled(instructionCode, this, this);
-	}
+    @Override
+    public AssembledInstruction assembleFromCode(int instructionCode) {
+        return new Assembled(instructionCode, this, this);
+    }
 
-	public static class Assembled extends AssembledRFPUInstruction {
+    public static class Assembled extends AssembledRFPUInstruction {
 
-		public Assembled(int targetRegister, int sourceRegister, int destinationRegister, int function_code,
-						 Instruction origin, BasicInstruction<InstructionCmpCondnDouble.Assembled> basicOrigin) {
-			super(OPERATION_CODE, FMT, targetRegister, sourceRegister, destinationRegister, function_code, origin, basicOrigin);
-		}
+        public Assembled(int targetRegister, int sourceRegister, int destinationRegister, int function_code,
+                         Instruction origin, BasicInstruction<InstructionCmpCondnDouble.Assembled> basicOrigin) {
+            super(OPERATION_CODE, FMT, targetRegister, sourceRegister, destinationRegister, function_code, origin, basicOrigin);
+        }
 
-		public Assembled(int instructionCode, Instruction origin, BasicInstruction<InstructionCmpCondnDouble.Assembled> basicOrigin) {
-			super(instructionCode, origin, basicOrigin);
-		}
+        public Assembled(int instructionCode, Instruction origin, BasicInstruction<InstructionCmpCondnDouble.Assembled> basicOrigin) {
+            super(instructionCode, origin, basicOrigin);
+        }
 
-		public boolean cond0() {
-			return (getFunctionCode() & 0b1) > 0;
-		}
+        public boolean cond0() {
+            return (getFunctionCode() & 0b1) > 0;
+        }
 
-		public boolean cond1() {
-			return (getFunctionCode() & 0b10) > 0;
-		}
+        public boolean cond1() {
+            return (getFunctionCode() & 0b10) > 0;
+        }
 
-		public boolean cond2() {
-			return (getFunctionCode() & 0b100) > 0;
-		}
+        public boolean cond2() {
+            return (getFunctionCode() & 0b100) > 0;
+        }
 
-		public boolean cond3() {
-			return (getFunctionCode() & 0b1000) > 0;
-		}
+        public boolean cond3() {
+            return (getFunctionCode() & 0b1000) > 0;
+        }
 
-		public boolean cond4() {
-			return (getFunctionCode() & 0b10000) > 0;
-		}
+        public boolean cond4() {
+            return (getFunctionCode() & 0b10000) > 0;
+        }
 
 
-		@Override
-		public String parametersToString(String registersStart) {
-			return registersStart + getDestinationRegister()
-					+ ", " + registersStart + getSourceRegister()
-					+ ", " + registersStart + getTargetRegister();
-		}
-	}
+        @Override
+        public String parametersToString(String registersStart) {
+            return registersStart + getDestinationRegister()
+                    + ", " + registersStart + getSourceRegister()
+                    + ", " + registersStart + getTargetRegister();
+        }
+    }
 
-	public static class SingleCycle extends SingleCycleExecution<Assembled> {
+    public static class SingleCycle extends SingleCycleExecution<Assembled> {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address);
-		}
+        public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
+            super(simulation, instruction, address);
+        }
 
-		@Override
-		public void execute() {
-			if (instruction.getTargetRegister() % 2 != 0) evenFloatRegisterException();
-			if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
-			if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
+        @Override
+        public void execute() {
+            if (instruction.getTargetRegister() % 2 != 0) evenFloatRegisterException();
+            if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
+            if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
 
-			Register rt0 = registerCop1(instruction.getTargetRegister());
-			Register rt1 = registerCop1(instruction.getTargetRegister() + 1);
-			Register rs0 = registerCop1(instruction.getSourceRegister());
-			Register rs1 = registerCop1(instruction.getSourceRegister() + 1);
-			Register rd0 = registerCop1(instruction.getDestinationRegister());
-			Register rd1 = registerCop1(instruction.getDestinationRegister() + 1);
+            Register rt0 = registerCop1(instruction.getTargetRegister());
+            Register rt1 = registerCop1(instruction.getTargetRegister() + 1);
+            Register rs0 = registerCop1(instruction.getSourceRegister());
+            Register rs1 = registerCop1(instruction.getSourceRegister() + 1);
+            Register rd0 = registerCop1(instruction.getDestinationRegister());
+            Register rd1 = registerCop1(instruction.getDestinationRegister() + 1);
 
-			double ft = NumericUtils.intsToDouble(rt0.getValue(), rt1.getValue());
-			double fs = NumericUtils.intsToDouble(rs0.getValue(), rs1.getValue());
+            double ft = NumericUtils.intsToDouble(rt0.getValue(), rt1.getValue());
+            double fs = NumericUtils.intsToDouble(rs0.getValue(), rs1.getValue());
 
-			boolean less, equal, unordered;
+            boolean less, equal, unordered;
 
-			if (Double.isNaN(fs) || Double.isNaN(ft)) {
-				less = false;
-				equal = false;
-				unordered = true;
-				if (instruction.cond3()) {
-					throw new RuntimeInstructionException(InterruptCause.FLOATING_POINT_EXCEPTION);
-				}
-			} else {
-				less = fs < ft;
-				equal = fs == ft;
-				unordered = false;
-			}
+            if (Double.isNaN(fs) || Double.isNaN(ft)) {
+                less = false;
+                equal = false;
+                unordered = true;
+                if (instruction.cond3()) {
+                    throw new RuntimeInstructionException(InterruptCause.FLOATING_POINT_EXCEPTION);
+                }
+            } else {
+                less = fs < ft;
+                equal = fs == ft;
+                unordered = false;
+            }
 
-			boolean condition = instruction.cond4() ^ ((instruction.cond2() && less) || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
-			rd0.setValue(condition ? 0xFFFFFFFF : 0);
-			rd1.setValue(condition ? 0xFFFFFFFF : 0);
-		}
-	}
+            boolean condition = instruction.cond4() ^ ((instruction.cond2() && less) || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
+            rd0.setValue(condition ? 0xFFFFFFFF : 0);
+            rd1.setValue(condition ? 0xFFFFFFFF : 0);
+        }
+    }
 
-	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+    public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
-		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address, false, true);
-		}
+        public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+            super(simulation, instruction, address, false, true);
+        }
 
-		@Override
-		public void decode() {
-			if (instruction.getTargetRegister() % 2 != 0) evenFloatRegisterException();
-			if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
-			if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
+        @Override
+        public void decode() {
+            if (instruction.getTargetRegister() % 2 != 0) evenFloatRegisterException();
+            if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
+            if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
 
-			requiresCOP1(instruction.getTargetRegister());
-			requiresCOP1(instruction.getTargetRegister() + 1);
-			requiresCOP1(instruction.getSourceRegister());
-			requiresCOP1(instruction.getSourceRegister() + 1);
-			lockCOP1(instruction.getDestinationRegister());
-			lockCOP1(instruction.getDestinationRegister() + 1);
-		}
+            requiresCOP1(instruction.getTargetRegister());
+            requiresCOP1(instruction.getTargetRegister() + 1);
+            requiresCOP1(instruction.getSourceRegister());
+            requiresCOP1(instruction.getSourceRegister() + 1);
+            lockCOP1(instruction.getDestinationRegister());
+            lockCOP1(instruction.getDestinationRegister() + 1);
+        }
 
-		@Override
-		public void execute() {
-			double ft = NumericUtils.intsToDouble(valueCOP1(instruction.getTargetRegister()), valueCOP1(instruction.getTargetRegister() + 1));
-			double fs = NumericUtils.intsToDouble(valueCOP1(instruction.getSourceRegister()), valueCOP1(instruction.getSourceRegister() + 1));
+        @Override
+        public void execute() {
+            double ft = NumericUtils.intsToDouble(valueCOP1(instruction.getTargetRegister()), valueCOP1(instruction.getTargetRegister() + 1));
+            double fs = NumericUtils.intsToDouble(valueCOP1(instruction.getSourceRegister()), valueCOP1(instruction.getSourceRegister() + 1));
 
-			boolean less, equal, unordered;
+            boolean less, equal, unordered;
 
-			if (Double.isNaN(fs) || Double.isNaN(ft)) {
-				less = false;
-				equal = false;
-				unordered = true;
-				if (instruction.cond3()) {
-					throw new RuntimeInstructionException(InterruptCause.FLOATING_POINT_EXCEPTION);
-				}
-			} else {
-				less = fs < ft;
-				equal = fs == ft;
-				unordered = false;
-			}
+            if (Double.isNaN(fs) || Double.isNaN(ft)) {
+                less = false;
+                equal = false;
+                unordered = true;
+                if (instruction.cond3()) {
+                    throw new RuntimeInstructionException(InterruptCause.FLOATING_POINT_EXCEPTION);
+                }
+            } else {
+                less = fs < ft;
+                equal = fs == ft;
+                unordered = false;
+            }
 
-			boolean condition = instruction.cond4() ^ ((instruction.cond2() && less) || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
-			executionResult = new int[]{condition ? 0xFFFFFFFF : 0, condition ? 0xFFFFFFFF : 0};
+            boolean condition = instruction.cond4() ^ ((instruction.cond2() && less) || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
+            executionResult = new int[]{condition ? 0xFFFFFFFF : 0, condition ? 0xFFFFFFFF : 0};
 
-			forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
-			forwardCOP1(instruction.getDestinationRegister() + 1, executionResult[1], false);
-		}
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
+            forwardCOP1(instruction.getDestinationRegister() + 1, executionResult[1], false);
+        }
 
-		@Override
-		public void memory() {
-			forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
-			forwardCOP1(instruction.getDestinationRegister() + 1, executionResult[1], true);
-		}
+        @Override
+        public void memory() {
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
+            forwardCOP1(instruction.getDestinationRegister() + 1, executionResult[1], true);
+        }
 
-		@Override
-		public void writeBack() {
-			setAndUnlockCOP1(instruction.getDestinationRegister(), executionResult[0]);
-			setAndUnlockCOP1(instruction.getDestinationRegister() + 1, executionResult[1]);
-		}
-	}
+        @Override
+        public void writeBack() {
+            setAndUnlockCOP1(instruction.getDestinationRegister(), executionResult[0]);
+            setAndUnlockCOP1(instruction.getDestinationRegister() + 1, executionResult[1]);
+        }
+    }
 }
