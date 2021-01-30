@@ -2372,6 +2372,127 @@ StoreFPR(fd, to, ConvertFmt(ValueFPR(fs, from), from, to))
 Ninguna
 \END
 
+INSTRUCTION_DIV_DOCUMENTATION.=<u>División</u>
+
+<b>Formato:</b>
+div rd, rs, rt
+
+|SPECIAL     rs      rt     rd     DIV      SOP32 |
+|000000                           00010    011010 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- GPR[rs] / GPR[rt]
+
+El valor del registro <i>rs</i> es dividido entre el valor del registro <i>rt</i> para producir un cociente de 32 bits.
+El cociente es asignado al registro <i>rd</i>.
+
+<b>Restricciones:</b>
+Si el divisor en el registro <i>rt</i> es cero, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operación:</b>
+
+GPR[rd] <- GPR[rs] / GPR[rt]
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+Ya que las instrucciones de división y módulo están definidas para no producir excepciones al dividir entre zero, el seguro crear código que comprueba divisiones entre zero después de la instrucción de módulo o división.
+\END
+
+INSTRUCTION_MOD_DOCUMENTATION.=<u>Módulo</u>
+
+<b>Formato:</b>
+mod rd, rs, rt
+
+|SPECIAL     rs      rt     rd     MOD      SOP32 |
+|000000                           00011    011010 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- GPR[rs] % GPR[rt]
+
+El valor del registro <i>rs</i> es dividido entre el valor del registro <i>rt</i> para producir un resto de 32 bits.
+El resto es asignado al registro <i>rd</i>.
+
+<b>Restricciones:</b>
+Si el divisor en el registro <i>rt</i> es cero, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operación:</b>
+
+GPR[rd] <- GPR[rs] % GPR[rt]
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+Ya que las instrucciones de división y módulo están definidas para no producir excepciones al dividir entre zero, el seguro crear código que comprueba divisiones entre zero después de la instrucción de módulo o división.
+\END
+
+INSTRUCTION_DIVU_DOCUMENTATION.=<u>División sin signo</u>
+
+<b>Formato:</b>
+divu rd, rs, rt
+
+|SPECIAL     rs      rt     rd     DIVU     SOP33 |
+|000000                           00010    011011 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- GPR[rs] / GPR[rt]
+
+El valor del registro <i>rs</i> es dividido entre el valor del registro <i>rt</i> para producir un cociente de 32 bits.
+El cociente es asignado al registro <i>rd</i>.
+
+<b>Restricciones:</b>
+Si el divisor en el registro <i>rt</i> es cero, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operación:</b>
+
+GPR[rd] <- unsigned_word(GPR[rs]) / unsigned_word(GPR[rt])
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+Ya que las instrucciones de división y módulo están definidas para no producir excepciones al dividir entre zero, el seguro crear código que comprueba divisiones entre zero después de la instrucción de módulo o división.
+\END
+
+INSTRUCTION_MODU_DOCUMENTATION.=<u>Módulo sin signo</u>
+
+<b>Formato:</b>
+modu rd, rs, rt
+
+|SPECIAL     rs      rt     rd     MODU     SOP33 |
+|000000                           00011    011011 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- GPR[rs] % GPR[rt]
+
+El valor del registro <i>rs</i> es dividido entre el valor del registro <i>rt</i> para producir un resto de 32 bits.
+El resto es asignado al registro <i>rd</i>.
+
+<b>Restricciones:</b>
+Si el divisor en el registro <i>rt</i> es cero, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operación:</b>
+
+GPR[rd] <- unsigned_word(GPR[rs]) % unsigned_word(GPR[rt])
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+Ya que las instrucciones de división y módulo están definidas para no producir excepciones al dividir entre zero, el seguro crear código que comprueba divisiones entre zero después de la instrucción de módulo o división.
+\END
+
+
 FLOAT_CONDITION_AF=Siempre falso
 FLOAT_CONDITION_UN=Sin orden
 FLOAT_CONDITION_EQ=Igual

@@ -483,7 +483,7 @@ INSTRUCTION_LB=Load byte
 INSTRUCTION_LW=Load word
 INSTRUCTION_MFC0=Move from coprocessor 0
 INSTRUCTION_MFC1=Move from coprocessor 1
-INSTRUCTION_MOD=Module
+INSTRUCTION_MOD=Modulo
 INSTRUCTION_MODU=Unsigned module
 INSTRUCTION_MFC0=Move to coprocessor 0
 INSTRUCTION_MFC1=Move to coprocessor 1
@@ -2377,6 +2377,126 @@ StoreFPR(fd, to, ConvertFmt(ValueFPR(fs, from), from, to))
 
 <b>Exceptions:</b>
 None
+\END
+
+INSTRUCTION_DIV_DOCUMENTATION.=<u>Division</u>
+
+<b>Format:</b>
+div rd, rs, rt
+
+|SPECIAL     rs      rt     rd     DIV      SOP32 |
+|000000                           00010    011010 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd] <- GPR[rs] / GPR[rt]
+
+The 32-bit word value in GPR <i>rs</i> is divided by the 32-bit value in GPR <i>rt</i> to produce a 32-bit quotient.
+The 32-bit quotient is placed into GPR <i>rd</i>.
+
+<b>Restrictions:</b>
+If the divisor in GPR <i>rt</i> is zero, the result value is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+
+GPR[rd] <- GPR[rs] / GPR[rt]
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+Because the divide and modulo instructions are define to not trap if dividing by zero, it is safe to emit code that checks for zero-divide after the divide or modulo instruction.
+\END
+
+INSTRUCTION_MOD_DOCUMENTATION.=<u>Modulo</u>
+
+<b>Format:</b>
+mod rd, rs, rt
+
+|SPECIAL     rs      rt     rd     MOD      SOP32 |
+|000000                           00011    011010 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd] <- GPR[rs] % GPR[rt]
+
+The 32-bit word value in GPR <i>rs</i> is divided by the 32-bit value in GPR <i>rt</i> to produce a 32-bit remainder.
+The 32-bit remainder is placed into GPR <i>rd</i>.
+
+<b>Restrictions:</b>
+If the divisor in GPR <i>rt</i> is zero, the result value is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+
+GPR[rd] <- GPR[rs] % GPR[rt]
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+Because the divide and modulo instructions are define to not trap if dividing by zero, it is safe to emit code that checks for zero-divide after the divide or modulo instruction.
+\END
+
+INSTRUCTION_DIVU_DOCUMENTATION.=<u>Unsigned division</u>
+
+<b>Format:</b>
+divu rd, rs, rt
+
+|SPECIAL     rs      rt     rd     DIVU     SOP33 |
+|000000                           00010    011011 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd] <- GPR[rs] / GPR[rt]
+
+The 32-bit word value in GPR <i>rs</i> is divided by the 32-bit value in GPR <i>rt</i> to produce a 32-bit quotient.
+The 32-bit quotient is placed into GPR <i>rd</i>.
+
+<b>Restrictions:</b>
+If the divisor in GPR <i>rt</i> is zero, the result value is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+
+GPR[rd] <- unsigned_word(GPR[rs]) / unsigned_word(GPR[rt])
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+Because the divide and modulo instructions are define to not trap if dividing by zero, it is safe to emit code that checks for zero-divide after the divide or modulo instruction.
+\END
+
+INSTRUCTION_MODU_DOCUMENTATION.=<u>Unsigned modulo</u>
+
+<b>Format:</b>
+modu rd, rs, rt
+
+|SPECIAL     rs      rt     rd     MODU     SOP33 |
+|000000                           00011    011011 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd] <- GPR[rs] % GPR[rt]
+
+The 32-bit word value in GPR <i>rs</i> is divided by the 32-bit value in GPR <i>rt</i> to produce a 32-bit remainder.
+The 32-bit remainder is placed into GPR <i>rd</i>.
+
+<b>Restrictions:</b>
+If the divisor in GPR <i>rt</i> is zero, the result value is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+
+GPR[rd] <- unsigned_word(GPR[rs]) % unsigned_word(GPR[rt])
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+Because the divide and modulo instructions are define to not trap if dividing by zero, it is safe to emit code that checks for zero-divide after the divide or modulo instruction.
 \END
 
 FLOAT_CONDITION_AF=Always false
