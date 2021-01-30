@@ -2492,6 +2492,60 @@ Ninguna
 Ya que las instrucciones de división y módulo están definidas para no producir excepciones al dividir entre zero, el seguro crear código que comprueba divisiones entre zero después de la instrucción de módulo o división.
 \END
 
+INSTRUCTION_DIV_D_DOCUMENTATION.=<u>División en coma flotante de precisión doble</u>
+
+<b>Formato:</b>
+div.d fd, fs, ft
+
+| COP1      fmt      0      fs      fd      DIV   |
+|010001    10001   00000                   000011 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+FPR[fd] <- FRP[fs] / FPR[ft]
+
+El valor en el registro <i>ft</i> es dividido entre el valor en el registro <i>fs</i>. El resultado es calculado en precisión infinita, usando el redondeo proporcionado por <i>Java</i>, y asignado al registro <i>fd</i>.
+Los operando y el resultado son valores en coma flotante de precisión doble.
+
+<b>Restricciones:</b>
+Los registros <i>fs</i>, <i>ft</i> y <i>fd</i> deben ser FPRs pares. Si los registros no son válidos, el resultado es <black>IMPREDECIBLE</black>.
+Los operandos deben ser valores en coma flotante de precisión doble. Si no los son, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operación:</b>
+fmt <- double
+StoreFPR(fd, fmt, ValueFPR(fs, fmt) /<sub>fmt</sub> ValueFPR(ft, fmt))
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_DIV_S_DOCUMENTATION.=<u>División en coma flotante</u>
+
+<b>Formato:</b>
+div.s fd, fs, ft
+
+| COP1      fmt      0      fs      fd      DIV   |
+|010001    10000   00000                   000011 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+FPR[fd] <- FRP[fs] / FPR[ft]
+
+El valor en el registro <i>ft</i> es dividido entre el valor en el registro <i>fs</i>. El resultado es calculado en precisión infinita, usando el redondeo proporcionado por <i>Java</i>, y asignado al registro <i>fd</i>.
+Los operando y el resultado son valores en coma flotante.
+
+<b>Restricciones:</b>
+Los operandos deben ser valores en coma flotante. Si no los son, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operación:</b>
+fmt <- float
+StoreFPR(fd, fmt, ValueFPR(fs, fmt) /<sub>fmt</sub> ValueFPR(ft, fmt))
+
+<b>Excepciones:</b>
+Ninguna
+\END
 
 FLOAT_CONDITION_AF=Siempre falso
 FLOAT_CONDITION_UN=Sin orden

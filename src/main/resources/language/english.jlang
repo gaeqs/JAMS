@@ -2499,6 +2499,61 @@ None
 Because the divide and modulo instructions are define to not trap if dividing by zero, it is safe to emit code that checks for zero-divide after the divide or modulo instruction.
 \END
 
+INSTRUCTION_DIV_D_DOCUMENTATION.=<u>Double precision floating point division</u>
+
+<b>Format:</b>
+div.d fd, fs, ft
+
+| COP1      fmt      0      fs      fd      DIV   |
+|010001    10001   00000                   000011 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+FPR[fd] <- FPR[fs] / FPR[ft]
+
+The value in FPR <i>ft</i> is divided by the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
+The operands and result are values in double precision floating point.
+
+<b>Restrictions:</b>
+The fields <i>fs</i>, <i>ft</i> and <i>fd</i> must be even FPRs. If the fields are not valid, the result is <black>UNPREDICTABLE</black>.
+Operands must be values in double precision floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+fmt <- double
+StoreFPR(fd, fmt, ValueFPR(fs, fmt) /<sub>fmt</sub> ValueFPR(ft, fmt))
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_DIV_S_DOCUMENTATION.=<u>Floating point division</u>
+
+<b>Format:</b>
+div.s fd, fs, ft
+
+| COP1      fmt      0      fs      fd      DIV   |
+|010001    10000   00000                   000011 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+FPR[fd] <- FPR[fs] / FPR[ft]
+
+The value in FPR <i>ft</i> is divided by the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
+The operands and result are values in floating point.
+
+<b>Restrictions:</b>
+Operands must be values in floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+fmt <- float
+StoreFPR(fd, fmt, ValueFPR(fs, fmt) /<sub>fmt</sub> ValueFPR(ft, fmt))
+
+<b>Exceptions:</b>
+None
+\END
+
 FLOAT_CONDITION_AF=Always false
 FLOAT_CONDITION_UN=Unordered
 FLOAT_CONDITION_EQ=Equal
