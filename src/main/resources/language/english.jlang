@@ -2554,6 +2554,76 @@ StoreFPR(fd, fmt, ValueFPR(fs, fmt) /<sub>fmt</sub> ValueFPR(ft, fmt))
 None
 \END
 
+INSTRUCTION_ERET_DOCUMENTATION.=<u>Exception return</u>
+
+<b>Format:</b>
+eret
+
+| COP0     CO    0     ERET   |
+|010000    1           011000 |
+|  6       1     19      6    |
+
+
+<b>Description:</b>
+This instruction clears the execution and all instruction hazards and returns to the interrupted instruction by an interruption, exception or error proccesing.
+<black>eret</black> doesn't execute the next instruction and doesn't have a delay slot.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Operation:</b>
+
+if Status<sub>ERL</sub> = 1 then
+    temp <- ErrorEPC
+    Status<sub>ERL</sub> <- 0
+else
+    temp <- EPC
+    Status<sub>EXL</sub> <- 0
+endif
+
+PC <- temp
+
+ClearHazards()
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_J_DOCUMENTATION.=<u>Jump</u>
+
+<b>Format:</b>
+j target
+
+|  J      index |
+|000010         |
+|  6       26   |
+
+
+<b>Description:</b>
+This is a PC-region branch (not PC-relative); the effective target address is the 256MB-aligned region.
+The low 28 bits of the target addres is the <i>index</i> field shifted left 2 bits. The remaining upper bits are the corresponding bits of the addres of the instruction in the delay slot (not the branch itself).
+Jump to the effective target address. If delay slots are enabled, this instruction also executes the instruction that follows the jump, in the branch delay slot, before executing the jump itself (or the following instruction if delay slots are disabled).
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Operation:</b>
+
+<black>I:</black>
+<black>I+1:</black>
+PC <- PC<sub>31..28</sub> || index || 00
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+Forming the branch target address by catenating PC and index bits rather than adding a signed offset to the PC is an advantage if all program code addresses fit into a 256MB region aligned on a 256MB boundary. It allows a branch from anywhere to anywhere in the region, an action not allowed by a signed relative offset.
+This definition creates the following boundary case: when the jump instruction is in the last word of a 256MB region, it can branch only to the following 256MB region containing the branch delay slot.
+The jump instruction has been deprecated in Release 6. Use <black>bc</black> instead.
+\END
+
 FLOAT_CONDITION_AF=Always false
 FLOAT_CONDITION_UN=Unordered
 FLOAT_CONDITION_EQ=Equal

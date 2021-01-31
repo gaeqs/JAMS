@@ -2547,6 +2547,76 @@ StoreFPR(fd, fmt, ValueFPR(fs, fmt) /<sub>fmt</sub> ValueFPR(ft, fmt))
 Ninguna
 \END
 
+INSTRUCTION_ERET_DOCUMENTATION.=<u>Retorno de la excepción</u>
+
+<b>Formato:</b>
+eret
+
+| COP0     CO    0     ERET   |
+|010000    1           011000 |
+|  6       1     19      6    |
+
+
+<b>Descipción:</b>
+Esta instrucción borra la ejecución y todos los riesgos de instrucciones y retorna a la instrucción interrumpida por una interrupción, excepción o error de procesamiento.
+<black>eret</black> no ejecuta la siguiente ejecución y no tiene ningún hueco de retardo.
+
+<b>Restricciones:</b>
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+<b>Operación:</b>
+
+if Status<sub>ERL</sub> = 1 then
+    temp <- ErrorEPC
+    Status<sub>ERL</sub> <- 0
+else
+    temp <- EPC
+    Status<sub>EXL</sub> <- 0
+endif
+
+PC <- temp
+
+ClearHazards()
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_J_DOCUMENTATION.=<u>Salto</u>
+
+<b>Formato:</b>
+j target
+
+|  J      index |
+|000010         |
+|  6       26   |
+
+
+<b>Descripción:</b>
+Esta es una ramificación relativa a la región del PC (no al PC en sí); el rango es una región alineada de 256MB.
+Los 28 bits menos significativos de la dirección efectiva están compuestos por la celda <i>index</i> desplazada dos posiciones a la izquierda. Los bits restantes corresponden a los bits de la dirección de la instruccion en el hueco de retardo (o la instrucción que le sigue si los huecos de retardo están deshabilitados).
+La instruccción salta a la dirección efectiva. Si los huecos de retardo están habilitados, esta instrucción también ejecuta la instrucción que le sigue antes de realizar el salto.
+
+<b>Restricciones:</b>
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+<b>Operación:</b>
+
+<black>I:</black>
+<black>I+1:</black>
+PC <- PC<sub>31..28</sub> || index || 00
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+El formar la dirección efectiva concatenando el PC y los bits de la celda <i>index</i> en vez de añadir in desplazamiento al PC es una ventaja si todo el código del programa entra en una región de 256MB alineada en un entorno de 256MB. Permite realizar una ramificación de y a cualquier instrucción de la región, acto que no es posible con un desplazamiento.
+Esta definición crea el siguiente caso límite: cuando la instrucción de salto está en la última palabra de la región de 256, ésta solo puede realizar un salto a los 256MB de la región que contiene el hueco de retardo.
+La instrucción jump ha sido marcada como obsoleta en la Release 6. Use <black>bc</black> en su lugar.
+\END
+
 FLOAT_CONDITION_AF=Siempre falso
 FLOAT_CONDITION_UN=Sin orden
 FLOAT_CONDITION_EQ=Igual
