@@ -2573,7 +2573,6 @@ This instruction clears the execution and all instruction hazards and returns to
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
-
 if Status<sub>ERL</sub> = 1 then
     temp <- ErrorEPC
     Status<sub>ERL</sub> <- 0
@@ -2603,14 +2602,13 @@ j target
 <b>Description:</b>
 This is a PC-region branch (not PC-relative); the effective target address is the 256MB-aligned region.
 The low 28 bits of the target addres is the <i>index</i> field shifted left 2 bits. The remaining upper bits are the corresponding bits of the addres of the instruction in the delay slot (not the branch itself).
-Jump to the effective target address. If delay slots are enabled, this instruction also executes the instruction that follows the jump, in the branch delay slot, before executing the jump itself (or the following instruction if delay slots are disabled).
+Jump to the effective target address. If delay slots are enabled, this instruction also executes the instruction that follows the jump, in the branch delay slot, before executing the jump itself.
 
 <b>Restrictions:</b>
 <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
-
 <black>I:</black>
 <black>I+1:</black>
 PC <- PC<sub>31..28</sub> || index || 00
@@ -2622,6 +2620,427 @@ None
 Forming the branch target address by catenating PC and index bits rather than adding a signed offset to the PC is an advantage if all program code addresses fit into a 256MB region aligned on a 256MB boundary. It allows a branch from anywhere to anywhere in the region, an action not allowed by a signed relative offset.
 This definition creates the following boundary case: when the jump instruction is in the last word of a 256MB region, it can branch only to the following 256MB region containing the branch delay slot.
 The jump instruction has been deprecated in Release 6. Use <black>bc</black> instead.
+\END
+
+INSTRUCTION_JAL_DOCUMENTATION.=<u>Jump and link</u>
+
+<b>Format:</b>
+jal target
+
+| JAL     index |
+|000011         |
+|  6       26   |
+
+
+<b>Description:</b>
+This is a PC-region branch (not PC-relative); the effective target address is the 256MB-aligned region.
+
+Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+The low 28 bits of the target addres is the <i>index</i> field shifted left 2 bits. The remaining upper bits are the corresponding bits of the addres of the instruction in the delay slot (not the branch itself).
+Jump to the effective target address. If delay slots are enabled, this instruction also executes the instruction that follows the jump, in the branch delay slot, before executing the jump itself.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Operation:</b>
+<black>I:</black>
+GPR[31] <- PC + 4
+<black>I+1:</black>
+PC <- PC<sub>31..28</sub> || index || 00
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+Forming the branch target address by catenating PC and index bits rather than adding a signed offset to the PC is an advantage if all program code addresses fit into a 256MB region aligned on a 256MB boundary. It allows a branch from anywhere to anywhere in the region, an action not allowed by a signed relative offset.
+This definition creates the following boundary case: when the jump instruction is in the last word of a 256MB region, it can branch only to the following 256MB region containing the branch delay slot.
+The jump and link instruction has been deprecated in Release 6. Use <black>balc</black> instead.
+\END
+
+INSTRUCTION_JALR_DOCUMENTATION.=<u>Jump and link register</u>
+
+<b>Format:</b>
+jalr rs (rd = 31 implied)
+jalr rd, rs
+
+|SPECIAL     rs      rt     rd      0       JALR  |
+|000000                                    001001 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd] <- return_addr, PC <- GPR[rs]
+
+Places the return address link in GPR <i>rd</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+
+Jump to the effective target addres in GPR <i>rs</i>. If the target address is not 4-bytes aligned, an Address Error exception will occur when the target address is fetched.
+If delay slots are enabled, this instruction also executes the instruction that follows the jump, in the branch delay slot, before executing the jump itself.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+Register <i>rs</i> and <i>rd</i> must not be equal, because such an instruction does not have the same effect when re-executed. The result of execution such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the delay slot.
+
+<b>Operation:</b>
+<black>I:</black>
+temp <- GPR[rs]
+GPR[31] <- PC + 4
+<black>I+1:</black>
+PC <- temp
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+This jump-and-link register instruction can select a register for the return link; other link instructions use GPR 31.
+The default register for GPR <i>rd</i>, if omitted in the assembly language instruction, is GPR 31.
+\END
+
+INSTRUCTION_LB_DOCUMENTATION.=<u>Load byte</u>
+
+<b>Format:</b>
+lb rt offset(base)
+
+|  LB      base     rt    offset |
+|100000                          |
+|  6        5       5       16   |
+
+
+<b>Description:</b>
+GPR[rt] <- memory[GPR[base] + offset]
+
+The contents of the 8-bit byte at the memory location by the effective address are fetched, sign-extended and placed in GPR <i>rt</i>.
+The 16-bit signed <i>offset</i> is added to the contents of GPR <i>base</i> to form the effective address.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+v_addr <- sign_extend(offset) + GPR[base]
+(p_addr, cca) <- AddressTranslation(v_addr, DATA, LOAD)
+mem_byte <- LoadMemory(CCA, BYTE, p_addr, v_addr, DATA)
+GPR[rt] <- sign_extend(mem_byte)
+
+<b>Exceptions:</b>
+Address Error
+\END
+
+INSTRUCTION_LW_DOCUMENTATION.=<u>Load word</u>
+
+<b>Format:</b>
+lw rt offset(base)
+
+|  LW      base     rt    offset |
+|100011                          |
+|  6        5       5       16   |
+
+
+<b>Description:</b>
+GPR[rt] <- memory[GPR[base] + offset]
+
+The contents of the 32-bit word at the memory location by the effective address are fetched, sign-extended and placed in GPR <i>rt</i>.
+The 16-bit signed <i>offset</i> is added to the contents of GPR <i>base</i> to form the effective address.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+v_addr <- sign_extend(offset) + GPR[base]
+(p_addr, cca) <- AddressTranslation(v_addr, DATA, LOAD)
+mem_word <- LoadMemory(CCA, WORD, p_addr, v_addr, DATA)
+GPR[rt] <- sign_extend(mem_word)
+
+<b>Exceptions:</b>
+Address Error
+\END
+
+INSTRUCTION_MFC0_DOCUMENTATION.=<u>Move from coprocessor 0</u>
+
+<b>Format:</b>
+mfc0 rt, rd (sel = 0 implied)
+mfc0 rt, rd, sel
+
+| COP0     MF     rt    rd    0    sel |
+|010000  00000                         |
+|  6       5      5     5     8     0  |
+
+
+<b>Description:</b>
+GPR[rt] <- CPR[0, rd, sel]
+
+The contents of the coprocessor 0 register specified by the combination of <i>rd</i> and <i>sel</i> are loaded into the general register <i>rt</i>.
+
+<b>Restrictions:</b>
+Reading a reserved register or a register that is not implemented for the current core configuration returns 0.
+
+<b>Operation:</b>
+if IsCoprocessorRegisterImplemented(0, rd, sel) then
+    GPR[rt] <- CPR[0, rd, sel]
+else
+    GPR[rt] <- 0
+endif
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_MFC1_DOCUMENTATION.=<u>Move from coprocessor 1</u>
+
+<b>Format:</b>
+mfc1 rt, rd
+
+| COP1     MF     rt    fs     0 |
+|010001  00000                   |
+|  6       5      5     5     11 |
+
+
+<b>Description:</b>
+GPR[rt] <- FPR[fs]
+
+The contents of the coprocessor 1 register <i>fs</i> are loaded into the general register <i>rt</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+GPR[rt] <- ValueFPR(fs, UNINTERPRETED_WORD)
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_MTC0_DOCUMENTATION.=<u>Move to coprocessor 0</u>
+
+<b>Format:</b>
+mtc0 rt, rd (sel = 0 implied)
+mtc0 rt, rd, sel
+
+| COP0     MT     rt    rd    0    sel |
+|010000  00100                         |
+|  6       5      5     5     8     0  |
+
+
+<b>Description:</b>
+CPR[0, rd, sel] <- GPR[rt]
+
+The contents of the general register <i>rt</i> are loaded into the coprocessor 0 register specified by the combination of <i>rd</i> and <i>sel</i>.
+
+<b>Restrictions:</b>
+Writes to a reserved register or a register that is not implemented for the current core configuration are ignored.
+
+<b>Operation:</b>
+if IsCoprocessorRegisterImplemented(0, rd, sel) then
+    CPR[0, rd, sel] <- GPR[rt]
+endif
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_MTC1_DOCUMENTATION.=<u>Move to coprocessor 1</u>
+
+<b>Format:</b>
+mtc1 rt, rd
+
+| COP1     MT     rt    fs     0 |
+|010001  00100                   |
+|  6       5      5     5     11 |
+
+
+<b>Description:</b>
+FPR[fs] <- GPR[rt]
+
+The contents of the general register <i>rt</i> are loaded into the coprocessor 1 register <i>fs</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+StoreFPR(fs, UNINTERPRETED_WORD, GPR[rt])
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_MUL_DOCUMENTATION.=<u>Multiplication and return low word</u>
+
+<b>Format:</b>
+mul rd, rs, rt
+
+|SPECIAL     rs      rt     rd     MUL      SOP30 |
+|000000                           00010    011000 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd] <- lo_word(GPR[rs] * GPR[rt])
+
+The 32-bit word value in GPR <i>rs</i> is multiplied by the 32-bit value in GPR <i>rt</i> to produce a 32-bit word contaning the low 32 bits of the result.
+The 32-bit word is placed into GPR <i>rd</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+
+GPR[rd] <- lo_word(GPR[rs] * GPR[rt])
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+The low half of the integer multiplication result is identical for signed and unsigned. Neverthless, there different instructions for unsigned and signed multiplication that produce the low half of the result.
+Implementations may choose to optimize a multiply that produces the low half followed by a multiply that produces the upper half. Programmers are recommended to use matching lower and upper half multiplications.
+\END
+
+INSTRUCTION_MUH_DOCUMENTATION.=<u>Multiplication and return high word</u>
+
+<b>Format:</b>
+muh rd, rs, rt
+
+|SPECIAL     rs      rt     rd     MUH      SOP30 |
+|000000                           00011    011000 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd] <- hi_word(GPR[rs] * GPR[rt])
+
+The 32-bit word value in GPR <i>rs</i> is multiplied by the 32-bit value in GPR <i>rt</i> to produce a 32-bit word contaning the upper 32 bits of the result.
+The 32-bit word is placed into GPR <i>rd</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+
+GPR[rd] <- hi_word(GPR[rs] * GPR[rt])
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+The low half of the integer multiplication result is identical for signed and unsigned. Neverthless, there different instructions for unsigned and signed multiplication that produce the low half of the result.
+Implementations may choose to optimize a multiply that produces the low half followed by a multiply that produces the upper half. Programmers are recommended to use matching lower and upper half multiplications.
+\END
+
+INSTRUCTION_MULU_DOCUMENTATION.=<u>Unsigned multiplication and return low word</u>
+
+<b>Format:</b>
+mulu rd, rs, rt
+
+|SPECIAL     rs      rt     rd     MULU     SOP31 |
+|000000                           00010    011001 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd] <- lo_word(GPR[rs] * GPR[rt])
+
+The 32-bit word value in GPR <i>rs</i> is multiplied by the 32-bit value in GPR <i>rt</i> to produce a 32-bit word contaning the low 32 bits of the result.
+The 32-bit word is placed into GPR <i>rd</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+
+GPR[rd] <- lo_word(unsigned_word(GPR[rs]) * unsigned_word(GPR[rt]))
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+The low half of the integer multiplication result is identical for signed and unsigned. Neverthless, there different instructions for unsigned and signed multiplication that produce the low half of the result.
+Implementations may choose to optimize a multiply that produces the low half followed by a multiply that produces the upper half. Programmers are recommended to use matching lower and upper half multiplications.
+\END
+
+INSTRUCTION_MUHU_DOCUMENTATION.=<u>Unsigned multiplication and return high word</u>
+
+<b>Format:</b>
+muhu rd, rs, rt
+
+|SPECIAL     rs      rt     rd     MUHU     SOP31 |
+|000000                           00011    011001 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd] <- hi_word(GPR[rs] * GPR[rt])
+
+The 32-bit word value in GPR <i>rs</i> is multiplied by the 32-bit value in GPR <i>rt</i> to produce a 32-bit word contaning the upper 32 bits of the result.
+The 32-bit word is placed into GPR <i>rd</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+
+GPR[rd] <- hi_word(unsigned_word(GPR[rs]) * unsigned_word(GPR[rt]))
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+The low half of the integer multiplication result is identical for signed and unsigned. Neverthless, there different instructions for unsigned and signed multiplication that produce the low half of the result.
+Implementations may choose to optimize a multiply that produces the low half followed by a multiply that produces the upper half. Programmers are recommended to use matching lower and upper half multiplications.
+\END
+
+INSTRUCTION_MUL_D_DOCUMENTATION.=<u>Double precision floating point multiplication</u>
+
+<b>Format:</b>
+mul.d fd, fs, ft
+
+| COP1      fmt      0      fs      fd      MUL   |
+|010001    10001   00000                   000010 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+FPR[fd] <- FPR[fs] * FPR[ft]
+
+The value in FPR <i>ft</i> is multiplied by the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
+The operands and result are values in double precision floating point.
+
+<b>Restrictions:</b>
+The fields <i>fs</i>, <i>ft</i> and <i>fd</i> must be even FPRs. If the fields are not valid, the result is <black>UNPREDICTABLE</black>.
+Operands must be values in double precision floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+fmt <- double
+StoreFPR(fd, fmt, ValueFPR(fs, fmt) *<sub>fmt</sub> ValueFPR(ft, fmt))
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_MUL_S_DOCUMENTATION.=<u>Floating point multiplication</u>
+
+<b>Format:</b>
+div.s fd, fs, ft
+
+| COP1      fmt      0      fs      fd      MUL   |
+|010001    10000   00000                   000010 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+FPR[fd] <- FPR[fs] * FPR[ft]
+
+The value in FPR <i>ft</i> is multiplied by the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
+The operands and result are values in floating point.
+
+<b>Restrictions:</b>
+Operands must be values in floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+fmt <- float
+StoreFPR(fd, fmt, ValueFPR(fs, fmt) *<sub>fmt</sub> ValueFPR(ft, fmt))
+
+<b>Exceptions:</b>
+None
 \END
 
 FLOAT_CONDITION_AF=Always false
