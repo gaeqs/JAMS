@@ -3043,6 +3043,58 @@ StoreFPR(fd, fmt, ValueFPR(fs, fmt) *<sub>fmt</sub> ValueFPR(ft, fmt))
 Ninguna
 \END
 
+INSTRUCTION_OR_DOCUMENTATION.=<u>Or</u>
+
+<b>Formato:</b>
+or rd, rs, rt
+
+|SPECIAL     rs      rt     rd      0        OR   |
+|000000                                    100101 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- GPR[rs] or GPR[rt]
+
+Realiza la operación lógica OR usando los valores dentro de los registros <i>rs</i> y <i>rt</i>.
+El resultado es asignado al registro <i>rd</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+GPR[rd] <- GPR[rs] or GPR[rt]
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_ORI_DOCUMENTATION.=<u>Or con inmediato</u>
+
+<b>Formato:</b>
+ori rt, rs, inmediato
+
+| ORI       rs     rt     inmediato |
+|001101                             |
+|  6        5      5         16     |
+
+
+<b>Descripción:</b>
+GPR[rt] <- GPR[rs] or zero_extend(inmediato)
+
+El <i>inmediato</i> de 16 bits es extendido a la izquierda con ceros y combinado con el valor del registro <i>rs</i> usando la operación lógica OR.
+El resultado es asignado al registro <i>rt</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+GPR[rt] <- GPR[rs] or zero_extend(immediate)
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
 FLOAT_CONDITION_AF=Siempre falso
 FLOAT_CONDITION_UN=Sin orden
 FLOAT_CONDITION_EQ=Igual

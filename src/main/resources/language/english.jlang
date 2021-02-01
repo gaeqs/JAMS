@@ -3043,6 +3043,58 @@ StoreFPR(fd, fmt, ValueFPR(fs, fmt) *<sub>fmt</sub> ValueFPR(ft, fmt))
 None
 \END
 
+INSTRUCTION_OR_DOCUMENTATION.=<u>Or</u>
+
+<b>Format:</b>
+or rd, rs, rt
+
+|SPECIAL     rs      rt     rd      0        OR   |
+|000000                                    100101 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd] <- GPR[rs] or GPR[rt]
+
+Performs a bitwise logical OR using the values inside GPR <i>rs</i> and GPR <i>rt</i>.
+The result is placed into GPR <i>rd</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+GPR[rd] <- GPR[rs] or GPR[rt]
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_ORI_DOCUMENTATION.=<u>Immediate or</u>
+
+<b>Format:</b>
+ori rt, rs, immediate
+
+| ORI       rs     rt     immediate |
+|001101                             |
+|  6        5      5         16     |
+
+
+<b>Description:</b>
+GPR[rt] <- GPR[rs] or zero_extend(immediate)
+
+The 16-bit <i>immediate</i> is zero-extended to the left and combined with the value of GPR <i>rs</i> in a bitwise logical OR operation.
+The result is placed into GPR <i>rt</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+GPR[rt] <- GPR[rs] or zero_extend(immediate)
+
+<b>Exceptions:</b>
+None
+\END
+
 FLOAT_CONDITION_AF=Always false
 FLOAT_CONDITION_UN=Unordered
 FLOAT_CONDITION_EQ=Equal
