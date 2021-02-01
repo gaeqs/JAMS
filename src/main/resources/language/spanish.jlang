@@ -3095,6 +3095,37 @@ GPR[rt] <- GPR[rs] or zero_extend(immediate)
 Ninguna
 \END
 
+INSTRUCTION_SB_DOCUMENTATION.=<u>Guardar byte
+
+<b>Formato:</b>
+sb rt desplazamiento(base)
+
+|  SB      base     rt    desplazamiento |
+|101000                                  |
+|  6        5       5           16       |
+
+
+<b>Descripción:</b>
+memory[GPR[base] + offset] <- GPR[rt]
+
+Los 8 bits menos significantes del registro <i>rt</i> son guardados en la dirección de memoria efectiva.
+El contenido de la celda <i>desplazamiento</i> es sumado al contenido del registro <i>base</i> para formar la dirección efectiva.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+v_addr <- sign_extend(offset) + GPR[base]
+(p_addr, cca) <- AddressTranslation(v_addr, DATA, LOAD)
+
+byte_sel <- v_addr<sub>1..0</sub> xor BigEndianCPU<sub>2</sub>
+data_byte <- GPR[rt]<sub>31 - 8 * byte_sel .. 0</sub> || 0<sub>8 * bytesel</sub>
+StoreMemory (CCA, BYTE, data_byte, p_addr, v_addr, DATA)
+
+<b>Excepciones:</b>
+Address Error
+\END
+
 FLOAT_CONDITION_AF=Siempre falso
 FLOAT_CONDITION_UN=Sin orden
 FLOAT_CONDITION_EQ=Igual

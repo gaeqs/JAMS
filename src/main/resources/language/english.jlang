@@ -3095,6 +3095,37 @@ GPR[rt] <- GPR[rs] or zero_extend(immediate)
 None
 \END
 
+INSTRUCTION_SB_DOCUMENTATION.=<u>Save byte</u>
+
+<b>Format:</b>
+sb rt offset(base)
+
+|  SB      base     rt    offset |
+|101000                          |
+|  6        5       5       16   |
+
+
+<b>Description:</b>
+memory[GPR[base] + offset] <- GPR[rt]
+
+The least-significant 8-bit byte of GPR <i>rt</i> is stored in memory at the location specified by the effective address.
+The 16-bit signed <i>offset</i> is added to the contents of GPR <i>base</i> to form the effective address.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+v_addr <- sign_extend(offset) + GPR[base]
+(p_addr, cca) <- AddressTranslation(v_addr, DATA, LOAD)
+
+byte_sel <- v_addr<sub>1..0</sub> xor BigEndianCPU<sub>2</sub>
+data_byte <- GPR[rt]<sub>31 - 8 * byte_sel .. 0</sub> || 0<sub>8 * bytesel</sub>
+StoreMemory (CCA, BYTE, data_byte, p_addr, v_addr, DATA)
+
+<b>Exceptions:</b>
+Address Error
+\END
+
 FLOAT_CONDITION_AF=Always false
 FLOAT_CONDITION_UN=Unordered
 FLOAT_CONDITION_EQ=Equal
