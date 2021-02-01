@@ -3126,6 +3126,60 @@ StoreMemory (CCA, BYTE, data_byte, p_addr, v_addr, DATA)
 Address Error
 \END
 
+INSTRUCTION_SLL_DOCUMENTATION.=<u>Shift word left logical</u>
+
+<b>Format:</b>
+sll rd, rt, sa
+
+|SPECIAL     0      rt     rd      sa      SLL   |
+|000000                                   000000 |
+|  6         5      5      5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd] <- GPR[rt] << sa
+
+The contents of GPR <i>rt</i> are shifted left, inserting zeros into the emptied bits. The result is placed in GPR <i>rd</i>. The bit-shift amount is specified by <i>sa</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+GPR[rd] <- GPR[rt]<sub>31-sa..0</sub> || 0<sub>sa</sub>
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+<black>sll $zero, $zero, 0</black>, expressed as <black>NOP</black>, is the assembly idiom used to denote no operation.
+\END
+
+INSTRUCTION_SLLV_DOCUMENTATION.=<u>Shift word left logical variable</u>
+
+<b>Format:</b>
+sllv rd, rt, rs
+
+|SPECIAL     rs     rt     rd     0      SLLV  |
+|000000                                 000100 |
+|  6         5      5      5      5       6    |
+
+
+<b>Description:</b>
+GPR[rd] <- GPR[rt] << GPR[rs]
+
+The contents of GPR <i>rt</i> are shifted left, inserting zeros into the emptied bits. The result is placed in GPR <i>rd</i>. The bit-shift amount is specified by the low-order 5 bits of GPR <i>rs</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+sa <- GPR[rs]<sub>4..0</sub>
+GPR[rd] <- GPR[rt]<sub>31-sa..0</sub> || 0<sub>sa</sub>
+
+<b>Exceptions:</b>
+None
+\END
+
 FLOAT_CONDITION_AF=Always false
 FLOAT_CONDITION_UN=Unordered
 FLOAT_CONDITION_EQ=Equal

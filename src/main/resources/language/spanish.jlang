@@ -2259,11 +2259,11 @@ Las condiciones vinculadas a cada bit son las siguientes:
 Si el bit 4 está activado el resultado es negado.
 Si el bit 3 está activado y alguno de los operandos es <black>NaN</black>, una excepción Floating Point Exception será lanzada.
 
-<b>Restrictions:</b>
+<b>Restricciones:</b>
 Los registros <i>fs</i>, <i>ft</i> y <i>fd</i> deben ser FPRs pares. Si los registros no son válidos, el resultado es <black>IMPREDECIBLE</black>.
 Los operandos deben ser valores en coma flotante de precisión doble. Si no los son, el resultado es <black>IMPREDECIBLE</black>.
 
-<b>Operation:</b>
+<b>Operación:</b>
 fmt <- double
 fsv <- ValueFPR(fs, fmt)
 ftv <- ValueFPR(ft, fmt)
@@ -2284,7 +2284,7 @@ endif
 condition <- cond<sub>4</sub> xor ((cond<sub>2</sub> and less) or (cond<sub>1</sub> and equal) or (cond<sub>0</sub> and unordered))
 StoreFPR(fd, fmt, extend_bit.fmt(condition))
 
-<b>Exceptions:</b>
+<b>Excepciones:</b>
 Floating Point Exception
 \END
 
@@ -2315,10 +2315,10 @@ Las condiciones vinculadas a cada bit son las siguientes:
 Si el bit 4 está activado el resultado es negado.
 Si el bit 3 está activado y alguno de los operandos es <black>NaN</black>, una excepción Floating Point Exception será lanzada.
 
-<b>Restrictions:</b>
+<b>Restricciones:</b>
 Los operandos deben ser valores en coma flotante de precisión doble. Si no los son, el resultado es <black>IMPREDECIBLE</black>.
 
-<b>Operation:</b>
+<b>Operación:</b>
 fmt <- float
 fsv <- ValueFPR(fs, fmt)
 ftv <- ValueFPR(ft, fmt)
@@ -2339,7 +2339,7 @@ endif
 condition <- cond<sub>4</sub> xor ((cond<sub>2</sub> and less) or (cond<sub>1</sub> and equal) or (cond<sub>0</sub> and unordered))
 StoreFPR(fd, fmt, extend_bit.fmt(condition))
 
-<b>Exceptions:</b>
+<b>Excepciones:</b>
 Floating Point Exception
 \END
 
@@ -3124,6 +3124,60 @@ StoreMemory (CCA, BYTE, data_byte, p_addr, v_addr, DATA)
 
 <b>Excepciones:</b>
 Address Error
+\END
+
+INSTRUCTION_SLL_DOCUMENTATION.=<u>Shift word left logical</u>
+
+<b>Formato:</b>
+sll rd, rt, sa
+
+|SPECIAL     0      rt     rd      sa      SLL   |
+|000000                                   000000 |
+|  6         5      5      5       5        6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- GPR[rt] << sa
+
+El contenido del registro <i>rt</i> es desplazado a la izquierda, rellenando con ceros los bits vacíos. El resultado es asignado al registro <i>rd</i>. El número de bits desplazado viene especificado por <i>sa</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+GPR[rd] <- GPR[rt]<sub>31-sa..0</sub> || 0<sub>sa</sub>
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Programming Notes:</b>
+<black>sll $zero, $zero, 0</black>, expresado como <black>NOP</black>, es el alias usado para expresar una .
+\END
+
+INSTRUCTION_SLLV_DOCUMENTATION.=<u>Shift word left logical variable</u>
+
+<b>Formato:</b>
+sllv rd, rt, rs
+
+|SPECIAL     rs     rt     rd     0      SLLV  |
+|000000                                 000100 |
+|  6         5      5      5      5       6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- GPR[rt] << GPR[rs]
+
+El contenido del registro <i>rt</i> es desplazado a la izquierda, rellenando con ceros los bits vacíos. El resultado es asignado al registro <i>rd</i>. El número de bits desplazado viene especificado por los 5 bits menos significantes del registro <i>sa</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+sa <- GPR[rs]<sub>4..0</sub>
+GPR[rd] <- GPR[rt]<sub>31-sa..0</sub> || 0<sub>sa</sub>
+
+<b>Excepciones:</b>
+Ninguna
 \END
 
 FLOAT_CONDITION_AF=Siempre falso
