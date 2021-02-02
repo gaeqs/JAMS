@@ -614,7 +614,7 @@ temp <- (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (GPR[rt]<sub>31</sub
 if temp<sub>32</sub> != temp<sub>31</sub> then
     SignalException(IntegerOverflow)
 else
-    GPR[rd] <- temp
+    GPR[rd] <- temp<sub>31..0</sub>
 endif
 
 <b>Excepciones:</b>
@@ -629,7 +629,7 @@ INSTRUCTION_ADD_D_DOCUMENTATION.=<u>Suma en coma flotante de precisión doble</u
 <b>Formato:</b>
 add.d fd, fs, ft
 
-| COP1      fmt      0      fs      fd      ABS   |
+| COP1      fmt      0      fs      fd      ADD   |
 |010001    10001   00000                   000000 |
 |  6         5       5      5       5        6    |
 
@@ -657,7 +657,7 @@ INSTRUCTION_ADD_S_DOCUMENTATION.=<u>Suma en coma flotante</u>
 <b>Formato:</b>
 add.s fd, fs, ft
 
-| COP1      fmt      0      fs      fd      ABS   |
+| COP1      fmt      0      fs      fd      ADD   |
 |010001    10000   00000                   000000 |
 |  6         5       5      5       5        6    |
 
@@ -743,7 +743,7 @@ INSTRUCTION_ADDU_DOCUMENTATION.=<u>Suma sin signo</u>
 <b>Formato:</b>
 addu rd, rs, rt
 
-|SPECIAL     rs      rt     rd      0       ADD   |
+|SPECIAL     rs      rt     rd      0       ADDU  |
 |000000                                    100001 |
 |  6         5       5      5       5        6    |
 
@@ -3095,7 +3095,7 @@ GPR[rt] <- GPR[rs] or zero_extend(immediate)
 Ninguna
 \END
 
-INSTRUCTION_SB_DOCUMENTATION.=<u>Guardar byte
+INSTRUCTION_SB_DOCUMENTATION.=<u>Guardar byte</u>
 
 <b>Formato:</b>
 sb rt desplazamiento(base)
@@ -3106,7 +3106,7 @@ sb rt desplazamiento(base)
 
 
 <b>Descripción:</b>
-memory[GPR[base] + offset] <- GPR[rt]
+memory[GPR[base] + desplazamiento] <- GPR[rt]
 
 Los 8 bits menos significantes del registro <i>rt</i> son guardados en la dirección de memoria efectiva.
 El contenido de la celda <i>desplazamiento</i> es sumado al contenido del registro <i>base</i> para formar la dirección efectiva.
@@ -3115,7 +3115,7 @@ El contenido de la celda <i>desplazamiento</i> es sumado al contenido del regist
 Ninguna
 
 <b>Operación:</b>
-v_addr <- sign_extend(offset) + GPR[base]
+v_addr <- sign_extend(desplazamiento) + GPR[base]
 (p_addr, cca) <- AddressTranslation(v_addr, DATA, LOAD)
 
 byte_sel <- v_addr<sub>1..0</sub> xor BigEndianCPU<sub>2</sub>
@@ -3126,7 +3126,7 @@ StoreMemory (CCA, BYTE, data_byte, p_addr, v_addr, DATA)
 Address Error
 \END
 
-INSTRUCTION_SLL_DOCUMENTATION.=<u>Shift word left logical</u>
+INSTRUCTION_SLL_DOCUMENTATION.=<u>Desplazar a la izquierda de manera lógica</u>
 
 <b>Formato:</b>
 sll rd, rt, sa
@@ -3151,10 +3151,10 @@ GPR[rd] <- GPR[rt]<sub>31-sa..0</sub> || 0<sub>sa</sub>
 Ninguna
 
 <b>Programming Notes:</b>
-<black>sll $zero, $zero, 0</black>, expresado como <black>NOP</black>, es el alias usado para expresar una .
+<black>sll $zero, $zero, 0</black>, expresado como <black>NOP</black>, es el alias usado para expresar una operación nula.
 \END
 
-INSTRUCTION_SLLV_DOCUMENTATION.=<u>Shift word left logical variable</u>
+INSTRUCTION_SLLV_DOCUMENTATION.=<u>Desplazar a la izquierda de manera lógica dependiendo de una variable</u>
 
 <b>Formato:</b>
 sllv rd, rt, rs
@@ -3178,6 +3178,354 @@ GPR[rd] <- GPR[rt]<sub>31-sa..0</sub> || 0<sub>sa</sub>
 
 <b>Excepciones:</b>
 Ninguna
+\END
+
+INSTRUCTION_SLT_DOCUMENTATION.=<u>Asignar si menor que valor</u>
+
+<b>Formato:</b>
+slt rd, rt, rs
+
+|SPECIAL     rs     rt     rd     0      SLT   |
+|000000                                 101010 |
+|  6         5      5      5      5       6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- (GPR[rs] < GPR[rt])
+
+Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros con signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+Si el contenido de <i>rs</i> es menor que el contenido de <i>rt</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+if GPR[rs] < GPR[rt] then
+    GPR[rd] <- 0<sub>31..0</sub> || 1
+else
+    GPR[rd] <- 0
+endif
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SLTI_DOCUMENTATION.=<u>Asignar si menor que inmediato</u>
+
+<b>Formato:</b>
+slti rt, rs, inmediato
+
+| SLTI       rs     rt     inmediato |
+|001010                              |
+|  6         5      5         16     |
+
+
+<b>Descripción:</b>
+GPR[rd] <- (GPR[rs] < sign_extend(inmediato))
+
+Compara el contenido del registro <i>rs</i> y la celda <i>inmediato</i> como enteros con signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+Si el contenido de <i>rs</i> es menor que el contenido de <i>inmediato/i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+if GPR[rs] < sign_extend(immediate) then
+    GPR[rd] <- 0<sub>31..0</sub> || 1
+else
+    GPR[rd] <- 0
+endif
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SLTIU_DOCUMENTATION.=<u>Asignar si menor que inmediato sin signo</u>
+
+<b>Formato:</b>
+sltiu rt, rs, inmediato
+
+| SLTIU      rs     rt     inmediato |
+|001011                              |
+|  6         5      5         16     |
+
+
+<b>Descripción:</b>
+GPR[rd] <- (GPR[rs] < sign_extend(inmediato))
+
+Compara el contenido del registro <i>rs</i> y la celda <i>inmediato</i> como enteros sin signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+Si el contenido de <i>rs</i> es menor que el contenido de <i>inmediato/i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+if (0 || GPR[rs]) < (0 || sign_extend(inmediato)) then
+    GPR[rd] <- 0<sub>31..0</sub> || 1
+else
+    GPR[rd] <- 0
+endif
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SLTU_DOCUMENTATION.=<u>Asignar si menor que valor sin signo</u>
+
+<b>Formato:</b>
+sltu rd, rt, rs
+
+|SPECIAL     rs     rt     rd     0      SLTU  |
+|000000                                 101011 |
+|  6         5      5      5      5       6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- (GPR[rs] < GPR[rt])
+
+Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros sin signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+Si el contenido de <i>rs</i> es menor que el contenido de <i>rt</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+if (0 || GPR[rs]) < (0 || GPR[rt]) then
+    GPR[rd] <- 0<sub>31..0</sub> || 1
+else
+    GPR[rd] <- 0
+endif
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SRL_DOCUMENTATION.=<u>Desplazar a la derecha de manera lógica</u>
+
+<b>Formato:</b>
+srl rd, rt, sa
+
+|SPECIAL    0    R    rt    rd     sa     SLL   |
+|000000          0                       000000 |
+|  6        4    1    5     5      5       6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- GPR[rt] << sa
+
+El contenido del registro <i>rt</i> es desplazado a la derecha, rellenando con ceros los bits vacíos. El resultado es asignado al registro <i>rd</i>. El número de bits desplazado viene especificado por <i>sa</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+GPR[rd] <- 0<sub>sa</sub> || GPR[rt]<sub>31..sa</sub>
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SRLV_DOCUMENTATION.=<u>Desplazar a la derecha de manera lógica dependiendo de una variable</u>
+
+<b>Formato:</b>
+srlv rd, rt, rs
+
+|SPECIAL     rs     rt     rd     0      SRLV  |
+|000000                                 000110 |
+|  6         5      5      5      5       6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- GPR[rt] >> GPR[rs]
+
+El contenido del registro <i>rt</i> es desplazado a la derecha, rellenando con ceros los bits vacíos. El resultado es asignado al registro <i>rd</i>. El número de bits desplazado viene especificado por los 5 bits menos significantes del registro <i>sa</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+sa <- GPR[rs]<sub>4..0</sub>
+GPR[rd] <- 0<sub>sa</sub> || GPR[rt]<sub>31..sa</sub>
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SUB_DOCUMENTATION.=<u>Resta</u>
+
+<b>Formato:</b>
+sub rd, rs, rt
+
+|SPECIAL     rs      rt     rd      0       SUB   |
+|000000                                    100010 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- GPR[rs] - GPR[rt]
+
+La palabra de 32 bits del registro <i>rt</i> es restada a la palabra de 32 bits del registro <i>rs</i> para producir un resultado de 32 bits.
+ - Si la resta resulta en un desbordamiento aritmético en complemento a 2 de 32 bits, el registro destino no es modificado y la excepción <black>Integer Overflow</black> es lanzada.
+ - Si la resta no produce un desbordamiento, el resultado es insertado en el registro GPR <i>rd</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+temp <- (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) - (GPR[rt]<sub>31</sub> || GPR[rt]<sub>31..0</sub>)
+if temp<sub>32</sub> != temp<sub>31</sub> then
+    SignalException(IntegerOverflow)
+else
+    GPR[rd] <- temp<sub>31..0</sub>
+endif
+
+<b>Excepciones:</b>
+Integer Overflow
+
+<b>Notas del programador:</b>
+<black>subu</black> ejecuta la misma operación aritmética pero no lanza una excepción al desbordar.
+\END
+
+INSTRUCTION_SUB_D_DOCUMENTATION.=<u>Resta en coma flotante de precisión doble</u>
+
+<b>Formato:</b>
+sub.d fd, fs, ft
+
+| COP1      fmt      0      fs      fd      SUB   |
+|010001    10001   00000                   000001 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+FPR[fd] <- FRP[fs] - FPR[ft]
+
+El valor en el registro <i>ft</i> es restado al valor en el registro <i>fs</i>. El resultado es calculado en precisión infinita, usando el redondeo proporcionado por <i>Java</i>, y asignado al registro <i>fd</i>.
+Los operando y el resultado son valores en coma flotante de precisión doble.
+
+<b>Restricciones:</b>
+Los registros <i>fs</i>, <i>ft</i> y <i>fd</i> deben ser FPRs pares. Si los registros no son válidos, el resultado es <black>IMPREDECIBLE</black>.
+El operando debe ser un valor en coma flotante de precisión doble. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operación:</b>
+fmt <- double
+StoreFPR(fd, fmt, ValueFPR(fs, fmt) -<sub>fmt</sub> ValueFPR(ft, fmt))
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SUB_S_DOCUMENTATION.=<u>Resta en coma flotante</u>
+
+<b>Formato:</b>
+sub.s fd, fs, ft
+
+| COP1      fmt      0      fs      fd      SUB   |
+|010001    10000   00000                   000001 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+FPR[fd] <- FRP[fs] - FPR[ft]
+
+El valor en el registro <i>ft</i> es restado al valor en el registro <i>fs</i>. El resultado es calculado en precisión infinita, usando el redondeo proporcionado por <i>Java</i>, y asignado al registro <i>fd</i>.
+Los operando y el resultado son valores en coma flotante.
+
+<b>Restricciones:</b>
+El operando debe ser un valor en coma flotante. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Operación:</b>
+fmt <- float
+StoreFPR(fd, fmt, ValueFPR(fs, fmt) -<sub>fmt</sub> ValueFPR(ft, fmt))
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SUBU_DOCUMENTATION.=<u>Resta sin signo</u>
+
+<b>Formato:</b>
+subu rd, rs, rt
+
+|SPECIAL     rs      rt     rd      0       SUBU  |
+|000000                                    100011 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- GPR[rs] - GPR[rt]
+
+La palabra de 32 bits del registro <i>rt</i> es restada a la palabra de 32 bits del registro <i>rs</i> para producir un resultado de 32 bits.
+El resultado es asignado al registro <i>rd</i>.
+Ninguna excepción de desbordamiento ocurre en ninguna de las circunstancias.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+temp <- GPR[rs] - GPR[rt]
+GPR[rd] <- temp
+
+<b>Excepciones:</b>
+Ninguna
+
+<b>Notas del programador:</b>
+El término <i>sin signo</i> en esta instrucción es parcialmente incorrecto; esta instrucción ejecuta una operación aritmética de 32 bits que no lanza una excepción al desbordar. Esta instrucción es apropiada para aritmética sin signo, o entornos aritméticos que ignoran el desbordamiento, como puede ser la aritmética del lenguaje C.
+\END
+
+INSTRUCTION_SW_DOCUMENTATION.=<u>Guardar palabra</u>
+
+<b>Formato:</b>
+sw rt desplazamiento(base)
+
+|  SW      base     rt    desplazamiento |
+|101011                                  |
+|  6        5       5           16       |
+
+
+<b>Descripción:</b>
+memory[GPR[base] + desplazamiento] <- GPR[rt]
+
+La palabra del registro <i>rt</i> es guardada en la dirección de memoria efectiva.
+El contenido de la celda <i>desplazamiento</i> es sumado al contenido del registro <i>base</i> para formar la dirección efectiva.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+v_addr <- sign_extend(desplazamiento) + GPR[base]
+(p_addr, cca) <- AddressTranslation(v_addr, DATA, LOAD)
+
+word <- GPR[rt]
+StoreMemory (CCA, WORD, word, p_addr, v_addr, DATA)
+
+<b>Excepciones:</b>
+Address Error
+\END
+
+INSTRUCTION_SYSCALL_DOCUMENTATION.=<u>Llamada al sistema</u>
+
+<b>Formato:</b>
+syscall
+
+|SPECIAL     0     SYSCALL |
+| 00000            001100  |
+|   6        20      6     |
+
+
+<b>Descripción:</b>
+<b>Descripción:</b>
+Llamada al sistema
+
+Una excepción System Call es lanzada, transfiriendo el control al manejador de excepciones de manera inmediata e incondicional.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+SignalException(SystemCall)
+
+<b>Excepciones:</b>
+System Call
 \END
 
 FLOAT_CONDITION_AF=Siempre falso

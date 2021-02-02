@@ -614,7 +614,7 @@ temp <- (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (GPR[rt]<sub>31</sub
 if temp<sub>32</sub> != temp<sub>31</sub> then
     SignalException(IntegerOverflow)
 else
-    GPR[rd] <- temp
+    GPR[rd] <- temp<sub>31..0</sub>
 endif
 
 <b>Exceptions:</b>
@@ -629,7 +629,7 @@ INSTRUCTION_ADD_D_DOCUMENTATION.=<u>Double precision floating point addition</u>
 <b>Format:</b>
 add.d fd, fs, ft
 
-| COP1      fmt      0      fs      fd      ABS   |
+| COP1      fmt      0      fs      fd      ADD   |
 |010001    10001   00000                   000000 |
 |  6         5       5      5       5        6    |
 
@@ -657,7 +657,7 @@ INSTRUCTION_ADD_S_DOCUMENTATION.=<u>Floating point addition</u>
 <b>Format:</b>
 add.s fd, fs, ft
 
-| COP1      fmt      0      fs      fd      ABS   |
+| COP1      fmt      0      fs      fd      ADD   |
 |010001    10000   00000                   000000 |
 |  6         5       5      5       5        6    |
 
@@ -743,7 +743,7 @@ INSTRUCTION_ADDU_DOCUMENTATION.=<u>Unsigned addition</u>
 <b>Format:</b>
 addu rd, rs, rt
 
-|SPECIAL     rs      rt     rd      0       ADD   |
+|SPECIAL     rs      rt     rd      0       ADDU  |
 |000000                                    100001 |
 |  6         5       5      5       5        6    |
 
@@ -3178,6 +3178,353 @@ GPR[rd] <- GPR[rt]<sub>31-sa..0</sub> || 0<sub>sa</sub>
 
 <b>Exceptions:</b>
 None
+\END
+
+INSTRUCTION_SLT_DOCUMENTATION.=<u>Set on less than</u>
+
+<b>Format:</b>
+slt rd, rt, rs
+
+|SPECIAL     rs     rt     rd     0      SLT   |
+|000000                                 101010 |
+|  6         5      5      5      5       6    |
+
+
+<b>Description:</b>
+GPR[rd] <- (GPR[rs] < GPR[rt])
+
+Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
+If GPR <i>rs</i> is less than GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if GPR[rs] < GPR[rt] then
+    GPR[rd] <- 0<sub>31..0</sub> || 1
+else
+    GPR[rd] <- 0
+endif
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SLTI_DOCUMENTATION.=<u>Set on less than immediate</u>
+
+<b>Format:</b>
+slti rt, rs, immediate
+
+| SLTI       rs     rt     immediate |
+|001010                              |
+|  6         5      5         16     |
+
+
+<b>Description:</b>
+GPR[rd] <- (GPR[rs] < sign_extend(immediate))
+
+Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
+If GPR <i>rs</i> is less than <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if GPR[rs] < sign_extend(immediate) then
+    GPR[rd] <- 0<sub>31..0</sub> || 1
+else
+    GPR[rd] <- 0
+endif
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SLTIU_DOCUMENTATION.=<u>Set on less than immediate unsigned</u>
+
+<b>Format:</b>
+sltiu rt, rs, immediate
+
+| SLTIU      rs     rt     immediate |
+|001011                              |
+|  6         5      5         16     |
+
+
+<b>Description:</b>
+GPR[rd] <- (GPR[rs] < sign_extend(immediate))
+
+Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
+If GPR <i>rs</i> is less than <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if (0 || GPR[rs]) < (0 || sign_extend(immediate)) then
+    GPR[rd] <- 0<sub>31..0</sub> || 1
+else
+    GPR[rd] <- 0
+endif
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SLTU_DOCUMENTATION.=<u>Set on less than unsigned</u>
+
+<b>Format:</b>
+sltu rd, rt, rs
+
+|SPECIAL     rs     rt     rd     0      SLTU  |
+|000000                                 101011 |
+|  6         5      5      5      5       6    |
+
+
+<b>Description:</b>
+GPR[rd] <- (GPR[rs] < GPR[rt])
+
+Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
+If GPR <i>rs</i> is less than GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if (0 || GPR[rs]) < (0 || GPR[rt]) then
+    GPR[rd] <- 0<sub>31..0</sub> || 1
+else
+    GPR[rd] <- 0
+endif
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SRL_DOCUMENTATION.=<u>Shift word right logical</u>
+
+<b>Format:</b>
+srl rd, rt, sa
+
+|SPECIAL    0    R    rt    rd     sa     SRL   |
+|000000          0                       000010 |
+|  6        4    1    5     5      5       6    |
+
+
+<b>Description:</b>
+GPR[rd] <- GPR[rt] >> sa
+
+The contents of GPR <i>rt</i> are shifted right, inserting zeros into the emptied bits. The result is placed in GPR <i>rd</i>. The bit-shift amount is specified by <i>sa</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+GPR[rd] <- 0<sub>sa</sub> || GPR[rt]<sub>31..sa</sub>
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SRLV_DOCUMENTATION.=<u>Shift word right logical variable</u>
+
+<b>Format:</b>
+srlv rd, rt, rs
+
+|SPECIAL     rs     rt     rd     0      SRLV  |
+|000000                                 000110 |
+|  6         5      5      5      5       6    |
+
+
+<b>Description:</b>
+GPR[rd] <- GPR[rt] >> GPR[rs]
+
+The contents of GPR <i>rt</i> are shifted right, inserting zeros into the emptied bits. The result is placed in GPR <i>rd</i>. The bit-shift amount is specified by the low-order 5 bits of GPR <i>rs</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+sa <- GPR[rs]<sub>4..0</sub>
+GPR[rd] <- 0<sub>sa</sub> || GPR[rt]<sub>31..sa</sub>
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SUB_DOCUMENTATION.=<u>Subtraction</u>
+
+<b>Format:</b>
+sub rd, rs, rt
+
+|SPECIAL     rs      rt     rd      0       SUB   |
+|000000                                    100010 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd] <- GPR[rs] - GPR[rt]
+
+The 32-bit word value in GPR <i>rt</i> is subtracted to the 32-bit value in GPR <i>rs</i> to produce a 32-bit result.
+ - If the subtraction results in 32-bit 2's complement arithmetic overflow, the destination register is not modified and an <black>Integer Overflow</black> exception occurs.
+ - If the subtraction does not overflow, the 32-bit result is placed intoto GPR <i>rd</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+temp <- (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) - (GPR[rt]<sub>31</sub> || GPR[rt]<sub>31..0</sub>)
+if temp<sub>32</sub> != temp<sub>31</sub> then
+    SignalException(IntegerOverflow)
+else
+    GPR[rd] <- temp<sub>31..0</sub>
+endif
+
+<b>Exceptions:</b>
+Integer Overflow
+
+<b>Programming Notes:</b>
+<black>subu</black> performs the same arithmetic operation but does not trap on overflow.
+\END
+
+INSTRUCTION_SUB_D_DOCUMENTATION.=<u>Double precision floating point subtraction</u>
+
+<b>Format:</b>
+sub.d fd, fs, ft
+
+| COP1      fmt      0      fs      fd      SUB   |
+|010001    10001   00000                   000001 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+FPR[fd] <- FPR[fs] - FPR[ft]
+
+The value in FPR <i>ft</i> is subtracted to the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
+The operands and result are values in double precision floating point.
+
+<b>Restrictions:</b>
+The fields <i>fs</i>, <i>ft</i> and <i>fd</i> must be even FPRs. If the fields are not valid, the result is <black>UNPREDICTABLE</black>.
+The operand must be a value in double precision floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+fmt <- double
+StoreFPR(fd, fmt, ValueFPR(fs, fmt) -<sub>fmt</sub> ValueFPR(ft, fmt))
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SUB_S_DOCUMENTATION.=<u>Floating point subtraction</u>
+
+<b>Format:</b>
+sub.s fd, fs, ft
+
+| COP1      fmt      0      fs      fd      SUB   |
+|010001    10000   00000                   000001 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+FPR[fd] <- FPR[fs] - FPR[ft]
+
+The value in FPR <i>ft</i> is subtracted to the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
+The operands and result are values in floating point.
+
+<b>Restrictions:</b>
+The operand must be a value in floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+<b>Operation:</b>
+fmt <- float
+StoreFPR(fd, fmt, ValueFPR(fs, fmt) -<sub>fmt</sub> ValueFPR(ft, fmt))
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SUBU_DOCUMENTATION.=<u>Unsigned subtraction</u>
+
+<b>Format:</b>
+subu rd, rs, rt
+
+|SPECIAL     rs      rt     rd      0       SUBU  |
+|000000                                    100011 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd] <- GPR[rs] - GPR[rt]
+
+The 32-bit word value in GPR <i>rt</i> is subtracted to the 32-bit value in GPR <i>rs</i> to produce a 32-bit result.
+The 32-bit result is placed into GPR <i>rd</i>.
+No <black>Integer Overflow</black> exception occurs under any circumstances.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+temp <- GPR[rs] - GPR[rt]
+GPR[rd] <- temp
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+The term <i>unsigned</i> in the instruction name is a misnomer; this operation is a 32-bit modulo arithmetic that does not trap on overflow. This instruction is appropiate for unsigned arithmetic, such as address arithmetic, or integer arithmetic environments that ignore overflow, such as the C language arithmetic.
+\END
+
+INSTRUCTION_SW_DOCUMENTATION.=<u>Save word</u>
+
+<b>Format:</b>
+sw rt offset(base)
+
+|  SW      base     rt    offset |
+|101011                          |
+|  6        5       5       16   |
+
+
+<b>Description:</b>
+memory[GPR[base] + offset] <- GPR[rt]
+
+The word of GPR <i>rt</i> is stored in memory at the location specified by the effective address.
+The 16-bit signed <i>offset</i> is added to the contents of GPR <i>base</i> to form the effective address.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+v_addr <- sign_extend(offset) + GPR[base]
+(p_addr, cca) <- AddressTranslation(v_addr, DATA, LOAD)
+
+word <- GPR[rt]
+StoreMemory (CCA, WORD, word, p_addr, v_addr, DATA)
+
+<b>Exceptions:</b>
+Address Error
+\END
+
+INSTRUCTION_SYSCALL_DOCUMENTATION.=<u>System call</u>
+
+<b>Format:</b>
+syscall
+
+|SPECIAL     0     SYSCALL |
+| 00000            001100  |
+|   6        20      6     |
+
+
+<b>Description:</b>
+System call
+
+A System Call excepcion occurs, immediately and unconditionally transfering control to the exception handler.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+SignalException(SystemCall)
+
+<b>Exceptions:</b>
+System Call
 \END
 
 FLOAT_CONDITION_AF=Always false
