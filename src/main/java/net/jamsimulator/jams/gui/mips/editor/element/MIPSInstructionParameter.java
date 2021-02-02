@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.mips.editor.element;
 
-import net.jamsimulator.jams.gui.mips.editor.MIPSEditorError;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 import net.jamsimulator.jams.project.mips.MIPSProject;
@@ -38,6 +37,7 @@ public class MIPSInstructionParameter {
 	private final int start;
 	private final String text;
 	private final List<MIPSInstructionParameterPart> parts;
+	private boolean valid;
 
 	public MIPSInstructionParameter(MIPSLine line, MIPSFileElements elements, int start, String text, int index, ParameterType hint) {
 		this.line = line;
@@ -66,6 +66,10 @@ public class MIPSInstructionParameter {
 		return parts;
 	}
 
+	public boolean isValid() {
+		return valid;
+	}
+
 	public Optional<String> getLabelParameterPart() {
 		for (MIPSInstructionParameterPart part : parts) {
 			if (part.getType() == MIPSInstructionParameterPart.InstructionParameterPartType.LABEL
@@ -78,7 +82,7 @@ public class MIPSInstructionParameter {
 
 	public List<ParameterType> refreshMetadata(RegistersBuilder builder) {
 		List<ParameterType> types = ParameterType.getCompatibleParameterTypes(text, builder);
-		if (types.isEmpty()) parts.forEach(target -> target.errors.add(MIPSEditorError.INVALID_INSTRUCTION_PARAMETER));
+		valid = !types.isEmpty();
 		return types;
 	}
 

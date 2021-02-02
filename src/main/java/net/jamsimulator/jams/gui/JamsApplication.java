@@ -46,6 +46,7 @@ import net.jamsimulator.jams.gui.project.ProjectListTabPane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.start.StartWindow;
 import net.jamsimulator.jams.manager.ActionManager;
+import net.jamsimulator.jams.manager.MIPSEditorErrorBuilderManager;
 import net.jamsimulator.jams.manager.ThemeManager;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -184,6 +185,16 @@ public class JamsApplication extends Application {
 	public static ActionManager getActionManager() {
 		return ActionManager.INSTANCE;
 	}
+
+	/**
+	 * Returns the {@link ActionManager}.
+	 *
+	 * @return the {@link ActionManager}.
+	 */
+	public static MIPSEditorErrorBuilderManager getMIPSEditorErrorBuilderManager() {
+		return MIPSEditorErrorBuilderManager.INSTANCE;
+	}
+
 
 	/**
 	 * Adds a listener that will be invoked when the main stage is closed.

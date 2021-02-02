@@ -334,14 +334,14 @@ CONFIG_SIMULATION_MIPS_REGION_FLOW=Flujo
 CONFIG_SIMULATION_MIPS_FLOW_MAX_ITEMS=Entradas máximas:
 CONFIG_SIMULATION_MIPS_FLOW_MAX_ITEMS_TOOLTIP=La cantidad de entradas que el panel de flujo puede representar al mismo tiempo.
 
-EDITOR_MIPS_ERROR_ILLEGAL_LABEL=El nombre de la etiqueta '{TEXT}' es inválido.
-EDITOR_MIPS_ERROR_LABEL_NOT_FOUND=No se ha podido encontrar la etiqueta '{TEXT}'.
-EDITOR_MIPS_ERROR_DUPLICATE_LABEL=La etiqueta '{TEXT}' está duplicada.
-EDITOR_MIPS_ERROR_DUPLICATE_GLOBAL_LABEL=La etiqueta '{TEXT}' está duplicada en el archivo '{FILE}'.
-EDITOR_MIPS_ERROR_DIRECTIVE_NOT_FOUND=No se ha podido encontrar la directiva '{TEXT}'.
-EDITOR_MIPS_ERROR_INVALID_DIRECTIVE_PARAMETER=El parámetro '{TEXT} tiene un formato incorrecto.
-EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=No se ha podido encontrar la instrucción '{TEXT}' con los parámetros indicados.
-EDITOR_MIPS_ERROR_INVALID_INSTRUCTION_PARAMETER=El parámetro '{TEXT} tiene un formato incorrecto.
+EDITOR_MIPS_ERROR_ILLEGAL_LABEL=El nombre de la etiqueta '{NAME}' es inválido.
+EDITOR_MIPS_ERROR_LABEL_NOT_FOUND=No se ha podido encontrar la etiqueta '{NAME}'.
+EDITOR_MIPS_ERROR_DUPLICATE_LABEL=La etiqueta '{NAME}' está duplicada.
+EDITOR_MIPS_ERROR_DUPLICATE_GLOBAL_LABEL=La etiqueta '{NAME}' está duplicada en el archivo '{FILE}'.
+EDITOR_MIPS_ERROR_DIRECTIVE_NOT_FOUND=No se ha podido encontrar la directiva '{NAME}'.
+EDITOR_MIPS_ERROR_INVALID_DIRECTIVE_PARAMETER=El parámetro '{NAME} tiene un formato incorrecto.
+EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=No se ha podido encontrar la instrucción '{NAME}' con los parámetros indicados.
+EDITOR_MIPS_ERROR_INVALID_INSTRUCTION_PARAMETER=El parámetro '{NAME} tiene un formato incorrecto.
 
 ACTION_REGION_GENERAL=General
 ACTION_GENERAL_CREATE_PROJECT=Crear proyecto

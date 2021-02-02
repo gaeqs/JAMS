@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.mips.editor.element;
 
-import net.jamsimulator.jams.gui.mips.editor.MIPSEditorError;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveEqv;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveGlobl;
@@ -86,11 +85,6 @@ public class MIPSDirective extends MIPSCodeElement {
 
 	@Override
 	public void refreshMetadata(MIPSFileElements elements) {
-		errors.clear();
-
-		if (directive == null) {
-			errors.add(MIPSEditorError.DIRECTIVE_NOT_FOUND);
-		}
 	}
 
 

@@ -335,13 +335,13 @@ CONFIG_SIMULATION_MIPS_FLOW_MAX_ITEMS=Maximum entries:
 CONFIG_SIMULATION_MIPS_FLOW_MAX_ITEMS_TOOLTIP=The maximum amount of entries the flow pane can hold at the same time.
 
 EDITOR_MIPS_ERROR_ILLEGAL_LABEL=The label '{TEXT}' has an invalid name.
-EDITOR_MIPS_ERROR_LABEL_NOT_FOUND=Couldn't found label '{TEXT}'.
-EDITOR_MIPS_ERROR_DUPLICATE_LABEL=Found duplicated label '{TEXT}'.
-EDITOR_MIPS_ERROR_DUPLICATE_GLOBAL_LABEL=Found duplicated global label '{TEXT}' on file '{FILE}'.
-EDITOR_MIPS_ERROR_DIRECTIVE_NOT_FOUND=Couldn't found directive '{TEXT}'.
-EDITOR_MIPS_ERROR_INVALID_DIRECTIVE_PARAMETER=The parameter '{TEXT}' is invalid.
-EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=Couldn't found instruction '{TEXT}' with the given parameters.
-EDITOR_MIPS_ERROR_INVALID_INSTRUCTION_PARAMETER=The parameter '{TEXT}' is invalid.
+EDITOR_MIPS_ERROR_LABEL_NOT_FOUND=Couldn't found label '{NAME}'.
+EDITOR_MIPS_ERROR_DUPLICATE_LABEL=Found duplicated label '{NAME}'.
+EDITOR_MIPS_ERROR_DUPLICATE_GLOBAL_LABEL=Found duplicated global label '{NAME}' on file '{FILE}'.
+EDITOR_MIPS_ERROR_DIRECTIVE_NOT_FOUND=Couldn't found directive '{NAME}'.
+EDITOR_MIPS_ERROR_INVALID_DIRECTIVE_PARAMETER=The parameter '{NAME}' is invalid.
+EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=Couldn't found instruction '{NAME}' with the given parameters.
+EDITOR_MIPS_ERROR_INVALID_INSTRUCTION_PARAMETER=The parameter '{NAME}' is invalid.
 
 ACTION_REGION_GENERAL=General
 ACTION_GENERAL_CREATE_PROJECT=Create project

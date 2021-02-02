@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.mips.editor.element;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.mips.editor.MIPSEditorError;
+import net.jamsimulator.jams.gui.mips.error.MIPSEditorError;
 import net.jamsimulator.jams.language.Language;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
@@ -143,12 +143,7 @@ public abstract class MIPSCodeElement {
      * @param popup the {@link VBox} inside the popup.
      */
     public void populatePopupWithErrors(VBox popup) {
-        Language language = Jams.getLanguageManager().getSelected();
-
-        errors.forEach(target -> {
-            String message = language.getOrDefault("EDITOR_MIPS_ERROR_" + target);
-            popup.getChildren().add(new Label(message.replace("{TEXT}", getSimpleText())));
-        });
+        errors.forEach(target -> popup.getChildren().add(new Label(target.getParsedDescription())));
     }
 
     /**
@@ -157,12 +152,7 @@ public abstract class MIPSCodeElement {
      * @param textArea the {@link StyleClassedTextArea}.
      */
     public void populatePopupWithErrors(StyleClassedTextArea textArea) {
-        Language language = Jams.getLanguageManager().getSelected();
-
-        errors.forEach(target -> {
-            String message = language.getOrDefault("EDITOR_MIPS_ERROR_" + target);
-            textArea.append(message + "\n", "");
-        });
+        errors.forEach(target -> textArea.append(target.getParsedDescription() + "\n", ""));
     }
 
     /**

@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.mips.editor.element;
 
-import net.jamsimulator.jams.gui.mips.editor.MIPSEditorError;
 import net.jamsimulator.jams.mips.parameter.ParameterPartType;
 import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MIPSProject;
@@ -79,24 +78,18 @@ public class MIPSInstructionParameterPart extends MIPSCodeElement {
 
 	@Override
 	public void refreshMetadata(MIPSFileElements elements) {
-		errors.clear();
 		if (type != InstructionParameterPartType.LABEL && type != InstructionParameterPartType.GLOBAL_LABEL) return;
 
-		MIPSFilesToAssemble filesToAssemble = elements.getFilesToAssemble().orElse(null);
+		var filesToAssemble = elements.getFilesToAssemble().orElse(null);
 
-		boolean containsLocal = elements.getLabels().contains(text);
 		boolean isGlobal;
 		if (filesToAssemble == null) {
-			isGlobal = containsLocal && elements.getSetAsGlobalLabel().contains(text);
+			isGlobal = elements.getLabels().contains(text) && elements.getSetAsGlobalLabel().contains(text);
 		} else {
 			isGlobal = filesToAssemble.getGlobalLabels().contains(text);
 		}
 
 		type = isGlobal ? InstructionParameterPartType.GLOBAL_LABEL : InstructionParameterPartType.LABEL;
-
-		if (!containsLocal && !isGlobal) {
-			errors.add(MIPSEditorError.LABEL_NOT_FOUND);
-		}
 	}
 
 	public enum InstructionParameterPartType {

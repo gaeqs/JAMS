@@ -22,50 +22,48 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.editor.element;
+package net.jamsimulator.jams.gui.mips.error.event;
 
-import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
-import net.jamsimulator.jams.utils.LabelUtils;
+import net.jamsimulator.jams.event.Cancellable;
+import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.gui.mips.error.MIPSEditorErrorBuilder;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+public class MIPSEditorBuilderUnregisterEvent extends Event {
 
-public class MIPSLabel extends MIPSCodeElement {
+    protected MIPSEditorErrorBuilder<?> builder;
 
-	private boolean global;
+    MIPSEditorBuilderUnregisterEvent(MIPSEditorErrorBuilder<?> builder) {
+        this.builder = builder;
+    }
 
-	public MIPSLabel(MIPSLine line, int startIndex, int endIndex, String text) {
-		super(line, startIndex, endIndex, text);
-		global = false;
-		registerLabel(getLabel(), false);
-	}
+    public MIPSEditorErrorBuilder<?> getBuilder() {
+        return builder;
+    }
 
+    public static class Before extends MIPSEditorBuilderUnregisterEvent implements Cancellable {
 
-	@Override
-	public String getSimpleText() {
-		return text;
-	}
+        private boolean cancelled;
 
-	public String getLabel() {
-		return text.substring(0, text.length() - 1).trim();
-	}
+        public Before(MIPSEditorErrorBuilder<?> builder) {
+            super(builder);
+        }
 
-	public boolean isGlobal() {
-		return global;
-	}
+        @Override
+        public boolean isCancelled() {
+            return cancelled;
+        }
 
-	@Override
-	public List<String> getStyles() {
-		String style = global ? "mips-global-label" : "mips-label";
-		if (hasErrors()) return Arrays.asList(style, "mips-error");
-		return Collections.singletonList(style);
-	}
+        @Override
+        public void setCancelled(boolean cancelled) {
+            this.cancelled = cancelled;
+        }
+    }
 
-	@Override
-	public void refreshMetadata(MIPSFileElements elements) {
-		String label = getLabel();
-		global = elements.getSetAsGlobalLabel().contains(label);
-	}
+    public static class After extends MIPSEditorBuilderUnregisterEvent {
 
+        public After(MIPSEditorErrorBuilder<?> builder) {
+            super(builder);
+        }
+
+    }
 }

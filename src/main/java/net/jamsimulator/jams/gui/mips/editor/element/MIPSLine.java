@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.mips.editor.element;
 
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.utils.LabelUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.CodeArea;
@@ -241,6 +242,12 @@ public class MIPSLine {
 	 */
 	public void refreshMetadata(MIPSFileElements elements) {
 		getSortedElements().forEach(target -> target.refreshMetadata(elements));
+
+		var errorManager = JamsApplication.getMIPSEditorErrorBuilderManager();
+		getSortedElements().forEach(target -> {
+			target.errors.clear();
+			errorManager.getErrors(target, elements, target.errors);
+		});
 	}
 
 	/**

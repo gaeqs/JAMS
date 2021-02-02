@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.mips.editor.element;
 
-import net.jamsimulator.jams.gui.mips.editor.MIPSEditorError;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
@@ -118,12 +117,7 @@ public class MIPSInstruction extends MIPSCodeElement {
 
     @Override
     public void refreshMetadata(MIPSFileElements elements) {
-        errors.clear();
-
-        if (instruction == null || instruction.isEmpty()) {
-            errors.add(MIPSEditorError.INSTRUCTION_NOT_FOUND);
-            return;
-        }
+        if (instruction == null || instruction.isEmpty()) return;
 
         MIPSProject project = elements.getProject().orElse(null);
         InstructionSet set = project.getData().getInstructionSet();
@@ -136,9 +130,6 @@ public class MIPSInstruction extends MIPSCodeElement {
         }
 
         mostCompatibleInstruction = set.getBestCompatibleInstruction(this.instruction, types).orElse(null);
-        if (mostCompatibleInstruction == null) {
-            errors.add(MIPSEditorError.INSTRUCTION_NOT_FOUND);
-        }
     }
 
     private void parseText(MIPSFileElements elements) {
