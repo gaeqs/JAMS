@@ -945,10 +945,10 @@ b desplazamiento
 
 <b>Descripción:</b>
 Inserta la dirección de retorno en el registro <i>31</i>. Ésta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
-Un desplazamiento de 18 bits (la <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -978,7 +978,7 @@ balc desplazamiento
 
 <b>Descripción:</b>
 Inserta la dirección de retorno en el registro <i>31</i>. Ésta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
-Un desplazamiento de 28 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 28 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Esta instrución ejecuta una ramificación compacta. Las ramificaciones compactas no tienen huecos de retardo.
 
 <b>Restricciones:</b>
@@ -1004,7 +1004,7 @@ balc desplazamiento
 
 
 <b>Descripción:</b>
-Un desplazamiento de 28 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 28 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Esta instrución ejecuta una ramificación compacta. Las ramificaciones compactas no tienen huecos de retardo.
 
 <b>Restricciones:</b>
@@ -1035,10 +1035,10 @@ La condición es verdadera si y solo si el bit 0 del registro <i>ft</i> es cero.
 Si la condición es falsa, la ramificación no es tomada y la ejecución continua con la siguiente instrucción.
 
 If the condition is false, the branch is not taken and execution continues with the next instruction.
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1072,10 +1072,10 @@ La condición es verdadera si y solo si el bit 0 del registro <i>ft</i> no es ce
 Si la condición es falsa, la ramificación no es tomada y la ejecución continua con la siguiente instrucción.
 
 If the condition is false, the branch is not taken and execution continues with the next instruction.
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1105,11 +1105,11 @@ beq rs, rt, desplazamiento
 <b>Descripción:</b>
 Ramificación si GPR[rs] = GPR[rt]
 
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido de los registros <i>rt</i> y <i>rs</i> son iguales, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1142,11 +1142,11 @@ bgez rs, offset
 <b>Descripción:</b>
 Ramificación compacta si GPR[rs] >= 0.
 
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> es mayor o igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1179,11 +1179,11 @@ blezalc rt, desplazamiento
 <b>Descripción:</b>
 Enlace y ramificación compacta si GPR[rt] <= 0.
 Inserta la dirección de retorno en el registro <i>31</i>. Ésta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rt</i> es menor o igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 El registro <i>31</i> no debe ser usado por el registro <i>rs</i>, ya que las instrucciones no tendrán el mismo efecto al volver a ser ejecutatas. El resultado de ejecutar dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al gestor de excepciones returnar la ejecución volviendo a ejecutar la ramificación cuando una excepción es lanzada en el hueco de retardo.
 
@@ -1217,11 +1217,11 @@ bgezalc rt, desplazamiento
 <b>Descripción:</b>
 Enlace y ramificación compacta si GPR[rt] >= 0.
 Inserta la dirección de retorno en el registro <i>31</i>. Ésta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rt</i> es mayor o igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 El registro <i>31</i> no debe ser usado por el registro <i>rs</i>, ya que las instrucciones no tendrán el mismo efecto al volver a ser ejecutatas. El resultado de ejecutar dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al gestor de excepciones returnar la ejecución volviendo a ejecutar la ramificación cuando una excepción es lanzada en el hueco de retardo.
 
@@ -1255,11 +1255,11 @@ bgtzalc rt, desplazamiento
 <b>Descripción:</b>
 Enlace y ramificación compacta si GPR[rt] > 0.
 Inserta la dirección de retorno en el registro <i>31</i>. Ésta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rt</i> es mayor que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 El registro <i>31</i> no debe ser usado por el registro <i>rs</i>, ya que las instrucciones no tendrán el mismo efecto al volver a ser ejecutatas. El resultado de ejecutar dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al gestor de excepciones returnar la ejecución volviendo a ejecutar la ramificación cuando una excepción es lanzada en el hueco de retardo.
 
@@ -1293,11 +1293,11 @@ bltzalc rt, desplazamiento
 <b>Descripción:</b>
 Enlace y ramificación compacta si GPR[rt] < 0.
 Inserta la dirección de retorno en el registro <i>31</i>. Ésta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rt</i> es menor que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 El registro <i>31</i> no debe ser usado por el registro <i>rs</i>, ya que las instrucciones no tendrán el mismo efecto al volver a ser ejecutatas. El resultado de ejecutar dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al gestor de excepciones returnar la ejecución volviendo a ejecutar la ramificación cuando una excepción es lanzada en el hueco de retardo.
 
@@ -1331,11 +1331,11 @@ beqzalc rt, desplazamiento
 <b>Descripción:</b>
 Enlace y ramificación compacta si GPR[rt] = 0.
 Inserta la dirección de retorno en el registro <i>31</i>. Ésta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rt</i> es igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 El registro <i>31</i> no debe ser usado por el registro <i>rs</i>, ya que las instrucciones no tendrán el mismo efecto al volver a ser ejecutatas. El resultado de ejecutar dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al gestor de excepciones returnar la ejecución volviendo a ejecutar la ramificación cuando una excepción es lanzada en el hueco de retardo.
 
@@ -1370,11 +1370,11 @@ bnezalc rt, desplazamiento
 <b>Descripción:</b>
 Enlace y ramificación compacta si GPR[rt] != 0.
 Inserta la dirección de retorno en el registro <i>31</i>. Ésta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rt</i> no es igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 El registro <i>31</i> no debe ser usado por el registro <i>rs</i>, ya que las instrucciones no tendrán el mismo efecto al volver a ser ejecutatas. El resultado de ejecutar dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al gestor de excepciones returnar la ejecución volviendo a ejecutar la ramificación cuando una excepción es lanzada en el hueco de retardo.
 
@@ -1408,11 +1408,11 @@ blezc rt, offset
 <b>Descripción:</b>
 Enlace compacto si GPR[rt] <= 0.
 
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rt</i> es menor o igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1439,11 +1439,11 @@ bgezc rt, offset
 <b>Descripción:</b>
 Ramificación compacta si GPR[rt] >= 0.
 
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rt</i> es mayor o igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1470,11 +1470,11 @@ bgtzc rt, offset
 <b>Descripción:</b>
 Ramificación compacta si GPR[rt] > 0.
 
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rt</i> es mayor que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1502,11 +1502,11 @@ bltzc rt, offset
 <b>Descripción:</b>
 Ramificación compacta si GPR[rt] < 0.
 
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rt</i> es menor que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1533,11 +1533,11 @@ bgec rs, rt, offset
 <b>Descripción:</b>
 Ramificación compacta si GPR[rs] >= GPR[rt].
 
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> es mayor o igual que el contenido del registro <i>rt</i>, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1564,11 +1564,11 @@ bltc rs, rt, offset
 <b>Descripción:</b>
 Ramificación compacta si GPR[rs] < GPR[rt].
 
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> es menor que el contenido del registro <i>rt</i>, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1595,11 +1595,11 @@ bgeuc rs, rt, offset
 <b>Descripción:</b>
 Ramificación compacta si GPR[rs] >= GPR[rt].
 
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> es mayor o igual que el contenido del registro <i>rt</i>, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1626,11 +1626,11 @@ bltuc rs, rt, offset
 <b>Descripción:</b>
 Ramificación compacta si GPR[rs] < GPR[rt].
 
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> es menor que el contenido del registro <i>rt</i>, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1657,11 +1657,11 @@ beqc rs, rt, offset
 <b>Descripción:</b>
 Ramificación compacta si GPR[rs] = GPR[rt].
 
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> es igual que el contenido del registro <i>rt</i>, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1688,11 +1688,11 @@ bnec rs, rt, offset
 <b>Descripción:</b>
 Ramificación compacta si GPR[rs] != GPR[rt].
 
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> no es igual que el contenido del registro <i>rt</i>, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1719,11 +1719,11 @@ beqzc rs, offset
 <b>Descripción:</b>
 Ramificación compacta si GPR[rs] == 0.
 
-Un desplazamiento de 23 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 23 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> es igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1750,11 +1750,11 @@ bnezc rs, offset
 <b>Descripción:</b>
 Ramificación compacta si GPR[rs] != 0.
 
-Un desplazamiento de 23 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 23 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> no es igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1781,11 +1781,11 @@ bgtz rs, offset
 <b>Descripción:</b>
 Ramificación compacta si GPR[rs] > 0.
 
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> es mayor que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1858,11 +1858,11 @@ bgtz rs, offset
 <b>Descripción:</b>
 Ramificación compacta si GPR[rs] <= 0.
 
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> es menor o igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1894,11 +1894,11 @@ bltz rs, offset
 <b>Descripción:</b>
 Ramificación compacta si GPR[rs] < 0.
 
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rs</i> es menor cero, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1930,11 +1930,11 @@ bne rs, rt, desplazamiento
 <b>Descripción:</b>
 Ramificación si GPR[rs] != GPR[rt]
 
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido de los registros <i>rt</i> y <i>rs</i> no son iguales, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1966,11 +1966,11 @@ bovc rs, rt, offset
 <b>Descripción:</b>
 Ramificación compacta si GPR[rs] + GPR[rt] desborda
 
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rt</i> mas el contenido del registro <i>rs</i> desborda, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -1999,11 +1999,11 @@ bnvc rs, rt, offset
 <b>Descripción:</b>
 Ramificación compacta si GPR[rs] + GPR[rt] no desborda
 
-Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción parra formar una dirección efectiva.
+Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
 Si el contenido del registro <i>rt</i> mas el contenido del registro <i>rs</i> no desborda, la instrucción ejecuta la ramificación a la dirección efectiva.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -2562,7 +2562,7 @@ Esta instrucción borra la ejecución y todos los riesgos de instrucciones y ret
 <black>eret</black> no ejecuta la siguiente ejecución y no tiene ningún hueco de retardo.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -2599,7 +2599,7 @@ Los 28 bits menos significativos de la dirección efectiva están compuestos por
 La instruccción salta a la dirección efectiva. Si los huecos de retardo están habilitados, esta instrucción también ejecuta la instrucción que le sigue antes de realizar el salto.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -2635,7 +2635,7 @@ Los 28 bits menos significativos de la dirección efectiva están compuestos por
 La instruccción salta a la dirección efectiva. Si los huecos de retardo están habilitados, esta instrucción también ejecuta la instrucción que le sigue antes de realizar el salto.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 <b>Operación:</b>
@@ -2674,7 +2674,7 @@ Los 28 bits menos significativos de la dirección efectiva están compuestos por
 La instruccción salta a la dirección efectiva. Si los huecos de retardo están habilitados, esta instrucción también ejecuta la instrucción que le sigue antes de realizar el salto.
 
 <b>Restricciones:</b>
-Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+Las <i>Instrucciones de control de tranferencia (CTIs)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTIs incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
 Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
 
 Los registros <i>rs</i> y <i>rd</i> no deben ser los mismos, ya que una instrucción como ésta no tendría el mismo efecto cuando se volviera a ejecutar. El resultado de la ejecución de dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al manejador de excepciones retomar la ejecución volviendo a ejecutar la ramificación cuando una excepción ocurre en el hueco de retardo.

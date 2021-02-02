@@ -29,6 +29,7 @@ import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.mips.editor.MIPSEditorError;
 import net.jamsimulator.jams.language.Language;
+import org.fxmisc.richtext.StyleClassedTextArea;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,165 +40,179 @@ import java.util.Objects;
  */
 public abstract class MIPSCodeElement {
 
-	protected final MIPSLine line;
+    protected final MIPSLine line;
 
-	protected int startIndex;
-	protected int endIndex;
-	protected final String text;
+    protected int startIndex;
+    protected int endIndex;
+    protected final String text;
 
-	protected List<MIPSEditorError> errors;
+    protected List<MIPSEditorError> errors;
 
-	/**
-	 * Creates the element.
-	 * <p>
-	 * The start and end indices must be file absolute indices.
-	 *
-	 * @param startIndex the start index.
-	 * @param endIndex   the end index.
-	 * @param text       the text.
-	 */
-	public MIPSCodeElement(MIPSLine line, int startIndex, int endIndex, String text) {
-		if (startIndex > endIndex) {
-			throw new IllegalArgumentException("Start index (" + startIndex + ") is bigger than the end index (" + endIndex + ").");
-		}
-		this.line = line;
-		this.startIndex = startIndex;
-		this.endIndex = endIndex;
-		this.text = text;
-		this.errors = new ArrayList<>();
-	}
+    /**
+     * Creates the element.
+     * <p>
+     * The start and end indices must be file absolute indices.
+     *
+     * @param startIndex the start index.
+     * @param endIndex   the end index.
+     * @param text       the text.
+     */
+    public MIPSCodeElement(MIPSLine line, int startIndex, int endIndex, String text) {
+        if (startIndex > endIndex) {
+            throw new IllegalArgumentException("Start index (" + startIndex + ") is bigger than the end index (" + endIndex + ").");
+        }
+        this.line = line;
+        this.startIndex = startIndex;
+        this.endIndex = endIndex;
+        this.text = text;
+        this.errors = new ArrayList<>();
+    }
 
-	/**
-	 * Returns the line of this element.
-	 *
-	 * @return the {@link MIPSLine}.
-	 */
-	public MIPSLine getLine() {
-		return line;
-	}
+    /**
+     * Returns the line of this element.
+     *
+     * @return the {@link MIPSLine}.
+     */
+    public MIPSLine getLine() {
+        return line;
+    }
 
-	/**
-	 * Returns the file absolute index where this element starts. This index is inclusive.
-	 *
-	 * @return the index.
-	 */
-	public int getStartIndex() {
-		return startIndex;
-	}
+    /**
+     * Returns the file absolute index where this element starts. This index is inclusive.
+     *
+     * @return the index.
+     */
+    public int getStartIndex() {
+        return startIndex;
+    }
 
-	/**
-	 * Returns the file absolute index where this element ends. This index is exclusive.
-	 *
-	 * @return the index.
-	 */
-	public int getEndIndex() {
-		return endIndex;
-	}
+    /**
+     * Returns the file absolute index where this element ends. This index is exclusive.
+     *
+     * @return the index.
+     */
+    public int getEndIndex() {
+        return endIndex;
+    }
 
-	/**
-	 * Moves the element.
-	 *
-	 * @param offset the chars the element must move.
-	 */
-	public void move(int offset) {
-		startIndex += offset;
-		endIndex += offset;
-	}
+    /**
+     * Moves the element.
+     *
+     * @param offset the chars the element must move.
+     */
+    public void move(int offset) {
+        startIndex += offset;
+        endIndex += offset;
+    }
 
-	/**
-	 * Returns the text representing this element.
-	 *
-	 * @return the text.
-	 */
-	public String getText() {
-		return text;
-	}
+    /**
+     * Returns the text representing this element.
+     *
+     * @return the text.
+     */
+    public String getText() {
+        return text;
+    }
 
-	/**
-	 * Returns the text representing this element without any children.
-	 *
-	 * @return the text.
-	 */
-	public abstract String getSimpleText();
+    /**
+     * Returns the text representing this element without any children.
+     *
+     * @return the text.
+     */
+    public abstract String getSimpleText();
 
-	/**
-	 * Returns the styles to apply to this element.
-	 *
-	 * @return the styles.
-	 */
-	public abstract List<String> getStyles();
+    /**
+     * Returns the styles to apply to this element.
+     *
+     * @return the styles.
+     */
+    public abstract List<String> getStyles();
 
-	/**
-	 * Returns whether this element has errors.
-	 *
-	 * @return whether this element has errors.
-	 */
-	public boolean hasErrors() {
-		return !errors.isEmpty();
-	}
+    /**
+     * Returns whether this element has errors.
+     *
+     * @return whether this element has errors.
+     */
+    public boolean hasErrors() {
+        return !errors.isEmpty();
+    }
 
-	/**
-	 * Populates the given popup with the errors inside this element.
-	 *
-	 * @param popup the {@link VBox} inside the popup.
-	 */
-	public void populatePopupWithErrors(VBox popup) {
-		Language language = Jams.getLanguageManager().getSelected();
+    /**
+     * Populates the given popup with the errors inside this element.
+     *
+     * @param popup the {@link VBox} inside the popup.
+     */
+    public void populatePopupWithErrors(VBox popup) {
+        Language language = Jams.getLanguageManager().getSelected();
 
-		errors.forEach(target -> {
-			String message = language.getOrDefault("EDITOR_MIPS_ERROR_" + target);
-			popup.getChildren().add(new Label(message.replace("{TEXT}", getSimpleText())));
-		});
-	}
+        errors.forEach(target -> {
+            String message = language.getOrDefault("EDITOR_MIPS_ERROR_" + target);
+            popup.getChildren().add(new Label(message.replace("{TEXT}", getSimpleText())));
+        });
+    }
 
-	/**
-	 * Refreshes the metadata of this element.
-	 * <p>
-	 * Metadata includes errors and global status for labels.
-	 *
-	 * @param elements the {@link MIPSFileElements}.
-	 */
-	public abstract void refreshMetadata(MIPSFileElements elements);
+    /**
+     * Populates the given text area with the errors inside this element.
+     *
+     * @param textArea the {@link StyleClassedTextArea}.
+     */
+    public void populatePopupWithErrors(StyleClassedTextArea textArea) {
+        Language language = Jams.getLanguageManager().getSelected();
 
-	/**
-	 * Registers the given label in the line.
-	 *
-	 * @param label  the label.
-	 * @param global whether the label is global.
-	 */
-	protected void registerLabel(String label, boolean global) {
-		line.registerLabel(label, global);
-	}
+        errors.forEach(target -> {
+            String message = language.getOrDefault("EDITOR_MIPS_ERROR_" + target);
+            textArea.append(message + "\n", "");
+        });
+    }
 
-	/**
-	 * Adds this label to the used labels collection.
-	 *
-	 * @param label the label.
-	 */
-	protected void markUsedLabel(String label) {
-		line.markUsedLabel(label);
-	}
+    /**
+     * Refreshes the metadata of this element.
+     * <p>
+     * Metadata includes errors and global status for labels.
+     *
+     * @param elements the {@link MIPSFileElements}.
+     */
+    public abstract void refreshMetadata(MIPSFileElements elements);
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		MIPSCodeElement that = (MIPSCodeElement) o;
-		return startIndex == that.startIndex &&
-				endIndex == that.endIndex;
-	}
+    /**
+     * Registers the given label in the line.
+     *
+     * @param label  the label.
+     * @param global whether the label is global.
+     */
+    protected void registerLabel(String label, boolean global) {
+        line.registerLabel(label, global);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(startIndex, endIndex);
-	}
+    /**
+     * Adds this label to the used labels collection.
+     *
+     * @param label the label.
+     */
+    protected void markUsedLabel(String label) {
+        line.markUsedLabel(label);
+    }
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + "{" +
-				"startIndex=" + startIndex +
-				", endIndex=" + endIndex +
-				", text='" + text + '\'' +
-				'}';
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MIPSCodeElement that = (MIPSCodeElement) o;
+        return startIndex == that.startIndex &&
+                endIndex == that.endIndex;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(startIndex, endIndex);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "{" +
+                "startIndex=" + startIndex +
+                ", endIndex=" + endIndex +
+                ", text='" + text + '\'' +
+                '}';
+    }
 }

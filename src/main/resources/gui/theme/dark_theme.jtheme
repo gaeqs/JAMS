@@ -977,6 +977,11 @@ AnchorPane {
 
 /* MIPS DOCUMENTATION */
 
+.documentation-top-message * {
+    -fx-background-color: -theme-background-lighter;
+    -fx-padding: 8 0 5 10;
+}
+
 .documentation * {
     -fx-background-color: -theme-background;
     -fx-padding: 8 0 5 10;
@@ -1058,6 +1063,11 @@ AnchorPane {
 
 .code-area .mips-instruction {
     -fx-fill: #f8d75e;
+}
+
+.code-area .mips-pseudo-instruction {
+    -rtfx-underline-color: #7af85e;
+    -rtfx-underline-width: 1px;
 }
 
 .code-area .mips-instruction-parameter-label {

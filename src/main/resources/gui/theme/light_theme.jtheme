@@ -1044,7 +1044,12 @@ AnchorPane {
 }
 
 .code-area .mips-instruction {
-    -fx-fill: #be9f33;
+    -fx-fill: #666527;
+}
+
+.code-area .mips-pseudo-instruction {
+    -rtfx-underline-color: #326627;
+    -rtfx-underline-width: 1px;
 }
 
 .code-area .mips-instruction-parameter-label {

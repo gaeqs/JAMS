@@ -946,7 +946,7 @@ Places the return address link in GPR <i>31</i>. The return link is the address 
 An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1034,7 +1034,7 @@ If the condition is false, the branch is not taken and execution continues with 
 An 18-bit signed offset (the 26-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1069,7 +1069,7 @@ If the condition is false, the branch is not taken and execution continues with 
 An 18-bit signed offset (the 26-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1103,7 +1103,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rt</i> and GPR <i>rs</i> are equal, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1140,7 +1140,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rs</i> are greater than or equal to zero, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1178,7 +1178,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rt</i> are less than or equal to zero, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 GPR <i>31</i> must not be used by the sorce register, because such instructions don't have the same effect when re-executed. The result of executing such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the branch delay slot.
@@ -1218,7 +1218,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rt</i> are greater than or equal to zero, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 GPR <i>31</i> must not be used by the sorce register, because such instructions don't have the same effect when re-executed. The result of executing such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the branch delay slot.
 
@@ -1258,7 +1258,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rt</i> are greater than zero, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 GPR <i>31</i> must not be used by the sorce register, because such instructions don't have the same effect when re-executed. The result of executing such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the branch delay slot.
@@ -1299,7 +1299,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rt</i> are lower than zero, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 GPR <i>31</i> must not be used by the sorce register, because such instructions don't have the same effect when re-executed. The result of executing such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the branch delay slot.
@@ -1340,7 +1340,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rt</i> are equal to zero, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 GPR <i>31</i> must not be used by the sorce register, because such instructions don't have the same effect when re-executed. The result of executing such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the branch delay slot.
@@ -1381,7 +1381,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rt</i> are not equal to zero, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 GPR <i>31</i> must not be used by the sorce register, because such instructions don't have the same effect when re-executed. The result of executing such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the branch delay slot.
@@ -1420,7 +1420,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rt</i> less than or equal to zero, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1451,7 +1451,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rt</i> greater than or equal to zero, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1482,7 +1482,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rt</i> greater than zero, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1513,7 +1513,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rt</i> less than zero, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1544,7 +1544,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rs</i> are greater than or equal to the contents of GPR <i>rt</i>, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1575,7 +1575,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rs</i> are less than the contents of GPR <i>rt</i>, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1606,7 +1606,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rs</i> are greater than or equal to the contents of GPR <i>rt</i>, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1637,7 +1637,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rs</i> are less than the contents of GPR <i>rt</i>, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1668,7 +1668,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rs</i> are equal to the contents of GPR <i>rt</i>, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1699,7 +1699,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rs</i> are not equal to the contents of GPR <i>rt</i>, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1730,7 +1730,7 @@ An 23-bit signed offset (the 21-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rs</i> are equal to zero, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1761,7 +1761,7 @@ An 23-bit signed offset (the 21-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rs</i> are not equal to zero, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1792,7 +1792,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rs</i> are greater than zero, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1869,7 +1869,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rs</i> are less than or equal to zero, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1905,7 +1905,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rs</i> are less than zero, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1941,7 +1941,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rt</i> and GPR <i>rs</i> are not equal, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -1977,7 +1977,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rs</i> plus the contents of GPR <i>rt</i> overflow, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -2010,7 +2010,7 @@ An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is 
 If the contents of GPR <i>rs</i> plus the contents of GPR <i>rt</i> don't overflow, branch to the effective target address.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -2569,7 +2569,7 @@ This instruction clears the execution and all instruction hazards and returns to
 <black>eret</black> doesn't execute the next instruction and doesn't have a delay slot.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -2605,7 +2605,7 @@ The low 28 bits of the target addres is the <i>index</i> field shifted left 2 bi
 Jump to the effective target address. If delay slots are enabled, this instruction also executes the instruction that follows the jump, in the branch delay slot, before executing the jump itself.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -2640,7 +2640,7 @@ The low 28 bits of the target addres is the <i>index</i> field shifted left 2 bi
 Jump to the effective target address. If delay slots are enabled, this instruction also executes the instruction that follows the jump, in the branch delay slot, before executing the jump itself.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 <b>Operation:</b>
@@ -2678,7 +2678,7 @@ Jump to the effective target addres in GPR <i>rs</i>. If the target address is n
 If delay slots are enabled, this instruction also executes the instruction that follows the jump, in the branch delay slot, before executing the jump itself.
 
 <b>Restrictions:</b>
-<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
 Register <i>rs</i> and <i>rd</i> must not be equal, because such an instruction does not have the same effect when re-executed. The result of execution such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the delay slot.

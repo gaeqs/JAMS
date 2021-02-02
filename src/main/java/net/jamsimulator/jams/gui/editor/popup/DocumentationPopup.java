@@ -25,16 +25,15 @@
 package net.jamsimulator.jams.gui.editor.popup;
 
 import javafx.application.Platform;
-import javafx.event.Event;
-import javafx.event.EventDispatchChain;
-import javafx.event.EventDispatcher;
 import javafx.geometry.Bounds;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.StyleClassedTextArea;
-import org.fxmisc.richtext.model.StyledDocument;
 
 /**
  * This class is a small guide to implement autocompletion popups.
@@ -43,64 +42,76 @@ import org.fxmisc.richtext.model.StyledDocument;
  */
 public class DocumentationPopup extends Popup {
 
-	protected final CodeFileEditor display;
-	protected final StyleClassedTextArea content;
+    protected final CodeFileEditor display;
+    protected final StyleClassedTextArea topMessage;
+    protected final StyleClassedTextArea content;
 
-	protected VirtualizedScrollPane<StyleClassedTextArea> scroll;
+    protected VirtualizedScrollPane<StyleClassedTextArea> scroll;
 
 
-	/**
-	 * Creates the documentation popup.
-	 *
-	 * @param display the code display where this popup is displayed.
-	 */
-	public DocumentationPopup(CodeFileEditor display) {
-		this.display = display;
-		content = new StyleClassedTextArea();
-		content.getStyleClass().add("documentation");
+    /**
+     * Creates the documentation popup.
+     *
+     * @param display the code display where this popup is displayed.
+     */
+    public DocumentationPopup(CodeFileEditor display) {
+        this.display = display;
+        topMessage = new StyleClassedTextArea();
+        topMessage.getStyleClass().add("documentation-top-message");
+        content = new StyleClassedTextArea();
+        content.getStyleClass().add("documentation");
 
-		scroll = new VirtualizedScrollPane<>(content);
+        scroll = new VirtualizedScrollPane<>(content);
 
-		getContent().add(scroll);
+        getContent().addAll(new VBox(topMessage, scroll));
 
-		scroll.setPrefWidth(450);
-		scroll.setPrefHeight(450);
+        scroll.setPrefWidth(450);
+        scroll.setPrefHeight(450);
 
-		content.setWrapText(true);
-		content.setEditable(false);
+        topMessage.setWrapText(true);
+        topMessage.setEditable(false);
+        content.setWrapText(true);
+        content.setEditable(false);
 
-		var oldDispatcher = content.getEventDispatcher();
-		content.setEventDispatcher((event, tail) -> {
-			if(event instanceof MouseEvent) {
-				return oldDispatcher.dispatchEvent(event, tail);
-			}
-			return display.getEventDispatcher().dispatchEvent(event, tail);
-		});
-	}
+        topMessage.setMaxHeight(50);
 
-	/**
-	 * Returns the {@link CodeFileEditor} where this popup is displayed.
-	 *
-	 * @return the {@link CodeFileEditor}.
-	 */
-	public CodeFileEditor getDisplay() {
-		return display;
-	}
+        manageDispatcher(content);
+        manageDispatcher(topMessage);
+    }
 
-	public void execute(int caretOffset) {
-		int caretPosition = display.getCaretPosition() + caretOffset;
-		if (caretPosition <= 0) return;
+    private void manageDispatcher(StyleClassedTextArea area) {
+        var oldDispatcher = area.getEventDispatcher();
+        area.setEventDispatcher((event, tail) -> {
+            if (event instanceof MouseEvent && ((MouseEvent) event).getButton() == MouseButton.PRIMARY) {
+                return oldDispatcher.dispatchEvent(event, tail);
+            }
+            return display.getEventDispatcher().dispatchEvent(event, tail);
+        });
+    }
 
-		if (isShowing()) return;
-		Platform.runLater(() -> {
-			Bounds bounds = display.getCaretBounds().orElse(null);
-			if (bounds == null) return;
-			show(display, bounds.getMinX() - getWidth(), bounds.getMinY() + 20);
-			Platform.runLater(() -> {
-				show(display, bounds.getMinX() - getWidth(), bounds.getMinY() + 20);
-				requestFocus();
-			});
-		});
-	}
+    /**
+     * Returns the {@link CodeFileEditor} where this popup is displayed.
+     *
+     * @return the {@link CodeFileEditor}.
+     */
+    public CodeFileEditor getDisplay() {
+        return display;
+    }
+
+    public void execute(int caretOffset) {
+        int caretPosition = display.getCaretPosition() + caretOffset;
+        if (caretPosition <= 0) return;
+
+        if (isShowing()) return;
+        Platform.runLater(() -> {
+            Bounds bounds = display.getCaretBounds().orElse(null);
+            if (bounds == null) return;
+            show(display, bounds.getMinX() - getWidth(), bounds.getMinY() + 20);
+            Platform.runLater(() -> {
+                show(display, bounds.getMinX() - getWidth(), bounds.getMinY() + 20);
+                requestFocus();
+            });
+        });
+    }
 
 }

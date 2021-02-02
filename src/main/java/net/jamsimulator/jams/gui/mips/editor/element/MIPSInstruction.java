@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.mips.editor.element;
 
 import net.jamsimulator.jams.gui.mips.editor.MIPSEditorError;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
@@ -38,153 +39,168 @@ import java.util.stream.Collectors;
 
 public class MIPSInstruction extends MIPSCodeElement {
 
-	private String instruction;
-	private final List<MIPSInstructionParameter> parameters;
+    private String instruction;
+    private Instruction mostCompatibleInstruction;
+    private final List<MIPSInstructionParameter> parameters;
 
-	public MIPSInstruction(MIPSLine line, MIPSFileElements elements, int startIndex, int endIndex, String text) {
-		super(line, startIndex, endIndex, text);
-		this.parameters = new ArrayList<>();
-		parseText(elements);
+    public MIPSInstruction(MIPSLine line, MIPSFileElements elements, int startIndex, int endIndex, String text) {
+        super(line, startIndex, endIndex, text);
+        this.parameters = new ArrayList<>();
+        parseText(elements);
 
-		for (MIPSInstructionParameter parameter : parameters) {
-			parameter.getLabelParameterPart().ifPresent(this::markUsedLabel);
-		}
-	}
+        for (MIPSInstructionParameter parameter : parameters) {
+            parameter.getLabelParameterPart().ifPresent(this::markUsedLabel);
+        }
+    }
 
-	@Override
-	public String getSimpleText() {
-		return instruction;
-	}
+    @Override
+    public String getSimpleText() {
+        return instruction;
+    }
 
-	public List<MIPSInstructionParameter> getParameters() {
-		return parameters;
-	}
+    public List<MIPSInstructionParameter> getParameters() {
+        return parameters;
+    }
 
-	public Set<Instruction> getCompatibleInstructions(MIPSFileElements elements, int upTo) {
-		MIPSProject project = elements.getProject().orElse(null);
-		if (project == null) return Collections.emptySet();
+    public Optional<Instruction> getMostCompatibleInstruction() {
+        return Optional.ofNullable(mostCompatibleInstruction);
+    }
 
-		var instructionSet = project.getData().getInstructionSet();
-		var registerBuilder = project.getData().getRegistersBuilder();
+    public Set<Instruction> getCompatibleInstructions(MIPSFileElements elements, int upTo) {
+        MIPSProject project = elements.getProject().orElse(null);
+        if (project == null) return Collections.emptySet();
 
-		var instructions = instructionSet.getInstructionByMnemonic(instruction);
+        var instructionSet = project.getData().getInstructionSet();
+        var registerBuilder = project.getData().getRegistersBuilder();
 
-		int i = 0;
-		Instruction current;
-		for (MIPSInstructionParameter parameter : parameters) {
-			if (i == upTo) return instructions;
-			var iterator = instructions.iterator();
-			while (iterator.hasNext()) {
-				current = iterator.next();
-				if (current.getParameters().length <= i
-						|| !current.getParameters()[i].match(parameter.getText(), registerBuilder)) {
-					iterator.remove();
-				}
-			}
+        var instructions = instructionSet.getInstructionByMnemonic(instruction);
 
-			i++;
-		}
+        int i = 0;
+        Instruction current;
+        for (MIPSInstructionParameter parameter : parameters) {
+            if (i == upTo) return instructions;
+            var iterator = instructions.iterator();
+            while (iterator.hasNext()) {
+                current = iterator.next();
+                if (current.getParameters().length <= i
+                        || !current.getParameters()[i].match(parameter.getText(), registerBuilder)) {
+                    iterator.remove();
+                }
+            }
 
-		return instructions;
-	}
+            i++;
+        }
 
-	@Override
-	public void move(int offset) {
-		super.move(offset);
-		parameters.forEach(parameter -> parameter.getParts().forEach(target -> target.move(offset)));
-	}
+        return instructions;
+    }
 
-	@Override
-	public List<String> getStyles() {
-		if (hasErrors()) return Arrays.asList("mips-instruction", "mips-error");
-		return Collections.singletonList("mips-instruction");
-	}
+    @Override
+    public void move(int offset) {
+        super.move(offset);
+        parameters.forEach(parameter -> parameter.getParts().forEach(target -> target.move(offset)));
+    }
 
-	@Override
-	public void refreshMetadata(MIPSFileElements elements) {
-		errors.clear();
+    @Override
+    public List<String> getStyles() {
+        var list = new ArrayList<String>();
+        list.add("mips-instruction");
 
-		if (instruction == null || instruction.isEmpty()) {
-			errors.add(MIPSEditorError.INSTRUCTION_NOT_FOUND);
-			return;
-		}
+        if (mostCompatibleInstruction instanceof PseudoInstruction) {
+            list.add("mips-pseudo-instruction");
+        }
 
-		MIPSProject project = elements.getProject().orElse(null);
-		InstructionSet set = project.getData().getInstructionSet();
+        if (hasErrors()) {
+            list.add("mips-error");
+        }
 
-		RegistersBuilder builder = project.getData().getRegistersBuilder();
-		List<ParameterType>[] types = new List[parameters.size()];
+        return list;
+    }
 
-		for (int i = 0; i < parameters.size(); i++) {
-			types[i] = parameters.get(i).refreshMetadata(builder);
-		}
+    @Override
+    public void refreshMetadata(MIPSFileElements elements) {
+        errors.clear();
 
-		Instruction instruction = set.getBestCompatibleInstruction(this.instruction, types).orElse(null);
-		if (instruction == null) {
-			errors.add(MIPSEditorError.INSTRUCTION_NOT_FOUND);
-		}
-	}
+        if (instruction == null || instruction.isEmpty()) {
+            errors.add(MIPSEditorError.INSTRUCTION_NOT_FOUND);
+            return;
+        }
 
-	private void parseText(MIPSFileElements elements) {
-		String raw = text;
-		String trim = raw.trim();
-		int mnemonicIndex = StringUtils.indexOf(trim, ' ', ',', '\t');
+        MIPSProject project = elements.getProject().orElse(null);
+        InstructionSet set = project.getData().getInstructionSet();
 
-		if (mnemonicIndex == -1) {
-			instruction = trim;
-			startIndex += text.indexOf(instruction);
-			endIndex = startIndex + instruction.length() + 1;
-			return;
-		}
+        RegistersBuilder builder = project.getData().getRegistersBuilder();
+        List<ParameterType>[] types = new List[parameters.size()];
 
-		instruction = trim.substring(0, mnemonicIndex);
-		startIndex += text.indexOf(instruction);
-		endIndex = startIndex + instruction.length() + 1;
+        for (int i = 0; i < parameters.size(); i++) {
+            types[i] = parameters.get(i).refreshMetadata(builder);
+        }
 
-		raw = trim.substring(mnemonicIndex + 1);
+        mostCompatibleInstruction = set.getBestCompatibleInstruction(this.instruction, types).orElse(null);
+        if (mostCompatibleInstruction == null) {
+            errors.add(MIPSEditorError.INSTRUCTION_NOT_FOUND);
+        }
+    }
 
-		MIPSProject project = elements.getProject().orElse(null);
-		if (project == null) return;
+    private void parseText(MIPSFileElements elements) {
+        String raw = text;
+        String trim = raw.trim();
+        int mnemonicIndex = StringUtils.indexOf(trim, ' ', ',', '\t');
 
-		var instructionSet = project.getData().getInstructionSet();
-		var registerBuilder = project.getData().getRegistersBuilder();
+        if (mnemonicIndex == -1) {
+            instruction = trim;
+            startIndex += text.indexOf(instruction);
+            endIndex = startIndex + instruction.length() + 1;
+            return;
+        }
 
-		var parameterCache = new ArrayList<String>();
+        instruction = trim.substring(0, mnemonicIndex);
+        startIndex += text.indexOf(instruction);
+        endIndex = startIndex + instruction.length() + 1;
 
-		var instructions = instructionSet.getInstructionByMnemonic(instruction);
-		var best = InstructionUtils.getBestInstruction(instructions, parameterCache, registerBuilder, raw).orElse(null);
+        raw = trim.substring(mnemonicIndex + 1);
 
-		if (best == null) {
-			//DO SIMPLE SPLIT
-			generateParametersBySplit(elements);
-		} else {
-			int index = 0;
-			int i = 0;
-			for (String parameter : parameterCache) {
-				index = raw.indexOf(parameter, index);
-				parameters.add(new MIPSInstructionParameter(line, elements, endIndex + index, parameter, i, best.getParameters()[i]));
-				index += parameter.length();
-				i++;
-			}
-		}
-	}
+        MIPSProject project = elements.getProject().orElse(null);
+        if (project == null) return;
 
-	private void generateParametersBySplit(MIPSFileElements elements) {
-		Map<Integer, String> parts = StringUtils.multiSplitIgnoreInsideStringWithIndex(text, false, " ", ",", "\t");
-		if (parts.isEmpty()) return;
+        var instructionSet = project.getData().getInstructionSet();
+        var registerBuilder = project.getData().getRegistersBuilder();
 
-		//Sorts all entries by their indices.
-		List<Map.Entry<Integer, String>> stringParameters = parts.entrySet().stream()
-				.sorted(Comparator.comparingInt(Map.Entry::getKey)).collect(Collectors.toList());
+        var parameterCache = new ArrayList<String>();
 
-		//The first entry is the instruction itself.
-		int start = startIndex - stringParameters.get(0).getKey();
-		stringParameters.remove(0);
+        var instructions = instructionSet.getInstructionByMnemonic(instruction);
+        var best = InstructionUtils.getBestInstruction(instructions, parameterCache, registerBuilder, raw).orElse(null);
 
-		//Adds all parameters.
-		int i = 0;
-		for (Map.Entry<Integer, String> entry : stringParameters) {
-			parameters.add(new MIPSInstructionParameter(line, elements, start + entry.getKey(), entry.getValue(), i++, null));
-		}
-	}
+        if (best == null) {
+            //DO SIMPLE SPLIT
+            generateParametersBySplit(elements);
+        } else {
+            int index = 0;
+            int i = 0;
+            for (String parameter : parameterCache) {
+                index = raw.indexOf(parameter, index);
+                parameters.add(new MIPSInstructionParameter(line, elements, endIndex + index, parameter, i, best.getParameters()[i]));
+                index += parameter.length();
+                i++;
+            }
+        }
+    }
+
+    private void generateParametersBySplit(MIPSFileElements elements) {
+        Map<Integer, String> parts = StringUtils.multiSplitIgnoreInsideStringWithIndex(text, false, " ", ",", "\t");
+        if (parts.isEmpty()) return;
+
+        //Sorts all entries by their indices.
+        List<Map.Entry<Integer, String>> stringParameters = parts.entrySet().stream()
+                .sorted(Comparator.comparingInt(Map.Entry::getKey)).collect(Collectors.toList());
+
+        //The first entry is the instruction itself.
+        int start = startIndex - stringParameters.get(0).getKey();
+        stringParameters.remove(0);
+
+        //Adds all parameters.
+        int i = 0;
+        for (Map.Entry<Integer, String> entry : stringParameters) {
+            parameters.add(new MIPSInstructionParameter(line, elements, start + entry.getKey(), entry.getValue(), i++, null));
+        }
+    }
 }

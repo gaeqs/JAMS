@@ -369,7 +369,9 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
 				if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT) {
 					if (documentationPopup != null) documentationPopup.hide();
 				}
-			}
+			} else {
+                if (documentationPopup != null) documentationPopup.hide();
+            }
 		});
 
 		//FOCUS
