@@ -101,15 +101,10 @@ public class MIPSInstruction extends MIPSCodeElement {
 
     @Override
     public List<String> getStyles() {
-        var list = new ArrayList<String>();
-        list.add("mips-instruction");
+        var list = getGeneralStyles("mips-instruction");
 
         if (mostCompatibleInstruction instanceof PseudoInstruction) {
             list.add("mips-pseudo-instruction");
-        }
-
-        if (hasErrors()) {
-            list.add("mips-error");
         }
 
         return list;
@@ -169,7 +164,7 @@ public class MIPSInstruction extends MIPSCodeElement {
             int i = 0;
             for (String parameter : parameterCache) {
                 index = raw.indexOf(parameter, index);
-                parameters.add(new MIPSInstructionParameter(line, elements, endIndex + index, parameter, i, best.getParameters()[i]));
+                parameters.add(new MIPSInstructionParameter(line, this, elements, endIndex + index, parameter, i, best.getParameters()[i]));
                 index += parameter.length();
                 i++;
             }
@@ -191,7 +186,7 @@ public class MIPSInstruction extends MIPSCodeElement {
         //Adds all parameters.
         int i = 0;
         for (Map.Entry<Integer, String> entry : stringParameters) {
-            parameters.add(new MIPSInstructionParameter(line, elements, start + entry.getKey(), entry.getValue(), i++, null));
+            parameters.add(new MIPSInstructionParameter(line, this, elements, start + entry.getKey(), entry.getValue(), i++, null));
         }
     }
 }

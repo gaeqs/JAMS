@@ -343,6 +343,8 @@ EDITOR_MIPS_ERROR_INVALID_DIRECTIVE_PARAMETER=The parameter '{NAME}' is invalid.
 EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=Couldn't found instruction '{NAME}' with the given parameters.
 EDITOR_MIPS_ERROR_INVALID_INSTRUCTION_PARAMETER=The parameter '{NAME}' is invalid.
 
+EDITOR_MIPS_WARNING_REGISTER_AT_USE=Avoid using the register $at. Its value may change unexpectedly when a pseudoinstruction is executed.
+
 ACTION_REGION_GENERAL=General
 ACTION_GENERAL_CREATE_PROJECT=Create project
 ACTION_GENERAL_OPEN_PROJECT=Open project

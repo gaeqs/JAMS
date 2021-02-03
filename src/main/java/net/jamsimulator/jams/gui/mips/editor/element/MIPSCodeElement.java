@@ -26,9 +26,7 @@ package net.jamsimulator.jams.gui.mips.editor.element;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.mips.error.MIPSEditorError;
-import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspection;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
 import java.util.ArrayList;
@@ -46,7 +44,7 @@ public abstract class MIPSCodeElement {
     protected int endIndex;
     protected final String text;
 
-    protected List<MIPSEditorError> errors;
+    protected List<MIPSEditorInspection> inspections;
 
     /**
      * Creates the element.
@@ -65,7 +63,7 @@ public abstract class MIPSCodeElement {
         this.startIndex = startIndex;
         this.endIndex = endIndex;
         this.text = text;
-        this.errors = new ArrayList<>();
+        this.inspections = new ArrayList<>();
     }
 
     /**
@@ -129,12 +127,31 @@ public abstract class MIPSCodeElement {
     public abstract List<String> getStyles();
 
     /**
-     * Returns whether this element has errors.
+     * Returns whether this element has inspections.
      *
-     * @return whether this element has errors.
+     * @return whether this element has inspections.
+     */
+    public boolean hasInspections() {
+        return !inspections.isEmpty();
+    }
+
+    /**
+     * Returns whether this element has any error.
+     *
+     * @return whether this element has any error.
      */
     public boolean hasErrors() {
-        return !errors.isEmpty();
+        return inspections.stream().anyMatch(target -> target.getBuilder().isError());
+    }
+
+
+    /**
+     * Returns whether this element has any warning.
+     *
+     * @return whether this element has any warning.
+     */
+    public boolean hasWarnings() {
+        return inspections.stream().anyMatch(target -> !target.getBuilder().isError());
     }
 
     /**
@@ -143,7 +160,7 @@ public abstract class MIPSCodeElement {
      * @param popup the {@link VBox} inside the popup.
      */
     public void populatePopupWithErrors(VBox popup) {
-        errors.forEach(target -> popup.getChildren().add(new Label(target.getParsedDescription())));
+        inspections.forEach(target -> popup.getChildren().add(new Label(target.getParsedDescription())));
     }
 
     /**
@@ -152,7 +169,7 @@ public abstract class MIPSCodeElement {
      * @param textArea the {@link StyleClassedTextArea}.
      */
     public void populatePopupWithErrors(StyleClassedTextArea textArea) {
-        errors.forEach(target -> textArea.append(target.getParsedDescription() + "\n", ""));
+        inspections.forEach(target -> textArea.append(target.getParsedDescription() + "\n", ""));
     }
 
     /**
@@ -181,6 +198,15 @@ public abstract class MIPSCodeElement {
      */
     protected void markUsedLabel(String label) {
         line.markUsedLabel(label);
+    }
+
+    protected List<String> getGeneralStyles(String baseStyle) {
+        List<String> list = new ArrayList<>();
+        list.add(baseStyle);
+        if (hasInspections()) {
+            list.add(hasErrors() ? "mips-error" : "mips-warning");
+        }
+        return list;
     }
 
     @Override

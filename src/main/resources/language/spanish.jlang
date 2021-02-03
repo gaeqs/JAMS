@@ -343,6 +343,8 @@ EDITOR_MIPS_ERROR_INVALID_DIRECTIVE_PARAMETER=El parámetro '{NAME} tiene un for
 EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=No se ha podido encontrar la instrucción '{NAME}' con los parámetros indicados.
 EDITOR_MIPS_ERROR_INVALID_INSTRUCTION_PARAMETER=El parámetro '{NAME} tiene un formato incorrecto.
 
+EDITOR_MIPS_WARNING_REGISTER_AT_USE=Evita usar el registro $at. Su valor puede cambiar inesperadamente cuando se ejecuta una pseudoinstrucción.
+
 ACTION_REGION_GENERAL=General
 ACTION_GENERAL_CREATE_PROJECT=Crear proyecto
 ACTION_GENERAL_OPEN_PROJECT=Abrir proyecto

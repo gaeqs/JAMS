@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.gui.mips.editor.element;
 
 import net.jamsimulator.jams.mips.parameter.ParameterPartType;
-import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.StringUtils;
@@ -72,8 +71,7 @@ public class MIPSInstructionParameterPart extends MIPSCodeElement {
 
 	@Override
 	public List<String> getStyles() {
-		if (hasErrors()) return Arrays.asList(type.getCssClass(), "mips-error");
-		return Collections.singletonList(type.getCssClass());
+		return getGeneralStyles(type.getCssClass());
 	}
 
 	@Override

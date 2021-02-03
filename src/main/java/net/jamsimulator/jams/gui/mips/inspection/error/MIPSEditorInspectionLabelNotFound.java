@@ -1,37 +1,37 @@
-package net.jamsimulator.jams.gui.mips.error.defaults;
+package net.jamsimulator.jams.gui.mips.inspection.error;
 
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSCodeElement;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSInstructionParameterPart;
-import net.jamsimulator.jams.gui.mips.error.MIPSEditorError;
-import net.jamsimulator.jams.gui.mips.error.MIPSEditorErrorBuilder;
+import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspection;
+import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilder;
 
 import java.util.Map;
 import java.util.Optional;
 
-public class MIPSEditorErrorLabelNotFound extends MIPSEditorError {
+public class MIPSEditorInspectionLabelNotFound extends MIPSEditorInspection {
 
     public static String NAME = "LABEL_NOT_FOUND";
 
-    public MIPSEditorErrorLabelNotFound(MIPSEditorErrorBuilder<?> builder, String instruction) {
+    public MIPSEditorInspectionLabelNotFound(MIPSEditorInspectionBuilder<?> builder, String instruction) {
         super(builder, Map.of("{NAME}", instruction));
     }
 
-    public static class Builder extends MIPSEditorErrorBuilder<MIPSEditorErrorLabelNotFound> {
+    public static class Builder extends MIPSEditorInspectionBuilder<MIPSEditorInspectionLabelNotFound> {
 
         public Builder() {
-            super(NAME);
+            super(NAME, true);
         }
 
         @Override
-        public Optional<MIPSEditorErrorLabelNotFound> tryToBuild(MIPSCodeElement element, MIPSFileElements elements) {
+        public Optional<MIPSEditorInspectionLabelNotFound> tryToBuild(MIPSCodeElement element, MIPSFileElements elements) {
             if (element instanceof MIPSInstructionParameterPart) {
                 var type = ((MIPSInstructionParameterPart) element).getType();
                 if (type != MIPSInstructionParameterPart.InstructionParameterPartType.LABEL)
                     return Optional.empty();
 
                 if (!elements.getLabels().contains(element.getSimpleText())) {
-                    return Optional.of(new MIPSEditorErrorLabelNotFound(this, element.getSimpleText()));
+                    return Optional.of(new MIPSEditorInspectionLabelNotFound(this, element.getSimpleText()));
                 }
             }
 

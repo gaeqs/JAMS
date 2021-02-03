@@ -33,14 +33,16 @@ import java.util.*;
 public class MIPSInstructionParameter {
 
 	private final MIPSLine line;
+	private final MIPSInstruction instruction;
 	private final int index;
 	private final int start;
 	private final String text;
 	private final List<MIPSInstructionParameterPart> parts;
 	private boolean valid;
 
-	public MIPSInstructionParameter(MIPSLine line, MIPSFileElements elements, int start, String text, int index, ParameterType hint) {
+	public MIPSInstructionParameter(MIPSLine line, MIPSInstruction instruction, MIPSFileElements elements, int start, String text, int index, ParameterType hint) {
 		this.line = line;
+		this.instruction = instruction;
 		this.index = index;
 		this.start = start;
 		this.text = text;
@@ -60,6 +62,10 @@ public class MIPSInstructionParameter {
 
 	public String getText() {
 		return text;
+	}
+
+	public MIPSInstruction getInstruction() {
+		return instruction;
 	}
 
 	public List<MIPSInstructionParameterPart> getParts() {

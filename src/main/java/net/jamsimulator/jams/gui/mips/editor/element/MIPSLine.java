@@ -245,8 +245,8 @@ public class MIPSLine {
 
 		var errorManager = JamsApplication.getMIPSEditorErrorBuilderManager();
 		getSortedElements().forEach(target -> {
-			target.errors.clear();
-			errorManager.getErrors(target, elements, target.errors);
+			target.inspections.clear();
+			errorManager.getInspections(target, elements, target.inspections);
 		});
 	}
 

@@ -22,29 +22,29 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.error.event;
+package net.jamsimulator.jams.gui.mips.inspection.event;
 
 import net.jamsimulator.jams.event.Cancellable;
 import net.jamsimulator.jams.event.Event;
-import net.jamsimulator.jams.gui.mips.error.MIPSEditorErrorBuilder;
+import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilder;
 
-public class MIPSEditorErrorBuilderRegisterEvent extends Event {
+public class MIPSEditorBuilderUnregisterEvent extends Event {
 
-    protected MIPSEditorErrorBuilder<?> builder;
+    protected MIPSEditorInspectionBuilder<?> builder;
 
-    MIPSEditorErrorBuilderRegisterEvent(MIPSEditorErrorBuilder<?> builder) {
+    MIPSEditorBuilderUnregisterEvent(MIPSEditorInspectionBuilder<?> builder) {
         this.builder = builder;
     }
 
-    public MIPSEditorErrorBuilder<?> getBuilder() {
+    public MIPSEditorInspectionBuilder<?> getBuilder() {
         return builder;
     }
 
-    public static class Before extends MIPSEditorErrorBuilderRegisterEvent implements Cancellable {
+    public static class Before extends MIPSEditorBuilderUnregisterEvent implements Cancellable {
 
         private boolean cancelled;
 
-        public Before(MIPSEditorErrorBuilder<?> builder) {
+        public Before(MIPSEditorInspectionBuilder<?> builder) {
             super(builder);
         }
 
@@ -59,9 +59,9 @@ public class MIPSEditorErrorBuilderRegisterEvent extends Event {
         }
     }
 
-    public static class After extends MIPSEditorErrorBuilderRegisterEvent {
+    public static class After extends MIPSEditorBuilderUnregisterEvent {
 
-        public After(MIPSEditorErrorBuilder<?> builder) {
+        public After(MIPSEditorInspectionBuilder<?> builder) {
             super(builder);
         }
 

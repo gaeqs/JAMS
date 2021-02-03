@@ -46,7 +46,7 @@ import net.jamsimulator.jams.gui.project.ProjectListTabPane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.start.StartWindow;
 import net.jamsimulator.jams.manager.ActionManager;
-import net.jamsimulator.jams.manager.MIPSEditorErrorBuilderManager;
+import net.jamsimulator.jams.manager.MIPSEditorInspectionBuilderManager;
 import net.jamsimulator.jams.manager.ThemeManager;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -191,8 +191,8 @@ public class JamsApplication extends Application {
 	 *
 	 * @return the {@link ActionManager}.
 	 */
-	public static MIPSEditorErrorBuilderManager getMIPSEditorErrorBuilderManager() {
-		return MIPSEditorErrorBuilderManager.INSTANCE;
+	public static MIPSEditorInspectionBuilderManager getMIPSEditorErrorBuilderManager() {
+		return MIPSEditorInspectionBuilderManager.INSTANCE;
 	}
 
 

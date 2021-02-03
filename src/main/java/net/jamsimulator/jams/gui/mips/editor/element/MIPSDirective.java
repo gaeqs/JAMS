@@ -79,8 +79,7 @@ public class MIPSDirective extends MIPSCodeElement {
 
 	@Override
 	public List<String> getStyles() {
-		if (hasErrors()) return Arrays.asList("mips-directive", "mips-error");
-		return Collections.singletonList("mips-directive");
+		return getGeneralStyles("mips-directive");
 	}
 
 	@Override

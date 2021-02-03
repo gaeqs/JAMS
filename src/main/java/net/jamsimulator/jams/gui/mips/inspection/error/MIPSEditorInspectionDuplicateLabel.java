@@ -1,31 +1,31 @@
-package net.jamsimulator.jams.gui.mips.error.defaults;
+package net.jamsimulator.jams.gui.mips.inspection.error;
 
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSCodeElement;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSDirectiveParameter;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSLabel;
-import net.jamsimulator.jams.gui.mips.error.MIPSEditorError;
-import net.jamsimulator.jams.gui.mips.error.MIPSEditorErrorBuilder;
+import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspection;
+import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilder;
 
 import java.util.Map;
 import java.util.Optional;
 
-public class MIPSEditorErrorDuplicateLabel extends MIPSEditorError {
+public class MIPSEditorInspectionDuplicateLabel extends MIPSEditorInspection {
 
     public static String NAME = "DUPLICATE_LABEL";
 
-    public MIPSEditorErrorDuplicateLabel(MIPSEditorErrorBuilder<?> builder, String label) {
+    public MIPSEditorInspectionDuplicateLabel(MIPSEditorInspectionBuilder<?> builder, String label) {
         super(builder, Map.of("{NAME}", label));
     }
 
-    public static class Builder extends MIPSEditorErrorBuilder<MIPSEditorErrorDuplicateLabel> {
+    public static class Builder extends MIPSEditorInspectionBuilder<MIPSEditorInspectionDuplicateLabel> {
 
         public Builder() {
-            super(NAME);
+            super(NAME, true);
         }
 
         @Override
-        public Optional<MIPSEditorErrorDuplicateLabel> tryToBuild(MIPSCodeElement element, MIPSFileElements elements) {
+        public Optional<MIPSEditorInspectionDuplicateLabel> tryToBuild(MIPSCodeElement element, MIPSFileElements elements) {
             String label;
 
             if (element instanceof MIPSDirectiveParameter) {
@@ -38,7 +38,7 @@ public class MIPSEditorErrorDuplicateLabel extends MIPSEditorError {
             }
 
             if (elements.getLabels().amount(label) > 1) {
-                return Optional.of(new MIPSEditorErrorDuplicateLabel(this, label));
+                return Optional.of(new MIPSEditorInspectionDuplicateLabel(this, label));
             }
 
             return Optional.empty();

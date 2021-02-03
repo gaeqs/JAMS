@@ -24,48 +24,41 @@
 
 package net.jamsimulator.jams.gui.mips.editor.element;
 
-import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
-import net.jamsimulator.jams.utils.LabelUtils;
-
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class MIPSLabel extends MIPSCodeElement {
 
-	private boolean global;
+    private boolean global;
 
-	public MIPSLabel(MIPSLine line, int startIndex, int endIndex, String text) {
-		super(line, startIndex, endIndex, text);
-		global = false;
-		registerLabel(getLabel(), false);
-	}
+    public MIPSLabel(MIPSLine line, int startIndex, int endIndex, String text) {
+        super(line, startIndex, endIndex, text);
+        global = false;
+        registerLabel(getLabel(), false);
+    }
 
 
-	@Override
-	public String getSimpleText() {
-		return text;
-	}
+    @Override
+    public String getSimpleText() {
+        return text;
+    }
 
-	public String getLabel() {
-		return text.substring(0, text.length() - 1).trim();
-	}
+    public String getLabel() {
+        return text.substring(0, text.length() - 1).trim();
+    }
 
-	public boolean isGlobal() {
-		return global;
-	}
+    public boolean isGlobal() {
+        return global;
+    }
 
-	@Override
-	public List<String> getStyles() {
-		String style = global ? "mips-global-label" : "mips-label";
-		if (hasErrors()) return Arrays.asList(style, "mips-error");
-		return Collections.singletonList(style);
-	}
+    @Override
+    public List<String> getStyles() {
+        return getGeneralStyles(global ? "mips-global-label" : "mips-label");
+    }
 
-	@Override
-	public void refreshMetadata(MIPSFileElements elements) {
-		String label = getLabel();
-		global = elements.getSetAsGlobalLabel().contains(label);
-	}
+    @Override
+    public void refreshMetadata(MIPSFileElements elements) {
+        String label = getLabel();
+        global = elements.getSetAsGlobalLabel().contains(label);
+    }
 
 }

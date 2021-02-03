@@ -1,35 +1,35 @@
-package net.jamsimulator.jams.gui.mips.error.defaults;
+package net.jamsimulator.jams.gui.mips.inspection.error;
 
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSCodeElement;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSDirectiveParameter;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
-import net.jamsimulator.jams.gui.mips.error.MIPSEditorError;
-import net.jamsimulator.jams.gui.mips.error.MIPSEditorErrorBuilder;
+import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspection;
+import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilder;
 
 import java.util.Map;
 import java.util.Optional;
 
-public class MIPSEditorErrorInvalidDirectiveParameter extends MIPSEditorError {
+public class MIPSEditorInspectionInvalidDirectiveParameter extends MIPSEditorInspection {
 
     public static String NAME = "INVALID_DIRECTIVE_PARAMETER";
 
-    public MIPSEditorErrorInvalidDirectiveParameter(MIPSEditorErrorBuilder<?> builder, String parameter) {
+    public MIPSEditorInspectionInvalidDirectiveParameter(MIPSEditorInspectionBuilder<?> builder, String parameter) {
         super(builder, Map.of("{NAME}", parameter));
     }
 
-    public static class Builder extends MIPSEditorErrorBuilder<MIPSEditorErrorInvalidDirectiveParameter> {
+    public static class Builder extends MIPSEditorInspectionBuilder<MIPSEditorInspectionInvalidDirectiveParameter> {
 
         public Builder() {
-            super(NAME);
+            super(NAME, true);
         }
 
         @Override
-        public Optional<MIPSEditorErrorInvalidDirectiveParameter> tryToBuild(MIPSCodeElement element, MIPSFileElements elements) {
+        public Optional<MIPSEditorInspectionInvalidDirectiveParameter> tryToBuild(MIPSCodeElement element, MIPSFileElements elements) {
             if (element instanceof MIPSDirectiveParameter) {
                 var param = (MIPSDirectiveParameter) element;
                 var directive = param.getDirective().getDirective();
                 if (directive != null && !directive.isParameterValidInContext(param.getIndex(), param.getSimpleText(), elements)) {
-                    return Optional.of(new MIPSEditorErrorInvalidDirectiveParameter(this, element.getSimpleText()));
+                    return Optional.of(new MIPSEditorInspectionInvalidDirectiveParameter(this, element.getSimpleText()));
                 }
             }
 

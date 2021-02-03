@@ -1,31 +1,31 @@
-package net.jamsimulator.jams.gui.mips.error.defaults;
+package net.jamsimulator.jams.gui.mips.inspection.error;
 
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSCodeElement;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSDirectiveParameter;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSLabel;
-import net.jamsimulator.jams.gui.mips.error.MIPSEditorError;
-import net.jamsimulator.jams.gui.mips.error.MIPSEditorErrorBuilder;
+import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspection;
+import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilder;
 
 import java.util.Map;
 import java.util.Optional;
 
-public class MIPSEditorErrorDuplicateGlobalLabel extends MIPSEditorError {
+public class MIPSEditorInspectionDuplicateGlobalLabel extends MIPSEditorInspection {
 
     public static String NAME = "DUPLICATE_GLOBAL_LABEL";
 
-    public MIPSEditorErrorDuplicateGlobalLabel(MIPSEditorErrorBuilder<?> builder, String label, String file) {
+    public MIPSEditorInspectionDuplicateGlobalLabel(MIPSEditorInspectionBuilder<?> builder, String label, String file) {
         super(builder, Map.of("{NAME}", label));
     }
 
-    public static class Builder extends MIPSEditorErrorBuilder<MIPSEditorErrorDuplicateGlobalLabel> {
+    public static class Builder extends MIPSEditorInspectionBuilder<MIPSEditorInspectionDuplicateGlobalLabel> {
 
         public Builder() {
-            super(NAME);
+            super(NAME, true);
         }
 
         @Override
-        public Optional<MIPSEditorErrorDuplicateGlobalLabel> tryToBuild(MIPSCodeElement element, MIPSFileElements elements) {
+        public Optional<MIPSEditorInspectionDuplicateGlobalLabel> tryToBuild(MIPSCodeElement element, MIPSFileElements elements) {
             String label;
             boolean global;
 
@@ -45,7 +45,7 @@ public class MIPSEditorErrorDuplicateGlobalLabel extends MIPSEditorError {
             int amount = optional.get().getGlobalLabels().amount(label);
             if (global) amount--;
             if (amount > 0) {
-                return Optional.of(new MIPSEditorErrorDuplicateGlobalLabel(this, label, "NOT IMPLEMENTED"));
+                return Optional.of(new MIPSEditorInspectionDuplicateGlobalLabel(this, label, "NOT IMPLEMENTED"));
             }
 
             return Optional.empty();

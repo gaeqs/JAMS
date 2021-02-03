@@ -1,21 +1,21 @@
-package net.jamsimulator.jams.gui.mips.error;
+package net.jamsimulator.jams.gui.mips.inspection;
 
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MIPSEditorError {
+public class MIPSEditorInspection {
 
-    private final MIPSEditorErrorBuilder<?> builder;
+    private final MIPSEditorInspectionBuilder<?> builder;
     private final Map<String, String> replacements;
 
-    public MIPSEditorError(MIPSEditorErrorBuilder<?> builder, Map<String, String> replacements) {
+    public MIPSEditorInspection(MIPSEditorInspectionBuilder<?> builder, Map<String, String> replacements) {
         this.builder = builder;
         this.replacements = replacements == null ? new HashMap<>() : replacements;
     }
 
-    public MIPSEditorErrorBuilder<?> getBuilder() {
+    public MIPSEditorInspectionBuilder<?> getBuilder() {
         return builder;
     }
 

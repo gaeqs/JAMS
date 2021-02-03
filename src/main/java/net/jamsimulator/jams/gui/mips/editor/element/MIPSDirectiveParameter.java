@@ -81,15 +81,13 @@ public class MIPSDirectiveParameter extends MIPSCodeElement {
     @Override
     public List<String> getStyles() {
         String style;
-
         if (registeredLabel) {
             style = globalLabel ? "mips-global-label" : "mips-label";
         } else {
             style = string ? "mips-directive-parameter-string" : "mips-directive-parameter";
         }
 
-        if (hasErrors()) return Arrays.asList(style, "mips-error");
-        return Collections.singletonList(style);
+        return getGeneralStyles(style);
     }
 
     @Override
