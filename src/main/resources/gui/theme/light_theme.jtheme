@@ -1075,6 +1075,11 @@ AnchorPane {
     -fx-fill: #665827;
 }
 
+.code-area .mips-warning {
+    -rtfx-underline-color: #6e5703;
+    -rtfx-underline-width: 1px;
+}
+
 .code-area .mips-error {
     -rtfx-underline-color: #661717;
     -rtfx-underline-width: 1px;

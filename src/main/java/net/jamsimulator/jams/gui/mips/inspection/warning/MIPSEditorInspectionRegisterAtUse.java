@@ -14,8 +14,8 @@ import java.util.Set;
 public class MIPSEditorInspectionRegisterAtUse extends MIPSEditorInspection {
 
     public static String NAME = "REGISTER_AT_USE";
-    private static Set<String> AT_NAMES = Set.of("$at", "$1");
-    private static Set<ParameterType> AT_PARAMETERS = Set.of(
+    private static final Set<String> AT_NAMES = Set.of("$at", "$1");
+    private static final Set<ParameterType> AT_PARAMETERS = Set.of(
             ParameterType.REGISTER,
             ParameterType.SIGNED_16_BIT_REGISTER_SHIFT,
             ParameterType.UNSIGNED_16_BIT_REGISTER_SHIFT,
