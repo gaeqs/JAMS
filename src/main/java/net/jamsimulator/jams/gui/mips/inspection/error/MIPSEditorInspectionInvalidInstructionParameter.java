@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * This method appears when an instruction parameter part is invalid.
+ * This error appears when an instruction parameter part is invalid.
  */
 public class MIPSEditorInspectionInvalidInstructionParameter extends MIPSEditorInspection {
 

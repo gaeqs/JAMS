@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * This method appears when the given label is duplicated.
+ * This error appears when the given label is duplicated.
  */
 public class MIPSEditorInspectionDuplicateLabel extends MIPSEditorInspection {
 

@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.mips.inspection.error;
+package net.jamsimulator.jams.gui.mips.inspection.warning;
 
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSCodeElement;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSDirective;
@@ -10,7 +10,9 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * This method appears when the given directive is not found.
+ * This inspection warns the user when a directive is not found.
+ * <p>
+ * This inspection is NOT an error. This is done to support code with unsupported directives.
  */
 public class MIPSEditorInspectionDirectiveNotFound extends MIPSEditorInspection {
 
@@ -23,7 +25,7 @@ public class MIPSEditorInspectionDirectiveNotFound extends MIPSEditorInspection 
     public static class Builder extends MIPSEditorInspectionBuilder<MIPSEditorInspectionDirectiveNotFound> {
 
         public Builder() {
-            super(NAME, true);
+            super(NAME, false);
         }
 
         @Override

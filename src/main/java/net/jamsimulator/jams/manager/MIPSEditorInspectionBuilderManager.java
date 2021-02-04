@@ -7,6 +7,7 @@ import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilder;
 import net.jamsimulator.jams.gui.mips.inspection.error.*;
 import net.jamsimulator.jams.gui.mips.inspection.event.MIPSEditorBuilderUnregisterEvent;
 import net.jamsimulator.jams.gui.mips.inspection.event.MIPSEditorErrorBuilderRegisterEvent;
+import net.jamsimulator.jams.gui.mips.inspection.warning.MIPSEditorInspectionDirectiveNotFound;
 import net.jamsimulator.jams.gui.mips.inspection.warning.MIPSEditorInspectionRegisterAtUse;
 
 import java.util.Collection;

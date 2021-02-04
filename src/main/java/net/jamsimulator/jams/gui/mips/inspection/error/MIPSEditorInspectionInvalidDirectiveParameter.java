@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * This method appears when a directive parameter is invalid.
+ * This error appears when a directive parameter is invalid.
  */
 public class MIPSEditorInspectionInvalidDirectiveParameter extends MIPSEditorInspection {
 

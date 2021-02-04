@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * This method appears when the written instruction is not found.
+ * This error appears when the written instruction is not found.
  */
 public class MIPSEditorInspectionInstructionNotFound extends MIPSEditorInspection {
 

@@ -98,7 +98,8 @@ public class MIPSProject extends BasicProject {
 				getData().getDirectiveSet(),
 				getData().getInstructionSet(),
 				getData().getRegistersBuilder().createRegisters(),
-				configuration.generateNewMemory());
+				configuration.generateNewMemory(),
+				log);
 
 		if (log != null) {
 			log.println();

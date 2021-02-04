@@ -30,8 +30,6 @@ import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.utils.StringUtils;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class MIPSDirectiveParameter extends MIPSCodeElement {
@@ -55,7 +53,7 @@ public class MIPSDirectiveParameter extends MIPSCodeElement {
     }
 
     public DirectiveParameterType getType() {
-        if (directive != null) {
+        if (directive != null && directive.getDirective() != null) {
             return directive.getDirective().getParameterTypeFor(index);
         }
         return DirectiveParameterType.getAllCandidates(text).stream().findAny().orElse(null);

@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * This method appears when label has illegal characters.
+ * This error appears when label has illegal characters.
  */
 public class MIPSEditorInspectionIllegalLabel extends MIPSEditorInspection {
 

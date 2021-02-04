@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.assembler.builder;
 
+import net.jamsimulator.jams.gui.util.log.Log;
 import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
@@ -47,7 +48,7 @@ public class MIPS32AssemblerBuilder extends AssemblerBuilder {
 
 	@Override
 	public MIPS32Assembler createAssembler(Map<String, String> rawFiles, DirectiveSet directiveSet, InstructionSet instructionSet,
-										   Registers registerSet, Memory memory) {
-		return new MIPS32Assembler(rawFiles, instructionSet, directiveSet, registerSet, memory);
+										   Registers registerSet, Memory memory, Log log) {
+		return new MIPS32Assembler(rawFiles, instructionSet, directiveSet, registerSet, memory, log);
 	}
 }
