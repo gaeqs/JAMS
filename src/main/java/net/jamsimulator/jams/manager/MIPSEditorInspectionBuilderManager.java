@@ -11,6 +11,14 @@ import net.jamsimulator.jams.gui.mips.inspection.warning.MIPSEditorInspectionReg
 
 import java.util.Collection;
 
+/**
+ * This singleton stores all {@link MIPSEditorInspectionBuilder}s that projects may use.
+ * <p>
+ * To register an {@link MIPSEditorInspectionBuilder} use {@link #add(Object)}.
+ * To unregister an {@link MIPSEditorInspectionBuilder} use {@link #remove(Object)}.
+ * An {@link MIPSEditorInspectionBuilder}'s removal from the manager doesn't make editors to stop using
+ * it inmediatelly.
+ */
 public class MIPSEditorInspectionBuilderManager extends Manager<MIPSEditorInspectionBuilder<?>> {
 
     public static final MIPSEditorInspectionBuilderManager INSTANCE = new MIPSEditorInspectionBuilderManager();
@@ -37,6 +45,15 @@ public class MIPSEditorInspectionBuilderManager extends Manager<MIPSEditorInspec
         add(new MIPSEditorInspectionRegisterAtUse.Builder());
     }
 
+    /**
+     * Adds to the given collection a new instance of all inspections the given element matches.
+     * <p>
+     * This method checks all registered inspections in this manager.
+     *
+     * @param element    the element to inspect.
+     * @param elements   the {@link MIPSFileElements} the given element is inside of.
+     * @param collection the collection where the inspections will be added.
+     */
     public void getInspections(MIPSCodeElement element, MIPSFileElements elements, Collection<? super MIPSEditorInspection> collection) {
         for (MIPSEditorInspectionBuilder<?> builder : this) {
             builder.tryToBuild(element, elements).ifPresent(collection::add);

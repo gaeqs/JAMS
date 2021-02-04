@@ -9,6 +9,9 @@ import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilder;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * This method appears when a directive parameter is invalid.
+ */
 public class MIPSEditorInspectionInvalidDirectiveParameter extends MIPSEditorInspection {
 
     public static String NAME = "INVALID_DIRECTIVE_PARAMETER";

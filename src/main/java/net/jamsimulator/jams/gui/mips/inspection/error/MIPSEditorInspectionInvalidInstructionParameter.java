@@ -9,6 +9,9 @@ import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilder;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * This method appears when an instruction parameter part is invalid.
+ */
 public class MIPSEditorInspectionInvalidInstructionParameter extends MIPSEditorInspection {
 
     public static String NAME = "INVALID_INSTRUCTION_PARAMETER";

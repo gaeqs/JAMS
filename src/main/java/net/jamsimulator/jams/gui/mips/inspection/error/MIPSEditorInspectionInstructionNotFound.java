@@ -9,6 +9,9 @@ import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilder;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * This method appears when the written instruction is not found.
+ */
 public class MIPSEditorInspectionInstructionNotFound extends MIPSEditorInspection {
 
     public static String NAME = "INSTRUCTION_NOT_FOUND";

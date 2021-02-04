@@ -12,6 +12,9 @@ import net.jamsimulator.jams.utils.LabelUtils;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * This method appears when label has illegal characters.
+ */
 public class MIPSEditorInspectionIllegalLabel extends MIPSEditorInspection {
 
     public static String NAME = "ILLEGAL_LABEL";

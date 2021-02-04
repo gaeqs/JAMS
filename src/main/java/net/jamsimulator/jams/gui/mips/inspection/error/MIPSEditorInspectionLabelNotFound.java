@@ -9,6 +9,9 @@ import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilder;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * This error appears when the written label is not found.
+ */
 public class MIPSEditorInspectionLabelNotFound extends MIPSEditorInspection {
 
     public static String NAME = "LABEL_NOT_FOUND";

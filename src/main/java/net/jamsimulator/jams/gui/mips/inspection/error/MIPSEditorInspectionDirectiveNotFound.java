@@ -9,6 +9,9 @@ import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilder;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * This method appears when the given directive is not found.
+ */
 public class MIPSEditorInspectionDirectiveNotFound extends MIPSEditorInspection {
 
     public static String NAME = "DIRECTIVE_NOT_FOUND";

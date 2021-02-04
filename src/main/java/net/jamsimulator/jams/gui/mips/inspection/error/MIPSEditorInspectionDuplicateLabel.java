@@ -10,6 +10,9 @@ import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilder;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * This method appears when the given label is duplicated.
+ */
 public class MIPSEditorInspectionDuplicateLabel extends MIPSEditorInspection {
 
     public static String NAME = "DUPLICATE_LABEL";

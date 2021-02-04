@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * This inspection warns the user to avoid using the $at register, as it is used by pseudoinstructions
+ * to do their executions.
+ */
 public class MIPSEditorInspectionRegisterAtUse extends MIPSEditorInspection {
 
     public static String NAME = "REGISTER_AT_USE";
