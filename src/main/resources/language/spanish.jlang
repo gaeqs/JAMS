@@ -343,7 +343,8 @@ EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=No se ha podido encontrar la instrucció
 EDITOR_MIPS_ERROR_INVALID_INSTRUCTION_PARAMETER=El parámetro '{NAME} tiene un formato incorrecto.
 
 EDITOR_MIPS_WARNING_LABEL_NOT_FOUND=No se ha podido encontrar la etiqueta '{NAME}'.
-EDITOR_MIPS_WARNING_REGISTER_AT_USE=Evita usar el registro $at. Su valor puede cambiar inesperadamente cuando se ejecuta una pseudoinstrucción.
+EDITOR_MIPS_WARNING_REGISTER_USING_AT=Evita usar el registro $at. Su valor puede cambiar inesperadamente cuando se ejecuta una pseudoinstrucción.
+EDITOR_MIPS_WARNING_USING_EQUIVALENT=Evita usar equivalentes. Los equivalentes suelen empeorar la lectura del código e impiden al inspector trabajar.
 
 ACTION_REGION_GENERAL=General
 ACTION_GENERAL_CREATE_PROJECT=Crear proyecto

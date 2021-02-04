@@ -29,6 +29,8 @@ public class MIPSEditorInspectionDuplicateGlobalLabel extends MIPSEditorInspecti
 
         @Override
         public Optional<MIPSEditorInspectionDuplicateGlobalLabel> tryToBuild(MIPSCodeElement element, MIPSFileElements elements) {
+            if(element.getLine().isUsingReplacements()) return Optional.empty();
+
             String label;
             boolean global;
 

@@ -31,93 +31,102 @@ import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MIPSDirective extends MIPSCodeElement {
 
-	private String simpleText;
-	private Directive directive;
-	private final List<MIPSDirectiveParameter> parameters;
+    private String simpleText;
+    private Directive directive;
+    private final List<MIPSDirectiveParameter> parameters;
 
-	public MIPSDirective(MIPSLine line, MIPSFileElements elements, int startIndex, int endIndex, String text) {
-		super(line, startIndex, endIndex, text);
-		parameters = new ArrayList<>();
-		parseText(elements);
-	}
+    public MIPSDirective(MIPSLine line, MIPSFileElements elements, int startIndex, int endIndex, String text) {
+        super(line, startIndex, endIndex, text);
+        parameters = new ArrayList<>();
+        parseText(elements);
+    }
 
-	@Override
-	public String getSimpleText() {
-		return simpleText;
-	}
+    @Override
+    public String getSimpleText() {
+        return simpleText;
+    }
 
-	public Directive getDirective() {
-		return directive;
-	}
+    public Directive getDirective() {
+        return directive;
+    }
 
-	public List<MIPSDirectiveParameter> getParameters() {
-		return parameters;
-	}
+    public List<MIPSDirectiveParameter> getParameters() {
+        return parameters;
+    }
 
-	public boolean isGlobal() {
-		return simpleText.equalsIgnoreCase("." + DirectiveGlobl.NAME);
-	}
+    public boolean isGlobal() {
+        return simpleText.equalsIgnoreCase("." + DirectiveGlobl.NAME);
+    }
 
-	public boolean isEqv() {
-		return simpleText.equalsIgnoreCase("." + DirectiveEqv.NAME);
-	}
+    public boolean isEqv() {
+        return simpleText.equalsIgnoreCase("." + DirectiveEqv.NAME);
+    }
 
-	public String getEqvKey() {
-		return parameters.isEmpty() ? "" : parameters.get(0).text;
-	}
+    public String getEqvKey() {
+        return parameters.isEmpty() ? "" : parameters.get(0).text;
+    }
 
-	@Override
-	public void move(int offset) {
-		super.move(offset);
-		parameters.forEach(parameter -> parameter.move(offset));
-	}
+    public String getEqvValue() {
+        var param = getEqvKey();
+        if (param.isEmpty()) return "";
+        return text.substring(text.indexOf(param) + param.length());
+    }
 
-	@Override
-	public List<String> getStyles() {
-		return getGeneralStyles("mips-directive");
-	}
+    @Override
+    public void move(int offset) {
+        super.move(offset);
+        parameters.forEach(parameter -> parameter.move(offset));
+    }
 
-	@Override
-	public void refreshMetadata(MIPSFileElements elements) {
-	}
+    @Override
+    public List<String> getStyles() {
+        return getGeneralStyles("mips-directive");
+    }
+
+    @Override
+    public void refreshMetadata(MIPSFileElements elements) {
+    }
 
 
-	private void parseText(MIPSFileElements elements) {
-		Map<Integer, String> parts = StringUtils.multiSplitIgnoreInsideStringWithIndex(text, false, " ", ",", "\t");
-		if (parts.isEmpty()) return;
+    private void parseText(MIPSFileElements elements) {
+        Map<Integer, String> parts = StringUtils.multiSplitIgnoreInsideStringWithIndex(text, false, " ", ",", "\t");
+        if (parts.isEmpty()) return;
 
-		//Sorts all entries by their indices.
-		List<Map.Entry<Integer, String>> stringParameters = parts.entrySet().stream()
-				.sorted(Comparator.comparingInt(Map.Entry::getKey)).collect(Collectors.toList());
+        //Sorts all entries by their indices.
+        List<Map.Entry<Integer, String>> stringParameters = parts.entrySet().stream()
+                .sorted(Comparator.comparingInt(Map.Entry::getKey)).collect(Collectors.toList());
 
-		//The first entry is the directive itself.
-		Map.Entry<Integer, String> first = stringParameters.get(0);
-		simpleText = first.getValue();
-		stringParameters.remove(0);
+        //The first entry is the directive itself.
+        Map.Entry<Integer, String> first = stringParameters.get(0);
+        simpleText = first.getValue();
+        stringParameters.remove(0);
 
-		MIPSProject project = elements.getProject().orElse(null);
-		if (project != null) {
-			DirectiveSet set = project.getData().getDirectiveSet();
-			directive = set.getDirective(this.simpleText.substring(1)).orElse(null);
-		} else directive = null;
+        MIPSProject project = elements.getProject().orElse(null);
+        if (project != null) {
+            DirectiveSet set = project.getData().getDirectiveSet();
+            directive = set.getDirective(this.simpleText.substring(1)).orElse(null);
+        } else directive = null;
 
-		//Adds all parameters.
-		int index = 0;
-		for (Map.Entry<Integer, String> entry : stringParameters) {
-			parameters.add(new MIPSDirectiveParameter(
-					line,
-					this,
-					index++,
-					startIndex + entry.getKey(),
-					startIndex + entry.getKey() + entry.getValue().length(), entry.getValue()));
-		}
+        //Adds all parameters.
+        int index = 0;
+        for (Map.Entry<Integer, String> entry : stringParameters) {
+            parameters.add(new MIPSDirectiveParameter(
+                    line,
+                    this,
+                    index++,
+                    startIndex + entry.getKey(),
+                    startIndex + entry.getKey() + entry.getValue().length(), entry.getValue()));
+        }
 
-		startIndex += first.getKey();
-		endIndex = startIndex + simpleText.length();
-	}
+        startIndex += first.getKey();
+        endIndex = startIndex + simpleText.length();
+    }
 }

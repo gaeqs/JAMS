@@ -8,7 +8,8 @@ import net.jamsimulator.jams.gui.mips.inspection.error.*;
 import net.jamsimulator.jams.gui.mips.inspection.event.MIPSEditorBuilderUnregisterEvent;
 import net.jamsimulator.jams.gui.mips.inspection.event.MIPSEditorErrorBuilderRegisterEvent;
 import net.jamsimulator.jams.gui.mips.inspection.warning.MIPSEditorInspectionDirectiveNotFound;
-import net.jamsimulator.jams.gui.mips.inspection.warning.MIPSEditorInspectionRegisterAtUse;
+import net.jamsimulator.jams.gui.mips.inspection.warning.MIPSEditorInspectionRegisterUsingAt;
+import net.jamsimulator.jams.gui.mips.inspection.warning.MIPSEditorInspectionUsingEquivalent;
 
 import java.util.Collection;
 
@@ -34,7 +35,6 @@ public class MIPSEditorInspectionBuilderManager extends Manager<MIPSEditorInspec
 
     @Override
     protected void loadDefaultElements() {
-        add(new MIPSEditorInspectionDirectiveNotFound.Builder());
         add(new MIPSEditorInspectionDuplicateGlobalLabel.Builder());
         add(new MIPSEditorInspectionDuplicateLabel.Builder());
         add(new MIPSEditorInspectionIllegalLabel.Builder());
@@ -43,7 +43,9 @@ public class MIPSEditorInspectionBuilderManager extends Manager<MIPSEditorInspec
         add(new MIPSEditorInspectionInvalidInstructionParameter.Builder());
         add(new MIPSEditorInspectionLabelNotFound.Builder());
 
-        add(new MIPSEditorInspectionRegisterAtUse.Builder());
+        add(new MIPSEditorInspectionDirectiveNotFound.Builder());
+        add(new MIPSEditorInspectionRegisterUsingAt.Builder());
+        add(new MIPSEditorInspectionUsingEquivalent.Builder());
     }
 
     /**

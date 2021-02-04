@@ -56,7 +56,7 @@ public class MIPSDirectiveParameter extends MIPSCodeElement {
         if (directive != null && directive.getDirective() != null) {
             return directive.getDirective().getParameterTypeFor(index);
         }
-        return DirectiveParameterType.getAllCandidates(text).stream().findAny().orElse(null);
+        return DirectiveParameterType.getAllCandidates(text).stream().findAny().orElse(DirectiveParameterType.ANY);
     }
 
     public MIPSDirective getDirective() {

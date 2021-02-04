@@ -28,6 +28,7 @@ public class MIPSEditorInspectionInvalidInstructionParameter extends MIPSEditorI
 
         @Override
         public Optional<MIPSEditorInspectionInvalidInstructionParameter> tryToBuild(MIPSCodeElement element, MIPSFileElements elements) {
+            if(element.getLine().isUsingReplacements()) return Optional.empty();
             if (element instanceof MIPSInstructionParameterPart
                     && !((MIPSInstructionParameterPart) element).getParameter().isValid()) {
                 return Optional.of(new MIPSEditorInspectionInvalidInstructionParameter(this,

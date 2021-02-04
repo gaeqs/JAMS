@@ -168,7 +168,7 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
 		FileEditorHolder holder = (FileEditorHolder) node;
 
 		files.forEach((file, elements) -> {
-			elements.searchForUpdates(toUpdate);
+			elements.seachForLabelsUpdates(toUpdate);
 			Optional<FileEditorTab> fTab = holder.getFileDisplayTab(file, true);
 			if (fTab.isPresent()) {
 				FileEditor display = fTab.get().getDisplay();
@@ -223,7 +223,7 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
 
 		Optional<FileEditorTab> fTab = holder.getFileDisplayTab(file, true);
 
-		elements.searchForUpdates(globalLabels);
+		elements.seachForLabelsUpdates(globalLabels);
 		if (fTab.isPresent()) {
 			FileEditor display = fTab.get().getDisplay();
 			if (display instanceof MIPSFileEditor) {

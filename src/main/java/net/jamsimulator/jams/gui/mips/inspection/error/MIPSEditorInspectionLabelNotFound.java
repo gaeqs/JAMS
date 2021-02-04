@@ -28,6 +28,7 @@ public class MIPSEditorInspectionLabelNotFound extends MIPSEditorInspection {
 
         @Override
         public Optional<MIPSEditorInspectionLabelNotFound> tryToBuild(MIPSCodeElement element, MIPSFileElements elements) {
+            if(element.getLine().isUsingReplacements()) return Optional.empty();
             if (element instanceof MIPSInstructionParameterPart) {
                 var type = ((MIPSInstructionParameterPart) element).getType();
                 if (type != MIPSInstructionParameterPart.InstructionParameterPartType.LABEL)

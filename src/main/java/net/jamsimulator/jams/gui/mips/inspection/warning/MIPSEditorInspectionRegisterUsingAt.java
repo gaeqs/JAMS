@@ -15,9 +15,9 @@ import java.util.Set;
  * This inspection warns the user to avoid using the $at register, as it is used by pseudoinstructions
  * to do their executions.
  */
-public class MIPSEditorInspectionRegisterAtUse extends MIPSEditorInspection {
+public class MIPSEditorInspectionRegisterUsingAt extends MIPSEditorInspection {
 
-    public static String NAME = "REGISTER_AT_USE";
+    public static String NAME = "REGISTER_USING_AT";
     private static final Set<String> AT_NAMES = Set.of("$at", "$1");
     private static final Set<ParameterType> AT_PARAMETERS = Set.of(
             ParameterType.REGISTER,
@@ -28,18 +28,18 @@ public class MIPSEditorInspectionRegisterAtUse extends MIPSEditorInspection {
             ParameterType.LABEL_REGISTER_SHIFT
     );
 
-    public MIPSEditorInspectionRegisterAtUse(MIPSEditorInspectionBuilder<?> builder) {
+    public MIPSEditorInspectionRegisterUsingAt(MIPSEditorInspectionBuilder<?> builder) {
         super(builder, Map.of());
     }
 
-    public static class Builder extends MIPSEditorInspectionBuilder<MIPSEditorInspectionRegisterAtUse> {
+    public static class Builder extends MIPSEditorInspectionBuilder<MIPSEditorInspectionRegisterUsingAt> {
 
         public Builder() {
             super(NAME, false);
         }
 
         @Override
-        public Optional<MIPSEditorInspectionRegisterAtUse> tryToBuild(MIPSCodeElement element, MIPSFileElements elements) {
+        public Optional<MIPSEditorInspectionRegisterUsingAt> tryToBuild(MIPSCodeElement element, MIPSFileElements elements) {
 
             if (element instanceof MIPSInstructionParameterPart
                     && ((MIPSInstructionParameterPart) element).getType()
@@ -55,7 +55,7 @@ public class MIPSEditorInspectionRegisterAtUse extends MIPSEditorInspection {
                 if(index >= parameters.length) return Optional.empty();
 
                 if(AT_PARAMETERS.contains(parameters[index]) && AT_NAMES.contains(element.getSimpleText())) {
-                    return Optional.of(new MIPSEditorInspectionRegisterAtUse(this));
+                    return Optional.of(new MIPSEditorInspectionRegisterUsingAt(this));
                 }
             }
 

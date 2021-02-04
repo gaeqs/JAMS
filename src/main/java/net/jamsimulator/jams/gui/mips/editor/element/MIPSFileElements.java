@@ -38,370 +38,429 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class MIPSFileElements {
 
-	private final MIPSProject project;
-	private MIPSFilesToAssemble filesToAssemble;
+    private final MIPSProject project;
+    private MIPSFilesToAssemble filesToAssemble;
 
-	private final List<MIPSLine> lines;
+    private final List<MIPSLine> lines;
 
-	private final Bag<String> labels;
-	private final Bag<String> setAsGlobalLabel;
+    private final Bag<String> labels;
+    private final Bag<String> setAsGlobalLabel;
+    private final TreeSet<MIPSReplacement> replacements;
 
-	private final Set<Integer> requiresUpdate;
+    private final Set<Integer> requiresUpdate;
 
-	public MIPSFileElements(MIPSProject project) {
-		this.project = project;
+    public MIPSFileElements(MIPSProject project) {
+        this.project = project;
 
-		this.lines = new ArrayList<>();
-		this.labels = new Bag<>();
-		this.setAsGlobalLabel = new Bag<>();
+        this.lines = new ArrayList<>();
+        this.labels = new Bag<>();
+        this.setAsGlobalLabel = new Bag<>();
+        this.replacements = new TreeSet<>();
 
-		this.requiresUpdate = new HashSet<>();
-		this.filesToAssemble = null;
-	}
+        this.requiresUpdate = new HashSet<>();
+        this.filesToAssemble = null;
+    }
 
-	/**
-	 * Returns the project of this file, if present.
-	 *
-	 * @return the project of this file, if present.
-	 */
-	public Optional<MIPSProject> getProject() {
-		return Optional.ofNullable(project);
-	}
+    /**
+     * Returns the project of this file, if present.
+     *
+     * @return the project of this file, if present.
+     */
+    public Optional<MIPSProject> getProject() {
+        return Optional.ofNullable(project);
+    }
 
-	/**
-	 * Returns the {@link MIPSFilesToAssemble} this file is inside of, if present.
-	 *
-	 * @return the {@link MIPSFilesToAssemble}, if present.
-	 */
-	public Optional<MIPSFilesToAssemble> getFilesToAssemble() {
-		return Optional.ofNullable(filesToAssemble);
-	}
+    /**
+     * Returns the {@link MIPSFilesToAssemble} this file is inside of, if present.
+     *
+     * @return the {@link MIPSFilesToAssemble}, if present.
+     */
+    public Optional<MIPSFilesToAssemble> getFilesToAssemble() {
+        return Optional.ofNullable(filesToAssemble);
+    }
 
-	/**
-	 * Sets the {@link MIPSFilesToAssemble} this file is inside of.
-	 * <p>
-	 * This method should be used only by a {@link MIPSFilesToAssemble}.
-	 *
-	 * @param filesToAssemble the {@link MIPSFilesToAssemble}.
-	 */
-	public void setFilesToAssemble(MIPSFilesToAssemble filesToAssemble) {
-		this.filesToAssemble = filesToAssemble;
-	}
+    /**
+     * Sets the {@link MIPSFilesToAssemble} this file is inside of.
+     * <p>
+     * This method should be used only by a {@link MIPSFilesToAssemble}.
+     *
+     * @param filesToAssemble the {@link MIPSFilesToAssemble}.
+     */
+    public void setFilesToAssemble(MIPSFilesToAssemble filesToAssemble) {
+        this.filesToAssemble = filesToAssemble;
+    }
 
-	/**
-	 * Returns all lines of the represented file.
-	 *
-	 * @return the lines.
-	 */
-	public List<MIPSLine> getLines() {
-		return lines;
-	}
+    /**
+     * Returns all lines of the represented file.
+     *
+     * @return the lines.
+     */
+    public List<MIPSLine> getLines() {
+        return lines;
+    }
 
-	/**
-	 * Returns all labels registered on this file.
-	 *
-	 * @return the labels.
-	 */
-	public Bag<String> getLabels() {
-		return labels;
-	}
+    /**
+     * Returns all labels registered on this file.
+     *
+     * @return the labels.
+     */
+    public Bag<String> getLabels() {
+        return labels;
+    }
 
-	public boolean isLabelDeclared(String label) {
-		return labels.contains(label) || filesToAssemble != null && filesToAssemble.getGlobalLabels().contains(label);
-	}
+    public boolean isLabelDeclared(String label) {
+        return labels.contains(label) || filesToAssemble != null && filesToAssemble.getGlobalLabels().contains(label);
+    }
 
-	/**
-	 * Returns the labels that should be set as global labels.
-	 *
-	 * @return the labels.
-	 */
-	public Bag<String> getSetAsGlobalLabel() {
-		return setAsGlobalLabel;
-	}
+    /**
+     * Returns the labels that should be set as global labels.
+     *
+     * @return the labels.
+     */
+    public Bag<String> getSetAsGlobalLabel() {
+        return setAsGlobalLabel;
+    }
 
-	/**
-	 * Returns all global labels that are defined by this file.
-	 *
-	 * @return the global labels.
-	 */
-	public Set<String> getExistingGlobalLabels() {
-		Set<String> existingLabels = new HashSet<>();
-		for (String label : setAsGlobalLabel) {
-			if (labels.contains(label)) existingLabels.add(label);
-		}
-		return existingLabels;
-	}
+    /**
+     * Returns all global labels that are defined by this file.
+     *
+     * @return the global labels.
+     */
+    public Set<String> getExistingGlobalLabels() {
+        Set<String> existingLabels = new HashSet<>();
+        for (String label : setAsGlobalLabel) {
+            if (labels.contains(label)) existingLabels.add(label);
+        }
+        return existingLabels;
+    }
 
-	/**
-	 * Returns the element placed at the given index.
-	 *
-	 * @param index the index.
-	 * @return the element, if found.
-	 */
-	public Optional<MIPSCodeElement> getElementAt(int index) {
-		try {
-			MIPSLine line = lines.get(lineOf(index));
-			return line.getElementAt(index);
-		} catch (IndexOutOfBoundsException ex) {
-			return Optional.empty();
-		}
-	}
+    /**
+     * Returns the element placed at the given index.
+     *
+     * @param index the index.
+     * @return the element, if found.
+     */
+    public Optional<MIPSCodeElement> getElementAt(int index) {
+        try {
+            MIPSLine line = lines.get(lineOf(index));
+            return line.getElementAt(index);
+        } catch (IndexOutOfBoundsException ex) {
+            return Optional.empty();
+        }
+    }
 
-	/**
-	 * Returns the index of the file where the given absolute position is located at.
-	 * <p>
-	 * The absolute position is the character position.
-	 *
-	 * @param position the absolute position.
-	 * @return the line index or -1 if not found.
-	 */
-	public int lineOf(int position) {
-		if (position < 0) return -1;
-		int i = 0;
-		for (MIPSLine line : lines) {
-			if (line.getStart() <= position && line.getStart() + line.getText().length() >= position) return i;
-			i++;
-		}
-		return -1;
-	}
+    /**
+     * Returns the index of the file where the given absolute position is located at.
+     * <p>
+     * The absolute position is the character position.
+     *
+     * @param position the absolute position.
+     * @return the line index or -1 if not found.
+     */
+    public int lineOf(int position) {
+        if (position < 0) return -1;
+        int i = 0;
+        for (MIPSLine line : lines) {
+            if (line.getStart() <= position && line.getStart() + line.getText().length() >= position) return i;
+            i++;
+        }
+        return -1;
+    }
 
-	/**
-	 * Returns the line that contains the given index position.
-	 *
-	 * @param position the position.
-	 * @return the line.
-	 */
-	public MIPSLine getLineWithPosition(int position) {
-		return lines.get(lineOf(position));
-	}
+    /**
+     * Returns the line that contains the given index position.
+     *
+     * @param position the position.
+     * @return the line.
+     */
+    public MIPSLine getLineWithPosition(int position) {
+        return lines.get(lineOf(position));
+    }
 
-	public boolean removeLine(int index) {
-		if (index < 0 || index >= lines.size()) throw new IndexOutOfBoundsException("Index out of bounds");
-		MIPSLine line = lines.remove(index);
+    public boolean removeLine(int index) {
+        if (index < 0 || index >= lines.size()) throw new IndexOutOfBoundsException("Index out of bounds");
+        MIPSLine line = lines.remove(index);
 
-		int length = line.getText().length() + 1;
-		for (int i = index; i < lines.size(); i++)
-			lines.get(i).move(-length);
+        line.getReplacement().ifPresent(this::removeReplacement);
 
-		requiresUpdate.remove(lines.size());
-		return checkLabels(line, false);
-	}
+        int length = line.getText().length() + 1;
+        for (int i = index; i < lines.size(); i++)
+            lines.get(i).move(-length);
 
-	public boolean addLine(int index, String text) {
-		if (index < 0 || index > lines.size()) throw new IndexOutOfBoundsException("Index out of bounds");
-		if (text.contains("\n") || text.contains("\r")) throw new IllegalArgumentException("Invalid line!");
+        requiresUpdate.remove(lines.size());
+        return checkLabels(line, false);
+    }
 
-		int start = 0;
-		if (index != 0) {
-			MIPSLine previous = lines.get(index - 1);
-			start = previous.getStart() + previous.getText().length() + 1;
-		}
+    public boolean addLine(int index, String text) {
+        if (index < 0 || index > lines.size()) throw new IndexOutOfBoundsException("Index out of bounds");
+        if (text.contains("\n") || text.contains("\r")) throw new IllegalArgumentException("Invalid line!");
 
-		MIPSLine line = new MIPSLine(this, start, text);
-		lines.add(index, line);
+        int start = 0;
+        if (index != 0) {
+            MIPSLine previous = lines.get(index - 1);
+            start = previous.getStart() + previous.getText().length() + 1;
+        }
 
-		int length = text.length() + 1;
-		for (int i = index + 1; i < lines.size(); i++)
-			lines.get(i).move(length);
+        MIPSLine line = new MIPSLine(this, start, text);
+        lines.add(index, line);
 
-		requiresUpdate.add(index);
-		return checkLabels(line, true);
-	}
+        int length = text.length() + 1;
+        for (int i = index + 1; i < lines.size(); i++)
+            lines.get(i).move(length);
 
-	public boolean editLine(int index, String text) {
-		if (index < 0 || index >= lines.size()) throw new IndexOutOfBoundsException("Index out of bounds");
-		if (text.contains("\n") || text.contains("\r")) throw new IllegalArgumentException("Invalid line!");
+        line.getReplacement().ifPresent(target -> addReplacemenet(target, true));
 
-		MIPSLine old = lines.get(index);
-		int difference = text.length() - old.getText().length();
+        requiresUpdate.add(index);
+        return checkLabels(line, true);
+    }
 
-		MIPSLine line = new MIPSLine(this, old.getStart(), text);
-		lines.set(index, line);
+    public boolean editLine(int index, String text) {
+        if (index < 0 || index >= lines.size()) throw new IndexOutOfBoundsException("Index out of bounds");
+        if (text.contains("\n") || text.contains("\r")) throw new IllegalArgumentException("Invalid line!");
 
-		for (int i = index + 1; i < lines.size(); i++)
-			lines.get(i).move(difference);
+        MIPSLine old = lines.get(index);
+        old.getReplacement().ifPresent(this::removeReplacement);
 
+        int difference = text.length() - old.getText().length();
 
-		requiresUpdate.add(index);
-		boolean a = checkLabels(old, false);
-		boolean b = checkLabels(line, true);
-		return a || b;
-	}
+        MIPSLine line = new MIPSLine(this, old.getStart(), text);
+        lines.set(index, line);
 
-	/**
-	 * Refreshes all lines.
-	 *
-	 * @param raw the raw file string.
-	 */
-	public void refreshAll(String raw) {
-		lines.clear();
-		labels.clear();
-		setAsGlobalLabel.clear();
-		if (raw.isEmpty()) return;
+        for (int i = index + 1; i < lines.size(); i++)
+            lines.get(i).move(difference);
 
-		int start = 0;
-		int end = 0;
-		StringBuilder builder = new StringBuilder();
+        line.getReplacement().ifPresent(target -> addReplacemenet(target, true));
 
-		//Checks all lines
-		char c;
-		MIPSLine line;
-		while (raw.length() > end) {
-			c = raw.charAt(end);
-			if (c == '\n' || c == '\r') {
-				line = new MIPSLine(this, start, builder.toString());
+        requiresUpdate.add(index);
+        boolean a = checkLabels(old, false);
+        boolean b = checkLabels(line, true);
+        return a || b;
+    }
 
-				line.getRegisteredLabels().forEach((label, global) -> {
-					labels.add(label);
-					if (global) setAsGlobalLabel.add(label);
-				});
+    /**
+     * Refreshes all lines.
+     *
+     * @param raw the raw file string.
+     */
+    public void refreshAll(String raw) {
+        lines.clear();
+        labels.clear();
+        setAsGlobalLabel.clear();
+        replacements.clear();
+        if (raw.isEmpty()) return;
 
-				if (line.getDirective().isPresent() && line.getDirective().get().isGlobal()) {
-					line.getDirective().get().getParameters().forEach(target -> {
-						setAsGlobalLabel.add(target.text);
-					});
-				}
+        int start = 0;
+        int end = 0;
+        StringBuilder builder = new StringBuilder();
 
-				this.lines.add(line);
-				//Restarts the builder.
-				builder = new StringBuilder();
-				start = end + 1;
-			} else builder.append(c);
-			end++;
-		}
+        //Checks all lines
+        char c;
+        MIPSLine line;
+        while (raw.length() > end) {
+            c = raw.charAt(end);
+            if (c == '\n' || c == '\r') {
+                line = new MIPSLine(this, start, builder.toString());
 
-		//Final line
-		if (end >= start) {
-			line = new MIPSLine(this, start, builder.toString());
+                line.getRegisteredLabels().forEach((label, global) -> {
+                    labels.add(label);
+                    if (global) setAsGlobalLabel.add(label);
+                });
 
-			line.getRegisteredLabels().forEach((label, global) -> {
-				labels.add(label);
-				if (global) setAsGlobalLabel.add(label);
-			});
+                if (line.getDirective().isPresent() && line.getDirective().get().isGlobal()) {
+                    line.getDirective().get().getParameters().forEach(target -> {
+                        setAsGlobalLabel.add(target.text);
+                    });
+                }
 
-			if (line.getDirective().isPresent() && line.getDirective().get().isGlobal()) {
-				line.getDirective().get().getParameters().forEach(target -> {
-					setAsGlobalLabel.add(target.text);
-				});
-			}
+                this.lines.add(line);
+                line.getReplacement().ifPresent(target -> addReplacemenet(target, false));
 
-			this.lines.add(line);
-		}
+                //Restarts the builder.
+                builder = new StringBuilder();
+                start = end + 1;
+            } else builder.append(c);
+            end++;
+        }
 
-		for (MIPSLine mipsLine : lines) {
-			mipsLine.refreshMetadata(this);
-		}
-	}
+        //Final line
+        if (end >= start) {
+            line = new MIPSLine(this, start, builder.toString());
 
-	/**
-	 * Styles all lines.
-	 *
-	 * @param area the area to style.
-	 */
-	public void styleAll(CodeArea area) {
-		int i = 0;
-		for (MIPSLine line : lines) {
-			line.styleLine(area, i);
-			i++;
-		}
-		requiresUpdate.clear();
-	}
+            line.getRegisteredLabels().forEach((label, global) -> {
+                labels.add(label);
+                if (global) setAsGlobalLabel.add(label);
+            });
 
-	/**
-	 * Styles the selected lines.
-	 *
-	 * @param area   the area to style.
-	 * @param from   the first line index.
-	 * @param amount the amount of lines to style.
-	 */
-	public void styleLines(CodeArea area, int from, int amount) {
-		if (from < 0 || from + amount > lines.size())
-			throw new IndexOutOfBoundsException("Index out of bounds. [" + from + ", " + (from + amount) + ")");
-		for (int i = 0; i < amount; i++) {
-			lines.get(from + i).styleLine(area, from + i);
-		}
-	}
+            if (line.getDirective().isPresent() && line.getDirective().get().isGlobal()) {
+                line.getDirective().get().getParameters().forEach(target -> {
+                    setAsGlobalLabel.add(target.text);
+                });
+            }
 
-	/**
-	 * Styles the selected lines.
-	 *
-	 * @param area  the area to style.
-	 * @param lines the lines to update.
-	 */
-	public void styleLines(CodeArea area, Collection<Integer> lines) {
-		lines.forEach(target -> this.lines.get(target).styleLine(area, target));
-	}
+            this.lines.add(line);
+        }
 
-	/**
-	 * Applies all pending updates to the given area.
-	 *
-	 * @param area the {@link CodeArea}.
-	 */
-	public void update(MIPSFileEditor area) {
-		for (Integer i : requiresUpdate) {
-			if (i < 0 || i >= lines.size()) continue;
-			MIPSLine line = lines.get(i);
-			line.refreshMetadata(this);
-			line.styleLine(area, i);
-		}
-		requiresUpdate.clear();
-	}
+        int i = 0;
+        for (MIPSLine mipsLine : lines) {
+            mipsLine.refreshMetadata(this);
+        }
+    }
 
-	/**
-	 * Adds to the update queue all lines containing any of the given labels.
-	 *
-	 * @param labelsToCheck the labels.
-	 */
-	public void searchForUpdates(Collection<String> labelsToCheck) {
-		int i = 0;
-		Collection<String> used;
-		for (MIPSLine mipsLine : lines) {
-			used = mipsLine.getUsedLabels();
-			for (String label : labelsToCheck) {
-				if (used.contains(label)) {
-					requiresUpdate.add(i);
-					break;
-				}
-			}
-			if (mipsLine.getLabel().isPresent()) {
-				if (labelsToCheck.contains(mipsLine.getLabel().get().getLabel())) {
-					requiresUpdate.add(i);
-				}
-			}
-			i++;
-		}
-	}
+    /**
+     * Styles all lines.
+     *
+     * @param area the area to style.
+     */
+    public void styleAll(CodeArea area) {
+        int i = 0;
+        for (MIPSLine line : lines) {
+            line.styleLine(area, i);
+            i++;
+        }
+        requiresUpdate.clear();
+    }
 
+    /**
+     * Styles the selected lines.
+     *
+     * @param area   the area to style.
+     * @param from   the first line index.
+     * @param amount the amount of lines to style.
+     */
+    public void styleLines(CodeArea area, int from, int amount) {
+        if (from < 0 || from + amount > lines.size())
+            throw new IndexOutOfBoundsException("Index out of bounds. [" + from + ", " + (from + amount) + ")");
+        for (int i = 0; i < amount; i++) {
+            lines.get(from + i).styleLine(area, from + i);
+        }
+    }
 
-	private boolean checkLabels(MIPSLine line, boolean add) {
-		List<String> labelsToCheck = new ArrayList<>();
-		AtomicBoolean globalLabelUpdated = new AtomicBoolean(false);
+    /**
+     * Styles the selected lines.
+     *
+     * @param area  the area to style.
+     * @param lines the lines to update.
+     */
+    public void styleLines(CodeArea area, Collection<Integer> lines) {
+        lines.forEach(target -> this.lines.get(target).styleLine(area, target));
+    }
 
-		//LABELS
-		line.getRegisteredLabels().forEach((label, global) -> {
-			if (add) labels.add(label);
-			else labels.remove(label);
-			labelsToCheck.add(label);
+    /**
+     * Applies all pending updates to the given area.
+     *
+     * @param area the {@link CodeArea}.
+     */
+    public void update(MIPSFileEditor area) {
+        for (Integer i : requiresUpdate) {
+            if (i < 0 || i >= lines.size()) continue;
+            MIPSLine line = lines.get(i);
+            line.refreshMetadata(this);
+            line.styleLine(area, i);
+        }
+        requiresUpdate.clear();
+    }
 
-			if (global) {
-				if (add) setAsGlobalLabel.add(label);
-				else setAsGlobalLabel.remove(label);
-			}
-			globalLabelUpdated.set(globalLabelUpdated.get() || global || setAsGlobalLabel.contains(label));
-		});
+    /**
+     * Adds to the update queue all lines containing any of the given labels.
+     *
+     * @param labelsToCheck the labels.
+     */
+    public void seachForLabelsUpdates(Collection<String> labelsToCheck) {
+        int i = 0;
+        Collection<String> used;
+        for (MIPSLine mipsLine : lines) {
+            used = mipsLine.getUsedLabels();
+            for (String label : labelsToCheck) {
+                if (used.contains(label)) {
+                    requiresUpdate.add(i);
+                    break;
+                }
+            }
+            if (mipsLine.getLabel().isPresent()) {
+                if (labelsToCheck.contains(mipsLine.getLabel().get().getLabel())) {
+                    requiresUpdate.add(i);
+                }
+            }
+            i++;
+        }
+    }
 
-		//DIRECTIVE
-		if (line.getDirective().isPresent() && line.getDirective().get().isGlobal()) {
-			line.getDirective().get().getParameters().forEach(target -> {
-				if (add) setAsGlobalLabel.add(target.text);
-				else setAsGlobalLabel.remove(target.text);
-				labelsToCheck.add(target.text);
-			});
-			globalLabelUpdated.set(globalLabelUpdated.get() || !line.getDirective().get().getParameters().isEmpty());
-		}
+    public Set<MIPSReplacement> getReplacements(int startIndex, String text) {
+        Set<MIPSReplacement> set = new HashSet<>();
+        Iterator<MIPSReplacement> iterator = replacements.iterator();
 
-		searchForUpdates(labelsToCheck);
-		return globalLabelUpdated.get();
-	}
+        MIPSReplacement current;
+        while (iterator.hasNext() && (current = iterator.next()).getLine().getStart() < startIndex) {
+            if (text.contains(current.getKey())) {
+                set.add(current);
+            }
+        }
+        return set;
+    }
+
+    private void removeReplacement(MIPSReplacement replacement) {
+        replacements.remove(replacement);
+
+        //CHECK
+        int lineIndex = lines.indexOf(replacement.getLine());
+        var sublist = lines.subList(lineIndex + 1, lines.size());
+
+        int i = lineIndex + 1;
+        for (var line : sublist) {
+            if (line.getUsedReplacements().contains(replacement)) {
+                requiresUpdate.add(i);
+            }
+            i++;
+        }
+    }
+
+    private void addReplacemenet(MIPSReplacement replacement, boolean check) {
+        replacements.add(replacement);
+
+        if (check) {
+            //CHECK
+            int lineIndex = lines.indexOf(replacement.getLine());
+            var sublist = lines.subList(lineIndex + 1, lines.size());
+
+            int i = lineIndex + 1;
+            for (var line : sublist) {
+                if (line.getText().contains(replacement.getKey())) {
+                    requiresUpdate.add(i);
+                }
+                i++;
+            }
+        }
+    }
+
+    private boolean checkLabels(MIPSLine line, boolean add) {
+        List<String> labelsToCheck = new ArrayList<>();
+        AtomicBoolean globalLabelUpdated = new AtomicBoolean(false);
+
+        //LABELS
+        line.getRegisteredLabels().forEach((label, global) -> {
+            if (add) labels.add(label);
+            else labels.remove(label);
+            labelsToCheck.add(label);
+
+            if (global) {
+                if (add) setAsGlobalLabel.add(label);
+                else setAsGlobalLabel.remove(label);
+            }
+            globalLabelUpdated.set(globalLabelUpdated.get() || global || setAsGlobalLabel.contains(label));
+        });
+
+        //DIRECTIVE
+        if (line.getDirective().isPresent() && line.getDirective().get().isGlobal()) {
+            line.getDirective().get().getParameters().forEach(target -> {
+                if (add) setAsGlobalLabel.add(target.text);
+                else setAsGlobalLabel.remove(target.text);
+                labelsToCheck.add(target.text);
+            });
+            globalLabelUpdated.set(globalLabelUpdated.get() || !line.getDirective().get().getParameters().isEmpty());
+        }
+
+        seachForLabelsUpdates(labelsToCheck);
+        return globalLabelUpdated.get();
+    }
 
 }

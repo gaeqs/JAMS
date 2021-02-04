@@ -57,6 +57,6 @@ public class DirectiveEqv extends Directive {
 
 	@Override
 	public boolean isParameterValidInContext(int index, String value, MIPSFileElements context) {
-		return isParameterValid(index, value);
+		return true;
 	}
 }

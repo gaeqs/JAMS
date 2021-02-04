@@ -343,7 +343,8 @@ EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=Couldn't found instruction '{NAME}' with
 EDITOR_MIPS_ERROR_INVALID_INSTRUCTION_PARAMETER=The parameter '{NAME}' is invalid.
 
 EDITOR_MIPS_WARNING_DIRECTIVE_NOT_FOUND=Couldn't found directive '{NAME}'.
-EDITOR_MIPS_WARNING_REGISTER_AT_USE=Avoid using the register $at. Its value may change unexpectedly when a pseudoinstruction is executed.
+EDITOR_MIPS_WARNING_REGISTER_USING_AT=Avoid using the register $at. Its value may change unexpectedly when a pseudoinstruction is executed.
+EDITOR_MIPS_WARNING_USING_EQUIVALENT=Avoid using equivalents. Equivalents ofter make code less legible and prevents the inspector from working.
 
 ACTION_REGION_GENERAL=General
 ACTION_GENERAL_CREATE_PROJECT=Create project
