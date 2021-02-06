@@ -36,6 +36,10 @@ public class MIPSLabel extends MIPSCodeElement {
         registerLabel(getLabel(), false);
     }
 
+    @Override
+    public String getTranslatedNameNode() {
+        return "MIPS_ELEMENT_LABEL";
+    }
 
     @Override
     public String getSimpleText() {

@@ -53,6 +53,11 @@ public class MIPSInstruction extends MIPSCodeElement {
     }
 
     @Override
+    public String getTranslatedNameNode() {
+        return "MIPS_ELEMENT_INSTRUCTION";
+    }
+
+    @Override
     public String getSimpleText() {
         return instruction;
     }

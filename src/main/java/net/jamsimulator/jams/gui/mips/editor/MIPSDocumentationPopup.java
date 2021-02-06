@@ -8,7 +8,7 @@ import net.jamsimulator.jams.gui.mips.editor.element.MIPSInstruction;
 import net.jamsimulator.jams.gui.util.StringStyler;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 
-public class MipsDocumentationPopup extends DocumentationPopup {
+public class MIPSDocumentationPopup extends DocumentationPopup {
 
     private final MIPSAutocompletionPopup autocompletionPopup;
 
@@ -17,7 +17,7 @@ public class MipsDocumentationPopup extends DocumentationPopup {
      *
      * @param display the code display where this popup is displayed.
      */
-    public MipsDocumentationPopup(CodeFileEditor display, MIPSAutocompletionPopup autocompletionPopup) {
+    public MIPSDocumentationPopup(CodeFileEditor display, MIPSAutocompletionPopup autocompletionPopup) {
         super(display);
         this.autocompletionPopup = autocompletionPopup;
         autocompletionPopup.registerListeners(this, true);
@@ -69,7 +69,7 @@ public class MipsDocumentationPopup extends DocumentationPopup {
             if (element instanceof MIPSInstruction) {
 
                 topMessage.clear();
-                element.populatePopupWithErrors(topMessage);
+                element.populatePopupWithInspections(topMessage);
                 topMessage.setMaxHeight(topMessage.getLength() > 0 ? 50 : 0);
 
                 var instructions = ((MIPSInstruction) element).getMostCompatibleInstruction();

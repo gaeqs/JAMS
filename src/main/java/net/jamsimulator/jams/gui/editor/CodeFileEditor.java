@@ -29,9 +29,11 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Popup;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.Action;
@@ -43,6 +45,7 @@ import net.jamsimulator.jams.gui.editor.popup.DocumentationPopup;
 import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
+import net.jamsimulator.jams.gui.util.ZoomUtils;
 import net.jamsimulator.jams.utils.FileUtils;
 import net.jamsimulator.jams.utils.KeyCombinationBuilder;
 import net.jamsimulator.jams.utils.StringUtils;
@@ -65,438 +68,408 @@ import java.util.regex.Pattern;
  */
 public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrollHandled {
 
-	protected final FileEditorTab tab;
-	protected String old, original;
-	protected VirtualizedScrollPane scrollPane;
-	protected ScaledVirtualized zoom;
+    protected final FileEditorTab tab;
+    protected String old, original;
+    protected VirtualizedScrollPane scrollPane;
+    protected ScaledVirtualized zoom;
 
-	protected AutocompletionPopup autocompletionPopup;
-	protected DocumentationPopup documentationPopup;
-	private ChangeListener<? super Number> autocompletionMoveListener;
+    protected AutocompletionPopup autocompletionPopup;
+    protected DocumentationPopup documentationPopup;
+    private ChangeListener<? super Number> autocompletionMoveListener;
 
-	public CodeFileEditor(FileEditorTab tab) {
-		super(read(tab));
-		this.tab = tab;
-		this.original = getText();
+    public CodeFileEditor(FileEditorTab tab) {
+        super(read(tab));
+        this.tab = tab;
+        this.original = getText();
 
-		CustomLineNumberFactory factory = CustomLineNumberFactory.get(this);
-		getChildren().add(0, factory.getBackground());
+        CustomLineNumberFactory factory = CustomLineNumberFactory.get(this);
+        getChildren().add(0, factory.getBackground());
 
-		JamsApplication.getThemeManager().getSelected().apply(this);
-		JamsApplication.getThemeManager().registerListeners(this, true);
+        JamsApplication.getThemeManager().getSelected().apply(this);
+        JamsApplication.getThemeManager().registerListeners(this, true);
 
-		setParagraphGraphicFactory(factory);
-		applyOldTextListener();
-		applyAutoIndent();
-		applyIndentRemover();
-		applySaveMarkListener();
-		initializeAutocompletionPopupListeners();
-		initializeActionsListeners();
-		applyZoomListener();
+        setParagraphGraphicFactory(factory);
+        applyOldTextListener();
+        applyAutoIndent();
+        applyIndentRemover();
+        applySaveMarkListener();
+        initializeAutocompletionPopupListeners();
+        initializeActionsListeners();
 
-		setOnContextMenuRequested(request -> {
-			createContextMenu(request.getScreenX(), request.getScreenY());
-			request.consume();
-		});
+        setOnContextMenuRequested(request -> {
+            createContextMenu(request.getScreenX(), request.getScreenY());
+            request.consume();
+        });
 
-		focusedProperty().addListener((obs, old, val) -> {
-			if (val) {
-				var t = getTab();
-				if (t != null) {
-					var holder = t.getList().getHolder();
-					if (holder == null) return;
-					holder.setLastFocusedEditor(this);
-				}
-			}
-		});
-	}
-
-
-	/**
-	 * Returns the {@link FileEditorTab} holding this editor.
-	 *
-	 * @return the {@link FileEditorTab}
-	 */
-	public FileEditorTab getTab() {
-		return tab;
-	}
+        focusedProperty().addListener((obs, old, val) -> {
+            if (val) {
+                var t = getTab();
+                if (t != null) {
+                    var holder = t.getList().getHolder();
+                    if (holder == null) return;
+                    holder.setLastFocusedEditor(this);
+                }
+            }
+        });
+    }
 
 
-	/**
-	 * Returns the {@link AutocompletionPopup} used in this editor.
-	 *
-	 * @return the {@link AutocompletionPopup}.
-	 */
-	public AutocompletionPopup getAutocompletionPopup() {
-		return autocompletionPopup;
-	}
+    /**
+     * Returns the {@link FileEditorTab} holding this editor.
+     *
+     * @return the {@link FileEditorTab}
+     */
+    public FileEditorTab getTab() {
+        return tab;
+    }
 
-	/**
-	 * Returns the {@link Popup} showing the current documentation.
-	 *
-	 * @return the popup.
-	 */
-	public DocumentationPopup getDocumentationPopup() {
-		return documentationPopup;
-	}
 
-	//region actions
+    /**
+     * Returns the {@link AutocompletionPopup} used in this editor.
+     *
+     * @return the {@link AutocompletionPopup}.
+     */
+    public AutocompletionPopup getAutocompletionPopup() {
+        return autocompletionPopup;
+    }
 
-	/**
-	 * Returns a new {@link List} with all lines of this file inside.
-	 *
-	 * @return the {@link List}.
-	 */
-	public List<CodeFileLine> getLines() {
-		List<String> raw = StringUtils.multiSplit(getText(), "\n", "\r");
-		List<CodeFileLine> lines = new ArrayList<>(raw.size());
-		if (raw.isEmpty()) return lines;
+    /**
+     * Returns the {@link Popup} showing the current documentation.
+     *
+     * @return the popup.
+     */
+    public DocumentationPopup getDocumentationPopup() {
+        return documentationPopup;
+    }
 
-		int current = 0;
-		int amount = 0;
-		for (String line : raw) {
-			lines.add(new CodeFileLine(current, line, amount));
-			amount += line.length() + 1;
-			current++;
-		}
+    //region actions
 
-		return lines;
-	}
+    /**
+     * Returns a new {@link List} with all lines of this file inside.
+     *
+     * @return the {@link List}.
+     */
+    public List<CodeFileLine> getLines() {
+        List<String> raw = StringUtils.multiSplit(getText(), "\n", "\r");
+        List<CodeFileLine> lines = new ArrayList<>(raw.size());
+        if (raw.isEmpty()) return lines;
 
-	/**
-	 * Returns the line at the given index.
-	 * <p>
-	 * If the index is negative the first line will be returned.
-	 * If the index exceeds the amount of lines, the last line will be returned.
-	 * If the file is empty, an empty {@link CodeFileLine} will be returned.
-	 *
-	 * @param index the index.
-	 * @return the {@link CodeFileLine}.
-	 */
-	public CodeFileLine getLine(int index) {
-		if (index < 0) index = 0;
-		List<String> lines = StringUtils.multiSplit(getText(), "\n", "\r");
+        int current = 0;
+        int amount = 0;
+        for (String line : raw) {
+            lines.add(new CodeFileLine(current, line, amount));
+            amount += line.length() + 1;
+            current++;
+        }
 
-		if (lines.isEmpty()) return new CodeFileLine(0, "", 0);
+        return lines;
+    }
 
-		int current = 0;
-		int amount = 0;
-		for (String line : lines) {
-			if (current >= index) break;
-			amount += line.length() + 1;
+    /**
+     * Returns the line at the given index.
+     * <p>
+     * If the index is negative the first line will be returned.
+     * If the index exceeds the amount of lines, the last line will be returned.
+     * If the file is empty, an empty {@link CodeFileLine} will be returned.
+     *
+     * @param index the index.
+     * @return the {@link CodeFileLine}.
+     */
+    public CodeFileLine getLine(int index) {
+        if (index < 0) index = 0;
+        List<String> lines = StringUtils.multiSplit(getText(), "\n", "\r");
 
-			current++;
-		}
+        if (lines.isEmpty()) return new CodeFileLine(0, "", 0);
 
-		if (index >= lines.size()) index = lines.size() - 1;
+        int current = 0;
+        int amount = 0;
+        for (String line : lines) {
+            if (current >= index) break;
+            amount += line.length() + 1;
 
-		return new CodeFileLine(index, lines.get(index), amount);
-	}
+            current++;
+        }
 
-	/**
-	 * Returns the line at the given absolute position.
-	 * <p>
-	 * If the position is negative the first line will be returned.
-	 * If the position exceeds the amount of lines, the last line will be returned.
-	 * If the file is empty, an empty {@link CodeFileLine} will be returned.
-	 *
-	 * @param position the position.
-	 * @return the {@link CodeFileLine}.
-	 */
-	public CodeFileLine getLineFromAbsolutePosition(int position) {
-		if (position < 0) position = 0;
-		List<String> lines = StringUtils.multiSplit(getText(), "\n", "\r");
-		if (lines.isEmpty()) return new CodeFileLine(0, "", 0);
+        if (index >= lines.size()) index = lines.size() - 1;
 
-		int index = 0;
-		int amount = 0;
-		for (String line : lines) {
-			position -= line.length() + 1;
-			if (position < 0) break;
-			amount += line.length() + 1;
-			index++;
-		}
+        return new CodeFileLine(index, lines.get(index), amount);
+    }
 
-		if (index >= lines.size()) index = lines.size() - 1;
+    /**
+     * Returns the line at the given absolute position.
+     * <p>
+     * If the position is negative the first line will be returned.
+     * If the position exceeds the amount of lines, the last line will be returned.
+     * If the file is empty, an empty {@link CodeFileLine} will be returned.
+     *
+     * @param position the position.
+     * @return the {@link CodeFileLine}.
+     */
+    public CodeFileLine getLineFromAbsolutePosition(int position) {
+        if (position < 0) position = 0;
+        List<String> lines = StringUtils.multiSplit(getText(), "\n", "\r");
+        if (lines.isEmpty()) return new CodeFileLine(0, "", 0);
 
-		return new CodeFileLine(index, lines.get(index), amount);
-	}
+        int index = 0;
+        int amount = 0;
+        for (String line : lines) {
+            position -= line.length() + 1;
+            if (position < 0) break;
+            amount += line.length() + 1;
+            index++;
+        }
 
-	/**
-	 * Reformats the file.
-	 * This method should be overridden by this children's classes.
-	 */
-	public void reformat() {
-	}
+        if (index >= lines.size()) index = lines.size() - 1;
 
-	/**
-	 * Duplicates the current line.
-	 * If a selection is made, the selection will be duplicated instead.
-	 */
-	public void duplicateCurrentLine() {
-		IndexRange selection = getSelection();
-		if (selection.getStart() == selection.getEnd()) {
-			int caretPosition = getCaretPosition();
-			CodeFileLine line = getLineFromAbsolutePosition(getCaretPosition());
-			if (line == null) return;
-			int end = line.getStart() + line.getText().length();
-			replaceText(end, end, "\n" + line.getText());
-			moveTo(caretPosition + line.getText().length() + 1);
-		} else {
-			String text = getText(selection);
-			replaceText(selection.getEnd(), selection.getEnd(), text);
-			moveTo(selection.getEnd() + text.length());
-			getCaretSelectionBind().selectRange(selection.getEnd(), selection.getEnd() + text.length());
-		}
-	}
+        return new CodeFileLine(index, lines.get(index), amount);
+    }
 
-	//endregion
+    /**
+     * Reformats the file.
+     * This method should be overridden by this children's classes.
+     */
+    public void reformat() {
+    }
 
-	//region override
+    /**
+     * Duplicates the current line.
+     * If a selection is made, the selection will be duplicated instead.
+     */
+    public void duplicateCurrentLine() {
+        IndexRange selection = getSelection();
+        if (selection.getStart() == selection.getEnd()) {
+            int caretPosition = getCaretPosition();
+            CodeFileLine line = getLineFromAbsolutePosition(getCaretPosition());
+            if (line == null) return;
+            int end = line.getStart() + line.getText().length();
+            replaceText(end, end, "\n" + line.getText());
+            moveTo(caretPosition + line.getText().length() + 1);
+        } else {
+            String text = getText(selection);
+            replaceText(selection.getEnd(), selection.getEnd(), text);
+            moveTo(selection.getEnd() + text.length());
+            getCaretSelectionBind().selectRange(selection.getEnd(), selection.getEnd() + text.length());
+        }
+    }
 
-	@Override
-	public void onClose() {
-		JamsApplication.getThemeManager().unregisterListeners(this);
-		JamsApplication.getStage().xProperty().removeListener(autocompletionMoveListener);
-		JamsApplication.getStage().yProperty().removeListener(autocompletionMoveListener);
-		JamsApplication.getStage().widthProperty().removeListener(autocompletionMoveListener);
-		JamsApplication.getStage().heightProperty().removeListener(autocompletionMoveListener);
-	}
+    //endregion
 
-	@Override
-	public void save() {
-		try {
-			if (tab == null) return;
-			FileUtils.writeAll(tab.getFile(), original = getText());
-			tab.setSaveMark(false);
-			tab.layoutDisplay();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    //region override
 
-	@Override
-	public void reload() {
-		replaceText(0, getText().length(), original = read(tab));
-		tab.setSaveMark(false);
-		tab.layoutDisplay();
-	}
+    @Override
+    public void onClose() {
+        JamsApplication.getThemeManager().unregisterListeners(this);
+        JamsApplication.getStage().xProperty().removeListener(autocompletionMoveListener);
+        JamsApplication.getStage().yProperty().removeListener(autocompletionMoveListener);
+        JamsApplication.getStage().widthProperty().removeListener(autocompletionMoveListener);
+        JamsApplication.getStage().heightProperty().removeListener(autocompletionMoveListener);
+    }
 
-	@Override
-	public boolean supportsActionRegion(String region) {
-		return RegionTags.TEXT_EDITOR.equals(region) || RegionTags.EDITOR_TAB.equals(region);
-	}
+    @Override
+    public void save() {
+        try {
+            if (tab == null) return;
+            FileUtils.writeAll(tab.getFile(), original = getText());
+            tab.setSaveMark(false);
+            tab.layoutDisplay();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-	@Override
-	public VirtualizedScrollPane getScrollPane() {
-		return scrollPane;
-	}
+    @Override
+    public void reload() {
+        replaceText(0, getText().length(), original = read(tab));
+        tab.setSaveMark(false);
+        tab.layoutDisplay();
+    }
 
-	@Override
-	public void setScrollPane(VirtualizedScrollPane scrollPane) {
-		this.scrollPane = scrollPane;
-	}
+    @Override
+    public boolean supportsActionRegion(String region) {
+        return RegionTags.TEXT_EDITOR.equals(region) || RegionTags.EDITOR_TAB.equals(region);
+    }
 
-	@Override
-	public ScaledVirtualized getZoom() {
-		return zoom;
-	}
+    @Override
+    public VirtualizedScrollPane getScrollPane() {
+        return scrollPane;
+    }
 
-	@Override
-	public void setZoom(ScaledVirtualized zoom) {
-		this.zoom = zoom;
-	}
+    @Override
+    public void setScrollPane(VirtualizedScrollPane scrollPane) {
+        this.scrollPane = scrollPane;
+    }
 
-	//endregion
+    @Override
+    public ScaledVirtualized getZoom() {
+        return zoom;
+    }
 
-	//region configuration
+    @Override
+    public void setZoom(ScaledVirtualized zoom) {
+        this.zoom = zoom;
+        ZoomUtils.applyZoomListener(this, zoom);
+    }
 
-	private void applyOldTextListener() {
-		textProperty().addListener((obs, old, value) -> this.old = old);
-	}
+    //endregion
 
-	protected void applyAutoIndent() {
-		Pattern whiteSpace = Pattern.compile("^\\s+");
-		addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-			if (event.getCode() == KeyCode.ENTER) {
-				int caretPosition = getCaretPosition();
-				int currentParagraph = getCurrentParagraph();
-				Matcher m0 = whiteSpace.matcher(getParagraph(currentParagraph - 1).getSegments().get(0));
-				if (m0.find()) Platform.runLater(() -> insertText(caretPosition, m0.group()));
-			}
-		});
-	}
+    //region configuration
 
-	protected void applyIndentRemover() {
-		addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-			if (event.getCode() == KeyCode.BACK_SPACE) {
+    private void applyOldTextListener() {
+        textProperty().addListener((obs, old, value) -> this.old = old);
+    }
 
-				int caretPosition = getCaretPosition();
+    protected void applyAutoIndent() {
+        Pattern whiteSpace = Pattern.compile("^\\s+");
+        addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                int caretPosition = getCaretPosition();
+                int currentParagraph = getCurrentParagraph();
+                Matcher m0 = whiteSpace.matcher(getParagraph(currentParagraph - 1).getSegments().get(0));
+                if (m0.find()) Platform.runLater(() -> insertText(caretPosition, m0.group()));
+            }
+        });
+    }
 
-				//If shift is pressed, then just execute a normal backspace.
-				if (event.isShiftDown()) {
-					return;
-				}
+    protected void applyIndentRemover() {
+        addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.BACK_SPACE) {
 
-				int currentParagraph = getCurrentParagraph();
-				Position position = offsetToPosition(caretPosition, Bias.Forward);
+                int caretPosition = getCaretPosition();
 
-				String s = old.substring(caretPosition - position.getMinor(), caretPosition + 1);
-				if (s.trim().isEmpty()) {
-					int to = caretPosition - position.getMinor() - 1;
-					if (to < 0) to = 0;
+                //If shift is pressed, then just execute a normal backspace.
+                if (event.isShiftDown()) {
+                    return;
+                }
 
-					boolean lastParagraphEmpty = currentParagraph != 0 && getParagraph(currentParagraph - 1).getText().isEmpty();
+                int currentParagraph = getCurrentParagraph();
+                Position position = offsetToPosition(caretPosition, Bias.Forward);
 
-					replaceText(to, caretPosition, lastParagraphEmpty ? s : "");
-				}
-			}
-		});
-	}
+                String s = old.substring(caretPosition - position.getMinor(), caretPosition + 1);
+                if (s.trim().isEmpty()) {
+                    int to = caretPosition - position.getMinor() - 1;
+                    if (to < 0) to = 0;
 
-	protected void initializeAutocompletionPopupListeners() {
+                    boolean lastParagraphEmpty = currentParagraph != 0 && getParagraph(currentParagraph - 1).getText().isEmpty();
 
-		//AUTO COMPLETION
-		addEventHandler(KeyEvent.KEY_TYPED, event -> {
-			if (autocompletionPopup != null && autocompletionPopup.manageTypeEvent(event)) event.consume();
-			if (documentationPopup != null) documentationPopup.hide();
-		});
+                    replaceText(to, caretPosition, lastParagraphEmpty ? s : "");
+                }
+            }
+        });
+    }
 
-		//AUTOCOMPLETION MOVEMENT
-		addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-			if (autocompletionPopup != null && autocompletionPopup.managePressEvent(event)) {
-				event.consume();
-				if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT) {
-					if (documentationPopup != null) documentationPopup.hide();
-				}
-			} else {
+    protected void initializeAutocompletionPopupListeners() {
+
+        //AUTO COMPLETION
+        addEventHandler(KeyEvent.KEY_TYPED, event -> {
+            if (autocompletionPopup != null && autocompletionPopup.manageTypeEvent(event)) event.consume();
+            if (documentationPopup != null) documentationPopup.hide();
+        });
+
+        //AUTOCOMPLETION MOVEMENT
+        addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (autocompletionPopup != null && autocompletionPopup.managePressEvent(event)) {
+                event.consume();
+                if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT) {
+                    if (documentationPopup != null) documentationPopup.hide();
+                }
+            } else {
                 if (documentationPopup != null) documentationPopup.hide();
             }
-		});
+        });
 
-		//FOCUS
-		focusedProperty().addListener((obs, old, val) -> {
-			if (autocompletionPopup != null) autocompletionPopup.hide();
-			if (documentationPopup != null) documentationPopup.hide();
-		});
-		//CLICK
-		addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-			if (autocompletionPopup != null) autocompletionPopup.hide();
-			if (documentationPopup != null) documentationPopup.hide();
-		});
+        //FOCUS
+        focusedProperty().addListener((obs, old, val) -> {
+            if (autocompletionPopup != null) autocompletionPopup.hide();
+            if (documentationPopup != null) documentationPopup.hide();
+        });
+        //CLICK
+        addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            if (autocompletionPopup != null) autocompletionPopup.hide();
+            if (documentationPopup != null) documentationPopup.hide();
+        });
 
-		//MOVE
-		autocompletionMoveListener = (obs, old, val) -> {
-			if (autocompletionPopup != null) autocompletionPopup.hide();
-			if (documentationPopup != null) documentationPopup.hide();
-		};
-		JamsApplication.getStage().xProperty().addListener(autocompletionMoveListener);
-		JamsApplication.getStage().yProperty().addListener(autocompletionMoveListener);
-		JamsApplication.getStage().widthProperty().addListener(autocompletionMoveListener);
-		JamsApplication.getStage().heightProperty().addListener(autocompletionMoveListener);
-	}
+        //MOVE
+        autocompletionMoveListener = (obs, old, val) -> {
+            if (autocompletionPopup != null) autocompletionPopup.hide();
+            if (documentationPopup != null) documentationPopup.hide();
+        };
+        JamsApplication.getStage().xProperty().addListener(autocompletionMoveListener);
+        JamsApplication.getStage().yProperty().addListener(autocompletionMoveListener);
+        JamsApplication.getStage().widthProperty().addListener(autocompletionMoveListener);
+        JamsApplication.getStage().heightProperty().addListener(autocompletionMoveListener);
+    }
 
-	protected void initializeActionsListeners() {
-		addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-			try {
-				KeyCodeCombination combination = new KeyCombinationBuilder(event).build();
-				if (JamsApplication.getActionManager().executeAction(combination, this)) {
+    protected void initializeActionsListeners() {
+        addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            try {
+                KeyCodeCombination combination = new KeyCombinationBuilder(event).build();
+                if (JamsApplication.getActionManager().executeAction(combination, this)) {
 
-					KeyCode c = event.getCode();
-					if (c == KeyCode.UP || c == KeyCode.DOWN || c == KeyCode.LEFT || c == KeyCode.RIGHT
-							|| c == KeyCode.DELETE || c == KeyCode.BACK_SPACE) return;
-					event.consume();
-				}
-			} catch (IllegalArgumentException ignore) {
-			}
-		});
-		addEventFilter(MouseEvent.MOUSE_CLICKED, event -> JamsApplication.hideContextMenu());
-	}
+                    KeyCode c = event.getCode();
+                    if (c == KeyCode.UP || c == KeyCode.DOWN || c == KeyCode.LEFT || c == KeyCode.RIGHT
+                            || c == KeyCode.DELETE || c == KeyCode.BACK_SPACE) return;
+                    event.consume();
+                }
+            } catch (IllegalArgumentException ignore) {
+            }
+        });
+        addEventFilter(MouseEvent.MOUSE_CLICKED, event -> JamsApplication.hideContextMenu());
+    }
 
-	protected void applySaveMarkListener() {
-		addEventHandler(KeyEvent.KEY_TYPED, event -> {
-			if (event.getCharacter().isEmpty()) return;
-			if (tab != null) {
-				tab.setSaveMark(!getText().equals(original));
-				tab.layoutDisplay();
-			}
-		});
-	}
+    protected void applySaveMarkListener() {
+        addEventHandler(KeyEvent.KEY_TYPED, event -> {
+            if (event.getCharacter().isEmpty()) return;
+            if (tab != null) {
+                tab.setSaveMark(!getText().equals(original));
+                tab.layoutDisplay();
+            }
+        });
+    }
 
-	protected void applyZoomListener() {
-		addEventFilter(ScrollEvent.SCROLL, event -> {
-			if (event.isControlDown()
-					&& (boolean) Jams.getMainConfiguration().get("editor.zoom_using_mouse_wheel").orElse(true)) {
+    private void createContextMenu(double screenX, double screenY) {
+        Set<ContextAction> set = getSupportedContextActions();
+        if (set.isEmpty()) return;
+        ContextMenu main = new ContextActionMenuBuilder(this).addAll(set).build();
+        JamsApplication.openContextMenu(main, this, screenX, screenY);
+    }
 
-				double current = zoom.getZoom().getX();
-				if (event.getDeltaY() < 0) {
-					if (current > 0.4) {
-						zoom.getZoom().setX(current - 0.2);
-						zoom.getZoom().setY(current - 0.2);
-					}
-				} else if (event.getDeltaY() > 0) {
-					zoom.getZoom().setX(current + 0.2);
-					zoom.getZoom().setY(current + 0.2);
-				}
-				event.consume();
-			}
-		});
+    private Set<ContextAction> getSupportedContextActions() {
+        Set<Action> actions = JamsApplication.getActionManager();
+        Set<ContextAction> set = new HashSet<>();
+        for (Action action : actions) {
+            if (action instanceof ContextAction && supportsActionRegion(action.getRegionTag())
+                    && ((ContextAction) action).supportsTextEditorState(this)) {
+                set.add((ContextAction) action);
+            }
+        }
+        return set;
+    }
 
-		//RESET
-		addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-			if (event.isControlDown() && event.getButton() == MouseButton.MIDDLE
-					&& (boolean) Jams.getMainConfiguration().get("editor.reset_zoom_using_middle_button").orElse(true)) {
-				zoom.getZoom().setX(1);
-				zoom.getZoom().setY(1);
-				zoom.getZoom().setZ(1);
-			}
-		});
-	}
+    private static String read(FileEditorTab tab) {
+        if (tab == null) return "";
+        try {
+            return FileUtils.readAll(tab.getFile());
+        } catch (IOException ex) {
+            StringWriter writer = new StringWriter();
+            ex.printStackTrace(new PrintWriter(writer));
+            return writer.toString();
+        }
+    }
 
-	private void createContextMenu(double screenX, double screenY) {
-		Set<ContextAction> set = getSupportedContextActions();
-		if (set.isEmpty()) return;
-		ContextMenu main = new ContextActionMenuBuilder(this).addAll(set).build();
-		JamsApplication.openContextMenu(main, this, screenX, screenY);
-	}
+    @Listener
+    private void onThemeChange(SelectedThemeChangeEvent.After event) {
+        event.getNewTheme().apply(this);
+    }
 
-	private Set<ContextAction> getSupportedContextActions() {
-		Set<Action> actions = JamsApplication.getActionManager();
-		Set<ContextAction> set = new HashSet<>();
-		for (Action action : actions) {
-			if (action instanceof ContextAction && supportsActionRegion(action.getRegionTag())
-					&& ((ContextAction) action).supportsTextEditorState(this)) {
-				set.add((ContextAction) action);
-			}
-		}
-		return set;
-	}
+    @Listener
+    private void onThemeChange(GeneralFontChangeEvent.After event) {
+        JamsApplication.getThemeManager().getSelected().apply(this);
+    }
 
-	private static String read(FileEditorTab tab) {
-		if (tab == null) return "";
-		try {
-			return FileUtils.readAll(tab.getFile());
-		} catch (IOException ex) {
-			StringWriter writer = new StringWriter();
-			ex.printStackTrace(new PrintWriter(writer));
-			return writer.toString();
-		}
-	}
+    @Listener
+    private void onThemeChange(CodeFontChangeEvent.After event) {
+        JamsApplication.getThemeManager().getSelected().apply(this);
+    }
 
-	@Listener
-	private void onThemeChange(SelectedThemeChangeEvent.After event) {
-		event.getNewTheme().apply(this);
-	}
-
-	@Listener
-	private void onThemeChange(GeneralFontChangeEvent.After event) {
-		JamsApplication.getThemeManager().getSelected().apply(this);
-	}
-
-	@Listener
-	private void onThemeChange(CodeFontChangeEvent.After event) {
-		JamsApplication.getThemeManager().getSelected().apply(this);
-	}
-
-	//endregion
+    //endregion
 }

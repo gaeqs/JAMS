@@ -48,6 +48,11 @@ public class MIPSDirectiveParameter extends MIPSCodeElement {
         registerLabelsIfRequired();
     }
 
+    @Override
+    public String getTranslatedNameNode() {
+        return "MIPS_ELEMENT_DIRECTIVE_PARAMETER";
+    }
+
     public int getIndex() {
         return index;
     }

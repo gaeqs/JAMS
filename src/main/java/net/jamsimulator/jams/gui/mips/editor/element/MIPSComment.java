@@ -34,6 +34,11 @@ public class MIPSComment extends MIPSCodeElement {
 	}
 
 	@Override
+	public String getTranslatedNameNode() {
+		return "MIPS_ELEMENT_COMMENT";
+	}
+
+	@Override
 	public String getSimpleText() {
 		return text;
 	}

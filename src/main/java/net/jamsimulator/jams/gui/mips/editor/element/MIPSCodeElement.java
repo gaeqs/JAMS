@@ -24,14 +24,15 @@
 
 package net.jamsimulator.jams.gui.mips.editor.element;
 
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspection;
+import net.jamsimulator.jams.language.Language;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * Represents a element inside a MIPS file.
@@ -65,6 +66,32 @@ public abstract class MIPSCodeElement {
         this.text = text;
         this.inspections = new ArrayList<>();
     }
+
+    /**
+     * Returns the translated name of this code element in the current selected language..
+     *
+     * @return the translated name.
+     */
+    public String getTranslatedName() {
+        return getTranslatedName(Jams.getLanguageManager().getSelected());
+    }
+
+    /**
+     * Returns the translated name of this code element in the given language.
+     *
+     * @param language the language.
+     * @return the translated name.
+     */
+    public String getTranslatedName(Language language) {
+        return language.getOrDefault(getTranslatedNameNode());
+    }
+
+    /**
+     * Returns the language node of the name for this code element.
+     *
+     * @return the language node.
+     */
+    public abstract String getTranslatedNameNode();
 
     /**
      * Returns the line of this element.
@@ -155,12 +182,12 @@ public abstract class MIPSCodeElement {
     }
 
     /**
-     * Populates the given popup with the errors inside this element.
+     * Executes the given {@link Consumer} for each inspection in this element.
      *
-     * @param popup the {@link VBox} inside the popup.
+     * @param consumer the consumer to execute.
      */
-    public void populatePopupWithErrors(VBox popup) {
-        inspections.forEach(target -> popup.getChildren().add(new Label(target.getParsedDescription())));
+    public void forEachInspection(Consumer<MIPSEditorInspection> consumer) {
+        inspections.forEach(consumer);
     }
 
     /**
@@ -168,7 +195,7 @@ public abstract class MIPSCodeElement {
      *
      * @param textArea the {@link StyleClassedTextArea}.
      */
-    public void populatePopupWithErrors(StyleClassedTextArea textArea) {
+    public void populatePopupWithInspections(StyleClassedTextArea textArea) {
         inspections.forEach(target -> textArea.append(target.getParsedDescription() + "\n", ""));
     }
 

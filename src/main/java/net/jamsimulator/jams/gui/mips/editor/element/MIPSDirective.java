@@ -50,6 +50,11 @@ public class MIPSDirective extends MIPSCodeElement {
     }
 
     @Override
+    public String getTranslatedNameNode() {
+        return "MIPS_ELEMENT_DIRECTIVE";
+    }
+
+    @Override
     public String getSimpleText() {
         return simpleText;
     }

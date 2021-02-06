@@ -1093,6 +1093,10 @@ AnchorPane {
     -fx-border-width: 1px;
 }
 
+.mips-popup .label {
+    -fx-font-size: 12.5px;
+}
+
 /* MIPS EXPLORER */
 .mips-explorer-file-to-assemble {
     -fx-background-color: #8eb381;
