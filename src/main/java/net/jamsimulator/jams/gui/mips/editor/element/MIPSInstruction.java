@@ -54,7 +54,7 @@ public class MIPSInstruction extends MIPSCodeElement {
 
     @Override
     public String getTranslatedNameNode() {
-        return "MIPS_ELEMENT_INSTRUCTION";
+        return mostCompatibleInstruction instanceof PseudoInstruction ? "MIPS_ELEMENT_PSEUDOINSTRUCTION" : "MIPS_ELEMENT_INSTRUCTION";
     }
 
     @Override
