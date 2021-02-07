@@ -3543,6 +3543,51 @@ SignalException(SystemCall)
 System Call
 \END
 
+INSTRUCTION_B_DOCUMENTATION.=<u>Unconditional branch</u>
+
+<b>Format:</b>
+b offset
+
+<b>Conversion:</b>
+beq $zero, $zero, offset
+
+<b>Description:</b>
+An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+Branch to the effective target address.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Exceptions:</b>
+None
+
+<b>Programming Notes:</b>
+With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+<black>beq $zero, $zero, offset</black>, expressed as <black>b offset</black>, is the assembly idiom used to denote an unconditional branch.
+\END
+
+INSTRUCTION_JR_DOCUMENTATION.=<u>Jump register</u>
+
+<b>Format:</b>
+jr rs
+
+<b>Conversion:</b>
+jr $zero, rs
+
+
+<b>Description:</b>
+Jump to the effective target addres in GPR <i>rs</i>. If the target address is not 4-bytes aligned, an Address Error exception will occur when the target address is fetched.
+If delay slots are enabled, this instruction also executes the instruction that follows the jump, in the branch delay slot, before executing the jump itself.
+
+<b>Restrictions:</b>
+<i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Exceptions:</b>
+None
+\END
+
 FLOAT_CONDITION_AF=Always false
 FLOAT_CONDITION_UN=Unordered
 FLOAT_CONDITION_EQ=Equal
