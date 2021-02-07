@@ -38,7 +38,7 @@ public class MIPSLabel extends MIPSCodeElement {
 
     @Override
     public String getTranslatedNameNode() {
-        return "MIPS_ELEMENT_LABEL";
+        return global ? "MIPS_ELEMENT_GLOBAL_LABEL" : "MIPS_ELEMENT_LABEL";
     }
 
     @Override
