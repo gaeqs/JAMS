@@ -3575,7 +3575,6 @@ jr rs
 <b>Conversion:</b>
 jr $zero, rs
 
-
 <b>Description:</b>
 Jump to the effective target addres in GPR <i>rs</i>. If the target address is not 4-bytes aligned, an Address Error exception will occur when the target address is fetched.
 If delay slots are enabled, this instruction also executes the instruction that follows the jump, in the branch delay slot, before executing the jump itself.
@@ -3583,6 +3582,87 @@ If delay slots are enabled, this instruction also executes the instruction that 
 <b>Restrictions:</b>
 <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
 If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_LA_DOCUMENTATION.=<u>Load address</u>
+
+<b>Format:</b>
+la rs, label
+
+<b>Conversion:</b>
+address <- get_address(label)
+aui $at, $zero, address<sub>31..16</sub>
+ori rs, $at, address<sub>15..0</sub>
+
+<b>Description:</b>
+Loads the address of the <i>label</i> into GPR <i>rs</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_LI_DOCUMENTATION.=<u>Load immediate</u>
+
+<b>Format:</b>
+li rs, number
+
+<b>Conversion:</b>
+if number<sub>31..16</sub> = 0
+    addiu rs, $zero, number<sub>15..0</sub>
+else
+    aui $at, $zero, number<sub>31..16</sub>
+    ori rs, $at, number<sub>15..0</sub>
+endif
+
+<b>Description:</b>
+Loads the <i>number</i> into GPR <i>rs</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_LUI_DOCUMENTATION.=<u>Load upper immediate</u>
+
+<b>Format:</b>
+lui rs, number
+
+<b>Conversion:</b>
+aui rs, $zero, number<sub>15..0</sub>
+
+<b>Description:</b>
+Loads the <i>number</i> into the upper part of GPR <i>rs</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_LIF_DOCUMENTATION.=<u>Load immediate float</u>
+
+<b>Format:</b>
+lif fd, float
+
+<b>Conversion:</b>
+aui $at, $zero, float<sub>31..16</sub>
+ori $at, $at, float<sub>15..0</sub>
+mtc1 $at, fd
+
+<b>Description:</b>
+Loads the <i>float</i> into the FPR <i>fd</i>.
+
+<b>Restrictions:</b>
+None
 
 <b>Exceptions:</b>
 None

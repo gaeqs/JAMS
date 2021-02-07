@@ -3588,6 +3588,87 @@ Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las
 Ninguna
 \END
 
+INSTRUCTION_LA_DOCUMENTATION.=<u>Cargar dirección</u>
+
+<b>Formato:</b>
+la rs, etiqueta
+
+<b>Conversión:</b>
+address <- get_address(etiqueta)
+aui $at, $zero, address<sub>31..16</sub>
+ori rs, $at, address<sub>15..0</sub>
+
+<b>Descripción:</b>
+Carga la dirección de la <i>etiqueta</i> en el registro <i>rs</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_LI_DOCUMENTATION.=<u>Cargar inmediato</u>
+
+<b>Formato:</b>
+li rs, número
+
+<b>Conversión:</b>
+if número<sub>31..16</sub> = 0
+    addiu rs, $zero, número<sub>15..0</sub>
+else
+    aui $at, $zero, número<sub>31..16</sub>
+    ori rs, $at, número<sub>15..0</sub>
+endif
+
+<b>Descripción:</b>
+Carga el <i>número</i> en el registro <i>rs</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_LUI_DOCUMENTATION.=<u>Cargar inmediato en los bits más significantes</u>
+
+<b>Formato:</b>
+lui rs, número
+
+<b>Conversión:</b>
+aui rs, $zero, número<sub>15..0</sub>
+
+<b>Descripción:</b>
+Carga el <i>número</i> en los 16 bits más significantes del registro <i>rs</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_LIF_DOCUMENTATION.=<u>Cargar inmediato en coma flotante</u>
+
+<b>Formato:</b>
+lif fd, float
+
+<b>Conversión:</b>
+aui $at, $zero, float<sub>31..16</sub>
+ori $at, $at, float<sub>15..0</sub>
+mtc1 $at, fd
+
+<b>Descripción:</b>
+Carga el <i>float</i> en el registro de coma flotante <i>fd</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
 FLOAT_CONDITION_AF=Siempre falso
 FLOAT_CONDITION_UN=Sin orden
 FLOAT_CONDITION_EQ=Igual
