@@ -4,8 +4,6 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Slider;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
 import net.jamsimulator.jams.gui.mips.simulator.flow.SegmentedFlowEntry;
@@ -27,8 +25,8 @@ public class MultiCycleFlowTable extends FlowTable {
 
 	private long firstCycle;
 
-	public MultiCycleFlowTable(Simulation<? extends MultiCycleArchitecture> simulation, ScrollPane scrollPane, Slider sizeSlider) {
-		super(simulation, scrollPane, sizeSlider);
+	public MultiCycleFlowTable(Simulation<? extends MultiCycleArchitecture> simulation) {
+		super(simulation);
 
 		firstCycle = 0;
 
@@ -37,8 +35,8 @@ public class MultiCycleFlowTable extends FlowTable {
 			entries = new HashMap<>();
 			simulation.registerListeners(this, true);
 		} else {
-			setAlignment(Pos.CENTER);
-			getChildren().add(new Label("Events are disabled."));
+			flows.setAlignment(Pos.CENTER);
+			flows.getChildren().add(new Label("Events are disabled."));
 		}
 	}
 
@@ -64,14 +62,14 @@ public class MultiCycleFlowTable extends FlowTable {
 			event = toAdd.pop();
 			entry = entries.get(event.getInstructionNumber());
 			if (entry == null) {
-				entry = new SegmentedFlowEntry(getChildren().size(), this,
+				entry = new SegmentedFlowEntry(flows.getChildren().size(), this,
 						event.getInstruction(), start, event.getInstructionNumber(), event.getCycle());
 				entries.put(event.getInstructionNumber(), entry);
-				getChildren().add(entry);
+				flows.getChildren().add(entry);
 			}
 
 			if (entries.size() > maxItems) {
-				SegmentedFlowEntry toRemove = (SegmentedFlowEntry) getChildren().remove(0);
+				SegmentedFlowEntry toRemove = (SegmentedFlowEntry) flows.getChildren().remove(0);
 				entries.remove(toRemove.getInstructionNumber());
 			}
 
@@ -80,10 +78,35 @@ public class MultiCycleFlowTable extends FlowTable {
 
 
 		long localCycle = firstCycle;
-		firstCycle = ((SegmentedFlowEntry) getChildren().get(0)).getStartingCycle();
+		firstCycle = ((SegmentedFlowEntry) flows.getChildren().get(0)).getStartingCycle();
 
 		if (localCycle != firstCycle) {
 			refresh();
+		}
+
+		refreshVisualizer();
+	}
+
+	@Override
+	public long getFirstCycle() {
+		return firstCycle;
+	}
+
+
+	@Override
+	public long getLastCycle() {
+		if (flows.getChildren().isEmpty()) return 0;
+
+		var last = (SegmentedFlowEntry) flows.getChildren().get(flows.getChildren().size() - 1);
+		return last.getLastCycle();
+	}
+
+	public void refresh() {
+		int index = 0;
+		for (Node child : flows.getChildren()) {
+			if (child instanceof SegmentedFlowEntry) {
+				((SegmentedFlowEntry) child).refresh(index++, stepSize, firstCycle);
+			}
 		}
 	}
 
@@ -109,25 +132,18 @@ public class MultiCycleFlowTable extends FlowTable {
 
 	@Listener
 	private void onSimulationReset(SimulationResetEvent event) {
-		getChildren().clear();
+		flows.getChildren().clear();
 		entries.clear();
+		refreshVisualizer();
 	}
 
 	@Listener
 	private void onSimulationUndo(SimulationUndoStepEvent.After event) {
-		SegmentedFlowEntry cycle = ((SegmentedFlowEntry) getChildren().get(getChildren().size() - 1));
+		SegmentedFlowEntry cycle = ((SegmentedFlowEntry) flows.getChildren().get(flows.getChildren().size() - 1));
 		if (cycle.removeCycle(event.getUndoCycle()) && cycle.isEmpty()) {
 			entries.remove(cycle.getInstructionNumber());
-			getChildren().remove(getChildren().size() - 1);
+			flows.getChildren().remove(flows.getChildren().size() - 1);
 		}
-	}
-
-	private void refresh() {
-		int index = 0;
-		for (Node child : getChildren()) {
-			if (child instanceof SegmentedFlowEntry) {
-				((SegmentedFlowEntry) child).refresh(index++, stepSize, firstCycle);
-			}
-		}
+		refreshVisualizer();
 	}
 }

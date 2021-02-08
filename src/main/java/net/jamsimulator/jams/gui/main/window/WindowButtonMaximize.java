@@ -44,10 +44,10 @@ public class WindowButtonMaximize extends WindowButton {
 		stage.maximizedProperty().addListener(this::onMaximizedChange);
 
 		if(stage.isMaximized()) {
-			getStyleClass().add("window_button-unmaximize");
+			getStyleClass().add("window-button-unmaximize");
 		}
 		else {
-			getStyleClass().add("window_button-maximize");
+			getStyleClass().add("window-button-maximize");
 		}
 	}
 
@@ -59,12 +59,12 @@ public class WindowButtonMaximize extends WindowButton {
 		imageView.setImage(val ? maximized : windowed);
 
 		if(stage.isMaximized()) {
-			getStyleClass().remove("window_button-maximize");
-			getStyleClass().add("window_button-unmaximize");
+			getStyleClass().remove("window-button-maximize");
+			getStyleClass().add("window-button-unmaximize");
 		}
 		else {
-			getStyleClass().remove("window_button-unmaximize");
-			getStyleClass().add("window_button-maximize");
+			getStyleClass().remove("window-button-unmaximize");
+			getStyleClass().add("window-button-maximize");
 		}
 	}
 }

@@ -41,7 +41,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionClo extends BasicRInstruction<InstructionClo.Assembled> {
 
-	public static final String NAME = "Count leading ones in word";
 	public static final String MNEMONIC = "clo";
 	public static final int OPERATION_CODE = 0;
 	public static final int FUNCTION_CODE = 0b010001;
@@ -49,7 +48,7 @@ public class InstructionClo extends BasicRInstruction<InstructionClo.Assembled> 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER};
 
 	public InstructionClo() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

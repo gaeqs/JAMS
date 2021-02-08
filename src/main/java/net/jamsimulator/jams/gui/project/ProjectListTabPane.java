@@ -52,16 +52,17 @@ public class ProjectListTabPane extends TabPane {
 	 * Creates the projects' main pane.
 	 */
 	public ProjectListTabPane() {
+		getStyleClass().add("project-list");
 		setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
 		openSavedProjects();
 
 		getTabs().addListener((ListChangeListener<? super Tab>) event -> Platform.runLater(() -> {
 			//If empty, open the start window.
-			if(getTabs().isEmpty()) {
+			if (getTabs().isEmpty()) {
 				saveOpenProjects();
 				JamsApplication.getStage().hide();
 				StartWindow.open();
-				if(!getTabs().isEmpty()) {
+				if (!getTabs().isEmpty()) {
 					JamsApplication.getStage().show();
 				}
 			}

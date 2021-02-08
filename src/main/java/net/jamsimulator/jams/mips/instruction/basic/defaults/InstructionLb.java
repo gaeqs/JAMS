@@ -41,7 +41,6 @@ import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionLb extends BasicInstruction<InstructionLb.Assembled> {
 
-	public static final String NAME = "Load byte";
 	public static final String MNEMONIC = "lb";
 	public static final int OPERATION_CODE = 0b100000;
 
@@ -49,7 +48,7 @@ public class InstructionLb extends BasicInstruction<InstructionLb.Assembled> {
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.SIGNED_16_BIT_REGISTER_SHIFT};
 
 	public InstructionLb() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

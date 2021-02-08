@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
@@ -38,17 +39,18 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Assembled> {
 
-	public static final String NAME = "Convert from %s to %s";
+	public static final String NAME_SUFIX = "CVT";
 	public static final String MNEMONIC = "cvt.%s.%s";
 	public static final int OPERATION_CODE = 0b010001;
 
 	private final FmtNumbers to, from;
 
 	public InstructionCvtNN(FmtNumbers to, FmtNumbers from) {
-		super(String.format(NAME, from.getName(), to.getName()),
+		super(
 				String.format(MNEMONIC, to.getMnemonic(), from.getMnemonic()),
 				new ParameterType[]{to.requiresEvenRegister() ? ParameterType.EVEN_FLOAT_REGISTER : ParameterType.FLOAT_REGISTER,
 						from.requiresEvenRegister() ? ParameterType.EVEN_FLOAT_REGISTER : ParameterType.FLOAT_REGISTER},
@@ -58,6 +60,23 @@ public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Asse
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+	}
+
+	@Override
+	public String getName() {
+		var name = Jams.getLanguageManager().getSelected().getOrDefault("INSTRUCTION_" + NAME_SUFIX);
+		return name.replace("{FROM}", from.getName()).replace("{TO}", to.getName());
+	}
+
+	@Override
+	public String getDocumentation() {
+		var documentation = Jams.getLanguageManager().getSelected().getOrDefault("INSTRUCTION_" + NAME_SUFIX + "_DOCUMENTATION");
+		return documentation.replace("{FROM}", from.getName())
+				.replace("{TO}", to.getName())
+				.replace("{FROM_MNEMONIC}", from.getMnemonic())
+				.replace("{TO_MNEMONIC}", to.getMnemonic())
+				.replace("{FROM_FMT}", StringUtils.addZeros(Integer.toBinaryString(from.getFmt()), 5))
+				.replace("{TO_CVT}", StringUtils.addZeros(Integer.toBinaryString(to.getCvt()), 6));
 	}
 
 	@Override

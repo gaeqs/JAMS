@@ -36,8 +36,6 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionNop extends PseudoInstruction {
 
-
-	public static final String NAME = "No operation";
 	public static final String MNEMONIC = "nop";
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[0];
@@ -48,7 +46,7 @@ public class PseudoInstructionNop extends PseudoInstruction {
 	private static final ParameterParseResult ZERO = ParameterParseResult.builder().register(0).build();
 
 	public PseudoInstructionNop() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES);
+		super(MNEMONIC, PARAMETER_TYPES);
 	}
 
 	@Override

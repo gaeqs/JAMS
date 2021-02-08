@@ -31,6 +31,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -39,16 +40,15 @@ import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
-public class InstructionBnec extends BasicInstruction<InstructionBnec.Assembled> {
+public class InstructionBnec extends BasicInstruction<InstructionBnec.Assembled> implements ControlTransferInstruction {
 
-	public static final String NAME = "Branch on not equal compact";
 	public static final String MNEMONIC = "bnec";
 	public static final int OPERATION_CODE = 0b011000;
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
 
 	public InstructionBnec() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
@@ -73,6 +73,11 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 		int rs = instructionCode >> AssembledI16Instruction.SOURCE_REGISTER_SHIFT & AssembledI16Instruction.SOURCE_REGISTER_MASK;
 		int rt = instructionCode >> AssembledI16Instruction.TARGET_REGISTER_SHIFT & AssembledI16Instruction.TARGET_REGISTER_MASK;
 		return super.match(instructionCode) && rs < rt && rs != 0;
+	}
+
+	@Override
+	public boolean isCompact() {
+		return true;
 	}
 
 	public static class Assembled extends AssembledI16Instruction {

@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.mips.assembler.builder;
 
+import net.jamsimulator.jams.gui.util.log.Log;
+import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
@@ -31,7 +33,6 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -42,55 +43,58 @@ import java.util.Objects;
  * If a plugin want to add a custom assembler to JAMS, it should create a child of this class and register
  * it on the {@link net.jamsimulator.jams.manager.AssemblerBuilderManager}.
  */
-public abstract class AssemblerBuilder {
+public abstract class AssemblerBuilder implements Labeled {
 
-	private final String name;
+    private final String name;
 
-	/**
-	 * Creates an assembler builder using a name.
-	 * This name must be unique for each assembler builder.
-	 *
-	 * @param name the name.
-	 */
-	public AssemblerBuilder(String name) {
-		Validate.notNull(name, "Name cannot be null!");
-		this.name = name;
-	}
+    /**
+     * Creates an assembler builder using a name.
+     * This name must be unique for each assembler builder.
+     *
+     * @param name the name.
+     */
+    public AssemblerBuilder(String name) {
+        Validate.notNull(name, "Name cannot be null!");
+        this.name = name;
+    }
 
-	/**
-	 * Returns the name of this assembler builder.
-	 * This name must be unique for each assembler builder.
-	 *
-	 * @return the name of this assembler builder.
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * Returns the name of this assembler builder.
+     * This name must be unique for each assembler builder.
+     *
+     * @return the name of this assembler builder.
+     */
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * Creates an {@link Assembler} using a {@link DirectiveSet}, an {@link InstructionSet}, a {@link Registers}
-	 * and a {@link Memory}.
-	 *
-	 * @param rawFiles       the raw text of all files to assemble.
-	 * @param directiveSet   the directive set.
-	 * @param instructionSet the instruction set.
-	 * @param registerSet    the register set.
-	 * @param memory         the memory.
-	 * @return the new {@link Assembler}.
-	 */
-	public abstract Assembler createAssembler(Map<String, String> rawFiles, DirectiveSet directiveSet,
-											  InstructionSet instructionSet, Registers registerSet, Memory memory);
+    /**
+     * Creates an {@link Assembler} using a {@link DirectiveSet}, an {@link InstructionSet}, a {@link Registers}
+     * and a {@link Memory}.
+     *
+     * @param rawFiles       the raw text of all files to assemble.
+     * @param directiveSet   the directive set.
+     * @param instructionSet the instruction set.
+     * @param registerSet    the register set.
+     * @param memory         the memory.
+     * @param log            the log used by the assembler to inform about errors and warnings.
+     * @return the new {@link Assembler}.
+     */
+    public abstract Assembler createAssembler(Map<String, String> rawFiles, DirectiveSet directiveSet,
+                                              InstructionSet instructionSet, Registers registerSet,
+                                              Memory memory, Log log);
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		AssemblerBuilder that = (AssemblerBuilder) o;
-		return name.equals(that.name);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AssemblerBuilder that = (AssemblerBuilder) o;
+        return name.equals(that.name);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(name);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
 }

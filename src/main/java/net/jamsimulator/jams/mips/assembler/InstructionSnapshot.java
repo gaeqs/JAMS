@@ -9,10 +9,8 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.utils.InstructionUtils;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.OptionalInt;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class InstructionSnapshot {
 
@@ -76,7 +74,10 @@ public class InstructionSnapshot {
 
 	private int scanInstruction(Registers registers, Set<Instruction> instructions, String rawParameters, String mnemonic) {
 		parameters = new LinkedList<>();
-		instruction = InstructionUtils.getBestInstruction(instructions, parameters, registers, rawParameters).orElse(null);
+
+		var parametersReference = new AtomicReference<List<String>>();
+		instruction = InstructionUtils.getBestInstruction(instructions, parametersReference, registers, rawParameters).orElse(null);
+		parameters = parametersReference.get();
 
 		if (instruction == null) {
 			throw new AssemblerException(line, "Instruction " + mnemonic + " with the given parameters not found.\n" + rawParameters);

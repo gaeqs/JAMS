@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.memory.builder;
 
+import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -36,7 +37,7 @@ import java.util.Objects;
  * If a plugin wants to add a custom memory to JAMS, it should create a child of this class and register
  * it on the {@link net.jamsimulator.jams.manager.AssemblerBuilderManager}.
  */
-public abstract class MemoryBuilder {
+public abstract class MemoryBuilder implements Labeled {
 
 	private final String name;
 
@@ -57,6 +58,7 @@ public abstract class MemoryBuilder {
 	 *
 	 * @return the name of this memory builder.
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}

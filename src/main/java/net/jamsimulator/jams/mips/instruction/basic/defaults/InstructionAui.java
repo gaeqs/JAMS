@@ -41,7 +41,6 @@ import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionAui extends BasicInstruction<InstructionAui.Assembled> {
 
-	public static final String NAME = "Immediate addition to upper bits";
 	public static final String MNEMONIC = "aui";
 	public static final int OPERATION_CODE = 0b001111;
 
@@ -49,7 +48,7 @@ public class InstructionAui extends BasicInstruction<InstructionAui.Assembled> {
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
 
 	public InstructionAui() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

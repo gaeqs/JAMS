@@ -41,7 +41,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionDivSingle extends BasicRFPUInstruction<InstructionDivSingle.Assembled> {
 
-	public static final String NAME = "Division (single)";
 	public static final String MNEMONIC = "div.s";
 	public static final int OPERATION_CODE = 0b010001;
 	public static final int FMT = 0b10000;
@@ -51,7 +50,7 @@ public class InstructionDivSingle extends BasicRFPUInstruction<InstructionDivSin
 			= new ParameterType[]{ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER};
 
 	public InstructionDivSingle() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

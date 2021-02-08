@@ -31,6 +31,7 @@ public class FileEditorHolder extends SplitPane {
 	 * @param workingPane the {@link WorkingPane}.
 	 */
 	public FileEditorHolder(WorkingPane workingPane) {
+		getStyleClass().add("file-editor-holder");
 		this.list = new FileEditorTabList(this);
 		getItems().add(list);
 		this.workingPane = workingPane;

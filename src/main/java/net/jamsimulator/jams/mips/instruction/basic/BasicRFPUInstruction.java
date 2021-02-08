@@ -38,19 +38,18 @@ public abstract class BasicRFPUInstruction<Inst extends AssembledInstruction> ex
 	private final int fmtCode;
 
 	/**
-	 * Creates a basic instruction using a name, a mnemonic, a parameter types array, an operation code,
+	 * Creates a basic instruction using a mnemonic, a parameter types array, an operation code,
 	 * a function code and a operand type format specifier .
 	 *
-	 * @param name          the name.
 	 * @param mnemonic      the mnemonic.
 	 * @param parameters    the parameter types.
 	 * @param operationCode the operation code.
 	 * @param functionCode  the function code.
 	 * @param fmtCode       the operand type format specifier.
 	 */
-	public BasicRFPUInstruction(String name, String mnemonic, ParameterType[] parameters, int operationCode,
+	public BasicRFPUInstruction(String mnemonic, ParameterType[] parameters, int operationCode,
 								int functionCode, int fmtCode) {
-		super(name, mnemonic, parameters, operationCode, functionCode);
+		super(mnemonic, parameters, operationCode, functionCode);
 		this.fmtCode = fmtCode;
 	}
 

@@ -34,6 +34,7 @@ import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.editor.element.*;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.StringUtils;
@@ -46,209 +47,228 @@ import java.util.stream.Stream;
 
 public class MIPSAutocompletionPopup extends AutocompletionPopup {
 
-	private static final Image ICON_INSTRUCTION = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_INSTRUCTION).orElse(null);
-	private static final Image ICON_DIRECTIVE = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_DIRECTIVE).orElse(null);
-	private static final Image ICON_LABEL = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_LABEL).orElse(null);
-	private static final Image ICON_REGISTER = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_REGISTER).orElse(null);
+    private static final Image ICON_INSTRUCTION = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_INSTRUCTION).orElse(null);
+    private static final Image ICON_PSEUDO_INSTRUCTION = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_PSEUDO_INSTRUCTION).orElse(null);
+    private static final Image ICON_DIRECTIVE = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_DIRECTIVE).orElse(null);
+    private static final Image ICON_LABEL = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_LABEL).orElse(null);
+    private static final Image ICON_REGISTER = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_REGISTER).orElse(null);
 
-	private final MIPSFileElements mipsElements;
-	private MIPSCodeElement element;
+    private final MIPSFileElements mipsElements;
+    private MIPSCodeElement element;
 
-	public MIPSAutocompletionPopup(MIPSFileEditor display) {
-		super(display);
-		this.mipsElements = display.getElements();
-	}
+    public MIPSAutocompletionPopup(MIPSFileEditor display) {
+        super(display);
+        this.mipsElements = display.getElements();
+    }
 
-	@Override
-	public MIPSFileEditor getDisplay() {
-		return (MIPSFileEditor) super.getDisplay();
-	}
+    @Override
+    public MIPSFileEditor getDisplay() {
+        return (MIPSFileEditor) super.getDisplay();
+    }
 
-	@Override
-	public void execute(int caretOffset, boolean autocompleteIfOne) {
-		int caretPosition = display.getCaretPosition() + caretOffset;
-		if (caretPosition <= 0) return;
-		element = mipsElements.getElementAt(caretPosition - 1).orElse(null);
-		if (element == null) {
-			hide();
-			return;
-		}
+    @Override
+    public void execute(int caretOffset, boolean autocompleteIfOne) {
+        int caretPosition = display.getCaretPosition() + caretOffset;
+        if (caretPosition <= 0) return;
+        element = mipsElements.getElementAt(caretPosition - 1).orElse(null);
+        if (element == null) {
+            hide();
+            return;
+        }
 
-		Platform.runLater(() -> {
-			refreshContents(caretPosition);
-			if (isEmpty()) {
-				hide();
-				return;
-			}
-			if (autocompleteIfOne && size() == 1) {
-				hide();
-				autocomplete();
-			} else {
-				Bounds bounds = display.getCaretBounds().orElse(null);
-				if (bounds == null) return;
-				show(display, bounds.getMinX(), bounds.getMinY() + 20);
-			}
-		});
-	}
+        Platform.runLater(() -> {
+            refreshContents(caretPosition);
+            if (isEmpty()) {
+                hide();
+                return;
+            }
+            if (autocompleteIfOne && size() == 1) {
+                hide();
+                autocomplete();
+            } else {
+                Bounds bounds = display.getCaretBounds().orElse(null);
+                if (bounds == null) return;
+                show(display, bounds.getMinX(), bounds.getMinY() + 20);
+            }
+        });
+    }
 
-	@Override
-	public void refreshContents(int caretPosition) {
-		elements.clear();
+    @Override
+    public void refreshContents(int caretPosition) {
+        elements.clear();
 
-		var to = caretPosition - element.getStartIndex();
-		var start = element.getSimpleText();
+        var to = caretPosition - element.getStartIndex();
+        var start = element.getSimpleText();
 
-		if (to > 0 && to < start.length()) {
-			start = start.substring(0, caretPosition - element.getStartIndex());
-		}
+        if (to > 0 && to < start.length()) {
+            start = start.substring(0, caretPosition - element.getStartIndex());
+        }
 
-		if (element instanceof MIPSDirective)
-			start = refreshDirective(start);
-		else if (element instanceof MIPSDirectiveParameter) {
-			start = refreshDisplayDirectiveParameter(start);
-		} else if (element instanceof MIPSInstruction)
-			start = refreshInstruction(start);
-		else if (element instanceof MIPSInstructionParameterPart)
-			start = refreshDisplayInstructionParameterPart(start);
+        if (element instanceof MIPSDirective)
+            start = refreshDirective(start);
+        else if (element instanceof MIPSDirectiveParameter) {
+            start = refreshDisplayDirectiveParameter(start);
+        } else if (element instanceof MIPSInstruction)
+            start = refreshInstructionAndDirectives(start);
+        else if (element instanceof MIPSInstructionParameterPart)
+            start = refreshDisplayInstructionParameterPart(start);
 
-		sortAndShowElements(start);
+        sortAndShowElements(start);
 
-		if (isEmpty()) return;
-		selectedIndex = 0;
-		refreshSelected();
-	}
+        if (isEmpty()) return;
+        selectedIndex = 0;
+        refreshSelected();
+    }
 
-	protected String refreshDirective(String start) {
-		MIPSProject project = getDisplay().getProject().orElse(null);
-		if (project == null) return start;
+    protected String refreshDirective(String start) {
+        MIPSProject project = getDisplay().getProject().orElse(null);
+        if (project == null) return start;
 
-		var space = Jams.getMainConfiguration()
-				.getEnum(MIPSSpaces.class, "editor.mips.space_after_directive")
-				.orElse(MIPSSpaces.SPACE).getValue();
+        var space = Jams.getMainConfiguration()
+                .getEnum(MIPSSpaces.class, "editor.mips.space_after_directive")
+                .orElse(MIPSSpaces.SPACE).getValue();
 
-		String directive = start.substring(1);
-		addElements(project.getData().getDirectiveSet().getDirectives().stream().filter(target -> target.getName().startsWith(directive)),
-				Directive::getName, d -> "." + d.getName() + (d.hasParameters() ? space : ""), 0, ICON_DIRECTIVE);
-		return directive;
-	}
+        String directive = start.substring(1);
+        addElements(project.getData().getDirectiveSet().getDirectives().stream().filter(target -> target.getName().startsWith(directive)),
+                Directive::getName, d -> "." + d.getName() + (d.hasParameters() ? space : ""), 0, ICON_DIRECTIVE);
+        return directive;
+    }
 
-	protected String refreshInstruction(String start) {
-		MIPSProject project = getDisplay().getProject().orElse(null);
-		if (project == null) return start;
-
-
-		var space = Jams.getMainConfiguration()
-				.getEnum(MIPSSpaces.class, "editor.mips.space_after_instruction")
-				.orElse(MIPSSpaces.SPACE).getValue();
-
-		Stream<Instruction> stream = project.getData().getInstructionSet().getInstructions().stream().filter(target -> target.getMnemonic().startsWith(start.toLowerCase()));
-		addElements(stream, i -> i.getMnemonic() + " \t"
-				+ StringUtils.addSpaces(parseParameters(i.getParameters()), 25, true)
-				+ i.getName(), i -> i.getMnemonic() + (i.hasParameters() ? space : ""), 0, ICON_INSTRUCTION);
-		return start;
-	}
-
-	protected String refreshDisplayInstructionParameterPart(String start) {
-		MIPSProject project = getDisplay().getProject().orElse(null);
-		if (project == null) return start;
-
-		var part = (MIPSInstructionParameterPart) element;
-		var parameter = part.getParameter();
-		int parameterIndex = part.getParameter().getIndex();
-
-		var line = getDisplay().getElements().getLineWithPosition(element.getStartIndex());
-		var compatibleInstructions = line.getInstruction()
-				.map(target -> target.getCompatibleInstructions(mipsElements, parameterIndex))
-				.orElse(Collections.emptySet());
-
-		boolean hasLabels = false, hasRegisters = false;
-
-		for (Instruction instruction : compatibleInstructions) {
-			var partStartIndex = new AtomicInteger();
-			var partType = instruction.getParameters()[parameterIndex]
-					.getPartAt(display.getCaretPosition() - parameter.getStart(), parameter.getText(), partStartIndex);
-
-			var partStart = parameter.getText().substring(partStartIndex.get(),
-					getDisplay().getCaretPosition() - parameter.getStart()).toLowerCase();
-
-			switch (partType) {
-				case LABEL:
-					if (hasLabels) break;
-					Set<String> labels = new HashSet<>(mipsElements.getLabels());
-					mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
-					addElements(labels.stream().filter(target -> target.toLowerCase().startsWith(partStart)), s -> s, s -> s, partStartIndex.get(), ICON_LABEL);
-					hasLabels = true;
-					break;
-				case REGISTER:
-					if (hasRegisters) break;
-					Set<String> names = project.getData().getRegistersBuilder().getRegistersNames();
-					Set<Character> starts = project.getData().getRegistersBuilder().getValidRegistersStarts();
-
-					starts.forEach(c -> addElements(names.stream()
-							.filter(target -> target.toLowerCase().startsWith(partStart)
-									|| (c + target.toLowerCase()).startsWith(partStart)), s -> c + s, s -> c + s, partStartIndex.get(), ICON_REGISTER));
-
-					hasRegisters = true;
-					break;
-				case STRING:
-				case IMMEDIATE:
-				default:
-					break;
-			}
-		}
-		return start;
-	}
-
-	protected String refreshDisplayDirectiveParameter(String start) {
-		MIPSProject project = getDisplay().getProject().orElse(null);
-		if (project == null || element == null) return start;
-
-		var parameter = (MIPSDirectiveParameter) element;
-		var directive = parameter.getDirective().getDirective();
-
-		//Checks whether and what space should add.
-		var shouldAddSpace = directive != null
-				&& (directive.canRepeatLastParameter() || directive.getParametersAmount() - 1 > parameter.getIndex());
-		var space = shouldAddSpace
-				? Jams.getMainConfiguration()
-				.getEnum(MIPSSpaces.class, "editor.mips.space_after_directive_parameter")
-				.orElse(MIPSSpaces.SPACE).getValue()
-				: "";
-
-		var offset = getDisplay().getCaretPosition() - parameter.getStartIndex();
-		var parameterStart = parameter.getText().substring(0, offset).toLowerCase();
-
-		switch (parameter.getType()) {
-			case LABEL, INT_OR_LABEL -> {
-				Set<String> labels = new HashSet<>(mipsElements.getLabels());
-				mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
-				addElements(labels.stream().filter(target -> target.toLowerCase().startsWith(parameterStart)), s -> s, s -> s + space, 0, ICON_LABEL);
-			}
-		}
-
-		return start;
-	}
+    protected String refreshInstructionAndDirectives(String start) {
+        MIPSProject project = getDisplay().getProject().orElse(null);
+        if (project == null) return start;
 
 
-	protected String parseParameters(ParameterType[] types) {
-		StringBuilder builder = new StringBuilder();
-		for (ParameterType type : types) {
-			builder.append(type.getExample()).append(" ");
-		}
-		return builder.length() == 0 ? " " : builder.substring(0, builder.length() - 1);
-	}
+        var space = Jams.getMainConfiguration()
+                .getEnum(MIPSSpaces.class, "editor.mips.space_after_instruction")
+                .orElse(MIPSSpaces.SPACE).getValue();
 
-	@Override
-	public void autocomplete() {
-		if (isEmpty()) return;
-		String replacement = selected.getAutocompletion();
+        Stream<Instruction> pseudoStream = project.getData().getInstructionSet().getInstructions().stream()
+                .filter(target -> target.getMnemonic().startsWith(start.toLowerCase()))
+                .filter(target -> target instanceof PseudoInstruction);
 
-		int caretPosition = display.getCaretPosition();
-		if (caretPosition == 0) return;
-		MIPSCodeElement element = mipsElements.getElementAt(caretPosition - 1).orElse(null);
-		if (element == null) return;
-		if (element.getText().substring(0, caretPosition - element.getStartIndex()).equals(replacement)) return;
+        Stream<Instruction> nonPseudoStream = project.getData().getInstructionSet().getInstructions().stream()
+                .filter(target -> target.getMnemonic().startsWith(start.toLowerCase()))
+                .filter(target -> !(target instanceof PseudoInstruction));
 
-		display.replaceText(element.getStartIndex() + selected.getOffset(), caretPosition, replacement);
-	}
+
+        addElements(nonPseudoStream, i -> i.getMnemonic() + " \t"
+                + StringUtils.addSpaces(parseParameters(i.getParameters()), 25, true)
+                + i.getName(), i -> i.getMnemonic() + (i.hasParameters() ? space : ""), 0, ICON_INSTRUCTION);
+
+        addElements(pseudoStream, i -> i.getMnemonic() + " \t"
+                + StringUtils.addSpaces(parseParameters(i.getParameters()), 25, true)
+                + i.getName(), i -> i.getMnemonic() + (i.hasParameters() ? space : ""), 0, ICON_PSEUDO_INSTRUCTION);
+
+        //Add directives too!
+        String directive = start.startsWith(".") ? start.substring(1) : start;
+        addElements(project.getData().getDirectiveSet().getDirectives().stream().filter(target -> target.getName().startsWith(directive)),
+                Directive::getName, d -> "." + d.getName() + (d.hasParameters() ? space : ""), 0, ICON_DIRECTIVE);
+
+        return directive;
+    }
+
+    protected String refreshDisplayInstructionParameterPart(String start) {
+        MIPSProject project = getDisplay().getProject().orElse(null);
+        if (project == null) return start;
+
+        var part = (MIPSInstructionParameterPart) element;
+        var parameter = part.getParameter();
+        int parameterIndex = part.getParameter().getIndex();
+
+        var line = getDisplay().getElements().getLineWithPosition(element.getStartIndex());
+        var compatibleInstructions = line.getInstruction()
+                .map(target -> target.getCompatibleInstructions(mipsElements, parameterIndex))
+                .orElse(Collections.emptySet());
+
+        boolean hasLabels = false, hasRegisters = false;
+
+        for (Instruction instruction : compatibleInstructions) {
+            var partStartIndex = new AtomicInteger();
+            var partType = instruction.getParameters()[parameterIndex]
+                    .getPartAt(display.getCaretPosition() - parameter.getStart(), parameter.getText(), partStartIndex);
+
+            var partStart = parameter.getText().substring(partStartIndex.get(),
+                    getDisplay().getCaretPosition() - parameter.getStart()).toLowerCase();
+
+            switch (partType) {
+                case LABEL:
+                    if (hasLabels) break;
+                    Set<String> labels = new HashSet<>(mipsElements.getLabels());
+                    mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
+                    addElements(labels.stream().filter(target -> target.toLowerCase().startsWith(partStart)), s -> s, s -> s, partStartIndex.get(), ICON_LABEL);
+                    hasLabels = true;
+                    break;
+                case REGISTER:
+                    if (hasRegisters) break;
+                    Set<String> names = project.getData().getRegistersBuilder().getRegistersNames();
+                    Set<Character> starts = project.getData().getRegistersBuilder().getValidRegistersStarts();
+
+                    starts.forEach(c -> addElements(names.stream()
+                            .filter(target -> target.toLowerCase().startsWith(partStart)
+                                    || (c + target.toLowerCase()).startsWith(partStart)), s -> c + s, s -> c + s, partStartIndex.get(), ICON_REGISTER));
+
+                    hasRegisters = true;
+                    break;
+                case STRING:
+                case IMMEDIATE:
+                default:
+                    break;
+            }
+        }
+        return start;
+    }
+
+    protected String refreshDisplayDirectiveParameter(String start) {
+        MIPSProject project = getDisplay().getProject().orElse(null);
+        if (project == null || element == null) return start;
+
+        var parameter = (MIPSDirectiveParameter) element;
+        var directive = parameter.getDirective().getDirective();
+
+        //Checks whether and what space should add.
+        var shouldAddSpace = directive.isPresent()
+                && (directive.get().canRepeatLastParameter() || directive.get().getParametersAmount() - 1 > parameter.getIndex());
+        var space = shouldAddSpace
+                ? Jams.getMainConfiguration()
+                .getEnum(MIPSSpaces.class, "editor.mips.space_after_directive_parameter")
+                .orElse(MIPSSpaces.SPACE).getValue()
+                : "";
+
+        var offset = getDisplay().getCaretPosition() - parameter.getStartIndex();
+        var parameterStart = parameter.getText().substring(0, offset).toLowerCase();
+
+        switch (parameter.getType()) {
+            case LABEL, INT_OR_LABEL -> {
+                Set<String> labels = new HashSet<>(mipsElements.getLabels());
+                mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
+                addElements(labels.stream().filter(target -> target.toLowerCase().startsWith(parameterStart)), s -> s, s -> s + space, 0, ICON_LABEL);
+            }
+        }
+
+        return start;
+    }
+
+
+    protected String parseParameters(ParameterType[] types) {
+        StringBuilder builder = new StringBuilder();
+        for (ParameterType type : types) {
+            builder.append(type.getExample()).append(" ");
+        }
+        return builder.length() == 0 ? " " : builder.substring(0, builder.length() - 1);
+    }
+
+    @Override
+    public void autocomplete() {
+        if (isEmpty()) return;
+        String replacement = selected.getAutocompletion();
+
+        int caretPosition = display.getCaretPosition();
+        if (caretPosition == 0) return;
+        MIPSCodeElement element = mipsElements.getElementAt(caretPosition - 1).orElse(null);
+        if (element == null) return;
+        if (element.getText().substring(0, caretPosition - element.getStartIndex()).equals(replacement)) return;
+
+        display.replaceText(element.getStartIndex() + selected.getOffset(), caretPosition, replacement);
+    }
 }

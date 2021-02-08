@@ -26,8 +26,10 @@ package net.jamsimulator.jams.mips.instruction.execution;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 import net.jamsimulator.jams.mips.simulation.pipelined.ForwardingSupporter;
 import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
 import net.jamsimulator.jams.mips.simulation.pipelined.exception.RAWHazardException;
@@ -41,10 +43,14 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
 
 	protected boolean executesMemory, executesWriteBack;
 
-	public MultiCycleExecution(Simulation<? extends MultiCycleArchitecture> simulation, Inst instruction, int address, boolean executesMemory, boolean executesWriteBack) {
+	protected boolean inDelaySlot;
+
+	public MultiCycleExecution(Simulation<? extends MultiCycleArchitecture> simulation, Inst instruction, int address,
+							   boolean executesMemory, boolean executesWriteBack) {
 		super(simulation, instruction, address);
 		this.executesMemory = executesMemory;
 		this.executesWriteBack = executesWriteBack;
+		this.inDelaySlot = false;
 	}
 
 	/**
@@ -66,6 +72,24 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
 	 */
 	public void setInstructionId(long instructionId) {
 		this.instructionId = instructionId;
+	}
+
+	/**
+	 * Returns whether this instruction is being executed in a delay slot.
+	 *
+	 * @return whether this instruction is being executed in a delay slot.
+	 */
+	public boolean isInDelaySlot() {
+		return inDelaySlot;
+	}
+
+	/**
+	 * Sets whether this instruction is being executed in a delay slot.
+	 *
+	 * @param inDelaySlot whether this instruction is being executed in a delay slot.
+	 */
+	public void setInDelaySlot(boolean inDelaySlot) {
+		this.inDelaySlot = inDelaySlot;
 	}
 
 	public boolean executesMemory() {
@@ -242,9 +266,24 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
 	//endregion
 
 	public void jump(int address) {
-		setAndUnlock(pc(), address);
+		//The instruction should be a control transfer instruction to perform a jump.
+		if (!(instruction.getBasicOrigin() instanceof ControlTransferInstruction))
+			throw new IllegalStateException("The instruction " + instruction.getBasicOrigin() + " is not a control transfer instruction!");
+
 		if (simulation instanceof PipelinedSimulation) {
-			((PipelinedSimulation) simulation).getPipeline().removeFetch();
+			if (!simulation.getData().areDelaySlotsEnabled() || ((ControlTransferInstruction) instruction.getBasicOrigin()).isCompact()) {
+				((PipelinedSimulation) simulation).getPipeline().removeFetch();
+
+				setAndUnlock(pc(), address);
+			} else {
+				//The fetch is not cancelled. If there's an instruction to fetch,
+				//the next one will be fetched at address + 4. We do not want that!
+				//The instruction at the fetch slot will always be null, so we check its PC instead.
+				boolean willFetch = ((PipelinedSimulation) simulation).getPipeline().getPc(MultiCycleStep.FETCH) != 0;
+				setAndUnlock(pc(), willFetch ? address - 4 : address);
+			}
+		} else {
+			setAndUnlock(pc(), address);
 		}
 	}
 

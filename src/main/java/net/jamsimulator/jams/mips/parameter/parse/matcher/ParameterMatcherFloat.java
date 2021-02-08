@@ -22,54 +22,33 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.editor;
+package net.jamsimulator.jams.mips.parameter.parse.matcher;
 
-/**
- * This enum recollects all error that can be displayed by a {@link MIPSFileEditor}.
- */
-public enum MIPSEditorError {
+import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
+import net.jamsimulator.jams.mips.parameter.parse.exception.ParameterParseException;
+import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
+import net.jamsimulator.jams.utils.NumericUtils;
 
-	//LABELS
+public class ParameterMatcherFloat implements ParameterMatcher {
 
-	/**
-	 * Used when a label has an illegal name.
-	 */
-	ILLEGAL_LABEL,
-	/**
-	 * Used when a parameter is pointing to a label that doesn't exist.
-	 */
-	LABEL_NOT_FOUND,
-	/**
-	 * Used when a label is duplicated.
-	 */
-	DUPLICATE_LABEL,
-	/**
-	 * Used when a global label is duplicated.
-	 */
-	DUPLICATE_GLOBAL_LABEL,
+	@Override
+	public ParameterParseResult parse(String value, Registers registerSet) {
+		try {
+			var intValue = Float.floatToIntBits(Float.parseFloat(value));
+			return new ParameterParseResult.Builder().immediate(intValue).build();
+		} catch (Exception ex) {
+			throw new ParameterParseException("Error while parsing parameter " + value + ".", ex);
+		}
+	}
 
-	//DIRECTIVES
-	/**
-	 * Used when a directive doesn't exist.
-	 */
-	DIRECTIVE_NOT_FOUND,
+	@Override
+	public boolean match(String value, Registers registerSet) {
+		return NumericUtils.isFloat(value);
+	}
 
-	/**
-	 * Used when a directive's parameter has an invalid format or context.
-	 */
-	INVALID_DIRECTIVE_PARAMETER,
-
-	//DIRECTIVE PARAMETERS
-
-	//INSTRUCTIONS
-	/**
-	 * Used when an instruction doesn't exist.
-	 */
-	INSTRUCTION_NOT_FOUND,
-
-	//INSTRUCTION PARAMETERS
-	/**
-	 * Used when an instruction's parameter has an invalid format or context.
-	 */
-	INVALID_INSTRUCTION_PARAMETER
+	@Override
+	public boolean match(String value, RegistersBuilder builder) {
+		return NumericUtils.isFloat(value);
+	}
 }

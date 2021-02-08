@@ -46,7 +46,7 @@ public class MIPSConfigurationCacheControls extends AnchorPane {
 		button.getStyleClass().add("bold-button");
 
 		button.setOnAction(event -> {
-			var builder = Jams.getCacheBuilderManager().getAll().stream().findAny()
+			var builder = Jams.getCacheBuilderManager().stream().findAny()
 					.map(CacheBuilder::makeNewInstance).orElse(null);
 
 			cacheTab.getConfiguration().getCacheBuilders().add(builder);

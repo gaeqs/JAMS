@@ -54,72 +54,72 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GeneralInstructionTests {
 
-	static Simulation<?> simulation = new SingleCycleSimulation(SingleCycleArchitecture.INSTANCE, new MIPS32InstructionSet(),
-			new MIPS32Registers(), new MIPS32Memory(), MIPS32Memory.TEXT, MIPS32Memory.KERNEL_TEXT,
-			new SimulationData(new SimulationSyscallExecutions(), new File(""), null, new HashMap<>(), new HashMap<>(), true, true, true, true));
+    static Simulation<?> simulation = new SingleCycleSimulation(SingleCycleArchitecture.INSTANCE, MIPS32InstructionSet.INSTANCE,
+            new MIPS32Registers(), new MIPS32Memory(), MIPS32Memory.TEXT, MIPS32Memory.KERNEL_TEXT,
+            new SimulationData(new SimulationSyscallExecutions(), new File(""), null, new HashMap<>(), new HashMap<>(), true, true, true, true, true));
 
-	@Test
-	void testBasicInstruction() {
-		Registers set = simulation.getRegisters();
-		Register t0 = set.getRegister("t0").get();
-		Register t1 = set.getRegister("t1").get();
-		Register t2 = set.getRegister("t2").get();
-		t0.setValue(3);
-		t1.setValue(20);
+    @Test
+    void testBasicInstruction() {
+        Registers set = simulation.getRegisters();
+        Register t0 = set.getRegister("t0").get();
+        Register t1 = set.getRegister("t1").get();
+        Register t2 = set.getRegister("t2").get();
+        t0.setValue(3);
+        t1.setValue(20);
 
-		List<ParameterType>[] list = new List[]{Collections.singletonList(ParameterType.REGISTER),
-				Collections.singletonList(ParameterType.REGISTER),
-				Collections.singletonList(ParameterType.REGISTER)};
+        List<ParameterType>[] list = new List[]{Collections.singletonList(ParameterType.REGISTER),
+                Collections.singletonList(ParameterType.REGISTER),
+                Collections.singletonList(ParameterType.REGISTER)};
 
-		Optional<Instruction> optional = simulation.getInstructionSet().getBestCompatibleInstruction("add", list);
+        Optional<Instruction> optional = simulation.getInstructionSet().getBestCompatibleInstruction("add", list);
 
-		if (!optional.isPresent()) fail("Instruction not found.");
+        if (!optional.isPresent()) fail("Instruction not found.");
 
-		ParameterParseResult[] parameters = new ParameterParseResult[]{
-				ParameterParseResult.builder().register(t2.getIdentifier()).build(),
-				ParameterParseResult.builder().register(t1.getIdentifier()).build(),
-				ParameterParseResult.builder().register(t0.getIdentifier()).build()
-		};
+        ParameterParseResult[] parameters = new ParameterParseResult[]{
+                ParameterParseResult.builder().register(t2.getIdentifier()).build(),
+                ParameterParseResult.builder().register(t1.getIdentifier()).build(),
+                ParameterParseResult.builder().register(t0.getIdentifier()).build()
+        };
 
-		AssembledInstruction[] instructions = optional.get().assemble(null, 0, parameters);
-		if (instructions.length != 1) fail("Incorrect instruction.");
+        AssembledInstruction[] instructions = optional.get().assemble(null, 0, parameters);
+        if (instructions.length != 1) fail("Incorrect instruction.");
 
 
-		InstructionExecution<?, ?> execution = instructions[0].getBasicOrigin()
-				.generateExecution(simulation, instructions[0], 0).orElse(null);
+        InstructionExecution<?, ?> execution = instructions[0].getBasicOrigin()
+                .generateExecution(simulation, instructions[0], 0).orElse(null);
 
-		assertTrue(execution instanceof SingleCycleExecution, "Execution is not a single cycle execution.");
+        assertTrue(execution instanceof SingleCycleExecution, "Execution is not a single cycle execution.");
 
-		((SingleCycleExecution<?>) execution).execute();
-		assertEquals(23, t2.getValue(), "Bad add instruction result.");
-	}
+        ((SingleCycleExecution<?>) execution).execute();
+        assertEquals(23, t2.getValue(), "Bad add instruction result.");
+    }
 
-	@Test
-	void testOverflow() {
-		Registers set = simulation.getRegisters();
-		Register t0 = set.getRegister("t0").get();
-		Register t1 = set.getRegister("t1").get();
-		Register t2 = set.getRegister("t2").get();
-		t0.setValue(Integer.MAX_VALUE);
-		t1.setValue(20);
+    @Test
+    void testOverflow() {
+        Registers set = simulation.getRegisters();
+        Register t0 = set.getRegister("t0").get();
+        Register t1 = set.getRegister("t1").get();
+        Register t2 = set.getRegister("t2").get();
+        t0.setValue(Integer.MAX_VALUE);
+        t1.setValue(20);
 
-		ParameterParseResult[] parameters = new ParameterParseResult[]{
-				ParameterParseResult.builder().register(t2.getIdentifier()).build(),
-				ParameterParseResult.builder().register(t1.getIdentifier()).build(),
-				ParameterParseResult.builder().register(t0.getIdentifier()).build()
-		};
+        ParameterParseResult[] parameters = new ParameterParseResult[]{
+                ParameterParseResult.builder().register(t2.getIdentifier()).build(),
+                ParameterParseResult.builder().register(t1.getIdentifier()).build(),
+                ParameterParseResult.builder().register(t0.getIdentifier()).build()
+        };
 
-		InstructionAdd add = new InstructionAdd();
-		AssembledInstruction instruction = add.assembleBasic(parameters);
-		InstructionExecution<?, ?> execution = add.generateExecution(simulation, instruction, 0).orElse(null);
+        InstructionAdd add = new InstructionAdd();
+        AssembledInstruction instruction = add.assembleBasic(parameters);
+        InstructionExecution<?, ?> execution = add.generateExecution(simulation, instruction, 0).orElse(null);
 
-		assertTrue(execution instanceof SingleCycleExecution, "Execution is not a single cycle execution.");
+        assertTrue(execution instanceof SingleCycleExecution, "Execution is not a single cycle execution.");
 
-		try {
-			((SingleCycleExecution<?>) execution).execute();
-			fail("Execution didn't throw an exception.");
-		} catch (RuntimeInstructionException ex) {
-			assertEquals(ex.getInterruptCause(), InterruptCause.ARITHMETIC_OVERFLOW_EXCEPTION, "Exception caught, but it's not an Integer Overflow exception.");
-		}
-	}
+        try {
+            ((SingleCycleExecution<?>) execution).execute();
+            fail("Execution didn't throw an exception.");
+        } catch (RuntimeInstructionException ex) {
+            assertEquals(ex.getInterruptCause(), InterruptCause.ARITHMETIC_OVERFLOW_EXCEPTION, "Exception caught, but it's not an Integer Overflow exception.");
+        }
+    }
 }

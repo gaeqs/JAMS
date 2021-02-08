@@ -21,7 +21,7 @@ public class LanguageValueEditor extends ComboBox<Language> implements ValueEdit
 
 	public LanguageValueEditor() {
 		setConverter(ValueConverters.getByTypeUnsafe(Language.class));
-		getItems().addAll(Jams.getLanguageManager().getAll());
+		getItems().addAll(Jams.getLanguageManager());
 		getSelectionModel().select(Jams.getLanguageManager().getSelected());
 		getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> listener.accept(val));
 		Jams.getLanguageManager().registerListeners(this, true);

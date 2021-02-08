@@ -36,7 +36,6 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionJL extends PseudoInstruction {
 
-	public static final String NAME = InstructionJ.NAME;
 	public static final String MNEMONIC = InstructionJ.MNEMONIC;
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.LABEL};
@@ -44,7 +43,7 @@ public class PseudoInstructionJL extends PseudoInstruction {
 	private static final ParameterType[] BASIC_PARAMETER_TYPES = new ParameterType[]{ParameterType.SIGNED_32_BIT};
 
 	public PseudoInstructionJL() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES);
+		super(MNEMONIC, PARAMETER_TYPES);
 	}
 
 	@Override

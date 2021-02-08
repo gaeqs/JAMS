@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.register.builder;
 
+import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -37,7 +38,7 @@ import java.util.Set;
  * If a plugin wants to add a custom {@link Registers} to JAMS, it should create a child of this class and register
  * it on the manager.
  */
-public abstract class RegistersBuilder {
+public abstract class RegistersBuilder implements Labeled {
 
 	protected final String name;
 
@@ -75,6 +76,7 @@ public abstract class RegistersBuilder {
 	 *
 	 * @return the name of the builder.
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}

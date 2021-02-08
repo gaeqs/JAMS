@@ -41,7 +41,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionSlt extends BasicRInstruction<InstructionSlt.Assembled> {
 
-	public static final String NAME = "Set on less than";
 	public static final String MNEMONIC = "slt";
 	public static final int OPERATION_CODE = 0;
 	public static final int FUNCTION_CODE = 0b101010;
@@ -50,7 +49,7 @@ public class InstructionSlt extends BasicRInstruction<InstructionSlt.Assembled> 
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER};
 
 	public InstructionSlt() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

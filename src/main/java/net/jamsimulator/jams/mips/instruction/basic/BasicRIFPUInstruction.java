@@ -38,17 +38,16 @@ public abstract class BasicRIFPUInstruction<Inst extends AssembledInstruction> e
 	private final int subcode;
 
 	/**
-	 * Creates a basic instruction using a name, a mnemonic, a parameter types array, an operation code,
+	 * Creates a basic instruction using a mnemonic, a parameter types array, an operation code,
 	 * and a subcode.
 	 *
-	 * @param name          the name.
 	 * @param mnemonic      the mnemonic.
 	 * @param parameters    the parameter types.
 	 * @param operationCode the operation code.
 	 * @param subcode       the subcode.
 	 */
-	public BasicRIFPUInstruction(String name, String mnemonic, ParameterType[] parameters, int operationCode, int subcode) {
-		super(name, mnemonic, parameters, operationCode);
+	public BasicRIFPUInstruction(String mnemonic, ParameterType[] parameters, int operationCode, int subcode) {
+		super(mnemonic, parameters, operationCode);
 		this.subcode = subcode;
 	}
 

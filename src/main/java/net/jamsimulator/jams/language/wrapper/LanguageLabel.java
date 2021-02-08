@@ -34,7 +34,7 @@ import net.jamsimulator.jams.utils.StringUtils;
 public class LanguageLabel extends Label {
 
 	private String node;
-	private final String[] replacements;
+	private String[] replacements;
 
 	public LanguageLabel(String node, String... replacements) {
 		this.node = node;
@@ -45,6 +45,11 @@ public class LanguageLabel extends Label {
 
 	public void setNode(String node) {
 		this.node = node;
+		refreshMessage();
+	}
+
+	public void setReplacements(String[] replacements) {
+		this.replacements = replacements;
 		refreshMessage();
 	}
 

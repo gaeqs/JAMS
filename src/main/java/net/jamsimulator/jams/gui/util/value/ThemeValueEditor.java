@@ -21,7 +21,7 @@ public class ThemeValueEditor extends ComboBox<Theme> implements ValueEditor<The
 
 	public ThemeValueEditor() {
 		setConverter(ValueConverters.getByTypeUnsafe(Theme.class));
-		getItems().addAll(JamsApplication.getThemeManager().getAll());
+		getItems().addAll(JamsApplication.getThemeManager());
 		getSelectionModel().select(JamsApplication.getThemeManager().getSelected());
 		getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> listener.accept(val));
 		JamsApplication.getThemeManager().registerListeners(this, true);
@@ -55,7 +55,7 @@ public class ThemeValueEditor extends ComboBox<Theme> implements ValueEditor<The
 	@Listener
 	private void onThemeUnregister(ThemeUnregisterEvent.After event) {
 		if (getSelectionModel().getSelectedItem().equals(event.getTheme()))
-			setValue(JamsApplication.getThemeManager().getAll().stream().findAny().orElse(null));
+			setValue(JamsApplication.getThemeManager().stream().findAny().orElse(null));
 		getItems().remove(event.getTheme());
 	}
 

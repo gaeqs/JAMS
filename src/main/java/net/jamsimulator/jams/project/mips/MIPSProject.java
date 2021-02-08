@@ -29,15 +29,16 @@ import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.gui.util.log.Log;
 import net.jamsimulator.jams.mips.assembler.Assembler;
+import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.project.BasicProject;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurationPresets;
+import net.jamsimulator.jams.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.HashMap;
 
 public class MIPSProject extends BasicProject {
@@ -83,7 +84,11 @@ public class MIPSProject extends BasicProject {
 			}
 
 			var name = rootPath.relativize(target.toPath()).toString();
-			files.put(name, String.join("\n", Files.readAllLines(target.toPath())));
+			try {
+				files.put(name, FileUtils.readAll(target));
+			} catch (Exception ex) {
+				throw new AssemblerException("Error while loading file " + target + ".", ex);
+			}
 		}
 
 		long nanos = System.nanoTime();
@@ -93,7 +98,8 @@ public class MIPSProject extends BasicProject {
 				getData().getDirectiveSet(),
 				getData().getInstructionSet(),
 				getData().getRegistersBuilder().createRegisters(),
-				configuration.generateNewMemory());
+				configuration.generateNewMemory(),
+				log);
 
 		if (log != null) {
 			log.println();

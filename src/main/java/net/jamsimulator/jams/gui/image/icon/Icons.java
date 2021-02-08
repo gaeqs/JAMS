@@ -68,6 +68,7 @@ public class Icons {
 
 	public static final IconData AUTOCOMPLETION_DIRECTIVE = new IconData("autocompletion_directive", "/gui/icon/autocompletion/directive.png");
 	public static final IconData AUTOCOMPLETION_INSTRUCTION = new IconData("autocompletion_instruction", "/gui/icon/autocompletion/instruction.png");
+	public static final IconData AUTOCOMPLETION_PSEUDO_INSTRUCTION = new IconData("autocompletion_pseudo_instruction", "/gui/icon/autocompletion/pseudo-instruction.png");
 	public static final IconData AUTOCOMPLETION_LABEL = new IconData("autocompletion_label", "/gui/icon/autocompletion/label.png");
 	public static final IconData AUTOCOMPLETION_REGISTER = new IconData("autocompletion_register", "/gui/icon/autocompletion/register.png");
 

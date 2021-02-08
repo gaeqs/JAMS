@@ -28,7 +28,6 @@ import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
-import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionJ;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionJal;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
@@ -37,7 +36,6 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionJalL extends PseudoInstruction {
 
-	public static final String NAME = InstructionJal.NAME;
 	public static final String MNEMONIC = InstructionJal.MNEMONIC;
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.LABEL};
@@ -45,7 +43,7 @@ public class PseudoInstructionJalL extends PseudoInstruction {
 	private static final ParameterType[] BASIC_PARAMETER_TYPES = new ParameterType[]{ParameterType.SIGNED_32_BIT};
 
 	public PseudoInstructionJalL() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES);
+		super(MNEMONIC, PARAMETER_TYPES);
 	}
 
 	@Override

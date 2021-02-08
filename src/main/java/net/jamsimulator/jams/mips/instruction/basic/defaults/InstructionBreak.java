@@ -42,7 +42,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionBreak extends BasicRInstruction<InstructionBreak.Assembled> {
 
-	public static final String NAME = "Breakpoint";
 	public static final String MNEMONIC = "break";
 	public static final int OPERATION_CODE = 0;
 	public static final int FUNCTION_CODE = 0b001101;
@@ -50,7 +49,7 @@ public class InstructionBreak extends BasicRInstruction<InstructionBreak.Assembl
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[0];
 
 	public InstructionBreak() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

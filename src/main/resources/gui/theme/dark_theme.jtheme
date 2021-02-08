@@ -12,7 +12,7 @@ Dark Theme
     -theme-background-darkest: derive(-theme-background, -30%);
     -theme-header: #3B4754;
     -theme-menu-item-hover: #4D6EAF;
-    -theme-explorer-element-selected: #4D6EAF;
+    -theme-element-selected: #4D6EAF;
 }
 
 /*REMOVE FOCUS INDICATOR (BLUE BORDER)*/
@@ -86,16 +86,17 @@ AnchorPane {
 .tab-pane .tab-header-area .tab {
     -fx-background-radius: 0;
     -fx-background-color: -theme-background;
-    -fx-border-color: transparent;
-    -fx-padding: 2 4 2 4;
+    -fx-padding: 2 4 0 4;
+    -fx-border-width: 0 2 3 0;
+    -fx-border-color: -theme-background;
 }
 
 .tab-pane .tab-header-area .tab:selected {
-    -fx-background-color: -theme-background-lighter;
+    -fx-border-color: -theme-background -theme-background -theme-background-pressed -theme-background;
 }
 
 .tab-pane .tab-header-area .tab:showing {
-    -fx-background-color: -theme-background-lighter;
+    -fx-border-color: -theme-background -theme-background -theme-background-pressed -theme-background;
 }
 
 .tab-pane .tab-header-area .tab .tab-label {
@@ -320,12 +321,16 @@ AnchorPane {
 
 .list-view .list-cell:even {
     -fx-text-fill: -theme-foreground;
-    -fx-background-color: -theme-background-lighter;
+    -fx-background-color: -theme-background-darker;
 }
 
 .list-view .list-cell:odd {
     -fx-text-fill: -theme-foreground;
-    -fx-background-color: -theme-background-pressed;
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.list-view .corner {
+    -fx-background-color: -theme-background;
 }
 
 /* COMBO BOX */
@@ -371,7 +376,7 @@ AnchorPane {
 }
 
 .table-view .filler {
-    -fx-background-color: -theme-background-darker;
+    -fx-background-color: -theme-background-darkest;
 }
 
 .table-view .column-header {
@@ -585,18 +590,18 @@ AnchorPane {
 }
 
 /* WINDOW BUTTON*/
-.window_button {
+.window-button {
     -fx-border-color: transparent;
     -fx-border-width: 0;
     -fx-background-color: -theme-background;
     -fx-background-radius: 0;
 }
 
-.window_button:hover {
-    -fx-background-color: -theme-background-lighter;
+.window-button:hover {
+    -fx-background-color: -theme-background-lighºter;
 }
 
-.window_button:pressed {
+.window-button:pressed {
     -fx-background-color: -theme-background-pressed;
 }
 
@@ -605,11 +610,11 @@ AnchorPane {
     -fx-background-color: -theme-background-darker-2;
 }
 
-.start-top-bar-window_button-minimize {
+.start-top-bar-window-button-minimize {
     -fx-background-color: -theme-background-darker-2;
 }
 
-.start-top-bar-window_button-close {
+.start-top-bar-window-button-close {
     -fx-background-color: -theme-background-darker-2;
 }
 
@@ -627,12 +632,26 @@ AnchorPane {
     -fx-background-color: -theme-background-darker-2;
 }
 
+.project-tab-pane .tab-header-area {
+    -fx-background-color: -theme-background-darker-2;
+
+}
+
 .project-tab-pane .tab-header-area .tab-header-background {
     -fx-background-color: -theme-background-darker-2;
 }
 
 .project-tab-anchor-pane {
     -fx-background-color: -theme-background-darker-2;
+}
+
+.project-tab-pane .tab-header-area .tab {
+    -fx-background-color: -theme-background-darker-2;
+    -fx-border-color: -theme-background-darker-2;
+}
+
+.project-tab-pane .tab-header-area .tab:selected {
+    -fx-border-color: -theme-background-darker-2 -theme-background-darker-2 -theme-background-pressed -theme-background-darker-2;
 }
 
 .buttons-hbox {
@@ -648,6 +667,12 @@ AnchorPane {
     -fx-text-fill: -theme-background-darker-2;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
+}
+
+/*ABOUT*/
+.about-text {
+    -fx-font-size: 18px;
+    -fx-text-alignment: center;
 }
 
 /*SIDEBAR*/
@@ -722,8 +747,6 @@ AnchorPane {
 /*BOTTOM BAR*/
 .bottom-bar {
     -fx-background-color: -theme-background-darker-2;
-    -fx-border-color: -theme-background-darker;
-    -fx-border-width: 1 0 0 0;
 }
 
 /*BOTTOM BAR BUTTON*/
@@ -770,7 +793,7 @@ AnchorPane {
 }
 
 .selected-explorer-element {
-    -fx-background-color: -theme-explorer-element-selected;
+    -fx-background-color: -theme-element-selected;
 }
 
 .explorer-jams-folder {
@@ -778,7 +801,7 @@ AnchorPane {
 }
 
 .explorer-jams-folder.selected-explorer-element {
-    -fx-background-color: -theme-explorer-element-selected;
+    -fx-background-color: -theme-element-selected;
 }
 
 /* CONFIG */
@@ -799,7 +822,7 @@ AnchorPane {
 }
 
 .configuration-window-section .selected-explorer-element {
-    -fx-background-color: -theme-explorer-element-selected;
+    -fx-background-color: -theme-element-selected;
 }
 
 .configuration-window-display {
@@ -849,11 +872,16 @@ AnchorPane {
 
 /* FILE DISPLAY LIST */
 .file-editor-list {
-    -fx-background-color: -theme-background;
+    -fx-background-color: -theme-background-darkest;
 }
 
 .file-editor-list .tab-header-area .tab-header-background {
     -fx-background-color: -theme-background;
+}
+
+.file-editor-list .tab-header-area .tab:selected {
+    -fx-background-color: -theme-background-lighter;
+    -fx-border-color: -theme-background-lighter -theme-background-lighter -theme-background-pressed -theme-background-lighter;
 }
 
 .draggable-file-editor-list:hover {
@@ -889,7 +917,7 @@ AnchorPane {
 }
 
 /*Default text*/
-.code-area .text {
+.styled-text-area .text {
     -fx-fill: -theme-foreground;
     -fx-font-family: "{FONT_CODE}";
     -fx-font-size: 13.5;
@@ -944,7 +972,50 @@ AnchorPane {
 }
 
 .autocompletion-popup-element-selected {
-    -fx-background-color: -theme-explorer-element-selected;
+    -fx-background-color: -theme-element-selected;
+}
+
+/* MIPS DOCUMENTATION */
+
+.documentation-top-message * {
+    -fx-background-color: -theme-background-lighter;
+    -fx-padding: 8 0 5 10;
+}
+
+.documentation * {
+    -fx-background-color: -theme-background;
+    -fx-padding: 8 0 5 10;
+}
+
+.documentation .text {
+    -fx-font-family: "{FONT_GENERAL}";
+}
+
+.documentation .code {
+    -fx-font-family: "{FONT_CODE}";
+    -fx-font-size: 14.5;
+}
+
+.documentation .bold {
+    -fx-font-weight: bold;
+}
+
+.documentation .underline {
+    -rtfx-underline-color: -theme-foreground;
+    -rtfx-underline-width: 1px
+}
+
+.documentation .italic {
+    -fx-font-style: italic;
+}
+
+.documentation .sub {
+    -fx-font-size: 9;
+}
+
+.documentation .black {
+    -fx-fill: -theme-foreground-darker;
+    -fx-font-weight: bolder;
 }
 
 /* LOG */
@@ -994,6 +1065,11 @@ AnchorPane {
     -fx-fill: #f8d75e;
 }
 
+.code-area .mips-pseudo-instruction {
+    -rtfx-underline-color: #7af85e;
+    -rtfx-underline-width: 1px;
+}
+
 .code-area .mips-instruction-parameter-label {
     -fx-fill: #ffffff;
     -fx-font-style: italic;
@@ -1017,6 +1093,11 @@ AnchorPane {
     -fx-fill: #f8d75e;
 }
 
+.code-area .mips-warning {
+    -rtfx-underline-color: #efbe0a;
+    -rtfx-underline-width: 1px;
+}
+
 .code-area .mips-error {
     -rtfx-underline-color: #cb2f2f;
     -rtfx-underline-width: 1px;
@@ -1029,6 +1110,11 @@ AnchorPane {
     -fx-border-color: -theme-background-lighter;
     -fx-border-width: 1px;
 }
+
+.mips-popup .label {
+    -fx-font-size: 12.5px;
+}
+
 
 /* MIPS EXPLORER */
 .mips-explorer-file-to-assemble {
@@ -1109,6 +1195,10 @@ AnchorPane {
     -fx-background-color: -theme-background-lighter;
 }
 
+.flow-current-cycle-label {
+    -fx-background-color: -theme-background;
+}
+
 /* ----------------------- */
 /* SINGLE CYCLE SIMULATION */
 /* ----------------------- */
@@ -1174,19 +1264,14 @@ AnchorPane {
 }
 
 /*CACHES*/
-
-.cache-log-message-even {
-    -fx-background-color: -theme-background-darker;
-}
-
-.cache-log-message-odd {
-    -fx-background-color: -theme-background-darker-2;
-}
-
 .cache-log-message .hit {
     -fx-text-fill: #b5f874;
 }
 
 .cache-log-message .miss {
     -fx-text-fill: #e59d9c;
+}
+
+.cache-log-message .label {
+    -fx-font-size: 13px;
 }

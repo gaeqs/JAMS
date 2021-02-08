@@ -41,7 +41,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionMul extends BasicRSOPInstruction<InstructionMul.Assembled> {
 
-	public static final String NAME = "Multiplication, low word";
 	public static final String MNEMONIC = "mul";
 	public static final int OPERATION_CODE = 0;
 	public static final int FUNCTION_CODE = 0b011000;
@@ -51,7 +50,7 @@ public class InstructionMul extends BasicRSOPInstruction<InstructionMul.Assemble
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER};
 
 	public InstructionMul() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, SOP_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, SOP_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

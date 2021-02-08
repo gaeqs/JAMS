@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.action;
 
 import javafx.scene.input.KeyCombination;
+import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Objects;
@@ -33,7 +34,7 @@ import java.util.Optional;
 /**
  * Represents an action that can be bind to a {@link javafx.scene.input.KeyCombination}.
  */
-public abstract class Action {
+public abstract class Action implements Labeled {
 
 	private final String name;
 	private final String regionTag;
@@ -63,6 +64,7 @@ public abstract class Action {
 	 *
 	 * @return the name.
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}

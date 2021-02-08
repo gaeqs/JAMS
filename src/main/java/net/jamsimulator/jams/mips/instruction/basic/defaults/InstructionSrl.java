@@ -41,7 +41,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionSrl extends BasicRInstruction<InstructionSrl.Assembled> {
 
-	public static final String NAME = "Shift word right logical";
 	public static final String MNEMONIC = "srl";
 	public static final int OPERATION_CODE = 0;
 	public static final int FUNCTION_CODE = 0b000010;
@@ -50,7 +49,7 @@ public class InstructionSrl extends BasicRInstruction<InstructionSrl.Assembled> 
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.UNSIGNED_5_BIT};
 
 	public InstructionSrl() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

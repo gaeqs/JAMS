@@ -21,7 +21,7 @@ public class MemoryBuilderValueEditor extends ComboBox<MemoryBuilder> implements
 
 	public MemoryBuilderValueEditor() {
 		setConverter(ValueConverters.getByTypeUnsafe(MemoryBuilder.class));
-		getItems().addAll(Jams.getMemoryBuilderManager().getAll());
+		getItems().addAll(Jams.getMemoryBuilderManager());
 		getSelectionModel().select(Jams.getMemoryBuilderManager().getDefault());
 		getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> listener.accept(val));
 		Jams.getMemoryBuilderManager().registerListeners(this, true);

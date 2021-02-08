@@ -28,14 +28,14 @@ public class SyscallExecutionPrintCharacter implements SyscallExecution {
 	public void execute(Simulation<?> simulation) {
 		Register register = simulation.getRegisters().getRegister(this.register).orElse(null);
 		if (register == null) throw new IllegalStateException("Register " + this.register + " not found");
-		char value = (char) register.getValue();
+		char value = (char) (register.getValue() & 0xFF);
 		simulation.getConsole().print(value);
 		if (lineJump) simulation.getConsole().println();
 	}
 
 	@Override
 	public void executeMultiCycle(MultiCycleExecution<?> execution) {
-		var character = (char) execution.value(register);
+		var character = (char) (execution.value(register) & 0xFF);
 		var console = execution.getSimulation().getConsole();
 		console.print(character);
 		if (lineJump) console.println();

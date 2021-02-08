@@ -2,6 +2,7 @@ package net.jamsimulator.jams.gui.mips.simulator.flow;
 
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
@@ -11,34 +12,37 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.mips.simulator.flow.multicycle.MultiCycleFlowTable;
 import net.jamsimulator.jams.gui.mips.simulator.flow.pipelined.PipelinedFlowTable;
 import net.jamsimulator.jams.gui.mips.simulator.flow.singlecycle.SingleCycleFlowTable;
+import net.jamsimulator.jams.gui.util.PixelScrollPane;
+import net.jamsimulator.jams.gui.util.ScalableNode;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import org.reactfx.util.TriFunction;
+import net.jamsimulator.jams.utils.AnchorUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * This table watches the instruction flow inside a {@link Simulation}.
  * <p>
  * This class must be extended to provide specific functionalities.
  */
-public class FlowTable extends VBox implements ActionRegion {
+public abstract class FlowTable extends AnchorPane implements ActionRegion {
 
 	//region static
 
-	private static final Map<Architecture, TriFunction<Simulation<?>, ScrollPane, Slider, FlowTable>> FLOW_PER_ARCHITECTURE = new HashMap<>();
+	private static final Map<Architecture, Function<Simulation<?>, FlowTable>> FLOW_PER_ARCHITECTURE = new HashMap<>();
 
 	static {
-		FLOW_PER_ARCHITECTURE.put(SingleCycleArchitecture.INSTANCE, (s, p, sl) ->
-				new SingleCycleFlowTable((Simulation<? extends SingleCycleArchitecture>) s, p, sl));
-		FLOW_PER_ARCHITECTURE.put(MultiCycleArchitecture.INSTANCE, (s, p, sl) ->
-				new MultiCycleFlowTable((Simulation<? extends MultiCycleArchitecture>) s, p, sl));
-		FLOW_PER_ARCHITECTURE.put(PipelinedArchitecture.INSTANCE, (s, p, sl) ->
-				new PipelinedFlowTable((Simulation<? extends MultiCycleArchitecture>) s, p, sl));
+		FLOW_PER_ARCHITECTURE.put(SingleCycleArchitecture.INSTANCE, s ->
+				new SingleCycleFlowTable((Simulation<? extends SingleCycleArchitecture>) s));
+		FLOW_PER_ARCHITECTURE.put(MultiCycleArchitecture.INSTANCE, s ->
+				new MultiCycleFlowTable((Simulation<? extends MultiCycleArchitecture>) s));
+		FLOW_PER_ARCHITECTURE.put(PipelinedArchitecture.INSTANCE, s ->
+				new PipelinedFlowTable((Simulation<? extends MultiCycleArchitecture>) s));
 	}
 
 	/**
@@ -47,7 +51,7 @@ public class FlowTable extends VBox implements ActionRegion {
 	 * @param architecture the {@link Architecture}.
 	 * @param builder      the builder.
 	 */
-	public static void registerFlow(Architecture architecture, TriFunction<Simulation<?>, ScrollPane, Slider, FlowTable> builder) {
+	public static void registerFlow(Architecture architecture, Function<Simulation<?>, FlowTable> builder) {
 		FLOW_PER_ARCHITECTURE.put(architecture, builder);
 	}
 
@@ -57,18 +61,25 @@ public class FlowTable extends VBox implements ActionRegion {
 	 * If the simulation's {@link Architecture} has no flow table registered,
 	 * an empty flow table will be created.
 	 * <p>
-	 * Use {@link #registerFlow(Architecture, TriFunction)} to register a flow table.
+	 * Use {@link #registerFlow(Architecture, Function)} to register a flow table.
 	 *
 	 * @param simulation the simulation.
-	 * @param pane       the {@link ScrollPane} where this flow table will be inside of.
-	 * @param slider     the {@link Slider} that controls the size of the entries.
 	 * @return the flow table.
 	 */
-	public static FlowTable createFlow(Simulation<?> simulation, ScrollPane pane, Slider slider) {
-		TriFunction<Simulation<?>, ScrollPane, Slider, FlowTable> builder =
-				FLOW_PER_ARCHITECTURE.get(simulation.getArchitecture());
-		if (builder == null) return new FlowTable(simulation, pane, slider);
-		return builder.apply(simulation, pane, slider);
+	public static FlowTable createFlow(Simulation<?> simulation) {
+		Function<Simulation<?>, FlowTable> builder = FLOW_PER_ARCHITECTURE.get(simulation.getArchitecture());
+		if (builder == null) return new FlowTable(simulation) {
+			@Override
+			public long getFirstCycle() {
+				return 0;
+			}
+
+			@Override
+			public long getLastCycle() {
+				return 0;
+			}
+		};
+		return builder.apply(simulation);
 	}
 
 	//endregion
@@ -78,25 +89,50 @@ public class FlowTable extends VBox implements ActionRegion {
 	protected double stepSize = 40;
 	protected int maxItems;
 
+	protected Slider sizeSlider;
+
+	protected ScrollPane flowsScrollPane;
+	protected VBox flows;
+	protected FlowTableCycleVisualizer cycleVisualizer;
+
 	protected FlowEntry selected;
 
 	/**
 	 * Creates the flow table.
 	 *
 	 * @param simulation the simulation.
-	 * @param scrollPane the {@link ScrollPane} where this flow table will be inside of.
-	 * @param sizeSlider the {@link Slider} that controls the size of the entries.
 	 */
-	public FlowTable(Simulation<?> simulation, ScrollPane scrollPane, Slider sizeSlider) {
+	public FlowTable(Simulation<?> simulation) {
 		this.simulation = simulation;
-		this.scrollPane = scrollPane;
+		this.scrollPane = new PixelScrollPane();
+		this.sizeSlider = new Slider();
+
+		flows = new VBox();
+		var scalableNode = new ScalableNode(flows, scrollPane);
+		AnchorUtils.setAnchor(scalableNode, 20, 0, 0, 0);
 
 		maxItems = (int) Jams.getMainConfiguration().get("simulation.mips.flow_max_items").orElse(100);
-
 		sizeSlider.setValue(stepSize);
 		sizeSlider.valueProperty().addListener((obs, old, val) -> setStepSize(val.doubleValue()));
+		sizeSlider.setPrefHeight(20);
+		AnchorUtils.setAnchor(sizeSlider, -1, 0, 2, 2);
 
-		getChildren().add(sizeSlider);
+		var anchorScrollPane = new AnchorPane();
+		this.cycleVisualizer = new FlowTableCycleVisualizer(this, scrollPane);
+		anchorScrollPane.getChildren().addAll(cycleVisualizer, scalableNode);
+
+		scrollPane.setContent(anchorScrollPane);
+		scrollPane.setFitToHeight(true);
+		scrollPane.setPannable(true);
+		AnchorUtils.setAnchor(scrollPane, 0, 20, 0, 0);
+
+
+		cycleVisualizer.setMaxHeight(20);
+		AnchorUtils.setAnchor(cycleVisualizer, 0, -1, 0, 0);
+
+		getChildren().addAll(scrollPane, sizeSlider);
+
+		cycleVisualizer.toFront();
 
 		Jams.getMainConfiguration().registerListeners(this, true);
 	}
@@ -126,6 +162,14 @@ public class FlowTable extends VBox implements ActionRegion {
 	 */
 	public void setStepSize(double stepSize) {
 		this.stepSize = stepSize;
+		cycleVisualizer.setStepSize(stepSize);
+	}
+
+	/**
+	 * Refreshes the cycle visualizer of this flow table.
+	 */
+	public void refreshVisualizer() {
+		cycleVisualizer.refresh();
 	}
 
 	/**
@@ -142,6 +186,20 @@ public class FlowTable extends VBox implements ActionRegion {
 			selected.getStyleClass().add("flow-entry-selected");
 		}
 	}
+
+	/**
+	 * Returns the first cycle represented in this flow table.
+	 *
+	 * @return the first represented cycle.
+	 */
+	public abstract long getFirstCycle();
+
+	/**
+	 * Returns the last cycle represented in this flow table.
+	 *
+	 * @return the last represented cycle.
+	 */
+	public abstract long getLastCycle();
 
 	@Override
 	public boolean supportsActionRegion(String region) {

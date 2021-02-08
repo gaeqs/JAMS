@@ -41,7 +41,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionOr extends BasicRInstruction<InstructionOr.Assembled> {
 
-	public static final String NAME = "Or";
 	public static final String MNEMONIC = "or";
 	public static final int OPERATION_CODE = 0;
 	public static final int FUNCTION_CODE = 0b100101;
@@ -50,7 +49,7 @@ public class InstructionOr extends BasicRInstruction<InstructionOr.Assembled> {
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER};
 
 	public InstructionOr() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

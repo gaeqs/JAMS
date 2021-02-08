@@ -77,7 +77,12 @@ public abstract class AssembledJInstruction extends AssembledInstruction {
 	 * @return the absolute address.
 	 */
 	public int getAbsoluteAddress(int pc) {
-		return (pc & PC_MASK) + (getAddress() << ADDRESS_SHIFT);
+		// The addres must be calculated using getAddress() + 4.
+		// The low 28 bits of the target address is the instr_index field shifted left 2bits.
+		// The remaining upper bits are the corre-sponding bits of the address of the instruction
+		// in the delay slot (not the branch itself).
+		// MIPS32 Instruction Set Manual, page 194.
+		return (pc & PC_MASK) + ((getAddress() + 4) << ADDRESS_SHIFT);
 	}
 
 

@@ -38,8 +38,6 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionMulRRI32 extends PseudoInstruction {
 
-
-	public static final String NAME = InstructionMul.NAME;
 	public static final String MNEMONIC = InstructionMul.MNEMONIC;
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_32_BIT};
@@ -52,7 +50,7 @@ public class PseudoInstructionMulRRI32 extends PseudoInstruction {
 	private static final ParameterParseResult AT = ParameterParseResult.builder().register(1).build();
 
 	public PseudoInstructionMulRRI32() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES);
+		super(MNEMONIC, PARAMETER_TYPES);
 	}
 
 	@Override

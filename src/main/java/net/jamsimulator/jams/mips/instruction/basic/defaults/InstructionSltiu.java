@@ -41,15 +41,14 @@ import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionSltiu extends BasicInstruction<InstructionSltiu.Assembled> {
 
-	public static final String NAME = "Set on less than immediate unsigned";
 	public static final String MNEMONIC = "sltiu";
 	public static final int OPERATION_CODE = 0b001011;
 
 	private static final ParameterType[] PARAMETER_TYPES
-			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
+			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.UNSIGNED_16_BIT};
 
 	public InstructionSltiu() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

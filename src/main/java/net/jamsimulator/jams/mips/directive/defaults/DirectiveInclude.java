@@ -29,11 +29,11 @@ import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
+import net.jamsimulator.jams.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.List;
+import java.util.Arrays;
 
 public class DirectiveInclude extends Directive {
 
@@ -51,15 +51,17 @@ public class DirectiveInclude extends Directive {
 
 
 		File file = new File(parameters[0]);
-		if (!file.exists()) throw new AssemblerException("File " + parameters + " not found!");
+		if (!file.exists()) throw new AssemblerException("File " + parameters[0] + " not found!");
 
-		List<String> lines;
+
+		String[] lines;
 		try {
-			lines = Files.readAllLines(file.toPath());
+			String text = FileUtils.readAll(file);
+			lines = text.split("\n");
 		} catch (IOException e) {
 			throw new AssemblerException(e);
 		}
-		aFile.getRawCode().addAll(lineNumber + 1, lines);
+		aFile.getRawCode().addAll(lineNumber + 1, Arrays.asList(lines));
 		return -1;
 	}
 

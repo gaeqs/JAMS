@@ -26,6 +26,7 @@ package net.jamsimulator.jams.language;
 
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.language.exception.LanguageFailedLoadException;
+import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.*;
@@ -35,9 +36,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-public class Language {
+public class Language implements Labeled {
 
 	public static final String MESSAGE_SEPARATOR = "=";
+	public static final char LITERAL_CHARACTER = '.';
 
 	private final String name;
 	private final File file;
@@ -73,6 +75,7 @@ public class Language {
 		}
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -113,7 +116,13 @@ public class Language {
 			writer.write(name + "\n");
 
 			for (Map.Entry<String, String> entry : messages.entrySet()) {
-				writer.write(entry.getKey() + "=" + entry.getValue() + "\n");
+				//If contains \n the text is literal.
+				if (entry.getValue().contains("\n")) {
+					writer.write(entry.getKey() + LITERAL_CHARACTER + MESSAGE_SEPARATOR + entry.getValue());
+					writer.write("\n\\END\n");
+				} else {
+					writer.write(entry.getKey() + MESSAGE_SEPARATOR + entry.getValue() + '\n');
+				}
 			}
 
 			writer.close();
@@ -129,19 +138,30 @@ public class Language {
 		String line;
 		int index;
 		String node;
-		String message;
+		StringBuilder message;
 		while ((line = reader.readLine()) != null) {
-			if (line.isEmpty()) continue;
+			if (line.isEmpty() || line.startsWith("//")) continue;
 			index = line.indexOf(MESSAGE_SEPARATOR);
-			if (index == -1 || index == line.length() - 1) {
+			if (index == -1) {
 				System.err.println("Error while loading Language " + name + ": bad line format: " + line);
 				continue;
 			}
 
 			node = line.substring(0, index);
-			message = line.substring(index + 1);
+			message = new StringBuilder(line.substring(index + 1));
 
-			messages.put(node, message);
+			if (node.isEmpty()) continue;
+
+			if (node.charAt(node.length() - 1) == LITERAL_CHARACTER) {
+				node = node.substring(0, node.length() - 1);
+				if (node.isEmpty()) continue;
+
+				while ((line = reader.readLine()) != null && !line.equals("\\END")) {
+					message.append('\n').append(line);
+				}
+			}
+
+			messages.put(node, message.toString());
 		}
 	}
 

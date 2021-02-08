@@ -21,7 +21,7 @@ public class ArchitectureValueEditor extends ComboBox<Architecture> implements V
 
 	public ArchitectureValueEditor() {
 		setConverter(ValueConverters.getByTypeUnsafe(Architecture.class));
-		getItems().addAll(Jams.getArchitectureManager().getAll());
+		getItems().addAll(Jams.getArchitectureManager());
 		getSelectionModel().select(Jams.getArchitectureManager().getDefault());
 		getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> listener.accept(val));
 		Jams.getArchitectureManager().registerListeners(this, true);

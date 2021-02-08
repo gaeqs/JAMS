@@ -1,13 +1,15 @@
 package net.jamsimulator.jams.gui.mips.simulator.cache;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
@@ -28,31 +30,29 @@ public class CacheLogVisualizer extends AnchorPane {
 
 	private final static int MAX_LOGS = 100;
 
-	private final HashMap<Cache, List<CacheOperationEvent>> messages;
+	private final HashMap<Cache, List<CacheLogData>> messages;
 	private final CacheVisualizer visualizer;
 
-	private final VBox contents;
+	private final ListView<CacheLogData> contents;
 	private final Button clearButton, clearAllButton;
-	private final HashMap<Cache, Integer> added;
 
 	private Cache currentCache;
 
 	public CacheLogVisualizer(CacheVisualizer visualizer) {
 		currentCache = visualizer.getSelectedCache();
-		contents = new VBox();
-		added = new HashMap<>();
-		contents.setFillWidth(true);
+
+		contents = new ListView<>(FXCollections.observableArrayList());
+		contents.setCellFactory(list -> new CacheLogMessage());
+
+
 		messages = new HashMap<>();
 		this.visualizer = visualizer;
 
-		clearButton = new LanguageButton(Messages.CACHES_LOG_CLEAR);
-		clearAllButton = new LanguageButton(Messages.CACHES_LOG_CLEAR_ALL);
-		clearButton.setOnAction(event -> {
-			contents.getChildren().clear();
-			messages.remove(visualizer.getSelectedCache());
-		});
+		clearButton = new LanguageButton(Messages.CACHE_LOG_CLEAR);
+		clearAllButton = new LanguageButton(Messages.CACHE_LOG_CLEAR_ALL);
+		clearButton.setOnAction(event -> messages.remove(visualizer.getSelectedCache()).clear());
 		clearAllButton.setOnAction(event -> {
-			contents.getChildren().clear();
+			messages.values().forEach(List::clear);
 			messages.clear();
 		});
 
@@ -61,14 +61,9 @@ public class CacheLogVisualizer extends AnchorPane {
 		var buttonsHBox = new HBox(clearButton, clearAllButton);
 		buttonsHBox.setSpacing(2);
 
-		var scroll = new PixelScrollPane(contents);
-		scroll.setFitToHeight(true);
-		scroll.setFitToWidth(true);
-
 		AnchorUtils.setAnchor(buttonsHBox, 0, -1, 5, 5);
-		AnchorUtils.setAnchor(scroll, 30, 0, 0, 0);
-
-		getChildren().addAll(scroll, buttonsHBox);
+		AnchorUtils.setAnchor(contents, 30, 0, 0, 0);
+		getChildren().addAll(contents, buttonsHBox);
 	}
 
 	/**
@@ -87,9 +82,6 @@ public class CacheLogVisualizer extends AnchorPane {
 		clearAllButton.setDisable(false);
 	}
 
-	//Even register, for colored table.
-	private boolean even = true;
-
 	/**
 	 * Adds the given {@link CacheOperationEvent} to the log.
 	 *
@@ -97,10 +89,7 @@ public class CacheLogVisualizer extends AnchorPane {
 	 */
 	public void manageCacheEvent(CacheOperationEvent event) {
 		var list = messages.computeIfAbsent(event.getCache(), k -> new LinkedList<>());
-		list.add(event);
-
-		added.merge(event.getCache(), 1, Integer::sum);
-
+		list.add(new CacheLogData(event));
 		if (list.size() > MAX_LOGS) {
 			list.remove(0);
 		}
@@ -111,75 +100,90 @@ public class CacheLogVisualizer extends AnchorPane {
 	 */
 	public void refresh() {
 		Platform.runLater(() -> {
-			//If the current cache is the selected one, just add the new elements.
-			if (currentCache.equals(visualizer.getSelectedCache())) {
-				var added = this.added.getOrDefault(visualizer.getSelectedCache(), 0);
-				if (added > MAX_LOGS || getChildren().size() + added > MAX_LOGS) {
-					var to = Math.max(0, getChildren().size() + added - MAX_LOGS);
-					if (to >= contents.getChildren().size()) contents.getChildren().clear();
-					else contents.getChildren().remove(0, to);
-				}
+			currentCache = visualizer.getSelectedCache();
+			var items = contents.getItems();
+			items.clear();
 
-				var list = messages.get(currentCache);
-				if (list == null) return;
-				var from = Math.max(0, list.size() - added);
-				this.added.put(currentCache, 0);
-				for (int i = from; i < list.size(); i++) {
-					contents.getChildren().add(new CacheLogMessage(list.get(i), even = !even));
-				}
-			}
-			//Else, clear and add the new elements.
-			else {
-				currentCache = visualizer.getSelectedCache();
-				contents.getChildren().clear();
-				var list = messages.get(currentCache);
-				if (list == null) return;
-				list.forEach(event -> contents.getChildren().add(new CacheLogMessage(event, even = !even)));
+			var data = messages.get(currentCache);
+			if (data != null) {
+				items.addAll(data);
 			}
 		});
 	}
 
-	private static class CacheLogMessage extends VBox {
+	private static class CacheLogData {
 
-		public CacheLogMessage(CacheOperationEvent event, boolean even) {
-			getStyleClass().addAll("cache-log-message", even ? "cache-log-message-even" : "cache-log-message-odd");
-			loadMessage(event);
+		private final long operation;
+		private final boolean hit;
+		private final int blockIndex;
+
+		private final boolean hasOldBlock, hasNewBlock;
+		private final int oldBlockTag, newBlockTag;
+
+
+		public CacheLogData(CacheOperationEvent event) {
+			this.operation = event.getOperation();
+			this.hit = event.isHit();
+			this.blockIndex = event.getBlockIndex();
+
+			this.hasOldBlock = event.getOldBlock() != null;
+			this.hasNewBlock = event.getNewBlock() != null;
+			this.oldBlockTag = hasOldBlock ? event.getOldBlock().getTag() : 0;
+			this.newBlockTag = hasNewBlock ? event.getNewBlock().getTag() : 0;
 		}
+	}
 
-		private void loadMessage(CacheOperationEvent event) {
-			var hitOrMiss = new Label("■ " + event.getOperation());
-			//I guess they never miss.
-			hitOrMiss.getStyleClass().add(event.isHit() ? "hit" : "miss");
-			hitOrMiss.setTooltip(new LanguageTooltip(event.isHit() ? Messages.CACHES_LOG_HIT : Messages.CACHES_LOG_MISS,
-					"{OPERATION}", String.valueOf(event.getOperation())));
+	private static class CacheLogMessage extends ListCell<CacheLogData> {
+
+		@Override
+		protected void updateItem(CacheLogData item, boolean empty) {
+			super.updateItem(item, empty);
+			if (item != null) {
+				var box = new VBox();
+
+				var hitOrMiss = new Label("■ " + item.operation);
+				//I guess they never miss.
+				hitOrMiss.getStyleClass().add(item.hit ? "hit" : "miss");
+				hitOrMiss.setTooltip(new LanguageTooltip(item.hit ? Messages.CACHE_LOG_HIT : Messages.CACHE_LOG_MISS,
+						"{OPERATION}", String.valueOf(item.operation)));
 
 
-			//Index and tag message.
-			var tag = event.getOldBlock() == null
-					? "-"
-					: "0x" + StringUtils.addZeros(Integer.toHexString(event.getOldBlock().getTag()), 8);
-			var label = new LanguageLabel(Messages.CACHES_LOG_INDEX, "{INDEX}",
-					String.valueOf(event.getBlockIndex()), "{TAG}", tag);
+				//Index and tag message.
+				var tag = !item.hasOldBlock
+						? "-"
+						: "0x" + StringUtils.addZeros(Integer.toHexString(item.oldBlockTag), 8);
+				var label = new LanguageLabel(Messages.CACHE_LOG_INDEX, "{INDEX}",
+						String.valueOf(item.blockIndex), "{TAG}", tag);
 
-			var hBox = new HBox(new Group(hitOrMiss), new Group(label));
-			hBox.setSpacing(20);
+				var hBox = new HBox(new Group(hitOrMiss), new Group(label));
+				hBox.setSpacing(20);
 
-			if (event.isHit()) {
-				getChildren().addAll(hBox);
-			} else {
-				//Calculates the change label.
-				var change = new Label();
-				if (event.getNewBlock() != null) {
-					if (event.getOldBlock() != null) {
-						change.setText("\t0x" + StringUtils.addZeros(Integer.toHexString(event.getOldBlock().getTag()), 8)
-								+ " → 0x" + StringUtils.addZeros(Integer.toHexString(event.getNewBlock().getTag()), 8));
-					} else {
-						change.setText("\t→ 0x" + StringUtils.addZeros(Integer.toHexString(event.getNewBlock().getTag()), 8));
+				if (item.hit) {
+					box.getChildren().addAll(hBox);
+				} else {
+					//Calculates the change label.
+					var change = new Label();
+					if (item.hasNewBlock) {
+						if (item.hasOldBlock) {
+							change.setText("\t0x" + StringUtils.addZeros(Integer.toHexString(item.oldBlockTag), 8)
+									+ " → 0x" + StringUtils.addZeros(Integer.toHexString(item.newBlockTag), 8));
+						} else {
+							change.setText("\t→ 0x" + StringUtils.addZeros(Integer.toHexString(item.newBlockTag), 8));
+						}
 					}
+
+					box.getChildren().addAll(hBox, new Group(change));
 				}
 
-				getChildren().addAll(hBox, new Group(change));
+
+				setGraphic(box);
+			} else {
+				setGraphic(null);
 			}
+		}
+
+		public CacheLogMessage() {
+			getStyleClass().addAll("cache-log-message");
 		}
 	}
 }

@@ -24,121 +24,121 @@
 
 package net.jamsimulator.jams.gui.mips.editor.element;
 
-import net.jamsimulator.jams.gui.mips.editor.MIPSEditorError;
 import net.jamsimulator.jams.mips.parameter.ParameterPartType;
-import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class MIPSInstructionParameterPart extends MIPSCodeElement {
 
-	private final MIPSInstructionParameter parameter;
-	private final int index;
-	private InstructionParameterPartType type;
+    private final MIPSInstructionParameter parameter;
+    private final int index;
+    private InstructionParameterPartType type;
 
-	public MIPSInstructionParameterPart(MIPSLine line, MIPSFileElements elements, int startIndex, int endIndex, String text, MIPSInstructionParameter parameter, int index, ParameterPartType type) {
-		super(line, startIndex, endIndex, text);
+    public MIPSInstructionParameterPart(MIPSLine line, MIPSFileElements elements, int startIndex, int endIndex, String text, MIPSInstructionParameter parameter, int index, ParameterPartType type) {
+        super(line, startIndex, endIndex, text);
 
-		this.parameter = parameter;
-		this.index = index;
+        this.parameter = parameter;
+        this.index = index;
 
-		if (type == null) {
-			this.type = InstructionParameterPartType.getByString(text, elements.getProject().orElse(null));
-		} else {
-			this.type = InstructionParameterPartType.getByStringAndType(type);
-		}
-	}
+        if (type == null) {
+            this.type = InstructionParameterPartType.getByString(text, elements.getProject().orElse(null));
+        } else {
+            this.type = InstructionParameterPartType.getByStringAndType(type);
+        }
+    }
 
-	public MIPSInstructionParameter getParameter() {
-		return parameter;
-	}
+    @Override
+    public String getTranslatedNameNode() {
+        return "MIPS_ELEMENT_INSTRUCTION_PARAMETER_" + type.getLanguageNodeSufix();
+    }
 
-	public int getIndex() {
-		return index;
-	}
+    public MIPSInstructionParameter getParameter() {
+        return parameter;
+    }
 
-	public InstructionParameterPartType getType() {
-		return type;
-	}
+    public int getIndex() {
+        return index;
+    }
 
-	@Override
-	public String getSimpleText() {
-		return text;
-	}
+    public InstructionParameterPartType getType() {
+        return type;
+    }
 
-	@Override
-	public List<String> getStyles() {
-		if (hasErrors()) return Arrays.asList(type.getCssClass(), "mips-error");
-		return Collections.singletonList(type.getCssClass());
-	}
+    @Override
+    public String getSimpleText() {
+        return text;
+    }
 
-	@Override
-	public void refreshMetadata(MIPSFileElements elements) {
-		errors.clear();
-		if (type != InstructionParameterPartType.LABEL && type != InstructionParameterPartType.GLOBAL_LABEL) return;
+    @Override
+    public List<String> getStyles() {
+        return getGeneralStyles(type.getCssClass());
+    }
 
-		MIPSFilesToAssemble filesToAssemble = elements.getFilesToAssemble().orElse(null);
+    @Override
+    public void refreshMetadata(MIPSFileElements elements) {
+        if (type != InstructionParameterPartType.LABEL && type != InstructionParameterPartType.GLOBAL_LABEL) return;
 
-		boolean containsLocal = elements.getLabels().contains(text);
-		boolean isGlobal;
-		if (filesToAssemble == null) {
-			isGlobal = containsLocal && elements.getSetAsGlobalLabel().contains(text);
-		} else {
-			isGlobal = filesToAssemble.getGlobalLabels().contains(text);
-		}
+        var filesToAssemble = elements.getFilesToAssemble().orElse(null);
 
-		type = isGlobal ? InstructionParameterPartType.GLOBAL_LABEL : InstructionParameterPartType.LABEL;
+        boolean isGlobal;
+        if (filesToAssemble == null) {
+            isGlobal = elements.getLabels().contains(text) && elements.getSetAsGlobalLabel().contains(text);
+        } else {
+            isGlobal = filesToAssemble.getGlobalLabels().contains(text);
+        }
 
-		if (!containsLocal && !isGlobal) {
-			errors.add(MIPSEditorError.LABEL_NOT_FOUND);
-		}
-	}
+        type = isGlobal ? InstructionParameterPartType.GLOBAL_LABEL : InstructionParameterPartType.LABEL;
+    }
 
-	public enum InstructionParameterPartType {
-		REGISTER("mips-instruction-parameter-register"),
-		IMMEDIATE("mips-instruction-parameter-immediate"),
-		STRING("mips-instruction-parameter-string"),
-		LABEL("mips-instruction-parameter-label"),
-		GLOBAL_LABEL("mips-instruction-parameter-global-label");
+    public enum InstructionParameterPartType {
+        REGISTER("mips-instruction-parameter-register", "REGISTER"),
+        IMMEDIATE("mips-instruction-parameter-immediate", "IMMEDIATE"),
+        STRING("mips-instruction-parameter-string", "STRING"),
+        LABEL("mips-instruction-parameter-label", "LABEL"),
+        GLOBAL_LABEL("mips-instruction-parameter-global-label", "GLOBAL_LABEL");
 
-		private final String cssClass;
+        private final String cssClass;
+        private final String languageNodeSufix;
 
-		InstructionParameterPartType(String cssClass) {
-			this.cssClass = cssClass;
-		}
+        InstructionParameterPartType(String cssClass, String languageNodeSufix) {
+            this.cssClass = cssClass;
+            this.languageNodeSufix = languageNodeSufix;
+        }
 
-		public String getCssClass() {
-			return cssClass;
-		}
+        public String getCssClass() {
+            return cssClass;
+        }
 
-		public static InstructionParameterPartType getByStringAndType(ParameterPartType type) {
-			return switch (type) {
-				case REGISTER -> REGISTER;
-				case IMMEDIATE -> IMMEDIATE;
-				case LABEL -> LABEL;
-				case STRING -> STRING;
-			};
-		}
+        public String getLanguageNodeSufix() {
+            return languageNodeSufix;
+        }
 
-		public static InstructionParameterPartType getByString(String string, MIPSProject project) {
-			if (NumericUtils.isInteger(string)) return IMMEDIATE;
+        public static InstructionParameterPartType getByStringAndType(ParameterPartType type) {
+            return switch (type) {
+                case REGISTER -> REGISTER;
+                case IMMEDIATE -> IMMEDIATE;
+                case LABEL -> LABEL;
+                case STRING -> STRING;
+            };
+        }
 
-			if (project == null) {
-				if (string.startsWith("$")) return REGISTER;
-			} else {
-				if (project.getData().getRegistersBuilder().getValidRegistersStarts()
-						.stream().anyMatch(target -> string.startsWith(target.toString()))) {
-					return REGISTER;
-				}
-			}
+        public static InstructionParameterPartType getByString(String string, MIPSProject project) {
+            if (NumericUtils.isInteger(string) || NumericUtils.isFloat(string)) return IMMEDIATE;
 
-			if (StringUtils.isStringOrChar(string)) return STRING;
-			return LABEL;
-		}
-	}
+            if (project == null) {
+                if (string.startsWith("$")) return REGISTER;
+            } else {
+                if (project.getData().getRegistersBuilder().getValidRegistersStarts()
+                        .stream().anyMatch(target -> string.startsWith(target.toString()))) {
+                    return REGISTER;
+                }
+            }
+
+            if (StringUtils.isStringOrChar(string)) return STRING;
+            return LABEL;
+        }
+    }
 }

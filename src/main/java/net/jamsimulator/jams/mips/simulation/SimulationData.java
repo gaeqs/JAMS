@@ -19,10 +19,11 @@ public class SimulationData {
 	protected final Console console;
 	protected final Map<Integer, String> originalInstructions;
 	protected final Map<String, Integer> labels;
-	protected final boolean callEvents, undoEnabled, enableForwarding, solveBranchOnDecode;
+	protected final boolean callEvents, undoEnabled, enableForwarding, solveBranchOnDecode, enableDelaySlot;
 
 	public SimulationData(SimulationSyscallExecutions syscallExecutions, File workingDirectory, Console console,
-						  Map<Integer, String> originalInstructions, Map<String, Integer> labels, boolean callEvents, boolean undoEnabled, boolean enableForwarding, boolean solveBranchOnDecode) {
+						  Map<Integer, String> originalInstructions, Map<String, Integer> labels, boolean callEvents, boolean undoEnabled,
+						  boolean enableForwarding, boolean solveBranchOnDecode, boolean enableDelaySlot) {
 		this.syscallExecutions = syscallExecutions;
 		this.workingDirectory = workingDirectory;
 		this.console = console;
@@ -32,6 +33,7 @@ public class SimulationData {
 		this.undoEnabled = undoEnabled;
 		this.enableForwarding = enableForwarding;
 		this.solveBranchOnDecode = solveBranchOnDecode;
+		this.enableDelaySlot = enableDelaySlot;
 	}
 
 	public SimulationData(MIPSSimulationConfiguration configuration, File workingDirectory, Console console,
@@ -49,6 +51,7 @@ public class SimulationData {
 		this.undoEnabled = (boolean) configuration.getNodeValue(MIPSSimulationConfigurationPresets.UNDO_ENABLED) && callEvents;
 		this.enableForwarding = configuration.getNodeValue(MIPSSimulationConfigurationPresets.FORWARDING_ENABLED);
 		this.solveBranchOnDecode = configuration.getNodeValue(MIPSSimulationConfigurationPresets.BRANCH_ON_DECODE);
+		this.enableDelaySlot = (boolean) configuration.getNodeValue(MIPSSimulationConfigurationPresets.DELAY_SLOTS_ENABLED) && solveBranchOnDecode;
 	}
 
 	/**
@@ -133,5 +136,15 @@ public class SimulationData {
 	 */
 	public boolean shouldSolveBranchesOnDecode() {
 		return solveBranchOnDecode;
+	}
+
+	/**
+	 * If this option is enabled, instructions right after a control
+	 * transfer instruction that is not compact will be always executed.
+	 *
+	 * @return whether delay slots are enabled.
+	 */
+	public boolean areDelaySlotsEnabled() {
+		return enableDelaySlot;
 	}
 }

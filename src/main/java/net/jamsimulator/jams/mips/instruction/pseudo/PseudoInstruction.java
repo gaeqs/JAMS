@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.instruction.pseudo;
 
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
@@ -40,20 +41,25 @@ import java.util.Objects;
  */
 public abstract class PseudoInstruction implements Instruction {
 
-	protected final String name;
 	protected final String mnemonic;
 	protected final ParameterType[] parameters;
 
 
-	public PseudoInstruction(String name, String mnemonic, ParameterType[] parameters) {
-		this.name = name;
+	public PseudoInstruction(String mnemonic, ParameterType[] parameters) {
 		this.mnemonic = mnemonic;
 		this.parameters = parameters;
 	}
 
 	@Override
 	public String getName() {
-		return name;
+		var sufix = mnemonic.toUpperCase().replace('.', '_');
+		return Jams.getLanguageManager().getSelected().getOrDefault("INSTRUCTION_" + sufix);
+	}
+
+	@Override
+	public String getDocumentation() {
+		var sufix = mnemonic.toUpperCase().replace('.', '_');
+		return Jams.getLanguageManager().getSelected().getOrDefault("INSTRUCTION_" + sufix + "_DOCUMENTATION");
 	}
 
 	@Override

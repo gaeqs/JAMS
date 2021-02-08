@@ -42,7 +42,6 @@ import net.jamsimulator.jams.utils.NumericUtils;
 
 public class InstructionAbsDouble extends BasicRFPUInstruction<InstructionAbsDouble.Assembled> {
 
-	public static final String NAME = "Absolute (double)";
 	public static final String MNEMONIC = "abs.d";
 	public static final int OPERATION_CODE = 0b010001;
 	public static final int FMT = 0b10001;
@@ -52,7 +51,7 @@ public class InstructionAbsDouble extends BasicRFPUInstruction<InstructionAbsDou
 			= new ParameterType[]{ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER};
 
 	public InstructionAbsDouble() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

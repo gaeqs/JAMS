@@ -14,7 +14,7 @@ def bundleLibs = false
 def winConsole = false
 
 group projectGroup
-version '0.7-ALPHA'
+version '0.8-ALPHA'
 
 repositories {
     jcenter()
@@ -106,7 +106,6 @@ jlink {
     }
     addExtraDependencies("javafx")
     jpackage {
-
         def ver = normalizeAppVersion(version as String)
 
         //Splash is bugged in windows.

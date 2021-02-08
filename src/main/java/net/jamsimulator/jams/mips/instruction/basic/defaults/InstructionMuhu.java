@@ -41,7 +41,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionMuhu extends BasicRSOPInstruction<InstructionMuhu.Assembled> {
 
-	public static final String NAME = "Multiplication unsigned, high word";
 	public static final String MNEMONIC = "muhu";
 	public static final int OPERATION_CODE = 0;
 	public static final int FUNCTION_CODE = 0b011001;
@@ -51,7 +50,7 @@ public class InstructionMuhu extends BasicRSOPInstruction<InstructionMuhu.Assemb
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER};
 
 	public InstructionMuhu() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, SOP_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, SOP_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

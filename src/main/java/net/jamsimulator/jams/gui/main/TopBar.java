@@ -60,6 +60,7 @@ public class TopBar extends AnchorPane {
 		menuBar = new MainMenuBar();
 
 		windowButtons = new HBox();
+		windowButtons.getStyleClass().add("window-buttons");
 		generateButtons(stage);
 		AnchorUtils.setAnchor(windowButtons, 0, 0, -1, 0);
 
@@ -85,6 +86,10 @@ public class TopBar extends AnchorPane {
 		Button minimize = new WindowButtonMinimize(stage);
 		Button maximize = new WindowButtonMaximize(stage);
 		Button close = new WindowButtonClose(stage);
+
+		minimize.getStyleClass().add("minimize");
+		maximize.getStyleClass().add("maximize");
+		close.getStyleClass().add("close");
 
 		minimize.setPrefWidth(30);
 		minimize.setPrefHeight(30);

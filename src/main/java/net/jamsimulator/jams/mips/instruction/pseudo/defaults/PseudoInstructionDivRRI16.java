@@ -37,8 +37,6 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionDivRRI16 extends PseudoInstruction {
 
-
-	public static final String NAME = InstructionDiv.NAME;
 	public static final String MNEMONIC = InstructionDiv.MNEMONIC;
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
@@ -50,7 +48,7 @@ public class PseudoInstructionDivRRI16 extends PseudoInstruction {
 	private static final ParameterParseResult AT = ParameterParseResult.builder().register(1).build();
 
 	public PseudoInstructionDivRRI16() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES);
+		super(MNEMONIC, PARAMETER_TYPES);
 	}
 
 	@Override

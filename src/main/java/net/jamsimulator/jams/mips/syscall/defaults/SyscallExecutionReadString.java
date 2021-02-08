@@ -42,15 +42,12 @@ public class SyscallExecutionReadString implements SyscallExecution {
 		if (simulation.checkThreadInterrupted()) return;
 
 		Memory memory = simulation.getMemory();
-		byte[] bytes = value.getBytes(StandardCharsets.US_ASCII);
-
 		int address = addressReg.getValue();
+
 		int amount = 0;
-
-		while (amount < maxChars - 1 && amount < bytes.length) {
-
-			memory.setByte(address, bytes[amount]);
-
+		for (char c : value.toCharArray()) {
+			if (amount >= maxChars - 1) break;
+			memory.setByte(address, (byte) c);
 			amount++;
 			address++;
 		}
@@ -72,13 +69,11 @@ public class SyscallExecutionReadString implements SyscallExecution {
 		if (simulation.checkThreadInterrupted()) return;
 
 		Memory memory = simulation.getMemory();
-		byte[] bytes = value.getBytes(StandardCharsets.US_ASCII);
 
 		int amount = 0;
-		while (amount < maxChars - 1 && amount < bytes.length) {
-
-			memory.setByte(address, bytes[amount]);
-
+		for (char c : value.toCharArray()) {
+			if (amount >= maxChars - 1) break;
+			memory.setByte(address, (byte) c);
 			amount++;
 			address++;
 		}

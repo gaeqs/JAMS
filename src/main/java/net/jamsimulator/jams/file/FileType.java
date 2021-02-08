@@ -30,6 +30,7 @@ import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditorTab;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.icon.IconManager;
+import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Arrays;
@@ -43,7 +44,7 @@ import java.util.Set;
  * Remember that if two file types contains the same extension and the're inside
  * the same manager some functions will cause unpredictable results.
  */
-public abstract class FileType {
+public abstract class FileType implements Labeled {
 
 	public static final int IMAGE_SIZE = 16;
 
@@ -74,11 +75,7 @@ public abstract class FileType {
 		this.icon = null;
 	}
 
-	/**
-	 * Returns the name.
-	 *
-	 * @return the name
-	 */
+	@Override
 	public String getName() {
 		return name;
 	}

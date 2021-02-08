@@ -41,7 +41,6 @@ import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionSlti extends BasicInstruction<InstructionSlti.Assembled> {
 
-	public static final String NAME = "Set on less than immediate";
 	public static final String MNEMONIC = "slti";
 	public static final int OPERATION_CODE = 0b001010;
 
@@ -49,7 +48,7 @@ public class InstructionSlti extends BasicInstruction<InstructionSlti.Assembled>
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
 
 	public InstructionSlti() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

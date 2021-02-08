@@ -73,6 +73,7 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 
 	public WorkingPane(Tab parent, ProjectTab projectTab, Node center,
 					   Set<PaneSnapshot> paneSnapshots, boolean init) {
+		getStyleClass().add("working-pane");
 		this.parent = parent;
 		this.projectTab = projectTab;
 		this.center = center;
@@ -147,15 +148,10 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 	//region INIT
 
 	protected void init() {
-		//Black line separator
-		Separator separator = new Separator(Orientation.HORIZONTAL);
-		AnchorUtils.setAnchor(separator, 0, -1, 0, 0);
-		getChildren().add(separator);
-
 		//Slit panes.
 		verticalSplitPane = new SplitPane();
 		getChildren().add(verticalSplitPane);
-		AnchorUtils.setAnchor(verticalSplitPane, 1, BOTTOM_BAR_HEIGHT, SIDEBAR_WIDTH, SIDEBAR_WIDTH);
+		AnchorUtils.setAnchor(verticalSplitPane, 0, BOTTOM_BAR_HEIGHT, SIDEBAR_WIDTH, SIDEBAR_WIDTH);
 		verticalSplitPane.setOrientation(Orientation.VERTICAL);
 
 		horizontalSplitPane = new SplitPane();
@@ -186,8 +182,8 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 
 		VBox leftSidebarHolder = new VBox();
 		VBox rightSidebarHolder = new VBox();
-		AnchorUtils.setAnchor(leftSidebarHolder, 1, BOTTOM_BAR_HEIGHT, 0, -1);
-		AnchorUtils.setAnchor(rightSidebarHolder, 1, BOTTOM_BAR_HEIGHT, -1, 0);
+		AnchorUtils.setAnchor(leftSidebarHolder, 0, BOTTOM_BAR_HEIGHT, 0, -1);
+		AnchorUtils.setAnchor(rightSidebarHolder, 0, BOTTOM_BAR_HEIGHT, -1, 0);
 
 		Sidebar topLeftSidebar = loadSidebar(true, true, leftPane);
 		Sidebar bottomLeftSidebar = loadSidebar(true, false, leftPane);

@@ -31,6 +31,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -39,16 +40,15 @@ import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
-public class InstructionBgec extends BasicInstruction<InstructionBgec.Assembled> {
+public class InstructionBgec extends BasicInstruction<InstructionBgec.Assembled> implements ControlTransferInstruction {
 
-	public static final String NAME = "Branch on greater than or equal to compact";
 	public static final String MNEMONIC = "bgec";
 	public static final int OPERATION_CODE = 0b010110;
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
 
 	public InstructionBgec() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
@@ -69,6 +69,11 @@ public class InstructionBgec extends BasicInstruction<InstructionBgec.Assembled>
 		int rs = instructionCode >> AssembledI16Instruction.SOURCE_REGISTER_SHIFT & AssembledI16Instruction.SOURCE_REGISTER_MASK;
 		int rt = instructionCode >> AssembledI16Instruction.TARGET_REGISTER_SHIFT & AssembledI16Instruction.TARGET_REGISTER_MASK;
 		return super.match(instructionCode) && rt != rs && rs != 0 && rt != 0;
+	}
+
+	@Override
+	public boolean isCompact() {
+		return true;
 	}
 
 	public static class Assembled extends AssembledI16Instruction {
@@ -100,7 +105,7 @@ public class InstructionBgec extends BasicInstruction<InstructionBgec.Assembled>
 			Register rt = register(instruction.getTargetRegister());
 			Register rs = register(instruction.getSourceRegister());
 			if (rs.getValue() < rt.getValue()) return;
-			pc().setValue(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+			pc().setValue(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
 		}
 	}
 
@@ -118,7 +123,7 @@ public class InstructionBgec extends BasicInstruction<InstructionBgec.Assembled>
 
 			if (solveBranchOnDecode()) {
 				if (value(instruction.getSourceRegister()) >= value(instruction.getTargetRegister())) {
-					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}
@@ -136,7 +141,7 @@ public class InstructionBgec extends BasicInstruction<InstructionBgec.Assembled>
 		public void writeBack() {
 			if (!solveBranchOnDecode()) {
 				if (value(instruction.getSourceRegister()) >= value(instruction.getTargetRegister())) {
-					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
 				} else unlock(pc());
 			}
 		}

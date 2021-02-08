@@ -32,6 +32,7 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -39,9 +40,8 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
-public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled> {
+public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled> implements ControlTransferInstruction {
 
-	public static final String NAME = "Jump and link register";
 	public static final String MNEMONIC = "jalr";
 	public static final int OPERATION_CODE = 0;
 	public static final int FUNCTION_CODE = 0b001001;
@@ -50,7 +50,7 @@ public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER};
 
 	public InstructionJalr() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
@@ -64,6 +64,11 @@ public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled
 	@Override
 	public AssembledInstruction assembleFromCode(int instructionCode) {
 		return new Assembled(instructionCode, this, this);
+	}
+
+	@Override
+	public boolean isCompact() {
+		return false;
 	}
 
 	public static class Assembled extends AssembledRInstruction {

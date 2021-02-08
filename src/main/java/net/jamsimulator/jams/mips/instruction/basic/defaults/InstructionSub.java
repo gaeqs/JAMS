@@ -42,7 +42,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionSub extends BasicRInstruction<InstructionSub.Assembled> {
 
-	public static final String NAME = "Subtraction";
 	public static final String MNEMONIC = "sub";
 	public static final int OPERATION_CODE = 0;
 	public static final int FUNCTION_CODE = 0b100010;
@@ -51,7 +50,7 @@ public class InstructionSub extends BasicRInstruction<InstructionSub.Assembled> 
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER};
 
 	public InstructionSub() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

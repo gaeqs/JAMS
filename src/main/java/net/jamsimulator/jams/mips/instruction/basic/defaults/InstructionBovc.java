@@ -25,12 +25,13 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -39,19 +40,18 @@ import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
-public class InstructionBovc extends BasicInstruction<InstructionBovc.Assembled> {
+public class InstructionBovc extends BasicInstruction<InstructionBovc.Assembled> implements ControlTransferInstruction {
 
-	public static final String NAME = "Branch on overflow compact";
 	public static final String MNEMONIC = "bovc";
 	public static final int OPERATION_CODE = 0b001000;
 
 	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
 
 	public InstructionBovc() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 	}
 
 	@Override
@@ -71,6 +71,11 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 		int rs = instructionCode >> AssembledI16Instruction.SOURCE_REGISTER_SHIFT & AssembledI16Instruction.SOURCE_REGISTER_MASK;
 		int rt = instructionCode >> AssembledI16Instruction.TARGET_REGISTER_SHIFT & AssembledI16Instruction.TARGET_REGISTER_MASK;
 		return super.match(instructionCode) && rs >= rt;
+	}
+
+	@Override
+	public boolean isCompact() {
+		return true;
 	}
 
 	public static class Assembled extends AssembledI16Instruction {
@@ -129,7 +134,7 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 					Math.addExact(value(instruction.getSourceRegister()), value(instruction.getTargetRegister()));
 					unlock(pc());
 				} catch (ArithmeticException ex) {
-					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
 				}
 			}
 		}
@@ -144,7 +149,7 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 				return;
 			}
 
-			pc().setValue(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+			pc().setValue(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
 		}
 
 		@Override
@@ -159,7 +164,7 @@ addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
 					Math.addExact(value(instruction.getSourceRegister()), value(instruction.getTargetRegister()));
 					unlock(pc());
 				} catch (ArithmeticException ex) {
-					jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+					jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
 				}
 			}
 		}

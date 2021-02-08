@@ -42,7 +42,6 @@ import net.jamsimulator.jams.utils.NumericUtils;
 
 public class InstructionSubDouble extends BasicRFPUInstruction<InstructionSubDouble.Assembled> {
 
-	public static final String NAME = "Subtraction (double)";
 	public static final String MNEMONIC = "sub.d";
 	public static final int OPERATION_CODE = 0b010001;
 	public static final int FMT = 0b10001;
@@ -52,7 +51,7 @@ public class InstructionSubDouble extends BasicRFPUInstruction<InstructionSubDou
 			= new ParameterType[]{ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER};
 
 	public InstructionSubDouble() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

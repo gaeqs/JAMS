@@ -7,7 +7,8 @@ public enum CacheReplacementPolicy {
 
 	RANDOM,
 	FIFO,
-	LRU;
+	LRU,
+	MRU;
 
 	private static final Random RANDOM_INSTANCE = new Random();
 
@@ -18,6 +19,9 @@ public enum CacheReplacementPolicy {
 				return RANDOM_INSTANCE.nextInt(blocks.length);
 			case FIFO:
 				comparingFunction = CacheBlock::getCreationTime;
+				break;
+			case MRU:
+				comparingFunction = cacheBlock -> -cacheBlock.getModificationTime();
 				break;
 			default:
 			case LRU:

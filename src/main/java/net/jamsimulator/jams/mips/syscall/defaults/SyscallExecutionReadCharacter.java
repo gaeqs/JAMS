@@ -32,7 +32,7 @@ public class SyscallExecutionReadCharacter implements SyscallExecution {
 		char value = simulation.popCharOrLock();
 		if (simulation.checkThreadInterrupted()) return;
 
-		register.setValue(value);
+		register.setValue(((int)value) & 0xFF);
 
 		simulation.getConsole().printDone(value);
 		if (lineJump) simulation.getConsole().println();
@@ -44,7 +44,7 @@ public class SyscallExecutionReadCharacter implements SyscallExecution {
 		char value = simulation.popCharOrLock();
 		if (simulation.checkThreadInterrupted()) return;
 
-		execution.setAndUnlock(register, value);
+		execution.setAndUnlock(register, ((int)value) & 0xFF);
 
 		simulation.getConsole().printDone(value);
 		if (lineJump) simulation.getConsole().println();

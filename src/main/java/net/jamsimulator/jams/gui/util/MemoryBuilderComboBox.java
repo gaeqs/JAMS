@@ -11,7 +11,7 @@ import net.jamsimulator.jams.mips.memory.builder.event.MemoryBuilderUnregisterEv
 public class MemoryBuilderComboBox extends ComboBox<MemoryBuilder> {
 
 	public MemoryBuilderComboBox(MemoryBuilder selected) {
-		getItems().addAll(Jams.getMemoryBuilderManager().getAll());
+		getItems().addAll(Jams.getMemoryBuilderManager());
 		getSelectionModel().select(selected);
 
 		setConverter(new StringConverter<MemoryBuilder>() {

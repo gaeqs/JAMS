@@ -41,7 +41,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionAnd extends BasicRInstruction<InstructionAnd.Assembled> {
 
-	public static final String NAME = "And";
 	public static final String MNEMONIC = "and";
 	public static final int OPERATION_CODE = 0;
 	public static final int FUNCTION_CODE = 0b100100;
@@ -50,7 +49,7 @@ public class InstructionAnd extends BasicRInstruction<InstructionAnd.Assembled> 
 			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER};
 
 	public InstructionAnd() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
 		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

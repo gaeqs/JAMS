@@ -43,12 +43,14 @@ public class ProjectTabPane extends TabPane {
 	private final WorkingPane workingPane;
 
 	private final Consumer<Tab> onClose;
+	private final BiConsumer<Tab, Tab> onSelect;
 
 	public ProjectTabPane(ProjectTab projectTab, BiConsumer<Tab, Tab> onSelect, Consumer<Tab> onClose) {
 		getStyleClass().add("project-tab-pane");
 		setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
 		this.projectTab = projectTab;
 		this.onClose = onClose;
+		this.onSelect = onSelect;
 
 		projectTab.addTabCloseListener(event -> {
 			for (Tab tab : getTabs()) {
@@ -57,10 +59,21 @@ public class ProjectTabPane extends TabPane {
 			}
 		});
 
-		Platform.runLater(() -> getChildren().remove(0));
-		getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> onSelect.accept(old, val));
-
 		workingPane = createProjectPane((tab, pt) -> new MIPSStructurePane(tab, pt, (MIPSProject) pt.getProject()), false);
+		removeFirst();
+
+		getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> onSelect.accept(old, val));
+	}
+
+
+	private void removeFirst() {
+		Platform.runLater(() -> {
+			if (getChildren().isEmpty()) removeFirst();
+			else {
+				getChildren().remove(0);
+				onSelect.accept(null, getTabs().get(0));
+			}
+		});
 	}
 
 	public WorkingPane getWorkingPane() {
@@ -70,7 +83,6 @@ public class ProjectTabPane extends TabPane {
 	public <E extends ProjectPane> E createProjectPane(BiFunction<Tab, ProjectTab, E> creator, boolean closeable) {
 		LanguageTab tab = new LanguageTab("");
 		tab.setClosable(closeable);
-		getTabs().add(tab);
 
 		E pane = creator.apply(tab, projectTab);
 		if (!(pane instanceof Pane)) throw new IllegalArgumentException("Pane must be a Pane!");
@@ -80,8 +92,11 @@ public class ProjectTabPane extends TabPane {
 
 		tab.setOnClosed(event -> {
 			pane.onClose();
-			if(onClose != null) onClose.accept(tab);
+			if (onClose != null) onClose.accept(tab);
 		});
+
+		getTabs().add(tab);
+
 		return pane;
 	}
 }

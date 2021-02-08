@@ -28,10 +28,12 @@ public class MIPS32InstructionSet extends InstructionSet {
 
 	public static final String NAME = "MIPS32";
 
-	public MIPS32InstructionSet() {
+	public static final MIPS32InstructionSet INSTANCE = new MIPS32InstructionSet();
+
+	private MIPS32InstructionSet() {
 		super(NAME);
-		instructions.addAll(MIPS32DefaultInstructions.basicInstructions);
-		instructions.addAll(MIPS32DefaultInstructions.pseudoInstructions);
+		MIPS32DefaultInstructions.basicInstructions.forEach(this::registerInstruction);
+		MIPS32DefaultInstructions.pseudoInstructions.forEach(this::registerInstruction);
 	}
 
 }

@@ -42,101 +42,102 @@ import net.jamsimulator.jams.utils.NumericUtils;
 
 public class InstructionCeilLSingle extends BasicRFPUInstruction<InstructionCeilLSingle.Assembled> {
 
-	public static final String NAME = "Ceiling single to long";
-	public static final String MNEMONIC = "ceil.l.s";
-	public static final int OPERATION_CODE = 0b010001;
-	public static final int FMT = 0b10000;
-	public static final int FUNCTION_CODE = 0b001010;
+    public static final String MNEMONIC = "ceil.l.s";
+    public static final int OPERATION_CODE = 0b010001;
+    public static final int FMT = 0b10000;
+    public static final int FUNCTION_CODE = 0b001010;
 
-	private static final ParameterType[] PARAMETER_TYPES
-			= new ParameterType[]{ParameterType.EVEN_FLOAT_REGISTER, ParameterType.FLOAT_REGISTER};
+    private static final ParameterType[] PARAMETER_TYPES
+            = new ParameterType[]{ParameterType.EVEN_FLOAT_REGISTER, ParameterType.FLOAT_REGISTER};
 
-	public InstructionCeilLSingle() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
-		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
-		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
-	}
+    public InstructionCeilLSingle() {
+        super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
+        addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+        addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+        addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+    }
 
-	@Override
-	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new Assembled(parameters[1].getRegister(), parameters[0].getRegister(), origin, this);
-	}
+    @Override
+    public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
+        return new Assembled(parameters[1].getRegister(), parameters[0].getRegister(), origin, this);
+    }
 
-	@Override
-	public AssembledInstruction assembleFromCode(int instructionCode) {
-		return new Assembled(instructionCode, this, this);
-	}
+    @Override
+    public AssembledInstruction assembleFromCode(int instructionCode) {
+        return new Assembled(instructionCode, this, this);
+    }
 
-	public static class Assembled extends AssembledRFPUInstruction {
+    public static class Assembled extends AssembledRFPUInstruction {
 
-		public Assembled(int sourceRegister, int destinationRegister, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-			super(InstructionCeilLSingle.OPERATION_CODE, InstructionCeilLSingle.FMT, 0, sourceRegister,
-					destinationRegister, InstructionCeilLSingle.FUNCTION_CODE, origin, basicOrigin);
-		}
+        public Assembled(int sourceRegister, int destinationRegister, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(InstructionCeilLSingle.OPERATION_CODE, InstructionCeilLSingle.FMT, 0, sourceRegister,
+                    destinationRegister, InstructionCeilLSingle.FUNCTION_CODE, origin, basicOrigin);
+        }
 
-		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-			super(instructionCode, origin, basicOrigin);
-		}
+        public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(instructionCode, origin, basicOrigin);
+        }
 
-		@Override
-		public String parametersToString(String registersStart) {
-			return registersStart + getDestinationRegister() + ", " + registersStart + getSourceRegister();
-		}
-	}
+        @Override
+        public String parametersToString(String registersStart) {
+            return registersStart + getDestinationRegister() + ", " + registersStart + getSourceRegister();
+        }
+    }
 
-	public static class SingleCycle extends SingleCycleExecution<Assembled> {
+    public static class SingleCycle extends SingleCycleExecution<Assembled> {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address);
-		}
+        public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
+            super(simulation, instruction, address);
+        }
 
-		@Override
-		public void execute() {
+        @Override
+        public void execute() {
+            if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
+            Register rs0 = registerCop1(instruction.getSourceRegister());
+            float f = Float.intBitsToFloat(rs0.getValue());
+            long l = (long) Math.ceil(f);
+            int[] ints = NumericUtils.longToInts(l);
 
-			Register rs0 = registerCop1(instruction.getSourceRegister());
-			float f = Float.intBitsToFloat(rs0.getValue());
-			long l = (long) Math.ceil(f);
-			int[] ints = NumericUtils.longToInts(l);
-
-			registerCop1(instruction.getDestinationRegister()).setValue(ints[0]);
-			registerCop1(instruction.getDestinationRegister() + 1).setValue(ints[1]);
-		}
-	}
+            registerCop1(instruction.getDestinationRegister()).setValue(ints[0]);
+            registerCop1(instruction.getDestinationRegister() + 1).setValue(ints[1]);
+        }
+    }
 
 
-	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+    public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
-		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address, false, true);
-		}
+        public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+            super(simulation, instruction, address, false, true);
+        }
 
-		@Override
-		public void decode() {
-			requiresCOP1(instruction.getSourceRegister());
-			lockCOP1(instruction.getDestinationRegister());
-		}
+        @Override
+        public void decode() {
+            if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
+            requiresCOP1(instruction.getSourceRegister());
+            lockCOP1(instruction.getDestinationRegister());
+            lockCOP1(instruction.getDestinationRegister() + 1);
+        }
 
-		@Override
-		public void execute() {
-			var to = instruction.getDestinationRegister();
-			var ceil = (long) Math.ceil(Float.intBitsToFloat(valueCOP1(instruction.getSourceRegister())));
-			executionResult = NumericUtils.longToInts(ceil);
-			forwardCOP1(to, executionResult[0], false);
-			forwardCOP1(to + 1, executionResult[1], false);
-		}
+        @Override
+        public void execute() {
+            var to = instruction.getDestinationRegister();
+            var ceil = (long) Math.ceil(Float.intBitsToFloat(valueCOP1(instruction.getSourceRegister())));
+            executionResult = NumericUtils.longToInts(ceil);
+            forwardCOP1(to, executionResult[0], false);
+            forwardCOP1(to + 1, executionResult[1], false);
+        }
 
-		@Override
-		public void memory() {
-			var to = instruction.getDestinationRegister();
-			forwardCOP1(to, executionResult[0], true);
-			forwardCOP1(to + 1, executionResult[1], true);
-		}
+        @Override
+        public void memory() {
+            var to = instruction.getDestinationRegister();
+            forwardCOP1(to, executionResult[0], true);
+            forwardCOP1(to + 1, executionResult[1], true);
+        }
 
-		@Override
-		public void writeBack() {
-			setAndUnlockCOP1(instruction.getDestinationRegister(), executionResult[0]);
-			setAndUnlockCOP1(instruction.getDestinationRegister() + 1, executionResult[1]);
-		}
-	}
+        @Override
+        public void writeBack() {
+            setAndUnlockCOP1(instruction.getDestinationRegister(), executionResult[0]);
+            setAndUnlockCOP1(instruction.getDestinationRegister() + 1, executionResult[1]);
+        }
+    }
 }

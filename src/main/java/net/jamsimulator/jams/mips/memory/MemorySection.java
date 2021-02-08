@@ -208,6 +208,16 @@ public class MemorySection {
 	}
 
 	/**
+	 * Return whether the given address is bigger or equal to the first address of the memory section.
+	 *
+	 * @param address the address.
+	 * @return whether the given address is bigger or equal to the first address of the memory section.
+	 */
+	public boolean isBigger(int address) {
+		return Integer.compareUnsigned(address, firstAddress) >= 0;
+	}
+
+	/**
 	 * Creates a copy of the memory section.
 	 *
 	 * @return the copy.

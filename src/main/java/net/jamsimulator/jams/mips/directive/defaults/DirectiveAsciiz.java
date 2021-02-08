@@ -32,8 +32,6 @@ import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.StringUtils;
 
-import java.nio.charset.StandardCharsets;
-
 public class DirectiveAsciiz extends Directive {
 
 	public static final String NAME = "asciiz";
@@ -56,8 +54,8 @@ public class DirectiveAsciiz extends Directive {
 			if (!s.startsWith("\"") && !s.endsWith("\""))
 				throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + s + "' is not a string.");
 			s = StringUtils.parseEscapeCharacters(s.substring(1, s.length() - 1));
-			for (byte b : s.getBytes(StandardCharsets.US_ASCII)) {
-				file.getAssembler().getMemory().setByte(data.getCurrent(), b);
+			for (char c : s.toCharArray()) {
+				file.getAssembler().getMemory().setByte(data.getCurrent(), (byte) c);
 				data.addCurrent(1);
 			}
 			file.getAssembler().getMemory().setByte(data.getCurrent(), (byte) 0);

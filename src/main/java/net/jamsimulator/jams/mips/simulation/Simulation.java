@@ -33,6 +33,7 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
 import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
@@ -122,7 +123,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 		this.numberGenerators = new NumberGenerators();
 
-		this.instructionCache = useCache ? new InstructionExecution[instructionStackBottom - memory.getFirstTextAddress() + 1] : null;
+		// 1 Instruction = 4 Bytes.
+		this.instructionCache = useCache ? new InstructionExecution[((instructionStackBottom - memory.getFirstTextAddress()) >> 2) + 1] : null;
 
 		if (data.canCallEvents() && data.isUndoEnabled()) {
 			memory.registerListeners(this, true);
@@ -323,6 +325,10 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 			if (!optional.isPresent()) {
 				try {
 					callEvent(new SimulationLockEvent(this));
+
+					//Flushes the console. This call is important.
+					getConsole().flush();
+
 					synchronized (inputLock) {
 						inputLock.wait();
 					}
@@ -343,12 +349,16 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	 */
 	public char popCharOrLock() {
 		Optional<Character> optional = Optional.empty();
-		while (!optional.isPresent()) {
+		while (optional.isEmpty()) {
 			optional = data.getConsole().popChar();
 
-			if (!optional.isPresent()) {
+			if (optional.isEmpty()) {
 				try {
 					callEvent(new SimulationLockEvent(this));
+
+					//Flushes the console. This call is important.
+					getConsole().flush();
+
 					synchronized (inputLock) {
 						inputLock.wait();
 					}
@@ -398,8 +408,16 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 	public InstructionExecution<? super Arch, ?> fetch(int pc) {
 		InstructionExecution<Arch, ?> cached;
 		if (instructionCache != null && Integer.compareUnsigned(pc, instructionStackBottom) < 0) {
-			cached = instructionCache[pc - memory.getFirstTextAddress()];
-			if (cached != null) return cached;
+			try {
+				cached = instructionCache[(pc - memory.getFirstTextAddress()) >> 2];
+				if (cached != null) return cached;
+			} catch (Exception e) {
+				System.out.println("0x" + Integer.toHexString(pc));
+				System.out.println("0x" + Integer.toHexString(memory.getFirstTextAddress()));
+				System.out.println(pc - memory.getFirstTextAddress());
+				System.out.println(instructionCache.length);
+				throw e;
+			}
 		}
 
 		int data = memory.getWord(pc, true, true);
@@ -412,7 +430,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 
 		if (instructionCache != null && Integer.compareUnsigned(pc, instructionStackBottom) < 0) {
-			instructionCache[pc - memory.getFirstTextAddress()] = cached;
+			instructionCache[(pc - memory.getFirstTextAddress()) >> 2] = cached;
 		}
 		return cached;
 	}
@@ -452,7 +470,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		return !statusRegister.getBit(COP0RegistersBits.STATUS_UM);
 	}
 
-	public void manageMIPSInterrupt(RuntimeInstructionException exception, int pc) {
+	public void manageMIPSInterrupt(RuntimeInstructionException exception, InstructionExecution<?, ?> execution, int pc) {
 		if (!areMIPSInterruptsEnabled()) return;
 		statusRegister.modifyBits(1, COP0RegistersBits.STATUS_EXL, 1);
 		epcRegister.setValue(pc);
@@ -462,7 +480,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		}
 
 		//Modify cause register
-		causeRegister.modifyBits(0, COP0RegistersBits.CAUSE_BD, 1);
+		var delaySlot = execution instanceof MultiCycleExecution && ((MultiCycleExecution<?>) execution).isInDelaySlot();
+		causeRegister.modifyBits(delaySlot ? 1 : 0, COP0RegistersBits.CAUSE_BD, 1);
 		causeRegister.modifyBits(exception.getInterruptCause().getValue(), COP0RegistersBits.CAUSE_EX_CODE, 5);
 
 		registers.getProgramCounter().setValue(MIPS32Memory.EXCEPTION_HANDLER);
@@ -551,9 +570,11 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 				finishedRunningLock.notifyAll();
 				callEvent(new SimulationStopEvent(this));
+				getConsole().flush();
 			}
 		});
 		callEvent(new SimulationStartEvent(this));
+		thread.setPriority(Thread.MAX_PRIORITY);
 		thread.start();
 	}
 
@@ -610,7 +631,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		int address = event.getAddress() >> 2 << 2;
 
 		if (address >= memory.getFirstTextAddress() && address <= instructionStackBottom) {
-			instructionCache[address - memory.getFirstTextAddress()] = null;
+			instructionCache[(address - memory.getFirstTextAddress()) >> 2] = null;
 		}
 
 		var memorySection = event.getMemorySection().orElse(null);
@@ -618,7 +639,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 			instructionStackBottom = address;
 
 			InstructionExecution<Arch, ?>[] array =
-					new InstructionExecution[instructionStackBottom - memory.getFirstTextAddress() + 1];
+					new InstructionExecution[((instructionStackBottom - memory.getFirstTextAddress()) >> 2) + 1];
 			System.arraycopy(instructionCache, 0, array, 0, instructionCache.length);
 			instructionCache = array;
 		}
@@ -629,14 +650,14 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 		int address = event.getAddress();
 
 		if (address >= memory.getFirstTextAddress() && address <= instructionStackBottom) {
-			instructionCache[address - memory.getFirstTextAddress()] = null;
+			instructionCache[(address - memory.getFirstTextAddress()) >> 2] = null;
 		}
 		var memorySection = event.getMemorySection().orElse(null);
 		if (memorySection != null && memorySection.getName().equals("Text") && instructionStackBottom < event.getAddress()) {
 			instructionStackBottom = address;
 
 			InstructionExecution<Arch, ?>[] array =
-					new InstructionExecution[instructionStackBottom - memory.getFirstTextAddress() + 1];
+					new InstructionExecution[((instructionStackBottom - memory.getFirstTextAddress()) >> 2) + 1];
 			System.arraycopy(instructionCache, 0, array, 0, instructionCache.length);
 			instructionCache = array;
 		}

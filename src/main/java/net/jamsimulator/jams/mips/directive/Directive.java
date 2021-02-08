@@ -97,7 +97,7 @@ public abstract class Directive {
 	 */
 	public DirectiveParameterType getParameterTypeFor(int index) {
 		//Check if parameter is out of bounds.
-		if (index < 0 || index >= parameters.length && !repeatLastParameter) return null;
+		if (index < 0 || index >= parameters.length && !repeatLastParameter) return DirectiveParameterType.ANY;
 		return parameters[Math.min(index, parameters.length - 1)];
 	}
 

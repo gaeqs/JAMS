@@ -41,88 +41,95 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionMtc0 extends BasicIFPUInstruction<InstructionMtc0.Assembled> {
 
-	public static final String NAME = "Move to coprocessor 0";
-	public static final String MNEMONIC = "mtc0";
-	public static final int OPERATION_CODE = 0b010000;
-	public static final int SUBCODE = 0b00100;
+    public static final String MNEMONIC = "mtc0";
+    public static final int OPERATION_CODE = 0b010000;
+    public static final int SUBCODE = 0b00100;
 
-	private static final ParameterType[] PARAMETER_TYPES
-			= new ParameterType[]{ParameterType.REGISTER, ParameterType.COPROCESSOR_0_REGISTER, ParameterType.UNSIGNED_5_BIT};
+    private static final ParameterType[] PARAMETER_TYPES
+            = new ParameterType[]{ParameterType.REGISTER, ParameterType.COPROCESSOR_0_REGISTER, ParameterType.UNSIGNED_5_BIT};
 
-	public InstructionMtc0() {
-		super(NAME, MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, SUBCODE);
-		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
-		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
-	}
+    public InstructionMtc0() {
+        super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, SUBCODE);
+        addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+        addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+        addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+    }
 
-	@Override
-	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new Assembled(parameters[0].getRegister(), parameters[1].getRegister(), parameters[2].getImmediate(), origin, this);
-	}
+    @Override
+    public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
+        return new Assembled(parameters[0].getRegister(), parameters[1].getRegister(), parameters[2].getImmediate(), origin, this);
+    }
 
-	@Override
-	public AssembledInstruction assembleFromCode(int instructionCode) {
-		return new Assembled(instructionCode, this, this);
-	}
+    @Override
+    public AssembledInstruction assembleFromCode(int instructionCode) {
+        return new Assembled(instructionCode, this, this);
+    }
 
-	public static class Assembled extends AssembledI11Instruction {
+    public static class Assembled extends AssembledI11Instruction {
 
-		public Assembled(int targetRegister, int destinationRegister, int selection, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-			super(OPERATION_CODE, SUBCODE, targetRegister, destinationRegister, selection & 0b111, origin, basicOrigin);
-		}
+        public Assembled(int targetRegister, int destinationRegister, int selection, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(OPERATION_CODE, SUBCODE, targetRegister, destinationRegister, selection & 0b111, origin, basicOrigin);
+        }
 
-		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-			super(instructionCode, origin, basicOrigin);
-		}
+        public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(instructionCode, origin, basicOrigin);
+        }
 
-		@Override
-		public String parametersToString(String registersStart) {
-			return registersStart + getTargetRegister()
-					+ ", " + registersStart + getDestinationRegister();
-		}
-	}
+        @Override
+        public String parametersToString(String registersStart) {
+            return registersStart + getTargetRegister()
+                    + ", " + registersStart + getDestinationRegister();
+        }
+    }
 
-	public static class SingleCycle extends SingleCycleExecution<Assembled> {
+    public static class SingleCycle extends SingleCycleExecution<Assembled> {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address);
-		}
+        public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
+            super(simulation, instruction, address);
+        }
 
-		@Override
-		public void execute() {
-			Register rt = register(instruction.getTargetRegister());
-			Register rd = registerCop0(instruction.getDestinationRegister());
-			rd.setValue(rt.getValue());
-		}
-	}
+        @Override
+        public void execute() {
+            Register rt = register(instruction.getTargetRegister());
+            Register rd = registerCop0(instruction.getDestinationRegister());
+            rd.setValue(rt.getValue());
+        }
+    }
 
-	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+    public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
-		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address, false, true);
-		}
+        public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+            super(simulation, instruction, address, false, true);
+        }
 
-		@Override
-		public void decode() {
-			requires(instruction.getTargetRegister());
-			lockCOP0(instruction.getDestinationRegister());
-		}
+        @Override
+        public void decode() {
+            requires(instruction.getTargetRegister());
+            if (registerCop0(instruction.getDestinationRegister()) != null) {
+                lockCOP0(instruction.getDestinationRegister());
+            }
+        }
 
-		@Override
-		public void execute() {
-			executionResult = new int[]{value(instruction.getTargetRegister())};
-			forwardCOP0(instruction.getDestinationRegister(), instruction.getImmediate(), executionResult[0], false);
-		}
+        @Override
+        public void execute() {
+            executionResult = new int[]{value(instruction.getTargetRegister())};
+            if (registerCop0(instruction.getDestinationRegister()) != null) {
+                forwardCOP0(instruction.getDestinationRegister(), instruction.getImmediate(), executionResult[0], false);
+            }
+        }
 
-		@Override
-		public void memory() {
-			forwardCOP0(instruction.getDestinationRegister(), instruction.getImmediate(), executionResult[0], true);
-		}
+        @Override
+        public void memory() {
+            if (registerCop0(instruction.getDestinationRegister()) != null) {
+                forwardCOP0(instruction.getDestinationRegister(), instruction.getImmediate(), executionResult[0], true);
+            }
+        }
 
-		@Override
-		public void writeBack() {
-			setAndUnlockCOP0(instruction.getDestinationRegister(), instruction.getImmediate(), instruction.getImmediate());
-		}
-	}
+        @Override
+        public void writeBack() {
+            if (registerCop0(instruction.getDestinationRegister()) != null) {
+                setAndUnlockCOP0(instruction.getDestinationRegister(), instruction.getImmediate(), instruction.getImmediate());
+            }
+        }
+    }
 }

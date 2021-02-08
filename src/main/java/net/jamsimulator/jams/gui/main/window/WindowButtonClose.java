@@ -32,7 +32,7 @@ public class WindowButtonClose extends WindowButton {
 
 	public WindowButtonClose(Stage stage) {
 		super(stage, JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_CLOSE).orElse(null));
-		getStyleClass().add("window_button-close");
+		getStyleClass().add("window-button-close");
 		setOnAction(event -> onAction());
 	}
 
