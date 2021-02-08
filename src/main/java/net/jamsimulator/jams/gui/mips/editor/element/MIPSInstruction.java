@@ -27,13 +27,13 @@ package net.jamsimulator.jams.gui.mips.editor.element;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
-import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.InstructionUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class MIPSInstruction extends MIPSCodeElement {
@@ -121,15 +121,26 @@ public class MIPSInstruction extends MIPSCodeElement {
 
         MIPSProject project = elements.getProject().orElse(null);
         InstructionSet set = project.getData().getInstructionSet();
-
         RegistersBuilder builder = project.getData().getRegistersBuilder();
-        List<ParameterType>[] types = new List[parameters.size()];
 
-        for (int i = 0; i < parameters.size(); i++) {
-            types[i] = parameters.get(i).refreshMetadata(builder);
+        var instructions = set.getInstructionByMnemonic(instruction);
+        mostCompatibleInstruction = null;
+
+        base:
+        for (Instruction current : instructions) {
+            if (mostCompatibleInstruction == null || InstructionSet.COMPARATOR.compare(mostCompatibleInstruction, current) > 0) {
+                var types = current.getParameters();
+                if (types.length != parameters.size()) return;
+
+                for (int i = 0; i < types.length; i++) {
+                    if (!types[i].match(parameters.get(i).getText(), builder)) {
+                        continue base;
+                    }
+                }
+
+                mostCompatibleInstruction = current;
+            }
         }
-
-        mostCompatibleInstruction = set.getBestCompatibleInstruction(this.instruction, types).orElse(null);
     }
 
     private void parseText(MIPSFileElements elements) {
@@ -156,10 +167,10 @@ public class MIPSInstruction extends MIPSCodeElement {
         var instructionSet = project.getData().getInstructionSet();
         var registerBuilder = project.getData().getRegistersBuilder();
 
-        var parameterCache = new ArrayList<String>();
+        var parametersReference = new AtomicReference<List<String>>();
 
         var instructions = instructionSet.getInstructionByMnemonic(instruction);
-        var best = InstructionUtils.getBestInstruction(instructions, parameterCache, registerBuilder, raw).orElse(null);
+        var best = InstructionUtils.getBestInstruction(instructions, parametersReference, registerBuilder, raw).orElse(null);
 
         if (best == null) {
             //DO SIMPLE SPLIT
@@ -167,7 +178,7 @@ public class MIPSInstruction extends MIPSCodeElement {
         } else {
             int index = 0;
             int i = 0;
-            for (String parameter : parameterCache) {
+            for (String parameter : parametersReference.get()) {
                 index = raw.indexOf(parameter, index);
                 parameters.add(new MIPSInstructionParameter(line, this, elements, endIndex + index, parameter, i, best.getParameters()[i]));
                 index += parameter.length();

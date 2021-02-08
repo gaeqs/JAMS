@@ -354,7 +354,6 @@ EDITOR_MIPS_ERROR_DUPLICATE_LABEL=Found duplicated label '{NAME}'.
 EDITOR_MIPS_ERROR_DUPLICATE_GLOBAL_LABEL=Found duplicated global label '{NAME}' on file '{FILE}'.
 EDITOR_MIPS_ERROR_INVALID_DIRECTIVE_PARAMETER=The parameter '{NAME}' is invalid.
 EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=Couldn't found instruction '{NAME}' with the given parameters.
-EDITOR_MIPS_ERROR_INVALID_INSTRUCTION_PARAMETER=The parameter '{NAME}' is invalid.
 
 EDITOR_MIPS_WARNING_DIRECTIVE_NOT_FOUND=Couldn't found directive '{NAME}'.
 EDITOR_MIPS_WARNING_REGISTER_USING_AT=Avoid using the register $at. Its value may change unexpectedly when a pseudoinstruction is executed.

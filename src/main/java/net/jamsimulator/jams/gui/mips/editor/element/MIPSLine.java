@@ -272,15 +272,14 @@ public class MIPSLine {
      * <p>
      * {@link MIPSLine}s don't store their line index, so it must be given to the method.
      *
-     * @param area the {@link CodeArea} to style.
-     * @param line the line index.
+     * @param lastEnd      the last end given by the previous line.
+     * @param spansBuilder the {@link StyleSpansBuilder}.
      */
-    public void styleLine(CodeArea area, int line) {
-        if (getSortedElements().isEmpty()) return;
-        int textLength = text.length();
-        int lastEnd = start;
-        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
+    public int styleLine(int lastEnd, StyleSpansBuilder<Collection<String>> spansBuilder) {
+        if (getSortedElements().isEmpty()) return lastEnd;
 
+        spansBuilder.add(Collections.emptyList(), start - lastEnd);
+        lastEnd = start;
 
         for (MIPSCodeElement element : getSortedElements()) {
             try {
@@ -292,10 +291,7 @@ public class MIPSLine {
             }
         }
 
-        if (textLength + start > lastEnd) {
-            spansBuilder.add(Collections.emptyList(), textLength + start - lastEnd);
-        }
-        area.setStyleSpans(line, 0, spansBuilder.create());
+        return lastEnd;
     }
 
     /**

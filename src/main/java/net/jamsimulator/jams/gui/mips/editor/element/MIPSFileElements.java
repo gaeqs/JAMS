@@ -29,6 +29,8 @@ import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
 import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.model.StyleSpans;
+import org.fxmisc.richtext.model.StyleSpansBuilder;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -47,7 +49,7 @@ public class MIPSFileElements {
     private final Bag<String> setAsGlobalLabel;
     private final TreeSet<MIPSReplacement> replacements;
 
-    private final Set<Integer> requiresUpdate;
+    private final LinkedList<Integer> requiresUpdate;
 
     public MIPSFileElements(MIPSProject project) {
         this.project = project;
@@ -57,7 +59,7 @@ public class MIPSFileElements {
         this.setAsGlobalLabel = new Bag<>();
         this.replacements = new TreeSet<>();
 
-        this.requiresUpdate = new HashSet<>();
+        this.requiresUpdate = new LinkedList<>();
         this.filesToAssemble = null;
     }
 
@@ -187,7 +189,7 @@ public class MIPSFileElements {
         for (int i = index; i < lines.size(); i++)
             lines.get(i).move(-length);
 
-        requiresUpdate.remove(lines.size());
+        requiresUpdate.remove((Object) lines.size());
         return checkLabels(line, false);
     }
 
@@ -312,12 +314,23 @@ public class MIPSFileElements {
      * @param area the area to style.
      */
     public void styleAll(CodeArea area) {
-        int i = 0;
+        if (lines.isEmpty()) return;
+        int lastEnd = 0;
+        var spansBuilder = new StyleSpansBuilder<Collection<String>>();
+
         for (MIPSLine line : lines) {
-            line.styleLine(area, i);
-            i++;
+            lastEnd = line.styleLine(lastEnd, spansBuilder);
         }
         requiresUpdate.clear();
+
+        StyleSpans<Collection<String>> spans;
+        try {
+            spans = spansBuilder.create();
+        } catch (IllegalStateException ex) {
+            // No spans have been added.
+            return;
+        }
+        area.setStyleSpans(0, spans);
     }
 
     /**
@@ -330,19 +343,22 @@ public class MIPSFileElements {
     public void styleLines(CodeArea area, int from, int amount) {
         if (from < 0 || from + amount > lines.size())
             throw new IndexOutOfBoundsException("Index out of bounds. [" + from + ", " + (from + amount) + ")");
-        for (int i = 0; i < amount; i++) {
-            lines.get(from + i).styleLine(area, from + i);
-        }
-    }
 
-    /**
-     * Styles the selected lines.
-     *
-     * @param area  the area to style.
-     * @param lines the lines to update.
-     */
-    public void styleLines(CodeArea area, Collection<Integer> lines) {
-        lines.forEach(target -> this.lines.get(target).styleLine(area, target));
+        int lastEnd = lines.get(from).getStart();
+        var spansBuilder = new StyleSpansBuilder<Collection<String>>();
+
+        for (int i = 0; i < amount; i++) {
+            lastEnd = lines.get(from + i).styleLine(lastEnd, spansBuilder);
+        }
+
+        StyleSpans<Collection<String>> spans;
+        try {
+            spans = spansBuilder.create();
+        } catch (IllegalStateException ex) {
+            // No spans have been added.
+            return;
+        }
+        area.setStyleSpans(0, spans);
     }
 
     /**
@@ -351,13 +367,40 @@ public class MIPSFileElements {
      * @param area the {@link CodeArea}.
      */
     public void update(MIPSFileEditor area) {
-        for (Integer i : requiresUpdate) {
+        if (requiresUpdate.isEmpty()) return;
+        requiresUpdate.sort(Integer::compareTo);
+
+        int i;
+        MIPSLine line;
+        int lastEnd = -1;
+        int first = -1;
+
+        var spansBuilder = new StyleSpansBuilder<Collection<String>>();
+
+        while (!requiresUpdate.isEmpty()) {
+            i = requiresUpdate.pop();
             if (i < 0 || i >= lines.size()) continue;
-            MIPSLine line = lines.get(i);
+            line = lines.get(i);
+
+            if (lastEnd == -1) {
+                lastEnd = line.getStart();
+                first = line.getStart();
+            }
+
             line.refreshMetadata(this);
-            line.styleLine(area, i);
+            lastEnd = line.styleLine(lastEnd, spansBuilder);
         }
-        requiresUpdate.clear();
+
+        StyleSpans<Collection<String>> spans;
+        try {
+            spans = spansBuilder.create();
+        } catch (IllegalStateException ex) {
+            // No spans have been added.
+            return;
+        }
+        if (first != -1) {
+            area.setStyleSpans(first, spans);
+        }
     }
 
     /**

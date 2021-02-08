@@ -25,153 +25,141 @@
 package net.jamsimulator.jams.gui.mips.editor.element;
 
 import net.jamsimulator.jams.mips.parameter.ParameterType;
-import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.util.*;
 
 public class MIPSInstructionParameter {
 
-	private final MIPSLine line;
-	private final MIPSInstruction instruction;
-	private final int index;
-	private final int start;
-	private final String text;
-	private final List<MIPSInstructionParameterPart> parts;
-	private boolean valid;
+    private final MIPSLine line;
+    private final MIPSInstruction instruction;
+    private final int index;
+    private final int start;
+    private final String text;
+    private final List<MIPSInstructionParameterPart> parts;
 
-	public MIPSInstructionParameter(MIPSLine line, MIPSInstruction instruction, MIPSFileElements elements, int start, String text, int index, ParameterType hint) {
-		this.line = line;
-		this.instruction = instruction;
-		this.index = index;
-		this.start = start;
-		this.text = text;
-		this.parts = new ArrayList<>();
+    public MIPSInstructionParameter(MIPSLine line, MIPSInstruction instruction, MIPSFileElements elements, int start, String text, int index, ParameterType hint) {
+        this.line = line;
+        this.instruction = instruction;
+        this.index = index;
+        this.start = start;
+        this.text = text;
+        this.parts = new ArrayList<>();
 
-		if (hint != null) parseTextWithHint(start, elements, hint);
-		else parseTextSimple(start, elements);
-	}
+        if (hint != null) parseTextWithHint(start, elements, hint);
+        else parseTextSimple(start, elements);
+    }
 
-	public int getIndex() {
-		return index;
-	}
+    public int getIndex() {
+        return index;
+    }
 
-	public int getStart() {
-		return start;
-	}
+    public int getStart() {
+        return start;
+    }
 
-	public String getText() {
-		return text;
-	}
+    public String getText() {
+        return text;
+    }
 
-	public MIPSInstruction getInstruction() {
-		return instruction;
-	}
+    public MIPSInstruction getInstruction() {
+        return instruction;
+    }
 
-	public List<MIPSInstructionParameterPart> getParts() {
-		return parts;
-	}
+    public List<MIPSInstructionParameterPart> getParts() {
+        return parts;
+    }
 
-	public boolean isValid() {
-		return valid;
-	}
+    public Optional<String> getLabelParameterPart() {
+        for (MIPSInstructionParameterPart part : parts) {
+            if (part.getType() == MIPSInstructionParameterPart.InstructionParameterPartType.LABEL
+                    || part.getType() == MIPSInstructionParameterPart.InstructionParameterPartType.GLOBAL_LABEL) {
+                return Optional.of(part.text);
+            }
+        }
+        return Optional.empty();
+    }
 
-	public Optional<String> getLabelParameterPart() {
-		for (MIPSInstructionParameterPart part : parts) {
-			if (part.getType() == MIPSInstructionParameterPart.InstructionParameterPartType.LABEL
-					|| part.getType() == MIPSInstructionParameterPart.InstructionParameterPartType.GLOBAL_LABEL) {
-				return Optional.of(part.text);
-			}
-		}
-		return Optional.empty();
-	}
+    private void parseTextWithHint(int start, MIPSFileElements elements, ParameterType hint) {
+        int[] indices = hint.split(text);
+        int amount = hint.getAmountOfParts();
 
-	public List<ParameterType> refreshMetadata(RegistersBuilder builder) {
-		List<ParameterType> types = ParameterType.getCompatibleParameterTypes(text, builder);
-		valid = !types.isEmpty();
-		return types;
-	}
+        int partStart;
+        int partEnd;
+        for (int i = 0; i < amount; i++) {
+            partStart = start + indices[i << 1];
+            partEnd = partStart + indices[(i << 1) + 1];
 
-	private void parseTextWithHint(int start, MIPSFileElements elements, ParameterType hint) {
-		int[] indices = hint.split(text);
-		int amount = hint.getAmountOfParts();
+            if (partStart > partEnd) continue;
 
-		int partStart;
-		int partEnd;
-		for (int i = 0; i < amount; i++) {
-			partStart = start + indices[i << 1];
-			partEnd = partStart + indices[(i << 1) + 1];
+            parts.add(new MIPSInstructionParameterPart(line, elements, partStart, partEnd,
+                    text.substring(partStart - start, partEnd - start), this, i, hint.getPart(i)));
+        }
+    }
 
-			if (partStart > partEnd) continue;
+    private void parseTextSimple(int start, MIPSFileElements elements) {
+        StringBuilder builder = new StringBuilder();
+        int index = 0;
+        for (char c : text.toCharArray()) {
+            if (c == '+') {
+                addPartSimple(builder.toString(), start, elements);
+                builder = new StringBuilder();
+                start += index + 1;
+            } else {
+                builder.append(c);
+            }
+            index++;
+        }
+        addPartSimple(builder.toString(), start, elements);
+    }
 
-			parts.add(new MIPSInstructionParameterPart(line, elements, partStart, partEnd,
-					text.substring(partStart - start, partEnd - start), this, i, hint.getPart(i)));
-		}
-	}
+    private void addPartSimple(String string, int start, MIPSFileElements elements) {
+        Optional<MIPSProject> project = elements.getProject();
+        if (project.isEmpty()) {
+            parts.add(new MIPSInstructionParameterPart(line, elements, start, start + string.length(), string, this, 0, null));
+            return;
+        }
 
-	private void parseTextSimple(int start, MIPSFileElements elements) {
-		StringBuilder builder = new StringBuilder();
-		int index = 0;
-		for (char c : text.toCharArray()) {
-			if (c == '+') {
-				addPartSimple(builder.toString(), start, elements);
-				builder = new StringBuilder();
-				start += index + 1;
-			} else {
-				builder.append(c);
-			}
-			index++;
-		}
-		addPartSimple(builder.toString(), start, elements);
-	}
+        if (string.indexOf('(') != -1 || string.indexOf(')') != -1) {
+            List<ParameterType> types = ParameterType.getCompatibleParameterTypes(string, project.get().getData().getRegistersBuilder());
+            if (types.size() == 1 && types.get(0) == ParameterType.LABEL) {
+                parts.add(new MIPSInstructionParameterPart(line, elements, start, start + string.length(), string, this, 0, null));
+                return;
+            }
+        }
 
-	private void addPartSimple(String string, int start, MIPSFileElements elements) {
-		Optional<MIPSProject> project = elements.getProject();
-		if (project.isEmpty()) {
-			parts.add(new MIPSInstructionParameterPart(line, elements, start, start + string.length(), string, this, 0, null));
-			return;
-		}
+        var parts = new HashMap<Integer, String>();
 
-		if (string.indexOf('(') != -1 || string.indexOf(')') != -1) {
-			List<ParameterType> types = ParameterType.getCompatibleParameterTypes(string, project.get().getData().getRegistersBuilder());
-			if (types.size() == 1 && types.get(0) == ParameterType.LABEL) {
-				parts.add(new MIPSInstructionParameterPart(line, elements, start, start + string.length(), string, this, 0, null));
-				return;
-			}
-		}
+        int lastAddition = string.lastIndexOf('+');
+        if (lastAddition >= 0) {
+            parts.put(0, string.substring(0, lastAddition));
+            string = string.substring(lastAddition + 1);
+        }
 
-		var parts = new HashMap<Integer, String>();
+        int lastParenthesis = string.lastIndexOf('(');
+        if (lastParenthesis >= 0 && lastParenthesis < string.lastIndexOf(')')) {
+            parts.put(lastAddition + 1, string.substring(0, lastParenthesis));
+            string = string.substring(lastParenthesis + 1, string.lastIndexOf(')'));
+        }
 
-		int lastAddition = string.lastIndexOf('+');
-		if (lastAddition >= 0) {
-			parts.put(0, string.substring(0, lastAddition));
-			string = string.substring(lastAddition + 1);
-		}
+        if (!string.isEmpty()) {
+            parts.put(lastAddition + lastParenthesis + 2, string);
+        }
 
-		int lastParenthesis = string.lastIndexOf('(');
-		if (lastParenthesis >= 0 && lastParenthesis < string.lastIndexOf(')')) {
-			parts.put(lastAddition + 1, string.substring(0, lastParenthesis));
-			string = string.substring(lastParenthesis + 1, string.lastIndexOf(')'));
-		}
+        List<Map.Entry<Integer, String>> sorted = new ArrayList<>(parts.entrySet());
+        sorted.sort(Comparator.comparingInt(Map.Entry::getKey));
 
-		if (!string.isEmpty()) {
-			parts.put(lastAddition + lastParenthesis + 2, string);
-		}
-
-		List<Map.Entry<Integer, String>> sorted = new ArrayList<>(parts.entrySet());
-		sorted.sort(Comparator.comparingInt(Map.Entry::getKey));
-
-		int i = 0;
-		for (Map.Entry<Integer, String> entry : sorted) {
-			this.parts.add(new MIPSInstructionParameterPart(
-					line,
-					elements,
-					start + entry.getKey(),
-					start + entry.getKey() + entry.getValue().length(),
-					entry.getValue(),
-					this,
-					i++,
-					null));
-		}
-	}
+        int i = 0;
+        for (Map.Entry<Integer, String> entry : sorted) {
+            this.parts.add(new MIPSInstructionParameterPart(
+                    line,
+                    elements,
+                    start + entry.getKey(),
+                    start + entry.getKey() + entry.getValue().length(),
+                    entry.getValue(),
+                    this,
+                    i++,
+                    null));
+        }
+    }
 }

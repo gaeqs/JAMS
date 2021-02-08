@@ -28,7 +28,6 @@ import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Popup;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.CodeFileLine;
@@ -39,7 +38,6 @@ import net.jamsimulator.jams.gui.mips.editor.element.MIPSLine;
 import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;
 import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MIPSProject;
-import net.jamsimulator.jams.utils.AnchorUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.event.MouseOverTextEvent;
 import org.fxmisc.richtext.model.PlainTextChange;
@@ -218,13 +216,17 @@ public class MIPSFileEditor extends CodeFileEditor {
     }
 
     private void index() {
-        elements.refreshAll(getText());
-        elements.styleAll(this);
+        synchronized (formattingLock) {
+            elements.refreshAll(getText());
+            elements.styleAll(this);
+        }
     }
 
     private void index(String text) {
-        elements.refreshAll(text);
-        elements.styleAll(this);
+        synchronized (formattingLock) {
+            elements.refreshAll(text);
+            elements.styleAll(this);
+        }
     }
 
     private void initializePopupListeners() {

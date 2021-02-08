@@ -40,7 +40,6 @@ public class MIPSEditorInspectionBuilderManager extends Manager<MIPSEditorInspec
         add(new MIPSEditorInspectionIllegalLabel.Builder());
         add(new MIPSEditorInspectionInstructionNotFound.Builder());
         add(new MIPSEditorInspectionInvalidDirectiveParameter.Builder());
-        add(new MIPSEditorInspectionInvalidInstructionParameter.Builder());
         add(new MIPSEditorInspectionLabelNotFound.Builder());
 
         add(new MIPSEditorInspectionDirectiveNotFound.Builder());

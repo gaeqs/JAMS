@@ -354,7 +354,6 @@ EDITOR_MIPS_ERROR_DUPLICATE_LABEL=La etiqueta '{NAME}' está duplicada.
 EDITOR_MIPS_ERROR_DUPLICATE_GLOBAL_LABEL=La etiqueta '{NAME}' está duplicada en el archivo '{FILE}'.
 EDITOR_MIPS_ERROR_INVALID_DIRECTIVE_PARAMETER=El parámetro '{NAME} tiene un formato incorrecto.
 EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=No se ha podido encontrar la instrucción '{NAME}' con los parámetros indicados.
-EDITOR_MIPS_ERROR_INVALID_INSTRUCTION_PARAMETER=El parámetro '{NAME} tiene un formato incorrecto.
 
 EDITOR_MIPS_WARNING_DIRECTIVE_NOT_FOUND=No se ha podido encontrar la directiva '{NAME}'.
 EDITOR_MIPS_WARNING_REGISTER_USING_AT=Evita usar el registro $at. Su valor puede cambiar inesperadamente cuando se ejecuta una pseudoinstrucción.
