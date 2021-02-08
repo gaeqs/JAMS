@@ -39,12 +39,7 @@ class BasicInstructionTest {
 	static void setUp() {
 		instruction = new InstructionAdd();
 	}
-
-	@Test
-	void getName() {
-		assertEquals(InstructionAdd.NAME, instruction.getName(), "Bad name.");
-	}
-
+	
 	@Test
 	void getMnemonic() {
 		assertEquals(InstructionAdd.MNEMONIC, instruction.getMnemonic(), "Bad mnemonic.");

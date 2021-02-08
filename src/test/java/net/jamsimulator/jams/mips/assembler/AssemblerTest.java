@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.mips.assembler;
 
+import net.jamsimulator.jams.gui.util.log.Log;
+import net.jamsimulator.jams.gui.util.log.SimpleLog;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.directive.set.MIPS32DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.MIPS32InstructionSet;
@@ -74,13 +76,14 @@ class AssemblerTest {
 
 		MIPS32Assembler assembler = new MIPS32Assembler(
 				files,
-				new MIPS32InstructionSet(),
-				new MIPS32DirectiveSet(),
-				new MIPS32Registers(), new MIPS32Memory());
+				MIPS32InstructionSet.INSTANCE,
+				MIPS32DirectiveSet.INSTANCE,
+				new MIPS32Registers(), new MIPS32Memory(), null);
 		assembler.assemble();
 		SimulationSyscallExecutions executions = new SimulationSyscallExecutions();
 
-		SimulationData data = new SimulationData(executions, new File(""), null, assembler.getOriginals(), assembler.getLabelsWithFileNames(), true, true, true, true);
+		SimulationData data = new SimulationData(executions, new File(""), null, assembler.getOriginals(), assembler.getLabelsWithFileNames(),
+				true, true, true, true, true);
 		Simulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE, data);
 
 		assertEquals(0x02508820, simulation.getMemory().getWord(simulation.getRegisters().getProgramCounter().getValue()));
