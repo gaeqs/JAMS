@@ -28,6 +28,8 @@ import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAddiu;
+import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionSlt;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionSlti;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
@@ -37,34 +39,50 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 public class PseudoInstructionSgtiRRI extends PseudoInstruction {
 
 
-	public static final String NAME = "Set on greater than immediate";
-	public static final String MNEMONIC = "sgti";
+    public static final String NAME = "Set on greater than immediate";
+    public static final String MNEMONIC = "sgti";
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
+    private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
+    private static final ParameterType[] ADDIU_PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
+    private static final ParameterType[] SLT_PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER};
 
-	public PseudoInstructionSgtiRRI() {
-		super(MNEMONIC, PARAMETER_TYPES);
-	}
+    private static final ParameterParseResult ZERO = ParameterParseResult.builder().register(0).build();
+    private static final ParameterParseResult AT = ParameterParseResult.builder().register(1).build();
 
-	@Override
-	public int getInstructionAmount(String[] parameters) {
-		return 1;
-	}
+    public PseudoInstructionSgtiRRI() {
+        super(MNEMONIC, PARAMETER_TYPES);
+    }
 
-	@Override
-	public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
-		//Get instructions
-		Instruction slti = set.getInstruction(InstructionSlti.MNEMONIC, PARAMETER_TYPES).orElse(null);
-		if (!(slti instanceof BasicInstruction))
-			throw new AssemblerException("Basic instruction '" + InstructionSlti.MNEMONIC + "' not found.");
+    @Override
+    public int getInstructionAmount(String[] parameters) {
+        return 2;
+    }
 
-		//Get parameters
-		ParameterParseResult[] sltiParameters = new ParameterParseResult[]{
-				parameters[0],
-				parameters[2],
-				parameters[1]
-		};
+    @Override
+    public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
+        //Get instructions
+        Instruction addiu = set.getInstruction(InstructionAddiu.MNEMONIC, ADDIU_PARAMETER_TYPES).orElse(null);
+        if (!(addiu instanceof BasicInstruction))
+            throw new AssemblerException("Basic instruction '" + InstructionAddiu.MNEMONIC + "' not found.");
 
-		return new AssembledInstruction[]{((BasicInstruction<?>) slti).assembleBasic(sltiParameters, this)};
-	}
+        Instruction slt = set.getInstruction(InstructionSlt.MNEMONIC, SLT_PARAMETER_TYPES).orElse(null);
+        if (!(slt instanceof BasicInstruction))
+            throw new AssemblerException("Basic instruction '" + InstructionSlt.MNEMONIC + "' not found.");
+
+        //Get parameters
+        ParameterParseResult[] addiuParameters = new ParameterParseResult[]{
+                AT, ZERO, parameters[2]
+        };
+
+        ParameterParseResult[] sltParameters = new ParameterParseResult[]{
+                parameters[0],
+                AT,
+                parameters[1]
+        };
+
+        return new AssembledInstruction[]{
+                ((BasicInstruction<?>) addiu).assembleBasic(addiuParameters, this),
+                ((BasicInstruction<?>) slt).assembleBasic(sltParameters, this)
+        };
+    }
 }

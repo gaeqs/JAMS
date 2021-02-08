@@ -3240,7 +3240,7 @@ slti rt, rs, inmediato
 GPR[rd] <- (GPR[rs] < sign_extend(inmediato))
 
 Compara el contenido del registro <i>rs</i> y la celda <i>inmediato</i> como enteros con signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
-Si el contenido de <i>rs</i> es menor que el contenido de <i>inmediato/i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+Si el contenido de <i>rs</i> es menor que el contenido de <i>inmediato</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
 
 <b>Restricciones:</b>
 Ninguna
@@ -3270,7 +3270,7 @@ sltiu rt, rs, inmediato
 GPR[rd] <- (GPR[rs] < sign_extend(inmediato))
 
 Compara el contenido del registro <i>rs</i> y la celda <i>inmediato</i> como enteros sin signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
-Si el contenido de <i>rs</i> es menor que el contenido de <i>inmediato/i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+Si el contenido de <i>rs</i> es menor que el contenido de <i>inmediato</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
 
 <b>Restricciones:</b>
 Ninguna
@@ -3661,6 +3661,316 @@ mtc1 $at, fd
 
 <b>Descripción:</b>
 Carga el <i>float</i> en el registro de coma flotante <i>fd</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_MOVE_DOCUMENTATION.=<u>Mover valor</u>
+
+<b>Formato:</b>
+move rd, rs
+
+<b>Conversión:</b>
+add rd, $zero, rs
+
+<b>Descripción:</b>
+GPR[rd] <- GPR[rs]
+
+Mueve el contenido del registro <i>rs</i> al registro <i>rd</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_NOP_DOCUMENTATION.=<u>Operación nula</u>
+
+<b>Formato:</b>
+nop
+
+<b>Conversión:</b>
+sll $zero, $zero, $zero
+
+<b>Descripción:</b>
+Operación nula. No hace nada.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SGE_DOCUMENTATION.=<u>Asignar si mayor o igual que valor</u>
+
+<b>Formato:</b>
+sge rd, rt, rs
+
+<b>Conversión:</b>
+slt rd, rt, rs
+ori $at, $zero, 1
+subu rd, $at, rd
+
+<b>Descripción:</b>
+GPR[rd] <- (GPR[rs] >= GPR[rt])
+
+Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros con signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+Si el contenido de <i>rs</i> es mayor o igual que el contenido de <i>rt</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SGEI_DOCUMENTATION.=<u>Asignar si mayor o igual que inmediato</u>
+
+<b>Formato:</b>
+sgei rt, rs, immediate
+
+<b>Conversión:</b>
+slti rt, rs, immediate
+ori $at, $zero, 1
+subu rd, $at, rd
+
+<b>Descripción:</b>
+GPR[rd] <- (GPR[rs] >= sign_extend(immediate))
+
+Compara el contenido del registro <i>rs</i> y la celda <i>inmediato</i> como enteros con signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+Si el contenido de <i>rs</i> es mayor o igual que el contenido de <i>inmediato</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SGEIU_DOCUMENTATION.=<u>Asignar si mayor o igual que inmediato sin signo</u>
+
+<b>Formato:</b>
+sgeiu rt, rs, immediate
+
+<b>Conversión:</b>
+sltiu rt, rs, immediate
+ori $at, $zero, 1
+subu rd, $at, rd
+
+<b>Descripción:</b>
+GPR[rd] <- (GPR[rs] >= sign_extend(immediate))
+
+Compara el contenido del registro <i>rs</i> y la celda <i>inmediato</i> como enteros sin signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+Si el contenido de <i>rs</i> es mayor o igual que el contenido de <i>inmediato</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SGEU_DOCUMENTATION.=<u>Asignar si mayor o igual que valor sin signo</u>
+
+<b>Formato:</b>
+sgeu rd, rt, rs
+
+<b>Conversión:</b>
+sltu rd, rt, rs
+ori $at, $zero, 1
+subu rd, $at, rd
+
+<b>Descripción:</b>
+GPR[rd] <- (GPR[rs] >= GPR[rt])
+
+Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros sin signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+Si el contenido de <i>rs</i> es mayor o igual que el contenido de <i>rt</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SGT_DOCUMENTATION.=<u>Asignar si mayor que valor</u>
+
+<b>Formato:</b>
+sgt rd, rt, rs
+
+<b>Conversión:</b>
+slt rd, rs, rt
+
+<b>Descripción:</b>
+GPR[rd] <- (GPR[rs] > GPR[rt])
+
+Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros con signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+Si el contenido de <i>rs</i> es mayor que el contenido de <i>rt</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SGTI_DOCUMENTATION.=<u>Asignar si mayor que inmediato</u>
+
+<b>Formato:</b>
+sgti rt, rs, immediate
+
+<b>Conversión:</b>
+addiu $at, $zero, immediate
+slt rd, $at, rs
+
+<b>Descripción:</b>
+GPR[rd] <- (GPR[rs] > sign_extend(immediate))
+
+Compara el contenido del registro <i>rs</i> y la celda <i>inmediato</i> como enteros con signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+Si el contenido de <i>rs</i> es mayor que el contenido de <i>inmediato</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SGTIU_DOCUMENTATION.=<u>Asignar si mayor que inmediato sin signo</u>
+
+<b>Formato:</b>
+sgtiu rt, rs, immediate
+
+<b>Conversión:</b>
+addiu $at, $zero, immediate
+sltu rd, $at, rs
+
+<b>Descripción:</b>
+GPR[rd] <- (GPR[rs] > sign_extend(immediate))
+
+Compara el contenido del registro <i>rs</i> y la celda <i>inmediato</i> como enteros sin signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+Si el contenido de <i>rs</i> es mayor que el contenido de <i>inmediato</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SGTU_DOCUMENTATION.=<u>Asignar si mayor que valor sin signo</u>
+
+<b>Formato:</b>
+sgtu rd, rt, rs
+
+<b>Conversión:</b>
+sltu rd, rs, rt
+
+<b>Descripción:</b>
+GPR[rd] <- (GPR[rs] > GPR[rt])
+
+Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros sin signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+Si el contenido de <i>rs</i> es mayor que el contenido de <i>rt</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SLE_DOCUMENTATION.=<u>Asignar si menor o igual que valor</u>
+
+<b>Formato:</b>
+sle rd, rt, rs
+
+<b>Conversión:</b>
+slt rd, rs, rt
+ori $at, $zero, 1
+subu rd, $at, rd
+
+<b>Descripción:</b>
+GPR[rd] <- (GPR[rs] <= GPR[rt])
+
+Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros con signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+Si el contenido de <i>rs</i> es menor o igual que el contenido de <i>rt</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SLEI_DOCUMENTATION.=<u>Asignar si menor o igual que inmediato</u>
+
+<b>Formato:</b>
+slei rt, rs, immediate
+
+<b>Conversión:</b>
+addiu $at, $zero, immediate
+slt rd, $at, rs
+ori $at, $zero, 1
+subu rd, $at, rd
+
+<b>Descripción:</b>
+GPR[rd] <- (GPR[rs] <= sign_extend(immediate))
+
+Compara el contenido del registro <i>rs</i> y la celda <i>inmediato</i> como enteros con signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+Si el contenido de <i>rs</i> es mayor o igual que el contenido de <i>inmediato</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SLEIU_DOCUMENTATION.=<u>Asignar si menor o igual que inmediato sin signo</u>
+
+<b>Formato:</b>
+sleiu rt, rs, immediate
+
+<b>Conversión:</b>
+addiu $at, $zero, immediate
+sltu rd, $at, rs
+ori $at, $zero, 1
+subu rd, $at, rd
+
+<b>Descripción:</b>
+GPR[rd] <- (GPR[rs] <= sign_extend(immediate))
+
+Compara el contenido del registro <i>rs</i> y la celda <i>inmediato</i> como enteros sin signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+Si el contenido de <i>rs</i> es menor o igual que el contenido de <i>inmediato</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_SLEU_DOCUMENTATION.=<u>Asignar si menor o igual que valor sin signo</u>
+
+<b>Formato:</b>
+sleu rd, rt, rs
+
+<b>Conversión:</b>
+sltu rd, rs, rt
+ori $at, $zero, 1
+subu rd, $at, rd
+
+<b>Descripción:</b>
+GPR[rd] <- (GPR[rs] <= GPR[rt])
+
+Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros sin signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+Si el contenido de <i>rs</i> es menor o igual que el contenido de <i>rt</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
 
 <b>Restricciones:</b>
 Ninguna

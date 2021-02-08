@@ -278,7 +278,14 @@ public class MIPSLine {
     public int styleLine(int lastEnd, StyleSpansBuilder<Collection<String>> spansBuilder) {
         if (getSortedElements().isEmpty()) return lastEnd;
 
-        spansBuilder.add(Collections.emptyList(), start - lastEnd);
+        try {
+            spansBuilder.add(Collections.emptyList(), start - lastEnd);
+        } catch (Exception exception) {
+            System.err.println("Last: " + lastEnd);
+            System.err.println("Start: " + start);
+            System.err.println("Diff: " + (start - lastEnd));
+            throw exception;
+        }
         lastEnd = start;
 
         for (MIPSCodeElement element : getSortedElements()) {

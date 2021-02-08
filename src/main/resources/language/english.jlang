@@ -3668,6 +3668,316 @@ None
 None
 \END
 
+INSTRUCTION_MOVE_DOCUMENTATION.=<u>Value movement</u>
+
+<b>Format:</b>
+move rd, rs
+
+<b>Conversion:</b>
+add rd, $zero, rs
+
+<b>Description:</b>
+GPR[rd] <- GPR[rs]
+
+Moves the contents of the GPR <i>rs</i> to the GPR <i>rd</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_NOP_DOCUMENTATION.=<u>No operation</u>
+
+<b>Format:</b>
+nop
+
+<b>Conversion:</b>
+sll $zero, $zero, $zero
+
+<b>Description:</b>
+No operation. Does nothing.
+
+<b>Restrictions:</b>
+None
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SGE_DOCUMENTATION.=<u>Set on greater than or equal</u>
+
+<b>Format:</b>
+sge rd, rt, rs
+
+<b>Conversion:</b>
+slt rd, rt, rs
+ori $at, $zero, 1
+subu rd, $at, rd
+
+<b>Description:</b>
+GPR[rd] <- (GPR[rs] >= GPR[rt])
+
+Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
+If GPR <i>rs</i> is greater than or equal GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+<b>Restrictions:</b>
+None
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SGEI_DOCUMENTATION.=<u>Set on greater than or equal immediate</u>
+
+<b>Format:</b>
+sgei rt, rs, immediate
+
+<b>Conversion:</b>
+slti rt, rs, immediate
+ori $at, $zero, 1
+subu rd, $at, rd
+
+<b>Description:</b>
+GPR[rd] <- (GPR[rs] >= sign_extend(immediate))
+
+Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
+If GPR <i>rs</i> is greater than or equal <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+<b>Restrictions:</b>
+None
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SGEIU_DOCUMENTATION.=<u>Set on greater than or equal immediate unsigned</u>
+
+<b>Format:</b>
+sgeiu rt, rs, immediate
+
+<b>Conversion:</b>
+sltiu rt, rs, immediate
+ori $at, $zero, 1
+subu rd, $at, rd
+
+<b>Description:</b>
+GPR[rd] <- (GPR[rs] >= sign_extend(immediate))
+
+Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
+If GPR <i>rs</i> is greater than or equal <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+<b>Restrictions:</b>
+None
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SGEU_DOCUMENTATION.=<u>Set on greater than or equal unsigned</u>
+
+<b>Format:</b>
+sgeu rd, rt, rs
+
+<b>Conversion:</b>
+sltu rd, rt, rs
+ori $at, $zero, 1
+subu rd, $at, rd
+
+<b>Description:</b>
+GPR[rd] <- (GPR[rs] >= GPR[rt])
+
+Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
+If GPR <i>rs</i> is greater than or equal GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+<b>Restrictions:</b>
+None
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SGT_DOCUMENTATION.=<u>Set on greater than or equal</u>
+
+<b>Format:</b>
+sgt rd, rt, rs
+
+<b>Conversion:</b>
+slt rd, rs, rt
+
+<b>Description:</b>
+GPR[rd] <- (GPR[rs] > GPR[rt])
+
+Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
+If GPR <i>rs</i> is greater than GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+<b>Restrictions:</b>
+None
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SGTI_DOCUMENTATION.=<u>Set on greater than immediate</u>
+
+<b>Format:</b>
+sgti rt, rs, immediate
+
+<b>Conversion:</b>
+addiu $at, $zero, immediate
+slt rd, $at, rs
+
+<b>Description:</b>
+GPR[rd] <- (GPR[rs] > sign_extend(immediate))
+
+Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
+If GPR <i>rs</i> is greater than <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+<b>Restrictions:</b>
+None
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SGTIU_DOCUMENTATION.=<u>Set on greater than immediate unsigned</u>
+
+<b>Format:</b>
+sgtiu rt, rs, immediate
+
+<b>Conversion:</b>
+addiu $at, $zero, immediate
+sltu rd, $at, rs
+
+<b>Description:</b>
+GPR[rd] <- (GPR[rs] > sign_extend(immediate))
+
+Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
+If GPR <i>rs</i> is greater than <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+<b>Restrictions:</b>
+None
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SGTU_DOCUMENTATION.=<u>Set on greater than unsigned</u>
+
+<b>Format:</b>
+sgtu rd, rt, rs
+
+<b>Conversion:</b>
+sltu rd, rs, rt
+
+<b>Description:</b>
+GPR[rd] <- (GPR[rs] > GPR[rt])
+
+Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
+If GPR <i>rs</i> is greater than GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+<b>Restrictions:</b>
+None
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SLE_DOCUMENTATION.=<u>Set on less than or equal</u>
+
+<b>Format:</b>
+sle rd, rt, rs
+
+<b>Conversion:</b>
+slt rd, rs, rt
+ori $at, $zero, 1
+subu rd, $at, rd
+
+<b>Description:</b>
+GPR[rd] <- (GPR[rs] <= GPR[rt])
+
+Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
+If GPR <i>rs</i> is less than or equal GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+<b>Restrictions:</b>
+None
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SLEI_DOCUMENTATION.=<u>Set on less than or equal immediate</u>
+
+<b>Format:</b>
+slei rt, rs, immediate
+
+<b>Conversion:</b>
+addiu $at, $zero, immediate
+slt rd, $at, rs
+ori $at, $zero, 1
+subu rd, $at, rd
+
+<b>Description:</b>
+GPR[rd] <- (GPR[rs] <= sign_extend(immediate))
+
+Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
+If GPR <i>rs</i> is less than or equal <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+<b>Restrictions:</b>
+None
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SLEIU_DOCUMENTATION.=<u>Set on less than or equal immediate unsigned</u>
+
+<b>Format:</b>
+sleiu rt, rs, immediate
+
+<b>Conversion:</b>
+addiu $at, $zero, immediate
+sltu rd, $at, rs
+ori $at, $zero, 1
+subu rd, $at, rd
+
+<b>Description:</b>
+GPR[rd] <- (GPR[rs] <= sign_extend(immediate))
+
+Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
+If GPR <i>rs</i> is less than or equal <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+<b>Restrictions:</b>
+None
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_SLEU_DOCUMENTATION.=<u>Set on less than or equal unsigned</u>
+
+<b>Format:</b>
+sleu rd, rt, rs
+
+<b>Conversion:</b>
+sltu rd, rs, rt
+ori $at, $zero, 1
+subu rd, $at, rd
+
+<b>Description:</b>
+GPR[rd] <- (GPR[rs] <= GPR[rt])
+
+Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
+If GPR <i>rs</i> is less than or equal GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+<b>Restrictions:</b>
+None
+
+<b>Exceptions:</b>
+None
+\END
+
 FLOAT_CONDITION_AF=Always false
 FLOAT_CONDITION_UN=Unordered
 FLOAT_CONDITION_EQ=Equal

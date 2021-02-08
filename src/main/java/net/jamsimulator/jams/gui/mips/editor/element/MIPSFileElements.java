@@ -49,7 +49,7 @@ public class MIPSFileElements {
     private final Bag<String> setAsGlobalLabel;
     private final TreeSet<MIPSReplacement> replacements;
 
-    private final LinkedList<Integer> requiresUpdate;
+    private final TreeSet<Integer> requiresUpdate;
 
     public MIPSFileElements(MIPSProject project) {
         this.project = project;
@@ -59,7 +59,7 @@ public class MIPSFileElements {
         this.setAsGlobalLabel = new Bag<>();
         this.replacements = new TreeSet<>();
 
-        this.requiresUpdate = new LinkedList<>();
+        this.requiresUpdate = new TreeSet<>();
         this.filesToAssemble = null;
     }
 
@@ -189,7 +189,7 @@ public class MIPSFileElements {
         for (int i = index; i < lines.size(); i++)
             lines.get(i).move(-length);
 
-        requiresUpdate.remove((Object) lines.size());
+        requiresUpdate.remove(lines.size());
         return checkLabels(line, false);
     }
 
@@ -368,7 +368,6 @@ public class MIPSFileElements {
      */
     public void update(MIPSFileEditor area) {
         if (requiresUpdate.isEmpty()) return;
-        requiresUpdate.sort(Integer::compareTo);
 
         int i;
         MIPSLine line;
@@ -377,8 +376,8 @@ public class MIPSFileElements {
 
         var spansBuilder = new StyleSpansBuilder<Collection<String>>();
 
-        while (!requiresUpdate.isEmpty()) {
-            i = requiresUpdate.pop();
+        for (Integer integer : requiresUpdate) {
+            i = integer;
             if (i < 0 || i >= lines.size()) continue;
             line = lines.get(i);
 
@@ -390,6 +389,7 @@ public class MIPSFileElements {
             line.refreshMetadata(this);
             lastEnd = line.styleLine(lastEnd, spansBuilder);
         }
+        requiresUpdate.clear();
 
         StyleSpans<Collection<String>> spans;
         try {
