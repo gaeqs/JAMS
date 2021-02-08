@@ -31,10 +31,7 @@ import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MIPSDirective extends MIPSCodeElement {
@@ -59,8 +56,8 @@ public class MIPSDirective extends MIPSCodeElement {
         return simpleText;
     }
 
-    public Directive getDirective() {
-        return directive;
+    public Optional<Directive> getDirective() {
+        return Optional.ofNullable(directive);
     }
 
     public List<MIPSDirectiveParameter> getParameters() {

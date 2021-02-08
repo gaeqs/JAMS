@@ -2,14 +2,23 @@ package net.jamsimulator.jams.gui.mips.editor;
 
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSCodeElement;
+import net.jamsimulator.jams.gui.mips.editor.element.MIPSInstruction;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Represents the content JAMS shows to the user when them hovers over an {@link MIPSCodeElement} in the editor.
+ */
 public class MIPSHoverInfo extends VirtualizedScrollPane<StyleClassedTextArea> {
 
+    /**
+     * Creates the hover info for the given {@link MIPSCodeElement element}.
+     *
+     * @param element the given {@link MIPSCodeElement element}.
+     */
     public MIPSHoverInfo(MIPSCodeElement element) {
         super(new StyleClassedTextArea());
 
@@ -26,8 +35,15 @@ public class MIPSHoverInfo extends VirtualizedScrollPane<StyleClassedTextArea> {
     }
 
     private void addGeneralInfo(MIPSCodeElement element) {
-        getContent().append(element.getTranslatedName() + " " , List.of("bold"));
-        getContent().append(element.getSimpleText().trim() + "\n", Collections.emptyList());
+        //{TYPE} {TEXT} ({NAME})
+        getContent().append(element.getTranslatedName() + " ", List.of("bold"));
+        getContent().append(element.getSimpleText().trim(), Collections.emptyList());
+
+        //If the element is an instruction show the name too.
+        if (element instanceof MIPSInstruction && ((MIPSInstruction) element).getMostCompatibleInstruction().isPresent()) {
+            getContent().append(" (" + ((MIPSInstruction) element).getMostCompatibleInstruction().get().getName() + ")\n", Collections.emptyList());
+        } else getContent().append("\n", Collections.emptyList());
+
     }
 
     private void addWarnings(MIPSCodeElement element) {

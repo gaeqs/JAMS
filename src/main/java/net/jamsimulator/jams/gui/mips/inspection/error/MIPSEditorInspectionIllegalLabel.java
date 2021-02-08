@@ -36,9 +36,9 @@ public class MIPSEditorInspectionIllegalLabel extends MIPSEditorInspection {
             String label;
 
             if (element instanceof MIPSDirectiveParameter
-                    && ((MIPSDirectiveParameter) element).getDirective().getDirective() != null) {
+                    && ((MIPSDirectiveParameter) element).getDirective().getDirective().isPresent()) {
                 var type =
-                        ((MIPSDirectiveParameter) element).getDirective().getDirective()
+                        ((MIPSDirectiveParameter) element).getDirective().getDirective().get()
                                 .getParameterTypeFor(((MIPSDirectiveParameter) element).getIndex());
 
                 if (type != DirectiveParameterType.LABEL) return Optional.empty();

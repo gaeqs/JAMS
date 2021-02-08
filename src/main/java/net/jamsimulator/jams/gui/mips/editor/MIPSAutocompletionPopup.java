@@ -227,8 +227,8 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
         var directive = parameter.getDirective().getDirective();
 
         //Checks whether and what space should add.
-        var shouldAddSpace = directive != null
-                && (directive.canRepeatLastParameter() || directive.getParametersAmount() - 1 > parameter.getIndex());
+        var shouldAddSpace = directive.isPresent()
+                && (directive.get().canRepeatLastParameter() || directive.get().getParametersAmount() - 1 > parameter.getIndex());
         var space = shouldAddSpace
                 ? Jams.getMainConfiguration()
                 .getEnum(MIPSSpaces.class, "editor.mips.space_after_directive_parameter")

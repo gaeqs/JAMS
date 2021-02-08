@@ -32,7 +32,7 @@ public class MIPSEditorInspectionInvalidDirectiveParameter extends MIPSEditorIns
             if (element instanceof MIPSDirectiveParameter) {
                 var param = (MIPSDirectiveParameter) element;
                 var directive = param.getDirective().getDirective();
-                if (directive != null && !directive.isParameterValidInContext(param.getIndex(), param.getSimpleText(), elements)) {
+                if (directive.isPresent() && !directive.get().isParameterValidInContext(param.getIndex(), param.getSimpleText(), elements)) {
                     return Optional.of(new MIPSEditorInspectionInvalidDirectiveParameter(this, element.getSimpleText()));
                 }
             }

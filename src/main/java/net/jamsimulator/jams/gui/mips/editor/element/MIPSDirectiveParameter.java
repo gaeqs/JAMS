@@ -58,8 +58,8 @@ public class MIPSDirectiveParameter extends MIPSCodeElement {
     }
 
     public DirectiveParameterType getType() {
-        if (directive != null && directive.getDirective() != null) {
-            return directive.getDirective().getParameterTypeFor(index);
+        if (directive != null && directive.getDirective().isPresent()) {
+            return directive.getDirective().get().getParameterTypeFor(index);
         }
         return DirectiveParameterType.getAllCandidates(text).stream().findAny().orElse(DirectiveParameterType.ANY);
     }
@@ -95,8 +95,7 @@ public class MIPSDirectiveParameter extends MIPSCodeElement {
 
     @Override
     public void refreshMetadata(MIPSFileElements elements) {
-        var directive = this.directive.getDirective();
-        if (directive == null) return;
+        if (directive.getDirective().isEmpty()) return;
 
         if (registeredLabel) {
             MIPSFilesToAssemble filesToAssemble = elements.getFilesToAssemble().orElse(null);
@@ -107,15 +106,15 @@ public class MIPSDirectiveParameter extends MIPSCodeElement {
 
     private void registerLabelsIfRequired() {
         var directive = this.directive.getDirective();
-        if (directive == null) return;
-        if (directive instanceof DirectiveLab || directive instanceof DirectiveExtern) {
+        if (directive.isEmpty()) return;
+        if (directive.get() instanceof DirectiveLab || directive.get() instanceof DirectiveExtern) {
             if (index == 0) {
-                globalLabel = directive instanceof DirectiveExtern;
+                globalLabel = directive.get() instanceof DirectiveExtern;
                 registerLabel(text, globalLabel);
                 registeredLabel = true;
             }
         } else {
-            var type = directive.getParameterTypeFor(index);
+            var type = directive.get().getParameterTypeFor(index);
             if (type != null && type.mayBeLabel()) {
                 markUsedLabel(text);
             }
