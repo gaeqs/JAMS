@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.mips.simulator.instruction;
+package net.jamsimulator.jams.gui.mips.simulator.instructionold;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;

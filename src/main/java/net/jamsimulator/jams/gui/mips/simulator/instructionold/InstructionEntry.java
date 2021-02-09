@@ -1,4 +1,4 @@
-package net.jamsimulator.jams.gui.mips.simulator.instruction;
+package net.jamsimulator.jams.gui.mips.simulator.instructionold;
 
 import javafx.beans.property.*;
 import net.jamsimulator.jams.event.Listener;

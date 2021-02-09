@@ -1,13 +1,13 @@
-package net.jamsimulator.jams.gui.mips.simulator.instruction;
+package net.jamsimulator.jams.gui.mips.simulator.instructionold;
 
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
-import net.jamsimulator.jams.gui.mips.simulator.instruction.multicycle.MultiCycleInstructionsTable;
-import net.jamsimulator.jams.gui.mips.simulator.instruction.pipelined.PipelinedInstructionsTable;
-import net.jamsimulator.jams.gui.mips.simulator.instruction.singlecycle.SingleCycleInstructionsTable;
+import net.jamsimulator.jams.gui.mips.simulator.instructionold.multicycle.MultiCycleInstructionsTable;
+import net.jamsimulator.jams.gui.mips.simulator.instructionold.pipelined.PipelinedInstructionsTable;
+import net.jamsimulator.jams.gui.mips.simulator.instructionold.singlecycle.SingleCycleInstructionsTable;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTableColumn;
 import net.jamsimulator.jams.mips.architecture.Architecture;

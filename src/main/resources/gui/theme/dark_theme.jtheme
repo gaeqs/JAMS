@@ -1212,54 +1212,53 @@ AnchorPane {
     -fx-background-color: #5a6770;
 }
 
-/*FLOW*/
-.flow-entry .single-cycle-execute {
-    -fx-background-color: #5a6770;
-}
-
 /* ---------------------- */
 /* MULTI CYCLE SIMULATION */
 /* ---------------------- */
 
 /* INSTRUCTION TABLE */
-.table-view .multi-cycle-fetch {
-    -fx-background-color: #92925a;
+.code-area .instruction-fetch {
+    -fx-background-color: #4c4c37;
 }
 
-.table-view .multi-cycle-decode {
-    -fx-background-color: #5f7749;
+.code-area .instruction-decode {
+    -fx-background-color: #404c34;
 }
 
-.table-view .multi-cycle-execute {
-    -fx-background-color: #5a6770;
+.code-area .instruction-execute {
+    -fx-background-color: #2f3f48;
 }
 
-.table-view .multi-cycle-memory {
-    -fx-background-color: #4f4b54;
+.code-area .instruction-memory {
+    -fx-background-color: #41384c;
 }
 
-.table-view .multi-cycle-write-back {
-    -fx-background-color: #665857;
+.code-area .instruction-write-back {
+    -fx-background-color: #4c3937;
+}
+
+.code-area .instruction-breakpoint {
+    -fx-background-color: #341f1f;
 }
 
 /*FLOW*/
-.flow-entry .multi-cycle-fetch {
+.flow-entry .instruction-fetch {
     -fx-background-color: #92925a;
 }
 
-.flow-entry .multi-cycle-decode {
+.flow-entry .instruction-decode {
     -fx-background-color: #5f7749;
 }
 
-.flow-entry .multi-cycle-execute {
+.flow-entry .instruction-execute {
     -fx-background-color: #5a6770;
 }
 
-.flow-entry .multi-cycle-memory {
+.flow-entry .instruction-memory {
     -fx-background-color: #4f4b54;
 }
 
-.flow-entry .multi-cycle-write-back {
+.flow-entry .instruction-write-back {
     -fx-background-color: #665857;
 }
 

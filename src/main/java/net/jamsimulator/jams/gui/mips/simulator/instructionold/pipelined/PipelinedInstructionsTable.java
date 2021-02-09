@@ -1,11 +1,11 @@
-package net.jamsimulator.jams.gui.mips.simulator.instruction.pipelined;
+package net.jamsimulator.jams.gui.mips.simulator.instructionold.pipelined;
 
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.TableRow;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionEntry;
-import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionsTable;
+import net.jamsimulator.jams.gui.mips.simulator.instructionold.InstructionEntry;
+import net.jamsimulator.jams.gui.mips.simulator.instructionold.InstructionsTable;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
 import net.jamsimulator.jams.mips.simulation.Simulation;

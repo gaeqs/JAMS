@@ -22,47 +22,40 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor;
+package net.jamsimulator.jams.gui.mips.simulator.instruction;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
-import org.fxmisc.richtext.GenericStyledArea;
+import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.utils.StringUtils;
 import org.reactfx.collection.LiveList;
 import org.reactfx.value.Val;
 
+import java.util.Collections;
+import java.util.Set;
 import java.util.function.IntFunction;
 
-public class CustomLineNumberFactory implements IntFunction<Node> {
+public class CompiledViewerNumberFactory implements IntFunction<Node> {
 
     private static final Insets DEFAULT_INSETS = new Insets(0.0, 5.0, 0.0, 5.0);
+    private static final Image BREAKPOINT_IMAGE = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_BREAKPOINT).orElse(null);
 
-    public static CustomLineNumberFactory get(GenericStyledArea<?, ?, ?> area) {
-        return get(area, digits -> "%1$" + digits + "s", String::valueOf);
-    }
-
-    public static CustomLineNumberFactory get(GenericStyledArea<?, ?, ?> area,
-                                              IntFunction<String> format,
-                                              IntFunction<String> translate) {
-        return new CustomLineNumberFactory(area, format, translate);
-    }
 
     private final Val<Integer> nParagraphs;
-    private final IntFunction<String> format;
-    private final IntFunction<String> translate;
-
-
     private final Rectangle background;
 
+    private final MIPSCompiledCodeViewer viewer;
 
-    public CustomLineNumberFactory(GenericStyledArea<?, ?, ?> area, IntFunction<String> format, IntFunction<String> translate) {
-        nParagraphs = LiveList.sizeOf(area.getParagraphs());
-        this.format = format;
-        this.translate = translate;
-
+    public CompiledViewerNumberFactory(MIPSCompiledCodeViewer viewer) {
+        this.viewer = viewer;
+        nParagraphs = LiveList.sizeOf(viewer.getParagraphs());
         background = new Rectangle(0, 100000);
         background.getStyleClass().add("left-bar-background");
     }
@@ -73,9 +66,9 @@ public class CustomLineNumberFactory implements IntFunction<Node> {
 
     @Override
     public Node apply(int idx) {
-        Val<String> formatted = nParagraphs.map(n -> format(idx + 1, n));
+        var formatted = nParagraphs.map(n -> format(idx));
 
-        Label lineNo = new Label();
+        var lineNo = new Label();
         lineNo.setPadding(DEFAULT_INSETS);
         lineNo.setAlignment(Pos.BOTTOM_RIGHT);
         lineNo.getStyleClass().add("line-number");
@@ -84,19 +77,44 @@ public class CustomLineNumberFactory implements IntFunction<Node> {
         // when lineNo is removed from scene
         lineNo.textProperty().bind(formatted.conditionOnShowing(lineNo));
 
+        boolean breakpoint = viewer.compiledLines.get(idx).getAddress().map(address ->
+                viewer.getSimulation().getBreakpoints().contains(address)).orElse(false);
 
-        HBox hBox = new HBox(lineNo);
+        var image = new NearestImageView(breakpoint ? BREAKPOINT_IMAGE : null, 16, 16);
+        image.setSmooth(true);
+        var hBox = new HBox(lineNo, image);
         hBox.getStyleClass().add("left-bar");
 
-        if (idx >= 0 && idx < 9) {
+        if (idx < 9) {
             background.widthProperty().bind(hBox.widthProperty());
         }
+
+        hBox.setOnMousePressed(event -> {
+            var optional = viewer.compiledLines.get(idx).getAddress();
+            if (optional.isEmpty()) return;
+            if (image.getImage() == null) {
+                viewer.getSimulation().getBreakpoints().add(optional.get());
+                if (!viewer.isLineBeingUsed(idx)) {
+                    viewer.setParagraphStyle(idx, Set.of("instruction-breakpoint"));
+                } else {
+                    image.setImage(BREAKPOINT_IMAGE);
+                }
+            } else {
+                viewer.getSimulation().getBreakpoints().remove(optional.get());
+                if (!viewer.isLineBeingUsed(idx)) {
+                    viewer.setParagraphStyle(idx, Collections.emptySet());
+                } else {
+                    image.setImage(null);
+                }
+            }
+        });
 
         return hBox;
     }
 
-    private String format(int x, int max) {
-        int digits = (int) Math.floor(Math.log10(max)) + 1;
-        return String.format(format.apply(digits), translate.apply(x));
+    private String format(int x) {
+        return viewer.compiledLines.get(x).getAddress()
+                .map(target -> " 0x" + StringUtils.addZeros(Integer.toHexString(target), 8))
+                .orElse("           ");
     }
 }

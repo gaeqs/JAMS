@@ -3,7 +3,6 @@ package net.jamsimulator.jams.gui.mips.project;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.ActionRegion;
@@ -15,16 +14,18 @@ import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.simulator.cache.CacheVisualizer;
 import net.jamsimulator.jams.gui.mips.simulator.execution.ExecutionButtons;
 import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
-import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionTableGroup;
-import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionsTable;
+import net.jamsimulator.jams.gui.mips.simulator.instruction.type.MIPSMultiCycleCompiledCodeViewer;
+import net.jamsimulator.jams.gui.mips.simulator.instruction.type.MIPSPipelinedCompiledCodeViewer;
+import net.jamsimulator.jams.gui.mips.simulator.instruction.type.MIPSSingleCycleCompiledCodeViewer;
+import net.jamsimulator.jams.gui.mips.simulator.instructionold.InstructionTableGroup;
+import net.jamsimulator.jams.gui.mips.simulator.instructionold.InstructionsTable;
 import net.jamsimulator.jams.gui.mips.simulator.label.LabelTable;
 import net.jamsimulator.jams.gui.mips.simulator.memory.MemoryPane;
 import net.jamsimulator.jams.gui.mips.simulator.register.COP0RegistersTable;
 import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
-import net.jamsimulator.jams.gui.util.PixelScrollPane;
-import net.jamsimulator.jams.gui.util.ScalableNode;
+import net.jamsimulator.jams.gui.util.ZoomUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
@@ -32,7 +33,8 @@ import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.project.mips.MIPSProject;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import org.fxmisc.flowless.ScaledVirtualized;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -68,12 +70,17 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 			userTab.setClosable(false);
 			kernelTab.setClosable(false);
 			pane.getTabs().addAll(userTab, kernelTab);
-			center = pane;
+			//center = pane;
 			instructionTableGroup = new InstructionTableGroup(user, kernel, userTab, kernelTab, pane);
 		} else {
-			center = user;
+			//center = user;
 			instructionTableGroup = new InstructionTableGroup(user);
 		}
+
+		var viewer = new MIPSPipelinedCompiledCodeViewer(simulation);
+		var scale = new ScaledVirtualized<>(viewer);
+		ZoomUtils.applyZoomListener(viewer, scale);
+		center = new VirtualizedScrollPane<>(scale);
 
 		loadRegisterTabs();
 		loadConsole();

@@ -1,30 +1,32 @@
-package net.jamsimulator.jams.gui.mips.simulator.instruction.multicycle;
+package net.jamsimulator.jams.gui.mips.simulator.instructionold.singlecycle;
 
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.TableRow;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionEntry;
-import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionsTable;
-import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
+import net.jamsimulator.jams.gui.mips.simulator.instructionold.InstructionEntry;
+import net.jamsimulator.jams.gui.mips.simulator.instructionold.InstructionsTable;
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.mips.simulation.event.*;
-import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleSimulation;
-import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
+import net.jamsimulator.jams.mips.simulation.event.SimulationLockEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationUnlockEvent;
 
 import java.util.Map;
 
-public class MultiCycleInstructionsTable extends InstructionsTable {
+public class SingleCycleInstructionsTable extends InstructionsTable {
+
+	public static final String CURRENT_INSTRUCTION_STYLE_CLASS = "single-cycle-current-instruction";
+	public static final String NEXT_INSTRUCTION_STYLE_CLASS = "single-cycle-next-instruction";
 
 	private final Register pc;
 
-	public MultiCycleInstructionsTable(Simulation<? extends MultiCycleArchitecture> simulation, Map<Integer, String> originals, boolean kernel) {
+	public SingleCycleInstructionsTable(Simulation<? extends SingleCycleArchitecture> simulation, Map<Integer, String> originals, boolean kernel) {
 		super(simulation, originals, kernel);
-		if (!(simulation instanceof MultiCycleSimulation))
-			throw new IllegalArgumentException("Simulation must be a MultiCycleSimulation.");
 		simulation.registerListeners(this, true);
 		pc = simulation.getRegisters().getProgramCounter();
 		if (!simulation.isRunning()) {
@@ -67,25 +69,18 @@ public class MultiCycleInstructionsTable extends InstructionsTable {
 		refresh();
 	}
 
-	@Listener
-	private void onSimulationUndo(SimulationUndoStepEvent.After event) {
-		refresh();
-	}
-
 
 	@Override
 	public void onRowUpdate(TableRow<InstructionEntry> row) {
 		int current = pc.getValue();
-
-		String style = ((MultiCycleSimulation) simulation).getCurrentStep().getStyle();
-
-		if (simulation.isRunning() || ((MultiCycleSimulation) simulation).getCurrentStep() != MultiCycleStep.FETCH)
-			current -= 4;
+		String style = simulation.isRunning() ? CURRENT_INSTRUCTION_STYLE_CLASS : NEXT_INSTRUCTION_STYLE_CLASS;
+		if (simulation.isRunning()) current -= 4;
 
 		if (!simulation.isFinished() && row.getItem() != null && row.getItem().getAddress() == current) {
 			Platform.runLater(() -> {
 				for (Node child : row.getChildrenUnmodifiable()) {
-					MultiCycleStep.removeAllStyles(child);
+					child.getStyleClass().remove(CURRENT_INSTRUCTION_STYLE_CLASS);
+					child.getStyleClass().remove(NEXT_INSTRUCTION_STYLE_CLASS);
 					if (!child.getStyleClass().contains(style)) {
 						child.getStyleClass().add(style);
 					}
@@ -93,7 +88,8 @@ public class MultiCycleInstructionsTable extends InstructionsTable {
 			});
 		} else {
 			for (Node child : row.getChildrenUnmodifiable()) {
-				MultiCycleStep.removeAllStyles(child);
+				child.getStyleClass().remove(CURRENT_INSTRUCTION_STYLE_CLASS);
+				child.getStyleClass().remove(NEXT_INSTRUCTION_STYLE_CLASS);
 			}
 		}
 	}

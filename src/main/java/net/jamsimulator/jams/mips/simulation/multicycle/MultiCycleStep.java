@@ -4,11 +4,11 @@ import javafx.scene.Node;
 
 public enum MultiCycleStep {
 
-	FETCH("F", "multi-cycle-fetch"),
-	DECODE("D", "multi-cycle-decode"),
-	EXECUTE("E", "multi-cycle-execute"),
-	MEMORY("M", "multi-cycle-memory"),
-	WRITE_BACK("W", "multi-cycle-write-back");
+	FETCH("F", "instruction-fetch"),
+	DECODE("D", "instruction-decode"),
+	EXECUTE("E", "instruction-execute"),
+	MEMORY("M", "instruction-memory"),
+	WRITE_BACK("W", "instruction-write-back");
 
 	private final String tag;
 	private final String style;
