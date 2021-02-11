@@ -301,6 +301,8 @@ CONFIG_EDITOR_ZOOM_USING_MOUSE_WHEEL=Hacer zoom usando la rueda del ratón mient
 CONFIG_EDITOR_ZOOM_USING_MOUSE_WHEEL_TOOLTIP=Si esta opción está activada podrás hacer zoom usando la rueda del ratón mientras pulsas la tecla Shortcut.
 CONFIG_EDITOR_RESET_ZOOM_USING_MIDDLE_BUTTON=Deshacer el zoom usando Shortcut+Botón central del ratón
 CONFIG_EDITOR_RESET_ZOOM_USING_MIDDLE_BUTTON_TOOLTIP=Si esta opción está activada podrás deshacer el zoom usando el botón central del ratón mientras pulsas la tecla Shortcut.
+CONFIG_EDITOR_RESET_ZOOM_SENSIBILITY=Sensibilidad del zoom:
+CONFIG_EDITOR_RESET_ZOOM_SENSIBILITY_TOOLTIP=Esta opción permite configurar la ampliación del zoom en cada desplazamiento de la rueda.\n\nRecuerda que el valor por defecto del zoom es '2' y un zoom x2 tiene un valor de '2'.
 
 CONFIG_EDITOR_MIPS=MIPS
 CONFIG_EDITOR_MIPS_REGION_TABS=Tabuladores

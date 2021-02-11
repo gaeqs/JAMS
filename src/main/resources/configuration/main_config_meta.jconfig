@@ -105,6 +105,11 @@
       "language_node": "CONFIG_EDITOR_RESET_ZOOM_USING_MIDDLE_BUTTON",
       "region": "mouse_control"
     },
+    "zoom_sensibility": {
+      "type": "double",
+      "language_node": "CONFIG_EDITOR_RESET_ZOOM_SENSIBILITY",
+      "region": "mouse_control"
+    },
     "mips": {
       "meta": {
         "language_node": "CONFIG_EDITOR_MIPS",

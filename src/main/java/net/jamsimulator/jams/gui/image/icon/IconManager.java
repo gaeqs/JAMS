@@ -41,7 +41,7 @@ import java.util.Optional;
  */
 public class IconManager {
 
-	public static final int SIZE = 40;
+	public static final int SIZE = 1024;
 
 	public static IconManager INSTANCE = new IconManager();
 

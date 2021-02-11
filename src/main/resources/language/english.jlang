@@ -301,6 +301,8 @@ CONFIG_EDITOR_ZOOM_USING_MOUSE_WHEEL=Zoom with Shortcut+Mouse Wheel
 CONFIG_EDITOR_ZOOM_USING_MOUSE_WHEEL_TOOLTIP=If this option is enable you can zoom using the mouse wheel while pressing the Shortcut key.
 CONFIG_EDITOR_RESET_ZOOM_USING_MIDDLE_BUTTON=Reset zoom with Shortcut+Mouse Middle Button
 CONFIG_EDITOR_RESET_ZOOM_USING_MIDDLE_BUTTON_TOOLTIP=If this option is enable you can reset the zoom using the mouse middle button while pressing the Shortcut key.
+CONFIG_EDITOR_RESET_ZOOM_SENSIBILITY=Zoom sensibility:
+CONFIG_EDITOR_RESET_ZOOM_SENSIBILITY_TOOLTIP=This option configures the zoom made in each wheel scroll.\n\nRemember that the default zoom value is '1' and the 2x zoom value is '2'.
 
 CONFIG_EDITOR_MIPS=MIPS
 CONFIG_EDITOR_MIPS_REGION_TABS=Tabs

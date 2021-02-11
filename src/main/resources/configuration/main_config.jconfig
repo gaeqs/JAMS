@@ -22,6 +22,7 @@
   "editor": {
     "zoom_using_mouse_wheel": true,
     "reset_zoom_using_middle_button": true,
+    "zoom_sensibility": 0.007,
     "mips": {
       "use_tabs": true,
       "preserve_tabs": true,

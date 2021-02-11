@@ -11,19 +11,14 @@ public class ZoomUtils {
 
     public static void applyZoomListener(Node node, ScaledVirtualized<?> zoom) {
         node.addEventFilter(ScrollEvent.SCROLL, event -> {
+            double sensibility = Jams.getMainConfiguration().getNumber("editor.zoom_sensibility").orElse(0.2).doubleValue();
             if (event.isControlDown()
                     && (boolean) Jams.getMainConfiguration().get("editor.zoom_using_mouse_wheel").orElse(true)) {
 
                 double current = zoom.getZoom().getX();
-                if (event.getDeltaY() < 0) {
-                    if (current > 0.4) {
-                        zoom.getZoom().setX(current - 0.2);
-                        zoom.getZoom().setY(current - 0.2);
-                    }
-                } else if (event.getDeltaY() > 0) {
-                    zoom.getZoom().setX(current + 0.2);
-                    zoom.getZoom().setY(current + 0.2);
-                }
+                double value = Math.max(0.4, current + sensibility * event.getDeltaY());
+                zoom.getZoom().setX(value);
+                zoom.getZoom().setY(value);
                 event.consume();
             }
         });

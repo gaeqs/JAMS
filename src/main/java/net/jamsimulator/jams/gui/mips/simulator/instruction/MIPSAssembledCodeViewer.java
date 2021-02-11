@@ -299,15 +299,18 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
             var elements = order.getElements();
             var instruction = optional.get();
 
-            for (var element : elements) {
+            for (int i = 0, elementsSize = elements.size(); i < elementsSize; i++) {
+                MIPSAssembledInstructionViewerElement element = elements.get(i);
                 int size = switch (element) {
                     case HEX_CODE -> styleHexadecimalCode(code, stringBuilder, styleBuilder);
-                    case DISASSEMBLED -> styleDisassembled(instruction, code, registerStart, stringBuilder, styleBuilder);
+                    case DISASSEMBLED -> styleDisassembled(instruction, code, registerStart, i == 0, stringBuilder, styleBuilder);
                     case ORIGINAL -> styleOriginal(original, stringBuilder, styleBuilder);
                 };
 
-                int add = Math.max(4, element.getMaximumLength() - size);
-                stringBuilder.append(" ".repeat(add));
+                if (i != elementsSize - 1) {
+                    int add = Math.max(4, element.getMaximumLength() - size);
+                    stringBuilder.append(" ".repeat(add));
+                }
             }
         }
     }
@@ -335,9 +338,9 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
      * @param styleBuilder  the style builder.
      * @return the length of the styled text.
      */
-    private int styleDisassembled(BasicInstruction<?> instruction, int code, String registerStart,
+    private int styleDisassembled(BasicInstruction<?> instruction, int code, String registerStart, boolean first,
                                   StringBuilder stringBuilder, EasyStyleSpansBuilder styleBuilder) {
-        addAndStyle(instruction.getMnemonic(), INSTRUCTION, stringBuilder, styleBuilder);
+        addAndStyle((first ? "\t" : "") + instruction.getMnemonic(), INSTRUCTION, stringBuilder, styleBuilder);
 
         var assembled = instruction.assembleFromCode(code);
         var parameters = assembled.parametersToString(registerStart);

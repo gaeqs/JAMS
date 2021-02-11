@@ -65,8 +65,7 @@ public class StartWindow extends AnchorPane {
 	}
 
 	private void loadImage() {
-		Image image = JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO
-		).orElse(null);
+		Image image = JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO).orElse(null);
 		contents.getChildren().add(new NearestImageView(image, 150, 150));
 	}
 
