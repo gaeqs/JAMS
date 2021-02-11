@@ -369,38 +369,28 @@ public class MIPSFileElements {
     public void update(MIPSFileEditor area) {
         if (requiresUpdate.isEmpty()) return;
 
-        int i;
         MIPSLine line;
-        int lastEnd = -1;
-        int first = -1;
 
-        var spansBuilder = new StyleSpansBuilder<Collection<String>>();
-
-        for (Integer integer : requiresUpdate) {
-            i = integer;
+        for (int i : requiresUpdate) {
             if (i < 0 || i >= lines.size()) continue;
+
+            var spansBuilder = new StyleSpansBuilder<Collection<String>>();
             line = lines.get(i);
 
-            if (lastEnd == -1) {
-                lastEnd = line.getStart();
-                first = line.getStart();
-            }
-
             line.refreshMetadata(this);
-            lastEnd = line.styleLine(lastEnd, spansBuilder);
+            line.styleLine(line.getStart(), spansBuilder);
+
+            StyleSpans<Collection<String>> spans;
+            try {
+                spans = spansBuilder.create();
+            } catch (IllegalStateException ex) {
+                // No spans have been added.
+                return;
+            }
+            area.setStyleSpans(i, 0, spans);
+
         }
         requiresUpdate.clear();
-
-        StyleSpans<Collection<String>> spans;
-        try {
-            spans = spansBuilder.create();
-        } catch (IllegalStateException ex) {
-            // No spans have been added.
-            return;
-        }
-        if (first != -1) {
-            area.setStyleSpans(first, spans);
-        }
     }
 
     /**
