@@ -1,15 +1,15 @@
-package net.jamsimulator.jams.gui.mips.simulator.instructionold;
+package net.jamsimulator.jams.gui.mips.simulator.instruction;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 
-public class InstructionTableGroup {
+public class InstructionViewerGroup {
 
-	private final InstructionsTable user, kernel;
+	private final MIPSAssembledCodeViewer user, kernel;
 	private final Tab userTab, kernelTab;
 	private final TabPane pane;
 
-	public InstructionTableGroup(InstructionsTable user) {
+	public InstructionViewerGroup(MIPSAssembledCodeViewer user) {
 		this.user = user;
 		this.kernel = null;
 		this.userTab = null;
@@ -17,7 +17,7 @@ public class InstructionTableGroup {
 		this.pane = null;
 	}
 
-	public InstructionTableGroup(InstructionsTable user, InstructionsTable kernel, Tab userTab, Tab kernelTab, TabPane pane) {
+	public InstructionViewerGroup(MIPSAssembledCodeViewer user, MIPSAssembledCodeViewer kernel, Tab userTab, Tab kernelTab, TabPane pane) {
 		this.user = user;
 		this.kernel = kernel;
 		this.userTab = userTab;
@@ -25,11 +25,11 @@ public class InstructionTableGroup {
 		this.pane = pane;
 	}
 
-	public InstructionsTable getUser() {
+	public MIPSAssembledCodeViewer getUser() {
 		return user;
 	}
 
-	public InstructionsTable getKernel() {
+	public MIPSAssembledCodeViewer getKernel() {
 		return kernel;
 	}
 

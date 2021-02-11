@@ -24,6 +24,10 @@ public class EasyStyleSpansBuilder {
         to = index + element.length();
     }
 
+    public boolean isEmpty() {
+        return to == 0;
+    }
+
     public StyleSpans<Collection<String>> create() {
         return builder.create();
     }

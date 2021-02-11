@@ -178,6 +178,7 @@
       "meta": {
         "language_node": "CONFIG_SIMULATION_MIPS",
         "regions": {
+          "instructions": 0,
           "flow": 1
         }
       },
@@ -185,6 +186,16 @@
         "type": "positive_integer",
         "language_node": "CONFIG_SIMULATION_MIPS_FLOW_MAX_ITEMS",
         "region": "flow"
+      },
+      "viewer_elements_order": {
+        "type": "assembled_instruction_viewer_order",
+        "language_node": "CONFIG_SIMULATION_MIPS_INSTRUCTIONS_VIEWER_ELEMENTS_ORDER",
+        "region": "instructions"
+      },
+      "show_labels": {
+        "type": "boolean",
+        "language_node": "CONFIG_SIMULATION_MIPS_INSTRUCTIONS_SHOW_LABELS",
+        "region": "instructions"
       }
     }
   }

@@ -63,6 +63,11 @@ Dark Theme
 /*PANE*/
 AnchorPane {
     -fx-background-color: -theme-background;
+    -fx-background-radius: 5;
+}
+
+.darker_pane {
+    -fx-background-color: -theme-background-darker-2;
 }
 
 /*MUST ADD THIS CLASS TO ELEMENTS*/
@@ -1199,19 +1204,6 @@ AnchorPane {
     -fx-background-color: -theme-background;
 }
 
-/* ----------------------- */
-/* SINGLE CYCLE SIMULATION */
-/* ----------------------- */
-
-/* INSTRUCTION TABLE */
-.table-view .single-cycle-next-instruction {
-    -fx-background-color: #92925a;
-}
-
-.table-view .single-cycle-current-instruction {
-    -fx-background-color: #5a6770;
-}
-
 /* ---------------------- */
 /* MULTI CYCLE SIMULATION */
 /* ---------------------- */
@@ -1238,7 +1230,7 @@ AnchorPane {
 }
 
 .code-area .instruction-breakpoint {
-    -fx-background-color: #341f1f;
+    -fx-background-color: #763e3c;
 }
 
 /*FLOW*/

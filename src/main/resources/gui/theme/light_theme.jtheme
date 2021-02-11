@@ -65,6 +65,10 @@ AnchorPane {
     -fx-background-color: -theme-background;
 }
 
+.darker_pane {
+    -fx-background-color: -theme-background-darker-2;
+}
+
 /*MUST ADD THIS CLASS TO ELEMENTS*/
 .anchor-pane {
     -fx-background-color: -theme-background;
@@ -1180,67 +1184,53 @@ AnchorPane {
     -fx-background-color: -theme-background;
 }
 
-/* ----------------------- */
-/* SINGLE CYCLE SIMULATION */
-/* ----------------------- */
-
-/* INSTRUCTION TABLE */
-.table-view .single-cycle-next-instruction {
-    -fx-background-color: #cccc7e;
-}
-
-.table-view .single-cycle-current-instruction {
-    -fx-background-color: #a3bbcc;
-}
-
-/*FLOW*/
-.flow-entry .single-cycle-execute {
-    -fx-background-color: #a3bbcc;
-}
-
 /* ---------------------- */
 /* MULTI CYCLE SIMULATION */
 /* ---------------------- */
 
 /* INSTRUCTION TABLE */
-.table-view .multi-cycle-fetch {
+.code-area .instruction-fetch {
     -fx-background-color: #cccc7e;
 }
 
-.table-view .multi-cycle-decode {
+.code-area .instruction-decode {
     -fx-background-color: #a3cc7c;
 }
 
-.table-view .multi-cycle-execute {
+.code-area .instruction-execute {
     -fx-background-color: #a3bbcc;
 }
 
-.table-view .multi-cycle-memory {
+.code-area .instruction-memory {
     -fx-background-color: #c0b6cc;
 }
 
-.table-view .multi-cycle-write-back {
+.code-area .instruction-write-back {
     -fx-background-color: #ccafad;
 }
 
+.code-area .instruction-breakpoint {
+    -fx-background-color: #dd8481;
+}
+
 /*FLOW*/
-.flow-entry .multi-cycle-fetch {
+.flow-entry .instruction-fetch {
     -fx-background-color: #cccc7e;
 }
 
-.flow-entry .multi-cycle-decode {
+.flow-entry .instruction-decode {
     -fx-background-color: #a3cc7c;
 }
 
-.flow-entry .multi-cycle-execute {
+.flow-entry .instruction-execute {
     -fx-background-color: #a3bbcc;
 }
 
-.flow-entry .multi-cycle-memory {
+.flow-entry .instruction-memory {
     -fx-background-color: #c0b6cc;
 }
 
-.flow-entry .multi-cycle-write-back {
+.flow-entry .instruction-write-back {
     -fx-background-color: #ccafad;
 }
 

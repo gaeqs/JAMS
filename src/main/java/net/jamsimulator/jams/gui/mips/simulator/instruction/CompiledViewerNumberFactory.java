@@ -38,8 +38,6 @@ import net.jamsimulator.jams.utils.StringUtils;
 import org.reactfx.collection.LiveList;
 import org.reactfx.value.Val;
 
-import java.util.Collections;
-import java.util.Set;
 import java.util.function.IntFunction;
 
 public class CompiledViewerNumberFactory implements IntFunction<Node> {
@@ -51,17 +49,13 @@ public class CompiledViewerNumberFactory implements IntFunction<Node> {
     private final Val<Integer> nParagraphs;
     private final Rectangle background;
 
-    private final MIPSCompiledCodeViewer viewer;
+    private final MIPSAssembledCodeViewer viewer;
 
-    public CompiledViewerNumberFactory(MIPSCompiledCodeViewer viewer) {
+    public CompiledViewerNumberFactory(MIPSAssembledCodeViewer viewer) {
         this.viewer = viewer;
         nParagraphs = LiveList.sizeOf(viewer.getParagraphs());
         background = new Rectangle(0, 100000);
         background.getStyleClass().add("left-bar-background");
-    }
-
-    public Rectangle getBackground() {
-        return background;
     }
 
     @Override
@@ -77,8 +71,8 @@ public class CompiledViewerNumberFactory implements IntFunction<Node> {
         // when lineNo is removed from scene
         lineNo.textProperty().bind(formatted.conditionOnShowing(lineNo));
 
-        boolean breakpoint = viewer.compiledLines.get(idx).getAddress().map(address ->
-                viewer.getSimulation().getBreakpoints().contains(address)).orElse(false);
+        boolean breakpoint = viewer.assembledLines.get(idx).getAddress().map(address ->
+                viewer.getSimulation().hasBreakpoint(address)).orElse(false);
 
         var image = new NearestImageView(breakpoint ? BREAKPOINT_IMAGE : null, 16, 16);
         image.setSmooth(true);
@@ -90,22 +84,13 @@ public class CompiledViewerNumberFactory implements IntFunction<Node> {
         }
 
         hBox.setOnMousePressed(event -> {
-            var optional = viewer.compiledLines.get(idx).getAddress();
+            var optional = viewer.assembledLines.get(idx).getAddress();
             if (optional.isEmpty()) return;
-            if (image.getImage() == null) {
-                viewer.getSimulation().getBreakpoints().add(optional.get());
-                if (!viewer.isLineBeingUsed(idx)) {
-                    viewer.setParagraphStyle(idx, Set.of("instruction-breakpoint"));
-                } else {
-                    image.setImage(BREAKPOINT_IMAGE);
-                }
-            } else {
-                viewer.getSimulation().getBreakpoints().remove(optional.get());
-                if (!viewer.isLineBeingUsed(idx)) {
-                    viewer.setParagraphStyle(idx, Collections.emptySet());
-                } else {
-                    image.setImage(null);
-                }
+            viewer.simulation.toggleBreakpoint(optional.get());
+
+            //The table can't refresh the line if it is being used by another color.
+            if (viewer.isLineBeingUsed(idx)) {
+                image.setImage(viewer.getSimulation().hasBreakpoint(optional.get()) ? BREAKPOINT_IMAGE : null);
             }
         });
 
@@ -113,7 +98,7 @@ public class CompiledViewerNumberFactory implements IntFunction<Node> {
     }
 
     private String format(int x) {
-        return viewer.compiledLines.get(x).getAddress()
+        return viewer.assembledLines.get(x).getAddress()
                 .map(target -> " 0x" + StringUtils.addZeros(Integer.toHexString(target), 8))
                 .orElse("           ");
     }

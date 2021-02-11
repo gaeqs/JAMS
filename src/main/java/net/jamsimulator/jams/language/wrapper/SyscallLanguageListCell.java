@@ -7,7 +7,7 @@ import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
-public class SyscallLanguageListCell extends ListCell<SyscallExecutionBuilder> {
+public class SyscallLanguageListCell extends ListCell<SyscallExecutionBuilder<?>> {
 
 	private String node;
 

@@ -1,7 +1,9 @@
 package net.jamsimulator.jams.gui.util.value;
 
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.util.converter.DoubleValueConverter;
 
 import java.util.function.Consumer;
@@ -53,6 +55,11 @@ public class DoubleValueEditor extends TextField implements ValueEditor<Double> 
 	@Override
 	public Node getAsNode() {
 		return this;
+	}
+
+	@Override
+	public Node buildConfigNode(Label label) {
+		return new HBox(label, this);
 	}
 
 	@Override

@@ -2,7 +2,9 @@ package net.jamsimulator.jams.gui.util.value;
 
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.mips.editor.MIPSSpaces;
 import net.jamsimulator.jams.gui.util.converter.MIPSSpacesValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverters;
@@ -38,6 +40,11 @@ public class MIPSSpacesValueEditor extends ComboBox<MIPSSpaces> implements Value
 	@Override
 	public Node getAsNode() {
 		return this;
+	}
+
+	@Override
+	public Node buildConfigNode(Label label) {
+		return new HBox(label, this);
 	}
 
 	@Override

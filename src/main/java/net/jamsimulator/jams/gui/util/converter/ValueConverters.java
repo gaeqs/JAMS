@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.util.converter;
 
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.mips.editor.MIPSSpaces;
+import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledInstructionViewerOrder;
 import net.jamsimulator.jams.gui.theme.Theme;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.mips.architecture.Architecture;
@@ -118,6 +119,11 @@ public class ValueConverters {
 		var themeConverter = new ThemeValueConverter();
 		converterByName.put(ThemeValueConverter.NAME, themeConverter);
 		converterByType.put(Theme.class, themeConverter);
+
+		//MIPS COMPILED INSTRUCTION VIEWER ORDER
+		var compiledViewerConverter = new MIPSAssembledInstructionViewerOrderValueConverter();
+		converterByName.put(MIPSAssembledInstructionViewerOrderValueConverter.NAME, compiledViewerConverter);
+		converterByType.put(MIPSAssembledInstructionViewerOrder.class, compiledViewerConverter);
 	}
 
 

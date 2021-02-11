@@ -38,79 +38,74 @@ import net.jamsimulator.jams.utils.Validate;
 
 public class ConfigurationWindowNode extends HBox {
 
-	protected Configuration configuration;
-	protected String relativeNode;
-	protected String languageNode;
-	protected String region;
+    protected Configuration configuration;
+    protected String relativeNode;
+    protected String languageNode;
+    protected String region;
 
-	protected ValueEditor<?> editor;
-	protected ValueConverter<?> converter;
+    protected ValueEditor<?> editor;
+    protected ValueConverter<?> converter;
 
 
-	public ConfigurationWindowNode(Configuration configuration, String relativeNode,
-								   String languageNode, String region, String type) {
-		getStyleClass().add("configuration-window-node");
-		this.configuration = configuration;
-		this.relativeNode = relativeNode;
-		this.languageNode = languageNode;
-		this.region = region;
+    public ConfigurationWindowNode(Configuration configuration, String relativeNode,
+                                   String languageNode, String region, String type) {
+        getStyleClass().add("configuration-window-node");
+        this.configuration = configuration;
+        this.relativeNode = relativeNode;
+        this.languageNode = languageNode;
+        this.region = region;
 
-		editor = ValueEditors.getByName(type).map(ValueEditor.Builder::build).orElse(null);
-		Validate.notNull(editor, "Editor cannot be null! Type: " + type);
-		converter = loadConverter(type);
-		Validate.notNull(converter, "Converter cannot be null! Type: " + type);
+        editor = ValueEditors.getByName(type).map(ValueEditor.Builder::build).orElse(null);
+        Validate.notNull(editor, "Editor cannot be null! Type: " + type);
+        converter = loadConverter(type);
+        Validate.notNull(converter, "Converter cannot be null! Type: " + type);
 
-		init(type);
+        init();
 
-		configuration.getString(relativeNode).flatMap(converter::fromStringSafe)
-				.ifPresent(v -> editor.setCurrentValueUnsafe(v));
+        configuration.getString(relativeNode).flatMap(converter::fromStringSafe)
+                .ifPresent(v -> editor.setCurrentValueUnsafe(v));
 
-		editor.addListener(value -> converter.save(configuration, relativeNode, value));
-	}
+        editor.addListener(value -> converter.save(configuration, relativeNode, value));
+    }
 
-	public Configuration getConfiguration() {
-		return configuration;
-	}
+    public Configuration getConfiguration() {
+        return configuration;
+    }
 
-	public String getRelativeNode() {
-		return relativeNode;
-	}
+    public String getRelativeNode() {
+        return relativeNode;
+    }
 
-	public String getLanguageNode() {
-		return languageNode;
-	}
+    public String getLanguageNode() {
+        return languageNode;
+    }
 
-	public String getRegion() {
-		return region;
-	}
+    public String getRegion() {
+        return region;
+    }
 
-	protected void init(String type) {
-		setAlignment(Pos.CENTER_LEFT);
-		Label label = languageNode == null ? new Label(relativeNode) : new LanguageLabel(languageNode);
-		if (languageNode != null) {
-			label.setTooltip(new LanguageTooltip(languageNode + "_TOOLTIP", LanguageTooltip.DEFAULT_DELAY));
-		}
+    protected void init() {
+        setAlignment(Pos.CENTER_LEFT);
+        Label label = languageNode == null ? new Label(relativeNode) : new LanguageLabel(languageNode);
+        if (languageNode != null) {
+            label.setTooltip(new LanguageTooltip(languageNode + "_TOOLTIP", LanguageTooltip.DEFAULT_DELAY));
+        }
 
-		Region region = new Region();
-		region.setPrefWidth(10);
+        Region region = new Region();
+        region.setPrefWidth(10);
 
-		if (type.equals(BooleanValueEditor.NAME)) {
-			label.setOnMouseClicked(click -> editor.setCurrentValueUnsafe(!((boolean) editor.getCurrentValue())));
-			getChildren().addAll(region, editor.getAsNode(), label);
-		} else {
-			getChildren().addAll(region, label, editor.getAsNode());
-		}
-	}
+        getChildren().addAll(region, editor.buildConfigNode(label));
+    }
 
-	protected ValueConverter<?> loadConverter(String type) {
-		if (type.equals(FontValueEditor.NAME)) {
-			type = StringValueEditor.NAME;
-		} else if (type.equals(PositiveIntegerValueEditor.NAME)) {
-			type = IntegerValueEditor.NAME;
-		}
+    protected ValueConverter<?> loadConverter(String type) {
+        if (type.equals(FontValueEditor.NAME)) {
+            type = StringValueEditor.NAME;
+        } else if (type.equals(PositiveIntegerValueEditor.NAME)) {
+            type = IntegerValueEditor.NAME;
+        }
 
-		return ValueConverters.getByName(type).orElse(null);
-	}
+        return ValueConverters.getByName(type).orElse(null);
+    }
 
 
 }

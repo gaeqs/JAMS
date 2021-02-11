@@ -1,8 +1,8 @@
 package net.jamsimulator.jams.gui.mips.simulator.instruction.type;
 
 import javafx.application.Platform;
-import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSCompiledCodeViewer;
-import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSCompiledLine;
+import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledCodeViewer;
+import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledLine;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
@@ -11,12 +11,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
-public class MIPSPipelinedCompiledCodeViewer extends MIPSCompiledCodeViewer {
+public class MIPSPipelinedAssembledCodeViewer extends MIPSAssembledCodeViewer {
 
-    private int[] previousLines;
+    private final int[] previousLines;
 
-    public MIPSPipelinedCompiledCodeViewer(Simulation<?> simulation) {
-        super(simulation);
+    public MIPSPipelinedAssembledCodeViewer(Simulation<?> simulation, boolean kernel) {
+        super(simulation, kernel);
 
         previousLines = new int[MultiCycleStep.values().length];
 
@@ -26,10 +26,10 @@ public class MIPSPipelinedCompiledCodeViewer extends MIPSCompiledCodeViewer {
         for (MultiCycleStep step : MultiCycleStep.values()) {
             int pcVal = pipeline.getPc(step);
 
-            var optional = compiledLines.stream()
+            var optional = assembledLines.stream()
                     .filter(target -> target.getAddress().filter(v -> v == pcVal).isPresent())
                     .findFirst();
-            previousLines[step.ordinal()] = optional.map(MIPSCompiledLine::getLine).orElse(-1);
+            previousLines[step.ordinal()] = optional.map(MIPSAssembledLine::getLine).orElse(-1);
 
             if (previousLines[step.ordinal()] != -1) {
                 setParagraphStyle(previousLines[step.ordinal()], Set.of(step.getStyle()));
@@ -43,8 +43,8 @@ public class MIPSPipelinedCompiledCodeViewer extends MIPSCompiledCodeViewer {
 
             for (int previousLine : previousLines) {
                 if (previousLine != -1) {
-                    int address = compiledLines.get(previousLine).getAddress().orElse(-1);
-                    boolean breakpoint = address != -1 && simulation.getBreakpoints().contains(address);
+                    int address = assembledLines.get(previousLine).getAddress().orElse(-1);
+                    boolean breakpoint = address != -1 && simulation.hasBreakpoint(address);
                     setParagraphStyle(previousLine, breakpoint ? Set.of("instruction-breakpoint") : Collections.emptyList());
                 }
             }
@@ -54,10 +54,10 @@ public class MIPSPipelinedCompiledCodeViewer extends MIPSCompiledCodeViewer {
             for (MultiCycleStep step : MultiCycleStep.values()) {
                 int pcVal = pipeline.getPc(step);
 
-                var optional = compiledLines.stream()
+                var optional = assembledLines.stream()
                         .filter(target -> target.getAddress().filter(v -> v == pcVal).isPresent())
                         .findFirst();
-                previousLines[step.ordinal()] = optional.map(MIPSCompiledLine::getLine).orElse(-1);
+                previousLines[step.ordinal()] = optional.map(MIPSAssembledLine::getLine).orElse(-1);
 
                 if (previousLines[step.ordinal()] != -1) {
                     setParagraphStyle(previousLines[step.ordinal()], Set.of(step.getStyle()));

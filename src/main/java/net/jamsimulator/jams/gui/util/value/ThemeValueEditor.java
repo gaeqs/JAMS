@@ -2,6 +2,8 @@ package net.jamsimulator.jams.gui.util.value;
 
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.theme.Theme;
@@ -40,6 +42,11 @@ public class ThemeValueEditor extends ComboBox<Theme> implements ValueEditor<The
 	@Override
 	public Node getAsNode() {
 		return this;
+	}
+
+	@Override
+	public Node buildConfigNode(Label label) {
+		return new HBox(label, this);
 	}
 
 	@Override

@@ -2,6 +2,8 @@ package net.jamsimulator.jams.gui.util.value;
 
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 
 import java.util.function.Consumer;
@@ -32,6 +34,11 @@ public class FontValueEditor extends ComboBox<String> implements ValueEditor<Str
 	@Override
 	public Node getAsNode() {
 		return this;
+	}
+
+	@Override
+	public Node buildConfigNode(Label label) {
+		return new HBox(label, this);
 	}
 
 	@Override

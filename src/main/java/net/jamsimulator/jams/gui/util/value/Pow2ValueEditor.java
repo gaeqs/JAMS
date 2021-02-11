@@ -2,6 +2,8 @@ package net.jamsimulator.jams.gui.util.value;
 
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.Jams;
 
 import java.util.function.Consumer;
@@ -48,6 +50,11 @@ public class Pow2ValueEditor extends ComboBox<String> implements ValueEditor<Int
 	@Override
 	public Node getAsNode() {
 		return this;
+	}
+
+	@Override
+	public Node buildConfigNode(Label label) {
+		return new HBox(label, this);
 	}
 
 	@Override

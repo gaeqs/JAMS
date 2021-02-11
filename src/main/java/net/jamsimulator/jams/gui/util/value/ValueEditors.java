@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.util.value;
 
 import javafx.scene.text.Font;
 import net.jamsimulator.jams.gui.mips.editor.MIPSSpaces;
+import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledInstructionViewerOrder;
 import net.jamsimulator.jams.gui.theme.Theme;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.mips.architecture.Architecture;
@@ -40,110 +41,115 @@ import java.util.Optional;
 
 public class ValueEditors {
 
-	private static final Map<String, ValueEditor.Builder<?>> editorByName = new HashMap<>();
-	private static final Map<Class<?>, ValueEditor.Builder<?>> editorByType = new HashMap<>();
+    private static final Map<String, ValueEditor.Builder<?>> editorByName = new HashMap<>();
+    private static final Map<Class<?>, ValueEditor.Builder<?>> editorByType = new HashMap<>();
 
-	static {
+    static {
 
-		//ARCHITECTURE
-		var architectureEditor = new ArchitectureValueEditor.Builder();
-		editorByName.put(ArchitectureValueEditor.NAME, architectureEditor);
-		editorByType.put(Architecture.class, architectureEditor);
+        //ARCHITECTURE
+        var architectureEditor = new ArchitectureValueEditor.Builder();
+        editorByName.put(ArchitectureValueEditor.NAME, architectureEditor);
+        editorByType.put(Architecture.class, architectureEditor);
 
-		//BOOLEAN
-		var booleanEditor = new BooleanValueEditor.Builder();
-		editorByName.put(BooleanValueEditor.NAME, booleanEditor);
-		editorByType.put(Boolean.class, booleanEditor);
-		editorByType.put(boolean.class, booleanEditor);
+        //BOOLEAN
+        var booleanEditor = new BooleanValueEditor.Builder();
+        editorByName.put(BooleanValueEditor.NAME, booleanEditor);
+        editorByType.put(Boolean.class, booleanEditor);
+        editorByType.put(boolean.class, booleanEditor);
 
-		//CacheBuilder
-		var cacheBuilderEditor = new CacheBuilderValueEditor.Builder();
-		editorByName.put(CacheBuilderValueEditor.NAME, cacheBuilderEditor);
-		editorByType.put(CacheBuilder.class, cacheBuilderEditor);
+        //CacheBuilder
+        var cacheBuilderEditor = new CacheBuilderValueEditor.Builder();
+        editorByName.put(CacheBuilderValueEditor.NAME, cacheBuilderEditor);
+        editorByType.put(CacheBuilder.class, cacheBuilderEditor);
 
-		//DOUBLE
-		var doubleEditor = new DoubleValueEditor.Builder();
-		editorByName.put(DoubleValueEditor.NAME, doubleEditor);
-		editorByType.put(Double.class, doubleEditor);
-		editorByType.put(double.class, doubleEditor);
+        //DOUBLE
+        var doubleEditor = new DoubleValueEditor.Builder();
+        editorByName.put(DoubleValueEditor.NAME, doubleEditor);
+        editorByType.put(Double.class, doubleEditor);
+        editorByType.put(double.class, doubleEditor);
 
-		//FLOAT
-		var floatEditor = new FloatValueEditor.Builder();
-		editorByName.put(FloatValueEditor.NAME, floatEditor);
-		editorByType.put(Float.class, floatEditor);
-		editorByType.put(float.class, floatEditor);
+        //FLOAT
+        var floatEditor = new FloatValueEditor.Builder();
+        editorByName.put(FloatValueEditor.NAME, floatEditor);
+        editorByType.put(Float.class, floatEditor);
+        editorByType.put(float.class, floatEditor);
 
-		//FONT
-		var fontEditor = new FontValueEditor.Builder();
-		editorByName.put(FontValueEditor.NAME, fontEditor);
-		editorByType.put(Font.class, fontEditor);
+        //FONT
+        var fontEditor = new FontValueEditor.Builder();
+        editorByName.put(FontValueEditor.NAME, fontEditor);
+        editorByType.put(Font.class, fontEditor);
 
-		//INTEGER
-		var integerEditor = new IntegerValueEditor.Builder();
-		editorByName.put(IntegerValueEditor.NAME, integerEditor);
-		editorByType.put(Integer.class, integerEditor);
-		editorByType.put(int.class, integerEditor);
+        //INTEGER
+        var integerEditor = new IntegerValueEditor.Builder();
+        editorByName.put(IntegerValueEditor.NAME, integerEditor);
+        editorByType.put(Integer.class, integerEditor);
+        editorByType.put(int.class, integerEditor);
 
-		//LANGUAGES
-		var languageEditor = new LanguageValueEditor.Builder();
-		editorByName.put(LanguageValueEditor.NAME, languageEditor);
-		editorByType.put(Language.class, languageEditor);
+        //LANGUAGES
+        var languageEditor = new LanguageValueEditor.Builder();
+        editorByName.put(LanguageValueEditor.NAME, languageEditor);
+        editorByType.put(Language.class, languageEditor);
 
-		//MEMORY BUILDER
-		var memoryBuilderEditor = new MemoryBuilderValueEditor.Builder();
-		editorByName.put(MemoryBuilderValueEditor.NAME, memoryBuilderEditor);
-		editorByType.put(MemoryBuilder.class, memoryBuilderEditor);
+        //MEMORY BUILDER
+        var memoryBuilderEditor = new MemoryBuilderValueEditor.Builder();
+        editorByName.put(MemoryBuilderValueEditor.NAME, memoryBuilderEditor);
+        editorByType.put(MemoryBuilder.class, memoryBuilderEditor);
 
-		//MIPS SPACES
-		var mipsSpacesEditor = new MIPSSpacesValueEditor.Builder();
-		editorByName.put(MIPSSpacesValueEditor.NAME, mipsSpacesEditor);
-		editorByType.put(MIPSSpaces.class, mipsSpacesEditor);
+        //MIPS SPACES
+        var mipsSpacesEditor = new MIPSSpacesValueEditor.Builder();
+        editorByName.put(MIPSSpacesValueEditor.NAME, mipsSpacesEditor);
+        editorByType.put(MIPSSpaces.class, mipsSpacesEditor);
 
-		//POSITIVE INTEGER
-		var positiveIntegerEditor = new PositiveIntegerValueEditor.Builder();
-		editorByName.put(PositiveIntegerValueEditor.NAME, positiveIntegerEditor);
+        //POSITIVE INTEGER
+        var positiveIntegerEditor = new PositiveIntegerValueEditor.Builder();
+        editorByName.put(PositiveIntegerValueEditor.NAME, positiveIntegerEditor);
 
-		//POW 2 INTEGER
-		var pow2 = new Pow2ValueEditor.Builder();
-		editorByName.put(Pow2ValueEditor.NAME, pow2);
+        //POW 2 INTEGER
+        var pow2 = new Pow2ValueEditor.Builder();
+        editorByName.put(Pow2ValueEditor.NAME, pow2);
 
-		//STRING
-		var stringEditor = new StringValueEditor.Builder();
-		editorByName.put(StringValueEditor.NAME, stringEditor);
-		editorByType.put(String.class, stringEditor);
+        //STRING
+        var stringEditor = new StringValueEditor.Builder();
+        editorByName.put(StringValueEditor.NAME, stringEditor);
+        editorByType.put(String.class, stringEditor);
 
-		//SYSCALL EXECUTION BUILDER BUNDLE
-		var syscallExecutionBuilderBundleEditor = new SyscallExecutionBuilderBundleValueEditor.Builder();
-		editorByName.put(SyscallExecutionBuilderBundleValueEditor.NAME, syscallExecutionBuilderBundleEditor);
-		editorByType.put(SyscallExecutionBuilderBundle.class, syscallExecutionBuilderBundleEditor);
+        //SYSCALL EXECUTION BUILDER BUNDLE
+        var syscallExecutionBuilderBundleEditor = new SyscallExecutionBuilderBundleValueEditor.Builder();
+        editorByName.put(SyscallExecutionBuilderBundleValueEditor.NAME, syscallExecutionBuilderBundleEditor);
+        editorByType.put(SyscallExecutionBuilderBundle.class, syscallExecutionBuilderBundleEditor);
 
-		//SYSCALL EXECUTION BUILDER
-		var syscallExecutionBuilderEditor = new SyscallExecutionBuilderValueEditor.Builder();
-		editorByName.put(SyscallExecutionBuilderValueEditor.NAME, syscallExecutionBuilderEditor);
-		editorByType.put(SyscallExecutionBuilder.class, syscallExecutionBuilderEditor);
+        //SYSCALL EXECUTION BUILDER
+        var syscallExecutionBuilderEditor = new SyscallExecutionBuilderValueEditor.Builder();
+        editorByName.put(SyscallExecutionBuilderValueEditor.NAME, syscallExecutionBuilderEditor);
+        editorByType.put(SyscallExecutionBuilder.class, syscallExecutionBuilderEditor);
 
-		//THEME
-		var themeEditor = new ThemeValueEditor.Builder();
-		editorByName.put(ThemeValueEditor.NAME, themeEditor);
-		editorByType.put(Theme.class, themeEditor);
-	}
+        //THEME
+        var themeEditor = new ThemeValueEditor.Builder();
+        editorByName.put(ThemeValueEditor.NAME, themeEditor);
+        editorByType.put(Theme.class, themeEditor);
+
+        //MIPS COMPILED INSTRUCTION VIEWER ORDER
+        var compiledViewerEditor = new MIPSAssembledInstructionViewerOrderValueEditor.Builder();
+        editorByName.put(MIPSAssembledInstructionViewerOrderValueEditor.NAME, compiledViewerEditor);
+        editorByType.put(MIPSAssembledInstructionViewerOrder.class, compiledViewerEditor);
+    }
 
 
-	public static Optional<ValueEditor.Builder<?>> getByName(String name) {
-		if (name == null) return Optional.empty();
-		return Optional.ofNullable(editorByName.get(name.toLowerCase()));
-	}
+    public static Optional<ValueEditor.Builder<?>> getByName(String name) {
+        if (name == null) return Optional.empty();
+        return Optional.ofNullable(editorByName.get(name.toLowerCase()));
+    }
 
-	public static <T> Optional<ValueEditor.Builder<T>> getByType(Class<T> clazz) {
-		if (clazz == null) return Optional.empty();
-		return Optional.ofNullable((ValueEditor.Builder<T>) editorByType.get(clazz));
-	}
+    public static <T> Optional<ValueEditor.Builder<T>> getByType(Class<T> clazz) {
+        if (clazz == null) return Optional.empty();
+        return Optional.ofNullable((ValueEditor.Builder<T>) editorByType.get(clazz));
+    }
 
-	public static <T> ValueEditor.Builder<T> getByTypeUnsafe(Class<T> clazz) {
-		return getByType(clazz).orElse(null);
-	}
+    public static <T> ValueEditor.Builder<T> getByTypeUnsafe(Class<T> clazz) {
+        return getByType(clazz).orElse(null);
+    }
 
-	public static boolean add(Class<?> clazz, ValueEditor.Builder<?> editor) {
-		return editorByType.putIfAbsent(clazz, editor) == null;
-	}
+    public static boolean add(Class<?> clazz, ValueEditor.Builder<?> editor) {
+        return editorByType.putIfAbsent(clazz, editor) == null;
+    }
 }

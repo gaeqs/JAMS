@@ -37,7 +37,9 @@
     "open_log_on_assemble": true,
     "memory_rows": 48,
     "mips": {
-      "flow_max_items": 100
+      "flow_max_items": 100,
+      "viewer_elements_order": "DISASSEMBLED;HEX_CODE;ORIGINAL",
+      "show_labels": true
     }
   }
 }
