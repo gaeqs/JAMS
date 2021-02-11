@@ -87,7 +87,9 @@ public class MIPSAssembledInstructionViewerOrderValueEditor extends VBox impleme
     @Override
     public Node buildConfigNode(Label label) {
         var box = new VBox(label, this);
+        box.setSpacing(5);
         box.setFillWidth(true);
+        box.setAlignment(Pos.CENTER_LEFT);
         return box;
     }
 

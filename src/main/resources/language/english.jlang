@@ -325,9 +325,9 @@ CONFIG_EDITOR_MIPS_MAXIMUM_BLANK_LINES_TOOLTIP=The maximum amount of blank lines
 
 CONFIG_EXPLORER=Explorer
 CONFIG_EXPLORER_REGION_SIZE=Size
-CONFIG_EXPLORER_SECTION_SEPARATOR_WIDTH=Width per hierarchy level for sections
+CONFIG_EXPLORER_SECTION_SEPARATOR_WIDTH=Width per hierarchy level for sections:
 CONFIG_EXPLORER_SECTION_SEPARATOR_WIDTH_TOOLTIP=Represents the width that a section will shift per hierarchy level
-CONFIG_EXPLORER_ELEMENT_SEPARATOR_WIDTH=Width per hierarchy level for elements
+CONFIG_EXPLORER_ELEMENT_SEPARATOR_WIDTH=Width per hierarchy level for elements:
 CONFIG_EXPLORER_ELEMENT_SEPARATOR_WIDTH_TOOLTIP=Represents the width that an element will shift per hierarchy level
 CONFIG_EXPLORER_MIPS=MIPS
 CONFIG_EXPLORER_MIPS_REGION_CREATION=Creation

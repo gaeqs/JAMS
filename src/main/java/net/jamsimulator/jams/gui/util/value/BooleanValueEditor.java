@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.util.value;
 
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -37,7 +38,10 @@ public class BooleanValueEditor extends CheckBox implements ValueEditor<Boolean>
     @Override
     public Node buildConfigNode(Label label) {
         label.setOnMouseClicked(click -> setCurrentValueUnsafe(!((boolean) getCurrentValue())));
-        return new HBox(this, label);
+        var box = new HBox(this, label);
+        box.setSpacing(5);
+        box.setAlignment(Pos.CENTER_LEFT);
+        return box;
     }
 
     @Override

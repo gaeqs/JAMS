@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.util.value;
 
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -46,7 +47,10 @@ public class ThemeValueEditor extends ComboBox<Theme> implements ValueEditor<The
 
 	@Override
 	public Node buildConfigNode(Label label) {
-		return new HBox(label, this);
+		var box =  new HBox(label, this);
+		box.setSpacing(5);
+		box.setAlignment(Pos.CENTER_LEFT);
+		return box;
 	}
 
 	@Override
