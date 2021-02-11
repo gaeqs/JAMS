@@ -24,7 +24,7 @@ import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.utils.FileUtils;
 
 import java.io.File;

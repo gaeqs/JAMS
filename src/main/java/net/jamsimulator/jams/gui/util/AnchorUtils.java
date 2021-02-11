@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.utils;
+package net.jamsimulator.jams.gui.util;
 
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;

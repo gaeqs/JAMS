@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.utils;
+package net.jamsimulator.jams.gui.util;
 
 public class CharacterCodes {
 

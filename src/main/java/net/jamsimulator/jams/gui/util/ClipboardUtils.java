@@ -22,10 +22,12 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.utils;
+package net.jamsimulator.jams.gui.util;
 
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
+import net.jamsimulator.jams.utils.FileUtils;
+import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
 import java.util.*;

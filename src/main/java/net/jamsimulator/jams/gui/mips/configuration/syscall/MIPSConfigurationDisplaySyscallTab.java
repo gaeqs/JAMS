@@ -7,7 +7,7 @@ import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 
 public class MIPSConfigurationDisplaySyscallTab extends AnchorPane {
 

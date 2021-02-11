@@ -3,7 +3,7 @@ package net.jamsimulator.jams.gui.mips.configuration;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 
 public class MIPSConfigurationsList extends AnchorPane {
 

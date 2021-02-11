@@ -16,7 +16,7 @@ import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.cache.event.CacheOperationEvent;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.HashMap;

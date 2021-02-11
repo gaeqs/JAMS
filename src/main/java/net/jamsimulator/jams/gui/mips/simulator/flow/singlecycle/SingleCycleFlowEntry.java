@@ -5,7 +5,7 @@ import javafx.scene.control.Label;
 import net.jamsimulator.jams.gui.mips.simulator.flow.FlowEntry;
 import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 
 public class SingleCycleFlowEntry extends FlowEntry {
 

@@ -1,12 +1,11 @@
 package net.jamsimulator.jams.gui.mips.simulator.flow;
 
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 
 public class FlowTableCycleVisualizer extends AnchorPane {
 

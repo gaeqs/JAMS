@@ -12,7 +12,7 @@ import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.MemorySection;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.ArrayList;

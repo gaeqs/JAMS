@@ -47,7 +47,7 @@ import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
 import net.jamsimulator.jams.gui.util.ZoomUtils;
 import net.jamsimulator.jams.utils.FileUtils;
-import net.jamsimulator.jams.utils.KeyCombinationBuilder;
+import net.jamsimulator.jams.gui.util.KeyCombinationBuilder;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.utils;
+package net.jamsimulator.jams.gui.util;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;

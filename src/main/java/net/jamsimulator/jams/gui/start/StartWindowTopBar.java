@@ -35,7 +35,7 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.window.WindowButtonClose;
 import net.jamsimulator.jams.gui.main.window.WindowButtonMinimize;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 
 
 public class StartWindowTopBar extends AnchorPane {

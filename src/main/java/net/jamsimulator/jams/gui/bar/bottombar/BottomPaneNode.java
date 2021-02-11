@@ -29,7 +29,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.gui.bar.BarPane;
 import net.jamsimulator.jams.gui.bar.PaneSnapshot;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 
 /**
  * Represents a wrapper of a node used by a {@link BottomBar}.

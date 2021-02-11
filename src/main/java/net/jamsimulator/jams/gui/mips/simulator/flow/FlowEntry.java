@@ -3,7 +3,7 @@ package net.jamsimulator.jams.gui.mips.simulator.flow;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 
 /**
  * Represents an instruction inside a {@link FlowTable}.

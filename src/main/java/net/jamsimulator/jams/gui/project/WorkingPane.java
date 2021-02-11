@@ -28,7 +28,6 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
@@ -43,7 +42,7 @@ import net.jamsimulator.jams.gui.bar.bottombar.BottomBar;
 import net.jamsimulator.jams.gui.bar.sidebar.SidePane;
 import net.jamsimulator.jams.gui.bar.sidebar.Sidebar;
 import net.jamsimulator.jams.gui.bar.sidebar.SidebarFillRegion;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 
 import java.util.Set;
 

@@ -44,7 +44,7 @@ import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.Virtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -151,8 +151,8 @@ public class FileEditorTab extends Tab implements ActionRegion {
 		Platform.runLater(() -> name.setText(saveMark ? file.getName() + " *" : file.getName()));
 	}
 
-	public void openInNewHolder(boolean horizontal) {
-		list.getHolder().openInNewHolder(this, horizontal);
+	public void openInNewHolder(FileOpenPosition position) {
+		list.getHolder().openInNewHolder(this, position);
 	}
 
 	public void layoutDisplay() {
