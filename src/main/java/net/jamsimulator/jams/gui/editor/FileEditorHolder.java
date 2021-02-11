@@ -331,6 +331,7 @@ public class FileEditorHolder extends SplitPane {
                 list.setHolder(this);
                 getItems().add(list);
                 SplitPane.setResizableWithParent(list, false);
+                refreshSupport();
             } else {
                 parent.removeChild(this);
             }
