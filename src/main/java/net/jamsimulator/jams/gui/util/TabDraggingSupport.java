@@ -2,12 +2,14 @@ package net.jamsimulator.jams.gui.util;
 
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.editor.FileEditorTab;
 import net.jamsimulator.jams.gui.editor.FileOpenPosition;
 
@@ -99,7 +101,16 @@ public class TabDraggingSupport {
 
             content.putString(draggingID);
             dragboard.setContent(content);
-            dragboard.setDragView(graphic.snapshot(null, null));
+
+
+            var sceneSnapshot = JamsApplication.getScene().snapshot(null);
+            int tx = (int) Math.ceil(graphic.getLocalToSceneTransform().getTx());
+            int ty = (int) Math.ceil(graphic.getLocalToSceneTransform().getTy());
+
+            var parameters = new SnapshotParameters();
+            parameters.setFill(sceneSnapshot.getPixelReader().getColor(tx, ty));
+
+            dragboard.setDragView(graphic.snapshot(parameters, null));
             current = tab;
         });
         graphic.setOnDragOver(e -> {
