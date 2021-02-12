@@ -92,6 +92,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
     protected boolean running;
     protected boolean finished;
 
+    protected int cycleDelay;
     protected long cycles;
 
     protected COP0Register badAddressRegister;
@@ -119,6 +120,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
         this.kernelStackBottom = kernelStackBottom;
         this.data = data;
         this.files = new SimulationFiles(this);
+        this.cycleDelay = 0;
 
         this.breakpoints = new HashSet<>();
 
@@ -312,6 +314,28 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
      */
     public int getKernelStackBottom() {
         return kernelStackBottom;
+    }
+
+    /**
+     * Returns the delay before a cycle of this simulation in milliseconds.
+     * <p>
+     * If the value is 0, this simulation will run at the fastest it can.
+     *
+     * @return the delay in ms.
+     */
+    public int getCycleDelay() {
+        return cycleDelay;
+    }
+
+    /**
+     * Sets the delay before a cycle of this simulation in milliseconds.
+     * <p>
+     * If the value is 0, this simulation will run at the fastest it can.
+     *
+     * @param cycleDelay the delay in ms.
+     */
+    public void setCycleDelay(int cycleDelay) {
+        this.cycleDelay = Math.max(0, cycleDelay);
     }
 
     /**
@@ -653,6 +677,19 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
         }
         callEvent(new SimulationCachesResetEvent(this));
         return true;
+    }
+
+    /**
+     * Sleeps the simulation the amount of time specified by the {@link #cycleDelay} variable.
+     */
+    protected void velocitySleep() {
+        if (cycleDelay > 0) {
+            try {
+                Thread.sleep(cycleDelay);
+            } catch (InterruptedException e) {
+                interruptThread();
+            }
+        }
     }
 
     /**

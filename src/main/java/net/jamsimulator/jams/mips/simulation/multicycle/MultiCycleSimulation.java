@@ -199,9 +199,12 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 			boolean first = true;
 			try {
 				while (!finished && !checkThreadInterrupted()) {
-					runStep(first);
-					first = false;
-					cycles++;
+					velocitySleep();
+					if (!checkThreadInterrupted()) {
+						runStep(first);
+						first = false;
+						cycles++;
+					}
 				}
 			} catch (Exception ex) {
 				System.err.println("PC: 0x" + StringUtils.addZeros(Integer.toHexString(registers.getProgramCounter().getValue()), 8));

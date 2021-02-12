@@ -1,9 +1,7 @@
 package net.jamsimulator.jams.gui.mips.project;
 
 import javafx.scene.Node;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.Jams;
@@ -27,6 +25,7 @@ import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.ZoomUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
+import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.register.Register;
@@ -199,6 +198,23 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
     @Override
     public void populateHBox(HBox buttonsHBox) {
         buttonsHBox.getChildren().clear();
+
+        var tooltip = new LanguageTooltip(Messages.ACTION_MIPS_SIMULATION_CYCLE_DELAY, LanguageTooltip.DEFAULT_DELAY);
+        var delayHint = new Label("0ms");
+        delayHint.setTooltip(tooltip);
+
+        var bar = new Slider(0, 20, 0);
+        bar.setPrefWidth(200);
+        bar.setTooltip(new LanguageTooltip(Messages.ABOUT, LanguageTooltip.DEFAULT_DELAY));
+        bar.valueProperty().addListener((obs, old, val) -> {
+            double normalized = (Math.pow(2, val.doubleValue() / 5) - 1) / 15;
+            int delay = (int) (normalized * 2000);
+            simulation.setCycleDelay(delay);
+            delayHint.setText(delay + "ms");
+        });
+        bar.setTooltip(tooltip);
+
+        buttonsHBox.getChildren().addAll(delayHint, bar);
         buttonsHBox.getChildren().addAll(executionButtons.getNodes());
     }
 

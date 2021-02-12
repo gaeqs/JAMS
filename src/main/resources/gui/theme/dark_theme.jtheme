@@ -578,11 +578,11 @@ AnchorPane {
 
 /*SLIDER*/
 .slider * {
-    -fx-background-color: -theme-background-darker;
+    -fx-background-color: -theme-background-darkest;
 }
 
 .slider .thumb {
-    -fx-background-color: -theme-background-lighter;
+    -fx-background-color: -theme-background-pressed;
 }
 
 /* TOOLTIP */
@@ -954,7 +954,7 @@ AnchorPane {
 }
 
 .code-area .left-bar .line-number .text {
-    -fx-fill: -theme-background-lighter;
+    -fx-fill: -theme-foreground-darker-2;
     -fx-font-family: "{FONT_CODE}";
     -fx-font-size: 12;
 }

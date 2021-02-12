@@ -579,11 +579,11 @@ AnchorPane {
 
 /*SLIDER*/
 .slider * {
-    -fx-background-color: -theme-background-darker;
+    -fx-background-color: -theme-background-lightest;
 }
 
 .slider .thumb {
-    -fx-background-color: -theme-background-lighter;
+    -fx-background-color: -theme-background-pressed;
 }
 
 /* TOOLTIP */

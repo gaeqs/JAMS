@@ -97,7 +97,7 @@ public class ProjectTab extends Tab {
 		buttonsHBox.setAlignment(Pos.CENTER_RIGHT);
 		buttonsHBox.setSpacing(2);
 		buttonsHBox.setPrefHeight(28);
-		buttonsHBox.setPrefWidth(300);
+		buttonsHBox.setPrefWidth(400);
 		pane.getChildren().add(buttonsHBox);
 
 

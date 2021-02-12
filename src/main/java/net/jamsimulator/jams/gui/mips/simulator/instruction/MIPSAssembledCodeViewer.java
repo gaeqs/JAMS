@@ -17,7 +17,6 @@ import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.event.*;
-import net.jamsimulator.jams.mips.simulation.pipelined.event.PipelineShiftEvent;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.CodeArea;
 
@@ -120,6 +119,13 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     protected abstract void refresh();
 
     /**
+     * Clears all styles of all paragraphs.
+     * <p>
+     * To be implemente by the different architectures.
+     */
+    protected abstract void clearStyles();
+
+    /**
      * Returns whether the given line is being styled by the architecture.
      * <p>
      * To be implemente by the different architectures.
@@ -130,13 +136,6 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     protected abstract boolean isLineBeingUsed(int line);
 
     //region events
-
-    @Listener
-    private void onPipelineShift(PipelineShiftEvent.After event) {
-        if (shouldUpdate) {
-            refresh();
-        }
-    }
 
     @Listener
     private void onSimulationLock(SimulationLockEvent event) {
@@ -152,6 +151,9 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     @Listener
     private void onSimulationStart(SimulationStartEvent event) {
         shouldUpdate = false;
+        if(simulation.getCycleDelay() == 0) {
+            clearStyles();
+        }
     }
 
     @Listener
@@ -162,9 +164,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
 
     @Listener
     private void onSimulationReset(SimulationResetEvent event) {
-        if (shouldUpdate) {
-            refresh();
-        }
+        refresh();
     }
 
     @Listener

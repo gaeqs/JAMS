@@ -1,11 +1,13 @@
 package net.jamsimulator.jams.gui.mips.simulator.instruction.type;
 
 import javafx.application.Platform;
+import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledCodeViewer;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledLine;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
+import net.jamsimulator.jams.mips.simulation.pipelined.event.PipelineShiftEvent;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -67,7 +69,27 @@ public class MIPSPipelinedAssembledCodeViewer extends MIPSAssembledCodeViewer {
     }
 
     @Override
+    protected void clearStyles() {
+        Platform.runLater(() -> {
+            for (int previousLine : previousLines) {
+                if (previousLine != -1) {
+                    int address = assembledLines.get(previousLine).getAddress().orElse(-1);
+                    boolean breakpoint = address != -1 && simulation.hasBreakpoint(address);
+                    setParagraphStyle(previousLine, breakpoint ? Set.of("instruction-breakpoint") : Collections.emptyList());
+                }
+            }
+        });
+    }
+
+    @Override
     protected boolean isLineBeingUsed(int line) {
         return line != -1 && Arrays.stream(previousLines).anyMatch(v -> v == line);
+    }
+
+    @Listener
+    private void onPipelineShift(PipelineShiftEvent.After event) {
+        if (shouldUpdate || simulation.getCycleDelay() != 0) {
+            refresh();
+        }
     }
 }

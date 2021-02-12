@@ -152,9 +152,12 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
             boolean first = true;
             try {
                 while (!finished && !checkThreadInterrupted()) {
-                    runStep(first);
-                    first = false;
-                    instructions++;
+                    velocitySleep();
+                    if (!checkThreadInterrupted()) {
+                        runStep(first);
+                        first = false;
+                        instructions++;
+                    }
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
