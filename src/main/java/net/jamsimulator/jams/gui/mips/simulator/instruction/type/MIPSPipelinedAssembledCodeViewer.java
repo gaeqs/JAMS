@@ -88,8 +88,14 @@ public class MIPSPipelinedAssembledCodeViewer extends MIPSAssembledCodeViewer {
 
     @Listener
     private void onPipelineShift(PipelineShiftEvent.After event) {
-        if (shouldUpdate || simulation.getCycleDelay() != 0) {
+        boolean newFullSpeed = simulation.getCycleDelay() == 0;
+        if (!fullSpeed && newFullSpeed) {
+            clearStyles();
+        }
+        if (shouldUpdate || !newFullSpeed) {
             refresh();
         }
+
+        fullSpeed = newFullSpeed;
     }
 }

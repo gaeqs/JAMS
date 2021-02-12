@@ -72,10 +72,16 @@ public class MIPSMultiCycleAssembledCodeViewer extends MIPSAssembledCodeViewer {
     }
 
     @Listener
-    private void onMultiCycleStep (MultiCycleStepEvent.After event) {
-        if (shouldUpdate || simulation.getCycleDelay() != 0) {
+    private void onMultiCycleStep(MultiCycleStepEvent.After event) {
+        boolean newFullSpeed = simulation.getCycleDelay() == 0;
+        if (!fullSpeed && newFullSpeed) {
+            clearStyles();
+        }
+        if (shouldUpdate || !newFullSpeed) {
             refresh();
         }
+
+        fullSpeed = newFullSpeed;
     }
 
 }

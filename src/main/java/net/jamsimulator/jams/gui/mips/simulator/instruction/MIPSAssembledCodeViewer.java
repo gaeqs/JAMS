@@ -66,6 +66,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     protected final Register pc;
 
     protected boolean shouldUpdate;
+    protected boolean fullSpeed;
 
     public Simulation<?> getSimulation() {
         return simulation;
@@ -83,6 +84,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
         this.kernel = kernel;
         pc = simulation.getRegisters().getProgramCounter();
         shouldUpdate = true;
+        fullSpeed = simulation.getCycleDelay() == 0;
 
         addElements(simulation);
 
@@ -151,7 +153,8 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     @Listener
     private void onSimulationStart(SimulationStartEvent event) {
         shouldUpdate = false;
-        if(simulation.getCycleDelay() == 0) {
+        fullSpeed = simulation.getCycleDelay() == 0;
+        if (fullSpeed) {
             clearStyles();
         }
     }
