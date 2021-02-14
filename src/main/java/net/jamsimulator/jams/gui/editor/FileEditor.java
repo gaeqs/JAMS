@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.editor;
 
 
+import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.gui.ActionRegion;
 
 /**
@@ -32,25 +33,32 @@ import net.jamsimulator.jams.gui.ActionRegion;
  */
 public interface FileEditor extends ActionRegion {
 
-	/**
-	 * Returns the {@link FileEditorTab} of this editor.
-	 *
-	 * @return the {@link FileEditorTab}.
-	 */
-	FileEditorTab getTab();
+    /**
+     * Returns the {@link FileEditorTab} of this editor.
+     *
+     * @return the {@link FileEditorTab}.
+     */
+    FileEditorTab getTab();
 
-	/**
-	 * This method is executed when the file editor is closed.
-	 */
-	void onClose();
+    /**
+     * This method is executed when the file editor is closed.
+     */
+    void onClose();
 
-	/**
-	 * This method is executed when the file should be saved.
-	 */
-	void save();
+    /**
+     * This method is executed when the file should be saved.
+     */
+    void save();
 
-	/**
-	 * This method is executed when the file should be reloaded.
-	 */
-	void reload();
+    /**
+     * This method is executed when the file should be reloaded.
+     */
+    void reload();
+
+    /**
+     * Adds this editor to the given {@link AnchorPane}.
+     *
+     * @param tabAnchorPane the {@link AnchorPane} inside the tab.
+     */
+    void addNodesToTab(AnchorPane tabAnchorPane);
 }

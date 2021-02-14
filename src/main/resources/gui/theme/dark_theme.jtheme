@@ -1023,6 +1023,20 @@ AnchorPane {
     -fx-font-weight: bolder;
 }
 
+/* HINT BAR */
+.hint-bar-error {
+    -fx-fill: #cb2f2f;
+}
+
+.hint-bar-warning {
+    -fx-fill: #efbe0a;
+}
+
+.hint-bar-info {
+    -fx-fill: #4c762e;
+}
+
+
 /* LOG */
 .code-area .log_error {
     -fx-fill: #cb2f2f;

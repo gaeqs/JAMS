@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.mips.editor.element;
 
 import net.jamsimulator.jams.collection.Bag;
+import net.jamsimulator.jams.gui.editor.EditorHintBar;
 import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
 import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MIPSProject;
@@ -313,13 +314,15 @@ public class MIPSFileElements {
      *
      * @param area the area to style.
      */
-    public void styleAll(CodeArea area) {
+    public void styleAll(CodeArea area, EditorHintBar hintBar) {
         if (lines.isEmpty()) return;
         int lastEnd = 0;
         var spansBuilder = new StyleSpansBuilder<Collection<String>>();
 
+        int index = 0;
         for (MIPSLine line : lines) {
             lastEnd = line.styleLine(lastEnd, spansBuilder);
+            line.refreshHints(hintBar, index++);
         }
         requiresUpdate.clear();
 
@@ -340,7 +343,7 @@ public class MIPSFileElements {
      * @param from   the first line index.
      * @param amount the amount of lines to style.
      */
-    public void styleLines(CodeArea area, int from, int amount) {
+    public void styleLines(CodeArea area, EditorHintBar hintBar, int from, int amount) {
         if (from < 0 || from + amount > lines.size())
             throw new IndexOutOfBoundsException("Index out of bounds. [" + from + ", " + (from + amount) + ")");
 
@@ -348,7 +351,9 @@ public class MIPSFileElements {
         var spansBuilder = new StyleSpansBuilder<Collection<String>>();
 
         for (int i = 0; i < amount; i++) {
-            lastEnd = lines.get(from + i).styleLine(lastEnd, spansBuilder);
+            var line = lines.get(from + i);
+            lastEnd = line.styleLine(lastEnd, spansBuilder);
+            line.refreshHints(hintBar, from + i);
         }
 
         StyleSpans<Collection<String>> spans;
@@ -369,6 +374,8 @@ public class MIPSFileElements {
     public void update(MIPSFileEditor area) {
         if (requiresUpdate.isEmpty()) return;
 
+        var hintBar = area.getHintBar();
+
         MIPSLine line;
 
         for (int i : requiresUpdate) {
@@ -379,6 +386,7 @@ public class MIPSFileElements {
 
             line.refreshMetadata(this);
             line.styleLine(line.getStart(), spansBuilder);
+            line.refreshHints(hintBar, i);
 
             StyleSpans<Collection<String>> spans;
             try {

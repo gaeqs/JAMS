@@ -33,6 +33,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Popup;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
@@ -45,9 +46,11 @@ import net.jamsimulator.jams.gui.editor.popup.DocumentationPopup;
 import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
+import net.jamsimulator.jams.gui.util.GUIReflectionUtils;
+import net.jamsimulator.jams.gui.util.KeyCombinationBuilder;
 import net.jamsimulator.jams.gui.util.ZoomUtils;
 import net.jamsimulator.jams.utils.FileUtils;
-import net.jamsimulator.jams.gui.util.KeyCombinationBuilder;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -66,12 +69,13 @@ import java.util.regex.Pattern;
 /**
  * Represents a code editor.
  */
-public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrollHandled {
+public class CodeFileEditor extends CodeArea implements FileEditor {
 
     protected final FileEditorTab tab;
     protected String old, original;
-    protected VirtualizedScrollPane scrollPane;
-    protected ScaledVirtualized zoom;
+    protected VirtualizedScrollPane<ScaledVirtualized<CodeFileEditor>> scrollPane;
+    protected ScaledVirtualized<CodeFileEditor> zoom;
+    protected EditorHintBar hintBar;
 
     protected AutocompletionPopup autocompletionPopup;
     protected DocumentationPopup documentationPopup;
@@ -81,9 +85,13 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
         super(read(tab));
         this.tab = tab;
         this.original = getText();
+        this.hintBar = new EditorHintBar(this);
+
+        zoom = new ScaledVirtualized<>(this);
+        scrollPane = new VirtualizedScrollPane<>(zoom);
+        ZoomUtils.applyZoomListener(this, zoom);
 
         CustomLineNumberFactory factory = CustomLineNumberFactory.get(this);
-        getChildren().add(0, factory.getBackground());
 
         JamsApplication.getThemeManager().getSelected().apply(this);
         JamsApplication.getThemeManager().registerListeners(this, true);
@@ -123,6 +131,15 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
         return tab;
     }
 
+    /**
+     * Returns the {@link EditorHintBar hint bar} of this editor.
+     * The hint bar is used to show errors, warnings and information in the right side of the editor.
+     *
+     * @return the {@link EditorHintBar hint bar}.
+     */
+    public EditorHintBar getHintBar() {
+        return hintBar;
+    }
 
     /**
      * Returns the {@link AutocompletionPopup} used in this editor.
@@ -285,30 +302,39 @@ public class CodeFileEditor extends CodeArea implements FileEditor, VirtualScrol
     }
 
     @Override
+    public void addNodesToTab(AnchorPane tabAnchorPane) {
+        tabAnchorPane.getChildren().add(scrollPane);
+        AnchorUtils.setAnchor(scrollPane, 0, 0, 0, 0);
+
+        var optional = GUIReflectionUtils.getVerticalScrollBar(scrollPane);
+
+        tabAnchorPane.getChildren().add(hintBar);
+        hintBar.setPrefWidth(15);
+        AnchorUtils.setAnchor(hintBar, 0, 0, -1, optional
+                .map(bar -> bar.isVisible() ? bar.getWidth() : 0.0).orElse(0.0));
+
+        if (optional.isEmpty()) return;
+        var bar = optional.get();
+
+        bar.widthProperty().addListener((obs, old, val) ->
+                AnchorUtils.setAnchor(hintBar, 0, 0, -1, bar.isVisible() ? val.doubleValue() : 0));
+        bar.visibleProperty().addListener((obs, old, val) ->
+                AnchorUtils.setAnchor(hintBar, 0, 0, -1, val ? bar.getWidth() : 0));
+    }
+
+    @Override
     public boolean supportsActionRegion(String region) {
         return RegionTags.TEXT_EDITOR.equals(region) || RegionTags.EDITOR_TAB.equals(region);
     }
 
-    @Override
-    public VirtualizedScrollPane getScrollPane() {
+    public VirtualizedScrollPane<?> getScrollPane() {
         return scrollPane;
     }
 
-    @Override
-    public void setScrollPane(VirtualizedScrollPane scrollPane) {
-        this.scrollPane = scrollPane;
-    }
-
-    @Override
-    public ScaledVirtualized getZoom() {
+    public ScaledVirtualized<?> getZoom() {
         return zoom;
     }
 
-    @Override
-    public void setZoom(ScaledVirtualized zoom) {
-        this.zoom = zoom;
-        ZoomUtils.applyZoomListener(this, zoom);
-    }
 
     //endregion
 

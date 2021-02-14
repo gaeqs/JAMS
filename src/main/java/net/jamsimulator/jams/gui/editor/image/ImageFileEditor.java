@@ -24,50 +24,61 @@
 
 package net.jamsimulator.jams.gui.editor.image;
 
+import javafx.scene.Node;
 import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditorTab;
 import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
+import net.jamsimulator.jams.gui.util.PixelScrollPane;
 
 import java.net.MalformedURLException;
 
 public class ImageFileEditor extends NearestImageView implements FileEditor {
 
-	private final FileEditorTab tab;
+    private final FileEditorTab tab;
 
-	public ImageFileEditor(FileEditorTab tab) throws MalformedURLException, IllegalArgumentException {
-		super(new Image(tab.getFile().toURI().toURL().toString()));
-		this.tab = tab;
+    public ImageFileEditor(FileEditorTab tab) throws MalformedURLException, IllegalArgumentException {
+        super(new Image(tab.getFile().toURI().toURL().toString()));
+        this.tab = tab;
 
-		focusedProperty().addListener((obs, old, val) -> {
-			if(val) {
-				getTab().getList().getHolder().setLastFocusedEditor(this);
-			}
-		});
-	}
+        focusedProperty().addListener((obs, old, val) -> {
+            if (val) {
+                getTab().getList().getHolder().setLastFocusedEditor(this);
+            }
+        });
+    }
 
-	@Override
-	public FileEditorTab getTab() {
-		return tab;
-	}
+    @Override
+    public FileEditorTab getTab() {
+        return tab;
+    }
 
-	@Override
-	public void onClose() {
-	}
+    @Override
+    public void onClose() {
+    }
 
-	@Override
-	public void save() {
+    @Override
+    public void save() {
 
-	}
+    }
 
-	@Override
-	public void reload() {
+    @Override
+    public void reload() {
 
-	}
+    }
 
-	@Override
-	public boolean supportsActionRegion(String region) {
-		return RegionTags.EDITOR_TAB.equals(region);
-	}
+    @Override
+    public void addNodesToTab(AnchorPane tabAnchorPane) {
+        var scroll = new PixelScrollPane(this);
+        tabAnchorPane.getChildren().add(scroll);
+        AnchorUtils.setAnchor(scroll, 0, 0, 0, 0);
+    }
+
+    @Override
+    public boolean supportsActionRegion(String region) {
+        return RegionTags.EDITOR_TAB.equals(region);
+    }
 }

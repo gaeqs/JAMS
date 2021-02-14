@@ -1004,6 +1004,20 @@ AnchorPane {
     -fx-background-color: -theme-element-selected;
 }
 
+/* HINT BAR */
+.hint-bar-error {
+    -fx-fill: #661717;
+}
+
+.hint-bar-warning {
+    -fx-fill: #6e5703;
+}
+
+.hint-bar-info {
+    -fx-fill: #4c762e;
+}
+
+
 /* LOG */
 .code-area .log_error {
     -fx-fill: #800202;

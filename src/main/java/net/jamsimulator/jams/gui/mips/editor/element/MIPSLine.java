@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.mips.editor.element;
 
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.editor.EditorHintBar;
 import net.jamsimulator.jams.utils.LabelUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.CodeArea;
@@ -299,6 +300,23 @@ public class MIPSLine {
         }
 
         return lastEnd;
+    }
+
+    public void refreshHints(EditorHintBar hintBar, int line) {
+        if (hintBar == null) return;
+        var elements = getSortedElements();
+        boolean inspections = elements.stream().anyMatch(MIPSCodeElement::hasInspections);
+
+        if (inspections) {
+            boolean errors = elements.stream().anyMatch(MIPSCodeElement::hasErrors);
+            if (errors) {
+                hintBar.addHint(line, EditorHintBar.HintType.ERROR);
+            } else {
+                hintBar.addHint(line, EditorHintBar.HintType.WARNING);
+            }
+        } else {
+            hintBar.removeHint(line);
+        }
     }
 
     /**
