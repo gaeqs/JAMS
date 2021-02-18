@@ -393,7 +393,7 @@ public class MIPSFileElements {
                 spans = spansBuilder.create();
             } catch (IllegalStateException ex) {
                 // No spans have been added.
-                return;
+                continue;
             }
             area.setStyleSpans(i, 0, spans);
 
