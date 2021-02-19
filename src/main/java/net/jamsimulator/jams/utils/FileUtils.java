@@ -26,6 +26,7 @@ package net.jamsimulator.jams.utils;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.function.BiConsumer;
 
 public class FileUtils {
 
@@ -97,7 +98,7 @@ public class FileUtils {
             Path from = target.toPath();
             Path to = new File(folder, target.getName()).toPath();
             if (target.isDirectory()) {
-                Files.walkFileTree(from, new CopyFileVisitor(from, to, false));
+                Files.walkFileTree(from, new CopyFileVisitor(from, to, false, null));
             } else {
                 Files.copy(from, to, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
             }
@@ -108,13 +109,15 @@ public class FileUtils {
         return true;
     }
 
-    public static boolean moveFile(File folder, File target) {
+    public static boolean moveFile(File folder, File target, BiConsumer<File, File> moveAction) {
         try {
+            File toFile = new File(folder, target.getName());
             Path from = target.toPath();
-            Path to = new File(folder, target.getName()).toPath();
+            Path to = toFile.toPath();
             if (target.isDirectory()) {
-                Files.walkFileTree(from, new CopyFileVisitor(from, to, true));
+                Files.walkFileTree(from, new CopyFileVisitor(from, to, true, moveAction));
             } else {
+                moveAction.accept(target, toFile);
                 Files.move(from, to, StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {

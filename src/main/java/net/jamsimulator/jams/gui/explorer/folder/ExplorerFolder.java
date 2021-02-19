@@ -212,7 +212,8 @@ public class ExplorerFolder extends ExplorerSection {
         addEventHandler(DragEvent.DRAG_EXITED, event -> removeDragHint());
 
         addEventHandler(DragEvent.DRAG_DROPPED, event -> {
-            FolderExplorerDragAndDropManagement.manageDrop(event.getDragboard(), folder);
+            var explorer = (FolderExplorer) getExplorer();
+            FolderExplorerDragAndDropManagement.manageDrop(event.getDragboard(), folder, explorer.getFileMoveAction());
             event.setDropCompleted(true);
             event.consume();
         });

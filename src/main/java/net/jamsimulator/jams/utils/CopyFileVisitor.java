@@ -24,9 +24,11 @@
 
 package net.jamsimulator.jams.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.function.BiConsumer;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 
@@ -36,11 +38,13 @@ public class CopyFileVisitor extends SimpleFileVisitor<Path> {
     private final Path source;
     private final Path target;
     private final boolean move;
+    private final BiConsumer<File, File> moveAction;
 
-    public CopyFileVisitor(Path source, Path target, boolean move) {
+    public CopyFileVisitor(Path source, Path target, boolean move, BiConsumer<File, File> moveAction) {
         this.source = source;
         this.target = target;
         this.move = move;
+        this.moveAction = moveAction;
     }
 
 
@@ -59,18 +63,19 @@ public class CopyFileVisitor extends SimpleFileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         Path newFile = target.resolve(source.relativize(file));
-        if(move) {
+        if (move) {
+            moveAction.accept(file.toFile(), newFile.toFile());
             Files.move(file, newFile, StandardCopyOption.REPLACE_EXISTING);
         } else {
             Files.copy(file, newFile, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
         }
-        Files.copy(file, newFile);
         return FileVisitResult.CONTINUE;
 
     }
 
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+        dir.toFile().delete();
         return FileVisitResult.CONTINUE;
     }
 

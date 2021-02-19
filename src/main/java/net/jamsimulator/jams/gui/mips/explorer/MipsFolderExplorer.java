@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.mips.explorer;
 
+import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.explorer.event.ExplorerAddElementEvent;
@@ -39,93 +40,100 @@ import java.util.Optional;
 
 public class MipsFolderExplorer extends FolderExplorer {
 
-	public static final String EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS = "mips-explorer-file-to-assemble";
+    public static final String EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS = "mips-explorer-file-to-assemble";
 
-	private final MIPSProject project;
+    private final MIPSProject project;
 
-	/**
-	 * Creates the mips explorer folder.
-	 *
-	 * @param project    the {@link MIPSProject} of this explorer.
-	 * @param scrollPane the {@link ScrollPane} handling this explorer.
-	 */
-	public MipsFolderExplorer(MIPSProject project, ScrollPane scrollPane) {
-		super(project.getFolder(), scrollPane);
-		this.project = project;
-		project.getData().getFilesToAssemble().registerListeners(this, true);
-		for (File file : project.getData().getFilesToAssemble().getFiles()) {
-			markFileToAssemble(file);
-		}
+    /**
+     * Creates the mips explorer folder.
+     *
+     * @param project    the {@link MIPSProject} of this explorer.
+     * @param scrollPane the {@link ScrollPane} handling this explorer.
+     */
+    public MipsFolderExplorer(MIPSProject project, ScrollPane scrollPane) {
+        super(project.getFolder(), scrollPane);
+        this.project = project;
+        project.getData().getFilesToAssemble().registerListeners(this, true);
+        for (File file : project.getData().getFilesToAssemble().getFiles()) {
+            markFileToAssemble(file);
+        }
 
-		getExplorerFolder(project.getData().getFolder()).ifPresent(metadataFolder ->
-				metadataFolder.getRepresentation().getStyleClass().add("explorer-jams-folder"));
+        getExplorerFolder(project.getData().getFolder()).ifPresent(metadataFolder ->
+                metadataFolder.getRepresentation().getStyleClass().add("explorer-jams-folder"));
 
-		registerListeners(this, true);
-	}
+        setFileMoveAction((from, to) -> {
+            if (project.getData().getFilesToAssemble().containsFile(from)) {
+                Platform.runLater(() -> project.getData().getFilesToAssemble().addFile(to, true));
+            }
 
-	/**
-	 * Returns the {@link MIPSProject} of this explorer.
-	 *
-	 * @return the {@link MIPSProject}.
-	 */
-	public MIPSProject getProject() {
-		return project;
-	}
+        });
 
-	/**
-	 * Disposes this project. This method must be called when this explorer is no longer needed.
-	 */
-	public void dispose() {
-		killWatchers();
-		project.getData().getFilesToAssemble().unregisterListeners(this);
-	}
+        registerListeners(this, true);
+    }
 
-	private void markFileToAssemble(File file) {
-		Optional<ExplorerFile> optional = getExplorerFile(file);
-		if (!optional.isPresent()) return;
-		ExplorerFile explorerFile = optional.get();
+    /**
+     * Returns the {@link MIPSProject} of this explorer.
+     *
+     * @return the {@link MIPSProject}.
+     */
+    public MIPSProject getProject() {
+        return project;
+    }
 
-		if (!explorerFile.getStyleClass().contains(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS)) {
-			explorerFile.getStyleClass().add(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS);
-		}
-	}
+    /**
+     * Disposes this project. This method must be called when this explorer is no longer needed.
+     */
+    public void dispose() {
+        killWatchers();
+        project.getData().getFilesToAssemble().unregisterListeners(this);
+    }
 
-	private void unmarkFileToAssemble(File file) {
-		Optional<ExplorerFile> optional = getExplorerFile(file);
-		if (!optional.isPresent()) return;
-		ExplorerFile explorerFile = optional.get();
+    private void markFileToAssemble(File file) {
+        Optional<ExplorerFile> optional = getExplorerFile(file);
+        if (optional.isEmpty()) return;
+        ExplorerFile explorerFile = optional.get();
 
-		explorerFile.getStyleClass().remove(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS);
-	}
+        if (!explorerFile.getStyleClass().contains(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS)) {
+            explorerFile.getStyleClass().add(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS);
+        }
+    }
 
-	@Listener
-	private void onFileAddedToAssemble(FileAddToAssembleEvent.After event) {
-		File file = event.getFile();
-		markFileToAssemble(file);
-	}
+    private void unmarkFileToAssemble(File file) {
+        Optional<ExplorerFile> optional = getExplorerFile(file);
+        if (optional.isEmpty()) return;
+        ExplorerFile explorerFile = optional.get();
 
-	@Listener
-	private void onFileRemoveFromAssemble(FileRemoveFromAssembleEvent.After event) {
-		File file = event.getFile();
-		unmarkFileToAssemble(file);
-	}
+        explorerFile.getStyleClass().remove(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS);
+    }
 
-	@Listener
-	private void onFileAdded(ExplorerAddElementEvent.After event) {
-		if (event.getElement() instanceof ExplorerFile) {
-			ExplorerFile eFile = (ExplorerFile) event.getElement();
-			File file = eFile.getFile();
+    @Listener
+    private void onFileAddedToAssemble(FileAddToAssembleEvent.After event) {
+        File file = event.getFile();
+        markFileToAssemble(file);
+    }
 
-			if (project.getData().getFilesToAssemble().getFiles().contains(file)) {
-				if (!eFile.getStyleClass().contains(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS)) {
-					eFile.getStyleClass().add(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS);
-				}
-			}
-		}
-	}
+    @Listener
+    private void onFileRemoveFromAssemble(FileRemoveFromAssembleEvent.After event) {
+        File file = event.getFile();
+        unmarkFileToAssemble(file);
+    }
 
-	@Listener
-	private void onFileRemoved (ExplorerRemoveElementEvent.After event) {
-		project.getData().getFilesToAssemble().checkFiles();
-	}
+    @Listener
+    private void onFileAdded(ExplorerAddElementEvent.After event) {
+        if (event.getElement() instanceof ExplorerFile) {
+            ExplorerFile eFile = (ExplorerFile) event.getElement();
+            File file = eFile.getFile();
+
+            if (project.getData().getFilesToAssemble().containsFile(file)) {
+                if (!eFile.getStyleClass().contains(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS)) {
+                    eFile.getStyleClass().add(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS);
+                }
+            }
+        }
+    }
+
+    @Listener
+    private void onFileRemoved(ExplorerRemoveElementEvent.After event) {
+        project.getData().getFilesToAssemble().checkFiles();
+    }
 }

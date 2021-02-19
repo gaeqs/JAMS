@@ -33,6 +33,7 @@ import net.jamsimulator.jams.utils.FileUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 public class FolderExplorerDragAndDropManagement {
 
@@ -54,21 +55,22 @@ public class FolderExplorerDragAndDropManagement {
         ClipboardContent content = new ClipboardContent();
         content.putFiles(files);
 
-        StringBuilder builder = new StringBuilder(EXPLORER_PROTOCOL);
+        StringBuilder builder = new StringBuilder();
         for (File element : files) {
-            builder.append(':');
-            builder.append(element.getAbsolutePath());
+            builder.append(EXPLORER_PROTOCOL).append(':')
+                    .append(element.getAbsolutePath())
+                    .append('\n');
         }
-        content.putString(builder.toString());
+        content.putString(builder.length() == 0 ? "" : builder.substring(0, builder.length() - 1));
         dragboard.setContent(content);
     }
 
-    public static void manageDrop(Dragboard content, File folder) {
+    public static void manageDrop(Dragboard content, File folder, BiConsumer<File, File> moveAction) {
         boolean move = content.getTransferModes().contains(TransferMode.MOVE);
         if (content.hasUrl()) {
             String string = content.getUrl();
             if (string.startsWith(URL_PROTOCOL + ":")) {
-                manageDropFromURL(string, folder, move);
+                manageDropFromURL(string, folder, move, moveAction);
                 return;
             }
         }
@@ -76,58 +78,49 @@ public class FolderExplorerDragAndDropManagement {
         if (content.hasString()) {
             String string = content.getString();
             if (string.startsWith(EXPLORER_PROTOCOL + ":")) {
-                manageDropFromString(string, folder, move);
+                manageDropFromString(string, folder, move, moveAction);
                 return;
             }
         }
 
         List<File> files = content.getFiles();
         for (File file : files) {
-            if (move ? !FileUtils.moveFile(folder, file) : !FileUtils.copyFile(folder, file)) {
-                System.err.println("Error while copying file " + file + ".");
-            }
+            manageFileDrop(file, folder, move, moveAction);
         }
     }
 
-    private static void manageDropFromString(String string, File folder, boolean move) {
-        String files = string.substring(EXPLORER_PROTOCOL.length() + 1);
-        if (files.isEmpty()) return;
-        String[] filesArray = files.split("\n");
+    private static void manageDropFromString(String string, File folder, boolean move, BiConsumer<File, File> moveAction) {
+        String[] filesArray = string.split("\n");
         for (String path : filesArray) {
             if (path.isEmpty()) continue;
             try {
-                manageFileDrop(new File(path), folder, move);
+                manageFileDrop(new File(path.substring(EXPLORER_PROTOCOL.length() + 1)), folder, move, moveAction);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
     }
 
-    private static void manageDropFromURL(String url, File folder, boolean move) {
-        if (url.isEmpty()) return;
+    private static void manageDropFromURL(String url, File folder, boolean move, BiConsumer<File, File> moveAction) {
         String[] filesArray = url.split("\n");
         for (String path : filesArray) {
             if (path.isEmpty()) continue;
             try {
                 var file = new File(path.substring(URL_PROTOCOL.length() + 2).trim());
-                manageFileDrop(file, folder, move);
+                manageFileDrop(file, folder, move, moveAction);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
     }
 
-    private static void manageFileDrop(File file, File folder, boolean move) {
-        if (!file.exists() || folder.getPath().startsWith(file.getPath())) {
+    private static void manageFileDrop(File file, File folder, boolean move, BiConsumer<File, File> moveAction) {
+        if (!file.exists() || folder.getPath().startsWith(file.getPath()) || file.getParentFile().equals(folder)) {
             return;
         }
 
-        if (move ? !FileUtils.moveFile(folder, file) : !FileUtils.copyFile(folder, file)) {
-            System.err.println("Error while copying file " + file + ".");
-        } else {
-            if (!move && !file.delete() || move && file.exists()) {
-                System.err.println("Error while copying file " + file + ".");
-            }
+        if (move ? !FileUtils.moveFile(folder, file, moveAction) : !FileUtils.copyFile(folder, file)) {
+            new IllegalStateException("Error while copying file " + file + ".").printStackTrace();
         }
     }
 
