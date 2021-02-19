@@ -192,6 +192,22 @@ public class ExplorerFolder extends ExplorerSection {
         if (parent != null && parent instanceof ExplorerFolder) ((ExplorerFolder) parent).removeDragHint();
     }
 
+    /**
+     * Adds the drop here hint to this element.
+     */
+    public void addDropHereHint() {
+        if (!representation.getStyleClass().contains("explorer-folder-drop-location")) {
+            representation.getStyleClass().add("explorer-folder-drop-location");
+        }
+    }
+
+    /**
+     * Removes the drop here hint from this element.
+     */
+    public void removeDropHereHint() {
+        representation.getStyleClass().remove("explorer-folder-drop-location");
+    }
+
     @Override
     protected void loadListeners() {
         super.loadListeners();
@@ -237,12 +253,10 @@ public class ExplorerFolder extends ExplorerSection {
         for (File file : folderFiles) {
             if (file.isDirectory()) {
                 element = new ExplorerFolder(explorer, this, file, hierarchyLevel + 1);
-                elements.add(element);
-                filteredElements.add(element);
+                addElement(element);
             } else if (file.isFile()) {
                 element = new ExplorerFile(this, file, hierarchyLevel + 1);
-                elements.add(element);
-                filteredElements.add(element);
+                addElement(element);
             }
         }
         representation.refreshStatusIcon();

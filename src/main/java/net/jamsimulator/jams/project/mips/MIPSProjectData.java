@@ -145,7 +145,7 @@ public class MIPSProjectData extends ProjectData {
 	@Override
 	public void save() {
 		try {
-			filesToAssemble.save(folder);
+			filesToAssemble.save(metadataFolder);
 			saveMipsConfiguration();
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -159,7 +159,7 @@ public class MIPSProjectData extends ProjectData {
 		super.load();
 		try {
 			loadMipsConfiguration();
-			filesToAssemble.load(folder);
+			filesToAssemble.load(metadataFolder);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -188,7 +188,7 @@ public class MIPSProjectData extends ProjectData {
 				.filter(target -> target.getName().equals(selected)).findAny().orElse(null);
 
 		try {
-			filesToAssemble.load(folder);
+			filesToAssemble.load(metadataFolder);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

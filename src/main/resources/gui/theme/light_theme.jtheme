@@ -760,15 +760,23 @@ AnchorPane {
 /*FOLDER EXPLORER*/
 .explorer-folder .label,
 .explorer-file .label {
-    -fx-border-width: 1;
+    -fx-border-width: 0;
+    -fx-padding: 1;
     -fx-border-color: transparent;
 }
 
 .explorer-folder-allow-drop .label,
 .explorer-file-allow-drop .label {
-    -fx-border-color: red;
+    -fx-border-color: #561414;
+    -fx-border-width: 1;
+    -fx-padding: 0;
 }
 
+.explorer-folder-drop-location .label {
+    -fx-border-color: #3a4166;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 1 1 0 1;
+}
 /*BOTTOM BAR*/
 .bottom-bar {
     -fx-background-color: -theme-background-darker-2;
@@ -821,11 +829,11 @@ AnchorPane {
     -fx-background-color: -theme-element-selected;
 }
 
-.explorer-jams-folder {
-    -fx-background-color: #f1c4c4;
+.explorer-out-folder {
+    -fx-background-color: #cac0a7;
 }
 
-.explorer-jams-folder.selected-explorer-element {
+.explorer-out-folder.selected-explorer-element {
     -fx-background-color: -theme-element-selected;
 }
 

@@ -34,10 +34,10 @@ import java.io.IOException;
 public abstract class ProjectData extends SimpleEventBroadcast {
 
 	public static final String METADATA_FOLDER_NAME = ".jams";
-	public static final String FILES_FOLDER_NAME = "files";
+	public static final String FILES_FOLDER_NAME = "Simulation files";
 	public static final String METADATA_DATA_NAME = "data.json";
 
-	protected final File folder;
+	protected final File metadataFolder;
 	protected final File filesFolder;
 	protected boolean loaded;
 	protected RootConfiguration data;
@@ -45,8 +45,8 @@ public abstract class ProjectData extends SimpleEventBroadcast {
 	protected String name;
 
 	public ProjectData(File projectFolder) {
-		folder = new File(projectFolder, METADATA_FOLDER_NAME);
-		if (!FolderUtils.checkFolder(folder)) {
+		metadataFolder = new File(projectFolder, METADATA_FOLDER_NAME);
+		if (!FolderUtils.checkFolder(metadataFolder)) {
 			throw new RuntimeException("Couldn't create data folder!");
 		}
 		filesFolder = new File(projectFolder, FILES_FOLDER_NAME);
@@ -55,8 +55,8 @@ public abstract class ProjectData extends SimpleEventBroadcast {
 		}
 	}
 
-	public File getFolder() {
-		return folder;
+	public File getMetadataFolder() {
+		return metadataFolder;
 	}
 
 	public File getFilesFolder() {
@@ -84,11 +84,11 @@ public abstract class ProjectData extends SimpleEventBroadcast {
 		if (loaded) return;
 		loaded = true;
 		try {
-			data = new RootConfiguration(new File(folder, METADATA_DATA_NAME));
+			data = new RootConfiguration(new File(metadataFolder, METADATA_DATA_NAME));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 
-		name = data.getString("name").orElse(folder.getParentFile().getName());
+		name = data.getString("name").orElse(metadataFolder.getParentFile().getName());
 	}
 }

@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Represents an {@link Explorer} whose elements
@@ -49,11 +50,13 @@ public class FolderExplorer extends Explorer {
      *
      * @param mainFolder the main folder of the explorer.
      */
-    public FolderExplorer(File mainFolder, ScrollPane scrollPane) {
+    public FolderExplorer(File mainFolder, ScrollPane scrollPane, Predicate<File> fileFilter) {
         super(scrollPane, true, false);
         Validate.notNull(mainFolder, "Folder cannot be null!");
         Validate.isTrue(mainFolder.isDirectory(), "Folder must be a directory!");
         this.mainFolder = mainFolder;
+
+        filter = element -> !(element instanceof ExplorerFile) || fileFilter.test(((ExplorerFile) element).getFile());
 
         fileOpenAction = file -> {
         };

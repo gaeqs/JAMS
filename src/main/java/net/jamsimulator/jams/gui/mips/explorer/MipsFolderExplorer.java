@@ -26,21 +26,26 @@ package net.jamsimulator.jams.gui.mips.explorer;
 
 import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.Region;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.explorer.event.ExplorerAddElementEvent;
 import net.jamsimulator.jams.gui.explorer.event.ExplorerRemoveElementEvent;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
+import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
 import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Optional;
 
 public class MipsFolderExplorer extends FolderExplorer {
 
     public static final String EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS = "mips-explorer-file-to-assemble";
+    public static final String EXPLORER_OUT_FILE_STYLE_CLASS = "explorer-out-folder";
 
     private final MIPSProject project;
 
@@ -51,22 +56,25 @@ public class MipsFolderExplorer extends FolderExplorer {
      * @param scrollPane the {@link ScrollPane} handling this explorer.
      */
     public MipsFolderExplorer(MIPSProject project, ScrollPane scrollPane) {
-        super(project.getFolder(), scrollPane);
+        super(project.getFolder(), scrollPane,
+                file -> !file.toPath().startsWith(project.getData().getMetadataFolder().toPath()));
         this.project = project;
         project.getData().getFilesToAssemble().registerListeners(this, true);
         for (File file : project.getData().getFilesToAssemble().getFiles()) {
             markFileToAssemble(file);
         }
 
-        getExplorerFolder(project.getData().getFolder()).ifPresent(metadataFolder ->
-                metadataFolder.getRepresentation().getStyleClass().add("explorer-jams-folder"));
-
         setFileMoveAction((from, to) -> {
             if (project.getData().getFilesToAssemble().containsFile(from)) {
                 Platform.runLater(() -> project.getData().getFilesToAssemble().addFile(to, true));
             }
-
         });
+
+        try {
+            Files.walk(project.getData().getFilesFolder().toPath()).forEach(file -> markOutFile(file.toFile()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         registerListeners(this, true);
     }
@@ -98,6 +106,22 @@ public class MipsFolderExplorer extends FolderExplorer {
         }
     }
 
+    private void markOutFile(File file) {
+        Region region;
+        var optional = getExplorerFile(file);
+        if (optional.isEmpty()) {
+            var folderOptional = getExplorerFolder(file);
+            if (folderOptional.isEmpty()) return;
+            region = folderOptional.get().getRepresentation();
+        } else {
+            region = optional.get();
+        }
+
+        if (!region.getStyleClass().contains(EXPLORER_OUT_FILE_STYLE_CLASS)) {
+            region.getStyleClass().add(EXPLORER_OUT_FILE_STYLE_CLASS);
+        }
+    }
+
     private void unmarkFileToAssemble(File file) {
         Optional<ExplorerFile> optional = getExplorerFile(file);
         if (optional.isEmpty()) return;
@@ -121,13 +145,23 @@ public class MipsFolderExplorer extends FolderExplorer {
     @Listener
     private void onFileAdded(ExplorerAddElementEvent.After event) {
         if (event.getElement() instanceof ExplorerFile) {
-            ExplorerFile eFile = (ExplorerFile) event.getElement();
-            File file = eFile.getFile();
+            var eFile = (ExplorerFile) event.getElement();
+            var file = eFile.getFile();
 
             if (project.getData().getFilesToAssemble().containsFile(file)) {
                 if (!eFile.getStyleClass().contains(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS)) {
                     eFile.getStyleClass().add(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS);
                 }
+            }
+
+            if (file.toPath().startsWith(project.getData().getFilesFolder().toPath())) {
+                ((Region) event.getElement()).getStyleClass().add(EXPLORER_OUT_FILE_STYLE_CLASS);
+            }
+        } else if (event.getElement() instanceof ExplorerFolder) {
+            var file = ((ExplorerFolder) event.getElement()).getFolder();
+            if (file.toPath().startsWith(project.getData().getFilesFolder().toPath())) {
+                ((ExplorerFolder) event.getElement()).getRepresentation()
+                        .getStyleClass().add(EXPLORER_OUT_FILE_STYLE_CLASS);
             }
         }
     }

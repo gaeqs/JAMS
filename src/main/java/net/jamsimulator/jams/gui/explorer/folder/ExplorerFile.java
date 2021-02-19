@@ -105,12 +105,14 @@ public class ExplorerFile extends ExplorerBasicElement {
             if (!getStyleClass().contains("explorer-file-allow-drop")) {
                 getStyleClass().add("explorer-file-allow-drop");
             }
+            getParentSection().ifPresent(ExplorerFolder::addDropHereHint);
             if (parent instanceof ExplorerFolder) ((ExplorerFolder) parent).removeDragHint();
             event.consume();
         });
 
         addEventHandler(DragEvent.DRAG_EXITED, event -> {
             getStyleClass().remove("explorer-file-allow-drop");
+            getParentSection().ifPresent(ExplorerFolder::removeDropHereHint);
             applyCss();
         });
 
