@@ -32,6 +32,7 @@ public class FolderActionRegions {
 
 	public static final ContextRegion NEW = new ContextRegion("new", null, 0);
 	public static final ContextRegion CLIPBOARD = new ContextRegion("clipboard", null, 1);
+	public static final ContextRegion OTHER = new ContextRegion("other", null, 2);
 	public static final ContextRegion SHOW = new ContextRegion("show", null, 999);
 
 	public static final ContextRegion ASSEMBLER = new ContextRegion("show", null, 2);

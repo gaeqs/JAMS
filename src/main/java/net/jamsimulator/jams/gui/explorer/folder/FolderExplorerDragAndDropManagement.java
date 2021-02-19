@@ -119,7 +119,7 @@ public class FolderExplorerDragAndDropManagement {
             return;
         }
 
-        if (move ? !FileUtils.moveFile(folder, file, moveAction) : !FileUtils.copyFile(folder, file)) {
+        if (move ? !FileUtils.moveFileToFolder(folder, file, moveAction) : !FileUtils.copyFileToFolder(folder, file)) {
             new IllegalStateException("Error while copying file " + file + ".").printStackTrace();
         }
     }

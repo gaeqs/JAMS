@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.util;
 
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
+import net.jamsimulator.jams.gui.popup.PasteNewNameWindow;
 import net.jamsimulator.jams.utils.FileUtils;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -34,50 +35,59 @@ import java.util.*;
 
 public class ClipboardUtils {
 
-	public static void copy(File... files) {
-		Validate.hasNoNulls(files, "Files cannot be null!");
-		Validate.isTrue(Arrays.stream(files).allMatch(File::exists), "File must exist!");
+    public static void copy(File... files) {
+        Validate.hasNoNulls(files, "Files cannot be null!");
+        Validate.isTrue(Arrays.stream(files).allMatch(File::exists), "File must exist!");
 
-		Map<DataFormat, Object> contentMap = new HashMap<>();
-		contentMap.put(DataFormat.FILES, new ArrayList<>(Arrays.asList(files)));
+        Map<DataFormat, Object> contentMap = new HashMap<>();
+        contentMap.put(DataFormat.FILES, new ArrayList<>(Arrays.asList(files)));
 
-		Clipboard.getSystemClipboard().setContent(contentMap);
+        Clipboard.getSystemClipboard().setContent(contentMap);
 
-	}
+    }
 
-	public static void copy(Collection<File> files) {
-		Validate.notNull(files, "Files cannot be null!");
-		Validate.isTrue(files.stream().allMatch(File::exists), "File must exist!");
+    public static void copy(Collection<File> files) {
+        Validate.notNull(files, "Files cannot be null!");
+        Validate.isTrue(files.stream().allMatch(File::exists), "File must exist!");
 
-		Map<DataFormat, Object> contentMap = new HashMap<>();
-		contentMap.put(DataFormat.FILES, new ArrayList<>(files));
+        Map<DataFormat, Object> contentMap = new HashMap<>();
+        contentMap.put(DataFormat.FILES, new ArrayList<>(files));
 
-		Clipboard.getSystemClipboard().setContent(contentMap);
+        Clipboard.getSystemClipboard().setContent(contentMap);
 
-	}
+    }
 
-	public static void cut(File file) {
-		Validate.notNull(file, "File cannot be null!");
-		Validate.isTrue(file.exists(), "File must exist!");
+    public static void cut(File file) {
+        Validate.notNull(file, "File cannot be null!");
+        Validate.isTrue(file.exists(), "File must exist!");
 
-		Map<DataFormat, Object> contentMap = new HashMap<>();
-		List<File> files = new ArrayList<>();
-		files.add(file);
-		contentMap.put(DataFormat.FILES, files);
+        Map<DataFormat, Object> contentMap = new HashMap<>();
+        List<File> files = new ArrayList<>();
+        files.add(file);
+        contentMap.put(DataFormat.FILES, files);
 
-		Clipboard.getSystemClipboard().setContent(contentMap);
-	}
+        Clipboard.getSystemClipboard().setContent(contentMap);
+    }
 
-	public static void paste(File folder) {
-		Validate.notNull(folder, "Folder cannot be null!");
-		Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
+    public static void paste(File folder) {
+        Validate.notNull(folder, "Folder cannot be null!");
+        Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
 
-		Clipboard clipboard = Clipboard.getSystemClipboard();
+        Clipboard clipboard = Clipboard.getSystemClipboard();
 
-		if (!clipboard.hasContent(DataFormat.FILES)) return;
-		clipboard.getContentTypes().forEach(System.out::println);
-		List<File> files = clipboard.getFiles();
+        if (!clipboard.hasContent(DataFormat.FILES)) return;
+        clipboard.getContentTypes().forEach(System.out::println);
+        List<File> files = clipboard.getFiles();
 
-		files.forEach(file -> FileUtils.copyFile(folder, file));
-	}
+        files.forEach(file -> {
+            var to = new File(folder, file.getName());
+            if (to.exists()) {
+                var optional = PasteNewNameWindow.open(to);
+                if (optional.isEmpty()) return;
+                to = new File(folder, optional.get());
+            }
+
+            FileUtils.copyFile(file, to);
+        });
+    }
 }

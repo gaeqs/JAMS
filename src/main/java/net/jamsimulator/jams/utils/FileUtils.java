@@ -93,7 +93,7 @@ public class FileUtils {
         writer.close();
     }
 
-    public static boolean copyFile(File folder, File target) {
+    public static boolean copyFileToFolder(File folder, File target) {
         try {
             Path from = target.toPath();
             Path to = new File(folder, target.getName()).toPath();
@@ -109,7 +109,22 @@ public class FileUtils {
         return true;
     }
 
-    public static boolean moveFile(File folder, File target, BiConsumer<File, File> moveAction) {
+    public static boolean copyFile(File from, File to) {
+        try {
+            if (from.isDirectory()) {
+                Files.walkFileTree(from.toPath(), new CopyFileVisitor(from.toPath(), to.toPath(), false, null));
+            } else {
+                Files.copy(from.toPath(), to.toPath(), StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+
+    public static boolean moveFileToFolder(File folder, File target, BiConsumer<File, File> moveAction) {
         try {
             File toFile = new File(folder, target.getName());
             Path from = target.toPath();

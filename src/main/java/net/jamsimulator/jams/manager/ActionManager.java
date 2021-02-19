@@ -339,6 +339,8 @@ public class ActionManager extends Manager<Action> {
 		add(new FolderActionDelete());
 		add(new FolderActionPaste());
 
+		add(new FolderActionRename());
+
 		add(new FolderActionShowInFiles());
 
 		add(new FolderActionNewFile());
@@ -351,7 +353,9 @@ public class ActionManager extends Manager<Action> {
 
 		// MIPS EXPLORER ELEMENT
 		add(new FolderActionAddFileToAssembler());
+		add(new FolderActionAddAllFilesToAssembler());
 		add(new FolderActionRemoveFileFromAssembler());
+		add(new FolderActionRemoveAllFilesFromAssembler());
 
 		add(new MipsFilesToAssembleActionRemove());
 
