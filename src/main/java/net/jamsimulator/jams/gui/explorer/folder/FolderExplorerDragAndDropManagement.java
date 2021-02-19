@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.explorer.folder;
 
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.utils.FileUtils;
 
@@ -35,73 +36,99 @@ import java.util.List;
 
 public class FolderExplorerDragAndDropManagement {
 
-	public static final String EXPLORER_PROTOCOL = "jams_folder_explorer";
+    public static final String EXPLORER_PROTOCOL = "jams_folder_explorer";
+    public static final String URL_PROTOCOL = "file";
 
-	public static void manageDragFromElements(Dragboard dragboard, List<ExplorerElement> elements) {
-		List<File> files = new ArrayList<>();
-		for (ExplorerElement element : elements) {
-			if (element instanceof ExplorerFolder)
-				files.add(((ExplorerFolder) element).getFolder());
-			else if (element instanceof ExplorerFile)
-				files.add(((ExplorerFile) element).getFile());
-		}
-		manageDrag(dragboard, files);
-	}
+    public static void manageDragFromElements(Dragboard dragboard, List<ExplorerElement> elements) {
+        List<File> files = new ArrayList<>();
+        for (ExplorerElement element : elements) {
+            if (element instanceof ExplorerFolder)
+                files.add(((ExplorerFolder) element).getFolder());
+            else if (element instanceof ExplorerFile)
+                files.add(((ExplorerFile) element).getFile());
+        }
+        manageDrag(dragboard, files);
+    }
 
-	public static void manageDrag(Dragboard dragboard, List<File> files) {
-		ClipboardContent content = new ClipboardContent();
-		content.putFiles(files);
+    public static void manageDrag(Dragboard dragboard, List<File> files) {
+        ClipboardContent content = new ClipboardContent();
+        content.putFiles(files);
 
-		StringBuilder builder = new StringBuilder(EXPLORER_PROTOCOL);
-		for (File element : files) {
-			builder.append(':');
-			builder.append(element.getAbsolutePath());
-		}
-		content.putString(builder.toString());
-		dragboard.setContent(content);
-	}
+        StringBuilder builder = new StringBuilder(EXPLORER_PROTOCOL);
+        for (File element : files) {
+            builder.append(':');
+            builder.append(element.getAbsolutePath());
+        }
+        content.putString(builder.toString());
+        dragboard.setContent(content);
+    }
 
-	public static void manageDrop(Dragboard content, File folder) {
-		if (content.hasUrl()) {
-			String string = content.getString();
-			if (string.startsWith(EXPLORER_PROTOCOL + ":")) {
-				manageDropFromString(string, folder);
-				return;
-			}
-		}
-		List<File> files = content.getFiles();
-		for (File file : files) {
-			if (!FileUtils.copyFile(folder, file)) {
-				System.err.println("Error while copying file " + file + ".");
-			}
-		}
-	}
+    public static void manageDrop(Dragboard content, File folder) {
+        boolean move = content.getTransferModes().contains(TransferMode.MOVE);
+        if (content.hasUrl()) {
+            String string = content.getUrl();
+            if (string.startsWith(URL_PROTOCOL + ":")) {
+                manageDropFromURL(string, folder, move);
+                return;
+            }
+        }
 
-	private static void manageDropFromString(String string, File folder) {
-		String files = string.substring(EXPLORER_PROTOCOL.length() + 1);
-		if (files.isEmpty()) return;
-		String[] filesArray = files.split("\n");
-		File file;
-		for (String path : filesArray) {
-			if (path.isEmpty()) continue;
-			try {
-				file = new File(path);
+        if (content.hasString()) {
+            String string = content.getString();
+            if (string.startsWith(EXPLORER_PROTOCOL + ":")) {
+                manageDropFromString(string, folder, move);
+                return;
+            }
+        }
 
-				if (!file.exists() || file.getParentFile().equals(folder)) {
-					continue;
-				}
+        List<File> files = content.getFiles();
+        for (File file : files) {
+            if (move ? !FileUtils.moveFile(folder, file) : !FileUtils.copyFile(folder, file)) {
+                System.err.println("Error while copying file " + file + ".");
+            }
+        }
+    }
 
-				if (!FileUtils.copyFile(folder, file)) {
-					System.err.println("Error while copying file " + file + ".");
-				} else {
-					if (!file.delete()) {
-						System.err.println("Error while copying file " + file + ".");
-					}
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-	}
+    private static void manageDropFromString(String string, File folder, boolean move) {
+        String files = string.substring(EXPLORER_PROTOCOL.length() + 1);
+        if (files.isEmpty()) return;
+        String[] filesArray = files.split("\n");
+        for (String path : filesArray) {
+            if (path.isEmpty()) continue;
+            try {
+                manageFileDrop(new File(path), folder, move);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private static void manageDropFromURL(String url, File folder, boolean move) {
+        if (url.isEmpty()) return;
+        String[] filesArray = url.split("\n");
+        for (String path : filesArray) {
+            if (path.isEmpty()) continue;
+            try {
+                var file = new File(path.substring(URL_PROTOCOL.length() + 2).trim());
+                manageFileDrop(file, folder, move);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private static void manageFileDrop(File file, File folder, boolean move) {
+        if (!file.exists() || folder.getPath().startsWith(file.getPath())) {
+            return;
+        }
+
+        if (move ? !FileUtils.moveFile(folder, file) : !FileUtils.copyFile(folder, file)) {
+            System.err.println("Error while copying file " + file + ".");
+        } else {
+            if (!move && !file.delete() || move && file.exists()) {
+                System.err.println("Error while copying file " + file + ".");
+            }
+        }
+    }
 
 }

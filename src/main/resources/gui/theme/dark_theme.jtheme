@@ -744,8 +744,8 @@ AnchorPane {
     -fx-border-color: transparent;
 }
 
-.explorer-folder-allow-drop > .label,
-.explorer-file-allow-drop > .label {
+.explorer-folder-allow-drop .label,
+.explorer-file-allow-drop .label {
     -fx-border-color: red;
 }
 

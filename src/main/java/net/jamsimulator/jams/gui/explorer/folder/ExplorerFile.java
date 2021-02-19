@@ -114,6 +114,7 @@ public class ExplorerFile extends ExplorerBasicElement {
 			applyCss();
 		});
 
+
 		addEventHandler(DragEvent.DRAG_DROPPED, event -> {
 			FolderExplorerDragAndDropManagement.manageDrop(event.getDragboard(),
 					((ExplorerFolder) parent).getFolder());
@@ -125,7 +126,7 @@ public class ExplorerFile extends ExplorerBasicElement {
 			if (!selected) {
 				getExplorer().selectElementAlone(this);
 			}
-			Dragboard db = startDragAndDrop(TransferMode.COPY);
+			Dragboard db = startDragAndDrop(TransferMode.COPY_OR_MOVE);
 			List<ExplorerElement> selectedElements = getExplorer().getSelectedElements();
 			FolderExplorerDragAndDropManagement.manageDragFromElements(db, selectedElements);
 			event.consume();
