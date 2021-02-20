@@ -360,7 +360,7 @@ public class MIPSFileElements {
         for (int i = 0; i < amount; i++) {
             var line = lines.get(from + i);
             lastEnd = line.styleLine(lastEnd, spansBuilder);
-            line.refreshHints(hintBar, from + i, false);
+            line.refreshHints(hintBar, from + i);
 
         }
 
@@ -393,7 +393,7 @@ public class MIPSFileElements {
 
             line.refreshMetadata(this);
             line.styleLine(line.getStart(), spansBuilder);
-            line.refreshHints(hintBar, i, false);
+            line.refreshHints(hintBar, i);
 
 
             StyleSpans<Collection<String>> spans;

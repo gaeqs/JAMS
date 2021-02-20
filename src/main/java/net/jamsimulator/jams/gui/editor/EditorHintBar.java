@@ -105,6 +105,11 @@ public class EditorHintBar extends Region {
         getChildren().clear();
     }
 
+    /**
+     * Updates the internal data when the given line is being removed.
+     *
+     * @param line the line being removed.
+     */
     public void applyLineRemoval(int line) {
         removeHint(line);
 
@@ -114,7 +119,12 @@ public class EditorHintBar extends Region {
                 .forEach(target -> target.move(-1, heightPerLine, scaleFix));
     }
 
-    public void applyLineAddition (int line) {
+    /**
+     * Updates the internal data when the given line is being added.
+     *
+     * @param line the line being added.
+     */
+    public void applyLineAddition(int line) {
         double heightPerLine = getHeight() / editor.getParagraphs().size();
         double scaleFix = getScaleFix();
         linesHints.stream().filter(target -> target.line >= line)

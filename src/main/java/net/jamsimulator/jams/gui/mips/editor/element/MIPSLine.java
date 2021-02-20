@@ -302,13 +302,20 @@ public class MIPSLine {
         int end = start + text.length();
         if (end > lastEnd) {
             spansBuilder.add(Collections.emptyList(), end - lastEnd);
-            lastEnd= end;
+            lastEnd = end;
         }
 
         return lastEnd;
     }
 
-    public void refreshHints(EditorHintBar hintBar, int line, boolean full) {
+    /**
+     * Refreshes the hints this line has for the given {@link EditorHintBar}.
+     * If this line has no hints, this method will call {@link EditorHintBar#removeHint(int)}.
+     *
+     * @param hintBar the {@link EditorHintBar}.
+     * @param line    the number of this line.
+     */
+    public void refreshHints(EditorHintBar hintBar, int line) {
         if (hintBar == null) return;
         var elements = getSortedElements();
         boolean inspections = elements.stream().anyMatch(MIPSCodeElement::hasInspections);
@@ -320,7 +327,7 @@ public class MIPSLine {
             } else {
                 hintBar.addHint(line, EditorHintBar.HintType.WARNING);
             }
-        } else if (!full) {
+        } else {
             hintBar.removeHint(line);
         }
     }
