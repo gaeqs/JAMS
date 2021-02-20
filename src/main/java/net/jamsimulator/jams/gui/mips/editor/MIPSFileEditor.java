@@ -200,11 +200,11 @@ public class MIPSFileEditor extends CodeFileEditor {
 
             if (linesToRemove > 0) {
                 for (int i = 0; i < linesToRemove; i++) {
-                    refresh |= elements.removeLine(currentLine + editedLines);
+                    refresh |= elements.removeLine(currentLine + editedLines, hintBar);
                 }
             } else if (linesToAdd > 0) {
                 for (int i = 0; i < linesToAdd; i++) {
-                    refresh |= elements.addLine(currentLine + i + editedLines, getLine(currentLine + i + editedLines).getText());
+                    refresh |= elements.addLine(currentLine + i + editedLines, getLine(currentLine + i + editedLines).getText(), hintBar);
                 }
             }
 

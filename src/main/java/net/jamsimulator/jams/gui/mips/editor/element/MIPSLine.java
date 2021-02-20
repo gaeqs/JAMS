@@ -299,10 +299,16 @@ public class MIPSLine {
             }
         }
 
+        int end = start + text.length();
+        if (end > lastEnd) {
+            spansBuilder.add(Collections.emptyList(), end - lastEnd);
+            lastEnd= end;
+        }
+
         return lastEnd;
     }
 
-    public void refreshHints(EditorHintBar hintBar, int line) {
+    public void refreshHints(EditorHintBar hintBar, int line, boolean full) {
         if (hintBar == null) return;
         var elements = getSortedElements();
         boolean inspections = elements.stream().anyMatch(MIPSCodeElement::hasInspections);
@@ -314,7 +320,7 @@ public class MIPSLine {
             } else {
                 hintBar.addHint(line, EditorHintBar.HintType.WARNING);
             }
-        } else {
+        } else if (!full) {
             hintBar.removeHint(line);
         }
     }

@@ -180,7 +180,7 @@ public class MIPSFileElements {
         return lines.get(lineOf(position));
     }
 
-    public boolean removeLine(int index) {
+    public boolean removeLine(int index, EditorHintBar bar) {
         if (index < 0 || index >= lines.size()) throw new IndexOutOfBoundsException("Index out of bounds");
         MIPSLine line = lines.remove(index);
 
@@ -191,10 +191,15 @@ public class MIPSFileElements {
             lines.get(i).move(-length);
 
         requiresUpdate.remove(lines.size());
+
+        if (bar != null) {
+            bar.applyLineRemoval(index);
+        }
+
         return checkLabels(line, false);
     }
 
-    public boolean addLine(int index, String text) {
+    public boolean addLine(int index, String text, EditorHintBar bar) {
         if (index < 0 || index > lines.size()) throw new IndexOutOfBoundsException("Index out of bounds");
         if (text.contains("\n") || text.contains("\r")) throw new IllegalArgumentException("Invalid line!");
 
@@ -214,6 +219,11 @@ public class MIPSFileElements {
         line.getReplacement().ifPresent(target -> addReplacemenet(target, true));
 
         requiresUpdate.add(index);
+
+        if (bar != null) {
+            bar.applyLineAddition(index);
+        }
+
         return checkLabels(line, true);
     }
 
@@ -303,7 +313,6 @@ public class MIPSFileElements {
             this.lines.add(line);
         }
 
-        int i = 0;
         for (MIPSLine mipsLine : lines) {
             mipsLine.refreshMetadata(this);
         }
@@ -319,10 +328,8 @@ public class MIPSFileElements {
         int lastEnd = 0;
         var spansBuilder = new StyleSpansBuilder<Collection<String>>();
 
-        int index = 0;
         for (MIPSLine line : lines) {
             lastEnd = line.styleLine(lastEnd, spansBuilder);
-            line.refreshHints(hintBar, index++);
         }
         requiresUpdate.clear();
 
@@ -353,7 +360,8 @@ public class MIPSFileElements {
         for (int i = 0; i < amount; i++) {
             var line = lines.get(from + i);
             lastEnd = line.styleLine(lastEnd, spansBuilder);
-            line.refreshHints(hintBar, from + i);
+            line.refreshHints(hintBar, from + i, false);
+
         }
 
         StyleSpans<Collection<String>> spans;
@@ -374,9 +382,8 @@ public class MIPSFileElements {
     public void update(MIPSFileEditor area) {
         if (requiresUpdate.isEmpty()) return;
 
-        var hintBar = area.getHintBar();
-
         MIPSLine line;
+        var hintBar = area.getHintBar();
 
         for (int i : requiresUpdate) {
             if (i < 0 || i >= lines.size()) continue;
@@ -386,7 +393,8 @@ public class MIPSFileElements {
 
             line.refreshMetadata(this);
             line.styleLine(line.getStart(), spansBuilder);
-            line.refreshHints(hintBar, i);
+            line.refreshHints(hintBar, i, false);
+
 
             StyleSpans<Collection<String>> spans;
             try {
