@@ -21,7 +21,7 @@ public class SingleCycleFlowEntry extends FlowEntry {
 		super(index, table, instruction, registerStart);
 		this.cycle = cycle;
 		label = new Label("E");
-		label.getStyleClass().add("single-cycle-execute");
+		label.getStyleClass().add("instruction-execute");
 		label.setPrefWidth(stepSize);
 		label.setAlignment(Pos.CENTER);
 
