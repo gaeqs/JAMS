@@ -5,11 +5,11 @@ import javafx.util.StringConverter;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
-public class MemoryTableCell extends TextFieldTableCell<MemoryEntry, String> {
+public class SimpleMemoryTableCell extends TextFieldTableCell<SimpleMemoryEntry, String> {
 
 	private final int offset;
 
-	public MemoryTableCell(int offset) {
+	public SimpleMemoryTableCell(int offset) {
 		super();
 
 		this.offset = offset;
@@ -18,30 +18,30 @@ public class MemoryTableCell extends TextFieldTableCell<MemoryEntry, String> {
 			@Override
 			public String toString(String object) {
 				if (getTableRow() == null) return object;
-				MemoryEntry entry = getTableRow().getItem();
+				SimpleMemoryEntry entry = getTableRow().getItem();
 				if (entry == null) return object;
-				int value = entry.getSimulation().getMemory()
+				int value = entry.getMemory()
 						.getWord(entry.getAddress() + offset, false, true);
 				return "0x" + StringUtils.addZeros(Integer.toHexString(value), 8);
 			}
 
 			@Override
 			public String fromString(String string) {
-				MemoryEntry entry = getTableRow().getItem();
+				SimpleMemoryEntry entry = getTableRow().getItem();
 				if (entry == null) return null;
 
 				try {
 					int value = NumericUtils.decodeInteger(string);
-					entry.getSimulation().getMemory().setWord(entry.getAddress() + offset, value);
+					entry.getMemory().setWord(entry.getAddress() + offset, value);
 					return string;
 				} catch (NumberFormatException ex) {
 					if (string.length() > 4) {
 						return getTableRow().getItem().getRepresentation()
-								.represent(entry.getSimulation().getMemory(), entry.getAddress() + offset);
+								.represent(entry.getMemory(), entry.getAddress() + offset);
 					} else {
 						int i = 0;
 						for (char c : string.toCharArray()) {
-							entry.getSimulation().getMemory().setByte(entry.getAddress() + offset + i++, (byte) c);
+							entry.getMemory().setByte(entry.getAddress() + offset + i++, (byte) c);
 						}
 						return string;
 					}
@@ -53,10 +53,10 @@ public class MemoryTableCell extends TextFieldTableCell<MemoryEntry, String> {
 	@Override
 	public void cancelEdit() {
 		super.cancelEdit();
-		MemoryEntry entry = getTableRow().getItem();
+		SimpleMemoryEntry entry = getTableRow().getItem();
 		if (entry == null) return;
 		updateItem(entry.getRepresentation()
-				.represent(entry.getSimulation().getMemory(), entry.getAddress() + offset), false);
+				.represent(entry.getMemory(), entry.getAddress() + offset), false);
 	}
 
 	@Override
@@ -66,17 +66,17 @@ public class MemoryTableCell extends TextFieldTableCell<MemoryEntry, String> {
 			setText(null);
 			setGraphic(null);
 		} else {
-			MemoryEntry entry = getTableRow().getItem();
+			SimpleMemoryEntry entry = getTableRow().getItem();
 			if (entry == null) return;
 
 			if (!entry.getRepresentation().isColor()) {
-				setText(entry.getRepresentation().represent(entry.getSimulation().getMemory(), entry.getAddress() + offset));
+				setText(entry.getRepresentation().represent(entry.getMemory(), entry.getAddress() + offset));
 				setStyle("-fx-background-color: transparent");
 				return;
 			}
 
 			setText("");
-			setStyle("-fx-background-color: " + entry.getRepresentation().represent(entry.getSimulation().getMemory(), entry.getAddress() + offset));
+			setStyle("-fx-background-color: " + entry.getRepresentation().represent(entry.getMemory(), entry.getAddress() + offset));
 		}
 	}
 }

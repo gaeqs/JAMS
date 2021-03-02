@@ -180,7 +180,7 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
 
 	@Override
 	public void setWord(int address, int word) {
-		if (address % 4 != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_STORE_EXCEPTION, address);
+		if ((address & 0x2) != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_STORE_EXCEPTION, address);
 		CacheBlock block = getBlock(address, areEventCallsEnabled());
 		if (block != null) {
 			if (!areEventCallsEnabled()) {
@@ -210,7 +210,7 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
 
 	@Override
 	public int getWord(int address, boolean callEvents, boolean bypassCaches) {
-		if (address % 4 != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
+		if ((address & 0x2) != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
 		if (bypassCaches) return parent.getWord(address, callEvents, true);
 		boolean events = callEvents && areEventCallsEnabled();
 
@@ -351,6 +351,11 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
 	public void forceStats(long operations, long hits) {
 		this.operations = operations;
 		this.hits = hits;
+	}
+
+	@Override
+	public Optional<CacheBlock> getCacheBlock(int index) {
+		return Optional.ofNullable(blocks[index]);
 	}
 
 	@Override

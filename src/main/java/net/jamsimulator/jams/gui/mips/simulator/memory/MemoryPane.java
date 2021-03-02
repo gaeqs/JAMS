@@ -1,18 +1,21 @@
 package net.jamsimulator.jams.gui.mips.simulator.memory;
 
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.LanguageStringComboBox;
+import net.jamsimulator.jams.gui.util.value.HexadecimalIntegerValueEditor;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.MemorySection;
+import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -23,107 +26,127 @@ import java.util.stream.Collectors;
 
 public class MemoryPane extends AnchorPane implements ActionRegion {
 
-	private final ComboBox<String> offsetSelection;
-	private ComboBox<String> representationSelection;
-	private final MemoryTable table;
-	private final HBox buttonsHBox;
+    private final MemoryTable table;
 
-	public MemoryPane(Simulation<?> simulation) {
-		offsetSelection = new ComboBox<>();
-		initOffsetComboBox(simulation.getMemory());
+    public MemoryPane(Simulation<?> simulation) {
+        var offsetSelection = new ComboBox<String>();
+        var directOffsetSelection = new HexadecimalIntegerValueEditor();
+        var representationSelection = initRepresentationComboBox();
 
-		initRepresentationComboBox();
+        var offsetHbox = new HBox();
+        var buttonsHBox = new HBox();
 
-		table = new MemoryTable(simulation, 0, MemoryRepresentation.HEXADECIMAL);
+        if (simulation.getMemory() instanceof Cache) {
+            table = new CacheMemoryTable(simulation, (Cache) simulation.getMemory(), 0, MemoryRepresentation.HEXADECIMAL);
+        } else {
+            table = new SimpleMemoryTable(simulation, simulation.getMemory(), 0, MemoryRepresentation.HEXADECIMAL);
+        }
 
-		buttonsHBox = new HBox();
-		initButtons();
+        initOffsetComboBox(simulation.getMemory(), offsetSelection);
+        initDirectOffsetSelection(directOffsetSelection);
 
-		AnchorUtils.setAnchor(offsetSelection, 0, -1, 0, 0);
-		AnchorUtils.setAnchor(representationSelection, 25, -1, 0, 0);
-		AnchorUtils.setAnchor(table, 50, 31, 0, 0);
-		AnchorUtils.setAnchor(buttonsHBox, -1, 0, 0, 0);
+        offsetHbox.setSpacing(5);
+        offsetHbox.getChildren().addAll(offsetSelection, directOffsetSelection);
+        offsetSelection.prefWidthProperty().bind(offsetHbox.widthProperty().divide(2));
+        directOffsetSelection.prefWidthProperty().bind(offsetHbox.widthProperty().divide(2));
+        initButtons(buttonsHBox);
 
-		getChildren().addAll(offsetSelection, representationSelection, table, buttonsHBox);
-	}
+        AnchorUtils.setAnchor(offsetHbox, 0, -1, 0, 0);
+        AnchorUtils.setAnchor(representationSelection, 30, -1, 0, 0);
+        AnchorUtils.setAnchor((Node) table, 60, 31, 0, 0);
+        AnchorUtils.setAnchor(buttonsHBox, -1, 0, 0, 0);
 
-	public void select(int address) {
-		var offset = Integer.remainderUnsigned(address, (table.getRows() << 4));
-		var start = address - offset;
-		var row = offset >>> 4;
+        getChildren().addAll(offsetHbox, representationSelection, (Node) table, buttonsHBox);
+    }
 
-		table.setOffset(start);
-		table.getSelectionModel().select(row);
-		table.scrollTo(row);
+    public void select(int address) {
+        var offset = Integer.remainderUnsigned(address, (table.getRows() << 4));
+        var start = address - offset;
+        var row = offset >>> 4;
 
-	}
+        if (table instanceof SimpleMemoryTable) {
+            var smt = (SimpleMemoryTable) table;
+            smt.setOffset(start);
+            smt.getSelectionModel().select(row);
+            smt.scrollTo(row);
+        }
 
-	private void initOffsetComboBox(Memory memory) {
-		List<String> list = new ArrayList<>();
-		for (MemorySection section : memory.getMemorySections()) {
-			list.add("0x" + StringUtils.addZeros(Integer.toHexString(section.getFirstAddress()), 8) + " - " + section.getName());
-		}
-		list.add("0x" + StringUtils.addZeros(Integer.toHexString(MIPS32Memory.HEAP), 8) + " - Heap");
-		list.add("0x" + StringUtils.addZeros(Integer.toHexString(MIPS32Memory.STACK), 8) + " - Stack");
+    }
 
-		list.sort(String::compareTo);
-		offsetSelection.getItems().addAll(list);
-		offsetSelection.getSelectionModel().select(0);
+    private void initOffsetComboBox(Memory memory, ComboBox<String> offsetSelection) {
+        if (!(table instanceof SimpleMemoryTable)) return;
+        var smt = (SimpleMemoryTable) table;
 
-		offsetSelection.setOnAction(event -> {
-			String name = offsetSelection.getSelectionModel().getSelectedItem().substring(13);
-			if (name.equals("Heap")) {
-				table.setOffset(MIPS32Memory.HEAP);
-			} if (name.equals("Stack")) {
-				table.setOffset(MIPS32Memory.STACK);
-			} else {
-				Optional<MemorySection> section = memory.getMemorySection(name);
-				section.ifPresent(memorySection -> table.setOffset(memorySection.getFirstAddress()));
-			}
-		});
-	}
+        List<String> list = new ArrayList<>();
+        for (MemorySection section : memory.getMemorySections()) {
+            list.add("0x" + StringUtils.addZeros(Integer.toHexString(section.getFirstAddress()), 8) + " - " + section.getName());
+        }
+        list.add("0x" + StringUtils.addZeros(Integer.toHexString(MIPS32Memory.HEAP), 8) + " - Heap");
+        list.add("0x" + StringUtils.addZeros(Integer.toHexString(MIPS32Memory.STACK), 8) + " - Stack");
 
-	private void initRepresentationComboBox() {
-		List<String> values = Arrays.stream(MemoryRepresentation.values())
-				.map(MemoryRepresentation::getLanguageNode).collect(Collectors.toList());
+        list.sort(String::compareTo);
+        offsetSelection.getItems().addAll(list);
+        offsetSelection.getSelectionModel().select(0);
 
-		representationSelection = new LanguageStringComboBox(values) {
-			@Override
-			public void onSelect(int index, String node) {
-				table.setRepresentation(MemoryRepresentation.values()[index]);
-			}
-		};
-		representationSelection.getSelectionModel().select(0);
-	}
+        offsetSelection.setOnAction(event -> {
+            String name = offsetSelection.getSelectionModel().getSelectedItem().substring(13);
+            if (name.equals("Heap")) {
+                smt.setOffset(MIPS32Memory.HEAP);
+            }
+            if (name.equals("Stack")) {
+                smt.setOffset(MIPS32Memory.STACK);
+            } else {
+                Optional<MemorySection> section = memory.getMemorySection(name);
+                section.ifPresent(memorySection -> smt.setOffset(memorySection.getFirstAddress()));
+            }
+        });
+    }
 
-	private void initButtons() {
-		buttonsHBox.setAlignment(Pos.CENTER);
-		buttonsHBox.setFillHeight(true);
-		Button previous = new Button("←");
-		Button next = new Button("→");
+    private void initDirectOffsetSelection(HexadecimalIntegerValueEditor directOffsetSelection) {
+        if (!(table instanceof SimpleMemoryTable)) return;
+        var smt = (SimpleMemoryTable) table;
+        directOffsetSelection.setCurrentValue(smt.getOffset());
+        directOffsetSelection.addListener(val -> {
+            val = val >> 2 << 2;
+            smt.setOffset(val);
+        });
+    }
 
-		previous.getStyleClass().add("bold-button");
-		next.getStyleClass().add("bold-button");
-		previous.setPrefWidth(300);
-		next.setPrefWidth(300);
+    private LanguageStringComboBox initRepresentationComboBox() {
+        List<String> values = Arrays.stream(MemoryRepresentation.values())
+                .map(MemoryRepresentation::getLanguageNode).collect(Collectors.toList());
+
+        var representationSelection = new LanguageStringComboBox(values) {
+            @Override
+            public void onSelect(int index, String node) {
+                table.setRepresentation(MemoryRepresentation.values()[index]);
+            }
+        };
+        representationSelection.getSelectionModel().select(0);
+        return representationSelection;
+    }
+
+    private void initButtons(HBox buttonsHBox) {
+        buttonsHBox.setAlignment(Pos.CENTER);
+        buttonsHBox.setFillHeight(true);
+        Button previous = new Button("←");
+        Button next = new Button("→");
+
+        previous.getStyleClass().add("bold-button");
+        next.getStyleClass().add("bold-button");
+        previous.setPrefWidth(300);
+        next.setPrefWidth(300);
 
 
-		previous.setOnAction(event -> {
-			int offset = table.getOffset() - (table.getRows() << 4);
-			table.setOffset(offset);
-		});
+        previous.setOnAction(event -> table.previousPage());
+        next.setOnAction(event -> table.nextPage());
 
-		next.setOnAction(event -> {
-			int offset = table.getOffset() + (table.getRows() << 4);
-			table.setOffset(offset);
-		});
+        buttonsHBox.getChildren().addAll(previous, next);
+    }
 
-		buttonsHBox.getChildren().addAll(previous, next);
-	}
-
-	@Override
-	public boolean supportsActionRegion(String region) {
-		return RegionTags.MIPS_SIMULATION.equals(region);
-	}
+    @Override
+    public boolean supportsActionRegion(String region) {
+        return RegionTags.MIPS_SIMULATION.equals(region);
+    }
 
 }
