@@ -38,176 +38,190 @@ import java.io.InputStream;
 
 public class Jams {
 
-	private static String VERSION;
+    private static String VERSION;
 
-	private static File mainFolder;
+    private static File mainFolder;
 
-	private static RootConfiguration mainConfiguration;
+    private static RootConfiguration mainConfiguration;
 
-	private static LanguageManager languageManager;
-	private static FileTypeManager fileTypeManager;
+    private static LanguageManager languageManager;
+    private static FileTypeManager fileTypeManager;
 
-	private static ArchitectureManager architectureManager;
-	private static AssemblerBuilderManager assemblerBuilderManager;
-	private static MemoryBuilderManager memoryBuilderManager;
-	private static CacheBuilderManager cacheBuilderManager;
-	private static RegistersBuilderManager registersBuilderManager;
+    private static ArchitectureManager architectureManager;
+    private static AssemblerBuilderManager assemblerBuilderManager;
+    private static MemoryBuilderManager memoryBuilderManager;
+    private static CacheBuilderManager cacheBuilderManager;
+    private static RegistersBuilderManager registersBuilderManager;
 
-	private static InstructionSetManager instructionSetManager;
-	private static DirectiveSetManager directiveSetManager;
-	private static SyscallExecutionBuilderManager syscallExecutionBuilderManager;
+    private static InstructionSetManager instructionSetManager;
+    private static DirectiveSetManager directiveSetManager;
+    private static SyscallExecutionBuilderManager syscallExecutionBuilderManager;
 
-	//JAMS main method.
-	public static void main(String[] args) {
-		loadVersion();
-		System.out.println("Loading JAMS version " + getVersion());
-		mainFolder = FolderUtils.checkMainFolder();
-		TempUtils.loadTemporalFolder();
+    private static NumberRepresentationManager numberRepresentationManager;
 
-		mainConfiguration = ConfigurationUtils.loadMainConfiguration();
+    //JAMS main method.
+    public static void main(String[] args) {
+        loadVersion();
+        System.out.println("Loading JAMS version " + getVersion());
+        mainFolder = FolderUtils.checkMainFolder();
+        TempUtils.loadTemporalFolder();
 
-		languageManager = LanguageManager.INSTANCE;
-		fileTypeManager = FileTypeManager.INSTANCE;
+        mainConfiguration = ConfigurationUtils.loadMainConfiguration();
 
-		architectureManager = ArchitectureManager.INSTANCE;
-		assemblerBuilderManager = AssemblerBuilderManager.INSTANCE;
-		memoryBuilderManager = MemoryBuilderManager.INSTANCE;
-		cacheBuilderManager = CacheBuilderManager.INSTANCE;
-		registersBuilderManager = RegistersBuilderManager.INSTANCE;
+        languageManager = LanguageManager.INSTANCE;
+        fileTypeManager = FileTypeManager.INSTANCE;
 
-		instructionSetManager = InstructionSetManager.INSTANCE;
-		directiveSetManager = DirectiveSetManager.INSTANCE;
-		syscallExecutionBuilderManager = SyscallExecutionBuilderManager.INSTANCE;
+        architectureManager = ArchitectureManager.INSTANCE;
+        assemblerBuilderManager = AssemblerBuilderManager.INSTANCE;
+        memoryBuilderManager = MemoryBuilderManager.INSTANCE;
+        cacheBuilderManager = CacheBuilderManager.INSTANCE;
+        registersBuilderManager = RegistersBuilderManager.INSTANCE;
 
-		JamsApplication.main(args);
-	}
+        instructionSetManager = InstructionSetManager.INSTANCE;
+        directiveSetManager = DirectiveSetManager.INSTANCE;
+        syscallExecutionBuilderManager = SyscallExecutionBuilderManager.INSTANCE;
 
-	/**
-	 * Returns the version of this instance of JAMS.
-	 *
-	 * @return the version of JAMS.
-	 */
-	public static String getVersion() {
-		return VERSION;
-	}
+        numberRepresentationManager = NumberRepresentationManager.INSTANCE;
 
-	/**
-	 * Returns JAMS's main folder. This folder is used to store general data.
-	 *
-	 * @return JAMS's main folder.
-	 */
-	public static File getMainFolder() {
-		return mainFolder;
-	}
+        JamsApplication.main(args);
+    }
 
-	/**
-	 * Returns JAMS's main configuration.
-	 *
-	 * @return JAMS's main configuration.
-	 */
-	public static RootConfiguration getMainConfiguration() {
-		return mainConfiguration;
-	}
+    /**
+     * Returns the version of this instance of JAMS.
+     *
+     * @return the version of JAMS.
+     */
+    public static String getVersion() {
+        return VERSION;
+    }
 
-	/**
-	 * Returns the {@link LanguageManager}.
-	 *
-	 * @return the {@link LanguageManager}.
-	 */
-	public static LanguageManager getLanguageManager() {
-		return languageManager;
-	}
+    /**
+     * Returns JAMS's main folder. This folder is used to store general data.
+     *
+     * @return JAMS's main folder.
+     */
+    public static File getMainFolder() {
+        return mainFolder;
+    }
 
-	/**
-	 * Returns the {@link FileTypeManager}.
-	 *
-	 * @return the {@link FileTypeManager}.
-	 */
-	public static FileTypeManager getFileTypeManager() {
-		return fileTypeManager;
-	}
+    /**
+     * Returns JAMS's main configuration.
+     *
+     * @return JAMS's main configuration.
+     */
+    public static RootConfiguration getMainConfiguration() {
+        return mainConfiguration;
+    }
 
-	/**
-	 * Returns the {@link ArchitectureManager}.
-	 *
-	 * @return the {@link ArchitectureManager}.
-	 */
-	public static ArchitectureManager getArchitectureManager() {
-		return architectureManager;
-	}
+    /**
+     * Returns the {@link LanguageManager}.
+     *
+     * @return the {@link LanguageManager}.
+     */
+    public static LanguageManager getLanguageManager() {
+        return languageManager;
+    }
 
-	/**
-	 * Return the {@link AssemblerBuilderManager}.
-	 *
-	 * @return the {@link AssemblerBuilderManager}.
-	 * @see AssemblerBuilderManager
-	 */
-	public static AssemblerBuilderManager getAssemblerBuilderManager() {
-		return assemblerBuilderManager;
-	}
+    /**
+     * Returns the {@link FileTypeManager}.
+     *
+     * @return the {@link FileTypeManager}.
+     */
+    public static FileTypeManager getFileTypeManager() {
+        return fileTypeManager;
+    }
 
-	/**
-	 * Returns the {@link MemoryBuilderManager}.
-	 *
-	 * @return the {@link MemoryBuilderManager}.
-	 */
-	public static MemoryBuilderManager getMemoryBuilderManager() {
-		return memoryBuilderManager;
-	}
+    /**
+     * Returns the {@link ArchitectureManager}.
+     *
+     * @return the {@link ArchitectureManager}.
+     */
+    public static ArchitectureManager getArchitectureManager() {
+        return architectureManager;
+    }
 
-	/**
-	 * Returns the {@link CacheBuilderManager}.
-	 *
-	 * @return the {@link CacheBuilderManager}.
-	 */
-	public static CacheBuilderManager getCacheBuilderManager() {
-		return cacheBuilderManager;
-	}
+    /**
+     * Return the {@link AssemblerBuilderManager}.
+     *
+     * @return the {@link AssemblerBuilderManager}.
+     * @see AssemblerBuilderManager
+     */
+    public static AssemblerBuilderManager getAssemblerBuilderManager() {
+        return assemblerBuilderManager;
+    }
 
-	/**
-	 * Returns the {@link RegistersBuilderManager}.
-	 *
-	 * @return the {@link RegistersBuilderManager}.
-	 */
-	public static RegistersBuilderManager getRegistersBuilderManager() {
-		return registersBuilderManager;
-	}
+    /**
+     * Returns the {@link MemoryBuilderManager}.
+     *
+     * @return the {@link MemoryBuilderManager}.
+     */
+    public static MemoryBuilderManager getMemoryBuilderManager() {
+        return memoryBuilderManager;
+    }
 
-	/**
-	 * Returns the {@link InstructionSetManager}.
-	 *
-	 * @return the {@link InstructionSetManager}.
-	 */
-	public static InstructionSetManager getInstructionSetManager() {
-		return instructionSetManager;
-	}
+    /**
+     * Returns the {@link CacheBuilderManager}.
+     *
+     * @return the {@link CacheBuilderManager}.
+     */
+    public static CacheBuilderManager getCacheBuilderManager() {
+        return cacheBuilderManager;
+    }
 
-	/**
-	 * Returns the {@link DirectiveSetManager}.
-	 *
-	 * @return the {@link DirectiveSetManager}.
-	 */
-	public static DirectiveSetManager getDirectiveSetManager() {
-		return directiveSetManager;
-	}
+    /**
+     * Returns the {@link RegistersBuilderManager}.
+     *
+     * @return the {@link RegistersBuilderManager}.
+     */
+    public static RegistersBuilderManager getRegistersBuilderManager() {
+        return registersBuilderManager;
+    }
 
-	/**
-	 * Returns the {@link SyscallExecutionBuilderManager}.
-	 *
-	 * @return the {@link SyscallExecutionBuilderManager}.
-	 */
-	public static SyscallExecutionBuilderManager getSyscallExecutionBuilderManager() {
-		return syscallExecutionBuilderManager;
-	}
+    /**
+     * Returns the {@link InstructionSetManager}.
+     *
+     * @return the {@link InstructionSetManager}.
+     */
+    public static InstructionSetManager getInstructionSetManager() {
+        return instructionSetManager;
+    }
 
-	private static void loadVersion() {
-		InputStream stream = Jams.class.getResourceAsStream("/info.json");
-		try {
-			JSONObject object = new JSONObject(FileUtils.readAll(stream));
-			VERSION = object.getString("version");
-		} catch (Exception e) {
-			e.printStackTrace();
-			VERSION = "NULL";
-		}
-	}
+    /**
+     * Returns the {@link DirectiveSetManager}.
+     *
+     * @return the {@link DirectiveSetManager}.
+     */
+    public static DirectiveSetManager getDirectiveSetManager() {
+        return directiveSetManager;
+    }
+
+    /**
+     * Returns the {@link SyscallExecutionBuilderManager}.
+     *
+     * @return the {@link SyscallExecutionBuilderManager}.
+     */
+    public static SyscallExecutionBuilderManager getSyscallExecutionBuilderManager() {
+        return syscallExecutionBuilderManager;
+    }
+
+    /**
+     * Returns the {@link SyscallExecutionBuilderManager}.
+     *
+     * @return the {@link SyscallExecutionBuilderManager}.
+     */
+    public static NumberRepresentationManager getNumberRepresentationManager() {
+        return numberRepresentationManager;
+    }
+
+
+    private static void loadVersion() {
+        InputStream stream = Jams.class.getResourceAsStream("/info.json");
+        try {
+            JSONObject object = new JSONObject(FileUtils.readAll(stream));
+            VERSION = object.getString("version");
+        } catch (Exception e) {
+            e.printStackTrace();
+            VERSION = "NULL";
+        }
+    }
 }

@@ -69,7 +69,7 @@ public class SimpleMemoryTableCell extends TextFieldTableCell<SimpleMemoryEntry,
 
         SimpleMemoryEntry entry = getTableRow().getItem();
         if (entry == null) return;
-        if (entry.getRepresentation().isRequiresNextWord()) {
+        if (entry.getRepresentation().requiresNextWord()) {
             ((SimpleMemoryTable) getTableView()).populate();
         }
     }

@@ -16,7 +16,7 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionRunExceptionHandler;
 import net.jamsimulator.jams.mips.syscall.event.SyscallExecutionBuilderRegisterEvent;
 import net.jamsimulator.jams.mips.syscall.event.SyscallExecutionBuilderUnregisterEvent;
-import net.jamsimulator.jams.utils.NumericStringComparator;
+import net.jamsimulator.jams.utils.representation.NumericStringComparator;
 
 import java.util.Comparator;
 import java.util.LinkedList;

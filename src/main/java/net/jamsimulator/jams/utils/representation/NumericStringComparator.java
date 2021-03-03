@@ -1,4 +1,6 @@
-package net.jamsimulator.jams.utils;
+package net.jamsimulator.jams.utils.representation;
+
+import net.jamsimulator.jams.utils.NumericUtils;
 
 import java.util.Comparator;
 

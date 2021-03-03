@@ -2,6 +2,7 @@ package net.jamsimulator.jams.gui.mips.simulator.memory;
 
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.utils.NumberRepresentation;
 
 /**
  * Represents a table showing the contents of a memory.
@@ -37,14 +38,14 @@ public interface MemoryTable {
      *
      * @return the representation of the cells inside this table.
      */
-    MemoryRepresentation getRepresentation();
+    NumberRepresentation getRepresentation();
 
     /**
      * Sets the way the cells are represented inside this table.
      *
      * @param representation the representation of the cells inside this table.
      */
-    void setRepresentation(MemoryRepresentation representation);
+    void setRepresentation(NumberRepresentation representation);
 
     /**
      * Moves to the next page.

@@ -3,6 +3,7 @@ package net.jamsimulator.jams.gui.mips.simulator.memory;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import net.jamsimulator.jams.mips.memory.Memory;
+import net.jamsimulator.jams.utils.NumberRepresentation;
 import net.jamsimulator.jams.utils.StringUtils;
 
 /**
@@ -12,11 +13,11 @@ public class SimpleMemoryEntry {
 
     private final Memory memory;
     private final int address;
-    private final MemoryRepresentation representation;
+    private final NumberRepresentation representation;
 
     private StringProperty pAddress, p0, p4, p8, pC;
 
-    public SimpleMemoryEntry(Memory memory, int address, MemoryRepresentation representation) {
+    public SimpleMemoryEntry(Memory memory, int address, NumberRepresentation representation) {
         this.memory = memory;
         this.address = address;
         this.representation = representation;
@@ -30,7 +31,7 @@ public class SimpleMemoryEntry {
         return address;
     }
 
-    public MemoryRepresentation getRepresentation() {
+    public NumberRepresentation getRepresentation() {
         return representation;
     }
 

@@ -15,6 +15,7 @@ import net.jamsimulator.jams.mips.simulation.event.SimulationCachesResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
+import net.jamsimulator.jams.utils.NumberRepresentation;
 
 import java.util.HashMap;
 
@@ -31,13 +32,13 @@ public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements M
     protected Simulation<?> simulation;
     protected Memory memory;
     protected int offset;
-    private MemoryRepresentation representation;
+    private NumberRepresentation representation;
     private int rows;
 
     private Runnable onPopulate = () -> {
     };
 
-    public SimpleMemoryTable(Simulation<?> simulation, Memory memory, int offset, MemoryRepresentation representation) {
+    public SimpleMemoryTable(Simulation<?> simulation, Memory memory, int offset, NumberRepresentation representation) {
         this.simulation = simulation;
         this.memory = memory;
         this.offset = offset;
@@ -121,11 +122,11 @@ public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements M
         populate();
     }
 
-    public MemoryRepresentation getRepresentation() {
+    public NumberRepresentation getRepresentation() {
         return representation;
     }
 
-    public void setRepresentation(MemoryRepresentation representation) {
+    public void setRepresentation(NumberRepresentation representation) {
         if (representation == this.representation) return;
         this.representation = representation;
         populate();

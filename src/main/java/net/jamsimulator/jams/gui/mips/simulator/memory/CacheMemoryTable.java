@@ -12,6 +12,7 @@ import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.event.*;
+import net.jamsimulator.jams.utils.NumberRepresentation;
 
 import java.util.HashMap;
 
@@ -26,13 +27,13 @@ public class CacheMemoryTable extends TableView<CacheMemoryEntry> implements Mem
     protected Simulation<?> simulation;
     protected Cache cache;
     protected int block;
-    private MemoryRepresentation representation;
+    private NumberRepresentation representation;
     private int rows;
 
     private Runnable onPopulate = () -> {
     };
 
-    public CacheMemoryTable(Simulation<?> simulation, Cache cache, int block, MemoryRepresentation representation) {
+    public CacheMemoryTable(Simulation<?> simulation, Cache cache, int block, NumberRepresentation representation) {
         this.simulation = simulation;
         this.cache = cache;
         this.block = block;
@@ -118,12 +119,12 @@ public class CacheMemoryTable extends TableView<CacheMemoryEntry> implements Mem
     }
 
     @Override
-    public MemoryRepresentation getRepresentation() {
+    public NumberRepresentation getRepresentation() {
         return representation;
     }
 
     @Override
-    public void setRepresentation(MemoryRepresentation representation) {
+    public void setRepresentation(NumberRepresentation representation) {
         if (representation == this.representation) return;
         this.representation = representation;
         populate();

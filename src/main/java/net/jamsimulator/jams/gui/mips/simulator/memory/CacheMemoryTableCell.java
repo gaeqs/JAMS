@@ -66,7 +66,7 @@ public class CacheMemoryTableCell extends TextFieldTableCell<CacheMemoryEntry, S
 
         CacheMemoryEntry entry = getTableRow().getItem();
         if (entry == null) return;
-        if (entry.getRepresentation().isRequiresNextWord()) {
+        if (entry.getRepresentation().requiresNextWord()) {
             ((CacheMemoryTable) getTableView()).populate();
         }
     }
