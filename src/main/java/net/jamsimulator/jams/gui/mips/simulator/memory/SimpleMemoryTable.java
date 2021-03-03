@@ -18,6 +18,10 @@ import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 
 import java.util.HashMap;
 
+/**
+ * Represents the table that shows the content of a memory.
+ * This table should be inside a {@link MemoryPane}.
+ */
 public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements MemoryTable {
 
     public static final String MEMORY_ROWS_CONFIGURATION_NODE = "simulation.memory_rows";
@@ -29,6 +33,9 @@ public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements M
     protected int offset;
     private MemoryRepresentation representation;
     private int rows;
+
+    private Runnable onPopulate = () -> {
+    };
 
     public SimpleMemoryTable(Simulation<?> simulation, Memory memory, int offset, MemoryRepresentation representation) {
         this.simulation = simulation;
@@ -90,8 +97,14 @@ public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements M
         }
     }
 
+    @Override
     public Simulation<?> getSimulation() {
         return simulation;
+    }
+
+    @Override
+    public Memory getMemory() {
+        return memory;
     }
 
     public int getRows() {
@@ -130,7 +143,16 @@ public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements M
         populate();
     }
 
-    private void populate() {
+    @Override
+    public void afterPopulate(Runnable listener) {
+        var before = onPopulate;
+        onPopulate = () -> {
+            before.run();
+            listener.run();
+        };
+    }
+
+    public void populate() {
         getItems().clear();
 
         int current = offset;
@@ -141,6 +163,8 @@ public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements M
             getItems().add(entry);
             current += 0x10;
         }
+
+        onPopulate.run();
     }
 
     @Listener

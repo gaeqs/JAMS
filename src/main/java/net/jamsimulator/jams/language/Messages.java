@@ -120,6 +120,9 @@ public class Messages {
 	public static final String REGISTERS_HEX = "REGISTERS_HEX";
 
 	public static final String MEMORY_ADDRESS = "MEMORY_ADDRESS";
+	public static final String MEMORY_MEMORY = "MEMORY_MEMORY";
+	public static final String MEMORY_CACHE_TAG = "MEMORY_CACHE_TAG";
+	public static final String MEMORY_CACHE_BLOCK = "MEMORY_CACHE_BLOCK";
 
 	public static final String LABELS_NAME = "LABELS_NAME";
 	public static final String LABELS_ADDRESS = "LABELS_ADDRESS";

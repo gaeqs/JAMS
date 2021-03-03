@@ -5,6 +5,9 @@ import javafx.beans.property.StringProperty;
 import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
 import net.jamsimulator.jams.utils.StringUtils;
 
+/**
+ * Represents a row inside a {@link CacheMemoryTable}.
+ */
 public class CacheMemoryEntry {
 
     private CacheBlock block;

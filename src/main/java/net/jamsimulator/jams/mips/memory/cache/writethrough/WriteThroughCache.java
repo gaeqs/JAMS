@@ -9,6 +9,7 @@ import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 import net.jamsimulator.jams.mips.memory.cache.CacheStats;
+import net.jamsimulator.jams.mips.memory.cache.event.CacheResetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteGetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordGetEvent;
@@ -112,9 +113,14 @@ public abstract class WriteThroughCache extends SimpleEventBroadcast implements 
 
     @Override
     public void resetCache() {
+        var event = callEvent(new CacheResetEvent.Before(this));
+        if (event.isCancelled()) return;
+
         operations = hits = cacheTime = 0;
         Arrays.fill(blocks, null);
         if (parent instanceof Cache) ((Cache) parent).resetCache();
+
+        callEvent(new CacheResetEvent.After(this));
     }
 
     @Override
@@ -173,7 +179,7 @@ public abstract class WriteThroughCache extends SimpleEventBroadcast implements 
     @Override
     public void setWord(int address, int word) {
         parent.setWord(address, word);
-        CacheBlock block = getBlock(address, false, areEventCallsEnabled());
+        CacheBlock block = getBlock(address, true, areEventCallsEnabled());
         if (block != null) {
             if (!areEventCallsEnabled()) {
                 block.setModificationTime(cacheTime++);
@@ -197,6 +203,40 @@ public abstract class WriteThroughCache extends SimpleEventBroadcast implements 
             callEvent(new MemoryWordSetEvent.After(this, null, address, word, old));
         }
     }
+
+    @Override
+    public void setWord(int address, int word, boolean callEvents, boolean bypassCaches) {
+        parent.setWord(address, word, callEvents, bypassCaches);
+
+        if (bypassCaches) return;
+
+        boolean events = callEvents && areEventCallsEnabled();
+
+        CacheBlock block = getBlock(address, true, areEventCallsEnabled());
+        if (block != null) {
+            if (!events) {
+                block.setModificationTime(cacheTime++);
+                block.setWord(address & byteMask, word, isBigEndian());
+                return;
+            }
+
+            //Invokes the before event.
+            var before = callEvent(new MemoryWordSetEvent.Before(this, address, word));
+            if (before.isCancelled()) return;
+
+            //Refresh data.
+            address = before.getAddress();
+            word = before.getValue();
+
+            //Gets the section and sets the word.
+            block.setModificationTime(cacheTime++);
+            int old = block.setWord(address & byteMask, word, isBigEndian());
+
+            //Invokes the after event.
+            callEvent(new MemoryWordSetEvent.After(this, null, address, word, old));
+        }
+    }
+
 
     @Override
     public int getWord(int address, boolean callEvents, boolean bypassCaches) {

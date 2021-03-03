@@ -45,6 +45,10 @@ public enum MemoryRepresentation {
         return this == RGB || this == RGBA;
     }
 
+    public boolean isRequiresNextWord() {
+        return requiresNextWord;
+    }
+
     public String represent(Memory memory, int address) {
         try {
             int o1 = memory.getWord(address, false, true);
@@ -67,7 +71,8 @@ public enum MemoryRepresentation {
     public String represent(CacheBlock block, int address) {
         int o1 = block.getWord(address, false);
         int o2 = 0;
-        if (requiresNextWord && block.getData().length - 4 <= address) {
+
+        if (requiresNextWord && block.getData().length > address + 4) {
             o2 = block.getWord(address + 4, false);
         }
 

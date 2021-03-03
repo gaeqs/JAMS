@@ -171,13 +171,6 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     }
 
     @Listener
-    private void onMemoryEndianness(MemoryEndiannessChange.After event) {
-        if (shouldUpdate) {
-            refresh();
-        }
-    }
-
-    @Listener
     private void onSimulationUndo(SimulationUndoStepEvent.After event) {
         if (shouldUpdate) {
             refresh();
@@ -267,7 +260,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
                 }
             }
 
-            var code = memory.getWord(current);
+            var code = memory.getWord(current, false, true);
             assembledLines.add(new MIPSAssembledLine(assembledLines.size(), current, code));
 
             var original = originals.getOrDefault(current, "");

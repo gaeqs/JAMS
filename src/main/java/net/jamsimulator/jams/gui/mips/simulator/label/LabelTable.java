@@ -73,7 +73,7 @@ public class LabelTable extends TableView<LabelEntry> {
     private void selectMemory(int address) {
         simulationPane.getBarMap().searchButton("memory").ifPresent(BarButton::show);
         var memoryPane = simulationPane.getMemoryPane();
-        memoryPane.select(address);
+        memoryPane.selectAddress(address);
     }
 
 }

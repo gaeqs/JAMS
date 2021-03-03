@@ -5,6 +5,9 @@ import javafx.beans.property.StringProperty;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.utils.StringUtils;
 
+/**
+ * Represents a row inside a {@link SimpleMemoryTable}.
+ */
 public class SimpleMemoryEntry {
 
     private final Memory memory;

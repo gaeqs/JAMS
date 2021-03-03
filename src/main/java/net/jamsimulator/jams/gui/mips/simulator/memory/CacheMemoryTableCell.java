@@ -6,6 +6,9 @@ import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
+/**
+ * Represents a cell inside a {@link CacheMemoryTable}.
+ */
 public class CacheMemoryTableCell extends TextFieldTableCell<CacheMemoryEntry, String> {
 
     private final int offset;
@@ -58,14 +61,29 @@ public class CacheMemoryTableCell extends TextFieldTableCell<CacheMemoryEntry, S
     }
 
     @Override
+    public void commitEdit(String newValue) {
+        super.commitEdit(newValue);
+
+        CacheMemoryEntry entry = getTableRow().getItem();
+        if (entry == null) return;
+        if (entry.getRepresentation().isRequiresNextWord()) {
+            ((CacheMemoryTable) getTableView()).populate();
+        }
+    }
+
+    @Override
     public void updateItem(String item, boolean empty) {
         super.updateItem(item, empty);
         if (empty || getTableRow() == null) {
             setText(null);
             setGraphic(null);
+            setStyle("-fx-background-color: transparent");
         } else {
             CacheMemoryEntry entry = getTableRow().getItem();
-            if (entry == null) return;
+            if (entry == null) {
+                setStyle("-fx-background-color: transparent");
+                return;
+            }
 
             if (!entry.getRepresentation().isColor()) {
                 setText(entry.getRepresentation().represent(entry.getBlock(), entry.getAddress() + offset));

@@ -44,7 +44,7 @@ public class InstructionSnapshot {
 			//Add instructions to memory
 			int relativeAddress = address;
 			for (AssembledInstruction assembledInstruction : assembledInstructions) {
-				assembler.getMemory().setWord(relativeAddress, assembledInstruction.getCode());
+				assembler.getMemory().setWord(relativeAddress, assembledInstruction.getCode(), false, true);
 				relativeAddress += 4;
 			}
 		} catch (AssemblerException ex) {

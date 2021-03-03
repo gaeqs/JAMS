@@ -238,6 +238,29 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
     }
 
     @Override
+    public void setWord(int address, int word, boolean callEvents, boolean bypassCaches) {
+        if ((address & 0x2) != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_STORE_EXCEPTION, address);
+        if (!eventCallsEnabled || !callEvents) {
+            getSectionOrThrowException(address).setWord(address, word, bigEndian);
+            return;
+        }
+        //Invokes the before event.
+        MemoryWordSetEvent.Before before = callEvent(new MemoryWordSetEvent.Before(this, address, word));
+        if (before.isCancelled()) return;
+
+        //Refresh data.
+        address = before.getAddress();
+        word = before.getValue();
+
+        //Gets the section and sets the word.
+        MemorySection section = getSectionOrThrowException(address);
+        int old = section.setWord(address, word, bigEndian);
+
+        //Invokes the after event.
+        callEvent(new MemoryWordSetEvent.After(this, section, address, word, old));
+    }
+
+    @Override
     public int getWord(int address, boolean callEvents, boolean bypassCaches) {
         if ((address & 0x2) != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
         if (!eventCallsEnabled || !callEvents) {

@@ -3,24 +3,23 @@ package net.jamsimulator.jams.gui.mips.simulator.memory;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTableColumn;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
+import net.jamsimulator.jams.mips.memory.cache.event.CacheResetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.mips.simulation.event.SimulationCachesResetEvent;
-import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
-import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
-import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
+import net.jamsimulator.jams.mips.simulation.event.*;
 
 import java.util.HashMap;
 
+/**
+ * Represents the table that shows the content of a cache.
+ * This table should be inside a {@link MemoryPane}.
+ */
 public class CacheMemoryTable extends TableView<CacheMemoryEntry> implements MemoryTable {
-
-    public static final String MEMORY_ROWS_CONFIGURATION_NODE = "simulation.memory_rows";
 
     private final HashMap<Integer, CacheMemoryEntry> entries;
 
@@ -29,6 +28,9 @@ public class CacheMemoryTable extends TableView<CacheMemoryEntry> implements Mem
     protected int block;
     private MemoryRepresentation representation;
     private int rows;
+
+    private Runnable onPopulate = () -> {
+    };
 
     public CacheMemoryTable(Simulation<?> simulation, Cache cache, int block, MemoryRepresentation representation) {
         this.simulation = simulation;
@@ -101,6 +103,15 @@ public class CacheMemoryTable extends TableView<CacheMemoryEntry> implements Mem
         return simulation;
     }
 
+    public int getBlock() {
+        return block;
+    }
+
+    @Override
+    public Cache getMemory() {
+        return cache;
+    }
+
     @Override
     public int getRows() {
         return rows;
@@ -118,11 +129,37 @@ public class CacheMemoryTable extends TableView<CacheMemoryEntry> implements Mem
         populate();
     }
 
-    private void populate() {
+    @Override
+    public void nextPage() {
+        block++;
+        if (block >= cache.getBlocksAmount()) block = 0;
+        populate();
+    }
+
+    @Override
+    public void previousPage() {
+        block--;
+        if (block < 0) block = cache.getBlocksAmount() - 1;
+        populate();
+    }
+
+    @Override
+    public void afterPopulate(Runnable listener) {
+        var before = onPopulate;
+        onPopulate = () -> {
+            before.run();
+            listener.run();
+        };
+    }
+
+    public void populate() {
         getItems().clear();
 
         var cacheBlock = cache.getCacheBlock(block).orElse(null);
-        if (cacheBlock == null) return;
+        if (cacheBlock == null) {
+            onPopulate.run();
+            return;
+        }
         int current = 0;
 
         CacheMemoryEntry entry;
@@ -140,21 +177,11 @@ public class CacheMemoryTable extends TableView<CacheMemoryEntry> implements Mem
             entries.put(current, entry);
             getItems().add(entry);
         }
+
+        onPopulate.run();
     }
 
-    @Override
-    public void nextPage() {
-        block++;
-        if (block >= cache.getBlocksAmount()) block = 0;
-        populate();
-    }
-
-    @Override
-    public void previousPage() {
-        block--;
-        if (block < 0) block = cache.getBlocksAmount() - 1;
-        populate();
-    }
+    //region listeners
 
     @Listener
     private void onSimulationStart(SimulationStartEvent event) {
@@ -164,24 +191,22 @@ public class CacheMemoryTable extends TableView<CacheMemoryEntry> implements Mem
     @Listener
     private void onSimulationStop(SimulationStopEvent event) {
         cache.registerListeners(this, true);
-
-        var block = cache.getCacheBlock(this.block).orElse(null);
-        if (block == null) return;
-        entries.values().forEach(entry -> entry.refresh(block));
+        populate();
     }
 
     @Listener
     private void onSimulationReset(SimulationResetEvent event) {
-        var block = cache.getCacheBlock(this.block).orElse(null);
-        if (block == null) return;
-        entries.values().forEach(entry -> entry.refresh(block));
+        populate();
     }
 
     @Listener
     private void onSimulationCachesReset(SimulationCachesResetEvent event) {
-        var block = cache.getCacheBlock(this.block).orElse(null);
-        if (block == null) return;
-        entries.values().forEach(entry -> entry.refresh(block));
+        populate();
+    }
+
+    @Listener
+    private void onSimulationUndo(SimulationUndoStepEvent.After event) {
+        populate();
     }
 
     @Listener
@@ -216,11 +241,10 @@ public class CacheMemoryTable extends TableView<CacheMemoryEntry> implements Mem
     }
 
     @Listener
-    private void onConfigurationNodeChange(ConfigurationNodeChangeEvent.After event) {
-        if (event.getNode().equals(MEMORY_ROWS_CONFIGURATION_NODE)) {
-            rows = (int) event.getNewValueAs().orElse(rows);
-            populate();
-        }
+    private void onCacheReset(CacheResetEvent.After event) {
+        populate();
     }
 
+
+    //endregion
 }

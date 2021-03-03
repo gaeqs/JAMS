@@ -6,60 +6,104 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.LanguageStringComboBox;
-import net.jamsimulator.jams.gui.util.value.HexadecimalIntegerValueEditor;
-import net.jamsimulator.jams.mips.memory.MIPS32Memory;
+import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
+import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.memory.MemorySection;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.utils.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MemoryPane extends AnchorPane implements ActionRegion {
 
-    private final MemoryTable table;
+    private final Simulation<?> simulation;
+
+    private MemoryTable table;
+    private Memory selected;
+    private final ComboBox<String> memorySelector;
+
+    private final HBox headerHBox, buttonsHBox;
 
     public MemoryPane(Simulation<?> simulation) {
-        var offsetSelection = new ComboBox<String>();
-        var directOffsetSelection = new HexadecimalIntegerValueEditor();
+        this.simulation = simulation;
+
+        memorySelector = new ComboBox<>();
+        loadMemorySelector(simulation.getMemory());
+
+        buttonsHBox = new HBox();
+
         var representationSelection = initRepresentationComboBox();
 
-        var offsetHbox = new HBox();
-        var buttonsHBox = new HBox();
+        headerHBox = new HBox();
+        headerHBox.setSpacing(5);
+        headerHBox.getChildren().addAll(memorySelector, representationSelection);
+        memorySelector.prefWidthProperty().bind(headerHBox.widthProperty().divide(2));
+        representationSelection.prefWidthProperty().bind(headerHBox.widthProperty().divide(2));
 
-        if (simulation.getMemory() instanceof Cache) {
-            table = new CacheMemoryTable(simulation, (Cache) simulation.getMemory(), 0, MemoryRepresentation.HEXADECIMAL);
-        } else {
-            table = new SimpleMemoryTable(simulation, simulation.getMemory(), 0, MemoryRepresentation.HEXADECIMAL);
-        }
-
-        initOffsetComboBox(simulation.getMemory(), offsetSelection);
-        initDirectOffsetSelection(directOffsetSelection);
-
-        offsetHbox.setSpacing(5);
-        offsetHbox.getChildren().addAll(offsetSelection, directOffsetSelection);
-        offsetSelection.prefWidthProperty().bind(offsetHbox.widthProperty().divide(2));
-        directOffsetSelection.prefWidthProperty().bind(offsetHbox.widthProperty().divide(2));
         initButtons(buttonsHBox);
+        AnchorUtils.setAnchor(headerHBox, 0, -1, 2, 2);
+        AnchorUtils.setAnchor(buttonsHBox, -1, 0, 2, 2);
 
-        AnchorUtils.setAnchor(offsetHbox, 0, -1, 0, 0);
-        AnchorUtils.setAnchor(representationSelection, 30, -1, 0, 0);
-        AnchorUtils.setAnchor((Node) table, 60, 31, 0, 0);
-        AnchorUtils.setAnchor(buttonsHBox, -1, 0, 0, 0);
 
-        getChildren().addAll(offsetHbox, representationSelection, (Node) table, buttonsHBox);
+        var memory = simulation.getMemory().getBottomMemory();
+        selectMemory(memory);
+
+        Jams.getLanguageManager().registerListeners(this, true);
     }
 
-    public void select(int address) {
+    public void selectLastMemory() {
+        selectMemory(simulation.getMemory().getBottomMemory());
+    }
+
+    public void selectMemory(int index) {
+        int i = 0;
+        var current = simulation.getMemory();
+
+        while (i < index && current.getNextLevelMemory().isPresent()) {
+            current = current.getNextLevelMemory().get();
+            i++;
+        }
+
+        selectMemory(current);
+    }
+
+    private void selectMemory(Memory memory) {
+        if (selected == memory) return;
+        selected = memory;
+
+        getChildren().clear();
+
+        var representation = table == null ? MemoryRepresentation.HEXADECIMAL : table.getRepresentation();
+
+        Region header;
+        if (memory instanceof Cache) {
+            table = new CacheMemoryTable(simulation, (Cache) memory, 0, representation);
+            header = new CacheMemoryHeader((CacheMemoryTable) table);
+        } else {
+            table = new SimpleMemoryTable(simulation, memory, 0, representation);
+            header = new SimpleMemoryHeader((SimpleMemoryTable) table);
+        }
+
+        header.setPrefHeight(30);
+
+        AnchorUtils.setAnchor(header, 30, -1, 2, 2);
+        AnchorUtils.setAnchor((Node) table, 60, 31, 0, 0);
+
+        getChildren().addAll(headerHBox, header, (Node) table, buttonsHBox);
+    }
+
+    public void selectAddress(int address) {
+        selectLastMemory();
         var offset = Integer.remainderUnsigned(address, (table.getRows() << 4));
         var start = address - offset;
         var row = offset >>> 4;
@@ -73,57 +117,28 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
 
     }
 
-    private void initOffsetComboBox(Memory memory, ComboBox<String> offsetSelection) {
-        if (!(table instanceof SimpleMemoryTable)) return;
-        var smt = (SimpleMemoryTable) table;
+    private void loadMemorySelector(Memory memory) {
+        memorySelector.getItems().clear();
+        int i = 0;
+        Memory current = memory;
+        while (current != null) {
+            if (current instanceof Cache) {
+                String name = Jams.getLanguageManager().getSelected()
+                        .getOrDefault(((Cache) current).getBuilder().getLanguageNode());
 
-        List<String> list = new ArrayList<>();
-        for (MemorySection section : memory.getMemorySections()) {
-            list.add("0x" + StringUtils.addZeros(Integer.toHexString(section.getFirstAddress()), 8) + " - " + section.getName());
-        }
-        list.add("0x" + StringUtils.addZeros(Integer.toHexString(MIPS32Memory.HEAP), 8) + " - Heap");
-        list.add("0x" + StringUtils.addZeros(Integer.toHexString(MIPS32Memory.STACK), 8) + " - Stack");
+                String data = ((Cache) current).getBlocksAmount() + " / " + ((Cache) current).getBlockSize();
 
-        list.sort(String::compareTo);
-        offsetSelection.getItems().addAll(list);
-        offsetSelection.getSelectionModel().select(0);
-
-        offsetSelection.setOnAction(event -> {
-            String name = offsetSelection.getSelectionModel().getSelectedItem().substring(13);
-            if (name.equals("Heap")) {
-                smt.setOffset(MIPS32Memory.HEAP);
-            }
-            if (name.equals("Stack")) {
-                smt.setOffset(MIPS32Memory.STACK);
+                memorySelector.getItems().add((i++) + " - " + name + " " + data);
             } else {
-                Optional<MemorySection> section = memory.getMemorySection(name);
-                section.ifPresent(memorySection -> smt.setOffset(memorySection.getFirstAddress()));
+                String name = Jams.getLanguageManager().getSelected().getOrDefault(Messages.MEMORY_MEMORY);
+                memorySelector.getItems().add((i++) + " - " + name);
             }
-        });
-    }
+            current = current.getNextLevelMemory().orElse(null);
+        }
 
-    private void initDirectOffsetSelection(HexadecimalIntegerValueEditor directOffsetSelection) {
-        if (!(table instanceof SimpleMemoryTable)) return;
-        var smt = (SimpleMemoryTable) table;
-        directOffsetSelection.setCurrentValue(smt.getOffset());
-        directOffsetSelection.addListener(val -> {
-            val = val >> 2 << 2;
-            smt.setOffset(val);
-        });
-    }
+        memorySelector.getSelectionModel().selectLast();
 
-    private LanguageStringComboBox initRepresentationComboBox() {
-        List<String> values = Arrays.stream(MemoryRepresentation.values())
-                .map(MemoryRepresentation::getLanguageNode).collect(Collectors.toList());
-
-        var representationSelection = new LanguageStringComboBox(values) {
-            @Override
-            public void onSelect(int index, String node) {
-                table.setRepresentation(MemoryRepresentation.values()[index]);
-            }
-        };
-        representationSelection.getSelectionModel().select(0);
-        return representationSelection;
+        memorySelector.getSelectionModel().selectedIndexProperty().addListener((obs, old, val) -> selectMemory(val.intValue()));
     }
 
     private void initButtons(HBox buttonsHBox) {
@@ -144,9 +159,33 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
         buttonsHBox.getChildren().addAll(previous, next);
     }
 
+    private LanguageStringComboBox initRepresentationComboBox() {
+        List<String> values = Arrays.stream(MemoryRepresentation.values())
+                .map(MemoryRepresentation::getLanguageNode).collect(Collectors.toList());
+
+        var representationSelection = new LanguageStringComboBox(values) {
+            @Override
+            public void onSelect(int index, String node) {
+                table.setRepresentation(MemoryRepresentation.values()[index]);
+            }
+        };
+        representationSelection.getSelectionModel().select(0);
+        return representationSelection;
+    }
+
     @Override
     public boolean supportsActionRegion(String region) {
         return RegionTags.MIPS_SIMULATION.equals(region);
+    }
+
+    @Listener
+    public void onLanguageChange(SelectedLanguageChangeEvent.After event) {
+        loadMemorySelector(simulation.getMemory());
+    }
+
+    @Listener
+    public void onLanguageChange(DefaultLanguageChangeEvent.After event) {
+        loadMemorySelector(simulation.getMemory());
     }
 
 }
