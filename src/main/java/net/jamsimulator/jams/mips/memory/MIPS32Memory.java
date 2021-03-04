@@ -86,4 +86,9 @@ public class MIPS32Memory extends SimpleMemory {
         memory.eventCallsEnabled = eventCallsEnabled;
         return memory;
     }
+
+    @Override
+    public boolean isDirectionAffectedByCache(int address) {
+        return Integer.compareUnsigned(address, DATA) >= 0 && Integer.compareUnsigned(address, KERNEL_TEXT) < 0 ;
+    }
 }

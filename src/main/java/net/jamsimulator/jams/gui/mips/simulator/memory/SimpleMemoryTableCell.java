@@ -24,7 +24,7 @@ public class SimpleMemoryTableCell extends TextFieldTableCell<SimpleMemoryEntry,
                 SimpleMemoryEntry entry = getTableRow().getItem();
                 if (entry == null) return object;
                 int value = entry.getMemory()
-                        .getWord(entry.getAddress() + offset, false, true);
+                        .getWord(entry.getAddress() + offset, false, true, true);
                 return "0x" + StringUtils.addZeros(Integer.toHexString(value), 8);
             }
 

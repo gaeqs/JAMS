@@ -147,83 +147,34 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
 
     @Override
     public byte getByte(int address) {
-        return getByte(address, true, false);
+        return getByte(address, true, false, true);
     }
 
     @Override
     public void setByte(int address, byte b) {
-        CacheBlock block = getBlock(address, areEventCallsEnabled());
-        if (block != null) {
-            if (!areEventCallsEnabled()) {
-                block.setModificationTime(cacheTime++);
-                block.setByte(address & byteMask, b);
-                block.setDirty(true);
-                return;
-            }
-
-            //Invokes the before event.
-            var before = callEvent(new MemoryByteSetEvent.Before(this, address, b));
-            if (before.isCancelled()) return;
-
-            //Refresh data.
-            address = before.getAddress();
-            b = before.getValue();
-
-            //Gets the section and sets the byte.
-            block.setModificationTime(cacheTime++);
-            byte old = block.setByte(address & byteMask, b);
-            block.setDirty(true);
-
-            //Invokes the after event.
-            callEvent(new MemoryByteSetEvent.After(this, null, address, b, old));
-        }
+        setByte(address, b, true, false, true);
     }
 
     @Override
     public int getWord(int address) {
-        return getWord(address, true, false);
+        return getWord(address, true, false, true);
     }
 
     @Override
     public void setWord(int address, int word) {
-        if ((address & 0x2) != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_STORE_EXCEPTION, address);
-        CacheBlock block = getBlock(address, areEventCallsEnabled());
-        if (block != null) {
-            if (!areEventCallsEnabled()) {
-                block.setModificationTime(cacheTime++);
-                block.setWord(address & byteMask, word, isBigEndian());
-                block.setDirty(true);
-                return;
-            }
-
-            //Invokes the before event.
-            var before = callEvent(new MemoryWordSetEvent.Before(this, address, word));
-            if (before.isCancelled()) return;
-
-            //Refresh data.
-            address = before.getAddress();
-            word = before.getValue();
-
-            //Gets the section and sets the word.
-            block.setModificationTime(cacheTime++);
-            int old = block.setWord(address & byteMask, word, isBigEndian());
-            block.setDirty(true);
-
-            //Invokes the after event.
-            callEvent(new MemoryWordSetEvent.After(this, null, address, word, old));
-        }
+        setWord(address, word, true, false, true);
     }
 
     @Override
-    public void setWord(int address, int word, boolean callEvents, boolean bypassCaches) {
+    public void setWord(int address, int word, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
         if ((address & 0x2) != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_STORE_EXCEPTION, address);
 
-        if (bypassCaches) {
-            parent.setWord(address, word, callEvents, true);
+        if (bypassCaches || !isDirectionAffectedByCache(address)) {
+            parent.setWord(address, word, callEvents, true, modifyCaches);
             return;
         }
 
-        CacheBlock block = getBlock(address, areEventCallsEnabled());
+        CacheBlock block = getBlock(address, modifyCaches, areEventCallsEnabled());
 
         boolean events = callEvents && areEventCallsEnabled();
         if (block != null) {
@@ -249,20 +200,65 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
 
             //Invokes the after event.
             callEvent(new MemoryWordSetEvent.After(this, null, address, word, old));
+        } else {
+            parent.setWord(address, word, callEvents, false, modifyCaches);
         }
     }
 
+    @Override
+    public void setByte(int address, byte b, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
+        if (bypassCaches || !isDirectionAffectedByCache(address)) {
+            parent.setByte(address, b, callEvents, true, modifyCaches);
+            return;
+        }
+
+        CacheBlock block = getBlock(address, modifyCaches, areEventCallsEnabled());
+
+        boolean events = callEvents && areEventCallsEnabled();
+        if (block != null) {
+            if (!events) {
+                block.setModificationTime(cacheTime++);
+                block.setByte(address & byteMask, b);
+                block.setDirty(true);
+                return;
+            }
+
+            //Invokes the before event.
+            var before = callEvent(new MemoryByteSetEvent.Before(this, address, b));
+            if (before.isCancelled()) return;
+
+            //Refresh data.
+            address = before.getAddress();
+            b = before.getValue();
+
+            //Gets the section and sets the word.
+            block.setModificationTime(cacheTime++);
+            byte old = block.setByte(address & byteMask, b);
+            block.setDirty(true);
+
+            //Invokes the after event.
+            callEvent(new MemoryByteSetEvent.After(this, null, address, b, old));
+        } else {
+            parent.setByte(address, b, callEvents, false, modifyCaches);
+        }
+    }
 
     @Override
-    public int getWord(int address, boolean callEvents, boolean bypassCaches) {
+    public int getWord(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
         if ((address & 0x2) != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
-        if (bypassCaches) return parent.getWord(address, callEvents, true);
+        if (bypassCaches || !isDirectionAffectedByCache(address))
+            return parent.getWord(address, callEvents, true, modifyCaches);
         boolean events = callEvents && areEventCallsEnabled();
 
-        CacheBlock block = getBlock(address, events);
+        CacheBlock block = getBlock(address, modifyCaches, events);
+
+        if (block == null) {
+            return parent.getWord(address, callEvents, false, modifyCaches);
+        }
 
         if (!events) {
-            block.setModificationTime(cacheTime++);
+            if (modifyCaches)
+                block.setModificationTime(cacheTime++);
             return block.getWord(address & byteMask, isBigEndian());
         }
 
@@ -273,7 +269,8 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
         address = before.getAddress();
 
         //Gets the section and the word.
-        block.setModificationTime(cacheTime++);
+        if (modifyCaches)
+            block.setModificationTime(cacheTime++);
         int word = block.getWord(address & byteMask, isBigEndian());
 
         //Invokes the after event.
@@ -281,14 +278,20 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
     }
 
     @Override
-    public byte getByte(int address, boolean callEvents, boolean bypassCaches) {
-        if (bypassCaches) return parent.getByte(address, callEvents, true);
+    public byte getByte(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
+        if (bypassCaches || !isDirectionAffectedByCache(address))
+            return parent.getByte(address, callEvents, true, modifyCaches);
         boolean events = callEvents && areEventCallsEnabled();
 
-        CacheBlock block = getBlock(address, events);
+        CacheBlock block = getBlock(address, modifyCaches, events);
+
+        if (block == null) {
+            return parent.getByte(address, callEvents, false, modifyCaches);
+        }
 
         if (!events) {
-            block.setModificationTime(cacheTime++);
+            if (modifyCaches)
+                block.setModificationTime(cacheTime++);
             return block.getByte(address & byteMask);
         }
 
@@ -299,7 +302,8 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
         address = before.getAddress();
 
         //Gets the section and the byte.
-        block.setModificationTime(cacheTime++);
+        if (modifyCaches)
+            block.setModificationTime(cacheTime++);
         byte b = block.getByte(address & byteMask);
 
         //Invokes the after event.
@@ -423,7 +427,12 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
         return parent.getMemorySection(name);
     }
 
-    protected abstract CacheBlock getBlock(int address, boolean callEvent);
+    @Override
+    public boolean isDirectionAffectedByCache(int address) {
+        return parent.isDirectionAffectedByCache(address);
+    }
+
+    protected abstract CacheBlock getBlock(int address, boolean create, boolean callEvents);
 
     protected int calculateTag(int address) {
         return address >> tagShift;

@@ -500,7 +500,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
             }
         }
 
-        int data = memory.getWord(pc, true, true);
+        int data = memory.getWord(pc, true, true, true);
 
         Optional<? extends BasicInstruction<?>> optional = instructionSet.getInstructionByInstructionCode(data);
         if (optional.isEmpty()) return null;
@@ -566,7 +566,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
         registers.getProgramCounter().setValue(MIPS32Memory.EXCEPTION_HANDLER);
 
-        if (memory.getWord(MIPS32Memory.EXCEPTION_HANDLER, false, true) == 0) {
+        if (memory.getWord(MIPS32Memory.EXCEPTION_HANDLER, false, true, true) == 0) {
             finished = true;
             if (getConsole() != null) {
                 getConsole().println();

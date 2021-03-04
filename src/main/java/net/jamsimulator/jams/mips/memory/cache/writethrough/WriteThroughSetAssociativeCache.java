@@ -53,6 +53,9 @@ public class WriteThroughSetAssociativeCache extends WriteThroughCache {
 		}
 
 		var isHit = b != null;
+
+		if (!isHit && !create) return null;
+
 		CacheBlock old = b;
 		if (b != null) hits++;
 		else if (create) {

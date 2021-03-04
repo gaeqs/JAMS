@@ -77,7 +77,7 @@ class WriteThroughDirectCacheTest {
 			for (int j = i / 4; j < 256; j++) {
 				current += j;
 			}
-			assertEquals(current, mem.getWord(0x10010000 + i, false, false));
+			assertEquals(current, mem.getWord(0x10010000 + i, false, false, true));
 		}
 
 		assertEquals(33408, stats.getOperations());

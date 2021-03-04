@@ -24,7 +24,7 @@ public class WriteBackDirectCache extends WriteBackCache {
 	}
 
 	@Override
-	protected CacheBlock getBlock(int address, boolean callEvent) {
+	protected CacheBlock getBlock(int address, boolean create, boolean callEvent) {
 		int tag = calculateTag(address);
 		int index = calculateBlockIndex(address);
 
@@ -33,6 +33,9 @@ public class WriteBackDirectCache extends WriteBackCache {
 		if (b == null || b.getTag() != tag) b = null;
 
 		var isHit = b != null;
+
+		if (!isHit && !create) return null;
+
 		CacheBlock old = b;
 		if (b != null) hits++;
 		else {

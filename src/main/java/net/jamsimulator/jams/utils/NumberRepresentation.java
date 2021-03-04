@@ -80,10 +80,10 @@ public class NumberRepresentation implements Labeled {
      */
     public String represent(Memory memory, int address) {
         try {
-            int o1 = memory.getWord(address, false, true);
+            int o1 = memory.getWord(address, false, true, true);
             int o2 = 0;
             if (requiresNextWord) {
-                o2 = memory.getWord(address + 4, false, true);
+                o2 = memory.getWord(address + 4, false, true, true);
             }
 
             return transformer.apply(o1, o2);

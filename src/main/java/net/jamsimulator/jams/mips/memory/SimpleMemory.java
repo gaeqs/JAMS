@@ -184,12 +184,50 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
     @Override
     public byte getByte(int address) {
-        return getByte(address, true, false);
+        return getByte(address, true, false, true);
     }
 
     @Override
     public void setByte(int address, byte b) {
-        if (!eventCallsEnabled) {
+        setByte(address, b, true, false, true);
+    }
+
+    @Override
+    public int getWord(int address) {
+        return getWord(address, true, false, true);
+    }
+
+    @Override
+    public void setWord(int address, int word) {
+        setWord(address, word, true, false, true);
+    }
+
+    @Override
+    public void setWord(int address, int word, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
+        if ((address & 0x2) != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_STORE_EXCEPTION, address);
+        if (!eventCallsEnabled || !callEvents) {
+            getSectionOrThrowException(address).setWord(address, word, bigEndian);
+            return;
+        }
+        //Invokes the before event.
+        MemoryWordSetEvent.Before before = callEvent(new MemoryWordSetEvent.Before(this, address, word));
+        if (before.isCancelled()) return;
+
+        //Refresh data.
+        address = before.getAddress();
+        word = before.getValue();
+
+        //Gets the section and sets the word.
+        MemorySection section = getSectionOrThrowException(address);
+        int old = section.setWord(address, word, bigEndian);
+
+        //Invokes the after event.
+        callEvent(new MemoryWordSetEvent.After(this, section, address, word, old));
+    }
+
+    @Override
+    public void setByte(int address, byte b, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
+        if (!eventCallsEnabled || !callEvents) {
             getSectionOrThrowException(address).setByte(address, b);
             return;
         }
@@ -210,58 +248,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
     }
 
     @Override
-    public int getWord(int address) {
-        return getWord(address, true, false);
-    }
-
-    @Override
-    public void setWord(int address, int word) {
-        if ((address & 0x2) != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_STORE_EXCEPTION, address);
-        if (!eventCallsEnabled) {
-            getSectionOrThrowException(address).setWord(address, word, bigEndian);
-            return;
-        }
-        //Invokes the before event.
-        MemoryWordSetEvent.Before before = callEvent(new MemoryWordSetEvent.Before(this, address, word));
-        if (before.isCancelled()) return;
-
-        //Refresh data.
-        address = before.getAddress();
-        word = before.getValue();
-
-        //Gets the section and sets the word.
-        MemorySection section = getSectionOrThrowException(address);
-        int old = section.setWord(address, word, bigEndian);
-
-        //Invokes the after event.
-        callEvent(new MemoryWordSetEvent.After(this, section, address, word, old));
-    }
-
-    @Override
-    public void setWord(int address, int word, boolean callEvents, boolean bypassCaches) {
-        if ((address & 0x2) != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_STORE_EXCEPTION, address);
-        if (!eventCallsEnabled || !callEvents) {
-            getSectionOrThrowException(address).setWord(address, word, bigEndian);
-            return;
-        }
-        //Invokes the before event.
-        MemoryWordSetEvent.Before before = callEvent(new MemoryWordSetEvent.Before(this, address, word));
-        if (before.isCancelled()) return;
-
-        //Refresh data.
-        address = before.getAddress();
-        word = before.getValue();
-
-        //Gets the section and sets the word.
-        MemorySection section = getSectionOrThrowException(address);
-        int old = section.setWord(address, word, bigEndian);
-
-        //Invokes the after event.
-        callEvent(new MemoryWordSetEvent.After(this, section, address, word, old));
-    }
-
-    @Override
-    public int getWord(int address, boolean callEvents, boolean bypassCaches) {
+    public int getWord(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
         if ((address & 0x2) != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
         if (!eventCallsEnabled || !callEvents) {
             return getSectionOrThrowException(address).getWord(address, bigEndian);
@@ -281,7 +268,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
     }
 
     @Override
-    public byte getByte(int address, boolean callEvents, boolean bypassCaches) {
+    public byte getByte(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
         if (!eventCallsEnabled || !callEvents) {
             return getSectionOrThrowException(address).getByte(address);
         }
@@ -435,6 +422,11 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
     @Override
     public MemorySection getMemorySection(int address) {
         return getSectionOrThrowException(address);
+    }
+
+    @Override
+    public boolean isDirectionAffectedByCache(int address) {
+        return true;
     }
 
 

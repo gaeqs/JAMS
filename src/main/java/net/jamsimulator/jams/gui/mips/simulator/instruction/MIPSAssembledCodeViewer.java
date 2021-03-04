@@ -13,7 +13,6 @@ import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
-import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.event.*;
@@ -260,7 +259,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
                 }
             }
 
-            var code = memory.getWord(current, false, true);
+            var code = memory.getWord(current, false, true, true);
             assembledLines.add(new MIPSAssembledLine(assembledLines.size(), current, code));
 
             var original = originals.getOrDefault(current, "");
