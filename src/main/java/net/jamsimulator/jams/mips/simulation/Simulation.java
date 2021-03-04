@@ -127,7 +127,12 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
         this.numberGenerators = new NumberGenerators();
 
         // 1 Instruction = 4 Bytes.
-        this.instructionCache = useCache ? new InstructionExecution[((instructionStackBottom - memory.getFirstTextAddress()) >> 2) + 1] : null;
+
+        if (useCache) {
+            instructionCache =
+                    new InstructionExecution[((instructionStackBottom - memory.getFirstTextAddress()) >> 2) + 1];
+            prefetch();
+        }
 
         if (data.canCallEvents() && data.isUndoEnabled()) {
             memory.registerListeners(this, true);
@@ -487,20 +492,13 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
      */
     public InstructionExecution<? super Arch, ?> fetch(int pc) {
         InstructionExecution<Arch, ?> cached;
-        if (instructionCache != null && Integer.compareUnsigned(pc, instructionStackBottom) < 0) {
-            try {
-                cached = instructionCache[(pc - memory.getFirstTextAddress()) >> 2];
-                if (cached != null) return cached;
-            } catch (Exception e) {
-                System.out.println("0x" + Integer.toHexString(pc));
-                System.out.println("0x" + Integer.toHexString(memory.getFirstTextAddress()));
-                System.out.println(pc - memory.getFirstTextAddress());
-                System.out.println(instructionCache.length);
-                throw e;
-            }
+        boolean useCache = instructionCache != null && Integer.compareUnsigned(pc, instructionStackBottom) <= 0;
+        if (useCache) {
+            cached = instructionCache[(pc - memory.getFirstTextAddress()) >> 2];
+            if (cached != null) return cached;
         }
 
-        int data = memory.getWord(pc, true, true, true);
+        int data = memory.getWord(pc);
 
         Optional<? extends BasicInstruction<?>> optional = instructionSet.getInstructionByInstructionCode(data);
         if (optional.isEmpty()) return null;
@@ -509,7 +507,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
         cached = assembled.getBasicOrigin().generateExecution(this, assembled, pc).orElse(null);
 
 
-        if (instructionCache != null && Integer.compareUnsigned(pc, instructionStackBottom) < 0) {
+        if (useCache) {
             instructionCache[(pc - memory.getFirstTextAddress()) >> 2] = cached;
         }
         return cached;
@@ -692,6 +690,22 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
         }
     }
 
+    protected void prefetch() {
+        //instructionCache[(pc - memory.getFirstTextAddress()) >> 2];
+        for (int i = 0; i < instructionCache.length; i++) {
+            int address = (i << 2) + memory.getFirstTextAddress();
+            int data = memory.getWord(address);
+            var instruction =
+                    instructionSet.getInstructionByInstructionCode(data).orElseThrow();
+            var assembled = instruction.assembleFromCode(data);
+            var execution = assembled.getBasicOrigin()
+                    .generateExecution(this, assembled, address).orElseThrow();
+
+            instructionCache[i] = execution;
+        }
+
+    }
+
     /**
      * Executes steps until the bottom of the instruction stack is reached.
      *
@@ -716,7 +730,6 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
      * @return whether a step was undone.
      */
     public abstract boolean undoLastStep();
-
 
     //TODO this should be reworked.
     @Listener
