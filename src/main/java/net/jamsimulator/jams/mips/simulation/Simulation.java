@@ -135,7 +135,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
         }
 
         if (data.canCallEvents() && data.isUndoEnabled()) {
-            memory.registerListeners(this, true);
+            memory.getBottomMemory().registerListeners(this, true);
             registers.registerListeners(this, true);
             files.registerListeners(this, true);
         }
