@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.mips.simulator.instruction;
 
+import javafx.application.Platform;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
@@ -13,6 +14,8 @@ import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
+import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.event.*;
@@ -92,6 +95,8 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
 
         setEditable(false);
         simulation.registerListeners(this, true);
+        simulation.getMemory().getBottomMemory().registerListeners(this, true);
+
         Jams.getMainConfiguration().registerListeners(this, true);
     }
 
@@ -136,12 +141,52 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
      */
     protected abstract boolean isLineBeingUsed(int line);
 
+    protected void refreshInstructions() {
+        var memory = simulation.getMemory();
+
+        var registerStart = String.valueOf(simulation.getRegisters()
+                .getValidRegistersStarts().stream().findFirst().orElse('$'));
+        var order = Jams.getMainConfiguration()
+                .getAndConvertOrElse(VIEWER_ELEMENTS_ORDER_NODE, MIPSAssembledInstructionViewerOrder.DEFAULT);
+        var originals = simulation.getData().getOriginalInstructions();
+
+
+        for (MIPSAssembledLine line : assembledLines) {
+            if (line.getAddress().isEmpty() || line.getCode().isEmpty()) continue;
+
+            int code = memory.getWord(line.getAddress().get(), false, false, false);
+
+            if (line.getCode().get() != code) {
+                line.setCode(code);
+                Platform.runLater(() -> {
+
+                    var styleBuilder = new EasyStyleSpansBuilder();
+                    var stringBuilder = new StringBuilder();
+
+                    generateInstructionDisplay(simulation, code, registerStart,
+                            originals.getOrDefault(line.getAddress().get(), ""),
+                            order, stringBuilder, styleBuilder);
+
+
+                    var paragraph = getParagraph(line.getLine());
+                    replace(line.getLine(), 0, line.getLine(), paragraph.length(),
+                            stringBuilder.toString(), Collections.emptyList());
+                    if(!styleBuilder.isEmpty()) {
+                        setStyleSpans(line.getLine(), 0, styleBuilder.create());
+                    }
+                });
+            }
+        }
+
+    }
+
     //region events
 
     @Listener
     private void onSimulationLock(SimulationLockEvent event) {
         shouldUpdate = true;
         refresh();
+        refreshInstructions();
     }
 
     @Listener
@@ -162,17 +207,20 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     private void onSimulationStop(SimulationStopEvent event) {
         shouldUpdate = true;
         refresh();
+        refreshInstructions();
     }
 
     @Listener
     private void onSimulationReset(SimulationResetEvent event) {
         refresh();
+        refreshInstructions();
     }
 
     @Listener
     private void onSimulationUndo(SimulationUndoStepEvent.After event) {
         if (shouldUpdate) {
             refresh();
+            refreshInstructions();
         }
     }
 
@@ -215,6 +263,27 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
                         ex.printStackTrace();
                     }
                 }
+            }
+        }
+    }
+
+    @Listener
+    private void onMemoryChange(MemoryWordSetEvent.After event) {
+        checkMemoryChange(event.getAddress());
+    }
+
+    @Listener
+    private void onMemoryChange(MemoryByteSetEvent.After event) {
+        checkMemoryChange(event.getAddress());
+    }
+
+    private void checkMemoryChange(int address) {
+        if (shouldUpdate || !simulation.isRunning()) {
+            int first = kernel ? MIPS32Memory.EXCEPTION_HANDLER : MIPS32Memory.TEXT;
+            int last = kernel ? simulation.getKernelStackBottom() : simulation.getInstructionStackBottom();
+
+            if (address >= first && address <= last) {
+                refreshInstructions();
             }
         }
     }

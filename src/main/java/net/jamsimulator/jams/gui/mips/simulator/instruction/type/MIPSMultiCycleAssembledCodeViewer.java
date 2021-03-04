@@ -79,6 +79,7 @@ public class MIPSMultiCycleAssembledCodeViewer extends MIPSAssembledCodeViewer {
         }
         if (shouldUpdate || !newFullSpeed) {
             refresh();
+            refreshInstructions();
         }
 
         fullSpeed = newFullSpeed;

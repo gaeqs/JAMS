@@ -12,7 +12,7 @@ public class MIPSAssembledLine {
 
     private final int line;
     private final int address;
-    private final int code;
+    private int code;
     private final boolean hasCode;
 
     /**
@@ -70,5 +70,9 @@ public class MIPSAssembledLine {
      */
     public Optional<Integer> getCode() {
         return hasCode ? Optional.of(code) : Optional.empty();
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 }

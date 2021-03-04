@@ -94,6 +94,7 @@ public class MIPSPipelinedAssembledCodeViewer extends MIPSAssembledCodeViewer {
         }
         if (shouldUpdate || !newFullSpeed) {
             refresh();
+            refreshInstructions();
         }
 
         fullSpeed = newFullSpeed;
