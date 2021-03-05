@@ -79,7 +79,7 @@ public class MIPSDirective extends MIPSCodeElement {
     public String getEqvValue() {
         var param = getEqvKey();
         if (param.isEmpty()) return "";
-        return text.substring(text.indexOf(param) + param.length() + 1);
+        return text.substring(text.indexOf(param) + param.length()).trim();
     }
 
     @Override
