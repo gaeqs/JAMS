@@ -28,7 +28,7 @@ public class MIPSEditorInspectionInstructionNotFound extends MIPSEditorInspectio
 
         @Override
         public Optional<MIPSEditorInspectionInstructionNotFound> tryToBuild(MIPSCodeElement element, MIPSFileElements elements) {
-            if(element.getLine().isUsingReplacements()) return Optional.empty();
+            if(!element.getLine().areAllReplacementsValid()) return Optional.empty();
             if (element instanceof MIPSInstruction && ((MIPSInstruction) element).getMostCompatibleInstruction().isEmpty()) {
                 return Optional.of(new MIPSEditorInspectionInstructionNotFound(this, element.getSimpleText()));
             }

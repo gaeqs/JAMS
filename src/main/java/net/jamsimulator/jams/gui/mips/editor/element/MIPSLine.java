@@ -48,7 +48,9 @@ public class MIPSLine {
     private MIPSComment comment;
     private Map<String, Boolean> registeredLabels;
     private Collection<String> usedLabels;
+
     private Collection<MIPSReplacement> usedReplacements;
+    private int replacementsInLine, validReplacements;
 
     private MIPSReplacement replacement;
 
@@ -257,7 +259,18 @@ public class MIPSLine {
      * @param elements the {@link MIPSFileElements}.
      */
     public void refreshMetadata(MIPSFileElements elements) {
+        // Refreshes replacements.
+        String replacedText = text;
+        replacementsInLine = validReplacements = 0;
         usedReplacements = elements.getReplacements(start, text);
+        for (MIPSReplacement replacement : usedReplacements) {
+            try {
+                replacementsInLine += StringUtils.presentTimes(replacedText, replacement.getKey());
+                replacedText = replacedText.replace(replacement.getKey(), replacement.getValue());
+            } catch (IllegalArgumentException ex) {
+                ex.printStackTrace();
+            }
+        }
 
         getSortedElements().forEach(target -> target.refreshMetadata(elements));
 
@@ -333,6 +346,17 @@ public class MIPSLine {
     }
 
     /**
+     * Returns whether this line has no invalid replacements/equivalents.
+     * <p>
+     * If true, the inspector is allowed to check this line.
+     *
+     * @return whether this line has no invalid replacements/equivalents.
+     */
+    public boolean areAllReplacementsValid() {
+        return validReplacements == replacementsInLine;
+    }
+
+    /**
      * Registers the given label in the line.
      *
      * @param label  the label.
@@ -353,6 +377,14 @@ public class MIPSLine {
     protected void markUsedLabel(String label) {
         if (usedLabels == null) usedLabels = new ArrayList<>(1);
         usedLabels.add(label);
+    }
+
+    /**
+     * Adds a valid replacement to the line. This method should be used
+     * to any parameter that has a valid replacement.
+     */
+    protected void addValidReplacement() {
+        validReplacements++;
     }
 
     private void parseLine(MIPSFileElements elements) {

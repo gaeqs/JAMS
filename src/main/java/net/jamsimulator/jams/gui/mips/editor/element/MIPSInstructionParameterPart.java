@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.mips.editor.element;
 
 import net.jamsimulator.jams.mips.parameter.ParameterPartType;
+import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.StringUtils;
@@ -35,6 +36,7 @@ public class MIPSInstructionParameterPart extends MIPSCodeElement {
 
     private final MIPSInstructionParameter parameter;
     private final int index;
+    private final ParameterPartType hintType;
     private InstructionParameterPartType type;
 
     public MIPSInstructionParameterPart(MIPSLine line, MIPSFileElements elements, int startIndex, int endIndex, String text, MIPSInstructionParameter parameter, int index, ParameterPartType type) {
@@ -42,11 +44,12 @@ public class MIPSInstructionParameterPart extends MIPSCodeElement {
 
         this.parameter = parameter;
         this.index = index;
+        this.hintType = type;
 
         if (type == null) {
             this.type = InstructionParameterPartType.getByString(text, elements.getProject().orElse(null));
         } else {
-            this.type = InstructionParameterPartType.getByStringAndType(type);
+            this.type = InstructionParameterPartType.getByType(type);
         }
     }
 
@@ -79,6 +82,8 @@ public class MIPSInstructionParameterPart extends MIPSCodeElement {
 
     @Override
     public void refreshMetadata(MIPSFileElements elements) {
+        checkReplacements(elements);
+
         if (type != InstructionParameterPartType.LABEL && type != InstructionParameterPartType.GLOBAL_LABEL) return;
 
         var filesToAssemble = elements.getFilesToAssemble().orElse(null);
@@ -91,6 +96,35 @@ public class MIPSInstructionParameterPart extends MIPSCodeElement {
         }
 
         type = isGlobal ? InstructionParameterPartType.GLOBAL_LABEL : InstructionParameterPartType.LABEL;
+    }
+
+    private void checkReplacements(MIPSFileElements elements) {
+        MIPSReplacement validReplacement = line.getUsedReplacements().stream()
+                .filter(target -> target.getKey().equals(text)).findAny().orElse(null);
+        if (validReplacement != null) {
+            // Checks first the parameter type of the parent parameter. If it's a label, then set the type as a label.
+            // This avoids editor conflicts with immediates. The refreshMetadata method of the instruction will always
+            // be executed before this refreshMetadata, so no error should be expected.
+            var parameterType = parameter.getInstruction().getMostCompatibleInstruction()
+                    .filter(i -> i.getParameters().length > parameter.getIndex())
+                    .map(i -> i.getParameters()[parameter.getIndex()])
+                    .orElse(null);
+
+            if (parameterType == ParameterType.LABEL) {
+                type = InstructionParameterPartType.LABEL;
+            } else {
+                type = InstructionParameterPartType.getByString(validReplacement.getValue(), elements.getProject().orElse(null));
+            }
+
+            if (type != null && type != InstructionParameterPartType.LABEL && type != InstructionParameterPartType.GLOBAL_LABEL) {
+                line.addValidReplacement();
+            }
+
+        } else if (hintType == null) {
+            type = InstructionParameterPartType.getByString(text, elements.getProject().orElse(null));
+        } else {
+            type = InstructionParameterPartType.getByType(hintType);
+        }
     }
 
     public enum InstructionParameterPartType {
@@ -116,7 +150,7 @@ public class MIPSInstructionParameterPart extends MIPSCodeElement {
             return languageNodeSufix;
         }
 
-        public static InstructionParameterPartType getByStringAndType(ParameterPartType type) {
+        public static InstructionParameterPartType getByType(ParameterPartType type) {
             return switch (type) {
                 case REGISTER -> REGISTER;
                 case IMMEDIATE -> IMMEDIATE;
