@@ -550,6 +550,7 @@ INSTRUCTION_SYSCALL=System call
 
 //PSEUDO INSTRUCTIONS
 
+INSTRUCTION_ADDI=Immediate addition with overflow
 INSTRUCTION_B=Unconditional branch
 INSTRUCTION_JR=Jump register
 INSTRUCTION_LA=Load address
@@ -3562,6 +3563,40 @@ SignalException(SystemCall)
 
 <b>Exceptions:</b>
 System Call
+\END
+
+INSTRUCTION_ADDI_DOCUMENTATION.=<u>Immediate addition with overflow</u>
+
+<b>Format:</b>
+addi rt, rs, immediate
+
+<b>Conversion:</b>
+addiu $at, $zero, immediate
+add rt, $at, rs
+
+<b>Description:</b>
+GPR[rt] <- GPR[rs] + immediate
+
+The 16-bit signed <i>immediate</i> is added to the 32-bit value in GRP <i>rs</i> to produce a 32-bit arithmetic result.
+ - If the adition results in 32-bit 2's complement arithmetic overflow, the destination register is not modified and an <black>Integer Overflow</black> exception occurs.
+ - If the addition does not overflow, the 32-bit result is placed intoto GPR <i>rt</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+temp <- (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (immediate<sub>31</sub> || immediate<sub>31..0</sub>)
+if temp<sub>32</sub> != temp<sub>31</sub> then
+    SignalException(IntegerOverflow)
+else
+    GPR[rt] <- temp<sub>31..0</sub>
+endif
+
+<b>Exceptions:</b>
+Integer Overflow
+
+<b>Programming Notes:</b>
+<black>addiu</black> performs the same arithmetic operation but does not trap on overflow.
 \END
 
 INSTRUCTION_B_DOCUMENTATION.=<u>Unconditional branch</u>

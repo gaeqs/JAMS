@@ -550,6 +550,7 @@ INSTRUCTION_SYSCALL=Llamada al sistema
 
 //PSEUDO INSTRUCTIONS
 
+INSTRUCTION_ADDI=Suma con inmediato con desbordamiento
 INSTRUCTION_B=Ramificación incondicional
 INSTRUCTION_JR=Saltar al valor del registro
 INSTRUCTION_LA=Cargar dirección
@@ -641,7 +642,7 @@ GPR[rd] <- GPR[rs] + GPR[rt]
 
 La palabra de 32 bits del registro <i>rt</i> es sumada a la palabra de 32 bits del registro <i>rs</i> para producir un resultado de 32 bits.
  - Si la suma resulta en un desbordamiento aritmético en complemento a 2 de 32 bits, el registro destino no es modificado y la excepción <black>Integer Overflow</black> es lanzada.
- - Si la suma no produce un desbordamiento, el resultado es insertado en el registro GPR <i>rd</i>.
+ - Si la suma no produce un desbordamiento, el resultado es insertado en el registro <i>rd</i>.
 
 <b>Restricciones:</b>
 Ninguna
@@ -3563,6 +3564,39 @@ SignalException(SystemCall)
 
 <b>Excepciones:</b>
 System Call
+\END
+
+INSTRUCTION_ADDI_DOCUMENTATION.=<u>Suma con inmediato con desbordamiento</u>
+
+<b>Formato:</b>
+addi rt, rs, inmediato
+
+<b>Conversión:</b>
+addiu $at, $zero, inmediato
+add rt, $at, rs
+
+<b>Descripción:</b>
+GPR[rt] <- GPR[rs] + inmediato
+La palabra de 32 bits del <i>inmediato</i> es sumada a la palabra de 32 bits del registro <i>rs</i> para producir un resultado de 32 bits.
+ - Si la suma resulta en un desbordamiento aritmético en complemento a 2 de 32 bits, el registro destino no es modificado y la excepción <black>Integer Overflow</black> es lanzada.
+ - Si la suma no produce un desbordamiento, el resultado es insertado en el registro <i>rt</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+temp <- (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (inmediato<sub>31</sub> || inmediato<sub>31..0</sub>)
+if temp<sub>32</sub> != temp<sub>31</sub> then
+    SignalException(IntegerOverflow)
+else
+    GPR[rt] <- temp<sub>31..0</sub>
+endif
+
+<b>Excepciones:</b>
+Integer Overflow
+
+<b>Notas del programador:</b>
+<black>addiu</black> ejecuta la misma operación aritmética pero no lanza una excepción al desbordar.
 \END
 
 INSTRUCTION_B_DOCUMENTATION.=<u>Ramificación incondicional</u>
