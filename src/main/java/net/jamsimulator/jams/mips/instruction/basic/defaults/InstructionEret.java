@@ -47,7 +47,7 @@ public class InstructionEret extends BasicRInstruction<InstructionEret.Assembled
 	public static final int OPERATION_CODE = 0b010000;
 	public static final int FUNCTION_CODE = 0b011000;
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[0];
+	public static final ParameterType[] PARAMETER_TYPES = new ParameterType[0];
 
 	public InstructionEret() {
 		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);

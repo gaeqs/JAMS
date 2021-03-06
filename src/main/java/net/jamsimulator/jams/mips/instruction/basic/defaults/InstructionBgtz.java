@@ -35,6 +35,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicRIInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
@@ -47,7 +48,7 @@ public class InstructionBgtz extends BasicRIInstruction<InstructionBgtz.Assemble
 	public static final int OPERATION_CODE = 0b000111;
 	public static final int FUNCTION_CODE = 0b00000;
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
+	public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
 
 	public InstructionBgtz() {
 		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);

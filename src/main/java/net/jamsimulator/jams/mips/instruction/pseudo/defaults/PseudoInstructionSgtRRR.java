@@ -31,38 +31,27 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionSlt;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionSgtRRR extends PseudoInstruction {
 
-	public static final String MNEMONIC = "sgt";
+    public static final String MNEMONIC = "sgt";
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER};
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER);
 
-	public PseudoInstructionSgtRRR() {
-		super(MNEMONIC, PARAMETER_TYPES);
-	}
+    public PseudoInstructionSgtRRR() {
+        super(MNEMONIC, PARAMETER_TYPES);
+    }
 
-	@Override
-	public int getInstructionAmount(String[] parameters) {
-		return 1;
-	}
+    @Override
+    public int getInstructionAmount(String[] parameters) {
+        return 1;
+    }
 
-	@Override
-	public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
-		//Get instructions
-		Instruction slt = set.getInstruction(InstructionSlt.MNEMONIC, PARAMETER_TYPES).orElse(null);
-		if (!(slt instanceof BasicInstruction))
-			throw new AssemblerException("Basic instruction '" + InstructionSlt.MNEMONIC + "' not found.");
-
-		//Get parameters
-		ParameterParseResult[] sltParameters = new ParameterParseResult[]{
-				parameters[0],
-				parameters[2],
-				parameters[1]
-		};
-
-		return new AssembledInstruction[]{((BasicInstruction<?>) slt).assembleBasic(sltParameters, this)};
-	}
+    @Override
+    public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
+        return assemble(instructions(set, InstructionSlt.class), parameters(parameters[0], parameters[2], parameters[1]));
+    }
 }

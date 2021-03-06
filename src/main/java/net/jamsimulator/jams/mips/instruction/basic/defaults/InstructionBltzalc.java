@@ -34,6 +34,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
@@ -45,7 +46,7 @@ public class InstructionBltzalc extends BasicInstruction<InstructionBltzalc.Asse
 	public static final String MNEMONIC = "bltzalc";
 	public static final int OPERATION_CODE = 0b000111;
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
+	public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
 
 	public InstructionBltzalc() {
 		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);

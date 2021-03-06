@@ -35,6 +35,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
@@ -47,8 +48,7 @@ public class InstructionBc1nez extends BasicIFPUInstruction<InstructionBc1nez.As
 	public static final int OPERATION_CODE = 0b010001;
 	public static final int BASE_CODE = 0b01101;
 
-	private static final ParameterType[] PARAMETER_TYPES
-			= new ParameterType[]{ParameterType.FLOAT_REGISTER, ParameterType.SIGNED_16_BIT};
+	public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.FLOAT_REGISTER, ParameterType.SIGNED_16_BIT);
 
 	public InstructionBc1nez() {
 		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, BASE_CODE);

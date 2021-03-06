@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.instruction.basic;
 
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
@@ -48,6 +49,22 @@ public abstract class BasicRFPUInstruction<Inst extends AssembledInstruction> ex
 	 * @param fmtCode       the operand type format specifier.
 	 */
 	public BasicRFPUInstruction(String mnemonic, ParameterType[] parameters, int operationCode,
+								int functionCode, int fmtCode) {
+		super(mnemonic, parameters, operationCode, functionCode);
+		this.fmtCode = fmtCode;
+	}
+
+	/**
+	 * Creates a basic instruction using a mnemonic, a parameter types array, an operation code,
+	 * a function code and a operand type format specifier .
+	 *
+	 * @param mnemonic      the mnemonic.
+	 * @param parameters    the parameter types.
+	 * @param operationCode the operation code.
+	 * @param functionCode  the function code.
+	 * @param fmtCode       the operand type format specifier.
+	 */
+	public BasicRFPUInstruction(String mnemonic, InstructionParameterTypes parameters, int operationCode,
 								int functionCode, int fmtCode) {
 		super(mnemonic, parameters, operationCode, functionCode);
 		this.fmtCode = fmtCode;

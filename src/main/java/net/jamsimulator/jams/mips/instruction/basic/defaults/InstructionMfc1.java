@@ -34,6 +34,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicIFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
@@ -45,8 +46,7 @@ public class InstructionMfc1 extends BasicIFPUInstruction<InstructionMfc1.Assemb
 	public static final int OPERATION_CODE = 0b010001;
 	public static final int SUBCODE = 0b00000;
 
-	private static final ParameterType[] PARAMETER_TYPES
-			= new ParameterType[]{ParameterType.REGISTER, ParameterType.FLOAT_REGISTER};
+	public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.FLOAT_REGISTER);
 
 	public InstructionMfc1() {
 		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, SUBCODE);

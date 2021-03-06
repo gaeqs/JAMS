@@ -36,6 +36,7 @@ import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.simulation.Simulation;
@@ -46,7 +47,7 @@ public class InstructionBreak extends BasicRInstruction<InstructionBreak.Assembl
 	public static final int OPERATION_CODE = 0;
 	public static final int FUNCTION_CODE = 0b001101;
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[0];
+	public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes();
 
 	public InstructionBreak() {
 		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);

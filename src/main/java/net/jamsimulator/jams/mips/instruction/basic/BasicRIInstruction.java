@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.instruction.basic;
 
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRIInstruction;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
@@ -50,6 +51,22 @@ public abstract class BasicRIInstruction<Inst extends AssembledInstruction> exte
 		super(mnemonic, parameters, operationCode);
 		this.functionCode = functionCode;
 	}
+
+
+	/**
+	 * Creates a basic instruction using a mnemonic, a parameter types array and an operation code.
+	 *
+	 * @param mnemonic      the mnemonic.
+	 * @param parameters    the parameter types.
+	 * @param operationCode the operation code.
+	 * @param functionCode  the function code.
+	 */
+	public BasicRIInstruction(String mnemonic, InstructionParameterTypes parameters, int operationCode,
+							  int functionCode) {
+		super(mnemonic, parameters, operationCode);
+		this.functionCode = functionCode;
+	}
+
 
 	@Override
 	public boolean match(int instructionCode) {

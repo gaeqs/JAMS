@@ -37,6 +37,7 @@ import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
@@ -50,7 +51,7 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
     public static final int OPERATION_CODE = 0b010001;
     public static final int FMT = 0b10100;
 
-    private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER};
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER);
 
     private final FloatCondition condition;
 

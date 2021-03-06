@@ -24,86 +24,41 @@
 
 package net.jamsimulator.jams.mips.instruction.pseudo.defaults;
 
-import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
-import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAddu;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAui;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionSw;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionSwRLr extends PseudoInstruction {
 
-	public static final String MNEMONIC = InstructionSw.MNEMONIC;
+    public static final String MNEMONIC = InstructionSw.MNEMONIC;
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.LABEL_REGISTER_SHIFT};
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.LABEL_REGISTER_SHIFT);
 
-	private static final ParameterType[] AUI_BASIC_PARAMETER_TYPES =
-			new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
+    public PseudoInstructionSwRLr() {
+        super(MNEMONIC, PARAMETER_TYPES);
+    }
 
-	private static final ParameterType[] ADDU_BASIC_PARAMETER_TYPES =
-			new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER};
+    @Override
+    public int getInstructionAmount(String[] parameters) {
+        return 3;
+    }
 
-	private static final ParameterType[] SW_BASIC_PARAMETER_TYPES =
-			new ParameterType[]{ParameterType.REGISTER, ParameterType.SIGNED_16_BIT_REGISTER_SHIFT};
+    @Override
+    public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
+        var instructions = instructions(set, InstructionAui.class, InstructionAddu.class, InstructionSw.class);
 
-	private static final ParameterParseResult ZERO = ParameterParseResult.builder().register(0).build();
-	private static final ParameterParseResult AT = ParameterParseResult.builder().register(1).build();
+        int loadAddress = parameters[1].getLabelValue();
 
-	public PseudoInstructionSwRLr() {
-		super(MNEMONIC, PARAMETER_TYPES);
-	}
+        var aui = parameters(AT, ZERO, immediate(upper(loadAddress)));
+        var addu = parameters(AT, AT, register(parameters[1].getRegister()));
+        var sb = parameters(parameters[0], registerImmediate(1, lower(loadAddress)));
 
-	@Override
-	public int getInstructionAmount(String[] parameters) {
-		return 3;
-	}
-
-	@Override
-	public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
-		//Get instructions
-		Instruction aui = set.getInstruction(InstructionAui.MNEMONIC, AUI_BASIC_PARAMETER_TYPES).orElse(null);
-		if (!(aui instanceof BasicInstruction))
-			throw new AssemblerException("Basic instruction '" + InstructionAui.MNEMONIC + "' not found.");
-
-		Instruction addu = set.getInstruction(InstructionAddu.MNEMONIC, ADDU_BASIC_PARAMETER_TYPES).orElse(null);
-		if (!(addu instanceof BasicInstruction))
-			throw new AssemblerException("Basic instruction '" + InstructionAddu.MNEMONIC + "' not found.");
-
-		Instruction sw = set.getInstruction(MNEMONIC, SW_BASIC_PARAMETER_TYPES).orElse(null);
-		if (!(sw instanceof BasicInstruction))
-			throw new AssemblerException("Basic instruction '" + MNEMONIC + "' not found.");
-
-
-		int loadAddress = parameters[1].getLabelValue();
-		int upper = loadAddress >> 16;
-		int lower = loadAddress & 0xFFFF;
-
-		//Get parameters
-		ParameterParseResult[] auiParameters = new ParameterParseResult[]{
-				AT,
-				ZERO,
-				ParameterParseResult.builder().immediate(upper).build()
-		};
-
-		ParameterParseResult[] adduParameters = new ParameterParseResult[]{
-				AT,
-				AT,
-				ParameterParseResult.builder().register(parameters[1].getRegister()).build()
-		};
-
-		ParameterParseResult[] swParameters = new ParameterParseResult[]{
-				parameters[0],
-				ParameterParseResult.builder().register(1).immediate(lower).build()
-		};
-
-		return new AssembledInstruction[]{
-				((BasicInstruction) aui).assembleBasic(auiParameters, this),
-				((BasicInstruction) addu).assembleBasic(adduParameters, this),
-				((BasicInstruction) sw).assembleBasic(swParameters, this)};
-	}
+        return assemble(instructions, aui, addu, sb);
+    }
 }

@@ -34,6 +34,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
@@ -46,9 +47,8 @@ public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembl
 	public static final int FUNCTION_CODE = 0b100000;
 	public static final int ALIGN_CODE = 0b010;
 
-	private static final ParameterType[] PARAMETER_TYPES
-			= new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER,
-			ParameterType.REGISTER, ParameterType.UNSIGNED_5_BIT};
+	public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER,
+			ParameterType.REGISTER, ParameterType.UNSIGNED_5_BIT);
 
 	public InstructionAlign() {
 		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);

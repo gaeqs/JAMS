@@ -24,47 +24,31 @@
 
 package net.jamsimulator.jams.mips.instruction.pseudo.defaults;
 
-import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
-import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAdd;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionMoveRR extends PseudoInstruction {
 
-	public static final String MNEMONIC = "move";
+    public static final String MNEMONIC = "move";
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER};
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER);
 
-	private static final ParameterType[] ADD_BASIC_PARAMETER_TYPES =
-			new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER};
+    public PseudoInstructionMoveRR() {
+        super(MNEMONIC, PARAMETER_TYPES);
+    }
 
-	private static final ParameterParseResult ZERO = ParameterParseResult.builder().register(0).build();
+    @Override
+    public int getInstructionAmount(String[] parameters) {
+        return 1;
+    }
 
-	public PseudoInstructionMoveRR() {
-		super(MNEMONIC, PARAMETER_TYPES);
-	}
-
-	@Override
-	public int getInstructionAmount(String[] parameters) {
-		return 1;
-	}
-
-	@Override
-	public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
-		//Get instructions
-		Instruction add = set.getInstruction(InstructionAdd.MNEMONIC, ADD_BASIC_PARAMETER_TYPES).orElse(null);
-		if (!(add instanceof BasicInstruction))
-			throw new AssemblerException("Basic instruction '" + InstructionAdd.MNEMONIC + "' not found.");
-
-		ParameterParseResult[] addParameters = new ParameterParseResult[]{
-				parameters[0], ZERO, parameters[1]
-		};
-
-		return new AssembledInstruction[]{((BasicInstruction<?>) add).assembleBasic(addParameters, this)};
-	}
+    @Override
+    public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
+        return assemble(instructions(set, InstructionAdd.class), parameters(parameters[0], ZERO, parameters[1]));
+    }
 }

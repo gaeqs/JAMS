@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.instruction.basic;
 
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRIFPUInstruction;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
@@ -50,6 +51,21 @@ public abstract class BasicRIFPUInstruction<Inst extends AssembledInstruction> e
 		super(mnemonic, parameters, operationCode);
 		this.subcode = subcode;
 	}
+
+	/**
+	 * Creates a basic instruction using a mnemonic, a parameter types array, an operation code,
+	 * and a subcode.
+	 *
+	 * @param mnemonic      the mnemonic.
+	 * @param parameters    the parameter types.
+	 * @param operationCode the operation code.
+	 * @param subcode       the subcode.
+	 */
+	public BasicRIFPUInstruction(String mnemonic, InstructionParameterTypes parameters, int operationCode, int subcode) {
+		super(mnemonic, parameters, operationCode);
+		this.subcode = subcode;
+	}
+
 
 
 	@Override
