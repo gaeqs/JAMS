@@ -4034,6 +4034,222 @@ Ninguna
 Ninguna
 \END
 
+DIRECTIVE_ALIGN_DOCUMENTATION.=<u>Alinear</u>
+
+<b>Formato:</b>
+.align <0-3>
+
+<b>Descripción:</b>
+Alinea la siguiente inserción de memoria a una dirección múltiplo de 2^n.
+
+\END
+
+DIRECTIVE_ASCII_DOCUMENTATION.=<u>Insertar cadenas de caracteres ASCII</u>
+
+<b>Formato:</b>
+.ascii {"Texto"}
+
+<b>Descripción:</b>
+Inserta en la memoria las cadenas de caracteres en formato ASCII dados.
+
+\END
+
+DIRECTIVE_ASCIIZ_DOCUMENTATION.=<u>Insertar cadenas de caracteres ASCII, terminando con el caracter nulo</u>
+
+<b>Formato:</b>
+.asciiz {"Texto"}
+
+<b>Descripción:</b>
+Inserta en la memoria las cadenas de caracteres en formato ASCII dados, terminando cada una de ellas con el caracter nulo (\0).
+
+\END
+
+DIRECTIVE_BYTE_DOCUMENTATION.=<u>Insertar byte</u>
+
+<b>Formato:</b>
+.byte {byte | 'caracter'}
+
+<b>Descripción:</b>
+Inserta en la memoria los bytes dados.
+
+\END
+
+DIRECTIVE_DATA_DOCUMENTATION.=<u>Cambiar a la sección de datos</u>
+
+<b>Formato:</b>
+.data [dirección]
+
+<b>Descripción:</b>
+Hace que las siguientes inserciones de memoria sean colocadas en la sección de datos.
+Si una dirección es dada, las siguientes inserciones de memoria serán colocadas empezando por dicha dirección.
+
+\END
+
+DIRECTIVE_DOUBLE_DOCUMENTATION.=<u>Insertar doubles</u>
+
+<b>Formato:</b>
+.byte {double}
+
+<b>Descripción:</b>
+Inserta en la memoria los doubles dados.
+
+\END
+
+DIRECTIVE_DWORD_DOCUMENTATION.=<u>Insertar palabras dobles / longs</u>
+
+<b>Formato:</b>
+.dword {dword}
+
+<b>Descripción:</b>
+Inserta en la memoria las palabras dobles dadas.
+
+\END
+
+DIRECTIVE_EQV_DOCUMENTATION.=<u>Equivalente</u>
+
+<b>Formato:</b>
+.eqv <clave> <valor>
+
+<b>Descripción:</b>
+Reemplaza la clave en todas las siguientes líneas del archivo por el valor.
+
+<b>Notas del programador:</b>
+Evita usar esta directiva para reemplazar textos complejos.
+Esta directiva solo debe ser usada para reemplazar registros e inmediatos.
+
+\END
+
+DIRECTIVE_ERR_DOCUMENTATION.=<u>Error</u>
+
+<b>Formato:</b>
+.err
+
+<b>Descripción:</b>
+Produce un error de ensamblado.
+
+\END
+
+DIRECTIVE_EXTERN_DOCUMENTATION.=<u>Asignar memoria externa</u>
+
+<b>Format:</b>
+.extern <etiqueta> <tamaño>
+
+<b>Description:</b>
+Reserva el número dado de bytes en la sección externa de la memoria.
+La etiqueta creada será considerada una etiqueta global.
+
+\END
+
+DIRECTIVE_FLOAT_DOCUMENTATION.=<u>Insertar comas flotantes</u>
+
+<b>Formato:</b>
+.float {float}
+
+<b>Descripción:</b>
+Inserta en la memoria los números en coma flotante dados.
+
+\END
+
+DIRECTIVE_GLOBL_DOCUMENTATION.=<u>Marcar como etiqueta global</u>
+
+<b>Formato:</b>
+.globl <label>
+
+<b>Descripción:</b>
+Marca la etiqueta dada como global.
+
+\END
+
+DIRECTIVE_HALF_DOCUMENTATION.=<u>Insertar medias palabras</u>
+
+<b>Formato:</b>
+.half {media palabra}
+
+<b>Descripción:</b>
+Inserta en la memoria las medias palabras dadas.
+
+\END
+
+DIRECTIVE_INCLUDE_DOCUMENTATION.=<u>Incluir archivo</u>
+
+<b>Formato:</b>
+.include <archivo>
+
+<b>Description:</b>
+
+
+Reemplaza esta directive por los contenidos del archivo dado.
+
+<b>Programming Notes:</b>
+Evita usar esta directiva: puede causar bucles infinitos y hace que el inspector no funcione correctamente.
+
+\END
+
+DIRECTIVE_KDATA_DOCUMENTATION.=<u>Cambiar a la sección de datos del kernel</u>
+
+<b>Formato:</b>
+.kdata [dirección]
+
+<b>Descripción:</b>
+Hace que las siguientes inserciones de memoria sean colocadas en la sección de datos del kernel.
+Si una dirección es dada, las siguientes inserciones de memoria serán colocadas empezando por dicha dirección.
+
+\END
+
+DIRECTIVE_KTEXT_DOCUMENTATION.=<u>Cambiar a la sección de texto del kernel</u>
+
+<b>Formato:</b>
+.ktext [dirección]
+
+<b>Descripción:</b>
+Hace que las siguientes inserciones de memoria sean colocadas en la sección de texto del kernel.
+Si una dirección es dada, las siguientes inserciones de memoria serán colocadas empezando por dicha dirección.
+
+\END
+
+DIRECTIVE_LAB_DOCUMENTATION.=<u>Crear etiqueta</u>
+
+<b>Formato:</b>
+.lab <etiqueta>
+
+<b>Descripción:</b>
+Crea la etiqueta data.
+
+\END
+
+DIRECTIVE_SPACE_DOCUMENTATION.=<u>Reservar memoria</u>
+
+<b>Formato:</b>
+.space <tamaño>
+
+<b>Descripción:</b>
+Reserva la cantidad de bytes dada en la memoria.
+
+\END
+
+DIRECTIVE_TEXT_DOCUMENTATION.=<u>Cambiar a la sección de texto</u>
+
+<b>Formato:</b>
+.text [dirección]
+
+<b>Descripción:</b>
+Hace que las siguientes inserciones de memoria sean colocadas en la sección de texto.
+Si una dirección es dada, las siguientes inserciones de memoria serán colocadas empezando por dicha dirección.
+
+\END
+
+DIRECTIVE_WORD_DOCUMENTATION.=<u>Insertar palabras</u>
+
+<b>Formato:</b>
+.word {palabra | etiqueta}
+
+<b>Descripción:</b>
+Inserta en la memoria las siguientes palabras.
+Si una etiqueta es dada, su dirección será insertada.
+
+\END
+
+
 FLOAT_CONDITION_AF=Siempre falso
 FLOAT_CONDITION_UN=Sin orden
 FLOAT_CONDITION_EQ=Igual

@@ -4034,6 +4034,219 @@ None
 None
 \END
 
+DIRECTIVE_ALIGN_DOCUMENTATION.=<u>Align</u>
+
+<b>Format:</b>
+.align <0-3>
+
+<b>Description:</b>
+Aligns the next memory insertion to a 2^n multiple address.
+
+\END
+
+DIRECTIVE_ASCII_DOCUMENTATION.=<u>Insert ASCII strings</u>
+
+<b>Format:</b>
+.ascii {"Text"}
+
+<b>Description:</b>
+Inserts into the memory the given ASCII strings.
+
+\END
+
+DIRECTIVE_ASCIIZ_DOCUMENTATION.=<u>Insert ASCII strings, ending with a null character</u>
+
+<b>Format:</b>
+.asciiz {"Text"}
+
+<b>Description:</b>
+Inserts into the memory the given ASCII strings, adding at the end of each string a null (\0) character.
+
+\END
+
+DIRECTIVE_BYTE_DOCUMENTATION.=<u>Insert bytes</u>
+
+<b>Format:</b>
+.byte {byte | 'char'}
+
+<b>Description:</b>
+Inserts into the memory the given bytes.
+
+\END
+
+DIRECTIVE_DATA_DOCUMENTATION.=<u>Change to data section</u>
+
+<b>Format:</b>
+.data [address]
+
+<b>Description:</b>
+Makes the next memory insertions to be placed into the data section.
+If an address is given, the next memory insertions will be placed starting from the given address.
+
+\END
+
+DIRECTIVE_BYTE_DOCUMENTATION.=<u>Insert doubles</u>
+
+<b>Format:</b>
+.byte {double}
+
+<b>Description:</b>
+Inserts into the memory the given doubles.
+
+\END
+
+DIRECTIVE_DWORD_DOCUMENTATION.=<u>Insert double words / longs</u>
+
+<b>Format:</b>
+.dword {dword}
+
+<b>Description:</b>
+Inserts into the memory the given double words.
+
+\END
+
+DIRECTIVE_EQV_DOCUMENTATION.=<u>Equivalent</u>
+
+<b>Format:</b>
+.eqv <key> <value>
+
+<b>Description:</b>
+Replaces the key in the following lines of the file with the value.
+
+<b>Programming Notes:</b>
+Avoid using this directive for complex replacements.
+It should be used only for registers and immediates.
+
+\END
+
+DIRECTIVE_ERR_DOCUMENTATION.=<u>Error</u>
+
+<b>Format:</b>
+.err
+
+<b>Description:</b>
+Produces an assemble exception.
+
+\END
+
+DIRECTIVE_EXTERN_DOCUMENTATION.=<u>Allocate extern memory</u>
+
+<b>Format:</b>
+.extern <label> <amount>
+
+<b>Description:</b>
+Allocates the given amount of bytes into the extern section of the memory.
+The created label will be considered a global label.
+
+\END
+
+DIRECTIVE_FLOAT_DOCUMENTATION.=<u>Insert float</u>
+
+<b>Format:</b>
+.float {float}
+
+<b>Description:</b>
+Inserts into the memory the given floats.
+
+\END
+
+DIRECTIVE_GLOBL_DOCUMENTATION.=<u>Make label global</u>
+
+<b>Format:</b>
+.globl <label>
+
+<b>Description:</b>
+Makes the given label global.
+
+\END
+
+DIRECTIVE_HALF_DOCUMENTATION.=<u>Insert half words</u>
+
+<b>Format:</b>
+.half {half word}
+
+<b>Description:</b>
+Inserts into the memory the given half words.
+
+\END
+
+DIRECTIVE_INCLUDE_DOCUMENTATION.=<u>Include file</u>
+
+<b>Format:</b>
+.include <file>
+
+<b>Description:</b>
+
+Replaces this directive with the contents of the given file.
+
+<b>Programming Notes:</b>
+Avoid using this directive: it may cause recursive loops and prevents the inspector from working properly.
+
+\END
+
+DIRECTIVE_KDATA_DOCUMENTATION.=<u>Change to kernel data section</u>
+
+<b>Format:</b>
+.kdata [address]
+
+<b>Description:</b>
+Makes the next memory insertions to be placed into the kernel data section.
+If an address is given, the next memory insertions will be placed starting from the given address.
+
+\END
+
+DIRECTIVE_KTEXT_DOCUMENTATION.=<u>Change to kernel text section</u>
+
+<b>Format:</b>
+.ktext [address]
+
+<b>Description:</b>
+Makes the next memory insertions to be placed into the kernel text section.
+If an address is given, the next memory insertions will be placed starting from the given address.
+
+\END
+
+
+DIRECTIVE_LAB_DOCUMENTATION.=<u>Create label</u>
+
+<b>Format:</b>
+.lab <label>
+
+<b>Description:</b>
+Creates the given label.
+
+DIRECTIVE_SPACE_DOCUMENTATION.=<u>Allocate memory</u>
+
+<b>Format:</b>
+.space <amount>
+
+<b>Description:</b>
+Allocates the given amount of bytes into memory.
+
+\END
+
+DIRECTIVE_KTEXT_DOCUMENTATION.=<u>Change to text section</u>
+
+<b>Format:</b>
+.text [address]
+
+<b>Description:</b>
+Makes the next memory insertions to be placed into the text section.
+If an address is given, the next memory insertions will be placed starting from the given address.
+
+\END
+
+DIRECTIVE_WORD_DOCUMENTATION.=<u>Insert words</u>
+
+<b>Format:</b>
+.word {word | label}
+
+<b>Description:</b>
+Inserts into the memory the given words.
+If a label is given, its address will be inserted instead.
+
+\END
+
 FLOAT_CONDITION_AF=Always false
 FLOAT_CONDITION_UN=Unordered
 FLOAT_CONDITION_EQ=Equal
