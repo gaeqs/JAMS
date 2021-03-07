@@ -40,6 +40,8 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
 
     private MemoryTable table;
     private Memory selected;
+    private int savedOffset;
+
     private final ComboBox<String> memorySelector;
     private final ComboBox<String> representationSelection;
 
@@ -49,6 +51,7 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
 
     public MemoryPane(Simulation<?> simulation) {
         this.simulation = simulation;
+        this.savedOffset = 0;
 
         memorySelector = new ComboBox<>();
         loadMemorySelector(simulation.getMemory());
@@ -99,12 +102,16 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
 
         var representation = table == null ? NumberRepresentationManager.HEXADECIMAL : table.getRepresentation();
 
+        if (table instanceof SimpleMemoryTable) {
+            savedOffset = ((SimpleMemoryTable) table).getOffset();
+        }
+
         Region header;
         if (memory instanceof Cache) {
             table = new CacheMemoryTable(simulation, (Cache) memory, 0, representation);
             header = new CacheMemoryHeader((CacheMemoryTable) table);
         } else {
-            table = new SimpleMemoryTable(simulation, memory, 0, representation);
+            table = new SimpleMemoryTable(simulation, memory, savedOffset, representation);
             header = new SimpleMemoryHeader((SimpleMemoryTable) table);
         }
 
