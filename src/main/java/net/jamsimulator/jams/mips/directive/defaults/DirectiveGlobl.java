@@ -33,38 +33,38 @@ import net.jamsimulator.jams.utils.LabelUtils;
 
 public class DirectiveGlobl extends Directive {
 
-	public static final String NAME = "globl";
-	private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.LABEL};
+    public static final String NAME = "globl";
+    private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.LABEL};
 
 
-	public DirectiveGlobl() {
-		super(NAME, PARAMETERS, true, false);
-	}
+    public DirectiveGlobl() {
+        super(NAME, PARAMETERS, true, false);
+    }
 
-	@Override
-	public int execute(int lineNumber, String line, String[] parameters, MIPS32AssemblingFile file) {
-		if (parameters.length < 1)
-			throw new AssemblerException(lineNumber, "." + NAME + " must have at least one parameter.");
+    @Override
+    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
+        if (parameters.length < 1)
+            throw new AssemblerException(lineNumber, "." + NAME + " must have at least one parameter.");
 
-		for (String parameter : parameters) {
-			if (!LabelUtils.isLabelLegal(parameter))
-				throw new AssemblerException("Illegal label " + parameter + ".");
-		}
+        for (String parameter : parameters) {
+            if (!LabelUtils.isLabelLegal(parameter))
+                throw new AssemblerException("Illegal label " + parameter + ".");
+        }
 
-		for (String parameter : parameters) {
-			file.setAsGlobalLabel(lineNumber, parameter);
-		}
+        for (String parameter : parameters) {
+            file.setAsGlobalLabel(lineNumber, parameter + labelSufix);
+        }
 
-		return -1;
-	}
+        return -1;
+    }
 
-	@Override
-	public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address) {
+    @Override
+    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
 
-	}
+    }
 
-	@Override
-	public boolean isParameterValidInContext(int index, String value, MIPSFileElements context) {
-		return isParameterValid(index, value) && context.isLabelDeclared(value);
-	}
+    @Override
+    public boolean isParameterValidInContext(int index, String value, int amount, MIPSFileElements context) {
+        return isParameterValid(index, value) && context.isLabelDeclared(value);
+    }
 }

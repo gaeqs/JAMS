@@ -60,6 +60,7 @@ public class CompiledViewerNumberFactory implements IntFunction<Node> {
 
     @Override
     public Node apply(int idx) {
+        if(viewer.assembledLines.isEmpty()) return new HBox();
         var formatted = nParagraphs.map(n -> format(idx));
 
         var lineNo = new Label();
@@ -98,6 +99,7 @@ public class CompiledViewerNumberFactory implements IntFunction<Node> {
     }
 
     private String format(int x) {
+        if (viewer.assembledLines.size() <= x) return " - ";
         return viewer.assembledLines.get(x).getAddress()
                 .map(target -> " 0x" + StringUtils.addZeros(Integer.toHexString(target), 8))
                 .orElse("           ");

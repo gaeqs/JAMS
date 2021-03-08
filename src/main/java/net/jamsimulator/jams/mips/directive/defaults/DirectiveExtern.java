@@ -35,43 +35,46 @@ import net.jamsimulator.jams.utils.NumericUtils;
 
 public class DirectiveExtern extends Directive {
 
-	public static final String NAME = "extern";
-	private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.LABEL, DirectiveParameterType.POSITIVE_INT};
+    public static final String NAME = "extern";
+    private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.LABEL, DirectiveParameterType.POSITIVE_INT};
 
-	public DirectiveExtern() {
-		super(NAME, PARAMETERS, false, false);
-	}
+    public DirectiveExtern() {
+        super(NAME, PARAMETERS, false, false);
+    }
 
-	@Override
-	public int execute(int lineNumber, String line, String[] parameters, MIPS32AssemblingFile file) {
-		if (parameters.length != 2)
-			throw new AssemblerException(lineNumber, "." + NAME + " must have two parameter.");
+    @Override
+    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
+        if (parameters.length != 2)
+            throw new AssemblerException(lineNumber, "." + NAME + " must have two parameter.");
 
-		if (!NumericUtils.isInteger(parameters[1]))
-			throw new AssemblerException(parameters[1] + " is not a number.");
-		int i = NumericUtils.decodeInteger(parameters[1]);
-		if (i < 0)
-			throw new AssemblerException(i + " cannot be negative.");
+        if (!NumericUtils.isInteger(parameters[1]))
+            throw new AssemblerException(parameters[1] + " is not a number.");
+        int i = NumericUtils.decodeInteger(parameters[1]);
+        if (i < 0)
+            throw new AssemblerException(i + " cannot be negative.");
 
-		MIPS32AssemblerData data = file.getAssembler().getAssemblerData();
-		SelectedMemorySegment old = data.getSelected();
-		data.setSelected(SelectedMemorySegment.EXTERN);
-		data.align(0);
-		int start = data.getCurrent();
-		data.addCurrent(i);
-		file.checkLabel(lineNumber, parameters[0], start);
-		file.setAsGlobalLabel(lineNumber, parameters[0]);
-		data.setSelected(old);
-		return start;
-	}
+        MIPS32AssemblerData data = file.getAssembler().getAssemblerData();
+        SelectedMemorySegment old = data.getSelected();
+        data.setSelected(SelectedMemorySegment.EXTERN);
+        data.align(0);
+        int start = data.getCurrent();
+        data.addCurrent(i);
 
-	@Override
-	public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address) {
+        var label = parameters[0] + labelSufix;
+        file.checkLabel(lineNumber, label, start);
+        file.setAsGlobalLabel(lineNumber, label);
 
-	}
+        data.setSelected(old);
+        return start;
+    }
 
-	@Override
-	public boolean isParameterValidInContext(int index, String value, MIPSFileElements context) {
-		return isParameterValid(index, value);
-	}
+    @Override
+    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
+
+    }
+
+    @Override
+    public boolean isParameterValidInContext(int index, String value, int amount, MIPSFileElements context) {
+        return isParameterValid(index, value);
+    }
 }

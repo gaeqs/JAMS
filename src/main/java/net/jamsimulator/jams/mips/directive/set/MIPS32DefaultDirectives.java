@@ -42,6 +42,7 @@ class MIPS32DefaultDirectives {
         directives.add(new DirectiveData());
         directives.add(new DirectiveDouble());
         directives.add(new DirectiveDWord());
+        directives.add(new DirectiveEndmacro());
         directives.add(new DirectiveEqv());
         directives.add(new DirectiveErr());
         directives.add(new DirectiveExtern());
@@ -53,6 +54,7 @@ class MIPS32DefaultDirectives {
         directives.add(new DirectiveKData());
         directives.add(new DirectiveKText());
         directives.add(new DirectiveLab());
+        directives.add(new DirectiveMacro());
         directives.add(new DirectiveSpace());
         directives.add(new DirectiveText());
         directives.add(new DirectiveWord());

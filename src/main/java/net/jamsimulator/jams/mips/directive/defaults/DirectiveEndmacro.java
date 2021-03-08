@@ -26,52 +26,31 @@ package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
-import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
-import net.jamsimulator.jams.utils.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
+public class DirectiveEndmacro extends Directive {
 
-public class DirectiveInclude extends Directive {
+    public static final String NAME = "endmacro";
+    private static final DirectiveParameterType[] PARAMETERS = {};
 
-	public static final String NAME = "include";
-	private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.ANY};
+    public DirectiveEndmacro() {
+        super(NAME, PARAMETERS, false, false);
+    }
 
-	public DirectiveInclude() {
-		super(NAME, PARAMETERS, false, false);
-	}
+    @Override
+    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
+        // This directive is implemented in the assembler itself!
+        return -1;
+    }
 
-	@Override
-	public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile aFile) {
-		if (parameters.length != 1)
-			throw new AssemblerException(lineNumber, "." + NAME + " must have one parameter.");
+    @Override
+    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
 
+    }
 
-		File file = new File(parameters[0]);
-		if (!file.exists()) throw new AssemblerException("File " + parameters[0] + " not found!");
-
-
-		String[] lines;
-		try {
-			String text = FileUtils.readAll(file);
-			lines = text.split("\n");
-		} catch (IOException e) {
-			throw new AssemblerException(e);
-		}
-		aFile.getRawCode().addAll(lineNumber + 1, Arrays.asList(lines));
-		return -1;
-	}
-
-	@Override
-	public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-
-	}
-
-	@Override
-	public boolean isParameterValidInContext(int index, String value, int amount, MIPSFileElements context) {
-		return isParameterValid(index, value);
-	}
+    @Override
+    public boolean isParameterValidInContext(int index, String value, int amount, MIPSFileElements context) {
+        return false;
+    }
 }

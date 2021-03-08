@@ -153,10 +153,11 @@ public abstract class Directive {
      * @param lineNumber the line number the directive is at.
      * @param line       the line of the directive.
      * @param parameters the parameters of the directive.
+     * @param labelSufix when inside a macro, the label sufix that labels should use.
      * @param file       the file where this directive is at.
      * @return the start address of the directive.
      */
-    public abstract int execute(int lineNumber, String line, String[] parameters, MIPS32AssemblingFile file);
+    public abstract int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file);
 
     /**
      * This method is executed after all labels, instructions and directives had been decoded.
@@ -164,11 +165,12 @@ public abstract class Directive {
      * @param parameters the parameters of the directive.
      * @param file       the file where the directive is located at.
      * @param lineNumber the line number the directive is at.
-     * @param address    the start of the memory address dedicated to this directive in the method {@link #execute(int, String, String[], MIPS32AssemblingFile)}.
+     * @param address    the start of the memory address dedicated to this directive in the method {@link #execute(int, String, String[], String, MIPS32AssemblingFile)}.
+     * @param labelSufix when inside a macro, the label sufix that labels should use.
      */
-    public abstract void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address);
+    public abstract void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix);
 
-    public abstract boolean isParameterValidInContext(int index, String value, MIPSFileElements context);
+    public abstract boolean isParameterValidInContext(int index, String value, int amount, MIPSFileElements context);
 
     @Override
     public boolean equals(Object o) {

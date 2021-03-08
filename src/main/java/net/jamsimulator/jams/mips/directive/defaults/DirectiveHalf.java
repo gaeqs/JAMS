@@ -42,7 +42,7 @@ public class DirectiveHalf extends Directive {
 	}
 
 	@Override
-	public int execute(int lineNumber, String line, String[] parameters, MIPS32AssemblingFile file) {
+	public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
 		if (parameters.length < 1)
 			throw new AssemblerException(lineNumber, "." + NAME + " must have at least one parameter.");
 
@@ -62,12 +62,12 @@ public class DirectiveHalf extends Directive {
 	}
 
 	@Override
-	public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address) {
+	public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
 
 	}
 
 	@Override
-	public boolean isParameterValidInContext(int index, String value, MIPSFileElements context) {
+	public boolean isParameterValidInContext(int index, String value, int amount, MIPSFileElements context) {
 		return isParameterValid(index, value);
 	}
 }
