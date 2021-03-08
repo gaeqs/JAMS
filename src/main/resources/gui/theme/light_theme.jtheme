@@ -1101,6 +1101,14 @@ AnchorPane {
     -fx-fill: #665827;
 }
 
+.code-area .mips-macro-call {
+    -fx-fill: #205452;
+}
+
+.code-area .mips-macro-call-parameter {
+    -fx-fill: #2e2054;
+}
+
 .code-area .mips-warning {
     -rtfx-underline-color: #6e5703;
     -rtfx-underline-width: 1px;

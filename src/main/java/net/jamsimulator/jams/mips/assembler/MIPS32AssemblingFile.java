@@ -26,8 +26,8 @@ public class MIPS32AssemblingFile {
 
     private final Queue<String> labelsToAdd;
 
-    private final Map<String, MIPS32Macro> macros;
-    private MIPS32Macro currentMacro;
+    private final Map<String, Macro> macros;
+    private Macro currentMacro;
     private int callsToMacros;
 
 
@@ -80,6 +80,16 @@ public class MIPS32AssemblingFile {
      */
     public List<String> getRawCode() {
         return lines;
+    }
+
+    /**
+     * Returns the macro defined in this file that matches the given name.
+     *
+     * @param name the name.
+     * @return the macro if present.
+     */
+    public Optional<Macro> getMacro(String name) {
+        return Optional.ofNullable(macros.getOrDefault(name, null));
     }
 
     /**
@@ -178,7 +188,7 @@ public class MIPS32AssemblingFile {
         labelsToAdd.add(label);
     }
 
-    public void startMacro(MIPS32Macro macro) {
+    public void startMacro(Macro macro) {
         Validate.notNull(macro, "Macro cannot be null!");
         if (currentMacro != null) {
             throw new AssemblerException("Cannot define a macro inside another macro!");
@@ -226,7 +236,9 @@ public class MIPS32AssemblingFile {
             labelAddress = snapshot.executeNonLabelRequiredSteps(this, labelAddress);
             directives.add(snapshot);
         } else {
-            var spaceIndex = line.indexOf(" ");
+            int spaceIndex = line.indexOf(" ");
+            if (spaceIndex == -1) spaceIndex = line.indexOf(",");
+            if (spaceIndex == -1) spaceIndex = line.indexOf("\t");
 
             if (spaceIndex != -1 && line.substring(spaceIndex).trim().startsWith("(")) {
                 // MACRO
@@ -248,7 +260,7 @@ public class MIPS32AssemblingFile {
             return;
         }
 
-        checkLabel(index, label, labelAddress);
+        checkLabel(index, label == null ? null : label + labelSufix, labelAddress);
         while (!labelsToAdd.isEmpty()) checkLabel(index, labelsToAdd.poll(), labelAddress);
     }
 
@@ -284,10 +296,8 @@ public class MIPS32AssemblingFile {
         if (currentMacro == null) return false;
 
         if (line.equals(".endmacro")) {
-            System.out.println("Macro finished!");
             finishMacro();
         } else {
-            System.out.println("Adding line " + line);
             if (!line.isEmpty()) {
                 currentMacro.addLine(line);
             }

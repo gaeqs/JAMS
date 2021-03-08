@@ -75,6 +75,8 @@ MIPS_ELEMENT_INSTRUCTION_PARAMETER_IMMEDIATE=Immediate
 MIPS_ELEMENT_INSTRUCTION_PARAMETER_STRING=String
 MIPS_ELEMENT_INSTRUCTION_PARAMETER_LABEL=Label reference
 MIPS_ELEMENT_INSTRUCTION_PARAMETER_GLOBAL_LABEL=Global label reference
+MIPS_ELEMENT_MACRO_CALL=Macro call
+MIPS_ELEMENT_MACRO_CALL_PARAMETER=Macro call parameter
 MIPS_ELEMENT_ERRORS=Errors:
 MIPS_ELEMENT_WARNINGS=Warnings:
 
@@ -370,6 +372,8 @@ EDITOR_MIPS_ERROR_DUPLICATE_LABEL=Found duplicated label '{NAME}'.
 EDITOR_MIPS_ERROR_DUPLICATE_GLOBAL_LABEL=Found duplicated global label '{NAME}' on file '{FILE}'.
 EDITOR_MIPS_ERROR_INVALID_DIRECTIVE_PARAMETER=The parameter '{NAME}' is invalid.
 EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=Couldn't found instruction '{NAME}' with the given parameters.
+EDITOR_MIPS_ERROR_MACRO_NOT_FOUND=Couldn't found macro '{NAME}'.
+EDITOR_MIPS_ERROR_INVALID_MACRO_PARAMETERS_AMOUNT=Invalid amount of arguments for macro '{NAME}'. (Expected: {EXPECTED}. Found: {FOUND})
 
 EDITOR_MIPS_WARNING_DIRECTIVE_NOT_FOUND=Couldn't found directive '{NAME}'.
 EDITOR_MIPS_WARNING_REGISTER_USING_AT=Avoid using the register $at. Its value may change unexpectedly when a pseudoinstruction is executed.
@@ -4105,6 +4109,17 @@ Inserts into the memory the given double words.
 
 \END
 
+DIRECTIVE_ENDMACRO_DOCUMENTATION.=<u>End macro</u>
+
+<b>Format:</b>
+.endmacro
+
+<b>Description:</b>
+Ends the current macro definition.
+If no macro is being defined this directive will be ignored.
+
+\END
+
 DIRECTIVE_EQV_DOCUMENTATION.=<u>Equivalent</u>
 
 <b>Format:</b>
@@ -4214,6 +4229,45 @@ DIRECTIVE_LAB_DOCUMENTATION.=<u>Create label</u>
 
 <b>Description:</b>
 Creates the given label.
+
+DIRECTIVE_MACRO_DOCUMENTATION.=<u>Macro</u>
+
+<b>Format:</b>
+.macro <name>
+.macro <name> ()
+.macro <name> ({%parameter})
+
+<b>Description:</b>
+Starts a macro definition.
+A macro can be used to define a set of instructions that will be used constantly.
+Macros can have parameters. All parameters should start with "%" and they will
+replaced when a call to the macro is executed.
+
+A macro call must have this format: name (param1, param2). The space between the name and the first parentheses can be replaced with a comma or a tab.
+
+<b>Example:</b>
+
+This code creates a macro that prints a string:
+
+	.macro print (%string)
+	.data
+text:	.asciiz %string
+	.text
+	la $a0, text
+	li $v0, 4
+	syscall
+	.endmacro
+	.text
+	print ("Hi!\n")
+	print ("I'm using macros!\n")
+
+
+Output:
+
+Hi!
+I'm using macros!
+
+\END
 
 DIRECTIVE_SPACE_DOCUMENTATION.=<u>Allocate memory</u>
 

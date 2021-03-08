@@ -28,7 +28,7 @@ public class MIPSEditorInspectionInvalidDirectiveParameter extends MIPSEditorIns
 
         @Override
         public Optional<MIPSEditorInspectionInvalidDirectiveParameter> tryToBuild(MIPSCodeElement element, MIPSFileElements elements) {
-            if (!element.getLine().areAllReplacementsValid()) return Optional.empty();
+            if (!element.getLine().areAllReplacementsValid() || element.usesMacroParameter()) return Optional.empty();
             if (element instanceof MIPSDirectiveParameter) {
                 var param = (MIPSDirectiveParameter) element;
                 int amount = param.getDirective().getParameters().size();

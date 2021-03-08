@@ -41,10 +41,12 @@ public class MIPSLine {
 
     private int start;
     private final String text;
+    private final boolean canHaveMacroParameters;
 
     private MIPSLabel label;
     private MIPSInstruction instruction;
     private MIPSDirective directive;
+    private MIPSMacroCall macroCall;
     private MIPSComment comment;
     private Map<String, Boolean> registeredLabels;
     private Collection<String> usedLabels;
@@ -52,7 +54,10 @@ public class MIPSLine {
     private Collection<MIPSReplacement> usedReplacements;
     private int replacementsInLine, validReplacements;
 
+    private MIPSMacro usedMacro;
+
     private MIPSReplacement replacement;
+    private MIPSMacro macro;
 
     //Cached elements
     private SortedSet<MIPSCodeElement> elements;
@@ -60,6 +65,7 @@ public class MIPSLine {
     public MIPSLine(MIPSFileElements elements, int start, String text) {
         this.start = start;
         this.text = text;
+        this.canHaveMacroParameters = text.contains("%");
         parseLine(elements);
     }
 
@@ -82,6 +88,17 @@ public class MIPSLine {
     }
 
     /**
+     * Returns whether this line can have macro parameters.
+     * <p>
+     * If not, this line won't update the used macro, as it's not needed.
+     *
+     * @return whether this line can have macro parameters.
+     */
+    public boolean canHaveMacroParameters() {
+        return canHaveMacroParameters;
+    }
+
+    /**
      * Moves the start index of the line. This also edits the start index of all it's children.
      * <p>
      * This method is used to move the line when one or more previous lines are edited.
@@ -94,6 +111,7 @@ public class MIPSLine {
         if (label != null) label.move(offset);
         if (instruction != null) instruction.move(offset);
         if (directive != null) directive.move(offset);
+        if (macroCall != null) macroCall.move(offset);
     }
 
     /**
@@ -135,6 +153,35 @@ public class MIPSLine {
     }
 
     /**
+     * Returns the {@link MIPSMacroCall} of the line, if present.
+     *
+     * @return the {@link MIPSMacroCall} of the line, if present.
+     */
+    public Optional<MIPSMacroCall> getMacroCall() {
+        return Optional.ofNullable(macroCall);
+    }
+
+    /**
+     * Returns the {@link MIPSMacro} of the line, if present.
+     *
+     * @return the {@link MIPSMacro} of the line, if present.
+     */
+    public Optional<MIPSMacro> getMacro() {
+        return Optional.ofNullable(macro);
+    }
+
+    /**
+     * Returns the {@link MIPSMacro} used by the line, if present.
+     * <p>
+     * WARNING! This method will return {@link Optional#empty()} if {@link #canHaveMacroParameters()} is false!
+     *
+     * @return the {@link MIPSMacro} used by the line, if present.
+     */
+    public Optional<MIPSMacro> getUsedMacro() {
+        return Optional.ofNullable(usedMacro);
+    }
+
+    /**
      * Returns the {@link MIPSComment} of the line, if present.
      *
      * @return the {@link MIPSComment} of the line, if present.
@@ -143,6 +190,11 @@ public class MIPSLine {
         return Optional.ofNullable(comment);
     }
 
+    /**
+     * Returns the {@link MIPSReplacement} this line declares, if present.
+     *
+     * @return the {@link MIPSReplacement} this line declares, if present.
+     */
     public Optional<MIPSReplacement> getReplacement() {
         return Optional.ofNullable(replacement);
     }
@@ -152,7 +204,7 @@ public class MIPSLine {
      * <p>
      * All labels are linked to a {@code boolean} representing whether the label is global.
      * This only represents if the label is a global label by default (registered by an .extern directive, for example).
-     * These labels may be transformed to global by a .globl directive. These changes won't be registered by this map.
+     * These labels may be transfored to global by a .globl directive. These changes won't be registered by this map.
      *
      * @return all registered labels.
      */
@@ -170,10 +222,20 @@ public class MIPSLine {
         return usedLabels == null ? Collections.emptyList() : Collections.unmodifiableCollection(usedLabels);
     }
 
+    /**
+     * Returns an unmodifiable collection containing all replacements that this line uses.
+     *
+     * @return the collection.
+     */
     public Collection<MIPSReplacement> getUsedReplacements() {
         return usedReplacements == null ? Collections.emptyList() : Collections.unmodifiableCollection(usedReplacements);
     }
 
+    /**
+     * Returns whether this line is using replacements.
+     *
+     * @return whether this line is using replacements.
+     */
     public boolean isUsingReplacements() {
         return usedReplacements != null && !usedReplacements.isEmpty();
     }
@@ -184,7 +246,7 @@ public class MIPSLine {
      * @return whether it's empty.
      */
     public boolean isEmpty() {
-        return comment == null && label == null && directive == null && instruction == null;
+        return comment == null && label == null && directive == null && instruction == null && macroCall == null;
     }
 
     /**
@@ -193,7 +255,7 @@ public class MIPSLine {
      * @return the amount of tabs and spaces.
      */
     public int getTabsAmountAfterLabel() {
-        if (instruction == null && directive == null && comment == null) return 0;
+        if (instruction == null && directive == null && comment == null && macroCall == null) return 0;
 
         String text = label == null ? this.text : this.text.trim().substring(label.text.length());
         return calculateTabs(text);
@@ -247,6 +309,10 @@ public class MIPSLine {
             elements.add(directive);
             elements.addAll(directive.getParameters());
         }
+        if (macroCall != null) {
+            elements.add(macroCall);
+            elements.addAll(macroCall.getParameters());
+        }
 
         return elements;
     }
@@ -271,6 +337,9 @@ public class MIPSLine {
                 ex.printStackTrace();
             }
         }
+
+        // Refresh macro
+        usedMacro = elements.macroAt(start).orElse(null);
 
         getSortedElements().forEach(target -> target.refreshMetadata(elements));
 
@@ -409,16 +478,30 @@ public class MIPSLine {
             parsing = parsing.substring(labelIndex + 1);
         }
 
-        //INSTRUCTION / DIRECTIVE
+        //INSTRUCTION / DIRECTIVE / MACRO
         String trim = parsing.trim();
         if (trim.isEmpty()) return;
         if (trim.charAt(0) == '.') {
             directive = new MIPSDirective(this, elements, pStart, pEnd, parsing);
             if (directive.isEqv() && !directive.getEqvKey().isEmpty()) {
                 replacement = new MIPSReplacement(this, directive.getEqvKey(), directive.getEqvValue());
+            } else if (directive.isMacro()) {
+                macro = new MIPSMacro(this, directive);
             }
         } else {
-            instruction = new MIPSInstruction(this, elements, pStart, pEnd, parsing);
+            int spaceIndex = trim.indexOf(" ");
+            int commaIndex = trim.indexOf(",");
+            int tabIndex = trim.indexOf("\t");
+
+            int index = Math.min(spaceIndex == -1 ? Integer.MAX_VALUE : spaceIndex,
+                    Math.min(commaIndex == -1 ? Integer.MAX_VALUE : commaIndex,
+                            tabIndex == -1 ? Integer.MAX_VALUE : tabIndex));
+
+            if (index != Integer.MAX_VALUE && trim.substring(index + 1).trim().startsWith("(")) {
+                macroCall = new MIPSMacroCall(this, pStart, pEnd, index +  parsing.indexOf(trim), parsing);
+            } else {
+                instruction = new MIPSInstruction(this, elements, pStart, pEnd, parsing);
+            }
         }
     }
 
@@ -445,5 +528,11 @@ public class MIPSLine {
         int index = 0;
         while (index < text.length() && ((c = text.charAt(index++)) == '\t' || c == ' ')) amount += c == '\t' ? 4 : 1;
         return amount;
+    }
+
+
+    @Override
+    public String toString() {
+        return text;
     }
 }

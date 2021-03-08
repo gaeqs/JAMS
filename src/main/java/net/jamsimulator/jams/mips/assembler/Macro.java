@@ -5,13 +5,13 @@ import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MIPS32Macro {
+public class Macro {
 
     private final String name;
     private final String[] parameters;
     private final List<String> lines;
 
-    public MIPS32Macro(String name, String[] parameters) {
+    public Macro(String name, String[] parameters) {
         this.name = name;
         this.parameters = parameters;
         this.lines = new ArrayList<>();

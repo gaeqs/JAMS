@@ -75,6 +75,8 @@ MIPS_ELEMENT_INSTRUCTION_PARAMETER_IMMEDIATE=Inmediato
 MIPS_ELEMENT_INSTRUCTION_PARAMETER_STRING=String
 MIPS_ELEMENT_INSTRUCTION_PARAMETER_LABEL=Referencia a una etiqueta
 MIPS_ELEMENT_INSTRUCTION_PARAMETER_GLOBAL_LABEL=Referencia a una etiqueta global
+MIPS_ELEMENT_MACRO_CALL=Llamada a macro
+MIPS_ELEMENT_MACRO_CALL_PARAMETER=Parámetro de una llamada a macro
 MIPS_ELEMENT_ERRORS=Errores:
 MIPS_ELEMENT_WARNINGS=Advertencias:
 
@@ -370,6 +372,8 @@ EDITOR_MIPS_ERROR_DUPLICATE_LABEL=La etiqueta '{NAME}' está duplicada.
 EDITOR_MIPS_ERROR_DUPLICATE_GLOBAL_LABEL=La etiqueta '{NAME}' está duplicada en el archivo '{FILE}'.
 EDITOR_MIPS_ERROR_INVALID_DIRECTIVE_PARAMETER=El parámetro '{NAME} tiene un formato incorrecto.
 EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=No se ha podido encontrar la instrucción '{NAME}' con los parámetros indicados.
+EDITOR_MIPS_ERROR_MACRO_NOT_FOUND=No se ha podido encontrar la macro '{NAME}'.
+EDITOR_MIPS_ERROR_INVALID_MACRO_PARAMETERS_AMOUNT=Número de argumentos inválido para la macro '{NAME}'. (Se esperaban: {EXPECTED}. Se encontraron: {FOUND})
 
 EDITOR_MIPS_WARNING_DIRECTIVE_NOT_FOUND=No se ha podido encontrar la directiva '{NAME}'.
 EDITOR_MIPS_WARNING_REGISTER_USING_AT=Evita usar el registro $at. Su valor puede cambiar inesperadamente cuando se ejecuta una pseudoinstrucción.
@@ -4105,6 +4109,17 @@ Inserta en la memoria las palabras dobles dadas.
 
 \END
 
+DIRECTIVE_ENDMACRO_DOCUMENTATION.=<u>Terminar macro</u>
+
+<b>Formato:</b>
+.endmacro
+
+<b>Descripción:</b>
+Termina la definición del macro actual.
+Si no hay ningún macro siendo definido esta directiva será ignorada.
+
+\END
+
 DIRECTIVE_EQV_DOCUMENTATION.=<u>Equivalente</u>
 
 <b>Formato:</b>
@@ -4214,6 +4229,45 @@ DIRECTIVE_LAB_DOCUMENTATION.=<u>Crear etiqueta</u>
 
 <b>Descripción:</b>
 Crea la etiqueta data.
+
+\END
+
+DIRECTIVE_MACRO_DOCUMENTATION.=<u>Macro</u>
+
+<b>Formato:</b>
+.macro <nombre>
+.macro <nombre> ()
+.macro <nombre> ({%parámetro})
+
+<b>Descripción:</b>
+Empieza la definición de un macro.
+Un macro puede ser usado para definir un conjunto de instrucciones que se usarán constantemente.
+Los macros pueden tener parámetros. Todos los parámetros deben empezar por "%" y serán reemplazados
+cuando una llamada al macro es ejecutada.
+
+Una llamada a macro debe terner este formato: nombre (param1, param2). El espacio entre el nombre y el primer paréntesis puede ser reemplazado por una coma o una tabulación.
+
+<b>Ejemplo:</b>
+
+El siguiente código crea una macro que imprime una cadena de caracteres:
+
+	.macro print (%string)
+	.data
+text:	.asciiz %string
+	.text
+	la $a0, text
+	li $v0, 4
+	syscall
+	.endmacro
+	.text
+	print ("Hi!\n")
+	print ("I'm using macros!\n")
+
+
+Salida:
+
+Hi!
+I'm using macros!
 
 \END
 

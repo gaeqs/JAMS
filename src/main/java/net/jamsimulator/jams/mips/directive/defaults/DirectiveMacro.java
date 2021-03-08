@@ -26,7 +26,7 @@ package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
-import net.jamsimulator.jams.mips.assembler.MIPS32Macro;
+import net.jamsimulator.jams.mips.assembler.Macro;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
@@ -37,10 +37,10 @@ import java.util.List;
 public class DirectiveMacro extends Directive {
 
     public static final String NAME = "macro";
-    private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.STRING, DirectiveParameterType.STRING};
+    private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.ANY, DirectiveParameterType.ANY};
 
     public DirectiveMacro() {
-        super(NAME, PARAMETERS, false, false);
+        super(NAME, PARAMETERS, true, false);
     }
 
     @Override
@@ -50,7 +50,10 @@ public class DirectiveMacro extends Directive {
 
         String name = parameters[0];
         if (name.contains("(") || name.contains(")"))
-            throw new AssemblerException("Macro name cannot contain parenthesis!");
+            throw new AssemblerException(lineNumber, "Macro name cannot contain parenthesis!");
+        if (file.getMacro(name).isPresent()) {
+            throw new AssemblerException(lineNumber, "Macro " + name + " already exists!");
+        }
 
         List<String> macroParameters = new ArrayList<>();
 
@@ -59,29 +62,29 @@ public class DirectiveMacro extends Directive {
 
             if (value.equals("(") || value.equals("()")) {
                 if (i == 1) continue;
-                panic(value, i);
+                panic(lineNumber, value, i);
             } else if (value.equals(")")) {
                 if (i == parameters.length - 1) continue;
-                panic(value, i);
+                panic(lineNumber, value, i);
             }
 
             if (value.startsWith("(")) {
-                if (i != 1) panic(value, i);
+                if (i != 1) panic(lineNumber, value, i);
                 value = value.substring(1);
             }
 
             if (value.endsWith(")")) {
-                if (i != parameters.length - 1) panic(value, i);
+                if (i != parameters.length - 1) panic(lineNumber, value, i);
                 value = value.substring(0, value.length() - 1);
             }
 
-            if (!value.startsWith("%")) panic(value, i);
-            if (value.length() == 1) panic(value, 1);
+            if (!value.startsWith("%")) panic(lineNumber, value, i);
+            if (value.length() == 1) panic(lineNumber, value, 1);
 
             macroParameters.add(value);
         }
 
-        file.startMacro(new MIPS32Macro(name, macroParameters.toArray(new String[0])));
+        file.startMacro(new Macro(name, macroParameters.toArray(new String[0])));
 
         return -1;
     }
@@ -113,7 +116,7 @@ public class DirectiveMacro extends Directive {
         }
     }
 
-    private static void panic(String value, int i) {
-        throw new AssemblerException("Invalid macro parameter '" + value + "'! (Index " + i + ")");
+    private static void panic(int line, String value, int i) {
+        throw new AssemblerException(line, "Invalid macro parameter '" + value + "'! (Index " + i + ")");
     }
 }

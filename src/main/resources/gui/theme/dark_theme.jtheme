@@ -1116,9 +1116,16 @@ AnchorPane {
     -fx-fill: #7af85e;
 }
 
-
 .code-area .mips-instruction-parameter-string {
-    -fx-fill: #f8d75e;
+    -fx-fill: #4c762e;
+}
+
+.code-area .mips-macro-call {
+    -fx-fill: #5ef8d4;
+}
+
+.code-area .mips-macro-call-parameter {
+    -fx-fill: #875ef8;
 }
 
 .code-area .mips-warning {

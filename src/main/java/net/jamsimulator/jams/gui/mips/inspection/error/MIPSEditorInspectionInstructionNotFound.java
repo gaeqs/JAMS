@@ -28,8 +28,14 @@ public class MIPSEditorInspectionInstructionNotFound extends MIPSEditorInspectio
 
         @Override
         public Optional<MIPSEditorInspectionInstructionNotFound> tryToBuild(MIPSCodeElement element, MIPSFileElements elements) {
-            if(!element.getLine().areAllReplacementsValid()) return Optional.empty();
+            if (!element.getLine().areAllReplacementsValid()
+                    || element.usesMacroParameter()) return Optional.empty();
             if (element instanceof MIPSInstruction && ((MIPSInstruction) element).getMostCompatibleInstruction().isEmpty()) {
+                if (((MIPSInstruction) element).getParameters().stream()
+                        .flatMap(p -> p.getParts().stream()).anyMatch(MIPSCodeElement::usesMacroParameter)) {
+                    return Optional.empty();
+                }
+
                 return Optional.of(new MIPSEditorInspectionInstructionNotFound(this, element.getSimpleText()));
             }
 
