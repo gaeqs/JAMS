@@ -88,7 +88,7 @@ public class ProjectTab extends Tab {
 			}
 		}, tab -> pane.getChildren().remove(tab.getContent()));
 
-		AnchorUtils.setAnchor(projectTabPane, 0, 0, 0, 300);
+		AnchorUtils.setAnchor(projectTabPane, 0, 0, 0, 400);
 		pane.getChildren().add(projectTabPane);
 
 		buttonsHBox = new HBox();
