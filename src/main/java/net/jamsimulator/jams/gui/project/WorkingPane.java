@@ -31,220 +31,215 @@ import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.WindowEvent;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.bar.BarMap;
-import net.jamsimulator.jams.gui.bar.BarType;
-import net.jamsimulator.jams.gui.bar.PaneSnapshot;
-import net.jamsimulator.jams.gui.bar.bottombar.BottomBar;
-import net.jamsimulator.jams.gui.bar.sidebar.SidePane;
-import net.jamsimulator.jams.gui.bar.sidebar.Sidebar;
-import net.jamsimulator.jams.gui.bar.sidebar.SidebarFillRegion;
+import net.jamsimulator.jams.gui.bar.*;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 
 import java.util.Set;
 
 /**
  * The default working pane. This pane contains a central {@link SplitPane},
- * the central node, the left and right {@link SidePane}s and all four {@link Sidebar}s.
+ * the central node, the left and right {@link BarPane}s and all four {@link Bar}s.
  * <p>
  * This class is extended by the projects to add custom panes.
  */
 public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 
-	public static final int SIDEBAR_WIDTH = 25;
-	public static final int BOTTOM_BAR_HEIGHT = 25;
+    public static final int SIDEBAR_WIDTH = 25;
+    public static final int BOTTOM_BAR_HEIGHT = 25;
 
-	protected ProjectTab projectTab;
-	protected Tab parent;
+    protected ProjectTab projectTab;
+    protected Tab parent;
 
-	protected SplitPane horizontalSplitPane;
-	protected SplitPane verticalSplitPane;
-	protected Node center;
+    protected SplitPane horizontalSplitPane;
+    protected SplitPane verticalSplitPane;
+    protected Node center;
 
-	protected BarMap barMap;
+    protected BarMap barMap;
 
-	protected final Set<PaneSnapshot> paneSnapshots;
+    protected final Set<BarPaneSnapshot> paneSnapshots;
 
-	private EventHandler<WindowEvent> stageCloseListener;
+    private EventHandler<WindowEvent> stageCloseListener;
 
-	public WorkingPane(Tab parent, ProjectTab projectTab, Node center,
-					   Set<PaneSnapshot> paneSnapshots, boolean init) {
-		getStyleClass().add("working-pane");
-		this.parent = parent;
-		this.projectTab = projectTab;
-		this.center = center;
-		this.paneSnapshots = paneSnapshots;
-		this.barMap = new BarMap();
-		if (init) {
-			init();
-		}
-	}
+    public WorkingPane(Tab parent, ProjectTab projectTab, Node center,
+                       Set<BarPaneSnapshot> paneSnapshots, boolean init) {
+        getStyleClass().add("working-pane");
+        this.parent = parent;
+        this.projectTab = projectTab;
+        this.center = center;
+        this.paneSnapshots = paneSnapshots;
+        this.barMap = new BarMap();
+        if (init) {
+            init();
+        }
+    }
 
-	/**
-	 * Returns the {@link Tab} that contains this pane, or null.
-	 *
-	 * @return the {@link Tab} or null.
-	 */
-	public Tab getParentTab() {
-		return parent;
-	}
-
-
-	/**
-	 * Returns the {@link Tab} of the project this {@link WorkingPane} manages.
-	 *
-	 * @return the {@link Tab}.
-	 */
-	public ProjectTab getProjectTab() {
-		return projectTab;
-	}
-
-	/**
-	 * Returns the central node.
-	 *
-	 * @return the central node.
-	 */
-	public Node getCenter() {
-		return center;
-	}
-
-	/**
-	 * Returns the {@link BarMap} of this working pane.
-	 * The bar map stores all sidebars and bottolm bars of the pane.
-	 *
-	 * @return the {@link BarMap}.
-	 */
-	public BarMap getBarMap() {
-		return barMap;
-	}
-
-	/**
-	 * Adds the given {@link PaneSnapshot} to the matching {@link Sidebar} or {@link BottomBar}.
-	 *
-	 * @param snapshot the {@link PaneSnapshot}.
-	 * @return whether the snapshot was added. This method fails whether a snapshot with the same name is already added.
-	 */
-	public boolean addSidePaneSnapshot(PaneSnapshot snapshot) {
-		if (!paneSnapshots.add(snapshot)) return false;
-		manageSidePaneAddition(snapshot);
-		return true;
-	}
-
-	@Override
-	public void onClose() {
-		if (stageCloseListener != null) {
-			JamsApplication.removeStageCloseListener(stageCloseListener);
-		}
-	}
-
-	private void manageSidePaneAddition(PaneSnapshot snapshot) {
-		barMap.get(snapshot.getDefaultPosition()).ifPresent(target -> target.add(snapshot));
-	}
-
-	//region INIT
-
-	protected void init() {
-		//Slit panes.
-		verticalSplitPane = new SplitPane();
-		getChildren().add(verticalSplitPane);
-		AnchorUtils.setAnchor(verticalSplitPane, 0, BOTTOM_BAR_HEIGHT, SIDEBAR_WIDTH, SIDEBAR_WIDTH);
-		verticalSplitPane.setOrientation(Orientation.VERTICAL);
-
-		horizontalSplitPane = new SplitPane();
-		verticalSplitPane.getItems().add(horizontalSplitPane);
-
-		//Center pane
-		if (center == null) center = new AnchorPane();
-		horizontalSplitPane.getItems().add(center);
+    /**
+     * Returns the {@link Tab} that contains this pane, or null.
+     *
+     * @return the {@link Tab} or null.
+     */
+    public Tab getParentTab() {
+        return parent;
+    }
 
 
-		loadSidebars();
-		addSnapshots();
-		loadResizeEvents();
+    /**
+     * Returns the {@link Tab} of the project this {@link WorkingPane} manages.
+     *
+     * @return the {@link Tab}.
+     */
+    public ProjectTab getProjectTab() {
+        return projectTab;
+    }
 
-		stageCloseListener = target -> {
-			stageCloseListener = null;
-			onClose();
-		};
-		JamsApplication.addStageCloseListener(stageCloseListener);
-	}
+    /**
+     * Returns the central node.
+     *
+     * @return the central node.
+     */
+    public Node getCenter() {
+        return center;
+    }
 
-	private void loadSidebars() {
-		//Side panes
-		SidePane leftPane = new SidePane(horizontalSplitPane, true);
-		SidePane rightPane = new SidePane(horizontalSplitPane, false);
+    /**
+     * Returns the {@link BarMap} of this working pane.
+     * The bar map stores all sidebars and bottolm bars of the pane.
+     *
+     * @return the {@link BarMap}.
+     */
+    public BarMap getBarMap() {
+        return barMap;
+    }
 
-		//Sidebars
+    /**
+     * Adds the given {@link BarPaneSnapshot} to the matching {@link Bar}.
+     *
+     * @param snapshot the {@link BarPaneSnapshot}.
+     * @return whether the snapshot was added. This method fails whether a snapshot with the same name is already added.
+     */
+    public boolean addSidePaneSnapshot(BarPaneSnapshot snapshot) {
+        if (!paneSnapshots.add(snapshot)) return false;
+        manageSidePaneAddition(snapshot);
+        return true;
+    }
 
-		VBox leftSidebarHolder = new VBox();
-		VBox rightSidebarHolder = new VBox();
-		AnchorUtils.setAnchor(leftSidebarHolder, 0, BOTTOM_BAR_HEIGHT, 0, -1);
-		AnchorUtils.setAnchor(rightSidebarHolder, 0, BOTTOM_BAR_HEIGHT, -1, 0);
+    @Override
+    public void onClose() {
+        if (stageCloseListener != null) {
+            JamsApplication.removeStageCloseListener(stageCloseListener);
+        }
+    }
 
-		Sidebar topLeftSidebar = loadSidebar(true, true, leftPane);
-		Sidebar bottomLeftSidebar = loadSidebar(true, false, leftPane);
-		Sidebar topRightSidebar = loadSidebar(false, true, rightPane);
-		Sidebar bottomRightSidebar = loadSidebar(false, false, rightPane);
+    private void manageSidePaneAddition(BarPaneSnapshot snapshot) {
+        barMap.get(snapshot.getDefaultPosition()).ifPresent(target -> target.add(snapshot));
+    }
 
-		Region leftFill = new SidebarFillRegion(true, leftSidebarHolder, topLeftSidebar, bottomLeftSidebar);
-		Region rightFill = new SidebarFillRegion(false, rightSidebarHolder, topRightSidebar, bottomRightSidebar);
+    //region INIT
 
-		leftSidebarHolder.getChildren().addAll(topLeftSidebar, leftFill, bottomLeftSidebar);
-		rightSidebarHolder.getChildren().addAll(topRightSidebar, rightFill, bottomRightSidebar);
-		getChildren().addAll(leftSidebarHolder, rightSidebarHolder);
+    protected void init() {
+        //Slit panes.
+        verticalSplitPane = new SplitPane();
+        getChildren().add(verticalSplitPane);
+        AnchorUtils.setAnchor(verticalSplitPane, 0, BOTTOM_BAR_HEIGHT, SIDEBAR_WIDTH, SIDEBAR_WIDTH);
+        verticalSplitPane.setOrientation(Orientation.VERTICAL);
 
-		//Bottom panes
-		BottomBar bottomBar = new BottomBar(verticalSplitPane);
-		AnchorUtils.setAnchor(bottomBar, -1, 0, SIDEBAR_WIDTH, SIDEBAR_WIDTH);
-		bottomBar.setPrefHeight(BOTTOM_BAR_HEIGHT);
-		bottomBar.setMaxHeight(BOTTOM_BAR_HEIGHT);
-		getChildren().addAll(bottomBar);
+        horizontalSplitPane = new SplitPane();
+        verticalSplitPane.getItems().add(horizontalSplitPane);
 
-		barMap.put(BarType.TOP_LEFT, topLeftSidebar);
-		barMap.put(BarType.BOTTOM_LEFT, bottomLeftSidebar);
-		barMap.put(BarType.TOP_RIGHT, topRightSidebar);
-		barMap.put(BarType.BOTTOM_RIGHT, bottomRightSidebar);
-		barMap.put(BarType.BOTTOM, bottomBar);
-	}
+        //Center pane
+        if (center == null) center = new AnchorPane();
+        horizontalSplitPane.getItems().add(center);
 
-	private Sidebar loadSidebar(boolean left, boolean top, SidePane sidePane) {
-		Sidebar sidebar = new Sidebar(left, top, sidePane);
 
-		sidebar.setPrefWidth(SIDEBAR_WIDTH);
-		sidebar.setMaxWidth(SIDEBAR_WIDTH);
-		return sidebar;
-	}
+        loadSidebars();
+        addSnapshots();
+        loadResizeEvents();
 
-	private void addSnapshots() {
-		for (PaneSnapshot snapshot : paneSnapshots) {
-			manageSidePaneAddition(snapshot);
-		}
-	}
+        stageCloseListener = target -> {
+            stageCloseListener = null;
+            onClose();
+        };
+        JamsApplication.addStageCloseListener(stageCloseListener);
+    }
 
-	private void loadResizeEvents() {
-		//Rescaling AnchorPane inside a tab. Thanks JavaFX for the bug.
-		Platform.runLater(() -> {
-			if (getScene() == null) {
-				loadResizeEvents();
-				return;
-			}
-			getScene().heightProperty().addListener((obs, old, val) -> {
-				double height = val.doubleValue() - getLocalToSceneTransform().getTy();
-				setPrefHeight(height);
-				setMinHeight(height);
-			});
+    private void loadSidebars() {
+        // Bar Panes
+        var leftPane = new BarPane(barMap, horizontalSplitPane, true, Orientation.VERTICAL);
+        var rightPane = new BarPane(barMap, horizontalSplitPane, false, Orientation.VERTICAL);
+        var bottomPane = new BarPane(barMap, verticalSplitPane, false, Orientation.HORIZONTAL);
 
-			getScene().widthProperty().addListener((obs, old, val) -> {
-				double width = val.doubleValue() - getLocalToSceneTransform().getTx();
-				setPrefWidth(width);
-				setMinWidth(width);
-			});
-		});
-	}
+        // Bars
+        var leftHolder = new VBox();
+        var rightHolder = new VBox();
+        var bottomHolder = new HBox();
+        AnchorUtils.setAnchor(leftHolder, 0, BOTTOM_BAR_HEIGHT, 0, -1);
+        AnchorUtils.setAnchor(rightHolder, 0, BOTTOM_BAR_HEIGHT, -1, 0);
+        AnchorUtils.setAnchor(bottomHolder, -1, 0, SIDEBAR_WIDTH, SIDEBAR_WIDTH);
 
-	//endregion
+        var leftTop = loadSidebar(BarPosition.LEFT_TOP, leftPane);
+        var leftBottom = loadSidebar(BarPosition.LEFT_BOTTOM, leftPane);
+        var rightTop = loadSidebar(BarPosition.RIGHT_TOP, rightPane);
+        var rightBottom = loadSidebar(BarPosition.RIGHT_BOTTOM, rightPane);
+        var bottomLeft = loadBottomBar(BarPosition.BOTTOM_LEFT, bottomPane);
+        var bottomRight = loadBottomBar(BarPosition.BOTTOM_RIGHT, bottomPane);
+
+        var leftFill = new FillRegion(BarPosition.LEFT_TOP, leftHolder, leftTop, leftBottom);
+        var rightFill = new FillRegion(BarPosition.RIGHT_TOP, rightHolder, rightTop, rightBottom);
+        var bottomFill = new FillRegion(BarPosition.BOTTOM_LEFT, bottomHolder, bottomLeft, bottomRight);
+
+        leftHolder.getChildren().addAll(leftTop.getPane(), leftFill, leftBottom.getPane());
+        rightHolder.getChildren().addAll(rightTop.getPane(), rightFill, rightBottom.getPane());
+        bottomHolder.getChildren().addAll(bottomLeft.getPane(), bottomFill, bottomRight.getPane());
+        getChildren().addAll(leftHolder, rightHolder, bottomHolder);
+    }
+
+    private Bar loadSidebar(BarPosition position, BarPane pane) {
+        var bar = barMap.create(position, pane);
+
+        bar.getPane().setPrefWidth(SIDEBAR_WIDTH);
+        bar.getPane().setMaxWidth(SIDEBAR_WIDTH);
+        bar.getPane().setMinHeight(100);
+        return bar;
+    }
+
+    private Bar loadBottomBar(BarPosition position, BarPane pane) {
+        var bar = barMap.create(position, pane);
+
+        bar.getPane().setPrefHeight(BOTTOM_BAR_HEIGHT);
+        bar.getPane().setMaxHeight(BOTTOM_BAR_HEIGHT);
+        bar.getPane().setMinWidth(100);
+        return bar;
+    }
+
+    private void addSnapshots() {
+        paneSnapshots.forEach(this::manageSidePaneAddition);
+    }
+
+    private void loadResizeEvents() {
+        //Rescaling AnchorPane inside a tab. Thanks JavaFX for the bug.
+        Platform.runLater(() -> {
+            if (getScene() == null) {
+                loadResizeEvents();
+                return;
+            }
+            getScene().heightProperty().addListener((obs, old, val) -> {
+                double height = val.doubleValue() - getLocalToSceneTransform().getTy();
+                setPrefHeight(height);
+                setMinHeight(height);
+            });
+
+            getScene().widthProperty().addListener((obs, old, val) -> {
+                double width = val.doubleValue() - getLocalToSceneTransform().getTx();
+                setPrefWidth(width);
+                setMinWidth(width);
+            });
+        });
+    }
+
+    //endregion
 
 }

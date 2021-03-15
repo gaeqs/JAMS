@@ -681,53 +681,78 @@ AnchorPane {
 }
 
 /*SIDEBAR*/
-.sidebar {
+.bar {
     -fx-background-color: -theme-background-darker-2;
 }
 
-.sidebar-left {
+.bar-left-top,
+.bar-left-bottom {
     -fx-border-width: 0 1 0 0;
 }
 
-.sidebar-right {
+.bar-right-top,
+.bar-right-bottom {
     -fx-border-width: 0 0 0 1;
 }
 
+.bar-top-left,
+.bar-top-right {
+    -fx-border-width: 0 0 1 0;
+}
+
+.bar-bottom-left,
+.bar-bottom-right {
+    -fx-border-width: 1 0 0 0;
+}
+
 /*SIDEBAR BUTTON*/
-.sidebar-button {
+.bar-button {
     -fx-background-color: -theme-background-darker-2;
     -fx-border-width: 0;
+}
+
+.bar-left-top .bar-button,
+.bar-left-bottom .bar-button,
+.bar-right-top .bar-button,
+.bar-right-bottom .bar-button {
     -fx-padding: 10 0 5 0;
 }
 
-.sidebar-button .label {
+.bar-top-left .bar-button,
+.bar-top-right .bar-button,
+.bar-bottom-left .bar-button,
+.bar-bottom-right .bar-button {
+}
+
+.bar-button .label {
     -fx-font-size: 12px;
 }
 
-.sidebar-button:selected {
+.bar-button:selected {
     -fx-background-color: -theme-background-darker;
 }
 
-
-.sidebar-button-right .label {
+.bar-left-top .bar-button .label,
+.bar-left-bottom .bar-button .label {
     -fx-rotate: 90;
 }
 
-.sidebar-button-left .label {
+.bar-right-top .bar-button .label,
+.bar-right-bottom .bar-button .label {
     -fx-rotate: -90;
 }
 
 /*SIDE PANE NODE HEADER*/
-.side-pane-node-header {
+.bar-pane-node-header {
     -fx-background-color: -theme-background;
 }
 
-.side-pane-node-header:hover,
-.side-pane-node-header:pressed {
+.bar-pane-node-header:hover,
+.bar-pane-node-header:pressed {
     -fx-background-color: -theme-header;
 }
 
-.side-pane-node-header-button {
+.bar-pane-node-header-button {
     -fx-background-color: transparent;
     -fx-background-radius: 0;
 }
@@ -756,36 +781,6 @@ AnchorPane {
     -fx-border-color: #388df5;
     -fx-border-width: 0 0 1 0;
     -fx-padding: 1 1 0 1;
-}
-
-/*BOTTOM BAR*/
-.bottom-bar {
-    -fx-background-color: -theme-background-darker-2;
-}
-
-/*BOTTOM BAR BUTTON*/
-.bottom-bar-button {
-    -fx-background-color: -theme-background-darker-2;
-    -fx-border-width: 0;
-    -fx-padding: 0 10 0 10;
-}
-
-.bottom-bar-button .label {
-    -fx-font-size: 12px;
-}
-
-.bottom-bar-button:selected {
-    -fx-background-color: -theme-background-darker;
-}
-
-/*BOTTOM PANE NODE HEADER*/
-.bottom-pane-node-header {
-    -fx-background-color: -theme-background;
-}
-
-.bottom-pane-node-header:hover,
-.bottom-pane-node-header:pressed {
-    -fx-background-color: -theme-header;
 }
 
 .explorer-section {
