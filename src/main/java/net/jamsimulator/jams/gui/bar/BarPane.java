@@ -2,8 +2,9 @@ package net.jamsimulator.jams.gui.bar;
 
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
+import net.jamsimulator.jams.utils.Validate;
 
-public class BarPane extends SplitPane {
+public class BarPane extends SplitPane implements BarSnapshotHolder {
 
     private final BarPaneNode first, second;
     private final SplitPane parent;
@@ -30,45 +31,49 @@ public class BarPane extends SplitPane {
         return second;
     }
 
-    public void selectFirst(BarPaneSnapshot snapshot) {
-        select(first, snapshot);
-    }
+    @Override
+    public boolean show(BarButton button) {
+        Validate.notNull(button, "Button cannot be null!");
+        var node = button.getBar().getPosition().shouldUseFirstPane() ? first : second;
 
-    public void selectSecond(BarPaneSnapshot snapshot) {
-        select(second, snapshot);
-    }
+        if (node.getButton().orElse(null) == button) return false;
 
-    private void select(BarPaneNode node, BarPaneSnapshot snapshot) {
-        if (snapshot == null) {
-            if (node.getSnapshot().isEmpty()) return;
-            node.selectSnapshot(null);
+        boolean empty = node.getButton().isEmpty();
+        node.selectButton(button);
 
+        if (empty) {
+            getItems().add(node == first ? 0 : getItems().size(), node);
             if (getItems().size() > 1) {
-                dividerPosition = getDividerPositions()[0];
+                setDividerPosition(0, dividerPosition);
             } else {
-                parentDividerPosition = parent.getDividerPositions()[firstInParent ? 0 : parent.getItems().size() - 2];
-                parent.getItems().remove(this);
-            }
-
-            getItems().remove(node);
-
-        } else {
-            boolean empty = node.getSnapshot().isEmpty();
-            node.selectSnapshot(snapshot);
-
-            if (empty) {
-                getItems().add(node == first ? 0 : getItems().size(), node);
-                if (getItems().size() > 1) {
-                    setDividerPosition(0, dividerPosition);
+                if (firstInParent) {
+                    parent.getItems().add(0, this);
                 } else {
-                    if (firstInParent) {
-                        parent.getItems().add(0, this);
-                    } else {
-                        parent.getItems().add(this);
-                    }
-                    parent.setDividerPosition(firstInParent ? 0 : parent.getItems().size() - 2, parentDividerPosition);
+                    parent.getItems().add(this);
                 }
+                parent.setDividerPosition(firstInParent ? 0 : parent.getItems().size() - 2, parentDividerPosition);
             }
         }
+
+        return true;
+    }
+
+    @Override
+    public boolean hide(BarButton button) {
+        Validate.notNull(button, "Button cannot be null!");
+        var node = button.getBar().getPosition().shouldUseFirstPane() ? first : second;
+
+        if (node.getButton().orElse(null) != button) return false;
+        node.selectButton(null);
+
+        if (getItems().size() > 1) {
+            dividerPosition = getDividerPositions()[0];
+        } else {
+            parentDividerPosition = parent.getDividerPositions()[firstInParent ? 0 : parent.getItems().size() - 2];
+            parent.getItems().remove(this);
+        }
+
+        getItems().remove(node);
+        return true;
     }
 }

@@ -30,7 +30,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Orientation;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 
 public class FillRegion extends Region implements ChangeListener<Number> {
 
@@ -42,8 +41,8 @@ public class FillRegion extends Region implements ChangeListener<Number> {
         position.addStyleClasses(getStyleClass());
         this.orientation = position.getOrientation();
         this.holder = holder;
-        this.first = first.getPane();
-        this.second = second.getPane();
+        this.first = first.getNode();
+        this.second = second.getNode();
 
 
         if (orientation == Orientation.VERTICAL) {

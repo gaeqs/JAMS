@@ -191,27 +191,27 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
         var rightFill = new FillRegion(BarPosition.RIGHT_TOP, rightHolder, rightTop, rightBottom);
         var bottomFill = new FillRegion(BarPosition.BOTTOM_LEFT, bottomHolder, bottomLeft, bottomRight);
 
-        leftHolder.getChildren().addAll(leftTop.getPane(), leftFill, leftBottom.getPane());
-        rightHolder.getChildren().addAll(rightTop.getPane(), rightFill, rightBottom.getPane());
-        bottomHolder.getChildren().addAll(bottomLeft.getPane(), bottomFill, bottomRight.getPane());
+        leftHolder.getChildren().addAll(leftTop.getNode(), leftFill, leftBottom.getNode());
+        rightHolder.getChildren().addAll(rightTop.getNode(), rightFill, rightBottom.getNode());
+        bottomHolder.getChildren().addAll(bottomLeft.getNode(), bottomFill, bottomRight.getNode());
         getChildren().addAll(leftHolder, rightHolder, bottomHolder);
     }
 
     private Bar loadSidebar(BarPosition position, BarPane pane) {
         var bar = barMap.create(position, pane);
 
-        bar.getPane().setPrefWidth(SIDEBAR_WIDTH);
-        bar.getPane().setMaxWidth(SIDEBAR_WIDTH);
-        bar.getPane().setMinHeight(100);
+        bar.getNode().setPrefWidth(SIDEBAR_WIDTH);
+        bar.getNode().setMaxWidth(SIDEBAR_WIDTH);
+        bar.getNode().setMinHeight(100);
         return bar;
     }
 
     private Bar loadBottomBar(BarPosition position, BarPane pane) {
         var bar = barMap.create(position, pane);
 
-        bar.getPane().setPrefHeight(BOTTOM_BAR_HEIGHT);
-        bar.getPane().setMaxHeight(BOTTOM_BAR_HEIGHT);
-        bar.getPane().setMinWidth(100);
+        bar.getNode().setPrefHeight(BOTTOM_BAR_HEIGHT);
+        bar.getNode().setMaxHeight(BOTTOM_BAR_HEIGHT);
+        bar.getNode().setMinWidth(100);
         return bar;
     }
 

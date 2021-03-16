@@ -11,28 +11,40 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-
+/**
+ * Represents an editor bar that contains several {@link BarButton}s.
+ * <p>
+ * Bars should be stored inside a {@link BarMap}. This allows bars
+ * to share buttons.
+ */
 public class Bar {
 
     private final BarMap map;
-    private final Pane pane;
+    private final Pane node;
     private final BarPosition position;
     private final BarPane barPane;
 
     private final Set<BarButton> buttons;
 
+    /**
+     * Creates the bar.
+     *
+     * @param map      the {@link BarMap}.
+     * @param position the {@link BarPosition position} where this bar is showed.
+     * @param barPane  the {@link BarPane} where this bar will put their nodes.
+     */
     public Bar(BarMap map, BarPosition position, BarPane barPane) {
         this.map = map;
         this.position = position;
         this.barPane = barPane;
         this.buttons = new HashSet<>();
 
-        this.pane = switch (position.getOrientation()) {
+        this.node = switch (position.getOrientation()) {
             case VERTICAL -> new VBox();
             case HORIZONTAL -> new HBox();
         };
 
-        var classes = pane.getStyleClass();
+        var classes = node.getStyleClass();
         classes.add("bar");
         position.addStyleClasses(classes);
 
@@ -43,8 +55,8 @@ public class Bar {
         return map;
     }
 
-    public Pane getPane() {
-        return pane;
+    public Pane getNode() {
+        return node;
     }
 
     public BarPane getBarPane() {
@@ -59,7 +71,7 @@ public class Bar {
         if (buttons.stream().anyMatch(target -> target.getSnapshot().equals(snapshot))) return false;
         var button = new BarButton(this, snapshot);
         buttons.add(button);
-        pane.getChildren().add(button);
+        node.getChildren().add(button);
         return true;
     }
 
@@ -68,7 +80,7 @@ public class Bar {
         if (button.isEmpty()) return false;
         button.get().hide();
         buttons.remove(button.get());
-        pane.getChildren().remove(button.get());
+        node.getChildren().remove(button.get());
 
         return true;
     }
@@ -89,38 +101,6 @@ public class Bar {
         return buttons.stream().filter(target -> target.getSnapshot().getName().equals(snapshotName)).findAny();
     }
 
-    boolean show(BarButton button) {
-        if (position.shouldUseFirstPane()) {
-            if (barPane.getFirstNode().getSnapshot().orElse(null) != button.getSnapshot()) {
-                barPane.selectFirst(button.getSnapshot());
-                return true;
-            }
-        } else {
-            if (barPane.getSecondNode().getSnapshot().orElse(null) != button.getSnapshot()) {
-                barPane.selectSecond(button.getSnapshot());
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    boolean hide(BarButton button) {
-        if (position.shouldUseFirstPane()) {
-            if (barPane.getFirstNode().getSnapshot().orElse(null) == button.getSnapshot()) {
-                barPane.selectFirst(null);
-                return true;
-            }
-        } else {
-            if (barPane.getSecondNode().getSnapshot().orElse(null) == button.getSnapshot()) {
-                barPane.selectSecond(null);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     void manageDrop(String name, int index) {
         if (index < 0) index = 0;
 
@@ -129,8 +109,8 @@ public class Bar {
         var button = optional.get();
 
         if (button.getBar().equals(this)) {
-            pane.getChildren().remove(button);
-            pane.getChildren().add(Math.min(pane.getChildren().size(), index), button);
+            node.getChildren().remove(button);
+            node.getChildren().add(Math.min(node.getChildren().size(), index), button);
         } else {
             button.getBar().remove(button.getSnapshot());
             add(button.getSnapshot());
@@ -139,7 +119,7 @@ public class Bar {
 
 
     private void loadDragAndDropListeners() {
-        pane.addEventHandler(DragEvent.DRAG_OVER, event -> {
+        node.addEventHandler(DragEvent.DRAG_OVER, event -> {
             if (!event.getDragboard().hasString() ||
                     !event.getDragboard().getString().startsWith(BarButton.DRAG_DROP_PREFIX))
                 return;
@@ -147,10 +127,10 @@ public class Bar {
             event.consume();
         });
 
-        pane.addEventHandler(DragEvent.DRAG_DROPPED, event -> {
+        node.addEventHandler(DragEvent.DRAG_DROPPED, event -> {
             String name = event.getDragboard()
                     .getString().substring(BarButton.DRAG_DROP_PREFIX.length() + 1);
-            manageDrop(name, pane.getChildren().size());
+            manageDrop(name, node.getChildren().size());
             event.setDropCompleted(true);
             event.consume();
         });

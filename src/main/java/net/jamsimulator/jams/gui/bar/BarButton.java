@@ -67,7 +67,7 @@ public class BarButton extends ToggleButton {
     }
 
     public boolean show() {
-        if (bar.show(this)) {
+        if (bar.getBarPane().show(this)) {
             setSelected(true);
             return true;
         }
@@ -75,7 +75,7 @@ public class BarButton extends ToggleButton {
     }
 
     public boolean hide() {
-        if (bar.hide(this)) {
+        if (bar.getBarPane().hide(this)) {
             setSelected(false);
             return true;
         }
@@ -100,10 +100,9 @@ public class BarButton extends ToggleButton {
     }
 
     private void loadSelectListener() {
-        selectedProperty().addListener((obs, old, val) -> {
-            if (old == val) return;
-            if (val) bar.show(this);
-            else bar.hide(this);
+        setOnMouseClicked(event -> {
+            if (isSelected()) bar.getBarPane().show(this);
+            else bar.getBarPane().hide(this);
         });
     }
 
@@ -117,7 +116,7 @@ public class BarButton extends ToggleButton {
 
         addEventHandler(DragEvent.DRAG_DROPPED, event -> {
             String name = event.getDragboard().getString().substring(DRAG_DROP_PREFIX.length() + 1);
-            bar.manageDrop(name, bar.getPane().getChildren().indexOf(this));
+            bar.manageDrop(name, bar.getNode().getChildren().indexOf(this));
             event.setDropCompleted(true);
             event.consume();
         });

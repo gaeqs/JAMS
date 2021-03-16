@@ -9,26 +9,30 @@ import java.util.Optional;
 public class BarPaneNode extends AnchorPane {
 
     private final BarPaneNodeHeader header;
-
-    private BarPaneSnapshot snapshot;
+    private BarButton button;
 
     public BarPaneNode(BarMap map, SplitPane splitPane) {
         header = new BarPaneNodeHeader(map, splitPane);
         AnchorUtils.setAnchor(header, 0, -1, 0, 0);
     }
 
-    public Optional<BarPaneSnapshot> getSnapshot() {
-        return Optional.ofNullable(snapshot);
+    public Optional<BarButton> getButton() {
+        return Optional.ofNullable(button);
     }
 
-    public void selectSnapshot(BarPaneSnapshot snapshot) {
-        this.snapshot = snapshot;
-        header.selectSnapshot(snapshot);
-        if (snapshot == null) {
+    public void selectButton(BarButton button) {
+        if (this.button != null) {
+            this.button.setSelected(false);
+        }
+
+        this.button = button;
+        if (button == null) {
+            header.selectSnapshot(null);
             getChildren().clear();
         } else {
-            AnchorUtils.setAnchor(snapshot.getNode(), BarPaneNodeHeader.HEIGHT, 0, 0, 0);
-            getChildren().setAll(header, snapshot.getNode());
+            header.selectSnapshot(button.getSnapshot());
+            AnchorUtils.setAnchor(button.getSnapshot().getNode(), BarPaneNodeHeader.HEIGHT, 0, 0, 0);
+            getChildren().setAll(header, button.getSnapshot().getNode());
         }
     }
 
