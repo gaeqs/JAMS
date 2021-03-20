@@ -17,6 +17,7 @@ START_SUBTITLE=Versión {VERSION}
 MAIN_MENU_FILE=Archivo
 MAIN_MENU_EDIT=Editar
 MAIN_MENU_MIPS=MIPS
+MAIN_MENU_TOOLS=Herramientas
 MAIN_MENU_HELP=Ayuda
 
 MAIN_MENU_FILE_EXIT=Salir
@@ -31,6 +32,10 @@ MAIN_MENU_HELP_ABOUT=Acerca de
 
 PROJECT_TAB_STRUCTURE=Estructura del projecto
 PROJECT_TAB_SIMULATION=Simulación
+
+BAR_VIEW_MODE_PANE=Mostrar en el panel
+BAR_VIEW_MODE_WINDOW=Mostrar en una ventana
+BAR_VIEW_MODE_PERSISTENT_WINDOW=Mostrar en una ventana persistente
 
 BAR_EXPLORER_NAME=Explorador
 BAR_FILES_TO_ASSEMBLE_NAME=Archivos a ensamblar

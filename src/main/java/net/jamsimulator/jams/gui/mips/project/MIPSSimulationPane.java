@@ -9,6 +9,7 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.bar.BarPaneSnapshot;
 import net.jamsimulator.jams.gui.bar.BarPosition;
+import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModePane;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.simulator.cache.CacheVisualizer;
 import net.jamsimulator.jams.gui.mips.simulator.execution.ExecutionButtons;
@@ -38,8 +39,6 @@ import java.util.Set;
 
 public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 
-    public static final String BAR_CONFIGURATION_NODE = "invisible.bar.simulation.";
-
     protected MIPSProject project;
     protected Simulation<?> simulation;
     protected TabPane registersTabs;
@@ -50,7 +49,7 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 
 
     public MIPSSimulationPane(Tab parent, ProjectTab projectTab, MIPSProject project, Simulation<?> simulation) {
-        super(parent, projectTab, null, new HashSet<>(), false);
+        super(parent, projectTab, null, false);
         this.project = project;
         this.simulation = simulation;
         this.executionButtons = new ExecutionButtons(simulation);
@@ -80,6 +79,8 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
             instructionViewerGroup = new InstructionViewerGroup(user);
         }
 
+        init();
+
         loadRegisterTabs();
         loadConsole();
         loadMemoryTab();
@@ -87,11 +88,7 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
         loadLabels();
         loadCacheVisualizer();
 
-        init();
-
         SplitPane.setResizableWithParent(center, true);
-
-        //barMap.setOnPut((type, button) -> Jams.getMainConfiguration().set(BAR_CONFIGURATION_NODE + button.getName(), type));
     }
 
     public MIPSProject getProject() {
@@ -126,14 +123,14 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 
         registersTabs.getTabs().forEach(tab -> tab.setClosable(false));
 
-        manageBarAddition("registers", registersTabs, icon, Messages.BAR_REGISTERS_NAME, BarPosition.RIGHT_TOP);
+        manageBarAddition("registers", registersTabs, icon, Messages.BAR_REGISTERS_NAME, BarPosition.RIGHT_TOP, BarSnapshotViewModePane.INSTANCE, true);
     }
 
     private void loadConsole() {
         Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_CONSOLE
         ).orElse(null);
 
-        manageBarAddition("console", simulation.getConsole(), icon, Messages.BAR_CONSOLE_NAME, BarPosition.BOTTOM_RIGHT);
+        manageBarAddition("console", simulation.getConsole(), icon, Messages.BAR_CONSOLE_NAME, BarPosition.BOTTOM_RIGHT, BarSnapshotViewModePane.INSTANCE, true);
     }
 
     private void loadMemoryTab() {
@@ -142,7 +139,7 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 
         memoryPane = new MemoryPane(simulation);
 
-        manageBarAddition("memory", memoryPane, icon, Messages.BAR_MEMORY_NAME, BarPosition.LEFT_TOP);
+        manageBarAddition("memory", memoryPane, icon, Messages.BAR_MEMORY_NAME, BarPosition.LEFT_TOP, BarSnapshotViewModePane.INSTANCE, true);
     }
 
     private void loadFlow() {
@@ -151,14 +148,14 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 
 
         FlowTable flow = FlowTable.createFlow(simulation);
-        manageBarAddition("flow", flow, icon, Messages.BAR_FLOW_NAME, BarPosition.BOTTOM_RIGHT);
+        manageBarAddition("flow", flow, icon, Messages.BAR_FLOW_NAME, BarPosition.BOTTOM_RIGHT, BarSnapshotViewModePane.INSTANCE, true);
     }
 
     private void loadLabels() {
         var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_LABELS).orElse(null);
         var pane = new LabelTable(this);
 
-        manageBarAddition("labels", pane, icon, Messages.BAR_LABELS_NAME, BarPosition.RIGHT_BOTTOM);
+        manageBarAddition("labels", pane, icon, Messages.BAR_LABELS_NAME, BarPosition.RIGHT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
     }
 
     private void loadCacheVisualizer() {
@@ -166,19 +163,14 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
         var memory = simulation.getMemory();
         if (memory instanceof Cache) {
             var visualizer = new CacheVisualizer(simulation);
-            manageBarAddition("cache_visualizer", visualizer, icon, Messages.BAR_CACHES_NAME, BarPosition.LEFT_BOTTOM);
+            manageBarAddition("cache_visualizer", visualizer, icon, Messages.BAR_CACHES_NAME, BarPosition.LEFT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
         }
     }
 
 
-    private void manageBarAddition(String name, Node node, Image icon, String languageNode, BarPosition position) {
-        //Optional<BarType> optional = Jams.getMainConfiguration().getEnum(BarType.class, BAR_CONFIGURATION_NODE + name);
-        //if (optional.isPresent()) {
-        //    bar = optional.get();
-        //} else {
-        //    Jams.getMainConfiguration().set(BAR_CONFIGURATION_NODE + name, bar);
-        //}
-        paneSnapshots.add(new BarPaneSnapshot(name, node, position, icon, languageNode));
+    private void manageBarAddition(String name, Node node, Image icon, String languageNode, BarPosition defaultPosition,
+                                   BarSnapshotViewModePane defaultViewMode, boolean defaultEnable) {
+        barMap.registerSnapshot(new BarPaneSnapshot(name, node, defaultPosition, defaultViewMode, defaultEnable, icon, languageNode));
     }
 
 

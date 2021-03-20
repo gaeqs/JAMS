@@ -563,6 +563,10 @@ AnchorPane {
     -fx-background-color: -theme-menu-item-hover;
 }
 
+.check-menu-item {
+    -fx-mark-color: -theme-foreground-darker-2;
+}
+
 .context-menu {
     -fx-background-color: -theme-background;
     -fx-padding: 0px;

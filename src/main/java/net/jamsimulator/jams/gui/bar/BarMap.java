@@ -1,15 +1,16 @@
 package net.jamsimulator.jams.gui.bar;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Consumer;
 
 public class BarMap {
 
     private final HashMap<BarPosition, Bar> bars;
+    private final Set<BarPaneSnapshot> registeredSnapshots;
 
     public BarMap() {
         bars = new HashMap<>();
+        registeredSnapshots = new HashSet<>();
     }
 
     public Bar create(BarPosition position, BarPane pane) {
@@ -27,6 +28,22 @@ public class BarMap {
             if (entry.getValue().equals(bar)) return Optional.ofNullable(entry.getKey());
         }
         return Optional.empty();
+    }
+
+    public Set<BarPaneSnapshot> getRegisteredSnapshots() {
+        return Collections.unmodifiableSet(registeredSnapshots);
+    }
+
+    public boolean registerSnapshot(BarPaneSnapshot snapshot) {
+        if (!registeredSnapshots.add(snapshot)) return false;
+        snapshot.setMap(this);
+
+        if (snapshot.isEnabled()) {
+            var bar = get(snapshot.getPosition());
+            bar.ifPresent(target -> target.add(snapshot));
+        }
+
+        return true;
     }
 
     public Optional<? extends BarButton> searchButton(String name) {
@@ -51,5 +68,8 @@ public class BarMap {
         return optional;
     }
 
+    public void forEachButton(Consumer<BarButton> consumer) {
+        bars.forEach((position, bar) -> bar.getButtons().forEach(consumer));
+    }
 
 }

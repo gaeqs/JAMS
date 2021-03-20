@@ -24,17 +24,17 @@
 
 package net.jamsimulator.jams.language.wrapper;
 
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.CheckMenuItem;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 
-public class LanguageMenuItem extends MenuItem {
+public class LanguageCheckMenuItem extends CheckMenuItem {
 
     private final String node;
 
-    public LanguageMenuItem(String node) {
+    public LanguageCheckMenuItem(String node) {
         this.node = node;
         Jams.getLanguageManager().registerListeners(this, true);
         refreshMessage();

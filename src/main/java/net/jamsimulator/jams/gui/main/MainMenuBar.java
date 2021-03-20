@@ -38,6 +38,7 @@ import net.jamsimulator.jams.gui.action.context.ContextActionMainMenuBuilder;
 import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionUnbindEvent;
+import net.jamsimulator.jams.gui.bar.ToolsMenu;
 import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 
@@ -50,69 +51,78 @@ import java.util.Set;
  */
 public class MainMenuBar extends MenuBar {
 
-	public MainMenuBar() {
-		refresh();
-		Jams.getLanguageManager().registerListeners(this, true);
-		JamsApplication.getActionManager().registerListeners(this, true);
-	}
+    public MainMenuBar() {
+        refresh();
+        Jams.getLanguageManager().registerListeners(this, true);
+        JamsApplication.getActionManager().registerListeners(this, true);
+    }
 
-	public void refresh() {
-		getMenus().clear();
-		Set<MainMenuRegion> set = new HashSet<>();
+    public void refresh() {
+        getMenus().clear();
+        Set<MainMenuRegion> set = new HashSet<>();
+        set.add(MainMenuRegion.TOOLS);
 
-		for (Action action : JamsApplication.getActionManager()) {
-			if (!(action instanceof ContextAction)) continue;
-			if (!((ContextAction) action).getMainMenuRegion().isPresent()) continue;
-			set.add(((ContextAction) action).getMainMenuRegion().get());
-		}
+        for (Action action : JamsApplication.getActionManager()) {
+            if (!(action instanceof ContextAction)) continue;
+            if (!((ContextAction) action).getMainMenuRegion().isPresent()) continue;
+            set.add(((ContextAction) action).getMainMenuRegion().get());
+        }
 
-		set.stream().sorted(Comparator.comparingInt(MainMenuRegion::getPriority)).forEach(this::createMenu);
-	}
+        set.stream().sorted(Comparator.comparingInt(MainMenuRegion::getPriority)).forEach(this::createMenu);
+    }
 
-	private void createMenu(MainMenuRegion region) {
-		Set<ContextAction> set = getSupportedContextActions(region);
-		if (set.isEmpty()) return;
-		Menu main = new ContextActionMainMenuBuilder(region.getLanguageNode()).addAll(set).build();
+    private void createMenu(MainMenuRegion region) {
+        if (region == MainMenuRegion.TOOLS) {
+            createToolsMenu();
+            return;
+        }
+        Set<ContextAction> set = getSupportedContextActions(region);
+        if (set.isEmpty()) return;
+        Menu main = new ContextActionMainMenuBuilder(region.getLanguageNode()).addAll(set).build();
 
-		main.setOnShowing(event -> {
-			for (MenuItem item : main.getItems()) {
-				if (item instanceof ActionMenuItem) {
-					item.setDisable(!((ActionMenuItem) item).getAction().supportsMainMenuState(this));
-				}
-			}
-		});
+        main.setOnShowing(event -> {
+            for (MenuItem item : main.getItems()) {
+                if (item instanceof ActionMenuItem) {
+                    item.setDisable(!((ActionMenuItem) item).getAction().supportsMainMenuState(this));
+                }
+            }
+        });
 
-		getMenus().add(main);
-	}
+        getMenus().add(main);
+    }
 
-	private Set<ContextAction> getSupportedContextActions(MainMenuRegion region) {
-		Set<Action> actions = JamsApplication.getActionManager();
-		Set<ContextAction> set = new HashSet<>();
-		for (Action action : actions) {
-			if (action instanceof ContextAction && region.equals(((ContextAction) action).getMainMenuRegion().orElse(null))) {
-				set.add((ContextAction) action);
-			}
-		}
-		return set;
-	}
+    private void createToolsMenu() {
+        getMenus().add(new ToolsMenu());
+    }
 
-	@Listener
-	private void onLanguageChange(DefaultLanguageChangeEvent.After event) {
-		Platform.runLater(this::refresh);
-	}
+    private Set<ContextAction> getSupportedContextActions(MainMenuRegion region) {
+        Set<Action> actions = JamsApplication.getActionManager();
+        Set<ContextAction> set = new HashSet<>();
+        for (Action action : actions) {
+            if (action instanceof ContextAction && region.equals(((ContextAction) action).getMainMenuRegion().orElse(null))) {
+                set.add((ContextAction) action);
+            }
+        }
+        return set;
+    }
 
-	@Listener
-	private void onLanguageChange(SelectedLanguageChangeEvent.After event) {
-		Platform.runLater(this::refresh);
-	}
+    @Listener
+    private void onLanguageChange(DefaultLanguageChangeEvent.After event) {
+        Platform.runLater(this::refresh);
+    }
 
-	@Listener
-	private void onActionBind(ActionBindEvent.After event) {
-		Platform.runLater(this::refresh);
-	}
+    @Listener
+    private void onLanguageChange(SelectedLanguageChangeEvent.After event) {
+        Platform.runLater(this::refresh);
+    }
 
-	@Listener
-	private void onActionUnbind(ActionUnbindEvent.After event) {
-		Platform.runLater(this::refresh);
-	}
+    @Listener
+    private void onActionBind(ActionBindEvent.After event) {
+        Platform.runLater(this::refresh);
+    }
+
+    @Listener
+    private void onActionUnbind(ActionUnbindEvent.After event) {
+        Platform.runLater(this::refresh);
+    }
 }

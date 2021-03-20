@@ -5,6 +5,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import net.jamsimulator.jams.Jams;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -81,6 +82,7 @@ public class Bar {
         button.get().hide();
         buttons.remove(button.get());
         node.getChildren().remove(button.get());
+        button.get().getSnapshot().setButton(null);
 
         return true;
     }
@@ -114,6 +116,8 @@ public class Bar {
         } else {
             button.getBar().remove(button.getSnapshot());
             add(button.getSnapshot());
+            // Leaves the management to the BarPaneSnapshot
+            Jams.getMainConfiguration().set(String.format(BarPaneSnapshot.CONFIGURATION_NODE_POSITION, name), position);
         }
     }
 

@@ -42,11 +42,11 @@ public class FlowEntry extends AnchorPane {
 			prefWidthProperty().bind(table.scrollPane.widthProperty());
 
 			table.scrollPane.viewportBoundsProperty().addListener((obs, old, val) ->
-					AnchorUtils.setAnchor(instructionLabel, 0, 0, -table.scrollPane.getViewportBounds().getMinX() / table.getScaleX(), -1));
+					AnchorUtils.setAnchor(instructionLabel, 0, 0, -table.scrollPane.getViewportBounds().getMinX() /  table.scalableNode.scaleX(), -1));
 			table.scrollPane.hvalueProperty().addListener((obs, old, val) ->
-					AnchorUtils.setAnchor(instructionLabel, 0, 0, -table.scrollPane.getViewportBounds().getMinX() / table.getScaleX(), -1));
+					AnchorUtils.setAnchor(instructionLabel, 0, 0, -table.scrollPane.getViewportBounds().getMinX() /  table.scalableNode.scaleX(), -1));
 
-			AnchorUtils.setAnchor(instructionLabel, 0, 0, -table.scrollPane.getViewportBounds().getMinX() / table.getScaleX(), -1);
+			AnchorUtils.setAnchor(instructionLabel, 0, 0, -table.scrollPane.getViewportBounds().getMinX() /  table.scalableNode.scaleX(), -1);
 		} else {
 			AnchorUtils.setAnchor(instructionLabel, 0, 0, 0, -1);
 		}

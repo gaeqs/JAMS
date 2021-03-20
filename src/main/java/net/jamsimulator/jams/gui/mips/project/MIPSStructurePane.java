@@ -34,6 +34,7 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.bar.BarPaneSnapshot;
 import net.jamsimulator.jams.gui.bar.BarPosition;
+import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModePane;
 import net.jamsimulator.jams.gui.editor.FileEditorHolder;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.explorer.MipsFolderExplorer;
@@ -46,14 +47,11 @@ import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.io.File;
-import java.util.HashSet;
 
 /**
  * This class represent the working pane of a project.
  */
 public class MIPSStructurePane extends WorkingPane {
-
-    public static final String BAR_CONFIGURATION_NODE = "invisible.bar.structure.";
 
     protected final MIPSProject project;
     protected final MIPSStructurePaneButtons paneButtons;
@@ -71,21 +69,19 @@ public class MIPSStructurePane extends WorkingPane {
      * @param project    the {@link MIPSProject} to handle.
      */
     public MIPSStructurePane(Tab parent, ProjectTab projectTab, MIPSProject project) {
-        super(parent, projectTab, null, new HashSet<>(), false);
+        super(parent, projectTab, null, false);
         center = new FileEditorHolder(this);
         this.project = project;
 
         paneButtons = new MIPSStructurePaneButtons(this);
 
+        init();
+
         loadExplorer();
         loadFilesToAssembleSidebar();
         loadLogBottomBar();
 
-        init();
-
         SplitPane.setResizableWithParent(center, true);
-
-        //barMap.setOnPut((type, button) -> Jams.getMainConfiguration().set(BAR_CONFIGURATION_NODE + button.getName(), type));
     }
 
     /**
@@ -139,7 +135,7 @@ public class MIPSStructurePane extends WorkingPane {
             pane.setVvalue(pane.getVvalue() - deltaY);
         });
 
-        manageBarAddition("explorer", pane, icon, Messages.BAR_EXPLORER_NAME, BarPosition.LEFT_TOP);
+        manageBarAddition("explorer", pane, icon, Messages.BAR_EXPLORER_NAME, BarPosition.LEFT_TOP, BarSnapshotViewModePane.INSTANCE, true);
 
         explorer.setFileOpenAction(file -> openFile(file.getFile()));
     }
@@ -159,25 +155,21 @@ public class MIPSStructurePane extends WorkingPane {
             pane.setVvalue(pane.getVvalue() - deltaY);
         });
 
-        manageBarAddition("files_to_assemble", pane, icon, Messages.BAR_FILES_TO_ASSEMBLE_NAME, BarPosition.LEFT_BOTTOM);
+        manageBarAddition("files_to_assemble", pane, icon, Messages.BAR_FILES_TO_ASSEMBLE_NAME, BarPosition.LEFT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
     }
 
     private void loadLogBottomBar() {
         Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE).orElse(null);
         log = new SimpleLog();
-        manageBarAddition("log", log, icon, Messages.BAR_LOG_NAME, BarPosition.BOTTOM_LEFT);
+        manageBarAddition("log", log, icon, Messages.BAR_LOG_NAME, BarPosition.BOTTOM_LEFT, BarSnapshotViewModePane.INSTANCE, true);
     }
 
 
-    private void manageBarAddition(String name, Node node, Image icon, String languageNode, BarPosition position) {
-        //Optional<BarType> optional = Jams.getMainConfiguration().getEnum(BarType.class, BAR_CONFIGURATION_NODE + name);
-        //if (optional.isPresent()) {
-        //	bar = optional.get();
-        //} else {
-        //	Jams.getMainConfiguration().set(BAR_CONFIGURATION_NODE + name, bar);
-        //}
-        paneSnapshots.add(new BarPaneSnapshot(name, node, position, icon, languageNode));
+    private void manageBarAddition(String name, Node node, Image icon, String languageNode, BarPosition defaultPosition,
+                                   BarSnapshotViewModePane defaultViewMode, boolean defaultEnable) {
+        barMap.registerSnapshot(new BarPaneSnapshot(name, node, defaultPosition, defaultViewMode, defaultEnable, icon, languageNode));
     }
+
 
     @Override
     public String getLanguageNode() {

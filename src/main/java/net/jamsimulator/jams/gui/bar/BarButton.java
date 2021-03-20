@@ -8,12 +8,14 @@ import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import net.jamsimulator.jams.gui.bar.mode.ViewModeContextMenu;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class BarButton extends ToggleButton {
 
@@ -23,12 +25,16 @@ public class BarButton extends ToggleButton {
     private final Bar bar;
     private final BarPaneSnapshot snapshot;
 
+    private BarSnapshotHolder holder;
 
     public BarButton(Bar bar, BarPaneSnapshot snapshot) {
         Validate.notNull(bar, "Bar cannot be null!");
         Validate.notNull(snapshot, "Snapshot cannot be null!");
         this.bar = bar;
         this.snapshot = snapshot;
+        this.holder = null;
+
+        snapshot.setButton(this);
 
         getStyleClass().add("bar-button");
         var label = snapshot.getLanguageNode() == null
@@ -56,6 +62,8 @@ public class BarButton extends ToggleButton {
 
         loadSelectListener();
         loadDragAndDropListeners();
+
+        setContextMenu(new ViewModeContextMenu(snapshot));
     }
 
     public Bar getBar() {
@@ -66,20 +74,32 @@ public class BarButton extends ToggleButton {
         return snapshot;
     }
 
+
+    public Optional<BarSnapshotHolder> getCurrentHolder() {
+        return Optional.ofNullable(holder);
+    }
+
     public boolean show() {
-        if (bar.getBarPane().show(this)) {
-            setSelected(true);
+        if (holder != null) return false;
+        var newHolder = snapshot.getViewMode().manageView(this);
+        newHolder.ifPresent(target -> holder = target);
+        setSelected(newHolder.isPresent());
+        return newHolder.isPresent();
+    }
+
+    public boolean hide() {
+        if (holder == null) return false;
+        if (holder.hide(this)) {
+            setSelected(false);
+            holder = null;
             return true;
         }
         return false;
     }
 
-    public boolean hide() {
-        if (bar.getBarPane().hide(this)) {
-            setSelected(false);
-            return true;
-        }
-        return false;
+    public void forceHide() {
+        holder = null;
+        setSelected(false);
     }
 
     private Pane loadGroupPane() {
@@ -101,8 +121,8 @@ public class BarButton extends ToggleButton {
 
     private void loadSelectListener() {
         setOnMouseClicked(event -> {
-            if (isSelected()) bar.getBarPane().show(this);
-            else bar.getBarPane().hide(this);
+            if (isSelected()) show();
+            else hide();
         });
     }
 

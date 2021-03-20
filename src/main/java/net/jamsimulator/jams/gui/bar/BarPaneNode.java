@@ -22,7 +22,7 @@ public class BarPaneNode extends AnchorPane {
 
     public void selectButton(BarButton button) {
         if (this.button != null) {
-            this.button.setSelected(false);
+            this.button.forceHide();
         }
 
         this.button = button;

@@ -60,17 +60,13 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 
     protected BarMap barMap;
 
-    protected final Set<BarPaneSnapshot> paneSnapshots;
-
     private EventHandler<WindowEvent> stageCloseListener;
 
-    public WorkingPane(Tab parent, ProjectTab projectTab, Node center,
-                       Set<BarPaneSnapshot> paneSnapshots, boolean init) {
+    public WorkingPane(Tab parent, ProjectTab projectTab, Node center, boolean init) {
         getStyleClass().add("working-pane");
         this.parent = parent;
         this.projectTab = projectTab;
         this.center = center;
-        this.paneSnapshots = paneSnapshots;
         this.barMap = new BarMap();
         if (init) {
             init();
@@ -115,27 +111,12 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
         return barMap;
     }
 
-    /**
-     * Adds the given {@link BarPaneSnapshot} to the matching {@link Bar}.
-     *
-     * @param snapshot the {@link BarPaneSnapshot}.
-     * @return whether the snapshot was added. This method fails whether a snapshot with the same name is already added.
-     */
-    public boolean addSidePaneSnapshot(BarPaneSnapshot snapshot) {
-        if (!paneSnapshots.add(snapshot)) return false;
-        manageSidePaneAddition(snapshot);
-        return true;
-    }
-
     @Override
     public void onClose() {
+        barMap.forEachButton(BarButton::hide);
         if (stageCloseListener != null) {
             JamsApplication.removeStageCloseListener(stageCloseListener);
         }
-    }
-
-    private void manageSidePaneAddition(BarPaneSnapshot snapshot) {
-        barMap.get(snapshot.getDefaultPosition()).ifPresent(target -> target.add(snapshot));
     }
 
     //region INIT
@@ -156,7 +137,6 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
 
 
         loadSidebars();
-        addSnapshots();
         loadResizeEvents();
 
         stageCloseListener = target -> {
@@ -213,10 +193,6 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
         bar.getNode().setMaxHeight(BOTTOM_BAR_HEIGHT);
         bar.getNode().setMinWidth(100);
         return bar;
-    }
-
-    private void addSnapshots() {
-        paneSnapshots.forEach(this::manageSidePaneAddition);
     }
 
     private void loadResizeEvents() {

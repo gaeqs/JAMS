@@ -63,7 +63,6 @@ Dark Theme
 /*PANE*/
 AnchorPane {
     -fx-background-color: -theme-background;
-    -fx-background-radius: 5;
 }
 
 .darker_pane {
@@ -560,6 +559,10 @@ AnchorPane {
 .menu-item:hover,
 .menu-item:selected {
     -fx-background-color: -theme-menu-item-hover;
+}
+
+.check-menu-item {
+    -fx-mark-color: -theme-foreground-darker-2;
 }
 
 .context-menu {
