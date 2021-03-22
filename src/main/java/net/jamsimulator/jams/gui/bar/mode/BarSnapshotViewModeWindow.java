@@ -1,13 +1,12 @@
 package net.jamsimulator.jams.gui.bar.mode;
 
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.bar.BarButton;
-import net.jamsimulator.jams.gui.bar.BarPaneSnapshot;
+import net.jamsimulator.jams.gui.bar.BarSnapshot;
 import net.jamsimulator.jams.gui.bar.BarSnapshotHolder;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
@@ -17,6 +16,10 @@ import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 
 import java.util.Optional;
 
+/**
+ * Represents a {@link BarSnapshot snapshot}'s representation mode where
+ * its content is placed in a persistent window.
+ */
 public class BarSnapshotViewModeWindow implements BarSnapshotViewMode {
 
     public static final String NAME = "window";
@@ -43,7 +46,7 @@ public class BarSnapshotViewModeWindow implements BarSnapshotViewMode {
 
     private static class Window extends Stage implements BarSnapshotHolder {
 
-        private BarPaneSnapshot snapshot;
+        private BarSnapshot snapshot;
 
         @Override
         public boolean show(BarButton button) {

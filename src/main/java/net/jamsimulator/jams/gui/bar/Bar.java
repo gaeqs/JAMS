@@ -15,7 +15,7 @@ import java.util.Set;
 /**
  * Represents an editor bar that contains several {@link BarButton}s.
  * <p>
- * Bars should be stored inside a {@link BarMap}. This allows bars
+ * Bars must be stored inside a {@link BarMap}. This allows bars
  * to share buttons.
  */
 public class Bar {
@@ -52,23 +52,60 @@ public class Bar {
         loadDragAndDropListeners();
     }
 
+    /**
+     * Returns the {@link BarMap} containing this bar.
+     *
+     * @return the {@link BarMap}.
+     */
     public BarMap getMap() {
         return map;
     }
 
+    /**
+     * Returns the {@link Pane} of this bar.
+     * <p>
+     * This pane should be the representation of the bar, containing all enabled buttons.
+     *
+     * @return the {@link Pane}.
+     */
     public Pane getNode() {
         return node;
     }
 
+    /**
+     * Returns the {@link BarPane} linked to this bar.
+     * <p>
+     * The {@link BarPane} is the place where {@link BarSnapshot}s will be represented
+     * if they choose the {@link net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModePane pane view mode}.
+     *
+     * @return the {@link BarPane}.
+     */
     public BarPane getBarPane() {
         return barPane;
     }
 
+    /**
+     * Returns the {@link BarPosition position} this bar is located at.
+     * <p>
+     * This {@link BarPosition position} is used to identify this bar inside the {@link BarMap}.
+     *
+     * @return the {@link BarPosition position}.
+     * @see #getBarPane()
+     */
     public BarPosition getPosition() {
         return position;
     }
 
-    public boolean add(BarPaneSnapshot snapshot) {
+    /**
+     * Adds the given {@link BarSnapshot snapshot} into this bar.
+     * <p>
+     * Snapshots from another {@link BarMap} SHOULD NOT be used in this method.
+     * The given snapshot should be registered in the {@link BarMap} for this method to work properly.
+     *
+     * @param snapshot the {@link BarSnapshot snapshot}.
+     * @return whether the operation was successful.
+     */
+    public boolean add(BarSnapshot snapshot) {
         if (buttons.stream().anyMatch(target -> target.getSnapshot().equals(snapshot))) return false;
         var button = new BarButton(this, snapshot);
         buttons.add(button);
@@ -76,7 +113,13 @@ public class Bar {
         return true;
     }
 
-    public boolean remove(BarPaneSnapshot snapshot) {
+    /**
+     * Removes the given {@link BarSnapshot snapshot} from this bar.
+     *
+     * @param snapshot the {@link BarSnapshot snapshot}.
+     * @return whether the operation was successful.
+     */
+    public boolean remove(BarSnapshot snapshot) {
         var button = buttons.stream().filter(target -> target.getSnapshot().equals(snapshot)).findAny();
         if (button.isEmpty()) return false;
         button.get().hide();
@@ -87,18 +130,42 @@ public class Bar {
         return true;
     }
 
-    public boolean contains(BarPaneSnapshot snapshot) {
+    /**
+     * Returns whether this bar contains the given {@link BarSnapshot snapshot}.
+     *
+     * @param snapshot the {@link BarSnapshot snapshot}.
+     * @return whether the bar contains the snapshot.
+     */
+    public boolean contains(BarSnapshot snapshot) {
         return buttons.stream().anyMatch(target -> target.getSnapshot().equals(snapshot));
     }
 
+    /**
+     * Returns an unmodifiable {@link Set} with all {@link BarButton}s inside this bar.
+     *
+     * @return the unmodifiable {@link Set}.
+     * @see Collections#unmodifiableSet(Set)
+     */
     public Set<BarButton> getButtons() {
         return Collections.unmodifiableSet(buttons);
     }
 
-    public Optional<BarButton> getButton(BarPaneSnapshot snapshot) {
+    /**
+     * Returns the {@link BarButton} representing the given {@link BarSnapshot snapshot} if present.
+     *
+     * @param snapshot the {@link BarSnapshot snapshot}.
+     * @return the {@link BarButton} if present.
+     */
+    public Optional<BarButton> getButton(BarSnapshot snapshot) {
         return buttons.stream().filter(target -> target.getSnapshot().equals(snapshot)).findAny();
     }
 
+    /**
+     * Returns the {@link BarButton} representing the {@link BarSnapshot snapshot} that matches the given name if present.
+     *
+     * @param snapshotName the name of the {@link BarSnapshot snapshot}.
+     * @return the {@link BarButton} if present.
+     */
     public Optional<BarButton> getButton(String snapshotName) {
         return buttons.stream().filter(target -> target.getSnapshot().getName().equals(snapshotName)).findAny();
     }
@@ -117,7 +184,7 @@ public class Bar {
             button.getBar().remove(button.getSnapshot());
             add(button.getSnapshot());
             // Leaves the management to the BarPaneSnapshot
-            Jams.getMainConfiguration().set(String.format(BarPaneSnapshot.CONFIGURATION_NODE_POSITION, name), position);
+            Jams.getMainConfiguration().set(String.format(BarSnapshot.CONFIGURATION_NODE_POSITION, name), position);
         }
     }
 

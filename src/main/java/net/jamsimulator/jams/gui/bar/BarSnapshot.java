@@ -12,7 +12,7 @@ import net.jamsimulator.jams.utils.Validate;
 import java.util.Objects;
 import java.util.Optional;
 
-public class BarPaneSnapshot {
+public class BarSnapshot {
 
     public static final String CONFIGURATION_NODE_VIEW_MODE = "invisible.bar.%s.viewmode";
     public static final String CONFIGURATION_NODE_ENABLED = "invisible.bar.%s.enabled";
@@ -30,8 +30,8 @@ public class BarPaneSnapshot {
     private BarMap map;
     private BarButton button;
 
-    public BarPaneSnapshot(String name, Node node, BarPosition defaultPosition, BarSnapshotViewMode defaultViewMode, boolean defaultEnable,
-                           Image icon, String languageNode) {
+    public BarSnapshot(String name, Node node, BarPosition defaultPosition, BarSnapshotViewMode defaultViewMode, boolean defaultEnable,
+                       Image icon, String languageNode) {
         Validate.notNull(name, "Name cannot be null!");
         Validate.notNull(node, "Node cannot be null!");
         Validate.notNull(defaultPosition, "Default position cannot be null!");
@@ -134,7 +134,7 @@ public class BarPaneSnapshot {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BarPaneSnapshot that = (BarPaneSnapshot) o;
+        BarSnapshot that = (BarSnapshot) o;
         return name.equals(that.name);
     }
 

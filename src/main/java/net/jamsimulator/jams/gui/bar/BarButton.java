@@ -17,17 +17,27 @@ import net.jamsimulator.jams.utils.Validate;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Represents a button containing a {@link BarSnapshot}.
+ * Buttons should be inside a {@link Bar}.
+ */
 public class BarButton extends ToggleButton {
 
     public static final int IMAGE_SIZE = 16;
     public static final String DRAG_DROP_PREFIX = "sidebar";
 
     private final Bar bar;
-    private final BarPaneSnapshot snapshot;
+    private final BarSnapshot snapshot;
 
     private BarSnapshotHolder holder;
 
-    public BarButton(Bar bar, BarPaneSnapshot snapshot) {
+    /**
+     * Creates the button.
+     *
+     * @param bar      the {@link Bar} containing this button.
+     * @param snapshot the {@link BarSnapshot snapshot} being represented by the button.
+     */
+    public BarButton(Bar bar, BarSnapshot snapshot) {
         Validate.notNull(bar, "Bar cannot be null!");
         Validate.notNull(snapshot, "Snapshot cannot be null!");
         this.bar = bar;
@@ -66,19 +76,39 @@ public class BarButton extends ToggleButton {
         setContextMenu(new ViewModeContextMenu(snapshot));
     }
 
+    /**
+     * Returns the {@link Bar} containing this button.
+     *
+     * @return the {@link Bar}.
+     */
     public Bar getBar() {
         return bar;
     }
 
-    public BarPaneSnapshot getSnapshot() {
+    /**
+     * Returns the {@link BarSnapshot snapshot} represented by this button.
+     *
+     * @return the {@link BarSnapshot snapshot}.
+     */
+    public BarSnapshot getSnapshot() {
         return snapshot;
     }
 
-
+    /**
+     * If the {@link BarSnapshot snapshot} of this button if being displayed,
+     * returns the {@link BarSnapshotHolder holder} displaying it.
+     *
+     * @return the {@link BarSnapshotHolder holder} if the {@link BarSnapshot snapshot} is visible.
+     */
     public Optional<BarSnapshotHolder> getCurrentHolder() {
         return Optional.ofNullable(holder);
     }
 
+    /**
+     * Makes visible the {@link BarSnapshot} being represented.
+     *
+     * @return whether this operation was successful.
+     */
     public boolean show() {
         if (holder != null) return false;
         var newHolder = snapshot.getViewMode().manageView(this);
@@ -87,6 +117,11 @@ public class BarButton extends ToggleButton {
         return newHolder.isPresent();
     }
 
+    /**
+     * Hides the {@link BarSnapshot} being represented.
+     *
+     * @return whether this operation was successful.
+     */
     public boolean hide() {
         if (holder == null) return false;
         if (holder.hide(this)) {
@@ -97,6 +132,10 @@ public class BarButton extends ToggleButton {
         return false;
     }
 
+    /**
+     * Marks this button as not selected, without
+     * doing any management about the closure of the {@link BarSnapshot snapshot}.
+     */
     public void forceHide() {
         holder = null;
         setSelected(false);

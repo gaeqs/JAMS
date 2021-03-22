@@ -52,7 +52,7 @@ public class BarPaneNodeHeader extends AnchorPane {
 
     private final Button closeButton;
 
-    private BarPaneSnapshot snapshot;
+    private BarSnapshot snapshot;
     private Label label;
     private double relativeDragPosition;
 
@@ -82,7 +82,13 @@ public class BarPaneNodeHeader extends AnchorPane {
         }
     }
 
-    public void selectSnapshot(BarPaneSnapshot snapshot) {
+    /**
+     * Selected the given {@link BarSnapshot snapshot}.
+     * This displays its information and allows this header to deselect if needed.
+     *
+     * @param snapshot the {@link BarSnapshot snapshot}.
+     */
+    public void selectSnapshot(BarSnapshot snapshot) {
         this.snapshot = snapshot;
         if (snapshot == null) {
             getChildren().clear();

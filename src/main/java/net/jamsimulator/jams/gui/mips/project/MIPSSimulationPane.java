@@ -7,7 +7,7 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.bar.BarPaneSnapshot;
+import net.jamsimulator.jams.gui.bar.BarSnapshot;
 import net.jamsimulator.jams.gui.bar.BarPosition;
 import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModePane;
 import net.jamsimulator.jams.gui.image.icon.Icons;
@@ -170,7 +170,7 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 
     private void manageBarAddition(String name, Node node, Image icon, String languageNode, BarPosition defaultPosition,
                                    BarSnapshotViewModePane defaultViewMode, boolean defaultEnable) {
-        barMap.registerSnapshot(new BarPaneSnapshot(name, node, defaultPosition, defaultViewMode, defaultEnable, icon, languageNode));
+        barMap.registerSnapshot(new BarSnapshot(name, node, defaultPosition, defaultViewMode, defaultEnable, icon, languageNode));
     }
 
 

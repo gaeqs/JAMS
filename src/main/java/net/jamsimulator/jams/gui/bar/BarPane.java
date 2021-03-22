@@ -4,6 +4,14 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import net.jamsimulator.jams.utils.Validate;
 
+/**
+ * Represents a pane that can hold {@link BarSnapshot snapshot}s.
+ * This pane is usually linked to two {@link Bar}s.
+ * <p>
+ * This pane should be inside a {@link SplitPane}. This allows this pane to hide and show when needed.
+ * <p>
+ * This pane can contain two {@link BarSnapshot snapshot}s. Each of them is controlled by a {@link BarPaneNode}.
+ */
 public class BarPane extends SplitPane implements BarSnapshotHolder {
 
     private final BarPaneNode first, second;
@@ -12,6 +20,14 @@ public class BarPane extends SplitPane implements BarSnapshotHolder {
 
     private double dividerPosition, parentDividerPosition;
 
+    /**
+     * Creates the pane.
+     *
+     * @param map           the {@link BarMap} holding the {@link Bar}s linked to this pane.
+     * @param parent        the {@link SplitPane} holding this pane.
+     * @param firstInParent whether this pane should be added at the start or at the end of the parent {@link SplitPane}.
+     * @param orientation   the orientation of this pane.
+     */
     public BarPane(BarMap map, SplitPane parent, boolean firstInParent, Orientation orientation) {
         this.parent = parent;
         this.firstInParent = firstInParent;
@@ -23,10 +39,20 @@ public class BarPane extends SplitPane implements BarSnapshotHolder {
         dividerPosition = 0.5;
     }
 
+    /**
+     * Returns the {@link BarPaneNode} that controlls the first {@link BarSnapshot snapshot}.
+     *
+     * @return the {@link BarPaneNode}.
+     */
     public BarPaneNode getFirstNode() {
         return first;
     }
 
+    /**
+     * Returns the {@link BarPaneNode} that controlls the second {@link BarSnapshot snapshot}.
+     *
+     * @return the {@link BarPaneNode}.
+     */
     public BarPaneNode getSecondNode() {
         return second;
     }
