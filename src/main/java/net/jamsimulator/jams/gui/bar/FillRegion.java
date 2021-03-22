@@ -31,6 +31,9 @@ import javafx.geometry.Orientation;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 
+/**
+ * Small helper class that fills the space between two {@link Bar}s.
+ */
 public class FillRegion extends Region implements ChangeListener<Number> {
 
     private final Orientation orientation;

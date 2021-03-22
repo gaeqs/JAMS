@@ -1,5 +1,7 @@
 package net.jamsimulator.jams.gui.bar;
 
+import net.jamsimulator.jams.utils.Validate;
+
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -63,9 +65,11 @@ public class BarMap {
      *
      * @param snapshot the {@link BarSnapshot snapshot} to register.
      * @return whether the operation was successful.
+     * @throws IllegalArgumentException when the given snapshot is already registered in another map.
      */
     public boolean registerSnapshot(BarSnapshot snapshot) {
         if (!registeredSnapshots.add(snapshot)) return false;
+        Validate.isTrue(snapshot.getMap().isEmpty(), "The given snapshot is already registered in another map!");
         snapshot.setMap(this);
 
         if (snapshot.isEnabled()) {

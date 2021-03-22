@@ -1,5 +1,6 @@
 package net.jamsimulator.jams.gui.bar;
 
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.JamsApplication;
@@ -9,6 +10,10 @@ import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.language.wrapper.LanguageCheckMenuItem;
 import net.jamsimulator.jams.language.wrapper.LanguageMenu;
 
+/**
+ * Represents a {@link javafx.scene.control.Menu} representing
+ * all {@link BarSnapshot snapshots} of the current {@link WorkingPane}.
+ */
 public class ToolsMenu extends LanguageMenu {
 
     public static final int ICON_SIZE = 16;
@@ -33,12 +38,13 @@ public class ToolsMenu extends LanguageMenu {
         if (tab == null || !(tab.getContent() instanceof WorkingPane)) return;
 
         ((WorkingPane) tab.getContent()).getBarMap().getRegisteredSnapshots().forEach(snapshot -> {
-            var item = new LanguageCheckMenuItem(snapshot.getLanguageNode());
+
+            var item = snapshot.getLanguageNode()
+                    .map(v -> (CheckMenuItem) new LanguageCheckMenuItem(v))
+                    .orElseGet(() -> new CheckMenuItem(snapshot.getName()));
             item.setSelected(snapshot.isEnabled());
 
-            if (snapshot.getIcon() != null) {
-                item.setGraphic(new NearestImageView(snapshot.getIcon(), ICON_SIZE, ICON_SIZE));
-            }
+            snapshot.getIcon().ifPresent(target -> item.setGraphic(new NearestImageView(target, ICON_SIZE, ICON_SIZE)));
 
             getItems().add(item);
 

@@ -47,14 +47,14 @@ public class BarButton extends ToggleButton {
         snapshot.setButton(this);
 
         getStyleClass().add("bar-button");
-        var label = snapshot.getLanguageNode() == null
-                ? new Label(snapshot.getName())
-                : new LanguageLabel(snapshot.getLanguageNode());
+        var label = snapshot.getLanguageNode()
+                .map(v -> (Label) new LanguageLabel(v))
+                .orElseGet(() -> new Label(snapshot.getName()));
 
         var group = new Group(label);
 
-        if (snapshot.getIcon() != null) {
-            var view = new NearestImageView(snapshot.getIcon(), IMAGE_SIZE, IMAGE_SIZE);
+        if (snapshot.getIcon().isPresent()) {
+            var view = new NearestImageView(snapshot.getIcon().get(), IMAGE_SIZE, IMAGE_SIZE);
             var pane = loadGroupPane();
 
             if (bar.getPosition() == BarPosition.RIGHT_TOP || bar.getPosition() == BarPosition.RIGHT_BOTTOM) {
