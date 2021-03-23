@@ -184,59 +184,6 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 	}
 
 	@Override
-	public void executeAll() {
-		if (finished || running) return;
-		running = true;
-		interrupted = false;
-
-		memory.enableEventCalls(data.canCallEvents());
-		registers.enableEventCalls(data.canCallEvents());
-
-		thread = new Thread(() -> {
-			long cycles = 0;
-			long start = System.nanoTime();
-
-			boolean first = true;
-			try {
-				while (!finished && !checkThreadInterrupted()) {
-					velocitySleep();
-					if (!checkThreadInterrupted()) {
-						runStep(first);
-						first = false;
-						cycles++;
-					}
-				}
-			} catch (Exception ex) {
-				System.err.println("PC: 0x" + StringUtils.addZeros(Integer.toHexString(registers.getProgramCounter().getValue()), 8));
-				ex.printStackTrace();
-			}
-
-			long millis = (System.nanoTime() - start) / 1000000;
-
-			if (getConsole() != null) {
-				getConsole().println();
-				getConsole().printInfoLn(cycles + " cycles executed in " + millis + " millis.");
-
-				int performance = (int) (cycles / (((double) millis) / 1000));
-				getConsole().printInfoLn(performance + " cycle/s");
-				getConsole().println();
-			}
-
-			synchronized (finishedRunningLock) {
-				running = false;
-				memory.enableEventCalls(true);
-				registers.enableEventCalls(true);
-				finishedRunningLock.notifyAll();
-				callEvent(new SimulationStopEvent(this));
-				getConsole().flush();
-			}
-		});
-		callEvent(new SimulationStartEvent(this));
-		thread.setPriority(Thread.MAX_PRIORITY);
-		thread.start();
-	}
-
-	@Override
 	public boolean undoLastStep() {
 		if (!data.isUndoEnabled()) return false;
 

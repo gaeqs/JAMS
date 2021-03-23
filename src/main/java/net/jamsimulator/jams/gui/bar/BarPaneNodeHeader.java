@@ -93,7 +93,11 @@ public class BarPaneNodeHeader extends AnchorPane {
         if (snapshot == null) {
             getChildren().clear();
         } else {
-            label = snapshot.getLanguageNode() == null ? new Label(snapshot.getName()) : new LanguageLabel(snapshot.getLanguageNode());
+
+            label = snapshot.getLanguageNode()
+                    .map(v -> (Label) new LanguageLabel(v))
+                    .orElseGet(() -> new Label(snapshot.getName()));
+
             AnchorUtils.setAnchor(label, 0, 0, 5, -1);
             getChildren().setAll(label, closeButton);
         }

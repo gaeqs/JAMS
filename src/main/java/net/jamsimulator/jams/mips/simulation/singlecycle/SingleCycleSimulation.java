@@ -137,60 +137,6 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
     }
 
     @Override
-    public void executeAll() {
-        if (finished || running) return;
-        running = true;
-        interrupted = false;
-
-        memory.enableEventCalls(data.canCallEvents());
-        registers.enableEventCalls(data.canCallEvents());
-
-        thread = new Thread(() -> {
-            instructions = 0;
-            start = System.nanoTime();
-
-            boolean first = true;
-            try {
-                while (!finished && !checkThreadInterrupted()) {
-                    velocitySleep();
-                    if (!checkThreadInterrupted()) {
-                        runStep(first);
-                        first = false;
-                        instructions++;
-                    }
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-            long millis = (System.nanoTime() - start) / 1000000;
-
-            if (getConsole() != null) {
-                getConsole().println();
-                getConsole().printInfoLn(instructions + " instructions executed in " + millis + " millis.");
-
-                int performance = (int) (instructions / (((double) millis) / 1000));
-                getConsole().printInfoLn(performance + " inst/s");
-                getConsole().println();
-            }
-
-            synchronized (finishedRunningLock) {
-                running = false;
-                memory.enableEventCalls(true);
-                registers.enableEventCalls(true);
-                finishedRunningLock.notifyAll();
-                callEvent(new SimulationStopEvent(this));
-                if (getConsole() != null) {
-                    getConsole().flush();
-                }
-            }
-        });
-        callEvent(new SimulationStartEvent(this));
-        thread.setPriority(Thread.MAX_PRIORITY);
-        thread.start();
-    }
-
-    @Override
     public boolean undoLastStep() {
         if (!data.isUndoEnabled()) return false;
 

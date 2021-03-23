@@ -51,7 +51,7 @@ public class BarSnapshotViewModeWindow implements BarSnapshotViewMode {
         @Override
         public boolean show(BarButton button) {
             snapshot = button.getSnapshot();
-            setTitle(Jams.getLanguageManager().getSelected().getOrDefault(snapshot.getLanguageNode()));
+            setTitle(Jams.getLanguageManager().getSelected().getOrDefault(snapshot.getLanguageNode().orElse(null)));
             JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO).ifPresent(getIcons()::add);
 
             var anchor = new AnchorPane(snapshot.getNode());
@@ -79,12 +79,12 @@ public class BarSnapshotViewModeWindow implements BarSnapshotViewMode {
 
         @Listener
         private void onLanguageChange(SelectedLanguageChangeEvent.After event) {
-            setTitle(event.getNewLanguage().getOrDefault(snapshot.getLanguageNode()));
+            setTitle(event.getNewLanguage().getOrDefault(snapshot.getLanguageNode().orElse(null)));
         }
 
         @Listener
         private void onLanguageChange(DefaultLanguageChangeEvent.After event) {
-            setTitle(Jams.getLanguageManager().getSelected().getOrDefault(snapshot.getLanguageNode()));
+            setTitle(Jams.getLanguageManager().getSelected().getOrDefault(snapshot.getLanguageNode().orElse(null)));
         }
     }
 }

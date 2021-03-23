@@ -678,6 +678,17 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
     }
 
     /**
+     * Runs the given code synchronized to this simulation.
+     * <p>
+     * This allows to modify registers and memory safely.
+     *
+     * @param runnable the code to run.
+     */
+    public synchronized void runSynchronized(Runnable runnable) {
+        runnable.run();
+    }
+
+    /**
      * Sleeps the simulation the amount of time specified by the {@link #cycleDelay} variable.
      */
     protected void velocitySleep() {
@@ -711,10 +722,62 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
      *
      * @throws InstructionNotFoundException when an instruction couldn't be decoded.
      */
-    public abstract void executeAll();
+    public void executeAll() {
+        if (finished || running) return;
+        running = true;
+        interrupted = false;
+
+        memory.enableEventCalls(data.canCallEvents());
+        registers.enableEventCalls(data.canCallEvents());
+
+        thread = new Thread(() -> {
+
+            long cyclesStart = cycles;
+            long start = System.nanoTime();
+
+            try {
+                runStep(true);
+                while (!finished && !checkThreadInterrupted()) {
+                    velocitySleep();
+                    if (!checkThreadInterrupted()) {
+                        runStep(false);
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            long millis = (System.nanoTime() - start) / 1000000;
+
+            if (getConsole() != null) {
+                getConsole().println();
+                getConsole().printInfoLn(cycles - cyclesStart + " cycles executed in " + millis + " millis.");
+
+                int performance = (int) ((cycles - cyclesStart) / (((double) millis) / 1000));
+                getConsole().printInfoLn(performance + " cycle/s");
+                getConsole().println();
+            }
+
+            synchronized (finishedRunningLock) {
+                running = false;
+                memory.enableEventCalls(true);
+                registers.enableEventCalls(true);
+                finishedRunningLock.notifyAll();
+                callEvent(new SimulationStopEvent(this));
+                if (getConsole() != null) {
+                    getConsole().flush();
+                }
+            }
+        });
+        callEvent(new SimulationStartEvent(this));
+        thread.setPriority(Thread.MAX_PRIORITY);
+        thread.start();
+    }
 
     /**
      * Executes the next step of the simulation.
+     * <p>
+     * These method must be synchronized!
      *
      * @param first whether this is the first step made by this execution.
      */
