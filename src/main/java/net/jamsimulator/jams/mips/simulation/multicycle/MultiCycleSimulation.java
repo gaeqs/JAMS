@@ -275,7 +275,7 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
     @Override
     protected void manageExternalInterrupt(MIPSInterruptException interrupt) {
         int pc = registers.getProgramCounter().getValue();
-        manageMIPSInterrupt(interrupt, currentExecution, currentStep == MultiCycleStep.FETCH ? pc : pc + 4);
+        manageMIPSInterrupt(interrupt, currentExecution, currentStep == MultiCycleStep.FETCH ? pc : pc - 4);
     }
 
     private void fetch(boolean first) {
