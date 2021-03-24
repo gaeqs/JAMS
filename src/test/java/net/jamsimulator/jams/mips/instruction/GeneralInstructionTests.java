@@ -31,7 +31,7 @@ import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.MIPS32InstructionSet;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
-import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
+import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -118,7 +118,7 @@ class GeneralInstructionTests {
         try {
             ((SingleCycleExecution<?>) execution).execute();
             fail("Execution didn't throw an exception.");
-        } catch (RuntimeInstructionException ex) {
+        } catch (MIPSInterruptException ex) {
             assertEquals(ex.getInterruptCause(), InterruptCause.ARITHMETIC_OVERFLOW_EXCEPTION, "Exception caught, but it's not an Integer Overflow exception.");
         }
     }

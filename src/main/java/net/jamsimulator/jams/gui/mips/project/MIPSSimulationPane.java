@@ -7,8 +7,8 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.bar.BarSnapshot;
 import net.jamsimulator.jams.gui.bar.BarPosition;
+import net.jamsimulator.jams.gui.bar.BarSnapshot;
 import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModePane;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.simulator.cache.CacheVisualizer;
@@ -26,6 +26,8 @@ import net.jamsimulator.jams.gui.util.ZoomUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
+import net.jamsimulator.jams.mips.interrupt.InterruptCause;
+import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.register.Register;
@@ -87,6 +89,7 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
         loadFlow();
         loadLabels();
         loadCacheVisualizer();
+        loadLab();
 
         SplitPane.setResizableWithParent(center, true);
     }
@@ -165,6 +168,15 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
             var visualizer = new CacheVisualizer(simulation);
             manageBarAddition("cache_visualizer", visualizer, icon, Messages.BAR_CACHES_NAME, BarPosition.LEFT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
         }
+    }
+
+    private void loadLab() {
+        Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_BREAKPOINT).orElse(null);
+
+        var button = new Button("Generate interrupt");
+        button.setOnAction(event -> simulation.addInterruptToQueue(new MIPSInterruptException(InterruptCause.INTERRUPT)));
+
+        manageBarAddition("lab", button, icon, null, BarPosition.LEFT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
     }
 
 

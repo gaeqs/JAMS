@@ -35,8 +35,8 @@ import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundExcep
 import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
-import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
-import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
+import net.jamsimulator.jams.mips.interrupt.MIPSAddressException;
+import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
@@ -55,6 +55,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Represents the execution of a set of instructions, including a memory and a register set.
@@ -82,6 +83,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
     protected final Set<Integer> breakpoints;
 
     protected final NumberGenerators numberGenerators;
+
+    protected final ConcurrentLinkedQueue<MIPSInterruptException> interrupts;
 
     protected InstructionExecution<Arch, ?>[] instructionCache;
 
@@ -125,6 +128,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
         this.breakpoints = new HashSet<>();
 
         this.numberGenerators = new NumberGenerators();
+        this.interrupts = new ConcurrentLinkedQueue<>();
 
         // 1 Instruction = 4 Bytes.
 
@@ -544,23 +548,33 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
         statusRegister.modifyBits(enable ? 1 : 0, COP0RegistersBits.STATUS_IE, 1);
     }
 
+    /**
+     * Returns whether this simulation is in kernel mode.
+     *
+     * @return whether this simulation is in kernel mode.
+     */
     public boolean isKernelMode() {
         return !statusRegister.getBit(COP0RegistersBits.STATUS_UM);
     }
 
-    public void manageMIPSInterrupt(RuntimeInstructionException exception, InstructionExecution<?, ?> execution, int pc) {
+    public void addInterruptToQueue(MIPSInterruptException exception) {
+        System.out.println("ADDING "+exception);
+        interrupts.offer(exception);
+    }
+
+    protected void manageMIPSInterrupt(MIPSInterruptException exception, InstructionExecution<?, ?> execution, int pc) {
         if (!areMIPSInterruptsEnabled()) return;
         statusRegister.modifyBits(1, COP0RegistersBits.STATUS_EXL, 1);
-        epcRegister.setValue(pc);
 
-        if (exception instanceof RuntimeAddressException) {
-            badAddressRegister.modifyBits(((RuntimeAddressException) exception).getBadAddress(), 0, 32);
+        if (exception instanceof MIPSAddressException) {
+            badAddressRegister.modifyBits(((MIPSAddressException) exception).getBadAddress(), 0, 32);
         }
 
         //Modify cause register
         var delaySlot = execution instanceof MultiCycleExecution && ((MultiCycleExecution<?>) execution).isInDelaySlot();
         causeRegister.modifyBits(delaySlot ? 1 : 0, COP0RegistersBits.CAUSE_BD, 1);
         causeRegister.modifyBits(exception.getInterruptCause().getValue(), COP0RegistersBits.CAUSE_EX_CODE, 5);
+        epcRegister.setValue(delaySlot ? pc - 4 : pc);
 
         registers.getProgramCounter().setValue(MIPS32Memory.EXCEPTION_HANDLER);
 
@@ -601,6 +615,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
         memory.restoreSavedState();
         finished = false;
         cycles = 0;
+        interrupts.clear();
 
         callEvent(new SimulationResetEvent(this));
     }
@@ -636,24 +651,77 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
         thread = new Thread(() -> {
             try {
+                System.out.println(isKernelMode());
                 runStep(true);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            synchronized (finishedRunningLock) {
-                running = false;
-
-                memory.enableEventCalls(true);
-                registers.enableEventCalls(true);
-
-                finishedRunningLock.notifyAll();
-                callEvent(new SimulationStopEvent(this));
-                getConsole().flush();
-            }
+            manageSimulationFinish();
         });
         callEvent(new SimulationStartEvent(this));
         thread.setPriority(Thread.MAX_PRIORITY);
         thread.start();
+    }
+
+
+    /**
+     * Executes steps until the bottom of the instruction stack is reached.
+     *
+     * @throws InstructionNotFoundException when an instruction couldn't be decoded.
+     */
+    public void executeAll() {
+        if (finished || running) return;
+        running = true;
+        interrupted = false;
+
+        memory.enableEventCalls(data.canCallEvents());
+        registers.enableEventCalls(data.canCallEvents());
+
+        thread = new Thread(() -> {
+
+            long cyclesStart = cycles;
+            long start = System.nanoTime();
+
+            try {
+                runStep(true);
+                while (!finished && !checkThreadInterrupted()) {
+                    velocitySleep();
+                    if (!checkThreadInterrupted()) {
+                        runStep(false);
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            if (getConsole() != null) {
+                long millis = (System.nanoTime() - start) / 1000000;
+                getConsole().println();
+                getConsole().printInfoLn(cycles - cyclesStart + " cycles executed in " + millis + " millis.");
+
+                int performance = (int) ((cycles - cyclesStart) / (((double) millis) / 1000));
+                getConsole().printInfoLn(performance + " cycle/s");
+                getConsole().println();
+            }
+
+            manageSimulationFinish();
+        });
+        callEvent(new SimulationStartEvent(this));
+        thread.setPriority(Thread.MAX_PRIORITY);
+        thread.start();
+    }
+
+    private void manageSimulationFinish() {
+        synchronized (finishedRunningLock) {
+            running = false;
+            memory.enableEventCalls(true);
+            registers.enableEventCalls(true);
+            finishedRunningLock.notifyAll();
+            callEvent(new SimulationStopEvent(this));
+            if (getConsole() != null) {
+                getConsole().flush();
+            }
+        }
     }
 
     /**
@@ -718,63 +786,6 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
     }
 
     /**
-     * Executes steps until the bottom of the instruction stack is reached.
-     *
-     * @throws InstructionNotFoundException when an instruction couldn't be decoded.
-     */
-    public void executeAll() {
-        if (finished || running) return;
-        running = true;
-        interrupted = false;
-
-        memory.enableEventCalls(data.canCallEvents());
-        registers.enableEventCalls(data.canCallEvents());
-
-        thread = new Thread(() -> {
-
-            long cyclesStart = cycles;
-            long start = System.nanoTime();
-
-            try {
-                runStep(true);
-                while (!finished && !checkThreadInterrupted()) {
-                    velocitySleep();
-                    if (!checkThreadInterrupted()) {
-                        runStep(false);
-                    }
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-            long millis = (System.nanoTime() - start) / 1000000;
-
-            if (getConsole() != null) {
-                getConsole().println();
-                getConsole().printInfoLn(cycles - cyclesStart + " cycles executed in " + millis + " millis.");
-
-                int performance = (int) ((cycles - cyclesStart) / (((double) millis) / 1000));
-                getConsole().printInfoLn(performance + " cycle/s");
-                getConsole().println();
-            }
-
-            synchronized (finishedRunningLock) {
-                running = false;
-                memory.enableEventCalls(true);
-                registers.enableEventCalls(true);
-                finishedRunningLock.notifyAll();
-                callEvent(new SimulationStopEvent(this));
-                if (getConsole() != null) {
-                    getConsole().flush();
-                }
-            }
-        });
-        callEvent(new SimulationStartEvent(this));
-        thread.setPriority(Thread.MAX_PRIORITY);
-        thread.start();
-    }
-
-    /**
      * Executes the next step of the simulation.
      * <p>
      * These method must be synchronized!
@@ -782,6 +793,13 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
      * @param first whether this is the first step made by this execution.
      */
     protected abstract void runStep(boolean first);
+
+    /**
+     * Manages the given external interrupt.
+     *
+     * @param interrupt the {@link MIPSInterruptException interrupt}.
+     */
+    protected abstract void manageExternalInterrupt(MIPSInterruptException interrupt);
 
     /**
      * Undoes the last step made by this simulation.

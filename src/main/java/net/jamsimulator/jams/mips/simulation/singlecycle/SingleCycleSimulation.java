@@ -29,8 +29,8 @@ import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
-import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
-import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
+import net.jamsimulator.jams.mips.interrupt.MIPSAddressException;
+import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.event.CacheOperationEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryAllocateMemoryEvent;
@@ -43,8 +43,6 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.mips.simulation.change.*;
 import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
-import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
-import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileCloseEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileOpenEvent;
@@ -156,7 +154,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
     }
 
     @Override
-    protected void runStep(boolean first) {
+    protected synchronized void runStep(boolean first) {
         if (finished) return;
         int pc = registers.getProgramCounter().getValue();
 
@@ -188,12 +186,12 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
             if (execution == null) {
                 currentStepChanges = null;
-                throw new RuntimeAddressException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION, pc);
+                throw new MIPSAddressException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION, pc);
             }
 
             execution.execute();
 
-        } catch (RuntimeInstructionException ex) {
+        } catch (MIPSInterruptException ex) {
             if (!checkThreadInterrupted()) {
                 manageMIPSInterrupt(ex, execution, pc);
             }
@@ -204,6 +202,10 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
             currentStepChanges = null;
             registers.getProgramCounter().setValue(pc);
             return;
+        }
+
+        if (!interrupts.isEmpty() && !isKernelMode()) {
+            manageExternalInterrupt(interrupts.poll());
         }
 
         addCycleCount();
@@ -231,6 +233,11 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
             }
             callEvent(new SimulationFinishedEvent(this));
         }
+    }
+
+    @Override
+    protected void manageExternalInterrupt(MIPSInterruptException interrupt) {
+        manageMIPSInterrupt(interrupt, null, registers.getProgramCounter().getValue());
     }
 
     //region change listeners

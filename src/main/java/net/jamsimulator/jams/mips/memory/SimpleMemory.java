@@ -27,7 +27,7 @@ package net.jamsimulator.jams.mips.memory;
 import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
-import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
+import net.jamsimulator.jams.mips.interrupt.MIPSAddressException;
 import net.jamsimulator.jams.mips.memory.event.*;
 import net.jamsimulator.jams.utils.StringUtils;
 import net.jamsimulator.jams.utils.Validate;
@@ -204,7 +204,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
     @Override
     public void setWord(int address, int word, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
-        if ((address & 0x2) != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_STORE_EXCEPTION, address);
+        if ((address & 0x2) != 0) throw new MIPSAddressException(InterruptCause.ADDRESS_STORE_EXCEPTION, address);
         if (!eventCallsEnabled || !callEvents) {
             getSectionOrThrowException(address).setWord(address, word, bigEndian);
             return;
@@ -249,7 +249,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
     @Override
     public int getWord(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
-        if ((address & 0x2) != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
+        if ((address & 0x2) != 0) throw new MIPSAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
         if (!eventCallsEnabled || !callEvents) {
             return getSectionOrThrowException(address).getWord(address, bigEndian);
         }

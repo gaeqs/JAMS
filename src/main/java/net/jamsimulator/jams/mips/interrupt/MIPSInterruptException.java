@@ -24,21 +24,20 @@
 
 package net.jamsimulator.jams.mips.interrupt;
 
-public class RuntimeAddressException extends RuntimeInstructionException {
+public class MIPSInterruptException extends RuntimeException {
 
-	private final int badAddress;
+	private final InterruptCause cause;
 
-	public RuntimeAddressException(InterruptCause cause, int badAddress) {
-		super(cause);
-		this.badAddress = badAddress;
+	public MIPSInterruptException(InterruptCause cause) {
+		this.cause = cause;
 	}
 
-	public RuntimeAddressException(InterruptCause cause, int badAddress, Throwable throwable) {
-		super(cause, throwable);
-		this.badAddress = badAddress;
+	public MIPSInterruptException(InterruptCause cause, Throwable throwable) {
+		super(throwable);
+		this.cause = cause;
 	}
 
-	public int getBadAddress() {
-		return badAddress;
+	public InterruptCause getInterruptCause() {
+		return cause;
 	}
 }

@@ -36,7 +36,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
-import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
+import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
@@ -146,7 +146,7 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
                 equal = false;
                 unordered = true;
                 if (instruction.cond3()) {
-                    throw new RuntimeInstructionException(InterruptCause.FLOATING_POINT_EXCEPTION);
+                    throw new MIPSInterruptException(InterruptCause.FLOATING_POINT_EXCEPTION);
                 }
             } else {
                 less = fs < ft;
@@ -184,7 +184,7 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
                 equal = false;
                 unordered = true;
                 if (instruction.cond3()) {
-                    throw new RuntimeInstructionException(InterruptCause.FLOATING_POINT_EXCEPTION);
+                    throw new MIPSInterruptException(InterruptCause.FLOATING_POINT_EXCEPTION);
                 }
             } else {
                 less = fs < ft;

@@ -2,7 +2,7 @@ package net.jamsimulator.jams.mips.memory.cache.writethrough;
 
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
-import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
+import net.jamsimulator.jams.mips.interrupt.MIPSAddressException;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.MemorySection;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
@@ -160,7 +160,7 @@ public abstract class WriteThroughCache extends SimpleEventBroadcast implements 
 
     @Override
     public void setWord(int address, int word, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
-        if ((address & 0x2) != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
+        if ((address & 0x2) != 0) throw new MIPSAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
         parent.setWord(address, word, callEvents, bypassCaches, modifyCaches);
 
         if (bypassCaches || !isDirectionAffectedByCache(address)) return;
@@ -231,7 +231,7 @@ public abstract class WriteThroughCache extends SimpleEventBroadcast implements 
 
     @Override
     public int getWord(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
-        if ((address & 0x2) != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
+        if ((address & 0x2) != 0) throw new MIPSAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
         if (bypassCaches || !isDirectionAffectedByCache(address))
             return parent.getWord(address, callEvents, true, modifyCaches);
         boolean events = callEvents && areEventCallsEnabled();

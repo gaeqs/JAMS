@@ -1,7 +1,7 @@
 package net.jamsimulator.jams.utils;
 
 import net.jamsimulator.jams.manager.Labeled;
-import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
+import net.jamsimulator.jams.mips.interrupt.MIPSAddressException;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
 
@@ -87,7 +87,7 @@ public class NumberRepresentation implements Labeled {
             }
 
             return transformer.apply(o1, o2);
-        } catch (RuntimeAddressException ex) {
+        } catch (MIPSAddressException ex) {
             System.err.println("Bad address " + StringUtils.addZeros(Integer.toHexString(ex.getBadAddress()), 8));
             return "0'";
         }
