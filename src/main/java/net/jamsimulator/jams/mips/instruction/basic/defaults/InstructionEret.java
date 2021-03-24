@@ -53,7 +53,7 @@ public class InstructionEret extends BasicRInstruction<InstructionEret.Assembled
 		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, Pipelined::new);
 	}
 
 	@Override
@@ -116,6 +116,39 @@ public class InstructionEret extends BasicRInstruction<InstructionEret.Assembled
 
 		@Override
 		public void decode() {
+		}
+
+		@Override
+		public void execute() {
+			COP0Register status = (COP0Register) registerCop0(12, 0);
+			int temp;
+			if (status.getBit(COP0RegistersBits.STATUS_ERL)) {
+				temp = valueCOP0(30, 0);
+				status.modifyBits(0, COP0RegistersBits.STATUS_ERL, 1);
+			} else {
+				temp = valueCOP0(14, 0);
+				status.modifyBits(0, COP0RegistersBits.STATUS_EXL, 1);
+			}
+			jump(temp);
+		}
+
+		@Override
+		public void memory() {
+		}
+
+		@Override
+		public void writeBack() {
+		}
+	}
+
+	public static class Pipelined extends MultiCycleExecution<Assembled> {
+
+		public Pipelined(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address, false, true);
+		}
+
+		@Override
+		public void decode() {
 			requiresCOP0(12, 0);
 			requiresCOP0(14, 0);
 			requiresCOP0(30, 0);
@@ -156,7 +189,6 @@ public class InstructionEret extends BasicRInstruction<InstructionEret.Assembled
 		}
 
 		private void solve() {
-			valueCOP0(12, 0);
 			COP0Register status = (COP0Register) registerCop0(12, 0);
 			int temp;
 			if (status.getBit(COP0RegistersBits.STATUS_ERL)) {

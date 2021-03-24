@@ -54,7 +54,7 @@ public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled>
 		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, Pipelined::new);
 	}
 
 	@Override
@@ -106,6 +106,32 @@ public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled>
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address, false, false);
+		}
+
+		@Override
+		public void decode() {
+			decodeResult = new int[]{getAddress() + 4};
+		}
+
+		@Override
+		public void execute() {
+			jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
+			setAndUnlock(31, decodeResult[0]);
+		}
+
+		@Override
+		public void memory() {
+		}
+
+		@Override
+		public void writeBack() {
+		}
+	}
+
+	public static class Pipelined extends MultiCycleExecution<Assembled> {
+
+		public Pipelined(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
 			super(simulation, instruction, address, false, true);
 		}
 
@@ -113,16 +139,16 @@ public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled>
 		public void decode() {
 			lock(31);
 			lock(pc());
-			decodeResult = new int[]{getAddress() + 4 };
+			decodeResult = new int[]{getAddress() + 4};
 			if (solveBranchOnDecode()) {
-				jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+				jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
 			}
 		}
 
 		@Override
 		public void execute() {
 			if (!solveBranchOnDecode()) {
-				executionResult = new int[]{getAddress() + 4  + (instruction.getImmediateAsSigned() << 2)};
+				executionResult = new int[]{getAddress() + 4 + (instruction.getImmediateAsSigned() << 2)};
 			} else {
 				forward(31, decodeResult[0], false);
 			}

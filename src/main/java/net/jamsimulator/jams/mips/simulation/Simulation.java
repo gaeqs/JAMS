@@ -558,7 +558,6 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
     }
 
     public void addInterruptToQueue(MIPSInterruptException exception) {
-        System.out.println("ADDING "+exception);
         interrupts.offer(exception);
     }
 
@@ -651,7 +650,6 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
         thread = new Thread(() -> {
             try {
-                System.out.println(isKernelMode());
                 runStep(true);
             } catch (Exception ex) {
                 ex.printStackTrace();

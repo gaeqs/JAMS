@@ -54,7 +54,7 @@ public class InstructionBc1nez extends BasicIFPUInstruction<InstructionBc1nez.As
 		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, BASE_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, Pipelined::new);
 	}
 
 	@Override
@@ -89,6 +89,32 @@ public class InstructionBc1nez extends BasicIFPUInstruction<InstructionBc1nez.As
 		}
 	}
 
+	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address, false, false);
+		}
+
+		@Override
+		public void decode() {
+		}
+
+		@Override
+		public void execute() {
+			if ((valueCOP1(instruction.getTargetRegister()) & 1) != 0) {
+				jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
+			}
+		}
+
+		@Override
+		public void memory() {
+		}
+
+		@Override
+		public void writeBack() {
+		}
+	}
+
 	public static class SingleCycle extends SingleCycleExecution<Assembled> {
 
 		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
@@ -104,9 +130,9 @@ public class InstructionBc1nez extends BasicIFPUInstruction<InstructionBc1nez.As
 		}
 	}
 
-	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+	public static class Pipelined extends MultiCycleExecution<Assembled> {
 
-		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+		public Pipelined(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
 			super(simulation, instruction, address, false, !simulation.getData().shouldSolveBranchesOnDecode());
 		}
 

@@ -54,7 +54,7 @@ public class InstructionBgez extends BasicRIInstruction<InstructionBgez.Assemble
 		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, Pipelined::new);
 	}
 
 	@Override
@@ -107,6 +107,32 @@ public class InstructionBgez extends BasicRIInstruction<InstructionBgez.Assemble
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address, false, false);
+		}
+
+		@Override
+		public void decode() {
+		}
+
+		@Override
+		public void execute() {
+			if (value(instruction.getSourceRegister()) >= 0) {
+				jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
+			}
+		}
+
+		@Override
+		public void memory() {
+		}
+
+		@Override
+		public void writeBack() {
+		}
+	}
+
+	public static class Pipelined extends MultiCycleExecution<Assembled> {
+
+		public Pipelined(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
 			super(simulation, instruction, address, false, !simulation.getData().shouldSolveBranchesOnDecode());
 		}
 
