@@ -167,7 +167,7 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
 
     @Override
     public void setWord(int address, int word, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
-        if ((address & 0x2) != 0) throw new MIPSAddressException(InterruptCause.ADDRESS_STORE_EXCEPTION, address);
+        if ((address & 0x3) != 0) throw new MIPSAddressException(InterruptCause.ADDRESS_STORE_EXCEPTION, address);
 
         if (bypassCaches || !isDirectionAffectedByCache(address)) {
             parent.setWord(address, word, callEvents, true, modifyCaches);
@@ -245,7 +245,7 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
 
     @Override
     public int getWord(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
-        if ((address & 0x2) != 0) throw new MIPSAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
+        if ((address & 0x3) != 0) throw new MIPSAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
         if (bypassCaches || !isDirectionAffectedByCache(address))
             return parent.getWord(address, callEvents, true, modifyCaches);
         boolean events = callEvents && areEventCallsEnabled();

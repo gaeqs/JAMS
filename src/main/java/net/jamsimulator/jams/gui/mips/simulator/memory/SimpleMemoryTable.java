@@ -191,17 +191,17 @@ public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements M
 
     @Listener
     private void onMemoryChange(MemoryByteSetEvent.After event) {
-        int offset = (event.getAddress() % 16) >> 2 << 2;
+        int offset = (event.getAddress() & 0xF) >> 2 << 2;
         int address = event.getAddress() >> 4 << 4;
         SimpleMemoryEntry entry = entries.get(address);
         if (entry == null) return;
-        entry.update(event.getAddress(), offset);
+        entry.update(event.getAddress() >> 2 << 2, offset);
     }
 
 
     @Listener
     private void onMemoryChange(MemoryWordSetEvent.After event) {
-        int offset = event.getAddress() % 16;
+        int offset = event.getAddress() & 0xF;
         int address = event.getAddress() >> 4 << 4;
         SimpleMemoryEntry entry = entries.get(address);
         if (entry == null) return;

@@ -273,7 +273,7 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
             return;
         }
 
-        if (!interrupts.isEmpty() && !isKernelMode()) {
+        if (!interrupts.isEmpty() && !isKernelMode() && areMIPSInterruptsEnabled()) {
             manageExternalInterrupt(interrupts.poll());
         }
 

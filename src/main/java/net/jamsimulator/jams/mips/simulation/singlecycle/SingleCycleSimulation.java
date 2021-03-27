@@ -204,7 +204,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
             return;
         }
 
-        if (!interrupts.isEmpty() && !isKernelMode()) {
+        if (!interrupts.isEmpty() && !isKernelMode() && areMIPSInterruptsEnabled()) {
             manageExternalInterrupt(interrupts.poll());
         }
 

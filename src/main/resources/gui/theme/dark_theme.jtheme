@@ -1294,3 +1294,12 @@ AnchorPane {
 .cache-log-message .label {
     -fx-font-size: 13px;
 }
+
+/*LAB*/
+.segment {
+    -fx-fill: -theme-background-pressed;
+}
+
+.selected-segment {
+    -fx-fill: #cb1010;
+}

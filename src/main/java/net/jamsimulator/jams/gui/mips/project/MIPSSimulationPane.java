@@ -16,6 +16,7 @@ import net.jamsimulator.jams.gui.mips.simulator.execution.ExecutionButtons;
 import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionViewerGroup;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledCodeViewer;
+import net.jamsimulator.jams.gui.mips.simulator.lab.LabPane;
 import net.jamsimulator.jams.gui.mips.simulator.label.LabelTable;
 import net.jamsimulator.jams.gui.mips.simulator.memory.MemoryPane;
 import net.jamsimulator.jams.gui.mips.simulator.register.COP0RegistersTable;
@@ -172,11 +173,8 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 
     private void loadLab() {
         Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_BREAKPOINT).orElse(null);
-
-        var button = new Button("Generate interrupt");
-        button.setOnAction(event -> simulation.addInterruptToQueue(new MIPSInterruptException(InterruptCause.INTERRUPT)));
-
-        manageBarAddition("lab", button, icon, null, BarPosition.LEFT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
+        var lab = new LabPane(simulation);
+        manageBarAddition("lab", lab, icon, null, BarPosition.LEFT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
     }
 
 

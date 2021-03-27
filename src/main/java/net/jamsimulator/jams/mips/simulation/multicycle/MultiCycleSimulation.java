@@ -256,7 +256,7 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 
         addCycleCount();
 
-        if (!interrupts.isEmpty() && !isKernelMode()) {
+        if (!interrupts.isEmpty() && !isKernelMode() && areMIPSInterruptsEnabled()) {
             manageExternalInterrupt(interrupts.poll());
         }
 

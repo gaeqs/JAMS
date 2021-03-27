@@ -89,6 +89,7 @@ public class NumberRepresentation implements Labeled {
             return transformer.apply(o1, o2);
         } catch (MIPSAddressException ex) {
             System.err.println("Bad address " + StringUtils.addZeros(Integer.toHexString(ex.getBadAddress()), 8));
+            ex.printStackTrace();
             return "0'";
         }
     }
