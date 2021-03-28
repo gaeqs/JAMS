@@ -10,18 +10,18 @@ import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class LabInterruptGenerator extends VBox {
 
-	public LabInterruptGenerator(Simulation<?> simulation) {
-		setAlignment(Pos.CENTER);
+    public LabInterruptGenerator(Simulation<?> simulation) {
+        setAlignment(Pos.CENTER);
 
-		var comboBox = new ComboBox<InterruptCause>();
-		comboBox.getItems().addAll(InterruptCause.values());
-		comboBox.getSelectionModel().selectFirst();
-		getChildren().add(comboBox);
+        var comboBox = new ComboBox<InterruptCause>();
+        comboBox.getItems().addAll(InterruptCause.values());
+        comboBox.getSelectionModel().selectFirst();
+        getChildren().add(comboBox);
 
-		var button = new Button("Interrupt");
-		button.setOnAction(event -> simulation.addInterruptToQueue(
-				new MIPSInterruptException(comboBox.getSelectionModel().getSelectedItem())));
-		getChildren().add(button);
-	}
+        var button = new Button("Interrupt");
+        button.setOnAction(event -> simulation.requestSoftwareInterrupt(
+                new MIPSInterruptException(comboBox.getSelectionModel().getSelectedItem())));
+        getChildren().add(button);
+    }
 
 }

@@ -38,6 +38,7 @@ import net.jamsimulator.jams.mips.memory.event.MemoryAllocateMemoryEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
+import net.jamsimulator.jams.mips.register.COP0RegistersBits;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterLockEvent;
@@ -176,9 +177,9 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
     }
 
     @Override
-    public void manageMIPSInterrupt(MIPSInterruptException exception, InstructionExecution<?, ?> execution, int pc) {
+    protected void invokeInterrupt(InterruptCause type, MIPSInterruptException exception, boolean delaySlot, int pc) {
         currentStep = MultiCycleStep.FETCH;
-        super.manageMIPSInterrupt(exception, execution, pc);
+        super.invokeInterrupt(type, exception, delaySlot, pc);
     }
 
     @Override
@@ -245,7 +246,7 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
             }
         } catch (MIPSInterruptException ex) {
             if (!checkThreadInterrupted()) {
-                manageMIPSInterrupt(ex, currentExecution, registers.getProgramCounter().getValue() - 4);
+                requestSoftwareInterrupt(ex);
             }
         }
 
@@ -256,9 +257,7 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 
         addCycleCount();
 
-        if (!interrupts.isEmpty() && !isKernelMode() && areMIPSInterruptsEnabled()) {
-            manageExternalInterrupt(interrupts.poll());
-        }
+        manageInterrupts(currentExecution);
 
         if (data.isUndoEnabled() && currentStepChanges != null) {
             changes.add(currentStepChanges);
@@ -273,9 +272,26 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
     }
 
     @Override
-    protected void manageExternalInterrupt(MIPSInterruptException interrupt) {
+    protected void manageInterrupts(InstructionExecution<?, ?> execution) {
+        if (!arePendingInterrupts()) return;
+
+        int level = externalInterruptController.getRequestedIPL();
+        causeRegister.modifyBits(level, COP0RegistersBits.CAUSE_RIPL, 6);
+
+        InterruptCause cause;
+        MIPSInterruptException exception;
+
+        if (level == 1) {
+            causeRegister.modifyBits(1, COP0RegistersBits.CAUSE_IP, 1);
+            exception = externalInterruptController.getSoftwareInterrupt();
+            cause = exception.getInterruptCause();
+        } else {
+            exception = null;
+            cause = InterruptCause.INTERRUPT;
+        }
+
         int pc = registers.getProgramCounter().getValue();
-        manageMIPSInterrupt(interrupt, currentExecution, currentStep == MultiCycleStep.FETCH ? pc : pc - 4);
+        invokeInterrupt(cause, exception, false, currentStep == MultiCycleStep.FETCH ? pc : pc - 4);
     }
 
     private void fetch(boolean first) {

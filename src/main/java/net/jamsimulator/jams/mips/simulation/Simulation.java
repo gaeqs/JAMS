@@ -33,11 +33,11 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
-import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.interrupt.ExternalInterruptController;
+import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.MIPSAddressException;
 import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
-import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
@@ -55,7 +55,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Represents the execution of a set of instructions, including a memory and a register set.
@@ -78,13 +77,12 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
     protected final Registers registers;
     protected final Memory memory;
     protected final SimulationFiles files;
+    protected final ExternalInterruptController externalInterruptController;
 
     protected int instructionStackBottom, kernelStackBottom;
     protected final Set<Integer> breakpoints;
 
     protected final NumberGenerators numberGenerators;
-
-    protected final ConcurrentLinkedQueue<MIPSInterruptException> interrupts;
 
     protected InstructionExecution<Arch, ?>[] instructionCache;
 
@@ -103,6 +101,9 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
     protected COP0StatusRegister statusRegister;
     protected COP0Register causeRegister;
     protected COP0Register epcRegister;
+    protected COP0Register eBaseRegister;
+    protected COP0Register intCtlRegister;
+    protected COP0Register srsCtlRegister;
 
     /**
      * Creates the simulation.
@@ -119,6 +120,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
         this.instructionSet = instructionSet;
         this.registers = registers;
         this.memory = memory;
+        this.externalInterruptController = new ExternalInterruptController();
         this.instructionStackBottom = instructionStackBottom;
         this.kernelStackBottom = kernelStackBottom;
         this.data = data;
@@ -128,7 +130,6 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
         this.breakpoints = new HashSet<>();
 
         this.numberGenerators = new NumberGenerators();
-        this.interrupts = new ConcurrentLinkedQueue<>();
 
         // 1 Instruction = 4 Bytes.
 
@@ -160,6 +161,9 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
         statusRegister = (COP0StatusRegister) registers.getCoprocessor0RegisterUnchecked(12, 0);
         causeRegister = (COP0Register) registers.getCoprocessor0RegisterUnchecked(13, 0);
         epcRegister = (COP0Register) registers.getCoprocessor0RegisterUnchecked(14, 0);
+        eBaseRegister = (COP0Register) registers.getCoprocessor0RegisterUnchecked(15, 1);
+        intCtlRegister = (COP0Register) registers.getCoprocessor0RegisterUnchecked(12, 1);
+        srsCtlRegister = (COP0Register) registers.getCoprocessor0RegisterUnchecked(12, 2);
     }
 
     /**
@@ -535,6 +539,8 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
      * @return whether MIPS interrupts are enabled.
      */
     public boolean areMIPSInterruptsEnabled() {
+        // This method checks fields ERL, EXL and IE of the status registers.
+        // Interrupts are enabled only if ERL and EXL are 0 and IE is 1.
         return statusRegister.getSection(COP0RegistersBits.STATUS_IE, 3) == 1;
     }
 
@@ -557,32 +563,67 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
         return !statusRegister.getBit(COP0RegistersBits.STATUS_UM);
     }
 
-    public void addInterruptToQueue(MIPSInterruptException exception) {
-        interrupts.offer(exception);
+    /**
+     * Returns whether this simulation is in the exception level.
+     *
+     * @return whether this simulation is in the exception level.
+     */
+    public boolean isInExceptionLevel() {
+        return statusRegister.getBit(COP0RegistersBits.STATUS_EXL);
     }
 
-    protected void manageMIPSInterrupt(MIPSInterruptException exception, InstructionExecution<?, ?> execution, int pc) {
-        if (!areMIPSInterruptsEnabled()) return;
+    /**
+     * Returns the level of the interrupt currently being executed.
+     * <p>
+     * If this value is 0, the simulation is not executing any interrupt.
+     *
+     * @return the level of the interrupt currently being executed.
+     */
+    public int getIPLevel() {
+        return statusRegister.getSection(COP0RegistersBits.STATUS_IPL, 6);
+    }
+
+    public synchronized void requestHardwareInterrupt(int level) {
+        externalInterruptController.addRequest(level);
+    }
+
+    public synchronized void requestSoftwareInterrupt(MIPSInterruptException interrupt) {
+        externalInterruptController.addSoftwareRequest(interrupt);
+        causeRegister.modifyBits(1, COP0RegistersBits.CAUSE_IP, 1);
+    }
+
+    protected boolean arePendingInterrupts() {
+        return externalInterruptController.isRequestingInterrupts(this);
+    }
+
+    protected void invokeInterrupt(InterruptCause type, MIPSInterruptException exception,
+                                   boolean delaySlot, int pc) {
+        boolean exl = isInExceptionLevel();
+        int level = causeRegister.getSection(COP0RegistersBits.CAUSE_RIPL, 6);
+
+        if (!exl) {
+            epcRegister.setValue(delaySlot ? pc - 4 : pc);
+            causeRegister.modifyBits(delaySlot ? 1 : 0, COP0RegistersBits.CAUSE_BD, 1);
+        }
+
+        causeRegister.modifyBits(type.getValue(), COP0RegistersBits.CAUSE_EX_CODE, 5);
         statusRegister.modifyBits(1, COP0RegistersBits.STATUS_EXL, 1);
+        statusRegister.modifyBits(level, COP0RegistersBits.STATUS_IPL, 6);
+
+        int jump = generateExceptionVectorJump(exl, type, level);
+        registers.getProgramCounter().setValue(jump);
 
         if (exception instanceof MIPSAddressException) {
             badAddressRegister.modifyBits(((MIPSAddressException) exception).getBadAddress(), 0, 32);
         }
 
-        //Modify cause register
-        var delaySlot = execution instanceof MultiCycleExecution && ((MultiCycleExecution<?>) execution).isInDelaySlot();
-        causeRegister.modifyBits(delaySlot ? 1 : 0, COP0RegistersBits.CAUSE_BD, 1);
-        causeRegister.modifyBits(exception.getInterruptCause().getValue(), COP0RegistersBits.CAUSE_EX_CODE, 5);
-        epcRegister.setValue(delaySlot ? pc - 4 : pc);
-
-        registers.getProgramCounter().setValue(MIPS32Memory.EXCEPTION_HANDLER);
-
-        if (memory.getWord(MIPS32Memory.EXCEPTION_HANDLER, false, true, true) == 0) {
+        if (memory.getWord(jump, false, true, true) == 0) {
             finished = true;
             if (getConsole() != null) {
                 getConsole().println();
-                getConsole().printErrorLn("Execution finished. Runtime exception at 0x" + StringUtils.addZeros(Integer.toHexString(pc), 8)
-                        + ": Code " + exception.getInterruptCause().getValue() + " (" + exception.getInterruptCause() + ")");
+                getConsole().printErrorLn("Execution finished. Runtime exception at 0x"
+                        + StringUtils.addZeros(Integer.toHexString(pc), 8)
+                        + ": Code " + type.getValue() + " (" + type + ")");
                 getConsole().println();
             }
             callEvent(new SimulationFinishedEvent(this));
@@ -614,7 +655,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
         memory.restoreSavedState();
         finished = false;
         cycles = 0;
-        interrupts.clear();
+        externalInterruptController.reset();
 
         callEvent(new SimulationResetEvent(this));
     }
@@ -783,6 +824,23 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
     }
 
+    protected int generateExceptionVectorJump(boolean exceptionLevel, InterruptCause cause, int level) {
+        final int BASE_CONSTANT = 0x80000000;
+        final int BASE_MASK = 0x3fffffff;
+
+        int base = eBaseRegister.getValue();
+        int offset = exceptionLevel ? 0x180 : switch (cause) {
+            case CACHE_ERROR -> 0x100;
+            case INTERRUPT -> {
+                int vs = intCtlRegister.getSection(COP0RegistersBits.INT_CTL_VS, 5) << 5;
+                yield 0x200 + level * vs;
+            }
+            default -> 0x180;
+        };
+
+        return base + offset & BASE_MASK | BASE_CONSTANT;
+    }
+
     /**
      * Executes the next step of the simulation.
      * <p>
@@ -792,12 +850,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
      */
     protected abstract void runStep(boolean first);
 
-    /**
-     * Manages the given external interrupt.
-     *
-     * @param interrupt the {@link MIPSInterruptException interrupt}.
-     */
-    protected abstract void manageExternalInterrupt(MIPSInterruptException interrupt);
+    protected abstract void manageInterrupts(InstructionExecution<?, ?> execution);
 
     /**
      * Undoes the last step made by this simulation.

@@ -4,8 +4,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.GridPane;
-import net.jamsimulator.jams.mips.interrupt.InterruptCause;
-import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
 import java.util.Locale;
@@ -33,10 +31,9 @@ public class LabHexadecimalKeyboard extends GridPane {
     }
 
     public void refresh(boolean upperByte) {
-        int address = BASE_ADDRESS + (upperByte ? 1 : 0);
         simulation.runSynchronized(() -> {
-            simulation.getMemory().setByte(address, generateByte(upperByte));
-            simulation.addInterruptToQueue(new MIPSInterruptException(InterruptCause.INTERRUPT));
+            simulation.getMemory().setByte(BASE_ADDRESS + (upperByte ? 1 : 0), generateByte(upperByte));
+            simulation.requestHardwareInterrupt(2);
         });
     }
 

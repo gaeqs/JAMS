@@ -104,6 +104,7 @@ public class InstructionEret extends BasicRInstruction<InstructionEret.Assembled
 				temp = registerCop0(14, 0).getValue();
 				status.modifyBits(0, COP0RegistersBits.STATUS_EXL, 1);
 			}
+			status.modifyBits(0, COP0RegistersBits.STATUS_IPL, 6);
 			pc().setValue(temp);
 		}
 	}
@@ -129,6 +130,7 @@ public class InstructionEret extends BasicRInstruction<InstructionEret.Assembled
 				temp = valueCOP0(14, 0);
 				status.modifyBits(0, COP0RegistersBits.STATUS_EXL, 1);
 			}
+			status.modifyBits(0, COP0RegistersBits.STATUS_IPL, 6);
 			jump(temp);
 		}
 
@@ -198,6 +200,7 @@ public class InstructionEret extends BasicRInstruction<InstructionEret.Assembled
 				temp = valueCOP0(14, 0);
 				status.modifyBits(0, COP0RegistersBits.STATUS_EXL, 1);
 			}
+			status.modifyBits(0, COP0RegistersBits.STATUS_IPL, 6);
 			jump(temp);
 		}
 	}

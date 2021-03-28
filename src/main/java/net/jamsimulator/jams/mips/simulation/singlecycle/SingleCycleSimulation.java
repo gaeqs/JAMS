@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.simulation.singlecycle;
 
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
+import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
@@ -37,6 +38,7 @@ import net.jamsimulator.jams.mips.memory.event.MemoryAllocateMemoryEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
+import net.jamsimulator.jams.mips.register.COP0RegistersBits;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
@@ -193,7 +195,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
         } catch (MIPSInterruptException ex) {
             if (!checkThreadInterrupted()) {
-                manageMIPSInterrupt(ex, execution, pc);
+                requestSoftwareInterrupt(ex);
             }
         }
 
@@ -204,9 +206,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
             return;
         }
 
-        if (!interrupts.isEmpty() && !isKernelMode() && areMIPSInterruptsEnabled()) {
-            manageExternalInterrupt(interrupts.poll());
-        }
+        manageInterrupts(execution);
 
         addCycleCount();
 
@@ -236,8 +236,25 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
     }
 
     @Override
-    protected void manageExternalInterrupt(MIPSInterruptException interrupt) {
-        manageMIPSInterrupt(interrupt, null, registers.getProgramCounter().getValue());
+    protected void manageInterrupts(InstructionExecution<?, ?> execution) {
+        if (!arePendingInterrupts()) return;
+
+        int level = externalInterruptController.getRequestedIPL();
+        causeRegister.modifyBits(level, COP0RegistersBits.CAUSE_RIPL, 6);
+
+        InterruptCause cause;
+        MIPSInterruptException exception;
+
+        if (level == 1) {
+            causeRegister.modifyBits(1, COP0RegistersBits.CAUSE_IP, 1);
+            exception = externalInterruptController.getSoftwareInterrupt();
+            cause = exception.getInterruptCause();
+        } else {
+            exception = null;
+            cause = InterruptCause.INTERRUPT;
+        }
+
+        invokeInterrupt(cause, exception, false, registers.getProgramCounter().getValue());
     }
 
     //region change listeners
