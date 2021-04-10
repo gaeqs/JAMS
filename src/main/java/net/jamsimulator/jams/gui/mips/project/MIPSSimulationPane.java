@@ -63,7 +63,7 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
         var userScale = new ScaledVirtualized<>(user);
         ZoomUtils.applyZoomListener(user, userScale);
 
-        if (Integer.compareUnsigned(simulation.getKernelStackBottom(), MIPS32Memory.EXCEPTION_HANDLER) > 0) {
+        if (Integer.compareUnsigned(simulation.getKernelStackBottom(), MIPS32Memory.EXCEPTION_HANDLER) >= 0) {
             var kernel = MIPSAssembledCodeViewer.createViewer(simulation.getArchitecture(), simulation, true);
 
             var kernelScale = new ScaledVirtualized<>(kernel);
