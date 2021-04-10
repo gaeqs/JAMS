@@ -29,73 +29,81 @@ import java.lang.reflect.Method;
 
 class ListenerMethod {
 
-	private Class<? extends Event> event;
-	private boolean weakReference;
+    private final Class<? extends Event> event;
+    private final boolean weakReference;
 
-	private Object instance;
-	private Method method;
-	private Listener listener;
+    private final Method method;
+    private final Listener listener;
+    private final boolean ignoreCancelled;
 
-	private WeakReference<Object> instanceWeakReference;
+    private final Object instance;
+    private final WeakReference<Object> instanceWeakReference;
 
-	ListenerMethod(Object instance, Method method, Class<? extends Event> event, Listener listener, boolean weakReference) {
-		this.method = method;
-		this.event = event;
-		this.listener = listener;
-		this.weakReference = weakReference;
+    ListenerMethod(Object instance, Method method, Class<? extends Event> event, Listener listener, boolean weakReference) {
+        this.method = method;
+        this.event = event;
+        this.listener = listener;
+        this.ignoreCancelled = listener.ignoreCancelled();
+        this.weakReference = weakReference;
 
-		if (weakReference) {
-			this.instanceWeakReference = new WeakReference<>(instance);
-		} else {
-			this.instance = instance;
-		}
-	}
+        if (weakReference) {
+            this.instanceWeakReference = new WeakReference<>(instance);
+            this.instance = null;
+        } else {
+            this.instance = instance;
+            this.instanceWeakReference = null;
+        }
+    }
 
-	Class<? extends Event> getEvent() {
-		return event;
-	}
+    Class<? extends Event> getEvent() {
+        return event;
+    }
 
-	Listener getListener() {
-		return listener;
-	}
+    Listener getListener() {
+        return listener;
+    }
 
-	public Method getMethod() {
-		return method;
-	}
+    boolean ignoresCancelledEvents() {
+        return ignoreCancelled;
+    }
 
-	boolean matches(Object instance, Method method) {
-		//We want to check that it's the same instance, not an equivalent one.
-		if(weakReference) {
-			return this.method.equals(method) && instance == this.instanceWeakReference.get();
-		}
-		return this.method.equals(method) && instance == this.instance;
-	}
+    Method getMethod() {
+        return method;
+    }
 
-	boolean isReferenceValid() {
-		return !weakReference || instanceWeakReference.get() != null;
-	}
+    boolean matches(Object instance, Method method) {
+        //We want to check that it's the same instance, not an equivalent one.
+        if (weakReference) {
+            return this.method.equals(method) && instance == this.instanceWeakReference.get();
+        }
+        return this.method.equals(method) && instance == this.instance;
+    }
 
-	void call(Event event) {
-		try {
-			if (weakReference) {
-				Object instance = instanceWeakReference.get();
-				if (instance != null) {
-					method.invoke(instance, event);
-				}
-			} else {
-				method.invoke(instance, event);
-			}
-		} catch (Exception e) {
-			System.err.println("Error while calling listener " + method.getName() + "!");
-			e.printStackTrace();
-		}
-	}
+    boolean isReferenceInvalid() {
+        return weakReference && instanceWeakReference.get() == null;
+    }
 
-	@Override
-	public String toString() {
-		return "ListenerMethod{" +
-				"method=" + method +
-				", instance=" + instance +
-				'}';
-	}
+    void call(Event event) {
+        try {
+            if (weakReference) {
+                var instance = instanceWeakReference.get();
+                if (instance != null) {
+                    method.invoke(instance, event);
+                }
+            } else {
+                method.invoke(instance, event);
+            }
+        } catch (Exception e) {
+            System.err.println("Error while calling listener " + method.getName() + "!");
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "ListenerMethod{" +
+                "method=" + method +
+                ", instance=" + instance +
+                '}';
+    }
 }

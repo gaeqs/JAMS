@@ -29,12 +29,29 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * This annotation tags methods to be registered by the method {@link EventBroadcast#registerListeners(Object, boolean)}.
+ * These methods must have only one parameter with a type extending {@link Event}. They may be private or static.
+ * Static listeners will still be holded by an instance of its class and they're not recommended.
+ */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Listener {
 
-	int priority() default 0;
+    /**
+     * The priority of the listener.
+     * Listeners with bigger priorities will be called first.
+     *
+     * @return the priority.
+     */
+    int priority() default 0;
 
-	boolean ignoreCancelled() default false;
+    /**
+     * Returns whether this listener should run events even
+     * if they were cancelled by another listener with a higher priority.
+     *
+     * @return whether this listener should run cancelled events.
+     */
+    boolean ignoreCancelled() default false;
 
 }

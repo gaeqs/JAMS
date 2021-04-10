@@ -30,31 +30,43 @@ package net.jamsimulator.jams.event;
  * <p>
  * You can create you own event creating a child class of {@link Event}.
  * To listen your event, create a method with the event as a parameter
- * and a {@link Listener} annotation.
+ * and a {@link Listener} annotation. This method can be privated or static.
+ * Static listeners are not recommended and they will still require an instance
+ * of their class to work as a holder.
+ * <p>
+ * Events can be send through a {@link EventBroadcast} using the method
+ * {@link EventBroadcast#callEvent(Event)}.
+ * <p>
+ * The value {@link #getCaller() caller} holds the last {@link EventBroadcast}
+ * this event was sent through.
  */
 public class Event {
 
-	private EventBroadcast caller;
+    private EventBroadcast caller;
 
-	/**
-	 * Creates an event.
-	 * Send it to listeners through {@link EventBroadcast#callEvent(Event)}.
-	 */
-	public Event() {
-	}
+    /**
+     * Creates an event.
+     * Send it to listeners through {@link EventBroadcast#callEvent(Event)}.
+     */
+    public Event() {
+    }
 
+    /**
+     * Returns the {@link EventBroadcast} the event
+     * was sent through.
+     *
+     * @return the {@link EventBroadcast}.
+     */
+    public EventBroadcast getCaller() {
+        return caller;
+    }
 
-	/**
-	 * Returns the {@link EventBroadcast} the event
-	 * was sent through.
-	 *
-	 * @return the {@link EventBroadcast}.
-	 */
-	public EventBroadcast getCaller() {
-		return caller;
-	}
-
-	void setCaller(EventBroadcast caller) {
-		this.caller = caller;
-	}
+    /**
+     * Sets the {@link EventBroadcast} the event was sent through.
+     *
+     * @param caller the {@link EventBroadcast}
+     */
+    void setCaller(EventBroadcast caller) {
+        this.caller = caller;
+    }
 }
