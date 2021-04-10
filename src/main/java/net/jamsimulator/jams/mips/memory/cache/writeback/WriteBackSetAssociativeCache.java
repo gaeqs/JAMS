@@ -34,7 +34,7 @@ public class WriteBackSetAssociativeCache extends WriteBackCache {
     }
 
     @Override
-    protected CacheBlock getBlock(int address, boolean callEvent, boolean create) {
+    protected CacheBlock getBlock(int address, boolean create, boolean callEvents) {
         int tag = calculateTag(address);
         int index = calculateSetIndex(address) * setSize;
 
@@ -81,7 +81,7 @@ public class WriteBackSetAssociativeCache extends WriteBackCache {
             blocks[blockIndex] = b;
         }
 
-        if (callEvent) {
+        if (callEvents) {
             callEvent(new CacheOperationEvent(this, operations - 1, isHit, old, b, blockIndex));
         }
 

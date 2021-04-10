@@ -111,8 +111,8 @@ class WriteThroughSetAssociativeCacheTest {
 		}
 
 		assertEquals(33408, stats.getOperations());
-		assertEquals(24800, stats.getHits());
-		assertEquals(8608, stats.getMisses());
+		assertEquals(25152, stats.getHits());
+		assertEquals(8256, stats.getMisses());
 
 
 	}

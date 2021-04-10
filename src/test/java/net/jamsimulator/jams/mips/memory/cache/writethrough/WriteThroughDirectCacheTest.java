@@ -81,8 +81,8 @@ class WriteThroughDirectCacheTest {
 		}
 
 		assertEquals(33408, stats.getOperations());
-		assertEquals(24864, stats.getHits());
-		assertEquals(8544, stats.getMisses());
+		assertEquals(25216, stats.getHits());
+		assertEquals(8192, stats.getMisses());
 
 
 	}
