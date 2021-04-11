@@ -267,5 +267,8 @@ public class JamsApplication extends Application {
         for (ProjectTab project : getProjectsTabPane().getProjects()) {
             project.getProject().onClose();
         }
+
+        // Disables all plugins
+        Jams.getPluginManager().forEach(p -> p.setEnabled(false));
     }
 }

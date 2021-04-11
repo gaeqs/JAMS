@@ -41,7 +41,7 @@ public abstract class SelectableManager<Type extends Labeled> extends DefaultVal
 	 * @param afterSelectSelectedEventBuilder  the builder that creates the event called after the selected element is changed.
 	 */
 	public SelectableManager(Function<Type, Event> beforeRegisterEventBuilder, Function<Type, Event> afterRegisterEventBuilder,
-							 Function<Type, Event> afterUnregisterEventBuilder, Function<Type, Event> beforeUnregisterEventBuilder,
+							 Function<Type, Event> beforeUnregisterEventBuilder, Function<Type, Event> afterUnregisterEventBuilder,
 							 BiFunction<Type, Type, Event> beforeSelectDefaultEventBuilder, BiFunction<Type, Type, Event> afterSelectDefaultEventBuilder,
 							 BiFunction<Type, Type, Event> beforeSelectSelectedEventBuilder, BiFunction<Type, Type, Event> afterSelectSelectedEventBuilder) {
 		super(beforeRegisterEventBuilder, afterRegisterEventBuilder,

@@ -44,6 +44,8 @@ public class Jams {
 
     private static RootConfiguration mainConfiguration;
 
+    private static PluginManager pluginManager;
+
     private static LanguageManager languageManager;
     private static FileTypeManager fileTypeManager;
 
@@ -83,6 +85,9 @@ public class Jams {
 
         numberRepresentationManager = NumberRepresentationManager.INSTANCE;
 
+        // Plugins should be loaded after all managers are loaded!
+        pluginManager = PluginManager.INSTANCE;
+
         JamsApplication.main(args);
     }
 
@@ -111,6 +116,15 @@ public class Jams {
      */
     public static RootConfiguration getMainConfiguration() {
         return mainConfiguration;
+    }
+
+    /**
+     * Returns the {@link LanguageManager}.
+     *
+     * @return the {@link LanguageManager}.
+     */
+    public static PluginManager getPluginManager() {
+        return pluginManager;
     }
 
     /**

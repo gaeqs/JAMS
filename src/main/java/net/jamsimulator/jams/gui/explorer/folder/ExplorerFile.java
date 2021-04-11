@@ -26,6 +26,10 @@ package net.jamsimulator.jams.gui.explorer.folder;
 
 import javafx.scene.input.*;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.file.FileType;
+import net.jamsimulator.jams.file.event.FileTypeRegisterEvent;
+import net.jamsimulator.jams.file.event.FileTypeUnregisterEvent;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerBasicElement;
@@ -40,6 +44,7 @@ import java.util.Optional;
 public class ExplorerFile extends ExplorerBasicElement {
 
     private final File file;
+    private FileType type;
 
     /**
      * Creates an explorer file.
@@ -52,7 +57,11 @@ public class ExplorerFile extends ExplorerBasicElement {
         super(parent, file.getName(), hierarchyLevel);
         getStyleClass().add("explorer-file");
         this.file = file;
-        icon.setImage(Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType()).getIcon());
+
+        type = Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType());
+        icon.setImage(type.getIcon());
+
+        Jams.getFileTypeManager().registerListeners(this, true);
     }
 
     /**
@@ -149,5 +158,25 @@ public class ExplorerFile extends ExplorerBasicElement {
     @Override
     public Explorer getExplorer() {
         return super.getExplorer();
+    }
+
+    @Listener
+    private void onFileTypeRegister(FileTypeRegisterEvent.After event) {
+        if (type != Jams.getFileTypeManager().getUnknownType()) return;
+        int lastIndex = name.lastIndexOf(".");
+        if (lastIndex == -1 || lastIndex == name.length()) return;
+
+        if (event.getFileType().supportsExtension(name.substring(lastIndex + 1))) {
+            type = event.getFileType();
+            icon.setImage(type.getIcon());
+        }
+    }
+
+    @Listener
+    private void onFileTypeUnregister(FileTypeUnregisterEvent.After event) {
+        if (type != event.getFileType()) return;
+        type = Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType());
+        new NullPointerException().printStackTrace();
+        icon.setImage(type.getIcon());
     }
 }

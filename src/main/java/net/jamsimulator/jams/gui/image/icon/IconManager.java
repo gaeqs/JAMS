@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.gui.image.icon;
 
 import javafx.scene.image.Image;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.InputStream;
@@ -144,7 +143,7 @@ public class IconManager {
         Optional<Image> icon = getIcon(data);
         if (icon.isPresent()) return icon.get();
 
-        InputStream stream = Jams.class.getResourceAsStream(data.getUrl());
+        InputStream stream = data.getHolder().getResourceAsStream(data.getUrl());
         Image image = new Image(stream, SIZE, SIZE, false, false);
 
         if (image.isError()) {
