@@ -176,7 +176,6 @@ public class ExplorerFile extends ExplorerBasicElement {
     private void onFileTypeUnregister(FileTypeUnregisterEvent.After event) {
         if (type != event.getFileType()) return;
         type = Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType());
-        new NullPointerException().printStackTrace();
         icon.setImage(type.getIcon());
     }
 }

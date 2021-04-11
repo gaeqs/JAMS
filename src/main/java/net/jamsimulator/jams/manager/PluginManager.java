@@ -120,7 +120,7 @@ public class PluginManager extends Manager<Plugin> {
             if (!super.remove(o)) return false;
             try {
                 System.out.println("Disabling plugin " + plugin.getName() + ".");
-                plugin.setEnabled(true);
+                plugin.setEnabled(false);
             } catch (Exception ex) {
                 System.err.println(plugin.getName() + "'s onDisable() throwed an exception!");
                 ex.printStackTrace();

@@ -1,6 +1,8 @@
 package net.jamsimulator.jams.plugin;
 
+import javafx.application.Platform;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.manager.Labeled;
 
 import java.util.Collections;
@@ -106,8 +108,7 @@ public class Plugin implements Labeled {
         if (enabled) {
             loadDependencies();
             onEnable();
-        }
-        else {
+        } else {
             onDisable();
             dependencies.clear();
             enabledSoftDepenedencies.clear();
@@ -115,18 +116,44 @@ public class Plugin implements Labeled {
     }
 
     /**
-     * This method is called when a pluign is enabled. Override it to implement funcionality to your plugin!
+     * This method is called when a plugin is enabled. Override it to implement funcionality to your plugin!
      */
     public void onEnable() {
 
     }
 
     /**
-     * This method is called when a pluign is disabled. Override it to implement funcionality to your plugin!
+     * This method is called when JAMS finished loading. Override it to implement funcionality to your plugin!
+     * <p>
+     * If the plugin was not loaded when the application is loaded this method WONT be called!
+     * Use {@link JamsApplication#isLoaded()} to see if the application has been loaded.
+     */
+    public void onApplicationLoaded() {
+
+    }
+
+
+    /**
+     * This method is called when a plugin is disabled. Override it to implement funcionality to your plugin!
      */
     public void onDisable() {
 
     }
+
+    // region helper methods
+
+    /**
+     * Runs the given code in the JavaFX application thread.
+     * <p>
+     * This allows the code to modify JavaFX nodes.
+     *
+     * @param runnable the code to run.
+     */
+    public static void runInApplicationThread(Runnable runnable) {
+        Platform.runLater(runnable);
+    }
+
+    // endregion
 
     void init(PluginClassLoader classLoader, PluginHeader header) {
         this.classLoader = classLoader;
@@ -134,7 +161,7 @@ public class Plugin implements Labeled {
         this.enabled = false;
     }
 
-    private void loadDependencies () {
+    private void loadDependencies() {
         this.dependencies = header.dependencies().stream()
                 .map(target -> Jams.getPluginManager().get(target).orElse(null))
                 .filter(Objects::nonNull)

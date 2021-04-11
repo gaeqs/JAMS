@@ -49,6 +49,7 @@ import net.jamsimulator.jams.manager.ActionManager;
 import net.jamsimulator.jams.manager.BarSnapshotViewModeManager;
 import net.jamsimulator.jams.manager.MIPSEditorInspectionBuilderManager;
 import net.jamsimulator.jams.manager.ThemeManager;
+import net.jamsimulator.jams.plugin.Plugin;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.IOException;
@@ -60,6 +61,8 @@ public class JamsApplication extends Application {
 
     private static final int WIDTH = 1200, HEIGHT = 800;
     private static final int MIN_WIDTH = 20, MIN_HEIGHT = 20;
+
+    private static boolean loaded = false;
 
     private static Stage stage;
     private static Scene scene;
@@ -122,6 +125,17 @@ public class JamsApplication extends Application {
         });
 
         Jams.getMainConfiguration().registerListeners(this, true);
+        loaded = true;
+        Jams.getPluginManager().forEach(Plugin::onApplicationLoaded);
+    }
+
+    /**
+     * Returns whether the application has finished loading.
+     *
+     * @return whether the application has finished loading.
+     */
+    public static boolean isLoaded() {
+        return loaded;
     }
 
     /**
