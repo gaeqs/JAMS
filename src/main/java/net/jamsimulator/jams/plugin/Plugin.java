@@ -2,7 +2,6 @@ package net.jamsimulator.jams.plugin;
 
 import javafx.application.Platform;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.manager.Labeled;
 
 import java.util.Collections;
@@ -29,6 +28,8 @@ import java.util.stream.Collectors;
  * <p>
  * Plugins are loaded by a {@link PluginClassLoader}.
  * This makes them accessible to the classes of other plugins.
+ * <p>
+ * When a plugin is enabled it is registered in the {@link Jams#getGeneralEventBroadcast() general event broadcast}.
  */
 public class Plugin implements Labeled {
 
@@ -108,27 +109,22 @@ public class Plugin implements Labeled {
         if (enabled) {
             loadDependencies();
             onEnable();
+            Jams.getGeneralEventBroadcast().registerListeners(this, false);
         } else {
             onDisable();
             dependencies.clear();
             enabledSoftDepenedencies.clear();
+            Jams.getGeneralEventBroadcast().unregisterListeners(this);
         }
     }
 
     /**
      * This method is called when a plugin is enabled. Override it to implement funcionality to your plugin!
+     *
+     * Events are usually loaded before JAMS. Use {@link net.jamsimulator.jams.event.general.JAMSPostInitEvent} if
+     * you need to register elements to JAMS.
      */
     public void onEnable() {
-
-    }
-
-    /**
-     * This method is called when JAMS finished loading. Override it to implement funcionality to your plugin!
-     * <p>
-     * If the plugin was not loaded when the application is loaded this method WONT be called!
-     * Use {@link JamsApplication#isLoaded()} to see if the application has been loaded.
-     */
-    public void onApplicationLoaded() {
 
     }
 

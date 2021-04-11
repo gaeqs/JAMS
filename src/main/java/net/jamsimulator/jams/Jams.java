@@ -25,6 +25,9 @@
 package net.jamsimulator.jams;
 
 import net.jamsimulator.jams.configuration.RootConfiguration;
+import net.jamsimulator.jams.event.SimpleEventBroadcast;
+import net.jamsimulator.jams.event.general.JAMSPostInitEvent;
+import net.jamsimulator.jams.event.general.JAMSPreInitEvent;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.manager.*;
 import net.jamsimulator.jams.utils.ConfigurationUtils;
@@ -58,15 +61,21 @@ public class Jams {
     private static InstructionSetManager instructionSetManager;
     private static DirectiveSetManager directiveSetManager;
     private static SyscallExecutionBuilderManager syscallExecutionBuilderManager;
-
     private static NumberRepresentationManager numberRepresentationManager;
+
+    private static SimpleEventBroadcast generalEventBroadcast;
 
     //JAMS main method.
     public static void main(String[] args) {
+        generalEventBroadcast = new SimpleEventBroadcast();
         loadVersion();
         System.out.println("Loading JAMS version " + getVersion());
         mainFolder = FolderUtils.checkMainFolder();
         TempUtils.loadTemporalFolder();
+
+        pluginManager = PluginManager.INSTANCE;
+
+        generalEventBroadcast.callEvent(new JAMSPreInitEvent());
 
         mainConfiguration = ConfigurationUtils.loadMainConfiguration();
 
@@ -85,8 +94,7 @@ public class Jams {
 
         numberRepresentationManager = NumberRepresentationManager.INSTANCE;
 
-        // Plugins should be loaded after all managers are loaded!
-        pluginManager = PluginManager.INSTANCE;
+        generalEventBroadcast.callEvent(new JAMSPostInitEvent());
 
         JamsApplication.main(args);
     }
@@ -227,6 +235,16 @@ public class Jams {
         return numberRepresentationManager;
     }
 
+    /**
+     * Returns the general event broadcast.
+     * <p>
+     * This broadcast is used to send general events, such the initialization events.
+     *
+     * @return the general event broadcast.
+     */
+    public static SimpleEventBroadcast getGeneralEventBroadcast() {
+        return generalEventBroadcast;
+    }
 
     private static void loadVersion() {
         InputStream stream = Jams.class.getResourceAsStream("/info.json");

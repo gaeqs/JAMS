@@ -95,7 +95,6 @@ public class PluginManager extends Manager<Plugin> {
         return true;
     }
 
-
     /**
      * Attempts to unregister the given plugin.
      * If the element is null this method throws a {@link NullPointerException}.
@@ -162,13 +161,35 @@ public class PluginManager extends Manager<Plugin> {
 
     }
 
+    /**
+     * Loads the {@link Plugin} in the given {@link File}.
+     * <p>
+     * WARNING! This method only loads the {@link Plugin}. To register it use {@link #add(Plugin)}.
+     * Plugins requires all it's dependencies registered in this manager to be loaded.
+     *
+     * @param file the {@link File} of the {@link Plugin}.
+     * @return the loaded {@link Plugin}.
+     * @throws InvalidPluginHeaderException when the {@link PluginHeader} of the {@link Plugin} couldn't be loaded.
+     * @throws PluginLoadException          when the {@link Plugin} couldn't be loaded.
+     */
     public Plugin loadPlugin(File file) throws InvalidPluginHeaderException, PluginLoadException {
         Validate.notNull(file, "Plugin cannot be null!");
         Validate.isTrue(file.exists(), "File must exist!");
         return loadPlugin(loadPluginHeader(file));
     }
 
+    /**
+     * Loads the {@link Plugin} represented by the given {@link PluginHeader}.
+     * <p>
+     * WARNING! This method only loads the {@link Plugin}. To register it use {@link #add(Plugin)}.
+     * Plugins requires all it's dependencies registered in this manager to be loaded.
+     *
+     * @param header the {@link PluginHeader} of the {@link Plugin}.
+     * @return the loaded {@link Plugin}.
+     * @throws PluginLoadException when the {@link Plugin} couldn't be loaded.
+     */
     public Plugin loadPlugin(PluginHeader header) throws PluginLoadException {
+        Validate.notNull(header, "Header cannot be null!");
         for (String dependency : header.dependencies()) {
             if (get(dependency).isEmpty())
                 throw new PluginLoadException("Couldn't find dependency " + dependency + "!", header);
@@ -213,7 +234,6 @@ public class PluginManager extends Manager<Plugin> {
             throw new PluginLoadException(ex, header);
         }
     }
-
 
     private PluginHeader loadPluginHeader(File file) throws InvalidPluginHeaderException {
         JarFile jar = null;

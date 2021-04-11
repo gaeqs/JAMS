@@ -36,6 +36,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.event.general.JAMSApplicationPostInitEvent;
+import net.jamsimulator.jams.event.general.JAMSShutdownEvent;
 import net.jamsimulator.jams.gui.font.FontLoader;
 import net.jamsimulator.jams.gui.image.icon.IconManager;
 import net.jamsimulator.jams.gui.image.icon.Icons;
@@ -49,7 +51,6 @@ import net.jamsimulator.jams.manager.ActionManager;
 import net.jamsimulator.jams.manager.BarSnapshotViewModeManager;
 import net.jamsimulator.jams.manager.MIPSEditorInspectionBuilderManager;
 import net.jamsimulator.jams.manager.ThemeManager;
-import net.jamsimulator.jams.plugin.Plugin;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.IOException;
@@ -126,7 +127,7 @@ public class JamsApplication extends Application {
 
         Jams.getMainConfiguration().registerListeners(this, true);
         loaded = true;
-        Jams.getPluginManager().forEach(Plugin::onApplicationLoaded);
+        Jams.getGeneralEventBroadcast().callEvent(new JAMSApplicationPostInitEvent());
     }
 
     /**
@@ -270,6 +271,7 @@ public class JamsApplication extends Application {
 
 
     private static void onClose() {
+        Jams.getGeneralEventBroadcast().callEvent(new JAMSShutdownEvent.Before());
         //Save main configuration.
         try {
             Jams.getMainConfiguration().save(true);
@@ -281,6 +283,8 @@ public class JamsApplication extends Application {
         for (ProjectTab project : getProjectsTabPane().getProjects()) {
             project.getProject().onClose();
         }
+
+        Jams.getGeneralEventBroadcast().callEvent(new JAMSShutdownEvent.After());
 
         // Disables all plugins
         Jams.getPluginManager().forEach(p -> p.setEnabled(false));
