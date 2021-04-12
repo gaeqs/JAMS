@@ -626,15 +626,15 @@ AnchorPane {
 
 /* START WINDOW */
 .start-top-bar {
-    -fx-background-color: -theme-background-darker-2;
+    -fx-background-color: -theme-background;
 }
 
 .start-top-bar-window-button-minimize {
-    -fx-background-color: -theme-background-darker-2;
+    -fx-background-color: -theme-background;
 }
 
 .start-top-bar-window-button-close {
-    -fx-background-color: -theme-background-darker-2;
+    -fx-background-color: -theme-background;
 }
 
 .start-title {
@@ -1013,7 +1013,7 @@ AnchorPane {
 }
 
 .documentation * {
-    -fx-background-color: -theme-background;
+    -fx-background-color: -theme-background-darker;
     -fx-padding: 8 0 5 10;
 }
 
@@ -1357,8 +1357,4 @@ AnchorPane {
 .plugin-entry-author,
 .plugin-display-author {
     -fx-text-fill: -theme-foreground-darker;
-}
-
-.documentation * {
-    -fx-background-color: -theme-background-darker;
 }

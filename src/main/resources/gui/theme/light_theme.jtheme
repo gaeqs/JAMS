@@ -647,15 +647,15 @@ AnchorPane {
 
 /* START WINDOW */
 .start-top-bar {
-    -fx-background-color: -theme-background-darker-2;
+    -fx-background-color: -theme-background;
 }
 
 .start-top-bar-window-button-minimize {
-    -fx-background-color: -theme-background-darker-2;
+    -fx-background-color: -theme-background;
 }
 
 .start-top-bar-window-button-close {
-    -fx-background-color: -theme-background-darker-2;
+    -fx-background-color: -theme-background;
 }
 
 .start-title {
@@ -1030,6 +1030,49 @@ AnchorPane {
     -fx-background-color: -theme-element-selected;
 }
 
+/* MIPS DOCUMENTATION */
+
+.documentation-top-message * {
+    -fx-background-color: -theme-background-lighter;
+    -fx-padding: 8 0 5 10;
+}
+
+.documentation * {
+    -fx-background-color: -theme-background-darker;
+    -fx-padding: 8 0 5 10;
+}
+
+.documentation .text {
+    -fx-font-family: "{FONT_GENERAL}";
+}
+
+.documentation .code {
+    -fx-font-family: "{FONT_CODE}";
+    -fx-font-size: 14.5;
+}
+
+.documentation .bold {
+    -fx-font-weight: bold;
+}
+
+.documentation .underline {
+    -rtfx-underline-color: -theme-foreground;
+    -rtfx-underline-width: 1px
+}
+
+.documentation .italic {
+    -fx-font-style: italic;
+}
+
+.documentation .sub {
+    -fx-font-size: 9;
+}
+
+.documentation .black {
+    -fx-fill: -theme-foreground-darker;
+    -fx-font-weight: bolder;
+}
+
 /* HINT BAR */
 .hint-bar-error {
     -fx-fill: #661717;
@@ -1339,8 +1382,4 @@ AnchorPane {
 .plugin-entry-author,
 .plugin-display-author {
     -fx-text-fill: -theme-foreground-darker;
-}
-
-.documentation * {
-    -fx-background-color: -theme-background-darker;
 }
