@@ -155,6 +155,11 @@ public class Messages {
 	public static final String CONFIG_ACTION_BIND_CONFIRM_2 = "CONFIG_ACTION_BIND_CONFIRM_2";
 	public static final String CONFIG_ACTION_UNBIND = "CONFIG_ACTION_UNBIND";
 
+	public static final String CONFIG_PLUGIN = "CONFIG_PLUGIN";
+	public static final String CONFIG_PLUGIN_INSTALL = "CONFIG_PLUGIN_INSTALL";
+	public static final String CONFIG_PLUGIN_UNINSTALL = "CONFIG_PLUGIN_UNINSTALL";
+	public static final String CONFIG_PLUGIN_UNINSTALL_CONFIRM = "CONFIG_PLUGIN_UNINSTALL_CONFIRM";
+
 	public static final String CONFIG_APPEARANCE = "CONFIG_APPEARANCE";
 	public static final String CONFIG_APPEARANCE_THEME = "CONFIG_APPEARANCE_THEME";
 

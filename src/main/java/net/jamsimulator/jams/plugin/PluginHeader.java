@@ -20,6 +20,7 @@ public final record PluginHeader(String name,
                                  String mainClass,
                                  String descriptionLanguageNode,
                                  String url,
+                                 String favicon,
                                  List<String> authors,
                                  List<String> dependencies,
                                  List<String> softDependencies,
@@ -32,6 +33,7 @@ public final record PluginHeader(String name,
     public static final String MAIN_CLASS_FIELD = "main";
     public static final String DESCRIPTION_NODE_FIELD = "description_node";
     public static final String URL_FIELD = "url";
+    public static final String FAVICON_FIELD = "favicon";
     public static final String AUTHORS_FIELD = "authors";
     public static final String DEPENDENCIES_FIELD = "dependencies";
     public static final String SOFT_DEPENDENCIES_FIELD = "soft_dependencies";
@@ -49,6 +51,7 @@ public final record PluginHeader(String name,
 
         var description = configuration.getString(DESCRIPTION_NODE_FIELD).orElse(null);
         var url = configuration.getString(URL_FIELD).orElse(null);
+        var favicon = configuration.getString(FAVICON_FIELD).orElse(null);
 
         var authors = list((List<?>) configuration.get(AUTHORS_FIELD).orElseGet(Collections::emptyList));
         var dependencies = pluginList((List<?>) configuration.get(DEPENDENCIES_FIELD)
@@ -58,7 +61,7 @@ public final record PluginHeader(String name,
         var compatibleJAMSVersions = list((List<?>) configuration.get(COMPATIBLE_JAMS_VERSIONS_FIELD)
                 .orElseGet(Collections::emptyList));
 
-        return new PluginHeader(name, version, mainClass, description, url, authors, dependencies,
+        return new PluginHeader(name, version, mainClass, description, url, favicon, authors, dependencies,
                 softDependencies, compatibleJAMSVersions, pluginFile, configuration);
     }
 

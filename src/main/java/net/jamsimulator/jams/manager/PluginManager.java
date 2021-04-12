@@ -38,6 +38,8 @@ import net.jamsimulator.jams.utils.Validate;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.jar.JarFile;
@@ -149,6 +151,10 @@ public class PluginManager extends Manager<Plugin> {
 
         var loaded = new HashSet<PluginHeader>();
         for (PluginHeader header : headers) {
+            if (loaded.stream().anyMatch(target -> target.name().equals(header.name()))) {
+                System.err.println("Error while loading the plugin " + header.file().getPath()
+                        + ". A plugin with the same id (" + header.name() + ") is already loaded!");
+            }
             if (!loaded.contains(header)) {
                 try {
                     add(loadPluginAndDependencies(header, headers, loaded));
@@ -199,6 +205,68 @@ public class PluginManager extends Manager<Plugin> {
             return new PluginClassLoader(Jams.class.getClassLoader(), header).getPlugin();
         } catch (MalformedURLException ex) {
             throw new PluginLoadException(ex, header);
+        }
+    }
+
+    /**
+     * Unregisters and unloads the given {@link Plugin} and deletes its file.
+     *
+     * @param plugin the {@link Plugin}.
+     * @return whether the operation was sucessfull.
+     * @see #remove(Object)
+     */
+    public boolean unistallPlugin(Plugin plugin) {
+        // Unregisters
+        if (contains(plugin)) {
+            if (!remove(plugin)) return false;
+        }
+
+        // Unloads
+        try {
+            plugin.getClassLoader().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        // And deletes!
+        return plugin.getHeader().file().delete();
+    }
+
+    /**
+     * Copies the given {@link Plugin} to the plugins file, loads it and registers it.
+     * <p>
+     * Before copying, this method will check the "plugin.json" file of the plugin.
+     * If a {@link Plugin} with the same id is already registered, this {@link Plugin} won't be installed.
+     *
+     * @param file the file of the {@link Plugin}.
+     * @return whether the operation was sucessful.
+     */
+    public boolean installPLugin(File file) {
+        try {
+            var header = loadPluginHeader(file);
+            if (stream().anyMatch(plugin -> plugin.getHeader().name().equals(header.name())))
+                return false;
+
+            var to = new File(PLUGIN_FOLDER, header.name() + "-" + header.version() + ".jar");
+            int i = 1;
+            while (to.exists()) {
+                to = new File(PLUGIN_FOLDER, header.name() + "-" + header.version() + " (" + i++ + ").jar");
+            }
+
+            Files.copy(file.toPath(), to.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
+
+            try {
+                return add(loadPlugin(to));
+            } catch (PluginLoadException e) {
+                to.delete();
+                e.printStackTrace();
+                return false;
+            }
+
+        } catch (InvalidPluginHeaderException | IOException ex) {
+            ex.printStackTrace();
+            return false;
         }
     }
 

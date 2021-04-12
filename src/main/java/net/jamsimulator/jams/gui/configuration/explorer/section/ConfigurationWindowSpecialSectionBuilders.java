@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.configuration.explorer.section;
 
 import net.jamsimulator.jams.gui.configuration.explorer.section.action.ConfigurationWindowSectionActions;
+import net.jamsimulator.jams.gui.configuration.explorer.section.plugin.ConfigurationWindowSectionPlugins;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +41,7 @@ public class ConfigurationWindowSpecialSectionBuilders {
 	static {
 		//ACTIONS
 		builderByName.put("action", new ConfigurationWindowSectionActions.Builder());
+		builderByName.put("plugin", new ConfigurationWindowSectionPlugins.Builder());
 	}
 
 

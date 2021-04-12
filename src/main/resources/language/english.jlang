@@ -291,6 +291,11 @@ CONFIG_ACTION_BIND_CONFIRM=The following actions will be unbind from the given c
 CONFIG_ACTION_BIND_CONFIRM_2=Do you want to continue?
 CONFIG_ACTION_UNBIND=Are you sure you want to unbind this combination?
 
+CONFIG_PLUGIN=Plugins
+CONFIG_PLUGIN_INSTALL=Install
+CONFIG_PLUGIN_UNINSTALL=Unistall
+CONFIG_PLUGIN_UNINSTALL_CONFIRM=Are you sure you want to unistall the plugin {PLUGIN}?
+
 CONFIG_APPEARANCE=Appearance
 CONFIG_APPEARANCE_REGION_THEME=Theme
 CONFIG_APPEARANCE_REGION_TWEAKS=Tweaks

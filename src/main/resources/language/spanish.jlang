@@ -291,6 +291,11 @@ CONFIG_ACTION_BIND_CONFIRM=Las siguientes acciones serán desasignadas de la com
 CONFIG_ACTION_BIND_CONFIRM_2=¿Quieres continuar?
 CONFIG_ACTION_UNBIND=¿Estás seguro de que quieres desasignar esta combinación?
 
+CONFIG_PLUGIN=Plugins
+CONFIG_PLUGIN_INSTALL=Instalar
+CONFIG_PLUGIN_UNINSTALL=Desinstalar
+CONFIG_PLUGIN_UNINSTALL_CONFIRM=¿Estás seguro de que quieres desinstalar el plugin {PLUGIN}?
+
 CONFIG_APPEARANCE=Apariencia
 CONFIG_APPEARANCE_REGION_THEME=Tema
 CONFIG_APPEARANCE_REGION_TWEAKS=Ajustes

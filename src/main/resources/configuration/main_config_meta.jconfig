@@ -57,6 +57,12 @@
       "language_node": "CONFIG_ACTION"
     }
   },
+  "plugin": {
+    "meta": {
+      "type": "plugin",
+      "language_node": "CONFIG_PLUGIN"
+    }
+  },
   "explorer": {
     "meta": {
       "language_node": "CONFIG_EXPLORER",

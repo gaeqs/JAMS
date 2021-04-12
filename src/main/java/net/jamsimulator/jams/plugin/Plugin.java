@@ -1,11 +1,14 @@
 package net.jamsimulator.jams.plugin;
 
 import javafx.application.Platform;
+import javafx.scene.image.Image;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.gui.image.icon.IconManager;
 import net.jamsimulator.jams.manager.Labeled;
 
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,6 +40,7 @@ public class Plugin implements Labeled {
     private PluginHeader header;
     private boolean enabled;
     private Set<Plugin> dependencies, enabledSoftDepenedencies;
+    private Image favicon;
 
     @Override
     public String getName() {
@@ -96,6 +100,10 @@ public class Plugin implements Labeled {
         return Collections.unmodifiableSet(enabledSoftDepenedencies);
     }
 
+    public Optional<Image> getFavicon() {
+        return Optional.ofNullable(favicon);
+    }
+
     /**
      * WARNING! This method should be used only by a {@link net.jamsimulator.jams.manager.PluginManager}!
      * <p>
@@ -120,7 +128,7 @@ public class Plugin implements Labeled {
 
     /**
      * This method is called when a plugin is enabled. Override it to implement funcionality to your plugin!
-     *
+     * <p>
      * Events are usually loaded before JAMS. Use {@link net.jamsimulator.jams.event.general.JAMSPostInitEvent} if
      * you need to register elements to JAMS.
      */
@@ -155,6 +163,18 @@ public class Plugin implements Labeled {
         this.classLoader = classLoader;
         this.header = header;
         this.enabled = false;
+        try {
+            if (header.favicon() != null) {
+                var in = getClass().getResourceAsStream(header.favicon());
+                if (in != null) {
+                    System.out.println("HOHO");
+                    favicon = new Image(in, IconManager.SIZE, IconManager.SIZE, false, false);
+                    System.out.println("BAKANA!");
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void loadDependencies() {

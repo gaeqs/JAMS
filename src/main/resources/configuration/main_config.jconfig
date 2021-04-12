@@ -1,6 +1,8 @@
 {
   "action": {
   },
+  "plugin": {
+  },
   "language": {
     "default": "English",
     "selected": "English"
