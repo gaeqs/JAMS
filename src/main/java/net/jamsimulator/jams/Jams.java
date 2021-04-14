@@ -57,6 +57,7 @@ public class Jams {
     private static MemoryBuilderManager memoryBuilderManager;
     private static CacheBuilderManager cacheBuilderManager;
     private static RegistersBuilderManager registersBuilderManager;
+    private static ProjectTypeManager projectTypeManager;
 
     private static InstructionSetManager instructionSetManager;
     private static DirectiveSetManager directiveSetManager;
@@ -87,6 +88,7 @@ public class Jams {
         memoryBuilderManager = MemoryBuilderManager.INSTANCE;
         cacheBuilderManager = CacheBuilderManager.INSTANCE;
         registersBuilderManager = RegistersBuilderManager.INSTANCE;
+        projectTypeManager = ProjectTypeManager.INSTANCE;
 
         instructionSetManager = InstructionSetManager.INSTANCE;
         directiveSetManager = DirectiveSetManager.INSTANCE;
@@ -197,6 +199,15 @@ public class Jams {
      */
     public static RegistersBuilderManager getRegistersBuilderManager() {
         return registersBuilderManager;
+    }
+
+    /**
+     * Returns the {@link ProjectTypeManager}.
+     *
+     * @return the {@link ProjectTypeManager}.
+     */
+    public static ProjectTypeManager getProjectTypeManager() {
+        return projectTypeManager;
     }
 
     /**

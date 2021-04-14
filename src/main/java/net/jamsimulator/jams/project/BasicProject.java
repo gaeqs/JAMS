@@ -38,9 +38,9 @@ public abstract class BasicProject implements Project {
 	protected ProjectData data;
 
 	public BasicProject(File folder, boolean loadDataOnConstructor) {
-		//Validate.notNull(folder, "Folder cannot be null!");
-		//Validate.isTrue(folder.exists(), "Folder " + folder.getName() + " must exist!");
-		//Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
+		Validate.notNull(folder, "Folder cannot be null!");
+		Validate.isTrue(folder.exists(), "Folder " + folder.getName() + " must exist!");
+		Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
 
 		this.folder = folder;
 		this.projectTab = null;

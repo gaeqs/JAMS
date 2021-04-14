@@ -76,10 +76,6 @@ public class CreateProjectWindow extends VBox {
 			File folder = new File(pathField.getText());
 			if (!folder.mkdirs()) return;
 			MIPSProject project = new MIPSProject(nameField.getText(), folder);
-
-			//Add default configuration
-			project.getData().addConfiguration(new MIPSSimulationConfiguration("Default"));
-
 			JamsApplication.getProjectsTabPane().openProject(project);
 			stage.close();
 		});
