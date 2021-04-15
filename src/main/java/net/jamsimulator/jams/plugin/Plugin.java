@@ -167,9 +167,7 @@ public class Plugin implements Labeled {
             if (header.favicon() != null) {
                 var in = getClass().getResourceAsStream(header.favicon());
                 if (in != null) {
-                    System.out.println("HOHO");
                     favicon = new Image(in, IconManager.SIZE, IconManager.SIZE, false, false);
-                    System.out.println("BAKANA!");
                 }
             }
         } catch (Exception ex) {

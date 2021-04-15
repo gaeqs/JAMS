@@ -48,118 +48,120 @@ import java.util.stream.Collectors;
  */
 public class ProjectListTabPane extends TabPane {
 
-	/**
-	 * Creates the projects' main pane.
-	 */
-	public ProjectListTabPane() {
-		getStyleClass().add("project-list");
-		setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
-		openSavedProjects();
+    /**
+     * Creates the projects' main pane.
+     */
+    public ProjectListTabPane() {
+        getStyleClass().add("project-list");
+        setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
+        openSavedProjects();
 
-		getTabs().addListener((ListChangeListener<? super Tab>) event -> Platform.runLater(() -> {
-			//If empty, open the start window.
-			if (getTabs().isEmpty()) {
-				saveOpenProjects();
-				JamsApplication.getStage().hide();
-				StartWindow.open();
-				if (!getTabs().isEmpty()) {
-					JamsApplication.getStage().show();
-				}
-			}
-		}));
-	}
+        getTabs().addListener((ListChangeListener<? super Tab>) event -> Platform.runLater(() -> {
+            //If empty, open the start window.
+            if (getTabs().isEmpty()) {
+                saveOpenProjects();
+                JamsApplication.getStage().hide();
+                StartWindow.open();
+                if (!getTabs().isEmpty()) {
+                    JamsApplication.getStage().show();
+                }
+            }
+        }));
+    }
 
-	/**
-	 * Returns the focused {@link ProjectTab} of this tab pane, if present.
-	 *
-	 * @return the {@link ProjectTab}, if present.
-	 */
-	public Optional<ProjectTab> getFocusedProject() {
-		Tab tab = selectionModelProperty().getValue().getSelectedItem();
-		if (!(tab instanceof ProjectTab)) return Optional.empty();
-		return Optional.of((ProjectTab) tab);
-	}
+    /**
+     * Returns the focused {@link ProjectTab} of this tab pane, if present.
+     *
+     * @return the {@link ProjectTab}, if present.
+     */
+    public Optional<ProjectTab> getFocusedProject() {
+        Tab tab = selectionModelProperty().getValue().getSelectedItem();
+        if (!(tab instanceof ProjectTab)) return Optional.empty();
+        return Optional.of((ProjectTab) tab);
+    }
 
-	/**
-	 * Returns all {@link ProjectTab projects} stored inside this tab pane.
-	 *
-	 * @return all {@link ProjectTab projects}.
-	 */
-	public Set<ProjectTab> getProjects() {
-		return getTabs().stream().filter(target -> target instanceof ProjectTab)
-				.map(target -> (ProjectTab) target).collect(Collectors.toSet());
-	}
+    /**
+     * Returns all {@link ProjectTab projects} stored inside this tab pane.
+     *
+     * @return all {@link ProjectTab projects}.
+     */
+    public Set<ProjectTab> getProjects() {
+        return getTabs().stream().filter(target -> target instanceof ProjectTab)
+                .map(target -> (ProjectTab) target).collect(Collectors.toSet());
+    }
 
-	public Optional<ProjectTab> getProjectTab(Project project) {
-		return getTabs().stream()
-				.filter(target -> target instanceof ProjectTab && ((ProjectTab) target).getProject().equals(project))
-				.map(target -> (ProjectTab) target)
-				.findAny();
-	}
+    public Optional<ProjectTab> getProjectTab(Project project) {
+        return getTabs().stream()
+                .filter(target -> target instanceof ProjectTab && ((ProjectTab) target).getProject().equals(project))
+                .map(target -> (ProjectTab) target)
+                .findAny();
+    }
 
 
-	public boolean isProjectOpen(File folder) {
-		return getTabs().stream().anyMatch(target -> target instanceof ProjectTab
-				&& ((ProjectTab) target).getProject().getFolder().equals(folder));
-	}
+    public boolean isProjectOpen(File folder) {
+        return getTabs().stream().anyMatch(target -> target instanceof ProjectTab
+                && ((ProjectTab) target).getProject().getFolder().equals(folder));
+    }
 
-	/**
-	 * Returns whether the given {@link Project} is open in this tab pane.
-	 *
-	 * @param project the given {@link Project}.
-	 * @return whether the given {@link Project} is open in this tab pane.
-	 */
-	public boolean isProjectOpen(Project project) {
-		return getTabs().stream().anyMatch(target -> target instanceof ProjectTab
-				&& ((ProjectTab) target).getProject().equals(project));
-	}
+    /**
+     * Returns whether the given {@link Project} is open in this tab pane.
+     *
+     * @param project the given {@link Project}.
+     * @return whether the given {@link Project} is open in this tab pane.
+     */
+    public boolean isProjectOpen(Project project) {
+        return getTabs().stream().anyMatch(target -> target instanceof ProjectTab
+                && ((ProjectTab) target).getProject().equals(project));
+    }
 
-	/**
-	 * Opens the given {@link Project}.
-	 *
-	 * @param project the {@link Project}.
-	 * @return whether the project was successfully open.
-	 */
-	public boolean openProject(Project project) {
-		if (isProjectOpen(project)) return false;
-		if (!(project instanceof MIPSProject)) return false;
-		ProjectTab tab = new ProjectTab((MIPSProject) project);
-		project.assignProjectTab(tab);
-		getTabs().add(tab);
-		return true;
-	}
+    /**
+     * Opens the given {@link Project}.
+     *
+     * @param project the {@link Project}.
+     * @return whether the project was successfully open.
+     */
+    public boolean openProject(Project project) {
+        if (isProjectOpen(project)) return false;
+        if (!(project instanceof MIPSProject)) return false;
+        ProjectTab tab = new ProjectTab((MIPSProject) project);
+        project.assignProjectTab(tab);
+        getTabs().add(tab);
+        return true;
+    }
 
-	/**
-	 * Saves all opened projects on the opened_project.dat file.
-	 * This file will be read when JAMS starts, opening them.
-	 */
-	public void saveOpenProjects() {
-		JSONArray array = new JSONArray();
-		for (ProjectTab project : getProjects()) {
-			array.put(project.getProject().getFolder());
-		}
+    /**
+     * Saves all opened projects on the opened_project.dat file.
+     * This file will be read when JAMS starts, opening them.
+     */
+    public void saveOpenProjects() {
+        JSONArray array = new JSONArray();
+        for (ProjectTab project : getProjects()) {
+            array.put(project.getProject().getFolder());
+        }
 
-		try {
-			FileUtils.writeAll(new File(Jams.getMainFolder(), "opened_projects.dat"), array.toString(1));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+        try {
+            FileUtils.writeAll(new File(Jams.getMainFolder(), "opened_projects.dat"), array.toString(1));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-	private void openSavedProjects() {
-		File file = new File(Jams.getMainFolder(), "opened_projects.dat");
-		if (!file.exists()) return;
-		try {
-			JSONArray object = new JSONArray(FileUtils.readAll(file));
+    private void openSavedProjects() {
+        File file = new File(Jams.getMainFolder(), "opened_projects.dat");
+        if (!file.exists()) return;
+        try {
+            JSONArray object = new JSONArray(FileUtils.readAll(file));
 
-			for (Object o : object) {
-				File to = new File(o.toString());
-				if (!to.isDirectory()) continue;
-				openProject(new MIPSProject(to));
-			}
+            for (Object o : object) {
+                File folder = new File(o.toString());
+                if (!folder.isDirectory()) continue;
 
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
+                Jams.getProjectTypeManager().getByProjectfolder(folder)
+                        .ifPresent(type -> openProject(type.loadProject(folder)));
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 }
