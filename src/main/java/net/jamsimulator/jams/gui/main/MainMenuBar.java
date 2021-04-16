@@ -36,12 +36,17 @@ import net.jamsimulator.jams.gui.action.context.ActionMenuItem;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMainMenuBuilder;
 import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
+import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionOpenProject;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionUnbindEvent;
 import net.jamsimulator.jams.gui.bar.ToolsMenu;
+import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
+import net.jamsimulator.jams.language.wrapper.LanguageMenu;
+import net.jamsimulator.jams.project.ProjectSnapshot;
 
+import java.io.File;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
@@ -63,9 +68,8 @@ public class MainMenuBar extends MenuBar {
         set.add(MainMenuRegion.TOOLS);
 
         for (Action action : JamsApplication.getActionManager()) {
-            if (!(action instanceof ContextAction)) continue;
-            if (!((ContextAction) action).getMainMenuRegion().isPresent()) continue;
-            set.add(((ContextAction) action).getMainMenuRegion().get());
+            if (!(action instanceof ContextAction context) || context.getMainMenuRegion().isEmpty()) continue;
+            set.add(context.getMainMenuRegion().get());
         }
 
         set.stream().sorted(Comparator.comparingInt(MainMenuRegion::getPriority)).forEach(this::createMenu);
@@ -80,10 +84,14 @@ public class MainMenuBar extends MenuBar {
         if (set.isEmpty()) return;
         Menu main = new ContextActionMainMenuBuilder(region.getLanguageNode()).addAll(set).build();
 
+        if (region == MainMenuRegion.FILE) {
+            modifyFileMenu(main);
+        }
+
         main.setOnShowing(event -> {
             for (MenuItem item : main.getItems()) {
-                if (item instanceof ActionMenuItem) {
-                    item.setDisable(!((ActionMenuItem) item).getAction().supportsMainMenuState(this));
+                if (item instanceof ActionMenuItem action) {
+                    item.setDisable(!action.getAction().supportsMainMenuState(this));
                 }
             }
         });
@@ -93,6 +101,38 @@ public class MainMenuBar extends MenuBar {
 
     private void createToolsMenu() {
         getMenus().add(new ToolsMenu());
+    }
+
+    private void modifyFileMenu(Menu menu) {
+        int index = 0;
+
+        for (MenuItem item : menu.getItems()) {
+            index++;
+            if (item instanceof ActionMenuItem ami && ami.getAction() instanceof GeneralActionOpenProject) {
+                break;
+            }
+        }
+
+        var recentMenu = new LanguageMenu(Messages.ACTION_GENERAL_OPEN_RECENT);
+        recentMenu.getItems().add(new MenuItem(""));
+        recentMenu.setOnShowing(event -> {
+            recentMenu.getItems().clear();
+            for (ProjectSnapshot project : Jams.getRecentProjects()) {
+                var file = new File(project.path());
+                if (JamsApplication.getProjectsTabPane().isProjectOpen(file)) continue;
+                var item = new MenuItem(project.name());
+                item.setOnAction(action ->
+                        Jams.getProjectTypeManager().getByProjectfolder(file).ifPresent(type ->
+                                JamsApplication.getProjectsTabPane().openProject(type.loadProject(file))));
+                recentMenu.getItems().add(item);
+            }
+
+            if (recentMenu.getItems().isEmpty()) {
+                recentMenu.getItems().add(new MenuItem(""));
+            }
+        });
+
+        menu.getItems().add(index, recentMenu);
     }
 
     private Set<ContextAction> getSupportedContextActions(MainMenuRegion region) {

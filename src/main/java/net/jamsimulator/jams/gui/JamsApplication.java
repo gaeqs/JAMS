@@ -280,6 +280,7 @@ public class JamsApplication extends Application {
         }
 
         getProjectsTabPane().saveOpenProjects();
+        Jams.getRecentProjects().save();
         for (ProjectTab project : getProjectsTabPane().getProjects()) {
             project.getProject().onClose();
         }

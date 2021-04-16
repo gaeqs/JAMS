@@ -180,6 +180,7 @@ public class Messages {
 
 	public static final String ACTION_REGION_GENERAL = "ACTION_REGION_GENERAL";
 	public static final String ACTION_GENERAL_OPEN_PROJECT = "ACTION_GENERAL_OPEN_PROJECT";
+	public static final String ACTION_GENERAL_OPEN_RECENT = "ACTION_GENERAL_OPEN_RECENT";
 	public static final String ACTION_GENERAL_CREATE_PROJECT = "ACTION_GENERAL_CREATE_PROJECT";
 	public static final String ACTION_GENERAL_ASSEMBLE = "ACTION_GENERAL_ASSEMBLE";
 

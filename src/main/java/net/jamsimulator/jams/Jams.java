@@ -30,6 +30,7 @@ import net.jamsimulator.jams.event.general.JAMSPostInitEvent;
 import net.jamsimulator.jams.event.general.JAMSPreInitEvent;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.manager.*;
+import net.jamsimulator.jams.project.RecentProjects;
 import net.jamsimulator.jams.utils.ConfigurationUtils;
 import net.jamsimulator.jams.utils.FileUtils;
 import net.jamsimulator.jams.utils.FolderUtils;
@@ -64,6 +65,8 @@ public class Jams {
     private static SyscallExecutionBuilderManager syscallExecutionBuilderManager;
     private static NumberRepresentationManager numberRepresentationManager;
 
+    private static RecentProjects recentProjects;
+
     private static SimpleEventBroadcast generalEventBroadcast;
 
     //JAMS main method.
@@ -93,8 +96,8 @@ public class Jams {
         instructionSetManager = InstructionSetManager.INSTANCE;
         directiveSetManager = DirectiveSetManager.INSTANCE;
         syscallExecutionBuilderManager = SyscallExecutionBuilderManager.INSTANCE;
-
         numberRepresentationManager = NumberRepresentationManager.INSTANCE;
+        recentProjects = new RecentProjects();
 
         generalEventBroadcast.callEvent(new JAMSPostInitEvent());
 
@@ -244,6 +247,15 @@ public class Jams {
      */
     public static NumberRepresentationManager getNumberRepresentationManager() {
         return numberRepresentationManager;
+    }
+
+    /**
+     * Returns the {@link java.util.List list} containing the {@link net.jamsimulator.jams.project.ProjectSnapshot recent projects}.
+     *
+     * @return the recent projects.
+     */
+    public static RecentProjects getRecentProjects() {
+        return recentProjects;
     }
 
     /**

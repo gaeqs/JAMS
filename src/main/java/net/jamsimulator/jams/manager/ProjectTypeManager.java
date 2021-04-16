@@ -6,6 +6,7 @@ import net.jamsimulator.jams.project.event.ProjectTypeRegisterEvent;
 import net.jamsimulator.jams.project.event.ProjectTypeUnregisterEvent;
 import net.jamsimulator.jams.project.mips.MIPSProjectType;
 import net.jamsimulator.jams.utils.FileUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -43,7 +44,7 @@ public class ProjectTypeManager extends Manager<ProjectType<?>> {
             var type = data.get("type");
             if (type == null) return Optional.empty();
             return get(type.toString());
-        } catch (IOException e) {
+        } catch (IOException | JSONException e) {
             return Optional.empty();
         }
     }
