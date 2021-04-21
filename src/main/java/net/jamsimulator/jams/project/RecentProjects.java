@@ -1,6 +1,8 @@
 package net.jamsimulator.jams.project;
 
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.event.SimpleEventBroadcast;
+import net.jamsimulator.jams.project.event.RecentProjectAddEvent;
 import net.jamsimulator.jams.utils.FileUtils;
 import net.jamsimulator.jams.utils.Validate;
 import org.json.JSONArray;
@@ -15,10 +17,9 @@ import java.util.Optional;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-public class RecentProjects implements Iterable<ProjectSnapshot> {
+public class RecentProjects extends SimpleEventBroadcast implements Iterable<ProjectSnapshot> {
 
     public static final String FILE_NAME = "recent_projects.dat";
-    public static final int MAX_PROJECTS = 10;
 
     private final LinkedList<ProjectSnapshot> list;
 
@@ -38,9 +39,14 @@ public class RecentProjects implements Iterable<ProjectSnapshot> {
 
     public void add(ProjectSnapshot snapshot) {
         Validate.notNull(snapshot, "Snapshot cannot be null!");
+
+        var before = callEvent(new RecentProjectAddEvent.Before(snapshot));
+        if (before.isCancelled()) return;
+
         list.remove(snapshot);
         list.addFirst(snapshot);
-        if (list.size() > MAX_PROJECTS) list.removeLast();
+
+        callEvent(new RecentProjectAddEvent.After(snapshot));
     }
 
     public void save() {
@@ -64,7 +70,9 @@ public class RecentProjects implements Iterable<ProjectSnapshot> {
             for (Object o : object) {
                 try {
                     if (o instanceof JSONObject json) {
-                        add(ProjectSnapshot.of(json));
+                        var snapshot = ProjectSnapshot.of(json);
+                        if (!new File(snapshot.path()).isDirectory()) continue;
+                        add(snapshot);
                     }
                 } catch (JSONException ex) {
                     ex.printStackTrace();

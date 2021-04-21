@@ -38,7 +38,7 @@ public class Messages {
 	public static final String GENERAL_SORT = "GENERAL_SORT";
 
 	public static final String START_TITLE = "START_TITLE";
-	public static final String START_SUBTITLE = "START_SUBTITLE";
+	public static final String START_PROJECTS = "START_PROJECTS";
 
 
 	public static final String MAIN_MENU_FILE = "MAIN_MENU_FILE";

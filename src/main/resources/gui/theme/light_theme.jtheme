@@ -139,11 +139,11 @@ AnchorPane {
 }
 
 .scroll-pane .viewport {
-    -fx-background-color: -theme-background;
+    -fx-background-color: transparent;
 }
 
 .scroll-pane .corner {
-    -fx-background-color: -theme-background;
+    -fx-background-color: transparent;
 }
 
 /*SCROLL BAR*/
@@ -218,6 +218,13 @@ AnchorPane {
 
 .button:pressed {
     -fx-background-color: -theme-background-pressed;
+}
+
+.light-button {
+    -fx-background-color: -theme-background;
+    -fx-border-color: -theme-background-lighter;
+    -fx-background-radius: 5;
+    -fx-text-fill: -theme-foreground;
 }
 
 .bold-button {
@@ -659,12 +666,47 @@ AnchorPane {
 }
 
 .start-title {
-    -fx-font-size: 30;
+    -fx-text-fill: -theme-foreground-darker;
 }
 
-.start-subtitle {
-    -fx-font-size: 20;
-    -fx-text-fill: -theme-foreground-darker;
+.start-window-section-display {
+    -fx-background-color: -theme-background-darker;
+}
+
+.start-window-section-list-entry {
+    -fx-padding: 8 0 8 10;
+    -fx-alignment: center-left;
+}
+
+.start-window-section-list-entry:hover {
+    -fx-background-color: -theme-background-lighter;
+}
+
+.start-window-section-list-entry-selected {
+    -fx-background-color: -theme-background-pressed;
+}
+
+.start-window-section-list-entry-selected:hover {
+    -fx-background-color: -theme-background-pressed;
+}
+
+/* START WINDOW PROJECTS */
+.start-window-project-buttons-box {
+    -fx-padding: 10px;
+    -fx-spacing: 5px;
+}
+
+.start-window-project-entry {
+    -fx-padding: 10px;
+    -fx-spacing: 5px;
+}
+
+.start-window-project-entry:hover {
+    -fx-background-color: -theme-background-lighter;
+}
+
+.start-window-project-entry .path {
+    -fx-text-fill: -theme-foreground-darker-2;
 }
 
 /* PROJECT TAB PANE */

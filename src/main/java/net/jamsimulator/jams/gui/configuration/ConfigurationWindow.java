@@ -64,7 +64,6 @@ public class ConfigurationWindow extends SplitPane {
 
 	public static ConfigurationWindow getInstance() {
 		if (INSTANCE == null) {
-			ConfigurationWindow window;
 			try {
 				Configuration types = new RootConfiguration(new InputStreamReader(Jams.class.getResourceAsStream(
 						"/configuration/main_config_meta.jconfig")));
@@ -143,6 +142,7 @@ public class ConfigurationWindow extends SplitPane {
 		getItems().add(explorerScrollPane);
 		getItems().add(sectionDisplay);
 		SplitPane.setResizableWithParent(explorerScrollPane, false);
+		Platform.runLater(() -> setDividerPosition(0, 0.2));
 	}
 
 	public void display(ConfigurationWindowSection section) {
@@ -224,9 +224,6 @@ public class ConfigurationWindow extends SplitPane {
 			JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);
 			Jams.getLanguageManager().registerListeners(this, true);
 		}
-
-		stage.setOnShown(target -> Platform.runLater(() ->
-				Platform.runLater(() -> setDividerPosition(0, 0.3))));
 
 		stage.show();
 	}

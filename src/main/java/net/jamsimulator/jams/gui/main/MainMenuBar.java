@@ -56,6 +56,8 @@ import java.util.Set;
  */
 public class MainMenuBar extends MenuBar {
 
+    public static final int MAX_RECENT_PROJECTS = 10;
+
     public MainMenuBar() {
         refresh();
         Jams.getLanguageManager().registerListeners(this, true);
@@ -125,6 +127,7 @@ public class MainMenuBar extends MenuBar {
                         Jams.getProjectTypeManager().getByProjectfolder(file).ifPresent(type ->
                                 JamsApplication.getProjectsTabPane().openProject(type.loadProject(file))));
                 recentMenu.getItems().add(item);
+                if (recentMenu.getItems().size() >= MAX_RECENT_PROJECTS) break;
             }
 
             if (recentMenu.getItems().isEmpty()) {

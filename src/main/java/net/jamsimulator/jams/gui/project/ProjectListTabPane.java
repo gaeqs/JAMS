@@ -61,7 +61,7 @@ public class ProjectListTabPane extends TabPane {
             if (getTabs().isEmpty()) {
                 saveOpenProjects();
                 JamsApplication.getStage().hide();
-                StartWindow.open();
+                StartWindow.INSTANCE.open();
                 if (!getTabs().isEmpty()) {
                     JamsApplication.getStage().show();
                 }
