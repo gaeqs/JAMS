@@ -12,12 +12,14 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.BorderlessMainScene;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class StartWindow extends AnchorPane {
@@ -137,6 +139,14 @@ public class StartWindow extends AnchorPane {
             stage.setWidth(WIDTH);
             stage.setHeight(HEIGHT);
             JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO).ifPresent(stage.getIcons()::add);
+            stage.setOnCloseRequest(event -> {
+                // We are saving the configuration because it may be edited in the start window!
+                try {
+                    Jams.getMainConfiguration().save(true);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         }
         stage.showAndWait();
     }
