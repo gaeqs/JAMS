@@ -41,6 +41,7 @@ public class StartWindow extends AnchorPane {
     private StartWindow() {
         sections = FXCollections.observableList(new ArrayList<>());
         sections.add(new StartWindowSectionProjects(this));
+        sections.add(new StartWindowSectionNewProject(this));
         sections.add(new StartWindowSectionConfiguration());
     }
 
@@ -139,7 +140,7 @@ public class StartWindow extends AnchorPane {
             stage.setWidth(WIDTH);
             stage.setHeight(HEIGHT);
             JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO).ifPresent(stage.getIcons()::add);
-            stage.setOnCloseRequest(event -> {
+            stage.setOnHidden(event -> {
                 // We are saving the configuration because it may be edited in the start window!
                 try {
                     Jams.getMainConfiguration().save(true);

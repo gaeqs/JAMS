@@ -21,6 +21,6 @@ public class StartWindowSectionConfiguration implements StartWindowSection {
 
     @Override
     public String getName() {
-        return "projects";
+        return "configuration";
     }
 }

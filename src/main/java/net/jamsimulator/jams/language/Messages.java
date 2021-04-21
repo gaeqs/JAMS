@@ -39,6 +39,7 @@ public class Messages {
 
 	public static final String START_TITLE = "START_TITLE";
 	public static final String START_PROJECTS = "START_PROJECTS";
+	public static final String START_NEW_PROJECT = "START_NEW_PROJECT";
 
 
 	public static final String MAIN_MENU_FILE = "MAIN_MENU_FILE";

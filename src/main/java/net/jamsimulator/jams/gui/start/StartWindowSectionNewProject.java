@@ -9,7 +9,6 @@ import javafx.stage.DirectoryChooser;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.popup.CreateProjectWindow;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
@@ -21,12 +20,12 @@ import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.io.File;
 
-public class StartWindowSectionProjects extends AnchorPane implements StartWindowSection {
+public class StartWindowSectionNewProject extends AnchorPane implements StartWindowSection {
 
     private final StartWindow window;
     private VBox projects;
 
-    public StartWindowSectionProjects(StartWindow window) {
+    public StartWindowSectionNewProject(StartWindow window) {
         this.window = window;
         loadButtons();
         loadRecentProjects();
@@ -36,7 +35,7 @@ public class StartWindowSectionProjects extends AnchorPane implements StartWindo
 
     @Override
     public String getLanguageNode() {
-        return Messages.START_PROJECTS;
+        return Messages.START_NEW_PROJECT;
     }
 
     @Override
@@ -46,13 +45,22 @@ public class StartWindowSectionProjects extends AnchorPane implements StartWindo
 
     @Override
     public String getName() {
-        return "projects";
+        return "new_project";
     }
 
     private void loadButtons() {
+        var createButton = new LanguageButton(Messages.ACTION_GENERAL_CREATE_PROJECT);
         var openButton = new LanguageButton(Messages.ACTION_GENERAL_OPEN_PROJECT);
 
+        createButton.getStyleClass().add("light-button");
         openButton.getStyleClass().add("light-button");
+
+        createButton.setOnAction(event -> {
+            CreateProjectWindow.open();
+            if (!JamsApplication.getProjectsTabPane().getProjects().isEmpty()) {
+                window.getStage().hide();
+            }
+        });
 
         openButton.setOnAction(event -> {
             DirectoryChooser chooser = new DirectoryChooser();
@@ -62,7 +70,7 @@ public class StartWindowSectionProjects extends AnchorPane implements StartWindo
             window.getStage().hide();
         });
 
-        var hbox = new HBox(openButton);
+        var hbox = new HBox(createButton, openButton);
         hbox.getStyleClass().add("start-window-project-buttons-box");
 
         AnchorUtils.setAnchor(hbox, 0, -1, 0, 0);
@@ -97,7 +105,7 @@ public class StartWindowSectionProjects extends AnchorPane implements StartWindo
     }
 
 
-    private class RecentProject extends HBox {
+    private class RecentProject extends VBox {
 
         public RecentProject(ProjectSnapshot snapshot) {
             getStyleClass().add("start-window-project-entry");
@@ -107,14 +115,7 @@ public class StartWindowSectionProjects extends AnchorPane implements StartWindo
 
             title.getStyleClass().add("title");
             path.getStyleClass().add("path");
-
-            var type = Jams.getProjectTypeManager().getByProjectfolder(new File(snapshot.path()));
-            if (type.isPresent() && type.get().getIcon().isPresent()) {
-                var image = new NearestImageView(type.get().getIcon().get(), 40, 40);
-                getChildren().addAll(image, new VBox(title, path));
-            } else {
-                getChildren().addAll(title, new VBox(title, path));
-            }
+            getChildren().addAll(title, path);
 
             setOnMouseClicked(event -> {
                 var file = new File(snapshot.path());

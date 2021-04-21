@@ -1,8 +1,11 @@
 package net.jamsimulator.jams.project;
 
+import javafx.scene.image.Image;
 import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
+import java.util.Optional;
 
 /**
  * Represents the type of a {@link Project}. This type allows projects to be managed by
@@ -13,19 +16,32 @@ import java.io.File;
 public abstract class ProjectType<T extends Project> implements Labeled {
 
     private final String name;
+    private final Image icon;
 
     /**
      * Creates the project type.
      *
      * @param name the name of the project type.
+     * @param icon the icon representing this type. It may be null.
      */
-    public ProjectType(String name) {
+    public ProjectType(String name, Image icon) {
+        Validate.notNull(name, "Name cannot be null!");
         this.name = name;
+        this.icon = icon;
     }
 
     @Override
     public String getName() {
         return name;
+    }
+
+    /**
+     * Returns the {@link Image icon} representing this type, if present.
+     *
+     * @return the {@link Image icon}.
+     */
+    public Optional<Image> getIcon() {
+        return Optional.ofNullable(icon);
     }
 
     /**
