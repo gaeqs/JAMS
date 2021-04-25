@@ -5,7 +5,7 @@ import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.directive.set.MIPS32DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
-import net.jamsimulator.jams.mips.instruction.set.MIPS32InstructionSet;
+import net.jamsimulator.jams.mips.instruction.set.MIPS32r6InstructionSet;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
@@ -78,7 +78,7 @@ class WriteBackAssociativeCacheTest {
 
 	@Test
 	void testSimpleProblem() {
-		InstructionSet inst = MIPS32InstructionSet.INSTANCE;
+		InstructionSet inst = MIPS32r6InstructionSet.INSTANCE;
 		DirectiveSet dir = MIPS32DirectiveSet.INSTANCE;
 		Registers reg = new MIPS32Registers();
 		Cache mem = new WriteBackAssociativeCache(null, new MIPS32Memory(), 4, 8, CacheReplacementPolicy.LRU);

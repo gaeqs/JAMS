@@ -24,11 +24,9 @@
 
 package net.jamsimulator.jams.mips.assembler;
 
-import net.jamsimulator.jams.gui.util.log.Log;
-import net.jamsimulator.jams.gui.util.log.SimpleLog;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.directive.set.MIPS32DirectiveSet;
-import net.jamsimulator.jams.mips.instruction.set.MIPS32InstructionSet;
+import net.jamsimulator.jams.mips.instruction.set.MIPS32r6InstructionSet;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.simulation.Simulation;
@@ -76,7 +74,7 @@ class AssemblerTest {
 
 		MIPS32Assembler assembler = new MIPS32Assembler(
 				files,
-				MIPS32InstructionSet.INSTANCE,
+				MIPS32r6InstructionSet.INSTANCE,
 				MIPS32DirectiveSet.INSTANCE,
 				new MIPS32Registers(), new MIPS32Memory(), null);
 		assembler.assemble();

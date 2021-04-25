@@ -30,6 +30,7 @@ public class Messages {
 	public static final String GENERAL_OK = "GENERAL_OK";
 	public static final String GENERAL_FINISH = "GENERAL_FINISH";
 	public static final String GENERAL_CANCEL = "GENERAL_CANCEL";
+	public static final String GENERAL_CREATE = "GENERAL_CREATE";
 	public static final String GENERAL_CONFIRMATION = "GENERAL_CONFIRMATION";
 	public static final String GENERAL_ADD = "GENERAL_ADD";
 	public static final String GENERAL_REMOVE = "GENERAL_REMOVE";
@@ -41,6 +42,11 @@ public class Messages {
 	public static final String START_PROJECTS = "START_PROJECTS";
 	public static final String START_NEW_PROJECT = "START_NEW_PROJECT";
 
+	public static final String PROJECT_CREATOR_MIPS_ASSEMBLER = "PROJECT_CREATOR_MIPS_ASSEMBLER";
+	public static final String PROJECT_CREATOR_MIPS_INSTRUCTION_SET = "PROJECT_CREATOR_MIPS_INSTRUCTION_SET";
+	public static final String PROJECT_CREATOR_MIPS_DIRECTIVE_SET = "PROJECT_CREATOR_MIPS_DIRECTIVE_SET";
+	public static final String PROJECT_CREATOR_MIPS_REGISTERS = "PROJECT_CREATOR_MIPS_REGISTERS";
+	public static final String PROJECT_CREATOR_MIPS_EMPTY = "PROJECT_CREATOR_MIPS_EMPTY";
 
 	public static final String MAIN_MENU_FILE = "MAIN_MENU_FILE";
 	public static final String MAIN_MENU_FILE_EXIT = "MAIN_MENU_FILE_EXIT";

@@ -41,7 +41,7 @@ public class StartWindow extends AnchorPane {
     private StartWindow() {
         sections = FXCollections.observableList(new ArrayList<>());
         sections.add(new StartWindowSectionProjects(this));
-        sections.add(new StartWindowSectionNewProject(this));
+        sections.add(new StartWindowSectionNewProject(this::getStage));
         sections.add(new StartWindowSectionConfiguration());
     }
 

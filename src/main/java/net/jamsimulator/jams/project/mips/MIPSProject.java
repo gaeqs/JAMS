@@ -40,105 +40,119 @@ import net.jamsimulator.jams.utils.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.function.Consumer;
 
 public class MIPSProject extends BasicProject {
 
-	public MIPSProject(File folder) {
-		super(folder, false);
-		loadData(null);
-	}
+    public MIPSProject(File folder) {
+        super(folder, false);
+        loadData(null);
+    }
 
-	public MIPSProject(String name, File folder) {
-		super(folder, false);
-		loadData(name);
-	}
+    public MIPSProject(String name, File folder) {
+        super(folder, false);
+        loadData(name);
+    }
 
-	@Override
-	public MIPSProjectData getData() {
-		return (MIPSProjectData) super.getData();
-	}
+    public MIPSProject(String name, File folder, Consumer<MIPSProjectData> projectDataEditor) {
+        super(folder, false);
+        loadData(name, projectDataEditor);
+    }
 
-	@Override
-	public Simulation<?> assemble(Log log) throws IOException {
-		MIPSSimulationConfiguration configuration = getData().getSelectedConfiguration().orElse(null);
+    @Override
+    public MIPSProjectData getData() {
+        return (MIPSProjectData) super.getData();
+    }
 
-		if (configuration == null) {
-			if (log != null) {
-				log.printErrorLn("Error! Configuration not found!");
-			}
-			return null;
-		}
+    @Override
+    public Simulation<?> assemble(Log log) throws IOException {
+        MIPSSimulationConfiguration configuration = getData().getSelectedConfiguration().orElse(null);
 
-		if (log != null) {
-			log.printInfoLn("Assembling project \"" + data.getName() + "\" using configuration \"" + configuration.getName() + "\".");
-			log.println();
-			log.printInfoLn("Files:");
-		}
+        if (configuration == null) {
+            if (log != null) {
+                log.printErrorLn("Error! Configuration not found!");
+            }
+            return null;
+        }
 
-		var rootPath = folder.toPath();
-		var files = new HashMap<String, String>();
+        if (log != null) {
+            log.printInfoLn("Assembling project \"" + data.getName() + "\" using configuration \"" + configuration.getName() + "\".");
+            log.println();
+            log.printInfoLn("Files:");
+        }
 
-		for (File target : getData().getFilesToAssemble().getFiles()) {
-			if (log != null) {
-				log.printInfoLn("- " + target.getAbsolutePath());
-			}
+        var rootPath = folder.toPath();
+        var files = new HashMap<String, String>();
 
-			var name = rootPath.relativize(target.toPath()).toString();
-			try {
-				files.put(name, FileUtils.readAll(target));
-			} catch (Exception ex) {
-				throw new AssemblerException("Error while loading file " + target + ".", ex);
-			}
-		}
+        for (File target : getData().getFilesToAssemble().getFiles()) {
+            if (log != null) {
+                log.printInfoLn("- " + target.getAbsolutePath());
+            }
 
-		long nanos = System.nanoTime();
+            var name = rootPath.relativize(target.toPath()).toString();
+            try {
+                files.put(name, FileUtils.readAll(target));
+            } catch (Exception ex) {
+                throw new AssemblerException("Error while loading file " + target + ".", ex);
+            }
+        }
 
-		Assembler assembler = getData().getAssemblerBuilder().createAssembler(
-				files,
-				getData().getDirectiveSet(),
-				getData().getInstructionSet(),
-				getData().getRegistersBuilder().createRegisters(),
-				configuration.generateNewMemory(),
-				log);
+        long nanos = System.nanoTime();
 
-		if (log != null) {
-			log.println();
-			log.printInfoLn("Assembling...");
-		}
+        Assembler assembler = getData().getAssemblerBuilder().createAssembler(
+                files,
+                getData().getDirectiveSet(),
+                getData().getInstructionSet(),
+                getData().getRegistersBuilder().createRegisters(),
+                configuration.generateNewMemory(),
+                log);
 
-		assembler.assemble();
+        if (log != null) {
+            log.println();
+            log.printInfoLn("Assembling...");
+        }
 
-		if (log != null) {
-			log.printDoneLn("Assembly successful in " + (System.nanoTime() - nanos) / 1000000 + " millis.");
-		}
+        assembler.assemble();
 
-		var simulationData = new SimulationData(configuration, data.getFilesFolder(), new Console(),
-				assembler.getOriginals(), assembler.getLabelsWithFileNames());
+        if (log != null) {
+            log.printDoneLn("Assembly successful in " + (System.nanoTime() - nanos) / 1000000 + " millis.");
+        }
 
-		return assembler.createSimulation(configuration.getNodeValue(MIPSSimulationConfigurationPresets.ARCHITECTURE), simulationData);
-	}
+        var simulationData = new SimulationData(configuration, data.getFilesFolder(), new Console(),
+                assembler.getOriginals(), assembler.getLabelsWithFileNames());
 
-	@Override
-	public void onClose() {
-		data.save();
-		if (projectTab != null) {
-			WorkingPane pane = projectTab.getProjectTabPane().getWorkingPane();
-			if (pane instanceof MIPSStructurePane) {
-				((MIPSStructurePane) pane).getFileDisplayHolder().closeAll(true);
-			}
-		}
-	}
+        return assembler.createSimulation(configuration.getNodeValue(MIPSSimulationConfigurationPresets.ARCHITECTURE), simulationData);
+    }
+
+    @Override
+    public void onClose() {
+        data.save();
+        if (projectTab != null) {
+            WorkingPane pane = projectTab.getProjectTabPane().getWorkingPane();
+            if (pane instanceof MIPSStructurePane) {
+                ((MIPSStructurePane) pane).getFileDisplayHolder().closeAll(true);
+            }
+        }
+    }
 
 
-	@Override
-	protected void loadData(String name) {
-		data = new MIPSProjectData(this);
-		data.load();
+    @Override
+    protected void loadData(String name) {
+        loadData(name, null);
+    }
 
-		if (name != null) {
-			data.setName(name);
-		}
+    private void loadData(String name, Consumer<MIPSProjectData> projectDataEditor) {
+        data = new MIPSProjectData(this);
+        data.load();
 
-		data.save();
-	}
+        if (name != null) {
+            data.setName(name);
+        }
+
+        if (projectDataEditor != null) {
+            projectDataEditor.accept((MIPSProjectData) data);
+        }
+
+        data.save();
+    }
 }

@@ -126,16 +126,32 @@ public class MIPSProjectData extends ProjectData {
         return assemblerBuilder;
     }
 
+    public void setAssemblerBuilder(AssemblerBuilder assemblerBuilder) {
+        this.assemblerBuilder = assemblerBuilder;
+    }
+
     public RegistersBuilder getRegistersBuilder() {
         return registersBuilder;
+    }
+
+    public void setRegistersBuilder(RegistersBuilder registersBuilder) {
+        this.registersBuilder = registersBuilder;
     }
 
     public DirectiveSet getDirectiveSet() {
         return directiveSet;
     }
 
+    public void setDirectiveSet(DirectiveSet directiveSet) {
+        this.directiveSet = directiveSet;
+    }
+
     public InstructionSet getInstructionSet() {
         return instructionSet;
+    }
+
+    public void setInstructionSet(InstructionSet instructionSet) {
+        this.instructionSet = instructionSet;
     }
 
     public MIPSFilesToAssemble getFilesToAssemble() {

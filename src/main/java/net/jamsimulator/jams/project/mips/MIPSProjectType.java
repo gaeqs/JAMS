@@ -16,6 +16,7 @@ public class MIPSProjectType extends ProjectType<MIPSProject> {
 
     private MIPSProjectType() {
         super(NAME, ICON);
+        builderCreators.add(new MIPSEmptyProjectTemplate.Builder());
     }
 
     @Override

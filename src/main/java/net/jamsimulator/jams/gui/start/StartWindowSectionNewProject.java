@@ -1,36 +1,152 @@
 package net.jamsimulator.jams.gui.start;
 
+import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.popup.CreateProjectWindow;
+import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
-import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
-import net.jamsimulator.jams.project.ProjectSnapshot;
-import net.jamsimulator.jams.project.event.RecentProjectAddEvent;
-import net.jamsimulator.jams.project.mips.MIPSProject;
+import net.jamsimulator.jams.language.wrapper.LanguageLabel;
+import net.jamsimulator.jams.project.ProjectTemplateBuilder;
+import net.jamsimulator.jams.project.ProjectType;
+import net.jamsimulator.jams.project.event.ProjectTypeRegisterEvent;
+import net.jamsimulator.jams.project.event.ProjectTypeUnregisterEvent;
 
-import java.io.File;
+import java.util.HashMap;
+import java.util.function.Supplier;
 
-public class StartWindowSectionNewProject extends AnchorPane implements StartWindowSection {
+public class StartWindowSectionNewProject extends SplitPane implements StartWindowSection {
 
-    private final StartWindow window;
-    private VBox projects;
+    private final Supplier<Stage> stageSupplier;
 
-    public StartWindowSectionNewProject(StartWindow window) {
-        this.window = window;
-        loadButtons();
-        loadRecentProjects();
+    private final HashMap<ProjectTemplateBuilder<?>, Node> addedCreators;
+    private ProjectTemplateBuilder<?> selected;
+    private Node selectedButton;
 
-        Jams.getRecentProjects().registerListeners(this, true);
+    private final VBox sectionsVBox;
+    private final AnchorPane sectionDisplay;
+
+    private final ListChangeListener<ProjectTemplateBuilder<?>> listener = event -> {
+        event.getAddedSubList().forEach(this::addCreator);
+        event.getRemoved().forEach(this::removeCreator);
+    };
+
+    public StartWindowSectionNewProject(Supplier<Stage> stageSupplier) {
+        this.stageSupplier = stageSupplier;
+
+        addedCreators = new HashMap<>();
+        sectionsVBox = new VBox();
+        sectionDisplay = new AnchorPane();
+
+        sectionsVBox.getStyleClass().add("start-window-new-project-list");
+        sectionDisplay.getStyleClass().add("start-window-new-project-display");
+
+        loadSectionMenu();
+
+        Jams.getProjectTypeManager().registerListeners(this, true);
+    }
+
+    private void select(ProjectTemplateBuilder<?> creator, Node button) {
+        if (selected == creator) return;
+        if (selected != null) {
+            selectedButton.getStyleClass().remove("start-window-new-project-list-entry-selected");
+        }
+
+        selected = creator;
+        selectedButton = button;
+
+        sectionDisplay.getChildren().clear();
+        if (selected != null) {
+            selectedButton.getStyleClass().add("start-window-new-project-list-entry-selected");
+            populate();
+        }
+    }
+
+    private void loadSectionMenu() {
+        refreshSections();
+
+        getItems().addAll(sectionsVBox, sectionDisplay);
+        Platform.runLater(() -> setDividerPosition(0, 0.3));
+    }
+
+    private void refreshSections() {
+        sectionsVBox.getChildren().clear();
+        Jams.getProjectTypeManager().forEach(this::addCreators);
+    }
+
+    private void addCreators(ProjectType<?> type) {
+        type.getBuilderCreators().forEach(this::addCreator);
+        type.getBuilderCreators().addListener(listener);
+    }
+
+    private void addCreator(ProjectTemplateBuilder<?> creator) {
+        var button = new HBox();
+        button.setSpacing(5);
+
+        creator.getIcon().ifPresent(icon -> button.getChildren().add(new NearestImageView(icon, 20, 20)));
+        button.getChildren().add(creator.getLanguageNode()
+                .map(node -> (Label) new LanguageLabel(node))
+                .orElseGet(() -> new Label(creator.getName())));
+
+        button.getStyleClass().add("start-window-new-project-list-entry");
+        button.setFillHeight(true);
+        button.setOnMouseClicked(event -> select(creator, button));
+        sectionsVBox.getChildren().add(button);
+
+        if (selected == null) {
+            select(creator, button);
+        }
+
+        addedCreators.put(creator, button);
+    }
+
+    private void removeCreator(ProjectTemplateBuilder<?> creator) {
+        var value = addedCreators.remove(creator);
+        if (value != null) sectionsVBox.getChildren().remove(value);
+    }
+
+    private void populate() {
+        var builder = selected.createBuilder();
+        var node = builder.getBuilderNode();
+        AnchorUtils.setAnchor(node, 0, 35, 0, 0);
+        sectionDisplay.getChildren().add(node);
+
+        var buttons = new HBox();
+        var createButton = new LanguageButton(Messages.GENERAL_CREATE);
+        createButton.setOnAction(event -> {
+            var project = builder.build();
+            JamsApplication.getProjectsTabPane().openProject(project);
+            stageSupplier.get().hide();
+        });
+        createButton.disableProperty().bind(builder.validProperty().not());
+        buttons.getChildren().add(createButton);
+        buttons.getStyleClass().add("start-window-new-project-buttons");
+
+        AnchorUtils.setAnchor(buttons, -1, 0, 0, 0);
+        sectionDisplay.getChildren().add(buttons);
+
+    }
+
+    @Listener
+    private void onTypeRegistered(ProjectTypeRegisterEvent.After event) {
+        event.getProjectType().getBuilderCreators().forEach(this::addCreator);
+        event.getProjectType().getBuilderCreators().addListener(listener);
+    }
+
+    @Listener
+    private void onTypeUnregistered(ProjectTypeUnregisterEvent.After event) {
+        event.getProjectType().getBuilderCreators().forEach(this::removeCreator);
+        event.getProjectType().getBuilderCreators().removeListener(listener);
     }
 
     @Override
@@ -46,87 +162,5 @@ public class StartWindowSectionNewProject extends AnchorPane implements StartWin
     @Override
     public String getName() {
         return "new_project";
-    }
-
-    private void loadButtons() {
-        var createButton = new LanguageButton(Messages.ACTION_GENERAL_CREATE_PROJECT);
-        var openButton = new LanguageButton(Messages.ACTION_GENERAL_OPEN_PROJECT);
-
-        createButton.getStyleClass().add("light-button");
-        openButton.getStyleClass().add("light-button");
-
-        createButton.setOnAction(event -> {
-            CreateProjectWindow.open();
-            if (!JamsApplication.getProjectsTabPane().getProjects().isEmpty()) {
-                window.getStage().hide();
-            }
-        });
-
-        openButton.setOnAction(event -> {
-            DirectoryChooser chooser = new DirectoryChooser();
-            File folder = chooser.showDialog(JamsApplication.getStage());
-            if (folder == null || JamsApplication.getProjectsTabPane().isProjectOpen(folder)) return;
-            JamsApplication.getProjectsTabPane().openProject(new MIPSProject(folder));
-            window.getStage().hide();
-        });
-
-        var hbox = new HBox(createButton, openButton);
-        hbox.getStyleClass().add("start-window-project-buttons-box");
-
-        AnchorUtils.setAnchor(hbox, 0, -1, 0, 0);
-        getChildren().add(hbox);
-    }
-
-    private void loadRecentProjects() {
-        projects = new VBox();
-        var scrollpane = new PixelScrollPane(projects);
-        scrollpane.setFitToWidth(true);
-        scrollpane.setFitToHeight(true);
-
-        AnchorUtils.setAnchor(scrollpane, 50, 0, 0, 0);
-        getChildren().add(scrollpane);
-        refeshProjects();
-    }
-
-    private void refeshProjects() {
-        projects.getChildren().clear();
-        Jams.getRecentProjects().forEach(snapshot -> {
-            var file = new File(snapshot.path());
-            if (!file.isDirectory()) return;
-            projects.getChildren().add(new RecentProject(snapshot));
-        });
-    }
-
-    @Listener
-    private void onRecentProjectAdd(RecentProjectAddEvent.After event) {
-        // We refresh instead of adding it because it can be an already present
-        // project that is being moved to the top of the list.
-        refeshProjects();
-    }
-
-
-    private class RecentProject extends VBox {
-
-        public RecentProject(ProjectSnapshot snapshot) {
-            getStyleClass().add("start-window-project-entry");
-
-            var title = new Label(snapshot.name());
-            var path = new Label(snapshot.path());
-
-            title.getStyleClass().add("title");
-            path.getStyleClass().add("path");
-            getChildren().addAll(title, path);
-
-            setOnMouseClicked(event -> {
-                var file = new File(snapshot.path());
-                if (!file.isDirectory()) {
-                    projects.getChildren().remove(this);
-                    return;
-                }
-                JamsApplication.getProjectsTabPane().openProject(new MIPSProject(file));
-                window.getStage().hide();
-            });
-        }
-
     }
 }

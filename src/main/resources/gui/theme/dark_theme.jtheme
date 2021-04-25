@@ -688,6 +688,37 @@ AnchorPane {
     -fx-text-fill: -theme-foreground-darker-2;
 }
 
+/* START WINDOW NEW PROJECT */
+.start-window-new-project-list {
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.start-window-new-project-list-entry {
+    -fx-padding: 8 0 8 10;
+    -fx-alignment: center-left;
+}
+
+.start-window-new-project-list-entry:hover {
+    -fx-background-color: -theme-background-lighter;
+}
+
+.start-window-new-project-list-entry-selected {
+    -fx-background-color: -theme-background-pressed;
+}
+
+.start-window-new-project-list-entry-selected:hover {
+    -fx-background-color: -theme-background-pressed;
+}
+
+.start-window-new-project-buttons {
+    -fx-alignment: center-right;
+    -fx-padding: 20px;
+}
+
+.start-window-new-project-buttons .button {
+    -fx-pref-width: 100;
+    -fx-pref-height: 20;
+}
 
 /* PROJECT TAB PANE */
 .project-tab-pane {
@@ -1400,4 +1431,14 @@ AnchorPane {
 .plugin-entry-author,
 .plugin-display-author {
     -fx-text-fill: -theme-foreground-darker;
+}
+
+/*STYLED NODE LIST*/
+.styled-node-list {
+    -fx-padding: 10, 10, 5, 10;
+    -fx-spacing: 5px;
+}
+
+.styled-node-list-entry {
+    -fx-spacing: 7px;
 }

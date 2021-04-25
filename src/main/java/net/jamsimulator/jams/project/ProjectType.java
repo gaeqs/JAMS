@@ -1,10 +1,13 @@
 package net.jamsimulator.jams.project;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
 import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -15,8 +18,9 @@ import java.util.Optional;
  */
 public abstract class ProjectType<T extends Project> implements Labeled {
 
-    private final String name;
-    private final Image icon;
+    protected final String name;
+    protected final Image icon;
+    protected final ObservableList<ProjectTemplateBuilder<?>> builderCreators;
 
     /**
      * Creates the project type.
@@ -28,6 +32,7 @@ public abstract class ProjectType<T extends Project> implements Labeled {
         Validate.notNull(name, "Name cannot be null!");
         this.name = name;
         this.icon = icon;
+        this.builderCreators = FXCollections.observableList(new ArrayList<>());
     }
 
     @Override
@@ -42,6 +47,20 @@ public abstract class ProjectType<T extends Project> implements Labeled {
      */
     public Optional<Image> getIcon() {
         return Optional.ofNullable(icon);
+    }
+
+    /**
+     * Returns a modifiable list with all {@link ProjectTemplateBuilder} registered in this project type.
+     * <p>
+     * {@link ProjectTemplateBuilder}s are used to create {@link Project}s with custom parameters.
+     * These builders also provide graphical nodes for the project creation window.
+     * <p>
+     * This list is observable. You can listen modifications of this list.
+     *
+     * @return the {@link ObservableList}.
+     */
+    public ObservableList<ProjectTemplateBuilder<?>> getBuilderCreators() {
+        return builderCreators;
     }
 
     /**

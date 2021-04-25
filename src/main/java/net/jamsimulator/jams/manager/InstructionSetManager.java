@@ -25,7 +25,7 @@
 package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
-import net.jamsimulator.jams.mips.instruction.set.MIPS32InstructionSet;
+import net.jamsimulator.jams.mips.instruction.set.MIPS32r6InstructionSet;
 import net.jamsimulator.jams.mips.instruction.set.event.DefaultInstructionSetChangeEvent;
 import net.jamsimulator.jams.mips.instruction.set.event.InstructionSetRegisterEvent;
 import net.jamsimulator.jams.mips.instruction.set.event.InstructionSetUnregisterEvent;
@@ -50,11 +50,11 @@ public class InstructionSetManager extends DefaultValuableManager<InstructionSet
 
 	@Override
 	protected void loadDefaultElements() {
-		add(MIPS32InstructionSet.INSTANCE);
+		add(MIPS32r6InstructionSet.INSTANCE);
 	}
 
 	@Override
 	protected InstructionSet loadDefaultElement() {
-		return MIPS32InstructionSet.INSTANCE;
+		return MIPS32r6InstructionSet.INSTANCE;
 	}
 }
