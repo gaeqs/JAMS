@@ -28,7 +28,9 @@ import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.event.general.JAMSPostInitEvent;
 import net.jamsimulator.jams.event.general.JAMSPreInitEvent;
+import net.jamsimulator.jams.event.general.JAMSShutdownEvent;
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.manager.*;
 import net.jamsimulator.jams.project.RecentProjects;
 import net.jamsimulator.jams.utils.ConfigurationUtils;
@@ -38,6 +40,7 @@ import net.jamsimulator.jams.utils.TempUtils;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 public class Jams {
@@ -102,6 +105,9 @@ public class Jams {
         generalEventBroadcast.callEvent(new JAMSPostInitEvent());
 
         JamsApplication.main(args);
+
+        // This is called when the JavaFX manager finishes:
+        onClose();
     }
 
     /**
@@ -278,5 +284,30 @@ public class Jams {
             e.printStackTrace();
             VERSION = "NULL";
         }
+    }
+
+    /**
+     * This method is called when the JavaFX application finishes.
+     * Shutdowns everything and saves all savable elements.
+     */
+    private static void onClose() {
+        getGeneralEventBroadcast().callEvent(new JAMSShutdownEvent.Before());
+        //Save main configuration.
+        try {
+            getMainConfiguration().save(true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JamsApplication.getProjectsTabPane().saveOpenProjects();
+        getRecentProjects().save();
+        for (ProjectTab project : JamsApplication.getProjectsTabPane().getProjects()) {
+            project.getProject().onClose();
+        }
+
+        getGeneralEventBroadcast().callEvent(new JAMSShutdownEvent.After());
+
+        // Disables all plugins
+        getPluginManager().forEach(p -> p.setEnabled(false));
     }
 }

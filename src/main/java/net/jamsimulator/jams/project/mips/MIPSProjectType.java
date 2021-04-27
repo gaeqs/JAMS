@@ -20,17 +20,6 @@ public class MIPSProjectType extends ProjectType<MIPSProject> {
     }
 
     @Override
-    public MIPSProject createProject(String name, File folder) {
-        var project = new MIPSProject(name, folder);
-        if (project.getData().configurations.isEmpty()) {
-            //Add default configuration
-            project.getData().addConfiguration(new MIPSSimulationConfiguration("Default"));
-        }
-
-        return project;
-    }
-
-    @Override
     public MIPSProject loadProject(File folder) {
         return new MIPSProject(folder);
     }

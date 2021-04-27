@@ -17,17 +17,30 @@ import java.util.Optional;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
+/**
+ * The instance of this class stores the recent projects opened by the user.
+ * <p>
+ * The elements of this collection are {@link ProjectSnapshot}s.
+ */
 public class RecentProjects extends SimpleEventBroadcast implements Iterable<ProjectSnapshot> {
 
     public static final String FILE_NAME = "recent_projects.dat";
 
     private final LinkedList<ProjectSnapshot> list;
 
+    /**
+     * Creates the collection.
+     */
     public RecentProjects() {
         list = new LinkedList<>();
         load();
     }
 
+    /**
+     * Returns the amount of recent projects this collection has.
+     *
+     * @return the amount of recent projects.
+     */
     public int size() {
         return list.size();
     }
@@ -37,6 +50,14 @@ public class RecentProjects extends SimpleEventBroadcast implements Iterable<Pro
         return Optional.of(list.get(index));
     }
 
+    /**
+     * Adds a recent project.
+     * <p>
+     * This element will be added at the start of the collection.
+     * If this project is already inside this collection, the project will me moved a the start of the collection.
+     *
+     * @param snapshot the recent project.
+     */
     public void add(ProjectSnapshot snapshot) {
         Validate.notNull(snapshot, "Snapshot cannot be null!");
 
@@ -49,6 +70,9 @@ public class RecentProjects extends SimpleEventBroadcast implements Iterable<Pro
         callEvent(new RecentProjectAddEvent.After(snapshot));
     }
 
+    /**
+     * Saves the recent projects.
+     */
     public void save() {
         var file = new File(Jams.getMainFolder(), FILE_NAME);
         var array = new JSONArray();

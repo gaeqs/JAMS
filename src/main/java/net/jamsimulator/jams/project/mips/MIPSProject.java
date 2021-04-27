@@ -40,23 +40,11 @@ import net.jamsimulator.jams.utils.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.function.Consumer;
 
 public class MIPSProject extends BasicProject {
 
     public MIPSProject(File folder) {
-        super(folder, false);
-        loadData(null);
-    }
-
-    public MIPSProject(String name, File folder) {
-        super(folder, false);
-        loadData(name);
-    }
-
-    public MIPSProject(String name, File folder, Consumer<MIPSProjectData> projectDataEditor) {
-        super(folder, false);
-        loadData(name, projectDataEditor);
+        super(folder, true);
     }
 
     @Override
@@ -137,22 +125,8 @@ public class MIPSProject extends BasicProject {
 
 
     @Override
-    protected void loadData(String name) {
-        loadData(name, null);
-    }
-
-    private void loadData(String name, Consumer<MIPSProjectData> projectDataEditor) {
+    protected void loadData() {
         data = new MIPSProjectData(this);
         data.load();
-
-        if (name != null) {
-            data.setName(name);
-        }
-
-        if (projectDataEditor != null) {
-            projectDataEditor.accept((MIPSProjectData) data);
-        }
-
-        data.save();
     }
 }

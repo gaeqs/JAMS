@@ -26,7 +26,6 @@ package net.jamsimulator.jams.gui;
 
 import com.goxr3plus.fxborderlessscene.borderless.BorderlessScene;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -34,10 +33,8 @@ import javafx.scene.control.ContextMenu;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.general.JAMSApplicationPostInitEvent;
-import net.jamsimulator.jams.event.general.JAMSShutdownEvent;
 import net.jamsimulator.jams.gui.font.FontLoader;
 import net.jamsimulator.jams.gui.image.icon.IconManager;
 import net.jamsimulator.jams.gui.image.icon.Icons;
@@ -45,7 +42,6 @@ import net.jamsimulator.jams.gui.main.BorderlessMainScene;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
 import net.jamsimulator.jams.gui.main.MainScene;
 import net.jamsimulator.jams.gui.project.ProjectListTabPane;
-import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.start.StartWindow;
 import net.jamsimulator.jams.manager.ActionManager;
 import net.jamsimulator.jams.manager.BarSnapshotViewModeManager;
@@ -53,9 +49,6 @@ import net.jamsimulator.jams.manager.MIPSEditorInspectionBuilderManager;
 import net.jamsimulator.jams.manager.ThemeManager;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 public class JamsApplication extends Application {
@@ -69,8 +62,6 @@ public class JamsApplication extends Application {
     private static Scene scene;
     private static MainAnchorPane mainAnchorPane;
 
-    private static List<EventHandler<WindowEvent>> closeListeners;
-
     private static ContextMenu lastContextMenu;
 
     @Override
@@ -79,8 +70,6 @@ public class JamsApplication extends Application {
 
         FontLoader.load();
         primaryStage.setTitle("JAMS (Just Another MIPS Simulator)");
-
-        closeListeners = new ArrayList<>();
 
         Optional<Boolean> useBorderless = Jams.getMainConfiguration().get("appearance.hide_top_bar");
         boolean transparent = useBorderless.orElse(false);
@@ -119,11 +108,6 @@ public class JamsApplication extends Application {
         } else {
             stage.show();
         }
-
-        stage.setOnHidden(event -> {
-            closeListeners.forEach(target -> target.handle(event));
-            onClose();
-        });
 
         Jams.getMainConfiguration().registerListeners(this, true);
         loaded = true;
@@ -221,25 +205,6 @@ public class JamsApplication extends Application {
     }
 
     /**
-     * Adds a listener that will be invoked when the main stage is closed.
-     *
-     * @param listener the listener.
-     */
-    public static void addStageCloseListener(EventHandler<WindowEvent> listener) {
-        closeListeners.add(listener);
-    }
-
-
-    /**
-     * Removed a listener that would be invoked when the main stage is closed.
-     *
-     * @param listener the listener.
-     */
-    public static void removeStageCloseListener(EventHandler<WindowEvent> listener) {
-        closeListeners.remove(listener);
-    }
-
-    /**
      * Opens the given {@link ContextMenu}, hiding the last open context menu.
      *
      * @param menu   the {@link ContextMenu} to open.
@@ -267,27 +232,5 @@ public class JamsApplication extends Application {
 
     public static void main(String[] args) {
         launch(args);
-    }
-
-
-    private static void onClose() {
-        Jams.getGeneralEventBroadcast().callEvent(new JAMSShutdownEvent.Before());
-        //Save main configuration.
-        try {
-            Jams.getMainConfiguration().save(true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        getProjectsTabPane().saveOpenProjects();
-        Jams.getRecentProjects().save();
-        for (ProjectTab project : getProjectsTabPane().getProjects()) {
-            project.getProject().onClose();
-        }
-
-        Jams.getGeneralEventBroadcast().callEvent(new JAMSShutdownEvent.After());
-
-        // Disables all plugins
-        Jams.getPluginManager().forEach(p -> p.setEnabled(false));
     }
 }

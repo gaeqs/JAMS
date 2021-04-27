@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.gui.project;
 
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
@@ -33,12 +32,11 @@ import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.WindowEvent;
-import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.event.general.JAMSShutdownEvent;
 import net.jamsimulator.jams.gui.bar.*;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
-
-import java.util.Set;
 
 /**
  * The default working pane. This pane contains a central {@link SplitPane},
@@ -59,8 +57,6 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
     protected Node center;
 
     protected BarMap barMap;
-
-    private EventHandler<WindowEvent> stageCloseListener;
 
     public WorkingPane(Tab parent, ProjectTab projectTab, Node center, boolean init) {
         getStyleClass().add("working-pane");
@@ -114,9 +110,11 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
     @Override
     public void onClose() {
         barMap.forEachButton(BarButton::hide);
-        if (stageCloseListener != null) {
-            JamsApplication.removeStageCloseListener(stageCloseListener);
-        }
+    }
+
+    @Listener
+    private void onShutdown(JAMSShutdownEvent.Before event) {
+        onClose();
     }
 
     //region INIT
@@ -139,11 +137,8 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
         loadSidebars();
         loadResizeEvents();
 
-        stageCloseListener = target -> {
-            stageCloseListener = null;
-            onClose();
-        };
-        JamsApplication.addStageCloseListener(stageCloseListener);
+
+        Jams.getGeneralEventBroadcast().registerListeners(this, true);
     }
 
     private void loadSidebars() {

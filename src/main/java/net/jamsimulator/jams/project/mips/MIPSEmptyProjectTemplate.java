@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.gui.configuration.ConfigurationRegionDisplay;
 import net.jamsimulator.jams.gui.util.PathAndNameEditor;
 import net.jamsimulator.jams.gui.util.propertyeditor.PropertyEditors;
@@ -15,8 +16,12 @@ import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
+import net.jamsimulator.jams.project.ProjectData;
 import net.jamsimulator.jams.project.ProjectTemplate;
 import net.jamsimulator.jams.project.ProjectTemplateBuilder;
+import net.jamsimulator.jams.project.exception.MIPSTemplateBuildException;
+import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
+import net.jamsimulator.jams.utils.FolderUtils;
 
 import java.io.File;
 
@@ -102,13 +107,28 @@ public class MIPSEmptyProjectTemplate extends ProjectTemplate<MIPSProject> {
     }
 
     @Override
-    public MIPSProject build() {
-        return new MIPSProject(editor.getName(), new File(editor.getPath()), data -> {
-            data.setAssemblerBuilder(assemblerBuilderProperty.getValue());
-            data.setInstructionSet(instructionSetProperty.getValue());
-            data.setDirectiveSet(directiveSetProperty.getValue());
-            data.setRegistersBuilder(registersBuilderProperty.getValue());
-        });
+    public MIPSProject build() throws MIPSTemplateBuildException {
+        var folder = new File(editor.getPath());
+        if (!FolderUtils.checkFolder(folder))
+            throw new MIPSTemplateBuildException("Couldn't create folder " + editor.getPath() + "!");
+        var metadataFolder = new File(folder, ProjectData.METADATA_FOLDER_NAME);
+        if (!FolderUtils.checkFolder(metadataFolder))
+            throw new MIPSTemplateBuildException("Couldn't create folder " + metadataFolder.getAbsolutePath() + "!");
+
+        var metadataFile = new File(metadataFolder, ProjectData.METADATA_DATA_NAME);
+
+        try {
+            var config = new RootConfiguration(metadataFile);
+            config.convertAndSet(MIPSProjectData.NODE_ASSEMBLER, assemblerBuilderProperty.getValue(), AssemblerBuilder.class);
+            config.convertAndSet(MIPSProjectData.NODE_REGISTERS, registersBuilderProperty.getValue(), RegistersBuilder.class);
+            config.convertAndSet(MIPSProjectData.NODE_DIRECTIVES, directiveSetProperty.getValue(), DirectiveSet.class);
+            config.convertAndSet(MIPSProjectData.NODE_INSTRUCTIONS, instructionSetProperty.getValue(), InstructionSet.class);
+            new MIPSSimulationConfiguration("Default").save(config, MIPSProjectData.NODE_CONFIGURATIONS);
+            return new MIPSProject(folder);
+        } catch (Exception e) {
+            throw new MIPSTemplateBuildException(e);
+        }
+
     }
 
     public static class Builder extends ProjectTemplateBuilder<MIPSProject> {

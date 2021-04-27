@@ -214,6 +214,7 @@ public class Configuration {
         var c = ValueConverters.getByType(type);
         try {
             if (c.isEmpty()) {
+                System.err.println("Couldn't find converter for type " + type + "!");
                 Optional<Object> optional = get(key);
                 if (optional.isEmpty()) return Optional.empty();
                 return Optional.of((T) optional.get());

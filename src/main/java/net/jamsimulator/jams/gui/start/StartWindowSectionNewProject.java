@@ -17,10 +17,12 @@ import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
+import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.ProjectTemplateBuilder;
 import net.jamsimulator.jams.project.ProjectType;
 import net.jamsimulator.jams.project.event.ProjectTypeRegisterEvent;
 import net.jamsimulator.jams.project.event.ProjectTypeUnregisterEvent;
+import net.jamsimulator.jams.project.exception.MIPSTemplateBuildException;
 
 import java.util.HashMap;
 import java.util.function.Supplier;
@@ -124,7 +126,12 @@ public class StartWindowSectionNewProject extends SplitPane implements StartWind
         var buttons = new HBox();
         var createButton = new LanguageButton(Messages.GENERAL_CREATE);
         createButton.setOnAction(event -> {
-            var project = builder.build();
+            Project project = null;
+            try {
+                project = builder.build();
+            } catch (MIPSTemplateBuildException e) {
+                e.printStackTrace();
+            }
             JamsApplication.getProjectsTabPane().openProject(project);
             stageSupplier.get().hide();
         });

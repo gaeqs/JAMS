@@ -43,6 +43,7 @@ public class StartWindow extends AnchorPane {
         sections.add(new StartWindowSectionProjects(this));
         sections.add(new StartWindowSectionNewProject(this::getStage));
         sections.add(new StartWindowSectionConfiguration());
+        sections.add(new StartWindowSectionAbout());
     }
 
     public Stage getStage() {

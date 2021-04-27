@@ -41,6 +41,7 @@ public class Messages {
 	public static final String START_TITLE = "START_TITLE";
 	public static final String START_PROJECTS = "START_PROJECTS";
 	public static final String START_NEW_PROJECT = "START_NEW_PROJECT";
+	public static final String START_ABOUT = "START_ABOUT";
 
 	public static final String PROJECT_CREATOR_MIPS_ASSEMBLER = "PROJECT_CREATOR_MIPS_ASSEMBLER";
 	public static final String PROJECT_CREATOR_MIPS_INSTRUCTION_SET = "PROJECT_CREATOR_MIPS_INSTRUCTION_SET";

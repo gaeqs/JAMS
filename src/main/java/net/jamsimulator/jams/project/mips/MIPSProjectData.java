@@ -45,6 +45,13 @@ import java.util.Set;
 
 public class MIPSProjectData extends ProjectData {
 
+    public static final String NODE_ASSEMBLER = "mips.assembler";
+    public static final String NODE_REGISTERS = "mips.registers";
+    public static final String NODE_DIRECTIVES = "mips.directives";
+    public static final String NODE_INSTRUCTIONS = "mips.instructions";
+    public static final String NODE_CONFIGURATIONS = "mips.configurations";
+    public static final String NODE_SELECTED_CONFIGURATION = "mips.selectedConfiguration";
+
     protected Set<MIPSSimulationConfiguration> configurations;
     protected MIPSSimulationConfiguration selectedConfiguration;
 
@@ -211,37 +218,25 @@ public class MIPSProjectData extends ProjectData {
     }
 
     private void saveMipsConfiguration() {
-        data.set("mips.assembler", assemblerBuilder.getName());
-        data.set("mips.registers", registersBuilder.getName());
-        data.set("mips.directives", directiveSet.getName());
-        data.set("mips.instructions", instructionSet.getName());
-        data.remove("mips.configurations");
+        data.convertAndSet(NODE_ASSEMBLER, assemblerBuilder, AssemblerBuilder.class);
+        data.convertAndSet(NODE_REGISTERS, registersBuilder, RegistersBuilder.class);
+        data.convertAndSet(NODE_DIRECTIVES, directiveSet, DirectiveSet.class);
+        data.convertAndSet(NODE_INSTRUCTIONS, instructionSet, InstructionSet.class);
+        data.remove(NODE_CONFIGURATIONS);
 
-        configurations.forEach(config -> config.save(data, "mips.configurations"));
-        data.set("mips.selectedConfiguration", selectedConfiguration == null ? null : selectedConfiguration.getName());
+        configurations.forEach(config -> config.save(data, NODE_CONFIGURATIONS));
+        data.set(NODE_SELECTED_CONFIGURATION, selectedConfiguration == null ? null : selectedConfiguration.getName());
     }
 
 
     protected void loadMipsConfiguration() {
-        //ASSEMBLER
-        Optional<AssemblerBuilder> asOptional = data.getString("mips.assembler").flatMap(Jams.getAssemblerBuilderManager()::get);
-        assemblerBuilder = asOptional.orElseGet(() -> Jams.getAssemblerBuilderManager().getDefault());
-
-        //REGISTERS
-        Optional<RegistersBuilder> regOptional = data.getString("mips.registers").flatMap(Jams.getRegistersBuilderManager()::get);
-        registersBuilder = regOptional.orElseGet(() -> Jams.getRegistersBuilderManager().getDefault());
-
-        //DIRECTIVES
-        Optional<DirectiveSet> dirOptional = data.getString("mips.directives").flatMap(Jams.getDirectiveSetManager()::get);
-        directiveSet = dirOptional.orElseGet(() -> Jams.getDirectiveSetManager().getDefault());
-
-        //INSTRUCTIONS
-        Optional<InstructionSet> insOptional = data.getString("mips.instructions").flatMap(Jams.getInstructionSetManager()::get);
-        instructionSet = insOptional.orElseGet(() -> Jams.getInstructionSetManager().getDefault());
+        assemblerBuilder = data.getAndConvertOrElse(NODE_ASSEMBLER, AssemblerBuilder.class, Jams.getAssemblerBuilderManager().getDefault());
+        registersBuilder = data.getAndConvertOrElse(NODE_REGISTERS, RegistersBuilder.class, Jams.getRegistersBuilderManager().getDefault());
+        directiveSet = data.getAndConvertOrElse(NODE_DIRECTIVES, DirectiveSet.class, Jams.getDirectiveSetManager().getDefault());
+        instructionSet = data.getAndConvertOrElse(NODE_INSTRUCTIONS, InstructionSet.class, Jams.getInstructionSetManager().getDefault());
 
         configurations = new HashSet<>();
-
-        Optional<Configuration> configOptional = data.get("mips.configurations");
+        Optional<Configuration> configOptional = data.get(NODE_CONFIGURATIONS);
         if (configOptional.isPresent()) {
             Configuration config = configOptional.get();
 
@@ -251,7 +246,7 @@ public class MIPSProjectData extends ProjectData {
             });
         }
 
-        String selectedConfig = data.getString("mips.selectedConfiguration").orElse(null);
+        String selectedConfig = data.getString(NODE_SELECTED_CONFIGURATION).orElse(null);
         selectedConfiguration = configurations.stream().filter(target -> target.getName().equals(selectedConfig)).findAny().orElse(null);
 
     }
