@@ -132,8 +132,9 @@ public class Messages {
 	public static final String MEMORY_CACHE_TAG = "MEMORY_CACHE_TAG";
 	public static final String MEMORY_CACHE_BLOCK = "MEMORY_CACHE_BLOCK";
 
-	public static final String LABELS_NAME = "LABELS_NAME";
 	public static final String LABELS_ADDRESS = "LABELS_ADDRESS";
+	public static final String LABELS_LINE = "LABELS_LINE";
+	public static final String LABELS_REFERENCES = "LABELS_REFERENCES";
 	public static final String LABELS_CONTEXT_SHOW_IN_MEMORY = "LABELS_CONTEXT_SHOW_IN_MEMORY";
 	public static final String LABELS_CONTEXT_SHOW_IN_INSTRUCTION = "LABELS_CONTEXT_SHOW_IN_INSTRUCTION";
 
@@ -246,6 +247,9 @@ public class Messages {
 	public static final String ACTION_MIPS_SIMULATION_RESET = "ACTION_MIPS_SIMULATION_RESET";
 	public static final String ACTION_MIPS_SIMULATION_STOP = "ACTION_MIPS_SIMULATION_STOP";
 	public static final String ACTION_MIPS_SIMULATION_UNDO_ONE_STEP = "ACTION_MIPS_SIMULATION_UNDO_ONE_STEP";
+
+	public static final String ACTION_MIPS_LABELS_LABEL_SHOW_IN_MEMORY = "ACTION_MIPS_LABELS_LABEL_SHOW_IN_MEMORY";
+	public static final String ACTION_MIPS_LABELS_LABEL_SHOW_IN_INSTRUCTION_VIEWER = "ACTION_MIPS_LABELS_LABEL_SHOW_IN_INSTRUCTION_VIEWER";
 
 	public static final String ABOUT = "ABOUT";
 

@@ -13,6 +13,7 @@ import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.label.Label;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
@@ -171,7 +172,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
                     var paragraph = getParagraph(line.getLine());
                     replace(line.getLine(), 0, line.getLine(), paragraph.length(),
                             stringBuilder.toString(), Collections.emptyList());
-                    if(!styleBuilder.isEmpty()) {
+                    if (!styleBuilder.isEmpty()) {
                         setStyleSpans(line.getLine(), 0, styleBuilder.create());
                     }
                 });
@@ -321,7 +322,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
             int currentCopy = current;
 
             if (showLabels) {
-                var optional = labels.entrySet().stream().filter(e -> e.getValue() == currentCopy).map(Map.Entry::getKey).findAny();
+                var optional = labels.stream().filter(e -> e.getAddress() == currentCopy).map(Label::getKey).findAny();
                 if (optional.isPresent()) {
                     assembledLines.add(new MIPSAssembledLine(assembledLines.size()));
                     addAndStyle(optional.get() + ":\n", LABEL, stringBuilder, styleBuilder);

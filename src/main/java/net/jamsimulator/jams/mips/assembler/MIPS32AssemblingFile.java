@@ -1,6 +1,7 @@
 package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
+import net.jamsimulator.jams.mips.label.Label;
 import net.jamsimulator.jams.utils.LabelUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 import net.jamsimulator.jams.utils.Validate;
@@ -21,7 +22,7 @@ public class MIPS32AssemblingFile {
     private final List<DirectiveSnapshot> directives;
     private final Map<String, String> equivalents;
 
-    private final Map<String, Integer> labels;
+    private final Map<String, Label> labels;
     private final Set<String> convertToGlobalLabel;
 
     private final Queue<String> labelsToAdd;
@@ -110,8 +111,16 @@ public class MIPS32AssemblingFile {
      */
     public void setAsGlobalLabel(int executingLine, String label) {
         convertToGlobalLabel.add(label);
-        if (labels.containsKey(label)) {
-            assembler.addGlobalLabel(executingLine, label, labels.remove(label));
+        var instance = labels.remove(label);
+        if (instance != null) {
+            var global = assembler.addGlobalLabel(
+                    executingLine,
+                    instance.getKey(),
+                    instance.getAddress(),
+                    instance.getOriginFile(),
+                    instance.getOriginLine()
+            );
+            labels.put(global.getKey(), global);
         }
     }
 
@@ -120,7 +129,7 @@ public class MIPS32AssemblingFile {
      *
      * @return the map.
      */
-    public Map<String, Integer> getLabels() {
+    public Map<String, Label> getLabels() {
         return Collections.unmodifiableMap(labels);
     }
 
@@ -130,20 +139,20 @@ public class MIPS32AssemblingFile {
      * @param label the label.
      * @return the address, if present.
      */
-    public OptionalInt getLocalLabelAddress(String label) {
-        return labels.containsKey(label) ? OptionalInt.of(labels.get(label)) : OptionalInt.empty();
+    public Optional<Label> getLocalLabel(String label) {
+        return labels.containsKey(label) ? Optional.of(labels.get(label)) : Optional.empty();
     }
 
     /**
-     * Executes the method {@link #getLocalLabelAddress(String)}. If the address is not found,
+     * Executes the method {@link #getLocalLabel(String)}. If the address is not found,
      * the address is searched on the global labels.
      *
      * @param label the label.
      * @return the address, if present.
      */
-    public OptionalInt getLabelAddress(String label) {
-        OptionalInt optional = getLocalLabelAddress(label);
-        if (!optional.isPresent()) optional = assembler.getGlobalLabelAddress(label);
+    public Optional<Label> getLabel(String label) {
+        var optional = getLocalLabel(label);
+        if (optional.isEmpty()) optional = assembler.getGlobalLabel(label);
         return optional;
     }
 
@@ -272,15 +281,15 @@ public class MIPS32AssemblingFile {
         }
 
         if (convertToGlobalLabel.contains(label)) {
-            assembler.addGlobalLabel(index, label, address);
+            assembler.addGlobalLabel(index, label, address, name, index);
         } else {
-            if (assembler.getGlobalLabelAddress(label).isPresent()) {
+            if (assembler.getGlobalLabel(label).isPresent()) {
                 throw new AssemblerException(index, "Label " + label + " is already defined as a global label.");
             }
             if (labels.containsKey(label)) {
                 throw new AssemblerException(index, "Label " + label + " already defined.");
             }
-            labels.put(label, address);
+            labels.put(label, new Label(label, address, name, index, false));
         }
     }
 

@@ -23,6 +23,7 @@ import net.jamsimulator.jams.gui.mips.simulator.register.COP0RegistersTable;
 import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
+import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.gui.util.ZoomUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
@@ -157,9 +158,13 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 
     private void loadLabels() {
         var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_LABELS).orElse(null);
-        var pane = new LabelTable(this);
+        var scroll = new PixelScrollPane(null);
+        var pane = new LabelTable(scroll, this);
+        scroll.setContent(pane);
+        scroll.setFitToHeight(true);
+        scroll.setFitToWidth(true);
 
-        manageBarAddition("labels", pane, icon, Messages.BAR_LABELS_NAME, BarPosition.RIGHT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
+        manageBarAddition("labels", scroll, icon, Messages.BAR_LABELS_NAME, BarPosition.RIGHT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
     }
 
     private void loadCacheVisualizer() {

@@ -22,21 +22,12 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.action;
+package net.jamsimulator.jams.gui.action.defaults.mips.label;
 
-public class RegionTags {
+import net.jamsimulator.jams.gui.action.context.ContextRegion;
 
-	public static final String GENERAL = "GENERAL";
-	public static final String UNKNOWN = "UNKNOWN";
+public class LabelsTagRegions {
 
-	public static final String FOLDER_EXPLORER_ELEMENT = "FOLDER_EXPLORER_ELEMENT";
-	public static final String EXPLORER_ELEMENT = "EXPLORER_ELEMENT";
+	public static final ContextRegion SHOW = new ContextRegion("show", null, 0);
 
-	public static final String TEXT_EDITOR = "TEXT_EDITOR";
-	public static final String EDITOR_TAB = "EDITOR_TAB";
-
-	public static final String MIPS_FILE_TO_ASSEMBLE = "MIPS_FILE_TO_ASSEMBLE";
-	public static final String MIPS_SIMULATION = "MIPS_SIMULATION";
-
-	public static final String MIPS_SIMULATION_LABELS_LABEL = "MIPS_SIMULATION_LABELS_LABEL";
 }

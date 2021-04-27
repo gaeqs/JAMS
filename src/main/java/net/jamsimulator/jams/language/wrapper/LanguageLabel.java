@@ -43,6 +43,10 @@ public class LanguageLabel extends Label {
 		refreshMessage();
 	}
 
+	public String getNode() {
+		return node;
+	}
+
 	public void setNode(String node) {
 		this.node = node;
 		refreshMessage();

@@ -4,6 +4,7 @@ import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
+import net.jamsimulator.jams.mips.label.LabelReference;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Registers;
@@ -11,7 +12,6 @@ import net.jamsimulator.jams.utils.InstructionUtils;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.OptionalInt;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -103,11 +103,11 @@ public class InstructionSnapshot {
 
             //Parse label
             if (result.isHasLabel()) {
-                OptionalInt optional = file.getLabelAddress(result.getLabel());
+                var optional = file.getLabel(result.getLabel());
 
                 if (optional.isEmpty()) {
                     if (!labelSufix.isEmpty()) {
-                        optional = file.getLabelAddress(result.getLabel() + labelSufix);
+                        optional = file.getLabel(result.getLabel() + labelSufix);
                         if (optional.isEmpty()) {
                             throw new AssemblerException(line, "Label " + result.getLabel() + labelSufix + " not found.");
                         }
@@ -116,7 +116,8 @@ public class InstructionSnapshot {
                     }
                 }
 
-                result.setLabelValue(optional.getAsInt());
+                optional.get().addReference(new LabelReference(address, file.getName(), line));
+                result.setLabelValue(optional.get().getAddress());
             }
             assembledParameters[index++] = result;
         }

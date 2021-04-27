@@ -107,7 +107,7 @@ public class MIPSProject extends BasicProject {
         }
 
         var simulationData = new SimulationData(configuration, data.getFilesFolder(), new Console(),
-                assembler.getOriginals(), assembler.getLabelsWithFileNames());
+                assembler.getOriginals(), assembler.getAllLabels());
 
         return assembler.createSimulation(configuration.getNodeValue(MIPSSimulationConfigurationPresets.ARCHITECTURE), simulationData);
     }

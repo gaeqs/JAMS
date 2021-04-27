@@ -30,6 +30,7 @@ import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
+import net.jamsimulator.jams.mips.label.LabelReference;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.utils.NumericUtils;
 
@@ -58,11 +59,21 @@ public class DirectiveWord extends Directive {
     public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
         Memory memory = file.getAssembler().getMemory();
         for (String parameter : parameters) {
-            int value = NumericUtils.decodeIntegerSafe(parameter)
-                    .orElseGet(() -> file.getLabelAddress(parameter)
-                            .orElseGet(() -> file.getLabelAddress(parameter + labelSufix)
-                                    .orElseThrow(() -> new AssemblerException(lineNumber, "Label " + parameter + " not found."))));
-            memory.setWord(address, value);
+            var optional = NumericUtils.decodeIntegerSafe(parameter);
+            if (optional.isEmpty()) {
+                var label = file.getLabel(parameter);
+                if (label.isEmpty()) {
+                    label = file.getLabel(parameter + labelSufix);
+                }
+                if (label.isEmpty()) {
+                    throw new AssemblerException(lineNumber, "Label " + parameter + " not found.");
+                }
+
+                label.get().addReference(new LabelReference(address, file.getName(), lineNumber));
+                memory.setWord(address, label.get().getAddress());
+            } else {
+                memory.setWord(address, optional.get());
+            }
             address += 4;
         }
     }

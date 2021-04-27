@@ -1374,6 +1374,20 @@ AnchorPane {
     -fx-background-color: #665857;
 }
 
+/* LABELS */
+.label-table {
+    -fx-spacing: 5px;
+}
+
+.label-table-file-header {
+    -fx-spacing: 5px;
+    -fx-alignment: center-left;
+}
+
+.label-table-label-header-region {
+    -fx-pref-width: 50px;
+}
+
 /*CACHES*/
 .cache-log-message .hit {
     -fx-text-fill: #b5f874;
