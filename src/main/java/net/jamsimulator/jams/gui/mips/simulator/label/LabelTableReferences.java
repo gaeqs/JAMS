@@ -1,9 +1,11 @@
 package net.jamsimulator.jams.gui.mips.simulator.label;
 
-import net.jamsimulator.jams.gui.explorer.*;
+import net.jamsimulator.jams.gui.explorer.Explorer;
+import net.jamsimulator.jams.gui.explorer.ExplorerElement;
+import net.jamsimulator.jams.gui.explorer.ExplorerSection;
+import net.jamsimulator.jams.gui.explorer.LanguageExplorerSection;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.mips.label.Label;
-import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.Comparator;
 
@@ -21,13 +23,10 @@ public class LabelTableReferences extends LanguageExplorerSection {
         super(explorer, parent, "references", hierarchyLevel, Comparator.comparing(ExplorerElement::getVisibleName),
                 Messages.LABELS_REFERENCES);
 
-        //representation.getIcon().setImage(JamsApplication.getIconManager()
-        //        .getOrLoadSafe(Icons.SIMULATION_LABELS).orElse(null));
+        representation.hideIcon(true);
 
         label.getReferences().forEach(reference -> {
-            var address = StringUtils.addZeros(Integer.toHexString(reference.address()), 8);
-            addElement(new ExplorerBasicElement(this, "0x" + address + " (" +
-                    reference.originFile() + ":" + reference.originLine() + ")", 2));
+            addElement(new LabelTableReference(this, reference, 2));
         });
     }
 }

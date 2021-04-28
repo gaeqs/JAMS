@@ -40,6 +40,8 @@ import net.jamsimulator.jams.gui.action.defaults.explorerelement.mips.filestoass
 import net.jamsimulator.jams.gui.action.defaults.general.*;
 import net.jamsimulator.jams.gui.action.defaults.mips.label.MIPSLabelsLabelActionShowInInstructionViewer;
 import net.jamsimulator.jams.gui.action.defaults.mips.label.MIPSLabelsLabelActionShowInMemory;
+import net.jamsimulator.jams.gui.action.defaults.mips.label.MIPSLabelsReferenceActionShowInInstructionViewer;
+import net.jamsimulator.jams.gui.action.defaults.mips.label.MIPSLabelsReferenceActionShowInMemory;
 import net.jamsimulator.jams.gui.action.defaults.simulation.*;
 import net.jamsimulator.jams.gui.action.defaults.texteditor.*;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
@@ -371,6 +373,8 @@ public class ActionManager extends Manager<Action> {
         // LABEL TABLE
         add(new MIPSLabelsLabelActionShowInInstructionViewer());
         add(new MIPSLabelsLabelActionShowInMemory());
+        add(new MIPSLabelsReferenceActionShowInInstructionViewer());
+        add(new MIPSLabelsReferenceActionShowInMemory());
     }
 
     private List<Action> loadBinds() {

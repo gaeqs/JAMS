@@ -43,7 +43,7 @@ public class MIPSLabelsLabelActionShowInInstructionViewer extends ContextAction 
         super(
                 NAME,
                 RegionTags.MIPS_SIMULATION_LABELS_LABEL,
-                Messages.ACTION_MIPS_LABELS_LABEL_SHOW_IN_INSTRUCTION_VIEWER,
+                Messages.ACTION_MIPS_SIMULATION_LABELS_LABEL_SHOW_IN_INSTRUCTION_VIEWER,
                 DEFAULT_COMBINATION,
                 LabelsTagRegions.SHOW,
                 null,

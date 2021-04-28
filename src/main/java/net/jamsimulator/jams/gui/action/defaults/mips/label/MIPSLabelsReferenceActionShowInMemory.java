@@ -33,18 +33,19 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.mips.simulator.label.LabelTable;
 import net.jamsimulator.jams.gui.mips.simulator.label.LabelTableLabel;
+import net.jamsimulator.jams.gui.mips.simulator.label.LabelTableReference;
 import net.jamsimulator.jams.language.Messages;
 
-public class MIPSLabelsLabelActionShowInMemory extends ContextAction {
+public class MIPSLabelsReferenceActionShowInMemory extends ContextAction {
 
-    public static final String NAME = "MIPS_LABELS_LABEL_SHOW_IN_MEMORY";
+    public static final String NAME = "MIPS_LABELS_REFERENCE_SHOW_IN_MEMORY";
     public static final KeyCombination DEFAULT_COMBINATION = null;
 
-    public MIPSLabelsLabelActionShowInMemory() {
+    public MIPSLabelsReferenceActionShowInMemory() {
         super(
                 NAME,
-                RegionTags.MIPS_SIMULATION_LABELS_LABEL,
-                Messages.ACTION_MIPS_SIMULATION_LABELS_LABEL_SHOW_IN_MEMORY,
+                RegionTags.MIPS_SIMULATION_LABELS_REFERENCE,
+                Messages.ACTION_MIPS_SIMULATION_LABELS_REFERENCE_SHOW_IN_MEMORY,
                 DEFAULT_COMBINATION,
                 LabelsTagRegions.SHOW,
                 null,
@@ -54,12 +55,12 @@ public class MIPSLabelsLabelActionShowInMemory extends ContextAction {
 
     @Override
     public void run(Object node) {
-        if (!(node instanceof LabelTableLabel label)) return;
-        var explorer = (LabelTable) label.getExplorer();
+        if (!(node instanceof LabelTableReference reference)) return;
+        var explorer = (LabelTable) reference.getExplorer();
 
         explorer.getSimulationPane().getBarMap().searchButton("memory").ifPresent(BarButton::show);
         var memoryPane = explorer.getSimulationPane().getMemoryPane();
-        memoryPane.selectAddress(label.getLabel().getAddress());
+        memoryPane.selectAddress(reference.getReference().address());
     }
 
     @Override
@@ -69,7 +70,7 @@ public class MIPSLabelsLabelActionShowInMemory extends ContextAction {
     @Override
     public boolean supportsExplorerState(Explorer explorer) {
         return explorer instanceof LabelTable && explorer.getSelectedElements().size() == 1 &&
-                explorer.getSelectedElements().get(0) instanceof LabelTableLabel;
+                explorer.getSelectedElements().get(0) instanceof LabelTableReference;
     }
 
     @Override

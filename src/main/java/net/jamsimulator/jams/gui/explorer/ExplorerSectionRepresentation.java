@@ -142,6 +142,15 @@ public class ExplorerSectionRepresentation extends HBox {
 		return selected;
 	}
 
+	public void hideIcon(boolean hide) {
+		getChildren().clear();
+		if (hide) {
+			getChildren().addAll(separator, statusIcon, new Group(label));
+		} else {
+			getChildren().addAll(separator, statusIcon, icon, new Group(label));
+		}
+	}
+
 	public void select() {
 		if (selected) return;
 		getStyleClass().add("selected-explorer-element");
