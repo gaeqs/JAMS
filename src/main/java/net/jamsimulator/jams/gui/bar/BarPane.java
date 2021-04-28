@@ -73,7 +73,13 @@ public class BarPane extends SplitPane implements BarSnapshotHolder {
                 setDividerPosition(0, dividerPosition);
             } else {
                 if (firstInParent) {
-                    parent.getItems().add(0, this);
+                    if (parent.getItems().size() > 1) {
+                        double right = parent.getDividerPositions()[0];
+                        parent.getItems().add(0, this);
+                        parent.setDividerPosition(1, right);
+                    } else {
+                        parent.getItems().add(0, this);
+                    }
                 } else {
                     parent.getItems().add(this);
                 }
@@ -96,7 +102,15 @@ public class BarPane extends SplitPane implements BarSnapshotHolder {
             dividerPosition = getDividerPositions()[0];
         } else {
             parentDividerPosition = parent.getDividerPositions()[firstInParent ? 0 : parent.getItems().size() - 2];
-            parent.getItems().remove(this);
+
+
+            if (firstInParent && parent.getItems().size() > 2) {
+                double right = parent.getDividerPositions()[1];
+                parent.getItems().remove(this);
+                parent.setDividerPosition(0, right);
+            } else {
+                parent.getItems().remove(this);
+            }
         }
 
         getItems().remove(node);
