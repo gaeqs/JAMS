@@ -109,6 +109,7 @@ runtime {
     }
     jpackage {
         def ver = normalizeAppVersion(version as String)
+        appVersion = ver
 
         //Splash is bugged in windows.
         //jvmArgs = ['-splash:$APPDIR/logo.png']
@@ -125,6 +126,7 @@ runtime {
             installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu']
         } else if (org.gradle.internal.os.OperatingSystem.current().linux) {
             installerOptions += ['--linux-menu-group', 'programming']
+
             installerType = "deb"
         } else if (org.gradle.internal.os.OperatingSystem.current().macOsX) {
             installerType = "dmg"
