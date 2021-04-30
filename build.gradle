@@ -114,10 +114,8 @@ runtime {
         //Splash is bugged in windows.
         //jvmArgs = ['-splash:$APPDIR/logo.png']
 
-        imageOptions = ["--verbose", "--app-version", ver]
-        installerOptions = ['--app-version', ver,
-                            '--vendor', 'jamsimulator.net',
-                            '--file-associations', 'src/main/resources/associations.properties']
+        imageOptions = ["--verbose"]
+        installerOptions = ['--vendor', 'jamsimulator.net', '--file-associations', 'src/main/resources/associations.properties']
         imageOptions = ['--icon', 'src/main/resources/gui/icon/logo.ico']
         if (org.gradle.internal.os.OperatingSystem.current().windows) {
             if(winConsole) {
