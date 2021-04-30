@@ -103,6 +103,7 @@ task bundle {
 
 runtime {
     options.addAll(['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages'])
+    version =  normalizeAppVersion(version as String)
     launcher {
         jvmArgs = ['-Dlogback.configurationFile=./logback.xml']
     }
