@@ -141,13 +141,11 @@ static String normalizeAppVersion(final String appVersion) {
     if (org.gradle.internal.os.OperatingSystem.current().linux) {
         // Replace '-' with '.' for rpmbuild
         return appVersion.replace('-', '.')
-    } else if (org.gradle.internal.os.OperatingSystem.current().windows) {
+    } else {
         // This is a hack attempt to assure the version conforms to MSI productVersion string rules
         // See https://docs.microsoft.com/en-us/windows/win32/msi/productversion
         // For now, we'll just remove '-SNAPSHOT' if present.
         return appVersion.replaceAll('-SNAPSHOT$', '').replaceAll('-ALPHA$', '').replaceAll('-BETA$', '')
-    } else {
-        return appVersion
     }
 }
 
