@@ -9,6 +9,8 @@ import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledInstructionViewerElement;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledInstructionViewerOrder;
 import net.jamsimulator.jams.gui.util.converter.MIPSAssembledInstructionViewerOrderValueConverter;
+import net.jamsimulator.jams.gui.util.converter.ValueConverter;
+import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
@@ -96,6 +98,11 @@ public class MIPSAssembledInstructionViewerOrderValueEditor extends VBox impleme
     @Override
     public void addListener(Consumer<MIPSAssembledInstructionViewerOrder> consumer) {
         listener = listener.andThen(consumer);
+    }
+
+    @Override
+    public ValueConverter<MIPSAssembledInstructionViewerOrder> getLinkedConverter() {
+        return ValueConverters.getByTypeUnsafe(MIPSAssembledInstructionViewerOrder.class);
     }
 
     public static class Builder implements ValueEditor.Builder<MIPSAssembledInstructionViewerOrder> {

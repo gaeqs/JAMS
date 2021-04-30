@@ -304,7 +304,7 @@ public class PipelinedSimulation extends Simulation<PipelinedArchitecture> imple
         MIPSInterruptException exception;
 
         if (level == 1) {
-            causeRegister.modifyBits(1, COP0RegistersBits.CAUSE_IP, 1);
+            causeRegister.modifyBits(0, COP0RegistersBits.CAUSE_IP, 1);
             exception = externalInterruptController.getSoftwareInterrupt();
             cause = exception.getInterruptCause();
         } else {

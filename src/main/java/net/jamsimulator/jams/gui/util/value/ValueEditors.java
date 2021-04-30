@@ -104,9 +104,13 @@ public class ValueEditors {
         var positiveIntegerEditor = new PositiveIntegerValueEditor.Builder();
         editorByName.put(PositiveIntegerValueEditor.NAME, positiveIntegerEditor);
 
+        //RANGED INTEGER
+        var rangedIntegerEditor = new RangedIntegerValueEditor.Builder();
+        editorByName.put(RangedIntegerValueEditor.NAME, rangedIntegerEditor);
+
         //HEXADECIMAL INTEGER
         var hexadecimalIntegerEditor = new HexadecimalIntegerValueEditor.Builder();
-        editorByName.put(PositiveIntegerValueEditor.NAME, hexadecimalIntegerEditor);
+        editorByName.put(HexadecimalIntegerValueEditor.NAME, hexadecimalIntegerEditor);
 
         //POW 2 INTEGER
         var pow2 = new Pow2ValueEditor.Builder();

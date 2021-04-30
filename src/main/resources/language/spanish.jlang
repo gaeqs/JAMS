@@ -275,6 +275,12 @@ LABELS_ADDRESS=Dirección: {ADDRESS}
 LABELS_LINE=Línea: {LINE}
 LABELS_REFERENCES=Referencias
 
+LAB_SOFTWARE_INTERRUPTS=Interrupciones de software
+LAB_HARDWARE_INTERRUPTS=Interrupciones de hardware
+LAB_COUNTER=Contador
+LAB_COUNTER_RESET=Reiniciar
+LAB_INTERRUPT=Interrumpir
+
 CACHE_HITS=Aciertos
 CACHE_MISSES=Fallos
 CACHE_STATS=Estadísticas
@@ -385,6 +391,17 @@ CONFIG_SIMULATION_MIPS_INSTRUCTIONS_VIEWER_ELEMENTS_ORDER_USING=Usando:
 CONFIG_SIMULATION_MIPS_INSTRUCTIONS_VIEWER_ELEMENTS_ORDER_NOT_USING=Sin usar:
 CONFIG_SIMULATION_MIPS_INSTRUCTIONS_SHOW_LABELS=Mostrar etiquetas.
 CONFIG_SIMULATION_MIPS_INSTRUCTIONS_SHOW_LABELS_TOOLTIP=Esta opción le permite a las etiquetas aparecer en el visualizador de instrucciones.
+CONFIG_SIMULATION_MIPS_REGION_LAB=Lab
+CONFIG_SIMULATION_MIPS_LAB_FIRST_SEGMENT_ADDRESS=Dirección del primer visualizador:
+CONFIG_SIMULATION_MIPS_LAB_FIRST_SEGMENT_ADDRESS_TOOLTIP=La dirección de memoria usado por el primer visualizador del lab.
+CONFIG_SIMULATION_MIPS_LAB_SECOND_SEGMENT_ADDRESS=Dirección del segundo visualizador:
+CONFIG_SIMULATION_MIPS_LAB_SECOND_SEGMENT_ADDRESS_TOOLTIP=La dirección de memoria usado por el segundo visualizador del lab.
+CONFIG_SIMULATION_MIPS_LAB_FIRST_HEX_KERBOARD_ADDRESS=Primera dirección del teclado hexadeximal:
+CONFIG_SIMULATION_MIPS_LAB_FIRST_HEX_KERBOARD_ADDRESS_TOOLTIP=La dirección de memoria usada por los 8 números menos significativos del teclado hexadeximal.
+CONFIG_SIMULATION_MIPS_LAB_SECOND_HEX_KERBOARD_ADDRESS=Segunda dirección del teclado hexadeximal:
+CONFIG_SIMULATION_MIPS_LAB_SECOND_HEX_KERBOARD_ADDRESS_TOOLTIP=La dirección de memoria usada por los 8 números más significativos del teclado hexadeximal.
+CONFIG_SIMULATION_MIPS_LAB_COUNTER_ADDRESS=Dirección del contador:
+CONFIG_SIMULATION_MIPS_LAB_COUNTER_ADDRESS_TOOLTIP=La dirección de memoria del contador. El valor en esta dirección representa el número de ciclos que el contador va a esperar antes de lanzar una interrupción.
 
 EDITOR_MIPS_ERROR_ILLEGAL_LABEL=El nombre de la etiqueta '{NAME}' es inválido.
 EDITOR_MIPS_ERROR_LABEL_NOT_FOUND=No se ha podido encontrar la etiquera '{NAME}'.

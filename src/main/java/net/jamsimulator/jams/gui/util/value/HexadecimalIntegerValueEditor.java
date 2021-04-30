@@ -5,6 +5,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import net.jamsimulator.jams.gui.util.converter.ValueConverter;
+import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -70,6 +72,11 @@ public class HexadecimalIntegerValueEditor extends TextField implements ValueEdi
     @Override
     public void addListener(Consumer<Integer> consumer) {
         listener = listener.andThen(consumer);
+    }
+
+    @Override
+    public ValueConverter<Integer> getLinkedConverter() {
+        return ValueConverters.getByTypeUnsafe(Integer.class);
     }
 
     public static class Builder implements ValueEditor.Builder<Integer> {

@@ -501,9 +501,13 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
     public InstructionExecution<? super Arch, ?> fetch(int pc) {
         InstructionExecution<Arch, ?> cached;
         boolean useCache = instructionCache != null && Integer.compareUnsigned(pc, instructionStackBottom) <= 0;
+        int cacheIndex = 0;
         if (useCache) {
-            cached = instructionCache[(pc - memory.getFirstTextAddress()) >> 2];
-            if (cached != null) return cached;
+            cacheIndex = (pc - memory.getFirstTextAddress()) >> 2;
+            if (cacheIndex >= 0 && cacheIndex < instructionCache.length) {
+                cached = instructionCache[cacheIndex];
+                if (cached != null) return cached;
+            }
         }
 
         int data = memory.getWord(pc);
@@ -516,7 +520,9 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
 
         if (useCache) {
-            instructionCache[(pc - memory.getFirstTextAddress()) >> 2] = cached;
+            if (cacheIndex >= 0 && cacheIndex < instructionCache.length) {
+                instructionCache[(pc - memory.getFirstTextAddress()) >> 2] = cached;
+            }
         }
         return cached;
     }
@@ -691,7 +697,10 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
 
         thread = new Thread(() -> {
             try {
+                var before = callEvent(new SimulationCycleEvent.Before(this, cycles));
+                if (before.isCancelled()) return;
                 runStep(true);
+                callEvent(new SimulationCycleEvent.After(this, cycles - 1));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -726,7 +735,11 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
                 while (!finished && !checkThreadInterrupted()) {
                     velocitySleep();
                     if (!checkThreadInterrupted()) {
-                        runStep(false);
+                        var before = callEvent(new SimulationCycleEvent.Before(this, cycles));
+                        if (!before.isCancelled()) {
+                            runStep(false);
+                            callEvent(new SimulationCycleEvent.After(this, cycles - 1));
+                        }
                     }
                 }
             } catch (Exception ex) {

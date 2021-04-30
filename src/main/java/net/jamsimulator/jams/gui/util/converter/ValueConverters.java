@@ -98,7 +98,6 @@ public class ValueConverters {
         converterByName.put(MemoryBuilderValueConverter.NAME, memoryBuilderConverter);
         converterByType.put(MemoryBuilder.class, memoryBuilderConverter);
 
-
         //MIPS SPACE
         var mipsSpacesConverter = new MIPSSpacesValueConverter();
         converterByName.put(MIPSSpacesValueConverter.NAME, mipsSpacesConverter);

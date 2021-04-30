@@ -8,6 +8,7 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.util.converter.ActionValueConverter;
+import net.jamsimulator.jams.gui.util.converter.ValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundle;
 import net.jamsimulator.jams.mips.syscall.event.SyscallExecutionBuilderBundleRegisterEvent;
@@ -17,67 +18,72 @@ import java.util.function.Consumer;
 
 public class SyscallExecutionBuilderBundleValueEditor extends ComboBox<SyscallExecutionBuilderBundle> implements ValueEditor<SyscallExecutionBuilderBundle> {
 
-	public static final String NAME = ActionValueConverter.NAME;
+    public static final String NAME = ActionValueConverter.NAME;
 
-	private Consumer<SyscallExecutionBuilderBundle> listener = syscallExecutionBuilderBundle -> {
-	};
+    private Consumer<SyscallExecutionBuilderBundle> listener = syscallExecutionBuilderBundle -> {
+    };
 
-	public SyscallExecutionBuilderBundleValueEditor() {
-		setConverter(ValueConverters.getByTypeUnsafe(SyscallExecutionBuilderBundle.class));
-		getItems().addAll(Jams.getSyscallExecutionBuilderManager().getAllBundles());
-		getSelectionModel().select(0);
-		getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> listener.accept(val));
-		Jams.getSyscallExecutionBuilderManager().registerListeners(this, true);
-	}
+    public SyscallExecutionBuilderBundleValueEditor() {
+        setConverter(ValueConverters.getByTypeUnsafe(SyscallExecutionBuilderBundle.class));
+        getItems().addAll(Jams.getSyscallExecutionBuilderManager().getAllBundles());
+        getSelectionModel().select(0);
+        getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> listener.accept(val));
+        Jams.getSyscallExecutionBuilderManager().registerListeners(this, true);
+    }
 
-	@Override
-	public void setCurrentValue(SyscallExecutionBuilderBundle value) {
-		getSelectionModel().select(value);
-	}
+    @Override
+    public void setCurrentValue(SyscallExecutionBuilderBundle value) {
+        getSelectionModel().select(value);
+    }
 
-	@Override
-	public SyscallExecutionBuilderBundle getCurrentValue() {
-		return getValue();
-	}
+    @Override
+    public SyscallExecutionBuilderBundle getCurrentValue() {
+        return getValue();
+    }
 
-	@Override
-	public Node getAsNode() {
-		return this;
-	}
+    @Override
+    public Node getAsNode() {
+        return this;
+    }
 
-	@Override
-	public Node buildConfigNode(Label label) {
-		var box =  new HBox(label, this);
-		box.setSpacing(5);
-		box.setAlignment(Pos.CENTER_LEFT);
-		return box;
-	}
+    @Override
+    public Node buildConfigNode(Label label) {
+        var box = new HBox(label, this);
+        box.setSpacing(5);
+        box.setAlignment(Pos.CENTER_LEFT);
+        return box;
+    }
 
-	@Override
-	public void addListener(Consumer<SyscallExecutionBuilderBundle> consumer) {
-		listener = listener.andThen(consumer);
-	}
+    @Override
+    public void addListener(Consumer<SyscallExecutionBuilderBundle> consumer) {
+        listener = listener.andThen(consumer);
+    }
 
-	@Listener
-	private void onSyscallExecutionBuilderBundleRegister(SyscallExecutionBuilderBundleRegisterEvent.After event) {
-		getItems().add(event.getBundle());
-	}
+    @Override
+    public ValueConverter<SyscallExecutionBuilderBundle> getLinkedConverter() {
+        return ValueConverters.getByTypeUnsafe(SyscallExecutionBuilderBundle.class);
+    }
 
-	@Listener
-	private void onSyscallExecutionBuilderBundleUnregister(SyscallExecutionBuilderBundleUnregisterEvent.After event) {
-		boolean remove = getSelectionModel().getSelectedItem().equals(event.getBundle());
-		getItems().remove(event.getBundle());
-		if (remove) {
-			getSelectionModel().select(0);
-		}
-	}
+    @Listener
+    private void onSyscallExecutionBuilderBundleRegister(SyscallExecutionBuilderBundleRegisterEvent.After event) {
+        getItems().add(event.getBundle());
+    }
 
-	public static class Builder implements ValueEditor.Builder<SyscallExecutionBuilderBundle> {
+    @Listener
+    private void onSyscallExecutionBuilderBundleUnregister(SyscallExecutionBuilderBundleUnregisterEvent.After event) {
+        boolean remove = getSelectionModel().getSelectedItem().equals(event.getBundle());
+        getItems().remove(event.getBundle());
+        if (remove) {
+            getSelectionModel().select(0);
+        }
+    }
 
-		@Override
-		public ValueEditor<SyscallExecutionBuilderBundle> build() {
-			return new SyscallExecutionBuilderBundleValueEditor();
-		}
+    public static class Builder implements ValueEditor.Builder<SyscallExecutionBuilderBundle> {
 
-	}
+        @Override
+        public ValueEditor<SyscallExecutionBuilderBundle> build() {
+            return new SyscallExecutionBuilderBundleValueEditor();
+        }
+
+    }
 }

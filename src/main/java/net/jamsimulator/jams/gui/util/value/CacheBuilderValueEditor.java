@@ -8,6 +8,8 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.util.converter.CacheBuilderValueConverter;
+import net.jamsimulator.jams.gui.util.converter.ValueConverter;
+import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
@@ -78,7 +80,7 @@ public class CacheBuilderValueEditor extends ComboBox<CacheBuilder<?>> implement
 
     @Override
     public Node buildConfigNode(Label label) {
-        var box =  new HBox(label, this);
+        var box = new HBox(label, this);
         box.setSpacing(5);
         box.setAlignment(Pos.CENTER_LEFT);
         return box;
@@ -87,6 +89,12 @@ public class CacheBuilderValueEditor extends ComboBox<CacheBuilder<?>> implement
     @Override
     public void addListener(Consumer<CacheBuilder<?>> consumer) {
         listener = listener.andThen(consumer);
+    }
+
+    @Override
+    public ValueConverter<CacheBuilder<?>> getLinkedConverter() {
+        return (ValueConverter<CacheBuilder<?>>)
+                (Object) ValueConverters.getByTypeUnsafe(CacheBuilder.class);
     }
 
     @Listener

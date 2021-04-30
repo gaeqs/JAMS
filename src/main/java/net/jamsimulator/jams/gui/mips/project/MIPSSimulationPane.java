@@ -177,9 +177,12 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
     }
 
     private void loadLab() {
-        Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_BREAKPOINT).orElse(null);
+        Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_LAB).orElse(null);
         var lab = new LabPane(simulation);
-        manageBarAddition("lab", lab, icon, null, BarPosition.LEFT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
+        var scroll = new PixelScrollPane(lab);
+        scroll.setFitToWidth(true);
+        scroll.setFitToHeight(true);
+        manageBarAddition("lab", scroll, icon, null, BarPosition.LEFT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
     }
 
 

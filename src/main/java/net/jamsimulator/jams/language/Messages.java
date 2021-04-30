@@ -135,8 +135,12 @@ public class Messages {
 	public static final String LABELS_ADDRESS = "LABELS_ADDRESS";
 	public static final String LABELS_LINE = "LABELS_LINE";
 	public static final String LABELS_REFERENCES = "LABELS_REFERENCES";
-	public static final String LABELS_CONTEXT_SHOW_IN_MEMORY = "LABELS_CONTEXT_SHOW_IN_MEMORY";
-	public static final String LABELS_CONTEXT_SHOW_IN_INSTRUCTION = "LABELS_CONTEXT_SHOW_IN_INSTRUCTION";
+
+	public static final String LAB_SOFTWARE_INTERRUPTS = "LAB_SOFTWARE_INTERRUPTS";
+	public static final String LAB_HARDWARE_INTERRUPTS = "LAB_HARDWARE_INTERRUPTS";
+	public static final String LAB_COUNTER = "LAB_COUNTER";
+	public static final String LAB_COUNTER_RESET = "LAB_COUNTER_RESET";
+	public static final String LAB_INTERRUPT = "LAB_INTERRUPT";
 
 	public static final String CACHE_HITS = "CACHE_HITS";
 	public static final String CACHE_MISSES = "CACHE_MISSES";

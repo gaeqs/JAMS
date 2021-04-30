@@ -57,7 +57,7 @@ public class ConfigurationWindowNode extends HBox {
 
         editor = ValueEditors.getByName(type).map(ValueEditor.Builder::build).orElse(null);
         Validate.notNull(editor, "Editor cannot be null! Type: " + type);
-        converter = loadConverter(type);
+        converter = editor.getLinkedConverter();
         Validate.notNull(converter, "Converter cannot be null! Type: " + type);
 
         init();
@@ -95,16 +95,6 @@ public class ConfigurationWindowNode extends HBox {
         region.setPrefWidth(10);
 
         getChildren().addAll(region, editor.buildConfigNode(label));
-    }
-
-    protected ValueConverter<?> loadConverter(String type) {
-        if (type.equals(FontValueEditor.NAME)) {
-            type = StringValueEditor.NAME;
-        } else if (type.equals(PositiveIntegerValueEditor.NAME)) {
-            type = IntegerValueEditor.NAME;
-        }
-
-        return ValueConverters.getByName(type).orElse(null);
     }
 
 

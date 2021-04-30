@@ -190,7 +190,8 @@
         "language_node": "CONFIG_SIMULATION_MIPS",
         "regions": {
           "instructions": 0,
-          "flow": 1
+          "flow": 1,
+          "lab": 2
         }
       },
       "flow_max_items": {
@@ -207,6 +208,31 @@
         "type": "boolean",
         "language_node": "CONFIG_SIMULATION_MIPS_INSTRUCTIONS_SHOW_LABELS",
         "region": "instructions"
+      },
+      "lab_segment_1_address": {
+        "type": "hexadecimal_integer",
+        "language_node": "CONFIG_SIMULATION_MIPS_LAB_FIRST_SEGMENT_ADDRESS",
+        "region": "lab"
+      },
+      "lab_segment_2_address": {
+        "type": "hexadecimal_integer",
+        "language_node": "CONFIG_SIMULATION_MIPS_LAB_SECOND_SEGMENT_ADDRESS",
+        "region": "lab"
+      },
+      "lab_hex_kerboard_1_address": {
+        "type": "hexadecimal_integer",
+        "language_node": "CONFIG_SIMULATION_MIPS_LAB_FIRST_HEX_KERBOARD_ADDRESS",
+        "region": "lab"
+      },
+      "lab_hex_kerboard_2_address": {
+        "type": "hexadecimal_integer",
+        "language_node": "CONFIG_SIMULATION_MIPS_LAB_SECOND_HEX_KERBOARD_ADDRESS",
+        "region": "lab"
+      },
+      "lab_counter_address": {
+        "type": "hexadecimal_integer",
+        "language_node": "CONFIG_SIMULATION_MIPS_LAB_COUNTER_ADDRESS",
+        "region": "lab"
       }
     }
   }

@@ -6,6 +6,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.util.converter.BooleanValueConverter;
+import net.jamsimulator.jams.gui.util.converter.ValueConverter;
+import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 
 import java.util.function.Consumer;
 
@@ -48,6 +50,12 @@ public class BooleanValueEditor extends CheckBox implements ValueEditor<Boolean>
     public void addListener(Consumer<Boolean> consumer) {
         listener = listener.andThen(consumer);
     }
+
+    @Override
+    public ValueConverter<Boolean> getLinkedConverter() {
+        return ValueConverters.getByTypeUnsafe(Boolean.class);
+    }
+
 
     public static class Builder implements ValueEditor.Builder<Boolean> {
 

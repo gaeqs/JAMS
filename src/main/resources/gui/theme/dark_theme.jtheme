@@ -1410,6 +1410,10 @@ AnchorPane {
     -fx-fill: #cb1010;
 }
 
+.lab {
+    -fx-padding: 5px;
+}
+
 /* PLUGINS */
 .plugin-section:horizontal .split-pane-divider {
     -fx-background-color: -theme-background;

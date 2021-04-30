@@ -8,6 +8,8 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.util.converter.SyscallExecutionBuilderValueConverter;
+import net.jamsimulator.jams.gui.util.converter.ValueConverter;
+import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
@@ -79,7 +81,7 @@ public class SyscallExecutionBuilderValueEditor extends ComboBox<SyscallExecutio
 
     @Override
     public Node buildConfigNode(Label label) {
-        var box =  new HBox(label, this);
+        var box = new HBox(label, this);
         box.setSpacing(5);
         box.setAlignment(Pos.CENTER_LEFT);
         return box;
@@ -88,6 +90,12 @@ public class SyscallExecutionBuilderValueEditor extends ComboBox<SyscallExecutio
     @Override
     public void addListener(Consumer<SyscallExecutionBuilder<?>> consumer) {
         listener = listener.andThen(consumer);
+    }
+
+    @Override
+    public ValueConverter<SyscallExecutionBuilder<?>> getLinkedConverter() {
+        return (ValueConverter<SyscallExecutionBuilder<?>>)
+                (Object) ValueConverters.getByTypeUnsafe(SyscallExecutionBuilder.class);
     }
 
     @Listener

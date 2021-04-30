@@ -6,6 +6,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.util.converter.DoubleValueConverter;
+import net.jamsimulator.jams.gui.util.converter.ValueConverter;
+import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 
 import java.util.function.Consumer;
 
@@ -70,6 +72,12 @@ public class DoubleValueEditor extends TextField implements ValueEditor<Double> 
     public void addListener(Consumer<Double> consumer) {
         listener = listener.andThen(consumer);
     }
+
+    @Override
+    public ValueConverter<Double> getLinkedConverter() {
+        return ValueConverters.getByTypeUnsafe(Double.class);
+    }
+
 
     public static class Builder implements ValueEditor.Builder<Double> {
 

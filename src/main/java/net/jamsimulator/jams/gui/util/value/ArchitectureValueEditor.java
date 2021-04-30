@@ -8,6 +8,7 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.util.converter.ActionValueConverter;
+import net.jamsimulator.jams.gui.util.converter.ValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.architecture.event.ArchitectureRegisterEvent;
@@ -56,6 +57,11 @@ public class ArchitectureValueEditor extends ComboBox<Architecture> implements V
     @Override
     public void addListener(Consumer<Architecture> consumer) {
         listener = listener.andThen(consumer);
+    }
+
+    @Override
+    public ValueConverter<Architecture> getLinkedConverter() {
+        return ValueConverters.getByTypeUnsafe(Architecture.class);
     }
 
     @Listener

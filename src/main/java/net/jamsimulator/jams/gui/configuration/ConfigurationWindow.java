@@ -112,7 +112,7 @@ public class ConfigurationWindow extends SplitPane {
 		sectionDisplay = new VBox();
 		sectionDisplay.getStyleClass().add("configuration-window-display");
 
-		basicSectionContentsScroll = new ScrollPane();
+		basicSectionContentsScroll = new PixelScrollPane();
 		basicSectionContentsScroll.setFitToWidth(true);
 		basicSectionContentsScroll.setFitToHeight(true);
 
