@@ -51,184 +51,188 @@ import java.util.stream.Collectors;
 
 public class MIPSFilesToAssemble extends SimpleEventBroadcast {
 
-	public static final String FILE_NAME = "files_to_assemble.json";
+    public static final String FILE_NAME = "files_to_assemble.json";
 
-	private final MIPSProject project;
-	private final Map<File, MIPSFileElements> files;
-	private final Bag<String> globalLabels;
+    private final MIPSProject project;
+    private final Map<File, MIPSFileElements> files;
+    private final Bag<String> globalLabels;
 
-	public MIPSFilesToAssemble(MIPSProject project) {
-		this.project = project;
-		files = new HashMap<>();
-		globalLabels = new Bag<>();
-	}
+    public MIPSFilesToAssemble(MIPSProject project) {
+        this.project = project;
+        files = new HashMap<>();
+        globalLabels = new Bag<>();
+    }
 
-	public Optional<MIPSFileElements> getFileElements(File file) {
-		return Optional.ofNullable(files.get(file));
-	}
+    public Optional<MIPSFileElements> getFileElements(File file) {
+        return Optional.ofNullable(files.get(file));
+    }
 
-	public Bag<String> getGlobalLabels() {
-		return globalLabels;
-	}
+    public Bag<String> getGlobalLabels() {
+        return globalLabels;
+    }
 
-	public Set<File> getFiles() {
-		return Collections.unmodifiableSet(files.keySet());
-	}
+    public Set<File> getFiles() {
+        return Collections.unmodifiableSet(files.keySet());
+    }
 
-	public void addFile(File file, boolean refreshGlobalLabels) {
-		Validate.notNull(file, "File cannot be null!");
-		if (files.containsKey(file)) return;
+    public boolean containsFile(File file) {
+        return files.containsKey(file);
+    }
 
-		FileAddToAssembleEvent.Before before = callEvent(new FileAddToAssembleEvent.Before(file));
-		if (before.isCancelled()) return;
+    public void addFile(File file, boolean refreshGlobalLabels) {
+        Validate.notNull(file, "File cannot be null!");
+        if (files.containsKey(file)) return;
 
-		MIPSFileElements elements = new MIPSFileElements(project);
-		elements.setFilesToAssemble(this);
+        FileAddToAssembleEvent.Before before = callEvent(new FileAddToAssembleEvent.Before(file));
+        if (before.isCancelled()) return;
 
-		try {
-			String text = FileUtils.readAll(file);
-			if (!text.isEmpty()) {
-				text = text.substring(0, text.length() - 1);
-			}
+        MIPSFileElements elements = new MIPSFileElements(project);
+        elements.setFilesToAssemble(this);
 
-			elements.refreshAll(text);
-			files.put(file, elements);
+        try {
+            String text = FileUtils.readAll(file);
+            if (!text.isEmpty()) {
+                text = text.substring(0, text.length() - 1);
+            }
 
-			if (refreshGlobalLabels) {
-				refreshGlobalLabels();
-			}
+            elements.refreshAll(text);
+            files.put(file, elements);
 
-			callEvent(new FileAddToAssembleEvent.After(file));
-		} catch (IOException ex) {
-			throw new RuntimeException(ex);
-		}
-	}
+            if (refreshGlobalLabels) {
+                refreshGlobalLabels();
+            }
 
-	public void addFile(File file, MIPSFileElements elements, boolean refreshGlobalLabels) {
-		Validate.notNull(file, "File cannot be null!");
-		Validate.notNull(elements, "Elements cannot be null!");
+            callEvent(new FileAddToAssembleEvent.After(file));
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 
-		FileAddToAssembleEvent.Before before = callEvent(new FileAddToAssembleEvent.Before(file));
-		if (before.isCancelled()) return;
+    public void addFile(File file, MIPSFileElements elements, boolean refreshGlobalLabels) {
+        Validate.notNull(file, "File cannot be null!");
+        Validate.notNull(elements, "Elements cannot be null!");
 
-		if (files.containsKey(file)) return;
-		files.put(file, elements);
-		elements.setFilesToAssemble(this);
+        FileAddToAssembleEvent.Before before = callEvent(new FileAddToAssembleEvent.Before(file));
+        if (before.isCancelled()) return;
 
-		if (refreshGlobalLabels) {
-			refreshGlobalLabels();
-		}
+        if (files.containsKey(file)) return;
+        files.put(file, elements);
+        elements.setFilesToAssemble(this);
 
-		callEvent(new FileAddToAssembleEvent.After(file));
-	}
+        if (refreshGlobalLabels) {
+            refreshGlobalLabels();
+        }
 
-	public void addFile(File file, FileEditorHolder holder, boolean refreshGlobalLabels) {
-		Validate.notNull(file, "File cannot be null!");
-		Validate.notNull(holder, "List cannot be null!");
+        callEvent(new FileAddToAssembleEvent.After(file));
+    }
 
-		Optional<FileEditorTab> tab = holder.getFileDisplayTab(file, true);
-		if (tab.isEmpty() || !(tab.get().getDisplay() instanceof MIPSFileEditor)) {
-			addFile(file, refreshGlobalLabels);
-			return;
-		}
-		addFile(file, ((MIPSFileEditor) tab.get().getDisplay()).getElements(), refreshGlobalLabels);
-	}
+    public void addFile(File file, FileEditorHolder holder, boolean refreshGlobalLabels) {
+        Validate.notNull(file, "File cannot be null!");
+        Validate.notNull(holder, "List cannot be null!");
 
-	public void removeFile(File file) {
-		Validate.notNull(file, "File cannot be null!");
+        Optional<FileEditorTab> tab = holder.getFileDisplayTab(file, true);
+        if (tab.isEmpty() || !(tab.get().getDisplay() instanceof MIPSFileEditor)) {
+            addFile(file, refreshGlobalLabels);
+            return;
+        }
+        addFile(file, ((MIPSFileEditor) tab.get().getDisplay()).getElements(), refreshGlobalLabels);
+    }
 
-		FileRemoveFromAssembleEvent.Before before = callEvent(new FileRemoveFromAssembleEvent.Before(file));
-		if (before.isCancelled()) return;
+    public void removeFile(File file) {
+        Validate.notNull(file, "File cannot be null!");
 
-		if (!files.containsKey(file)) return;
-		MIPSFileElements elements = files.remove(file);
-		elements.setFilesToAssemble(null);
-		refreshDeletedDisplay(file, elements);
+        FileRemoveFromAssembleEvent.Before before = callEvent(new FileRemoveFromAssembleEvent.Before(file));
+        if (before.isCancelled()) return;
 
-		refreshGlobalLabels();
+        if (!files.containsKey(file)) return;
+        MIPSFileElements elements = files.remove(file);
+        elements.setFilesToAssemble(null);
+        refreshDeletedDisplay(file, elements);
 
-		callEvent(new FileRemoveFromAssembleEvent.After(file));
-	}
+        refreshGlobalLabels();
 
-	public void refreshGlobalLabels() {
-		Set<String> toUpdate = new HashSet<>(globalLabels);
+        callEvent(new FileRemoveFromAssembleEvent.After(file));
+    }
 
-		globalLabels.clear();
-		for (MIPSFileElements elements : files.values()) {
-			globalLabels.addAll(elements.getExistingGlobalLabels());
-		}
+    public void refreshGlobalLabels() {
+        Set<String> toUpdate = new HashSet<>(globalLabels);
 
-		toUpdate.addAll(globalLabels);
+        globalLabels.clear();
+        for (MIPSFileElements elements : files.values()) {
+            globalLabels.addAll(elements.getExistingGlobalLabels());
+        }
 
-		ProjectTab tab = JamsApplication.getProjectsTabPane().getProjectTab(project).orElse(null);
+        toUpdate.addAll(globalLabels);
 
-		if (tab == null) return;
-		Node node = tab.getProjectTabPane().getWorkingPane().getCenter();
-		if (!(node instanceof FileEditorHolder)) return;
-		FileEditorHolder holder = (FileEditorHolder) node;
+        ProjectTab tab = JamsApplication.getProjectsTabPane().getProjectTab(project).orElse(null);
 
-		files.forEach((file, elements) -> {
-			elements.seachForLabelsUpdates(toUpdate);
-			Optional<FileEditorTab> fTab = holder.getFileDisplayTab(file, true);
-			if (fTab.isPresent()) {
-				FileEditor display = fTab.get().getDisplay();
-				if (display instanceof MIPSFileEditor) {
-					elements.update(((MIPSFileEditor) display));
-				}
-			}
-		});
-	}
+        if (tab == null) return;
+        Node node = tab.getProjectTabPane().getWorkingPane().getCenter();
+        if (!(node instanceof FileEditorHolder)) return;
+        FileEditorHolder holder = (FileEditorHolder) node;
 
-	public void load(File folder) throws IOException {
-		File file = new File(folder, FILE_NAME);
-		if (!file.isFile()) return;
+        files.forEach((file, elements) -> {
+            elements.seachForLabelsUpdates(toUpdate);
+            Optional<FileEditorTab> fTab = holder.getFileDisplayTab(file, true);
+            if (fTab.isPresent()) {
+                FileEditor display = fTab.get().getDisplay();
+                if (display instanceof MIPSFileEditor) {
+                    elements.update(((MIPSFileEditor) display));
+                }
+            }
+        });
+    }
 
-		String value = FileUtils.readAll(file);
+    public void load(File folder) throws IOException {
+        File file = new File(folder, FILE_NAME);
+        if (!file.isFile()) return;
 
-		JSONArray array = new JSONArray(value);
-		for (Object element : array) {
-			file = new File(project.getFolder(), element.toString());
-			if (!file.isFile()) continue;
-			addFile(file, false);
-		}
+        String value = FileUtils.readAll(file);
 
-		Platform.runLater(this::refreshGlobalLabels);
-	}
+        JSONArray array = new JSONArray(value);
+        for (Object element : array) {
+            file = new File(project.getFolder(), element.toString());
+            if (!file.isFile()) continue;
+            addFile(file, false);
+        }
 
-	public void save(File folder) throws IOException {
-		Validate.notNull(folder, "Folder cannot be null!");
-		File file = new File(folder, FILE_NAME);
-		JSONArray array = new JSONArray();
-		Path projectPath = project.getFolder().toPath();
-		files.keySet().stream().map(target -> projectPath.relativize(target.toPath())).forEach(array::put);
+        Platform.runLater(this::refreshGlobalLabels);
+    }
 
-		Writer writer = new FileWriter(file);
-		writer.write(array.toString(1));
-		writer.close();
-	}
+    public void save(File folder) throws IOException {
+        Validate.notNull(folder, "Folder cannot be null!");
+        File file = new File(folder, FILE_NAME);
+        JSONArray array = new JSONArray();
+        Path projectPath = project.getFolder().toPath();
+        files.keySet().stream().map(target -> projectPath.relativize(target.toPath())).forEach(array::put);
 
-	public void checkFiles() {
-		List<File> toRemove = files.keySet().stream().filter(target -> !target.isFile()).collect(Collectors.toList());
-		for (File file : toRemove) {
-			removeFile(file);
-		}
-	}
+        Writer writer = new FileWriter(file);
+        writer.write(array.toString(1));
+        writer.close();
+    }
 
-	private void refreshDeletedDisplay(File file, MIPSFileElements elements) {
-		ProjectTab tab = JamsApplication.getProjectsTabPane().getProjectTab(project).orElse(null);
-		if (tab == null) return;
-		Node node = tab.getProjectTabPane().getWorkingPane().getCenter();
-		if (!(node instanceof FileEditorHolder)) return;
-		FileEditorHolder holder = (FileEditorHolder) node;
+    public void checkFiles() {
+        List<File> toRemove = files.keySet().stream().filter(target -> !target.isFile()).collect(Collectors.toList());
+        for (File file : toRemove) {
+            removeFile(file);
+        }
+    }
 
-		Optional<FileEditorTab> fTab = holder.getFileDisplayTab(file, true);
+    private void refreshDeletedDisplay(File file, MIPSFileElements elements) {
+        ProjectTab tab = JamsApplication.getProjectsTabPane().getProjectTab(project).orElse(null);
+        if (tab == null) return;
+        Node node = tab.getProjectTabPane().getWorkingPane().getCenter();
+        if (!(node instanceof FileEditorHolder)) return;
+        FileEditorHolder holder = (FileEditorHolder) node;
 
-		elements.seachForLabelsUpdates(globalLabels);
-		if (fTab.isPresent()) {
-			FileEditor display = fTab.get().getDisplay();
-			if (display instanceof MIPSFileEditor) {
-				elements.update(((MIPSFileEditor) display));
-			}
-		}
-	}
+        Optional<FileEditorTab> fTab = holder.getFileDisplayTab(file, true);
+
+        elements.seachForLabelsUpdates(globalLabels);
+        if (fTab.isPresent()) {
+            FileEditor display = fTab.get().getDisplay();
+            if (display instanceof MIPSFileEditor) {
+                elements.update(((MIPSFileEditor) display));
+            }
+        }
+    }
 }

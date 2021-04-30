@@ -79,7 +79,8 @@ public class MIPSFileEditor extends CodeFileEditor {
         applyLabelTabRemover();
 
         subscription = multiPlainChanges().subscribe(event -> event.forEach(this::index));
-        index();
+
+        Platform.runLater(this::index);
     }
 
     public Optional<MIPSProject> getProject() {
@@ -199,11 +200,11 @@ public class MIPSFileEditor extends CodeFileEditor {
 
             if (linesToRemove > 0) {
                 for (int i = 0; i < linesToRemove; i++) {
-                    refresh |= elements.removeLine(currentLine + editedLines);
+                    refresh |= elements.removeLine(currentLine + editedLines, hintBar);
                 }
             } else if (linesToAdd > 0) {
                 for (int i = 0; i < linesToAdd; i++) {
-                    refresh |= elements.addLine(currentLine + i + editedLines, getLine(currentLine + i + editedLines).getText());
+                    refresh |= elements.addLine(currentLine + i + editedLines, getLine(currentLine + i + editedLines).getText(), hintBar);
                 }
             }
 
@@ -218,14 +219,14 @@ public class MIPSFileEditor extends CodeFileEditor {
     private void index() {
         synchronized (formattingLock) {
             elements.refreshAll(getText());
-            elements.styleAll(this);
+            elements.styleAll(this, hintBar);
         }
     }
 
     private void index(String text) {
         synchronized (formattingLock) {
             elements.refreshAll(text);
-            elements.styleAll(this);
+            elements.styleAll(this, hintBar);
         }
     }
 

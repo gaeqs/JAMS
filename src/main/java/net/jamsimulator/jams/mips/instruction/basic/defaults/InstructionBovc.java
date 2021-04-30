@@ -34,6 +34,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
@@ -45,13 +46,13 @@ public class InstructionBovc extends BasicInstruction<InstructionBovc.Assembled>
 	public static final String MNEMONIC = "bovc";
 	public static final int OPERATION_CODE = 0b001000;
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
+	public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
 
 	public InstructionBovc() {
 		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, Pipelined::new);
 	}
 
 	@Override
@@ -117,9 +118,39 @@ public class InstructionBovc extends BasicInstruction<InstructionBovc.Assembled>
 		}
 	}
 
+
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address, false, false);
+		}
+
+		@Override
+		public void decode() {
+		}
+
+		@Override
+		public void execute() {
+			try {
+				Math.addExact(value(instruction.getSourceRegister()), value(instruction.getTargetRegister()));
+			} catch (ArithmeticException ex) {
+				jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
+			}
+		}
+
+		@Override
+		public void memory() {
+
+		}
+
+		@Override
+		public void writeBack() {
+		}
+	}
+
+	public static class Pipelined extends MultiCycleExecution<Assembled> {
+
+		public Pipelined(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
 			super(simulation, instruction, address, false, !simulation.getData().shouldSolveBranchesOnDecode());
 		}
 
@@ -141,15 +172,6 @@ public class InstructionBovc extends BasicInstruction<InstructionBovc.Assembled>
 
 		@Override
 		public void execute() {
-			executionResult = new int[0];
-
-			try {
-				Math.addExact(decodeResult[0], decodeResult[1]);
-			} catch (ArithmeticException ex) {
-				return;
-			}
-
-			pc().setValue(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
 		}
 
 		@Override

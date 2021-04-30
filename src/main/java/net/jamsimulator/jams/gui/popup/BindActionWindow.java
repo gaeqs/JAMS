@@ -42,8 +42,7 @@ import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
-import net.jamsimulator.jams.manager.ActionManager;
-import net.jamsimulator.jams.utils.KeyCombinationBuilder;
+import net.jamsimulator.jams.gui.util.KeyCombinationBuilder;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -34,23 +34,24 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
-public class InstructionJal extends BasicInstruction<InstructionJal.Assembled>  implements ControlTransferInstruction {
+public class InstructionJal extends BasicInstruction<InstructionJal.Assembled> implements ControlTransferInstruction {
 
 	public static final String MNEMONIC = "jal";
 	public static final int OPERATION_CODE = 0b000011;
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.SIGNED_32_BIT};
+	public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.SIGNED_32_BIT);
 
 	public InstructionJal() {
 		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, Pipelined::new);
 	}
 
 	@Override
@@ -100,6 +101,31 @@ public class InstructionJal extends BasicInstruction<InstructionJal.Assembled>  
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address, false, false);
+		}
+
+		@Override
+		public void decode() {
+		}
+
+		@Override
+		public void execute() {
+			jump(instruction.getAbsoluteAddress(getAddress() + 4));
+			setAndUnlock(31, getAddress() + 4);
+		}
+
+		@Override
+		public void memory() {
+		}
+
+		@Override
+		public void writeBack() {
+		}
+	}
+
+	public static class Pipelined extends MultiCycleExecution<Assembled> {
+
+		public Pipelined(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
 			super(simulation, instruction, address, false, true);
 		}
 

@@ -173,6 +173,7 @@ public class NumericUtils {
     }
 
     public static int decodeInteger(String string) {
+        string = string.trim();
         char c = '+';
         if (string.startsWith("+"))
             string = string.substring(1);

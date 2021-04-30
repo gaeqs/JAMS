@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'org.openjfx.javafxplugin' version '0.0.9'
-    id 'org.beryx.jlink' version '2.21.2'
+    id 'org.beryx.runtime' version '1.12.2'
 }
 
 def projectGroup = 'net.jamsimulator'
@@ -14,7 +14,7 @@ def bundleLibs = false
 def winConsole = false
 
 group projectGroup
-version '0.8-ALPHA'
+version '0.1-BETA'
 
 repositories {
     jcenter()
@@ -61,6 +61,7 @@ compileJava {
 }
 
 processResources {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from('src/main/resources') {
         include '*.json'
         filter { String line -> line.replace("\${VERSION}", project.version) }
@@ -68,6 +69,7 @@ processResources {
 }
 
 jar {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     manifest {
         attributes "Main-Class": projectMainClass
         attributes "Specification-Title": projectId
@@ -98,13 +100,12 @@ task bundle {
     finalizedBy build
 }
 
-jlink {
+
+runtime {
     options.addAll(['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages'])
     launcher {
-        name = 'JAMS'
         jvmArgs = ['-Dlogback.configurationFile=./logback.xml']
     }
-    addExtraDependencies("javafx")
     jpackage {
         def ver = normalizeAppVersion(version as String)
 

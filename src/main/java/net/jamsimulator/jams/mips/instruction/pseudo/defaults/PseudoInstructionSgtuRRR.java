@@ -24,47 +24,33 @@
 
 package net.jamsimulator.jams.mips.instruction.pseudo.defaults;
 
-import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
-import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionSltu;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionSgtuRRR extends PseudoInstruction {
 
 
-	public static final String NAME = "Set on greater than unsigned";
-	public static final String MNEMONIC = "sgtu";
+    public static final String NAME = "Set on greater than unsigned";
+    public static final String MNEMONIC = "sgtu";
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER};
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER);
 
-	public PseudoInstructionSgtuRRR() {
-		super(MNEMONIC, PARAMETER_TYPES);
-	}
+    public PseudoInstructionSgtuRRR() {
+        super(MNEMONIC, PARAMETER_TYPES);
+    }
 
-	@Override
-	public int getInstructionAmount(String[] parameters) {
-		return 1;
-	}
+    @Override
+    public int getInstructionAmount(String[] parameters) {
+        return 1;
+    }
 
-	@Override
-	public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
-		//Get instructions
-		Instruction sltu = set.getInstruction(InstructionSltu.MNEMONIC, PARAMETER_TYPES).orElse(null);
-		if (!(sltu instanceof BasicInstruction))
-			throw new AssemblerException("Basic instruction '" + InstructionSltu.MNEMONIC + "' not found.");
-
-		//Get parameters
-		ParameterParseResult[] sltuParameters = new ParameterParseResult[]{
-				parameters[0],
-				parameters[2],
-				parameters[1]
-		};
-
-		return new AssembledInstruction[]{((BasicInstruction<?>) sltu).assembleBasic(sltuParameters, this)};
-	}
+    @Override
+    public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
+        return assemble(instructions(set, InstructionSltu.class), parameters(parameters[0], parameters[2], parameters[1]));
+    }
 }

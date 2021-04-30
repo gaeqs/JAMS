@@ -26,25 +26,25 @@ package net.jamsimulator.jams.mips.simulation.singlecycle;
 
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
+import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
-import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
-import net.jamsimulator.jams.mips.interrupt.RuntimeInstructionException;
+import net.jamsimulator.jams.mips.interrupt.MIPSAddressException;
+import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.event.CacheOperationEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryAllocateMemoryEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
+import net.jamsimulator.jams.mips.register.COP0RegistersBits;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.mips.simulation.change.*;
 import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
-import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
-import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileCloseEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileOpenEvent;
@@ -137,57 +137,6 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
     }
 
     @Override
-    public void executeAll() {
-        if (finished || running) return;
-        running = true;
-        interrupted = false;
-
-        memory.enableEventCalls(data.canCallEvents());
-        registers.enableEventCalls(data.canCallEvents());
-
-        thread = new Thread(() -> {
-            instructions = 0;
-            start = System.nanoTime();
-
-            boolean first = true;
-            try {
-                while (!finished && !checkThreadInterrupted()) {
-                    runStep(first);
-                    first = false;
-                    instructions++;
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-            long millis = (System.nanoTime() - start) / 1000000;
-
-            if (getConsole() != null) {
-                getConsole().println();
-                getConsole().printInfoLn(instructions + " instructions executed in " + millis + " millis.");
-
-                int performance = (int) (instructions / (((double) millis) / 1000));
-                getConsole().printInfoLn(performance + " inst/s");
-                getConsole().println();
-            }
-
-            synchronized (finishedRunningLock) {
-                running = false;
-                memory.enableEventCalls(true);
-                registers.enableEventCalls(true);
-                finishedRunningLock.notifyAll();
-                callEvent(new SimulationStopEvent(this));
-                if (getConsole() != null) {
-                    getConsole().flush();
-                }
-            }
-        });
-        callEvent(new SimulationStartEvent(this));
-        thread.setPriority(Thread.MAX_PRIORITY);
-        thread.start();
-    }
-
-    @Override
     public boolean undoLastStep() {
         if (!data.isUndoEnabled()) return false;
 
@@ -207,7 +156,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
     }
 
     @Override
-    protected void runStep(boolean first) {
+    protected synchronized void runStep(boolean first) {
         if (finished) return;
         int pc = registers.getProgramCounter().getValue();
 
@@ -239,14 +188,14 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
 
             if (execution == null) {
                 currentStepChanges = null;
-                throw new RuntimeAddressException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION, pc);
+                throw new MIPSAddressException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION, pc);
             }
 
             execution.execute();
 
-        } catch (RuntimeInstructionException ex) {
+        } catch (MIPSInterruptException ex) {
             if (!checkThreadInterrupted()) {
-                manageMIPSInterrupt(ex, execution, pc);
+                requestSoftwareInterrupt(ex);
             }
         }
 
@@ -256,6 +205,8 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
             registers.getProgramCounter().setValue(pc);
             return;
         }
+
+        manageInterrupts(execution);
 
         addCycleCount();
 
@@ -282,6 +233,28 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
             }
             callEvent(new SimulationFinishedEvent(this));
         }
+    }
+
+    @Override
+    protected void manageInterrupts(InstructionExecution<?, ?> execution) {
+        if (!arePendingInterrupts()) return;
+
+        int level = externalInterruptController.getRequestedIPL();
+        causeRegister.modifyBits(level, COP0RegistersBits.CAUSE_RIPL, 6);
+
+        InterruptCause cause;
+        MIPSInterruptException exception;
+
+        if (level == 1) {
+            causeRegister.modifyBits(0, COP0RegistersBits.CAUSE_IP, 1);
+            exception = externalInterruptController.getSoftwareInterrupt();
+            cause = exception.getInterruptCause();
+        } else {
+            exception = null;
+            cause = InterruptCause.INTERRUPT;
+        }
+
+        invokeInterrupt(cause, exception, false, registers.getProgramCounter().getValue());
     }
 
     //region change listeners

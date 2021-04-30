@@ -51,86 +51,86 @@ import java.util.Optional;
 
 public class GeneralActionAssemble extends ContextAction {
 
-	public static final String NAME = "GENERAL_ASSEMBLE";
-	public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
+    public static final String NAME = "GENERAL_ASSEMBLE";
+    public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
 
-	public GeneralActionAssemble() {
-		super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_ASSEMBLE, DEFAULT_COMBINATION, GeneralActionRegions.MIPS_PRIORITY, MainMenuRegion.MIPS,
-				JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_ASSEMBLE).orElse(null));
-	}
+    public GeneralActionAssemble() {
+        super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_ASSEMBLE, DEFAULT_COMBINATION, GeneralActionRegions.MIPS_PRIORITY, MainMenuRegion.MIPS,
+                JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_ASSEMBLE).orElse(null));
+    }
 
-	@Override
-	public void run(Object node) {
-		if (node instanceof MIPSFileEditor) {
-			MIPSProject project = ((MIPSFileEditor) node).getProject().orElse(null);
-			if (project == null) return;
-			compileAndShow(project);
-		} else {
-			Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
-			if (!optionalProject.isPresent()) return;
-			ProjectTab tab = optionalProject.get();
-			if (tab.getProject() instanceof MIPSProject) {
-				compileAndShow((MIPSProject) tab.getProject());
-			}
-		}
-	}
+    @Override
+    public void run(Object node) {
+        if (node instanceof MIPSFileEditor) {
+            MIPSProject project = ((MIPSFileEditor) node).getProject().orElse(null);
+            if (project == null) return;
+            compileAndShow(project);
+        } else {
+            Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
+            if (optionalProject.isEmpty()) return;
+            ProjectTab tab = optionalProject.get();
+            if (tab.getProject() instanceof MIPSProject) {
+                compileAndShow((MIPSProject) tab.getProject());
+            }
+        }
+    }
 
-	public static void compileAndShow(MIPSProject project) {
-		ProjectTab tab = project.getProjectTab().orElse(null);
-		if (tab == null) return;
+    public static void compileAndShow(MIPSProject project) {
+        ProjectTab tab = project.getProjectTab().orElse(null);
+        if (tab == null) return;
 
-		Thread thread = new Thread(() -> {
-			MIPSStructurePane pane = (MIPSStructurePane) tab.getProjectTabPane().getWorkingPane();
-			pane.getFileDisplayHolder().saveAll(true);
+        Thread thread = new Thread(() -> {
+            MIPSStructurePane pane = (MIPSStructurePane) tab.getProjectTabPane().getWorkingPane();
+            pane.getFileDisplayHolder().saveAll(true);
 
-			if(Jams.getMainConfiguration().getOrElse("simulation.open_log_on_assemble", true)) {
-				pane.getBarMap().searchButton("log").ifPresent(BarButton::show);
-			}
-			SimpleLog log = pane.getLog();
+            if (Jams.getMainConfiguration().getOrElse("simulation.open_log_on_assemble", true)) {
+                Platform.runLater(() -> pane.getBarMap().searchButton("log").ifPresent(BarButton::show));
+            }
+            SimpleLog log = pane.getLog();
 
-			try {
-				Simulation<?> simulation = project.assemble(log);
-				if(simulation == null) return;
+            try {
+                Simulation<?> simulation = project.assemble(log);
+                if (simulation == null) return;
 
-				Platform.runLater(() ->
-						project.getProjectTab().ifPresent(projectTab -> projectTab.getProjectTabPane()
-								.createProjectPane((t, pt) ->
-										new MIPSSimulationPane(t, pt, project, simulation), true)));
+                Platform.runLater(() ->
+                        project.getProjectTab().ifPresent(projectTab -> projectTab.getProjectTabPane()
+                                .createProjectPane((t, pt) ->
+                                        new MIPSSimulationPane(t, pt, project, simulation), true)));
 
-			} catch (Exception ex) {
-				log.printErrorLn("ERROR:");
-				log.printErrorLn(ex.getMessage());
-				ex.printStackTrace();
-			}
-		});
+            } catch (Exception ex) {
+                log.printErrorLn("ERROR:");
+                log.printErrorLn(ex.getMessage());
+                ex.printStackTrace();
+            }
+        });
 
-		thread.setName("Assembler");
-		thread.start();
-	}
+        thread.setName("Assembler");
+        thread.start();
+    }
 
-	@Override
-	public void runFromMenu() {
-		Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
-		if (optionalProject.isEmpty()) return;
-		ProjectTab tab = optionalProject.get();
-		if (tab.getProject() instanceof MIPSProject) {
-			compileAndShow((MIPSProject) tab.getProject());
-		}
-	}
+    @Override
+    public void runFromMenu() {
+        Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
+        if (optionalProject.isEmpty()) return;
+        ProjectTab tab = optionalProject.get();
+        if (tab.getProject() instanceof MIPSProject) {
+            compileAndShow((MIPSProject) tab.getProject());
+        }
+    }
 
-	@Override
-	public boolean supportsExplorerState(Explorer explorer) {
-		return false;
-	}
+    @Override
+    public boolean supportsExplorerState(Explorer explorer) {
+        return false;
+    }
 
-	@Override
-	public boolean supportsTextEditorState(CodeFileEditor editor) {
-		return false;
-	}
+    @Override
+    public boolean supportsTextEditorState(CodeFileEditor editor) {
+        return false;
+    }
 
-	@Override
-	public boolean supportsMainMenuState(MainMenuBar bar) {
-		Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
-		return optionalProject.isPresent();
-	}
+    @Override
+    public boolean supportsMainMenuState(MainMenuBar bar) {
+        Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
+        return optionalProject.isPresent();
+    }
 }

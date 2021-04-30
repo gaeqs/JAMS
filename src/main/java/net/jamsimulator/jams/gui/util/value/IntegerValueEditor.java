@@ -1,73 +1,90 @@
 package net.jamsimulator.jams.gui.util.value;
 
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import net.jamsimulator.jams.gui.util.converter.ActionValueConverter;
+import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.util.converter.IntegerValueConverter;
+import net.jamsimulator.jams.gui.util.converter.ValueConverter;
+import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 import net.jamsimulator.jams.utils.NumericUtils;
 
 import java.util.function.Consumer;
 
 public class IntegerValueEditor extends TextField implements ValueEditor<Integer> {
 
-	public static final String NAME = IntegerValueConverter.NAME;
+    public static final String NAME = IntegerValueConverter.NAME;
 
-	protected String oldText;
+    protected String oldText;
 
-	private Consumer<Integer> listener = architecture -> {
-	};
+    private Consumer<Integer> listener = architecture -> {
+    };
 
-	public IntegerValueEditor() {
-		setText("0");
-		oldText = getText();
+    public IntegerValueEditor() {
+        setText("0");
+        oldText = getText();
 
-		Runnable run = () -> {
-			if (oldText.equals(getText())) return;
-			try {
-				int number = NumericUtils.decodeInteger(getText());
+        Runnable run = () -> {
+            if (oldText.equals(getText())) return;
+            try {
+                int number = NumericUtils.decodeInteger(getText());
 
-				listener.accept(number);
+                listener.accept(number);
 
-				oldText = getText();
-			} catch (NumberFormatException ex) {
-				setText(oldText);
-			}
-		};
+                oldText = getText();
+            } catch (NumberFormatException ex) {
+                setText(oldText);
+            }
+        };
 
-		setOnAction(event -> run.run());
-		focusedProperty().addListener((obs, old, val) -> {
-			if (val) return;
-			run.run();
-		});
-	}
+        setOnAction(event -> run.run());
+        focusedProperty().addListener((obs, old, val) -> {
+            if (val) return;
+            run.run();
+        });
+    }
 
-	@Override
-	public void setCurrentValue(Integer value) {
-		setText(String.valueOf(value));
-		listener.accept(value);
-	}
+    @Override
+    public void setCurrentValue(Integer value) {
+        setText(String.valueOf(value));
+        listener.accept(value);
+    }
 
-	@Override
-	public Integer getCurrentValue() {
-		return Integer.valueOf(getText());
-	}
+    @Override
+    public Integer getCurrentValue() {
+        return Integer.valueOf(getText());
+    }
 
-	@Override
-	public Node getAsNode() {
-		return this;
-	}
+    @Override
+    public Node getAsNode() {
+        return this;
+    }
 
-	@Override
-	public void addListener(Consumer<Integer> consumer) {
-		listener = listener.andThen(consumer);
-	}
+    @Override
+    public Node buildConfigNode(Label label) {
+        var box = new HBox(label, this);
+        box.setSpacing(5);
+        box.setAlignment(Pos.CENTER_LEFT);
+        return box;
+    }
 
-	public static class Builder implements ValueEditor.Builder<Integer> {
+    @Override
+    public void addListener(Consumer<Integer> consumer) {
+        listener = listener.andThen(consumer);
+    }
 
-		@Override
-		public ValueEditor<Integer> build() {
-			return new IntegerValueEditor();
-		}
+    @Override
+    public ValueConverter<Integer> getLinkedConverter() {
+        return ValueConverters.getByTypeUnsafe(Integer.class);
+    }
 
-	}
+    public static class Builder implements ValueEditor.Builder<Integer> {
+
+        @Override
+        public ValueEditor<Integer> build() {
+            return new IntegerValueEditor();
+        }
+
+    }
 }

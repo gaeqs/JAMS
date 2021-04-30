@@ -32,9 +32,10 @@ public class FolderActionRegions {
 
 	public static final ContextRegion NEW = new ContextRegion("new", null, 0);
 	public static final ContextRegion CLIPBOARD = new ContextRegion("clipboard", null, 1);
+	public static final ContextRegion OTHER = new ContextRegion("other", null, 2);
 	public static final ContextRegion SHOW = new ContextRegion("show", null, 999);
 
-	public static final ContextRegion ASSEMBLER = new ContextRegion("show", null, 2);
+	public static final ContextRegion ASSEMBLER = new ContextRegion("assembler", null, 2);
 
 	public static final ContextSubmenu NEW_SUBMENU = new ContextSubmenu("new", NEW, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_NEW);
 	public static final ContextRegion NEW_GENERAL = new ContextRegion("general", NEW_SUBMENU, 0);

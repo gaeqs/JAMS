@@ -24,45 +24,31 @@
 
 package net.jamsimulator.jams.mips.instruction.pseudo.defaults;
 
-import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
-import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionJal;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionJalL extends PseudoInstruction {
 
-	public static final String MNEMONIC = InstructionJal.MNEMONIC;
+    public static final String MNEMONIC = InstructionJal.MNEMONIC;
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.LABEL};
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.LABEL);
 
-	private static final ParameterType[] BASIC_PARAMETER_TYPES = new ParameterType[]{ParameterType.SIGNED_32_BIT};
+    public PseudoInstructionJalL() {
+        super(MNEMONIC, PARAMETER_TYPES);
+    }
 
-	public PseudoInstructionJalL() {
-		super(MNEMONIC, PARAMETER_TYPES);
-	}
+    @Override
+    public int getInstructionAmount(String[] parameters) {
+        return 1;
+    }
 
-	@Override
-	public int getInstructionAmount(String[] parameters) {
-		return 1;
-	}
-
-	@Override
-	public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
-		int jumpTo = parameters[0].getLabelValue();
-
-		Instruction jal = set.getInstruction(MNEMONIC, BASIC_PARAMETER_TYPES).orElse(null);
-		if (!(jal instanceof BasicInstruction))
-			throw new AssemblerException("Basic instruction '" + MNEMONIC + "' not found.");
-
-		ParameterParseResult[] newParameters = new ParameterParseResult[]{
-				ParameterParseResult.builder().immediate(jumpTo).build()
-		};
-
-		return new AssembledInstruction[]{((BasicInstruction<?>) jal).assembleBasic(newParameters, this)};
-	}
+    @Override
+    public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
+        return assemble(instructions(set, InstructionJal.class), parameters(immediate(parameters[0].getLabelValue())));
+    }
 }

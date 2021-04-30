@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.instruction.basic;
 
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
@@ -35,34 +36,49 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
  */
 public abstract class BasicRInstruction<Inst extends AssembledInstruction> extends BasicInstruction<Inst> {
 
-	private final int functionCode;
+    private final int functionCode;
 
-	/**
-	 * Creates a basic instruction using a mnemonic, a parameter types array and an operation code.
-	 *
-	 * @param mnemonic      the mnemonic.
-	 * @param parameters    the parameter types.
-	 * @param operationCode the operation code.
-	 * @param functionCode  the function code.
-	 */
-	public BasicRInstruction(String mnemonic, ParameterType[] parameters, int operationCode,
-							 int functionCode) {
-		super(mnemonic, parameters, operationCode);
-		this.functionCode = functionCode;
-	}
+    /**
+     * Creates a basic instruction using a mnemonic, a parameter types array and an operation code.
+     *
+     * @param mnemonic      the mnemonic.
+     * @param parameters    the parameter types.
+     * @param operationCode the operation code.
+     * @param functionCode  the function code.
+     */
+    public BasicRInstruction(String mnemonic, ParameterType[] parameters, int operationCode,
+                             int functionCode) {
+        super(mnemonic, parameters, operationCode);
+        this.functionCode = functionCode;
+    }
 
-	@Override
-	public boolean match(int instructionCode) {
-		return super.match(instructionCode) &&
-				(instructionCode & AssembledRInstruction.FUNCTION_CODE_MASK) == functionCode;
-	}
+    /**
+     * Creates a basic instruction using a mnemonic, a parameter types array and an operation code.
+     *
+     * @param mnemonic      the mnemonic.
+     * @param parameters    the parameter types.
+     * @param operationCode the operation code.
+     * @param functionCode  the function code.
+     */
+    public BasicRInstruction(String mnemonic, InstructionParameterTypes parameters, int operationCode,
+                             int functionCode) {
+        super(mnemonic, parameters, operationCode);
+        this.functionCode = functionCode;
+    }
 
-	/**
-	 * Returns the function code of the instruction.
-	 *
-	 * @return the function code.
-	 */
-	public int getFunctionCode() {
-		return functionCode;
-	}
+
+    @Override
+    public boolean match(int instructionCode) {
+        return super.match(instructionCode) &&
+                (instructionCode & AssembledRInstruction.FUNCTION_CODE_MASK) == functionCode;
+    }
+
+    /**
+     * Returns the function code of the instruction.
+     *
+     * @return the function code.
+     */
+    public int getFunctionCode() {
+        return functionCode;
+    }
 }

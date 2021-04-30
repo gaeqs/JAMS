@@ -28,7 +28,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import net.jamsimulator.jams.gui.project.ProjectListTabPane;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 
 /**
  * This is the main pane of JAMS's main window.

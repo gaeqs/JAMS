@@ -34,24 +34,25 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
-public class InstructionBalc extends BasicInstruction<InstructionBalc.Assembled>  implements ControlTransferInstruction {
+public class InstructionBalc extends BasicInstruction<InstructionBalc.Assembled> implements ControlTransferInstruction {
 
 	public static final String MNEMONIC = "balc";
 	public static final int OPERATION_CODE = 0b111010;
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.SIGNED_32_BIT};
+	public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.SIGNED_32_BIT);
 
 	public InstructionBalc() {
 		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
 		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
 		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+		addExecutionBuilder(PipelinedArchitecture.INSTANCE, Pipelined::new);
 	}
 
 	@Override
@@ -100,10 +101,35 @@ public class InstructionBalc extends BasicInstruction<InstructionBalc.Assembled>
 		}
 	}
 
-
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
 		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+			super(simulation, instruction, address, false, false);
+		}
+
+		@Override
+		public void decode() {
+			decodeResult = new int[]{getAddress() + 4};
+		}
+
+		@Override
+		public void execute() {
+			jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
+			setAndUnlock(31, decodeResult[0]);
+		}
+
+		@Override
+		public void memory() {
+		}
+
+		@Override
+		public void writeBack() {
+		}
+	}
+
+	public static class Pipelined extends MultiCycleExecution<Assembled> {
+
+		public Pipelined(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
 			super(simulation, instruction, address, false, true);
 		}
 
@@ -111,16 +137,16 @@ public class InstructionBalc extends BasicInstruction<InstructionBalc.Assembled>
 		public void decode() {
 			lock(31);
 			lock(pc());
-			decodeResult = new int[]{getAddress() + 4 };
+			decodeResult = new int[]{getAddress() + 4};
 			if (solveBranchOnDecode()) {
-				jump(getAddress() + 4  + (instruction.getImmediateAsSigned() << 2));
+				jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
 			}
 		}
 
 		@Override
 		public void execute() {
 			if (!solveBranchOnDecode()) {
-				executionResult = new int[]{getAddress() + 4  + (instruction.getImmediateAsSigned() << 2)};
+				executionResult = new int[]{getAddress() + 4 + (instruction.getImmediateAsSigned() << 2)};
 			} else {
 				forward(31, decodeResult[0], false);
 			}

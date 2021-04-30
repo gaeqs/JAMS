@@ -34,87 +34,87 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
-import net.jamsimulator.jams.mips.parameter.ParameterType;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class InstructionSyscall extends BasicRInstruction<InstructionSyscall.Assembled> {
 
-	public static final String MNEMONIC = "syscall";
-	public static final int OPERATION_CODE = 0;
-	public static final int FUNCTION_CODE = 0b001100;
+    public static final String MNEMONIC = "syscall";
+    public static final int OPERATION_CODE = 0;
+    public static final int FUNCTION_CODE = 0b001100;
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[0];
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes();
 
-	public InstructionSyscall() {
-		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
-		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
-		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
-	}
+    public InstructionSyscall() {
+        super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+        addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+        addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+        addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+    }
 
-	@Override
-	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new Assembled(origin, this);
-	}
+    @Override
+    public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
+        return new Assembled(origin, this);
+    }
 
-	@Override
-	public AssembledInstruction assembleFromCode(int instructionCode) {
-		return new Assembled(instructionCode, this, this);
-	}
+    @Override
+    public AssembledInstruction assembleFromCode(int instructionCode) {
+        return new Assembled(instructionCode, this, this);
+    }
 
-	public static class Assembled extends AssembledRInstruction {
+    public static class Assembled extends AssembledRInstruction {
 
-		public Assembled(Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-			super(InstructionSyscall.OPERATION_CODE, 0, 0, 0, 0,
-					InstructionSyscall.FUNCTION_CODE, origin, basicOrigin);
-		}
+        public Assembled(Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(InstructionSyscall.OPERATION_CODE, 0, 0, 0, 0,
+                    InstructionSyscall.FUNCTION_CODE, origin, basicOrigin);
+        }
 
-		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-			super(instructionCode, origin, basicOrigin);
-		}
+        public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(instructionCode, origin, basicOrigin);
+        }
 
-		@Override
-		public String parametersToString(String registersStart) {
-			return "";
-		}
-	}
+        @Override
+        public String parametersToString(String registersStart) {
+            return "";
+        }
+    }
 
-	public static class SingleCycle extends SingleCycleExecution<Assembled> {
+    public static class SingleCycle extends SingleCycleExecution<Assembled> {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address);
-		}
+        public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
+            super(simulation, instruction, address);
+        }
 
-		@Override
-		public void execute() {
-			simulation.getData().getSyscallExecutions().executeSyscall(simulation);
-		}
-	}
+        @Override
+        public void execute() {
+            simulation.getData().getSyscallExecutions().executeSyscall(simulation);
+        }
+    }
 
-	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+    public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
-		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address, false, false);
-		}
+        public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+            super(simulation, instruction, address, false, false);
+        }
 
-		@Override
-		public void decode() {
-			requires(2);
-		}
+        @Override
+        public void decode() {
+            requires(2);
+        }
 
-		@Override
-		public void execute() {
-			simulation.getData().getSyscallExecutions().executeSyscallMultiCycle(this);
-		}
+        @Override
+        public void execute() {
+            simulation.getData().getSyscallExecutions().executeSyscallMultiCycle(this);
+        }
 
-		@Override
-		public void memory() {
+        @Override
+        public void memory() {
 
-		}
+        }
 
-		@Override
-		public void writeBack() {
-		}
-	}
+        @Override
+        public void writeBack() {
+        }
+    }
 }

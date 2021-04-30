@@ -25,8 +25,10 @@
 package net.jamsimulator.jams.gui.mips.editor.element;
 
 import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.directive.defaults.DirectiveEndmacro;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveEqv;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveGlobl;
+import net.jamsimulator.jams.mips.directive.defaults.DirectiveMacro;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.StringUtils;
@@ -72,6 +74,14 @@ public class MIPSDirective extends MIPSCodeElement {
         return simpleText.equalsIgnoreCase("." + DirectiveEqv.NAME);
     }
 
+    public boolean isMacro() {
+        return simpleText.equalsIgnoreCase("." + DirectiveMacro.NAME);
+    }
+
+    public boolean isEndMacro() {
+        return simpleText.equalsIgnoreCase("." + DirectiveEndmacro.NAME);
+    }
+
     public String getEqvKey() {
         return parameters.isEmpty() ? "" : parameters.get(0).text;
     }
@@ -79,7 +89,7 @@ public class MIPSDirective extends MIPSCodeElement {
     public String getEqvValue() {
         var param = getEqvKey();
         if (param.isEmpty()) return "";
-        return text.substring(text.indexOf(param) + param.length());
+        return text.substring(text.indexOf(param) + param.length()).trim();
     }
 
     @Override

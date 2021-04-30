@@ -23,7 +23,7 @@ public class WriteBackAssociativeCache extends WriteBackCache {
 	}
 
 	@Override
-	protected CacheBlock getBlock(int address, boolean callEvent) {
+	protected CacheBlock getBlock(int address, boolean create, boolean callEvents) {
 		int tag = calculateTag(address);
 
 		operations++;
@@ -39,6 +39,9 @@ public class WriteBackAssociativeCache extends WriteBackCache {
 		}
 
 		var isHit = b != null;
+
+		if (!isHit && !create) return null;
+
 		CacheBlock old = b;
 
 		if (b != null) hits++;
@@ -63,7 +66,7 @@ public class WriteBackAssociativeCache extends WriteBackCache {
 			blocks[blockIndex] = b;
 		}
 
-		if (callEvent) {
+		if (callEvents) {
 			callEvent(new CacheOperationEvent(this, operations - 1, isHit, old, b, blockIndex));
 		}
 

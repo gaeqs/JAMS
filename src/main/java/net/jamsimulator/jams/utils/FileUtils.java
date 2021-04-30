@@ -26,95 +26,130 @@ package net.jamsimulator.jams.utils;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.function.BiConsumer;
 
 public class FileUtils {
 
-	public static boolean isChild(File child, File parent) {
-		return isChild(child.toPath().toAbsolutePath(), parent.toPath().toAbsolutePath());
-	}
+    public static boolean isChild(File child, File parent) {
+        return isChild(child.toPath().toAbsolutePath(), parent.toPath().toAbsolutePath());
+    }
 
-	public static boolean isChild(Path child, Path parent) {
-		return child.startsWith(parent);
-	}
+    public static boolean isChild(Path child, Path parent) {
+        return child.startsWith(parent);
+    }
 
-	public static boolean deleteDirectory(File directory) {
-		Validate.notNull(directory, "Directory cannot be null!");
-		File[] files = directory.listFiles();
-		if (files != null) {
-			for (File file : files) {
-				if (!Files.isSymbolicLink(file.toPath())) {
-					if (!deleteDirectory(file)) return false;
-				}
-			}
-		}
-		return directory.delete();
-	}
+    public static boolean deleteDirectory(File directory) {
+        Validate.notNull(directory, "Directory cannot be null!");
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (!Files.isSymbolicLink(file.toPath())) {
+                    if (!deleteDirectory(file)) return false;
+                }
+            }
+        }
+        return directory.delete();
+    }
 
-	public static String readAll(File file) throws IOException {
-		Validate.notNull(file, "File cannot be null!");
-		Validate.isTrue(file.exists(), "File must exist!");
-		Validate.isTrue(file.isFile(), "File must be a file!");
+    public static String readAll(File file) throws IOException {
+        Validate.notNull(file, "File cannot be null!");
+        Validate.isTrue(file.exists(), "File must exist!");
+        Validate.isTrue(file.isFile(), "File must be a file!");
 
-		StringBuilder builder = new StringBuilder();
-		Reader reader = new FileReader(file);
+        StringBuilder builder = new StringBuilder();
+        Reader reader = new FileReader(file);
 
-		int c;
-		while ((c = reader.read()) != -1) {
-			builder.append((char) c);
-		}
+        int c;
+        while ((c = reader.read()) != -1) {
+            builder.append((char) c);
+        }
 
-		reader.close();
+        reader.close();
 
-		return builder.toString();
-	}
+        return builder.toString();
+    }
 
-	public static String readAll(InputStream stream) throws IOException {
-		Validate.notNull(stream, "Stream cannot be null!");
+    public static String readAll(InputStream stream) throws IOException {
+        Validate.notNull(stream, "Stream cannot be null!");
 
-		StringBuilder builder = new StringBuilder();
-		Reader reader = new InputStreamReader(stream);
+        StringBuilder builder = new StringBuilder();
+        Reader reader = new InputStreamReader(stream);
 
-		int c;
-		while ((c = reader.read()) != -1) {
-			builder.append((char) c);
-		}
+        int c;
+        while ((c = reader.read()) != -1) {
+            builder.append((char) c);
+        }
 
-		reader.close();
+        reader.close();
 
-		return builder.toString();
-	}
+        return builder.toString();
+    }
 
-	public static void writeAll(File file, String text) throws IOException {
-		Validate.notNull(file, "File cannot be null!");
-		Validate.isTrue(!file.exists() || file.isFile(), "File must not exist or be a file!");
-		Writer writer = new FileWriter(file);
-		writer.write(text);
-		writer.close();
-	}
+    public static void writeAll(File file, String text) throws IOException {
+        Validate.notNull(file, "File cannot be null!");
+        Validate.isTrue(!file.exists() || file.isFile(), "File must not exist or be a file!");
+        Writer writer = new FileWriter(file);
+        writer.write(text);
+        writer.close();
+    }
 
-	public static boolean copyFile(File folder, File target) {
-		try {
-			Path from = target.toPath();
-			Path to = new File(folder, target.getName()).toPath();
-			if (target.isDirectory()) {
-				Files.walkFileTree(from, new CopyFileVisitor(from, to));
-			} else {
-				Files.copy(from, to, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
+    public static boolean copyFileToFolder(File folder, File target) {
+        try {
+            Path from = target.toPath();
+            Path to = new File(folder, target.getName()).toPath();
+            if (target.isDirectory()) {
+                Files.walkFileTree(from, new CopyFileVisitor(from, to, false, null));
+            } else {
+                Files.copy(from, to, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
 
-	public static boolean isValidPath(String path) {
-		try {
-			Paths.get(path);
-		} catch (InvalidPathException | NullPointerException ex) {
-			return false;
-		}
-		return true;
-	}
+    public static boolean copyFile(File from, File to) {
+        try {
+            if (from.isDirectory()) {
+                Files.walkFileTree(from.toPath(), new CopyFileVisitor(from.toPath(), to.toPath(), false, null));
+            } else {
+                Files.copy(from.toPath(), to.toPath(), StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+
+    public static boolean moveFileToFolder(File folder, File target, BiConsumer<File, File> moveAction) {
+        try {
+            File toFile = new File(folder, target.getName());
+            Path from = target.toPath();
+            Path to = toFile.toPath();
+            if (target.isDirectory()) {
+                Files.walkFileTree(from, new CopyFileVisitor(from, to, true, moveAction));
+            } else {
+                moveAction.accept(target, toFile);
+                Files.move(from, to, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+
+    public static boolean isValidPath(String path) {
+        try {
+            Paths.get(path);
+        } catch (InvalidPathException | NullPointerException ex) {
+            return false;
+        }
+        return true;
+    }
 }
 

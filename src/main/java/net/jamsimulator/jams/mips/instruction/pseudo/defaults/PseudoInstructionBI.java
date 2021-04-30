@@ -24,45 +24,31 @@
 
 package net.jamsimulator.jams.mips.instruction.pseudo.defaults;
 
-import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
-import net.jamsimulator.jams.mips.instruction.Instruction;
-import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
-import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionBeq;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionBeq;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionBI extends PseudoInstruction {
 
-	public static final String MNEMONIC = "b";
+    public static final String MNEMONIC = "b";
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.SIGNED_16_BIT};
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.SIGNED_16_BIT);
 
-	private static final ParameterType[] BASIC_PARAMETER_TYPES =
-			new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
-	private static final ParameterParseResult ZERO = ParameterParseResult.builder().register(0).build();
+    public PseudoInstructionBI() {
+        super(MNEMONIC, PARAMETER_TYPES);
+    }
 
-	public PseudoInstructionBI() {
-		super(MNEMONIC, PARAMETER_TYPES);
-	}
+    @Override
+    public int getInstructionAmount(String[] parameters) {
+        return 1;
+    }
 
-	@Override
-	public int getInstructionAmount(String[] parameters) {
-		return 1;
-	}
-
-	@Override
-	public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
-		Instruction beq = set.getInstruction(InstructionBeq.MNEMONIC, BASIC_PARAMETER_TYPES).orElse(null);
-		if (!(beq instanceof BasicInstruction))
-			throw new AssemblerException("Basic instruction '" + InstructionBeq.MNEMONIC + "' not found.");
-
-		ParameterParseResult[] newParameters = new ParameterParseResult[]{
-				ZERO, ZERO, parameters[0]
-		};
-
-		return new AssembledInstruction[]{((BasicInstruction) beq).assembleBasic(newParameters, this)};
-	}
+    @Override
+    public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
+        return assemble(instructions(set, InstructionBeq.class), parameters(ZERO, ZERO, parameters[0]));
+    }
 }

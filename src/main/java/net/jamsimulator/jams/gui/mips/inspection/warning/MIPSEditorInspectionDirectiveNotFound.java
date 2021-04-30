@@ -30,6 +30,7 @@ public class MIPSEditorInspectionDirectiveNotFound extends MIPSEditorInspection 
 
         @Override
         public Optional<MIPSEditorInspectionDirectiveNotFound> tryToBuild(MIPSCodeElement element, MIPSFileElements elements) {
+            if (element.usesMacroParameter()) return Optional.empty();
             if (element instanceof MIPSDirective && ((MIPSDirective) element).getDirective().isEmpty()) {
                 return Optional.of(new MIPSEditorInspectionDirectiveNotFound(this, element.getSimpleText()));
             }

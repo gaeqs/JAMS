@@ -150,8 +150,8 @@ public class MIPS32Registers extends Registers {
 
 
 		coprocessor0Registers[12] = new Register[8];
-		coprocessor0Registers[12][0] = new COP0StatusRegister(this, 12, 0, 0x0000ff11, 0xf85bff17, "Status", "12");
-		coprocessor0Registers[12][1] = new COP0Register(this, 12, 1, 0xFFFFFFFF, "IntCtl", "12.1");
+		coprocessor0Registers[12][0] = new COP0StatusRegister(this, 12, 0, 0x00000311, 0xf85bff17, "Status", "12");
+		coprocessor0Registers[12][1] = new COP0Register(this, 12, 1, 0x00000020 , 0xFFFFFFFF, "IntCtl", "12.1");
 		coprocessor0Registers[12][2] = new COP0Register(this, 12, 2, 0xFFFFFFFF, "SRSCtl", "12.2");
 		coprocessor0Registers[12][3] = new COP0Register(this, 12, 3, 0xFFFFFFFF, "SRSMap", "12.3");
 		coprocessor0Registers[12][4] = new COP0Register(this, 12, 4, 0xFFFFFFFF, "View_IPL", "12.4");
@@ -160,7 +160,7 @@ public class MIPS32Registers extends Registers {
 		coprocessor0Registers[12][7] = new COP0Register(this, 12, 7, 0xFFFFFFFF, "GTOffset", "12.7");
 
 		coprocessor0Registers[13] = new Register[6];
-		coprocessor0Registers[13][0] = new COP0Register(this, 13, 0, 0xFFFFFFFF, "Cause", "13");
+		coprocessor0Registers[13][0] = new COP0Register(this, 13, 0, 0x00800000, 0xFFFFFFFF, "Cause", "13");
 		coprocessor0Registers[13][4] = new COP0Register(this, 13, 4, 0xFFFFFFFF, "View_RIPL", "13.4");
 		coprocessor0Registers[13][5] = new COP0Register(this, 13, 5, 0xFFFFFFFF, "NestedExc", "13.5");
 
@@ -170,18 +170,18 @@ public class MIPS32Registers extends Registers {
 
 		coprocessor0Registers[15] = new Register[4];
 		coprocessor0Registers[15][0] = new COP0Register(this, 15, 0, 0xFFFFFFFF, "PRId", "15");
-		coprocessor0Registers[15][1] = new COP0Register(this, 15, 1, 0xFFFFFFFF, "EBase", "15.1");
+		coprocessor0Registers[15][1] = new COP0Register(this, 15, 1, 0x80000000, 0x3ffff000, "EBase", "15.1");
 		coprocessor0Registers[15][2] = new COP0Register(this, 15, 2, 0xFFFFFFFF, "CDMMBase", "15.2");
 		coprocessor0Registers[15][3] = new COP0Register(this, 15, 3, 0xFFFFFFFF, "CMGCRBase", "15.3");
 
 
 		coprocessor0Registers[16] = new Register[6];
-		coprocessor0Registers[16][0] = new COP0Register(this, 16, 0, 0xFFFFFFFF, "Config", "16");
-		coprocessor0Registers[16][1] = new COP0Register(this, 16, 1, 0xFFFFFFFF, "Config1", "16.1");
-		coprocessor0Registers[16][2] = new COP0Register(this, 16, 2, 0xFFFFFFFF, "Config2", "16.2");
-		coprocessor0Registers[16][3] = new COP0Register(this, 16, 3, 0xFFFFFFFF, "Config3", "16.3");
-		coprocessor0Registers[16][4] = new COP0Register(this, 16, 4, 0xFFFFFFFF, "Config4", "16.4");
-		coprocessor0Registers[16][5] = new COP0Register(this, 16, 5, 0xFFFFFFFF, "Config5", "16.5");
+		coprocessor0Registers[16][0] = new COP0Register(this, 16, 0, 0x80000000, 0x7FFFFFFF, "Config", "16");
+		coprocessor0Registers[16][1] = new COP0Register(this, 16, 1, 0x80000000, 0x7FFFFFFF, "Config1", "16.1");
+		coprocessor0Registers[16][2] = new COP0Register(this, 16, 2, 0x80000000, 0x7FFFFFFF, "Config2", "16.2");
+		coprocessor0Registers[16][3] = new COP0Register(this, 16, 3, 0x80000020, 0x00000000, "Config3", "16.3");
+		coprocessor0Registers[16][4] = new COP0Register(this, 16, 4, 0x80000000, 0x7FFFFFFF, "Config4", "16.4");
+		coprocessor0Registers[16][5] = new COP0Register(this, 16, 5, 0x00000000, 0x7FFFFFFF, "Config5", "16.5");
 
 		coprocessor0Registers[17] = new Register[1];
 		coprocessor0Registers[17][0] = new COP0Register(this, 17, 0, 0xFFFFFFFF, "LLAddr", "17");

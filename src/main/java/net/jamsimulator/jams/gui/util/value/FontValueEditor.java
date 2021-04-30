@@ -1,8 +1,13 @@
 package net.jamsimulator.jams.gui.util.value;
 
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
+import net.jamsimulator.jams.gui.util.converter.ValueConverter;
+import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 
 import java.util.function.Consumer;
 
@@ -35,8 +40,21 @@ public class FontValueEditor extends ComboBox<String> implements ValueEditor<Str
 	}
 
 	@Override
+	public Node buildConfigNode(Label label) {
+		var box =  new HBox(label, this);
+		box.setSpacing(5);
+		box.setAlignment(Pos.CENTER_LEFT);
+		return box;
+	}
+
+	@Override
 	public void addListener(Consumer<String> consumer) {
 		listener = listener.andThen(consumer);
+	}
+
+	@Override
+	public ValueConverter<String> getLinkedConverter() {
+		return ValueConverters.getByTypeUnsafe(String.class);
 	}
 
 	public static class Builder implements ValueEditor.Builder<String> {

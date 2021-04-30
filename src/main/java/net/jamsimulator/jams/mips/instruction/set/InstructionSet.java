@@ -29,6 +29,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -117,6 +118,23 @@ public class InstructionSet implements Labeled {
         Validate.notNull(mnemonic, "The given mnemonic cannot be null!");
         Validate.notNull(parameters, "The given parameters array cannot be null!");
         Validate.hasNoNulls(parameters, "One of the parameter types is null!");
+
+        var set = instructionsByMnemonic.get(mnemonic);
+        if (set == null) return Optional.empty();
+        return set.stream().filter(target -> target.match(mnemonic, parameters)).findFirst();
+    }
+
+    /**
+     * Returns the {@link Instruction} that matches the given mnemonic and parameter types, if present.
+     *
+     * @param mnemonic   the given mnemonic.
+     * @param parameters the given parameters.
+     * @return the {@link Instruction}, if present.
+     * @throws NullPointerException if the mnemonic, the parameters array or any parameter are null.
+     */
+    public Optional<Instruction> getInstruction(String mnemonic, InstructionParameterTypes parameters) {
+        Validate.notNull(mnemonic, "The given mnemonic cannot be null!");
+        Validate.notNull(parameters, "The given parameters array cannot be null!");
 
         var set = instructionsByMnemonic.get(mnemonic);
         if (set == null) return Optional.empty();

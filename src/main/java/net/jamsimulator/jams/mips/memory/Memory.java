@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.mips.memory;
 
 import net.jamsimulator.jams.event.EventBroadcast;
-import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
 
 import java.util.Optional;
 import java.util.Set;
@@ -35,227 +34,290 @@ import java.util.Set;
  */
 public interface Memory extends EventBroadcast {
 
-	/**
-	 * Returns whether this memory is big endian.
-	 * This value can be changed on runtime using {@link #setBigEndian(boolean)}.
-	 *
-	 * @return true if this memory is big endian. False if this memory is little endian.
-	 */
-	boolean isBigEndian();
+    /**
+     * Returns whether this memory is big endian.
+     * This value can be changed on runtime using {@link #setBigEndian(boolean)}.
+     *
+     * @return true if this memory is big endian. False if this memory is little endian.
+     */
+    boolean isBigEndian();
 
-	/**
-	 * Sets the endianness of the memory. If the given boolean is true the memory
-	 * will behave as a big endian memory. Else it will behave as a little endian memory.
-	 *
-	 * @param bigEndian whether the memory should behave as a big endian memory.
-	 */
-	void setBigEndian(boolean bigEndian);
+    /**
+     * Sets the endianness of the memory. If the given boolean is true the memory
+     * will behave as a big endian memory. Else it will behave as a little endian memory.
+     *
+     * @param bigEndian whether the memory should behave as a big endian memory.
+     */
+    void setBigEndian(boolean bigEndian);
 
-	/**
-	 * Returns the byte stored in the given address.
-	 *
-	 * @param address the address.
-	 * @return the byte.
-	 * @throws IndexOutOfBoundsException if no section contains the address.
-	 */
-	byte getByte(int address);
+    /**
+     * Returns the byte stored in the given address.
+     *
+     * @param address the address.
+     * @return the byte.
+     * @throws IndexOutOfBoundsException if no section contains the address.
+     */
+    byte getByte(int address);
 
-	/**
-	 * Stores the given byte into the given address.
-	 *
-	 * @param address the address.
-	 * @param b       the byte.
-	 * @throws IndexOutOfBoundsException if no section contains the address.
-	 */
-	void setByte(int address, byte b);
+    /**
+     * Stores the given byte into the given address.
+     *
+     * @param address the address.
+     * @param b       the byte.
+     * @throws IndexOutOfBoundsException if no section contains the address.
+     */
+    void setByte(int address, byte b);
 
-	/**
-	 * Returns the word stored in the given address.
-	 *
-	 * @param address the address.
-	 * @return the word.
-	 * @throws IllegalArgumentException  if the address is not aligned to words.
-	 * @throws IndexOutOfBoundsException if no section contains the address.
-	 */
-	int getWord(int address);
+    /**
+     * Returns the word stored in the given address.
+     *
+     * @param address the address.
+     * @return the word.
+     * @throws IllegalArgumentException  if the address is not aligned to words.
+     * @throws IndexOutOfBoundsException if no section contains the address.
+     */
+    int getWord(int address);
 
-	/**
-	 * Stores the given word into the given address.
-	 *
-	 * @param address the address.
-	 * @param word    the word.
-	 * @throws IllegalArgumentException  if the address is not aligned to words.
-	 * @throws IndexOutOfBoundsException if no section contains the address.
-	 */
-	void setWord(int address, int word);
+    /**
+     * Stores the given word into the given address.
+     *
+     * @param address the address.
+     * @param word    the word.
+     * @throws IllegalArgumentException  if the address is not aligned to words.
+     * @throws IndexOutOfBoundsException if no section contains the address.
+     */
+    void setWord(int address, int word);
 
-	/**
-	 * THIS METHOD SHOULDN'T BE USED BY INSTRUCTIONS!
-	 * <p>
-	 * Returns the word stored in the given address.
-	 *
-	 * @param address      the address.
-	 * @param callEvents   whether this method should call events. Events won't be called if {@link #areEventCallsEnabled()} is false.
-	 * @param bypassCaches whether this method should bypass all caches.
-	 * @return the word.
-	 */
-	int getWord(int address, boolean callEvents, boolean bypassCaches);
+    /**
+     * THIS METHOD SHOULDN'T BE USED BY INSTRUCTIONS!
+     * <p>
+     * Stores the given word into the given address.
+     *
+     * @param address      the address.
+     * @param word         the word.
+     * @param callEvents   whether this method should call events. Events won't be called if {@link #areEventCallsEnabled()} is false.
+     * @param bypassCaches whether this method should bypass all caches.
+     * @param modifyCaches whether this method should mofify caches if they fail.
+     * @throws IllegalArgumentException  if the address is not aligned to words.
+     * @throws IndexOutOfBoundsException if no section contains the address.
+     */
+    void setWord(int address, int word, boolean callEvents, boolean bypassCaches, boolean modifyCaches);
 
-	/**
-	 * THIS METHOD SHOULDN'T BE USED BY INSTRUCTIONS!
-	 * <p>
-	 * Returns the byte stored in the given address.
-	 *
-	 * @param address      the address.
-	 * @param callEvents   whether this method should call events. Events won't be called if {@link #areEventCallsEnabled()} is false.
-	 * @param bypassCaches whether this method should bypass all caches.
-	 * @return the byte.
-	 */
-	byte getByte(int address, boolean callEvents, boolean bypassCaches);
+    /**
+     * THIS METHOD SHOULDN'T BE USED BY INSTRUCTIONS!
+     * <p>
+     * Stores the given byte into the given address.
+     *
+     * @param address      the address.
+     * @param b            the byte.
+     * @param callEvents   whether this method should call events. Events won't be called if {@link #areEventCallsEnabled()} is false.
+     * @param bypassCaches whether this method should bypass all caches.
+     * @param modifyCaches whether this method should mofify caches if they fail.
+     * @throws IllegalArgumentException  if the address is not aligned to words.
+     * @throws IndexOutOfBoundsException if no section contains the address.
+     */
+    void setByte(int address, byte b, boolean callEvents, boolean bypassCaches, boolean modifyCaches);
 
-	/**
-	 * Returns the first text address assemblers should use.
-	 *
-	 * @return the first text address.
-	 */
-	int getFirstTextAddress();
 
-	/**
-	 * Returns the first data address assemblers should use.
-	 *
-	 * @return the first data address.
-	 */
-	int getFirstDataAddress();
+    /**
+     * THIS METHOD SHOULDN'T BE USED BY INSTRUCTIONS!
+     * <p>
+     * Returns the word stored in the given address.
+     *
+     * @param address      the address.
+     * @param callEvents   whether this method should call events. Events won't be called if {@link #areEventCallsEnabled()} is false.
+     * @param bypassCaches whether this method should bypass all caches.
+     * @param modifyCaches whether this method should mofify caches.
+     * @return the word.
+     * @throws IllegalArgumentException  if the address is not aligned to words.
+     * @throws IndexOutOfBoundsException if no section contains the address.
+     */
+    int getWord(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches);
 
-	/**
-	 * Returns the next data address.
-	 * This address is used to reserve more memory.
-	 *
-	 * @return the next data address.
-	 */
-	int getNextDataAddress();
+    /**
+     * THIS METHOD SHOULDN'T BE USED BY INSTRUCTIONS!
+     * <p>
+     * Returns the byte stored in the given address.
+     *
+     * @param address      the address.
+     * @param callEvents   whether this method should call events. Events won't be called if {@link #areEventCallsEnabled()} is false.
+     * @param bypassCaches whether this method should bypass all caches.
+     * @param modifyCaches whether this method should mofify caches.
+     * @return the byte.
+     * @throws IndexOutOfBoundsException if no section contains the address.
+     */
+    byte getByte(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches);
 
-	/**
-	 * Sets the next data address.
-	 * <p>
-	 * WARNING! This method should only be used by simulations when they undo a memory reservation!
-	 *
-	 * @param nextDataAddress the next data address.
-	 */
-	void setNextDataAddress(int nextDataAddress);
+    /**
+     * Returns the first text address assemblers should use.
+     *
+     * @return the first text address.
+     */
+    int getFirstTextAddress();
 
-	/**
-	 * Returns the first kernel text address assemblers should use.
-	 *
-	 * @return the first kernel text address.
-	 */
-	int getFirstKernelTextAddress();
+    /**
+     * Returns the first data address assemblers should use.
+     *
+     * @return the first data address.
+     */
+    int getFirstDataAddress();
 
-	/**
-	 * Returns the first kernel data address assemblers should use.
-	 *
-	 * @return the first kernel data address.
-	 */
-	int getFirstKernelDataAddress();
+    /**
+     * Returns the next data address.
+     * This address is used to reserve more memory.
+     *
+     * @return the next data address.
+     */
+    int getNextDataAddress();
 
-	/**
-	 * Returns the external address assemblers should use.
-	 *
-	 * @return the external kernel data address.
-	 */
-	int getFirstExternalAddress();
+    /**
+     * Sets the next data address.
+     * <p>
+     * WARNING! This method should only be used by simulations when they undo a memory reservation!
+     *
+     * @param nextDataAddress the next data address.
+     */
+    void setNextDataAddress(int nextDataAddress);
 
-	/**
-	 * Returns the memory located at the next hierarchy level, if present.
-	 * <p>
-	 * If this memory is a the last hierarchy level this method returns {@code Optional.empty()}.
-	 *
-	 * @return the memory located at the next hierarchy level.
-	 */
-	Optional<Memory> getNextLevelMemory();
+    /**
+     * Returns the first kernel text address assemblers should use.
+     *
+     * @return the first kernel text address.
+     */
+    int getFirstKernelTextAddress();
 
-	/**
-	 * Reserves 'length' bytes in the dynamic data section.
-	 *
-	 * @param length the amount of bytes to reserve.
-	 * @return the first address of the reserved data.
-	 */
-	int allocateMemory(int length);
+    /**
+     * Returns the first kernel data address assemblers should use.
+     *
+     * @return the first kernel data address.
+     */
+    int getFirstKernelDataAddress();
 
-	/**
-	 * Enables or disables event calls.
-	 * <p>
-	 * If this feature is disable the memory will work faster, but actions won't be able to be listened.
-	 * <p>
-	 * This state won't be registered by {@link #saveState()}, but it will be copied if you use {@link #copy()}.
-	 *
-	 * @param enable whether this feature should be enabled or disabled.
-	 */
-	void enableEventCalls(boolean enable);
+    /**
+     * Returns the external address assemblers should use.
+     *
+     * @return the external kernel data address.
+     */
+    int getFirstExternalAddress();
 
-	/**
-	 * Returns whether event calls are enabled.
-	 * <p>
-	 * If this feature is disable the memory will work faster, but actions won't be able to be listened.
-	 * <p>
-	 * This state won't be registered by {@link #saveState()}, but it will be copied if you use {@link #copy()}.
-	 *
-	 * @return whether this feature is enabled.
-	 * @see #enableEventCalls(boolean)
-	 */
-	boolean areEventCallsEnabled();
+    /**
+     * Returns the memory located at the next hierarchy level, if present.
+     * <p>
+     * If this memory is a the last hierarchy level this method returns {@code Optional.empty()}.
+     *
+     * @return the memory located at the next hierarchy level.
+     */
+    Optional<Memory> getNextLevelMemory();
 
-	/**
-	 * Creates a deep copy of the memory.
-	 *
-	 * @return the copy.
-	 */
-	Memory copy();
+    /**
+     * Returns the {@link Memory} located at the end of this memory hierarchy.
+     * <p>
+     * If this {@link Memory} has no linked memories this method returns this instance.
+     *
+     * @return the {@link Memory} located at the end.
+     */
+    default Memory getBottomMemory() {
+        var current = this;
 
-	/**
-	 * Saves the current state of the {@link Memory}.
-	 * You can return to this state using {@link #restoreSavedState()}.
-	 */
-	void saveState();
+        while (current.getNextLevelMemory().isPresent()) {
+            current = current.getNextLevelMemory().get();
+        }
 
-	/**
-	 * Returns this memory state to the latest state saved using {@link #saveState()}.
-	 * If no saved states are found the memory will be wiped.
-	 */
-	void restoreSavedState();
+        return current;
+    }
 
-	/**
-	 * Returns all {@link MemorySection}s inside this memory. The returned {@link Set} is unmodifiable.
-	 * <p>
-	 * These sections shouldn't be used to modify the memory. Use the main memory instead.
-	 *
-	 * @return all {@link MemorySection}s inside an unmodifiable {@link Set}.
-	 */
-	Set<MemorySection> getMemorySections();
+    /**
+     * Reserves 'length' bytes in the dynamic data section.
+     *
+     * @param length the amount of bytes to reserve.
+     * @return the first address of the reserved data.
+     */
+    int allocateMemory(int length);
 
-	/**
-	 * Returns the name of the {@link MemorySection} that matches the given address.
-	 *
-	 * @param address the address.
-	 * @return the name of the memory section.
-	 * @throws IndexOutOfBoundsException if no section contains the address.
-	 */
-	String getMemorySectionName(int address);
+    /**
+     * Enables or disables event calls.
+     * <p>
+     * If this feature is disable the memory will work faster, but actions won't be able to be listened.
+     * <p>
+     * This state won't be registered by {@link #saveState()}, but it will be copied if you use {@link #copy()}.
+     *
+     * @param enable whether this feature should be enabled or disabled.
+     */
+    void enableEventCalls(boolean enable);
 
-	/**
-	 * Returns the {@link MemorySection} that matches the given name, if present.
-	 *
-	 * @param name the name.
-	 * @return the {@link MemorySection}, if present.
-	 */
-	Optional<MemorySection> getMemorySection(String name);
+    /**
+     * Returns whether event calls are enabled.
+     * <p>
+     * If this feature is disable the memory will work faster, but actions won't be able to be listened.
+     * <p>
+     * This state won't be registered by {@link #saveState()}, but it will be copied if you use {@link #copy()}.
+     *
+     * @return whether this feature is enabled.
+     * @see #enableEventCalls(boolean)
+     */
+    boolean areEventCallsEnabled();
 
-	/**
-	 * Returns the {@link MemorySection} that matches the given address.
-	 *
-	 * @param address the address.
-	 * @return the {@link MemorySection}.
-	 * throws IndexOutOfBoundsException if no section contains the address.
-	 */
-	MemorySection getMemorySection(int address);
+    /**
+     * Creates a deep copy of the memory.
+     *
+     * @return the copy.
+     */
+    Memory copy();
+
+    /**
+     * Saves the current state of the {@link Memory}.
+     * You can return to this state using {@link #restoreSavedState()}.
+     */
+    void saveState();
+
+    /**
+     * Returns this memory state to the latest state saved using {@link #saveState()}.
+     * If no saved states are found the memory will be wiped.
+     */
+    void restoreSavedState();
+
+    /**
+     * Returns all {@link MemorySection}s inside this memory. The returned {@link Set} is unmodifiable.
+     * <p>
+     * These sections shouldn't be used to modify the memory. Use the main memory instead.
+     *
+     * @return all {@link MemorySection}s inside an unmodifiable {@link Set}.
+     */
+    Set<MemorySection> getMemorySections();
+
+    /**
+     * Returns the name of the {@link MemorySection} that matches the given address.
+     *
+     * @param address the address.
+     * @return the name of the memory section.
+     * @throws IndexOutOfBoundsException if no section contains the address.
+     */
+    String getMemorySectionName(int address);
+
+    /**
+     * Returns the {@link MemorySection} that matches the given name, if present.
+     *
+     * @param name the name.
+     * @return the {@link MemorySection}, if present.
+     */
+    Optional<MemorySection> getMemorySection(String name);
+
+    /**
+     * Returns the {@link MemorySection} that matches the given address.
+     *
+     * @param address the address.
+     * @return the {@link MemorySection}.
+     * throws IndexOutOfBoundsException if no section contains the address.
+     */
+    MemorySection getMemorySection(int address);
+
+    /**
+     * Returns whether the given address should be affected by the caches.
+     * <p>
+     * If the address is not affected, the caches will bypass the address.
+     *
+     * @param address the address.
+     * @return whether it should be affected.
+     */
+    boolean isDirectionAffectedByCache(int address);
 }

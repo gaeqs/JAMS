@@ -33,52 +33,60 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 
 class PopupWindowHelper {
 
-	static void open(Stage stage, Node node, int width, int height, boolean transparent) {
-		if (transparent) {
-			stage.initStyle(StageStyle.TRANSPARENT);
-			stage.focusedProperty().addListener((obs, old, val) -> {
-				if (!val) stage.close();
-			});
-		} else {
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setResizable(false);
-		}
+    static void open(Stage stage, Node node, int width, int height, boolean transparent) {
+        open(stage, node, width, height, transparent, false);
+    }
 
-		stage.initOwner(JamsApplication.getStage());
+    static void open(Stage stage, Node node, int width, int height, boolean transparent, boolean wait) {
+        if (transparent) {
+            stage.initStyle(StageStyle.TRANSPARENT);
+            stage.focusedProperty().addListener((obs, old, val) -> {
+                if (!val) stage.close();
+            });
+        } else {
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(false);
+        }
 
-		AnchorPane background = new AnchorPane();
-		background.getStyleClass().add("window-popup-background");
-		AnchorUtils.setAnchor(node, 0, 0, 0, 0);
+        stage.initOwner(JamsApplication.getStage());
 
-		if (width >= 0) {
-			background.setPrefWidth(width);
-		}
-		if (height >= 0) {
-			background.setPrefHeight(height);
-		}
+        AnchorPane background = new AnchorPane();
+        background.getStyleClass().add("window-popup-background");
+        AnchorUtils.setAnchor(node, 0, 0, 0, 0);
 
-		background.getChildren().add(node);
-		ThemedScene scene = new ThemedScene(background);
+        if (width >= 0) {
+            background.setPrefWidth(width);
+        }
+        if (height >= 0) {
+            background.setPrefHeight(height);
+        }
 
-		stage.setScene(scene);
+        background.getChildren().add(node);
+        ThemedScene scene = new ThemedScene(background);
 
-		if (node instanceof Region) {
-			background.applyCss();
-			background.layout();
-		}
+        stage.setScene(scene);
 
+        if (node instanceof Region) {
+            background.applyCss();
+            background.layout();
+        }
 
-		stage.show();
-		Platform.runLater(() -> {
-			Stage main = JamsApplication.getStage();
-			stage.setX(main.getX() + main.getWidth() / 2 - background.getWidth() / 2);
-			stage.setY(main.getY() + main.getHeight() / 2 - background.getHeight() / 2);
-		});
+        if (wait) {
+            stage.showAndWait();
+        } else {
+            stage.show();
+        }
 
-	}
+        Platform.runLater(() -> {
+            Stage main = JamsApplication.getStage();
+            stage.setX(main.getX() + main.getWidth() / 2 - background.getWidth() / 2);
+            stage.setY(main.getY() + main.getHeight() / 2 - background.getHeight() / 2);
+        });
+
+    }
 
 }

@@ -36,7 +36,9 @@ import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 
 public class FolderActionShowInFiles extends ContextAction {
 
@@ -69,11 +71,11 @@ public class FolderActionShowInFiles extends ContextAction {
 		}
 
 		new Thread(() -> {
-			//try {
-			//	Desktop.getDesktop().browse(folder.toURI());
-			//} catch (IOException e) {
-			//	e.printStackTrace();
-			//}
+			try {
+				Desktop.getDesktop().browse(folder.toURI());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}).start();
 	}
 

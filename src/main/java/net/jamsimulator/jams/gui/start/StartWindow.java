@@ -1,149 +1,155 @@
 package net.jamsimulator.jams.gui.start;
 
-import javafx.geometry.Pos;
-import javafx.scene.Cursor;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.configuration.ConfigurationWindow;
-import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.BorderlessMainScene;
-import net.jamsimulator.jams.gui.popup.CreateProjectWindow;
-import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
-import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
-import net.jamsimulator.jams.project.mips.MIPSProject;
-import net.jamsimulator.jams.utils.AnchorUtils;
 
-import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class StartWindow extends AnchorPane {
 
-	public static Stage stage;
+    public static StartWindow INSTANCE = new StartWindow();
+    public static final int WIDTH = 1000;
+    public static final int HEIGHT = 600;
 
-	private final StartWindowTopBar topBar;
-	private final VBox contents;
-	private Label subtitle;
+    private final ObservableList<StartWindowSection> sections;
+    private StartWindowSection selected;
+    private Node selectedButton;
 
-	private StartWindow() {
-		getStyleClass().add("anchor-pane");
+    private Stage stage;
+    private StartWindowTopBar topBar;
+    private SplitPane sectionsSplitPane;
+    private VBox sectionsVBox;
+    private AnchorPane sectionDisplay;
 
-		contents = new VBox();
-		topBar = new StartWindowTopBar(stage);
+    private StartWindow() {
+        sections = FXCollections.observableList(new ArrayList<>());
+        sections.add(new StartWindowSectionProjects(this));
+        sections.add(new StartWindowSectionNewProject(this::getStage));
+        sections.add(new StartWindowSectionConfiguration());
+        sections.add(new StartWindowSectionAbout());
+    }
 
-		AnchorUtils.setAnchor(contents, 30, 0, 0, 0);
-		getChildren().add(contents);
+    public Stage getStage() {
+        return stage;
+    }
 
-		contents.setAlignment(Pos.CENTER);
-		contents.setSpacing(8);
+    public ObservableList<StartWindowSection> getSections() {
+        return sections;
+    }
 
-		loadButtons();
-		loadImage();
-		loadTitle();
+    private void select(StartWindowSection section, Node button) {
+        if (selected == section) return;
+        if (selected != null) {
+            selectedButton.getStyleClass().remove("start-window-section-list-entry-selected");
+        }
 
-		contents.getChildren().add(new Region());
+        selected = section;
+        selectedButton = button;
 
-		loadOptions();
+        sectionDisplay.getChildren().clear();
+        if (selected != null) {
+            selectedButton.getStyleClass().add("start-window-section-list-entry-selected");
+            var node = selected.toNode();
+            if (node != null) {
+                AnchorUtils.setAnchor(node, 0, 0, 0, 0);
+                sectionDisplay.getChildren().add(node);
+            }
+        }
+    }
 
-		Jams.getLanguageManager().registerListeners(this, true);
-	}
+    private void init() {
+        getStyleClass().addAll("anchor-pane", "start-window");
 
-	private void loadButtons() {
-		AnchorUtils.setAnchor(topBar, 0, -1, 0, 0);
-		topBar.setPrefHeight(30);
-		getChildren().add(topBar);
-	}
+        topBar = new StartWindowTopBar(stage);
+        sectionsSplitPane = new SplitPane();
+        sectionsVBox = new VBox();
+        sectionDisplay = new AnchorPane();
 
-	private void loadImage() {
-		Image image = JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO
-		).orElse(null);
-		contents.getChildren().add(new NearestImageView(image, 150, 150));
-	}
+        sectionsSplitPane.getStyleClass().add("start-window-split-pane");
+        sectionsVBox.getStyleClass().add("start-window-section-list");
+        sectionDisplay.getStyleClass().add("start-window-section-display");
 
-	private void loadTitle() {
-		Label title = new LanguageLabel(Messages.START_TITLE);
-		title.getStyleClass().add("start-title");
-		contents.getChildren().add(title);
+        loadButtons();
+        loadSectionMenu();
+    }
 
-		String subtitleText = Jams.getLanguageManager().getSelected().getOrDefault(Messages.START_SUBTITLE)
-				.replace("{VERSION}", Jams.getVersion());
-		subtitle = new Label(subtitleText);
-		subtitle.getStyleClass().add("start-subtitle");
-		contents.getChildren().add(subtitle);
-	}
+    private void loadButtons() {
+        AnchorUtils.setAnchor(topBar, 0, -1, 0, 0);
+        topBar.setPrefHeight(30);
+        getChildren().add(topBar);
+    }
 
-	private void loadOptions() {
-		Label createProject = new LanguageLabel(Messages.MAIN_MENU_FILE_CREATE_PROJECT);
-		createProject.setCursor(Cursor.HAND);
-		contents.getChildren().add(createProject);
+    private void loadSectionMenu() {
+        sections.addListener((ListChangeListener<? super StartWindowSection>) listener -> refreshSections());
+        refreshSections();
 
-		Label openProject = new LanguageLabel(Messages.MAIN_MENU_FILE_OPEN_PROJECT);
-		openProject.setCursor(Cursor.HAND);
-		contents.getChildren().add(openProject);
+        sectionsSplitPane.getItems().addAll(sectionsVBox, sectionDisplay);
+        Platform.runLater(() -> sectionsSplitPane.setDividerPosition(0, 0.15));
+        stage.addEventFilter(WindowEvent.WINDOW_SHOWING,
+                event -> Platform.runLater(() -> sectionsSplitPane.setDividerPosition(0, 0.15)));
 
-		Label settings = new LanguageLabel(Messages.MAIN_MENU_FILE_SETTINGS);
-		settings.setCursor(Cursor.HAND);
-		contents.getChildren().add(settings);
+        AnchorUtils.setAnchor(sectionsSplitPane, 30, 0, 0, 0);
+        getChildren().add(sectionsSplitPane);
+    }
 
-		createProject.setOnMouseClicked(event -> {
-			CreateProjectWindow.open();
-			if (!JamsApplication.getProjectsTabPane().getProjects().isEmpty()) {
-				stage.hide();
-			}
-		});
+    private void refreshSections() {
+        sectionsVBox.getChildren().clear();
+        sections.forEach(section -> {
+            var button = new HBox(new LanguageLabel(section.getLanguageNode()));
+            button.getStyleClass().add("start-window-section-list-entry");
+            button.setFillHeight(true);
+            button.setOnMouseClicked(event -> select(section, button));
+            sectionsVBox.getChildren().add(button);
+        });
 
-		openProject.setOnMouseClicked(event -> {
-			DirectoryChooser chooser = new DirectoryChooser();
-			File folder = chooser.showDialog(JamsApplication.getStage());
-			if (folder == null || JamsApplication.getProjectsTabPane().isProjectOpen(folder)) return;
-			JamsApplication.getProjectsTabPane().openProject(new MIPSProject(folder));
-			stage.hide();
-		});
-
-		settings.setOnMouseClicked(event -> ConfigurationWindow.getInstance().open());
-	}
-
-	@Listener
-	private void onLanguageChange(SelectedLanguageChangeEvent.After event) {
-		String subtitleText = Jams.getLanguageManager().getSelected().getOrDefault(Messages.START_SUBTITLE)
-				.replace("{VERSION}", Jams.getVersion());
-		subtitle.setText(subtitleText);
-	}
+        if (!sectionsVBox.getChildren().isEmpty()) {
+            select(sections.get(0), sectionsVBox.getChildren().get(0));
+        }
+    }
 
 
-	@Listener
-	private void onLanguageChange(DefaultLanguageChangeEvent.After event) {
-		String subtitleText = Jams.getLanguageManager().getSelected().getOrDefault(Messages.START_SUBTITLE)
-				.replace("{VERSION}", Jams.getVersion());
-		subtitle.setText(subtitleText);
-	}
+    public void open() {
+        if (stage == null) {
+            stage = new Stage();
+            init();
 
-	public static void open() {
-		if (stage == null) {
-			stage = new Stage();
+            var scene = new BorderlessMainScene(stage, this, WIDTH, HEIGHT);
+            stage.setScene(scene);
 
-			StartWindow window = new StartWindow();
-			BorderlessMainScene scene = new BorderlessMainScene(stage, window, 400, 400);
-			stage.setScene(scene);
+            scene.setMoveControl(topBar);
+            scene.setResizable(true);
+            scene.setSnapEnabled(false);
 
-			scene.setMoveControl(window.topBar);
-			scene.setResizable(false);
-			scene.setSnapEnabled(false);
-
-			stage.initStyle(StageStyle.TRANSPARENT);
-			stage.setHeight(500);
-			stage.setWidth(500);
-		}
-		stage.showAndWait();
-	}
+            stage.initStyle(StageStyle.TRANSPARENT);
+            stage.setWidth(WIDTH);
+            stage.setHeight(HEIGHT);
+            JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO).ifPresent(stage.getIcons()::add);
+            stage.setOnHidden(event -> {
+                // We are saving the configuration because it may be edited in the start window!
+                try {
+                    Jams.getMainConfiguration().save(true);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+        stage.showAndWait();
+    }
 }

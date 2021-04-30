@@ -9,6 +9,7 @@ public class DirectiveSnapshot {
 
     public final int line;
     private final String raw;
+    private final String labelSufix;
 
     public int address;
 
@@ -17,10 +18,11 @@ public class DirectiveSnapshot {
     private Directive directive;
     private String[] parameters;
 
-    public DirectiveSnapshot(int line, int address, String raw) {
+    public DirectiveSnapshot(int line, int address, String raw, String labelSufix) {
         this.raw = raw;
         this.line = line;
         this.address = address;
+        this.labelSufix = labelSufix;
     }
 
     public void scan(MIPS32Assembler assembler) {
@@ -30,7 +32,7 @@ public class DirectiveSnapshot {
 
     public int executeNonLabelRequiredSteps(MIPS32AssemblingFile file, int labelAddress) {
         if (directive != null) {
-            int result = address = directive.execute(line, raw, parameters, file);
+            int result = address = directive.execute(line, raw, parameters, labelSufix, file);
             if (result == -1) address = labelAddress;
             return result;
         }
@@ -39,7 +41,7 @@ public class DirectiveSnapshot {
 
     public void executeLabelRequiredSteps(MIPS32AssemblingFile file) {
         if (directive != null) {
-            directive.postExecute(parameters, file, line, address);
+            directive.postExecute(parameters, file, line, address, labelSufix);
         }
     }
 

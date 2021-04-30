@@ -8,7 +8,7 @@ import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
-public class CacheBuilderLanguageListCell extends ListCell<CacheBuilder> {
+public class CacheBuilderLanguageListCell extends ListCell<CacheBuilder<?>> {
 
 	private String node;
 

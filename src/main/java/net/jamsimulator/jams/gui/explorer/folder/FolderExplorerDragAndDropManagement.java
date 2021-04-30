@@ -26,82 +26,102 @@ package net.jamsimulator.jams.gui.explorer.folder;
 
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.utils.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 public class FolderExplorerDragAndDropManagement {
 
-	public static final String EXPLORER_PROTOCOL = "jams_folder_explorer";
+    public static final String EXPLORER_PROTOCOL = "jams_folder_explorer";
+    public static final String URL_PROTOCOL = "file";
 
-	public static void manageDragFromElements(Dragboard dragboard, List<ExplorerElement> elements) {
-		List<File> files = new ArrayList<>();
-		for (ExplorerElement element : elements) {
-			if (element instanceof ExplorerFolder)
-				files.add(((ExplorerFolder) element).getFolder());
-			else if (element instanceof ExplorerFile)
-				files.add(((ExplorerFile) element).getFile());
-		}
-		manageDrag(dragboard, files);
-	}
+    public static void manageDragFromElements(Dragboard dragboard, List<ExplorerElement> elements) {
+        List<File> files = new ArrayList<>();
+        for (ExplorerElement element : elements) {
+            if (element instanceof ExplorerFolder)
+                files.add(((ExplorerFolder) element).getFolder());
+            else if (element instanceof ExplorerFile)
+                files.add(((ExplorerFile) element).getFile());
+        }
+        manageDrag(dragboard, files);
+    }
 
-	public static void manageDrag(Dragboard dragboard, List<File> files) {
-		ClipboardContent content = new ClipboardContent();
-		content.putFiles(files);
+    public static void manageDrag(Dragboard dragboard, List<File> files) {
+        ClipboardContent content = new ClipboardContent();
+        content.putFiles(files);
 
-		StringBuilder builder = new StringBuilder(EXPLORER_PROTOCOL);
-		for (File element : files) {
-			builder.append(':');
-			builder.append(element.getAbsolutePath());
-		}
-		content.putString(builder.toString());
-		dragboard.setContent(content);
-	}
+        StringBuilder builder = new StringBuilder();
+        for (File element : files) {
+            builder.append(EXPLORER_PROTOCOL).append(':')
+                    .append(element.getAbsolutePath())
+                    .append('\n');
+        }
+        content.putString(builder.length() == 0 ? "" : builder.substring(0, builder.length() - 1));
+        dragboard.setContent(content);
+    }
 
-	public static void manageDrop(Dragboard content, File folder) {
-		if (content.hasUrl()) {
-			String string = content.getString();
-			if (string.startsWith(EXPLORER_PROTOCOL + ":")) {
-				manageDropFromString(string, folder);
-				return;
-			}
-		}
-		List<File> files = content.getFiles();
-		for (File file : files) {
-			if (!FileUtils.copyFile(folder, file)) {
-				System.err.println("Error while copying file " + file + ".");
-			}
-		}
-	}
+    public static void manageDrop(Dragboard content, File folder, BiConsumer<File, File> moveAction) {
+        boolean move = content.getTransferModes().contains(TransferMode.MOVE);
+        if (content.hasUrl()) {
+            String string = content.getUrl();
+            if (string.startsWith(URL_PROTOCOL + ":")) {
+                manageDropFromURL(string, folder, move, moveAction);
+                return;
+            }
+        }
 
-	private static void manageDropFromString(String string, File folder) {
-		String files = string.substring(EXPLORER_PROTOCOL.length() + 1);
-		if (files.isEmpty()) return;
-		String[] filesArray = files.split("\n");
-		File file;
-		for (String path : filesArray) {
-			if (path.isEmpty()) continue;
-			try {
-				file = new File(path);
+        if (content.hasString()) {
+            String string = content.getString();
+            if (string.startsWith(EXPLORER_PROTOCOL + ":")) {
+                manageDropFromString(string, folder, move, moveAction);
+                return;
+            }
+        }
 
-				if (!file.exists() || file.getParentFile().equals(folder)) {
-					continue;
-				}
+        List<File> files = content.getFiles();
+        for (File file : files) {
+            manageFileDrop(file, folder, move, moveAction);
+        }
+    }
 
-				if (!FileUtils.copyFile(folder, file)) {
-					System.err.println("Error while copying file " + file + ".");
-				} else {
-					if (!file.delete()) {
-						System.err.println("Error while copying file " + file + ".");
-					}
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-	}
+    private static void manageDropFromString(String string, File folder, boolean move, BiConsumer<File, File> moveAction) {
+        String[] filesArray = string.split("\n");
+        for (String path : filesArray) {
+            if (path.isEmpty()) continue;
+            try {
+                manageFileDrop(new File(path.substring(EXPLORER_PROTOCOL.length() + 1)), folder, move, moveAction);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private static void manageDropFromURL(String url, File folder, boolean move, BiConsumer<File, File> moveAction) {
+        String[] filesArray = url.split("\n");
+        for (String path : filesArray) {
+            if (path.isEmpty()) continue;
+            try {
+                var file = new File(path.substring(URL_PROTOCOL.length() + 2).trim());
+                manageFileDrop(file, folder, move, moveAction);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private static void manageFileDrop(File file, File folder, boolean move, BiConsumer<File, File> moveAction) {
+        if (!file.exists() || folder.getPath().startsWith(file.getPath()) || file.getParentFile().equals(folder)) {
+            return;
+        }
+
+        if (move ? !FileUtils.moveFileToFolder(folder, file, moveAction) : !FileUtils.copyFileToFolder(folder, file)) {
+            new IllegalStateException("Error while copying file " + file + ".").printStackTrace();
+        }
+    }
 
 }

@@ -24,82 +24,39 @@
 
 package net.jamsimulator.jams.mips.instruction.pseudo.defaults;
 
-import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
-import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionOri;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionSlt;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionSubu;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionSgeRRR extends PseudoInstruction {
 
-	public static final String MNEMONIC = "sge";
+    public static final String MNEMONIC = "sge";
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER};
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER);
 
-	private static final ParameterType[] SLT_BASIC_PARAMETER_TYPES =
-			new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER};
+    public PseudoInstructionSgeRRR() {
+        super(MNEMONIC, PARAMETER_TYPES);
+    }
 
-	private static final ParameterType[] ORI_BASIC_PARAMETER_TYPES =
-			new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT};
+    @Override
+    public int getInstructionAmount(String[] parameters) {
+        return 3;
+    }
 
-	private static final ParameterType[] SUBU_BASIC_PARAMETER_TYPES =
-			new ParameterType[]{ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER};
+    @Override
+    public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
+        var instructions = instructions(set, InstructionSlt.class, InstructionOri.class, InstructionSubu.class);
 
-	private static final ParameterParseResult ZERO = ParameterParseResult.builder().register(0).build();
-	private static final ParameterParseResult AT = ParameterParseResult.builder().register(1).build();
+        var slt = parameters(parameters[0], parameters[1], parameters[2]);
+        var ori = parameters(AT, ZERO, immediate(1));
+        var subu = parameters(parameters[0], AT, parameters[0]);
 
-	public PseudoInstructionSgeRRR() {
-		super(MNEMONIC, PARAMETER_TYPES);
-	}
-
-	@Override
-	public int getInstructionAmount(String[] parameters) {
-		return 3;
-	}
-
-	@Override
-	public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
-		//Get instructions
-		Instruction slt = set.getInstruction(InstructionSlt.MNEMONIC, SLT_BASIC_PARAMETER_TYPES).orElse(null);
-		if (!(slt instanceof BasicInstruction))
-			throw new AssemblerException("Basic instruction '" + InstructionSlt.MNEMONIC + "' not found.");
-
-		Instruction ori = set.getInstruction(InstructionOri.MNEMONIC, ORI_BASIC_PARAMETER_TYPES).orElse(null);
-		if (!(ori instanceof BasicInstruction))
-			throw new AssemblerException("Basic instruction '" + InstructionOri.MNEMONIC + "' not found.");
-
-		Instruction subu = set.getInstruction(InstructionSubu.MNEMONIC, SUBU_BASIC_PARAMETER_TYPES).orElse(null);
-		if (!(subu instanceof BasicInstruction))
-			throw new AssemblerException("Basic instruction '" + InstructionSubu.MNEMONIC + "' not found.");
-
-		//Get parameters
-		ParameterParseResult[] sltParameters = new ParameterParseResult[]{
-				parameters[0],
-				parameters[1],
-				parameters[2]
-		};
-
-		ParameterParseResult[] oriParameters = new ParameterParseResult[]{
-				AT,
-				ZERO,
-				ParameterParseResult.builder().immediate(1).build()
-		};
-
-		ParameterParseResult[] subuParameters = new ParameterParseResult[]{
-				parameters[0],
-				AT,
-				parameters[0]
-		};
-
-		return new AssembledInstruction[]{
-				((BasicInstruction<?>) slt).assembleBasic(sltParameters, this),
-				((BasicInstruction<?>) ori).assembleBasic(oriParameters, this),
-				((BasicInstruction<?>) subu).assembleBasic(subuParameters, this)};
-	}
+        return assemble(instructions, slt, ori, subu);
+    }
 }

@@ -25,23 +25,30 @@
 package net.jamsimulator.jams.gui.start;
 
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.window.WindowButtonClose;
 import net.jamsimulator.jams.gui.main.window.WindowButtonMinimize;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
+import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
 
 public class StartWindowTopBar extends AnchorPane {
 
 
 	private final ImageView view;
+	private final Label title;
+	private final HBox viewTitleBox;
 	private final HBox windowButtons;
 
 	public StartWindowTopBar(Stage stage) {
@@ -50,7 +57,13 @@ public class StartWindowTopBar extends AnchorPane {
 				.getOrLoadSafe(Icons.LOGO).orElse(null));
 		view.setFitWidth(20);
 		view.setFitHeight(20);
-		AnchorUtils.setAnchor(view, 5, 5, 5, -1);
+		title = new LanguageLabel(Messages.START_TITLE, "{VERSION}", Jams.getVersion());
+		title.getStyleClass().add("start-title");
+
+		viewTitleBox = new HBox(view, title);
+		viewTitleBox.setSpacing(5);
+		viewTitleBox.setAlignment(Pos.CENTER_LEFT);
+		AnchorUtils.setAnchor(viewTitleBox, 5, 5, 5, -1);
 
 		windowButtons = new HBox();
 		generateButtons(stage);
@@ -62,6 +75,10 @@ public class StartWindowTopBar extends AnchorPane {
 
 	public ImageView getView() {
 		return view;
+	}
+
+	public Label getTitle() {
+		return title;
 	}
 
 	public HBox getWindowButtons() {
@@ -91,6 +108,6 @@ public class StartWindowTopBar extends AnchorPane {
 
 	private void refresh() {
 		getChildren().clear();
-		getChildren().addAll(view, windowButtons);
+		getChildren().addAll(viewTitleBox, windowButtons);
 	}
 }

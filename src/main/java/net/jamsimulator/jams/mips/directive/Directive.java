@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.directive;
 
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
@@ -38,134 +39,149 @@ import java.util.Objects;
  */
 public abstract class Directive {
 
-	private final String name;
+    private final String name;
 
-	private final DirectiveParameterType[] parameters;
-	private final boolean repeatLastParameter, optionalParameters;
+    private final DirectiveParameterType[] parameters;
+    private final boolean repeatLastParameter, optionalParameters;
 
-	public Directive(String name, DirectiveParameterType[] parameters, boolean repeatLastParameter, boolean optionalParameters) {
-		Validate.notNull(name, "Name cannot be null!");
-		Validate.hasNoNulls(parameters, "The parameters array cannot contain null elements!");
-		this.name = name;
-		this.parameters = parameters;
-		this.repeatLastParameter = repeatLastParameter;
-		this.optionalParameters = optionalParameters;
-	}
+    public Directive(String name, DirectiveParameterType[] parameters, boolean repeatLastParameter, boolean optionalParameters) {
+        Validate.notNull(name, "Name cannot be null!");
+        Validate.hasNoNulls(parameters, "The parameters array cannot contain null elements!");
+        this.name = name;
+        this.parameters = parameters;
+        this.repeatLastParameter = repeatLastParameter;
+        this.optionalParameters = optionalParameters;
+    }
 
-	/**
-	 * Returns the name of this directive.
-	 *
-	 * @return the name.
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * Returns the name of this directive.
+     *
+     * @return the name.
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * Returns whether this directive may have parameters.
-	 *
-	 * @return whether this directive may have parameters.
-	 */
-	public boolean hasParameters() {
-		return parameters.length > 0;
-	}
+    /**
+     * Returns the documentation of the instruction.
+     * This string is a HTML-like formatted text containing a complete description of the directive.
+     * <p>
+     * This documentation depends on the current language of JAMS.
+     *
+     * @return the documentation.
+     */
+    public String getDocumentation() {
+        var sufix = name.toUpperCase().replace('.', '_');
+        return Jams.getLanguageManager().getSelected().getOrDefault("DIRECTIVE_" + sufix + "_DOCUMENTATION");
+    }
 
-	/**
-	 * Returns the amount of parameters this directive has.
-	 * This doesn't count whether this directive can repeat the last parameter.
-	 *
-	 * @return the amount of parameters.
-	 */
-	public int getParametersAmount() {
-		return parameters.length;
-	}
+    /**
+     * Returns whether this directive may have parameters.
+     *
+     * @return whether this directive may have parameters.
+     */
+    public boolean hasParameters() {
+        return parameters.length > 0;
+    }
 
-	/**
-	 * Returns an unmodifiable array with all {@link DirectiveParameterType parameter types} of this directive.
-	 *
-	 * @return the array.
-	 */
-	public DirectiveParameterType[] getParameters() {
-		return Arrays.copyOf(parameters, parameters.length);
-	}
+    /**
+     * Returns the amount of parameters this directive has.
+     * This doesn't count whether this directive can repeat the last parameter.
+     *
+     * @return the amount of parameters.
+     */
+    public int getParametersAmount() {
+        return parameters.length;
+    }
 
-	/**
-	 * Returns the {@link DirectiveParameterType} for the parameter of the given index.
-	 *
-	 * @param index the index of the parameter.
-	 * @return the type, or null if not found.
-	 */
-	public DirectiveParameterType getParameterTypeFor(int index) {
-		//Check if parameter is out of bounds.
-		if (index < 0 || index >= parameters.length && !repeatLastParameter) return DirectiveParameterType.ANY;
-		return parameters[Math.min(index, parameters.length - 1)];
-	}
+    /**
+     * Returns an unmodifiable array with all {@link DirectiveParameterType parameter types} of this directive.
+     *
+     * @return the array.
+     */
+    public DirectiveParameterType[] getParameters() {
+        return Arrays.copyOf(parameters, parameters.length);
+    }
 
-	/**
-	 * Returns whether the last parameter of this directive can be repeated.
-	 * <p>
-	 * If true, this directive can have an undefined amount of parameters of the same type.
-	 *
-	 * @return whether the last parameter of this directive can be repeated.
-	 */
-	public boolean canRepeatLastParameter() {
-		return repeatLastParameter;
-	}
+    /**
+     * Returns the {@link DirectiveParameterType} for the parameter of the given index.
+     *
+     * @param index the index of the parameter.
+     * @return the type, or null if not found.
+     */
+    public DirectiveParameterType getParameterTypeFor(int index) {
+        //Check if parameter is out of bounds.
+        if (index < 0 || index >= parameters.length && !repeatLastParameter) return DirectiveParameterType.ANY;
+        return parameters[Math.min(index, parameters.length - 1)];
+    }
 
-	/**
-	 * Returns when the parameters of this directive are optional.
-	 *
-	 * @return when the parameters of this directive are optional.
-	 */
-	public boolean areParametersOptional() {
-		return optionalParameters;
-	}
+    /**
+     * Returns whether the last parameter of this directive can be repeated.
+     * <p>
+     * If true, this directive can have an undefined amount of parameters of the same type.
+     *
+     * @return whether the last parameter of this directive can be repeated.
+     */
+    public boolean canRepeatLastParameter() {
+        return repeatLastParameter;
+    }
 
-	/**
-	 * Returns whether the parameter at the given index is valid for this directive.
-	 *
-	 * @param index the index of the parameter.
-	 * @param value the parameter.
-	 * @return whether the parameter is valid.
-	 */
-	public boolean isParameterValid(int index, String value) {
-		var type = getParameterTypeFor(index);
-		return type != null && type.matches(value);
-	}
+    /**
+     * Returns when the parameters of this directive are optional.
+     *
+     * @return when the parameters of this directive are optional.
+     */
+    public boolean areParametersOptional() {
+        return optionalParameters;
+    }
 
-	/**
-	 * Executes the directive in the given assembler.
-	 *
-	 * @param lineNumber the line number the directive is at.
-	 * @param line       the line of the directive.
-	 * @param parameters the parameters of the directive.
-	 * @param file       the file where this directive is at.
-	 * @return the start address of the directive.
-	 */
-	public abstract int execute(int lineNumber, String line, String[] parameters, MIPS32AssemblingFile file);
+    /**
+     * Returns whether the parameter at the given index is valid for this directive.
+     *
+     * @param index the index of the parameter.
+     * @param value the parameter.
+     * @return whether the parameter is valid.
+     */
+    public boolean isParameterValid(int index, String value) {
+        var type = getParameterTypeFor(index);
+        return type != null && type.matches(value);
+    }
 
-	/**
-	 * This method is executed after all labels, instructions and directives had been decoded.
-	 *
-	 * @param parameters the parameters of the directive.
-	 * @param file       the file where the directive is located at.
-	 * @param lineNumber the line number the directive is at.
-	 * @param address    the start of the memory address dedicated to this directive in the method {@link #execute(int, String, String[], MIPS32AssemblingFile)}.
-	 */
-	public abstract void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address);
+    /**
+     * Executes the directive in the given assembler.
+     *
+     * @param lineNumber the line number the directive is at.
+     * @param line       the line of the directive.
+     * @param parameters the parameters of the directive.
+     * @param labelSufix when inside a macro, the label sufix that labels should use.
+     * @param file       the file where this directive is at.
+     * @return the start address of the directive.
+     */
+    public abstract int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file);
 
-	public abstract boolean isParameterValidInContext(int index, String value, MIPSFileElements context);
+    /**
+     * This method is executed after all labels, instructions and directives had been decoded.
+     *
+     * @param parameters the parameters of the directive.
+     * @param file       the file where the directive is located at.
+     * @param lineNumber the line number the directive is at.
+     * @param address    the start of the memory address dedicated to this directive in the method {@link #execute(int, String, String[], String, MIPS32AssemblingFile)}.
+     * @param labelSufix when inside a macro, the label sufix that labels should use.
+     */
+    public abstract void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix);
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		Directive directive = (Directive) o;
-		return name.equals(directive.name);
-	}
+    public abstract boolean isParameterValidInContext(int index, String value, int amount, MIPSFileElements context);
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(name);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Directive directive = (Directive) o;
+        return name.equals(directive.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
 }

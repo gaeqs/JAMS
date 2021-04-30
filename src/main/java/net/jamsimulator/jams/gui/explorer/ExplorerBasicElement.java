@@ -51,233 +51,242 @@ import java.util.Set;
  */
 public class ExplorerBasicElement extends HBox implements ExplorerElement {
 
-	public static final int SPACING = 5;
+    public static final int SPACING = 5;
 
-	protected ExplorerSection parent;
-	protected String name;
+    protected ExplorerSection parent;
+    protected String name;
 
-	//REPRESENTATION DATA
-	protected ImageView icon;
-	protected Label label;
-	protected ExplorerSeparatorRegion separator;
+    //REPRESENTATION DATA
+    protected ImageView icon;
+    protected Label label;
+    protected ExplorerSeparatorRegion separator;
 
-	//HIERARCHY
-	protected int hierarchyLevel;
+    //HIERARCHY
+    protected int hierarchyLevel;
 
-	protected boolean selected;
+    protected boolean selected;
 
-	/**
-	 * Creates an explorer basic element.
-	 *
-	 * @param parent         the {@link ExplorerSection} containing this element.
-	 * @param name           the name of the element.
-	 * @param hierarchyLevel the hierarchy level, used by the spacing.
-	 */
-	public ExplorerBasicElement(ExplorerSection parent, String name, int hierarchyLevel) {
-		getStyleClass().add("explorer-element");
-		this.parent = parent;
-		this.name = name;
-		this.hierarchyLevel = hierarchyLevel;
+    /**
+     * Creates an explorer basic element.
+     *
+     * @param parent         the {@link ExplorerSection} containing this element.
+     * @param name           the name of the element.
+     * @param hierarchyLevel the hierarchy level, used by the spacing.
+     */
+    public ExplorerBasicElement(ExplorerSection parent, String name, int hierarchyLevel) {
+        getStyleClass().add("explorer-element");
+        this.parent = parent;
+        this.name = name;
+        this.hierarchyLevel = hierarchyLevel;
 
-		selected = false;
+        selected = false;
 
-		loadElements();
-		loadListeners();
+        loadElements();
+        loadListeners();
 
-		setOnContextMenuRequested(request -> {
-			if (!selected) {
-				getExplorer().selectElementAlone(this);
-			}
-			createContextMenu(request.getScreenX(), request.getScreenY());
-			request.consume();
-		});
+        setOnContextMenuRequested(request -> {
+            if (!selected) {
+                getExplorer().selectElementAlone(this);
+            }
+            createContextMenu(request.getScreenX(), request.getScreenY());
+            request.consume();
+        });
 
-		prefWidthProperty().bind(parent.getExplorer().widthProperty());
-	}
+        prefWidthProperty().bind(parent.getExplorer().widthProperty());
+    }
 
-	public double getRepresentationWidth() {
-		return (separator == null ? 0 : separator.getWidth())
-				+ (icon == null ? 0 : icon.getFitWidth())
-				+ (label == null ? 0 : label.getWidth())
-				+ ExplorerBasicElement.SPACING * 2;
-	}
+    public double getRepresentationWidth() {
+        return (separator == null ? 0 : separator.getWidth())
+                + (icon == null || !getChildren().contains(icon) ? 0 : icon.getFitWidth())
+                + (label == null ? 0 : label.getWidth())
+                + ExplorerBasicElement.SPACING * 2;
+    }
 
-	/**
-	 * Retuns the {@link Label} of this element.
-	 *
-	 * @return the {@link Label}.
-	 */
-	public Label getLabel() {
-		return label;
-	}
+    public void hideIcon(boolean hide) {
+        getChildren().clear();
+        if (hide) {
+            getChildren().addAll(separator, new Group(label));
+        } else {
+            getChildren().addAll(separator, icon, new Group(label));
+        }
+    }
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    /**
+     * Retuns the {@link Label} of this element.
+     *
+     * @return the {@link Label}.
+     */
+    public Label getLabel() {
+        return label;
+    }
 
-	@Override
-	public String getVisibleName() {
-		return name;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	public Optional<? extends ExplorerSection> getParentSection() {
-		return Optional.of(parent);
-	}
+    @Override
+    public String getVisibleName() {
+        return name;
+    }
 
-	@Override
-	public Explorer getExplorer() {
-		return parent.getExplorer();
-	}
+    public Optional<? extends ExplorerSection> getParentSection() {
+        return Optional.of(parent);
+    }
 
-	@Override
-	public boolean isSelected() {
-		return selected;
-	}
+    @Override
+    public Explorer getExplorer() {
+        return parent.getExplorer();
+    }
 
-	@Override
-	public void select() {
-		if (selected) return;
-		getStyleClass().add("selected-explorer-element");
-		requestFocus();
-		selected = true;
-	}
+    @Override
+    public boolean isSelected() {
+        return selected;
+    }
 
-	@Override
-	public void deselect() {
-		if (!selected) return;
-		getStyleClass().remove("selected-explorer-element");
-		setFocused(false);
-		selected = false;
-	}
+    @Override
+    public void select() {
+        if (selected) return;
+        getStyleClass().add("selected-explorer-element");
+        requestFocus();
+        selected = true;
+    }
 
-	@Override
-	public Optional<ExplorerElement> getNext() {
-		int index = parent.getIndex(this);
-		if (index == -1)
-			throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
-		index++;
+    @Override
+    public void deselect() {
+        if (!selected) return;
+        getStyleClass().remove("selected-explorer-element");
+        setFocused(false);
+        selected = false;
+    }
 
-		ExplorerSection parent = this.parent;
-		Optional<ExplorerElement> element;
-		do {
-			element = parent.getElementByIndex(index);
-			if (element.isPresent()) return element;
+    @Override
+    public Optional<ExplorerElement> getNext() {
+        int index = parent.getIndex(this);
+        if (index == -1)
+            throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
+        index++;
 
-			if (!parent.getParentSection().isPresent()) return Optional.empty();
+        ExplorerSection parent = this.parent;
+        Optional<ExplorerElement> element;
+        do {
+            element = parent.getElementByIndex(index);
+            if (element.isPresent()) return element;
 
-			index = parent.getParentSection().get().getIndex(parent);
-			if (index == -1) {
-				throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
-			}
-			index++;
-			parent = parent.getParentSection().orElse(null);
-		} while (parent != null);
-		return element;
-	}
+            if (!parent.getParentSection().isPresent()) return Optional.empty();
 
-	@Override
-	public Optional<ExplorerElement> getPrevious() {
-		int index = parent.getIndex(this);
-		if (index == -1)
-			throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
-		index--;
+            index = parent.getParentSection().get().getIndex(parent);
+            if (index == -1) {
+                throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
+            }
+            index++;
+            parent = parent.getParentSection().orElse(null);
+        } while (parent != null);
+        return element;
+    }
 
-		if (index == -1) {
-			if (parent.hideRepresentation) {
-				return Optional.empty();
-			}
-			return Optional.of(parent);
-		}
+    @Override
+    public Optional<ExplorerElement> getPrevious() {
+        int index = parent.getIndex(this);
+        if (index == -1)
+            throw new IllegalStateException("Error while getting the next element. File is not inside the folder.");
+        index--;
 
-		ExplorerElement element = parent.getElementByIndex(index).get();
-		while (element instanceof ExplorerSection && ((ExplorerSection) element).isExpanded()) {
+        if (index == -1) {
+            if (parent.hideRepresentation) {
+                return Optional.empty();
+            }
+            return Optional.of(parent);
+        }
 
-			Optional<ExplorerElement> optional = ((ExplorerSection) element).getLastChildren();
-			if (!optional.isPresent()) return Optional.of(element);
-			element = optional.get();
+        ExplorerElement element = parent.getElementByIndex(index).get();
+        while (element instanceof ExplorerSection && ((ExplorerSection) element).isExpanded()) {
 
-		}
-		return Optional.of(element);
-	}
+            Optional<ExplorerElement> optional = ((ExplorerSection) element).getLastChildren();
+            if (!optional.isPresent()) return Optional.of(element);
+            element = optional.get();
 
-	@Override
-	public double getExplorerYTranslation() {
-		return getLocalToParentTransform().getTy() + parent.getExplorerYTranslation();
-	}
+        }
+        return Optional.of(element);
+    }
 
-	@Override
-	public double getElementHeight() {
-		return getHeight();
-	}
+    @Override
+    public double getExplorerYTranslation() {
+        return getLocalToParentTransform().getTy() + parent.getExplorerYTranslation();
+    }
 
-	@Override
-	public int getTotalElements() {
-		return 1;
-	}
+    @Override
+    public double getElementHeight() {
+        return getHeight();
+    }
 
-	@Override
-	public void createContextMenu(double screenX, double screenY) {
-		Set<ContextAction> set = getSupportedContextActions();
-		if (set.isEmpty()) return;
-		ContextMenu main = new ContextActionMenuBuilder(this).addAll(set).build();
-		JamsApplication.openContextMenu(main, this, screenX, screenY);
-	}
+    @Override
+    public int getTotalElements() {
+        return 1;
+    }
 
-	protected void removeOneHierarchyLevel() {
-		hierarchyLevel--;
-		if (separator != null) {
-			separator.setHierarchyLevel(hierarchyLevel);
-		}
-	}
+    @Override
+    public void createContextMenu(double screenX, double screenY) {
+        Set<ContextAction> set = getSupportedContextActions();
+        if (set.isEmpty()) return;
+        ContextMenu main = new ContextActionMenuBuilder(this).addAll(set).build();
+        JamsApplication.openContextMenu(main, this, screenX, screenY);
+    }
 
-	private Set<ContextAction> getSupportedContextActions() {
-		Explorer explorer = getExplorer();
-		Set<Action> actions = JamsApplication.getActionManager();
-		Set<ContextAction> set = new HashSet<>();
-		for (Action action : actions) {
-			if (action instanceof ContextAction && supportsActionRegion(action.getRegionTag())
-					&& ((ContextAction) action).supportsExplorerState(explorer)) {
-				set.add((ContextAction) action);
-			}
-		}
-		return set;
-	}
+    protected void removeOneHierarchyLevel() {
+        hierarchyLevel--;
+        if (separator != null) {
+            separator.setHierarchyLevel(hierarchyLevel);
+        }
+    }
 
-	protected void loadElements() {
-		icon = new NearestImageView(null, FileType.IMAGE_SIZE, FileType.IMAGE_SIZE);
-		label = new Label(name);
+    private Set<ContextAction> getSupportedContextActions() {
+        Explorer explorer = getExplorer();
+        Set<Action> actions = JamsApplication.getActionManager();
+        Set<ContextAction> set = new HashSet<>();
+        for (Action action : actions) {
+            if (action instanceof ContextAction && supportsActionRegion(action.getRegionTag())
+                    && ((ContextAction) action).supportsExplorerState(explorer)) {
+                set.add((ContextAction) action);
+            }
+        }
+        return set;
+    }
 
-		separator = new ExplorerSeparatorRegion(false, hierarchyLevel);
+    protected void loadElements() {
+        icon = new NearestImageView(null, FileType.IMAGE_SIZE, FileType.IMAGE_SIZE);
+        label = new Label(name);
 
-		//The label's group avoids it from being resized.
-		getChildren().addAll(separator, icon, new Group(label));
-		setSpacing(SPACING);
-		setAlignment(Pos.CENTER_LEFT);
-	}
+        separator = new ExplorerSeparatorRegion(false, hierarchyLevel);
 
-	protected void loadListeners() {
-		addEventHandler(MouseEvent.MOUSE_CLICKED, this::onMouseClicked);
+        //The label's group avoids it from being resized.
+        getChildren().addAll(separator, icon, new Group(label));
+        setSpacing(SPACING);
+        setAlignment(Pos.CENTER_LEFT);
+    }
 
-		//Only invoked when the element is focused.
-		addEventHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
-	}
+    protected void loadListeners() {
+        addEventHandler(MouseEvent.MOUSE_CLICKED, this::onMouseClicked);
 
-	protected void onMouseClicked(MouseEvent mouseEvent) {
-		if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-			getExplorer().manageMouseSelection(mouseEvent, this);
-			mouseEvent.consume();
-		}
-	}
+        //Only invoked when the element is focused.
+        addEventHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
+    }
 
-	protected void onKeyPressed(KeyEvent event) {
-		if (event.getCode() == KeyCode.ENTER) {//Avoid parent to use enter.
-			event.consume();
-		}
-	}
+    protected void onMouseClicked(MouseEvent mouseEvent) {
+        if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+            getExplorer().manageMouseSelection(mouseEvent, this);
+            mouseEvent.consume();
+        }
+    }
 
-	@Override
-	public boolean supportsActionRegion(String region) {
-		return region.equals(RegionTags.EXPLORER_ELEMENT);
-	}
+    protected void onKeyPressed(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {//Avoid parent to use enter.
+            event.consume();
+        }
+    }
+
+    @Override
+    public boolean supportsActionRegion(String region) {
+        return region.equals(RegionTags.EXPLORER_ELEMENT);
+    }
 }

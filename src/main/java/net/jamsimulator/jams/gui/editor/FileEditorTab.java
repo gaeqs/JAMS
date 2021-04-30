@@ -32,6 +32,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.file.FileType;
@@ -43,10 +44,9 @@ import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.project.WorkingPane;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
-import net.jamsimulator.jams.utils.AnchorUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
-import org.fxmisc.flowless.Virtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 
 import java.io.File;
@@ -56,144 +56,120 @@ import java.util.Set;
 
 public class FileEditorTab extends Tab implements ActionRegion {
 
-	private FileEditorTabList list;
-	private final File file;
-	private final FileEditor display;
-	private final Label name;
-	private boolean saveMark;
+    private FileEditorTabList list;
+    private final File file;
+    private final FileEditor display;
+    private final Label name;
+    private boolean saveMark;
 
-	private final AnchorPane anchorPane;
-	private final VirtualizedScrollPane scroll;
-	private final ScaledVirtualized scale;
-	private final ScrollPane simpleScroll;
+    private final AnchorPane anchorPane;
 
-	public FileEditorTab(FileEditorTabList list, File file) {
-		this.list = list;
-		this.file = file;
-		this.saveMark = false;
+    public FileEditorTab(FileEditorTabList list, File file) {
+        this.list = list;
+        this.file = file;
+        this.saveMark = false;
 
-		FileType type = Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType());
-		this.display = type.createDisplayTab(this);
+        FileType type = Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType());
+        this.display = type.createDisplayTab(this);
 
-		ImageView view = new NearestImageView(type.getIcon(), FileType.IMAGE_SIZE, FileType.IMAGE_SIZE);
-		name = new Label(file.getName(), view);
-		setGraphic(name);
+        ImageView view = new NearestImageView(type.getIcon(), FileType.IMAGE_SIZE, FileType.IMAGE_SIZE);
+        name = new Label(file.getName());
 
-		if (display == null) {
-			anchorPane = null;
-			scroll = null;
-			scale = null;
-			simpleScroll = null;
-			return;
-		}
+        var hbox = new HBox(view, name);
+        hbox.setSpacing(5);
+        setGraphic(hbox);
 
-		Node element = (Node) display;
-		anchorPane = new AnchorPane();
-		if (element instanceof Region) {
-			((Region) element).prefWidthProperty().bind(anchorPane.widthProperty());
-			((Region) element).prefHeightProperty().bind(anchorPane.heightProperty());
-		}
-		if (display instanceof Region && display instanceof Virtualized) {
-			scale = new ScaledVirtualized(element);
-			scroll = new VirtualizedScrollPane(scale);
-			simpleScroll = null;
-			AnchorUtils.setAnchor(scroll, 0, 0, 0, 0);
-			anchorPane.getChildren().addAll(scroll);
-			if (element instanceof VirtualScrollHandled) {
-				((VirtualScrollHandled) element).setScrollPane(scroll);
-				((VirtualScrollHandled) element).setZoom(scale);
-			}
-		} else {
-			scroll = null;
-			scale = null;
-			simpleScroll = new PixelScrollPane(element);
-			AnchorUtils.setAnchor(simpleScroll, 0, 0, 0, 0);
-			anchorPane.getChildren().addAll(simpleScroll);
-		}
+        if (display == null) {
+            anchorPane = null;
+            return;
+        }
 
-		setContent(anchorPane);
+        anchorPane = new AnchorPane();
+        display.addNodesToTab(anchorPane);
 
-		setOnClosed(target -> {
-			this.list.closeFileInternal(this);
-			display.onClose();
-		});
+        setContent(anchorPane);
 
-		setContextMenu(createContextMenu());
-	}
+        setOnClosed(target -> {
+            this.list.closeFileInternal(this);
+            display.onClose();
+        });
 
-	public FileEditorTabList getList() {
-		return list;
-	}
+        setContextMenu(createContextMenu());
+    }
 
-	void setList(FileEditorTabList list) {
-		this.list = list;
-	}
+    public FileEditorTabList getList() {
+        return list;
+    }
 
-	public WorkingPane getWorkingPane() {
-		return list.getWorkingPane();
-	}
+    void setList(FileEditorTabList list) {
+        this.list = list;
+    }
 
-	public File getFile() {
-		return file;
-	}
+    public WorkingPane getWorkingPane() {
+        return list.getWorkingPane();
+    }
 
-	public FileEditor getDisplay() {
-		return display;
-	}
+    public File getFile() {
+        return file;
+    }
 
-	public boolean isSaveMark() {
-		return saveMark;
-	}
+    public FileEditor getDisplay() {
+        return display;
+    }
 
-	public void setSaveMark(boolean saveMark) {
-		if (saveMark == this.saveMark) return;
-		this.saveMark = saveMark;
-		Platform.runLater(() -> name.setText(saveMark ? file.getName() + " *" : file.getName()));
-	}
+    public boolean isSaveMark() {
+        return saveMark;
+    }
 
-	public void openInNewHolder(boolean horizontal) {
-		list.getHolder().openInNewHolder(this, horizontal);
-	}
+    public void setSaveMark(boolean saveMark) {
+        if (saveMark == this.saveMark) return;
+        this.saveMark = saveMark;
+        Platform.runLater(() -> name.setText(saveMark ? file.getName() + " *" : file.getName()));
+    }
 
-	public void layoutDisplay() {
-		list.requestLayout();
-		if (anchorPane != null) anchorPane.requestLayout();
-		((Region) getContent()).requestLayout();
-		((Region) getGraphic()).requestLayout();
-	}
+    public void openInNewHolder(FileOpenPosition position) {
+        list.getHolder().openInNewHolder(this, position);
+    }
 
-	private Set<ContextAction> getSupportedContextActions() {
-		Set<Action> actions = JamsApplication.getActionManager();
-		Set<ContextAction> set = new HashSet<>();
-		for (Action action : actions) {
-			if (action instanceof ContextAction && supportsActionRegion(action.getRegionTag())) {
-				set.add((ContextAction) action);
-			}
-		}
-		return set;
-	}
+    public void layoutDisplay() {
+        list.requestLayout();
+        if (anchorPane != null) anchorPane.requestLayout();
+        ((Region) getContent()).requestLayout();
+        ((Region) getGraphic()).requestLayout();
+    }
 
-	private ContextMenu createContextMenu() {
-		Set<ContextAction> set = getSupportedContextActions();
-		if (set.isEmpty()) return null;
-		return new ContextActionMenuBuilder(this).addAll(set).build();
-	}
+    private Set<ContextAction> getSupportedContextActions() {
+        Set<Action> actions = JamsApplication.getActionManager();
+        Set<ContextAction> set = new HashSet<>();
+        for (Action action : actions) {
+            if (action instanceof ContextAction && supportsActionRegion(action.getRegionTag())) {
+                set.add((ContextAction) action);
+            }
+        }
+        return set;
+    }
 
-	@Override
-	public boolean supportsActionRegion(String region) {
-		return RegionTags.EDITOR_TAB.equals(region);
-	}
+    private ContextMenu createContextMenu() {
+        Set<ContextAction> set = getSupportedContextActions();
+        if (set.isEmpty()) return null;
+        return new ContextActionMenuBuilder(this).addAll(set).build();
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		FileEditorTab that = (FileEditorTab) o;
-		return file.equals(that.file);
-	}
+    @Override
+    public boolean supportsActionRegion(String region) {
+        return RegionTags.EDITOR_TAB.equals(region);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(file);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FileEditorTab that = (FileEditorTab) o;
+        return file.equals(that.file);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(file);
+    }
 }

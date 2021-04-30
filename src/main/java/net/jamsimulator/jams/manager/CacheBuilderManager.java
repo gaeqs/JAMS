@@ -36,7 +36,7 @@ import net.jamsimulator.jams.mips.memory.cache.event.CacheBuilderUnregisterEvent
  * <p>
  * To register an {@link CacheBuilder} use {@link #add(CacheBuilder)}.
  * To unregister an {@link CacheBuilder} use {@link #remove(Object)}.
- * An {@link CacheBuilder}'s removal from the manager doesn't make projects
+ * A {@link CacheBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
 public class CacheBuilderManager extends Manager<CacheBuilder<?>> {

@@ -26,6 +26,10 @@ package net.jamsimulator.jams.gui.explorer.folder;
 
 import javafx.scene.input.*;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.file.FileType;
+import net.jamsimulator.jams.file.event.FileTypeRegisterEvent;
+import net.jamsimulator.jams.file.event.FileTypeUnregisterEvent;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerBasicElement;
@@ -39,111 +43,139 @@ import java.util.Optional;
 
 public class ExplorerFile extends ExplorerBasicElement {
 
-	private final File file;
+    private final File file;
+    private FileType type;
 
-	/**
-	 * Creates an explorer file.
-	 *
-	 * @param parent         the {@link ExplorerSection} containing this file.
-	 * @param file           the represented {@link File}.
-	 * @param hierarchyLevel the hierarchy level, used by the spacing.
-	 */
-	public ExplorerFile(ExplorerFolder parent, File file, int hierarchyLevel) {
-		super(parent, file.getName(), hierarchyLevel);
-		getStyleClass().add("explorer-file");
-		this.file = file;
-		icon.setImage(Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType()).getIcon());
-	}
+    /**
+     * Creates an explorer file.
+     *
+     * @param parent         the {@link ExplorerSection} containing this file.
+     * @param file           the represented {@link File}.
+     * @param hierarchyLevel the hierarchy level, used by the spacing.
+     */
+    public ExplorerFile(ExplorerFolder parent, File file, int hierarchyLevel) {
+        super(parent, file.getName(), hierarchyLevel);
+        getStyleClass().add("explorer-file");
+        this.file = file;
 
-	/**
-	 * Returns the {@link File} represented by this explorer file.
-	 *
-	 * @return the {@link File}.
-	 */
-	public File getFile() {
-		return file;
-	}
+        type = Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType());
+        icon.setImage(type.getIcon());
 
-	@Override
-	protected void onMouseClicked(MouseEvent mouseEvent) {
-		super.onMouseClicked(mouseEvent);
-		if (mouseEvent.getClickCount() % 2 == 0) {
-			Explorer explorer = getExplorer();
-			if (explorer instanceof FolderExplorer) {
-				((FolderExplorer) explorer).getFileOpenAction().accept(this);
-				mouseEvent.consume();
-			}
-		}
-	}
+        Jams.getFileTypeManager().registerListeners(this, true);
+    }
 
-	@Override
-	protected void onKeyPressed(KeyEvent event) {
-		if (event.getCode() == KeyCode.ENTER) {
-			Explorer explorer = getExplorer();
-			if (explorer instanceof FolderExplorer) {
-				((FolderExplorer) explorer).getFileOpenAction().accept(this);
-				event.consume();
-				return;
-			}
-		}
-		super.onKeyPressed(event);
-	}
+    /**
+     * Returns the {@link File} represented by this explorer file.
+     *
+     * @return the {@link File}.
+     */
+    public File getFile() {
+        return file;
+    }
 
-	@Override
-	protected void loadListeners() {
-		super.loadListeners();
+    @Override
+    protected void onMouseClicked(MouseEvent mouseEvent) {
+        super.onMouseClicked(mouseEvent);
+        if (mouseEvent.getClickCount() % 2 == 0) {
+            Explorer explorer = getExplorer();
+            if (explorer instanceof FolderExplorer) {
+                ((FolderExplorer) explorer).getFileOpenAction().accept(this);
+                mouseEvent.consume();
+            }
+        }
+    }
 
-		addEventHandler(DragEvent.DRAG_OVER, event -> {
-			if (!(parent instanceof ExplorerFolder) || !event.getDragboard().hasFiles()) return;
-			File to = ((ExplorerFolder) parent).getFolder();
-			if (event.getDragboard().getFiles().stream().anyMatch(target -> target.equals(to)
-					|| FileUtils.isChild(to, target)))
-				return;
+    @Override
+    protected void onKeyPressed(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            Explorer explorer = getExplorer();
+            if (explorer instanceof FolderExplorer) {
+                ((FolderExplorer) explorer).getFileOpenAction().accept(this);
+                event.consume();
+                return;
+            }
+        }
+        super.onKeyPressed(event);
+    }
 
-			event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+    @Override
+    protected void loadListeners() {
+        super.loadListeners();
 
-			if (!getStyleClass().contains("explorer-file-allow-drop")) {
-				getStyleClass().add("explorer-file-allow-drop");
-			}
-			if (parent instanceof ExplorerFolder) ((ExplorerFolder) parent).removeDragHint();
-			event.consume();
-		});
+        addEventHandler(DragEvent.DRAG_OVER, event -> {
+            if (!(parent instanceof ExplorerFolder) || !event.getDragboard().hasFiles()) return;
+            File to = ((ExplorerFolder) parent).getFolder();
+            if (event.getDragboard().getFiles().stream().anyMatch(target -> target.equals(to)
+                    || FileUtils.isChild(to, target)))
+                return;
 
-		addEventHandler(DragEvent.DRAG_EXITED, event -> {
-			getStyleClass().remove("explorer-file-allow-drop");
-			applyCss();
-		});
+            event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
 
-		addEventHandler(DragEvent.DRAG_DROPPED, event -> {
-			FolderExplorerDragAndDropManagement.manageDrop(event.getDragboard(),
-					((ExplorerFolder) parent).getFolder());
-			event.setDropCompleted(true);
-			event.consume();
-		});
+            if (!getStyleClass().contains("explorer-file-allow-drop")) {
+                getStyleClass().add("explorer-file-allow-drop");
+            }
+            getParentSection().ifPresent(ExplorerFolder::addDropHereHint);
+            if (parent instanceof ExplorerFolder) ((ExplorerFolder) parent).removeDragHint();
+            event.consume();
+        });
 
-		addEventHandler(MouseEvent.DRAG_DETECTED, event -> {
-			if (!selected) {
-				getExplorer().selectElementAlone(this);
-			}
-			Dragboard db = startDragAndDrop(TransferMode.COPY);
-			List<ExplorerElement> selectedElements = getExplorer().getSelectedElements();
-			FolderExplorerDragAndDropManagement.manageDragFromElements(db, selectedElements);
-			event.consume();
-		});
-	}
+        addEventHandler(DragEvent.DRAG_EXITED, event -> {
+            getStyleClass().remove("explorer-file-allow-drop");
+            getParentSection().ifPresent(ExplorerFolder::removeDropHereHint);
+            applyCss();
+        });
 
-	@Override
-	public boolean supportsActionRegion(String region) {
-		return super.supportsActionRegion(region) || RegionTags.FOLDER_EXPLORER_ELEMENT.contains(region);
-	}
 
-	@Override
-	public Optional<? extends ExplorerFolder> getParentSection() {
-		return super.getParentSection().map(target -> (ExplorerFolder) target);
-	}
+        addEventHandler(DragEvent.DRAG_DROPPED, event -> {
+            var explorer = (FolderExplorer) getExplorer();
+            FolderExplorerDragAndDropManagement.manageDrop(event.getDragboard(),
+                    ((ExplorerFolder) parent).getFolder(), explorer.getFileMoveAction());
+            event.setDropCompleted(true);
+            event.consume();
+        });
 
-	@Override
-	public Explorer getExplorer() {
-		return super.getExplorer();
-	}
+        addEventHandler(MouseEvent.DRAG_DETECTED, event -> {
+            if (!selected) {
+                getExplorer().selectElementAlone(this);
+            }
+            Dragboard db = startDragAndDrop(TransferMode.COPY_OR_MOVE);
+            List<ExplorerElement> selectedElements = getExplorer().getSelectedElements();
+            FolderExplorerDragAndDropManagement.manageDragFromElements(db, selectedElements);
+            event.consume();
+        });
+    }
+
+    @Override
+    public boolean supportsActionRegion(String region) {
+        return super.supportsActionRegion(region) || RegionTags.FOLDER_EXPLORER_ELEMENT.contains(region);
+    }
+
+    @Override
+    public Optional<? extends ExplorerFolder> getParentSection() {
+        return super.getParentSection().map(target -> (ExplorerFolder) target);
+    }
+
+    @Override
+    public Explorer getExplorer() {
+        return super.getExplorer();
+    }
+
+    @Listener
+    private void onFileTypeRegister(FileTypeRegisterEvent.After event) {
+        if (type != Jams.getFileTypeManager().getUnknownType()) return;
+        int lastIndex = name.lastIndexOf(".");
+        if (lastIndex == -1 || lastIndex == name.length()) return;
+
+        if (event.getFileType().supportsExtension(name.substring(lastIndex + 1))) {
+            type = event.getFileType();
+            icon.setImage(type.getIcon());
+        }
+    }
+
+    @Listener
+    private void onFileTypeUnregister(FileTypeUnregisterEvent.After event) {
+        if (type != event.getFileType()) return;
+        type = Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType());
+        icon.setImage(type.getIcon());
+    }
 }

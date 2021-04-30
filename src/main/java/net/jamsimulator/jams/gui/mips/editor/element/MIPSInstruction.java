@@ -87,7 +87,7 @@ public class MIPSInstruction extends MIPSCodeElement {
             while (iterator.hasNext()) {
                 current = iterator.next();
                 if (current.getParameters().length <= i
-                        || !current.getParameters()[i].match(parameter.getText(), registerBuilder)) {
+                        || !current.getParameters()[i].match(parameter.getReplacedText(), registerBuilder)) {
                     iterator.remove();
                 }
             }
@@ -119,12 +119,15 @@ public class MIPSInstruction extends MIPSCodeElement {
     public void refreshMetadata(MIPSFileElements elements) {
         if (instruction == null || instruction.isEmpty()) return;
 
+        mostCompatibleInstruction = null;
+
         MIPSProject project = elements.getProject().orElse(null);
+        if (project == null) return;
+
         InstructionSet set = project.getData().getInstructionSet();
         RegistersBuilder builder = project.getData().getRegistersBuilder();
 
         var instructions = set.getInstructionByMnemonic(instruction);
-        mostCompatibleInstruction = null;
 
         base:
         for (Instruction current : instructions) {
@@ -133,7 +136,7 @@ public class MIPSInstruction extends MIPSCodeElement {
                 if (types.length != parameters.size()) return;
 
                 for (int i = 0; i < types.length; i++) {
-                    if (!types[i].match(parameters.get(i).getText(), builder)) {
+                    if (!types[i].match(parameters.get(i).getReplacedText(), builder)) {
                         continue base;
                     }
                 }

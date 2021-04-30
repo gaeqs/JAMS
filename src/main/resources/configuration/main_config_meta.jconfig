@@ -57,6 +57,12 @@
       "language_node": "CONFIG_ACTION"
     }
   },
+  "plugin": {
+    "meta": {
+      "type": "plugin",
+      "language_node": "CONFIG_PLUGIN"
+    }
+  },
   "explorer": {
     "meta": {
       "language_node": "CONFIG_EXPLORER",
@@ -103,6 +109,11 @@
     "reset_zoom_using_middle_button": {
       "type": "boolean",
       "language_node": "CONFIG_EDITOR_RESET_ZOOM_USING_MIDDLE_BUTTON",
+      "region": "mouse_control"
+    },
+    "zoom_sensibility": {
+      "type": "double",
+      "language_node": "CONFIG_EDITOR_RESET_ZOOM_SENSIBILITY",
       "region": "mouse_control"
     },
     "mips": {
@@ -178,13 +189,50 @@
       "meta": {
         "language_node": "CONFIG_SIMULATION_MIPS",
         "regions": {
-          "flow": 1
+          "instructions": 0,
+          "flow": 1,
+          "lab": 2
         }
       },
       "flow_max_items": {
         "type": "positive_integer",
         "language_node": "CONFIG_SIMULATION_MIPS_FLOW_MAX_ITEMS",
         "region": "flow"
+      },
+      "viewer_elements_order": {
+        "type": "assembled_instruction_viewer_order",
+        "language_node": "CONFIG_SIMULATION_MIPS_INSTRUCTIONS_VIEWER_ELEMENTS_ORDER",
+        "region": "instructions"
+      },
+      "show_labels": {
+        "type": "boolean",
+        "language_node": "CONFIG_SIMULATION_MIPS_INSTRUCTIONS_SHOW_LABELS",
+        "region": "instructions"
+      },
+      "lab_segment_1_address": {
+        "type": "hexadecimal_integer",
+        "language_node": "CONFIG_SIMULATION_MIPS_LAB_FIRST_SEGMENT_ADDRESS",
+        "region": "lab"
+      },
+      "lab_segment_2_address": {
+        "type": "hexadecimal_integer",
+        "language_node": "CONFIG_SIMULATION_MIPS_LAB_SECOND_SEGMENT_ADDRESS",
+        "region": "lab"
+      },
+      "lab_hex_kerboard_1_address": {
+        "type": "hexadecimal_integer",
+        "language_node": "CONFIG_SIMULATION_MIPS_LAB_FIRST_HEX_KERBOARD_ADDRESS",
+        "region": "lab"
+      },
+      "lab_hex_kerboard_2_address": {
+        "type": "hexadecimal_integer",
+        "language_node": "CONFIG_SIMULATION_MIPS_LAB_SECOND_HEX_KERBOARD_ADDRESS",
+        "region": "lab"
+      },
+      "lab_counter_address": {
+        "type": "hexadecimal_integer",
+        "language_node": "CONFIG_SIMULATION_MIPS_LAB_COUNTER_ADDRESS",
+        "region": "lab"
       }
     }
   }

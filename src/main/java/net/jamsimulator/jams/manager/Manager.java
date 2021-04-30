@@ -47,13 +47,13 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
 	 * @param beforeUnregisterEventBuilder the builder that creates the event called after an element is added.
 	 */
 	public Manager(Function<Type, Event> beforeRegisterEventBuilder, Function<Type, Event> afterRegisterEventBuilder,
-				   Function<Type, Event> afterUnregisterEventBuilder, Function<Type, Event> beforeUnregisterEventBuilder) {
+				   Function<Type, Event> beforeUnregisterEventBuilder, Function<Type, Event> afterUnregisterEventBuilder) {
 
 		this.broadcast = new SimpleEventBroadcast();
 		this.beforeRegisterEventBuilder = beforeRegisterEventBuilder;
 		this.afterRegisterEventBuilder = afterRegisterEventBuilder;
-		this.afterUnregisterEventBuilder = afterUnregisterEventBuilder;
 		this.beforeUnregisterEventBuilder = beforeUnregisterEventBuilder;
+		this.afterUnregisterEventBuilder = afterUnregisterEventBuilder;
 		loadDefaultElements();
 	}
 
@@ -124,10 +124,10 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
 	 * If the element is not present or the unregister event is cancelled this method returns {@link false}.
 	 * If the operation was successful the method returns {@link true}.
 	 *
-	 * @param o the element to register.
+	 * @param o the element to unregister.
 	 * @return whether the operation was successful.
 	 * @throws NullPointerException when the given element is null.
-	 * @see HashSet#add(Object)
+	 * @see HashSet#remove(Object)
 	 */
 	@Override
 	public boolean remove(Object o) {

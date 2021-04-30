@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.mips.editor.element;
 
 import net.jamsimulator.jams.collection.Bag;
+import net.jamsimulator.jams.gui.editor.EditorHintBar;
 import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
 import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MIPSProject;
@@ -50,6 +51,7 @@ public class MIPSFileElements {
     private final TreeSet<MIPSReplacement> replacements;
 
     private final TreeSet<Integer> requiresUpdate;
+    private final TreeSet<MIPSMacro> macros;
 
     public MIPSFileElements(MIPSProject project) {
         this.project = project;
@@ -61,6 +63,8 @@ public class MIPSFileElements {
 
         this.requiresUpdate = new TreeSet<>();
         this.filesToAssemble = null;
+
+        this.macros = new TreeSet<>();
     }
 
     /**
@@ -179,21 +183,39 @@ public class MIPSFileElements {
         return lines.get(lineOf(position));
     }
 
-    public boolean removeLine(int index) {
+    public Optional<MIPSMacro> getMacro(String name) {
+        return macros.stream().filter(m -> m.getName().equals(name)).findAny();
+    }
+
+    public Optional<MIPSMacro> macroAt(int lineStart) {
+        MIPSMacro dummy = new MIPSMacro(lineStart);
+        var macro = macros.lower(dummy);
+        if (macro == null || (macro.getEnd() != null && macro.getEnd().getStart() < lineStart)) return Optional.empty();
+        return Optional.of(macro);
+    }
+
+    public boolean removeLine(int index, EditorHintBar bar) {
         if (index < 0 || index >= lines.size()) throw new IndexOutOfBoundsException("Index out of bounds");
         MIPSLine line = lines.remove(index);
-
-        line.getReplacement().ifPresent(this::removeReplacement);
 
         int length = line.getText().length() + 1;
         for (int i = index; i < lines.size(); i++)
             lines.get(i).move(-length);
 
         requiresUpdate.remove(lines.size());
+
+        line.getReplacement().ifPresent(replacement -> removeReplacement(index, replacement));
+        line.getMacro().ifPresent(macro -> removeMacro(index, macro));
+        line.getDirective().filter(MIPSDirective::isEndMacro).ifPresent(d -> removeEndMacro(index, line));
+
+        if (bar != null) {
+            bar.applyLineRemoval(index);
+        }
+
         return checkLabels(line, false);
     }
 
-    public boolean addLine(int index, String text) {
+    public boolean addLine(int index, String text, EditorHintBar bar) {
         if (index < 0 || index > lines.size()) throw new IndexOutOfBoundsException("Index out of bounds");
         if (text.contains("\n") || text.contains("\r")) throw new IllegalArgumentException("Invalid line!");
 
@@ -210,9 +232,16 @@ public class MIPSFileElements {
         for (int i = index + 1; i < lines.size(); i++)
             lines.get(i).move(length);
 
-        line.getReplacement().ifPresent(target -> addReplacemenet(target, true));
+        line.getReplacement().ifPresent(replacement -> addReplacemenet(index, replacement));
+        line.getMacro().ifPresent(macro -> addMacro(index, macro));
+        line.getDirective().filter(MIPSDirective::isEndMacro).ifPresent(d -> addEndMacro(index, line));
 
         requiresUpdate.add(index);
+
+        if (bar != null) {
+            bar.applyLineAddition(index);
+        }
+
         return checkLabels(line, true);
     }
 
@@ -221,7 +250,6 @@ public class MIPSFileElements {
         if (text.contains("\n") || text.contains("\r")) throw new IllegalArgumentException("Invalid line!");
 
         MIPSLine old = lines.get(index);
-        old.getReplacement().ifPresent(this::removeReplacement);
 
         int difference = text.length() - old.getText().length();
 
@@ -231,7 +259,13 @@ public class MIPSFileElements {
         for (int i = index + 1; i < lines.size(); i++)
             lines.get(i).move(difference);
 
-        line.getReplacement().ifPresent(target -> addReplacemenet(target, true));
+        old.getReplacement().ifPresent(replacement -> removeReplacement(index, replacement));
+        old.getMacro().ifPresent(macro -> removeMacro(index, macro));
+        old.getDirective().filter(MIPSDirective::isEndMacro).ifPresent(d -> removeEndMacro(index, old));
+
+        line.getReplacement().ifPresent(replacement -> addReplacemenet(index, replacement));
+        line.getMacro().ifPresent(macro -> addMacro(index, macro));
+        line.getDirective().filter(MIPSDirective::isEndMacro).ifPresent(d -> addEndMacro(index, line));
 
         requiresUpdate.add(index);
         boolean a = checkLabels(old, false);
@@ -249,6 +283,7 @@ public class MIPSFileElements {
         labels.clear();
         setAsGlobalLabel.clear();
         replacements.clear();
+        macros.clear();
         if (raw.isEmpty()) return;
 
         int start = 0;
@@ -257,25 +292,10 @@ public class MIPSFileElements {
 
         //Checks all lines
         char c;
-        MIPSLine line;
         while (raw.length() > end) {
             c = raw.charAt(end);
             if (c == '\n' || c == '\r') {
-                line = new MIPSLine(this, start, builder.toString());
-
-                line.getRegisteredLabels().forEach((label, global) -> {
-                    labels.add(label);
-                    if (global) setAsGlobalLabel.add(label);
-                });
-
-                if (line.getDirective().isPresent() && line.getDirective().get().isGlobal()) {
-                    line.getDirective().get().getParameters().forEach(target -> {
-                        setAsGlobalLabel.add(target.text);
-                    });
-                }
-
-                this.lines.add(line);
-                line.getReplacement().ifPresent(target -> addReplacemenet(target, false));
+                refreshAllManageLine(new MIPSLine(this, start, builder.toString()));
 
                 //Restarts the builder.
                 builder = new StringBuilder();
@@ -286,26 +306,33 @@ public class MIPSFileElements {
 
         //Final line
         if (end >= start) {
-            line = new MIPSLine(this, start, builder.toString());
-
-            line.getRegisteredLabels().forEach((label, global) -> {
-                labels.add(label);
-                if (global) setAsGlobalLabel.add(label);
-            });
-
-            if (line.getDirective().isPresent() && line.getDirective().get().isGlobal()) {
-                line.getDirective().get().getParameters().forEach(target -> {
-                    setAsGlobalLabel.add(target.text);
-                });
-            }
-
-            this.lines.add(line);
+            refreshAllManageLine(new MIPSLine(this, start, builder.toString()));
         }
 
-        int i = 0;
         for (MIPSLine mipsLine : lines) {
             mipsLine.refreshMetadata(this);
         }
+    }
+
+    private void refreshAllManageLine(MIPSLine line) {
+        line.getRegisteredLabels().forEach((label, global) -> {
+            labels.add(label);
+            if (global) setAsGlobalLabel.add(label);
+        });
+
+        if (line.getDirective().isPresent()) {
+            var directive = line.getDirective().get();
+            directive.getParameters().forEach(target -> setAsGlobalLabel.add(target.text));
+            if (directive.isGlobal()) {
+                directive.getParameters().forEach(target -> setAsGlobalLabel.add(target.text));
+            } else if (directive.isEndMacro()) {
+                macros.forEach(macro -> macro.setEndIfPrevious(line));
+            }
+        }
+
+        this.lines.add(line);
+        line.getReplacement().ifPresent(replacements::add);
+        line.getMacro().ifPresent(macros::add);
     }
 
     /**
@@ -313,13 +340,15 @@ public class MIPSFileElements {
      *
      * @param area the area to style.
      */
-    public void styleAll(CodeArea area) {
+    public void styleAll(CodeArea area, EditorHintBar hintBar) {
         if (lines.isEmpty()) return;
         int lastEnd = 0;
         var spansBuilder = new StyleSpansBuilder<Collection<String>>();
 
+        int i = 0;
         for (MIPSLine line : lines) {
             lastEnd = line.styleLine(lastEnd, spansBuilder);
+            line.refreshHints(hintBar, i++);
         }
         requiresUpdate.clear();
 
@@ -340,7 +369,7 @@ public class MIPSFileElements {
      * @param from   the first line index.
      * @param amount the amount of lines to style.
      */
-    public void styleLines(CodeArea area, int from, int amount) {
+    public void styleLines(CodeArea area, EditorHintBar hintBar, int from, int amount) {
         if (from < 0 || from + amount > lines.size())
             throw new IndexOutOfBoundsException("Index out of bounds. [" + from + ", " + (from + amount) + ")");
 
@@ -348,7 +377,10 @@ public class MIPSFileElements {
         var spansBuilder = new StyleSpansBuilder<Collection<String>>();
 
         for (int i = 0; i < amount; i++) {
-            lastEnd = lines.get(from + i).styleLine(lastEnd, spansBuilder);
+            var line = lines.get(from + i);
+            lastEnd = line.styleLine(lastEnd, spansBuilder);
+            line.refreshHints(hintBar, from + i);
+
         }
 
         StyleSpans<Collection<String>> spans;
@@ -369,38 +401,31 @@ public class MIPSFileElements {
     public void update(MIPSFileEditor area) {
         if (requiresUpdate.isEmpty()) return;
 
-        int i;
         MIPSLine line;
-        int lastEnd = -1;
-        int first = -1;
+        var hintBar = area.getHintBar();
 
-        var spansBuilder = new StyleSpansBuilder<Collection<String>>();
-
-        for (Integer integer : requiresUpdate) {
-            i = integer;
+        for (int i : requiresUpdate) {
             if (i < 0 || i >= lines.size()) continue;
+
+            var spansBuilder = new StyleSpansBuilder<Collection<String>>();
             line = lines.get(i);
 
-            if (lastEnd == -1) {
-                lastEnd = line.getStart();
-                first = line.getStart();
-            }
-
             line.refreshMetadata(this);
-            lastEnd = line.styleLine(lastEnd, spansBuilder);
+            line.styleLine(line.getStart(), spansBuilder);
+            line.refreshHints(hintBar, i);
+
+
+            StyleSpans<Collection<String>> spans;
+            try {
+                spans = spansBuilder.create();
+            } catch (IllegalStateException ex) {
+                // No spans have been added.
+                continue;
+            }
+            area.setStyleSpans(i, 0, spans);
+
         }
         requiresUpdate.clear();
-
-        StyleSpans<Collection<String>> spans;
-        try {
-            spans = spansBuilder.create();
-        } catch (IllegalStateException ex) {
-            // No spans have been added.
-            return;
-        }
-        if (first != -1) {
-            area.setStyleSpans(first, spans);
-        }
     }
 
     /**
@@ -441,14 +466,30 @@ public class MIPSFileElements {
         return set;
     }
 
-    private void removeReplacement(MIPSReplacement replacement) {
-        replacements.remove(replacement);
+    // region replacement managment
+
+    private void addReplacemenet(int lineIndex, MIPSReplacement replacement) {
+        replacements.add(replacement);
 
         //CHECK
-        int lineIndex = lines.indexOf(replacement.getLine());
         var sublist = lines.subList(lineIndex + 1, lines.size());
 
         int i = lineIndex + 1;
+        for (var line : sublist) {
+            if (line.getText().contains(replacement.getKey())) {
+                requiresUpdate.add(i);
+            }
+            i++;
+        }
+    }
+
+    private void removeReplacement(int lineIndex, MIPSReplacement replacement) {
+        replacements.remove(replacement);
+
+        //CHECK
+        var sublist = lines.subList(lineIndex + 1, lines.size());
+
+        int i = lineIndex;
         for (var line : sublist) {
             if (line.getUsedReplacements().contains(replacement)) {
                 requiresUpdate.add(i);
@@ -457,23 +498,90 @@ public class MIPSFileElements {
         }
     }
 
-    private void addReplacemenet(MIPSReplacement replacement, boolean check) {
-        replacements.add(replacement);
+    // endregion
 
-        if (check) {
-            //CHECK
-            int lineIndex = lines.indexOf(replacement.getLine());
-            var sublist = lines.subList(lineIndex + 1, lines.size());
+    //region macro managment
 
-            int i = lineIndex + 1;
-            for (var line : sublist) {
-                if (line.getText().contains(replacement.getKey())) {
-                    requiresUpdate.add(i);
-                }
-                i++;
+    private void addMacro(int lineIndex, MIPSMacro macro) {
+        macros.add(macro);
+
+        for (MIPSMacro other : macros) {
+            if (other == macro) break;
+            other.setEndIfPrevious(macro.getStart());
+        }
+
+        macro.searchNewEnd(lineIndex + 1, lines);
+
+        int end = macro.getEnd() == null ? lines.size() : lines.indexOf(macro.getEnd());
+        addMacroLinesToUpdate(lineIndex + 1, end);
+
+        // Search for macro calls!
+        addMacroCallsToUpdate(lineIndex, macro);
+    }
+
+    public void removeMacro(int lineIndex, MIPSMacro macro) {
+        macros.remove(macro);
+
+        for (MIPSMacro other : macros) {
+            if (other.getEnd() != macro.getStart()) continue;
+            other.searchNewEnd(lineIndex, lines);
+
+            int end = other.getEnd() == null ? lines.size() : lines.indexOf(other.getEnd());
+            addMacroLinesToUpdate(lineIndex, end);
+        }
+
+        int end = macro.getEnd() == null ? lines.size() : lines.indexOf(macro.getEnd());
+        addMacroLinesToUpdate(lineIndex, end);
+
+        // Search for macro calls!
+        addMacroCallsToUpdate(lineIndex, macro);
+    }
+
+    public void addEndMacro(int lineIndex, MIPSLine line) {
+        for (MIPSMacro macro : macros) {
+            if (macro.getStart().getStart() >= line.getStart()) continue;
+            macro.setEndIfPrevious(line);
+            if (macro.getEnd() == line) {
+                int start = lines.indexOf(macro.getStart());
+                addMacroLinesToUpdate(start, lineIndex);
             }
         }
     }
+
+    private void removeEndMacro(int lineIndex, MIPSLine line) {
+        for (MIPSMacro macro : macros) {
+            if (macro.getEnd() != line) continue;
+
+            macro.searchNewEnd(lineIndex, lines);
+
+            int end = macro.getEnd() == null ? lines.size() : lines.indexOf(macro.getEnd());
+            addMacroLinesToUpdate(lineIndex, end);
+        }
+    }
+
+
+    private void addMacroLinesToUpdate(int from, int to) {
+        var sublist = lines.subList(from, to);
+
+        int i = from;
+        for (MIPSLine line : sublist) {
+            if (line.canHaveMacroParameters()) {
+                requiresUpdate.add(i);
+            }
+            i++;
+        }
+    }
+
+    private void addMacroCallsToUpdate(int lineIndex, MIPSMacro macro) {
+        for (MIPSLine other : lines.subList(lineIndex, lines.size())) {
+            if (other.getMacroCall().map(e -> e.getSimpleText().equals(macro.getName())).orElse(false)) {
+                requiresUpdate.add(lineIndex);
+            }
+            lineIndex++;
+        }
+    }
+
+    //endregion
 
     private boolean checkLabels(MIPSLine line, boolean add) {
         List<String> labelsToCheck = new ArrayList<>();

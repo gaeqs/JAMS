@@ -27,7 +27,7 @@ package net.jamsimulator.jams.mips.memory;
 import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
-import net.jamsimulator.jams.mips.interrupt.RuntimeAddressException;
+import net.jamsimulator.jams.mips.interrupt.MIPSAddressException;
 import net.jamsimulator.jams.mips.memory.event.*;
 import net.jamsimulator.jams.utils.StringUtils;
 import net.jamsimulator.jams.utils.Validate;
@@ -184,40 +184,28 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
 	@Override
 	public byte getByte(int address) {
-		return getByte(address, true, false);
+		return getByte(address, true, false, true);
 	}
 
 	@Override
 	public void setByte(int address, byte b) {
-		if (!eventCallsEnabled) {
-			getSectionOrThrowException(address).setByte(address, b);
-			return;
-		}
-		//Invokes the before event.
-		MemoryByteSetEvent.Before before = callEvent(new MemoryByteSetEvent.Before(this, address, b));
-		if (before.isCancelled()) return;
-
-		//Refresh data.
-		address = before.getAddress();
-		b = before.getValue();
-
-		//Gets the section and sets the byte.
-		MemorySection section = getSectionOrThrowException(address);
-		byte old = section.setByte(address, b);
-
-		//Invokes the after event.
-		callEvent(new MemoryByteSetEvent.After(this, section, address, b, old));
+		setByte(address, b, true, false, true);
 	}
 
 	@Override
 	public int getWord(int address) {
-		return getWord(address, true, false);
+		return getWord(address, true, false, true);
 	}
 
 	@Override
 	public void setWord(int address, int word) {
-		if (address % 4 != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_STORE_EXCEPTION, address);
-		if (!eventCallsEnabled) {
+		setWord(address, word, true, false, true);
+	}
+
+	@Override
+	public void setWord(int address, int word, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
+		if ((address & 0x3) != 0) throw new MIPSAddressException(InterruptCause.ADDRESS_STORE_EXCEPTION, address);
+		if (!eventCallsEnabled || !callEvents) {
 			getSectionOrThrowException(address).setWord(address, word, bigEndian);
 			return;
 		}
@@ -238,8 +226,30 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 	}
 
 	@Override
-	public int getWord(int address, boolean callEvents, boolean bypassCaches) {
-		if (address % 4 != 0) throw new RuntimeAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
+	public void setByte(int address, byte b, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
+		if (!eventCallsEnabled || !callEvents) {
+			getSectionOrThrowException(address).setByte(address, b);
+			return;
+		}
+		//Invokes the before event.
+		MemoryByteSetEvent.Before before = callEvent(new MemoryByteSetEvent.Before(this, address, b));
+		if (before.isCancelled()) return;
+
+		//Refresh data.
+		address = before.getAddress();
+		b = before.getValue();
+
+		//Gets the section and sets the byte.
+		MemorySection section = getSectionOrThrowException(address);
+		byte old = section.setByte(address, b);
+
+		//Invokes the after event.
+		callEvent(new MemoryByteSetEvent.After(this, section, address, b, old));
+	}
+
+	@Override
+	public int getWord(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
+		if ((address & 0x3) != 0) throw new MIPSAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
 		if (!eventCallsEnabled || !callEvents) {
 			return getSectionOrThrowException(address).getWord(address, bigEndian);
 		}
@@ -258,7 +268,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 	}
 
 	@Override
-	public byte getByte(int address, boolean callEvents, boolean bypassCaches) {
+	public byte getByte(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
 		if (!eventCallsEnabled || !callEvents) {
 			return getSectionOrThrowException(address).getByte(address);
 		}
@@ -414,6 +424,11 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 		return getSectionOrThrowException(address);
 	}
 
+	@Override
+	public boolean isDirectionAffectedByCache(int address) {
+		return true;
+	}
+
 
 	private MemorySection getSectionOrThrowException(int address) {
 		//Optimized for loop.
@@ -421,6 +436,9 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 			if (Integer.compareUnsigned(firstAddresses[i], address) > 0)
 				return sections[i - 1];
 		}
+
+		var last = sections[sections.length - 1];
+		if (last.isInside(address)) return last;
 
 		throw new IndexOutOfBoundsException("Memory section not found for address 0x"
 				+ StringUtils.addZeros(Integer.toHexString(address), 8) + ".");

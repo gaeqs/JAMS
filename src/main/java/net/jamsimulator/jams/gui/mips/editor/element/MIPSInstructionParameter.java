@@ -62,6 +62,15 @@ public class MIPSInstructionParameter {
         return text;
     }
 
+    public String getReplacedText() {
+        String replaced = text;
+        for (MIPSReplacement replacement : line.getUsedReplacements()) {
+            replaced = replaced.replace(replacement.getKey(), replacement.getValue());
+        }
+
+        return replaced;
+    }
+
     public MIPSInstruction getInstruction() {
         return instruction;
     }

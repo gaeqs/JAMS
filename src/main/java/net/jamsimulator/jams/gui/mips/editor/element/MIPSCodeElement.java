@@ -30,6 +30,7 @@ import net.jamsimulator.jams.language.Language;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -229,11 +230,22 @@ public abstract class MIPSCodeElement {
 
     protected List<String> getGeneralStyles(String baseStyle) {
         List<String> list = new ArrayList<>();
-        list.add(baseStyle);
+        list.add(usesMacroParameter() ? "mips-macro-call-parameter" : baseStyle);
         if (hasInspections()) {
             list.add(hasErrors() ? "mips-error" : "mips-warning");
         }
         return list;
+    }
+
+    /**
+     * Returns whether this element uses a macro parameter.
+     *
+     * @return whether this element uses a macro parameter.
+     */
+    public boolean usesMacroParameter() {
+        if (!line.canHaveMacroParameters() || line.getUsedMacro().isEmpty()) return false;
+        var simple = getSimpleText();
+        return Arrays.stream(line.getUsedMacro().get().getParameters()).anyMatch(simple::contains);
     }
 
     @Override

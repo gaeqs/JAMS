@@ -29,7 +29,7 @@ public class MIPSEditorInspectionUsingEquivalent extends MIPSEditorInspection {
 
         @Override
         public Optional<MIPSEditorInspectionUsingEquivalent> tryToBuild(MIPSCodeElement element, MIPSFileElements elements) {
-            if (element.getLine().isUsingReplacements() || element.getLine().getReplacement().isPresent()) {
+            if(!element.getLine().areAllReplacementsValid()) {
                 return Optional.of(new MIPSEditorInspectionUsingEquivalent(this));
             }
 

@@ -6,7 +6,10 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class InstructionUtils {
@@ -65,6 +68,8 @@ public class InstructionUtils {
         ParameterType[] iParameters = instruction.getParameters();
         ParameterType currentType;
         boolean valid = true;
+
+        if (iParameters.length == 0 && !sParameters.isEmpty()) return false;
 
         for (int i = 0; i < iParameters.length && valid; i++) {
             currentType = iParameters[i];

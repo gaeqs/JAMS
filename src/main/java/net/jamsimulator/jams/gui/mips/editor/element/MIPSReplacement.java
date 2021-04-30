@@ -1,12 +1,17 @@
 package net.jamsimulator.jams.gui.mips.editor.element;
 
+import net.jamsimulator.jams.mips.parameter.ParameterType;
+import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
+
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 
 public class MIPSReplacement implements Comparable<MIPSReplacement> {
 
     private final MIPSLine line;
-    private String key;
-    private String value;
+    private final String key;
+    private final String value;
 
     public MIPSReplacement(MIPSLine line, String key, String value) {
         this.line = line;
@@ -22,16 +27,8 @@ public class MIPSReplacement implements Comparable<MIPSReplacement> {
         return key;
     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
     public String getValue() {
         return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 
     @Override

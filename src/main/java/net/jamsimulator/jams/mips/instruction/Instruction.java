@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.instruction;
 
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
@@ -56,81 +57,92 @@ import java.util.List;
  */
 public interface Instruction {
 
-	/**
-	 * Returns the name of the instruction. This is not the MIPS mnemonic, but an human-like name.
-	 * For example, the name for the "add" instruction may be "Addition".
-	 * <p>
-	 * This name depends on the current language of JAMS.
-	 * <p>
-	 * For the mnemonic of the instruction see {@link #getMnemonic()}.
-	 *
-	 * @return the human-like name.
-	 */
-	String getName();
+    /**
+     * Returns the name of the instruction. This is not the MIPS mnemonic, but an human-like name.
+     * For example, the name for the "add" instruction may be "Addition".
+     * <p>
+     * This name depends on the current language of JAMS.
+     * <p>
+     * For the mnemonic of the instruction see {@link #getMnemonic()}.
+     *
+     * @return the human-like name.
+     */
+    String getName();
 
-	/**
-	 * Returns the documentation of the instruction.
-	 * This string is a HTML-like formatted text containing a complete description of the instruction.
-	 * <p>
-	 * This documentation depends on the current language of JAMS.
-	 *
-	 * @return the documentation.
-	 */
-	String getDocumentation ();
+    /**
+     * Returns the documentation of the instruction.
+     * This string is a HTML-like formatted text containing a complete description of the instruction.
+     * <p>
+     * This documentation depends on the current language of JAMS.
+     *
+     * @return the documentation.
+     */
+    String getDocumentation();
 
-	/**
-	 * Returns the MIPS mnemonic of the instruction. This is the static short MIPS name of the instruction,
-	 * and it's used to filter and check the instruction in compile time.
-	 * <p>
-	 * For an human-like name see {@link #getName()}.
-	 *
-	 * @return the MIPS mnemonic.
-	 */
-	String getMnemonic();
+    /**
+     * Returns the MIPS mnemonic of the instruction. This is the static short MIPS name of the instruction,
+     * and it's used to filter and check the instruction in compile time.
+     * <p>
+     * For an human-like name see {@link #getName()}.
+     *
+     * @return the MIPS mnemonic.
+     */
+    String getMnemonic();
 
-	/**
-	 * Returns the parameter types of the instruction. These {@link ParameterType}s are used
-	 * to filter several instructions with the same mnemonic in compile time.
-	 * <p>
-	 * The returned array is a copy of the original one, so you cannot change the parameters of an instruction.
-	 *
-	 * @return the parameter types of the instruction.
-	 */
-	ParameterType[] getParameters();
+    /**
+     * Returns the parameter types of the instruction. These {@link ParameterType}s are used
+     * to filter several instructions with the same mnemonic in compile time.
+     * <p>
+     * The returned array is a copy of the original one, so you cannot change the parameters of an instruction.
+     *
+     * @return the parameter types of the instruction.
+     */
+    ParameterType[] getParameters();
 
-	/**
-	 * Returns whether this instruction has any parameter.
-	 *
-	 * @return whether this instruction has at least one parameter.
-	 */
-	boolean hasParameters();
+    /**
+     * Returns whether this instruction has any parameter.
+     *
+     * @return whether this instruction has at least one parameter.
+     */
+    boolean hasParameters();
 
-	/**
-	 * Returns whether the instruction matches the given mnemonic and parameter types.
-	 *
-	 * @param mnemonic   the given mnemonic.
-	 * @param parameters the given parameter types.
-	 * @return whether the instruction matches the given mnemonic and parameter types.
-	 */
-	boolean match(String mnemonic, ParameterType[] parameters);
+    /**
+     * Returns whether the instruction matches the given mnemonic and parameter types.
+     *
+     * @param mnemonic   the given mnemonic.
+     * @param parameters the given parameter types.
+     * @return whether the instruction matches the given mnemonic and parameter types.
+     */
+    boolean match(String mnemonic, ParameterType[] parameters);
 
-	/**
-	 * Returns whether the instruction matches the given mnemonic and a combination of the given parameter types.
-	 *
-	 * @param mnemonic   the given mnemonic.
-	 * @param parameters the given possible parameter types.
-	 * @return whether the instruction matches the given mnemonic and parameter types.
-	 */
-	boolean match(String mnemonic, List<ParameterType>[] parameters);
+    /**
+     * Returns whether the instruction matches the given mnemonic and parameter types.
+     *
+     * @param mnemonic   the given mnemonic.
+     * @param parameters the given parameter types.
+     * @return whether the instruction matches the given mnemonic and parameter types.
+     */
+    default boolean match(String mnemonic, InstructionParameterTypes parameters) {
+        return match(mnemonic, parameters.getParameters());
+    }
 
-	/**
-	 * Compiles the instruction using the given parameters.
-	 *
-	 * @param set        the instruction set used by the compiler. This is used by pseodu-instruction to get their basic instructions.
-	 * @param address    the address where this instruction is stored. This is used by pseudo-instructions.
-	 * @param parameters the parameters.
-	 * @return a {@link AssembledInstruction} array.
-	 */
-	AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters);
+    /**
+     * Returns whether the instruction matches the given mnemonic and a combination of the given parameter types.
+     *
+     * @param mnemonic   the given mnemonic.
+     * @param parameters the given possible parameter types.
+     * @return whether the instruction matches the given mnemonic and parameter types.
+     */
+    boolean match(String mnemonic, List<ParameterType>[] parameters);
+
+    /**
+     * Compiles the instruction using the given parameters.
+     *
+     * @param set        the instruction set used by the compiler. This is used by pseodu-instruction to get their basic instructions.
+     * @param address    the address where this instruction is stored. This is used by pseudo-instructions.
+     * @param parameters the parameters.
+     * @return a {@link AssembledInstruction} array.
+     */
+    AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters);
 
 }

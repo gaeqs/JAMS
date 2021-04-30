@@ -50,92 +50,87 @@ import java.util.Map;
  */
 public class ConfigurationWindowSectionActions extends ConfigurationWindowSection {
 
-	private final VBox box;
-	protected TextField searchbar;
-	protected ScrollPane scrollPane;
-	protected ActionsExplorer actionsExplorer;
+    private final VBox box;
+    protected TextField searchbar;
+    protected ScrollPane scrollPane;
+    protected ActionsExplorer actionsExplorer;
 
-	/**
-	 * Creates the actions explorer section.
-	 *
-	 * @param explorer       the {@link Explorer} of this section.
-	 * @param parent         the {@link ExplorerSection} containing this section. This may be null.
-	 * @param name           the name of the section.
-	 * @param hierarchyLevel the hierarchy level, used by the spacing.
-	 */
-	public ConfigurationWindowSectionActions(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name,
-											 String languageNode, int hierarchyLevel, Configuration configuration, Configuration meta, Map<String, Integer> regions) {
-		super(explorer, parent, name, languageNode, hierarchyLevel, configuration, meta, regions);
-		scrollPane = new PixelScrollPane();
-		scrollPane.setFitToHeight(true);
-		scrollPane.setFitToWidth(true);
+    /**
+     * Creates the actions explorer section.
+     *
+     * @param explorer       the {@link Explorer} of this section.
+     * @param parent         the {@link ExplorerSection} containing this section. This may be null.
+     * @param name           the name of the section.
+     * @param hierarchyLevel the hierarchy level, used by the spacing.
+     */
+    public ConfigurationWindowSectionActions(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name,
+                                             String languageNode, int hierarchyLevel, Configuration configuration, Configuration meta, Map<String, Integer> regions) {
+        super(explorer, parent, name, languageNode, hierarchyLevel, configuration, meta, regions);
+        scrollPane = new PixelScrollPane();
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
 
-		box = new VBox();
-		box.setSpacing(SPACING);
+        box = new VBox();
+        box.setSpacing(SPACING);
 
-		searchbar = new LanguageTextField(Messages.CONFIG_ACTION_SEARCH);
-		box.getChildren().add(searchbar);
+        searchbar = new LanguageTextField(Messages.CONFIG_ACTION_SEARCH);
+        box.getChildren().add(searchbar);
 
-		actionsExplorer = new ActionsExplorer(scrollPane, false);
-		actionsExplorer.hideMainSectionRepresentation();
+        actionsExplorer = new ActionsExplorer(scrollPane, false);
+        actionsExplorer.hideMainSectionRepresentation();
 
-		scrollPane.setContent(actionsExplorer);
+        scrollPane.setContent(actionsExplorer);
 
-		scrollPane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
-			double deltaY = scrollEvent.getDeltaY() * 0.003;
-			scrollPane.setVvalue(scrollPane.getVvalue() - deltaY);
-		});
+        scrollPane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
+            double deltaY = scrollEvent.getDeltaY() * 0.003;
+            scrollPane.setVvalue(scrollPane.getVvalue() - deltaY);
+        });
 
-		box.getChildren().add(scrollPane);
+        box.getChildren().add(scrollPane);
 
-		searchbar.textProperty().addListener((obs, old, val) -> {
-			actionsExplorer.setFilter(element -> element.getVisibleName().toLowerCase().startsWith(val.toLowerCase()));
-		});
+        searchbar.textProperty().addListener((obs, old, val) -> {
+            actionsExplorer.setFilter(element -> element.getVisibleName().toLowerCase().startsWith(val.toLowerCase()));
+        });
 
-		scrollPane.prefHeightProperty().bind(box.heightProperty().subtract(searchbar.heightProperty()));
-	}
+        scrollPane.prefHeightProperty().bind(box.heightProperty().subtract(searchbar.heightProperty()));
+    }
 
-	/**
-	 * Returns a unmodifiable {@link List} with all the
-	 * {@link ConfigurationWindowNode} of this section.
-	 *
-	 * @return the unmodifiable {@link List}.
-	 */
-	public List<ConfigurationWindowNode> getNodes() {
-		return null;
-	}
+    @Override
+    public List<ConfigurationWindowNode> getNodes() {
+        return null;
+    }
 
-	@Override
-	public Node getSpecialNode() {
-		return box;
-	}
+    @Override
+    public Node getSpecialNode() {
+        return box;
+    }
 
-	@Override
-	public boolean isSpecial() {
-		return true;
-	}
+    @Override
+    public boolean isSpecial() {
+        return true;
+    }
 
-	@Override
-	public ConfigurationWindowExplorer getExplorer() {
-		return super.getExplorer();
-	}
+    @Override
+    public ConfigurationWindowExplorer getExplorer() {
+        return super.getExplorer();
+    }
 
-	@Override
-	protected ExplorerSectionRepresentation loadRepresentation() {
-		return new ExplorerSectionLanguageRepresentation(this, hierarchyLevel, null);
-	}
+    @Override
+    protected ExplorerSectionRepresentation loadRepresentation() {
+        return new ExplorerSectionLanguageRepresentation(this, hierarchyLevel, null);
+    }
 
-	@Override
-	protected void loadChildren() {
-	}
+    @Override
+    protected void loadChildren() {
+    }
 
-	public static class Builder implements ConfigurationWindowSpecialSectionBuilder {
+    public static class Builder implements ConfigurationWindowSpecialSectionBuilder {
 
-		@Override
-		public ConfigurationWindowSection create(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name,
-												 String languageNode, int hierarchyLevel, Configuration configuration,
-												 Configuration meta, Map<String, Integer> regions) {
-			return new ConfigurationWindowSectionActions(explorer, parent, name, languageNode, hierarchyLevel, configuration, meta, regions);
-		}
-	}
+        @Override
+        public ConfigurationWindowSection create(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name,
+                                                 String languageNode, int hierarchyLevel, Configuration configuration,
+                                                 Configuration meta, Map<String, Integer> regions) {
+            return new ConfigurationWindowSectionActions(explorer, parent, name, languageNode, hierarchyLevel, configuration, meta, regions);
+        }
+    }
 }

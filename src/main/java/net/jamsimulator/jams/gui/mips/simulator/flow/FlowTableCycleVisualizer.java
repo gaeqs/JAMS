@@ -1,12 +1,11 @@
 package net.jamsimulator.jams.gui.mips.simulator.flow;
 
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 
 public class FlowTableCycleVisualizer extends AnchorPane {
 
@@ -22,20 +21,20 @@ public class FlowTableCycleVisualizer extends AnchorPane {
 
 		anchorScrollPane.viewportBoundsProperty().addListener((obs, old, val) -> {
 			AnchorUtils.setAnchor(this,
-					-anchorScrollPane.getViewportBounds().getMinY() / flowTable.getScaleY(),
+					-anchorScrollPane.getViewportBounds().getMinY() /  flowTable.scalableNode.scaleY(),
 					-1, 0, 0);
 			AnchorUtils.setAnchor(cycleLabel, 0, 0,
-					-anchorScrollPane.getViewportBounds().getMinX() / flowTable.getScaleX(),
+					-anchorScrollPane.getViewportBounds().getMinX() /  flowTable.scalableNode.scaleX(),
 					-1);
 		});
 		anchorScrollPane.vvalueProperty().addListener((obs, old, val) ->
 				AnchorUtils.setAnchor(this,
-						-anchorScrollPane.getViewportBounds().getMinY() / flowTable.getScaleY(),
+						-anchorScrollPane.getViewportBounds().getMinY() /  flowTable.scalableNode.scaleY(),
 						-1, 0, 0));
 
 		anchorScrollPane.hvalueProperty().addListener((obs, old, val) ->
 				AnchorUtils.setAnchor(cycleLabel, 0, 0,
-						-anchorScrollPane.getViewportBounds().getMinX() / flowTable.getScaleX(),
+						-anchorScrollPane.getViewportBounds().getMinX() / flowTable.scalableNode.scaleX(),
 						-1));
 	}
 

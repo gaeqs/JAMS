@@ -24,43 +24,33 @@
 
 package net.jamsimulator.jams.mips.instruction.pseudo.defaults;
 
-import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
-import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionBranchRL21 extends PseudoInstruction {
 
-	private static final ParameterType[] PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.LABEL};
-	private static final ParameterType[] BASIC_PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.SIGNED_32_BIT};
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.LABEL);
+    private static final ParameterType[] BASIC_PARAMETER_TYPES = new ParameterType[]{ParameterType.REGISTER, ParameterType.SIGNED_32_BIT};
 
-	public PseudoInstructionBranchRL21(String mnemonic) {
-		super(mnemonic, PARAMETER_TYPES);
-	}
+    public PseudoInstructionBranchRL21(String mnemonic) {
+        super(mnemonic, PARAMETER_TYPES);
+    }
 
-	@Override
-	public int getInstructionAmount(String[] parameters) {
-		return 1;
-	}
+    @Override
+    public int getInstructionAmount(String[] parameters) {
+        return 1;
+    }
 
-	@Override
-	public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
-		int offset = parameters[1].getLabelValue() - address - 4;
-		offset >>= 2;
+    @Override
+    public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
+        int offset = offset(parameters[1].getLabelValue(), address);
+        var basic = instruction(set, mnemonic, BASIC_PARAMETER_TYPES);
 
-		Instruction basic = set.getInstruction(mnemonic, BASIC_PARAMETER_TYPES).orElse(null);
-		if (!(basic instanceof BasicInstruction))
-			throw new AssemblerException("Basic instruction '" + mnemonic + "' not found.");
-
-		ParameterParseResult[] newParameters = new ParameterParseResult[]{
-				parameters[0],
-				ParameterParseResult.builder().immediate(offset).build()
-		};
-
-		return new AssembledInstruction[]{((BasicInstruction) basic).assembleBasic(newParameters, this)};
-	}
+        return assemble(new BasicInstruction[]{basic}, parameters(parameters[0], immediate(offset)));
+    }
 }

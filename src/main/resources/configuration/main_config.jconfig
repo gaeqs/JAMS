@@ -1,6 +1,8 @@
 {
   "action": {
   },
+  "plugin": {
+  },
   "language": {
     "default": "English",
     "selected": "English"
@@ -22,6 +24,7 @@
   "editor": {
     "zoom_using_mouse_wheel": true,
     "reset_zoom_using_middle_button": true,
+    "zoom_sensibility": 0.007,
     "mips": {
       "use_tabs": true,
       "preserve_tabs": true,
@@ -37,7 +40,14 @@
     "open_log_on_assemble": true,
     "memory_rows": 48,
     "mips": {
-      "flow_max_items": 100
+      "flow_max_items": 100,
+      "viewer_elements_order": "HEX_CODE;DISASSEMBLED;ORIGINAL",
+      "show_labels": true,
+      "lab_segment_1_address": 4294901776,
+      "lab_segment_2_address": 4294901777,
+      "lab_hex_kerboard_1_address": 4294901779,
+      "lab_hex_kerboard_2_address": 4294901780,
+      "lab_counter_address": 4294901778
     }
   }
 }

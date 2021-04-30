@@ -39,7 +39,7 @@ public abstract class DefaultValuableManager<Type extends Labeled> extends Manag
 	public DefaultValuableManager(Function<Type, Event> beforeRegisterEventBuilder, Function<Type, Event> afterRegisterEventBuilder,
 								  Function<Type, Event> beforeUnregisterEventBuilder, Function<Type, Event> afterUnregisterEventBuilder,
 								  BiFunction<Type, Type, Event> beforeSelectDefaultEventBuilder, BiFunction<Type, Type, Event> afterSelectDefaultEventBuilder) {
-		super(beforeRegisterEventBuilder, afterRegisterEventBuilder, afterUnregisterEventBuilder, beforeUnregisterEventBuilder);
+		super(beforeRegisterEventBuilder, afterRegisterEventBuilder, beforeUnregisterEventBuilder, afterUnregisterEventBuilder);
 
 		this.beforeSelectDefaultEventBuilder = beforeSelectDefaultEventBuilder;
 		this.afterSelectDefaultEventBuilder = afterSelectDefaultEventBuilder;

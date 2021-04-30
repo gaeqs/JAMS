@@ -3,7 +3,7 @@ package net.jamsimulator.jams.gui.mips.simulator.flow;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.utils.AnchorUtils;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 
 /**
  * Represents an instruction inside a {@link FlowTable}.
@@ -42,11 +42,11 @@ public class FlowEntry extends AnchorPane {
 			prefWidthProperty().bind(table.scrollPane.widthProperty());
 
 			table.scrollPane.viewportBoundsProperty().addListener((obs, old, val) ->
-					AnchorUtils.setAnchor(instructionLabel, 0, 0, -table.scrollPane.getViewportBounds().getMinX() / table.getScaleX(), -1));
+					AnchorUtils.setAnchor(instructionLabel, 0, 0, -table.scrollPane.getViewportBounds().getMinX() /  table.scalableNode.scaleX(), -1));
 			table.scrollPane.hvalueProperty().addListener((obs, old, val) ->
-					AnchorUtils.setAnchor(instructionLabel, 0, 0, -table.scrollPane.getViewportBounds().getMinX() / table.getScaleX(), -1));
+					AnchorUtils.setAnchor(instructionLabel, 0, 0, -table.scrollPane.getViewportBounds().getMinX() /  table.scalableNode.scaleX(), -1));
 
-			AnchorUtils.setAnchor(instructionLabel, 0, 0, -table.scrollPane.getViewportBounds().getMinX() / table.getScaleX(), -1);
+			AnchorUtils.setAnchor(instructionLabel, 0, 0, -table.scrollPane.getViewportBounds().getMinX() /  table.scalableNode.scaleX(), -1);
 		} else {
 			AnchorUtils.setAnchor(instructionLabel, 0, 0, 0, -1);
 		}

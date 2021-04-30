@@ -5,6 +5,7 @@ import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.label.Label;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.register.Registers;
@@ -26,7 +27,7 @@ public class MIPS32Assembler implements Assembler {
     private final Registers registers;
     private final Memory memory;
 
-    private final Map<String, Integer> globalLabels;
+    private final Map<String, Label> globalLabels;
     private final Map<Integer, String> originalInstructions;
 
     private final Log log;
@@ -76,29 +77,34 @@ public class MIPS32Assembler implements Assembler {
      * Adds the given label as a global label.
      *
      * @param executingLine the line executing this command.
-     * @param label         the label to register.
-     * @param address       the address of the label.
+     * @param key           the key of the label to register.
+     * @param address       the address of the label to register.
+     * @param originFile    the origin file of the label to register.
+     * @param originLine    the origin line of the label to register.
+     * @return the registered label.
      */
-    public void addGlobalLabel(int executingLine, String label, int address) {
-        if (globalLabels.containsKey(label)) {
-            throw new AssemblerException(executingLine, "The global label " + label + " is already defined.");
+    public Label addGlobalLabel(int executingLine, String key, int address, String originFile, int originLine) {
+        if (globalLabels.containsKey(key)) {
+            throw new AssemblerException(executingLine, "The global label " + key + " is already defined.");
         }
 
-        if (files.stream().anyMatch(target -> target.getLocalLabelAddress(label).isPresent())) {
-            throw new AssemblerException(executingLine, "The label " + label +
+        if (files.stream().anyMatch(target -> target.getLocalLabel(key).isPresent())) {
+            throw new AssemblerException(executingLine, "The label " + key +
                     " cannot be converted to a global label because there are two or more files with the same label.");
         }
-        globalLabels.put(label, address);
+        var label = new Label(key, address, originFile, originLine, true);
+        globalLabels.put(key, label);
+        return label;
     }
 
     /**
      * Returns the address that matches the given global label, if present.
      *
-     * @param label the label.
+     * @param key the label.
      * @return the address, if present.
      */
-    public OptionalInt getGlobalLabelAddress(String label) {
-        return globalLabels.containsKey(label) ? OptionalInt.of(globalLabels.get(label)) : OptionalInt.empty();
+    public Optional<Label> getGlobalLabel(String key) {
+        return globalLabels.containsKey(key) ? Optional.of(globalLabels.get(key)) : Optional.empty();
     }
 
     /**
@@ -158,12 +164,10 @@ public class MIPS32Assembler implements Assembler {
     }
 
     @Override
-    public Map<String, Integer> getLabelsWithFileNames() {
-        var map = new HashMap<>(globalLabels);
-        files.forEach(file -> file.getLabels().forEach((label, address) ->
-                map.put(file.getName() + "/" + label, address)));
-
-        return Collections.unmodifiableMap(map);
+    public Set<Label> getAllLabels() {
+        var set = new HashSet<>(globalLabels.values());
+        files.forEach(file -> set.addAll(file.getLabels().values()));
+        return Collections.unmodifiableSet(set);
     }
 
     @Override
@@ -189,7 +193,7 @@ public class MIPS32Assembler implements Assembler {
             current = current.get().getNextLevelMemory();
         }
 
-        int main = getGlobalLabelAddress("main").orElse(-1);
+        int main = getGlobalLabel("main").map(Label::getAddress).orElse(-1);
         if (main != -1) registers.getProgramCounter().setValue(main);
 
         registers.saveState();

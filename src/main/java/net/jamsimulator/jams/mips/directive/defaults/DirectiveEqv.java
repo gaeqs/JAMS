@@ -32,31 +32,31 @@ import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 
 public class DirectiveEqv extends Directive {
 
-	public static final String NAME = "eqv";
-	private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.ANY};
+    public static final String NAME = "eqv";
+    private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.ANY};
 
-	public DirectiveEqv() {
-		super(NAME, PARAMETERS, false, false);
-	}
+    public DirectiveEqv() {
+        super(NAME, PARAMETERS, false, false);
+    }
 
-	@Override
-	public int execute(int lineNumber, String line, String[] parameters, MIPS32AssemblingFile file) {
-		if (parameters.length < 2)
-			throw new AssemblerException(lineNumber, "." + NAME + " must have at least two parameter.");
+    @Override
+    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
+        if (parameters.length < 2)
+            throw new AssemblerException(lineNumber, "." + NAME + " must have at least two parameter.");
 
-		String replace = line.substring(("." + NAME + " " + parameters[0]).length()).trim();
-		file.addEquivalent(parameters[0], replace);
+        String replace = line.substring(("." + NAME + " " + parameters[0]).length()).trim();
+        file.addEquivalent(parameters[0] + labelSufix, replace);
 
-		return -1;
-	}
+        return -1;
+    }
 
-	@Override
-	public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address) {
+    @Override
+    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
 
-	}
+    }
 
-	@Override
-	public boolean isParameterValidInContext(int index, String value, MIPSFileElements context) {
-		return true;
-	}
+    @Override
+    public boolean isParameterValidInContext(int index, String value, int amount, MIPSFileElements context) {
+        return true;
+    }
 }

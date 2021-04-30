@@ -37,4 +37,7 @@ public class RegionTags {
 
 	public static final String MIPS_FILE_TO_ASSEMBLE = "MIPS_FILE_TO_ASSEMBLE";
 	public static final String MIPS_SIMULATION = "MIPS_SIMULATION";
+
+	public static final String MIPS_SIMULATION_LABELS_LABEL = "MIPS_SIMULATION_LABELS_LABEL";
+	public static final String MIPS_SIMULATION_LABELS_REFERENCE = "MIPS_SIMULATION_LABELS_REFERENCE";
 }

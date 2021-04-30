@@ -4,6 +4,7 @@ GENERAL_CONFIRM=Aceptar
 GENERAL_OK=Ok
 GENERAL_FINISH=Terminar
 GENERAL_CANCEL=Cancelar
+GENERAL_CREATE=Crear
 GENERAL_CONFIRMATION=Confirmación
 GENERAL_ADD=Añadir
 GENERAL_REMOVE=Eliminar
@@ -11,12 +12,23 @@ GENERAL_COPY=Copiar
 GENERAL_PASTE=Pegar
 GENERAL_SORT=Ordenar
 
-START_TITLE=JAMS
-START_SUBTITLE=Versión {VERSION}
+START_TITLE=JAMS {VERSION}
+START_PROJECTS=Proyectos
+START_NEW_PROJECT=Nuevo proyecto
+START_ABOUT=Acerca de
+
+PROJECT_CREATOR_MIPS_ASSEMBLER=Ensamblador:
+PROJECT_CREATOR_MIPS_INSTRUCTION_SET=Conjunto de instrucciones:
+PROJECT_CREATOR_MIPS_DIRECTIVE_SET=Conjunto de directivas:
+PROJECT_CREATOR_MIPS_REGISTERS=Registros:
+
+
+PROJECT_CREATOR_MIPS_EMPTY=Proyecto MIPS vacío
 
 MAIN_MENU_FILE=Archivo
 MAIN_MENU_EDIT=Editar
 MAIN_MENU_MIPS=MIPS
+MAIN_MENU_TOOLS=Herramientas
 MAIN_MENU_HELP=Ayuda
 
 MAIN_MENU_FILE_EXIT=Salir
@@ -31,6 +43,10 @@ MAIN_MENU_HELP_ABOUT=Acerca de
 
 PROJECT_TAB_STRUCTURE=Estructura del projecto
 PROJECT_TAB_SIMULATION=Simulación
+
+BAR_VIEW_MODE_PANE=Mostrar en el panel
+BAR_VIEW_MODE_WINDOW=Mostrar en una ventana
+BAR_VIEW_MODE_PERSISTENT_WINDOW=Mostrar en una ventana persistente
 
 BAR_EXPLORER_NAME=Explorador
 BAR_FILES_TO_ASSEMBLE_NAME=Archivos a ensamblar
@@ -75,6 +91,8 @@ MIPS_ELEMENT_INSTRUCTION_PARAMETER_IMMEDIATE=Inmediato
 MIPS_ELEMENT_INSTRUCTION_PARAMETER_STRING=String
 MIPS_ELEMENT_INSTRUCTION_PARAMETER_LABEL=Referencia a una etiqueta
 MIPS_ELEMENT_INSTRUCTION_PARAMETER_GLOBAL_LABEL=Referencia a una etiqueta global
+MIPS_ELEMENT_MACRO_CALL=Llamada a macro
+MIPS_ELEMENT_MACRO_CALL_PARAMETER=Parámetro de una llamada a macro
 MIPS_ELEMENT_ERRORS=Errores:
 MIPS_ELEMENT_WARNINGS=Advertencias:
 
@@ -219,6 +237,10 @@ SIMULATION_BUTTON_TOOLTIP_EXECUTE_ONE=Ejecutar un paso
 SIMULATION_BUTTON_TOOLTIP_UNDO=Deshacer un paso
 SIMULATION_BUTTON_TOOLTIP_RESET=Reiniciar
 
+SIMULATION_INSTRUCTION_VIEWER_DISASSEMBLED=Desensamblado
+SIMULATION_INSTRUCTION_VIEWER_ORIGINAL=Original
+SIMULATION_INSTRUCTION_VIEWER_HEXADECIMAL=Hexadecimal
+
 BAR_REGISTERS_NAME=Registros
 BAR_MEMORY_NAME=Memoria
 BAR_FLOW_NAME=Flujo
@@ -245,11 +267,19 @@ REGISTERS_VALUE=Valor
 REGISTERS_HEX=Hex
 
 MEMORY_ADDRESS=Dirección
+MEMORY_MEMORY=Memoria
+MEMORY_CACHE_TAG=Etiqueta: {TAG}
+MEMORY_CACHE_BLOCK=Bloque: {BLOCK}
 
-LABELS_NAME=Nombre
-LABELS_ADDRESS=Dirección
-LABELS_CONTEXT_SHOW_IN_MEMORY=Mostrar en memoria
-LABELS_CONTEXT_SHOW_IN_INSTRUCTION=Mostrar en la tabla de instrucciones
+LABELS_ADDRESS=Dirección: {ADDRESS}
+LABELS_LINE=Línea: {LINE}
+LABELS_REFERENCES=Referencias
+
+LAB_SOFTWARE_INTERRUPTS=Interrupciones de software
+LAB_HARDWARE_INTERRUPTS=Interrupciones de hardware
+LAB_COUNTER=Contador
+LAB_COUNTER_RESET=Reiniciar
+LAB_INTERRUPT=Interrumpir
 
 CACHE_HITS=Aciertos
 CACHE_MISSES=Fallos
@@ -277,6 +307,11 @@ CONFIG_ACTION_BIND_CONFIRM=Las siguientes acciones serán desasignadas de la com
 CONFIG_ACTION_BIND_CONFIRM_2=¿Quieres continuar?
 CONFIG_ACTION_UNBIND=¿Estás seguro de que quieres desasignar esta combinación?
 
+CONFIG_PLUGIN=Plugins
+CONFIG_PLUGIN_INSTALL=Instalar
+CONFIG_PLUGIN_UNINSTALL=Desinstalar
+CONFIG_PLUGIN_UNINSTALL_CONFIRM=¿Estás seguro de que quieres desinstalar el plugin {PLUGIN}?
+
 CONFIG_APPEARANCE=Apariencia
 CONFIG_APPEARANCE_REGION_THEME=Tema
 CONFIG_APPEARANCE_REGION_TWEAKS=Ajustes
@@ -297,6 +332,8 @@ CONFIG_EDITOR_ZOOM_USING_MOUSE_WHEEL=Hacer zoom usando la rueda del ratón mient
 CONFIG_EDITOR_ZOOM_USING_MOUSE_WHEEL_TOOLTIP=Si esta opción está activada podrás hacer zoom usando la rueda del ratón mientras pulsas la tecla Shortcut.
 CONFIG_EDITOR_RESET_ZOOM_USING_MIDDLE_BUTTON=Deshacer el zoom usando Shortcut+Botón central del ratón
 CONFIG_EDITOR_RESET_ZOOM_USING_MIDDLE_BUTTON_TOOLTIP=Si esta opción está activada podrás deshacer el zoom usando el botón central del ratón mientras pulsas la tecla Shortcut.
+CONFIG_EDITOR_RESET_ZOOM_SENSIBILITY=Sensibilidad del zoom:
+CONFIG_EDITOR_RESET_ZOOM_SENSIBILITY_TOOLTIP=Esta opción permite configurar la ampliación del zoom en cada desplazamiento de la rueda.\n\nRecuerda que el valor por defecto del zoom es '2' y un zoom x2 tiene un valor de '2'.
 
 CONFIG_EDITOR_MIPS=MIPS
 CONFIG_EDITOR_MIPS_REGION_TABS=Tabuladores
@@ -322,9 +359,9 @@ CONFIG_EDITOR_MIPS_MAXIMUM_BLANK_LINES_TOOLTIP=La cantidad de líneas en blanco 
 CONFIG_EXPLORER=Explorador
 CONFIG_EXPLORER_MIPS=MIPS
 CONFIG_EXPLORER_REGION_SIZE=Tamaño
-CONFIG_EXPLORER_SECTION_SEPARATOR_WIDTH=Ancho por nivel de herencia para secciones
+CONFIG_EXPLORER_SECTION_SEPARATOR_WIDTH=Ancho por nivel de herencia para secciones:
 CONFIG_EXPLORER_SECTION_SEPARATOR_WIDTH_TOOLTIP=Esta opción permite editar el ancho que una sección se moverá por cada nivel de herencia.
-CONFIG_EXPLORER_ELEMENT_SEPARATOR_WIDTH=Ancho por nivel de herencia para elementos
+CONFIG_EXPLORER_ELEMENT_SEPARATOR_WIDTH=Ancho por nivel de herencia para elementos:
 CONFIG_EXPLORER_ELEMENT_SEPARATOR_WIDTH_TOOLTIP=Esta opción permite editar el ancho que un elemento se moverá por cada nivel de herencia.
 CONFIG_EXPLORER_MIPS_REGION_CREATION=Creación
 CONFIG_EXPLORER_MIPS_ADD_CREATED_ASM_FILES_TO_ASSEMBLE=Añadir archivos asm a ensamblar automaticamente cuando son creados
@@ -347,6 +384,24 @@ CONFIG_SIMULATION_MEMORY_ROWS_TOOLTIP=El número de filas que la memoria puede m
 CONFIG_SIMULATION_MIPS_REGION_FLOW=Flujo
 CONFIG_SIMULATION_MIPS_FLOW_MAX_ITEMS=Entradas máximas:
 CONFIG_SIMULATION_MIPS_FLOW_MAX_ITEMS_TOOLTIP=La cantidad de entradas que el panel de flujo puede representar al mismo tiempo.
+CONFIG_SIMULATION_MIPS_REGION_INSTRUCTIONS=Visualizador de instrucciones
+CONFIG_SIMULATION_MIPS_INSTRUCTIONS_VIEWER_ELEMENTS_ORDER=Orden de los elementos del visualizador:
+CONFIG_SIMULATION_MIPS_INSTRUCTIONS_VIEWER_ELEMENTS_ORDER_TOOLTIP=En este panel puedes cambiar el orden de los elementos dentro del visualizador de instrucciones.
+CONFIG_SIMULATION_MIPS_INSTRUCTIONS_VIEWER_ELEMENTS_ORDER_USING=Usando:
+CONFIG_SIMULATION_MIPS_INSTRUCTIONS_VIEWER_ELEMENTS_ORDER_NOT_USING=Sin usar:
+CONFIG_SIMULATION_MIPS_INSTRUCTIONS_SHOW_LABELS=Mostrar etiquetas.
+CONFIG_SIMULATION_MIPS_INSTRUCTIONS_SHOW_LABELS_TOOLTIP=Esta opción le permite a las etiquetas aparecer en el visualizador de instrucciones.
+CONFIG_SIMULATION_MIPS_REGION_LAB=Lab
+CONFIG_SIMULATION_MIPS_LAB_FIRST_SEGMENT_ADDRESS=Dirección del primer visualizador:
+CONFIG_SIMULATION_MIPS_LAB_FIRST_SEGMENT_ADDRESS_TOOLTIP=La dirección de memoria usado por el primer visualizador del lab.
+CONFIG_SIMULATION_MIPS_LAB_SECOND_SEGMENT_ADDRESS=Dirección del segundo visualizador:
+CONFIG_SIMULATION_MIPS_LAB_SECOND_SEGMENT_ADDRESS_TOOLTIP=La dirección de memoria usado por el segundo visualizador del lab.
+CONFIG_SIMULATION_MIPS_LAB_FIRST_HEX_KERBOARD_ADDRESS=Primera dirección del teclado hexadeximal:
+CONFIG_SIMULATION_MIPS_LAB_FIRST_HEX_KERBOARD_ADDRESS_TOOLTIP=La dirección de memoria usada por los 8 números menos significativos del teclado hexadeximal.
+CONFIG_SIMULATION_MIPS_LAB_SECOND_HEX_KERBOARD_ADDRESS=Segunda dirección del teclado hexadeximal:
+CONFIG_SIMULATION_MIPS_LAB_SECOND_HEX_KERBOARD_ADDRESS_TOOLTIP=La dirección de memoria usada por los 8 números más significativos del teclado hexadeximal.
+CONFIG_SIMULATION_MIPS_LAB_COUNTER_ADDRESS=Dirección del contador:
+CONFIG_SIMULATION_MIPS_LAB_COUNTER_ADDRESS_TOOLTIP=La dirección de memoria del contador. El valor en esta dirección representa el número de ciclos que el contador va a esperar antes de lanzar una interrupción.
 
 EDITOR_MIPS_ERROR_ILLEGAL_LABEL=El nombre de la etiqueta '{NAME}' es inválido.
 EDITOR_MIPS_ERROR_LABEL_NOT_FOUND=No se ha podido encontrar la etiquera '{NAME}'.
@@ -354,6 +409,8 @@ EDITOR_MIPS_ERROR_DUPLICATE_LABEL=La etiqueta '{NAME}' está duplicada.
 EDITOR_MIPS_ERROR_DUPLICATE_GLOBAL_LABEL=La etiqueta '{NAME}' está duplicada en el archivo '{FILE}'.
 EDITOR_MIPS_ERROR_INVALID_DIRECTIVE_PARAMETER=El parámetro '{NAME} tiene un formato incorrecto.
 EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=No se ha podido encontrar la instrucción '{NAME}' con los parámetros indicados.
+EDITOR_MIPS_ERROR_MACRO_NOT_FOUND=No se ha podido encontrar la macro '{NAME}'.
+EDITOR_MIPS_ERROR_INVALID_MACRO_PARAMETERS_AMOUNT=Número de argumentos inválido para la macro '{NAME}'. (Se esperaban: {EXPECTED}. Se encontraron: {FOUND})
 
 EDITOR_MIPS_WARNING_DIRECTIVE_NOT_FOUND=No se ha podido encontrar la directiva '{NAME}'.
 EDITOR_MIPS_WARNING_REGISTER_USING_AT=Evita usar el registro $at. Su valor puede cambiar inesperadamente cuando se ejecuta una pseudoinstrucción.
@@ -362,6 +419,7 @@ EDITOR_MIPS_WARNING_USING_EQUIVALENT=Evita usar equivalentes. Los equivalentes s
 ACTION_REGION_GENERAL=General
 ACTION_GENERAL_CREATE_PROJECT=Crear proyecto
 ACTION_GENERAL_OPEN_PROJECT=Abrir proyecto
+ACTION_GENERAL_OPEN_RECENT=Abrir reciente
 ACTION_GENERAL_SETTINGS=Configuración
 ACTION_GENERAL_ASSEMBLE=Ensamblar código
 
@@ -394,13 +452,17 @@ ACTION_REGION_FOLDER_EXPLORER_ELEMENT=Elementos del explorador de carpetas
 ACTION_FOLDER_EXPLORER_ELEMENT_COPY=Copiar
 ACTION_FOLDER_EXPLORER_ELEMENT_DELETE=Eliminar
 ACTION_FOLDER_EXPLORER_ELEMENT_PASTE=Pegar
+ACTION_FOLDER_EXPLORER_ELEMENT_PASTE_ALREADY_EXIST=Introduce un nuevo nombre.
+ACTION_FOLDER_EXPLORER_ELEMENT_RENAME=Renombrar
 ACTION_FOLDER_EXPLORER_ELEMENT_SHOW_IN_FILES=Mostrar en Archivos
 ACTION_FOLDER_EXPLORER_ELEMENT_NEW=Nuevo
 ACTION_FOLDER_EXPLORER_ELEMENT_NEW_FILE=Archivo
 ACTION_FOLDER_EXPLORER_ELEMENT_NEW_ASSEMBLY_FILE=Archivo ensamblador
 ACTION_FOLDER_EXPLORER_ELEMENT_NEW_FOLDER=Carpeta
 ACTION_FOLDER_EXPLORER_ELEMENT_ADD_FILE_TO_ASSEMBLER=Añadir archivo al ensamblador
+ACTION_FOLDER_EXPLORER_ELEMENT_ADD_ALL_FILES_TO_ASSEMBLER=Añadir archivos compatibles al ensamblador
 ACTION_FOLDER_EXPLORER_ELEMENT_REMOVE_FILE_FROM_ASSEMBLER=Quitar archivo del ensamblador
+ACTION_FOLDER_EXPLORER_ELEMENT_REMOVE_ALL_FILES_FROM_ASSEMBLER=Quitar archivos del ensablador
 
 ACTION_REGION_EDITOR_TAB=Pestaña del editor
 ACTION_EDITOR_TAB_SPLIT_HORIZONTALLY=Mover horizontalmente
@@ -415,6 +477,15 @@ ACTION_MIPS_SIMULATION_EXECUTE_ONE_STEP=Ejecutar un paso
 ACTION_MIPS_SIMULATION_RESET=Reiniciar
 ACTION_MIPS_SIMULATION_STOP=Parar
 ACTION_MIPS_SIMULATION_UNDO_ONE_STEP=Deshace un paso
+ACTION_MIPS_SIMULATION_CYCLE_DELAY=Retardo por ciclo
+
+ACTION_REGION_MIPS_SIMULATION_LABELS_LABEL=Tabla de etiquetas (Etiqueta)
+ACTION_REGION_MIPS_SIMULATION_LABELS_REFERENCE=Tabla de etiquetas (Referencia)
+ACTION_MIPS_SIMULATION_LABELS_LABEL_SHOW_IN_MEMORY=Mostrar en memoria
+ACTION_MIPS_SIMULATION_LABELS_LABEL_SHOW_IN_INSTRUCTION_VIEWER=Mostrar en el visualizador de instrucciones
+ACTION_MIPS_SIMULATION_LABELS_REFERENCE_SHOW_IN_MEMORY=Mostrar en memoria
+ACTION_MIPS_SIMULATION_LABELS_REFERENCE_SHOW_IN_INSTRUCTION_VIEWER=Mostrar en el visualizador de instrucciones
+
 
 NUMBER_FORMAT_HEXADECIMAL=Hexadecimal
 NUMBER_FORMAT_DECIMAL=Decimal
@@ -529,6 +600,7 @@ INSTRUCTION_SYSCALL=Llamada al sistema
 
 //PSEUDO INSTRUCTIONS
 
+INSTRUCTION_ADDI=Suma con inmediato con desbordamiento
 INSTRUCTION_B=Ramificación incondicional
 INSTRUCTION_JR=Saltar al valor del registro
 INSTRUCTION_LA=Cargar dirección
@@ -620,7 +692,7 @@ GPR[rd] <- GPR[rs] + GPR[rt]
 
 La palabra de 32 bits del registro <i>rt</i> es sumada a la palabra de 32 bits del registro <i>rs</i> para producir un resultado de 32 bits.
  - Si la suma resulta en un desbordamiento aritmético en complemento a 2 de 32 bits, el registro destino no es modificado y la excepción <black>Integer Overflow</black> es lanzada.
- - Si la suma no produce un desbordamiento, el resultado es insertado en el registro GPR <i>rd</i>.
+ - Si la suma no produce un desbordamiento, el resultado es insertado en el registro <i>rd</i>.
 
 <b>Restricciones:</b>
 Ninguna
@@ -3544,6 +3616,39 @@ SignalException(SystemCall)
 System Call
 \END
 
+INSTRUCTION_ADDI_DOCUMENTATION.=<u>Suma con inmediato con desbordamiento</u>
+
+<b>Formato:</b>
+addi rt, rs, inmediato
+
+<b>Conversión:</b>
+addiu $at, $zero, inmediato
+add rt, $at, rs
+
+<b>Descripción:</b>
+GPR[rt] <- GPR[rs] + inmediato
+La palabra de 32 bits del <i>inmediato</i> es sumada a la palabra de 32 bits del registro <i>rs</i> para producir un resultado de 32 bits.
+ - Si la suma resulta en un desbordamiento aritmético en complemento a 2 de 32 bits, el registro destino no es modificado y la excepción <black>Integer Overflow</black> es lanzada.
+ - Si la suma no produce un desbordamiento, el resultado es insertado en el registro <i>rt</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+temp <- (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (inmediato<sub>31</sub> || inmediato<sub>31..0</sub>)
+if temp<sub>32</sub> != temp<sub>31</sub> then
+    SignalException(IntegerOverflow)
+else
+    GPR[rt] <- temp<sub>31..0</sub>
+endif
+
+<b>Excepciones:</b>
+Integer Overflow
+
+<b>Notas del programador:</b>
+<black>addiu</black> ejecuta la misma operación aritmética pero no lanza una excepción al desbordar.
+\END
+
 INSTRUCTION_B_DOCUMENTATION.=<u>Ramificación incondicional</u>
 
 <b>Formato:</b>
@@ -3978,6 +4083,272 @@ Ninguna
 <b>Excepciones:</b>
 Ninguna
 \END
+
+DIRECTIVE_ALIGN_DOCUMENTATION.=<u>Alinear</u>
+
+<b>Formato:</b>
+.align <0-3>
+
+<b>Descripción:</b>
+Alinea la siguiente inserción de memoria a una dirección múltiplo de 2^n.
+
+\END
+
+DIRECTIVE_ASCII_DOCUMENTATION.=<u>Insertar cadenas de caracteres ASCII</u>
+
+<b>Formato:</b>
+.ascii {"Texto"}
+
+<b>Descripción:</b>
+Inserta en la memoria las cadenas de caracteres en formato ASCII dados.
+
+\END
+
+DIRECTIVE_ASCIIZ_DOCUMENTATION.=<u>Insertar cadenas de caracteres ASCII, terminando con el caracter nulo</u>
+
+<b>Formato:</b>
+.asciiz {"Texto"}
+
+<b>Descripción:</b>
+Inserta en la memoria las cadenas de caracteres en formato ASCII dados, terminando cada una de ellas con el caracter nulo (\0).
+
+\END
+
+DIRECTIVE_BYTE_DOCUMENTATION.=<u>Insertar byte</u>
+
+<b>Formato:</b>
+.byte {byte | 'caracter'}
+
+<b>Descripción:</b>
+Inserta en la memoria los bytes dados.
+
+\END
+
+DIRECTIVE_DATA_DOCUMENTATION.=<u>Cambiar a la sección de datos</u>
+
+<b>Formato:</b>
+.data [dirección]
+
+<b>Descripción:</b>
+Hace que las siguientes inserciones de memoria sean colocadas en la sección de datos.
+Si una dirección es dada, las siguientes inserciones de memoria serán colocadas empezando por dicha dirección.
+
+\END
+
+DIRECTIVE_DOUBLE_DOCUMENTATION.=<u>Insertar doubles</u>
+
+<b>Formato:</b>
+.byte {double}
+
+<b>Descripción:</b>
+Inserta en la memoria los doubles dados.
+
+\END
+
+DIRECTIVE_DWORD_DOCUMENTATION.=<u>Insertar palabras dobles / longs</u>
+
+<b>Formato:</b>
+.dword {dword}
+
+<b>Descripción:</b>
+Inserta en la memoria las palabras dobles dadas.
+
+\END
+
+DIRECTIVE_ENDMACRO_DOCUMENTATION.=<u>Terminar macro</u>
+
+<b>Formato:</b>
+.endmacro
+
+<b>Descripción:</b>
+Termina la definición del macro actual.
+Si no hay ningún macro siendo definido esta directiva será ignorada.
+
+\END
+
+DIRECTIVE_EQV_DOCUMENTATION.=<u>Equivalente</u>
+
+<b>Formato:</b>
+.eqv <clave> <valor>
+
+<b>Descripción:</b>
+Reemplaza la clave en todas las siguientes líneas del archivo por el valor.
+
+<b>Notas del programador:</b>
+Evita usar esta directiva para reemplazar textos complejos.
+Esta directiva solo debe ser usada para reemplazar registros e inmediatos.
+
+\END
+
+DIRECTIVE_ERR_DOCUMENTATION.=<u>Error</u>
+
+<b>Formato:</b>
+.err
+
+<b>Descripción:</b>
+Produce un error de ensamblado.
+
+\END
+
+DIRECTIVE_EXTERN_DOCUMENTATION.=<u>Asignar memoria externa</u>
+
+<b>Format:</b>
+.extern <etiqueta> <tamaño>
+
+<b>Description:</b>
+Reserva el número dado de bytes en la sección externa de la memoria.
+La etiqueta creada será considerada una etiqueta global.
+
+\END
+
+DIRECTIVE_FLOAT_DOCUMENTATION.=<u>Insertar comas flotantes</u>
+
+<b>Formato:</b>
+.float {float}
+
+<b>Descripción:</b>
+Inserta en la memoria los números en coma flotante dados.
+
+\END
+
+DIRECTIVE_GLOBL_DOCUMENTATION.=<u>Marcar como etiqueta global</u>
+
+<b>Formato:</b>
+.globl <label>
+
+<b>Descripción:</b>
+Marca la etiqueta dada como global.
+
+\END
+
+DIRECTIVE_HALF_DOCUMENTATION.=<u>Insertar medias palabras</u>
+
+<b>Formato:</b>
+.half {media palabra}
+
+<b>Descripción:</b>
+Inserta en la memoria las medias palabras dadas.
+
+\END
+
+DIRECTIVE_INCLUDE_DOCUMENTATION.=<u>Incluir archivo</u>
+
+<b>Formato:</b>
+.include <archivo>
+
+<b>Description:</b>
+
+
+Reemplaza esta directive por los contenidos del archivo dado.
+
+<b>Programming Notes:</b>
+Evita usar esta directiva: puede causar bucles infinitos y hace que el inspector no funcione correctamente.
+
+\END
+
+DIRECTIVE_KDATA_DOCUMENTATION.=<u>Cambiar a la sección de datos del kernel</u>
+
+<b>Formato:</b>
+.kdata [dirección]
+
+<b>Descripción:</b>
+Hace que las siguientes inserciones de memoria sean colocadas en la sección de datos del kernel.
+Si una dirección es dada, las siguientes inserciones de memoria serán colocadas empezando por dicha dirección.
+
+\END
+
+DIRECTIVE_KTEXT_DOCUMENTATION.=<u>Cambiar a la sección de texto del kernel</u>
+
+<b>Formato:</b>
+.ktext [dirección]
+
+<b>Descripción:</b>
+Hace que las siguientes inserciones de memoria sean colocadas en la sección de texto del kernel.
+Si una dirección es dada, las siguientes inserciones de memoria serán colocadas empezando por dicha dirección.
+
+\END
+
+DIRECTIVE_LAB_DOCUMENTATION.=<u>Crear etiqueta</u>
+
+<b>Formato:</b>
+.lab <etiqueta>
+
+<b>Descripción:</b>
+Crea la etiqueta data.
+
+\END
+
+DIRECTIVE_MACRO_DOCUMENTATION.=<u>Macro</u>
+
+<b>Formato:</b>
+.macro <nombre>
+.macro <nombre> ()
+.macro <nombre> ({%parámetro})
+
+<b>Descripción:</b>
+Empieza la definición de un macro.
+Un macro puede ser usado para definir un conjunto de instrucciones que se usarán constantemente.
+Los macros pueden tener parámetros. Todos los parámetros deben empezar por "%" y serán reemplazados
+cuando una llamada al macro es ejecutada.
+
+Una llamada a macro debe terner este formato: nombre (param1, param2). El espacio entre el nombre y el primer paréntesis puede ser reemplazado por una coma o una tabulación.
+
+<b>Ejemplo:</b>
+
+El siguiente código crea una macro que imprime una cadena de caracteres:
+
+	.macro print (%string)
+	.data
+text:	.asciiz %string
+	.text
+	la $a0, text
+	li $v0, 4
+	syscall
+	.endmacro
+	.text
+	print ("Hi!\n")
+	print ("I'm using macros!\n")
+
+
+Salida:
+
+Hi!
+I'm using macros!
+
+\END
+
+DIRECTIVE_SPACE_DOCUMENTATION.=<u>Reservar memoria</u>
+
+<b>Formato:</b>
+.space <tamaño>
+
+<b>Descripción:</b>
+Reserva la cantidad de bytes dada en la memoria.
+
+\END
+
+DIRECTIVE_TEXT_DOCUMENTATION.=<u>Cambiar a la sección de texto</u>
+
+<b>Formato:</b>
+.text [dirección]
+
+<b>Descripción:</b>
+Hace que las siguientes inserciones de memoria sean colocadas en la sección de texto.
+Si una dirección es dada, las siguientes inserciones de memoria serán colocadas empezando por dicha dirección.
+
+\END
+
+DIRECTIVE_WORD_DOCUMENTATION.=<u>Insertar palabras</u>
+
+<b>Formato:</b>
+.word {palabra | etiqueta}
+
+<b>Descripción:</b>
+Inserta en la memoria las siguientes palabras.
+Si una etiqueta es dada, su dirección será insertada.
+
+\END
+
 
 FLOAT_CONDITION_AF=Siempre falso
 FLOAT_CONDITION_UN=Sin orden

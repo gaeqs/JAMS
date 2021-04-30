@@ -1,10 +1,14 @@
 package net.jamsimulator.jams.gui.util.value;
 
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.util.converter.LanguageValueConverter;
+import net.jamsimulator.jams.gui.util.converter.ValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.event.LanguageRegisterEvent;
@@ -43,6 +47,14 @@ public class LanguageValueEditor extends ComboBox<Language> implements ValueEdit
 	}
 
 	@Override
+	public Node buildConfigNode(Label label) {
+		var box =  new HBox(label, this);
+		box.setSpacing(5);
+		box.setAlignment(Pos.CENTER_LEFT);
+		return box;
+	}
+
+	@Override
 	public void addListener(Consumer<Language> consumer) {
 		listener = listener.andThen(consumer);
 	}
@@ -57,6 +69,11 @@ public class LanguageValueEditor extends ComboBox<Language> implements ValueEdit
 		if (getSelectionModel().getSelectedItem().equals(event.getLanguage()))
 			setValue(Jams.getLanguageManager().getDefault());
 		getItems().remove(event.getLanguage());
+	}
+
+	@Override
+	public ValueConverter<Language> getLinkedConverter() {
+		return ValueConverters.getByTypeUnsafe(Language.class);
 	}
 
 	public static class Builder implements ValueEditor.Builder<Language> {

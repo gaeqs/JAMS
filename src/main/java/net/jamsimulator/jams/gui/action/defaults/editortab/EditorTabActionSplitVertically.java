@@ -8,6 +8,7 @@ import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditorTab;
+import net.jamsimulator.jams.gui.editor.FileOpenPosition;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
@@ -33,7 +34,7 @@ public class EditorTabActionSplitVertically extends ContextAction {
 			tab = ((FileEditor) node).getTab();
 		if (tab == null) return;
 
-		tab.openInNewHolder(false);
+		tab.openInNewHolder(FileOpenPosition.BOTTOM);
 	}
 
 	@Override

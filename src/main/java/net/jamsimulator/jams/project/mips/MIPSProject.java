@@ -43,102 +43,90 @@ import java.util.HashMap;
 
 public class MIPSProject extends BasicProject {
 
-	public MIPSProject(File folder) {
-		super(folder, false);
-		loadData(null);
-	}
+    public MIPSProject(File folder) {
+        super(folder, true);
+    }
 
-	public MIPSProject(String name, File folder) {
-		super(folder, false);
-		loadData(name);
-	}
+    @Override
+    public MIPSProjectData getData() {
+        return (MIPSProjectData) super.getData();
+    }
 
-	@Override
-	public MIPSProjectData getData() {
-		return (MIPSProjectData) super.getData();
-	}
+    @Override
+    public Simulation<?> assemble(Log log) throws IOException {
+        MIPSSimulationConfiguration configuration = getData().getSelectedConfiguration().orElse(null);
 
-	@Override
-	public Simulation<?> assemble(Log log) throws IOException {
-		MIPSSimulationConfiguration configuration = getData().getSelectedConfiguration().orElse(null);
+        if (configuration == null) {
+            if (log != null) {
+                log.printErrorLn("Error! Configuration not found!");
+            }
+            return null;
+        }
 
-		if (configuration == null) {
-			if (log != null) {
-				log.printErrorLn("Error! Configuration not found!");
-			}
-			return null;
-		}
+        if (log != null) {
+            log.printInfoLn("Assembling project \"" + data.getName() + "\" using configuration \"" + configuration.getName() + "\".");
+            log.println();
+            log.printInfoLn("Files:");
+        }
 
-		if (log != null) {
-			log.printInfoLn("Assembling project \"" + data.getName() + "\" using configuration \"" + configuration.getName() + "\".");
-			log.println();
-			log.printInfoLn("Files:");
-		}
+        var rootPath = folder.toPath();
+        var files = new HashMap<String, String>();
 
-		var rootPath = folder.toPath();
-		var files = new HashMap<String, String>();
+        for (File target : getData().getFilesToAssemble().getFiles()) {
+            if (log != null) {
+                log.printInfoLn("- " + target.getAbsolutePath());
+            }
 
-		for (File target : getData().getFilesToAssemble().getFiles()) {
-			if (log != null) {
-				log.printInfoLn("- " + target.getAbsolutePath());
-			}
+            var name = rootPath.relativize(target.toPath()).toString();
+            try {
+                files.put(name, FileUtils.readAll(target));
+            } catch (Exception ex) {
+                throw new AssemblerException("Error while loading file " + target + ".", ex);
+            }
+        }
 
-			var name = rootPath.relativize(target.toPath()).toString();
-			try {
-				files.put(name, FileUtils.readAll(target));
-			} catch (Exception ex) {
-				throw new AssemblerException("Error while loading file " + target + ".", ex);
-			}
-		}
+        long nanos = System.nanoTime();
 
-		long nanos = System.nanoTime();
+        Assembler assembler = getData().getAssemblerBuilder().createAssembler(
+                files,
+                getData().getDirectiveSet(),
+                getData().getInstructionSet(),
+                getData().getRegistersBuilder().createRegisters(),
+                configuration.generateNewMemory(),
+                log);
 
-		Assembler assembler = getData().getAssemblerBuilder().createAssembler(
-				files,
-				getData().getDirectiveSet(),
-				getData().getInstructionSet(),
-				getData().getRegistersBuilder().createRegisters(),
-				configuration.generateNewMemory(),
-				log);
+        if (log != null) {
+            log.println();
+            log.printInfoLn("Assembling...");
+        }
 
-		if (log != null) {
-			log.println();
-			log.printInfoLn("Assembling...");
-		}
+        assembler.assemble();
 
-		assembler.assemble();
+        if (log != null) {
+            log.printDoneLn("Assembly successful in " + (System.nanoTime() - nanos) / 1000000 + " millis.");
+        }
 
-		if (log != null) {
-			log.printDoneLn("Assembly successful in " + (System.nanoTime() - nanos) / 1000000 + " millis.");
-		}
+        var simulationData = new SimulationData(configuration, data.getFilesFolder(), new Console(),
+                assembler.getOriginals(), assembler.getAllLabels());
 
-		var simulationData = new SimulationData(configuration, data.getFilesFolder(), new Console(),
-				assembler.getOriginals(), assembler.getLabelsWithFileNames());
+        return assembler.createSimulation(configuration.getNodeValue(MIPSSimulationConfigurationPresets.ARCHITECTURE), simulationData);
+    }
 
-		return assembler.createSimulation(configuration.getNodeValue(MIPSSimulationConfigurationPresets.ARCHITECTURE), simulationData);
-	}
-
-	@Override
-	public void onClose() {
-		data.save();
-		if (projectTab != null) {
-			WorkingPane pane = projectTab.getProjectTabPane().getWorkingPane();
-			if (pane instanceof MIPSStructurePane) {
-				((MIPSStructurePane) pane).getFileDisplayHolder().closeAll(true);
-			}
-		}
-	}
+    @Override
+    public void onClose() {
+        data.save();
+        if (projectTab != null) {
+            WorkingPane pane = projectTab.getProjectTabPane().getWorkingPane();
+            if (pane instanceof MIPSStructurePane) {
+                ((MIPSStructurePane) pane).getFileDisplayHolder().closeAll(true);
+            }
+        }
+    }
 
 
-	@Override
-	protected void loadData(String name) {
-		data = new MIPSProjectData(this);
-		data.load();
-
-		if (name != null) {
-			data.setName(name);
-		}
-
-		data.save();
-	}
+    @Override
+    protected void loadData() {
+        data = new MIPSProjectData(this);
+        data.load();
+    }
 }

@@ -30,55 +30,65 @@ import net.jamsimulator.jams.utils.Validate;
 import java.io.File;
 import java.util.Optional;
 
+/**
+ * Represents a base implementation of a {@link Project}.
+ * <p>
+ * If you want to create a new project type you can use this template to implement your own projects.
+ * Use {@link #loadData()} to load this {@link ProjectData project's data}.
+ */
 public abstract class BasicProject implements Project {
 
-	protected final File folder;
-	protected ProjectTab projectTab;
+    protected final File folder;
 
-	protected ProjectData data;
+    protected ProjectTab projectTab;
+    protected ProjectData data;
 
-	public BasicProject(File folder, boolean loadDataOnConstructor) {
-		//Validate.notNull(folder, "Folder cannot be null!");
-		//Validate.isTrue(folder.exists(), "Folder " + folder.getName() + " must exist!");
-		//Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
+    /**
+     * Creates the basic project.
+     *
+     * @param folder                the {@link File folder} of the project. It must exist and be a directory.
+     * @param loadDataOnConstructor whether the method {@link #loadData()} should be invoked in this constructor.
+     */
+    public BasicProject(File folder, boolean loadDataOnConstructor) {
+        Validate.notNull(folder, "Folder cannot be null!");
+        Validate.isTrue(folder.exists(), "Folder " + folder.getName() + " must exist!");
+        Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
 
-		this.folder = folder;
-		this.projectTab = null;
+        this.folder = folder;
+        this.projectTab = null;
 
-		if (loadDataOnConstructor) {
-			loadData(null);
-		}
-	}
+        if (loadDataOnConstructor) {
+            loadData();
+        }
+    }
 
-	@Override
-	public String getName() {
-		return data.getName();
-	}
+    @Override
+    public String getName() {
+        return data.getName();
+    }
 
-	@Override
-	public File getFolder() {
-		return folder;
-	}
+    @Override
+    public File getFolder() {
+        return folder;
+    }
 
-	@Override
-	public ProjectData getData() {
-		return data;
-	}
+    @Override
+    public ProjectData getData() {
+        return data;
+    }
 
-	@Override
-	public Optional<ProjectTab> getProjectTab() {
-		return Optional.ofNullable(projectTab);
-	}
+    @Override
+    public Optional<ProjectTab> getProjectTab() {
+        return Optional.ofNullable(projectTab);
+    }
 
-	@Override
-	public void assignProjectTab(ProjectTab tab) {
-		this.projectTab = tab;
-	}
+    @Override
+    public void assignProjectTab(ProjectTab tab) {
+        this.projectTab = tab;
+    }
 
-	/**
-	 * Loads the data of this project.
-	 *
-	 * @param name the name of the project, or null if the name should be get from the data.
-	 */
-	protected abstract void loadData(String name);
+    /**
+     * Loads the data of this project.
+     */
+    protected abstract void loadData();
 }
