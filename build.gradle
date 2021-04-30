@@ -127,9 +127,9 @@ runtime {
 
             installerType = "deb"
         } else if (org.gradle.internal.os.OperatingSystem.current().macOsX) {
-            appVersion = '1.0.0'
+            appVersion = ver
             imageOptions += [
-                    '--app-version', '1.0.0',
+                    '--app-version', ver,
                     '--copyright', 'JAMS 2021',
                     '--mac-package-name', 'JAMS',
             ]
