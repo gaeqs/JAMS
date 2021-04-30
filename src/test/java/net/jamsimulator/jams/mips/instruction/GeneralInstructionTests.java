@@ -45,10 +45,7 @@ import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,7 +53,7 @@ class GeneralInstructionTests {
 
     static Simulation<?> simulation = new SingleCycleSimulation(SingleCycleArchitecture.INSTANCE, MIPS32r6InstructionSet.INSTANCE,
             new MIPS32Registers(), new MIPS32Memory(), MIPS32Memory.TEXT, MIPS32Memory.KERNEL_TEXT,
-            new SimulationData(new SimulationSyscallExecutions(), new File(""), null, new HashMap<>(), new HashMap<>(), true, true, true, true, true));
+            new SimulationData(new SimulationSyscallExecutions(), new File(""), null, new HashMap<>(), new HashSet<>(), true, true, true, true, true));
 
     @Test
     void testBasicInstruction() {

@@ -80,7 +80,7 @@ class AssemblerTest {
 		assembler.assemble();
 		SimulationSyscallExecutions executions = new SimulationSyscallExecutions();
 
-		SimulationData data = new SimulationData(executions, new File(""), null, assembler.getOriginals(), assembler.getLabelsWithFileNames(),
+		SimulationData data = new SimulationData(executions, new File(""), null, assembler.getOriginals(), assembler.getAllLabels(),
 				true, true, true, true, true);
 		Simulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE, data);
 
