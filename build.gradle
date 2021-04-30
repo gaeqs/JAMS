@@ -144,7 +144,7 @@ static String normalizeAppVersion(final String appVersion) {
         // This is a hack attempt to assure the version conforms to MSI productVersion string rules
         // See https://docs.microsoft.com/en-us/windows/win32/msi/productversion
         // For now, we'll just remove '-SNAPSHOT' if present.
-        return appVersion.replaceAll('-SNAPSHOT$', '').replaceAll('-ALPHA$', '')
+        return appVersion.replaceAll('-SNAPSHOT$', '').replaceAll('-ALPHA$', '').replaceAll('-BETA$', '')
     } else {
         return appVersion
     }
