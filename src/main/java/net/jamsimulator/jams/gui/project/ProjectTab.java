@@ -34,7 +34,9 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
+import net.jamsimulator.jams.gui.project.event.ProjectCloseEvent;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.ProjectSnapshot;
@@ -109,6 +111,7 @@ public class ProjectTab extends Tab {
             project.assignProjectTab(null);
             project.onClose();
             Jams.getRecentProjects().add(ProjectSnapshot.of(project));
+            JamsApplication.getProjectsTabPane().callEvent(new ProjectCloseEvent(project));
         });
     }
 

@@ -29,7 +29,11 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.event.EventBroadcast;
+import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.project.event.ProjectOpenEvent;
 import net.jamsimulator.jams.gui.start.StartWindow;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.MIPSProject;
@@ -38,6 +42,7 @@ import org.json.JSONArray;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,12 +51,16 @@ import java.util.stream.Collectors;
  * Represents the projects' tab pane.
  * Projects' tabs are stored here.
  */
-public class ProjectListTabPane extends TabPane {
+public class ProjectListTabPane extends TabPane implements EventBroadcast {
+
+    private final SimpleEventBroadcast broadcast;
 
     /**
      * Creates the projects' main pane.
      */
     public ProjectListTabPane() {
+        this.broadcast = new SimpleEventBroadcast();
+
         getStyleClass().add("project-list");
         setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
         openSavedProjects();
@@ -123,9 +132,15 @@ public class ProjectListTabPane extends TabPane {
     public boolean openProject(Project project) {
         if (isProjectOpen(project)) return false;
         if (!(project instanceof MIPSProject)) return false;
+
+        var before = callEvent(new ProjectOpenEvent.Before(project));
+        if (before.isCancelled()) return false;
+
         ProjectTab tab = new ProjectTab((MIPSProject) project);
         project.assignProjectTab(tab);
         getTabs().add(tab);
+
+        callEvent(new ProjectOpenEvent.After(project, tab));
         return true;
     }
 
@@ -163,5 +178,30 @@ public class ProjectListTabPane extends TabPane {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean registerListener(Object instance, Method method, boolean useWeakReferences) {
+        return broadcast.registerListener(instance, method, useWeakReferences);
+    }
+
+    @Override
+    public int registerListeners(Object instance, boolean useWeakReferences) {
+        return broadcast.registerListeners(instance, useWeakReferences);
+    }
+
+    @Override
+    public boolean unregisterListener(Object instance, Method method) {
+        return broadcast.unregisterListener(instance, method);
+    }
+
+    @Override
+    public int unregisterListeners(Object instance) {
+        return broadcast.unregisterListeners(instance);
+    }
+
+    @Override
+    public <T extends Event> T callEvent(T event) {
+        return broadcast.callEvent(event, this);
     }
 }
