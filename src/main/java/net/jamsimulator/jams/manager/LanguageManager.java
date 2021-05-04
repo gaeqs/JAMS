@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.configuration.MainNodes;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Language;
@@ -35,11 +34,14 @@ import net.jamsimulator.jams.language.event.LanguageUnregisterEvent;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 import net.jamsimulator.jams.language.exception.LanguageFailedLoadException;
 import net.jamsimulator.jams.utils.FolderUtils;
+import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * This singleton stores all {@link Language}s that JAMS may use.
@@ -51,123 +53,159 @@ import java.util.Optional;
  */
 public class LanguageManager extends SelectableManager<Language> {
 
+    public static final String FOLDER_NAME = "language";
+    public static final String DEFAULT_LANGUAGE_NODE = "language.default";
+    public static final String SELECTED_LANGUAGE_NODE = "language.selected";
 
-	public static final String FOLDER_NAME = "language";
-	public static final String DEFAULT_LANGUAGE_NODE = "language.default";
-	public static final String SELECTED_LANGUAGE_NODE = "language.selected";
+    public static final LanguageManager INSTANCE = new LanguageManager();
 
-	public static final LanguageManager INSTANCE = new LanguageManager();
+    private Map<String, String> bundledLanguages;
+    private File folder;
 
-	private Map<String, String> bundledLanguages;
-	private File folder;
+    private LanguageManager() {
+        super(LanguageRegisterEvent.Before::new, LanguageRegisterEvent.After::new,
+                LanguageUnregisterEvent.Before::new, LanguageUnregisterEvent.After::new,
+                DefaultLanguageChangeEvent.Before::new, DefaultLanguageChangeEvent.After::new,
+                SelectedLanguageChangeEvent.Before::new, SelectedLanguageChangeEvent.After::new);
 
+        Jams.getMainConfiguration().registerListeners(this, true);
+    }
 
-	private LanguageManager() {
-		super(LanguageRegisterEvent.Before::new, LanguageRegisterEvent.After::new,
-				LanguageUnregisterEvent.Before::new, LanguageUnregisterEvent.After::new,
-				DefaultLanguageChangeEvent.Before::new, DefaultLanguageChangeEvent.After::new,
-				SelectedLanguageChangeEvent.Before::new, SelectedLanguageChangeEvent.After::new);
+    /**
+     * Loads the languages present in the given streams.
+     * If the language is already present, the language is merged. If not, the language is added to this manager.
+     *
+     * @param streams      the streams.
+     * @param closeStreams whether the streams should be closed after the language is closed.
+     */
+    public void loadLanguages(Collection<InputStream> streams, boolean closeStreams) {
+        Validate.hasNoNulls(streams, "Streams cannot have any null value!");
+        for (InputStream in : streams) {
+            try {
+                var language = new Language(in);
+                var other = get(language.getName());
 
-		Jams.getMainConfiguration().registerListeners(this, true);
-	}
+                if (other.isEmpty()) {
+                    add(language);
+                } else {
+                    other.get().addNotPresentValues(language);
+                    other.get().save();
+                }
+            } catch (LanguageFailedLoadException ex) {
+                ex.printStackTrace();
+            } finally {
 
-	@Override
-	protected void loadDefaultElements() {
-		loadLanguagesFolder();
-		loadStoredLanguages();
-		refreshBundledLanguages();
-	}
+                if (closeStreams) {
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
 
-	@Override
-	protected Language loadDefaultElement() {
-		String configDefault = Jams.getMainConfiguration()
-				.getString(MainNodes.CONFIG_LANGUAGE_DEFAULT).orElse("English");
+            }
+        }
+    }
 
-		Optional<Language> english = get("English");
-		Optional<Language> defaultOptional = get(configDefault);
-		if (defaultOptional.isEmpty()) {
-			System.err.println("Default language " + configDefault + " not found. Using English instead.");
-			if (english.isEmpty()) {
-				System.err.println("English language not found! Using the first found language instead.");
-				return stream().findFirst().orElseThrow(NullPointerException::new);
-			} else return english.get();
-		} else return defaultOptional.get();
-	}
+    @Override
+    protected void loadDefaultElements() {
+        loadLanguagesFolder();
+        loadStoredLanguages();
+        refreshBundledLanguages();
+    }
 
-	@Override
-	protected Language loadSelectedElement() {
-		String configSelected = Jams.getMainConfiguration()
-				.getString(MainNodes.CONFIG_LANGUAGE_SELECTED).orElse("English");
+    @Override
+    protected Language loadDefaultElement() {
+        var configDefault = Jams.getMainConfiguration().getString(DEFAULT_LANGUAGE_NODE).orElse("English");
 
-		Optional<Language> english = get("English");
-		Optional<Language> selectedOptional = get(configSelected);
-		if (selectedOptional.isEmpty()) {
-			System.err.println("Selected language " + configSelected + " not found. Using English instead.");
-			if (english.isEmpty()) {
-				System.err.println("English language not found! Using the first found language instead.");
-				return stream().findFirst().orElseThrow(NullPointerException::new);
-			} else return english.get();
-		} else return selectedOptional.get();
-	}
+        var english = get("English");
+        var defaultOptional = get(configDefault);
+        if (defaultOptional.isEmpty()) {
+            System.err.println("Default language " + configDefault + " not found. Using English instead.");
+            if (english.isEmpty()) {
+                System.err.println("English language not found! Using the first found language instead.");
+                return stream().findFirst().orElseThrow(NullPointerException::new);
+            } else return english.get();
+        } else return defaultOptional.get();
+    }
 
-	private void loadLanguagesFolder() {
-		folder = new File(Jams.getMainFolder(), FOLDER_NAME);
-		FolderUtils.checkFolder(folder);
+    @Override
+    protected Language loadSelectedElement() {
+        var configSelected = Jams.getMainConfiguration().getString(SELECTED_LANGUAGE_NODE).orElse("English");
 
-		bundledLanguages = new HashMap<>();
-		bundledLanguages.put("English", "/language/english.jlang");
-		bundledLanguages.put("Spanish", "/language/spanish.jlang");
+        var english = get("English");
+        var selectedOptional = get(configSelected);
+        if (selectedOptional.isEmpty()) {
+            System.err.println("Selected language " + configSelected + " not found. Using English instead.");
+            if (english.isEmpty()) {
+                System.err.println("English language not found! Using the first found language instead.");
+                return stream().findFirst().orElseThrow(NullPointerException::new);
+            } else return english.get();
+        } else return selectedOptional.get();
+    }
 
-		bundledLanguages.forEach((fileName, resourcePath) -> {
-			File file = new File(folder, fileName.toLowerCase() + ".jlang");
-			if (!file.exists()) {
-				if (!FolderUtils.moveFromResources(Jams.class, resourcePath, file))
-					throw new NullPointerException(fileName + " language not found!");
-			}
-		});
-	}
+    private void loadLanguagesFolder() {
+        folder = new File(Jams.getMainFolder(), FOLDER_NAME);
+        FolderUtils.checkFolder(folder);
 
-	private void loadStoredLanguages() {
-		File[] files = folder.listFiles();
-		if (files == null) throw new NullPointerException("There's no languages!");
+        bundledLanguages = new HashMap<>();
+        bundledLanguages.put("English", "/language/english.jlang");
+        bundledLanguages.put("Spanish", "/language/spanish.jlang");
 
-		for (File file : files) {
-			if (!file.getName().toLowerCase().endsWith(".jlang")) continue;
+        bundledLanguages.forEach((fileName, resourcePath) -> {
+            File file = new File(folder, fileName.toLowerCase() + ".jlang");
+            if (!file.exists()) {
+                if (!FolderUtils.moveFromResources(Jams.class, resourcePath, file))
+                    throw new NullPointerException(fileName + " language not found!");
+            }
+        });
+    }
 
-			try {
-				add(new Language(file));
-			} catch (LanguageFailedLoadException ex) {
-				System.err.println("Failed to load language " + file.getName() + ": ");
-				ex.printStackTrace();
-			}
-		}
+    private void loadStoredLanguages() {
+        var files = folder.listFiles();
+        if (files == null) throw new NullPointerException("There's no languages!");
 
-		if (isEmpty()) throw new NullPointerException("There's no languages!");
-	}
+        for (File file : files) {
+            if (!file.getName().toLowerCase().endsWith(".jlang")) continue;
 
-	private void refreshBundledLanguages() {
-		bundledLanguages.forEach((key, value) -> {
-			Language language = get(key).orElse(null);
-			if (language == null) return;
+            try {
+                add(new Language(file));
+            } catch (LanguageFailedLoadException ex) {
+                System.err.println("Failed to load language " + file.getName() + ": ");
+                ex.printStackTrace();
+            }
+        }
 
-			try {
-				Language bundled = new Language(Jams.class.getResourceAsStream(value));
-				language.addNotPresentValues(bundled);
-				language.save();
-			} catch (LanguageFailedLoadException e) {
-				e.printStackTrace();
-			}
+        if (isEmpty()) throw new NullPointerException("There's no languages!");
+    }
 
-		});
-	}
+    private void refreshBundledLanguages() {
+        bundledLanguages.forEach((key, value) -> {
+            var language = get(key).orElse(null);
+            if (language == null) return;
 
-	@Listener
-	private void onNodeChange(ConfigurationNodeChangeEvent.After event) {
-		if (event.getNode().equals(SELECTED_LANGUAGE_NODE)) {
-			get(event.getNewValue().orElse("").toString()).ifPresent(this::setSelected);
-		} else if (event.getNode().equals(DEFAULT_LANGUAGE_NODE)) {
-			get(event.getNewValue().orElse("").toString()).ifPresent(this::setDefault);
-		}
-	}
+            try {
+                var in = Jams.class.getResourceAsStream(value);
+                if (in != null) {
+                    Language bundled = new Language(in);
+                    in.close();
+                    language.addNotPresentValues(bundled);
+                    language.save();
+                }
+            } catch (LanguageFailedLoadException | IOException e) {
+                e.printStackTrace();
+            }
+
+        });
+    }
+
+    @Listener
+    private void onNodeChange(ConfigurationNodeChangeEvent.After event) {
+        if (event.getNode().equals(SELECTED_LANGUAGE_NODE)) {
+            get(event.getNewValue().orElse("").toString()).ifPresent(this::setSelected);
+        } else if (event.getNode().equals(DEFAULT_LANGUAGE_NODE)) {
+            get(event.getNewValue().orElse("").toString()).ifPresent(this::setDefault);
+        }
+    }
 
 }

@@ -36,6 +36,7 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
+import net.jamsimulator.jams.gui.theme.event.ThemeShouldRefreshEvent;
 
 public class ThemedBorderlessScene extends BorderlessScene {
 
@@ -57,22 +58,12 @@ public class ThemedBorderlessScene extends BorderlessScene {
 
 	protected void initializeJamsListeners() {
 		JamsApplication.getThemeManager().registerListeners(this, true);
-		JamsApplication.getThemeManager().getSelected().apply(this);
+		JamsApplication.getThemeManager().apply(this);
 	}
 
 	@Listener
-	public void onThemeChange(SelectedThemeChangeEvent.After event) {
-		event.getNewTheme().apply(this);
-	}
-
-	@Listener
-	public void onThemeChange(GeneralFontChangeEvent.After event) {
-		JamsApplication.getThemeManager().getSelected().apply(this);
-	}
-
-	@Listener
-	public void onThemeChange(CodeFontChangeEvent.After event) {
-		JamsApplication.getThemeManager().getSelected().apply(this);
+	private void onThemeRefresh (ThemeShouldRefreshEvent event) {
+		JamsApplication.getThemeManager().apply(this);
 	}
 
 }

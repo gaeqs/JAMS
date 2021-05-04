@@ -46,6 +46,7 @@ import net.jamsimulator.jams.gui.editor.popup.DocumentationPopup;
 import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
+import net.jamsimulator.jams.gui.theme.event.ThemeShouldRefreshEvent;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.GUIReflectionUtils;
 import net.jamsimulator.jams.gui.util.KeyCombinationBuilder;
@@ -93,7 +94,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
 
         CustomLineNumberFactory factory = CustomLineNumberFactory.get(this);
 
-        JamsApplication.getThemeManager().getSelected().apply(this);
+        JamsApplication.getThemeManager().apply(this);
         JamsApplication.getThemeManager().registerListeners(this, true);
 
         setParagraphGraphicFactory(factory);
@@ -483,18 +484,8 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
     }
 
     @Listener
-    private void onThemeChange(SelectedThemeChangeEvent.After event) {
-        event.getNewTheme().apply(this);
-    }
-
-    @Listener
-    private void onThemeChange(GeneralFontChangeEvent.After event) {
-        JamsApplication.getThemeManager().getSelected().apply(this);
-    }
-
-    @Listener
-    private void onThemeChange(CodeFontChangeEvent.After event) {
-        JamsApplication.getThemeManager().getSelected().apply(this);
+    private void onThemeRefresh (ThemeShouldRefreshEvent event) {
+        JamsApplication.getThemeManager().apply(this);
     }
 
     //endregion

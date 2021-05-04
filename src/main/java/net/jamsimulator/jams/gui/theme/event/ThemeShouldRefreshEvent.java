@@ -22,13 +22,12 @@
  * SOFTWARE.
  */
 
-package net.jamsimulator.jams.configuration;
+package net.jamsimulator.jams.gui.theme.event;
 
-public class MainNodes {
+import net.jamsimulator.jams.event.Event;
 
-	public static final String CONFIG_LANGUAGE_DEFAULT = "language.default";
-	public static final String CONFIG_LANGUAGE_SELECTED = "language.selected";
-
-	public static final String CONFIG_APPEARANCE_THEME = "appearance.theme";
-
+/**
+ * This event is called when the the JAMS style should refresh.
+ */
+public class ThemeShouldRefreshEvent extends Event {
 }

@@ -6,6 +6,7 @@ import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.image.icon.IconManager;
 import net.jamsimulator.jams.manager.Labeled;
 
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
@@ -145,6 +146,16 @@ public class Plugin implements Labeled {
     }
 
     // region helper methods
+
+    /**
+     * Returns an {@link InputStream} representing the resource in the plugin JAR matching the given path if present.
+     *
+     * @param path the path.
+     * @return the resource's {@link InputStream} if present.
+     */
+    public Optional<InputStream> resource(String path) {
+        return Optional.ofNullable(getClass().getResourceAsStream(path));
+    }
 
     /**
      * Runs the given code in the JavaFX application thread.

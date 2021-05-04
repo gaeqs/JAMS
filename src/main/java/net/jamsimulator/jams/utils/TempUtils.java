@@ -56,6 +56,8 @@ public class TempUtils {
 			e.printStackTrace();
 		}
 
+		file.deleteOnExit();
+
 		return file;
 	}
 
