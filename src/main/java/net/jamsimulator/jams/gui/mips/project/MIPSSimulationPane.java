@@ -182,7 +182,7 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
         var scroll = new PixelScrollPane(lab);
         scroll.setFitToWidth(true);
         scroll.setFitToHeight(true);
-        manageBarAddition("lab", scroll, icon, null, BarPosition.LEFT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
+        manageBarAddition("lab", scroll, icon, Messages.BAR_LAB_NAME, BarPosition.LEFT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
     }
 
 

@@ -80,7 +80,7 @@ public class SingleCycleFlowTable extends FlowTable {
 			while (!toAdd.isEmpty()) {
 				current = toAdd.pop();
 				entry = new SingleCycleFlowEntry(flows.getChildren().size(), this,
-						current.getInstruction(), start, current.getCycle(), stepSize);
+						current.getInstruction().orElse(null), start, current.getCycle(), stepSize);
 				flows.getChildren().add(flows.getChildren().size(), entry);
 			}
 			refreshVisualizer();

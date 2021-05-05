@@ -106,6 +106,7 @@ public class Messages {
 	public static final String BAR_CONSOLE_NAME = "BAR_CONSOLE_NAME";
 	public static final String BAR_FLOW_NAME = "BAR_FLOW_NAME";
 	public static final String BAR_LABELS_NAME = "BAR_LABELS_NAME";
+	public static final String BAR_LAB_NAME = "BAR_LAB_NAME";
 	public static final String BAR_CACHES_NAME = "BAR_CACHES_NAME";
 
 	public static final String INSTRUCTIONS_USER = "INSTRUCTIONS_USER";
