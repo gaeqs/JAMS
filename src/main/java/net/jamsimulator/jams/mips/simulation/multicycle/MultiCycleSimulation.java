@@ -43,7 +43,7 @@ import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterLockEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterUnlockEvent;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.mips.simulation.change.*;
 import net.jamsimulator.jams.mips.simulation.change.multicycle.MultiCycleSimulationChangeCurrentExecution;
@@ -67,7 +67,7 @@ import java.util.Optional;
  *
  * @see MultiCycleArchitecture
  */
-public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
+public class MultiCycleSimulation extends MIPSSimulation<MultiCycleArchitecture> {
 
     public static final int MAX_CHANGES = 10000;
 

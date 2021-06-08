@@ -10,7 +10,7 @@ import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTableColumn;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 
@@ -22,7 +22,7 @@ public class RegistersTable extends TableView<RegisterPropertyWrapper> implement
 
 	private final HashMap<Register, RegisterPropertyWrapper> registers;
 
-	public RegistersTable(Simulation<?> simulation, Set<Register> registers, boolean useDecimals) {
+	public RegistersTable(MIPSSimulation<?> simulation, Set<Register> registers, boolean useDecimals) {
 		this.registers = new HashMap<>();
 		getStyleClass().add("table-view-horizontal-fit");
 		setEditable(true);

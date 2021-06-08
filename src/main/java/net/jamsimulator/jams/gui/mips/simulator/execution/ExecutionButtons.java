@@ -11,7 +11,7 @@ import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.util.FixedButton;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 
@@ -24,7 +24,7 @@ public class ExecutionButtons {
 	private final Button runOne;
 	private final List<Node> nodes;
 
-	public ExecutionButtons(Simulation<?> simulation) {
+	public ExecutionButtons(MIPSSimulation<?> simulation) {
 		nodes = new ArrayList<>();
 		Image runOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY_ONE).orElse(null);
 		Image undoOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_UNDO_ONE).orElse(null);
@@ -75,7 +75,7 @@ public class ExecutionButtons {
 		changeToRunAll(event.getSimulation());
 	}
 
-	private void changeToRunAll(Simulation<?> simulation) {
+	private void changeToRunAll(MIPSSimulation<?> simulation) {
 		Platform.runLater(() -> {
 			Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY
 			).orElse(null);
@@ -86,7 +86,7 @@ public class ExecutionButtons {
 		});
 	}
 
-	private void changeToStop(Simulation<?> simulation) {
+	private void changeToStop(MIPSSimulation<?> simulation) {
 		Platform.runLater(() -> {
 			Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_STOP
 			).orElse(null);

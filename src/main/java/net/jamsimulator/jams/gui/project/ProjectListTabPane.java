@@ -136,7 +136,7 @@ public class ProjectListTabPane extends TabPane implements EventBroadcast {
         var before = callEvent(new ProjectOpenEvent.Before(project));
         if (before.isCancelled()) return false;
 
-        ProjectTab tab = new ProjectTab((MIPSProject) project);
+        ProjectTab tab = new ProjectTab(project);
         project.assignProjectTab(tab);
         getTabs().add(tab);
 

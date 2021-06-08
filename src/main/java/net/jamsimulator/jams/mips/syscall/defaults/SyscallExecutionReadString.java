@@ -7,11 +7,10 @@ import javafx.beans.property.SimpleIntegerProperty;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 
 public class SyscallExecutionReadString implements SyscallExecution {
@@ -27,7 +26,7 @@ public class SyscallExecutionReadString implements SyscallExecution {
 	}
 
 	@Override
-	public void execute(Simulation<?> simulation) {
+	public void execute(MIPSSimulation<?> simulation) {
 		Register maxCharsReg = simulation.getRegisters().getRegister(this.maxCharsRegister).orElse(null);
 		if (maxCharsReg == null) throw new IllegalStateException("Register " + this.maxCharsRegister + " not found");
 

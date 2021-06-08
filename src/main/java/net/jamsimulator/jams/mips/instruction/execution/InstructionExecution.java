@@ -30,18 +30,18 @@ import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.Registers;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.Validate;
 
 public abstract class InstructionExecution<Arch extends Architecture, Inst extends AssembledInstruction> {
 
-	protected final Simulation<? extends Arch> simulation;
+	protected final MIPSSimulation<? extends Arch> simulation;
 	protected final Registers registers;
 	protected final Inst instruction;
 
 	protected final int address;
 
-	public InstructionExecution(Simulation<? extends Arch> simulation, Inst instruction, int address) {
+	public InstructionExecution(MIPSSimulation<? extends Arch> simulation, Inst instruction, int address) {
 		Validate.notNull(simulation, "Simulation cannot be null!");
 		Validate.notNull(instruction, "Instruction cannot be null!");
 		this.simulation = simulation;
@@ -51,11 +51,11 @@ public abstract class InstructionExecution<Arch extends Architecture, Inst exten
 	}
 
 	/**
-	 * Returns the {@link Simulation} executing this instruction.
+	 * Returns the {@link MIPSSimulation} executing this instruction.
 	 *
-	 * @return the {@link Simulation}.
+	 * @return the {@link MIPSSimulation}.
 	 */
-	public Simulation<? extends Arch> getSimulation() {
+	public MIPSSimulation<? extends Arch> getSimulation() {
 		return simulation;
 	}
 

@@ -27,7 +27,7 @@ package net.jamsimulator.jams.mips.architecture;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleSimulation;
 
@@ -53,12 +53,12 @@ public class MultiCycleArchitecture extends Architecture {
 	}
 
 	@Override
-	public Simulation<? extends MultiCycleArchitecture> createSimulation(InstructionSet instructionSet,
-																		 Registers registers,
-																		 Memory memory,
-																		 int instructionStackBottom,
-																		 int kernelStackBottom,
-																		 SimulationData data) {
+	public MIPSSimulation<? extends MultiCycleArchitecture> createSimulation(InstructionSet instructionSet,
+                                                                             Registers registers,
+                                                                             Memory memory,
+                                                                             int instructionStackBottom,
+                                                                             int kernelStackBottom,
+                                                                             SimulationData data) {
 		return new MultiCycleSimulation(this, instructionSet, registers, memory, instructionStackBottom, kernelStackBottom, data);
 	}
 }

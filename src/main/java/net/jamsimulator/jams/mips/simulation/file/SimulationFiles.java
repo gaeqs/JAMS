@@ -1,7 +1,7 @@
 package net.jamsimulator.jams.mips.simulation.file;
 
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileCloseEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileOpenEvent;
 import net.jamsimulator.jams.utils.Validate;
@@ -13,10 +13,10 @@ import java.util.Optional;
 
 public class SimulationFiles extends SimpleEventBroadcast {
 
-	private final Simulation<?> simulation;
+	private final MIPSSimulation<?> simulation;
 	private final HashMap<Integer, SimulationFile> files;
 
-	public SimulationFiles(Simulation<?> simulation) {
+	public SimulationFiles(MIPSSimulation<?> simulation) {
 		this.simulation = simulation;
 		files = new HashMap<>();
 
@@ -25,7 +25,7 @@ public class SimulationFiles extends SimpleEventBroadcast {
 		files.put(2, new ConsoleOutSimulationFile(this, 2, simulation.getConsole(), true));
 	}
 
-	public Simulation<?> getSimulation() {
+	public MIPSSimulation<?> getSimulation() {
 		return simulation;
 	}
 

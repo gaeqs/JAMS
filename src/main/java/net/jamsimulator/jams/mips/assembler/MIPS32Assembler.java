@@ -9,7 +9,7 @@ import net.jamsimulator.jams.mips.label.Label;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.register.Registers;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 
 import java.util.*;
@@ -122,7 +122,7 @@ public class MIPS32Assembler implements Assembler {
     }
 
     @Override
-    public <Arch extends Architecture> Simulation<Arch> createSimulation(Arch architecture, SimulationData data) {
+    public <Arch extends Architecture> MIPSSimulation<Arch> createSimulation(Arch architecture, SimulationData data) {
         if (!assembled) throw new IllegalStateException("The program is still not assembled!");
 
         Memory memory = getMemory().copy();
@@ -132,10 +132,10 @@ public class MIPS32Assembler implements Assembler {
 
         Registers registers = getRegisters().copy();
 
-        Simulation<?> simulation = architecture.createSimulation(instructionSet, registers, memory,
+        MIPSSimulation<?> simulation = architecture.createSimulation(instructionSet, registers, memory,
                 assemblerData.getCurrentText() - 4,
                 assemblerData.getCurrentKText() - 4, data);
-        return (Simulation<Arch>) simulation;
+        return (MIPSSimulation<Arch>) simulation;
     }
 
     @Override

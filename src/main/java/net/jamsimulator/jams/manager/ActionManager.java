@@ -58,7 +58,7 @@ import java.util.stream.Collectors;
 /**
  * This singleton stores all {@link Action}s that JAMS may use.
  * <p>
- * To register an {@link Action} use {@link #add(Action)}.
+ * To register an {@link Action} use {@link Manager#add(Labeled)}}.
  * To unregister am {@link Action} use {@link #remove(Object)}.
  * <p>
  * To bind an {@link Action} to a {@link KeyCombination} use {@link #bind(KeyCombination, String)}.

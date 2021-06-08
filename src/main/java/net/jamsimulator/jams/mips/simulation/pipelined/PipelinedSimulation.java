@@ -46,7 +46,7 @@ import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterLockEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterUnlockEvent;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.mips.simulation.change.*;
 import net.jamsimulator.jams.mips.simulation.change.pipelined.PipelinedSimulationChangePipeline;
@@ -72,7 +72,7 @@ import java.util.Optional;
  *
  * @see MultiCycleArchitecture
  */
-public class PipelinedSimulation extends Simulation<PipelinedArchitecture> implements ForwardingSupporter {
+public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> implements ForwardingSupporter {
 
     public static final int MAX_CHANGES = 10000;
 

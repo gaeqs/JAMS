@@ -4,7 +4,7 @@ import javafx.application.Platform;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledCodeViewer;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledLine;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleSimulation;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 import net.jamsimulator.jams.mips.simulation.multicycle.event.MultiCycleStepEvent;
@@ -16,7 +16,7 @@ public class MIPSMultiCycleAssembledCodeViewer extends MIPSAssembledCodeViewer {
 
     private int previousLine;
 
-    public MIPSMultiCycleAssembledCodeViewer(Simulation<?> simulation, boolean kernel) {
+    public MIPSMultiCycleAssembledCodeViewer(MIPSSimulation<?> simulation, boolean kernel) {
         super(simulation, kernel);
 
         var sim = (MultiCycleSimulation) simulation;

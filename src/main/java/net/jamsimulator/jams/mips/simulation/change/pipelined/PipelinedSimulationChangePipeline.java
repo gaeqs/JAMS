@@ -1,7 +1,7 @@
 package net.jamsimulator.jams.mips.simulation.change.pipelined;
 
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.change.SimulationChange;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 import net.jamsimulator.jams.mips.simulation.pipelined.Pipeline;
@@ -19,7 +19,7 @@ public class PipelinedSimulationChangePipeline extends SimulationChange<Pipeline
 	}
 
 	@Override
-	public void restore(Simulation<? extends PipelinedArchitecture> simulation) {
+	public void restore(MIPSSimulation<? extends PipelinedArchitecture> simulation) {
 		((PipelinedSimulation) simulation).getPipeline().restore(old);
 	}
 }

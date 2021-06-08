@@ -2,7 +2,7 @@ package net.jamsimulator.jams.mips.syscall;
 
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionRunExceptionHandler;
 
 import java.util.Collections;
@@ -27,7 +27,7 @@ public class SimulationSyscallExecutions {
 		executions.put(v0Code, execution);
 	}
 
-	public void executeSyscall(Simulation<?> simulation) {
+	public void executeSyscall(MIPSSimulation<?> simulation) {
 		Register v0 = simulation.getRegisters().getRegister(2).orElse(null);
 		if (v0 == null) throw new IllegalStateException("Register v0 not found");
 

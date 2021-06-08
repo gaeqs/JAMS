@@ -1,6 +1,6 @@
 package net.jamsimulator.jams.mips.interrupt;
 
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.TreeSet;
@@ -18,7 +18,7 @@ public class ExternalInterruptController {
         return pendingInterrupts.size() > 0;
     }
 
-    public boolean isRequestingInterrupts(Simulation<?> simulation) {
+    public boolean isRequestingInterrupts(MIPSSimulation<?> simulation) {
         return pendingInterrupts.size() > 0 && simulation.areMIPSInterruptsEnabled() &&
                 simulation.getIPLevel() < pendingInterrupts.last();
     }

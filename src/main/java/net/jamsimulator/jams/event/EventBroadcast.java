@@ -46,7 +46,7 @@ public interface EventBroadcast {
      * If {@code weakReference} is true the instance will be store in a weak reference instead of a normal parameter.
      * This is useful if you want to register this such as buttons, or labels, allowing the GC to free memory easily
      * when those elements are no longer referenced in your code.
-     * Set this boolean to {@link false} if the only reference of the instance is hold by this broadcast.
+     * Set this boolean to {@code false} if the only reference of the instance is hold by this broadcast.
      *
      * @param instance          the instance.
      * @param method            the listener.
@@ -64,7 +64,7 @@ public interface EventBroadcast {
      * If {@code weakReference} is true the instance will be store in a weak reference instead of a normal parameter.
      * This is useful if you want to register this such as buttons, or labels, allowing the GC to free memory easily
      * when those elements are no longer referenced in your code.
-     * Set this boolean to {@link false} if the only reference of the instance is hold by this broadcast.
+     * Set this boolean to {@code false} if the only reference of the instance is hold by this broadcast.
      * <p>
      * See {@link #registerListener(Object, Method, boolean)} for more information.
      *

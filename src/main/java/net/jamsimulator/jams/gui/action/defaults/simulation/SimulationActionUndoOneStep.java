@@ -39,7 +39,7 @@ import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.mips.project.MIPSSimulationPane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 import java.util.Optional;
 
@@ -62,7 +62,7 @@ public class SimulationActionUndoOneStep extends ContextAction {
 		if (tab == null || !(tab.getContent() instanceof MIPSSimulationPane)) return;
 
 		MIPSSimulationPane pane = (MIPSSimulationPane) tab.getContent();
-		Simulation<?> simulation = pane.getSimulation();
+		MIPSSimulation<?> simulation = pane.getSimulation();
 
 		simulation.undoLastStep();
 	}

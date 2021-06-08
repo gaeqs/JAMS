@@ -34,7 +34,7 @@ import net.jamsimulator.jams.mips.memory.cache.event.CacheBuilderUnregisterEvent
 /**
  * This singleton stores all {@link CacheBuilder}s that projects may use.
  * <p>
- * To register an {@link CacheBuilder} use {@link #add(CacheBuilder)}.
+ * To register an {@link CacheBuilder} use {@link Manager#add(Labeled)}}.
  * To unregister an {@link CacheBuilder} use {@link #remove(Object)}.
  * A {@link CacheBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.

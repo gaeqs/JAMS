@@ -19,7 +19,7 @@ import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 import net.jamsimulator.jams.manager.NumberRepresentationManager;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.NumberRepresentation;
 import net.jamsimulator.jams.utils.representation.event.NumberRepresentationRegisterEvent;
 import net.jamsimulator.jams.utils.representation.event.NumberRepresentationUnregisterEvent;
@@ -32,11 +32,11 @@ import java.util.stream.Collectors;
 /**
  * Represents the main pane for the {@link MemoryPane}.
  * <p>
- * Use this to represents a set of memories of a {@link Simulation}.
+ * Use this to represents a set of memories of a {@link MIPSSimulation}.
  */
 public class MemoryPane extends AnchorPane implements ActionRegion {
 
-    private final Simulation<?> simulation;
+    private final MIPSSimulation<?> simulation;
 
     private MemoryTable table;
     private Memory selected;
@@ -49,7 +49,7 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
 
     private final HBox headerHBox, buttonsHBox;
 
-    public MemoryPane(Simulation<?> simulation) {
+    public MemoryPane(MIPSSimulation<?> simulation) {
         this.simulation = simulation;
         this.savedOffset = 0;
 
@@ -165,8 +165,8 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
     private void initButtons(HBox buttonsHBox) {
         buttonsHBox.setAlignment(Pos.CENTER);
         buttonsHBox.setFillHeight(true);
-        Button previous = new Button("←");
-        Button next = new Button("→");
+        Button previous = new Button("\u2190");
+        Button next = new Button("\u2192");
 
         previous.getStyleClass().add("bold-button");
         next.getStyleClass().add("bold-button");

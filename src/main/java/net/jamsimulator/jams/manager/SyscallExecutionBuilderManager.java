@@ -43,7 +43,7 @@ import java.util.Set;
 /**
  * This singleton stores all {@link SyscallExecutionBuilder}s that projects may use.
  * <p>
- * To register an {@link SyscallExecutionBuilder} use {@link #add(SyscallExecutionBuilder)}.
+ * To register an {@link SyscallExecutionBuilder} use {@link Manager#add(Labeled)}}.
  * To unregister an {@link SyscallExecutionBuilder} use {@link #remove(Object)}.
  * An {@link SyscallExecutionBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.

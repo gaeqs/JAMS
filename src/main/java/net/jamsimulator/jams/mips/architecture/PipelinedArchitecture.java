@@ -27,7 +27,7 @@ package net.jamsimulator.jams.mips.architecture;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
 
@@ -53,12 +53,12 @@ public class PipelinedArchitecture extends MultiCycleArchitecture {
 	}
 
 	@Override
-	public Simulation<? extends PipelinedArchitecture> createSimulation(InstructionSet instructionSet,
-															  Registers registers,
-															  Memory memory,
-															  int instructionStackBottom,
-															  int kernelStackBottom,
-															  SimulationData data) {
+	public MIPSSimulation<? extends PipelinedArchitecture> createSimulation(InstructionSet instructionSet,
+                                                                            Registers registers,
+                                                                            Memory memory,
+                                                                            int instructionStackBottom,
+                                                                            int kernelStackBottom,
+                                                                            SimulationData data) {
 		return new PipelinedSimulation(this, instructionSet, registers, memory, instructionStackBottom, kernelStackBottom, data);
 	}
 }

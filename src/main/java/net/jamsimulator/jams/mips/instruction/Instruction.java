@@ -40,13 +40,11 @@ import java.util.List;
  * <p>
  * Several instructions with the same mnemonic but different parameters may coexists at the same time.
  * For example, these two instructions are different {@link Instruction} instances:
- * <b>
  * <p>
  * add $t0,$t1,$t2
  * <p>
  * add $t0,$t1,100
  * <p>
- * </b>
  * The first one is a basic instruction that has three registers as parameters, and the second one
  * is a pseudo instruction that has two registers and a 16-bit immediate as parameters.
  * <p>

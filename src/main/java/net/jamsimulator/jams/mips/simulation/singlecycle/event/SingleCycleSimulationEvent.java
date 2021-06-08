@@ -1,6 +1,5 @@
 package net.jamsimulator.jams.mips.simulation.singlecycle.event;
 
-import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationEvent;
 import net.jamsimulator.jams.mips.simulation.singlecycle.SingleCycleSimulation;
 

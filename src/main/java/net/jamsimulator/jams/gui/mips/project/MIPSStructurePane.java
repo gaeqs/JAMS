@@ -130,11 +130,6 @@ public class MIPSStructurePane extends WorkingPane {
         explorer = new MipsFolderExplorer(project, pane);
         pane.setContent(explorer);
 
-        pane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
-            double deltaY = scrollEvent.getDeltaY() * 0.003;
-            pane.setVvalue(pane.getVvalue() - deltaY);
-        });
-
         manageBarAddition("explorer", pane, icon, Messages.BAR_EXPLORER_NAME, BarPosition.LEFT_TOP, BarSnapshotViewModePane.INSTANCE, true);
 
         explorer.setFileOpenAction(file -> openFile(file.getFile()));

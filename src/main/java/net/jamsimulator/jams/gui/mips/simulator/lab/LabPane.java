@@ -1,13 +1,13 @@
 package net.jamsimulator.jams.gui.mips.simulator.lab;
 
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class LabPane extends VBox {
 
     public static final String STYLE_CLASS = "lab";
 
-    public LabPane(Simulation<?> simulation) {
+    public LabPane(MIPSSimulation<?> simulation) {
         getStyleClass().add(STYLE_CLASS);
         getChildren().add(new LabSegments(simulation.getMemory()));
         getChildren().add(new LabHexadecimalKeyboard(simulation));

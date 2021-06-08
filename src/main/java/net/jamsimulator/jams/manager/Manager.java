@@ -84,8 +84,8 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
 	/**
 	 * Attempts to register the given element.
 	 * If the element is null this method throws an {@link NullPointerException}.
-	 * If the element is already present or the register event is cancelled this method returns {@link false}.
-	 * If the operation was successful the method returns {@link true}.
+	 * If the element is already present or the register event is cancelled this method returns {@code false}.
+	 * If the operation was successful the method returns {@code true}.
 	 *
 	 * @param element the element to register.
 	 * @return whether the operation was successful.
@@ -120,9 +120,9 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
 	/**
 	 * Attempts to unregister the given element.
 	 * If the element is null this method throws a {@link NullPointerException}.
-	 * If the element type is invalid this method returns {@link false}.
-	 * If the element is not present or the unregister event is cancelled this method returns {@link false}.
-	 * If the operation was successful the method returns {@link true}.
+	 * If the element type is invalid this method returns {@code false}.
+	 * If the element is not present or the unregister event is cancelled this method returns {@code false}.
+	 * If the operation was successful the method returns {@code true}.
 	 *
 	 * @param o the element to unregister.
 	 * @return whether the operation was successful.

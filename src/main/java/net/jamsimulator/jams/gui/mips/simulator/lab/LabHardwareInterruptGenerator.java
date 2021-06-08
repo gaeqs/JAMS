@@ -7,11 +7,11 @@ import net.jamsimulator.jams.gui.configuration.ConfigurationRegionDisplay;
 import net.jamsimulator.jams.gui.util.value.RangedIntegerValueEditor;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class LabHardwareInterruptGenerator extends VBox {
 
-    public LabHardwareInterruptGenerator(Simulation<?> simulation) {
+    public LabHardwareInterruptGenerator(MIPSSimulation<?> simulation) {
         getChildren().add(new ConfigurationRegionDisplay(Messages.LAB_HARDWARE_INTERRUPTS));
         setSpacing(5);
 

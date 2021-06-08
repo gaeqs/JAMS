@@ -1,7 +1,9 @@
 package net.jamsimulator.jams.mips.simulation.pipelined;
 
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+
 /**
- * Represents a {@link net.jamsimulator.jams.mips.simulation.Simulation} that supports forwarding.
+ * Represents a {@link MIPSSimulation} that supports forwarding.
  */
 public interface ForwardingSupporter {
 

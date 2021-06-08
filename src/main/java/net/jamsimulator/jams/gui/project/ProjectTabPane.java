@@ -28,9 +28,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
-import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
-import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -38,65 +36,66 @@ import java.util.function.Consumer;
 
 public class ProjectTabPane extends TabPane {
 
-	private final ProjectTab projectTab;
+    private final ProjectTab projectTab;
 
-	private final WorkingPane workingPane;
+    private final WorkingPane workingPane;
 
-	private final Consumer<Tab> onClose;
-	private final BiConsumer<Tab, Tab> onSelect;
+    private final Consumer<Tab> onClose;
+    private final BiConsumer<Tab, Tab> onSelect;
 
-	public ProjectTabPane(ProjectTab projectTab, BiConsumer<Tab, Tab> onSelect, Consumer<Tab> onClose) {
-		getStyleClass().add("project-tab-pane");
-		setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
-		this.projectTab = projectTab;
-		this.onClose = onClose;
-		this.onSelect = onSelect;
+    public ProjectTabPane(ProjectTab projectTab, BiConsumer<Tab, Tab> onSelect, Consumer<Tab> onClose) {
+        getStyleClass().add("project-tab-pane");
+        setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
+        this.projectTab = projectTab;
+        this.onClose = onClose;
+        this.onSelect = onSelect;
 
-		projectTab.addTabCloseListener(event -> {
-			for (Tab tab : getTabs()) {
-				if (tab.getContent() instanceof ProjectPane)
-					((ProjectPane) tab.getContent()).onClose();
-			}
-		});
+        projectTab.addTabCloseListener(event -> {
+            for (Tab tab : getTabs()) {
+                if (tab.getContent() instanceof ProjectPane)
+                    ((ProjectPane) tab.getContent()).onClose();
+            }
+        });
 
-		workingPane = createProjectPane((tab, pt) -> new MIPSStructurePane(tab, pt, (MIPSProject) pt.getProject()), false);
-		removeFirst();
+        workingPane = createProjectPane((tab, pt) ->
+                projectTab.getProject().generateMainProjectPane(tab, pt), false);
+        removeFirst();
 
-		getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> onSelect.accept(old, val));
-	}
+        getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> onSelect.accept(old, val));
+    }
 
 
-	private void removeFirst() {
-		Platform.runLater(() -> {
-			if (getChildren().isEmpty()) removeFirst();
-			else {
-				getChildren().remove(0);
-				onSelect.accept(null, getTabs().get(0));
-			}
-		});
-	}
+    private void removeFirst() {
+        Platform.runLater(() -> {
+            if (getChildren().isEmpty()) removeFirst();
+            else {
+                getChildren().remove(0);
+                onSelect.accept(null, getTabs().get(0));
+            }
+        });
+    }
 
-	public WorkingPane getWorkingPane() {
-		return workingPane;
-	}
+    public WorkingPane getWorkingPane() {
+        return workingPane;
+    }
 
-	public <E extends ProjectPane> E createProjectPane(BiFunction<Tab, ProjectTab, E> creator, boolean closeable) {
-		LanguageTab tab = new LanguageTab("");
-		tab.setClosable(closeable);
+    public <E extends ProjectPane> E createProjectPane(BiFunction<Tab, ProjectTab, E> creator, boolean closeable) {
+        LanguageTab tab = new LanguageTab("");
+        tab.setClosable(closeable);
 
-		E pane = creator.apply(tab, projectTab);
-		if (!(pane instanceof Pane)) throw new IllegalArgumentException("Pane must be a Pane!");
+        E pane = creator.apply(tab, projectTab);
+        if (!(pane instanceof Pane)) throw new IllegalArgumentException("Pane must be a Pane!");
 
-		tab.setNode(pane.getLanguageNode());
-		tab.setContent((Pane) pane);
+        tab.setNode(pane.getLanguageNode());
+        tab.setContent((Pane) pane);
 
-		tab.setOnClosed(event -> {
-			pane.onClose();
-			if (onClose != null) onClose.accept(tab);
-		});
+        tab.setOnClosed(event -> {
+            pane.onClose();
+            if (onClose != null) onClose.accept(tab);
+        });
 
-		getTabs().add(tab);
+        getTabs().add(tab);
 
-		return pane;
-	}
+        return pane;
+    }
 }

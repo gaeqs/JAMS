@@ -5,7 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.GridPane;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 import java.util.Locale;
 
@@ -16,9 +16,9 @@ public class LabHexadecimalKeyboard extends GridPane {
 
     private final HexButton[] buttons = new HexButton[16];
 
-    private final Simulation<?> simulation;
+    private final MIPSSimulation<?> simulation;
 
-    public LabHexadecimalKeyboard(Simulation<?> simulation) {
+    public LabHexadecimalKeyboard(MIPSSimulation<?> simulation) {
         this.simulation = simulation;
 
         setPadding(new Insets(10));

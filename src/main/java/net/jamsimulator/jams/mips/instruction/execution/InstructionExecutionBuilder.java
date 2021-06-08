@@ -26,10 +26,10 @@ package net.jamsimulator.jams.mips.instruction.execution;
 
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public interface InstructionExecutionBuilder<Arch extends Architecture, Inst extends AssembledInstruction> {
 
-	InstructionExecution<Arch, Inst> create(Simulation<Arch> simulation, Inst instruction, int address);
+	InstructionExecution<Arch, Inst> create(MIPSSimulation<Arch> simulation, Inst instruction, int address);
 
 }

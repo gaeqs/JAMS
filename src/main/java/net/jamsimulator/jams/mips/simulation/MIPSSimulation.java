@@ -68,7 +68,7 @@ import java.util.Set;
  *
  * @param <Arch> the architecture the simulation is based on.
  */
-public abstract class Simulation<Arch extends Architecture> extends SimpleEventBroadcast {
+public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEventBroadcast {
 
     protected final Arch architecture;
     protected final InstructionSet instructionSet;
@@ -115,7 +115,7 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
      * @param instructionStackBottom the address of the bottom of the instruction stack.
      * @param data                   the immutable data of this simulation.
      */
-    public Simulation(Arch architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, SimulationData data, boolean useCache) {
+    public MIPSSimulation(Arch architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, SimulationData data, boolean useCache) {
         this.architecture = architecture;
         this.instructionSet = instructionSet;
         this.registers = registers;
@@ -352,17 +352,17 @@ public abstract class Simulation<Arch extends Architecture> extends SimpleEventB
     }
 
     /**
-     * Returns the current cycle of this {@link Simulation}.
+     * Returns the current cycle of this {@link MIPSSimulation}.
      * This is also the amount of executed cycles.
      *
-     * @return the current cycle of this {@link Simulation}.
+     * @return the current cycle of this {@link MIPSSimulation}.
      */
     public long getCycles() {
         return cycles;
     }
 
     /**
-     * Sets the amount oc cycles of this {@link Simulation}.
+     * Sets the amount oc cycles of this {@link MIPSSimulation}.
      * This field may be used when the Register {@code Count} is updated.
      *
      * @param cycles the amount of cycles.

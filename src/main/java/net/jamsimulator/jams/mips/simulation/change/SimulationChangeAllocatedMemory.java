@@ -1,7 +1,7 @@
 package net.jamsimulator.jams.mips.simulation.change;
 
 import net.jamsimulator.jams.mips.architecture.Architecture;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 /**
  * A {@link SimulationChange} that registers a {@link net.jamsimulator.jams.mips.memory.Memory}'s endianness change.
@@ -15,7 +15,7 @@ public class SimulationChangeAllocatedMemory extends SimulationChange<Architectu
 	}
 
 	@Override
-	public void restore(Simulation<? extends Architecture> simulation) {
+	public void restore(MIPSSimulation<? extends Architecture> simulation) {
 		simulation.getMemory().setNextDataAddress(oldNext);
 	}
 }

@@ -4,10 +4,10 @@ import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 /**
- * A {@link SimulationChange} that registers a word change inside the {@link Simulation}'s {@link Memory}.
+ * A {@link SimulationChange} that registers a word change inside the {@link MIPSSimulation}'s {@link Memory}.
  */
 public class SimulationChangeCacheOperation extends SimulationChange<Architecture> {
 
@@ -24,7 +24,7 @@ public class SimulationChangeCacheOperation extends SimulationChange<Architectur
 	}
 
 	@Override
-	public void restore(Simulation<? extends Architecture> simulation) {
+	public void restore(MIPSSimulation<? extends Architecture> simulation) {
 		cache.undoOperation(hit, blockIndex, old);
 	}
 }

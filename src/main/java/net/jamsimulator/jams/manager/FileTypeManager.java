@@ -39,7 +39,7 @@ import java.util.Optional;
 /**
  * This singleton stores all {@link FileType}s that JAMS may use.
  * <p>
- * To register a {@link FileType} use {@link #add(FileType)}.
+ * To register a {@link FileType} use {@link Manager#add(Labeled)}}.
  * To unregister a {@link FileType} use {@link #remove(Object)}.
  */
 public class FileTypeManager extends Manager<FileType> {

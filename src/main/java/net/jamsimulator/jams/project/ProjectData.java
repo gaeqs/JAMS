@@ -38,6 +38,9 @@ public abstract class ProjectData extends SimpleEventBroadcast {
     public static final String FILES_FOLDER_NAME = "Simulation files";
     public static final String METADATA_DATA_NAME = "data.json";
 
+    public static final String NAME_NODE = "name";
+    public static final String PATH_NODE = "path";
+
     protected final ProjectType<?> type;
 
     protected final File metadataFolder;
@@ -82,8 +85,8 @@ public abstract class ProjectData extends SimpleEventBroadcast {
     }
 
     public void save() {
-        data.set("name", name);
-        data.set("type", type.getName());
+        data.set(NAME_NODE, name);
+        data.set(PATH_NODE, type.getName());
         try {
             data.save(true);
         } catch (IOException e) {
@@ -100,6 +103,6 @@ public abstract class ProjectData extends SimpleEventBroadcast {
             throw new RuntimeException(e);
         }
 
-        name = data.getString("name").orElse(metadataFolder.getParentFile().getName());
+        name = data.getString(NAME_NODE).orElse(metadataFolder.getParentFile().getName());
     }
 }

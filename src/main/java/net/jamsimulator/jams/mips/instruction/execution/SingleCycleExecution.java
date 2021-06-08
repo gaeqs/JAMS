@@ -26,11 +26,11 @@ package net.jamsimulator.jams.mips.instruction.execution;
 
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public abstract class SingleCycleExecution<Inst extends AssembledInstruction> extends InstructionExecution<SingleCycleArchitecture, Inst> {
 
-	public SingleCycleExecution(Simulation<SingleCycleArchitecture> simulation, Inst instruction, int address) {
+	public SingleCycleExecution(MIPSSimulation<SingleCycleArchitecture> simulation, Inst instruction, int address) {
 		super(simulation, instruction, address);
 	}
 

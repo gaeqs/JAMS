@@ -24,13 +24,17 @@
 
 package net.jamsimulator.jams.project.mips;
 
+import javafx.application.Platform;
+import javafx.scene.control.Tab;
+import net.jamsimulator.jams.gui.mips.project.MIPSSimulationPane;
 import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;
+import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.gui.util.log.Log;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.project.BasicProject;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
@@ -53,7 +57,23 @@ public class MIPSProject extends BasicProject {
     }
 
     @Override
-    public Simulation<?> assemble(Log log) throws IOException {
+    public void generateSimulation(Log log) throws IOException {
+        var simulation = assemble(log);
+        if (simulation == null) return;
+        Platform.runLater(() -> getProjectTab().ifPresent(projectTab -> projectTab.getProjectTabPane()
+                .createProjectPane((t, pt) -> new MIPSSimulationPane(t, pt, this, simulation), true)));
+    }
+
+    /**
+     * Assembles this project, creating a {@link MIPSSimulation}.
+     * <p>
+     *
+     * @param log The log debug messages will be print on. This log may be null.
+     * @return the {@link MIPSSimulation}.
+     * @throws IOException                                                       any {@link IOException} occurred on assembly.
+     * @throws net.jamsimulator.jams.mips.assembler.exception.AssemblerException any assembler exception thrown by the assembler.
+     */
+    public MIPSSimulation<?> assemble(Log log) throws IOException {
         MIPSSimulationConfiguration configuration = getData().getSelectedConfiguration().orElse(null);
 
         if (configuration == null) {
@@ -123,6 +143,11 @@ public class MIPSProject extends BasicProject {
         }
     }
 
+
+    @Override
+    public WorkingPane generateMainProjectPane(Tab tab, ProjectTab projectTab) {
+        return new MIPSStructurePane(tab, projectTab, this);
+    }
 
     @Override
     protected void loadData() {

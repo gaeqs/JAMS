@@ -10,7 +10,7 @@ import net.jamsimulator.jams.utils.representation.event.NumberRepresentationUnre
 /**
  * This singleton stores all {@link NumberRepresentation}s that JAMs may use.
  * <p>
- * To register an {@link NumberRepresentation} use {@link #add(NumberRepresentation)}.
+ * To register an {@link NumberRepresentation} use {@link Manager#add(Labeled)}}.
  * To unregister an {@link NumberRepresentation} use {@link #remove(Object)}.
  * A {@link NumberRepresentation}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.

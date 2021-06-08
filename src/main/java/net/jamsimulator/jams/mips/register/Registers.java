@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.register;
 
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Collections;
@@ -35,7 +36,7 @@ import java.util.Set;
 
 /**
  * Represents a {@link Register} set. An instance of this class stores all
- * {@link Register}s used by a {@link net.jamsimulator.jams.mips.simulation.Simulation}.
+ * {@link Register}s used by a {@link MIPSSimulation}.
  * <p>
  * Registers ProgramCounter, HighRegister and LowRegister are always present.
  */

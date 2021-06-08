@@ -10,7 +10,7 @@ import net.jamsimulator.jams.language.wrapper.LanguageTableColumn;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationCachesResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
@@ -29,7 +29,7 @@ public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements M
 
     private final HashMap<Integer, SimpleMemoryEntry> entries;
 
-    protected Simulation<?> simulation;
+    protected MIPSSimulation<?> simulation;
     protected Memory memory;
     protected int offset;
     private NumberRepresentation representation;
@@ -38,7 +38,7 @@ public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements M
     private Runnable onPopulate = () -> {
     };
 
-    public SimpleMemoryTable(Simulation<?> simulation, Memory memory, int offset, NumberRepresentation representation) {
+    public SimpleMemoryTable(MIPSSimulation<?> simulation, Memory memory, int offset, NumberRepresentation representation) {
         this.simulation = simulation;
         this.memory = memory;
         this.offset = offset;
@@ -99,7 +99,7 @@ public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements M
     }
 
     @Override
-    public Simulation<?> getSimulation() {
+    public MIPSSimulation<?> getSimulation() {
         return simulation;
     }
 

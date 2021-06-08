@@ -5,7 +5,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
@@ -29,7 +29,7 @@ public class SyscallExecutionOpenFile implements SyscallExecution {
 	}
 
 	@Override
-	public void execute(Simulation<?> simulation) {
+	public void execute(MIPSSimulation<?> simulation) {
 		Register nameRegister = simulation.getRegisters().getRegister(this.nameRegister).orElse(null);
 		if (nameRegister == null) throw new IllegalStateException("Register " + this.nameRegister + " not found");
 		Register flagRegister = simulation.getRegisters().getRegister(this.flagRegister).orElse(null);
@@ -131,7 +131,7 @@ public class SyscallExecutionOpenFile implements SyscallExecution {
 		}
 	}
 
-	private String getString(Simulation<?> simulation, int address) {
+	private String getString(MIPSSimulation<?> simulation, int address) {
 		Memory memory = simulation.getMemory();
 		char[] chars = new char[1024];
 		int amount = 0;

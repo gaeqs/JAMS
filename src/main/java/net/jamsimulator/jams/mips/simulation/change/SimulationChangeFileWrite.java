@@ -1,7 +1,7 @@
 package net.jamsimulator.jams.mips.simulation.change;
 
 import net.jamsimulator.jams.mips.architecture.Architecture;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.file.SimulationFile;
 
 /**
@@ -18,7 +18,7 @@ public class SimulationChangeFileWrite extends SimulationChange<Architecture> {
 	}
 
 	@Override
-	public void restore(Simulation<? extends Architecture> simulation) {
+	public void restore(MIPSSimulation<? extends Architecture> simulation) {
 		file.revert(amount);
 	}
 }

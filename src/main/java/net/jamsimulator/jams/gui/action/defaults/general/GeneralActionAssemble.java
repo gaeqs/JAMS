@@ -39,12 +39,10 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
-import net.jamsimulator.jams.gui.mips.project.MIPSSimulationPane;
 import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.util.log.SimpleLog;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.util.Optional;
@@ -89,14 +87,7 @@ public class GeneralActionAssemble extends ContextAction {
             SimpleLog log = pane.getLog();
 
             try {
-                Simulation<?> simulation = project.assemble(log);
-                if (simulation == null) return;
-
-                Platform.runLater(() ->
-                        project.getProjectTab().ifPresent(projectTab -> projectTab.getProjectTabPane()
-                                .createProjectPane((t, pt) ->
-                                        new MIPSSimulationPane(t, pt, project, simulation), true)));
-
+                project.generateSimulation(log);
             } catch (Exception ex) {
                 log.printErrorLn("ERROR:");
                 log.printErrorLn(ex.getMessage());

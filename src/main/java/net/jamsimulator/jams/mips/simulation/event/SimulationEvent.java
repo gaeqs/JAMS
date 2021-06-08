@@ -1,30 +1,30 @@
 package net.jamsimulator.jams.mips.simulation.event;
 
 import net.jamsimulator.jams.event.Event;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 /**
- * Represents an {@link Event} related to a {@link Simulation}.
+ * Represents an {@link Event} related to a {@link MIPSSimulation}.
  */
 public class SimulationEvent extends Event {
 
-	private final Simulation<?> simulation;
+	private final MIPSSimulation<?> simulation;
 
 	/**
 	 * Creates the simulation event.
 	 *
-	 * @param simulation the {@link Simulation} thatcreated this event.
+	 * @param simulation the {@link MIPSSimulation} thatcreated this event.
 	 */
-	public SimulationEvent(Simulation<?> simulation) {
+	public SimulationEvent(MIPSSimulation<?> simulation) {
 		this.simulation = simulation;
 	}
 
 	/**
-	 * Returns the {@link Simulation} that created this event.
+	 * Returns the {@link MIPSSimulation} that created this event.
 	 *
-	 * @return the {@link Simulation}.
+	 * @return the {@link MIPSSimulation}.
 	 */
-	public Simulation<?> getSimulation() {
+	public MIPSSimulation<?> getSimulation() {
 		return simulation;
 	}
 }

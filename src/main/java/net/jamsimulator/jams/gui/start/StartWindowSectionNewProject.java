@@ -87,8 +87,8 @@ public class StartWindowSectionNewProject extends SplitPane implements StartWind
     }
 
     private void addCreators(ProjectType<?> type) {
-        type.getBuilderCreators().forEach(this::addCreator);
-        type.getBuilderCreators().addListener(listener);
+        type.getTemplateBuilders().forEach(this::addCreator);
+        type.getTemplateBuilders().addListener(listener);
     }
 
     private void addCreator(ProjectTemplateBuilder<?> creator) {
@@ -146,14 +146,14 @@ public class StartWindowSectionNewProject extends SplitPane implements StartWind
 
     @Listener
     private void onTypeRegistered(ProjectTypeRegisterEvent.After event) {
-        event.getProjectType().getBuilderCreators().forEach(this::addCreator);
-        event.getProjectType().getBuilderCreators().addListener(listener);
+        event.getProjectType().getTemplateBuilders().forEach(this::addCreator);
+        event.getProjectType().getTemplateBuilders().addListener(listener);
     }
 
     @Listener
     private void onTypeUnregistered(ProjectTypeUnregisterEvent.After event) {
-        event.getProjectType().getBuilderCreators().forEach(this::removeCreator);
-        event.getProjectType().getBuilderCreators().removeListener(listener);
+        event.getProjectType().getTemplateBuilders().forEach(this::removeCreator);
+        event.getProjectType().getTemplateBuilders().removeListener(listener);
     }
 
     @Override

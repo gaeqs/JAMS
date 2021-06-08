@@ -1,7 +1,7 @@
 package net.jamsimulator.jams.gui.mips.simulator.memory;
 
 import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.NumberRepresentation;
 
 /**
@@ -13,11 +13,11 @@ import net.jamsimulator.jams.utils.NumberRepresentation;
 public interface MemoryTable {
 
     /**
-     * Returns the {@link Simulation} that owns the represented memory.
+     * Returns the {@link MIPSSimulation} that owns the represented memory.
      *
      * @return the simulation.
      */
-    Simulation<?> getSimulation();
+    MIPSSimulation<?> getSimulation();
 
     /**
      * Returns the represented memory.

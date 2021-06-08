@@ -4,7 +4,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
@@ -21,7 +21,7 @@ public class SyscallExecutionRandomFloat implements SyscallExecution {
 	}
 
 	@Override
-	public void execute(Simulation<?> simulation) {
+	public void execute(MIPSSimulation<?> simulation) {
 		Register genRegister = simulation.getRegisters().getRegister(this.generatorRegister).orElse(null);
 		if (genRegister == null) throw new IllegalStateException("Register " + this.generatorRegister + " not found");
 		Register valueRegister = simulation.getRegisters().getCoprocessor1Register(this.valueRegister).orElse(null);

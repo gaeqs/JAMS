@@ -1,15 +1,15 @@
 package net.jamsimulator.jams.mips.simulation.file;
 
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileReadEvent;
 
 public class ConsoleInSimulationFile implements SimulationFile {
 
 	protected final SimulationFiles files;
 	protected final int id;
-	protected final Simulation<?> simulation;
+	protected final MIPSSimulation<?> simulation;
 
-	public ConsoleInSimulationFile(SimulationFiles files, int id, Simulation<?> simulation) {
+	public ConsoleInSimulationFile(SimulationFiles files, int id, MIPSSimulation<?> simulation) {
 		this.files = files;
 		this.id = id;
 		this.simulation = simulation;

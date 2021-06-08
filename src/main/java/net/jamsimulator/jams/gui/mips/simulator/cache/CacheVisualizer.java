@@ -11,7 +11,7 @@ import net.jamsimulator.jams.language.wrapper.LanguageTab;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.cache.event.CacheOperationEvent;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
@@ -25,7 +25,7 @@ import java.util.Optional;
  */
 public class CacheVisualizer extends AnchorPane {
 
-	private final Simulation<?> simulation;
+	private final MIPSSimulation<?> simulation;
 	private final ComboBox<Cache> cacheComboBox;
 	private final CacheStatsVisualizer statsVisualizer;
 	private final CacheLogVisualizer logVisualizer;
@@ -33,9 +33,9 @@ public class CacheVisualizer extends AnchorPane {
 	/**
 	 * Creates the cache visualizer.
 	 *
-	 * @param simulation the {@link Simulation} containing the cache.
+	 * @param simulation the {@link MIPSSimulation} containing the cache.
 	 */
-	public CacheVisualizer(Simulation<?> simulation) {
+	public CacheVisualizer(MIPSSimulation<?> simulation) {
 		this.simulation = simulation;
 
 		cacheComboBox = new ComboBox<>();
@@ -50,11 +50,11 @@ public class CacheVisualizer extends AnchorPane {
 	}
 
 	/**
-	 * Returns the {@link Simulation} containing the caches of this visualizer.
+	 * Returns the {@link MIPSSimulation} containing the caches of this visualizer.
 	 *
-	 * @return the {@link Simulation}.
+	 * @return the {@link MIPSSimulation}.
 	 */
-	public Simulation<?> getSimulation() {
+	public MIPSSimulation<?> getSimulation() {
 		return simulation;
 	}
 
@@ -71,7 +71,7 @@ public class CacheVisualizer extends AnchorPane {
 	 * Loads the cache combo box.
 	 * This box allows to select any cache of the simulation.
 	 *
-	 * @param memory the {@link Simulation}'s memory.
+	 * @param memory the {@link MIPSSimulation}'s memory.
 	 */
 	private void loadCacheComboBox(Memory memory) {
 		cacheComboBox.setCellFactory(f -> new CacheLanguageListCell());

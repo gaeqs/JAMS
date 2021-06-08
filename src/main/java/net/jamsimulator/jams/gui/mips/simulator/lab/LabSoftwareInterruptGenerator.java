@@ -9,11 +9,11 @@ import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class LabSoftwareInterruptGenerator extends VBox {
 
-    public LabSoftwareInterruptGenerator(Simulation<?> simulation) {
+    public LabSoftwareInterruptGenerator(MIPSSimulation<?> simulation) {
         getChildren().add(new ConfigurationRegionDisplay(Messages.LAB_SOFTWARE_INTERRUPTS));
         setSpacing(5);
 

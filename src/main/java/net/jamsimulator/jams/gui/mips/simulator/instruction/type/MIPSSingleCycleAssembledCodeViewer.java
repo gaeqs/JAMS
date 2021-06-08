@@ -4,7 +4,7 @@ import javafx.application.Platform;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledCodeViewer;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledLine;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.singlecycle.event.SingleCycleInstructionExecutionEvent;
 
 import java.util.Collections;
@@ -14,7 +14,7 @@ public class MIPSSingleCycleAssembledCodeViewer extends MIPSAssembledCodeViewer 
 
     private int previousLine;
 
-    public MIPSSingleCycleAssembledCodeViewer(Simulation<?> simulation, boolean kernel) {
+    public MIPSSingleCycleAssembledCodeViewer(MIPSSimulation<?> simulation, boolean kernel) {
         super(simulation, kernel);
 
         var optional = assembledLines.stream()

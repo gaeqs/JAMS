@@ -15,7 +15,7 @@ import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationCycleEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
@@ -25,7 +25,7 @@ public class LabCounter extends VBox {
 
     public static final String CONFIG_NODE = "simulation.mips.lab_counter_address";
 
-    private final Simulation<?> simulation;
+    private final MIPSSimulation<?> simulation;
     private final RangedIntegerValueEditor numberEditor;
     private final ProgressBar progressBar;
     private final Label counterDisplay;
@@ -33,7 +33,7 @@ public class LabCounter extends VBox {
     public int address = 0xFFFF0012;
     private byte counter, reset;
 
-    public LabCounter(Simulation<?> simulation) {
+    public LabCounter(MIPSSimulation<?> simulation) {
         this.simulation = simulation;
         this.address = Jams.getMainConfiguration().getNumber(CONFIG_NODE).orElse(0).intValue();
 

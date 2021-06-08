@@ -1,12 +1,12 @@
 package net.jamsimulator.jams.mips.simulation.event;
 
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class SimulationAddBreakpointEvent extends SimulationEvent {
 
     private final int address;
 
-    public SimulationAddBreakpointEvent(Simulation<?> simulation, int address) {
+    public SimulationAddBreakpointEvent(MIPSSimulation<?> simulation, int address) {
         super(simulation);
         this.address = address;
     }

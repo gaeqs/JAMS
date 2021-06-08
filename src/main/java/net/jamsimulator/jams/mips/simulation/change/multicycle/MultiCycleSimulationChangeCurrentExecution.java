@@ -2,7 +2,7 @@ package net.jamsimulator.jams.mips.simulation.change.multicycle;
 
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.change.SimulationChange;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleSimulation;
 
@@ -18,7 +18,7 @@ public class MultiCycleSimulationChangeCurrentExecution extends SimulationChange
 	}
 
 	@Override
-	public void restore(Simulation<? extends MultiCycleArchitecture> simulation) {
+	public void restore(MIPSSimulation<? extends MultiCycleArchitecture> simulation) {
 		((MultiCycleSimulation) simulation).forceCurrentExecutionChange(old);
 	}
 }

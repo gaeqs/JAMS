@@ -4,7 +4,7 @@ import javafx.application.Platform;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledCodeViewer;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledLine;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
 import net.jamsimulator.jams.mips.simulation.pipelined.event.PipelineShiftEvent;
@@ -17,7 +17,7 @@ public class MIPSPipelinedAssembledCodeViewer extends MIPSAssembledCodeViewer {
 
     private final int[] previousLines;
 
-    public MIPSPipelinedAssembledCodeViewer(Simulation<?> simulation, boolean kernel) {
+    public MIPSPipelinedAssembledCodeViewer(MIPSSimulation<?> simulation, boolean kernel) {
         super(simulation, kernel);
 
         previousLines = new int[MultiCycleStep.values().length];

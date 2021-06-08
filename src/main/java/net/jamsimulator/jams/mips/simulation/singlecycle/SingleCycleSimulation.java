@@ -41,7 +41,7 @@ import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.COP0RegistersBits;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.mips.simulation.change.*;
 import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
@@ -65,7 +65,7 @@ import java.util.Optional;
  *
  * @see SingleCycleArchitecture
  */
-public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
+public class SingleCycleSimulation extends MIPSSimulation<SingleCycleArchitecture> {
 
     public static final int MAX_CHANGES = 10000;
 

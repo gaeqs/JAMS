@@ -70,7 +70,7 @@ public abstract class SelectableManager<Type extends Labeled> extends DefaultVal
 	 * If the given element is not present in this manager, this method throws an {@link IllegalArgumentException}.
 	 * <p>
 	 * If the element is already the default value or the change event is cancelled, this method returns {@code false}.
-	 * If the operation was successful, this method returns {@link true}.
+	 * If the operation was successful, this method returns {@code true}.
 	 *
 	 * @param selected the new selected element.
 	 * @return whether the operation was successful.

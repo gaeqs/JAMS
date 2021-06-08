@@ -18,7 +18,7 @@ import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.*;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.CodeArea;
@@ -33,7 +33,7 @@ import java.util.function.BiFunction;
  */
 public abstract class MIPSAssembledCodeViewer extends CodeArea {
 
-    public static Map<Architecture, BiFunction<Simulation<?>, Boolean, MIPSAssembledCodeViewer>> VIEWERS_PER_ARCHITECTURE = new HashMap<>();
+    public static Map<Architecture, BiFunction<MIPSSimulation<?>, Boolean, MIPSAssembledCodeViewer>> VIEWERS_PER_ARCHITECTURE = new HashMap<>();
 
     static {
         VIEWERS_PER_ARCHITECTURE.put(SingleCycleArchitecture.INSTANCE, MIPSSingleCycleAssembledCodeViewer::new);
@@ -42,12 +42,12 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     }
 
     public static void registerViewer(Architecture architecture,
-                                      BiFunction<Simulation<?>, Boolean, MIPSAssembledCodeViewer> builder) {
+                                      BiFunction<MIPSSimulation<?>, Boolean, MIPSAssembledCodeViewer> builder) {
         VIEWERS_PER_ARCHITECTURE.put(architecture, builder);
     }
 
-    public static MIPSAssembledCodeViewer createViewer(Architecture architecture, Simulation<?> simulation, boolean kernel) {
-        BiFunction<Simulation<?>, Boolean, MIPSAssembledCodeViewer> builder =
+    public static MIPSAssembledCodeViewer createViewer(Architecture architecture, MIPSSimulation<?> simulation, boolean kernel) {
+        BiFunction<MIPSSimulation<?>, Boolean, MIPSAssembledCodeViewer> builder =
                 VIEWERS_PER_ARCHITECTURE.get(architecture);
         if (builder == null) return new MIPSSingleCycleAssembledCodeViewer(simulation, kernel);
         return builder.apply(simulation, kernel);
@@ -64,14 +64,14 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     private static final String SHOW_LABELS_NODE = "simulation.mips.show_labels";
 
     protected final List<MIPSAssembledLine> assembledLines;
-    protected final Simulation<?> simulation;
+    protected final MIPSSimulation<?> simulation;
     protected final boolean kernel;
     protected final Register pc;
 
     protected boolean shouldUpdate;
     protected boolean fullSpeed;
 
-    public Simulation<?> getSimulation() {
+    public MIPSSimulation<?> getSimulation() {
         return simulation;
     }
 
@@ -81,7 +81,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
      * @param simulation the simulation holding the instructions.
      * @param kernel     whether this view should show user or kernel instructions.
      */
-    public MIPSAssembledCodeViewer(Simulation<?> simulation, boolean kernel) {
+    public MIPSAssembledCodeViewer(MIPSSimulation<?> simulation, boolean kernel) {
         assembledLines = new ArrayList<>();
         this.simulation = simulation;
         this.kernel = kernel;
@@ -294,11 +294,11 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     //region add and style
 
     /**
-     * Adds all instructions of the {@link Simulation} to this viewer.
+     * Adds all instructions of the {@link MIPSSimulation} to this viewer.
      *
-     * @param simulation the {@link Simulation}.
+     * @param simulation the {@link MIPSSimulation}.
      */
-    private void addElements(Simulation<?> simulation) {
+    private void addElements(MIPSSimulation<?> simulation) {
         assembledLines.clear();
         var order = Jams.getMainConfiguration()
                 .getAndConvertOrElse(VIEWER_ELEMENTS_ORDER_NODE, MIPSAssembledInstructionViewerOrder.DEFAULT);
@@ -348,13 +348,13 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     /**
      * Adds and styles the given instruction.
      *
-     * @param simulation    the {@link Simulation}
+     * @param simulation    the {@link MIPSSimulation}
      * @param code          the code of the instruction.
      * @param registerStart the prefix of the registers.
      * @param stringBuilder the string builder.
      * @param styleBuilder  the style builder.
      */
-    private void generateInstructionDisplay(Simulation<?> simulation, int code,
+    private void generateInstructionDisplay(MIPSSimulation<?> simulation, int code,
                                             String registerStart, String original,
                                             MIPSAssembledInstructionViewerOrder order,
                                             StringBuilder stringBuilder, EasyStyleSpansBuilder styleBuilder) {

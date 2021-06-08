@@ -119,6 +119,7 @@ public class MIPSEmptyProjectTemplate extends ProjectTemplate<MIPSProject> {
 
         try {
             var config = new RootConfiguration(metadataFile);
+            config.set(ProjectData.NAME_NODE, editor.getName());
             config.convertAndSet(MIPSProjectData.NODE_ASSEMBLER, assemblerBuilderProperty.getValue(), AssemblerBuilder.class);
             config.convertAndSet(MIPSProjectData.NODE_REGISTERS, registersBuilderProperty.getValue(), RegistersBuilder.class);
             config.convertAndSet(MIPSProjectData.NODE_DIRECTIVES, directiveSetProperty.getValue(), DirectiveSet.class);

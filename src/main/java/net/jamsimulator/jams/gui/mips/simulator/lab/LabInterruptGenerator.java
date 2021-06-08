@@ -7,18 +7,18 @@ import javafx.scene.control.Slider;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class LabInterruptGenerator extends VBox {
 
-    public LabInterruptGenerator(Simulation<?> simulation) {
+    public LabInterruptGenerator(MIPSSimulation<?> simulation) {
         setAlignment(Pos.CENTER);
         generateSoftwareInterruptManager(simulation);
         generateHardwareInterruptManager(simulation);
     }
 
 
-    private void generateSoftwareInterruptManager(Simulation<?> simulation) {
+    private void generateSoftwareInterruptManager(MIPSSimulation<?> simulation) {
         var comboBox = new ComboBox<InterruptCause>();
         comboBox.getItems().addAll(InterruptCause.values());
         comboBox.getSelectionModel().selectFirst();
@@ -31,7 +31,7 @@ public class LabInterruptGenerator extends VBox {
     }
 
 
-    private void generateHardwareInterruptManager(Simulation<?> simulation) {
+    private void generateHardwareInterruptManager(MIPSSimulation<?> simulation) {
         var slider = new Slider(2, 63, 2);
         getChildren().add(slider);
 

@@ -14,7 +14,7 @@ import net.jamsimulator.jams.mips.memory.cache.CacheStats;
 import net.jamsimulator.jams.mips.memory.cache.CacheTestsData;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.register.Registers;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 import org.junit.jupiter.api.Test;
@@ -87,7 +87,7 @@ class WriteBackAssociativeCacheTest {
 		assembler.assemble();
 
 		SimulationData data = new SimulationData(new SimulationSyscallExecutions(), new File(""), null, assembler.getOriginals(), assembler.getAllLabels(), false, false, true, true, true);
-		Simulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE, data);
+		MIPSSimulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE, data);
 
 		mem = (Cache) simulation.getMemory();
 

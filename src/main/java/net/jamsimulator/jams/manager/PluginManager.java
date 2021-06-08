@@ -70,8 +70,8 @@ public class PluginManager extends Manager<Plugin> {
     /**
      * Attempts to register the given plugin.
      * If the plugin is null this method throws an {@link NullPointerException}.
-     * If the plugin is already present or the register event is cancelled this method returns {@link false}.
-     * If the operation was successful the method returns {@link true}.
+     * If the plugin is already present or the register event is cancelled this method returns {@code false}.
+     * If the operation was successful the method returns {@code true}.
      * <p>
      * If the plugin can be registered, this method calls {@link Plugin#onEnable()}
      *
@@ -100,9 +100,9 @@ public class PluginManager extends Manager<Plugin> {
     /**
      * Attempts to unregister the given plugin.
      * If the element is null this method throws a {@link NullPointerException}.
-     * If the element type is invalid this method returns {@link false}.
-     * If the element is not present or the unregister event is cancelled this method returns {@link false}.
-     * If the operation was successful the method returns {@link true}.
+     * If the element type is invalid this method returns {@code false}.
+     * If the element is not present or the unregister event is cancelled this method returns {@code false}.
+     * If the operation was successful the method returns {@code true}.
      * If the plugin is a dependency or a soft dependency of another plugin this method returns false.
      * <p>
      * If the plugin can be unregistered, this method calls {@link Plugin#onDisable()}

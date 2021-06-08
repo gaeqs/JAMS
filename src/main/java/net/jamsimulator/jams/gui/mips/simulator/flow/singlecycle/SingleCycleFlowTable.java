@@ -7,7 +7,7 @@ import javafx.scene.control.Label;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
@@ -19,7 +19,7 @@ public class SingleCycleFlowTable extends FlowTable {
 
 	private LinkedList<SingleCycleInstructionExecutionEvent.After> toAdd;
 
-	public SingleCycleFlowTable(Simulation<? extends SingleCycleArchitecture> simulation) {
+	public SingleCycleFlowTable(MIPSSimulation<? extends SingleCycleArchitecture> simulation) {
 		super(simulation);
 
 		if (simulation.getData().canCallEvents()) {
@@ -32,8 +32,8 @@ public class SingleCycleFlowTable extends FlowTable {
 	}
 
 	@Override
-	public Simulation<? extends SingleCycleArchitecture> getSimulation() {
-		return (Simulation<? extends SingleCycleArchitecture>) super.getSimulation();
+	public MIPSSimulation<? extends SingleCycleArchitecture> getSimulation() {
+		return (MIPSSimulation<? extends SingleCycleArchitecture>) super.getSimulation();
 	}
 
 	@Override

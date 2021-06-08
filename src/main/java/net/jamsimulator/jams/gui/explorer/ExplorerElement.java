@@ -33,104 +33,104 @@ import java.util.Optional;
  */
 public interface ExplorerElement extends ActionRegion {
 
-	/**
-	 * Returns the name of the element. This may be the name shown to the user.
-	 *
-	 * @return the name of the element.
-	 */
-	String getName();
+    /**
+     * Returns the name of the element. This may be the name shown to the user.
+     *
+     * @return the name of the element.
+     */
+    String getName();
 
 
-	/**
-	 * Returns the name that this elements is currently showing to the user.
-	 * This is the string that should be used for filters and lists.
-	 *
-	 * @return the visible name.
-	 */
-	String getVisibleName();
+    /**
+     * Returns the name that this elements is currently showing to the user.
+     * This is the string that should be used for filters and lists.
+     *
+     * @return the visible name.
+     */
+    String getVisibleName();
 
-	/**
-	 * Returns the {@link Explorer} of this element.
-	 *
-	 * @return the {@link Explorer}.
-	 */
-	Explorer getExplorer();
+    /**
+     * Returns the {@link Explorer} of this element.
+     *
+     * @return the {@link Explorer}.
+     */
+    Explorer getExplorer();
 
-	/**
-	 * Returns the parent {@link ExplorerSection}.
-	 *
-	 * @return the parent {@link ExplorerSection}.
-	 */
-	Optional<? extends ExplorerSection> getParentSection();
+    /**
+     * Returns the parent {@link ExplorerSection}.
+     *
+     * @return the parent {@link ExplorerSection}.
+     */
+    Optional<? extends ExplorerSection> getParentSection();
 
-	/**
-	 * Returns whether the element is selected. If true, the elements
-	 * should be shown in the GUI with a blue background.
-	 *
-	 * @return whether the element is selected.
-	 */
-	boolean isSelected();
+    /**
+     * Returns whether the element is selected. If true, the elements
+     * should be shown in the GUI with a blue background.
+     *
+     * @return whether the element is selected.
+     */
+    boolean isSelected();
 
-	/**
-	 * Selects this element.
-	 * <p>
-	 * This method only marks this element as selected.
-	 * If you want to select this element use {@link Explorer#selectElementAlone(ExplorerElement)}.
-	 *
-	 * @see #isSelected().
-	 */
-	void select();
+    /**
+     * Selects this element.
+     * <p>
+     * This method only marks this element as selected.
+     * If you want to select this element use {@link Explorer#selectElementAlone(ExplorerElement)}.
+     *
+     * @see #isSelected() .
+     */
+    void select();
 
-	/**
-	 * Deselects this element.
-	 * <p>
-	 * This method only marks this element as not selected.
-	 * If you want to deselect this element use {@link Explorer#deselectAll()}
-	 * or {@link Explorer#addOrRemoveSelectedElement(ExplorerElement)}.
-	 *
-	 * @see #isSelected() .
-	 */
-	void deselect();
+    /**
+     * Deselects this element.
+     * <p>
+     * This method only marks this element as not selected.
+     * If you want to deselect this element use {@link Explorer#deselectAll()}
+     * or {@link Explorer#addOrRemoveSelectedElement(ExplorerElement)}.
+     *
+     * @see #isSelected() .
+     */
+    void deselect();
 
-	/**
-	 * Returns the next element in the explorer. This is the element
-	 * shown below this element in the GUI.
-	 *
-	 * @return the next element, if present.
-	 */
-	Optional<ExplorerElement> getNext();
+    /**
+     * Returns the next element in the explorer. This is the element
+     * shown below this element in the GUI.
+     *
+     * @return the next element, if present.
+     */
+    Optional<ExplorerElement> getNext();
 
-	/**
-	 * Returns the previous element in the explorer. This is the element
-	 * shown above this element in the GUI.
-	 *
-	 * @return the previous element, if present.
-	 */
-	Optional<ExplorerElement> getPrevious();
+    /**
+     * Returns the previous element in the explorer. This is the element
+     * shown above this element in the GUI.
+     *
+     * @return the previous element, if present.
+     */
+    Optional<ExplorerElement> getPrevious();
 
-	/**
-	 * Returns the y translation of this element inside the explorer.
-	 *
-	 * @return the y translation.
-	 */
-	double getExplorerYTranslation();
+    /**
+     * Returns the y translation of this element inside the explorer.
+     *
+     * @return the y translation.
+     */
+    double getExplorerYTranslation();
 
-	/**
-	 * Returns the height of this element.
-	 *
-	 * @return the height.
-	 */
-	double getElementHeight();
+    /**
+     * Returns the height of this element.
+     *
+     * @return the height.
+     */
+    double getElementHeight();
 
-	/**
-	 * Returns the total amount of children inside this element.
-	 *
-	 * @return the amount.
-	 */
-	int getTotalElements();
+    /**
+     * Returns the total amount of children inside this element.
+     *
+     * @return the amount.
+     */
+    int getTotalElements();
 
-	/**
-	 * Creates a context menu for the {@link Explorer} containing this element.
-	 */
-	void createContextMenu(double screenX, double screenY);
+    /**
+     * Creates a context menu for the {@link Explorer} containing this element.
+     */
+    void createContextMenu(double screenX, double screenY);
 }

@@ -20,7 +20,7 @@ public abstract class ProjectType<T extends Project> implements Labeled {
 
     protected final String name;
     protected final Image icon;
-    protected final ObservableList<ProjectTemplateBuilder<?>> builderCreators;
+    protected final ObservableList<ProjectTemplateBuilder<?>> templateBuilders;
 
     /**
      * Creates the project type.
@@ -32,7 +32,7 @@ public abstract class ProjectType<T extends Project> implements Labeled {
         Validate.notNull(name, "Name cannot be null!");
         this.name = name;
         this.icon = icon;
-        this.builderCreators = FXCollections.observableList(new ArrayList<>());
+        this.templateBuilders = FXCollections.observableList(new ArrayList<>());
     }
 
     @Override
@@ -59,8 +59,8 @@ public abstract class ProjectType<T extends Project> implements Labeled {
      *
      * @return the {@link ObservableList}.
      */
-    public ObservableList<ProjectTemplateBuilder<?>> getBuilderCreators() {
-        return builderCreators;
+    public ObservableList<ProjectTemplateBuilder<?>> getTemplateBuilders() {
+        return templateBuilders;
     }
 
     /**

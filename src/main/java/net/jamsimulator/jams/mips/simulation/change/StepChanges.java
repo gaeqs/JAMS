@@ -2,7 +2,7 @@ package net.jamsimulator.jams.mips.simulation.change;
 
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 import java.util.LinkedList;
 
@@ -24,7 +24,7 @@ public class StepChanges<Arch extends Architecture> {
 		}
 	}
 
-	public void restore(Simulation<? extends Arch> simulation) {
+	public void restore(MIPSSimulation<? extends Arch> simulation) {
 		synchronized (lock) {
 			changes.forEach(target -> target.restore(simulation));
 			changes.clear();

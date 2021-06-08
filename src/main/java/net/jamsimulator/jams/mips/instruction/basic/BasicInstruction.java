@@ -34,7 +34,7 @@ import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 import java.util.*;
 
@@ -184,7 +184,7 @@ public abstract class BasicInstruction<Inst extends AssembledInstruction> implem
      * @param <Arch>      the architecture type.
      * @return the {@link InstructionExecution}.
      */
-    public <Arch extends Architecture> Optional<InstructionExecution<Arch, Inst>> generateExecution(Simulation<Arch> simulation, AssembledInstruction instruction, int address) {
+    public <Arch extends Architecture> Optional<InstructionExecution<Arch, Inst>> generateExecution(MIPSSimulation<Arch> simulation, AssembledInstruction instruction, int address) {
         InstructionExecutionBuilder<Arch, Inst> fun = (InstructionExecutionBuilder<Arch, Inst>) executionBuilders.get(simulation.getArchitecture());
         if (fun == null) return Optional.empty();
         InstructionExecution<Arch, Inst> execution = fun.create(simulation, (Inst) instruction, address);

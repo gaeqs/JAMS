@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Represents the immutable data of a {@link Simulation}.
+ * Represents the immutable data of a {@link MIPSSimulation}.
  * An instance of this class should be used to build any simulation.
  */
 public class SimulationData {

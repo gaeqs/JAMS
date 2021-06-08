@@ -19,14 +19,14 @@ import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 /**
- * This table watches the instruction flow inside a {@link Simulation}.
+ * This table watches the instruction flow inside a {@link MIPSSimulation}.
  * <p>
  * This class must be extended to provide specific functionalities.
  */
@@ -34,15 +34,15 @@ public abstract class FlowTable extends AnchorPane implements ActionRegion {
 
     //region static
 
-    private static final Map<Architecture, Function<Simulation<?>, FlowTable>> FLOW_PER_ARCHITECTURE = new HashMap<>();
+    private static final Map<Architecture, Function<MIPSSimulation<?>, FlowTable>> FLOW_PER_ARCHITECTURE = new HashMap<>();
 
     static {
         FLOW_PER_ARCHITECTURE.put(SingleCycleArchitecture.INSTANCE, s ->
-                new SingleCycleFlowTable((Simulation<? extends SingleCycleArchitecture>) s));
+                new SingleCycleFlowTable((MIPSSimulation<? extends SingleCycleArchitecture>) s));
         FLOW_PER_ARCHITECTURE.put(MultiCycleArchitecture.INSTANCE, s ->
-                new MultiCycleFlowTable((Simulation<? extends MultiCycleArchitecture>) s));
+                new MultiCycleFlowTable((MIPSSimulation<? extends MultiCycleArchitecture>) s));
         FLOW_PER_ARCHITECTURE.put(PipelinedArchitecture.INSTANCE, s ->
-                new PipelinedFlowTable((Simulation<? extends MultiCycleArchitecture>) s));
+                new PipelinedFlowTable((MIPSSimulation<? extends MultiCycleArchitecture>) s));
     }
 
     /**
@@ -51,12 +51,12 @@ public abstract class FlowTable extends AnchorPane implements ActionRegion {
      * @param architecture the {@link Architecture}.
      * @param builder      the builder.
      */
-    public static void registerFlow(Architecture architecture, Function<Simulation<?>, FlowTable> builder) {
+    public static void registerFlow(Architecture architecture, Function<MIPSSimulation<?>, FlowTable> builder) {
         FLOW_PER_ARCHITECTURE.put(architecture, builder);
     }
 
     /**
-     * Creates a flow table for the given {@link Simulation}.
+     * Creates a flow table for the given {@link MIPSSimulation}.
      * <p>
      * If the simulation's {@link Architecture} has no flow table registered,
      * an empty flow table will be created.
@@ -66,8 +66,8 @@ public abstract class FlowTable extends AnchorPane implements ActionRegion {
      * @param simulation the simulation.
      * @return the flow table.
      */
-    public static FlowTable createFlow(Simulation<?> simulation) {
-        Function<Simulation<?>, FlowTable> builder = FLOW_PER_ARCHITECTURE.get(simulation.getArchitecture());
+    public static FlowTable createFlow(MIPSSimulation<?> simulation) {
+        Function<MIPSSimulation<?>, FlowTable> builder = FLOW_PER_ARCHITECTURE.get(simulation.getArchitecture());
         if (builder == null) return new FlowTable(simulation) {
             @Override
             public long getFirstCycle() {
@@ -84,7 +84,7 @@ public abstract class FlowTable extends AnchorPane implements ActionRegion {
 
     //endregion
 
-    protected Simulation<?> simulation;
+    protected MIPSSimulation<?> simulation;
     protected ScrollPane scrollPane;
     protected double stepSize = 40;
     protected int maxItems;
@@ -102,7 +102,7 @@ public abstract class FlowTable extends AnchorPane implements ActionRegion {
      *
      * @param simulation the simulation.
      */
-    public FlowTable(Simulation<?> simulation) {
+    public FlowTable(MIPSSimulation<?> simulation) {
         this.simulation = simulation;
         this.scrollPane = new PixelScrollPane();
         this.sizeSlider = new Slider();
@@ -140,11 +140,11 @@ public abstract class FlowTable extends AnchorPane implements ActionRegion {
     }
 
     /**
-     * Returns the {@link Simulation} this table is watching.
+     * Returns the {@link MIPSSimulation} this table is watching.
      *
-     * @return the {@link Simulation}.
+     * @return the {@link MIPSSimulation}.
      */
-    public Simulation<?> getSimulation() {
+    public MIPSSimulation<?> getSimulation() {
         return simulation;
     }
 

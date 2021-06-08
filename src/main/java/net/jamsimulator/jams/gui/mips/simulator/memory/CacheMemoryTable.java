@@ -10,7 +10,7 @@ import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.cache.event.CacheResetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.*;
 import net.jamsimulator.jams.utils.NumberRepresentation;
 
@@ -24,7 +24,7 @@ public class CacheMemoryTable extends TableView<CacheMemoryEntry> implements Mem
 
     private final HashMap<Integer, CacheMemoryEntry> entries;
 
-    protected Simulation<?> simulation;
+    protected MIPSSimulation<?> simulation;
     protected Cache cache;
     protected int block;
     private NumberRepresentation representation;
@@ -33,7 +33,7 @@ public class CacheMemoryTable extends TableView<CacheMemoryEntry> implements Mem
     private Runnable onPopulate = () -> {
     };
 
-    public CacheMemoryTable(Simulation<?> simulation, Cache cache, int block, NumberRepresentation representation) {
+    public CacheMemoryTable(MIPSSimulation<?> simulation, Cache cache, int block, NumberRepresentation representation) {
         this.simulation = simulation;
         this.cache = cache;
         this.block = block;
@@ -100,7 +100,7 @@ public class CacheMemoryTable extends TableView<CacheMemoryEntry> implements Mem
     }
 
     @Override
-    public Simulation<?> getSimulation() {
+    public MIPSSimulation<?> getSimulation() {
         return simulation;
     }
 

@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.utils.NumericUtils;
@@ -25,7 +25,7 @@ public class SyscallExecutionReadDouble implements SyscallExecution {
 	}
 
 	@Override
-	public void execute(Simulation<?> simulation) {
+	public void execute(MIPSSimulation<?> simulation) {
 		if (this.register % 2 != 0) throw new IllegalStateException("Register " + this.register + " is not even!");
 		Register register = simulation.getRegisters().getCoprocessor1Register(this.register).orElse(null);
 		Register register2 = simulation.getRegisters().getCoprocessor1Register(this.register + 1).orElse(null);

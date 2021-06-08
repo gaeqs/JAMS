@@ -39,7 +39,7 @@ import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled> implements ControlTransferInstruction {
@@ -90,7 +90,7 @@ public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled>
 
 	public static class SingleCycle extends SingleCycleExecution<Assembled> {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
+		public SingleCycle(MIPSSimulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
 			super(simulation, instruction, address);
 		}
 
@@ -105,7 +105,7 @@ public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled>
 
 	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
-		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+		public MultiCycle(MIPSSimulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
 			super(simulation, instruction, address, false, false);
 		}
 
@@ -131,7 +131,7 @@ public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled>
 
 	public static class Pipelined extends MultiCycleExecution<Assembled> {
 
-		public Pipelined(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+		public Pipelined(MIPSSimulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
 			super(simulation, instruction, address, false, true);
 		}
 

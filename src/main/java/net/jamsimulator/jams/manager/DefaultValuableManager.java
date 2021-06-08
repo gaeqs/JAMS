@@ -64,7 +64,7 @@ public abstract class DefaultValuableManager<Type extends Labeled> extends Manag
 	 * If the given element is not present in this manager, this method throws an {@link IllegalArgumentException}.
 	 * <p>
 	 * If the element is already the default value or the change event is cancelled, this method returns {@code false}.
-	 * If the operation was successful, this method returns {@link true}.
+	 * If the operation was successful, this method returns {@code true}.
 	 *
 	 * @param defaultValue the new default element.
 	 * @return whether the operation was successful.
@@ -89,10 +89,10 @@ public abstract class DefaultValuableManager<Type extends Labeled> extends Manag
 	 * Attempts to unregister the given element.
 	 * <p>
 	 * If the element is null this method throws a {@link NullPointerException}.
-	 * If the element type is invalid this method returns {@link false}.
-	 * If the element is not present or the unregister event is cancelled this method returns {@link false}.
-	 * If the default element equals to the given element this method returns {@link false} and does nothing.
-	 * If the operation was successful the method returns {@link true}.
+	 * If the element type is invalid this method returns {@code false}.
+	 * If the element is not present or the unregister event is cancelled this method returns {@code false}.
+	 * If the default element equals to the given element this method returns {@code false} and does nothing.
+	 * If the operation was successful the method returns {@code true}.
 	 *
 	 * @param o the element to register.
 	 * @return whether the operation was successful.

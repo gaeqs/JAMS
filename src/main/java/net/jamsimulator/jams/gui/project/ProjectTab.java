@@ -60,7 +60,7 @@ public class ProjectTab extends Tab {
      *
      * @param project the handled project.
      */
-    public ProjectTab(MIPSProject project) {
+    public ProjectTab(Project project) {
         super(project.getName());
         getStyleClass().add("project-tab");
         setClosable(true);

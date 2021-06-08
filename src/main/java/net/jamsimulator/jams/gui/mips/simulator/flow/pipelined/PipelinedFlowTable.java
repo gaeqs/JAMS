@@ -8,7 +8,7 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
 import net.jamsimulator.jams.gui.mips.simulator.flow.SegmentedFlowEntry;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
@@ -27,7 +27,7 @@ public class PipelinedFlowTable extends FlowTable {
 
 	private long firstCycle;
 
-	public PipelinedFlowTable(Simulation<? extends MultiCycleArchitecture> simulation) {
+	public PipelinedFlowTable(MIPSSimulation<? extends MultiCycleArchitecture> simulation) {
 		super(simulation);
 
 		firstCycle = 0;
@@ -44,8 +44,8 @@ public class PipelinedFlowTable extends FlowTable {
 	}
 
 	@Override
-	public Simulation<? extends MultiCycleArchitecture> getSimulation() {
-		return (Simulation<? extends MultiCycleArchitecture>) super.getSimulation();
+	public MIPSSimulation<? extends MultiCycleArchitecture> getSimulation() {
+		return (MIPSSimulation<? extends MultiCycleArchitecture>) super.getSimulation();
 	}
 
 	@Override

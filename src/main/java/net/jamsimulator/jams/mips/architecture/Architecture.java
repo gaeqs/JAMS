@@ -28,7 +28,7 @@ import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -65,14 +65,14 @@ public abstract class Architecture implements Labeled {
 	 * @param instructionSet the {@link InstructionSet} to use.
 	 * @param registers      the {@link Registers}.
 	 * @param memory         the {@link Memory}.
-	 * @return the {@link Simulation}.
+	 * @return the {@link MIPSSimulation}.
 	 */
-	public abstract Simulation<? extends Architecture> createSimulation(InstructionSet instructionSet,
-																		Registers registers,
-																		Memory memory,
-																		int instructionStackBottom,
-																		int kernelStackBottom,
-																		SimulationData data);
+	public abstract MIPSSimulation<? extends Architecture> createSimulation(InstructionSet instructionSet,
+                                                                            Registers registers,
+                                                                            Memory memory,
+                                                                            int instructionStackBottom,
+                                                                            int kernelStackBottom,
+                                                                            SimulationData data);
 
 	@Override
 	public boolean equals(Object o) {

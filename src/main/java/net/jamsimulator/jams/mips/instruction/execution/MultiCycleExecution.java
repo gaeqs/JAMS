@@ -28,7 +28,7 @@ import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 import net.jamsimulator.jams.mips.simulation.pipelined.ForwardingSupporter;
 import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
@@ -45,8 +45,8 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
 
 	protected boolean inDelaySlot;
 
-	public MultiCycleExecution(Simulation<? extends MultiCycleArchitecture> simulation, Inst instruction, int address,
-							   boolean executesMemory, boolean executesWriteBack) {
+	public MultiCycleExecution(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Inst instruction, int address,
+                               boolean executesMemory, boolean executesWriteBack) {
 		super(simulation, instruction, address);
 		this.executesMemory = executesMemory;
 		this.executesWriteBack = executesWriteBack;

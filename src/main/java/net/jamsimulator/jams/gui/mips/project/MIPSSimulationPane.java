@@ -28,12 +28,10 @@ import net.jamsimulator.jams.gui.util.ZoomUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
-import net.jamsimulator.jams.mips.interrupt.InterruptCause;
-import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -44,7 +42,7 @@ import java.util.Set;
 public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
 
     protected MIPSProject project;
-    protected Simulation<?> simulation;
+    protected MIPSSimulation<?> simulation;
     protected TabPane registersTabs;
 
     protected final ExecutionButtons executionButtons;
@@ -52,7 +50,7 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
     protected MemoryPane memoryPane;
 
 
-    public MIPSSimulationPane(Tab parent, ProjectTab projectTab, MIPSProject project, Simulation<?> simulation) {
+    public MIPSSimulationPane(Tab parent, ProjectTab projectTab, MIPSProject project, MIPSSimulation<?> simulation) {
         super(parent, projectTab, null, false);
         this.project = project;
         this.simulation = simulation;
@@ -100,7 +98,7 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
         return project;
     }
 
-    public Simulation<?> getSimulation() {
+    public MIPSSimulation<?> getSimulation() {
         return simulation;
     }
 
