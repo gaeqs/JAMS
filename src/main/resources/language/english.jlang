@@ -596,6 +596,18 @@ INSTRUCTION_SUB_S=Subtraction (single)
 INSTRUCTION_SUBU=Subtraction without overflow
 INSTRUCTION_SW=Save word
 INSTRUCTION_SYSCALL=System call
+INSTRUCTION_TEQ=Trap on equal
+INSTRUCTION_TEQI=Trap on equal immediate
+INSTRUCTION_TGE=Trap on greater or equal
+INSTRUCTION_TGEI=Trap on greater or equal immediate
+INSTRUCTION_TGEIU=Trap on greater or equal immediate unsigned
+INSTRUCTION_TGEU=Trap on greater or equal unsigne
+INSTRUCTION_TLT=Trap on less than
+INSTRUCTION_TLTI=Trap on less than immediate
+INSTRUCTION_TLTIU=Trap on less than immediate unsigned
+INSTRUCTION_TLTU=Trap on less than unsigned
+INSTRUCTION_TNE=Trap on not equal
+INSTRUCTION_TNEI=Trap on not equal immediate
 
 //PSEUDO INSTRUCTIONS
 
@@ -3612,6 +3624,330 @@ SignalException(SystemCall)
 
 <b>Exceptions:</b>
 System Call
+\END
+
+INSTRUCTION_TEQ_DOCUMENTATION.=<u>Trap on equal</u>
+
+<b>Format:</b>
+teq rs, rt
+
+|SPECIAL     rs      rt      0         TEQ   |
+|000000                               110100 |
+|  6         5       5       10         6    |
+
+
+<b>Description:</b>
+if GPR[rs] = GPR[rt] then Trap
+
+Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers. If both values are equal, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if GPR[rs] = GPR[rt] then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TEQI_DOCUMENTATION.=<u>Trap on equal immediate</u>
+
+<b>Format:</b>
+teqi rs, immediate
+
+|REGIMM      rs     TEQI     immediate |
+|000001            01100               |
+|  6         5       5          16     |
+
+
+<b>Description:</b>
+if GPR[rs] = immediate then Trap
+
+Compares the contents of GPR <i>rs</i> and the immediate value as signed integers. If both values are equal, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if GPR[rs] = immediate then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TGE_DOCUMENTATION.=<u>Trap on greater or equal</u>
+
+<b>Format:</b>
+tge rs, rt
+
+|SPECIAL     rs      rt      0         TGE   |
+|000000                               110000 |
+|  6         5       5       10         6    |
+
+
+<b>Description:</b>
+if GPR[rs] >= GPR[rt] then Trap
+
+Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers. If the first value is greater or equal to the second value, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if GPR[rs] >= GPR[rt] then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TGEI_DOCUMENTATION.=<u>Trap on greater or equal immediate</u>
+
+<b>Format:</b>
+tgei rs, immediate
+
+|REGIMM      rs     TGEI     immediate |
+|000001            01000               |
+|  6         5       5          16     |
+
+
+<b>Description:</b>
+if GPR[rs] >= immediate then Trap
+
+Compares the contents of GPR <i>rs</i> and the immediate value as signed integers. If the first value is greater or equal to the second value, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if GPR[rs] >= immediate then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TGEIU_DOCUMENTATION.=<u>Trap on greater or equal immediate unsigned</u>
+
+<b>Format:</b>
+tgeiu rs, immediate
+
+|REGIMM     rs     TGEIU     immediate |
+|000001            01001               |
+|  6         5       5          16     |
+
+
+<b>Description:</b>
+if GPR[rs] >= immediate then Trap
+
+Compares the contents of GPR <i>rs</i> and the immediate value as unsigned integers. If the first value is greater or equal to the second value, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if unsigned_word(GPR[rs]) >= unsigned_word(immediate) then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TGEU_DOCUMENTATION.=<u>Trap on greater or equal unsigned</u>
+
+<b>Format:</b>
+tgeu rs, rt
+
+|SPECIAL     rs      rt      0         TGEU  |
+|000000                               110001 |
+|  6         5       5       10         6    |
+
+
+<b>Description:</b>
+if GPR[rs] >= GPR[rt] then Trap
+
+Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers. If the first value is greater or equal to the second value, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if unsigned_word(GPR[rs]) >= unsigned_word(GPR[rt]) then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TLT_DOCUMENTATION.=<u>Trap on less than</u>
+
+<b>Format:</b>
+tlt rs, rt
+
+|SPECIAL     rs      rt      0         TLT   |
+|000000                               110010 |
+|  6         5       5       10         6    |
+
+
+<b>Description:</b>
+if GPR[rs] < GPR[rt] then Trap
+
+Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers. If the first value is less than the second value, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if GPR[rs] < GPR[rt] then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TLTI_DOCUMENTATION.=<u>Trap on lower than immediate</u>
+
+<b>Format:</b>
+tlti rs, immediate
+
+|REGIMM      rs     TLTI     immediate |
+|000001            01010               |
+|  6         5       5          16     |
+
+
+<b>Description:</b>
+if GPR[rs] < immediate then Trap
+
+Compares the contents of GPR <i>rs</i> and the immediate value as signed integers. If the first value is less than the second value, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if GPR[rs] < immediate then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TLTIU_DOCUMENTATION.=<u>Trap on less than immediate unsigned</u>
+
+<b>Format:</b>
+tltiu rs, immediate
+
+|REGIMM     rs     TLTIU     immediate |
+|000001            01011               |
+|  6         5       5          16     |
+
+
+<b>Description:</b>
+if GPR[rs] < immediate then Trap
+
+Compares the contents of GPR <i>rs</i> and the immediate value as unsigned integers. If the first value is less than the second value, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if unsigned_word(GPR[rs]) < unsigned_word(immediate) then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TLTU_DOCUMENTATION.=<u>Trap on less than unsigned</u>
+
+<b>Format:</b>
+tltu rs, rt
+
+|SPECIAL     rs      rt      0         TLTU  |
+|000000                               110011 |
+|  6         5       5       10         6    |
+
+
+<b>Description:</b>
+if GPR[rs] < GPR[rt] then Trap
+
+Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers. If the first value is less than the second value, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if unsigned_word(GPR[rs]) < unsigned_word(GPR[rt]) then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TNE_DOCUMENTATION.=<u>Trap on not equal</u>
+
+<b>Format:</b>
+tne rs, rt
+
+|SPECIAL     rs      rt      0         TNE   |
+|000000                               110110 |
+|  6         5       5       10         6    |
+
+
+<b>Description:</b>
+if GPR[rs] != GPR[rt] then Trap
+
+Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers. If both values are not equal, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if GPR[rs] != GPR[rt] then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TNEI_DOCUMENTATION.=<u>Trap on not equal immediate</u>
+
+<b>Format:</b>
+tnei rs, immediate
+
+|REGIMM      rs     TNEI     immediate |
+|000001            01110               |
+|  6         5       5          16     |
+
+
+<b>Description:</b>
+if GPR[rs] != immediate then Trap
+
+Compares the contents of GPR <i>rs</i> and the immediate value as signed integers. If both values are not equal, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if GPR[rs] != immediate then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
 \END
 
 INSTRUCTION_ADDI_DOCUMENTATION.=<u>Immediate addition with overflow</u>

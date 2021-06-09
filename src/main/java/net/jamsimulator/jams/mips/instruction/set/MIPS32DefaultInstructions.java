@@ -156,6 +156,19 @@ class MIPS32DefaultInstructions {
 
         basicInstructions.add(new InstructionSyscall());
 
+        basicInstructions.add(new InstructionTeq());
+        basicInstructions.add(new InstructionTeqi());
+        basicInstructions.add(new InstructionTge());
+        basicInstructions.add(new InstructionTgei());
+        basicInstructions.add(new InstructionTgeiu());
+        basicInstructions.add(new InstructionTgeu());
+        basicInstructions.add(new InstructionTlt());
+        basicInstructions.add(new InstructionTlti());
+        basicInstructions.add(new InstructionTltiu());
+        basicInstructions.add(new InstructionTltu());
+        basicInstructions.add(new InstructionTne());
+        basicInstructions.add(new InstructionTnei());
+
         //PSEUDO
         pseudoInstructions.add(new PseudoInstructionAddi());
         pseudoInstructions.add(new PseudoInstructionBI());
