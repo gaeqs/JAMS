@@ -608,6 +608,8 @@ INSTRUCTION_TLTIU=Trap on less than immediate unsigned
 INSTRUCTION_TLTU=Trap on less than unsigned
 INSTRUCTION_TNE=Trap on not equal
 INSTRUCTION_TNEI=Trap on not equal immediate
+INSTRUCTION_XOR=Xor
+INSTRUCTION_XORI=Immediate xor
 
 //PSEUDO INSTRUCTIONS
 
@@ -3948,6 +3950,59 @@ endif
 
 <b>Exceptions:</b>
 Trap
+\END
+
+
+INSTRUCTION_XOR_DOCUMENTATION.=<u>Xor</u>
+
+<b>Format:</b>
+xor rd, rs, rt
+
+|SPECIAL     rs      rt     rd      0        XOR  |
+|000000                                    100110 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd] <- GPR[rs] xor GPR[rt]
+
+Performs a bitwise logical XOR using the values inside GPR <i>rs</i> and GPR <i>rt</i>.
+The result is placed into GPR <i>rd</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+GPR[rd] <- GPR[rs] xor GPR[rt]
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_XORI_DOCUMENTATION.=<u>Immediate xor</u>
+
+<b>Format:</b>
+xori rt, rs, immediate
+
+| XORI      rs     rt     immediate |
+|001110                             |
+|  6        5      5         16     |
+
+
+<b>Description:</b>
+GPR[rt] <- GPR[rs] xor zero_extend(immediate)
+
+The 16-bit <i>immediate</i> is zero-extended to the left and combined with the value of GPR <i>rs</i> in a bitwise logical XOR operation.
+The result is placed into GPR <i>rt</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+GPR[rt] <- GPR[rs] xor zero_extend(immediate)
+
+<b>Exceptions:</b>
+None
 \END
 
 INSTRUCTION_ADDI_DOCUMENTATION.=<u>Immediate addition with overflow</u>

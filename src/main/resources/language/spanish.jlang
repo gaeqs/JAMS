@@ -610,6 +610,8 @@ INSTRUCTION_TLTIU=Interrupción si es menor que inmediato sin signo
 INSTRUCTION_TLTU=Interrupción si es menor sin signo
 INSTRUCTION_TNE=Interrupción si no es igual
 INSTRUCTION_TNEI=Interrupción si no es igual que inmediato
+INSTRUCTION_XOR=Xor
+INSTRUCTION_XORI=Xor con inmediato
 
 //PSEUDO INSTRUCTIONS
 
@@ -3959,6 +3961,58 @@ endif
 
 <b>Excepciones:</b>
 Trap
+\END
+
+INSTRUCTION_XOR_DOCUMENTATION.=<u>Xor</u>
+
+<b>Formato:</b>
+xor rd, rs, rt
+
+|SPECIAL     rs      rt     rd      0       XOR   |
+|000000                                    100110 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- GPR[rs] xor GPR[rt]
+
+Realiza la operación lógica XOR usando los valores dentro de los registros <i>rs</i> y <i>rt</i>.
+El resultado es asignado al registro <i>rd</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+GPR[rd] <- GPR[rs] xor GPR[rt]
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_XORI_DOCUMENTATION.=<u>Xor con inmediato</u>
+
+<b>Formato:</b>
+xori rt, rs, inmediato
+
+| XORI      rs     rt     inmediato |
+|001110                             |
+|  6        5      5         16     |
+
+
+<b>Descripción:</b>
+GPR[rt] <- GPR[rs] or zero_extend(inmediato)
+
+El <i>inmediato</i> de 16 bits es extendido a la izquierda con ceros y combinado con el valor del registro <i>rs</i> usando la operación lógica XOR.
+El resultado es asignado al registro <i>rt</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+GPR[rt] <- GPR[rs] xor zero_extend(immediate)
+
+<b>Excepciones:</b>
+Ninguna
 \END
 
 INSTRUCTION_ADDI_DOCUMENTATION.=<u>Suma con inmediato con desbordamiento</u>

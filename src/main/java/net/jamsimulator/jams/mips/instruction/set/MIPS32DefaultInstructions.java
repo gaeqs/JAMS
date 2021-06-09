@@ -169,6 +169,9 @@ class MIPS32DefaultInstructions {
         basicInstructions.add(new InstructionTne());
         basicInstructions.add(new InstructionTnei());
 
+        basicInstructions.add(new InstructionXor());
+        basicInstructions.add(new InstructionXori());
+
         //PSEUDO
         pseudoInstructions.add(new PseudoInstructionAddi());
         pseudoInstructions.add(new PseudoInstructionBI());
