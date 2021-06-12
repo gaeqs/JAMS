@@ -55,8 +55,7 @@ class GeneralInstructionTests {
             new MIPS32Registers(), new MIPS32Memory(), MIPS32Memory.TEXT, MIPS32Memory.KERNEL_TEXT,
             new SimulationData(new SimulationSyscallExecutions(), new File(""), null, new HashMap<>(), new HashSet<>(), true, true, true, true, true));
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"OptionalGetWithoutIsPresent", "unchecked"})
     @Test
     void testBasicInstruction() {
         Registers set = simulation.getRegisters();
