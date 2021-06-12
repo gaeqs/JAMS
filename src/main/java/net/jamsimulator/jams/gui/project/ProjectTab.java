@@ -40,7 +40,6 @@ import net.jamsimulator.jams.gui.project.event.ProjectCloseEvent;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.ProjectSnapshot;
-import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.util.ArrayList;
 import java.util.List;

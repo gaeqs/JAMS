@@ -10,14 +10,13 @@ import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.NearestImageView;
-import net.jamsimulator.jams.gui.popup.CreateProjectWindow;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.project.ProjectSnapshot;
 import net.jamsimulator.jams.project.event.RecentProjectAddEvent;
-import net.jamsimulator.jams.project.mips.MIPSProject;
+import net.jamsimulator.jams.project.mips.MIPSProjectType;
 
 import java.io.File;
 
@@ -55,10 +54,12 @@ public class StartWindowSectionProjects extends AnchorPane implements StartWindo
         openButton.getStyleClass().add("light-button");
 
         openButton.setOnAction(event -> {
-            DirectoryChooser chooser = new DirectoryChooser();
-            File folder = chooser.showDialog(JamsApplication.getStage());
+            var chooser = new DirectoryChooser();
+            var folder = chooser.showDialog(JamsApplication.getStage());
             if (folder == null || JamsApplication.getProjectsTabPane().isProjectOpen(folder)) return;
-            JamsApplication.getProjectsTabPane().openProject(new MIPSProject(folder));
+
+            var type = Jams.getProjectTypeManager().getByProjectfolder(folder).orElse(MIPSProjectType.INSTANCE);
+            JamsApplication.getProjectsTabPane().openProject(type.loadProject(folder));
             window.getStage().hide();
         });
 
@@ -117,12 +118,13 @@ public class StartWindowSectionProjects extends AnchorPane implements StartWindo
             }
 
             setOnMouseClicked(event -> {
-                var file = new File(snapshot.path());
-                if (!file.isDirectory()) {
+                var folder = new File(snapshot.path());
+                if (!folder.isDirectory()) {
                     projects.getChildren().remove(this);
                     return;
                 }
-                JamsApplication.getProjectsTabPane().openProject(new MIPSProject(file));
+
+                JamsApplication.getProjectsTabPane().openProject(type.get().loadProject(folder));
                 window.getStage().hide();
             });
         }

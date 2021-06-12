@@ -126,11 +126,12 @@ public class StartWindowSectionNewProject extends SplitPane implements StartWind
         var buttons = new HBox();
         var createButton = new LanguageButton(Messages.GENERAL_CREATE);
         createButton.setOnAction(event -> {
-            Project project = null;
+            Project project;
             try {
                 project = builder.build();
             } catch (MIPSTemplateBuildException e) {
                 e.printStackTrace();
+                return;
             }
             JamsApplication.getProjectsTabPane().openProject(project);
             stageSupplier.get().hide();

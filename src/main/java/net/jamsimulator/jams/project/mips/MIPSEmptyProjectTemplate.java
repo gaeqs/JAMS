@@ -119,12 +119,13 @@ public class MIPSEmptyProjectTemplate extends ProjectTemplate<MIPSProject> {
 
         try {
             var config = new RootConfiguration(metadataFile);
-            config.set(ProjectData.NAME_NODE, editor.getName());
             config.convertAndSet(MIPSProjectData.NODE_ASSEMBLER, assemblerBuilderProperty.getValue(), AssemblerBuilder.class);
             config.convertAndSet(MIPSProjectData.NODE_REGISTERS, registersBuilderProperty.getValue(), RegistersBuilder.class);
             config.convertAndSet(MIPSProjectData.NODE_DIRECTIVES, directiveSetProperty.getValue(), DirectiveSet.class);
             config.convertAndSet(MIPSProjectData.NODE_INSTRUCTIONS, instructionSetProperty.getValue(), InstructionSet.class);
+            config.set(MIPSProjectData.NODE_SELECTED_CONFIGURATION, "Default");
             new MIPSSimulationConfiguration("Default").save(config, MIPSProjectData.NODE_CONFIGURATIONS);
+            config.save(true);
             return new MIPSProject(folder);
         } catch (Exception e) {
             throw new MIPSTemplateBuildException(e);

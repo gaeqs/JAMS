@@ -131,7 +131,6 @@ public class ProjectListTabPane extends TabPane implements EventBroadcast {
      */
     public boolean openProject(Project project) {
         if (isProjectOpen(project)) return false;
-        if (!(project instanceof MIPSProject)) return false;
 
         var before = callEvent(new ProjectOpenEvent.Before(project));
         if (before.isCancelled()) return false;

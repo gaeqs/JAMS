@@ -39,7 +39,7 @@ public abstract class ProjectData extends SimpleEventBroadcast {
     public static final String METADATA_DATA_NAME = "data.json";
 
     public static final String NAME_NODE = "name";
-    public static final String PATH_NODE = "path";
+    public static final String TYPE_NODE = "type";
 
     protected final ProjectType<?> type;
 
@@ -86,7 +86,7 @@ public abstract class ProjectData extends SimpleEventBroadcast {
 
     public void save() {
         data.set(NAME_NODE, name);
-        data.set(PATH_NODE, type.getName());
+        data.set(TYPE_NODE, type.getName());
         try {
             data.save(true);
         } catch (IOException e) {
