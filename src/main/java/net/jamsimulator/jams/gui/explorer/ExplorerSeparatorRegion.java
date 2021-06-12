@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.gui.explorer;
@@ -34,63 +34,63 @@ import net.jamsimulator.jams.event.Listener;
  */
 public class ExplorerSeparatorRegion extends Region {
 
-	public static final String HIERARCHY_SEPARATOR_SECTION_NODE = "explorer.section_separator_width";
-	public static final String HIERARCHY_SEPARATOR_ELEMENT_NODE = "explorer.element_separator_width";
+    public static final String HIERARCHY_SEPARATOR_SECTION_NODE = "explorer.section_separator_width";
+    public static final String HIERARCHY_SEPARATOR_ELEMENT_NODE = "explorer.element_separator_width";
 
-	private final boolean section;
+    private final boolean section;
 
-	private int hierarchyLevel;
-	private boolean hasHierarchyLevel;
+    private int hierarchyLevel;
+    private boolean hasHierarchyLevel;
 
-	public ExplorerSeparatorRegion(boolean section, int hierarchyLevel) {
-		this.section = section;
-		this.hierarchyLevel = hierarchyLevel;
-		this.hasHierarchyLevel = true;
-		setHierarchyLevel(hierarchyLevel);
-		Jams.getMainConfiguration().registerListeners(this, true);
-	}
+    public ExplorerSeparatorRegion(boolean section, int hierarchyLevel) {
+        this.section = section;
+        this.hierarchyLevel = hierarchyLevel;
+        this.hasHierarchyLevel = true;
+        setHierarchyLevel(hierarchyLevel);
+        Jams.getMainConfiguration().registerListeners(this, true);
+    }
 
-	public ExplorerSeparatorRegion(double width) {
-		section = false;
-		hierarchyLevel = -1;
-		hasHierarchyLevel = false;
-		setPrefWidth(width);
-	}
+    public ExplorerSeparatorRegion(double width) {
+        section = false;
+        hierarchyLevel = -1;
+        hasHierarchyLevel = false;
+        setPrefWidth(width);
+    }
 
-	public void setHierarchyLevel(int hierarchyLevel) {
-		if (!hasHierarchyLevel) {
-			Jams.getMainConfiguration().registerListeners(this, true);
-		}
+    public void setHierarchyLevel(int hierarchyLevel) {
+        if (!hasHierarchyLevel) {
+            Jams.getMainConfiguration().registerListeners(this, true);
+        }
 
-		hasHierarchyLevel = true;
-		this.hierarchyLevel = hierarchyLevel;
+        hasHierarchyLevel = true;
+        this.hierarchyLevel = hierarchyLevel;
 
-		updateLevel();
-	}
+        updateLevel();
+    }
 
-	private void updateLevel() {
-		var config = Jams.getMainConfiguration();
+    private void updateLevel() {
+        var config = Jams.getMainConfiguration();
 
-		double width;
+        double width;
 
-		double folderWidth = config.getNumber(HIERARCHY_SEPARATOR_SECTION_NODE).orElse(0.0).doubleValue();
-		if (section) {
-			width = folderWidth * hierarchyLevel;
-		} else {
-			double fileWidth = config.getNumber(HIERARCHY_SEPARATOR_ELEMENT_NODE).orElse(0.0).doubleValue();
-			width = folderWidth * (hierarchyLevel - 1) + fileWidth;
-		}
+        double folderWidth = config.getNumber(HIERARCHY_SEPARATOR_SECTION_NODE).orElse(0.0).doubleValue();
+        if (section) {
+            width = folderWidth * hierarchyLevel;
+        } else {
+            double fileWidth = config.getNumber(HIERARCHY_SEPARATOR_ELEMENT_NODE).orElse(0.0).doubleValue();
+            width = folderWidth * (hierarchyLevel - 1) + fileWidth;
+        }
 
-		setPrefWidth(width);
-		setMinWidth(width);
-	}
+        setPrefWidth(width);
+        setMinWidth(width);
+    }
 
-	@Listener
-	private void onConfigurationNodeChange(ConfigurationNodeChangeEvent.After event) {
-		if (event.getNode().equals(HIERARCHY_SEPARATOR_ELEMENT_NODE)
-				|| event.getNode().equals(HIERARCHY_SEPARATOR_SECTION_NODE)) {
-			updateLevel();
-		}
-	}
+    @Listener
+    private void onConfigurationNodeChange(ConfigurationNodeChangeEvent.After event) {
+        if (event.getNode().equals(HIERARCHY_SEPARATOR_ELEMENT_NODE)
+                || event.getNode().equals(HIERARCHY_SEPARATOR_SECTION_NODE)) {
+            updateLevel();
+        }
+    }
 
 }

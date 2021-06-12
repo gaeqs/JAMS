@@ -1,3 +1,27 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
 package net.jamsimulator.jams.gui.mips.simulator.execution;
 
 import javafx.application.Platform;
@@ -20,82 +44,82 @@ import java.util.List;
 
 public class ExecutionButtons {
 
-	private final Button runOrStop;
-	private final Button runOne;
-	private final List<Node> nodes;
+    private final Button runOrStop;
+    private final Button runOne;
+    private final List<Node> nodes;
 
-	public ExecutionButtons(MIPSSimulation<?> simulation) {
-		nodes = new ArrayList<>();
-		Image runOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY_ONE).orElse(null);
-		Image undoOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_UNDO_ONE).orElse(null);
-		Image resetIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_RESET).orElse(null);
+    public ExecutionButtons(MIPSSimulation<?> simulation) {
+        nodes = new ArrayList<>();
+        Image runOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY_ONE).orElse(null);
+        Image undoOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_UNDO_ONE).orElse(null);
+        Image resetIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_RESET).orElse(null);
 
-		runOrStop = new FixedButton("", new NearestImageView(null, 16, 16), 28, 28);
-		changeToRunAll(simulation);
+        runOrStop = new FixedButton("", new NearestImageView(null, 16, 16), 28, 28);
+        changeToRunAll(simulation);
 
-		runOne = new FixedButton("", new NearestImageView(runOneIcon, 16, 16), 28, 28);
-		runOne.getStyleClass().add("buttons-hbox-button");
-		runOne.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_EXECUTE_ONE, LanguageTooltip.DEFAULT_DELAY));
-		runOne.setOnAction(event -> simulation.nextStep());
+        runOne = new FixedButton("", new NearestImageView(runOneIcon, 16, 16), 28, 28);
+        runOne.getStyleClass().add("buttons-hbox-button");
+        runOne.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_EXECUTE_ONE, LanguageTooltip.DEFAULT_DELAY));
+        runOne.setOnAction(event -> simulation.nextStep());
 
 
-		Button undo = new FixedButton("", new NearestImageView(undoOneIcon, 16, 16), 28, 28);
-		undo.getStyleClass().add("buttons-hbox-button");
-		undo.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_UNDO, LanguageTooltip.DEFAULT_DELAY));
-		undo.setOnAction(event -> simulation.undoLastStep());
-		undo.setDisable(!simulation.getData().isUndoEnabled());
+        Button undo = new FixedButton("", new NearestImageView(undoOneIcon, 16, 16), 28, 28);
+        undo.getStyleClass().add("buttons-hbox-button");
+        undo.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_UNDO, LanguageTooltip.DEFAULT_DELAY));
+        undo.setOnAction(event -> simulation.undoLastStep());
+        undo.setDisable(!simulation.getData().isUndoEnabled());
 
-		Button reset = new FixedButton("", new NearestImageView(resetIcon, 16, 16), 28, 28);
-		reset.getStyleClass().add("buttons-hbox-button");
+        Button reset = new FixedButton("", new NearestImageView(resetIcon, 16, 16), 28, 28);
+        reset.getStyleClass().add("buttons-hbox-button");
 
-		reset.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_RESET, LanguageTooltip.DEFAULT_DELAY));
-		reset.setOnAction(event -> simulation.reset());
+        reset.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_RESET, LanguageTooltip.DEFAULT_DELAY));
+        reset.setOnAction(event -> simulation.reset());
 
-		nodes.add(runOrStop);
-		nodes.add(runOne);
-		nodes.add(undo);
-		nodes.add(reset);
+        nodes.add(runOrStop);
+        nodes.add(runOne);
+        nodes.add(undo);
+        nodes.add(reset);
 
-		simulation.registerListeners(this, true);
-	}
+        simulation.registerListeners(this, true);
+    }
 
-	public List<Node> getNodes() {
-		return nodes;
-	}
+    public List<Node> getNodes() {
+        return nodes;
+    }
 
-	@Listener
-	private void onSimulationStart(SimulationStartEvent event) {
-		runOne.setDisable(true);
-		changeToStop(event.getSimulation());
-	}
+    @Listener
+    private void onSimulationStart(SimulationStartEvent event) {
+        runOne.setDisable(true);
+        changeToStop(event.getSimulation());
+    }
 
-	@Listener
-	private void onSimulationStop(SimulationStopEvent event) {
-		runOne.setDisable(false);
-		changeToRunAll(event.getSimulation());
-	}
+    @Listener
+    private void onSimulationStop(SimulationStopEvent event) {
+        runOne.setDisable(false);
+        changeToRunAll(event.getSimulation());
+    }
 
-	private void changeToRunAll(MIPSSimulation<?> simulation) {
-		Platform.runLater(() -> {
-			Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY
-			).orElse(null);
-			((NearestImageView) runOrStop.getGraphic()).setImage(runAllIcon);
-			runOrStop.getStyleClass().add("buttons-hbox-button");
-			runOrStop.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_EXECUTE_ALL, LanguageTooltip.DEFAULT_DELAY));
-			runOrStop.setOnAction(event -> simulation.executeAll());
-		});
-	}
+    private void changeToRunAll(MIPSSimulation<?> simulation) {
+        Platform.runLater(() -> {
+            Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY
+            ).orElse(null);
+            ((NearestImageView) runOrStop.getGraphic()).setImage(runAllIcon);
+            runOrStop.getStyleClass().add("buttons-hbox-button");
+            runOrStop.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_EXECUTE_ALL, LanguageTooltip.DEFAULT_DELAY));
+            runOrStop.setOnAction(event -> simulation.executeAll());
+        });
+    }
 
-	private void changeToStop(MIPSSimulation<?> simulation) {
-		Platform.runLater(() -> {
-			Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_STOP
-			).orElse(null);
+    private void changeToStop(MIPSSimulation<?> simulation) {
+        Platform.runLater(() -> {
+            Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_STOP
+            ).orElse(null);
 
-			((NearestImageView) runOrStop.getGraphic()).setImage(runAllIcon);
-			runOrStop.getStyleClass().add("buttons-hbox-button");
-			runOrStop.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_STOP, LanguageTooltip.DEFAULT_DELAY));
-			runOrStop.setOnAction(event -> simulation.stop());
-		});
-	}
+            ((NearestImageView) runOrStop.getGraphic()).setImage(runAllIcon);
+            runOrStop.getStyleClass().add("buttons-hbox-button");
+            runOrStop.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_STOP, LanguageTooltip.DEFAULT_DELAY));
+            runOrStop.setOnAction(event -> simulation.stop());
+        });
+    }
 
 }

@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.gui.configuration;
@@ -54,198 +54,195 @@ import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Objects;
 
 public class ConfigurationWindow extends SplitPane {
 
-	private static final int WIDTH = 900;
-	private static final int HEIGHT = 600;
+    private static final int WIDTH = 900;
+    private static final int HEIGHT = 600;
 
-	private static ConfigurationWindow INSTANCE;
+    private static ConfigurationWindow INSTANCE;
+    private final RootConfiguration configuration;
+    private final Configuration meta;
+    private final ConfigurationWindowExplorer explorer;
+    private final ScrollPane explorerScrollPane;
+    private final SectionTreeDisplay sectionTreeDisplay;
+    private final VBox sectionDisplay;
+    private final ScrollPane basicSectionContentsScroll;
+    private final VBox basicSectionContents;
+    private Stage stage;
+    private Scene scene;
 
-	public static ConfigurationWindow getInstance() {
-		if (INSTANCE == null) {
-			try {
-				Configuration types = new RootConfiguration(new InputStreamReader(Jams.class.getResourceAsStream(
-						"/configuration/main_config_meta.jconfig")));
-				INSTANCE = new ConfigurationWindow(Jams.getMainConfiguration(), types);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		return INSTANCE;
-	}
+    public ConfigurationWindow(RootConfiguration configuration, Configuration meta) {
+        this.stage = null;
+        this.configuration = configuration;
+        this.meta = meta;
 
-	private Stage stage;
-	private Scene scene;
+        explorerScrollPane = new PixelScrollPane();
+        explorerScrollPane.setFitToHeight(true);
+        explorerScrollPane.setFitToWidth(true);
+        explorer = new ConfigurationWindowExplorer(this, explorerScrollPane);
+        explorer.hideMainSectionRepresentation();
+        explorerScrollPane.setContent(explorer);
 
-	private final RootConfiguration configuration;
-	private final Configuration meta;
+        explorerScrollPane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
+            double deltaY = scrollEvent.getDeltaY() * 0.003;
+            explorerScrollPane.setVvalue(explorerScrollPane.getVvalue() - deltaY);
+        });
 
-	private final ConfigurationWindowExplorer explorer;
-	private final ScrollPane explorerScrollPane;
+        sectionTreeDisplay = new SectionTreeDisplay();
 
-	private final SectionTreeDisplay sectionTreeDisplay;
-	private final VBox sectionDisplay;
+        sectionDisplay = new VBox();
+        sectionDisplay.getStyleClass().add("configuration-window-display");
 
-	private final ScrollPane basicSectionContentsScroll;
-	private final VBox basicSectionContents;
+        basicSectionContentsScroll = new PixelScrollPane();
+        basicSectionContentsScroll.setFitToWidth(true);
+        basicSectionContentsScroll.setFitToHeight(true);
 
-	public ConfigurationWindow(RootConfiguration configuration, Configuration meta) {
-		this.stage = null;
-		this.configuration = configuration;
-		this.meta = meta;
+        basicSectionContents = new VBox();
+        basicSectionContents.setPadding(new Insets(5, 0, 0, 5));
+        basicSectionContents.getStyleClass().add("configuration-window-display-contents");
+        basicSectionContentsScroll.setContent(basicSectionContents);
 
-		explorerScrollPane = new PixelScrollPane();
-		explorerScrollPane.setFitToHeight(true);
-		explorerScrollPane.setFitToWidth(true);
-		explorer = new ConfigurationWindowExplorer(this, explorerScrollPane);
-		explorer.hideMainSectionRepresentation();
-		explorerScrollPane.setContent(explorer);
+        sectionDisplay.getChildren().add(sectionTreeDisplay);
 
-		explorerScrollPane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
-			double deltaY = scrollEvent.getDeltaY() * 0.003;
-			explorerScrollPane.setVvalue(explorerScrollPane.getVvalue() - deltaY);
-		});
+        init();
+    }
 
-		sectionTreeDisplay = new SectionTreeDisplay();
+    public static ConfigurationWindow getInstance() {
+        if (INSTANCE == null) {
+            try {
+                Configuration types = new RootConfiguration(new InputStreamReader(
+                        Objects.requireNonNull(Jams.class.getResourceAsStream(
+                                "/configuration/main_config_meta.jconfig"))));
+                INSTANCE = new ConfigurationWindow(Jams.getMainConfiguration(), types);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return INSTANCE;
+    }
 
-		sectionDisplay = new VBox();
-		sectionDisplay.getStyleClass().add("configuration-window-display");
+    public Configuration getConfiguration() {
+        return configuration;
+    }
 
-		basicSectionContentsScroll = new PixelScrollPane();
-		basicSectionContentsScroll.setFitToWidth(true);
-		basicSectionContentsScroll.setFitToHeight(true);
+    public Configuration getMeta() {
+        return meta;
+    }
 
-		basicSectionContents = new VBox();
-		basicSectionContents.setPadding(new Insets(5, 0, 0, 5));
-		basicSectionContents.getStyleClass().add("configuration-window-display-contents");
-		basicSectionContentsScroll.setContent(basicSectionContents);
+    public Stage getStage() {
+        return stage;
+    }
 
-		sectionDisplay.getChildren().add(sectionTreeDisplay);
+    private void init() {
+        getItems().add(explorerScrollPane);
+        getItems().add(sectionDisplay);
+        SplitPane.setResizableWithParent(explorerScrollPane, false);
+        Platform.runLater(() -> setDividerPosition(0, 0.2));
+    }
 
-		init();
-	}
+    public void display(ConfigurationWindowSection section) {
+        while (sectionDisplay.getChildren().size() > 1) {
+            sectionDisplay.getChildren().remove(1);
+        }
 
-	public Configuration getConfiguration() {
-		return configuration;
-	}
+        if (section.isSpecial()) {
+            Node node = section.getSpecialNode();
+            if (node instanceof Region) {
+                ((Region) node).prefHeightProperty().bind(sectionDisplay.heightProperty()
+                        .subtract(sectionTreeDisplay.heightProperty()));
+            }
+            sectionDisplay.getChildren().add(node);
+        } else {
+            displayNormalSection(section);
+        }
 
-	public Configuration getMeta() {
-		return meta;
-	}
+        sectionTreeDisplay.setSection(section);
+    }
 
-	public Stage getStage() {
-		return stage;
-	}
+    private void displayNormalSection(ConfigurationWindowSection section) {
+        basicSectionContents.getChildren().clear();
 
-	private void init() {
-		getItems().add(explorerScrollPane);
-		getItems().add(sectionDisplay);
-		SplitPane.setResizableWithParent(explorerScrollPane, false);
-		Platform.runLater(() -> setDividerPosition(0, 0.2));
-	}
+        List<ConfigurationWindowNode> nodes = section.getNodes();
+        String currentRegion = null;
 
-	public void display(ConfigurationWindowSection section) {
-		while (sectionDisplay.getChildren().size() > 1) {
-			sectionDisplay.getChildren().remove(1);
-		}
-
-		if (section.isSpecial()) {
-			Node node = section.getSpecialNode();
-			if (node instanceof Region) {
-				((Region) node).prefHeightProperty().bind(sectionDisplay.heightProperty()
-						.subtract(sectionTreeDisplay.heightProperty()));
-			}
-			sectionDisplay.getChildren().add(node);
-		} else {
-			displayNormalSection(section);
-		}
-
-		sectionTreeDisplay.setSection(section);
-	}
-
-	private void displayNormalSection(ConfigurationWindowSection section) {
-		basicSectionContents.getChildren().clear();
-
-		List<ConfigurationWindowNode> nodes = section.getNodes();
-		String currentRegion = null;
-
-		for (ConfigurationWindowNode node : nodes) {
-			if (currentRegion == null || !currentRegion.equals(node.getRegion())) {
-				currentRegion = node.getRegion();
-				if (currentRegion != null) {
-					basicSectionContents.getChildren().add(new ConfigurationRegionDisplay(section.getLanguageNode(), currentRegion));
-				}
-			}
-			basicSectionContents.getChildren().add(node);
-		}
+        for (ConfigurationWindowNode node : nodes) {
+            if (currentRegion == null || !currentRegion.equals(node.getRegion())) {
+                currentRegion = node.getRegion();
+                if (currentRegion != null) {
+                    basicSectionContents.getChildren().add(new ConfigurationRegionDisplay(section.getLanguageNode(), currentRegion));
+                }
+            }
+            basicSectionContents.getChildren().add(node);
+        }
 
 
-		sectionDisplay.getChildren().add(basicSectionContentsScroll);
-	}
+        sectionDisplay.getChildren().add(basicSectionContentsScroll);
+    }
 
-	public void open() {
-		if (stage == null) {
-			stage = new Stage();
-			scene = new ThemedScene(this);
-			stage.initOwner(JamsApplication.getStage());
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setScene(scene);
+    public void open() {
+        if (stage == null) {
+            stage = new Stage();
+            scene = new ThemedScene(this);
+            stage.initOwner(JamsApplication.getStage());
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(scene);
 
-			stage.setWidth(WIDTH);
-			stage.setHeight(HEIGHT);
-			stage.setMinWidth(WIDTH >> 1);
-			stage.setMinHeight(0);
+            stage.setWidth(WIDTH);
+            stage.setHeight(HEIGHT);
+            stage.setMinWidth(WIDTH >> 1);
+            stage.setMinHeight(0);
 
-			Stage main = JamsApplication.getStage();
+            Stage main = JamsApplication.getStage();
 
-			stage.setX(main.getX() + main.getWidth() / 2 - (WIDTH >> 1));
-			stage.setY(main.getY() + main.getHeight() / 2 - (HEIGHT >> 1));
+            stage.setX(main.getX() + main.getWidth() / 2 - (WIDTH >> 1));
+            stage.setY(main.getY() + main.getHeight() / 2 - (HEIGHT >> 1));
 
-			stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.CONFIG));
-			JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO)
-					.ifPresent(stage.getIcons()::add);
+            stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.CONFIG));
+            JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO)
+                    .ifPresent(stage.getIcons()::add);
 
 
-			stage.setOnCloseRequest(event -> {
-				try {
-					configuration.save(true);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			});
+            stage.setOnCloseRequest(event -> {
+                try {
+                    configuration.save(true);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
 
-			scene.setOnKeyPressed(event -> {
-				if (event.getCode() == KeyCode.ESCAPE) {
-					stage.close();
-				}
-			});
+            scene.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.ESCAPE) {
+                    stage.close();
+                }
+            });
 
-			JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);
-			Jams.getLanguageManager().registerListeners(this, true);
-		}
+            JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);
+            Jams.getLanguageManager().registerListeners(this, true);
+        }
 
-		stage.show();
-	}
+        stage.show();
+    }
 
-	@Listener
-	private void onSelectedLanguageChange(SelectedLanguageChangeEvent.After event) {
-		stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.CONFIG));
-	}
+    @Listener
+    private void onSelectedLanguageChange(SelectedLanguageChangeEvent.After event) {
+        stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.CONFIG));
+    }
 
-	@Listener
-	private void onActionBind(ActionBindEvent.After event) {
-		if (scene != null) {
-			JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);
-		}
+    @Listener
+    private void onActionBind(ActionBindEvent.After event) {
+        if (scene != null) {
+            JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);
+        }
 
-	}
+    }
 
-	@Listener
-	private void onActionUnbind(ActionBindEvent.After event) {
-		if (scene != null) {
-			JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);
-		}
+    @Listener
+    private void onActionUnbind(ActionBindEvent.After event) {
+        if (scene != null) {
+            JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);
+        }
 
-	}
+    }
 }

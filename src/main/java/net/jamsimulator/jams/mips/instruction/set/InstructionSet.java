@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.mips.instruction.set;
@@ -34,7 +34,6 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Represents an instruction set. An instruction set stores a collection of instruction and it's
@@ -74,6 +73,35 @@ public class InstructionSet implements Labeled {
         instructions = new HashSet<>();
         instructionsByMnemonic = new HashMap<>();
         basicInstructionsOnly = new HashMap<>();
+    }
+
+    /**
+     * Sorts the given list by the best instruction.
+     *
+     * @param list the list.
+     */
+    public static void sort(List<? extends Instruction> list) {
+        list.sort(COMPARATOR);
+    }
+
+    public static int bestInstructionOf(List<? extends Instruction> list) {
+        if (list.isEmpty()) throw new IllegalArgumentException("List is empty");
+        Instruction best = list.get(0);
+        int bestI = 0;
+
+        int i = 1;
+        var it = list.iterator();
+        Instruction current;
+        it.next();
+        while (it.hasNext()) {
+            current = it.next();
+            if (COMPARATOR.compare(best, current) > 0) {
+                best = current;
+                bestI = i;
+            }
+            i++;
+        }
+        return bestI;
     }
 
     @Override
@@ -178,7 +206,6 @@ public class InstructionSet implements Labeled {
         return Optional.empty();
     }
 
-
     /**
      * Registers an instruction to the instruction set. If an instruction with the same
      * mnemonic and parameters is registered in this instruction set the given instruction
@@ -196,42 +223,12 @@ public class InstructionSet implements Labeled {
     public boolean registerInstruction(Instruction instruction) {
         Validate.notNull(instruction, "The given instruction cannot be null!");
 
-        if (instruction instanceof BasicInstruction) {
-            BasicInstruction<?> basic = (BasicInstruction<?>) instruction;
+        if (instruction instanceof BasicInstruction<?> basic) {
             basicInstructionsOnly.computeIfAbsent(basic.getOperationCode(), k -> new HashSet<>()).add(basic);
         }
 
         instructionsByMnemonic.computeIfAbsent(instruction.getMnemonic(), k -> new HashSet<>()).add(instruction);
         return instructions.add(instruction);
-    }
-
-    /**
-     * Sorts the given list by the best instruction.
-     *
-     * @param list the list.
-     */
-    public static void sort(List<? extends Instruction> list) {
-        list.sort(COMPARATOR);
-    }
-
-    public static int bestInstructionOf(List<? extends Instruction> list) {
-        if (list.isEmpty()) throw new IllegalArgumentException("List is empty");
-        Instruction best = list.get(0);
-        int bestI = 0;
-
-        int i = 1;
-        var it = list.iterator();
-        Instruction current;
-        it.next();
-        while (it.hasNext()) {
-            current = it.next();
-            if (COMPARATOR.compare(best, current) > 0) {
-                best = current;
-                bestI = i;
-            }
-            i++;
-        }
-        return bestI;
     }
 
     public static class CompatibleInstructionComparator implements Comparator<Instruction> {

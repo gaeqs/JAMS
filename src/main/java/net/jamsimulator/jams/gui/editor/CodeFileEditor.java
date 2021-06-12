@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.gui.editor;
@@ -43,9 +43,6 @@ import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.editor.popup.DocumentationPopup;
-import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
-import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
-import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.ThemeShouldRefreshEvent;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.GUIReflectionUtils;
@@ -122,6 +119,16 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
         });
     }
 
+    private static String read(FileEditorTab tab) {
+        if (tab == null) return "";
+        try {
+            return FileUtils.readAll(tab.getFile());
+        } catch (IOException ex) {
+            StringWriter writer = new StringWriter();
+            ex.printStackTrace(new PrintWriter(writer));
+            return writer.toString();
+        }
+    }
 
     /**
      * Returns the {@link FileEditorTab} holding this editor.
@@ -151,6 +158,8 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
         return autocompletionPopup;
     }
 
+    //region actions
+
     /**
      * Returns the {@link Popup} showing the current documentation.
      *
@@ -159,8 +168,6 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
     public DocumentationPopup getDocumentationPopup() {
         return documentationPopup;
     }
-
-    //region actions
 
     /**
      * Returns a new {@link List} with all lines of this file inside.
@@ -249,6 +256,10 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
     public void reformat() {
     }
 
+    //endregion
+
+    //region override
+
     /**
      * Duplicates the current line.
      * If a selection is made, the selection will be duplicated instead.
@@ -269,10 +280,6 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
             getCaretSelectionBind().selectRange(selection.getEnd(), selection.getEnd() + text.length());
         }
     }
-
-    //endregion
-
-    //region override
 
     @Override
     public void onClose() {
@@ -332,14 +339,14 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
         return scrollPane;
     }
 
-    public ScaledVirtualized<?> getZoom() {
-        return zoom;
-    }
-
 
     //endregion
 
     //region configuration
+
+    public ScaledVirtualized<?> getZoom() {
+        return zoom;
+    }
 
     private void applyOldTextListener() {
         textProperty().addListener((obs, old, value) -> this.old = old);
@@ -472,19 +479,8 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
         return set;
     }
 
-    private static String read(FileEditorTab tab) {
-        if (tab == null) return "";
-        try {
-            return FileUtils.readAll(tab.getFile());
-        } catch (IOException ex) {
-            StringWriter writer = new StringWriter();
-            ex.printStackTrace(new PrintWriter(writer));
-            return writer.toString();
-        }
-    }
-
     @Listener
-    private void onThemeRefresh (ThemeShouldRefreshEvent event) {
+    private void onThemeRefresh(ThemeShouldRefreshEvent event) {
         JamsApplication.getThemeManager().apply(this);
     }
 

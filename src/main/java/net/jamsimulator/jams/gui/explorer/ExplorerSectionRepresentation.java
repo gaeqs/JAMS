@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.gui.explorer;
@@ -41,158 +41,158 @@ import net.jamsimulator.jams.gui.image.icon.Icons;
  */
 public class ExplorerSectionRepresentation extends HBox {
 
-	protected ExplorerSection section;
+    protected ExplorerSection section;
 
-	protected ImageView statusIcon;
-	protected ImageView icon;
-	protected Label label;
-	protected ExplorerSeparatorRegion separator;
+    protected ImageView statusIcon;
+    protected ImageView icon;
+    protected Label label;
+    protected ExplorerSeparatorRegion separator;
 
-	protected ExplorerSeparatorRegion emptyRegion;
+    protected ExplorerSeparatorRegion emptyRegion;
 
-	//HIERARCHY
-	protected int hierarchyLevel;
+    //HIERARCHY
+    protected int hierarchyLevel;
 
-	protected boolean selected;
+    protected boolean selected;
 
-	/**
-	 * Creates the representation.
-	 *
-	 * @param section        the {@link ExplorerSection} to represent.
-	 * @param hierarchyLevel the hierarchy level, used by the spacing.
-	 */
-	public ExplorerSectionRepresentation(ExplorerSection section, int hierarchyLevel) {
-		getStyleClass().addAll("explorer-element", "explorer-representation");
-		this.section = section;
-		this.hierarchyLevel = hierarchyLevel;
+    /**
+     * Creates the representation.
+     *
+     * @param section        the {@link ExplorerSection} to represent.
+     * @param hierarchyLevel the hierarchy level, used by the spacing.
+     */
+    public ExplorerSectionRepresentation(ExplorerSection section, int hierarchyLevel) {
+        getStyleClass().addAll("explorer-element", "explorer-representation");
+        this.section = section;
+        this.hierarchyLevel = hierarchyLevel;
 
-		selected = false;
+        selected = false;
 
-		emptyRegion = new ExplorerSeparatorRegion(FileType.IMAGE_SIZE);
+        emptyRegion = new ExplorerSeparatorRegion(FileType.IMAGE_SIZE);
 
-		loadElements();
-		loadListeners();
-		refreshStatusIcon();
+        loadElements();
+        loadListeners();
+        refreshStatusIcon();
 
-		prefWidthProperty().bind(section.explorer.widthProperty());
-	}
+        prefWidthProperty().bind(section.explorer.widthProperty());
+    }
 
-	public double getRepresentationWidth() {
-		double statusWidth = statusIcon.getImage() == null ? 0 : statusIcon.getFitWidth();
-		double iconWidth = icon.getImage() == null ? 0 : icon.getFitWidth();
-		double separatorWidth = separator == null ? 0 : separator.getWidth();
+    public double getRepresentationWidth() {
+        double statusWidth = statusIcon.getImage() == null ? 0 : statusIcon.getFitWidth();
+        double iconWidth = icon.getImage() == null ? 0 : icon.getFitWidth();
+        double separatorWidth = separator == null ? 0 : separator.getWidth();
 
-		return separatorWidth + statusWidth + iconWidth + label.getWidth() + ExplorerBasicElement.SPACING * 3;
-	}
-
-
-	public Label getLabel() {
-		return label;
-	}
-
-	public ImageView getIcon() {
-		return icon;
-	}
-
-	/**
-	 * Refresh the status icon of the folder.
-	 */
-	public void refreshStatusIcon() {
-		Image icon;
-		if (section.isEmpty()) {
-			icon = null;
-		} else if (section.isExpanded()) {
-			icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_EXPANDED
-			).orElse(null);
-		} else {
-			icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_COLLAPSED
-			).orElse(null);
-		}
-		statusIcon.setImage(icon);
-		if (icon == null) {
-			getChildren().remove(statusIcon);
-			if (!getChildren().contains(emptyRegion))
-				getChildren().add(1, emptyRegion);
-		} else if (!getChildren().contains(statusIcon)) {
-			getChildren().remove(emptyRegion);
-			getChildren().add(1, statusIcon);
-		}
-	}
+        return separatorWidth + statusWidth + iconWidth + label.getWidth() + ExplorerBasicElement.SPACING * 3;
+    }
 
 
-	/**
-	 * Returns the represented {@link ExplorerSection}.
-	 *
-	 * @return the represented {@link ExplorerSection}.
-	 */
-	public ExplorerSection getSection() {
-		return section;
-	}
+    public Label getLabel() {
+        return label;
+    }
 
-	/**
-	 * Returns the hierarchy level.
-	 *
-	 * @return the hierarchy level.
-	 */
-	public int getHierarchyLevel() {
-		return hierarchyLevel;
-	}
+    public ImageView getIcon() {
+        return icon;
+    }
 
-	public boolean isSelected() {
-		return selected;
-	}
-
-	public void hideIcon(boolean hide) {
-		getChildren().clear();
-		if (hide) {
-			getChildren().addAll(separator, statusIcon, new Group(label));
-		} else {
-			getChildren().addAll(separator, statusIcon, icon, new Group(label));
-		}
-	}
-
-	public void select() {
-		if (selected) return;
-		getStyleClass().add("selected-explorer-element");
-		selected = true;
-	}
-
-	public void deselect() {
-		if (!selected) return;
-		getStyleClass().remove("selected-explorer-element");
-		selected = false;
-	}
+    /**
+     * Refresh the status icon of the folder.
+     */
+    public void refreshStatusIcon() {
+        Image icon;
+        if (section.isEmpty()) {
+            icon = null;
+        } else if (section.isExpanded()) {
+            icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_EXPANDED
+            ).orElse(null);
+        } else {
+            icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_COLLAPSED
+            ).orElse(null);
+        }
+        statusIcon.setImage(icon);
+        if (icon == null) {
+            getChildren().remove(statusIcon);
+            if (!getChildren().contains(emptyRegion))
+                getChildren().add(1, emptyRegion);
+        } else if (!getChildren().contains(statusIcon)) {
+            getChildren().remove(emptyRegion);
+            getChildren().add(1, statusIcon);
+        }
+    }
 
 
-	protected void loadElements() {
-		statusIcon = new NearestImageView(null, 0, 0);
-		icon = new NearestImageView(null, 0, 0);
-		label = new Label(section.getName());
+    /**
+     * Returns the represented {@link ExplorerSection}.
+     *
+     * @return the represented {@link ExplorerSection}.
+     */
+    public ExplorerSection getSection() {
+        return section;
+    }
 
-		statusIcon.imageProperty().addListener((obs, old, val) -> {
-			statusIcon.setFitHeight(val == null ? 0 : FileType.IMAGE_SIZE);
-			statusIcon.setFitWidth(val == null ? 0 : FileType.IMAGE_SIZE);
-		});
+    /**
+     * Returns the hierarchy level.
+     *
+     * @return the hierarchy level.
+     */
+    public int getHierarchyLevel() {
+        return hierarchyLevel;
+    }
 
-		icon.imageProperty().addListener((obs, old, val) -> {
-			icon.setFitHeight(val == null ? 0 : FileType.IMAGE_SIZE);
-			icon.setFitWidth(val == null ? 0 : FileType.IMAGE_SIZE);
-		});
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void hideIcon(boolean hide) {
+        getChildren().clear();
+        if (hide) {
+            getChildren().addAll(separator, statusIcon, new Group(label));
+        } else {
+            getChildren().addAll(separator, statusIcon, icon, new Group(label));
+        }
+    }
+
+    public void select() {
+        if (selected) return;
+        getStyleClass().add("selected-explorer-element");
+        selected = true;
+    }
+
+    public void deselect() {
+        if (!selected) return;
+        getStyleClass().remove("selected-explorer-element");
+        selected = false;
+    }
 
 
-		separator = new ExplorerSeparatorRegion(true, hierarchyLevel);
+    protected void loadElements() {
+        statusIcon = new NearestImageView(null, 0, 0);
+        icon = new NearestImageView(null, 0, 0);
+        label = new Label(section.getName());
 
-		getChildren().addAll(separator, statusIcon, icon, new Group(label));
-		setSpacing(ExplorerBasicElement.SPACING);
-		setAlignment(Pos.CENTER_LEFT);
-	}
+        statusIcon.imageProperty().addListener((obs, old, val) -> {
+            statusIcon.setFitHeight(val == null ? 0 : FileType.IMAGE_SIZE);
+            statusIcon.setFitWidth(val == null ? 0 : FileType.IMAGE_SIZE);
+        });
 
-	protected void loadListeners() {
-		statusIcon.setOnMouseClicked(event -> {
-			section.getExplorer().selectElementAlone(section);
-			section.expandOrContract();
-			event.consume();
-		});
-	}
+        icon.imageProperty().addListener((obs, old, val) -> {
+            icon.setFitHeight(val == null ? 0 : FileType.IMAGE_SIZE);
+            icon.setFitWidth(val == null ? 0 : FileType.IMAGE_SIZE);
+        });
+
+
+        separator = new ExplorerSeparatorRegion(true, hierarchyLevel);
+
+        getChildren().addAll(separator, statusIcon, icon, new Group(label));
+        setSpacing(ExplorerBasicElement.SPACING);
+        setAlignment(Pos.CENTER_LEFT);
+    }
+
+    protected void loadListeners() {
+        statusIcon.setOnMouseClicked(event -> {
+            section.getExplorer().selectElementAlone(section);
+            section.expandOrContract();
+            event.consume();
+        });
+    }
 
 }

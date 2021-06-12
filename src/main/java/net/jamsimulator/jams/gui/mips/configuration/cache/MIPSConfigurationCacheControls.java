@@ -1,3 +1,27 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
 package net.jamsimulator.jams.gui.mips.configuration.cache;
 
 import javafx.geometry.Pos;
@@ -9,88 +33,88 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
-import net.jamsimulator.jams.gui.util.AnchorUtils;
 
 
 public class MIPSConfigurationCacheControls extends AnchorPane {
 
-	private final MIPSConfigurationDisplayCacheTab cacheTab;
-	private final HBox buttonsHbox;
+    private final MIPSConfigurationDisplayCacheTab cacheTab;
+    private final HBox buttonsHbox;
 
-	public MIPSConfigurationCacheControls(MIPSConfigurationDisplayCacheTab cacheTab) {
-		this.cacheTab = cacheTab;
+    public MIPSConfigurationCacheControls(MIPSConfigurationDisplayCacheTab cacheTab) {
+        this.cacheTab = cacheTab;
 
-		buttonsHbox = new HBox();
-		AnchorUtils.setAnchor(buttonsHbox, 0, 0, 0, -1);
-		buttonsHbox.setAlignment(Pos.CENTER_LEFT);
-		getChildren().add(buttonsHbox);
+        buttonsHbox = new HBox();
+        AnchorUtils.setAnchor(buttonsHbox, 0, 0, 0, -1);
+        buttonsHbox.setAlignment(Pos.CENTER_LEFT);
+        getChildren().add(buttonsHbox);
 
-		populate();
-	}
-
-
-	private void populate() {
-		generateAddButton();
-		generateRemoveButton();
-	}
-
-	private void generateAddButton() {
-		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.CONTROL_ADD
-		).orElse(null);
-
-		var button = new Button(null, new NearestImageView(icon, 16, 16));
-		button.setTooltip(new LanguageTooltip(Messages.GENERAL_ADD));
-		button.getStyleClass().add("bold-button");
-
-		button.setOnAction(event -> {
-			var builder = Jams.getCacheBuilderManager().stream().findAny()
-					.map(CacheBuilder::makeNewInstance).orElse(null);
-
-			cacheTab.getConfiguration().getCacheBuilders().add(builder);
-			cacheTab.getContents().add(builder);
-		});
-
-		buttonsHbox.getChildren().add(button);
-	}
+        populate();
+    }
 
 
-	private void generateRemoveButton() {
-		var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.CONTROL_REMOVE
-		).orElse(null);
+    private void populate() {
+        generateAddButton();
+        generateRemoveButton();
+    }
 
-		var button = new Button(null, new NearestImageView(icon, 16, 16));
-		button.setTooltip(new LanguageTooltip(Messages.GENERAL_REMOVE));
-		button.getStyleClass().add("bold-button");
+    private void generateAddButton() {
+        var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.CONTROL_ADD
+        ).orElse(null);
 
-		button.setOnAction(event -> {
-			var contents = cacheTab.getContents();
-			var selected = contents.getSelectedElements();
+        var button = new Button(null, new NearestImageView(icon, 16, 16));
+        button.setTooltip(new LanguageTooltip(Messages.GENERAL_ADD));
+        button.getStyleClass().add("bold-button");
 
-			if (selected.isEmpty()) return;
-			for (ExplorerElement element : selected) {
-				if (!(element instanceof MIPSConfigurationCacheContents.Representation)) continue;
+        button.setOnAction(event -> {
+            var builder = Jams.getCacheBuilderManager().stream().findAny()
+                    .map(CacheBuilder::makeNewInstance).orElse(null);
 
-				var previous = element.getPrevious();
-				contents.remove((MIPSConfigurationCacheContents.Representation) element);
-				cacheTab.getConfiguration().getCacheBuilders()
-						.remove(((MIPSConfigurationCacheContents.Representation) element).getIndex());
+            cacheTab.getConfiguration().getCacheBuilders().add(builder);
+            cacheTab.getContents().add(builder);
+        });
 
-				if (previous.isPresent()) {
-					contents.selectElementAlone(previous.get());
-				} else {
-					contents.getMainSection().getElementByIndex(0).ifPresent(contents::selectElementAlone);
+        buttonsHbox.getChildren().add(button);
+    }
 
-					if (contents.getMainSection().isEmpty()) {
-						cacheTab.display(null);
-					}
-				}
-			}
-		});
 
-		buttonsHbox.getChildren().add(button);
-	}
+    private void generateRemoveButton() {
+        var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.CONTROL_REMOVE
+        ).orElse(null);
+
+        var button = new Button(null, new NearestImageView(icon, 16, 16));
+        button.setTooltip(new LanguageTooltip(Messages.GENERAL_REMOVE));
+        button.getStyleClass().add("bold-button");
+
+        button.setOnAction(event -> {
+            var contents = cacheTab.getContents();
+            var selected = contents.getSelectedElements();
+
+            if (selected.isEmpty()) return;
+            for (ExplorerElement element : selected) {
+                if (!(element instanceof MIPSConfigurationCacheContents.Representation)) continue;
+
+                var previous = element.getPrevious();
+                contents.remove((MIPSConfigurationCacheContents.Representation) element);
+                cacheTab.getConfiguration().getCacheBuilders()
+                        .remove(((MIPSConfigurationCacheContents.Representation) element).getIndex());
+
+                if (previous.isPresent()) {
+                    contents.selectElementAlone(previous.get());
+                } else {
+                    contents.getMainSection().getElementByIndex(0).ifPresent(contents::selectElementAlone);
+
+                    if (contents.getMainSection().isEmpty()) {
+                        cacheTab.display(null);
+                    }
+                }
+            }
+        });
+
+        buttonsHbox.getChildren().add(button);
+    }
 
 }

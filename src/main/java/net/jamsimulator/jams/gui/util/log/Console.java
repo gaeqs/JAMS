@@ -1,3 +1,27 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
 package net.jamsimulator.jams.gui.util.log;
 
 import javafx.application.Platform;
@@ -14,9 +38,9 @@ import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.gui.util.log.event.ConsoleInputEvent;
-import net.jamsimulator.jams.gui.util.AnchorUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
@@ -29,300 +53,298 @@ import java.util.Optional;
 
 public class Console extends HBox implements Log, EventBroadcast {
 
-	protected VBox buttons;
+    protected final LinkedList<String> inputs;
+    protected VBox buttons;
+    protected CodeArea display;
+    protected TextField input;
+    protected VBox inputsDisplay;
+    protected boolean willRefresh = false;
 
-	protected CodeArea display;
-	protected TextField input;
+    protected SimpleEventBroadcast broadcast;
 
-	protected final LinkedList<String> inputs;
-	protected VBox inputsDisplay;
-	protected boolean willRefresh = false;
+    protected LinkedList<Pair> buffer;
 
-	protected SimpleEventBroadcast broadcast;
+    public Console() {
+        super();
+        getStyleClass().add("console");
 
-	protected LinkedList<Pair> buffer;
+        inputs = new LinkedList<>();
+        broadcast = new SimpleEventBroadcast();
+        buffer = new LinkedList<>();
 
-	public Console() {
-		super();
-		getStyleClass().add("console");
+        loadButtons();
+        loadDisplay();
 
-		inputs = new LinkedList<>();
-		broadcast = new SimpleEventBroadcast();
-		buffer = new LinkedList<>();
+        loadInputListeners();
+    }
 
-		loadButtons();
-		loadDisplay();
+    public Optional<String> popInput() {
+        try {
+            synchronized (inputs) {
+                Optional<String> optional = Optional.of(inputs.removeFirst());
+                refreshLater();
+                return optional;
+            }
+        } catch (NoSuchElementException ex) {
+            return Optional.empty();
+        }
+    }
 
-		loadInputListeners();
-	}
+    public Optional<Character> popChar() {
+        try {
+            synchronized (inputs) {
+                boolean found = false;
+                char c = 0;
+                String str;
 
-	public Optional<String> popInput() {
-		try {
-			synchronized (inputs) {
-				Optional<String> optional = Optional.of(inputs.removeFirst());
-				refreshLater();
-				return optional;
-			}
-		} catch (NoSuchElementException ex) {
-			return Optional.empty();
-		}
-	}
+                while (!found) {
+                    str = inputs.getFirst();
+                    if (str.isEmpty()) {
+                        inputs.removeFirst();
+                    } else {
+                        c = str.charAt(0);
+                        found = true;
+                        if (str.length() == 1) {
+                            inputs.removeFirst();
+                        } else {
+                            inputs.set(0, str.substring(1));
+                        }
+                        refreshLater();
+                    }
+                }
+                return Optional.of(c);
+            }
+        } catch (NoSuchElementException ex) {
+            return Optional.empty();
+        }
+    }
 
-	public Optional<Character> popChar() {
-		try {
-			synchronized (inputs) {
-				boolean found = false;
-				char c = 0;
-				String str;
+    @Override
+    public void print(Object object) {
+        printAndStyle(object, null);
+    }
 
-				while (!found) {
-					str = inputs.getFirst();
-					if (str.isEmpty()) {
-						inputs.removeFirst();
-					} else {
-						c = str.charAt(0);
-						found = true;
-						if (str.length() == 1) {
-							inputs.removeFirst();
-						} else {
-							inputs.set(0, str.substring(1));
-						}
-						refreshLater();
-					}
-				}
-				return Optional.of(c);
-			}
-		} catch (NoSuchElementException ex) {
-			return Optional.empty();
-		}
-	}
+    @Override
+    public void println(Object object) {
+        printAndStyleLn(object, null);
+    }
 
-	@Override
-	public void print(Object object) {
-		printAndStyle(object, null);
-	}
+    @Override
+    public void printError(Object object) {
+        printAndStyle(object, "log_error");
+    }
 
-	@Override
-	public void println(Object object) {
-		printAndStyleLn(object, null);
-	}
+    @Override
+    public void printErrorLn(Object object) {
+        printAndStyleLn(object, "log_error");
+    }
 
-	@Override
-	public void printError(Object object) {
-		printAndStyle(object, "log_error");
-	}
+    @Override
+    public void printInfo(Object object) {
+        printAndStyle(object, "log_info");
+    }
 
-	@Override
-	public void printErrorLn(Object object) {
-		printAndStyleLn(object, "log_error");
-	}
+    @Override
+    public void printInfoLn(Object object) {
+        printAndStyleLn(object, "log_info");
+    }
 
-	@Override
-	public void printInfo(Object object) {
-		printAndStyle(object, "log_info");
-	}
+    @Override
+    public void printWarning(Object object) {
+        printAndStyle(object, "log_warning");
+    }
 
-	@Override
-	public void printInfoLn(Object object) {
-		printAndStyleLn(object, "log_info");
-	}
+    @Override
+    public void printWarningLn(Object object) {
+        printAndStyleLn(object, "log_warning");
+    }
 
-	@Override
-	public void printWarning(Object object) {
-		printAndStyle(object, "log_warning");
-	}
+    @Override
+    public void printDone(Object object) {
+        printAndStyle(object, "log_done");
+    }
 
-	@Override
-	public void printWarningLn(Object object) {
-		printAndStyleLn(object, "log_warning");
-	}
+    @Override
+    public void printDoneLn(Object object) {
+        printAndStyleLn(object, "log_done");
+    }
 
-	@Override
-	public void printDone(Object object) {
-		printAndStyle(object, "log_done");
-	}
+    @Override
+    public void println() {
+        println("");
+    }
 
-	@Override
-	public void printDoneLn(Object object) {
-		printAndStyleLn(object, "log_done");
-	}
+    @Override
+    public void clear() {
+        Platform.runLater(() -> display.clear());
+    }
 
-	@Override
-	public void println() {
-		println("");
-	}
+    public void flush() {
+        Platform.runLater(() -> {
+            Pair pair;
+            while (!buffer.isEmpty()) {
+                pair = buffer.pop();
+                int from = display.getLength();
+                display.appendText(pair.text);
+                if (pair.style != null) {
+                    display.setStyle(from, display.getLength(), Collections.singleton(pair.style));
+                }
+            }
+        });
+    }
 
-	@Override
-	public void clear() {
-		Platform.runLater(() -> display.clear());
-	}
+    private void printAndStyle(Object object, String style) {
+        buffer.add(new Pair(object == null ? "null" : object.toString(), style));
+    }
 
-	public void flush() {
-		Platform.runLater(() -> {
-			Pair pair;
-			while (!buffer.isEmpty()) {
-				pair = buffer.pop();
-				int from = display.getLength();
-				display.appendText(pair.text);
-				if(pair.style != null) {
-					display.setStyle(from, display.getLength(), Collections.singleton(pair.style));
-				}
-			}
-		});
-	}
+    private void printAndStyleLn(Object object, String style) {
+        buffer.add(new Pair(object == null ? "null\n" : object.toString() + '\n', style));
+    }
 
-	private void printAndStyle(Object object, String style) {
-		buffer.add(new Pair(object == null ? "null" : object.toString(), style));
-	}
+    protected void applyZoomListener(VirtualizedScrollPane<ScaledVirtualized<CodeArea>> scroll) {
+        display.addEventFilter(ScrollEvent.SCROLL, event -> {
+            if (event.isControlDown()) {
+                double current = scroll.getContent().getZoom().getX();
+                if (event.getDeltaY() < 0) {
+                    if (current > 0.4) {
+                        scroll.getContent().getZoom().setX(current - 0.2);
+                        scroll.getContent().getZoom().setY(current - 0.2);
+                    }
+                } else if (event.getDeltaY() > 0) {
+                    scroll.getContent().getZoom().setX(current + 0.2);
+                    scroll.getContent().getZoom().setY(current + 0.2);
+                }
+                event.consume();
+            }
+        });
 
-	private void printAndStyleLn(Object object, String style) {
-		buffer.add(new Pair(object == null ? "null\n" : object.toString() + '\n', style));
-	}
+        //RESET
+        display.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            if (event.isControlDown() && event.getButton() == MouseButton.MIDDLE) {
+                scroll.getContent().getZoom().setX(1);
+                scroll.getContent().getZoom().setY(1);
+                scroll.getContent().getZoom().setZ(1);
+            }
+        });
+    }
 
-	protected void applyZoomListener(VirtualizedScrollPane<ScaledVirtualized<CodeArea>> scroll) {
-		display.addEventFilter(ScrollEvent.SCROLL, event -> {
-			if (event.isControlDown()) {
-				double current = scroll.getContent().getZoom().getX();
-				if (event.getDeltaY() < 0) {
-					if (current > 0.4) {
-						scroll.getContent().getZoom().setX(current - 0.2);
-						scroll.getContent().getZoom().setY(current - 0.2);
-					}
-				} else if (event.getDeltaY() > 0) {
-					scroll.getContent().getZoom().setX(current + 0.2);
-					scroll.getContent().getZoom().setY(current + 0.2);
-				}
-				event.consume();
-			}
-		});
+    protected void refreshLater() {
+        if (willRefresh) return;
+        willRefresh = true;
+        Platform.runLater(() -> {
+            willRefresh = false;
+            inputsDisplay.getChildren().clear();
 
-		//RESET
-		display.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-			if (event.isControlDown() && event.getButton() == MouseButton.MIDDLE) {
-				scroll.getContent().getZoom().setX(1);
-				scroll.getContent().getZoom().setY(1);
-				scroll.getContent().getZoom().setZ(1);
-			}
-		});
-	}
+            int index = 0;
+            for (String in : inputs) {
+                inputsDisplay.getChildren().add(new ConsoleInput(in, index++, this));
+            }
+        });
+    }
 
-	protected void refreshLater() {
-		if (willRefresh) return;
-		willRefresh = true;
-		Platform.runLater(() -> {
-			willRefresh = false;
-			inputsDisplay.getChildren().clear();
+    private void loadButtons() {
+        buttons = new VBox();
+        Button clear = new Button("C");
+        clear.setOnAction(event -> clear());
+        clear.getStyleClass().add("bold-button");
 
-			int index = 0;
-			for (String in : inputs) {
-				inputsDisplay.getChildren().add(new ConsoleInput(in, index++, this));
-			}
-		});
-	}
+        Button clearInputs = new Button("Ci");
+        clearInputs.setOnAction(event -> inputsDisplay.getChildren().clear());
+        clearInputs.getStyleClass().add("bold-button");
 
-	private void loadButtons() {
-		buttons = new VBox();
-		Button clear = new Button("C");
-		clear.setOnAction(event -> clear());
-		clear.getStyleClass().add("bold-button");
+        buttons.getChildren().addAll(clear, clearInputs);
+        getChildren().add(buttons);
+    }
 
-		Button clearInputs = new Button("Ci");
-		clearInputs.setOnAction(event -> inputsDisplay.getChildren().clear());
-		clearInputs.getStyleClass().add("bold-button");
+    private void loadDisplay() {
+        VBox vbox = new VBox();
+        AnchorPane anchor = new AnchorPane();
 
-		buttons.getChildren().addAll(clear, clearInputs);
-		getChildren().add(buttons);
-	}
+        display = new CodeArea();
+        VirtualizedScrollPane<ScaledVirtualized<CodeArea>> scroll = new VirtualizedScrollPane<>(new ScaledVirtualized<>(display));
+        display.setEditable(false);
+        applyZoomListener(scroll);
+        display.getStyleClass().add("display");
 
-	private void loadDisplay() {
-		VBox vbox = new VBox();
-		AnchorPane anchor = new AnchorPane();
+        inputsDisplay = new VBox();
+        inputsDisplay.getStyleClass().add("inputs");
 
-		display = new CodeArea();
-		VirtualizedScrollPane<ScaledVirtualized<CodeArea>> scroll = new VirtualizedScrollPane<>(new ScaledVirtualized<>(display));
-		display.setEditable(false);
-		applyZoomListener(scroll);
-		display.getStyleClass().add("display");
+        ScrollPane inputsScroll = new PixelScrollPane(inputsDisplay);
+        inputsScroll.setPadding(new Insets(0));
+        inputsScroll.setFitToWidth(true);
+        inputsScroll.setFitToHeight(true);
+        inputsScroll.setPrefWidth(200);
+        inputsDisplay.minHeightProperty().bind(inputsScroll.heightProperty());
 
-		inputsDisplay = new VBox();
-		inputsDisplay.getStyleClass().add("inputs");
+        anchor.getChildren().add(inputsScroll);
+        anchor.getChildren().add(scroll);
 
-		ScrollPane inputsScroll = new PixelScrollPane(inputsDisplay);
-		inputsScroll.setPadding(new Insets(0));
-		inputsScroll.setFitToWidth(true);
-		inputsScroll.setFitToHeight(true);
-		inputsScroll.setPrefWidth(200);
-		inputsDisplay.minHeightProperty().bind(inputsScroll.heightProperty());
+        AnchorUtils.setAnchor(scroll, 0, 0, 0, 200);
+        AnchorUtils.setAnchor(inputsScroll, 0, 0, -1, 0);
 
-		anchor.getChildren().add(inputsScroll);
-		anchor.getChildren().add(scroll);
+        vbox.getChildren().add(anchor);
 
-		AnchorUtils.setAnchor(scroll, 0, 0, 0, 200);
-		AnchorUtils.setAnchor(inputsScroll, 0, 0, -1, 0);
+        input = new TextField();
+        vbox.getChildren().add(input);
+        input.setMaxHeight(30);
+        input.setPromptText("> ...");
+        input.getStyleClass().add("prompt");
 
-		vbox.getChildren().add(anchor);
+        anchor.prefWidthProperty().bind(widthProperty().subtract(buttons.widthProperty()));
+        anchor.prefHeightProperty().bind(heightProperty().subtract(input.heightProperty()));
 
-		input = new TextField();
-		vbox.getChildren().add(input);
-		input.setMaxHeight(30);
-		input.setPromptText("> ...");
-		input.getStyleClass().add("prompt");
+        getChildren().add(vbox);
+    }
 
-		anchor.prefWidthProperty().bind(widthProperty().subtract(buttons.widthProperty()));
-		anchor.prefHeightProperty().bind(heightProperty().subtract(input.heightProperty()));
+    private void loadInputListeners() {
+        input.setOnAction(event -> {
+            String data = input.getText();
+            if (data.isEmpty()) return;
 
-		getChildren().add(vbox);
-	}
+            ConsoleInputEvent.Before before =
+                    callEvent(new ConsoleInputEvent.Before(this, data));
+            if (before.isCancelled()) return;
 
-	private void loadInputListeners() {
-		input.setOnAction(event -> {
-			String data = input.getText();
-			if (data.isEmpty()) return;
+            inputs.add(before.getInput());
+            refreshLater();
+            input.setText("");
 
-			ConsoleInputEvent.Before before =
-					callEvent(new ConsoleInputEvent.Before(this, data));
-			if (before.isCancelled()) return;
-
-			inputs.add(before.getInput());
-			refreshLater();
-			input.setText("");
-
-			callEvent(new ConsoleInputEvent.After(this, data));
-		});
-	}
+            callEvent(new ConsoleInputEvent.After(this, data));
+        });
+    }
 
 
-	@Override
-	public boolean registerListener(Object instance, Method method, boolean useWeakReferences) {
-		return broadcast.registerListener(instance, method, useWeakReferences);
-	}
+    @Override
+    public boolean registerListener(Object instance, Method method, boolean useWeakReferences) {
+        return broadcast.registerListener(instance, method, useWeakReferences);
+    }
 
-	@Override
-	public int registerListeners(Object instance, boolean useWeakReferences) {
-		return broadcast.registerListeners(instance, useWeakReferences);
-	}
+    @Override
+    public int registerListeners(Object instance, boolean useWeakReferences) {
+        return broadcast.registerListeners(instance, useWeakReferences);
+    }
 
-	@Override
-	public boolean unregisterListener(Object instance, Method method) {
-		return broadcast.unregisterListener(instance, method);
-	}
+    @Override
+    public boolean unregisterListener(Object instance, Method method) {
+        return broadcast.unregisterListener(instance, method);
+    }
 
-	@Override
-	public int unregisterListeners(Object instance) {
-		return broadcast.unregisterListeners(instance);
-	}
+    @Override
+    public int unregisterListeners(Object instance) {
+        return broadcast.unregisterListeners(instance);
+    }
 
-	@Override
-	public <T extends Event> T callEvent(T event) {
-		return broadcast.callEvent(event, this);
-	}
+    @Override
+    public <T extends Event> T callEvent(T event) {
+        return broadcast.callEvent(event, this);
+    }
 
-	private static class Pair {
-		String text, style;
+    private static class Pair {
+        String text, style;
 
-		public Pair(String text, String style) {
-			this.text = text;
-			this.style = style;
-		}
-	}
+        public Pair(String text, String style) {
+            this.text = text;
+            this.style = style;
+        }
+    }
 }

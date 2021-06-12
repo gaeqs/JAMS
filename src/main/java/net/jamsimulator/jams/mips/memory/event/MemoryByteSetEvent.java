@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.mips.memory.event;
@@ -35,73 +35,73 @@ import java.util.Optional;
  */
 public class MemoryByteSetEvent extends MemoryEvent {
 
-	protected int address;
-	protected byte value;
-	protected boolean cancelled;
+    protected int address;
+    protected byte value;
+    protected boolean cancelled;
 
-	private MemoryByteSetEvent(Memory memory, int address, byte value) {
-		super(memory);
-		this.address = address;
-		this.value = value;
-		this.cancelled = false;
-	}
+    private MemoryByteSetEvent(Memory memory, int address, byte value) {
+        super(memory);
+        this.address = address;
+        this.value = value;
+        this.cancelled = false;
+    }
 
-	public int getAddress() {
-		return address;
-	}
+    public int getAddress() {
+        return address;
+    }
 
-	public byte getValue() {
-		return value;
-	}
+    public byte getValue() {
+        return value;
+    }
 
-	/**
-	 * This event is invoked before a byte is stored in a {@link Memory}.
-	 */
-	public static class Before extends MemoryByteSetEvent implements Cancellable {
+    /**
+     * This event is invoked before a byte is stored in a {@link Memory}.
+     */
+    public static class Before extends MemoryByteSetEvent implements Cancellable {
 
-		public Before(Memory memory, int address, byte value) {
-			super(memory, address, value);
-		}
+        public Before(Memory memory, int address, byte value) {
+            super(memory, address, value);
+        }
 
-		public void setAddress(int address) {
-			this.address = address;
-		}
+        public void setAddress(int address) {
+            this.address = address;
+        }
 
-		public void setValue(byte value) {
-			this.value = value;
-		}
+        public void setValue(byte value) {
+            this.value = value;
+        }
 
-		@Override
-		public boolean isCancelled() {
-			return cancelled;
-		}
+        @Override
+        public boolean isCancelled() {
+            return cancelled;
+        }
 
-		@Override
-		public void setCancelled(boolean cancelled) {
-			this.cancelled = cancelled;
-		}
-	}
+        @Override
+        public void setCancelled(boolean cancelled) {
+            this.cancelled = cancelled;
+        }
+    }
 
-	/**
-	 * This event is invoked after a byte is stored in a {@link Memory}.
-	 */
-	public static class After extends MemoryByteSetEvent {
+    /**
+     * This event is invoked after a byte is stored in a {@link Memory}.
+     */
+    public static class After extends MemoryByteSetEvent {
 
-		private final MemorySection memorySection;
-		private final byte oldValue;
+        private final MemorySection memorySection;
+        private final byte oldValue;
 
-		public After(Memory memory, MemorySection memorySection, int address, byte value, byte oldValue) {
-			super(memory, address, value);
-			this.memorySection = memorySection;
-			this.oldValue = oldValue;
-		}
+        public After(Memory memory, MemorySection memorySection, int address, byte value, byte oldValue) {
+            super(memory, address, value);
+            this.memorySection = memorySection;
+            this.oldValue = oldValue;
+        }
 
-		public Optional<MemorySection> getMemorySection() {
-			return Optional.ofNullable(memorySection);
-		}
+        public Optional<MemorySection> getMemorySection() {
+            return Optional.ofNullable(memorySection);
+        }
 
-		public byte getOldValue() {
-			return oldValue;
-		}
-	}
+        public byte getOldValue() {
+            return oldValue;
+        }
+    }
 }
