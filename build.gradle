@@ -63,7 +63,7 @@ application {
 
 dependencies {
     implementation group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
-    implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.5'
+    implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.6'
     implementation group: 'org.json', name: 'json', version: '20200518'
 
     javafxDependencies.each {

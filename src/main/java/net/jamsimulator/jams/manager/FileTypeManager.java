@@ -131,7 +131,7 @@ public class FileTypeManager extends Manager<FileType> {
         add(unknownType);
         add(folderType);
         add(new TextFileType("Text", Icons.FILE_TEXT, "txt"));
-        add(new AssemblyFileType());
+        add(AssemblyFileType.INSTANCE);
         add(new ImageFileType("Image", Icons.FILE_IMAGE, "png", "gif", "jpg", "jpeg", "tiff"));
     }
 

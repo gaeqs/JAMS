@@ -91,10 +91,6 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
 
         try {
             String text = FileUtils.readAll(file);
-            if (!text.isEmpty()) {
-                text = text.substring(0, text.length() - 1);
-            }
-
             elements.refreshAll(text);
             files.put(file, elements);
 

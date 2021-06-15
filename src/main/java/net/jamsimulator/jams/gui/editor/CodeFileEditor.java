@@ -53,6 +53,8 @@ import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.model.PlainTextChange;
+import org.reactfx.Subscription;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -78,6 +80,9 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
     protected AutocompletionPopup autocompletionPopup;
     protected DocumentationPopup documentationPopup;
     private ChangeListener<? super Number> autocompletionMoveListener;
+
+    private final Subscription textRefreshSubscription;
+    private boolean textRefreshEnabled;
 
     public CodeFileEditor(FileEditorTab tab) {
         super(read(tab));
@@ -116,6 +121,11 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
                     holder.setLastFocusedEditor(this);
                 }
             }
+        });
+
+        textRefreshEnabled = true;
+        textRefreshSubscription = multiPlainChanges().subscribe(event -> {
+            if (textRefreshEnabled) event.forEach(this::onTextRefresh);
         });
     }
 
@@ -250,15 +260,13 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
     }
 
     /**
-     * Reformats the file.
-     * This method should be overridden by this children's classes.
+     * Enables or disables {@link #onTextRefresh(PlainTextChange)} calls.
+     *
+     * @param enabled wheteher calls are enabled.
      */
-    public void reformat() {
+    public void enableRefreshEvent(boolean enabled) {
+        textRefreshEnabled = enabled;
     }
-
-    //endregion
-
-    //region override
 
     /**
      * Duplicates the current line.
@@ -266,13 +274,15 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
      */
     public void duplicateCurrentLine() {
         IndexRange selection = getSelection();
+
         if (selection.getStart() == selection.getEnd()) {
-            int caretPosition = getCaretPosition();
-            CodeFileLine line = getLineFromAbsolutePosition(getCaretPosition());
-            if (line == null) return;
-            int end = line.getStart() + line.getText().length();
-            replaceText(end, end, "\n" + line.getText());
-            moveTo(caretPosition + line.getText().length() + 1);
+            var start = getCaretPosition() - getCaretColumn();
+            var end = start + getParagraphLength(getCurrentParagraph());
+            selection = new IndexRange(start, end);
+
+            String text = getText(selection);
+            replaceText(selection.getEnd(), selection.getEnd(), "\n" + text);
+            moveTo(selection.getEnd() + text.length() + 1);
         } else {
             String text = getText(selection);
             replaceText(selection.getEnd(), selection.getEnd(), text);
@@ -281,6 +291,25 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
         }
     }
 
+    /**
+     * Reformats the file.
+     * This method should be overridden by this children's classes.
+     */
+    public void reformat() {
+    }
+
+    //endregion
+
+    //region refresh
+
+    protected void onTextRefresh(PlainTextChange change) {
+
+    }
+
+    //endregion
+
+    //region override
+
     @Override
     public void onClose() {
         JamsApplication.getThemeManager().unregisterListeners(this);
@@ -288,6 +317,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
         JamsApplication.getStage().yProperty().removeListener(autocompletionMoveListener);
         JamsApplication.getStage().widthProperty().removeListener(autocompletionMoveListener);
         JamsApplication.getStage().heightProperty().removeListener(autocompletionMoveListener);
+        textRefreshSubscription.unsubscribe();
     }
 
     @Override

@@ -36,11 +36,12 @@ import java.util.Set;
 public class MIPS32RegistersBuilder extends RegistersBuilder {
 
     public static final String NAME = "MIPS32";
-    public static final MIPS32RegistersBuilder INSTANCE = new MIPS32RegistersBuilder();
     private static final Set<String> NAMES = new HashSet<>();
     private static final Set<String> GENERAL_NAMES = new HashSet<>();
     private static final Set<String> COP0_NAMES = new HashSet<>();
     private static final Set<String> COP1_NAMES = new HashSet<>();
+
+    public static final MIPS32RegistersBuilder INSTANCE = new MIPS32RegistersBuilder();
 
     static {
         NAMES.add("zero");

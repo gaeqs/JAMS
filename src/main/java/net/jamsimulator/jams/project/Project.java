@@ -41,6 +41,13 @@ import java.util.Optional;
 public interface Project {
 
     /**
+     * Returns the {@link ProjectType type} of this project.
+     *
+     * @return the {@link ProjectType type}.
+     */
+    ProjectType<?> getType();
+
+    /**
      * Returns the name of this project. This name must be selected by the user.
      *
      * @return the name.

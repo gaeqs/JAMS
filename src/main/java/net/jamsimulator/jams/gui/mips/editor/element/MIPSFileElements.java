@@ -164,7 +164,7 @@ public class MIPSFileElements {
         if (position < 0) return -1;
         int i = 0;
         for (MIPSLine line : lines) {
-            if (line.getStart() <= position && line.getStart() + line.getText().length() >= position) return i;
+            if (line.getStart() <= position && line.getStart() + line.getText().length() > position) return i;
             i++;
         }
         return -1;
@@ -319,7 +319,6 @@ public class MIPSFileElements {
 
         if (line.getDirective().isPresent()) {
             var directive = line.getDirective().get();
-            directive.getParameters().forEach(target -> setAsGlobalLabel.add(target.text));
             if (directive.isGlobal()) {
                 directive.getParameters().forEach(target -> setAsGlobalLabel.add(target.text));
             } else if (directive.isEndMacro()) {

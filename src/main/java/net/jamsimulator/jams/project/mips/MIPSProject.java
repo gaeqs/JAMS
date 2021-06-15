@@ -37,6 +37,7 @@ import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.SimulationData;
 import net.jamsimulator.jams.project.BasicProject;
+import net.jamsimulator.jams.project.ProjectType;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurationPresets;
 import net.jamsimulator.jams.utils.FileUtils;
@@ -49,6 +50,11 @@ public class MIPSProject extends BasicProject {
 
     public MIPSProject(File folder) {
         super(folder, true);
+    }
+
+    @Override
+    public ProjectType<?> getType() {
+        return MIPSProjectType.INSTANCE;
     }
 
     @Override
