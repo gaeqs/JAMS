@@ -144,7 +144,7 @@ public class MIPSProject extends BasicProject {
         if (projectTab != null) {
             WorkingPane pane = projectTab.getProjectTabPane().getWorkingPane();
             if (pane instanceof MIPSStructurePane) {
-                ((MIPSStructurePane) pane).getFileDisplayHolder().closeAll(true);
+                ((MIPSStructurePane) pane).getFileEditorHolder().closeAll(true);
             }
         }
     }

@@ -32,22 +32,17 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.FileEditorHolderHolder;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
-import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;
-import net.jamsimulator.jams.gui.project.ProjectTab;
-import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.project.Project;
-import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
-import net.jamsimulator.jams.project.mips.MIPSProject;
+import net.jamsimulator.jams.project.FilesToAssemblerHolder;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
 
 public class FolderActionAddAllFilesToAssembler extends ContextAction {
 
@@ -63,17 +58,18 @@ public class FolderActionAddAllFilesToAssembler extends ContextAction {
     @Override
     public void run(Object node) {
         if (!(node instanceof ExplorerElement)) return;
-        Explorer explorer = ((ExplorerElement) node).getExplorer();
+        var explorer = ((ExplorerElement) node).getExplorer();
         if (!(explorer instanceof FolderExplorer)) return;
         if (explorer.getSelectedElements().size() == 0) return;
 
-        ProjectTab tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
+        var tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
         if (tab == null) return;
-        Project project = tab.getProject();
-        if (!(project instanceof MIPSProject)) return;
-        MIPSFilesToAssemble files = ((MIPSProject) project).getData().getFilesToAssemble();
-        WorkingPane pane = tab.getProjectTabPane().getWorkingPane();
-        if (!(pane instanceof MIPSStructurePane)) return;
+        var project = tab.getProject();
+        var data = project.getData();
+        if (!(data instanceof FilesToAssemblerHolder)) return;
+        var files = ((FilesToAssemblerHolder) data).getFilesToAssemble();
+        var pane = tab.getProjectTabPane().getWorkingPane();
+        if (!(pane instanceof FileEditorHolderHolder holder)) return;
 
         var element = explorer.getSelectedElements().get(0);
         if (!(element instanceof ExplorerFolder)) return;
@@ -84,7 +80,7 @@ public class FolderActionAddAllFilesToAssembler extends ContextAction {
                 var file = path.toFile();
                 if (file.isFile() && Jams.getFileTypeManager().getByFile(file).map(FileType::getName)
                         .orElse("").equals(AssemblyFileType.NAME)) {
-                    files.addFile(file, ((MIPSStructurePane) pane).getFileDisplayHolder(), true);
+                    files.addFile(file, holder.getFileEditorHolder(), true);
                 }
             });
         } catch (IOException ex) {
@@ -101,13 +97,13 @@ public class FolderActionAddAllFilesToAssembler extends ContextAction {
     public boolean supportsExplorerState(Explorer explorer) {
         if (!(explorer instanceof FolderExplorer)) return false;
 
-        List<ExplorerElement> elements = explorer.getSelectedElements();
+        var elements = explorer.getSelectedElements();
         if (elements.isEmpty()) return false;
 
-        ProjectTab tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
+        var tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
         if (tab == null) return false;
-        Project project = tab.getProject();
-        if (!(project instanceof MIPSProject)) return false;
+        var project = tab.getProject();
+        if (!(project.getData() instanceof FilesToAssemblerHolder)) return false;
 
         var selected = explorer.getSelectedElements();
         return selected.size() == 1 && selected.get(0) instanceof ExplorerFolder;

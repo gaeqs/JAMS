@@ -35,6 +35,8 @@ import net.jamsimulator.jams.gui.editor.FileEditorTab;
 import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.gui.project.ProjectTab;
+import net.jamsimulator.jams.project.FilesToAssemble;
+import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
 import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
 import net.jamsimulator.jams.utils.FileUtils;
@@ -49,7 +51,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class MIPSFilesToAssemble extends SimpleEventBroadcast {
+public class MIPSFilesToAssemble extends SimpleEventBroadcast implements FilesToAssemble {
 
     public static final String FILE_NAME = "files_to_assemble.json";
 
@@ -67,18 +69,32 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
         return Optional.ofNullable(files.get(file));
     }
 
+    @Override
+    public Project getProject() {
+        return project;
+    }
+
+    @Override
+    public boolean supportsGlobalLabels() {
+        return true;
+    }
+
+    @Override
     public Bag<String> getGlobalLabels() {
         return globalLabels;
     }
 
+    @Override
     public Set<File> getFiles() {
         return Collections.unmodifiableSet(files.keySet());
     }
 
+    @Override
     public boolean containsFile(File file) {
         return files.containsKey(file);
     }
 
+    @Override
     public void addFile(File file, boolean refreshGlobalLabels) {
         Validate.notNull(file, "File cannot be null!");
         if (files.containsKey(file)) return;
@@ -122,6 +138,7 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
         callEvent(new FileAddToAssembleEvent.After(file));
     }
 
+    @Override
     public void addFile(File file, FileEditorHolder holder, boolean refreshGlobalLabels) {
         Validate.notNull(file, "File cannot be null!");
         Validate.notNull(holder, "List cannot be null!");
@@ -134,6 +151,7 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
         addFile(file, ((MIPSFileEditor) tab.get().getDisplay()).getElements(), refreshGlobalLabels);
     }
 
+    @Override
     public void removeFile(File file) {
         Validate.notNull(file, "File cannot be null!");
 
@@ -150,6 +168,7 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
         callEvent(new FileRemoveFromAssembleEvent.After(file));
     }
 
+    @Override
     public void refreshGlobalLabels() {
         Set<String> toUpdate = new HashSet<>(globalLabels);
 
@@ -206,6 +225,7 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
         writer.close();
     }
 
+    @Override
     public void checkFiles() {
         List<File> toRemove = files.keySet().stream().filter(target -> !target.isFile()).collect(Collectors.toList());
         for (File file : toRemove) {

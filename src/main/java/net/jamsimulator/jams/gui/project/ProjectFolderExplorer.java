@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.explorer;
+package net.jamsimulator.jams.gui.project;
 
 import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
@@ -33,6 +33,8 @@ import net.jamsimulator.jams.gui.explorer.event.ExplorerRemoveElementEvent;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
+import net.jamsimulator.jams.project.FilesToAssemblerHolder;
+import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
 import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
@@ -42,12 +44,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Optional;
 
-public class MipsFolderExplorer extends FolderExplorer {
+/**
+ * Represents a explorer linked to a {@link Project}. These explorers can manager files to assemble and
+ * automatically hides the project's metadata folder.
+ */
+public class ProjectFolderExplorer extends FolderExplorer {
 
     public static final String EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS = "mips-explorer-file-to-assemble";
     public static final String EXPLORER_OUT_FILE_STYLE_CLASS = "explorer-out-folder";
 
-    private final MIPSProject project;
+    private final Project project;
+    private final FilesToAssemblerHolder holder;
 
     /**
      * Creates the mips explorer folder.
@@ -55,20 +62,24 @@ public class MipsFolderExplorer extends FolderExplorer {
      * @param project    the {@link MIPSProject} of this explorer.
      * @param scrollPane the {@link ScrollPane} handling this explorer.
      */
-    public MipsFolderExplorer(MIPSProject project, ScrollPane scrollPane) {
+    public ProjectFolderExplorer(Project project, FilesToAssemblerHolder holder, ScrollPane scrollPane) {
         super(project.getFolder(), scrollPane,
                 file -> !file.toPath().startsWith(project.getData().getMetadataFolder().toPath()));
         this.project = project;
-        project.getData().getFilesToAssemble().registerListeners(this, true);
-        for (File file : project.getData().getFilesToAssemble().getFiles()) {
-            markFileToAssemble(file);
-        }
+        this.holder = holder;
 
-        setFileMoveAction((from, to) -> {
-            if (project.getData().getFilesToAssemble().containsFile(from)) {
-                Platform.runLater(() -> project.getData().getFilesToAssemble().addFile(to, true));
+        if (holder != null) {
+            holder.getFilesToAssemble().registerListeners(this, true);
+            for (File file : holder.getFilesToAssemble().getFiles()) {
+                markFileToAssemble(file);
             }
-        });
+
+            setFileMoveAction((from, to) -> {
+                if (holder.getFilesToAssemble().containsFile(from)) {
+                    Platform.runLater(() -> holder.getFilesToAssemble().addFile(to, true));
+                }
+            });
+        }
 
         try {
             Files.walk(project.getData().getFilesFolder().toPath()).forEach(file -> markOutFile(file.toFile()));
@@ -80,11 +91,11 @@ public class MipsFolderExplorer extends FolderExplorer {
     }
 
     /**
-     * Returns the {@link MIPSProject} of this explorer.
+     * Returns the {@link Project} of this explorer.
      *
-     * @return the {@link MIPSProject}.
+     * @return the {@link Project}.
      */
-    public MIPSProject getProject() {
+    public Project getProject() {
         return project;
     }
 
@@ -93,7 +104,6 @@ public class MipsFolderExplorer extends FolderExplorer {
      */
     public void dispose() {
         killWatchers();
-        project.getData().getFilesToAssemble().unregisterListeners(this);
     }
 
     private void markFileToAssemble(File file) {
@@ -147,7 +157,7 @@ public class MipsFolderExplorer extends FolderExplorer {
         if (event.getElement() instanceof ExplorerFile eFile) {
             var file = eFile.getFile();
 
-            if (project.getData().getFilesToAssemble().containsFile(file)) {
+            if (holder != null && holder.getFilesToAssemble().containsFile(file)) {
                 if (!eFile.getStyleClass().contains(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS)) {
                     eFile.getStyleClass().add(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS);
                 }
@@ -167,6 +177,8 @@ public class MipsFolderExplorer extends FolderExplorer {
 
     @Listener
     private void onFileRemoved(ExplorerRemoveElementEvent.After event) {
-        project.getData().getFilesToAssemble().checkFiles();
+        if (holder != null) {
+            holder.getFilesToAssemble().checkFiles();
+        }
     }
 }

@@ -63,7 +63,7 @@ public class GeneralActionAssemble extends ContextAction {
 
         Thread thread = new Thread(() -> {
             MIPSStructurePane pane = (MIPSStructurePane) tab.getProjectTabPane().getWorkingPane();
-            pane.getFileDisplayHolder().saveAll(true);
+            pane.getFileEditorHolder().saveAll(true);
 
             if (Jams.getMainConfiguration().getOrElse("simulation.open_log_on_assemble", true)) {
                 Platform.runLater(() -> pane.getBarMap().searchButton("log").ifPresent(BarButton::show));

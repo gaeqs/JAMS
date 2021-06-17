@@ -33,7 +33,8 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.LanguageExplorerSection;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.project.mips.MIPSProject;
+import net.jamsimulator.jams.project.FilesToAssemblerHolder;
+import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
 import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
 
@@ -43,17 +44,19 @@ import java.util.Comparator;
 public class FilesToAssembleSidebar extends Explorer {
 
     private final Image icon;
-    private final MIPSProject project;
+    private final Project project;
+    private final FilesToAssemblerHolder holder;
 
-    public FilesToAssembleSidebar(MIPSProject project, ScrollPane scrollPane) {
+    public FilesToAssembleSidebar(Project project, FilesToAssemblerHolder holder, ScrollPane scrollPane) {
         super(scrollPane, true, true);
         this.project = project;
+        this.holder = holder;
 
-        project.getData().getFilesToAssemble().registerListeners(this, true);
+        holder.getFilesToAssemble().registerListeners(this, true);
 
         icon = Jams.getFileTypeManager().getByExtension("asm").map(FileType::getIcon).orElse(null);
 
-        for (File file : project.getData().getFilesToAssemble().getFiles()) {
+        for (File file : holder.getFilesToAssemble().getFiles()) {
             mainSection.addElement(new FilesToAssembleSidebarElement(mainSection, file, this, icon));
         }
 
@@ -61,12 +64,21 @@ public class FilesToAssembleSidebar extends Explorer {
     }
 
     /**
-     * Returns the {@link MIPSProject} handling the files.
+     * Returns the {@link Project} handling the files.
      *
-     * @return the {@link MIPSProject}.
+     * @return the {@link Project}.
      */
-    public MIPSProject getProject() {
+    public Project getProject() {
         return project;
+    }
+
+    /**
+     * Returns the instance that holds the used {@link net.jamsimulator.jams.project.FilesToAssemble}.
+     *
+     * @return the holder.
+     */
+    public FilesToAssemblerHolder getHolder() {
+        return holder;
     }
 
     @Override

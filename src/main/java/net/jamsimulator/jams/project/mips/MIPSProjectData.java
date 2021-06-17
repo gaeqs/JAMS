@@ -30,6 +30,7 @@ import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
+import net.jamsimulator.jams.project.FilesToAssemblerHolder;
 import net.jamsimulator.jams.project.ProjectData;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.event.MIPSSimulationConfigurationAddEvent;
@@ -43,7 +44,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class MIPSProjectData extends ProjectData {
+public class MIPSProjectData extends ProjectData implements FilesToAssemblerHolder {
 
     public static final String NODE_ASSEMBLER = "mips.assembler";
     public static final String NODE_REGISTERS = "mips.registers";
@@ -158,6 +159,7 @@ public class MIPSProjectData extends ProjectData {
         this.instructionSet = instructionSet;
     }
 
+    @Override
     public MIPSFilesToAssemble getFilesToAssemble() {
         return filesToAssemble;
     }

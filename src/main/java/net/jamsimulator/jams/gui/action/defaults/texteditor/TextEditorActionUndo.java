@@ -66,7 +66,7 @@ public class TextEditorActionUndo extends ContextAction {
         Node pane = optionalProject.get().getProjectTabPane().getSelectionModel().getSelectedItem().getContent();
         if (!(pane instanceof MIPSStructurePane)) return;
 
-        FileEditorHolder holder = ((MIPSStructurePane) pane).getFileDisplayHolder();
+        FileEditorHolder holder = ((MIPSStructurePane) pane).getFileEditorHolder();
         Optional<FileEditor> optionalEditor = holder.getLastFocusedEditor();
         if (optionalEditor.isPresent() && optionalEditor.get() instanceof CodeFileEditor) {
             ((CodeFileEditor) optionalEditor.get()).undo();
@@ -90,7 +90,7 @@ public class TextEditorActionUndo extends ContextAction {
         Node pane = optionalProject.get().getProjectTabPane().getSelectionModel().getSelectedItem().getContent();
         if (!(pane instanceof MIPSStructurePane)) return false;
 
-        FileEditorHolder holder = ((MIPSStructurePane) pane).getFileDisplayHolder();
+        FileEditorHolder holder = ((MIPSStructurePane) pane).getFileEditorHolder();
         Optional<FileEditor> optionalEditor = holder.getLastFocusedEditor();
         if (optionalEditor.isEmpty() || !(optionalEditor.get() instanceof CodeFileEditor)) return false;
 

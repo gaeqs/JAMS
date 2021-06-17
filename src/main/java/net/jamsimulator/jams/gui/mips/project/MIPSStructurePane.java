@@ -29,16 +29,16 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.bar.BarPosition;
 import net.jamsimulator.jams.gui.bar.BarSnapshot;
 import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModePane;
 import net.jamsimulator.jams.gui.editor.FileEditorHolder;
+import net.jamsimulator.jams.gui.editor.FileEditorHolderHolder;
 import net.jamsimulator.jams.gui.image.icon.Icons;
-import net.jamsimulator.jams.gui.mips.explorer.MipsFolderExplorer;
 import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebar;
+import net.jamsimulator.jams.gui.project.ProjectFolderExplorer;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
@@ -51,12 +51,12 @@ import java.io.File;
 /**
  * This class represent the working pane of a project.
  */
-public class MIPSStructurePane extends WorkingPane {
+public class MIPSStructurePane extends WorkingPane implements FileEditorHolderHolder {
 
     protected final MIPSProject project;
     protected final MIPSStructurePaneButtons paneButtons;
 
-    protected MipsFolderExplorer explorer;
+    protected ProjectFolderExplorer explorer;
     protected FilesToAssembleSidebar filesToAssembleSidebar;
 
     protected SimpleLog log;
@@ -93,12 +93,8 @@ public class MIPSStructurePane extends WorkingPane {
         return project;
     }
 
-    /**
-     * Returns the {@link FileEditorHolder} that handles files in this pane.
-     *
-     * @return the {@link FileEditorHolder}.
-     */
-    public FileEditorHolder getFileDisplayHolder() {
+    @Override
+    public FileEditorHolder getFileEditorHolder() {
         return (FileEditorHolder) center;
     }
 
@@ -117,7 +113,7 @@ public class MIPSStructurePane extends WorkingPane {
      * @param file the {@link File}.
      */
     public void openFile(File file) {
-        getFileDisplayHolder().openFile(file);
+        getFileEditorHolder().openFile(file);
     }
 
     private void loadExplorer() {
@@ -127,7 +123,7 @@ public class MIPSStructurePane extends WorkingPane {
         ScrollPane pane = new PixelScrollPane();
         pane.setFitToHeight(true);
         pane.setFitToWidth(true);
-        explorer = new MipsFolderExplorer(project, pane);
+        explorer = new ProjectFolderExplorer(project, project.getData(), pane);
         pane.setContent(explorer);
 
         manageBarAddition("explorer", pane, icon, Messages.BAR_EXPLORER_NAME, BarPosition.LEFT_TOP, BarSnapshotViewModePane.INSTANCE, true);
@@ -142,14 +138,8 @@ public class MIPSStructurePane extends WorkingPane {
         ScrollPane pane = new PixelScrollPane();
         pane.setFitToHeight(true);
         pane.setFitToWidth(true);
-        filesToAssembleSidebar = new FilesToAssembleSidebar(project, pane);
+        filesToAssembleSidebar = new FilesToAssembleSidebar(project, project.getData(), pane);
         pane.setContent(filesToAssembleSidebar);
-
-        pane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
-            double deltaY = scrollEvent.getDeltaY() * 0.003;
-            pane.setVvalue(pane.getVvalue() - deltaY);
-        });
-
         manageBarAddition("files_to_assemble", pane, icon, Messages.BAR_FILES_TO_ASSEMBLE_NAME, BarPosition.LEFT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
     }
 
