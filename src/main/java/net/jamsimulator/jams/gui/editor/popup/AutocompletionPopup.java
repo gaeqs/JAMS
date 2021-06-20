@@ -302,7 +302,7 @@ public abstract class AutocompletionPopup extends Popup implements EventBroadcas
     }
 
     private boolean manageKeyEvent(KeyEvent event) {
-        if (event.getCode() == KeyCode.UNDEFINED) return true;
+        if (event.getCode() == KeyCode.UNDEFINED) return false;
         if (event.isControlDown() || event.isAltDown() || event.isMetaDown() || event.isShortcutDown()) return false;
 
         return switch (event.getCode()) {
@@ -343,6 +343,7 @@ public abstract class AutocompletionPopup extends Popup implements EventBroadcas
                 yield true;
             }
             case ESCAPE, SPACE -> {
+                if (!isShowing()) yield false;
                 hide();
                 yield true;
             }

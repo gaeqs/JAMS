@@ -317,6 +317,7 @@ public class ActionManager extends Manager<Action> {
         add(new TextEditorActionCopy());
         add(new TextEditorActionCut());
         add(new TextEditorActionDuplicateLine());
+        add(new TextEditorActionFind());
         add(new TextEditorActionNextFile());
         add(new TextEditorActionPaste());
         add(new TextEditorActionPreviousFile());

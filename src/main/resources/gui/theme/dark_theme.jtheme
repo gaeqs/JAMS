@@ -757,7 +757,6 @@ AnchorPane {
     -fx-border-color: transparent;
     -fx-background-insets: 2;
     -fx-background-radius: 5;
-    -fx-text-fill: -theme-background-darker-2;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
 }
@@ -1037,7 +1036,6 @@ AnchorPane {
 
 
 /* NUMBER LINE */
-
 .code-area .left-bar {
     -fx-border-width: 0 1 0 0;
     -fx-border-color: -theme-background-lighter;
@@ -1135,6 +1133,18 @@ AnchorPane {
     -fx-fill: #4c762e;
 }
 
+/* SEARCH */
+.code-area .search-result {
+    -rtfx-background-color: #213414;
+    -rtfx-border-stroke-color: #3c6321;
+    -rtfx-border-stroke-width: 1px;
+}
+
+.code-area .selected-search-result {
+    -rtfx-background-color: #2b3c6d;
+    -rtfx-border-stroke-color: #ffffff;
+    -rtfx-border-stroke-width: 1px;
+}
 
 /* LOG */
 .code-area .log_error {
@@ -1228,6 +1238,26 @@ AnchorPane {
     -rtfx-underline-width: 1px;
 }
 
+/* SEARCH AREA */
+.code-file-editor-search {
+    -fx-pref-height: 30px;
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.code-file-editor-search-text-field {
+    -fx-pref-width: 200px;
+}
+
+.code-file-editor-search-button {
+    -fx-background-color: -theme-background-darker-2;
+    -fx-border-color: transparent;
+    -fx-font-weight: bold;
+}
+
+.code-file-editor-search-results {
+    -fx-font-size: 12px;
+}
+
 /* MIPS POPUPS*/
 .mips-popup {
     -fx-background-color: -theme-background-lighter;
@@ -1239,7 +1269,6 @@ AnchorPane {
 .mips-popup .label {
     -fx-font-size: 12.5px;
 }
-
 
 /* MIPS EXPLORER */
 .mips-explorer-file-to-assemble {

@@ -77,6 +77,8 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
     protected ScaledVirtualized<CodeFileEditor> zoom;
     protected EditorHintBar hintBar;
 
+    protected CodeFileEditorSearch search;
+
     protected AutocompletionPopup autocompletionPopup;
     protected DocumentationPopup documentationPopup;
     private ChangeListener<? super Number> autocompletionMoveListener;
@@ -89,6 +91,8 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
         this.tab = tab;
         this.original = getText();
         this.hintBar = new EditorHintBar(this);
+
+        search = new CodeFileEditorSearch(this);
 
         zoom = new ScaledVirtualized<>(this);
         scrollPane = new VirtualizedScrollPane<>(zoom);
@@ -126,6 +130,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
         textRefreshEnabled = true;
         textRefreshSubscription = multiPlainChanges().subscribe(event -> {
             if (textRefreshEnabled) event.forEach(this::onTextRefresh);
+            search.refreshText();
         });
     }
 
@@ -157,6 +162,15 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
      */
     public EditorHintBar getHintBar() {
         return hintBar;
+    }
+
+    /**
+     * Returns the {@link CodeFileEditorSearch search bar} linked to this editor.
+     *
+     * @return the {@link CodeFileEditorSearch search bar}.
+     */
+    public CodeFileEditorSearch getSearch() {
+        return search;
     }
 
     /**

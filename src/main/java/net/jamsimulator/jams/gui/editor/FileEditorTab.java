@@ -25,10 +25,14 @@
 package net.jamsimulator.jams.gui.editor;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -42,10 +46,12 @@ import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.project.WorkingPane;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 
 import java.io.File;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 public class FileEditorTab extends Tab implements ActionRegion {
@@ -53,9 +59,13 @@ public class FileEditorTab extends Tab implements ActionRegion {
     private final File file;
     private final FileEditor display;
     private final Label name;
-    private final AnchorPane anchorPane;
+    private final AnchorPane anchorPane, topAnchorPane;
     private FileEditorTabList list;
     private boolean saveMark;
+
+
+    private final ChangeListener<Number> topNodeHeightListener;
+    private FileEditorTabTopNode topNode;
 
     public FileEditorTab(FileEditorTabList list, File file) {
         this.list = list;
@@ -73,14 +83,23 @@ public class FileEditorTab extends Tab implements ActionRegion {
         setGraphic(hbox);
 
         if (display == null) {
+            topAnchorPane = null;
             anchorPane = null;
+            topNodeHeightListener = null;
             return;
         }
 
+        topAnchorPane = new AnchorPane();
         anchorPane = new AnchorPane();
+
+        topNodeHeightListener = (obs, old, val) ->
+                AnchorUtils.setAnchor(anchorPane, val.doubleValue(), 0, 0, 0);
+
+        AnchorUtils.setAnchor(anchorPane, 0, 0, 0, 0);
+        topAnchorPane.getChildren().add(anchorPane);
         display.addNodesToTab(anchorPane);
 
-        setContent(anchorPane);
+        setContent(topAnchorPane);
 
         setOnClosed(target -> {
             this.list.closeFileInternal(this);
@@ -88,10 +107,22 @@ public class FileEditorTab extends Tab implements ActionRegion {
         });
 
         setContextMenu(createContextMenu());
+
+        // Hides the top bar when the escape key is pressed.
+        topAnchorPane.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ESCAPE) {
+                setTopNode(null);
+                event.consume();
+            }
+        });
     }
 
     public FileEditorTabList getList() {
         return list;
+    }
+
+    public AnchorPane getAnchorPane() {
+        return anchorPane;
     }
 
     void setList(FileEditorTabList list) {
@@ -114,6 +145,10 @@ public class FileEditorTab extends Tab implements ActionRegion {
         return saveMark;
     }
 
+    public Optional<FileEditorTabTopNode> getTopNode() {
+        return Optional.ofNullable(topNode);
+    }
+
     public void setSaveMark(boolean saveMark) {
         if (saveMark == this.saveMark) return;
         this.saveMark = saveMark;
@@ -129,6 +164,32 @@ public class FileEditorTab extends Tab implements ActionRegion {
         if (anchorPane != null) anchorPane.requestLayout();
         ((Region) getContent()).requestLayout();
         ((Region) getGraphic()).requestLayout();
+    }
+
+    public void setTopNode(FileEditorTabTopNode value) {
+        if (value == topNode || !(value instanceof Node) && value != null) return;
+        if (topNode != null) {
+            topAnchorPane.getChildren().remove((Node) topNode);
+            AnchorUtils.setAnchor(anchorPane, 0, 0, 0, 0);
+
+            if (topNode instanceof Region region) {
+                region.heightProperty().removeListener(topNodeHeightListener);
+            }
+
+            topNode.onHide();
+        }
+        topNode = value;
+        if (value != null) {
+            topAnchorPane.getChildren().add((Node) value);
+            AnchorUtils.setAnchor((Node) value, 0, -1, 0, 0);
+            AnchorUtils.setAnchor(anchorPane, 30, 0, 0, 0);
+
+            if (value instanceof Region region) {
+                region.heightProperty().addListener(topNodeHeightListener);
+            }
+
+            value.onShow();
+        }
     }
 
     private Set<ContextAction> getSupportedContextActions() {

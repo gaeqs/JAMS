@@ -164,7 +164,7 @@ public class MIPSFileElements {
         if (position < 0) return -1;
         int i = 0;
         for (MIPSLine line : lines) {
-            if (line.getStart() <= position && line.getStart() + line.getText().length() > position) return i;
+            if (line.getStart() <= position && line.getStart() + line.getText().length() >= position) return i;
             i++;
         }
         return -1;

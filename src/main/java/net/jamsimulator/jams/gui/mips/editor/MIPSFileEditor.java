@@ -127,6 +127,7 @@ public class MIPSFileEditor extends CodeFileEditor {
             if (event.getCode() == KeyCode.ENTER) {
                 int caretPosition = getCaretPosition();
                 int currentLine = elements.lineOf(caretPosition);
+                System.out.println("LINE: " + currentLine + " (" + caretPosition + ")");
                 if (currentLine == -1) return;
 
                 String previous = getParagraph(currentLine - 1).getText();
@@ -143,6 +144,7 @@ public class MIPSFileEditor extends CodeFileEditor {
                     builder.append(c);
                 }
 
+                System.out.println("ADDING '" + builder + "'");
                 Platform.runLater(() -> insertText(caretPosition, builder.toString()));
             }
         });
