@@ -56,7 +56,8 @@ public class RenameWindow extends VBox {
                 return;
             }
 
-            if (file.renameTo(new File(file.getParentFile(), field.getText()))) {
+            var newFile = new File(file.getParentFile(), field.getText());
+            if (file.renameTo(newFile)) {
                 stage.close();
             }
         });

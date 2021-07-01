@@ -79,6 +79,12 @@ public class ProjectTabPane extends TabPane {
         return workingPane;
     }
 
+    public void forEachProjectPane(Consumer<? super ProjectPane> consumer) {
+        getTabs().forEach(tab -> {
+            if (tab.getContent() instanceof ProjectPane pane) consumer.accept(pane);
+        });
+    }
+
     public <E extends ProjectPane> E createProjectPane(BiFunction<Tab, ProjectTab, E> creator, boolean closeable) {
         LanguageTab tab = new LanguageTab("");
         tab.setClosable(closeable);

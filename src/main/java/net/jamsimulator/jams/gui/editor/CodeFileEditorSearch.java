@@ -49,7 +49,7 @@ public class CodeFileEditorSearch extends AnchorPane implements FileEditorTabTop
      *
      * This maximum amount is set due to performance reasons.
      */
-    public static final int MAX_STYLED_RESULTS = 100;
+    public static final int MAX_STYLED_RESULTS = 30;
 
     private final CodeFileEditor editor;
     private final TextField textField;
@@ -241,10 +241,10 @@ public class CodeFileEditorSearch extends AnchorPane implements FileEditorTabTop
     }
 
 
-    private static record Result(String text, int start, int end) {
+    private static record Result(int start, int end) {
 
         public Result(Matcher matcher) {
-            this(matcher.group(), matcher.start(), matcher.end());
+            this(matcher.start(), matcher.end());
         }
 
         public int length() {
@@ -253,7 +253,7 @@ public class CodeFileEditorSearch extends AnchorPane implements FileEditorTabTop
 
         public int distanceTo(int position) {
             if (position < start) return start - position;
-            if (end > position) return position - end;
+            if (position > end) return position - end;
             return 0;
         }
 

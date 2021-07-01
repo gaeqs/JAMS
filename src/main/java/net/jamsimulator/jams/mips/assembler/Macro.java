@@ -25,10 +25,14 @@
 package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
+import org.reactfx.util.TriConsumer;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a macro in an assembly code.
+ */
 public class Macro {
 
     private final String name;
@@ -58,6 +62,27 @@ public class Macro {
 
         for (String line : lines) {
             file.scanLine(lineNumber, parseLine(line, parameters), sufix);
+        }
+    }
+
+    /**
+     * Executes the macro in an external assembler. This allows to create macros in external assemblers easily.
+     *
+     * @param parameters the parameters to replace.
+     * @param lineNumber the line executing this macro.
+     * @param macroCall  the call id of this execution.
+     * @param scanner    the consumer used to scan.
+     */
+    public void executeMacro(String[] parameters, int lineNumber, int macroCall,
+                             TriConsumer<Integer, String, String> scanner) {
+        if (parameters.length != this.parameters.length)
+            throw new AssemblerException("Macro " + name + " expected " + this.parameters.length +
+                    " parameters but found " + parameters.length + ".");
+
+        var sufix = "_M" + macroCall;
+
+        for (String line : lines) {
+            scanner.accept(lineNumber, parseLine(line, parameters), sufix);
         }
     }
 
