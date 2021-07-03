@@ -163,12 +163,14 @@ public class ProjectFolderExplorer extends FolderExplorer {
                 }
             }
 
-            if (file.toPath().startsWith(project.getData().getFilesFolder().toPath())) {
+            if (file.toPath().toAbsolutePath()
+                    .startsWith(project.getData().getFilesFolder().toPath().toAbsolutePath())) {
                 ((Region) event.getElement()).getStyleClass().add(EXPLORER_OUT_FILE_STYLE_CLASS);
             }
         } else if (event.getElement() instanceof ExplorerFolder) {
             var file = ((ExplorerFolder) event.getElement()).getFolder();
-            if (file.toPath().startsWith(project.getData().getFilesFolder().toPath())) {
+            if (file.toPath().toAbsolutePath()
+                    .startsWith(project.getData().getFilesFolder().toPath().toAbsolutePath())) {
                 ((ExplorerFolder) event.getElement()).getRepresentation()
                         .getStyleClass().add(EXPLORER_OUT_FILE_STYLE_CLASS);
             }
