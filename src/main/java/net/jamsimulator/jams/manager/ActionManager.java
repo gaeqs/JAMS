@@ -324,6 +324,7 @@ public class ActionManager extends Manager<Action> {
         add(new TextEditorActionRedo());
         add(new TextEditorActionReformat());
         add(new TextEditorActionRefreshFromDisk());
+        add(new TextEditorActionReplace());
         add(new TextEditorActionSave());
         add(new TextEditorActionSelectAll());
         add(new TextEditorActionShowAutocompletionPopup());

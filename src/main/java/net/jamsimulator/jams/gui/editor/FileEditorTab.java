@@ -182,10 +182,12 @@ public class FileEditorTab extends Tab implements ActionRegion {
         if (value != null) {
             topAnchorPane.getChildren().add((Node) value);
             AnchorUtils.setAnchor((Node) value, 0, -1, 0, 0);
-            AnchorUtils.setAnchor(anchorPane, 30, 0, 0, 0);
 
             if (value instanceof Region region) {
+                AnchorUtils.setAnchor(anchorPane, region.getHeight(), 0, 0, 0);
                 region.heightProperty().addListener(topNodeHeightListener);
+            } else {
+                AnchorUtils.setAnchor(anchorPane, 30, 0, 0, 0);
             }
 
             value.onShow();

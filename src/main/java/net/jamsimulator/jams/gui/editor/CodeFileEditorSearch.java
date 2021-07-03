@@ -46,37 +46,39 @@ public class CodeFileEditorSearch extends AnchorPane implements FileEditorTabTop
 
     /**
      * The maximum amount of result this node can style.
-     *
+     * <p>
      * This maximum amount is set due to performance reasons.
      */
     public static final int MAX_STYLED_RESULTS = 30;
 
-    private final CodeFileEditor editor;
-    private final TextField textField;
-    private final LanguageLabel resultsLabel;
+    protected final CodeFileEditor editor;
+    protected final TextField textField;
+    protected final LanguageLabel resultsLabel;
 
-    private final List<Result> results;
-    private final Set<Result> styled;
-    private Result selected;
+    protected final HBox searchHBox;
+
+    protected final List<Result> results;
+    protected final Set<Result> styled;
+    protected Result selected;
 
     public CodeFileEditorSearch(CodeFileEditor editor) {
         this.editor = editor;
         getStyleClass().add("code-file-editor-search");
 
-        var hBox = new HBox();
-        AnchorUtils.setAnchor(hBox, 0, 0, 0, -1);
+        searchHBox = new HBox();
+        AnchorUtils.setAnchor(searchHBox, 0, 0, 0, -1);
 
-        hBox.setSpacing(5);
-        hBox.setAlignment(Pos.CENTER_LEFT);
-        hBox.setFillHeight(true);
-        getChildren().add(hBox);
+        searchHBox.setSpacing(5);
+        searchHBox.setAlignment(Pos.CENTER_LEFT);
+        searchHBox.setFillHeight(true);
+        getChildren().add(searchHBox);
 
 
         textField = new TextField();
         textField.getStyleClass().add("code-file-editor-search-text-field");
         textField.textProperty().addListener((obs, old, val) -> onTextChange());
         textField.setOnAction(event -> selectNext());
-        hBox.getChildren().add(textField);
+        searchHBox.getChildren().add(textField);
 
         var previousButton = new Button("\u2191");
         var nextButton = new Button("\u2193");
@@ -84,11 +86,11 @@ public class CodeFileEditorSearch extends AnchorPane implements FileEditorTabTop
         nextButton.getStyleClass().add("code-file-editor-search-button");
         previousButton.setOnAction(event -> selectPrevious());
         nextButton.setOnAction(event -> selectNext());
-        hBox.getChildren().addAll(previousButton, nextButton);
+        searchHBox.getChildren().addAll(previousButton, nextButton);
 
         resultsLabel = new LanguageLabel(Messages.BAR_SEARCH_RESULTS, "{RESULTS}", "0");
         resultsLabel.getStyleClass().add("code-file-editor-search-results");
-        hBox.getChildren().add(resultsLabel);
+        searchHBox.getChildren().add(resultsLabel);
 
         var closeButton = new Button("x");
         closeButton.getStyleClass().add("code-file-editor-search-button");
@@ -104,6 +106,7 @@ public class CodeFileEditorSearch extends AnchorPane implements FileEditorTabTop
     public void open() {
         editor.getTab().setTopNode(this);
         textField.requestFocus();
+        refreshText();
     }
 
     public void hide() {
@@ -147,18 +150,18 @@ public class CodeFileEditorSearch extends AnchorPane implements FileEditorTabTop
     }
 
 
-    private void onTextChange() {
+    protected void onTextChange() {
         refreshText();
         moveToSelected();
     }
 
-    private void selectCloser() {
+    protected void selectCloser() {
         if (results.isEmpty()) selected = null;
         var caret = editor.getCaretPosition();
         selected = results.stream().min(Comparator.comparingInt(o -> o.distanceTo(caret))).orElse(null);
     }
 
-    private void moveToSelected() {
+    protected void moveToSelected() {
         if (selected != null) {
             editor.showParagraphInViewport(editor.offsetToPosition(selected.start,
                     TwoDimensional.Bias.Forward).getMajor());
@@ -166,7 +169,7 @@ public class CodeFileEditorSearch extends AnchorPane implements FileEditorTabTop
         }
     }
 
-    private void selectNext() {
+    protected void selectNext() {
         if (selected == null || results.size() < 2) return;
         var index = results.indexOf(selected) + 1;
         if (index == results.size()) index = 0;
@@ -176,7 +179,7 @@ public class CodeFileEditorSearch extends AnchorPane implements FileEditorTabTop
         styleNearbyResults();
     }
 
-    private void selectPrevious() {
+    protected void selectPrevious() {
         if (selected == null || results.size() < 2) return;
         var index = results.indexOf(selected) - 1;
         if (index < 0) index = results.size() - 1;
@@ -186,7 +189,7 @@ public class CodeFileEditorSearch extends AnchorPane implements FileEditorTabTop
         styleNearbyResults();
     }
 
-    private void clearStyles() {
+    protected void clearStyles() {
         styled.forEach(result -> {
             var spans = editor.getStyleSpans(result.start, result.end);
 
@@ -203,7 +206,7 @@ public class CodeFileEditorSearch extends AnchorPane implements FileEditorTabTop
         styled.clear();
     }
 
-    private void styleNearbyResults() {
+    protected void styleNearbyResults() {
         if (selected == null) return;
         Collection<Result> toStyle;
 
@@ -241,7 +244,7 @@ public class CodeFileEditorSearch extends AnchorPane implements FileEditorTabTop
     }
 
 
-    private static record Result(int start, int end) {
+    protected static record Result(int start, int end) {
 
         public Result(Matcher matcher) {
             this(matcher.start(), matcher.end());

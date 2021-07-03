@@ -78,6 +78,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
     protected EditorHintBar hintBar;
 
     protected CodeFileEditorSearch search;
+    protected CodeFileEditorReplace replace;
 
     protected AutocompletionPopup autocompletionPopup;
     protected DocumentationPopup documentationPopup;
@@ -93,6 +94,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
         this.hintBar = new EditorHintBar(this);
 
         search = new CodeFileEditorSearch(this);
+        replace = new CodeFileEditorReplace(this);
 
         zoom = new ScaledVirtualized<>(this);
         scrollPane = new VirtualizedScrollPane<>(zoom);
@@ -130,7 +132,9 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
         textRefreshEnabled = true;
         textRefreshSubscription = multiPlainChanges().subscribe(event -> {
             if (textRefreshEnabled) event.forEach(this::onTextRefresh);
-            search.refreshText();
+            var top = tab.getTopNode().orElse(null);
+            if (top == search) search.refreshText();
+            if (top == replace) replace.refreshText();
         });
     }
 
@@ -171,6 +175,15 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
      */
     public CodeFileEditorSearch getSearch() {
         return search;
+    }
+
+    /**
+     * Returns the {@link CodeFileEditorReplace replace bar} linked to this editor.
+     *
+     * @return the {@link CodeFileEditorReplace replace bar}.
+     */
+    public CodeFileEditorReplace getReplace() {
+        return replace;
     }
 
     /**
