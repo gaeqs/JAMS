@@ -32,7 +32,7 @@ public class MainMenuRegion {
 
     public static MainMenuRegion FILE = new MainMenuRegion("file", "MAIN_MENU_FILE", 0);
     public static MainMenuRegion EDIT = new MainMenuRegion("edit", "MAIN_MENU_EDIT", 1);
-    public static MainMenuRegion MIPS = new MainMenuRegion("mips", "MAIN_MENU_MIPS", 2);
+    public static MainMenuRegion SIMULATION = new MainMenuRegion("simulation", "MAIN_MENU_SIMULATION", 2);
     public static MainMenuRegion TOOLS = new MainMenuRegion("tools", "MAIN_MENU_TOOLS", 3);
     public static MainMenuRegion HELP = new MainMenuRegion("help", "MAIN_MENU_HELP", Integer.MAX_VALUE);
 

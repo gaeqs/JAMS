@@ -53,7 +53,7 @@ public class GeneralActionAssemble extends ContextAction {
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
 
     public GeneralActionAssemble() {
-        super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_ASSEMBLE, DEFAULT_COMBINATION, GeneralActionRegions.MIPS_PRIORITY, MainMenuRegion.MIPS,
+        super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_ASSEMBLE, DEFAULT_COMBINATION, GeneralActionRegions.MIPS_PRIORITY, MainMenuRegion.SIMULATION,
                 JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_ASSEMBLE).orElse(null));
     }
 

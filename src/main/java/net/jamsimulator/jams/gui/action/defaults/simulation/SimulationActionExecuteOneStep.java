@@ -48,7 +48,7 @@ public class SimulationActionExecuteOneStep extends ContextAction {
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.RIGHT, KeyCombination.ALT_DOWN);
 
     public SimulationActionExecuteOneStep() {
-        super(NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_EXECUTE_ONE_STEP, DEFAULT_COMBINATION, SImulationActionRegions.MIPS, MainMenuRegion.MIPS,
+        super(NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_EXECUTE_ONE_STEP, DEFAULT_COMBINATION, SImulationActionRegions.MIPS, MainMenuRegion.SIMULATION,
                 JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY_ONE).orElse(null));
     }
 

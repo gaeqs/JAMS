@@ -49,7 +49,7 @@ public class SimulationActionReset extends ContextAction {
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.BACK_SPACE, KeyCombination.ALT_DOWN);
 
     public SimulationActionReset() {
-        super(NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_RESET, DEFAULT_COMBINATION, SImulationActionRegions.MIPS, MainMenuRegion.MIPS,
+        super(NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_RESET, DEFAULT_COMBINATION, SImulationActionRegions.MIPS, MainMenuRegion.SIMULATION,
                 JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_RESET).orElse(null));
     }
 
