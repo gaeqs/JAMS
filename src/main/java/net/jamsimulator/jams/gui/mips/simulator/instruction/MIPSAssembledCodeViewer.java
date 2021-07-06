@@ -134,7 +134,10 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
                 .filter(line -> line.getAddress().map(v -> v == address).orElse(false)).findAny();
         if (optional.isEmpty()) return false;
 
-        int line = optional.get().getLine() != 0 ? optional.get().getLine() - 1 : 0;
+        var prevous = assembledLines
+                .get(optional.get().getLine() != 0 ? optional.get().getLine() - 1 : 0);
+
+        int line = prevous.getAddress().isPresent() ? optional.get().getLine() : prevous.getLine();
         moveTo(line, 0);
         showParagraphAtTop(line);
         return true;
