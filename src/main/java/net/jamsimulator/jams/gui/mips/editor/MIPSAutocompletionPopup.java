@@ -52,6 +52,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
     private static final Image ICON_DIRECTIVE = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_DIRECTIVE).orElse(null);
     private static final Image ICON_LABEL = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_LABEL).orElse(null);
     private static final Image ICON_REGISTER = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_REGISTER).orElse(null);
+    private static final Image ICON_MACRO = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_MACRO).orElse(null);
 
     private final MIPSFileElements mipsElements;
     private MIPSCodeElement element;
@@ -88,7 +89,22 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
             } else {
                 Bounds bounds = display.getCaretBounds().orElse(null);
                 if (bounds == null) return;
-                show(display, bounds.getMinX(), bounds.getMinY() + 20);
+
+                var zoomX = display.getZoom().getZoom().getX();
+                var zoomY = display.getZoom().getZoom().getY();
+
+                if (zoomX < 1 || zoomY < 1) {
+                    zoomX = zoomY = 1;
+                } else {
+                    zoomX = zoomX * 0.5 + 0.5;
+                    zoomY = zoomY * 0.5 + 0.5;
+                }
+
+                scroll.setScaleX(zoomX);
+                scroll.setScaleY(zoomY);
+
+                show(display, bounds.getMinX(), bounds.getMinY()
+                        + 20 * display.getZoom().getZoom().getY());
             }
         });
     }
@@ -109,7 +125,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
         else if (element instanceof MIPSDirectiveParameter) {
             start = refreshDisplayDirectiveParameter(start);
         } else if (element instanceof MIPSInstruction)
-            start = refreshInstructionAndDirectives(start);
+            start = refreshInstructionMacrosAndDirectives(start);
         else if (element instanceof MIPSInstructionParameterPart)
             start = refreshDisplayInstructionParameterPart(start);
 
@@ -134,7 +150,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
         return directive;
     }
 
-    protected String refreshInstructionAndDirectives(String start) {
+    protected String refreshInstructionMacrosAndDirectives(String start) {
         MIPSProject project = getDisplay().getProject().orElse(null);
         if (project == null) return start;
 
@@ -164,6 +180,10 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
         String directive = start.startsWith(".") ? start.substring(1) : start;
         addElements(project.getData().getDirectiveSet().getDirectives().stream().filter(target -> target.getName().startsWith(directive)),
                 Directive::getName, d -> "." + d.getName() + (d.hasParameters() ? space : ""), 0, ICON_DIRECTIVE);
+
+        // And macros!
+        addElements(mipsElements.getMacros().stream().filter(target -> target.getName().startsWith(directive)),
+                MIPSMacro::getName, m -> m.getName() + " (", 0, ICON_MACRO);
 
         return directive;
     }

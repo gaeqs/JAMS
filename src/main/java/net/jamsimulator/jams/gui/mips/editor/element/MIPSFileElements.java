@@ -180,6 +180,10 @@ public class MIPSFileElements {
         return lines.get(lineOf(position));
     }
 
+    public Set<MIPSMacro> getMacros () {
+        return Collections.unmodifiableSet(macros);
+    }
+
     public Optional<MIPSMacro> getMacro(String name) {
         return macros.stream().filter(m -> m.getName().equals(name)).findAny();
     }
