@@ -125,7 +125,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
         else if (element instanceof MIPSDirectiveParameter) {
             start = refreshDisplayDirectiveParameter(start);
         } else if (element instanceof MIPSInstruction)
-            start = refreshInstructionMacrosAndDirectives(start);
+            start = refreshInstructionsMacrosAndDirectives(start);
         else if (element instanceof MIPSInstructionParameterPart)
             start = refreshDisplayInstructionParameterPart(start);
 
@@ -150,7 +150,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
         return directive;
     }
 
-    protected String refreshInstructionMacrosAndDirectives(String start) {
+    protected String refreshInstructionsMacrosAndDirectives(String start) {
         MIPSProject project = getDisplay().getProject().orElse(null);
         if (project == null) return start;
 
