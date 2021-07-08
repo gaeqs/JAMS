@@ -59,10 +59,7 @@ import org.reactfx.Subscription;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -287,6 +284,16 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
     }
 
     /**
+     * Returns whether the text refresh event is enabled.
+     *
+     * @return whether the text refresh event is enabled.
+     * @see #enableRefreshEvent(boolean)
+     */
+    public boolean isRefreshEventEnabled() {
+        return textRefreshEnabled;
+    }
+
+    /**
      * Enables or disables {@link #onTextRefresh(PlainTextChange)} calls.
      *
      * @param enabled wheteher calls are enabled.
@@ -323,6 +330,22 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
      * This method should be overridden by this children's classes.
      */
     public void reformat() {
+    }
+
+    /**
+     * Replaces all the text of this editor with the given code.
+     * This method should be overriden by child implementations to grant good performance.
+     *
+     * @param text the new text.
+     * @return whether the operation was successfully executed.
+     * Returns false when the text to replace is the same to the text in the editor.
+     */
+    public boolean replaceAllText(String text) {
+        if (text.equals(getText())) return false;
+        replace(0, getLength(), text, Collections.emptySet());
+        tab.setSaveMark(true);
+        tab.layoutDisplay();
+        return true;
     }
 
     //endregion

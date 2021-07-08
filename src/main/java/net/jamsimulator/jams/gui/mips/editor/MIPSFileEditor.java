@@ -116,6 +116,16 @@ public class MIPSFileEditor extends CodeFileEditor {
     }
 
     @Override
+    public boolean replaceAllText(String text) {
+        enableRefreshEvent(false);
+        var result = super.replaceAllText(text);
+        enableRefreshEvent(true);
+        if (!result) return false;
+        index();
+        return true;
+    }
+
+    @Override
     public void reload() {
         super.reload();
         index();

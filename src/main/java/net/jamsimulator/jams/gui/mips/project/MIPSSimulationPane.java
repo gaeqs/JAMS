@@ -219,6 +219,11 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
     }
 
     @Override
+    public void saveAllOpenedFiles() {
+        // There's nothing to save!
+    }
+
+    @Override
     public void onClose() {
         super.onClose();
         simulation.stop();

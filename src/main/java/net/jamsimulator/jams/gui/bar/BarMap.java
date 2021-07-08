@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.bar;
 
+import javafx.scene.Node;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.*;
@@ -81,6 +82,14 @@ public class BarMap {
      */
     public Set<BarSnapshot> getRegisteredSnapshots() {
         return Collections.unmodifiableSet(registeredSnapshots);
+    }
+
+    public <T> Optional<T> getSnapshotNodeOfType(Class<T> clazz) {
+        for (BarSnapshot snapshot : registeredSnapshots) {
+            if (clazz.isAssignableFrom(snapshot.getNode().getClass()))
+                return Optional.of((T) snapshot.getNode());
+        }
+        return Optional.empty();
     }
 
     /**

@@ -86,6 +86,8 @@ public class CodeFileEditorSearch extends AnchorPane implements FileEditorTabTop
         nextButton.getStyleClass().add("code-file-editor-search-button");
         previousButton.setOnAction(event -> selectPrevious());
         nextButton.setOnAction(event -> selectNext());
+        previousButton.setFocusTraversable(false);
+        nextButton.setFocusTraversable(false);
         searchHBox.getChildren().addAll(previousButton, nextButton);
 
         resultsLabel = new LanguageLabel(Messages.BAR_SEARCH_RESULTS, "{RESULTS}", "0");
@@ -95,6 +97,7 @@ public class CodeFileEditorSearch extends AnchorPane implements FileEditorTabTop
         var closeButton = new Button("x");
         closeButton.getStyleClass().add("code-file-editor-search-button");
         closeButton.setOnAction(event -> hide());
+        closeButton.setFocusTraversable(false);
         AnchorUtils.setAnchor(closeButton, 2, 2, -1, 0);
         getChildren().add(closeButton);
 
@@ -169,22 +172,32 @@ public class CodeFileEditorSearch extends AnchorPane implements FileEditorTabTop
         }
     }
 
-    protected void selectNext() {
+    protected void selectNextWithoutStyle() {
         if (selected == null || results.size() < 2) return;
         var index = results.indexOf(selected) + 1;
         if (index == results.size()) index = 0;
         selected = results.get(index);
         moveToSelected();
+    }
+
+    protected void selectNext() {
+        if (selected == null || results.size() < 2) return;
+        selectNextWithoutStyle();
         clearStyles();
         styleNearbyResults();
     }
 
-    protected void selectPrevious() {
+    protected void selectPreviousWithoutStyle() {
         if (selected == null || results.size() < 2) return;
         var index = results.indexOf(selected) - 1;
         if (index < 0) index = results.size() - 1;
         selected = results.get(index);
         moveToSelected();
+    }
+
+    protected void selectPrevious() {
+        if (selected == null || results.size() < 2) return;
+        selectPreviousWithoutStyle();
         clearStyles();
         styleNearbyResults();
     }

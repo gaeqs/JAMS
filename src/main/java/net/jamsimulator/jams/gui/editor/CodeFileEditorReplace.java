@@ -69,17 +69,22 @@ public class CodeFileEditorReplace extends CodeFileEditorSearch {
         replaceHBox.getChildren().add(replaceButton);
 
         var replaceAllButton = new Button("Replace all");
+        replaceAllButton.setOnAction(event -> replaceAll());
         replaceHBox.getChildren().add(replaceAllButton);
     }
 
     private void onReplace() {
         if (selected == null) return;
-        System.out.println(selected);
         var toReplace = selected;
-        selectNext();
+        selectNextWithoutStyle();
         editor.replace(toReplace.start(), toReplace.end(),
                 replaceField.getText(), Collections.emptySet());
         refreshText();
         moveToSelected();
+    }
+
+    private void replaceAll() {
+        var result = editor.getText().replace(textField.getText(), replaceField.getText());
+        editor.replaceAllText(result);
     }
 }

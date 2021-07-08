@@ -107,6 +107,11 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
         return barMap;
     }
 
+    /**
+     * Saves all files opened by this working pane.
+     */
+    public abstract void saveAllOpenedFiles();
+
     @Override
     public void onClose() {
         barMap.forEachButton(BarButton::hide);

@@ -38,14 +38,10 @@ import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
-import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
-import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
-import net.jamsimulator.jams.gui.util.log.SimpleLog;
+import net.jamsimulator.jams.gui.util.log.Log;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.project.mips.MIPSProject;
-
-import java.util.Optional;
+import net.jamsimulator.jams.project.Project;
 
 public class GeneralActionAssemble extends ContextAction {
 
@@ -57,24 +53,26 @@ public class GeneralActionAssemble extends ContextAction {
                 JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_ASSEMBLE).orElse(null));
     }
 
-    public static void compileAndShow(MIPSProject project) {
+    public static void compileAndShow(Project project) {
         ProjectTab tab = project.getProjectTab().orElse(null);
         if (tab == null) return;
 
         Thread thread = new Thread(() -> {
-            MIPSStructurePane pane = (MIPSStructurePane) tab.getProjectTabPane().getWorkingPane();
-            pane.getFileEditorHolder().saveAll(true);
+            var pane = tab.getProjectTabPane().getWorkingPane();
+            pane.saveAllOpenedFiles();
 
             if (Jams.getMainConfiguration().getOrElse("simulation.open_log_on_assemble", true)) {
                 Platform.runLater(() -> pane.getBarMap().searchButton("log").ifPresent(BarButton::show));
             }
-            SimpleLog log = pane.getLog();
+            var log = pane.getBarMap().getSnapshotNodeOfType(Log.class);
 
             try {
-                project.generateSimulation(log);
+                project.generateSimulation(log.orElse(null));
             } catch (Exception ex) {
-                log.printErrorLn("ERROR:");
-                log.printErrorLn(ex.getMessage());
+                if (log.isPresent()) {
+                    log.get().printErrorLn("ERROR:");
+                    log.get().printErrorLn(ex.getMessage());
+                }
                 ex.printStackTrace();
             }
         });
@@ -85,28 +83,14 @@ public class GeneralActionAssemble extends ContextAction {
 
     @Override
     public void run(Object node) {
-        if (node instanceof MIPSFileEditor) {
-            MIPSProject project = ((MIPSFileEditor) node).getProject().orElse(null);
-            if (project == null) return;
-            compileAndShow(project);
-        } else {
-            Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
-            if (optionalProject.isEmpty()) return;
-            ProjectTab tab = optionalProject.get();
-            if (tab.getProject() instanceof MIPSProject) {
-                compileAndShow((MIPSProject) tab.getProject());
-            }
-        }
+        runFromMenu();
     }
 
     @Override
     public void runFromMenu() {
-        Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
+        var optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
         if (optionalProject.isEmpty()) return;
-        ProjectTab tab = optionalProject.get();
-        if (tab.getProject() instanceof MIPSProject) {
-            compileAndShow((MIPSProject) tab.getProject());
-        }
+        compileAndShow(optionalProject.get().getProject());
     }
 
     @Override
@@ -121,7 +105,6 @@ public class GeneralActionAssemble extends ContextAction {
 
     @Override
     public boolean supportsMainMenuState(MainMenuBar bar) {
-        Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
-        return optionalProject.isPresent();
+        return JamsApplication.getProjectsTabPane().getFocusedProject().isPresent();
     }
 }

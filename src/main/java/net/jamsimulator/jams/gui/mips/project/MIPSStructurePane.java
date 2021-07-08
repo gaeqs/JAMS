@@ -168,6 +168,11 @@ public class MIPSStructurePane extends WorkingPane implements FileEditorHolderHo
     }
 
     @Override
+    public void saveAllOpenedFiles() {
+        getFileEditorHolder().saveAll(true);
+    }
+
+    @Override
     public void onClose() {
         super.onClose();
         explorer.dispose();
