@@ -30,7 +30,7 @@ import net.jamsimulator.jams.mips.instruction.set.MIPS32r6InstructionSet;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.SimulationData;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 import org.junit.jupiter.api.Test;
 
@@ -81,7 +81,7 @@ class AssemblerTest {
 		assembler.assemble();
 		SimulationSyscallExecutions executions = new SimulationSyscallExecutions();
 
-		SimulationData data = new SimulationData(executions, new File(""), null, assembler.getOriginals(), assembler.getAllLabels(),
+		MIPSSimulationData data = new MIPSSimulationData(executions, new File(""), null, assembler.getOriginals(), assembler.getAllLabels(),
 				true, true, true, true, true);
 		MIPSSimulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE, data);
 

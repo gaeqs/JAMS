@@ -58,7 +58,7 @@ import java.util.Set;
 
 /**
  * Represents the execution of a set of instructions, including a memory and a register set.
- * Simulations are used to execute MIPS code.
+ * These Simulations are used to execute MIPS code.
  * <p>
  * They are based on {@link Architecture}s: the simulation should behave like the
  * architecture does on a real machine.
@@ -68,11 +68,11 @@ import java.util.Set;
  *
  * @param <Arch> the architecture the simulation is based on.
  */
-public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEventBroadcast {
+public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEventBroadcast implements Simulation<Integer> {
 
     protected final Arch architecture;
     protected final InstructionSet instructionSet;
-    protected final SimulationData data;
+    protected final MIPSSimulationData data;
 
     protected final Registers registers;
     protected final Memory memory;
@@ -111,7 +111,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
      * @param instructionStackBottom the address of the bottom of the instruction stack.
      * @param data                   the immutable data of this simulation.
      */
-    public MIPSSimulation(Arch architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, SimulationData data, boolean useCache) {
+    public MIPSSimulation(Arch architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, MIPSSimulationData data, boolean useCache) {
         this.architecture = architecture;
         this.instructionSet = instructionSet;
         this.registers = registers;
@@ -186,7 +186,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
      *
      * @return the instance.
      */
-    public SimulationData getData() {
+    public MIPSSimulationData getData() {
         return data;
     }
 
@@ -224,80 +224,6 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
     }
 
     /**
-     * Returns the {@link Console} of this simulation.
-     * This console is used to print the output of the simulation and to receive data from the user.
-     *
-     * @return the {@link Console}.
-     */
-    public Console getConsole() {
-        return data.getConsole();
-    }
-
-    /**
-     * Returns a unmodifiable {@link Set} with all this simulation's breakpoints.
-     *
-     * @return the {@link Set}.
-     */
-    public Set<Integer> getBreakpoints() {
-        return Collections.unmodifiableSet(breakpoints);
-    }
-
-    /**
-     * Returns whether the given address has a breakpoint.
-     *
-     * @param address the address.
-     * @return whether there's a breakpoint in the given address.
-     */
-    public boolean hasBreakpoint(int address) {
-        return breakpoints.contains(address);
-    }
-
-    /**
-     * Adds a breakpoint to the given address.
-     * If the given address has already a breakpoint this method returns false.
-     *
-     * @param address the address.
-     * @return whether the operation was successful.
-     */
-    public boolean addBreakpoint(int address) {
-        if (breakpoints.add(address)) {
-            callEvent(new SimulationAddBreakpointEvent(this, address));
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Removes a breakpoint of the given address.
-     * If the given address has not a breakpoint this method returns false.
-     *
-     * @param address the address.
-     * @return whether the operation was successful.
-     */
-    public boolean removeBreakpoint(int address) {
-        if (breakpoints.remove(address)) {
-            callEvent(new SimulationRemoveBreakpointEvent(this, address));
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Adds or removes the breakpoint linked to the given address.
-     *
-     * @param address the given address.
-     */
-    public void toggleBreakpoint(int address) {
-        if (breakpoints.contains(address)) {
-            breakpoints.remove(address);
-            callEvent(new SimulationRemoveBreakpointEvent(this, address));
-        } else {
-            breakpoints.add(address);
-            callEvent(new SimulationAddBreakpointEvent(this, address));
-        }
-    }
-
-    /**
      * Returns the collection containing all number generators of this simulation.
      *
      * @return the collection.
@@ -327,39 +253,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
     }
 
     /**
-     * Returns the delay before a cycle of this simulation in milliseconds.
-     * <p>
-     * If the value is 0, this simulation will run at the fastest it can.
-     *
-     * @return the delay in ms.
-     */
-    public int getCycleDelay() {
-        return cycleDelay;
-    }
-
-    /**
-     * Sets the delay before a cycle of this simulation in milliseconds.
-     * <p>
-     * If the value is 0, this simulation will run at the fastest it can.
-     *
-     * @param cycleDelay the delay in ms.
-     */
-    public void setCycleDelay(int cycleDelay) {
-        this.cycleDelay = Math.max(0, cycleDelay);
-    }
-
-    /**
-     * Returns the current cycle of this {@link MIPSSimulation}.
-     * This is also the amount of executed cycles.
-     *
-     * @return the current cycle of this {@link MIPSSimulation}.
-     */
-    public long getCycles() {
-        return cycles;
-    }
-
-    /**
-     * Sets the amount oc cycles of this {@link MIPSSimulation}.
+     * Sets the amount of cycles of this {@link MIPSSimulation}.
      * This field may be used when the Register {@code Count} is updated.
      *
      * @param cycles the amount of cycles.
@@ -368,14 +262,6 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
         this.cycles = cycles;
     }
 
-    /**
-     * Returns whether this simulation is executing code.
-     *
-     * @return whether this simulatin is executing code.
-     */
-    public boolean isRunning() {
-        return running;
-    }
 
     /**
      * Finishes the execution of this program.
@@ -462,30 +348,6 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
     }
 
     /**
-     * Marks the execution of this simulation as interrupted.
-     * This method should be only called by the execution thread.
-     * <p>
-     * This will not make a MIPS32 interrupt!
-     */
-    public void interruptThread() {
-        interrupted = true;
-    }
-
-    /**
-     * Checks whether the execution thread was interrupted.
-     * If true, the "interrupted" flag of the execution is marked as true.
-     * This method should be only called by the execution thread.
-     * <p>
-     * This has nothing to do with MIPS32 interrupts!
-     *
-     * @return whether the execution was interrupted.
-     */
-    public boolean checkThreadInterrupted() {
-        if (Thread.interrupted()) interrupted = true;
-        return interrupted;
-    }
-
-    /**
      * Fetches the {@link InstructionExecution} located at the given address.
      * <p>
      * This method may return {@code null} if the instruction cannot be decoded.
@@ -522,18 +384,6 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
             }
         }
         return cached;
-    }
-
-
-    /**
-     * Increases the cycle count by one.
-     * This also modifies the register {@code Count} if enabled.
-     */
-    public void addCycleCount() {
-        cycles++;
-        if (countRegister != null && (causeRegister == null || !causeRegister.getBit(COP0RegistersBits.CAUSE_DC))) {
-            countRegister.setValue(countRegister.getValue() + 1);
-        }
     }
 
     /**
@@ -633,133 +483,6 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
         }
     }
 
-    /**
-     * Stops the execution of the simulation.
-     */
-    public void stop() {
-        if (thread != null) {
-            thread.interrupt();
-            thread = null;
-        }
-    }
-
-    /**
-     * Returns the simulation to its first state.
-     * <p>
-     * This method depends on {@link Registers#restoreSavedState()} and {@link Memory#restoreSavedState()}.
-     * Any invocation to {@link Registers#saveState()} and {@link Memory#saveState()} on this simulation's
-     * {@link Memory} and {@link Registers} may result on unexpected results.
-     */
-    public void reset() {
-        stop();
-        waitForExecutionFinish();
-
-        registers.restoreSavedState();
-        memory.restoreSavedState();
-        finished = false;
-        cycles = 0;
-        externalInterruptController.reset();
-
-        callEvent(new SimulationResetEvent(this));
-    }
-
-    /**
-     * Waits till the current execution is finished.
-     */
-    public void waitForExecutionFinish() {
-        synchronized (finishedRunningLock) {
-            if (running) {
-                //Wait till cycle restoration.
-                try {
-                    finishedRunningLock.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    /**
-     * Executes the next step of this simulation.
-     *
-     * @throws InstructionNotFoundException when an instruction couldn't be decoded or when the bottom of the instruction stack is reached.
-     */
-    public void nextStep() {
-        if (finished || running) return;
-        running = true;
-        interrupted = false;
-
-        memory.enableEventCalls(data.canCallEvents());
-        registers.enableEventCalls(data.canCallEvents());
-
-        thread = new Thread(() -> {
-            try {
-                var before = callEvent(new SimulationCycleEvent.Before(this, cycles));
-                if (before.isCancelled()) return;
-                runStep(true);
-                callEvent(new SimulationCycleEvent.After(this, cycles - 1));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            manageSimulationFinish();
-        });
-        callEvent(new SimulationStartEvent(this));
-        thread.setPriority(Thread.MAX_PRIORITY);
-        thread.start();
-    }
-
-
-    /**
-     * Executes steps until the bottom of the instruction stack is reached.
-     *
-     * @throws InstructionNotFoundException when an instruction couldn't be decoded.
-     */
-    public void executeAll() {
-        if (finished || running) return;
-        running = true;
-        interrupted = false;
-
-        memory.enableEventCalls(data.canCallEvents());
-        registers.enableEventCalls(data.canCallEvents());
-
-        thread = new Thread(() -> {
-
-            long cyclesStart = cycles;
-            long start = System.nanoTime();
-
-            try {
-                runStep(true);
-                while (!finished && !checkThreadInterrupted()) {
-                    velocitySleep();
-                    if (!checkThreadInterrupted()) {
-                        var before = callEvent(new SimulationCycleEvent.Before(this, cycles));
-                        if (!before.isCancelled()) {
-                            runStep(false);
-                            callEvent(new SimulationCycleEvent.After(this, cycles - 1));
-                        }
-                    }
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-            if (getConsole() != null) {
-                long millis = (System.nanoTime() - start) / 1000000;
-                getConsole().println();
-                getConsole().printInfoLn(cycles - cyclesStart + " cycles executed in " + millis + " millis.");
-
-                int performance = (int) ((cycles - cyclesStart) / (((double) millis) / 1000));
-                getConsole().printInfoLn(performance + " cycle/s");
-                getConsole().println();
-            }
-
-            manageSimulationFinish();
-        });
-        callEvent(new SimulationStartEvent(this));
-        thread.setPriority(Thread.MAX_PRIORITY);
-        thread.start();
-    }
-
     private void manageSimulationFinish() {
         synchronized (finishedRunningLock) {
             running = false;
@@ -794,16 +517,6 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
         return true;
     }
 
-    /**
-     * Runs the given code synchronized to this simulation.
-     * <p>
-     * This allows to modify registers and memory safely.
-     *
-     * @param runnable the code to run.
-     */
-    public synchronized void runSynchronized(Runnable runnable) {
-        runnable.run();
-    }
 
     /**
      * Sleeps the simulation the amount of time specified by the {@link #cycleDelay} variable.
@@ -862,16 +575,238 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
 
     protected abstract void manageInterrupts(InstructionExecution<?, ?> execution);
 
+
+    //region overridden methods
+
+
+    @Override
+    public Console getConsole() {
+        return data.getConsole();
+    }
+
+
+    @Override
+    public Set<Integer> getBreakpoints() {
+        return Collections.unmodifiableSet(breakpoints);
+    }
+
+
+    @Override
+    public boolean hasBreakpoint(Integer address) {
+        return breakpoints.contains(address);
+    }
+
+    @Override
+    public boolean addBreakpoint(Integer address) {
+        if (breakpoints.add(address)) {
+            callEvent(new SimulationAddBreakpointEvent(this, address));
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removeBreakpoint(Integer address) {
+        if (breakpoints.remove(address)) {
+            callEvent(new SimulationRemoveBreakpointEvent(this, address));
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void toggleBreakpoint(Integer address) {
+        if (breakpoints.contains(address)) {
+            breakpoints.remove(address);
+            callEvent(new SimulationRemoveBreakpointEvent(this, address));
+        } else {
+            breakpoints.add(address);
+            callEvent(new SimulationAddBreakpointEvent(this, address));
+        }
+    }
+
+    @Override
+    public int getCycleDelay() {
+        return cycleDelay;
+    }
+
+    @Override
+    public void setCycleDelay(int cycleDelay) {
+        this.cycleDelay = Math.max(0, cycleDelay);
+    }
+
+    @Override
+    public long getCycles() {
+        return cycles;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return running;
+    }
+
+    @Override
+    public void interruptThread() {
+        interrupted = true;
+    }
+
+    @Override
+    public boolean checkThreadInterrupted() {
+        if (Thread.interrupted()) interrupted = true;
+        return interrupted;
+    }
+
     /**
-     * Undoes the last step made by this simulation.
-     * This method won't do nothing if no steps were made.
-     * <p>
-     * If this simulation was execution all instructions and this method is used,
-     * the simulation will stop.
-     *
-     * @return whether a step was undone.
+     * Increases the cycle count by one.
+     * This also modifies the register {@code Count} if enabled.
      */
+    @Override
+    public void addCycleCount() {
+        cycles++;
+        if (countRegister != null && (causeRegister == null || !causeRegister.getBit(COP0RegistersBits.CAUSE_DC))) {
+            countRegister.setValue(countRegister.getValue() + 1);
+        }
+    }
+
+    @Override
+    public void stop() {
+        if (thread != null) {
+            thread.interrupt();
+            thread = null;
+        }
+    }
+
+    /**
+     * Returns the simulation to its initial state. This also stops the simulation if running.
+     * <p>
+     * This method depends on {@link Registers#restoreSavedState()} and {@link Memory#restoreSavedState()}.
+     * Any invocation to {@link Registers#saveState()} and {@link Memory#saveState()} on this simulation's
+     * {@link Memory} and {@link Registers} may result on unexpected results.
+     */
+    @Override
+    public void reset() {
+        stop();
+        waitForExecutionFinish();
+
+        registers.restoreSavedState();
+        memory.restoreSavedState();
+        finished = false;
+        cycles = 0;
+        externalInterruptController.reset();
+
+        callEvent(new SimulationResetEvent(this));
+    }
+
+    @Override
+    public void waitForExecutionFinish() {
+        synchronized (finishedRunningLock) {
+            if (running) {
+                //Wait till cycle restoration.
+                try {
+                    finishedRunningLock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Executes the next step of this simulation.
+     *
+     * @throws InstructionNotFoundException when an instruction couldn't be decoded or when the bottom of the instruction stack is reached.
+     */
+    @Override
+    public void executeOneStep() {
+        if (finished || running) return;
+        running = true;
+        interrupted = false;
+
+        memory.enableEventCalls(data.canCallEvents());
+        registers.enableEventCalls(data.canCallEvents());
+
+        thread = new Thread(() -> {
+            try {
+                var before = callEvent(new SimulationCycleEvent.Before(this, cycles));
+                if (before.isCancelled()) return;
+                runStep(true);
+                callEvent(new SimulationCycleEvent.After(this, cycles - 1));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            manageSimulationFinish();
+        });
+        callEvent(new SimulationStartEvent(this));
+        thread.setPriority(Thread.MAX_PRIORITY);
+        thread.start();
+    }
+
+    /**
+     * Executes steps until the bottom of the instruction stack is reached.
+     *
+     * @throws InstructionNotFoundException when an instruction couldn't be decoded.
+     */
+    @Override
+    public void executeAll() {
+        if (finished || running) return;
+        running = true;
+        interrupted = false;
+
+        memory.enableEventCalls(data.canCallEvents());
+        registers.enableEventCalls(data.canCallEvents());
+
+        thread = new Thread(() -> {
+
+            long cyclesStart = cycles;
+            long start = System.nanoTime();
+
+            try {
+                runStep(true);
+                while (!finished && !checkThreadInterrupted()) {
+                    velocitySleep();
+                    if (!checkThreadInterrupted()) {
+                        var before = callEvent(new SimulationCycleEvent.Before(this, cycles));
+                        if (!before.isCancelled()) {
+                            runStep(false);
+                            callEvent(new SimulationCycleEvent.After(this, cycles - 1));
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            if (getConsole() != null) {
+                long millis = (System.nanoTime() - start) / 1000000;
+                getConsole().println();
+                getConsole().printInfoLn(cycles - cyclesStart + " cycles executed in " + millis + " millis.");
+
+                int performance = (int) ((cycles - cyclesStart) / (((double) millis) / 1000));
+                getConsole().printInfoLn(performance + " cycle/s");
+                getConsole().println();
+            }
+
+            manageSimulationFinish();
+        });
+        callEvent(new SimulationStartEvent(this));
+        thread.setPriority(Thread.MAX_PRIORITY);
+        thread.start();
+    }
+
+    @Override
+    public synchronized void runSynchronized(Runnable runnable) {
+        runnable.run();
+    }
+
+    @Override
+    public boolean isUndoEnabled() {
+        return data.isUndoEnabled();
+    }
+
+    @Override
     public abstract boolean undoLastStep();
+    //endregion
+
 
     //TODO this should be reworked.
     @SuppressWarnings("unchecked")

@@ -36,19 +36,34 @@ import net.jamsimulator.jams.gui.util.FixedButton;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * General implementations of the execution buttons shown in a simulation pane.
+ * <p>
+ * Implemented buttons:
+ * <li>Run step</li>
+ * <li>Run all / Stop</li>
+ * <li>Undo</li>
+ * <li>Reset</li>
+ */
 public class ExecutionButtons {
+
+    /**
+     * The style class used by the buttons.
+     */
+    public static final String STYLE_CLASS = "buttons-hbox-button";
 
     private final Button runOrStop;
     private final Button runOne;
     private final List<Node> nodes;
 
-    public ExecutionButtons(MIPSSimulation<?> simulation) {
+    public ExecutionButtons(Simulation<?> simulation) {
         nodes = new ArrayList<>();
         Image runOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY_ONE).orElse(null);
         Image undoOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_UNDO_ONE).orElse(null);
@@ -58,19 +73,19 @@ public class ExecutionButtons {
         changeToRunAll(simulation);
 
         runOne = new FixedButton("", new NearestImageView(runOneIcon, 16, 16), 28, 28);
-        runOne.getStyleClass().add("buttons-hbox-button");
+        runOne.getStyleClass().add(STYLE_CLASS);
         runOne.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_EXECUTE_ONE, LanguageTooltip.DEFAULT_DELAY));
-        runOne.setOnAction(event -> simulation.nextStep());
+        runOne.setOnAction(event -> simulation.executeOneStep());
 
 
         Button undo = new FixedButton("", new NearestImageView(undoOneIcon, 16, 16), 28, 28);
-        undo.getStyleClass().add("buttons-hbox-button");
+        undo.getStyleClass().add(STYLE_CLASS);
         undo.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_UNDO, LanguageTooltip.DEFAULT_DELAY));
         undo.setOnAction(event -> simulation.undoLastStep());
-        undo.setDisable(!simulation.getData().isUndoEnabled());
+        undo.setDisable(!simulation.isUndoEnabled());
 
         Button reset = new FixedButton("", new NearestImageView(resetIcon, 16, 16), 28, 28);
-        reset.getStyleClass().add("buttons-hbox-button");
+        reset.getStyleClass().add(STYLE_CLASS);
 
         reset.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_RESET, LanguageTooltip.DEFAULT_DELAY));
         reset.setOnAction(event -> simulation.reset());
@@ -99,12 +114,12 @@ public class ExecutionButtons {
         changeToRunAll(event.getSimulation());
     }
 
-    private void changeToRunAll(MIPSSimulation<?> simulation) {
+    private void changeToRunAll(Simulation<?> simulation) {
         Platform.runLater(() -> {
             Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY
             ).orElse(null);
             ((NearestImageView) runOrStop.getGraphic()).setImage(runAllIcon);
-            runOrStop.getStyleClass().add("buttons-hbox-button");
+            runOrStop.getStyleClass().add(STYLE_CLASS);
             runOrStop.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_EXECUTE_ALL, LanguageTooltip.DEFAULT_DELAY));
             runOrStop.setOnAction(event -> simulation.executeAll());
         });
@@ -116,7 +131,7 @@ public class ExecutionButtons {
             ).orElse(null);
 
             ((NearestImageView) runOrStop.getGraphic()).setImage(runAllIcon);
-            runOrStop.getStyleClass().add("buttons-hbox-button");
+            runOrStop.getStyleClass().add(STYLE_CLASS);
             runOrStop.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_STOP, LanguageTooltip.DEFAULT_DELAY));
             runOrStop.setOnAction(event -> simulation.stop());
         });

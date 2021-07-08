@@ -44,7 +44,7 @@ import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterLockEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterUnlockEvent;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.SimulationData;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 import net.jamsimulator.jams.mips.simulation.change.*;
 import net.jamsimulator.jams.mips.simulation.change.multicycle.MultiCycleSimulationChangeCurrentExecution;
 import net.jamsimulator.jams.mips.simulation.change.multicycle.MultiCycleSimulationChangeStep;
@@ -88,7 +88,7 @@ public class MultiCycleSimulation extends MIPSSimulation<MultiCycleArchitecture>
      * @param memory                 the memory to use in this simulation.
      * @param instructionStackBottom the address of the bottom of the instruction stack.
      */
-    public MultiCycleSimulation(MultiCycleArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, SimulationData data) {
+    public MultiCycleSimulation(MultiCycleArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, MIPSSimulationData data) {
         super(architecture, instructionSet, registers, memory, instructionStackBottom, kernelStackBottom, data, true);
         executedInstructions = 0;
         changes = data.isUndoEnabled() ? new LinkedList<>() : null;

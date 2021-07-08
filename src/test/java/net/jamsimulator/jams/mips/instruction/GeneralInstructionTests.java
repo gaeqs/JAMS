@@ -39,7 +39,7 @@ import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.SimulationData;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 import net.jamsimulator.jams.mips.simulation.singlecycle.SingleCycleSimulation;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ class GeneralInstructionTests {
 
     static MIPSSimulation<?> simulation = new SingleCycleSimulation(SingleCycleArchitecture.INSTANCE, MIPS32r6InstructionSet.INSTANCE,
             new MIPS32Registers(), new MIPS32Memory(), MIPS32Memory.TEXT, MIPS32Memory.KERNEL_TEXT,
-            new SimulationData(new SimulationSyscallExecutions(), new File(""), null, new HashMap<>(), new HashSet<>(), true, true, true, true, true));
+            new MIPSSimulationData(new SimulationSyscallExecutions(), new File(""), null, new HashMap<>(), new HashSet<>(), true, true, true, true, true));
 
     @SuppressWarnings({"OptionalGetWithoutIsPresent", "unchecked"})
     @Test

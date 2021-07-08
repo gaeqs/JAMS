@@ -31,7 +31,7 @@ import net.jamsimulator.jams.mips.label.Label;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.SimulationData;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +40,7 @@ import java.util.Set;
  * Represents an assembler. An assembler transforms assembly code into machine code.
  * <p>
  * To use a implementation of this class you must invoke {@link #assemble()} to assemble the code.
- * Then, invoke {@link #createSimulation(Architecture, SimulationData)} to create a {@link MIPSSimulation}.
+ * Then, invoke {@link #createSimulation(Architecture, MIPSSimulationData)} to create a {@link MIPSSimulation}.
  */
 public interface Assembler {
 
@@ -67,7 +67,7 @@ public interface Assembler {
      * @return the {@link MIPSSimulation}.
      * @throws IllegalStateException when the code is not assembled.
      */
-    <Arch extends Architecture> MIPSSimulation<Arch> createSimulation(Arch architecture, SimulationData data);
+    <Arch extends Architecture> MIPSSimulation<Arch> createSimulation(Arch architecture, MIPSSimulationData data);
 
     /**
      * Returns the {@link InstructionSet} used by this assembler.

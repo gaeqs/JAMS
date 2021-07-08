@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.action.defaults.simulation;
 
-import javafx.scene.control.Tab;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -36,11 +35,8 @@ import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
-import net.jamsimulator.jams.gui.mips.project.MIPSSimulationPane;
-import net.jamsimulator.jams.gui.project.ProjectTab;
+import net.jamsimulator.jams.gui.project.SimulationHolder;
 import net.jamsimulator.jams.language.Messages;
-
-import java.util.Optional;
 
 public class SimulationActionUndoOneStep extends ContextAction {
 
@@ -54,12 +50,12 @@ public class SimulationActionUndoOneStep extends ContextAction {
 
     @Override
     public void run(Object node) {
-        Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
+        var optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
         if (optionalProject.isEmpty()) return;
-        ProjectTab projectTab = optionalProject.get();
-        Tab tab = projectTab.getProjectTabPane().getSelectionModel().getSelectedItem();
-        if (tab == null || !(tab.getContent() instanceof MIPSSimulationPane pane)) return;
-        pane.getSimulation().undoLastStep();
+        var projectTab = optionalProject.get();
+        var tab = projectTab.getProjectTabPane().getSelectionModel().getSelectedItem();
+        if (tab == null || !(tab.getContent() instanceof SimulationHolder<?> holder)) return;
+        holder.getSimulation().undoLastStep();
     }
 
 
@@ -80,10 +76,10 @@ public class SimulationActionUndoOneStep extends ContextAction {
 
     @Override
     public boolean supportsMainMenuState(MainMenuBar bar) {
-        Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
+        var optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
         if (optionalProject.isEmpty()) return false;
-        ProjectTab projectTab = optionalProject.get();
-        Tab tab = projectTab.getProjectTabPane().getSelectionModel().getSelectedItem();
-        return tab != null && tab.getContent() instanceof MIPSSimulationPane;
+        var projectTab = optionalProject.get();
+        var tab = projectTab.getProjectTabPane().getSelectionModel().getSelectedItem();
+        return tab != null && tab.getContent() instanceof SimulationHolder<?>;
     }
 }

@@ -37,6 +37,7 @@ import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModePane;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.simulator.cache.CacheVisualizer;
 import net.jamsimulator.jams.gui.mips.simulator.execution.ExecutionButtons;
+import net.jamsimulator.jams.gui.mips.simulator.execution.SpeedSlider;
 import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionViewerGroup;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledCodeViewer;
@@ -46,6 +47,7 @@ import net.jamsimulator.jams.gui.mips.simulator.memory.MemoryPane;
 import net.jamsimulator.jams.gui.mips.simulator.register.COP0RegistersTable;
 import net.jamsimulator.jams.gui.mips.simulator.register.RegistersTable;
 import net.jamsimulator.jams.gui.project.ProjectTab;
+import net.jamsimulator.jams.gui.project.SimulationHolder;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.gui.util.ZoomUtils;
@@ -63,7 +65,7 @@ import org.fxmisc.flowless.VirtualizedScrollPane;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
+public class MIPSSimulationPane extends WorkingPane implements SimulationHolder<Integer>, ActionRegion {
 
     protected final ExecutionButtons executionButtons;
     protected final InstructionViewerGroup instructionViewerGroup;
@@ -121,6 +123,7 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
         return project;
     }
 
+    @Override
     public MIPSSimulation<?> getSimulation() {
         return simulation;
     }
@@ -232,23 +235,7 @@ public class MIPSSimulationPane extends WorkingPane implements ActionRegion {
     @Override
     public void populateHBox(HBox buttonsHBox) {
         buttonsHBox.getChildren().clear();
-
-        var tooltip = new LanguageTooltip(Messages.ACTION_MIPS_SIMULATION_CYCLE_DELAY, LanguageTooltip.DEFAULT_DELAY);
-        var delayHint = new Label("0ms");
-        delayHint.setTooltip(tooltip);
-
-        var bar = new Slider(0, 20, 0);
-        bar.setPrefWidth(200);
-        bar.setTooltip(new LanguageTooltip(Messages.ABOUT, LanguageTooltip.DEFAULT_DELAY));
-        bar.valueProperty().addListener((obs, old, val) -> {
-            double normalized = (Math.pow(2, val.doubleValue() / 5) - 1) / 15;
-            int delay = (int) (normalized * 2000);
-            simulation.setCycleDelay(delay);
-            delayHint.setText(delay + "ms");
-        });
-        bar.setTooltip(tooltip);
-
-        buttonsHBox.getChildren().addAll(delayHint, bar);
+        buttonsHBox.getChildren().addAll(new SpeedSlider(simulation));
         buttonsHBox.getChildren().addAll(executionButtons.getNodes());
     }
 

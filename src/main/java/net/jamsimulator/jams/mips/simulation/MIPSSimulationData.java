@@ -38,7 +38,7 @@ import java.util.Set;
  * Represents the immutable data of a {@link MIPSSimulation}.
  * An instance of this class should be used to build any simulation.
  */
-public class SimulationData {
+public class MIPSSimulationData {
 
     protected final SimulationSyscallExecutions syscallExecutions;
     protected final File workingDirectory;
@@ -47,9 +47,9 @@ public class SimulationData {
     protected final Set<Label> labels;
     protected final boolean callEvents, undoEnabled, enableForwarding, solveBranchOnDecode, enableDelaySlot;
 
-    public SimulationData(SimulationSyscallExecutions syscallExecutions, File workingDirectory, Console console,
-                          Map<Integer, String> originalInstructions, Set<Label> labels, boolean callEvents, boolean undoEnabled,
-                          boolean enableForwarding, boolean solveBranchOnDecode, boolean enableDelaySlot) {
+    public MIPSSimulationData(SimulationSyscallExecutions syscallExecutions, File workingDirectory, Console console,
+                              Map<Integer, String> originalInstructions, Set<Label> labels, boolean callEvents, boolean undoEnabled,
+                              boolean enableForwarding, boolean solveBranchOnDecode, boolean enableDelaySlot) {
         this.syscallExecutions = syscallExecutions;
         this.workingDirectory = workingDirectory;
         this.console = console;
@@ -62,8 +62,8 @@ public class SimulationData {
         this.enableDelaySlot = enableDelaySlot;
     }
 
-    public SimulationData(MIPSSimulationConfiguration configuration, File workingDirectory, Console console,
-                          Map<Integer, String> originalInstructions, Set<Label> labels) {
+    public MIPSSimulationData(MIPSSimulationConfiguration configuration, File workingDirectory, Console console,
+                              Map<Integer, String> originalInstructions, Set<Label> labels) {
         this.syscallExecutions = new SimulationSyscallExecutions();
         configuration.getSyscallExecutionBuilders().forEach((key, builder) ->
                 syscallExecutions.bindExecution(key, builder.build()));

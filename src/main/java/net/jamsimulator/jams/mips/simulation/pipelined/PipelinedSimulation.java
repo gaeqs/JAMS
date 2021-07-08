@@ -47,7 +47,7 @@ import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterLockEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterUnlockEvent;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.SimulationData;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 import net.jamsimulator.jams.mips.simulation.change.*;
 import net.jamsimulator.jams.mips.simulation.change.pipelined.PipelinedSimulationChangePipeline;
 import net.jamsimulator.jams.mips.simulation.change.pipelined.PipelinedSimulationExitRequest;
@@ -94,7 +94,7 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
      * @param memory                 the memory to use in this simulation.
      * @param instructionStackBottom the address of the bottom of the instruction stack.
      */
-    public PipelinedSimulation(PipelinedArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, SimulationData data) {
+    public PipelinedSimulation(PipelinedArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, MIPSSimulationData data) {
         super(architecture, instructionSet, registers, memory, instructionStackBottom, kernelStackBottom, data, false);
         instructionsStarted = 0;
         instructionsFinished = 0;

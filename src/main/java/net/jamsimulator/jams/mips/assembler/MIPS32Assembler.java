@@ -34,7 +34,7 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.SimulationData;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 
 import java.util.*;
 
@@ -147,7 +147,7 @@ public class MIPS32Assembler implements Assembler {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <Arch extends Architecture> MIPSSimulation<Arch> createSimulation(Arch architecture, SimulationData data) {
+    public <Arch extends Architecture> MIPSSimulation<Arch> createSimulation(Arch architecture, MIPSSimulationData data) {
         if (!assembled) throw new IllegalStateException("The program is still not assembled!");
 
         Memory memory = getMemory().copy();

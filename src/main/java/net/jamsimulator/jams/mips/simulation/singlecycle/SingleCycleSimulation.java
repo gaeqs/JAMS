@@ -42,7 +42,7 @@ import net.jamsimulator.jams.mips.register.COP0RegistersBits;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.SimulationData;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 import net.jamsimulator.jams.mips.simulation.change.*;
 import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
@@ -86,7 +86,7 @@ public class SingleCycleSimulation extends MIPSSimulation<SingleCycleArchitectur
      * @param memory                 the memory to use in this simulation.
      * @param instructionStackBottom the address of the bottom of the instruction stack.
      */
-    public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, SimulationData data) {
+    public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, MIPSSimulationData data) {
         super(architecture, instructionSet, registers, memory, instructionStackBottom, kernelStackBottom, data, true);
         changes = data.isUndoEnabled() ? new LinkedList<>() : null;
         listeners = new Listeners();

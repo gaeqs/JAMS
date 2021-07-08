@@ -35,7 +35,7 @@ import net.jamsimulator.jams.gui.util.log.Log;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.SimulationData;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 import net.jamsimulator.jams.project.BasicProject;
 import net.jamsimulator.jams.project.ProjectType;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
@@ -132,7 +132,7 @@ public class MIPSProject extends BasicProject {
             log.printDoneLn("Assembly successful in " + (System.nanoTime() - nanos) / 1000000 + " millis.");
         }
 
-        var simulationData = new SimulationData(configuration, data.getFilesFolder(), new Console(),
+        var simulationData = new MIPSSimulationData(configuration, data.getFilesFolder(), new Console(),
                 assembler.getOriginals(), assembler.getAllLabels());
 
         return assembler.createSimulation(configuration.getNodeValue(MIPSSimulationConfigurationPresets.ARCHITECTURE), simulationData);

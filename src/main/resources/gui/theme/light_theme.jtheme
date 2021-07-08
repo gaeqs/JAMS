@@ -782,6 +782,17 @@ AnchorPane {
     -fx-font-weight: bold;
 }
 
+/* SPEED SLIDER */
+.speed-slider {
+    -fx-fill-height: true;
+    -fx-spacing: 2px;
+    -fx-alignment: center;
+}
+
+.speed-slider .slider {
+    -fx-pref-width: 200px;
+}
+
 /*ABOUT*/
 .about-text {
     -fx-font-size: 18px;

@@ -65,6 +65,7 @@ dependencies {
     implementation group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
     implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.6'
     implementation group: 'org.json', name: 'json', version: '20200518'
+    implementation 'org.jetbrains:annotations:20.1.0'
 
     javafxDependencies.each {
         jarLib group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'win'

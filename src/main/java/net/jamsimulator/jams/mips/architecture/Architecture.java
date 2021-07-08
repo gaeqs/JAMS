@@ -29,7 +29,7 @@ import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.SimulationData;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Objects;
@@ -72,7 +72,7 @@ public abstract class Architecture implements Labeled {
                                                                             Memory memory,
                                                                             int instructionStackBottom,
                                                                             int kernelStackBottom,
-                                                                            SimulationData data);
+                                                                            MIPSSimulationData data);
 
     @Override
     public boolean equals(Object o) {
