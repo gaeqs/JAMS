@@ -34,7 +34,7 @@ public class MIPSSimulationConfigurationAddEvent extends Event {
     protected MIPSProjectData data;
     protected MIPSSimulationConfiguration mipsSimulationConfiguration;
 
-    public MIPSSimulationConfigurationAddEvent(MIPSProjectData data, MIPSSimulationConfiguration mipsSimulationConfiguration) {
+    private MIPSSimulationConfigurationAddEvent(MIPSProjectData data, MIPSSimulationConfiguration mipsSimulationConfiguration) {
         this.data = data;
         this.mipsSimulationConfiguration = mipsSimulationConfiguration;
     }

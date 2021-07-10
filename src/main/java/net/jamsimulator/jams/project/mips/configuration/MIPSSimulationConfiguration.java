@@ -108,18 +108,6 @@ public class MIPSSimulationConfiguration {
 
         this.rawValues = foundNodes;
 
-
-        nodesConfiguration.getAll(false).forEach((key, value) -> {
-            var preset = MIPSSimulationConfigurationPresets.getPreset(key).orElse(null);
-            if (preset != null) {
-                var optional = nodesConfiguration.getAndConvert(preset.getName(), preset.getType());
-                nodes.put(preset, optional.orElseGet(preset::getDefaultValue));
-            } else {
-                System.out.println("Raw value " + key + " found. Value: " + value);
-                rawValues.put(key, value);
-            }
-        });
-
         loadSyscalls(configuration);
         loadCaches(configuration);
     }

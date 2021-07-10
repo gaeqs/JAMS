@@ -51,7 +51,7 @@ public class MIPSProjectData extends ProjectData implements FilesToAssemblerHold
     public static final String NODE_DIRECTIVES = "mips.directives";
     public static final String NODE_INSTRUCTIONS = "mips.instructions";
     public static final String NODE_CONFIGURATIONS = "mips.configurations";
-    public static final String NODE_SELECTED_CONFIGURATION = "mips.selectedConfiguration";
+    public static final String NODE_SELECTED_CONFIGURATION = "mips.selected_configuration";
     protected final MIPSFilesToAssemble filesToAssemble;
     protected Set<MIPSSimulationConfiguration> configurations;
     protected MIPSSimulationConfiguration selectedConfiguration;
@@ -74,16 +74,15 @@ public class MIPSProjectData extends ProjectData implements FilesToAssemblerHold
         if (configurations.stream().anyMatch(target -> target.getName().equals(configuration.getName())))
             return false;
 
-        MIPSSimulationConfigurationAddEvent.Before before = callEvent(new MIPSSimulationConfigurationAddEvent.Before(this, configuration));
+        var before = callEvent(new MIPSSimulationConfigurationAddEvent.Before(this, configuration));
         if (before.isCancelled()) return false;
 
         boolean result = configurations.add(configuration);
         if (result) {
             callEvent(new MIPSSimulationConfigurationAddEvent.After(this, configuration));
-        }
-
-        if (selectedConfiguration == null) {
-            setSelectedConfiguration(configuration.getName());
+            if (selectedConfiguration == null) {
+                setSelectedConfiguration(configuration.getName());
+            }
         }
 
         return result;
@@ -94,7 +93,7 @@ public class MIPSProjectData extends ProjectData implements FilesToAssemblerHold
         MIPSSimulationConfiguration configuration = configurations.stream()
                 .filter(target -> target.getName().equals(name)).findAny().orElse(null);
         if (configuration == null) return false;
-        MIPSSimulationConfigurationRemoveEvent.Before before = callEvent(new MIPSSimulationConfigurationRemoveEvent.Before(this, configuration));
+        var before = callEvent(new MIPSSimulationConfigurationRemoveEvent.Before(this, configuration));
         if (before.isCancelled()) return false;
         boolean result = configurations.remove(configuration);
         if (result) {
@@ -248,5 +247,9 @@ public class MIPSProjectData extends ProjectData implements FilesToAssemblerHold
         String selectedConfig = data.getString(NODE_SELECTED_CONFIGURATION).orElse(null);
         selectedConfiguration = configurations.stream().filter(target -> target.getName().equals(selectedConfig)).findAny().orElse(null);
 
+        // Let's try to get a default configuration
+        if(selectedConfiguration == null) {
+            selectedConfiguration = configurations.stream().findAny().orElse(null);
+        }
     }
 }
