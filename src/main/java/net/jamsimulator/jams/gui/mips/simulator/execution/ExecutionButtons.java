@@ -47,10 +47,12 @@ import java.util.List;
  * General implementations of the execution buttons shown in a simulation pane.
  * <p>
  * Implemented buttons:
+ * <ul>
  * <li>Run step</li>
  * <li>Run all / Stop</li>
  * <li>Undo</li>
  * <li>Reset</li>
+ * </ul>
  */
 public class ExecutionButtons {
 
