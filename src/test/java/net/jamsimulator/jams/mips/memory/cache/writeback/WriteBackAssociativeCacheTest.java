@@ -41,6 +41,7 @@ import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
+import net.jamsimulator.jams.utils.RawFileData;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -107,7 +108,8 @@ class WriteBackAssociativeCacheTest {
 		Registers reg = new MIPS32Registers();
 		Cache mem = new WriteBackAssociativeCache(null, new MIPS32Memory(), 4, 8, CacheReplacementPolicy.LRU);
 
-		MIPS32Assembler assembler = new MIPS32Assembler(Collections.singletonMap("test.asm", CacheTestsData.PROGRAM), inst, dir, reg, mem, null);
+		MIPS32Assembler assembler = new MIPS32Assembler(Collections.singleton(
+				new RawFileData("test.asm", CacheTestsData.PROGRAM)), inst, dir, reg, mem, null);
 		assembler.assemble();
 
 		MIPSSimulationData data = new MIPSSimulationData(new SimulationSyscallExecutions(), new File(""), null, assembler.getOriginals(), assembler.getAllLabels(), false, false, true, true, true);

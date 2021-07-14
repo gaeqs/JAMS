@@ -35,6 +35,7 @@ import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
+import net.jamsimulator.jams.utils.RawFileData;
 
 import java.util.*;
 
@@ -58,7 +59,7 @@ public class MIPS32Assembler implements Assembler {
 
     private boolean assembled = false;
 
-    public MIPS32Assembler(Map<String, String> rawFiles, InstructionSet instructionSet, DirectiveSet directiveSet, Registers registers, Memory memory, Log log) {
+    public MIPS32Assembler(Iterable<RawFileData> rawFiles, InstructionSet instructionSet, DirectiveSet directiveSet, Registers registers, Memory memory, Log log) {
         this.files = new ArrayList<>();
 
         this.assemblerData = new MIPS32AssemblerData(memory);
@@ -73,7 +74,7 @@ public class MIPS32Assembler implements Assembler {
 
         this.log = log;
 
-        rawFiles.forEach((name, data) -> files.add(new MIPS32AssemblingFile(name, data, this)));
+        rawFiles.forEach(raw -> files.add(new MIPS32AssemblingFile(raw.file(), raw.data(), this)));
     }
 
     /**

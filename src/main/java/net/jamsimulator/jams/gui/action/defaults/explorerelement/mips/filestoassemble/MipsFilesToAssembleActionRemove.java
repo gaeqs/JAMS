@@ -25,15 +25,12 @@
 package net.jamsimulator.jams.gui.action.defaults.explorerelement.mips.filestoassemble;
 
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.folder.FolderActionRegions;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
-import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
-import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebar;
 import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebarElement;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.FilesToAssemblerHolder;
@@ -51,23 +48,11 @@ public class MipsFilesToAssembleActionRemove extends ContextAction {
 
     @Override
     public void run(Object node) {
-        if (!(node instanceof FilesToAssembleSidebarElement)) return;
-        var explorer = ((FilesToAssembleSidebarElement) node).getExplorer();
-        if (!(explorer instanceof FilesToAssembleSidebar)) return;
-
-        var elements = explorer.getSelectedElements();
-        if (elements.isEmpty()) return;
-
-        var tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
-        if (tab == null) return;
-        var project = tab.getProject();
-        var data = project.getData();
-        if (!(data instanceof FilesToAssemblerHolder)) return;
-        var files = ((FilesToAssemblerHolder) data).getFilesToAssemble();
-
-        for (ExplorerElement element : elements) {
-            files.removeFile(((FilesToAssembleSidebarElement) element).getFile());
-        }
+        if (!(node instanceof FilesToAssembleSidebarElement element)) return;
+        var data = element.getDisplay().getProject().getData();
+        if (!(data instanceof FilesToAssemblerHolder holder)) return;
+        var files = holder.getFilesToAssemble();
+        files.removeFile(element.getItem());
     }
 
     @Override
@@ -77,10 +62,7 @@ public class MipsFilesToAssembleActionRemove extends ContextAction {
 
     @Override
     public boolean supportsExplorerState(Explorer explorer) {
-        if (!(explorer instanceof FilesToAssembleSidebar)) return false;
-        var elements = explorer.getSelectedElements();
-        if (elements.isEmpty()) return false;
-        return elements.stream().allMatch(target -> target instanceof FilesToAssembleSidebarElement);
+        return false;
     }
 
     @Override

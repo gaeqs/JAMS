@@ -31,16 +31,16 @@ import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.utils.RawFileData;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.util.Map;
 import java.util.Objects;
 
 /**
  * Represents an assembler builder. Assembler builders are used to create several {@link Assembler}
  * using the given parameters.
  * <p>
- * If a plugin want to add a custom assembler to JAMS, it should create a child of this class and register
+ * If a plugin want to add a custom MIPS32 assembler to JAMS, it should create a child of this class and register
  * it on the {@link net.jamsimulator.jams.manager.AssemblerBuilderManager}.
  */
 public abstract class AssemblerBuilder implements Labeled {
@@ -81,7 +81,7 @@ public abstract class AssemblerBuilder implements Labeled {
      * @param log            the log used by the assembler to inform about errors and warnings.
      * @return the new {@link Assembler}.
      */
-    public abstract Assembler createAssembler(Map<String, String> rawFiles, DirectiveSet directiveSet,
+    public abstract Assembler createAssembler(Iterable<RawFileData> rawFiles, DirectiveSet directiveSet,
                                               InstructionSet instructionSet, Registers registerSet,
                                               Memory memory, Log log);
 

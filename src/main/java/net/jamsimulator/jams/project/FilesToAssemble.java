@@ -29,6 +29,7 @@ import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.gui.editor.FileEditorHolder;
 
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 
 public interface FilesToAssemble extends EventBroadcast {
@@ -39,7 +40,7 @@ public interface FilesToAssemble extends EventBroadcast {
 
     Bag<String> getGlobalLabels();
 
-    Set<File> getFiles();
+    List<File> getFiles();
 
     boolean containsFile(File file);
 
@@ -48,6 +49,8 @@ public interface FilesToAssemble extends EventBroadcast {
     void addFile(File file, FileEditorHolder holder, boolean refreshGlobalLabels);
 
     void removeFile(File file);
+
+    boolean moveFileToIndex(File file, int index);
 
     void refreshGlobalLabels();
 

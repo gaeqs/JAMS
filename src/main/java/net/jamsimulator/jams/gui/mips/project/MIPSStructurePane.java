@@ -25,7 +25,9 @@
 package net.jamsimulator.jams.gui.mips.project;
 
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.JamsApplication;
@@ -39,7 +41,6 @@ import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebar;
 import net.jamsimulator.jams.gui.project.ProjectFolderExplorer;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
-import net.jamsimulator.jams.gui.util.DraggableListCell;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.gui.util.log.SimpleLog;
 import net.jamsimulator.jams.language.Messages;
@@ -79,7 +80,6 @@ public class MIPSStructurePane extends WorkingPane implements FileEditorHolderHo
         loadExplorer();
         loadFilesToAssembleSidebar();
         loadLogBottomBar();
-        loadTestBottomBar();
 
         SplitPane.setResizableWithParent(center, true);
     }
@@ -148,29 +148,6 @@ public class MIPSStructurePane extends WorkingPane implements FileEditorHolderHo
         log = new SimpleLog();
         manageBarAddition("log", log, icon, Messages.BAR_LOG_NAME, BarPosition.BOTTOM_LEFT, BarSnapshotViewModePane.INSTANCE, true);
     }
-
-
-    private void loadTestBottomBar() {
-        Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE).orElse(null);
-
-        var list = new ListView<String>();
-        list.setCellFactory(target -> new DraggableListCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) setGraphic(null);
-                else setGraphic(new Label(item));
-            }
-        });
-
-        for (int i = 0; i < 10; i++) {
-            list.getItems().add("Element "+i);
-        }
-
-        manageBarAddition("test", list, icon, Messages.CACHE_RESET,
-                BarPosition.BOTTOM_LEFT, BarSnapshotViewModePane.INSTANCE, true);
-    }
-
 
     private void manageBarAddition(String name, Node node, Image icon, String languageNode, BarPosition defaultPosition,
                                    BarSnapshotViewModePane defaultViewMode, boolean defaultEnable) {

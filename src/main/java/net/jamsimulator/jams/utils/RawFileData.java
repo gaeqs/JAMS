@@ -22,34 +22,23 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.assembler.builder;
+package net.jamsimulator.jams.utils;
 
-import net.jamsimulator.jams.gui.util.log.Log;
-import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
-import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
-import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
-import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.register.Registers;
-import net.jamsimulator.jams.utils.RawFileData;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 
-import java.util.List;
+/**
+ * Small helper record containing a file with it's raw text.
+ */
+public record RawFileData(String file, String data) {
 
-public class MIPS32AssemblerBuilder extends AssemblerBuilder {
-
-    public static final String NAME = "MIPS32";
-
-    public static final MIPS32AssemblerBuilder INSTANCE = new MIPS32AssemblerBuilder();
-
-    /**
-     * Creates a MIPS32 builder.
-     */
-    private MIPS32AssemblerBuilder() {
-        super(NAME);
+    public RawFileData(File file) throws IOException {
+        this(file.getAbsolutePath(), FileUtils.readAll(file));
     }
 
-    @Override
-    public MIPS32Assembler createAssembler(Iterable<RawFileData> rawFiles, DirectiveSet directiveSet, InstructionSet instructionSet,
-                                           Registers registerSet, Memory memory, Log log) {
-        return new MIPS32Assembler(rawFiles, instructionSet, directiveSet, registerSet, memory, log);
+    public RawFileData(File file, Path parent) throws IOException {
+        this(parent.relativize(file.toPath()).toString(), FileUtils.readAll(file));
     }
+
 }

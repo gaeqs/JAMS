@@ -24,43 +24,95 @@
 
 package net.jamsimulator.jams.gui.mips.sidebar;
 
-import javafx.scene.image.Image;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.layout.HBox;
+import net.jamsimulator.jams.file.FileType;
+import net.jamsimulator.jams.gui.ActionRegion;
+import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.context.ContextAction;
+import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.explorer.ExplorerBasicElement;
-import net.jamsimulator.jams.gui.explorer.ExplorerSection;
+import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.util.DraggableListCell;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
-public class FilesToAssembleSidebarElement extends ExplorerBasicElement {
+public class FilesToAssembleSidebarElement extends DraggableListCell<File> implements ActionRegion {
 
     private final FilesToAssembleSidebar display;
-    private final File file;
 
-    /**
-     * Creates an files to assemble display's element.
-     *
-     * @param parent  the {@link ExplorerSection} containing this element.
-     * @param file    the represented file.
-     * @param display the {@link FilesToAssembleSidebar} this elements is being displayed on.
-     * @param icon    the displayed icon.
-     */
-    public FilesToAssembleSidebarElement(ExplorerSection parent, File file, FilesToAssembleSidebar display, Image icon) {
-        super(parent, display.getProject().getFolder().toPath().relativize(file.toPath()).toString(), 1);
+    public FilesToAssembleSidebarElement(FilesToAssembleSidebar display) {
         this.display = display;
-        this.file = file;
-        this.icon.setImage(icon);
+        setOnContextMenuRequested(this::manageContextMenuRequest);
     }
 
     public FilesToAssembleSidebar getDisplay() {
         return display;
     }
 
-    public File getFile() {
-        return file;
+    private Set<ContextAction> getSupportedContextActions() {
+        var actions = JamsApplication.getActionManager();
+        var set = new HashSet<ContextAction>();
+        if (isEmpty() || getItem() == null) return set;
+        for (Action action : actions) {
+            if (action instanceof ContextAction contextAction && supportsActionRegion(action.getRegionTag())) {
+                set.add(contextAction);
+            }
+        }
+        return set;
+    }
+
+    private void manageContextMenuRequest(ContextMenuEvent request) {
+        var set = getSupportedContextActions();
+        if (set.isEmpty()) {
+            request.consume();
+            return;
+        }
+        ContextMenu main = new ContextActionMenuBuilder(this).addAll(set).build();
+        JamsApplication.openContextMenu(main, this, request.getScreenX(), request.getScreenY());
+        request.consume();
     }
 
     @Override
     public boolean supportsActionRegion(String region) {
-        return super.supportsActionRegion(region) || RegionTags.MIPS_FILE_TO_ASSEMBLE.equals(region);
+        return RegionTags.MIPS_FILE_TO_ASSEMBLE.equals(region);
+    }
+
+    @Override
+    protected void updateItem(File item, boolean empty) {
+        super.updateItem(item, empty);
+        if (item == null || empty) setGraphic(null);
+        else {
+            var hbox = new HBox();
+            hbox.setSpacing(ExplorerBasicElement.SPACING);
+            hbox.getChildren().add(new NearestImageView(display.icon, FileType.IMAGE_SIZE, FileType.IMAGE_SIZE));
+            hbox.getChildren().add(new Label(display.getProject().getFolder()
+                    .toPath().relativize(item.toPath()).toString()));
+            setGraphic(hbox);
+        }
+    }
+
+    @Override
+    protected void onDragDropped(DragEvent event) {
+        if (getItem() == null) return;
+        var dragboard = event.getDragboard();
+
+        if (dragboard.hasString()) {
+            var items = getListView().getItems();
+
+            int index = Integer.parseInt(dragboard.getString());
+            if (index < 0 || index >= items.size()) return;
+            int to = getIndex();
+            items.add(to, items.remove(index));
+            display.getHolder().getFilesToAssemble().moveFileToIndex(getItem(), to);
+        }
+        event.consume();
     }
 }

@@ -38,6 +38,7 @@ import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.project.FilesToAssemble;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
+import net.jamsimulator.jams.project.mips.event.FileIndexChangedFromAssembleEvent;
 import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
 import net.jamsimulator.jams.utils.FileUtils;
 import net.jamsimulator.jams.utils.Validate;
@@ -56,17 +57,19 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast implements FilesTo
     public static final String FILE_NAME = "files_to_assemble.json";
 
     private final MIPSProject project;
-    private final Map<File, MIPSFileElements> files;
+    private final List<File> files;
+    private final Map<File, MIPSFileElements> fileElements;
     private final Bag<String> globalLabels;
 
     public MIPSFilesToAssemble(MIPSProject project) {
         this.project = project;
-        files = new HashMap<>();
+        files = new ArrayList<>();
+        fileElements = new HashMap<>();
         globalLabels = new Bag<>();
     }
 
     public Optional<MIPSFileElements> getFileElements(File file) {
-        return Optional.ofNullable(files.get(file));
+        return Optional.ofNullable(fileElements.get(file));
     }
 
     @Override
@@ -85,19 +88,19 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast implements FilesTo
     }
 
     @Override
-    public Set<File> getFiles() {
-        return Collections.unmodifiableSet(files.keySet());
+    public List<File> getFiles() {
+        return Collections.unmodifiableList(files);
     }
 
     @Override
     public boolean containsFile(File file) {
-        return files.containsKey(file);
+        return files.contains(file);
     }
 
     @Override
     public void addFile(File file, boolean refreshGlobalLabels) {
         Validate.notNull(file, "File cannot be null!");
-        if (files.containsKey(file)) return;
+        if (files.contains(file)) return;
 
         FileAddToAssembleEvent.Before before = callEvent(new FileAddToAssembleEvent.Before(file));
         if (before.isCancelled()) return;
@@ -108,7 +111,8 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast implements FilesTo
         try {
             String text = FileUtils.readAll(file);
             elements.refreshAll(text);
-            files.put(file, elements);
+            files.add(file);
+            fileElements.put(file, elements);
 
             if (refreshGlobalLabels) {
                 refreshGlobalLabels();
@@ -127,8 +131,9 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast implements FilesTo
         FileAddToAssembleEvent.Before before = callEvent(new FileAddToAssembleEvent.Before(file));
         if (before.isCancelled()) return;
 
-        if (files.containsKey(file)) return;
-        files.put(file, elements);
+        if (files.contains(file)) return;
+        files.add(file);
+        fileElements.put(file, elements);
         elements.setFilesToAssemble(this);
 
         if (refreshGlobalLabels) {
@@ -158,8 +163,9 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast implements FilesTo
         FileRemoveFromAssembleEvent.Before before = callEvent(new FileRemoveFromAssembleEvent.Before(file));
         if (before.isCancelled()) return;
 
-        if (!files.containsKey(file)) return;
-        MIPSFileElements elements = files.remove(file);
+        if (!files.contains(file)) return;
+        files.remove(file);
+        var elements = fileElements.remove(file);
         elements.setFilesToAssemble(null);
         refreshDeletedDisplay(file, elements);
 
@@ -169,11 +175,27 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast implements FilesTo
     }
 
     @Override
+    public boolean moveFileToIndex(File file, int index) {
+        if (!files.contains(file) || index < 0 || index >= files.size()) return false;
+        int old = files.indexOf(file);
+        var before =
+                callEvent(new FileIndexChangedFromAssembleEvent.Before(file, old, index));
+        if (before.isCancelled()) return false;
+        index = before.getNewIndex();
+
+        if (index < 0 || index >= files.size()) return false;
+        files.remove(file);
+        files.add(index, file);
+        callEvent(new FileIndexChangedFromAssembleEvent.After(file, old, index));
+        return true;
+    }
+
+    @Override
     public void refreshGlobalLabels() {
         Set<String> toUpdate = new HashSet<>(globalLabels);
 
         globalLabels.clear();
-        for (MIPSFileElements elements : files.values()) {
+        for (MIPSFileElements elements : fileElements.values()) {
             globalLabels.addAll(elements.getExistingGlobalLabels());
         }
 
@@ -185,7 +207,7 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast implements FilesTo
         Node node = tab.getProjectTabPane().getWorkingPane().getCenter();
         if (!(node instanceof FileEditorHolder holder)) return;
 
-        files.forEach((file, elements) -> {
+        fileElements.forEach((file, elements) -> {
             elements.seachForLabelsUpdates(toUpdate);
             Optional<FileEditorTab> fTab = holder.getFileDisplayTab(file, true);
             if (fTab.isPresent()) {
@@ -218,7 +240,7 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast implements FilesTo
         File file = new File(folder, FILE_NAME);
         JSONArray array = new JSONArray();
         Path projectPath = project.getFolder().toPath();
-        files.keySet().stream().map(target -> projectPath.relativize(target.toPath())).forEach(array::put);
+        files.stream().map(target -> projectPath.relativize(target.toPath())).forEach(array::put);
 
         Writer writer = new FileWriter(file);
         writer.write(array.toString(1));
@@ -227,7 +249,7 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast implements FilesTo
 
     @Override
     public void checkFiles() {
-        List<File> toRemove = files.keySet().stream().filter(target -> !target.isFile()).collect(Collectors.toList());
+        var toRemove = files.stream().filter(target -> !target.isFile()).collect(Collectors.toList());
         for (File file : toRemove) {
             removeFile(file);
         }

@@ -24,43 +24,35 @@
 
 package net.jamsimulator.jams.gui.mips.sidebar;
 
+import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.file.FileType;
-import net.jamsimulator.jams.gui.explorer.Explorer;
-import net.jamsimulator.jams.gui.explorer.ExplorerElement;
-import net.jamsimulator.jams.gui.explorer.LanguageExplorerSection;
-import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.FilesToAssemblerHolder;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
 import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
 
 import java.io.File;
-import java.util.Comparator;
 
-public class FilesToAssembleSidebar extends Explorer {
+public class FilesToAssembleSidebar extends ListView<File> {
 
-    private final Image icon;
-    private final Project project;
-    private final FilesToAssemblerHolder holder;
+    protected final Image icon;
+    protected final Project project;
+    protected final FilesToAssemblerHolder holder;
 
     public FilesToAssembleSidebar(Project project, FilesToAssemblerHolder holder, ScrollPane scrollPane) {
-        super(scrollPane, true, true);
         this.project = project;
         this.holder = holder;
 
-        holder.getFilesToAssemble().registerListeners(this, true);
+        setCellFactory(target -> new FilesToAssembleSidebarElement(this));
 
+        holder.getFilesToAssemble().registerListeners(this, true);
         icon = Jams.getFileTypeManager().getByExtension("asm").map(FileType::getIcon).orElse(null);
 
-        for (File file : holder.getFilesToAssemble().getFiles()) {
-            mainSection.addElement(new FilesToAssembleSidebarElement(mainSection, file, this, icon));
-        }
-
-        hideMainSectionRepresentation();
+        getItems().addAll(holder.getFilesToAssemble().getFiles());
     }
 
     /**
@@ -81,22 +73,13 @@ public class FilesToAssembleSidebar extends Explorer {
         return holder;
     }
 
-    @Override
-    protected void generateMainSection() {
-        mainSection = new LanguageExplorerSection(this, null, "Files to assemble",
-                0, Comparator.comparing(ExplorerElement::getName), Messages.BAR_FILES_TO_ASSEMBLE_NAME);
-        getChildren().add(this.mainSection);
-    }
-
-
     @Listener
     private void onFileAdd(FileAddToAssembleEvent.After event) {
-        mainSection.addElement(new FilesToAssembleSidebarElement(mainSection, event.getFile(), this, icon));
+        getItems().add(event.getFile());
     }
 
     @Listener
     private void onFileRemoved(FileRemoveFromAssembleEvent.After event) {
-        mainSection.removeElementIf(element -> element instanceof FilesToAssembleSidebarElement
-                && ((FilesToAssembleSidebarElement) element).getFile().equals(event.getFile()));
+        getItems().remove(event.getFile());
     }
 }

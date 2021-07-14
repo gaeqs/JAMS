@@ -40,11 +40,11 @@ import net.jamsimulator.jams.project.BasicProject;
 import net.jamsimulator.jams.project.ProjectType;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurationPresets;
-import net.jamsimulator.jams.utils.FileUtils;
+import net.jamsimulator.jams.utils.RawFileData;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedList;
 
 public class MIPSProject extends BasicProject {
 
@@ -96,16 +96,14 @@ public class MIPSProject extends BasicProject {
         }
 
         var rootPath = folder.toPath();
-        var files = new HashMap<String, String>();
+        var files = new LinkedList<RawFileData>();
 
         for (File target : getData().getFilesToAssemble().getFiles()) {
             if (log != null) {
                 log.printInfoLn("- " + target.getAbsolutePath());
             }
-
-            var name = rootPath.relativize(target.toPath()).toString();
             try {
-                files.put(name, FileUtils.readAll(target));
+                files.add(new RawFileData(target, rootPath));
             } catch (Exception ex) {
                 throw new AssemblerException("Error while loading file " + target + ".", ex);
             }
