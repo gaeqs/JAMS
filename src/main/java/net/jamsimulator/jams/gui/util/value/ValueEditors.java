@@ -158,7 +158,11 @@ public class ValueEditors {
         return getByType(clazz).orElse(null);
     }
 
-    public static boolean add(Class<?> clazz, ValueEditor.Builder<?> editor) {
+    public static boolean addByType(Class<?> clazz, ValueEditor.Builder<?> editor) {
         return editorByType.putIfAbsent(clazz, editor) == null;
+    }
+
+    public static boolean addByName(String name, ValueEditor.Builder<?> editor) {
+        return editorByName.putIfAbsent(name, editor) == null;
     }
 }

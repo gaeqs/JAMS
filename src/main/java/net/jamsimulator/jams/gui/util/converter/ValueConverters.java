@@ -165,7 +165,11 @@ public class ValueConverters {
         return getByType(clazz).orElse(null);
     }
 
-    public static boolean add(Class<?> clazz, ValueConverter<?> converter) {
+    public static boolean addByType(Class<?> clazz, ValueConverter<?> converter) {
         return converterByType.putIfAbsent(clazz, converter) == null;
+    }
+
+    public static boolean addByName(String name, ValueConverter<?> converter) {
+        return converterByName.putIfAbsent(name, converter) == null;
     }
 }
