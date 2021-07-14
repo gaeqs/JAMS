@@ -32,11 +32,10 @@ import net.jamsimulator.jams.event.general.JAMSShutdownEvent;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.manager.*;
+import net.jamsimulator.jams.plugin.exception.InvalidPluginHeaderException;
+import net.jamsimulator.jams.plugin.exception.PluginLoadException;
 import net.jamsimulator.jams.project.RecentProjects;
-import net.jamsimulator.jams.utils.ConfigurationUtils;
-import net.jamsimulator.jams.utils.FileUtils;
-import net.jamsimulator.jams.utils.FolderUtils;
-import net.jamsimulator.jams.utils.TempUtils;
+import net.jamsimulator.jams.utils.*;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -74,6 +73,7 @@ public class Jams {
 
     //JAMS main method.
     public static void main(String[] args) {
+        var data = new ArgumentsData(args);
         generalEventBroadcast = new SimpleEventBroadcast();
         loadVersion();
         System.out.println("Loading JAMS version " + getVersion());
@@ -81,6 +81,7 @@ public class Jams {
         TempUtils.loadTemporalFolder();
 
         pluginManager = PluginManager.INSTANCE;
+        loadPluginsFromArguments(data);
 
         generalEventBroadcast.callEvent(new JAMSPreInitEvent());
 
@@ -309,5 +310,17 @@ public class Jams {
 
         // Disables all plugins
         getPluginManager().forEach(p -> p.setEnabled(false));
+    }
+
+    private static void loadPluginsFromArguments(ArgumentsData data) {
+        // Load plugins from the arguments
+        for (File plugin : data.getPluginsToLoad()) {
+            try {
+                pluginManager.add(pluginManager.loadPlugin(plugin));
+            } catch (InvalidPluginHeaderException | PluginLoadException e) {
+                System.out.println("Couldn't load plugin " + plugin.getAbsolutePath());
+                e.printStackTrace();
+            }
+        }
     }
 }
