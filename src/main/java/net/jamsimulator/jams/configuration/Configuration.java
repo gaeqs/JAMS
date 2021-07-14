@@ -54,9 +54,13 @@ public class Configuration {
             Double.class,
             Character.class,
             Boolean.class,
-            String.class,
-            List.class,
-            Map.class);
+            String.class);
+
+    /**
+     * Objects natively supported but that can be overriden by a converter.
+     */
+    public static final Set<Class<?>> SECONDARY_NATIVE_CLASSES = Set.of(List.class, Map.class);
+
     protected String name;
     protected Map<String, Object> map;
     protected RootConfiguration root;
@@ -78,6 +82,10 @@ public class Configuration {
 
     public static boolean isObjectNativelySupported(Object o) {
         return NATIVE_CLASSES.stream().anyMatch(target -> target.isInstance(o));
+    }
+
+    public static boolean isObjectSeondaryNativelySupported(Object o) {
+        return SECONDARY_NATIVE_CLASSES.stream().anyMatch(target -> target.isInstance(o));
     }
 
     /**
@@ -513,7 +521,13 @@ public class Configuration {
         }
 
         var c = ValueConverters.getByType(converter);
-        if (c.isEmpty() || !c.get().conversionClass().isInstance(value)) return false;
+        if (c.isEmpty() || !c.get().conversionClass().isInstance(value))  {
+            if(isObjectSeondaryNativelySupported(value)) {
+                set(key, value);
+                return true;
+            }
+            return false;
+        }
         c.get().save(this, key, value);
         return true;
     }
