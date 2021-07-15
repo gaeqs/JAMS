@@ -95,7 +95,7 @@ public class RangedIntegerValueEditor extends TextField implements ValueEditor<I
 
     @Override
     public Integer getCurrentValue() {
-        return Integer.valueOf(getText());
+        return NumericUtils.decodeInteger(getText());
     }
 
     @Override
