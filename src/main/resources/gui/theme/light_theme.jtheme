@@ -245,13 +245,24 @@ AnchorPane {
     -fx-font-weight: bold;
 }
 
+.dark-2-bold-button {
+    -fx-background-color: -theme-background-darker-2;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0;
+    -fx-text-fill: -theme-foreground;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
 .bold-button:hover,
-.dark-bold-button:hover {
+.dark-bold-button:hover,
+.dark-2-bold-button:hover {
     -fx-background-color: -theme-background-lighter;
 }
 
 .bold-button:pressed,
-.dark-bold-button:pressed {
+.dark-bold-button:pressed,
+.dark-2-bold-button:pressed {
     -fx-background-color: -theme-background-pressed;
 }
 
