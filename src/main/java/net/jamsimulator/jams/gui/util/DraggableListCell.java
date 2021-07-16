@@ -42,6 +42,8 @@ import net.jamsimulator.jams.utils.NumericUtils;
  */
 public class DraggableListCell<T> extends ListCell<T> {
 
+    private boolean draggable = true;
+
     public DraggableListCell() {
         setOnDragDetected(this::onDragDetected);
         setOnDragOver(this::onDragOver);
@@ -52,8 +54,17 @@ public class DraggableListCell<T> extends ListCell<T> {
         setCursor(Cursor.CLOSED_HAND);
     }
 
+    public boolean isDraggable() {
+        return draggable;
+    }
+
+    public void setDraggable(boolean draggable) {
+        this.draggable = draggable;
+        setCursor(draggable ? Cursor.CLOSED_HAND : Cursor.DEFAULT);
+    }
+
     protected void onDragDetected(MouseEvent event) {
-        if (getItem() == null) return;
+        if (getItem() == null || !draggable) return;
         var dragboard = startDragAndDrop(TransferMode.MOVE);
         var content = new ClipboardContent();
         content.putString(String.valueOf(getIndex()));
@@ -72,7 +83,7 @@ public class DraggableListCell<T> extends ListCell<T> {
     }
 
     protected void onDragOver(DragEvent event) {
-        if (event.getGestureSource() != this
+        if (draggable && getItem() != null && event.getGestureSource() != this
                 && event.getDragboard().hasString()
                 && NumericUtils.isInteger(event.getDragboard().getString())) {
             event.acceptTransferModes(TransferMode.MOVE);
@@ -81,7 +92,7 @@ public class DraggableListCell<T> extends ListCell<T> {
     }
 
     protected void onDragEntered(DragEvent event) {
-        if (event.getGestureSource() != this
+        if (draggable && getItem() != null && event.getGestureSource() != this
                 && event.getDragboard().hasString()
                 && NumericUtils.isInteger(event.getDragboard().getString())) {
             setOpacity(0.3);
@@ -90,7 +101,7 @@ public class DraggableListCell<T> extends ListCell<T> {
     }
 
     protected void onDragExited(DragEvent event) {
-        if (event.getGestureSource() != this
+        if (draggable && getItem() != null && event.getGestureSource() != this
                 && event.getDragboard().hasString()
                 && NumericUtils.isInteger(event.getDragboard().getString())) {
             setOpacity(1.0);
@@ -99,7 +110,7 @@ public class DraggableListCell<T> extends ListCell<T> {
     }
 
     protected void onDragDropped(DragEvent event) {
-        if (getItem() == null) return;
+        if (getItem() == null || !draggable) return;
         var dragboard = event.getDragboard();
 
         if (dragboard.hasString()) {
