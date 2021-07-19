@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.action.defaults.texteditor;
+package net.jamsimulator.jams.gui.action.defaults.editor;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -32,19 +32,17 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.language.Messages;
 
-public class TextEditorActionSave extends Action {
+public class EditorActionSave extends Action {
 
-    public static final String NAME = "TEXT_EDITOR_SAVE";
+    public static final String NAME = "EDITOR_SAVE";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN);
 
-    public TextEditorActionSave() {
-        super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_SAVE, DEFAULT_COMBINATION);
+    public EditorActionSave() {
+        super(NAME, RegionTags.EDITOR, Messages.ACTION_EDITOR_SAVE, DEFAULT_COMBINATION);
     }
 
     @Override
     public void run(Object node) {
-        if (node instanceof FileEditor) {
-            ((FileEditor) node).save();
-        }
+        if (node instanceof FileEditor editor) editor.save();
     }
 }

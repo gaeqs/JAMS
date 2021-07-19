@@ -412,7 +412,9 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
 
     @Override
     public boolean supportsActionRegion(String region) {
-        return RegionTags.TEXT_EDITOR.equals(region) || RegionTags.EDITOR_TAB.equals(region);
+        return RegionTags.TEXT_EDITOR.equals(region) ||
+                RegionTags.EDITOR.equals(region) ||
+                RegionTags.EDITOR_TAB.equals(region);
     }
 
     public VirtualizedScrollPane<?> getScrollPane() {

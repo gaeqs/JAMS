@@ -32,6 +32,7 @@ import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.defaults.editor.EditorActionSave;
 import net.jamsimulator.jams.gui.action.defaults.editortab.EditorTabActionSplitHorizontally;
 import net.jamsimulator.jams.gui.action.defaults.editortab.EditorTabActionSplitVertically;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.*;
@@ -325,7 +326,7 @@ public class ActionManager extends Manager<Action> {
         add(new TextEditorActionReformat());
         add(new TextEditorActionRefreshFromDisk());
         add(new TextEditorActionReplace());
-        add(new TextEditorActionSave());
+        add(new EditorActionSave());
         add(new TextEditorActionSelectAll());
         add(new TextEditorActionShowAutocompletionPopup());
         add(new TextEditorActionShowDocumentationPopup());

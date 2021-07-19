@@ -32,6 +32,7 @@ public class RegionTags {
     public static final String FOLDER_EXPLORER_ELEMENT = "FOLDER_EXPLORER_ELEMENT";
     public static final String EXPLORER_ELEMENT = "EXPLORER_ELEMENT";
 
+    public static final String EDITOR = "EDITOR";
     public static final String TEXT_EDITOR = "TEXT_EDITOR";
     public static final String EDITOR_TAB = "EDITOR_TAB";
 
