@@ -35,13 +35,13 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 
-class PopupWindowHelper {
+public class PopupWindowHelper {
 
-    static void open(Stage stage, Node node, int width, int height, boolean transparent) {
+    public static void open(Stage stage, Node node, int width, int height, boolean transparent) {
         open(stage, node, width, height, transparent, false);
     }
 
-    static void open(Stage stage, Node node, int width, int height, boolean transparent, boolean wait) {
+    public static void open(Stage stage, Node node, int width, int height, boolean transparent, boolean wait) {
         if (transparent) {
             stage.initStyle(StageStyle.TRANSPARENT);
             stage.focusedProperty().addListener((obs, old, val) -> {
