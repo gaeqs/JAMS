@@ -40,6 +40,7 @@ import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.popup.NewAssemblyFileWindow;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.project.FilesToAssemblerHolder;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 
@@ -79,10 +80,10 @@ public class FolderActionNewAssemblyFile extends ContextAction {
         }
 
         Optional<Project> optional = JamsApplication.getProjectsTabPane().getFocusedProject().map(ProjectTab::getProject);
-        if (optional.isEmpty() || !(optional.get() instanceof MIPSProject)) {
+        if (optional.isEmpty() || !(optional.get().getData() instanceof FilesToAssemblerHolder)) {
             NewAssemblyFileWindow.open(folder, null);
         } else {
-            NewAssemblyFileWindow.open(folder, (MIPSProject) optional.get());
+            NewAssemblyFileWindow.open(folder, (FilesToAssemblerHolder) optional.get().getData());
         }
     }
 
