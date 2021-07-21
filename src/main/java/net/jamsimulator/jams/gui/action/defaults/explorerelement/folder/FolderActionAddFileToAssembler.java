@@ -108,7 +108,7 @@ public class FolderActionAddFileToAssembler extends ContextAction {
                     .map(FileType::getName).orElse("").equals(AssemblyFileType.NAME))
                 return false;
 
-            allPresent &= files.getFiles().contains(((ExplorerFile) element).getFile());
+            allPresent &= files.containsFile(((ExplorerFile) element).getFile());
         }
 
         return !allPresent;
