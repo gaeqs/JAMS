@@ -37,6 +37,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.event.file.FileEvent;
 import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.JamsApplication;
@@ -49,6 +51,8 @@ import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardWatchEventKinds;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
@@ -102,7 +106,7 @@ public class FileEditorTab extends Tab implements ActionRegion {
         setContent(topAnchorPane);
 
         setOnClosed(target -> {
-            this.list.closeFileInternal(this);
+            this.list.closeFileInternal(this, true);
             display.onClose();
         });
 
@@ -115,6 +119,9 @@ public class FileEditorTab extends Tab implements ActionRegion {
                 event.consume();
             }
         });
+
+        // Register the file listener.
+        list.getWorkingPane().getProjectTab().registerListeners(this, true);
     }
 
     public FileEditorTabList getList() {
@@ -227,5 +234,18 @@ public class FileEditorTab extends Tab implements ActionRegion {
     @Override
     public int hashCode() {
         return Objects.hash(file);
+    }
+
+
+    @Listener
+    private void onFileChange(FileEvent event) {
+        if (event.getWatchEvent().kind() == StandardWatchEventKinds.ENTRY_DELETE) {
+            if (!this.file.exists()) {
+                setOnClosed(null);
+                list.closeFileInternal(this, false);
+                list.getTabs().remove(this);
+                display.onClose();
+            }
+        }
     }
 }

@@ -294,15 +294,18 @@ public class FileEditorTabList extends TabPane {
      * This method should be called when the {@link FileEditorTab} is closed by the user.
      *
      * @param tab the {@link FileEditorTab}.
+     * @param save whether this method should call the save method of the contents inside the tab.
      */
-    void closeFileInternal(FileEditorTab tab) {
+    void closeFileInternal(FileEditorTab tab, boolean save) {
 
         FileEditor last = holder.getLastFocusedEditor().orElse(null);
         if (last != null && last.equals(tab.getDisplay())) {
             holder.setLastFocusedEditor(null);
         }
 
-        tab.getDisplay().save();
+        if(save) {
+            tab.getDisplay().save();
+        }
         refreshList();
     }
 
