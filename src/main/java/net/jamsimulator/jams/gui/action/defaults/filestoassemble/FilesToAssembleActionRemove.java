@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.action.defaults.explorerelement.mips.filestoassemble;
+package net.jamsimulator.jams.gui.action.defaults.filestoassemble;
 
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.RegionTags;
@@ -33,26 +33,22 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebarElement;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.project.FilesToAssemblerHolder;
 
-public class MipsFilesToAssembleActionRemove extends ContextAction {
+public class FilesToAssembleActionRemove extends ContextAction {
 
 
-    public static final String NAME = "MIPS_FILES_TO_ASSEMBLE_REMOVE";
+    public static final String NAME = "FILES_TO_ASSEMBLE_REMOVE";
     public static final KeyCombination DEFAULT_COMBINATION = null;
 
-    public MipsFilesToAssembleActionRemove() {
-        super(NAME, RegionTags.MIPS_FILE_TO_ASSEMBLE, Messages.ACTION_MIPS_FILES_TO_ASSEMBLE_REMOVE,
+    public FilesToAssembleActionRemove() {
+        super(NAME, RegionTags.MIPS_FILE_TO_ASSEMBLE, Messages.ACTION_FILES_TO_ASSEMBLE_REMOVE,
                 DEFAULT_COMBINATION, FolderActionRegions.ASSEMBLER, null, null);
     }
 
     @Override
     public void run(Object node) {
         if (!(node instanceof FilesToAssembleSidebarElement element)) return;
-        var data = element.getDisplay().getProject().getData();
-        if (!(data instanceof FilesToAssemblerHolder holder)) return;
-        var files = holder.getFilesToAssemble();
-        files.removeFile(element.getItem());
+        element.getDisplay().getFilesToAssemble().removeFile(element.getItem());
     }
 
     @Override

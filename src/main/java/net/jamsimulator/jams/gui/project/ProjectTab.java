@@ -38,6 +38,7 @@ import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.event.file.FileEvent;
 import net.jamsimulator.jams.event.file.FolderEventBroadcast;
+import net.jamsimulator.jams.event.general.JAMSShutdownEvent;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
 import net.jamsimulator.jams.gui.project.event.ProjectCloseEvent;
@@ -96,6 +97,7 @@ public class ProjectTab extends Tab implements EventBroadcast {
 
         // Register the file event that manages the recursive addition.
         registerListeners(this, true);
+        Jams.getGeneralEventBroadcast().registerListeners(this, true);
 
         AnchorPane pane = new AnchorPane();
         pane.getStyleClass().add("project-tab-anchor-pane");
@@ -234,6 +236,15 @@ public class ProjectTab extends Tab implements EventBroadcast {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+        }
+    }
+
+    @Listener
+    private void onShutdown(JAMSShutdownEvent.Before event) {
+        try {
+            folderEventBroadcast.kill();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

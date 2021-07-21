@@ -37,7 +37,7 @@ import net.jamsimulator.jams.gui.action.defaults.editortab.EditorTabActionSplitH
 import net.jamsimulator.jams.gui.action.defaults.editortab.EditorTabActionSplitVertically;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.*;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.folder.*;
-import net.jamsimulator.jams.gui.action.defaults.explorerelement.mips.filestoassemble.MipsFilesToAssembleActionRemove;
+import net.jamsimulator.jams.gui.action.defaults.filestoassemble.FilesToAssembleActionRemove;
 import net.jamsimulator.jams.gui.action.defaults.general.*;
 import net.jamsimulator.jams.gui.action.defaults.mips.label.MIPSLabelsLabelActionShowInInstructionViewer;
 import net.jamsimulator.jams.gui.action.defaults.mips.label.MIPSLabelsLabelActionShowInMemory;
@@ -364,7 +364,7 @@ public class ActionManager extends Manager<Action> {
         add(new FolderActionRemoveFileFromAssembler());
         add(new FolderActionRemoveAllFilesFromAssembler());
 
-        add(new MipsFilesToAssembleActionRemove());
+        add(new FilesToAssembleActionRemove());
 
         //SIMULATION
         add(new SimulationActionExecuteAllInstructions());
