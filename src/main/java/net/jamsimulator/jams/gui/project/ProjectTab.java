@@ -86,6 +86,7 @@ public class ProjectTab extends Tab implements EventBroadcast {
 
         folderEventBroadcast = new FolderEventBroadcast(this);
         var folderEventBroadcastThread = new Thread(folderEventBroadcast::folderListenerProcessor);
+        folderEventBroadcastThread.setDaemon(true);
         folderEventBroadcastThread.start();
 
         try {
