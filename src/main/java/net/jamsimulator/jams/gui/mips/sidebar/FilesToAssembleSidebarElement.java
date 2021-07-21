@@ -111,7 +111,7 @@ public class FilesToAssembleSidebarElement extends DraggableListCell<File> imple
             if (index < 0 || index >= items.size()) return;
             int to = getIndex();
             items.add(to, items.remove(index));
-            display.getHolder().getFilesToAssemble().moveFileToIndex(getItem(), to);
+            display.getFilesToAssemble().moveFileToIndex(getItem(), to);
         }
         event.consume();
     }

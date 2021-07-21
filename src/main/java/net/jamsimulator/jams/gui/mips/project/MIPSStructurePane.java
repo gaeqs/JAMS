@@ -138,7 +138,7 @@ public class MIPSStructurePane extends WorkingPane implements FileEditorHolderHo
         ScrollPane pane = new PixelScrollPane();
         pane.setFitToHeight(true);
         pane.setFitToWidth(true);
-        filesToAssembleSidebar = new FilesToAssembleSidebar(project, project.getData(), pane);
+        filesToAssembleSidebar = new FilesToAssembleSidebar(project, project.getData().getFilesToAssemble(), pane);
         pane.setContent(filesToAssembleSidebar);
         manageBarAddition("files_to_assemble", pane, icon, Messages.BAR_FILES_TO_ASSEMBLE_NAME, BarPosition.LEFT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
     }

@@ -30,7 +30,7 @@ import javafx.scene.image.Image;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.file.FileType;
-import net.jamsimulator.jams.project.FilesToAssemblerHolder;
+import net.jamsimulator.jams.project.FilesToAssemble;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
 import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
@@ -41,18 +41,18 @@ public class FilesToAssembleSidebar extends ListView<File> {
 
     protected final Image icon;
     protected final Project project;
-    protected final FilesToAssemblerHolder holder;
+    protected final FilesToAssemble filesToAssemble;
 
-    public FilesToAssembleSidebar(Project project, FilesToAssemblerHolder holder, ScrollPane scrollPane) {
+    public FilesToAssembleSidebar(Project project, FilesToAssemble filesToAssemble, ScrollPane scrollPane) {
         this.project = project;
-        this.holder = holder;
+        this.filesToAssemble = filesToAssemble;
 
         setCellFactory(target -> new FilesToAssembleSidebarElement(this));
 
-        holder.getFilesToAssemble().registerListeners(this, true);
+        filesToAssemble.registerListeners(this, true);
         icon = Jams.getFileTypeManager().getByExtension("asm").map(FileType::getIcon).orElse(null);
 
-        getItems().addAll(holder.getFilesToAssemble().getFiles());
+        getItems().addAll(filesToAssemble.getFiles());
     }
 
     /**
@@ -65,12 +65,12 @@ public class FilesToAssembleSidebar extends ListView<File> {
     }
 
     /**
-     * Returns the instance that holds the used {@link net.jamsimulator.jams.project.FilesToAssemble}.
+     * Returns the {@link FilesToAssemble} this node is using.
      *
-     * @return the holder.
+     * @return the {@link FilesToAssemble}.
      */
-    public FilesToAssemblerHolder getHolder() {
-        return holder;
+    public FilesToAssemble getFilesToAssemble() {
+        return filesToAssemble;
     }
 
     @Listener
