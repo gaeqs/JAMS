@@ -33,7 +33,7 @@ import net.jamsimulator.jams.gui.explorer.event.ExplorerRemoveElementEvent;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
-import net.jamsimulator.jams.project.FilesToAssemblerHolder;
+import net.jamsimulator.jams.project.FilesToAssemble;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
@@ -42,7 +42,10 @@ import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Represents a explorer linked to a {@link Project}. These explorers can manager files to assemble and
@@ -54,7 +57,7 @@ public class ProjectFolderExplorer extends FolderExplorer {
     public static final String EXPLORER_OUT_FILE_STYLE_CLASS = "explorer-out-folder";
 
     private final Project project;
-    private final FilesToAssemblerHolder holder;
+    private final Set<FilesToAssemble> filesToAssemble;
 
     /**
      * Creates the mips explorer folder.
@@ -62,24 +65,24 @@ public class ProjectFolderExplorer extends FolderExplorer {
      * @param project    the {@link MIPSProject} of this explorer.
      * @param scrollPane the {@link ScrollPane} handling this explorer.
      */
-    public ProjectFolderExplorer(Project project, FilesToAssemblerHolder holder, ScrollPane scrollPane) {
+    public ProjectFolderExplorer(Project project, Collection<? extends FilesToAssemble> filesToAssemble, ScrollPane scrollPane) {
         super(project.getFolder(), scrollPane,
                 file -> !file.toPath().startsWith(project.getData().getMetadataFolder().toPath()));
         this.project = project;
-        this.holder = holder;
+        this.filesToAssemble = new HashSet<>(filesToAssemble);
 
-        if (holder != null) {
-            holder.getFilesToAssemble().registerListeners(this, true);
-            for (File file : holder.getFilesToAssemble().getFiles()) {
-                markFileToAssemble(file);
+
+        this.filesToAssemble.forEach(holder -> {
+            holder.registerListeners(this, true);
+            holder.getFiles().forEach(this::markFileToAssemble);
+        });
+
+
+        setFileMoveAction((from, to) -> this.filesToAssemble.forEach(holder -> {
+            if (holder.containsFile(from)) {
+                Platform.runLater(() -> holder.addFile(to, true));
             }
-
-            setFileMoveAction((from, to) -> {
-                if (holder.getFilesToAssemble().containsFile(from)) {
-                    Platform.runLater(() -> holder.getFilesToAssemble().addFile(to, true));
-                }
-            });
-        }
+        }));
 
         try {
             Files.walk(project.getData().getFilesFolder().toPath()).forEach(file -> markOutFile(file.toFile()));
@@ -157,7 +160,7 @@ public class ProjectFolderExplorer extends FolderExplorer {
         if (event.getElement() instanceof ExplorerFile eFile) {
             var file = eFile.getFile();
 
-            if (holder != null && holder.getFilesToAssemble().containsFile(file)) {
+            if (filesToAssemble.stream().anyMatch(target -> target.containsFile(file))) {
                 if (!eFile.getStyleClass().contains(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS)) {
                     eFile.getStyleClass().add(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS);
                 }
@@ -179,8 +182,6 @@ public class ProjectFolderExplorer extends FolderExplorer {
 
     @Listener
     private void onFileRemoved(ExplorerRemoveElementEvent.After event) {
-        if (holder != null) {
-            holder.getFilesToAssemble().checkFiles();
-        }
+        filesToAssemble.forEach(FilesToAssemble::checkFiles);
     }
 }

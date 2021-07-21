@@ -47,6 +47,7 @@ import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.io.File;
+import java.util.Set;
 
 /**
  * This class represent the working pane of a project.
@@ -123,7 +124,7 @@ public class MIPSStructurePane extends WorkingPane implements FileEditorHolderHo
         ScrollPane pane = new PixelScrollPane();
         pane.setFitToHeight(true);
         pane.setFitToWidth(true);
-        explorer = new ProjectFolderExplorer(project, project.getData(), pane);
+        explorer = new ProjectFolderExplorer(project, Set.of(project.getData().getFilesToAssemble()), pane);
         pane.setContent(explorer);
 
         manageBarAddition("explorer", pane, icon, Messages.BAR_EXPLORER_NAME, BarPosition.LEFT_TOP, BarSnapshotViewModePane.INSTANCE, true);
