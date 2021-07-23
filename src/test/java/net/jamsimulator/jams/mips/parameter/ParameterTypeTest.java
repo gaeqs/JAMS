@@ -38,7 +38,7 @@ class ParameterTypeTest {
 		for (ParameterType value : ParameterType.values()) {
 			assertTrue(value.match(value.getExample(), set), "Example for parameter type " + value + " doesn't match.");
 			assertTrue(ParameterType.getCompatibleParameterTypes(value.getExample(), set).contains(value),
-					"Couldn't found the parameter using the example.");
+					"Couldn't find the parameter using the example.");
 			System.out.println(value + ": " + value.getExample() + " -> " + value.parse(value.getExample(), set));
 		}
 	}

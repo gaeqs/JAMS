@@ -393,7 +393,8 @@ public class ActionManager extends Manager<Action> {
             }
             Action action = get(key).orElse(null);
             if (action == null) {
-                System.err.println("Couldn't found action " + key + ".");
+                System.err.println("Couldn't find action " + key + ".");
+                new NoSuchElementException().printStackTrace();
                 return;
             }
             presentActions.add(action);
