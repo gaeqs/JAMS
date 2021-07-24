@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Represents a simple event caller. An event caller allows to send
@@ -69,11 +70,11 @@ public class SimpleEventBroadcast implements EventBroadcast {
         var listenerMethod = new ListenerMethod(instance, method, type, annotation, useWeakReferences);
 
         var methods = registeredListeners.computeIfAbsent(type, k ->
-                Collections.synchronizedSortedSet(new TreeSet<>(((o1, o2) -> {
+                new ConcurrentSkipListSet<>(((o1, o2) -> {
                     int val = o2.getListener().priority() - o1.getListener().priority();
                     //Avoids override. Listeners registered first have priority.
                     return val == 0 ? -1 : val;
-                }))));
+                })));
 
 
         if (methods.stream().anyMatch(target -> target.matches(instance, method))) return false;

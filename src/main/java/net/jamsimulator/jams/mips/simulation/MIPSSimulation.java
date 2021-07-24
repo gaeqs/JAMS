@@ -756,21 +756,14 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
         registers.enableEventCalls(data.canCallEvents());
 
         thread = new Thread(() -> {
-
             long cyclesStart = cycles;
             long start = System.nanoTime();
 
             try {
-                runStep(true);
-                while (!finished && !checkThreadInterrupted()) {
-                    velocitySleep();
-                    if (!checkThreadInterrupted()) {
-                        var before = callEvent(new SimulationCycleEvent.Before(this, cycles));
-                        if (!before.isCancelled()) {
-                            runStep(false);
-                            callEvent(new SimulationCycleEvent.After(this, cycles - 1));
-                        }
-                    }
+                if (data.canCallEvents()) {
+                    executeAllWithEvents();
+                } else {
+                    executeAllWithoutEvents();
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -791,6 +784,34 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
         callEvent(new SimulationStartEvent(this));
         thread.setPriority(Thread.MAX_PRIORITY);
         thread.start();
+    }
+
+    private void executeAllWithEvents() {
+        var before = callEvent(new SimulationCycleEvent.Before(this, cycles));
+        if (!before.isCancelled()) {
+            runStep(true);
+            callEvent(new SimulationCycleEvent.After(this, cycles - 1));
+        }
+        while (!finished && !checkThreadInterrupted()) {
+            velocitySleep();
+            if (!checkThreadInterrupted()) {
+                before = callEvent(new SimulationCycleEvent.Before(this, cycles));
+                if (!before.isCancelled()) {
+                    runStep(false);
+                    callEvent(new SimulationCycleEvent.After(this, cycles - 1));
+                }
+            }
+        }
+    }
+
+    private void executeAllWithoutEvents() {
+        runStep(true);
+        while (!finished && !checkThreadInterrupted()) {
+            velocitySleep();
+            if (!checkThreadInterrupted()) {
+                runStep(false);
+            }
+        }
     }
 
     @Override
