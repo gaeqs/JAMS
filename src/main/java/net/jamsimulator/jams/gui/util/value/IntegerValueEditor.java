@@ -77,6 +77,7 @@ public class IntegerValueEditor extends TextField implements ValueEditor<Integer
     @Override
     public void setCurrentValue(Integer value) {
         setText(String.valueOf(value));
+        oldText = getText();
         listener.accept(value);
     }
 

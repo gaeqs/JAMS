@@ -76,6 +76,7 @@ public class DoubleValueEditor extends TextField implements ValueEditor<Double> 
     @Override
     public void setCurrentValue(Double value) {
         setText(String.valueOf(value));
+        oldText = getText();
         listener.accept(value);
     }
 

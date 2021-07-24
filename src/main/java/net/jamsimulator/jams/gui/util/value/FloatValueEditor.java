@@ -76,6 +76,7 @@ public class FloatValueEditor extends TextField implements ValueEditor<Float> {
     @Override
     public void setCurrentValue(Float value) {
         setText(String.valueOf(value));
+        oldText = getText();
         listener.accept(value);
     }
 

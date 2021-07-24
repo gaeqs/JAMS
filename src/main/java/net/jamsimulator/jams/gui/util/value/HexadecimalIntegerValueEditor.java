@@ -77,6 +77,7 @@ public class HexadecimalIntegerValueEditor extends TextField implements ValueEdi
     @Override
     public void setCurrentValue(Integer value) {
         setText("0x" + StringUtils.addZeros(Integer.toHexString(value), 8));
+        oldText = getText();
         listener.accept(value);
     }
 
