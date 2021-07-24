@@ -55,7 +55,11 @@ public class SimulationActionReset extends ContextAction {
         var projectTab = optionalProject.get();
         var tab = projectTab.getProjectTabPane().getSelectionModel().getSelectedItem();
         if (tab == null || !(tab.getContent() instanceof SimulationHolder<?> holder)) return;
-        holder.getSimulation().reset();
+        try {
+            holder.getSimulation().reset();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 

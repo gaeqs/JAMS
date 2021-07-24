@@ -142,7 +142,7 @@ public class MultiCycleSimulation extends MIPSSimulation<MultiCycleArchitecture>
     }
 
     @Override
-    public void reset() {
+    public void reset() throws InterruptedException {
         super.reset();
         if (changes != null) {
             changes.clear();
@@ -179,13 +179,14 @@ public class MultiCycleSimulation extends MIPSSimulation<MultiCycleArchitecture>
     }
 
     @Override
-    public boolean undoLastStep() {
+    public boolean undoLastStep() throws InterruptedException {
         if (!data.isUndoEnabled()) return false;
 
         if (callEvent(new SimulationUndoStepEvent.Before(this, cycles - 1)).isCancelled()) return false;
 
         stop();
         waitForExecutionFinish();
+
 
         if (changes.isEmpty()) return false;
         finished = false;

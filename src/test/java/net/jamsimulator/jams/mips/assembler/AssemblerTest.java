@@ -87,7 +87,11 @@ class AssemblerTest {
 
         System.out.println("Starting simulation");
         simulation.executeAll();
-        simulation.waitForExecutionFinish();
+        try {
+            simulation.waitForExecutionFinish();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         System.out.println("Simulation end");
         System.out.println("$t1: " + simulation.getRegisters().getRegister("t1").get().getValue());
         System.out.println("$s0: 0x" + Integer.toHexString(simulation.getRegisters().getRegister("s0").get().getValue()));

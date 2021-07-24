@@ -567,7 +567,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
     /**
      * Executes the next step of the simulation.
      * <p>
-     * These method must be synchronized!
+     * This method must be synchronized!
      *
      * @param first whether this is the first step made by this execution.
      */
@@ -682,9 +682,11 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
      * This method depends on {@link Registers#restoreSavedState()} and {@link Memory#restoreSavedState()}.
      * Any invocation to {@link Registers#saveState()} and {@link Memory#saveState()} on this simulation's
      * {@link Memory} and {@link Registers} may result on unexpected results.
+     *
+     * @throws InterruptedException if the {@link Thread} calling this method is interrupted while is waiting for the simulation to finish.
      */
     @Override
-    public void reset() {
+    public void reset() throws InterruptedException {
         stop();
         waitForExecutionFinish();
 
@@ -698,15 +700,11 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
     }
 
     @Override
-    public void waitForExecutionFinish() {
+    public void waitForExecutionFinish() throws InterruptedException {
         synchronized (finishedRunningLock) {
             if (running) {
                 //Wait till cycle restoration.
-                try {
-                    finishedRunningLock.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                finishedRunningLock.wait();
             }
         }
     }
@@ -823,9 +821,6 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
     public boolean isUndoEnabled() {
         return data.isUndoEnabled();
     }
-
-    @Override
-    public abstract boolean undoLastStep();
     //endregion
 
 

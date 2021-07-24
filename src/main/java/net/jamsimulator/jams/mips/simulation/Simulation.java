@@ -152,13 +152,19 @@ public interface Simulation<Address extends Number> extends EventBroadcast {
 
     /**
      * Returns the simulation to its initial state. This also stops the simulation if running.
+     * <p>
+     * This method waits for the simulation to finish if it's running.
+     *
+     * @throws InterruptedException if the {@link Thread} calling this method is interrupted while is waiting for the simulation to finish.
      */
-    void reset();
+    void reset() throws InterruptedException;
 
     /**
      * Waits till the current execution is finished.
+     *
+     * @throws InterruptedException if the {@link Thread} calling this method is interrupted while is waiting.
      */
-    void waitForExecutionFinish();
+    void waitForExecutionFinish() throws InterruptedException;
 
     /**
      * Executes the next step of this simulation.
@@ -187,10 +193,13 @@ public interface Simulation<Address extends Number> extends EventBroadcast {
      * <p>
      * If this simulation was executing all instructions and this method is used,
      * the simulation will stop.
+     * <p>
+     * This method waits for the simulation to finish if it's running.
      *
      * @return whether a step was undone.
+     * @throws InterruptedException if the {@link Thread} calling this method is interrupted while is waiting for the simulation to finish.
      */
-    boolean undoLastStep();
+    boolean undoLastStep() throws InterruptedException;
 
     /**
      * Runs the given code synchronized to this simulation.

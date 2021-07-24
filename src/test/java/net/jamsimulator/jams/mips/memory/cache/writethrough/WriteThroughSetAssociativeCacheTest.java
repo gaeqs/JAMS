@@ -120,7 +120,11 @@ class WriteThroughSetAssociativeCacheTest {
 		//mem.resetCache();
 		simulation.executeAll();
 
-		simulation.waitForExecutionFinish();
+		try {
+			simulation.waitForExecutionFinish();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
 		CacheStats stats = mem.getStats();
 		System.out.println(stats);

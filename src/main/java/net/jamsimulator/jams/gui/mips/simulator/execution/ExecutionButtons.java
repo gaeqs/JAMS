@@ -82,14 +82,26 @@ public class ExecutionButtons {
         Button undo = new FixedButton("", new NearestImageView(undoOneIcon, 16, 16), 28, 28);
         undo.getStyleClass().add(STYLE_CLASS);
         undo.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_UNDO, LanguageTooltip.DEFAULT_DELAY));
-        undo.setOnAction(event -> simulation.undoLastStep());
+        undo.setOnAction(event -> {
+            try {
+                simulation.undoLastStep();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
         undo.setDisable(!simulation.isUndoEnabled());
 
         Button reset = new FixedButton("", new NearestImageView(resetIcon, 16, 16), 28, 28);
         reset.getStyleClass().add(STYLE_CLASS);
 
         reset.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_RESET, LanguageTooltip.DEFAULT_DELAY));
-        reset.setOnAction(event -> simulation.reset());
+        reset.setOnAction(event -> {
+            try {
+                simulation.reset();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
 
         nodes.add(runOrStop);
         nodes.add(runOne);
