@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.simulation.event;
 
 import net.jamsimulator.jams.event.Cancellable;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class SimulationUndoStepEvent extends SimulationEvent {
 
@@ -34,9 +35,9 @@ public class SimulationUndoStepEvent extends SimulationEvent {
     /**
      * Creates the simulation event.
      *
-     * @param simulation the {@link MIPSSimulation} thatcreated this event.
+     * @param simulation the {@link MIPSSimulation} that created this event.
      */
-    protected SimulationUndoStepEvent(MIPSSimulation<?> simulation, long undoCycle) {
+    protected SimulationUndoStepEvent(Simulation<?> simulation, long undoCycle) {
         super(simulation);
         this.undoCycle = undoCycle;
     }
@@ -52,9 +53,9 @@ public class SimulationUndoStepEvent extends SimulationEvent {
         /**
          * Creates the simulation event.
          *
-         * @param simulation the {@link MIPSSimulation} thatcreated this event.
+         * @param simulation the {@link MIPSSimulation} that created this event.
          */
-        public Before(MIPSSimulation<?> simulation, long undoCycle) {
+        public Before(Simulation<?> simulation, long undoCycle) {
             super(simulation, undoCycle);
         }
 
@@ -75,9 +76,9 @@ public class SimulationUndoStepEvent extends SimulationEvent {
         /**
          * Creates the simulation event.
          *
-         * @param simulation the {@link MIPSSimulation} thatcreated this event.
+         * @param simulation the {@link Simulation} that created this event.
          */
-        public After(MIPSSimulation<?> simulation, long undoCycle) {
+        public After(Simulation<?> simulation, long undoCycle) {
             super(simulation, undoCycle);
         }
     }

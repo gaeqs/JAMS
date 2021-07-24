@@ -35,7 +35,6 @@ import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.util.FixedButton;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
-import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
@@ -127,7 +126,7 @@ public class ExecutionButtons {
         });
     }
 
-    private void changeToStop(MIPSSimulation<?> simulation) {
+    private void changeToStop(Simulation<?> simulation) {
         Platform.runLater(() -> {
             Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_STOP
             ).orElse(null);

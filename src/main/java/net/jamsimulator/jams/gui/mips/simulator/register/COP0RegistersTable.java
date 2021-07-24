@@ -114,13 +114,17 @@ public class COP0RegistersTable extends TableView<COP0RegisterPropertyWrapper> i
 
     @Listener
     private void onSimulationStart(SimulationStartEvent event) {
-        event.getSimulation().getRegisters().unregisterListeners(this);
+        if (event.getSimulation() instanceof MIPSSimulation<?> simulation) {
+            simulation.unregisterListeners(this);
+        }
     }
 
     @Listener
     private void onSimulationStop(SimulationStopEvent event) {
-        event.getSimulation().getRegisters().registerListeners(this, true);
-        registers.values().forEach(COP0RegisterPropertyWrapper::updateRegister);
+        if (event.getSimulation() instanceof MIPSSimulation<?> simulation) {
+            simulation.getRegisters().registerListeners(this, true);
+            registers.values().forEach(COP0RegisterPropertyWrapper::updateRegister);
+        }
     }
 
     @Listener

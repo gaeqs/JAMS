@@ -24,16 +24,16 @@
 
 package net.jamsimulator.jams.mips.simulation.event;
 
-import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.simulation.Simulation;
 
 public class SimulationResetEvent extends SimulationEvent {
 
     /**
      * Creates the simulation event.
      *
-     * @param simulation the {@link MIPSSimulation} thatcreated this event.
+     * @param simulation the {@link Simulation} that created this event.
      */
-    public SimulationResetEvent(MIPSSimulation<?> simulation) {
+    public SimulationResetEvent(Simulation<?> simulation) {
         super(simulation);
     }
 }

@@ -30,7 +30,7 @@ public class SimulationUnlockEvent extends SimulationEvent {
     /**
      * Creates the simulation event.
      *
-     * @param simulation the {@link MIPSSimulation} thatcreated this event.
+     * @param simulation the {@link MIPSSimulation} that created this event.
      */
     public SimulationUnlockEvent(MIPSSimulation<?> simulation) {
         super(simulation);

@@ -252,7 +252,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
 
     @Listener
     private void onBreakpointAdd(SimulationAddBreakpointEvent event) {
-        int address = event.getAddress();
+        int address = event.getAddress().intValue();
         var optional = assembledLines.stream()
                 .filter(line -> line.getAddress().map(v -> v == address).orElse(false)).findAny();
 

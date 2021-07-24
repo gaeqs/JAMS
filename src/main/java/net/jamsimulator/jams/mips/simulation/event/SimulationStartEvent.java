@@ -24,7 +24,7 @@
 
 package net.jamsimulator.jams.mips.simulation.event;
 
-import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.simulation.Simulation;
 
 /**
  * This event is called when the execution of a simulation has stopped.
@@ -34,9 +34,9 @@ public class SimulationStartEvent extends SimulationEvent {
     /**
      * Creates the simulation event.
      *
-     * @param simulation the {@link MIPSSimulation} thatcreated this event.
+     * @param simulation the {@link Simulation} that created this event.
      */
-    public SimulationStartEvent(MIPSSimulation<?> simulation) {
+    public SimulationStartEvent(Simulation<?> simulation) {
         super(simulation);
     }
 }

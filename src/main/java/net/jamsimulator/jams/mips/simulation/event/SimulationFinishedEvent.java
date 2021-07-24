@@ -24,7 +24,7 @@
 
 package net.jamsimulator.jams.mips.simulation.event;
 
-import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.simulation.Simulation;
 
 /**
  * This event is called when the executing code of a simulation has exited.
@@ -35,9 +35,9 @@ public class SimulationFinishedEvent extends SimulationEvent {
     /**
      * Creates the simulation event.
      *
-     * @param simulation the {@link MIPSSimulation} thatcreated this event.
+     * @param simulation the {@link Simulation} that created this event.
      */
-    public SimulationFinishedEvent(MIPSSimulation<?> simulation) {
+    public SimulationFinishedEvent(Simulation<?> simulation) {
         super(simulation);
     }
 }
