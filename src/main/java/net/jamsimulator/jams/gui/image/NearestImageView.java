@@ -24,19 +24,75 @@
 
 package net.jamsimulator.jams.gui.image;
 
+import com.sun.javafx.geom.BaseBounds;
+import com.sun.javafx.geom.transform.BaseTransform;
+import com.sun.javafx.scene.ImageViewHelper;
+import com.sun.javafx.sg.prism.NGNode;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Represents an {@link ImageView} that doesn't smooth the image inside..
  */
 public class NearestImageView extends ImageView {
 
+    static {
+        NearestImageViewHelper.setImageViewAccessor(new ImageViewHelper.ImageViewAccessor() {
+            @Override
+            public NGNode doCreatePeer(Node node) {
+                return new NGNearestImageView();
+            }
+
+            @Override
+            public void doUpdatePeer(Node node) {
+                try {
+                    var method = ImageView.class.getDeclaredMethod("doUpdatePeer");
+                    method.setAccessible(true);
+                    method.invoke(node);
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public BaseBounds doComputeGeomBounds(Node node, BaseBounds bounds, BaseTransform tx) {
+                try {
+                    var method = ImageView.class.getDeclaredMethod(
+                            "doComputeGeomBounds", BaseBounds.class, BaseTransform.class);
+                    method.setAccessible(true);
+                    return (BaseBounds) method.invoke(node, bounds, tx);
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            public boolean doComputeContains(Node node, double localX, double localY) {
+                try {
+                    var method = ImageView.class.getDeclaredMethod(
+                            "doComputeContains", double.class, double.class);
+                    method.setAccessible(true);
+                    return (boolean) method.invoke(node, localX, localY);
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+        });
+    }
+
+    {
+        NearestImageViewHelper.initHelper(this);
+    }
+
     /**
      * Creates the nearest image view.
      */
     public NearestImageView() {
-        setSmooth(false);
     }
 
     /**
@@ -46,7 +102,6 @@ public class NearestImageView extends ImageView {
      */
     public NearestImageView(String url) {
         super(url);
-        setSmooth(false);
     }
 
     /**
@@ -56,7 +111,6 @@ public class NearestImageView extends ImageView {
      */
     public NearestImageView(Image image) {
         super(image);
-        setSmooth(false);
     }
 
     /**
@@ -66,7 +120,6 @@ public class NearestImageView extends ImageView {
      */
     public NearestImageView(Image image, double width, double height) {
         super(image);
-        setSmooth(false);
         setFitWidth(width);
         setFitHeight(height);
     }

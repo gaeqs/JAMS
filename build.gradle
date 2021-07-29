@@ -33,7 +33,7 @@ def projectId = "JAMS"
 def projectMainClass = "net.jamsimulator.jams.Jams"
 
 def javafxVersion = '14.0.2.1'
-def javafxDependencies = ['javafx-base', 'javafx-controls', 'javafx-media', 'javafx-graphics', 'javafx-fxml']
+def javafxDependencies = ['javafx-base', 'javafx-controls', 'javafx-media', 'javafx-graphics', 'javafx-fxml', 'javafx-swing']
 def bundleLibs = false
 def winConsole = false
 
@@ -53,7 +53,7 @@ configurations {
 
 javafx {
     version = javafxVersion
-    modules = ['javafx.base', 'javafx.controls', 'javafx.media', 'javafx.graphics', 'javafx.fxml']
+    modules = ['javafx.base', 'javafx.controls', 'javafx.media', 'javafx.graphics', 'javafx.fxml', 'javafx.swing']
 }
 
 application {
