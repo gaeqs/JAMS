@@ -80,7 +80,7 @@ public class PluginExplorerList extends VBox {
         button.setOnAction(event -> {
 
             var chooser = new FileChooser();
-            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Plugin", ".jar"));
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Plugin", "*.jar"));
             var file = chooser.showOpenDialog(getScene().getWindow());
             if (file != null) {
                 Jams.getPluginManager().installPLugin(file);
