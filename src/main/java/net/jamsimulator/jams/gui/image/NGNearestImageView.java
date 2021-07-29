@@ -43,9 +43,6 @@ public class NGNearestImageView extends NGImageView {
 
     @Override
     protected void renderContent(Graphics g) {
-        int imgW = image.getWidth();
-        int imgH = image.getHeight();
-
         var factory = (BaseResourceFactory) g.getResourceFactory();
         var tex = factory.getCachedTexture(image, Texture.WrapMode.CLAMP_TO_EDGE);
         tex.setLinearFiltering(false);
