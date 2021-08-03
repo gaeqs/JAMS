@@ -52,7 +52,7 @@ public class Icons {
 
     public static final IconData PROJECT_ASSEMBLE = new IconData("project_assemble", "/gui/icon/project/assemble.png");
     public static final IconData PROJECT_ASSEMBLE_GRAY = new IconData("project_assemble_gray", "/gui/icon/project/assemble_gray.png");
-    public static final IconData PROJECT_SETTINGS = new IconData("project_settings", "/gui/icon/project/settings.png");
+    public static final IconData PROJECT_SETTINGS = new IconData("project_settings", "/gui/icon/project/settings-18.png");
 
     public static final IconData SIMULATION_PLAY = new IconData("simulation_play", "/gui/icon/simulation/play.png");
     public static final IconData SIMULATION_STOP = new IconData("simulation_stop", "/gui/icon/simulation/stop.png");

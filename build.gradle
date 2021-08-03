@@ -24,7 +24,7 @@
 
 plugins {
     id 'java'
-    id 'org.openjfx.javafxplugin' version '0.0.9'
+    id 'org.openjfx.javafxplugin' version '0.0.10'
     id 'org.beryx.runtime' version '1.12.4'
 }
 
@@ -32,7 +32,7 @@ def projectGroup = 'net.jamsimulator'
 def projectId = "JAMS"
 def projectMainClass = "net.jamsimulator.jams.Jams"
 
-def javafxVersion = '14.0.2.1'
+def javafxVersion = '16'
 def javafxDependencies = ['javafx-base', 'javafx-controls', 'javafx-media', 'javafx-graphics', 'javafx-fxml', 'javafx-swing']
 def bundleLibs = false
 def winConsole = false
@@ -64,8 +64,8 @@ application {
 dependencies {
     implementation group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
     implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.6'
-    implementation group: 'org.json', name: 'json', version: '20200518'
-    implementation 'org.jetbrains:annotations:20.1.0'
+    implementation group: 'org.json', name: 'json', version: '20210307'
+    implementation 'org.jetbrains:annotations:21.0.1'
 
     javafxDependencies.each {
         jarLib group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'win'
@@ -74,10 +74,10 @@ dependencies {
     }
 
     jarLib group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
-    jarLib group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.5'
-    jarLib group: 'org.json', name: 'json', version: '20200518'
+    jarLib group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.6'
+    jarLib group: 'org.json', name: 'json', version: '20210307'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
 }
 
 compileJava {
