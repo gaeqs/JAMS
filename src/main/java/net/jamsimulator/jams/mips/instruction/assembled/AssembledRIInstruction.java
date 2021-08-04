@@ -33,10 +33,29 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
  */
 public abstract class AssembledRIInstruction extends AssembledInstruction {
 
+    /**
+     * The mask used by the immediate.
+     */
     public static final int IMMEDIATE_MASK = 0xFFFF;
+
+    /**
+     * The shift used by the function code.
+     */
     public static final int FUNCTION_CODE_SHIFT = 16;
+
+    /**
+     * The mask used by the function code after the shift.
+     */
     public static final int FUNCTION_CODE_MASK = 0x1F;
+
+    /**
+     * The shift used by the source register.
+     */
     public static final int SOURCE_REGISTER_SHIFT = 21;
+
+    /**
+     * The mask used by the source register after the shift.
+     */
     public static final int SOURCE_REGISTER_MASK = 0x1F;
 
     /**
@@ -65,6 +84,16 @@ public abstract class AssembledRIInstruction extends AssembledInstruction {
         super(calculateValue(operationCode, sourceRegister, functionCode, immediate), origin, basicOrigin);
     }
 
+    /**
+     * Calculates the integer representing the instruction using the given
+     * operation code, source register, target register, and immediate.
+     *
+     * @param operationCode  the operation code.
+     * @param sourceRegister the source register.
+     * @param targetRegister the target register.
+     * @param immediate      the immediate.
+     * @return the integer representing the instruction.
+     */
     static int calculateValue(int operationCode, int sourceRegister, int targetRegister, int immediate) {
         int value = operationCode << AssembledInstruction.OPERATION_CODE_SHIFT;
         value += (sourceRegister & SOURCE_REGISTER_MASK) << SOURCE_REGISTER_SHIFT;
@@ -85,7 +114,7 @@ public abstract class AssembledRIInstruction extends AssembledInstruction {
 
     /**
      * Returns the immediate value of the instruction as a signed 16-bit number.
-     * For a unsigned version of this value see {@link #getImmediate()}.
+     * For an unsigned version of this value see {@link #getImmediate()}.
      *
      * @return the signed 16-bit immediate.
      */

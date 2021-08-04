@@ -33,12 +33,39 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
  */
 public abstract class AssembledI9Instruction extends AssembledInstruction {
 
+    /**
+     * The mask used by the function operation code.
+     */
     public static final int FUNCTION_CODE_MASK = 0X3F;
+
+    /**
+     * The shift used by the offset.
+     */
     public static final int OFFSET_SHIFT = 7;
+
+    /**
+     * The mask used by the offset after the shift.
+     */
     public static final int OFFSET_MASK = 0x1FF;
+
+    /**
+     * The shift used by the target register.
+     */
     public static final int TARGET_REGISTER_SHIFT = 16;
+
+    /**
+     * The mask used by the target register after the shift.
+     */
     public static final int TARGET_REGISTER_MASK = 0x1F;
+
+    /**
+     * The shift used by the base register.
+     */
     public static final int BASE_REGISTER_SHIFT = 21;
+
+    /**
+     * The mask used by the base register after the shift.
+     */
     public static final int BASE_REGISTER_MASK = 0x1F;
 
     /**
@@ -68,6 +95,17 @@ public abstract class AssembledI9Instruction extends AssembledInstruction {
         super(calculateValue(operationCode, baseRegister, targetRegister, offset, functionCode), origin, basicOrigin);
     }
 
+    /**
+     * Calculates the integer representing the instruction using the given
+     * operation code, base register, target register offset and function code.
+     *
+     * @param operationCode  the operation code.
+     * @param baseRegister   the base register.
+     * @param targetRegister the target register.
+     * @param offset         the offset.
+     * @param functionCode   the function operation code.
+     * @return the integer representing the instruction.
+     */
     static int calculateValue(int operationCode, int baseRegister, int targetRegister, int offset, int functionCode) {
         int value = operationCode << AssembledInstruction.OPERATION_CODE_SHIFT;
         value += (baseRegister & BASE_REGISTER_MASK) << BASE_REGISTER_SHIFT;
@@ -98,7 +136,7 @@ public abstract class AssembledI9Instruction extends AssembledInstruction {
 
     /**
      * Returns the offset value of the instruction as a signed 9-bit number.
-     * For a unsigned version of this value see {@link #getOffset()}.
+     * For an unsigned version of this value see {@link #getOffset()}.
      *
      * @return the signed 9-bit immediate.
      */

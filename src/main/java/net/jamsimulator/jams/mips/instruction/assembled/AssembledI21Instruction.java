@@ -33,10 +33,20 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
  */
 public abstract class AssembledI21Instruction extends AssembledInstruction {
 
+    /**
+     * The mask used by the immediate.
+     */
     public static final int IMMEDIATE_MASK = 0x1FFFFF;
-    public static final int DESTINATION_REGISTER_SHIFT = 21;
-    public static final int DESTINATION_REGISTER_MASK = 0x1F;
 
+    /**
+     * The shift used by the destination register.
+     */
+    public static final int DESTINATION_REGISTER_SHIFT = 21;
+
+    /**
+     * The mask used by the destination register after the shift.
+     */
+    public static final int DESTINATION_REGISTER_MASK = 0x1F;
 
     /**
      * Creates a compiled I-Type Imm21 instruction using an instruction code, an origin {@link Instruction} and an origin {@link BasicInstruction}.
@@ -63,6 +73,15 @@ public abstract class AssembledI21Instruction extends AssembledInstruction {
         super(calculateValue(operationCode, destinationRegister, immediate), origin, basicOrigin);
     }
 
+    /**
+     * Calculates the integer representing the instruction using the given
+     * operation code, destination register and immediate.
+     *
+     * @param operationCode       the operation code.
+     * @param destinationRegister the destination register.
+     * @param immediate           the immediate.
+     * @return the integer representing the instruction.
+     */
     static int calculateValue(int operationCode, int destinationRegister, int immediate) {
         int value = operationCode << AssembledInstruction.OPERATION_CODE_SHIFT;
         value += (destinationRegister & DESTINATION_REGISTER_MASK) << DESTINATION_REGISTER_SHIFT;
@@ -82,7 +101,7 @@ public abstract class AssembledI21Instruction extends AssembledInstruction {
 
     /**
      * Returns the immediate value of the instruction as a signed 21-bit number.
-     * For a unsigned version of this value see {@link #getImmediate()}.
+     * For an unsigned version of this value see {@link #getImmediate()}.
      *
      * @return the signed 21-bit immediate.
      */

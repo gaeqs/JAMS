@@ -33,10 +33,29 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
  */
 public abstract class AssembledIFPUInstruction extends AssembledInstruction {
 
+    /**
+     * The mask used by the immediate value.
+     */
     public static final int IMMEDIATE_MASK = 0xFFFF;
+
+    /**
+     * The shift used by the target register value.
+     */
     public static final int TARGET_REGISTER_SHIFT = 16;
+
+    /**
+     * The mask used by the target register value after the shift.
+     */
     public static final int TARGET_REGISTER_MASK = 0x1F;
+
+    /**
+     * The shift used by the base register value.
+     */
     public static final int BASE_REGISTER_SHIFT = 21;
+
+    /**
+     * The mask used by the base register value after the shift.
+     */
     public static final int BASE_REGISTER_MASK = 0x1F;
 
     /**
@@ -65,6 +84,16 @@ public abstract class AssembledIFPUInstruction extends AssembledInstruction {
         super(calculateValue(operationCode, baseRegister, targetRegister, immediate), origin, basicOrigin);
     }
 
+    /**
+     * Calculates the integer representing the instruction using the given
+     * operation code, base register, target register and immediate.
+     *
+     * @param operationCode  the operation code.
+     * @param baseRegister   the base register.
+     * @param targetRegister the target register.
+     * @param immediate      the immediate value.
+     * @return the integer representing the instruction.
+     */
     static int calculateValue(int operationCode, int baseRegister, int targetRegister, int immediate) {
         int value = operationCode << AssembledInstruction.OPERATION_CODE_SHIFT;
         value += (baseRegister & BASE_REGISTER_MASK) << BASE_REGISTER_SHIFT;
@@ -85,7 +114,7 @@ public abstract class AssembledIFPUInstruction extends AssembledInstruction {
 
     /**
      * Returns the immediate value of the instruction as a signed 16-bit number.
-     * For a unsigned version of this value see {@link #getImmediate()}.
+     * For an unsigned version of this value see {@link #getImmediate()}.
      *
      * @return the signed 16-bit immediate.
      */

@@ -29,16 +29,39 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 
 /**
- * Represents a compiled instruction.
+ * Represents a assembled instruction.
  */
 public abstract class AssembledInstruction {
 
+    /**
+     * The shift used by the operation code.
+     */
     public static final int OPERATION_CODE_SHIFT = 26;
 
+    /**
+     * The instruction code of this assembled instruction.
+     */
     protected int value;
+
+    /**
+     * The instruction this assembled instruction originates from.
+     */
     protected Instruction origin;
+
+    /**
+     * The basic instruction this assembled instruction originates from. This value can be the same as {@link #origin}
+     * if this assembled instruction originates from a basic instruction.
+     */
     protected BasicInstruction<?> basicOrigin;
 
+    /**
+     * Creates the assembled instruction.
+     *
+     * @param code        the operation code.
+     * @param origin      the instruction (basic or pseudoinstruction) this assembled instruction originates from.
+     * @param basicOrigin the basic instruction this assembled instruction originates from.
+     *                    It can be the same instruction as the origin instruction.
+     */
     AssembledInstruction(int code, Instruction origin, BasicInstruction<?> basicOrigin) {
         this.value = code;
         this.origin = origin;
@@ -46,7 +69,7 @@ public abstract class AssembledInstruction {
     }
 
     /**
-     * Returns the numeric representation of the compiled instruction.
+     * Returns the numeric representation of the assembled instruction.
      *
      * @return the numeric representation.
      */
@@ -55,9 +78,9 @@ public abstract class AssembledInstruction {
     }
 
     /**
-     * Returns the original {@link Instruction} of the compiled instruction.
+     * Returns the original {@link Instruction} of the assembled instruction.
      * <p>
-     * Several compiled instructions may have the same {@link Instruction}, is this was
+     * Several assembled instructions may have the same {@link Instruction}, is this was
      * a {@link PseudoInstruction}.
      *
      * @return the original {@link Instruction}.
@@ -67,7 +90,7 @@ public abstract class AssembledInstruction {
     }
 
     /**
-     * Returns the original {@link BasicInstruction} of the compiled instruction.
+     * Returns the original {@link BasicInstruction} of the assembled instruction.
      * If the origin instruction was a {@link BasicInstruction} this method will return the same
      * result as the method {@link #getOrigin()}.
      *

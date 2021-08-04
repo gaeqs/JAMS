@@ -33,12 +33,39 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
  */
 public abstract class AssembledRIFPUInstruction extends AssembledInstruction {
 
+    /**
+     * The mask used by the immediate.
+     */
     public static final int IMMEDIATE_MASK = 0x7FF;
+
+    /**
+     * The shift used by the source register.
+     */
     public static final int SOURCE_REGISTER_SHIFT = 11;
+
+    /**
+     * The mask used by the source register after the shift.
+     */
     public static final int SOURCE_REGISTER_MASK = 0x1F;
+
+    /**
+     * The shift used by the target register.
+     */
     public static final int TARGET_REGISTER_SHIFT = 16;
+
+    /**
+     * The mask used by the target register after the shift.
+     */
     public static final int TARGET_REGISTER_MASK = 0x1F;
+
+    /**
+     * The shift used by the subcode.
+     */
     public static final int SUBCODE_SHIFT = 21;
+
+    /**
+     * The mask used by the subcode after the shift.
+     */
     public static final int SUBCODE_MASK = 0x1F;
 
     /**
@@ -68,6 +95,17 @@ public abstract class AssembledRIFPUInstruction extends AssembledInstruction {
         super(calculateValue(operationCode, subcode, targetRegister, sourceRegister, immediate), origin, basicOrigin);
     }
 
+    /**
+     * Calculates the integer representing the instruction using the given
+     * operation code, subcode, target register, source register and immediate.
+     *
+     * @param operationCode  the operation code.
+     * @param subcode        the subcode.
+     * @param targetRegister the target register.
+     * @param sourceRegister the source register.
+     * @param immediate      the immediate.
+     * @return the integer representing the instruction.
+     */
     static int calculateValue(int operationCode, int subcode, int targetRegister, int sourceRegister, int immediate) {
         int value = operationCode << AssembledInstruction.OPERATION_CODE_SHIFT;
         value += (subcode & SUBCODE_MASK) << SUBCODE_SHIFT;
@@ -89,7 +127,7 @@ public abstract class AssembledRIFPUInstruction extends AssembledInstruction {
 
     /**
      * Returns the immediate value of the instruction as a signed 11-bit number.
-     * For a unsigned version of this value see {@link #getImmediate()}.
+     * For an unsigned version of this value see {@link #getImmediate()}.
      *
      * @return the signed 11-bit immediate.
      */

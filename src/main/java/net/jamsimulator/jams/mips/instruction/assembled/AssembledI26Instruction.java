@@ -35,6 +35,9 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
  */
 public abstract class AssembledI26Instruction extends AssembledInstruction {
 
+    /**
+     * The mask used by the immediate.
+     */
     public static final int IMMEDIATE_MASK = 0x3FFFFFF;
 
     /**
@@ -60,6 +63,14 @@ public abstract class AssembledI26Instruction extends AssembledInstruction {
         super(calculateValue(operationCode, address), origin, basicOrigin);
     }
 
+    /**
+     * Calculates the integer representing the instruction using the given
+     * operation code and immediate.
+     *
+     * @param operationCode the operation code.
+     * @param immediate     the immediate.
+     * @return the integer representing the instruction.
+     */
     static int calculateValue(int operationCode, int immediate) {
         return (operationCode << AssembledInstruction.OPERATION_CODE_SHIFT) + (immediate & IMMEDIATE_MASK);
     }
@@ -76,7 +87,7 @@ public abstract class AssembledI26Instruction extends AssembledInstruction {
 
     /**
      * Returns the immediate value of the instruction as a signed 26-bit number.
-     * For a unsigned version of this value see {@link #getImmediate()}.
+     * For an unsigned version of this value see {@link #getImmediate()}.
      *
      * @return the signed 26-bit immediate.
      */

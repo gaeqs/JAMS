@@ -34,15 +34,51 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
  */
 public abstract class AssembledRInstruction extends AssembledInstruction {
 
+    /**
+     * The mask used by the function code.
+     */
     public static final int FUNCTION_CODE_MASK = 0X3F;
+
+    /**
+     * The shift used by the shift amout.
+     */
     public static final int SHIFT_AMOUNT_SHIFT = 6;
+
+    /**
+     * The mask used by the shift amount after the shift.
+     */
     public static final int SHIFT_AMOUNT_MASK = 0x1F;
+
+    /**
+     * The shift used by the destination register.
+     */
     public static final int DESTINATION_REGISTER_SHIFT = 11;
+
+    /**
+     * The mask used by the destination register after the shift.
+     */
     public static final int DESTINATION_REGISTER_MASK = 0x1F;
-    public static final int TARGET_REGISTER_SHIFT = 16;
-    public static final int TARGET_REGISTER_MASK = 0x1F;
-    public static final int SOURCE_REGISTER_SHIFT = 21;
+
+    /**
+     * The shift used by the source register.
+     */
+    public static final int SOURCE_REGISTER_SHIFT = 16;
+
+    /**
+     * The mask used by the source register after the shift.
+     */
     public static final int SOURCE_REGISTER_MASK = 0x1F;
+
+    /**
+     * The shift used by the target register.
+     */
+    public static final int TARGET_REGISTER_SHIFT = 21;
+
+    /**
+     * The mask used by the target register after the shift.
+     */
+    public static final int TARGET_REGISTER_MASK = 0x1F;
+
 
     /**
      * Creates a compiled R-Type instruction using an instruction code, an origin {@link Instruction} and an origin {@link BasicInstruction}.
@@ -75,6 +111,18 @@ public abstract class AssembledRInstruction extends AssembledInstruction {
                 origin, basicOrigin);
     }
 
+    /**
+     * Calculates the integer representing the instruction using the given
+     * operation code, source register, target register, destination register, shift amount and function code.
+     *
+     * @param operationCode       the operation code.
+     * @param sourceRegister      the source register.
+     * @param targetRegister      the target register.
+     * @param destinationRegister the destination register.
+     * @param shiftAmount         the shift amount.
+     * @param functionCode        the function code.
+     * @return the integer representing the instruction.
+     */
     static int calculateValue(int operationCode, int sourceRegister, int targetRegister, int destinationRegister,
                               int shiftAmount, int functionCode) {
         int value = operationCode << AssembledInstruction.OPERATION_CODE_SHIFT;

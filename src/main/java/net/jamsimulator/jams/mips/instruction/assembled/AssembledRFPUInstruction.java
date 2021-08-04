@@ -34,18 +34,53 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
  */
 public abstract class AssembledRFPUInstruction extends AssembledInstruction {
 
+    /**
+     * The mask used by the function code.
+     */
     public static final int FUNCTION_CODE_MASK = 0X3F;
+
+    /**
+     * The shift used by the destination register.
+     */
     public static final int DESTINATION_REGISTER_SHIFT = 6;
+
+    /**
+     * The mask used by the destination register after the shift.
+     */
     public static final int DESTINATION_REGISTER_MASK = 0x1F;
+
+    /**
+     * The shift used by the source register.
+     */
     public static final int SOURCE_REGISTER_SHIFT = 11;
+
+    /**
+     * The mask used by the source register after the shift.
+     */
     public static final int SOURCE_REGISTER_MASK = 0x1F;
+
+    /**
+     * The shift used by the target register.
+     */
     public static final int TARGET_REGISTER_SHIFT = 16;
+
+    /**
+     * The mask used by the target register after the shift.
+     */
     public static final int TARGET_REGISTER_MASK = 0x1F;
+
+    /**
+     * The shift used by the FMT value.
+     */
     public static final int FMT_SHIFT = 21;
+
+    /**
+     * The mask used by the FMT value after the shift.
+     */
     public static final int FMT_MASK = 0x1F;
 
     /**
-     * Creates a compiled I instruction using an instruction code, an origin {@link Instruction} and an origin {@link BasicInstruction}.
+     * Creates a compiled RFPU instruction using an instruction code, an origin {@link Instruction} and an origin {@link BasicInstruction}.
      *
      * @param value       the value of the instruction.
      * @param origin      the origin instruction.
@@ -75,6 +110,18 @@ public abstract class AssembledRFPUInstruction extends AssembledInstruction {
                 origin, basicOrigin);
     }
 
+    /**
+     * Calculates the integer representing the instruction using the given
+     * operation code, fmt, target register, source register, destination register and immediate.
+     *
+     * @param operationCode       the operation code.
+     * @param fmt                 the fmt.
+     * @param targetRegister      the target register.
+     * @param sourceRegister      the source register.
+     * @param destinationRegister the destination register.
+     * @param functionCode        the function code.
+     * @return the integer representing the instruction.
+     */
     static int calculateValue(int operationCode, int fmt, int targetRegister, int sourceRegister,
                               int destinationRegister, int functionCode) {
         int value = operationCode << AssembledInstruction.OPERATION_CODE_SHIFT;

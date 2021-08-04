@@ -33,11 +33,31 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
  */
 public abstract class AssembledPCREL19Instruction extends AssembledInstruction {
 
+    /**
+     * The mask used by the immediate.
+     */
     public static final int IMMEDIATE_MASK = 0x7FFFF;
+
+    /**
+     * The shift used by the pc relative value.
+     */
     public static final int PCREL_SHIFT = 19;
-    public static final int PCREL_MASK = 0x3;
+
+    /**
+     * The mask used by the pc relative value after the shift.
+     */
+    public static final int PCREL_MASK = 0x1F;
+
+    /**
+     * The shift used by the source register.
+     */
     public static final int SOURCE_REGISTER_SHIFT = 21;
+
+    /**
+     * The mask used by the source register after the shift.
+     */
     public static final int SOURCE_REGISTER_MASK = 0x1F;
+
 
     /**
      * Creates a compiled PCREL instruction using an instruction code, an origin {@link Instruction} and an origin {@link BasicInstruction}.
@@ -65,6 +85,17 @@ public abstract class AssembledPCREL19Instruction extends AssembledInstruction {
         super(calculateValue(operationCode, sourceRegister, pcrel, immediate), origin, basicOrigin);
     }
 
+
+    /**
+     * Calculates the integer representing the instruction using the given
+     * operation code, source register, pc relative and immediate.
+     *
+     * @param operationCode  the operation code.
+     * @param sourceRegister the source register.
+     * @param pcrel          the pc relative value.
+     * @param immediate      the immediate.
+     * @return the integer representing the instruction.
+     */
     static int calculateValue(int operationCode, int sourceRegister, int pcrel, int immediate) {
         int value = operationCode << AssembledInstruction.OPERATION_CODE_SHIFT;
         value += (sourceRegister & SOURCE_REGISTER_MASK) << SOURCE_REGISTER_SHIFT;
@@ -86,7 +117,7 @@ public abstract class AssembledPCREL19Instruction extends AssembledInstruction {
 
     /**
      * Returns the immediate value of the instruction as a signed 16-bit number.
-     * For a unsigned version of this value see {@link #getImmediate()}.
+     * For an unsigned version of this value see {@link #getImmediate()}.
      *
      * @return the signed 16-bit immediate.
      */

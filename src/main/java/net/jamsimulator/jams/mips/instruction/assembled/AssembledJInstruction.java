@@ -32,8 +32,19 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
  */
 public abstract class AssembledJInstruction extends AssembledInstruction {
 
+    /**
+     * The shift used by the address when calculating the final address.
+     */
     public static final int ADDRESS_SHIFT = 2;
+
+    /**
+     * The mask used by the address when fetching it from the instruction code.
+     */
     public static final int ADDRESS_MASK = 0x3FFFFFF;
+
+    /**
+     * The mask used by the PC when calculating the final address.
+     */
     public static final int PC_MASK = 0xF0000000;
 
     /**
@@ -59,6 +70,15 @@ public abstract class AssembledJInstruction extends AssembledInstruction {
         super(calculateValue(operationCode, address), origin, basicOrigin);
     }
 
+    /**
+     * Calculates the instruction code using the given operation code and address.
+     * <p>
+     * The addres should not be shifted right by 2! This method already shifts the address.
+     *
+     * @param operationCode the operation code.
+     * @param address       the address.
+     * @return the instruction code.
+     */
     static int calculateValue(int operationCode, int address) {
         return (operationCode << AssembledInstruction.OPERATION_CODE_SHIFT) + (address >>> ADDRESS_SHIFT & ADDRESS_MASK);
     }
