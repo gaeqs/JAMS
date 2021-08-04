@@ -27,28 +27,88 @@ package net.jamsimulator.jams.gui.image;
 import com.sun.javafx.sg.prism.NGImageView;
 import com.sun.prism.Graphics;
 import com.sun.prism.Image;
+import com.sun.prism.ResourceFactory;
 import com.sun.prism.Texture;
-import com.sun.prism.impl.BaseResourceFactory;
+import com.sun.prism.image.Coords;
+
+import java.lang.reflect.Field;
 
 
 public class NGNearestImageView extends NGImageView {
 
-    private Image image;
+    private final Field imageField, coordsField, xField, yField, wField, hField;
+    private boolean logging = false;
 
-    @Override
-    public void setImage(Object img) {
-        super.setImage(img);
-        image = (Image) img;
+    public NGNearestImageView() {
+        super();
+        try {
+            imageField = NGImageView.class.getDeclaredField("image");
+            coordsField = NGImageView.class.getDeclaredField("coords");
+            xField = NGImageView.class.getDeclaredField("x");
+            yField = NGImageView.class.getDeclaredField("y");
+            wField = NGImageView.class.getDeclaredField("w");
+            hField = NGImageView.class.getDeclaredField("h");
+
+            imageField.setAccessible(true);
+            coordsField.setAccessible(true);
+            xField.setAccessible(true);
+            yField.setAccessible(true);
+            wField.setAccessible(true);
+            hField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setLogging(boolean logging) {
+        this.logging = logging;
     }
 
     @Override
     protected void renderContent(Graphics g) {
-        var factory = (BaseResourceFactory) g.getResourceFactory();
-        var tex = factory.getCachedTexture(image, Texture.WrapMode.CLAMP_TO_EDGE);
-        tex.setLinearFiltering(false);
-        tex.unlock();
+        try {
+            var image = (Image) imageField.get(this);
+            var coords = (Coords) coordsField.get(this);
 
+            var x = xField.getFloat(this);
+            var y = yField.getFloat(this);
+            var w = wField.getFloat(this);
+            var h = hField.getFloat(this);
 
-        super.renderContent(g);
+            int imgW = image.getWidth();
+            int imgH = image.getHeight();
+
+            ResourceFactory factory = g.getResourceFactory();
+            int maxSize = factory.getMaximumTextureSize();
+
+            if (imgW <= maxSize && imgH <= maxSize) {
+                Texture texture = getBestTexture(factory, image, imgW, imgH, w, h);
+                if (coords == null) {
+                    g.drawTexture(texture, x, y, x + w, y + h, 0, 0, imgW, imgH);
+                } else {
+                    coords.draw(texture, g, x, y);
+                }
+                texture.unlock();
+            } else {
+                super.renderContent(g);
+            }
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    protected Texture getBestTexture(ResourceFactory factory, Image image,
+                                     float imageWidth, float imageHeight, float width, float height) {
+        Texture tex;
+        if (width >= imageWidth || height > imageHeight) {
+            // Use normal mode
+            tex =  factory.getCachedTexture(image, Texture.WrapMode.CLAMP_TO_EDGE);
+            tex.setLinearFiltering(false);
+        } else {
+            // Use mipmaps!
+            tex = factory.getCachedTexture(image, Texture.WrapMode.REPEAT, true);
+            tex.setLinearFiltering(true);
+        }
+        return tex;
     }
 }

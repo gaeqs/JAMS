@@ -29,7 +29,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionAssemble;
@@ -90,7 +89,7 @@ public class MIPSStructurePaneButtons {
         Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_ASSEMBLE
         ).orElse(null);
 
-        Button assemble = new FixedButton("", new NearestImageView(icon, 18, 18), 28, 28);
+        Button assemble = new FixedButton("", new NearestImageView(icon, 20, 20), 28, 28);
         assemble.getStyleClass().add("buttons-hbox-button");
         assemble.setOnAction(event -> GeneralActionAssemble.compileAndShow(structurePane.project));
         nodes.add(assemble);
@@ -100,12 +99,7 @@ public class MIPSStructurePaneButtons {
         Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_SETTINGS
         ).orElse(null);
 
-
-        var view = new ImageView(icon);
-        view.setFitWidth(18);
-        view.setFitHeight(18);
-
-        Button configButton = new FixedButton("", view, 28, 28);
+        Button configButton = new FixedButton("", new NearestImageView(icon, 20, 20), 28, 28);
         configButton.getStyleClass().add("buttons-hbox-button");
         configButton.setOnAction(event -> MIPSConfigurationWindow.open(structurePane.getProject().getData()));
         nodes.add(configButton);

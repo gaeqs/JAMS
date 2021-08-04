@@ -35,7 +35,7 @@ import javafx.scene.image.ImageView;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Represents an {@link ImageView} that doesn't smooth the image inside..
+ * Represents an {@link ImageView} that doesn't smooth the image inside.
  */
 public class NearestImageView extends ImageView {
 
@@ -48,6 +48,9 @@ public class NearestImageView extends ImageView {
 
             @Override
             public void doUpdatePeer(Node node) {
+                NGNearestImageView ng = NearestImageViewHelper.getPeer(node);
+                ng.setLogging(((NearestImageView)node).logging);
+
                 try {
                     var method = ImageView.class.getDeclaredMethod("doUpdatePeer");
                     method.setAccessible(true);
@@ -89,6 +92,8 @@ public class NearestImageView extends ImageView {
         NearestImageViewHelper.initHelper(this);
     }
 
+    private boolean logging = false;
+
     /**
      * Creates the nearest image view.
      */
@@ -122,6 +127,10 @@ public class NearestImageView extends ImageView {
         super(image);
         setFitWidth(width);
         setFitHeight(height);
+    }
+
+    public void setLogging(boolean logging) {
+        this.logging = logging;
     }
 
 }
