@@ -28,7 +28,6 @@ import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -40,6 +39,7 @@ import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.popup.event.AutocompletionPopupSelectElementEvent;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -195,7 +195,7 @@ public abstract class AutocompletionPopup extends Popup implements EventBroadcas
      * @param <T>                      the type of the elements.
      */
     public <T> void addElements(Collection<T> collection, Function<T, String> conversion,
-                                Function<T, String> autocompletionConversion, int offset, Image icon) {
+                                Function<T, String> autocompletionConversion, int offset, IconData icon) {
         addElements(collection.iterator(), conversion, autocompletionConversion, offset, icon);
     }
 
@@ -208,7 +208,7 @@ public abstract class AutocompletionPopup extends Popup implements EventBroadcas
      * @param <T>                      the type of the elements.
      */
     public <T> void addElements(Stream<T> collection, Function<T, String> conversion,
-                                Function<T, String> autocompletionConversion, int offset, Image icon) {
+                                Function<T, String> autocompletionConversion, int offset, IconData icon) {
         addElements(collection.iterator(), conversion, autocompletionConversion, offset, icon);
     }
 
@@ -221,7 +221,7 @@ public abstract class AutocompletionPopup extends Popup implements EventBroadcas
      * @param <T>                      the type of the elements.
      */
     public <T> void addElements(Iterator<T> iterator, Function<T, String> conversion,
-                                Function<T, String> autocompletionConversion, int offset, Image icon) {
+                                Function<T, String> autocompletionConversion, int offset, IconData icon) {
         AutocompletionPopupElement label;
         T next;
         while (iterator.hasNext()) {

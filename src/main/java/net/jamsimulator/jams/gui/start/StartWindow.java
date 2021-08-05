@@ -163,7 +163,7 @@ public class StartWindow extends AnchorPane {
             stage.initStyle(StageStyle.TRANSPARENT);
             stage.setWidth(WIDTH);
             stage.setHeight(HEIGHT);
-            JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO).ifPresent(stage.getIcons()::add);
+            Icons.LOGO.getImage().ifPresent(stage.getIcons()::add);
             stage.setOnHidden(event -> {
                 // We are saving the configuration because it may be edited in the start window!
                 try {

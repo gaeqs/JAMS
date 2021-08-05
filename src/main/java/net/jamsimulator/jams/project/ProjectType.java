@@ -26,7 +26,7 @@ package net.jamsimulator.jams.project;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.image.Image;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 /**
- * Represents the type of a {@link Project}. This type allows projects to be managed by
+ * Represents the type of {@link Project}. This type allows projects to be managed by
  * their respective {@link Project} class.
  *
  * @param <T> the project to load or create.
@@ -43,7 +43,7 @@ import java.util.Optional;
 public abstract class ProjectType<T extends Project> implements Labeled {
 
     protected final String name;
-    protected final Image icon;
+    protected final IconData icon;
     protected final ObservableList<ProjectTemplateBuilder<?>> templateBuilders;
 
     /**
@@ -52,7 +52,7 @@ public abstract class ProjectType<T extends Project> implements Labeled {
      * @param name the name of the project type.
      * @param icon the icon representing this type. It may be null.
      */
-    public ProjectType(String name, Image icon) {
+    public ProjectType(String name, IconData icon) {
         Validate.notNull(name, "Name cannot be null!");
         this.name = name;
         this.icon = icon;
@@ -65,11 +65,11 @@ public abstract class ProjectType<T extends Project> implements Labeled {
     }
 
     /**
-     * Returns the {@link Image icon} representing this type, if present.
+     * Returns the {@link IconData icon} representing this type, if present.
      *
-     * @return the {@link Image icon}.
+     * @return the {@link IconData icon}.
      */
-    public Optional<Image> getIcon() {
+    public Optional<IconData> getIcon() {
         return Optional.ofNullable(icon);
     }
 

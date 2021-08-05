@@ -33,6 +33,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.main.window.WindowButtonClose;
 import net.jamsimulator.jams.gui.main.window.WindowButtonMaximize;
 import net.jamsimulator.jams.gui.main.window.WindowButtonMinimize;
@@ -42,7 +43,7 @@ import net.jamsimulator.jams.gui.util.AnchorUtils;
 public class TopBar extends AnchorPane {
 
 
-    private final ImageView view;
+    private final QualityImageView view;
     private final MainMenuBar menuBar;
     private final HBox windowButtons;
 
@@ -51,8 +52,7 @@ public class TopBar extends AnchorPane {
     public TopBar(Stage stage, boolean transparentMode) {
         getStyleClass().add("top-bar");
         this.transparentMode = transparentMode;
-        view = new ImageView(JamsApplication.getIconManager()
-                .getOrLoadSafe(Icons.LOGO).orElse(null));
+        view = new QualityImageView(Icons.LOGO);
         view.setFitWidth(20);
         view.setFitHeight(20);
         AnchorUtils.setAnchor(view, 5, 5, 5, -1);
@@ -68,7 +68,7 @@ public class TopBar extends AnchorPane {
         refresh();
     }
 
-    public ImageView getView() {
+    public QualityImageView getView() {
         return view;
     }
 

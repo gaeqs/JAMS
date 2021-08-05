@@ -83,8 +83,7 @@ public class MIPSConfigurationWindow extends SplitPane {
         stage.setY(main.getY() + main.getHeight() / 2 - (HEIGHT >> 1));
 
         stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.SIMULATION_CONFIGURATION_INFO));
-        JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO)
-                .ifPresent(stage.getIcons()::add);
+        Icons.LOGO.getImage().ifPresent(stage.getIcons()::add);
 
         JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);
 

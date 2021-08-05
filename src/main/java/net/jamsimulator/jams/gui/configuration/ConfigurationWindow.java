@@ -32,6 +32,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -46,7 +47,9 @@ import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowExplo
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowSection;
 import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNode;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
@@ -192,7 +195,7 @@ public class ConfigurationWindow extends SplitPane {
             stage.setWidth(WIDTH);
             stage.setHeight(HEIGHT);
             stage.setMinWidth(WIDTH >> 1);
-            stage.setMinHeight(0);
+            stage.setMinHeight(HEIGHT >> 1);
 
             Stage main = JamsApplication.getStage();
 
@@ -200,8 +203,7 @@ public class ConfigurationWindow extends SplitPane {
             stage.setY(main.getY() + main.getHeight() / 2 - (HEIGHT >> 1));
 
             stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.CONFIG));
-            JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO)
-                    .ifPresent(stage.getIcons()::add);
+            Icons.LOGO.getImage().ifPresent(stage.getIcons()::add);
 
 
             stage.setOnCloseRequest(event -> {

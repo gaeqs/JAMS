@@ -26,10 +26,10 @@ package net.jamsimulator.jams.gui.mips.sidebar;
 
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.file.FileType;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.project.FilesToAssemble;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
@@ -39,7 +39,7 @@ import java.io.File;
 
 public class FilesToAssembleSidebar extends ListView<File> {
 
-    protected final Image icon;
+    protected final IconData icon;
     protected final Project project;
     protected final FilesToAssemble filesToAssemble;
 

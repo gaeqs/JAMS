@@ -25,13 +25,12 @@
 package net.jamsimulator.jams.gui.main.window;
 
 import javafx.stage.Stage;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 
 public class WindowButtonMinimize extends WindowButton {
 
     public WindowButtonMinimize(Stage stage) {
-        super(stage, JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_MINIMIZE).orElse(null));
+        super(stage, Icons.WINDOW_MINIMIZE);
         getStyleClass().add("window-button-minimize");
         setOnAction(event -> onAction());
     }

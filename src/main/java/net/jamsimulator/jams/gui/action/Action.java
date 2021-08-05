@@ -93,7 +93,7 @@ public abstract class Action implements Labeled {
      * Returns the default combination of the action, if present.
      * <p>
      * If the combination is present, this action is not present in the actions file and
-     * no actions are bind to this combination this combination will be bind to this action.
+     * no actions are bind to this combination will be bind to this action.
      * <p>
      * The combination will not be bind if the action is present in the actions file but it has no combinations.
      *

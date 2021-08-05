@@ -26,7 +26,6 @@ package net.jamsimulator.jams.gui.image.nearest;
 
 import com.sun.javafx.geom.BaseBounds;
 import com.sun.javafx.geom.transform.BaseTransform;
-import com.sun.javafx.scene.ImageViewHelper;
 import com.sun.javafx.sg.prism.NGNode;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -40,7 +39,7 @@ import java.lang.reflect.InvocationTargetException;
 public class NearestImageView extends ImageView {
 
     static {
-        NearestImageViewHelper.setImageViewAccessor(new ImageViewHelper.ImageViewAccessor() {
+        NearestImageViewHelper.setImageViewAccessor(new NearestImageViewHelper.ImageViewAccessor() {
             @Override
             public NGNode doCreatePeer(Node node) {
                 return new NGNearestImageView();

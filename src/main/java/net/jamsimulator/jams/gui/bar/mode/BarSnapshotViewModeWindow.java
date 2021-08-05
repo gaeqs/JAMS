@@ -76,7 +76,7 @@ public class BarSnapshotViewModeWindow implements BarSnapshotViewMode {
         public boolean show(BarButton button) {
             snapshot = button.getSnapshot();
             setTitle(Jams.getLanguageManager().getSelected().getOrDefault(snapshot.getLanguageNode().orElse(null)));
-            JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO).ifPresent(getIcons()::add);
+            Icons.LOGO.getImage().ifPresent(getIcons()::add);
 
             var anchor = new AnchorPane(snapshot.getNode());
             AnchorUtils.setAnchor(snapshot.getNode(), 0, 0, 0, 0);

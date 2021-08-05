@@ -30,7 +30,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.language.Messages;
@@ -70,8 +69,7 @@ public class PluginExplorerList extends VBox {
     }
 
     private void loadInstallButton() {
-        var view = new QualityImageView(JamsApplication.getIconManager()
-                .getOrLoadSafe(Icons.CONTROL_ADD).orElse(null), 16, 16);
+        var view = new QualityImageView(Icons.CONTROL_ADD, 16, 16);
 
         var button = new Button("", view);
         button.getStyleClass().add("dark-bold-button");

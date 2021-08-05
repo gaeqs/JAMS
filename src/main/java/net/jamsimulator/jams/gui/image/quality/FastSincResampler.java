@@ -24,7 +24,10 @@
 
 package net.jamsimulator.jams.gui.image.quality;
 
-import java.nio.IntBuffer;
+import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.event.general.JAMSShutdownEvent;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
@@ -35,10 +38,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class FastSincResampler {
 
-    private static final int THREADS = Runtime.getRuntime().availableProcessors();
+    public static final int THREADS = Runtime.getRuntime().availableProcessors();
     private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(THREADS);
+    private static final EventManager EVENT_MANAGER = new EventManager();
 
-    public static IntBuffer resample(IntBuffer in, int inWidth, int inHeight, int outWidth, int outHeight, int tasks) {
+    public static int[] resample(int[] in, int inWidth, int inHeight, int outWidth, int outHeight, int tasks) {
         try {
             return new FastSincResampler(in, inWidth, inHeight, outWidth, outHeight, tasks).output;
         } catch (Exception e) {
@@ -46,7 +50,20 @@ public class FastSincResampler {
         }
     }
 
-    private final IntBuffer output;
+    private static class EventManager {
+
+        public EventManager() {
+            Jams.getGeneralEventBroadcast().registerListeners(this, true);
+        }
+
+        @Listener
+        private void onShutdown(JAMSShutdownEvent.Before event) {
+            EXECUTOR.shutdown();
+        }
+
+    }
+
+    private final int[] output;
 
     private final int inputWidth, inputHeight;
     private final int outputWidth, outputHeight;
@@ -60,7 +77,7 @@ public class FastSincResampler {
     private final AtomicInteger sharedY = new AtomicInteger(0);
     private final AtomicInteger sharedX = new AtomicInteger(0);
 
-    public FastSincResampler(IntBuffer input, int intputWidth, int inputHeight,
+    public FastSincResampler(int[] input, int intputWidth, int inputHeight,
                              int outputWidth, int outputHeight, int tasks)
             throws Exception {
         this.inputWidth = intputWidth;
@@ -71,7 +88,7 @@ public class FastSincResampler {
         horizontalFilterLength = Math.max((float) intputWidth / outputWidth, 1) * 4.0f;
         verticalFilterLength = Math.max((float) intputWidth / outputWidth, 1) * 4.0f;
 
-        output = IntBuffer.allocate(outputWidth * outputHeight);
+        output = new int[outputWidth * outputHeight];
 
         inVertical = new float[intputWidth * inputHeight * 4];
         inHorizontal = new float[intputWidth * inputHeight * 4];
@@ -97,10 +114,11 @@ public class FastSincResampler {
         }
     }
 
-    private void unpackPixels(IntBuffer input) {
+    private void unpackPixels(int[] input) {
         int index = 0;
-        while (index < inVertical.length && input.position() < input.limit()) {
-            int argb = input.get();
+        int arrayIndex = 0;
+        while (index < inVertical.length && arrayIndex < input.length) {
+            int argb = input[arrayIndex++];
             inVertical[index++] = (argb >>> 24);
             inVertical[index++] = (argb >>> 16) & 0xFF;
             inVertical[index++] = (argb >>> 8) & 0xFF;
@@ -199,7 +217,7 @@ public class FastSincResampler {
                             | ((int) (r + 0.5) & 0xFF) << 16
                             | ((int) (g + 0.5) & 0xFF) << 8
                             | ((int) (b + 0.5) & 0xFF);
-                    output.put(y * outputWidth + x, pixel);
+                    output[y * outputWidth + x] = pixel;
                 }
 
             }

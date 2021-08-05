@@ -29,7 +29,6 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
@@ -62,10 +61,7 @@ public class MIPSConfigurationCacheControls extends AnchorPane {
     }
 
     private void generateAddButton() {
-        var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.CONTROL_ADD
-        ).orElse(null);
-
-        var button = new Button(null, new QualityImageView(icon, 16, 16));
+        var button = new Button(null, new QualityImageView(Icons.CONTROL_ADD, 16, 16));
         button.setTooltip(new LanguageTooltip(Messages.GENERAL_ADD));
         button.getStyleClass().add("bold-button");
 
@@ -82,10 +78,7 @@ public class MIPSConfigurationCacheControls extends AnchorPane {
 
 
     private void generateRemoveButton() {
-        var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.CONTROL_REMOVE
-        ).orElse(null);
-
-        var button = new Button(null, new QualityImageView(icon, 16, 16));
+        var button = new Button(null, new QualityImageView(Icons.CONTROL_REMOVE, 16, 16));
         button.setTooltip(new LanguageTooltip(Messages.GENERAL_REMOVE));
         button.getStyleClass().add("bold-button");
 

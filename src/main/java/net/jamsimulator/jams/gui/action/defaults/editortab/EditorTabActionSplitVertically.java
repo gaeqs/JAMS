@@ -24,9 +24,7 @@
 
 package net.jamsimulator.jams.gui.action.defaults.editortab;
 
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
@@ -46,12 +44,7 @@ public class EditorTabActionSplitVertically extends ContextAction {
 
     public EditorTabActionSplitVertically() {
         super(NAME, RegionTags.EDITOR_TAB, Messages.ACTION_EDITOR_TAB_SPLIT_VERTICALLY,
-                DEFAULT_COMBINATION, EditorTagRegions.SPLIT, null, loadIcon());
-    }
-
-    private static Image loadIcon() {
-        return JamsApplication.getIconManager().getOrLoadSafe(Icons.TAB_SPLIT_VERTICALLY
-        ).orElse(null);
+                DEFAULT_COMBINATION, EditorTagRegions.SPLIT, null, Icons.TAB_SPLIT_VERTICALLY);
     }
 
     @Override

@@ -26,7 +26,6 @@ package net.jamsimulator.jams.gui.image.nearest;
 
 import com.sun.javafx.geom.BaseBounds;
 import com.sun.javafx.geom.transform.BaseTransform;
-import com.sun.javafx.scene.ImageViewHelper;
 import com.sun.javafx.scene.NodeHelper;
 import com.sun.javafx.sg.prism.NGNode;
 import com.sun.javafx.util.Utils;
@@ -36,7 +35,7 @@ import javafx.scene.image.ImageView;
 public class NearestImageViewHelper extends NodeHelper {
 
     private static final NearestImageViewHelper theInstance;
-    private static ImageViewHelper.ImageViewAccessor imageViewAccessor;
+    private static ImageViewAccessor imageViewAccessor;
 
     static {
         theInstance = new NearestImageViewHelper();
@@ -73,7 +72,7 @@ public class NearestImageViewHelper extends NodeHelper {
         return imageViewAccessor.doComputeContains(node, localX, localY);
     }
 
-    public static void setImageViewAccessor(final ImageViewHelper.ImageViewAccessor newAccessor) {
+    public static void setImageViewAccessor(final ImageViewAccessor newAccessor) {
         if (imageViewAccessor != null) {
             throw new IllegalStateException();
         }

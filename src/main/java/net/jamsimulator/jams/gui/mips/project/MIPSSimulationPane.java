@@ -25,15 +25,16 @@
 package net.jamsimulator.jams.gui.mips.project;
 
 import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.ActionRegion;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.bar.BarPosition;
 import net.jamsimulator.jams.gui.bar.BarSnapshot;
 import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModePane;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.simulator.cache.CacheVisualizer;
 import net.jamsimulator.jams.gui.mips.simulator.execution.ExecutionButtons;
@@ -53,7 +54,6 @@ import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.gui.util.ZoomUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
-import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.register.Register;
@@ -137,9 +137,7 @@ public class MIPSSimulationPane extends WorkingPane implements SimulationHolder<
     }
 
     private void loadRegisterTabs() {
-        Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_REGISTERS
-        ).orElse(null);
-
+        var icon = Icons.SIMULATION_REGISTERS;
         registersTabs = new TabPane();
 
 
@@ -156,32 +154,24 @@ public class MIPSSimulationPane extends WorkingPane implements SimulationHolder<
     }
 
     private void loadConsole() {
-        Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_CONSOLE
-        ).orElse(null);
-
+        var icon = Icons.SIMULATION_CONSOLE;
         manageBarAddition("console", simulation.getConsole(), icon, Messages.BAR_CONSOLE_NAME, BarPosition.BOTTOM_RIGHT, BarSnapshotViewModePane.INSTANCE, true);
     }
 
     private void loadMemoryTab() {
-        Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_MEMORY
-        ).orElse(null);
-
+        var icon = Icons.SIMULATION_MEMORY;
         memoryPane = new MemoryPane(simulation);
-
         manageBarAddition("memory", memoryPane, icon, Messages.BAR_MEMORY_NAME, BarPosition.LEFT_TOP, BarSnapshotViewModePane.INSTANCE, true);
     }
 
     private void loadFlow() {
-        Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_FLOW
-        ).orElse(null);
-
-
+        var icon = Icons.SIMULATION_FLOW;
         FlowTable flow = FlowTable.createFlow(simulation);
         manageBarAddition("flow", flow, icon, Messages.BAR_FLOW_NAME, BarPosition.BOTTOM_RIGHT, BarSnapshotViewModePane.INSTANCE, true);
     }
 
     private void loadLabels() {
-        var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_LABELS).orElse(null);
+        var icon = Icons.SIMULATION_LABELS;
         var scroll = new PixelScrollPane(null);
         var pane = new LabelTable(scroll, this);
         scroll.setContent(pane);
@@ -192,7 +182,7 @@ public class MIPSSimulationPane extends WorkingPane implements SimulationHolder<
     }
 
     private void loadCacheVisualizer() {
-        var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_CACHES).orElse(null);
+        var icon = Icons.SIMULATION_CACHES;
         var memory = simulation.getMemory();
         if (memory instanceof Cache) {
             var visualizer = new CacheVisualizer(simulation);
@@ -201,7 +191,7 @@ public class MIPSSimulationPane extends WorkingPane implements SimulationHolder<
     }
 
     private void loadLab() {
-        Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_LAB).orElse(null);
+        var icon = Icons.SIMULATION_LAB;
         var lab = new LabPane(simulation);
         var scroll = new PixelScrollPane(lab);
         scroll.setFitToWidth(true);
@@ -210,7 +200,7 @@ public class MIPSSimulationPane extends WorkingPane implements SimulationHolder<
     }
 
 
-    private void manageBarAddition(String name, Node node, Image icon, String languageNode, BarPosition defaultPosition,
+    private void manageBarAddition(String name, Node node, IconData icon, String languageNode, BarPosition defaultPosition,
                                    BarSnapshotViewModePane defaultViewMode, boolean defaultEnable) {
         barMap.registerSnapshot(new BarSnapshot(name, node, defaultPosition, defaultViewMode, defaultEnable, icon, languageNode));
     }

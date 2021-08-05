@@ -73,7 +73,7 @@ public class ActionExplorerRegion extends ExplorerSection {
     @Override
     protected ExplorerSectionRepresentation loadRepresentation() {
         ExplorerSectionRepresentation representation = new ExplorerSectionLanguageRepresentation(this, hierarchyLevel, null);
-        representation.getIcon().setImage(Jams.getFileTypeManager().getFolderType().getIcon());
+        representation.getIcon().setIcon(Jams.getFileTypeManager().getFolderType().getIcon());
         return representation;
     }
 

@@ -44,8 +44,9 @@ public class SimulationActionUndoOneStep extends ContextAction {
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.LEFT, KeyCombination.ALT_DOWN);
 
     public SimulationActionUndoOneStep() {
-        super(NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_UNDO_ONE_STEP, DEFAULT_COMBINATION, SImulationActionRegions.MIPS, MainMenuRegion.SIMULATION,
-                JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_UNDO_ONE).orElse(null));
+        super(NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_UNDO_ONE_STEP, DEFAULT_COMBINATION,
+                SimulationActionRegions.MIPS, MainMenuRegion.SIMULATION,
+                Icons.SIMULATION_UNDO_ONE);
     }
 
     @Override

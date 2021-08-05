@@ -31,7 +31,7 @@ import net.jamsimulator.jams.gui.image.icon.Icons;
 public class WindowButtonClose extends WindowButton {
 
     public WindowButtonClose(Stage stage) {
-        super(stage, JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_CLOSE).orElse(null));
+        super(stage, Icons.WINDOW_CLOSE);
         getStyleClass().add("window-button-close");
         setOnAction(event -> onAction());
     }

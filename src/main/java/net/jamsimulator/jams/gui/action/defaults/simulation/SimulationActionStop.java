@@ -44,8 +44,9 @@ public class SimulationActionStop extends ContextAction {
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.UP, KeyCombination.ALT_DOWN);
 
     public SimulationActionStop() {
-        super(NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_STOP, DEFAULT_COMBINATION, SImulationActionRegions.MIPS, MainMenuRegion.SIMULATION,
-                JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_STOP).orElse(null));
+        super(NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_STOP,
+                DEFAULT_COMBINATION, SimulationActionRegions.MIPS, MainMenuRegion.SIMULATION,
+                Icons.SIMULATION_STOP);
     }
 
     @Override

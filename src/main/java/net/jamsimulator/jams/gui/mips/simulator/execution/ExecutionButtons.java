@@ -27,9 +27,7 @@ package net.jamsimulator.jams.gui.mips.simulator.execution;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.util.FixedButton;
@@ -66,9 +64,9 @@ public class ExecutionButtons {
 
     public ExecutionButtons(Simulation<?> simulation) {
         nodes = new ArrayList<>();
-        Image runOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY_ONE).orElse(null);
-        Image undoOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_UNDO_ONE).orElse(null);
-        Image resetIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_RESET).orElse(null);
+        var runOneIcon = Icons.SIMULATION_PLAY_ONE;
+        var undoOneIcon = Icons.SIMULATION_UNDO_ONE;
+        var resetIcon = Icons.SIMULATION_RESET;
 
         runOrStop = new FixedButton("", new QualityImageView(null, 16, 16), 28, 28);
         changeToRunAll(simulation);
@@ -129,9 +127,7 @@ public class ExecutionButtons {
 
     private void changeToRunAll(Simulation<?> simulation) {
         Platform.runLater(() -> {
-            Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY
-            ).orElse(null);
-            ((QualityImageView) runOrStop.getGraphic()).setImage(runAllIcon);
+            ((QualityImageView) runOrStop.getGraphic()).setIcon(Icons.SIMULATION_PLAY);
             runOrStop.getStyleClass().add(STYLE_CLASS);
             runOrStop.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_EXECUTE_ALL, LanguageTooltip.DEFAULT_DELAY));
             runOrStop.setOnAction(event -> simulation.executeAll());
@@ -140,10 +136,7 @@ public class ExecutionButtons {
 
     private void changeToStop(Simulation<?> simulation) {
         Platform.runLater(() -> {
-            Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_STOP
-            ).orElse(null);
-
-            ((QualityImageView) runOrStop.getGraphic()).setImage(runAllIcon);
+            ((QualityImageView) runOrStop.getGraphic()).setIcon(Icons.SIMULATION_STOP);
             runOrStop.getStyleClass().add(STYLE_CLASS);
             runOrStop.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_STOP, LanguageTooltip.DEFAULT_DELAY));
             runOrStop.setOnAction(event -> simulation.stop());

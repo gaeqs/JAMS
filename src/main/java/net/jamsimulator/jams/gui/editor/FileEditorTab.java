@@ -30,7 +30,6 @@ import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
@@ -78,7 +77,7 @@ public class FileEditorTab extends Tab implements ActionRegion {
         FileType type = Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType());
         this.display = type.createDisplayTab(this);
 
-        ImageView view = new QualityImageView(type.getIcon(), FileType.IMAGE_SIZE, FileType.IMAGE_SIZE);
+        var view = new QualityImageView(type.getIcon(), FileType.IMAGE_SIZE, FileType.IMAGE_SIZE);
         name = new Label(file.getName());
 
         var hbox = new HBox(view, name);

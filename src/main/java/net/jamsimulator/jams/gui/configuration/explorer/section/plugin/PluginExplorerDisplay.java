@@ -33,7 +33,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.popup.ConfirmationWindow;
@@ -124,9 +123,7 @@ public class PluginExplorerDisplay extends AnchorPane {
     }
 
     private void loadDeleteButton(Plugin plugin) {
-        var view = new QualityImageView(JamsApplication.getIconManager()
-                .getOrLoadSafe(Icons.CONTROL_REMOVE).orElse(null), 16, 16);
-
+        var view = new QualityImageView(Icons.CONTROL_REMOVE, 16, 16);
         var button = new Button("", view);
         button.getStyleClass().add("dark-bold-button");
         button.setTooltip(new LanguageTooltip(Messages.CONFIG_PLUGIN_UNINSTALL));

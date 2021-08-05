@@ -24,21 +24,20 @@
 
 package net.jamsimulator.jams.gui.main.window;
 
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 
 public class WindowButtonMaximize extends WindowButton {
 
-    private final Image maximized, windowed;
+    private final IconData maximized, windowed;
 
     public WindowButtonMaximize(Stage stage) {
         super(stage, null);
-        this.maximized = JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_UNMAXIMIZE).orElse(null);
-        this.windowed = JamsApplication.getIconManager().getOrLoadSafe(Icons.WINDOW_MAXIMIZE).orElse(null);
+        this.maximized = Icons.WINDOW_UNMAXIMIZE;
+        this.windowed = Icons.WINDOW_MAXIMIZE;
 
-        imageView.setImage(stage.isMaximized() ? maximized : windowed);
+        imageView.setIcon(stage.isMaximized() ? maximized : windowed);
 
         setOnAction(event -> onAction());
         stage.maximizedProperty().addListener(this::onMaximizedChange);
@@ -55,7 +54,7 @@ public class WindowButtonMaximize extends WindowButton {
     }
 
     private void onMaximizedChange(Object obs, boolean old, boolean val) {
-        imageView.setImage(val ? maximized : windowed);
+        imageView.setIcon(val ? maximized : windowed);
 
         if (stage.isMaximized()) {
             getStyleClass().remove("window-button-maximize");

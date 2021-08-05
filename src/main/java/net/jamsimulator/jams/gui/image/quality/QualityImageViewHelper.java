@@ -26,17 +26,15 @@ package net.jamsimulator.jams.gui.image.quality;
 
 import com.sun.javafx.geom.BaseBounds;
 import com.sun.javafx.geom.transform.BaseTransform;
-import com.sun.javafx.scene.ImageViewHelper;
 import com.sun.javafx.scene.NodeHelper;
 import com.sun.javafx.sg.prism.NGNode;
 import com.sun.javafx.util.Utils;
 import javafx.scene.Node;
-import javafx.scene.image.ImageView;
 
 public class QualityImageViewHelper extends NodeHelper {
 
     private static final QualityImageViewHelper theInstance;
-    private static ImageViewHelper.ImageViewAccessor imageViewAccessor;
+    private static ImageViewAccessor imageViewAccessor;
 
     static {
         theInstance = new QualityImageViewHelper();
@@ -47,7 +45,7 @@ public class QualityImageViewHelper extends NodeHelper {
         return theInstance;
     }
 
-    public static void initHelper(ImageView imageView) {
+    public static void initHelper(QualityImageView imageView) {
         setHelper(imageView, getInstance());
     }
 
@@ -73,7 +71,7 @@ public class QualityImageViewHelper extends NodeHelper {
         return imageViewAccessor.doComputeContains(node, localX, localY);
     }
 
-    public static void setImageViewAccessor(final ImageViewHelper.ImageViewAccessor newAccessor) {
+    public static void setImageViewAccessor(final ImageViewAccessor newAccessor) {
         if (imageViewAccessor != null) {
             throw new IllegalStateException();
         }

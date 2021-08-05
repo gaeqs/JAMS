@@ -25,8 +25,8 @@
 package net.jamsimulator.jams.gui.editor.popup;
 
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 
 /**
@@ -49,7 +49,7 @@ public class AutocompletionPopupElement extends HBox {
      * @param name           the name the {@link AutocompletionPopup} is showing.
      * @param autocompletion the replacement to place when the autocompletion is finished.
      */
-    public AutocompletionPopupElement(AutocompletionPopup popup, Object element, int index, String name, String autocompletion, int offset, Image icon) {
+    public AutocompletionPopupElement(AutocompletionPopup popup, Object element, int index, String name, String autocompletion, int offset, IconData icon) {
         getStyleClass().add("autocompletion-popup-element");
         setMinWidth(500);
         this.popup = popup;

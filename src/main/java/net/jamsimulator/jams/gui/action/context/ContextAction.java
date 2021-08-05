@@ -29,6 +29,7 @@ import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -39,7 +40,7 @@ import java.util.Optional;
  */
 public abstract class ContextAction extends Action implements ContextRegionable {
 
-    private final Image icon;
+    private final IconData icon;
     private final ContextRegion contextRegion;
     private final MainMenuRegion mainMenuRegion;
 
@@ -55,7 +56,7 @@ public abstract class ContextAction extends Action implements ContextRegionable 
      * @param icon               the icon this action will show on the context menu or null.
      */
     public ContextAction(String name, String regionTag, String languageNode,
-                         KeyCombination defaultCombination, ContextRegion contextRegion, MainMenuRegion mainMenuRegion, Image icon) {
+                         KeyCombination defaultCombination, ContextRegion contextRegion, MainMenuRegion mainMenuRegion, IconData icon) {
         super(name, regionTag, languageNode, defaultCombination);
         Validate.notNull(contextRegion, "Context region cannot be null!");
         this.contextRegion = contextRegion;
@@ -102,7 +103,7 @@ public abstract class ContextAction extends Action implements ContextRegionable 
         return Optional.ofNullable(mainMenuRegion);
     }
 
-    public Optional<Image> getIcon() {
+    public Optional<IconData> getIcon() {
         return Optional.ofNullable(icon);
     }
 

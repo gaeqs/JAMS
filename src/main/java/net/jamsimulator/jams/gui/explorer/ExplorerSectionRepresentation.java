@@ -27,11 +27,10 @@ package net.jamsimulator.jams.gui.explorer;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.file.FileType;
-import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 
@@ -43,8 +42,8 @@ public class ExplorerSectionRepresentation extends HBox {
 
     protected ExplorerSection section;
 
-    protected ImageView statusIcon;
-    protected ImageView icon;
+    protected QualityImageView statusIcon;
+    protected QualityImageView icon;
     protected Label label;
     protected ExplorerSeparatorRegion separator;
 
@@ -78,8 +77,8 @@ public class ExplorerSectionRepresentation extends HBox {
     }
 
     public double getRepresentationWidth() {
-        double statusWidth = statusIcon.getImage() == null ? 0 : statusIcon.getFitWidth();
-        double iconWidth = icon.getImage() == null ? 0 : icon.getFitWidth();
+        double statusWidth = statusIcon.getIcon() == null ? 0 : statusIcon.getFitWidth();
+        double iconWidth = icon.getIcon() == null ? 0 : icon.getFitWidth();
         double separatorWidth = separator == null ? 0 : separator.getWidth();
 
         return separatorWidth + statusWidth + iconWidth + label.getWidth() + ExplorerBasicElement.SPACING * 3;
@@ -90,7 +89,7 @@ public class ExplorerSectionRepresentation extends HBox {
         return label;
     }
 
-    public ImageView getIcon() {
+    public QualityImageView getIcon() {
         return icon;
     }
 
@@ -98,17 +97,15 @@ public class ExplorerSectionRepresentation extends HBox {
      * Refresh the status icon of the folder.
      */
     public void refreshStatusIcon() {
-        Image icon;
+        IconData icon;
         if (section.isEmpty()) {
             icon = null;
         } else if (section.isExpanded()) {
-            icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_EXPANDED
-            ).orElse(null);
+            icon = Icons.EXPLORER_FOLDER_EXPANDED;
         } else {
-            icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.EXPLORER_FOLDER_COLLAPSED
-            ).orElse(null);
+            icon = Icons.EXPLORER_FOLDER_COLLAPSED;
         }
-        statusIcon.setImage(icon);
+        statusIcon.setIcon(icon);
         if (icon == null) {
             getChildren().remove(statusIcon);
             if (!getChildren().contains(emptyRegion))
@@ -169,12 +166,12 @@ public class ExplorerSectionRepresentation extends HBox {
         icon = new QualityImageView(null, 0, 0);
         label = new Label(section.getName());
 
-        statusIcon.imageProperty().addListener((obs, old, val) -> {
+        statusIcon.iconProperty().addListener((obs, old, val) -> {
             statusIcon.setFitHeight(val == null ? 0 : FileType.IMAGE_SIZE);
             statusIcon.setFitWidth(val == null ? 0 : FileType.IMAGE_SIZE);
         });
 
-        icon.imageProperty().addListener((obs, old, val) -> {
+        icon.iconProperty().addListener((obs, old, val) -> {
             icon.setFitHeight(val == null ? 0 : FileType.IMAGE_SIZE);
             icon.setFitWidth(val == null ? 0 : FileType.IMAGE_SIZE);
         });

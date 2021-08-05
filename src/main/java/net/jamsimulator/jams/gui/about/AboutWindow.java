@@ -54,8 +54,7 @@ public class AboutWindow extends AnchorPane {
         contents.setAlignment(Pos.CENTER);
         contents.setSpacing(5);
 
-        var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO).orElse(null);
-        contents.getChildren().add(new QualityImageView(icon, IMAGE_SIZE, IMAGE_SIZE));
+        contents.getChildren().add(new QualityImageView(Icons.LOGO, IMAGE_SIZE, IMAGE_SIZE));
 
         var label = new LanguageLabel(Messages.ABOUT, "{VERSION}", Jams.getVersion());
         label.getStyleClass().add("about-text");
@@ -84,8 +83,7 @@ public class AboutWindow extends AnchorPane {
         stage.setY(main.getY() + main.getHeight() / 2 - (HEIGHT >> 1));
 
         stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.MAIN_MENU_HELP_ABOUT));
-        JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO)
-                .ifPresent(stage.getIcons()::add);
+        Icons.LOGO.getImage().ifPresent(stage.getIcons()::add);
 
 
         scene.setOnKeyPressed(event -> {

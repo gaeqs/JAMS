@@ -53,8 +53,11 @@ public class BarPane extends SplitPane implements BarSnapshotHolder {
      * @param orientation   the orientation of this pane.
      */
     public BarPane(BarMap map, SplitPane parent, boolean firstInParent, Orientation orientation) {
+        SplitPane.setResizableWithParent(this, false);
+
         this.parent = parent;
         this.firstInParent = firstInParent;
+
         first = new BarPaneNode(map, orientation == Orientation.HORIZONTAL ? parent : null);
         second = new BarPaneNode(map, orientation == Orientation.HORIZONTAL ? parent : this);
         setOrientation(orientation);

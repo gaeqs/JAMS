@@ -36,6 +36,7 @@ import javafx.stage.Stage;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.main.window.WindowButtonClose;
 import net.jamsimulator.jams.gui.main.window.WindowButtonMinimize;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
@@ -46,17 +47,14 @@ import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 public class StartWindowTopBar extends AnchorPane {
 
 
-    private final ImageView view;
+    private final QualityImageView view;
     private final Label title;
     private final HBox viewTitleBox;
     private final HBox windowButtons;
 
     public StartWindowTopBar(Stage stage) {
         getStyleClass().add("start-top-bar");
-        view = new ImageView(JamsApplication.getIconManager()
-                .getOrLoadSafe(Icons.LOGO).orElse(null));
-        view.setFitWidth(20);
-        view.setFitHeight(20);
+        view = new QualityImageView(Icons.LOGO, 20, 20);
         title = new LanguageLabel(Messages.START_TITLE, "{VERSION}", Jams.getVersion());
         title.getStyleClass().add("start-title");
 
@@ -73,7 +71,7 @@ public class StartWindowTopBar extends AnchorPane {
         refresh();
     }
 
-    public ImageView getView() {
+    public QualityImageView getView() {
         return view;
     }
 

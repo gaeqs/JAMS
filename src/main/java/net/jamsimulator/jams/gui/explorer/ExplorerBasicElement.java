@@ -57,7 +57,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
     protected String name;
 
     //REPRESENTATION DATA
-    protected ImageView icon;
+    protected QualityImageView icon;
     protected Label label;
     protected ExplorerSeparatorRegion separator;
 

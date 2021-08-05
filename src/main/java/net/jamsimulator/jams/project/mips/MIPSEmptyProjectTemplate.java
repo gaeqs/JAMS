@@ -28,11 +28,11 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.gui.configuration.ConfigurationRegionDisplay;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.util.PathAndNameEditor;
 import net.jamsimulator.jams.gui.util.propertyeditor.PropertyEditors;
 import net.jamsimulator.jams.language.Messages;
@@ -161,7 +161,7 @@ public class MIPSEmptyProjectTemplate extends ProjectTemplate<MIPSProject> {
 
         public static final String NAME = "mips-empty";
         public static final String LANGUAGE_NODE = Messages.PROJECT_CREATOR_MIPS_EMPTY;
-        public static final Image ICON = MIPSProjectType.ICON;
+        public static final IconData ICON = MIPSProjectType.ICON;
 
         public Builder() {
             super(NAME, LANGUAGE_NODE, ICON);

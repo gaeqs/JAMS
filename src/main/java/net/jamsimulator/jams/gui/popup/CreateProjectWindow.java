@@ -43,7 +43,7 @@ public class CreateProjectWindow extends VBox {
     public static void open() {
         Stage stage = new Stage();
         stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.MAIN_MENU_FILE_CREATE_PROJECT_TITLE));
-        JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO).ifPresent(stage.getIcons()::add);
+        Icons.LOGO.getImage().ifPresent(stage.getIcons()::add);
         var node = new StartWindowSectionNewProject(() -> stage);
 
         stage.initModality(Modality.APPLICATION_MODAL);

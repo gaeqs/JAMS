@@ -26,10 +26,9 @@ package net.jamsimulator.jams.gui.mips.editor;
 
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
-import javafx.scene.image.Image;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.editor.element.*;
 import net.jamsimulator.jams.mips.directive.Directive;
@@ -47,12 +46,12 @@ import java.util.stream.Stream;
 
 public class MIPSAutocompletionPopup extends AutocompletionPopup {
 
-    private static final Image ICON_INSTRUCTION = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_INSTRUCTION).orElse(null);
-    private static final Image ICON_PSEUDO_INSTRUCTION = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_PSEUDO_INSTRUCTION).orElse(null);
-    private static final Image ICON_DIRECTIVE = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_DIRECTIVE).orElse(null);
-    private static final Image ICON_LABEL = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_LABEL).orElse(null);
-    private static final Image ICON_REGISTER = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_REGISTER).orElse(null);
-    private static final Image ICON_MACRO = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_MACRO).orElse(null);
+    private static final IconData ICON_INSTRUCTION = Icons.AUTOCOMPLETION_INSTRUCTION;
+    private static final IconData ICON_PSEUDO_INSTRUCTION = Icons.AUTOCOMPLETION_PSEUDO_INSTRUCTION;
+    private static final IconData ICON_DIRECTIVE = Icons.AUTOCOMPLETION_DIRECTIVE;
+    private static final IconData ICON_LABEL = Icons.AUTOCOMPLETION_LABEL;
+    private static final IconData ICON_REGISTER = Icons.AUTOCOMPLETION_REGISTER;
+    private static final IconData ICON_MACRO = Icons.AUTOCOMPLETION_MACRO;
 
     private final MIPSFileElements mipsElements;
     private MIPSCodeElement element;

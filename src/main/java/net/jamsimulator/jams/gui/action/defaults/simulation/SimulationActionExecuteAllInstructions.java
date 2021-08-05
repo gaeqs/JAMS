@@ -44,8 +44,8 @@ public class SimulationActionExecuteAllInstructions extends ContextAction {
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.DOWN, KeyCombination.ALT_DOWN);
 
     public SimulationActionExecuteAllInstructions() {
-        super(NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_EXECUTE_ALL_INSTRUCTIONS, DEFAULT_COMBINATION, SImulationActionRegions.MIPS, MainMenuRegion.SIMULATION,
-                JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY).orElse(null));
+        super(NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_EXECUTE_ALL_INSTRUCTIONS,
+                DEFAULT_COMBINATION, SimulationActionRegions.MIPS, MainMenuRegion.SIMULATION, Icons.SIMULATION_PLAY);
     }
 
     @Override

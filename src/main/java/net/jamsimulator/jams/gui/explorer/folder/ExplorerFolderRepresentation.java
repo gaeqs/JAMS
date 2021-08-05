@@ -37,7 +37,7 @@ public class ExplorerFolderRepresentation extends ExplorerSectionRepresentation 
      */
     public ExplorerFolderRepresentation(ExplorerSection section, int hierarchyLevel) {
         super(section, hierarchyLevel);
-        icon.setImage(Jams.getFileTypeManager().getFolderType().getIcon());
+        icon.setIcon(Jams.getFileTypeManager().getFolderType().getIcon());
     }
 
 }

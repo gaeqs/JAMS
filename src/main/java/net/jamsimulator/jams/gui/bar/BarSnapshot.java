@@ -31,6 +31,7 @@ import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewMode;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Objects;
@@ -50,7 +51,7 @@ public class BarSnapshot {
 
     private final String name;
     private final Node node;
-    private final Image icon;
+    private final IconData icon;
     private final String languageNode;
 
     private BarPosition position;
@@ -72,7 +73,7 @@ public class BarSnapshot {
      * @param languageNode    the language node for this snapshot or null.
      */
     public BarSnapshot(String name, Node node, BarPosition defaultPosition, BarSnapshotViewMode defaultViewMode, boolean defaultEnable,
-                       Image icon, String languageNode) {
+                       IconData icon, String languageNode) {
         Validate.notNull(name, "Name cannot be null!");
         Validate.notNull(node, "Node cannot be null!");
         Validate.notNull(defaultPosition, "Default position cannot be null!");
@@ -116,11 +117,11 @@ public class BarSnapshot {
     }
 
     /**
-     * The {@link Image icon} to show in the {@link BarButton} if present.
+     * The {@link IconData icon} to show in the {@link BarButton} if present.
      *
-     * @return the {@link Image icon} if present.
+     * @return the {@link IconData icon} if present.
      */
-    public Optional<Image> getIcon() {
+    public Optional<IconData> getIcon() {
         return Optional.ofNullable(icon);
     }
 

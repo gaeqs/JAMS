@@ -32,6 +32,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.utils.StringUtils;
@@ -43,7 +44,7 @@ import java.util.function.IntFunction;
 public class CompiledViewerNumberFactory implements IntFunction<Node> {
 
     private static final Insets DEFAULT_INSETS = new Insets(0.0, 5.0, 0.0, 5.0);
-    private static final Image BREAKPOINT_IMAGE = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_BREAKPOINT).orElse(null);
+    private static final IconData BREAKPOINT_IMAGE = Icons.SIMULATION_BREAKPOINT;
 
 
     private final Val<Integer> nParagraphs;
@@ -76,7 +77,6 @@ public class CompiledViewerNumberFactory implements IntFunction<Node> {
                 viewer.getSimulation().hasBreakpoint(address)).orElse(false);
 
         var image = new QualityImageView(breakpoint ? BREAKPOINT_IMAGE : null, 16, 16);
-        image.setSmooth(true);
         var hBox = new HBox(lineNo, image);
         hBox.getStyleClass().add("left-bar");
 
@@ -91,7 +91,7 @@ public class CompiledViewerNumberFactory implements IntFunction<Node> {
 
             //The table can't refresh the line if it is being used by another color.
             if (viewer.isLineBeingUsed(idx)) {
-                image.setImage(viewer.getSimulation().hasBreakpoint(optional.get()) ? BREAKPOINT_IMAGE : null);
+                image.setIcon(viewer.getSimulation().hasBreakpoint(optional.get()) ? BREAKPOINT_IMAGE : null);
             }
         });
 

@@ -55,8 +55,7 @@ public class LabelTableLabel extends ExplorerSection {
 
         this.label = label;
 
-        representation.getIcon().setImage(JamsApplication.getIconManager()
-                .getOrLoadSafe(Icons.SIMULATION_LABELS).orElse(null));
+        representation.getIcon().setIcon(Icons.SIMULATION_LABELS);
 
         var address = "0x" + StringUtils.addZeros(Integer.toHexString(label.getAddress()), 8);
 

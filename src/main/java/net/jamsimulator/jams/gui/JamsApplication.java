@@ -36,7 +36,6 @@ import javafx.stage.StageStyle;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.general.JAMSApplicationPostInitEvent;
 import net.jamsimulator.jams.gui.font.FontLoader;
-import net.jamsimulator.jams.gui.image.icon.IconManager;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.BorderlessMainScene;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
@@ -107,15 +106,6 @@ public class JamsApplication extends Application {
      */
     public static ProjectListTabPane getProjectsTabPane() {
         return mainAnchorPane.getProjectListTabPane();
-    }
-
-    /**
-     * Returns the {@link IconManager}.
-     *
-     * @return the {@link IconManager}.
-     */
-    public static IconManager getIconManager() {
-        return IconManager.INSTANCE;
     }
 
     /**
@@ -219,7 +209,8 @@ public class JamsApplication extends Application {
         stage.setY(y);
 
 
-        getIconManager().getOrLoadSafe(Icons.LOGO).ifPresent(primaryStage.getIcons()::add);
+        Icons.LOGO.getImage().ifPresent(primaryStage.getIcons()::add);
+
         if (getProjectsTabPane().getProjects().isEmpty()) {
             StartWindow.INSTANCE.open();
             if (!getProjectsTabPane().getProjects().isEmpty()) {

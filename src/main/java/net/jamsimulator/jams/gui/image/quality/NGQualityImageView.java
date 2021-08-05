@@ -24,122 +24,138 @@
 
 package net.jamsimulator.jams.gui.image.quality;
 
-import com.sun.javafx.sg.prism.NGImageView;
-import com.sun.prism.Graphics;
-import com.sun.prism.Image;
-import com.sun.prism.ResourceFactory;
-import com.sun.prism.Texture;
-import com.sun.prism.image.Coords;
-import javafx.scene.image.PixelFormat;
+import com.sun.javafx.geom.RectBounds;
+import com.sun.javafx.sg.prism.NGNode;
+import com.sun.javafx.tk.Toolkit;
+import com.sun.prism.*;
+import net.jamsimulator.jams.gui.image.icon.CachedTexture;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 
-import java.lang.reflect.Field;
 import java.nio.IntBuffer;
 
 
-public class NGQualityImageView extends NGImageView {
+public class NGQualityImageView extends NGNode {
 
-    private final Field imageField, coordsField, xField, yField, wField, hField;
+    protected IconData icon;
+
+    protected float x, y, w, h;
 
     private Texture currentTexture = null;
-    private Image representedImage = null;
+    private CachedTexture currentCachedTexture;
+    private IconData representedIcon = null;
     private int textureWidth = -1, textureHeight = -1;
 
-    public NGQualityImageView() {
-        super();
-        try {
-            imageField = NGImageView.class.getDeclaredField("image");
-            coordsField = NGImageView.class.getDeclaredField("coords");
-            xField = NGImageView.class.getDeclaredField("x");
-            yField = NGImageView.class.getDeclaredField("y");
-            wField = NGImageView.class.getDeclaredField("w");
-            hField = NGImageView.class.getDeclaredField("h");
+    public void setIcon(Object i) {
+        var newIcon = (IconData) i;
+        if (icon == newIcon) return;
 
-            imageField.setAccessible(true);
-            coordsField.setAccessible(true);
-            xField.setAccessible(true);
-            yField.setAccessible(true);
-            wField.setAccessible(true);
-            hField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
+        var needsInvalidate = newIcon == null || icon == null;
+        icon = newIcon;
+        if (needsInvalidate) {
+            geometryChanged();
         }
     }
+
+    public void setX(float x) {
+        if (this.x != x) {
+            this.x = x;
+            geometryChanged();
+        }
+    }
+
+    public void setY(float y) {
+        if (this.y != y) {
+            this.y = y;
+            geometryChanged();
+        }
+    }
+
+    public void setDimensions(float cw, float ch) {
+        w = cw;
+        h = ch;
+    }
+
+
+    @Override
+    protected void doRender(Graphics g) {
+        if (icon != null && icon.hasImage()) {
+            super.doRender(g);
+        }
+    }
+
 
     @Override
     protected void renderContent(Graphics g) {
-        try {
-            var image = (Image) imageField.get(this);
-            var coords = (Coords) coordsField.get(this);
-
-            var x = xField.getFloat(this);
-            var y = yField.getFloat(this);
-            var w = wField.getFloat(this);
-            var h = hField.getFloat(this);
-
-            int imgW = image.getWidth();
-            int imgH = image.getHeight();
-
-            ResourceFactory factory = g.getResourceFactory();
-            int maxSize = factory.getMaximumTextureSize();
-
-            if (imgW <= maxSize && imgH <= maxSize) {
-                Texture texture = getBestTexture(factory, image, imgW, imgH, (int) w, (int) h);
-                texture.lock();
-                if (coords == null) {
-                    g.drawTexture(texture, x, y, x + w, y + h, 0, 0, w, h);
-                } else {
-                    coords.draw(texture, g, x, y);
-                }
-                texture.unlock();
-            } else {
-                super.renderContent(g);
-            }
-        } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
-        }
+        if (w < 1 || h < 1) return;
+        var cached = getBestTexture(g.getResourceFactory(), (int) w, (int) h);
+        if (cached == null) return;
+        currentTexture.lock();
+        g.drawTexture(currentTexture, x, y, x + w, y + h, 0, 0, cached.width(), cached.height());
+        currentTexture.unlock();
     }
 
-    protected Texture getBestTexture(ResourceFactory factory, Image image,
-                                     int imageWidth, int imageHeight, int width, int height) {
-
-        if (width == textureWidth && height == textureHeight && representedImage == image) {
+    protected CachedTexture getBestTexture(ResourceFactory factory, int width, int height) {
+        if (width == textureWidth && height == textureHeight && representedIcon == icon) {
             // Nothing to do!
-            return currentTexture;
+            return currentCachedTexture;
         }
 
-        if ((width != textureWidth || height != textureHeight) && currentTexture != null) {
+        if (currentTexture != null) {
             currentTexture.contentsNotUseful();
             currentTexture.dispose();
             currentTexture = null;
         }
 
-        if (currentTexture == null) {
-            currentTexture = factory.createTexture(com.sun.prism.PixelFormat.INT_ARGB_PRE,
-                    Texture.Usage.DYNAMIC, Texture.WrapMode.CLAMP_TO_EDGE, width, height);
-            currentTexture.contentsUseful();
-            currentTexture.setLinearFiltering(false);
+        var cached = icon.getTexture(width, height).orElse(null);
+        currentCachedTexture = cached;
 
-            textureWidth = width;
-            textureHeight = height;
+        if (cached == null) {
+            currentTexture = factory.createTexture(PixelFormat.INT_ARGB_PRE,
+                    Texture.Usage.DYNAMIC, Texture.WrapMode.CLAMP_TO_EDGE, width, height);
         } else {
-            currentTexture.lock();
+            currentTexture = factory.createTexture(PixelFormat.INT_ARGB_PRE,
+                    Texture.Usage.DYNAMIC, Texture.WrapMode.CLAMP_TO_EDGE, cached.width(), cached.height());
         }
 
-        // Use mipmaps!
+        currentTexture.contentsUseful();
+        currentTexture.setLinearFiltering(false);
+        textureWidth = width;
+        textureHeight = height;
 
-        var buffer = IntBuffer.allocate(imageWidth * imageHeight);
-        image.getPixels(0, 0, imageWidth, imageHeight,
-                PixelFormat.getIntArgbPreInstance(), buffer, imageWidth);
 
-        var result = FastSincResampler.resample(buffer, imageWidth, imageHeight, width, height, 10);
-        currentTexture.update(result, com.sun.prism.PixelFormat.INT_ARGB_PRE,
-                0, 0, 0, 0, width, height, width * 4, false);
+        if (cached == null) return null;
 
-        representedImage = image;
+        currentTexture.update(IntBuffer.wrap(cached.buffer()), PixelFormat.INT_ARGB_PRE,
+                0, 0, 0, 0, cached.width(), cached.height(),
+                cached.width() * 4, false);
 
+        representedIcon = icon;
         currentTexture.unlock();
 
-        // Use resampling
-        return currentTexture;
+        return currentCachedTexture;
+    }
+
+    @Override
+    protected boolean hasOverlappingContents() {
+        return false;
+    }
+
+    @Override
+    protected boolean supportsOpaqueRegions() {
+        return true;
+    }
+
+    @Override
+    protected boolean hasOpaqueRegion() {
+        if (!super.hasOpaqueRegion() || w < 1 || h < 1 || icon == null) return false;
+        var op = icon.getImage();
+        if (op.isEmpty()) return false;
+        var image = (Image) Toolkit.getImageAccessor().getPlatformImage(op.get());
+        return image.isOpaque();
+    }
+
+    @Override
+    protected RectBounds computeOpaqueRegion(RectBounds opaqueRegion) {
+        return (RectBounds) opaqueRegion.deriveWithNewBounds(x, y, 0, x + w, y + h, 0);
     }
 }

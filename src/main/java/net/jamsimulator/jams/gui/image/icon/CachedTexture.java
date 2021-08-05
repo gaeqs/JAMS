@@ -22,37 +22,10 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.main.window;
+package net.jamsimulator.jams.gui.image.icon;
 
-import javafx.application.Platform;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.stage.Stage;
-import net.jamsimulator.jams.gui.image.icon.IconData;
-import net.jamsimulator.jams.gui.image.quality.QualityImageView;
+import java.nio.IntBuffer;
 
-public class WindowButton extends Button {
+public record CachedTexture(int width, int height, int[] buffer) {
 
-    public static final float FIT = 12.0f;
-    public static final String STYLE_CLASS = "window-button";
-
-    protected final Stage stage;
-    protected final QualityImageView imageView;
-
-    public WindowButton(Stage stage, IconData display) {
-        super("", new QualityImageView(display, FIT, FIT));
-        getStyleClass().add(STYLE_CLASS);
-        setAlignment(Pos.CENTER);
-        this.stage = stage;
-        this.imageView = (QualityImageView) getGraphic();
-
-        imageView.iconProperty().addListener((obs, old, val) -> Platform.runLater(() -> {
-            imageView.setFitWidth(FIT);
-            imageView.setFitHeight(FIT);
-        }));
-    }
-
-    public Stage getStage() {
-        return stage;
-    }
 }

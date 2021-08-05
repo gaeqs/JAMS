@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.project;
 
 import javafx.scene.image.Image;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Optional;
@@ -40,7 +41,7 @@ public abstract class ProjectTemplateBuilder<T extends Project> {
 
     protected final String name;
     protected final String languageNode;
-    protected final Image icon;
+    protected final IconData icon;
 
     /**
      * Creates the new template builder.
@@ -49,7 +50,7 @@ public abstract class ProjectTemplateBuilder<T extends Project> {
      * @param languageNode the language node or null.
      * @param icon         the icon or null.
      */
-    public ProjectTemplateBuilder(String name, String languageNode, Image icon) {
+    public ProjectTemplateBuilder(String name, String languageNode, IconData icon) {
         Validate.notNull(name, "Name cannot be null!");
         this.name = name;
         this.languageNode = languageNode;
@@ -79,7 +80,7 @@ public abstract class ProjectTemplateBuilder<T extends Project> {
      *
      * @return the {@link Image icon} if present.
      */
-    public Optional<Image> getIcon() {
+    public Optional<IconData> getIcon() {
         return Optional.ofNullable(icon);
     }
 

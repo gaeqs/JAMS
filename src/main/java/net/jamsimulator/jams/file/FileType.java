@@ -24,12 +24,9 @@
 
 package net.jamsimulator.jams.file;
 
-import javafx.scene.image.Image;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditorTab;
 import net.jamsimulator.jams.gui.image.icon.IconData;
-import net.jamsimulator.jams.gui.image.icon.IconManager;
 import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -52,7 +49,6 @@ public abstract class FileType implements Labeled {
     private final String name;
     private final Set<String> extensions;
     private final IconData iconData;
-    private Image icon;
 
     /**
      * Creates a file type.
@@ -60,7 +56,6 @@ public abstract class FileType implements Labeled {
      * @param name       the name.
      * @param iconData   the name of the icon.
      * @param extensions the extensions.
-     * @see IconManager
      */
     public FileType(String name, IconData iconData, String... extensions) {
         Validate.notNull(name, "Name cannot be null!");
@@ -68,10 +63,7 @@ public abstract class FileType implements Labeled {
         this.name = name;
         this.extensions = new HashSet<>();
         this.extensions.addAll(Arrays.asList(extensions));
-
         this.iconData = iconData;
-        //Lazy initialization.
-        this.icon = null;
     }
 
     @Override
@@ -114,12 +106,8 @@ public abstract class FileType implements Labeled {
         return extensions.stream().anyMatch(target -> target.equalsIgnoreCase(extension));
     }
 
-    public Image getIcon() {
-        if (icon == null) {
-            IconManager manager = JamsApplication.getIconManager();
-            icon = manager.getOrLoadSafe(iconData).orElse(null);
-        }
-        return icon;
+    public IconData getIcon() {
+        return iconData;
     }
 
     /**

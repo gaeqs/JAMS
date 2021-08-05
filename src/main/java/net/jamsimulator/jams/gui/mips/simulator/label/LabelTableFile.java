@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.mips.simulator.label;
 
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
@@ -44,8 +43,6 @@ public class LabelTableFile extends ExplorerSection {
      */
     public LabelTableFile(Explorer explorer, ExplorerSection parent, String file, int hierarchyLevel) {
         super(explorer, parent, file, hierarchyLevel, Comparator.comparing(ExplorerElement::getVisibleName));
-
-        representation.getIcon().setImage(JamsApplication.getIconManager()
-                .getOrLoadSafe(Icons.FILE_ASSEMBLY).orElse(null));
+        representation.getIcon().setIcon(Icons.FILE_ASSEMBLY);
     }
 }

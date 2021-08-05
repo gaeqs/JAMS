@@ -25,9 +25,8 @@
 package net.jamsimulator.jams.plugin;
 
 import javafx.application.Platform;
-import javafx.scene.image.Image;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.image.icon.IconManager;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.manager.Labeled;
 
 import java.io.InputStream;
@@ -65,7 +64,7 @@ public class Plugin implements Labeled {
     private PluginHeader header;
     private boolean enabled;
     private Set<Plugin> dependencies, enabledSoftDepenedencies;
-    private Image favicon;
+    private IconData favicon;
 
     /**
      * Runs the given code in the JavaFX application thread.
@@ -157,7 +156,7 @@ public class Plugin implements Labeled {
         return Collections.unmodifiableSet(enabledSoftDepenedencies);
     }
 
-    public Optional<Image> getFavicon() {
+    public Optional<IconData> getFavicon() {
         return Optional.ofNullable(favicon);
     }
 
@@ -200,7 +199,8 @@ public class Plugin implements Labeled {
             if (header.favicon() != null) {
                 var in = getClass().getResourceAsStream(header.favicon());
                 if (in != null) {
-                    favicon = new Image(in, IconManager.SIZE, IconManager.SIZE, false, false);
+                    favicon = new IconData("plugin_favicon_" + getName(), in, this);
+                    in.close();
                 }
             }
         } catch (Exception ex) {

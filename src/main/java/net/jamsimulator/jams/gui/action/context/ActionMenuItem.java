@@ -33,6 +33,7 @@ import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.Action;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class ActionMenuItem extends MenuItem {
      * @param node   the {@link Node} of the context.
      * @param icon   the shown {@link Image icon} or null.
      */
-    public ActionMenuItem(ContextAction action, Object node, Image icon, boolean fromMainMenu) {
+    public ActionMenuItem(ContextAction action, Object node, IconData icon, boolean fromMainMenu) {
         super(Jams.getLanguageManager().getSelected().getOrDefault(action.getLanguageNode().orElse(null)));
         this.action = action;
         setGraphic(new QualityImageView(icon, FileType.IMAGE_SIZE, FileType.IMAGE_SIZE));

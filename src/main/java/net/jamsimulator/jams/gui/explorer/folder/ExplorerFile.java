@@ -59,7 +59,7 @@ public class ExplorerFile extends ExplorerBasicElement {
         this.file = file;
 
         type = Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType());
-        icon.setImage(type.getIcon());
+        icon.setIcon(type.getIcon());
 
         Jams.getFileTypeManager().registerListeners(this, true);
     }
@@ -168,7 +168,7 @@ public class ExplorerFile extends ExplorerBasicElement {
 
         if (event.getFileType().supportsExtension(name.substring(lastIndex + 1))) {
             type = event.getFileType();
-            icon.setImage(type.getIcon());
+            icon.setIcon(type.getIcon());
         }
     }
 
@@ -176,6 +176,6 @@ public class ExplorerFile extends ExplorerBasicElement {
     private void onFileTypeUnregister(FileTypeUnregisterEvent.After event) {
         if (type != event.getFileType()) return;
         type = Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType());
-        icon.setImage(type.getIcon());
+        icon.setIcon(type.getIcon());
     }
 }

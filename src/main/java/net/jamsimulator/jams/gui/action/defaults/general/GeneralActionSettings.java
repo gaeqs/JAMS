@@ -27,7 +27,6 @@ package net.jamsimulator.jams.gui.action.defaults.general;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
@@ -44,8 +43,8 @@ public class GeneralActionSettings extends ContextAction {
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
 
     public GeneralActionSettings() {
-        super(NAME, RegionTags.GENERAL, Messages.MAIN_MENU_FILE_SETTINGS, DEFAULT_COMBINATION, GeneralActionRegions.SETTINGS, MainMenuRegion.FILE,
-                JamsApplication.getIconManager().getOrLoadSafe(Icons.MENU_SETTINGS).orElse(null));
+        super(NAME, RegionTags.GENERAL, Messages.MAIN_MENU_FILE_SETTINGS, DEFAULT_COMBINATION,
+                GeneralActionRegions.SETTINGS, MainMenuRegion.FILE, Icons.MENU_SETTINGS);
     }
 
     @Override

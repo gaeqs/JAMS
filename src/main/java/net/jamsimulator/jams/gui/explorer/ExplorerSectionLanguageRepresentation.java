@@ -91,12 +91,12 @@ public class ExplorerSectionLanguageRepresentation extends ExplorerSectionRepres
         icon = new QualityImageView(null, 0, 0);
 
 
-        statusIcon.imageProperty().addListener((obs, old, val) -> {
+        statusIcon.iconProperty().addListener((obs, old, val) -> {
             statusIcon.setFitHeight(val == null ? 0 : FileType.IMAGE_SIZE);
             statusIcon.setFitWidth(val == null ? 0 : FileType.IMAGE_SIZE);
         });
 
-        icon.imageProperty().addListener((obs, old, val) -> {
+        icon.iconProperty().addListener((obs, old, val) -> {
             icon.setFitHeight(val == null ? 0 : FileType.IMAGE_SIZE);
             icon.setFitWidth(val == null ? 0 : FileType.IMAGE_SIZE);
         });
