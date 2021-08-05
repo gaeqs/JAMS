@@ -33,7 +33,7 @@ import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.Action;
-import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class ActionMenuItem extends MenuItem {
     public ActionMenuItem(ContextAction action, Object node, Image icon, boolean fromMainMenu) {
         super(Jams.getLanguageManager().getSelected().getOrDefault(action.getLanguageNode().orElse(null)));
         this.action = action;
-        setGraphic(new NearestImageView(icon, FileType.IMAGE_SIZE, FileType.IMAGE_SIZE));
+        setGraphic(new QualityImageView(icon, FileType.IMAGE_SIZE, FileType.IMAGE_SIZE));
         if (fromMainMenu) {
             setOnAction(target -> action.runFromMenu());
         } else {

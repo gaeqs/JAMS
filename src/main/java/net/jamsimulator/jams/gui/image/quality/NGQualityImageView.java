@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.image;
+package net.jamsimulator.jams.gui.image.quality;
 
 import com.sun.javafx.sg.prism.NGImageView;
 import com.sun.prism.Graphics;
@@ -30,16 +30,21 @@ import com.sun.prism.Image;
 import com.sun.prism.ResourceFactory;
 import com.sun.prism.Texture;
 import com.sun.prism.image.Coords;
+import javafx.scene.image.PixelFormat;
 
 import java.lang.reflect.Field;
+import java.nio.IntBuffer;
 
 
-public class NGNearestImageView extends NGImageView {
+public class NGQualityImageView extends NGImageView {
 
     private final Field imageField, coordsField, xField, yField, wField, hField;
-    private boolean logging = false;
 
-    public NGNearestImageView() {
+    private Texture currentTexture = null;
+    private Image representedImage = null;
+    private int textureWidth = -1, textureHeight = -1;
+
+    public NGQualityImageView() {
         super();
         try {
             imageField = NGImageView.class.getDeclaredField("image");
@@ -60,10 +65,6 @@ public class NGNearestImageView extends NGImageView {
         }
     }
 
-    public void setLogging(boolean logging) {
-        this.logging = logging;
-    }
-
     @Override
     protected void renderContent(Graphics g) {
         try {
@@ -82,9 +83,10 @@ public class NGNearestImageView extends NGImageView {
             int maxSize = factory.getMaximumTextureSize();
 
             if (imgW <= maxSize && imgH <= maxSize) {
-                Texture texture = getBestTexture(factory, image, imgW, imgH, w, h);
+                Texture texture = getBestTexture(factory, image, imgW, imgH, (int) w, (int) h);
+                texture.lock();
                 if (coords == null) {
-                    g.drawTexture(texture, x, y, x + w, y + h, 0, 0, imgW, imgH);
+                    g.drawTexture(texture, x, y, x + w, y + h, 0, 0, w, h);
                 } else {
                     coords.draw(texture, g, x, y);
                 }
@@ -98,17 +100,46 @@ public class NGNearestImageView extends NGImageView {
     }
 
     protected Texture getBestTexture(ResourceFactory factory, Image image,
-                                     float imageWidth, float imageHeight, float width, float height) {
-        Texture tex;
-        if (width >= imageWidth || height > imageHeight) {
-            // Use normal mode
-            tex =  factory.getCachedTexture(image, Texture.WrapMode.CLAMP_TO_EDGE);
-            tex.setLinearFiltering(false);
-        } else {
-            // Use mipmaps!
-            tex = factory.getCachedTexture(image, Texture.WrapMode.REPEAT, true);
-            tex.setLinearFiltering(true);
+                                     int imageWidth, int imageHeight, int width, int height) {
+
+        if (width == textureWidth && height == textureHeight && representedImage == image) {
+            // Nothing to do!
+            return currentTexture;
         }
-        return tex;
+
+        if ((width != textureWidth || height != textureHeight) && currentTexture != null) {
+            currentTexture.contentsNotUseful();
+            currentTexture.dispose();
+            currentTexture = null;
+        }
+
+        if (currentTexture == null) {
+            currentTexture = factory.createTexture(com.sun.prism.PixelFormat.INT_ARGB_PRE,
+                    Texture.Usage.DYNAMIC, Texture.WrapMode.CLAMP_TO_EDGE, width, height);
+            currentTexture.contentsUseful();
+            currentTexture.setLinearFiltering(false);
+
+            textureWidth = width;
+            textureHeight = height;
+        } else {
+            currentTexture.lock();
+        }
+
+        // Use mipmaps!
+
+        var buffer = IntBuffer.allocate(imageWidth * imageHeight);
+        image.getPixels(0, 0, imageWidth, imageHeight,
+                PixelFormat.getIntArgbPreInstance(), buffer, imageWidth);
+
+        var result = FastSincResampler.resample(buffer, imageWidth, imageHeight, width, height, 10);
+        currentTexture.update(result, com.sun.prism.PixelFormat.INT_ARGB_PRE,
+                0, 0, 0, 0, width, height, width * 4, false);
+
+        representedImage = image;
+
+        currentTexture.unlock();
+
+        // Use resampling
+        return currentTexture;
     }
 }

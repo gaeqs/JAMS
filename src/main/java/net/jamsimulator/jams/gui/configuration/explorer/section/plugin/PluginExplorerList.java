@@ -31,8 +31,8 @@ import javafx.stage.FileChooser;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
 import net.jamsimulator.jams.plugin.event.PluginRegisterEvent;
@@ -70,7 +70,7 @@ public class PluginExplorerList extends VBox {
     }
 
     private void loadInstallButton() {
-        var view = new NearestImageView(JamsApplication.getIconManager()
+        var view = new QualityImageView(JamsApplication.getIconManager()
                 .getOrLoadSafe(Icons.CONTROL_ADD).orElse(null), 16, 16);
 
         var button = new Button("", view);

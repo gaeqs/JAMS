@@ -33,7 +33,7 @@ import javafx.stage.DirectoryChooser;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.language.Messages;
@@ -135,7 +135,7 @@ public class StartWindowSectionProjects extends AnchorPane implements StartWindo
 
             var type = Jams.getProjectTypeManager().getByProjectfolder(new File(snapshot.path()));
             if (type.isPresent() && type.get().getIcon().isPresent()) {
-                var image = new NearestImageView(type.get().getIcon().get(), 40, 40);
+                var image = new QualityImageView(type.get().getIcon().get(), 40, 40);
                 getChildren().addAll(image, new VBox(title, path));
             } else {
                 getChildren().addAll(title, new VBox(title, path));

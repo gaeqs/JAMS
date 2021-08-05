@@ -32,8 +32,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.language.Messages;
@@ -55,7 +55,7 @@ public class AboutWindow extends AnchorPane {
         contents.setSpacing(5);
 
         var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.LOGO).orElse(null);
-        contents.getChildren().add(new NearestImageView(icon, IMAGE_SIZE, IMAGE_SIZE));
+        contents.getChildren().add(new QualityImageView(icon, IMAGE_SIZE, IMAGE_SIZE));
 
         var label = new LanguageLabel(Messages.ABOUT, "{VERSION}", Jams.getVersion());
         label.getStyleClass().add("about-text");

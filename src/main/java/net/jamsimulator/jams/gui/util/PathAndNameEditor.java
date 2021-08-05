@@ -30,7 +30,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.utils.FileUtils;
 
@@ -52,7 +52,7 @@ public class PathAndNameEditor extends StyledNodeList {
         addEntry(Messages.MAIN_MENU_FILE_CREATE_PROJECT_NAME, nameField);
 
         pathField = new TextField(defPath.getAbsolutePath() + File.separator);
-        var selectParent = new Button("", new NearestImageView(Jams.getFileTypeManager().getFolderType().getIcon(), 16, 16));
+        var selectParent = new Button("", new QualityImageView(Jams.getFileTypeManager().getFolderType().getIcon(), 16, 16));
         addEntry(Messages.MAIN_MENU_FILE_CREATE_PROJECT_PATH, pathField, selectParent);
 
         selectParent.setOnAction(event -> {

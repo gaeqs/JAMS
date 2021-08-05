@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.image;
+package net.jamsimulator.jams.gui.image.nearest;
 
 import com.sun.javafx.geom.BaseBounds;
 import com.sun.javafx.geom.transform.BaseTransform;

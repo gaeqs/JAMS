@@ -30,8 +30,8 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.util.FixedButton;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
@@ -70,16 +70,16 @@ public class ExecutionButtons {
         Image undoOneIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_UNDO_ONE).orElse(null);
         Image resetIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_RESET).orElse(null);
 
-        runOrStop = new FixedButton("", new NearestImageView(null, 16, 16), 28, 28);
+        runOrStop = new FixedButton("", new QualityImageView(null, 16, 16), 28, 28);
         changeToRunAll(simulation);
 
-        runOne = new FixedButton("", new NearestImageView(runOneIcon, 16, 16), 28, 28);
+        runOne = new FixedButton("", new QualityImageView(runOneIcon, 16, 16), 28, 28);
         runOne.getStyleClass().add(STYLE_CLASS);
         runOne.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_EXECUTE_ONE, LanguageTooltip.DEFAULT_DELAY));
         runOne.setOnAction(event -> simulation.executeOneStep());
 
 
-        Button undo = new FixedButton("", new NearestImageView(undoOneIcon, 16, 16), 28, 28);
+        Button undo = new FixedButton("", new QualityImageView(undoOneIcon, 16, 16), 28, 28);
         undo.getStyleClass().add(STYLE_CLASS);
         undo.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_UNDO, LanguageTooltip.DEFAULT_DELAY));
         undo.setOnAction(event -> {
@@ -91,7 +91,7 @@ public class ExecutionButtons {
         });
         undo.setDisable(!simulation.isUndoEnabled());
 
-        Button reset = new FixedButton("", new NearestImageView(resetIcon, 16, 16), 28, 28);
+        Button reset = new FixedButton("", new QualityImageView(resetIcon, 16, 16), 28, 28);
         reset.getStyleClass().add(STYLE_CLASS);
 
         reset.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_RESET, LanguageTooltip.DEFAULT_DELAY));
@@ -131,7 +131,7 @@ public class ExecutionButtons {
         Platform.runLater(() -> {
             Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_PLAY
             ).orElse(null);
-            ((NearestImageView) runOrStop.getGraphic()).setImage(runAllIcon);
+            ((QualityImageView) runOrStop.getGraphic()).setImage(runAllIcon);
             runOrStop.getStyleClass().add(STYLE_CLASS);
             runOrStop.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_EXECUTE_ALL, LanguageTooltip.DEFAULT_DELAY));
             runOrStop.setOnAction(event -> simulation.executeAll());
@@ -143,7 +143,7 @@ public class ExecutionButtons {
             Image runAllIcon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIMULATION_STOP
             ).orElse(null);
 
-            ((NearestImageView) runOrStop.getGraphic()).setImage(runAllIcon);
+            ((QualityImageView) runOrStop.getGraphic()).setImage(runAllIcon);
             runOrStop.getStyleClass().add(STYLE_CLASS);
             runOrStop.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_STOP, LanguageTooltip.DEFAULT_DELAY));
             runOrStop.setOnAction(event -> simulation.stop());

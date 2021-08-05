@@ -29,7 +29,7 @@ import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditorTab;
-import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.nearest.NearestImageView;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 

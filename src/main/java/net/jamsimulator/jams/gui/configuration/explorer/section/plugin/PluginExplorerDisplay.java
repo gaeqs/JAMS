@@ -34,8 +34,8 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.popup.ConfirmationWindow;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.StringStyler;
@@ -78,7 +78,7 @@ public class PluginExplorerDisplay extends AnchorPane {
         hbox.setSpacing(5);
 
         plugin.getFavicon().ifPresent(favicon ->
-                hbox.getChildren().add(new NearestImageView(favicon, 60, 60)));
+                hbox.getChildren().add(new QualityImageView(favicon, 60, 60)));
 
         var pane = new GridPane();
         pane.setAlignment(Pos.CENTER_LEFT);
@@ -124,7 +124,7 @@ public class PluginExplorerDisplay extends AnchorPane {
     }
 
     private void loadDeleteButton(Plugin plugin) {
-        var view = new NearestImageView(JamsApplication.getIconManager()
+        var view = new QualityImageView(JamsApplication.getIconManager()
                 .getOrLoadSafe(Icons.CONTROL_REMOVE).orElse(null), 16, 16);
 
         var button = new Button("", view);

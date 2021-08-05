@@ -40,7 +40,7 @@ import net.jamsimulator.jams.gui.action.event.ActionUnbindEvent;
 import net.jamsimulator.jams.gui.explorer.ExplorerBasicElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.gui.explorer.ExplorerSeparatorRegion;
-import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
 import java.util.ArrayList;
@@ -164,7 +164,7 @@ public class ActionsExplorerAction extends ExplorerBasicElement {
 
     @Override
     protected void loadElements() {
-        icon = new NearestImageView();
+        icon = new QualityImageView();
         label = new LanguageLabel(null);
 
         separator = new ExplorerSeparatorRegion(false, hierarchyLevel);

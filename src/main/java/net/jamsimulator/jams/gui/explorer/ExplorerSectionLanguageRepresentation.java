@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.explorer;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import net.jamsimulator.jams.file.FileType;
-import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
 /**
@@ -87,8 +87,8 @@ public class ExplorerSectionLanguageRepresentation extends ExplorerSectionRepres
 
     @Override
     protected void loadElements() {
-        statusIcon = new NearestImageView(null, 0, 0);
-        icon = new NearestImageView(null, 0, 0);
+        statusIcon = new QualityImageView(null, 0, 0);
+        icon = new QualityImageView(null, 0, 0);
 
 
         statusIcon.imageProperty().addListener((obs, old, val) -> {

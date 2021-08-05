@@ -36,7 +36,7 @@ import javafx.stage.Stage;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
@@ -117,7 +117,7 @@ public class StartWindowSectionNewProject extends SplitPane implements StartWind
         var button = new HBox();
         button.setSpacing(5);
 
-        creator.getIcon().ifPresent(icon -> button.getChildren().add(new NearestImageView(icon, 20, 20)));
+        creator.getIcon().ifPresent(icon -> button.getChildren().add(new QualityImageView(icon, 20, 20)));
         button.getChildren().add(creator.getLanguageNode()
                 .map(node -> (Label) new LanguageLabel(node))
                 .orElseGet(() -> new Label(creator.getName())));

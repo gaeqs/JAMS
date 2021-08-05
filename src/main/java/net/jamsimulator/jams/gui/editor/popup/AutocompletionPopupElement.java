@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.editor.popup;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
-import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 
 /**
  * Represents an element inside a {@link AutocompletionPopup}.
@@ -59,7 +59,7 @@ public class AutocompletionPopupElement extends HBox {
         this.autocompletion = autocompletion;
         this.offset = offset;
 
-        getChildren().addAll(new NearestImageView(icon, 16, 16), new Label(name));
+        getChildren().addAll(new QualityImageView(icon, 16, 16), new Label(name));
 
         setOnMouseClicked(event -> {
             this.popup.select(this.index, false);

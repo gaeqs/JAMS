@@ -30,7 +30,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
-import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 
 public class WindowButton extends Button {
 
@@ -41,7 +41,7 @@ public class WindowButton extends Button {
     protected final ImageView imageView;
 
     public WindowButton(Stage stage, Image display) {
-        super("", new NearestImageView(display, FIT, FIT));
+        super("", new QualityImageView(display, FIT, FIT));
         getStyleClass().add(STYLE_CLASS);
         setAlignment(Pos.CENTER);
         this.stage = stage;

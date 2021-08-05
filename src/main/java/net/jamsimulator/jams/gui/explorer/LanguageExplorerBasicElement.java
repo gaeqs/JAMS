@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.explorer;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import net.jamsimulator.jams.file.FileType;
-import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
 /**
@@ -72,7 +72,7 @@ public class LanguageExplorerBasicElement extends ExplorerBasicElement {
 
     @Override
     protected void loadElements() {
-        icon = new NearestImageView(null, FileType.IMAGE_SIZE, FileType.IMAGE_SIZE);
+        icon = new QualityImageView(null, FileType.IMAGE_SIZE, FileType.IMAGE_SIZE);
         label = new LanguageLabel(null);
 
         separator = new ExplorerSeparatorRegion(false, hierarchyLevel);

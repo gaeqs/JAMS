@@ -31,8 +31,8 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
-import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.value.ValueEditors;
 import net.jamsimulator.jams.language.Messages;
@@ -75,7 +75,7 @@ public class MIPSConfigurationSyscallControls extends AnchorPane {
         var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.CONTROL_ADD
         ).orElse(null);
 
-        var button = new Button(null, new NearestImageView(icon, 16, 16));
+        var button = new Button(null, new QualityImageView(icon, 16, 16));
         button.setTooltip(new LanguageTooltip(Messages.GENERAL_ADD));
         button.getStyleClass().add("bold-button");
 
@@ -96,7 +96,7 @@ public class MIPSConfigurationSyscallControls extends AnchorPane {
         var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.CONTROL_REMOVE
         ).orElse(null);
 
-        var button = new Button(null, new NearestImageView(icon, 16, 16));
+        var button = new Button(null, new QualityImageView(icon, 16, 16));
         button.setTooltip(new LanguageTooltip(Messages.GENERAL_REMOVE));
         button.getStyleClass().add("bold-button");
 
@@ -132,7 +132,7 @@ public class MIPSConfigurationSyscallControls extends AnchorPane {
         var icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.CONTROL_SORT
         ).orElse(null);
 
-        var button = new Button(null, new NearestImageView(icon, 16, 16));
+        var button = new Button(null, new QualityImageView(icon, 16, 16));
         button.setTooltip(new LanguageTooltip(Messages.GENERAL_SORT));
         button.getStyleClass().add("bold-button");
 

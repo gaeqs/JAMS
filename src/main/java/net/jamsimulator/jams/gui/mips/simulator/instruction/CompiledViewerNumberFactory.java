@@ -32,8 +32,8 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.reactfx.collection.LiveList;
 import org.reactfx.value.Val;
@@ -75,7 +75,7 @@ public class CompiledViewerNumberFactory implements IntFunction<Node> {
         boolean breakpoint = viewer.assembledLines.get(idx).getAddress().map(address ->
                 viewer.getSimulation().hasBreakpoint(address)).orElse(false);
 
-        var image = new NearestImageView(breakpoint ? BREAKPOINT_IMAGE : null, 16, 16);
+        var image = new QualityImageView(breakpoint ? BREAKPOINT_IMAGE : null, 16, 16);
         image.setSmooth(true);
         var hBox = new HBox(lineNo, image);
         hBox.getStyleClass().add("left-bar");

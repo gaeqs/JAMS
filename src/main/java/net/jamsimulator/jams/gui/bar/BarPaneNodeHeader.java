@@ -31,8 +31,8 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
@@ -70,7 +70,7 @@ public class BarPaneNodeHeader extends AnchorPane {
         setCursor(CURSOR);
 
         Image closeImage = JamsApplication.getIconManager().getOrLoadSafe(Icons.BAR_CLOSE).orElse(null);
-        closeButton = new Button("", new NearestImageView(closeImage, 16, 16));
+        closeButton = new Button("", new QualityImageView(closeImage, 16, 16));
         closeButton.getStyleClass().add("bar-pane-node-header-button");
         closeButton.setOnAction(event -> barMap.searchButton(snapshot.getName()).ifPresent(BarButton::hide));
         closeButton.setCursor(Cursor.HAND);

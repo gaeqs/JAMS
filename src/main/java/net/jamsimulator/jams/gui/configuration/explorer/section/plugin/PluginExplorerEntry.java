@@ -28,7 +28,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.plugin.Plugin;
 
 public class PluginExplorerEntry extends HBox {
@@ -61,7 +61,7 @@ public class PluginExplorerEntry extends HBox {
 
     private void loadFavicon() {
         plugin.getFavicon().ifPresent(favicon ->
-                getChildren().add(new NearestImageView(favicon, 60, 60)));
+                getChildren().add(new QualityImageView(favicon, 60, 60)));
     }
 
     private void loadCompactInfo() {

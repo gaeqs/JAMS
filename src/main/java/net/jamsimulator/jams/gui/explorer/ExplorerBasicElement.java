@@ -40,7 +40,7 @@ import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
-import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -254,7 +254,7 @@ public class ExplorerBasicElement extends HBox implements ExplorerElement {
     }
 
     protected void loadElements() {
-        icon = new NearestImageView(null, FileType.IMAGE_SIZE, FileType.IMAGE_SIZE);
+        icon = new QualityImageView(null, FileType.IMAGE_SIZE, FileType.IMAGE_SIZE);
         label = new Label(name);
 
         separator = new ExplorerSeparatorRegion(false, hierarchyLevel);

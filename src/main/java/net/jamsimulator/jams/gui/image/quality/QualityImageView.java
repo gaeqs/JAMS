@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.image;
+package net.jamsimulator.jams.gui.image.quality;
 
 import com.sun.javafx.geom.BaseBounds;
 import com.sun.javafx.geom.transform.BaseTransform;
@@ -34,23 +34,17 @@ import javafx.scene.image.ImageView;
 
 import java.lang.reflect.InvocationTargetException;
 
-/**
- * Represents an {@link ImageView} that doesn't smooth the image inside.
- */
-public class NearestImageView extends ImageView {
+public class QualityImageView extends ImageView {
 
     static {
-        NearestImageViewHelper.setImageViewAccessor(new ImageViewHelper.ImageViewAccessor() {
+        QualityImageViewHelper.setImageViewAccessor(new ImageViewHelper.ImageViewAccessor() {
             @Override
             public NGNode doCreatePeer(Node node) {
-                return new NGNearestImageView();
+                return new NGQualityImageView();
             }
 
             @Override
             public void doUpdatePeer(Node node) {
-                NGNearestImageView ng = NearestImageViewHelper.getPeer(node);
-                ng.setLogging(((NearestImageView)node).logging);
-
                 try {
                     var method = ImageView.class.getDeclaredMethod("doUpdatePeer");
                     method.setAccessible(true);
@@ -89,15 +83,13 @@ public class NearestImageView extends ImageView {
     }
 
     {
-        NearestImageViewHelper.initHelper(this);
+        QualityImageViewHelper.initHelper(this);
     }
-
-    private boolean logging = false;
 
     /**
      * Creates the nearest image view.
      */
-    public NearestImageView() {
+    public QualityImageView() {
     }
 
     /**
@@ -105,7 +97,7 @@ public class NearestImageView extends ImageView {
      *
      * @param url the image's URL.
      */
-    public NearestImageView(String url) {
+    public QualityImageView(String url) {
         super(url);
     }
 
@@ -114,7 +106,7 @@ public class NearestImageView extends ImageView {
      *
      * @param image the image.
      */
-    public NearestImageView(Image image) {
+    public QualityImageView(Image image) {
         super(image);
     }
 
@@ -123,14 +115,9 @@ public class NearestImageView extends ImageView {
      *
      * @param image the image.
      */
-    public NearestImageView(Image image, double width, double height) {
+    public QualityImageView(Image image, double width, double height) {
         super(image);
         setFitWidth(width);
         setFitHeight(height);
     }
-
-    public void setLogging(boolean logging) {
-        this.logging = logging;
-    }
-
 }

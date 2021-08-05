@@ -33,7 +33,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.bar.mode.ViewModeContextMenu;
-import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.utils.Validate;
@@ -78,7 +78,7 @@ public class BarButton extends ToggleButton {
         var group = new Group(label);
 
         if (snapshot.getIcon().isPresent()) {
-            var view = new NearestImageView(snapshot.getIcon().get(), IMAGE_SIZE, IMAGE_SIZE);
+            var view = new QualityImageView(snapshot.getIcon().get(), IMAGE_SIZE, IMAGE_SIZE);
             var pane = loadGroupPane();
 
             if (bar.getPosition() == BarPosition.RIGHT_TOP || bar.getPosition() == BarPosition.RIGHT_BOTTOM) {

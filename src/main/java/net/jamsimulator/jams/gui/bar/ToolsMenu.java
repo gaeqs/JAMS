@@ -29,7 +29,7 @@ import javafx.scene.control.MenuItem;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
-import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.language.wrapper.LanguageCheckMenuItem;
 import net.jamsimulator.jams.language.wrapper.LanguageMenu;
@@ -68,7 +68,7 @@ public class ToolsMenu extends LanguageMenu {
                     .orElseGet(() -> new CheckMenuItem(snapshot.getName()));
             item.setSelected(snapshot.isEnabled());
 
-            snapshot.getIcon().ifPresent(target -> item.setGraphic(new NearestImageView(target, ICON_SIZE, ICON_SIZE)));
+            snapshot.getIcon().ifPresent(target -> item.setGraphic(new QualityImageView(target, ICON_SIZE, ICON_SIZE)));
 
             getItems().add(item);
 

@@ -46,12 +46,11 @@ import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
-import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.StandardWatchEventKinds;
 import java.util.HashSet;
 import java.util.Objects;
@@ -79,7 +78,7 @@ public class FileEditorTab extends Tab implements ActionRegion {
         FileType type = Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType());
         this.display = type.createDisplayTab(this);
 
-        ImageView view = new NearestImageView(type.getIcon(), FileType.IMAGE_SIZE, FileType.IMAGE_SIZE);
+        ImageView view = new QualityImageView(type.getIcon(), FileType.IMAGE_SIZE, FileType.IMAGE_SIZE);
         name = new Label(file.getName());
 
         var hbox = new HBox(view, name);

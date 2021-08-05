@@ -37,7 +37,7 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.explorer.ExplorerBasicElement;
-import net.jamsimulator.jams.gui.image.NearestImageView;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.util.DraggableListCell;
 
 import java.io.File;
@@ -92,7 +92,7 @@ public class FilesToAssembleSidebarElement extends DraggableListCell<File> imple
         else {
             var hbox = new HBox();
             hbox.setSpacing(ExplorerBasicElement.SPACING);
-            hbox.getChildren().add(new NearestImageView(display.icon, FileType.IMAGE_SIZE, FileType.IMAGE_SIZE));
+            hbox.getChildren().add(new QualityImageView(display.icon, FileType.IMAGE_SIZE, FileType.IMAGE_SIZE));
             hbox.getChildren().add(new Label(display.getProject().getFolder()
                     .toPath().relativize(item.toPath()).toString()));
             setGraphic(hbox);
