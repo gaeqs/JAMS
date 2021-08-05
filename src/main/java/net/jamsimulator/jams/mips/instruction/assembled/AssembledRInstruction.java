@@ -60,25 +60,24 @@ public abstract class AssembledRInstruction extends AssembledInstruction {
     public static final int DESTINATION_REGISTER_MASK = 0x1F;
 
     /**
-     * The shift used by the source register.
-     */
-    public static final int SOURCE_REGISTER_SHIFT = 16;
-
-    /**
-     * The mask used by the source register after the shift.
-     */
-    public static final int SOURCE_REGISTER_MASK = 0x1F;
-
-    /**
      * The shift used by the target register.
      */
-    public static final int TARGET_REGISTER_SHIFT = 21;
+    public static final int TARGET_REGISTER_SHIFT = 16;
 
     /**
      * The mask used by the target register after the shift.
      */
     public static final int TARGET_REGISTER_MASK = 0x1F;
 
+    /**
+     * The shift used by the source register.
+     */
+    public static final int SOURCE_REGISTER_SHIFT = 21;
+
+    /**
+     * The mask used by the source register after the shift.
+     */
+    public static final int SOURCE_REGISTER_MASK = 0x1F;
 
     /**
      * Creates a compiled R-Type instruction using an instruction code, an origin {@link Instruction} and an origin {@link BasicInstruction}.

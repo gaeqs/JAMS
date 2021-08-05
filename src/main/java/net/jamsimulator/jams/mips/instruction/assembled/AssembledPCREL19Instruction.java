@@ -46,7 +46,7 @@ public abstract class AssembledPCREL19Instruction extends AssembledInstruction {
     /**
      * The mask used by the pc relative value after the shift.
      */
-    public static final int PCREL_MASK = 0x1F;
+    public static final int PCREL_MASK = 0x3;
 
     /**
      * The shift used by the source register.

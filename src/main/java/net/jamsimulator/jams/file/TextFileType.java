@@ -38,7 +38,6 @@ public class TextFileType extends FileType {
      * @param name       the name.
      * @param iconName   the name of the icon.
      * @param extensions the extensions.
-     * @see net.jamsimulator.jams.gui.image.icon.IconManager
      */
     public TextFileType(String name, IconData iconName, String... extensions) {
         super(name, iconName, extensions);

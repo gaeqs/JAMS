@@ -38,7 +38,6 @@ public class ImageFileType extends FileType {
      * @param name       the name.
      * @param iconData   the name of the icon.
      * @param extensions the extensions.
-     * @see net.jamsimulator.jams.gui.image.icon.IconManager
      */
     public ImageFileType(String name, IconData iconData, String... extensions) {
         super(name, iconData, extensions);
