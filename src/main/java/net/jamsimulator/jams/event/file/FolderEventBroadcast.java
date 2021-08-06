@@ -123,6 +123,10 @@ public class FolderEventBroadcast extends SimpleEventBroadcast {
                 ex.printStackTrace();
                 running = false;
                 return;
+            } catch (ClosedWatchServiceException ex) {
+                // Just finish the method.
+                running = false;
+                return;
             }
 
             for (var event : key.pollEvents()) {
