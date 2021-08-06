@@ -98,6 +98,7 @@ public class ProjectTabPane extends TabPane {
         tab.setOnClosed(event -> {
             pane.onClose();
             if (onClose != null) onClose.accept(tab);
+            tab.setContent(null);
         });
 
         getTabs().add(tab);
