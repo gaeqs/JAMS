@@ -117,7 +117,6 @@ public class NGQualityImageView extends NGNode {
                     Texture.Usage.DYNAMIC, Texture.WrapMode.CLAMP_TO_EDGE, cached.width(), cached.height());
         }
 
-        currentTexture.contentsUseful();
         currentTexture.setLinearFiltering(false);
         textureWidth = width;
         textureHeight = height;
