@@ -49,11 +49,8 @@ public class NGQualityImageView extends NGNode {
         var newIcon = (IconData) i;
         if (icon == newIcon) return;
 
-        var needsInvalidate = newIcon == null || icon == null;
         icon = newIcon;
-        if (needsInvalidate) {
-            geometryChanged();
-        }
+        geometryChanged();
     }
 
     public void setX(float x) {
