@@ -116,12 +116,11 @@ public class NGQualityImageView extends NGNode {
 
         currentTexture.contentsUseful();
 
-        currentTexture.setLinearFiltering(false);
         textureWidth = width;
         textureHeight = height;
 
-
         if (cached == null) return null;
+        currentTexture.setLinearFiltering(width <= cached.width() && height <= cached.height());
 
         currentTexture.update(IntBuffer.wrap(cached.buffer()), PixelFormat.INT_ARGB_PRE,
                 0, 0, 0, 0, cached.width(), cached.height(),
