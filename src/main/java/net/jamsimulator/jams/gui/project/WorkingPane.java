@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.project;
 
-import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
@@ -138,11 +137,7 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
         if (center == null) center = new AnchorPane();
         horizontalSplitPane.getItems().add(center);
 
-
         loadSidebars();
-        loadResizeEvents();
-
-
         Jams.getGeneralEventBroadcast().registerListeners(this, true);
     }
 
@@ -193,27 +188,6 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
         bar.getNode().setMaxHeight(BOTTOM_BAR_HEIGHT);
         bar.getNode().setMinWidth(100);
         return bar;
-    }
-
-    private void loadResizeEvents() {
-        //Rescaling AnchorPane inside a tab. Thanks JavaFX for the bug.
-        Platform.runLater(() -> {
-            if (getScene() == null) {
-                loadResizeEvents();
-                return;
-            }
-            getScene().heightProperty().addListener((obs, old, val) -> {
-                double height = val.doubleValue() - getLocalToSceneTransform().getTy();
-                setPrefHeight(height);
-                setMinHeight(height);
-            });
-
-            getScene().widthProperty().addListener((obs, old, val) -> {
-                double width = val.doubleValue() - getLocalToSceneTransform().getTx();
-                setPrefWidth(width);
-                setMinWidth(width);
-            });
-        });
     }
 
     //endregion
