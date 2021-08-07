@@ -36,7 +36,7 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
-import net.jamsimulator.jams.gui.util.LanguageStringComboBox;
+import net.jamsimulator.jams.gui.util.LanguageComboBox;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
@@ -51,7 +51,6 @@ import net.jamsimulator.jams.utils.representation.event.NumberRepresentationUnre
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Represents the main pane for the {@link MemoryPane}.
@@ -62,7 +61,7 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
 
     private final MIPSSimulation<?> simulation;
     private final ComboBox<String> memorySelector;
-    private final ComboBox<String> representationSelection;
+    private final ComboBox<NumberRepresentation> representationSelection;
     private final List<NumberRepresentation> representations = new ArrayList<>();
     private final HBox headerHBox, buttonsHBox;
     private MemoryTable table;
@@ -199,19 +198,17 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
         buttonsHBox.getChildren().addAll(previous, next);
     }
 
-    private LanguageStringComboBox initRepresentationComboBox() {
+    private LanguageComboBox<NumberRepresentation> initRepresentationComboBox() {
         representations.addAll(Jams.getNumberRepresentationManager());
         representations.sort(Comparator.comparing(NumberRepresentation::getName));
+        var representationSelection = new LanguageComboBox<>(NumberRepresentation::getLanguageNode);
 
-        List<String> values = representations.stream().map(NumberRepresentation::getLanguageNode).collect(Collectors.toList());
+        representationSelection.setOnAction(event ->
+                table.setRepresentation(representationSelection.getSelectionModel().getSelectedItem()));
 
-        var representationSelection = new LanguageStringComboBox(values) {
-            @Override
-            public void onSelect(int index, String node) {
-                table.setRepresentation(representations.get(index));
-            }
-        };
-        representationSelection.getSelectionModel().select(representations.indexOf(NumberRepresentationManager.HEXADECIMAL));
+        representationSelection.getItems().addAll(representations);
+        representationSelection.getSelectionModel()
+                .select(representations.indexOf(NumberRepresentationManager.HEXADECIMAL));
         return representationSelection;
     }
 
@@ -244,8 +241,7 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
 
     private void refreshRepresentationComboBox() {
         representations.sort(Comparator.comparing(NumberRepresentation::getName));
-        List<String> values = representations.stream().map(NumberRepresentation::getLanguageNode).collect(Collectors.toList());
-        representationSelection.getItems().setAll(values);
+        representationSelection.getItems().setAll(representations);
         representationSelection.getSelectionModel().select(representations.indexOf(NumberRepresentationManager.HEXADECIMAL));
     }
 }
