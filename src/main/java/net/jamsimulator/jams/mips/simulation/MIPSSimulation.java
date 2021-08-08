@@ -673,6 +673,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
         if (thread != null) {
             thread.interrupt();
             thread = null;
+            runSynchronized(() -> interrupted = true);
         }
     }
 
