@@ -210,6 +210,10 @@ public class JamsApplication extends Application {
 
 
         Icons.LOGO.getImage().ifPresent(primaryStage.getIcons()::add);
+        Jams.getMainConfiguration().registerListeners(this, true);
+
+        // Load projects
+        getProjectsTabPane().openSavedProjects();
 
         if (getProjectsTabPane().getProjects().isEmpty()) {
             StartWindow.INSTANCE.open();
@@ -220,7 +224,6 @@ public class JamsApplication extends Application {
             stage.show();
         }
 
-        Jams.getMainConfiguration().registerListeners(this, true);
         loaded = true;
         Jams.getGeneralEventBroadcast().callEvent(new JAMSApplicationPostInitEvent());
     }

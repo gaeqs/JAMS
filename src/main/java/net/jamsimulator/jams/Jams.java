@@ -37,6 +37,7 @@ import net.jamsimulator.jams.plugin.exception.PluginLoadException;
 import net.jamsimulator.jams.project.RecentProjects;
 import net.jamsimulator.jams.utils.*;
 import org.json.JSONObject;
+import task.TaskExecutor;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,12 +70,15 @@ public class Jams {
 
     private static RecentProjects recentProjects;
 
+    private static TaskExecutor taskExecutor;
     private static SimpleEventBroadcast generalEventBroadcast;
 
     //JAMS main method.
     public static void main(String[] args) {
         var data = new ArgumentsData(args);
         generalEventBroadcast = new SimpleEventBroadcast();
+        taskExecutor = new TaskExecutor();
+
         loadVersion();
         System.out.println("Loading JAMS version " + getVersion());
         mainFolder = FolderUtils.checkMainFolder();
@@ -274,6 +278,17 @@ public class Jams {
      */
     public static SimpleEventBroadcast getGeneralEventBroadcast() {
         return generalEventBroadcast;
+    }
+
+    /**
+     * Returns the global {@link TaskExecutor}.
+     * <p>
+     * Use this executor to run asynchronous tasks.
+     *
+     * @return the task executor.
+     */
+    public static TaskExecutor getTaskExecutor() {
+        return taskExecutor;
     }
 
     private static void loadVersion() {

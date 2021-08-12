@@ -62,7 +62,6 @@ public class ProjectListTabPane extends TabPane implements EventBroadcast {
 
         getStyleClass().add("project-list");
         setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
-        openSavedProjects();
 
         getTabs().addListener((ListChangeListener<? super Tab>) event -> Platform.runLater(() -> {
             //If empty, open the start window.
@@ -159,7 +158,7 @@ public class ProjectListTabPane extends TabPane implements EventBroadcast {
         }
     }
 
-    private void openSavedProjects() {
+    public void openSavedProjects() {
         File file = new File(Jams.getMainFolder(), "opened_projects.dat");
         if (!file.exists()) return;
         try {

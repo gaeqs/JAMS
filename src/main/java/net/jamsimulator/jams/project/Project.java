@@ -28,6 +28,7 @@ import javafx.scene.control.Tab;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.log.Log;
+import task.TaskExecutor;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,7 +71,19 @@ public interface Project {
     ProjectData getData();
 
     /**
+     * Returns the {@link TaskExecutor} used to execute the asynchronous tasks
+     * requested by this project.
+     * <p>
+     * This executor will shut down when the project is closed.
+     *
+     * @return the {@link TaskExecutor}.
+     */
+    TaskExecutor getTaskExecutor();
+
+    /**
      * Assembles this project and creates a simulation pane in the project pane.
+     * <p>
+     * This method may be invoked from an external thread. Use JavaFX methods with caution.
      * <p>
      *
      * @param log The log debug messages will be print on. This log may be null.
@@ -100,7 +113,6 @@ public interface Project {
      * listeners from its inner {@link net.jamsimulator.jams.event.EventBroadcast}s.
      */
     void onClose();
-
 
     /**
      * Generates the main project pane of this project.

@@ -58,7 +58,10 @@ public class LanguageLabel extends Label {
     }
 
     private void refreshMessage() {
-        if (node == null) return;
+        if (node == null) {
+            setText(null);
+            return;
+        }
         var parsed = StringUtils.parseEscapeCharacters(Jams.getLanguageManager().getSelected().getOrDefault(node));
 
         for (int i = 0; i < replacements.length - 1; i += 2) {

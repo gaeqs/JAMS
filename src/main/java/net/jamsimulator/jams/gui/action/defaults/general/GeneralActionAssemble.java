@@ -57,7 +57,7 @@ public class GeneralActionAssemble extends ContextAction {
         ProjectTab tab = project.getProjectTab().orElse(null);
         if (tab == null) return;
 
-        Thread thread = new Thread(() -> {
+        project.getTaskExecutor().execute("assemble", Messages.ACTION_GENERAL_ASSEMBLE, () -> {
             var pane = tab.getProjectTabPane().getWorkingPane();
             pane.saveAllOpenedFiles();
 
@@ -68,6 +68,7 @@ public class GeneralActionAssemble extends ContextAction {
 
             try {
                 project.generateSimulation(log.orElse(null));
+                Thread.sleep(10000);
             } catch (Exception ex) {
                 if (log.isPresent()) {
                     log.get().printErrorLn("ERROR:");
@@ -76,9 +77,6 @@ public class GeneralActionAssemble extends ContextAction {
                 ex.printStackTrace();
             }
         });
-
-        thread.setName("Assembler");
-        thread.start();
     }
 
     @Override

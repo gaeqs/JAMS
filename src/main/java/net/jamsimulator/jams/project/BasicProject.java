@@ -26,6 +26,7 @@ package net.jamsimulator.jams.project;
 
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.utils.Validate;
+import task.TaskExecutor;
 
 import java.io.File;
 import java.util.Optional;
@@ -39,6 +40,7 @@ import java.util.Optional;
 public abstract class BasicProject implements Project {
 
     protected final File folder;
+    protected final TaskExecutor taskExecutor;
 
     protected ProjectTab projectTab;
     protected ProjectData data;
@@ -56,6 +58,8 @@ public abstract class BasicProject implements Project {
 
         this.folder = folder;
         this.projectTab = null;
+
+        this.taskExecutor = new TaskExecutor();
 
         if (loadDataOnConstructor) {
             loadData();
@@ -78,6 +82,11 @@ public abstract class BasicProject implements Project {
     }
 
     @Override
+    public TaskExecutor getTaskExecutor() {
+        return taskExecutor;
+    }
+
+    @Override
     public Optional<ProjectTab> getProjectTab() {
         return Optional.ofNullable(projectTab);
     }
@@ -85,6 +94,11 @@ public abstract class BasicProject implements Project {
     @Override
     public void assignProjectTab(ProjectTab tab) {
         this.projectTab = tab;
+    }
+
+    @Override
+    public void onClose() {
+        taskExecutor.shutdownNow();
     }
 
     /**
