@@ -41,6 +41,7 @@ import net.jamsimulator.jams.event.file.FolderEventBroadcast;
 import net.jamsimulator.jams.event.general.JAMSShutdownEvent;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
+import net.jamsimulator.jams.gui.project.bottombar.ProjectBottomBar;
 import net.jamsimulator.jams.gui.project.event.ProjectCloseEvent;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.project.Project;
@@ -52,7 +53,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.nio.file.StandardWatchEventKinds.*;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 
 /**
  * Represents a folder project's tab. This must be used by {@link MainAnchorPane#getProjectListTabPane()}
@@ -69,6 +70,7 @@ public class ProjectTab extends Tab implements EventBroadcast {
     private final ProjectTabPane projectTabPane;
     private final List<EventHandler<Event>> closeListeners;
     private final HBox buttonsHBox;
+    private final ProjectBottomBar bottomBar;
 
     private final FolderEventBroadcast folderEventBroadcast;
 
@@ -111,7 +113,7 @@ public class ProjectTab extends Tab implements EventBroadcast {
                         ((ProjectPane) node).populateHBox(getButtonsHBox());
                     }
 
-                    AnchorUtils.setAnchor(node, 28, 0, 0, 0);
+                    AnchorUtils.setAnchor(node, 28, 20, 0, 0);
                     if (!pane.getChildren().contains(node)) {
                         pane.getChildren().add(node);
                     } else {
@@ -127,6 +129,12 @@ public class ProjectTab extends Tab implements EventBroadcast {
 
         AnchorUtils.setAnchor(projectTabPane, 0, 0, 0, 400);
         pane.getChildren().add(projectTabPane);
+
+        bottomBar = new ProjectBottomBar(project);
+        bottomBar.setPrefHeight(20);
+        bottomBar.setMaxHeight(20);
+        AnchorUtils.setAnchor(bottomBar, -1, 0, 0, 0);
+        pane.getChildren().add(bottomBar);
 
         buttonsHBox = new HBox();
         AnchorUtils.setAnchor(buttonsHBox, 0, -1, -1, 0);
@@ -180,6 +188,15 @@ public class ProjectTab extends Tab implements EventBroadcast {
      */
     public HBox getButtonsHBox() {
         return buttonsHBox;
+    }
+
+    /**
+     * Returns the bar at the bottom of each project.
+     *
+     * @return the bar.
+     */
+    public ProjectBottomBar getBottomBar() {
+        return bottomBar;
     }
 
     /**
