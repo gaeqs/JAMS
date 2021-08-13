@@ -29,6 +29,7 @@ import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * Represents the execution of a set of instructions, including all elements required for the correct
@@ -47,13 +48,6 @@ public interface Simulation<Address extends Number> extends EventBroadcast {
      * @return the {@link Console}.
      */
     Console getConsole();
-
-    /**
-     * Returns a unmodifiable {@link Set} with all this simulation's breakpoints.
-     *
-     * @return the {@link Set}.
-     */
-    Set<Address> getBreakpoints();
 
     /**
      * Returns whether the given address has a breakpoint.
@@ -80,6 +74,13 @@ public interface Simulation<Address extends Number> extends EventBroadcast {
      * @return whether the operation was successful.
      */
     boolean removeBreakpoint(Address address);
+
+    /**
+     * Executes the given consumer for each breakpoint in this simulation.
+     *
+     * @param consumer the consumer.
+     */
+    void forEachBreakpoint(Consumer<Address> consumer);
 
     /**
      * Adds or removes the breakpoint linked to the given address.

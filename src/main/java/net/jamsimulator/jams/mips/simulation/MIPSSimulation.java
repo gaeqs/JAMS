@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.simulation;
 
+import net.jamsimulator.jams.collection.LowHeapIntArrayList;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.util.log.Console;
@@ -51,10 +52,8 @@ import net.jamsimulator.jams.mips.simulation.file.SimulationFiles;
 import net.jamsimulator.jams.mips.simulation.random.NumberGenerators;
 import net.jamsimulator.jams.utils.StringUtils;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * Represents the execution of a set of instructions, including a memory and a register set.
@@ -78,7 +77,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
     protected final Memory memory;
     protected final SimulationFiles files;
     protected final ExternalInterruptController externalInterruptController;
-    protected final Set<Integer> breakpoints;
+    protected final LowHeapIntArrayList breakpoints;
     protected final NumberGenerators numberGenerators;
     protected final Object inputLock;
     protected final Object finishedRunningLock;
@@ -123,7 +122,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
         this.files = new SimulationFiles(this);
         this.cycleDelay = 0;
 
-        this.breakpoints = new HashSet<>();
+        this.breakpoints = new LowHeapIntArrayList();
 
         this.numberGenerators = new NumberGenerators();
 
@@ -584,13 +583,6 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
         return data.getConsole();
     }
 
-
-    @Override
-    public Set<Integer> getBreakpoints() {
-        return Collections.unmodifiableSet(breakpoints);
-    }
-
-
     @Override
     public boolean hasBreakpoint(Integer address) {
         return breakpoints.contains(address);
@@ -598,11 +590,10 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
 
     @Override
     public boolean addBreakpoint(Integer address) {
-        if (breakpoints.add(address)) {
-            callEvent(new SimulationAddBreakpointEvent(this, address));
-            return true;
-        }
-        return false;
+        if (breakpoints.contains(address)) return false;
+        breakpoints.add(address);
+        callEvent(new SimulationAddBreakpointEvent(this, address));
+        return true;
     }
 
     @Override
@@ -623,6 +614,11 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
             breakpoints.add(address);
             callEvent(new SimulationAddBreakpointEvent(this, address));
         }
+    }
+
+    @Override
+    public void forEachBreakpoint(Consumer<Integer> consumer) {
+        breakpoints.forEach(consumer);
     }
 
     @Override

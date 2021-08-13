@@ -159,7 +159,7 @@ public class SingleCycleSimulation extends MIPSSimulation<SingleCycleArchitectur
         if (finished) return;
         int pc = registers.getProgramCounter().getValue();
 
-        if (!first && !breakpoints.isEmpty() && breakpoints.contains(pc)) {
+        if (breakpoints.contains(pc) && !first) {
             interruptThread();
             return;
         }

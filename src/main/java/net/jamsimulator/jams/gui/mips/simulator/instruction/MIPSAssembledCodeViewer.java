@@ -279,10 +279,9 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
             addElements(simulation);
             refresh();
 
-            var breakpoints = simulation.getBreakpoints();
             for (var line : assembledLines) {
                 if (line.getAddress().isEmpty()) continue;
-                if (breakpoints.contains(line.getAddress().get()) && !isLineBeingUsed(line.getLine())) {
+                if (simulation.hasBreakpoint(line.getAddress().get()) && !isLineBeingUsed(line.getLine())) {
                     try {
                         setParagraphStyle(line.getLine(), BREAKPOINT);
                     } catch (Exception ex) {
