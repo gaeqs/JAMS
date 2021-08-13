@@ -22,19 +22,29 @@
  *  SOFTWARE.
  */
 
-package task;
+package net.jamsimulator.jams.task;
 
 import javafx.beans.property.FloatProperty;
 
-import java.util.concurrent.Future;
+import java.util.concurrent.Callable;
 
 /**
- * Record used to wrap important information about a task being executed in a {@link ProgressableTask}.
+ * Represents a net.jamsimulator.jams.task whose progress can be tracked.
+ * <p>
+ * This interface extends {@link Callable}: you can use it on a {@link TaskExecutor}.
  *
- * @param name         the name of the task being executed.
- * @param languageNode the language node of the task. It may be null.
- * @param future       the object representing the task in the {@link java.util.concurrent.ExecutorService executor}.
- * @param progress     the progress of this task. This may be null if the tasks doesn't implement {@link ProgressableTask}.
+ * @param <T> the return type of the net.jamsimulator.jams.task.
  */
-public record JamsTask(String name, String languageNode, Future<?> future, FloatProperty progress) {
+public interface ProgressableTask<T> extends Callable<T> {
+
+    /**
+     * Returns the property representing the progress.
+     * <p>
+     * WARNING! Update this progress' value in the JavaFX's thread, as it may be bound to a Node's property
+     * that requires thread-safety.
+     *
+     * @return the progress property.
+     */
+    FloatProperty progressProperty();
+
 }

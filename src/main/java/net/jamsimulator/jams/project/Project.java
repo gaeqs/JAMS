@@ -28,7 +28,7 @@ import javafx.scene.control.Tab;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.log.Log;
-import task.TaskExecutor;
+import net.jamsimulator.jams.task.TaskExecutor;
 
 import java.io.File;
 import java.io.IOException;

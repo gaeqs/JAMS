@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package task;
+package net.jamsimulator.jams.task;
 
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
@@ -39,13 +39,13 @@ import java.util.concurrent.Executors;
 /**
  * Instances of this class allows developers to execute asynchronous tasks easily.
  * <p>
- * To execute a task, use the method {@link #execute(String, String, Runnable)} or {@link #execute(String, String, Callable)}.
+ * To execute a net.jamsimulator.jams.task, use the method {@link #execute(String, String, Runnable)} or {@link #execute(String, String, Callable)}.
  * {@link Callable}s can be {@link ProgressableTask}. This executor will handle them automatically.
  * <p>
  * The tasks will be wrapped in a {@link JamsTask} record. You can access to all tasks being executed using
  * {@link #getTasks()}. This method creates a copy of the tasks' list.
  * <p>
- * If you only want to get the first task you can use {@link #getFirstTask()}. This way you won't create any new list.
+ * If you only want to get the first net.jamsimulator.jams.task you can use {@link #getFirstTask()}. This way you won't create any new list.
  * <p>
  * The executor inside this class will be shut down when the JAMS application is closed
  * or when the method {@link #shutdown()} or {@link #shutdownNow()} is invoked.
@@ -56,7 +56,7 @@ public class TaskExecutor {
     private final LinkedList<JamsTask> tasks;
 
     /**
-     * Creates the task executor.
+     * Creates the net.jamsimulator.jams.task executor.
      */
     public TaskExecutor() {
         this.executor = Executors.newCachedThreadPool();
@@ -75,9 +75,9 @@ public class TaskExecutor {
     }
 
     /**
-     * Returns the first {@link JamsTask task} of the tasks' list if present.
+     * Returns the first {@link JamsTask net.jamsimulator.jams.task} of the tasks' list if present.
      *
-     * @return the first {@link JamsTask task} if present.
+     * @return the first {@link JamsTask net.jamsimulator.jams.task} if present.
      */
     public synchronized Optional<JamsTask> getFirstTask() {
         tasks.removeIf(it -> it.future().isDone());
@@ -86,12 +86,12 @@ public class TaskExecutor {
 
     /**
      * Executes the given runnable in this executor.
-     * You must provide a name to the task.
+     * You must provide a name to the net.jamsimulator.jams.task.
      *
-     * @param name         the name of the task.
-     * @param languageNode the language node of the task. It may be null.
+     * @param name         the name of the net.jamsimulator.jams.task.
+     * @param languageNode the language node of the net.jamsimulator.jams.task. It may be null.
      * @param runnable     the code to execute.
-     * @return the {@link JamsTask} representing the task being executed.
+     * @return the {@link JamsTask} representing the net.jamsimulator.jams.task being executed.
      * @see ExecutorService#submit(Runnable)
      */
     public synchronized JamsTask execute(String name, String languageNode, Runnable runnable) {
@@ -107,12 +107,12 @@ public class TaskExecutor {
 
     /**
      * Executes the given runnable in this executor.
-     * You must provide a name to the task.
+     * You must provide a name to the net.jamsimulator.jams.task.
      *
-     * @param name         the name of the task.
-     * @param languageNode the language node of the task. It may be null.
+     * @param name         the name of the net.jamsimulator.jams.task.
+     * @param languageNode the language node of the net.jamsimulator.jams.task. It may be null.
      * @param runnable     the code to execute.
-     * @return the {@link JamsTask} representing the task being executed.
+     * @return the {@link JamsTask} representing the net.jamsimulator.jams.task being executed.
      * @see ExecutorService#submit(Runnable)
      */
     public synchronized JamsTask execute(String name, String languageNode, Callable<?> runnable) {

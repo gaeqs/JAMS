@@ -25,8 +25,6 @@
 package net.jamsimulator.jams.project.mips;
 
 import javafx.application.Platform;
-import javafx.beans.property.FloatProperty;
-import javafx.beans.property.SimpleFloatProperty;
 import javafx.scene.control.Tab;
 import net.jamsimulator.jams.gui.mips.project.MIPSSimulationPane;
 import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;
@@ -34,7 +32,6 @@ import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.gui.util.log.Log;
-import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
@@ -44,7 +41,6 @@ import net.jamsimulator.jams.project.ProjectType;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurationPresets;
 import net.jamsimulator.jams.utils.RawFileData;
-import task.ProgressableTask;
 
 import java.io.File;
 import java.io.IOException;

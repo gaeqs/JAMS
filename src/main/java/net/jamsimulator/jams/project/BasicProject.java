@@ -26,7 +26,7 @@ package net.jamsimulator.jams.project;
 
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.utils.Validate;
-import task.TaskExecutor;
+import net.jamsimulator.jams.task.TaskExecutor;
 
 import java.io.File;
 import java.util.Optional;

@@ -37,7 +37,7 @@ import net.jamsimulator.jams.plugin.exception.PluginLoadException;
 import net.jamsimulator.jams.project.RecentProjects;
 import net.jamsimulator.jams.utils.*;
 import org.json.JSONObject;
-import task.TaskExecutor;
+import net.jamsimulator.jams.task.TaskExecutor;
 
 import java.io.File;
 import java.io.IOException;
@@ -285,7 +285,7 @@ public class Jams {
      * <p>
      * Use this executor to run asynchronous tasks.
      *
-     * @return the task executor.
+     * @return the net.jamsimulator.jams.task executor.
      */
     public static TaskExecutor getTaskExecutor() {
         return taskExecutor;

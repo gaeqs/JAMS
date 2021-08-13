@@ -33,7 +33,7 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.project.event.ProjectCloseEvent;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.project.Project;
-import task.JamsTask;
+import net.jamsimulator.jams.task.JamsTask;
 
 public class ProjectTaskBar extends HBox {
 
