@@ -220,7 +220,7 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
         }
 
         //BREAKPOINTS
-        if (breakpoints.contains(pipeline.getPc(MultiCycleStep.DECODE)) && !first) {
+        if (!first && !breakpoints.isEmpty() && breakpoints.contains(pipeline.getPc(MultiCycleStep.DECODE))) {
             if (currentStepChanges != null) {
                 currentStepChanges = null;
             }

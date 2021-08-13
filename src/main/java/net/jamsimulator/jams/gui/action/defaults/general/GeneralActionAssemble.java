@@ -68,7 +68,6 @@ public class GeneralActionAssemble extends ContextAction {
 
             try {
                 project.generateSimulation(log.orElse(null));
-                Thread.sleep(10000);
             } catch (Exception ex) {
                 if (log.isPresent()) {
                     log.get().printErrorLn("ERROR:");

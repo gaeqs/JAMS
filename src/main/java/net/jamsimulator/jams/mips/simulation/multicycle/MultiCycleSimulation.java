@@ -284,7 +284,7 @@ public class MultiCycleSimulation extends MIPSSimulation<MultiCycleArchitecture>
     private void fetch(boolean first) {
         int pc = registers.getProgramCounter().getValue();
 
-        if (breakpoints.contains(pc) && !first) {
+        if (!first && !breakpoints.isEmpty() && breakpoints.contains(pc)) {
             currentStepChanges = null;
             interruptThread();
             return;

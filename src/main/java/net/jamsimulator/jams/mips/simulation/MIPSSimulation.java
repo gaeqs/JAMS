@@ -736,6 +736,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
             manageSimulationFinish();
         });
         callEvent(new SimulationStartEvent(this));
+        thread.setName("MIPS Simulation (" + getClass().getName() + ")");
         thread.setPriority(Thread.MAX_PRIORITY);
         thread.start();
     }
@@ -781,6 +782,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
             manageSimulationFinish();
         });
         callEvent(new SimulationStartEvent(this));
+        thread.setName("MIPS Simulation (" + getClass().getName() + ")");
         thread.setPriority(Thread.MAX_PRIORITY);
         thread.start();
     }
