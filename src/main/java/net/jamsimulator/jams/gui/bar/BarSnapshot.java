@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.gui.bar;
 
 import javafx.scene.Node;
-import javafx.scene.image.Image;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;

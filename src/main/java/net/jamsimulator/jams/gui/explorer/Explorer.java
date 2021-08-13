@@ -44,7 +44,7 @@ import java.util.function.Predicate;
  * Represents an explorer. An explorer represents graphically the list of files inside
  * its main folder.
  * <p>
- * This class can be extend to add custom functionality.
+ * This class can be extended to add custom functionality.
  */
 public abstract class Explorer extends VBox implements EventBroadcast {
 
@@ -313,13 +313,13 @@ public abstract class Explorer extends VBox implements EventBroadcast {
     }
 
     /**
-     * This method should be override to generate the main {@link ExplorerSection} of this explorer.
+     * This method should be overridden to generate the main {@link ExplorerSection} of this explorer.
      */
     protected abstract void generateMainSection();
 
     /**
      * Refresh the width of the explorer.
-     * This should be used when a item is added or removed or a section is expanded or contracted.
+     * This should be used when an item is added or removed or a section is expanded or contracted.
      */
     public void refreshWidth() {
         applyCss();

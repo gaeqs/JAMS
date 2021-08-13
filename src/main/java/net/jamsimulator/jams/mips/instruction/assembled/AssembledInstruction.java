@@ -29,7 +29,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 
 /**
- * Represents a assembled instruction.
+ * Represents an assembled instruction.
  */
 public abstract class AssembledInstruction {
 

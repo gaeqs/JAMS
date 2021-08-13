@@ -34,7 +34,7 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 import java.util.*;
 
 /**
- * Represents a MIPS program's line. A line can contain a label, a directive or a instruction and a comment.
+ * Represents a MIPS program's line. A line can contain a label, a directive or an instruction and a comment.
  * This class is not intended to be modified after it's creation, as it may cause several align problems in the editor.
  */
 public class MIPSLine {
@@ -452,7 +452,7 @@ public class MIPSLine {
     }
 
     /**
-     * Adds this label to the used labels collection.
+     * Adds this label to the used labels' collection.
      *
      * @param label the label.
      * @see #getUsedLabels()

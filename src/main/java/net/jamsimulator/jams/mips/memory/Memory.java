@@ -203,7 +203,7 @@ public interface Memory extends EventBroadcast {
     /**
      * Returns the memory located at the next hierarchy level, if present.
      * <p>
-     * If this memory is a the last hierarchy level this method returns {@code Optional.empty()}.
+     * If this memory is at the last hierarchy level this method returns {@code Optional.empty()}.
      *
      * @return the memory located at the next hierarchy level.
      */

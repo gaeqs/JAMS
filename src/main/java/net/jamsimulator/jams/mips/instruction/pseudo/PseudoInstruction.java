@@ -224,7 +224,7 @@ public abstract class PseudoInstruction implements Instruction {
     }
 
     /**
-     * Calculates an branch offset with the given label address and the address of the branch.
+     * Calculates a branch offset with the given label address and the address of the branch.
      *
      * @param label   the label address.
      * @param address the branch address.

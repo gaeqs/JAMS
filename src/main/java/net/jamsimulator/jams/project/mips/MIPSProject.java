@@ -63,7 +63,7 @@ public class MIPSProject extends BasicProject {
     }
 
     @Override
-    public void generateSimulation(Log log) throws IOException {
+    public void generateSimulation(Log log) {
         var simulation = assemble(log);
         if (simulation == null) return;
         Platform.runLater(() -> getProjectTab().ifPresent(projectTab -> projectTab.getProjectTabPane()
@@ -76,10 +76,8 @@ public class MIPSProject extends BasicProject {
      *
      * @param log The log debug messages will be print on. This log may be null.
      * @return the {@link MIPSSimulation}.
-     * @throws IOException                                                       any {@link IOException} occurred on assembly.
-     * @throws net.jamsimulator.jams.mips.assembler.exception.AssemblerException any assembler exception thrown by the assembler.
      */
-    public MIPSSimulation<?> assemble(Log log) throws IOException {
+    public MIPSSimulation<?> assemble(Log log) {
         MIPSSimulationConfiguration configuration = getData().getSelectedConfiguration().orElse(null);
 
         if (configuration == null) {

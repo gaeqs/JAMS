@@ -31,12 +31,12 @@ public class CacheTestsData {
             data: .space 1024 #256 words
              .text
              .globl main
-            main: 
+            main:
              la $s0, data
              li $t0, 0
              li $t1, 256
 
-            add_loop: 
+            add_loop:
              sw $t0, 0($s0)
              addiu $t0, $t0, 1
              addiu $s0, $s0, 4
@@ -46,12 +46,12 @@ public class CacheTestsData {
              li $t0, 0
              li $t2, 1024
 
-            sum_loop_1: 
+            sum_loop_1:
 
              add $t1, $zero, $t0
              li $t3, 0
 
-             sum_loop_2: 
+             sum_loop_2:
 
               add $s1, $s0, $t1
               lw $t4, 0($s1)
@@ -66,9 +66,6 @@ public class CacheTestsData {
              
              addiu $t0, $t0, 4
              bne $t0, $t2, sum_loop_1
-             
-             
-             
             """;
 
 }

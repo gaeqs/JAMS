@@ -50,7 +50,7 @@ import java.util.Map;
 
 public class BindActionWindow extends VBox {
 
-    private Action action;
+    private final Action action;
     private KeyCodeCombination combination;
 
     private BindActionWindow(Stage stage, Action action) {

@@ -56,7 +56,7 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
     protected ActionsExplorer actionsExplorer;
 
     /**
-     * Creates the actions explorer section.
+     * Creates the actions' explorer section.
      *
      * @param explorer       the {@link Explorer} of this section.
      * @param parent         the {@link ExplorerSection} containing this section. This may be null.
@@ -108,11 +108,6 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
     @Override
     public boolean isSpecial() {
         return true;
-    }
-
-    @Override
-    public ConfigurationWindowExplorer getExplorer() {
-        return super.getExplorer();
     }
 
     @Override

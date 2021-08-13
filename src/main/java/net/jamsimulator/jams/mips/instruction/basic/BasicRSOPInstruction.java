@@ -30,7 +30,7 @@ import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
- * Represents a R-Type SOP basic instruction. This subclass adds the function code
+ * Represents an R-Type SOP basic instruction. This subclass adds the function code
  * of the instruction, allowing the simulator to find this instruction based on
  * an instruction code.
  */

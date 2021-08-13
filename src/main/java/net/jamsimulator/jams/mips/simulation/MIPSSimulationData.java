@@ -133,7 +133,7 @@ public class MIPSSimulationData {
     }
 
     /**
-     * Allows to undo instruction executions.
+     * Allows undoing instruction executions.
      * <p>
      * This technology consumes memory and computational resources.
      * If this option is disable the simulation will be executed faster, but you won't be able to undo instructions.
@@ -156,7 +156,7 @@ public class MIPSSimulationData {
     }
 
     /**
-     * Allows to solve branches on decode. This only works on architectures with multiple steps.
+     * Allows solving branches on decode. This only works on architectures with multiple steps.
      *
      * @return whether branches should be solved on the decode step.
      */
@@ -166,7 +166,7 @@ public class MIPSSimulationData {
 
     /**
      * If this option is enabled, instructions right after a control
-     * transfer instruction that is not compact will be always executed.
+     * transfer instruction that is not compact will always be executed.
      *
      * @return whether delay slots are enabled.
      */

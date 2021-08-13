@@ -45,8 +45,8 @@ public class SimulationChangeMemoryWord extends SimulationChange<Architecture> {
 
         if (memory instanceof Cache) {
             var stats = ((Cache) memory).getStats();
-            operations = stats.getOperations();
-            hits = stats.getHits();
+            operations = stats.operations();
+            hits = stats.hits();
         } else {
             operations = hits = 0;
         }

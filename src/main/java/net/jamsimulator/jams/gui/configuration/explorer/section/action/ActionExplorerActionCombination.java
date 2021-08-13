@@ -55,7 +55,7 @@ public class ActionExplorerActionCombination extends Button {
     }
 
     /**
-     * This method is called when the combination must be unbind.
+     * This method is called when the combination must be unbound.
      */
     private void deleteCombination() {
         JamsApplication.getActionManager().unbind(combination, action.getAction().getRegionTag());

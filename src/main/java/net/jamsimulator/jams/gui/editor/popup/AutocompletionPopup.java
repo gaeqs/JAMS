@@ -360,7 +360,7 @@ public abstract class AutocompletionPopup extends Popup implements EventBroadcas
      * Tries to open the popup at the caret position, refreshing it.
      * The caret position can be modified using the parameter 'caretOffset'.
      * <p>
-     * If 'autocompleteIfOne' is true and there's only one element inside the popup the popup won't open
+     * If 'autocompleteIfOne' is true and there's only one element inside the popup won't open,
      * and it will call the method {@link #autocomplete()}.
      *
      * @param caretOffset       the caret offset.

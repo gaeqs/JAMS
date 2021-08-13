@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.action.context;
 
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;

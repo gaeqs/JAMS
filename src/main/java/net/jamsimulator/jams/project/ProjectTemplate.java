@@ -44,7 +44,7 @@ public abstract class ProjectTemplate<E extends Project> {
     /**
      * Creates the project template.
      *
-     * @param type the {@link ProjectType} representing the @link Project} to create.
+     * @param type the {@link ProjectType} representing the {@link Project} to create.
      */
     public ProjectTemplate(ProjectType<E> type) {
         this.type = type;

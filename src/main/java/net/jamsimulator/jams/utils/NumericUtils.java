@@ -108,7 +108,6 @@ public class NumericUtils {
         }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static boolean isShort(String string) {
         try {
             Short.parseShort(string);
@@ -118,7 +117,6 @@ public class NumericUtils {
         }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static boolean isByte(String string) {
         try {
             Byte.parseByte(string);

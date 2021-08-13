@@ -44,7 +44,7 @@ public class AutocompletionPopupElement extends HBox {
     /**
      * Creates the element.
      *
-     * @param popup          the {@link AutocompletionPopup} where this element is inside of.
+     * @param popup          the {@link AutocompletionPopup} where this element is inside.
      * @param index          the index of this element inside the popup.
      * @param name           the name the {@link AutocompletionPopup} is showing.
      * @param autocompletion the replacement to place when the autocompletion is finished.
@@ -68,7 +68,7 @@ public class AutocompletionPopupElement extends HBox {
     }
 
     /**
-     * Returns the {@link AutocompletionPopup} where this element is inside of.
+     * Returns the {@link AutocompletionPopup} where this element is inside.
      *
      * @return the {@link AutocompletionPopup}.
      */

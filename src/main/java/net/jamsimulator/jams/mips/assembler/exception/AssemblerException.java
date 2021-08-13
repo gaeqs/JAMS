@@ -25,7 +25,7 @@
 package net.jamsimulator.jams.mips.assembler.exception;
 
 /**
- * Represents a assembler exception.
+ * Represents an assembler exception.
  */
 public class AssemblerException extends RuntimeException {
 

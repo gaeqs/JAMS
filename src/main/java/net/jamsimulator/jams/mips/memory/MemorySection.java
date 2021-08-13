@@ -32,7 +32,7 @@ import java.util.Arrays;
  * Represents a memory section. A memory section is a part of a simulation memory
  * who manages a list of {@link MemoryCell}s.
  * <p>
- * These {@link MemoryCell}s are not initialized when a instance of a MemorySection is created,
+ * These {@link MemoryCell}s are not initialized when an instance of a MemorySection is created,
  * but when it's required to store a data in the address the {@link MemoryCell} manages.
  *
  * @see Memory

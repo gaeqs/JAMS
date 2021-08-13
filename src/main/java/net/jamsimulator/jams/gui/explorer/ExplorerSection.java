@@ -129,7 +129,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
 
     /**
      * Returns whether this folder is expanded.
-     * If a explorer folder is expanded all its files will be shown on the {@link Explorer}.
+     * If an explorer folder is expanded all its files will be shown on the {@link Explorer}.
      *
      * @return whether this folder is expanded.
      */
@@ -194,7 +194,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
     }
 
     /**
-     * Contracts or expands the section depending the whether the section is contracted or expanded.
+     * Contracts or expands the section depending on the whether the section is contracted or expanded.
      *
      * @see #isExpanded()
      * @see #contract()

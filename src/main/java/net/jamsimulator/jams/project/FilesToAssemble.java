@@ -30,7 +30,6 @@ import net.jamsimulator.jams.gui.editor.FileEditorHolder;
 
 import java.io.File;
 import java.util.List;
-import java.util.Set;
 
 public interface FilesToAssemble extends EventBroadcast {
 

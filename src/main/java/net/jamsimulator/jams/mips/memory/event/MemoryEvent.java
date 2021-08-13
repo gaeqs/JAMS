@@ -32,7 +32,7 @@ import net.jamsimulator.jams.mips.memory.Memory;
  */
 public class MemoryEvent extends Event {
 
-    private Memory memory;
+    private final Memory memory;
 
     /**
      * Creates a memory event using a {@link Memory}.

@@ -28,7 +28,7 @@ import java.lang.reflect.Field;
 
 public class ReflectionUtils {
 
-    public static <E extends Enum> E[] getEnumValues(Class<E> enumClass)
+    public static <E extends Enum<?>> E[] getEnumValues(Class<E> enumClass)
             throws NoSuchFieldException, IllegalAccessException {
         Field f = enumClass.getDeclaredField("$VALUES");
         f.setAccessible(true);

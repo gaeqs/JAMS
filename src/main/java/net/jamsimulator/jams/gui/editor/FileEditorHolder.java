@@ -110,7 +110,7 @@ public class FileEditorHolder extends SplitPane {
     }
 
     /**
-     * Returns the {@link WorkingPane} this holder is inside of.
+     * Returns the {@link WorkingPane} this holder is inside.
      *
      * @return the {@link WorkingPane}.
      */
@@ -129,7 +129,7 @@ public class FileEditorHolder extends SplitPane {
 
     /**
      * Returns the {@link FileEditorTabList} inside this holder, if present.
-     * This elements is not present if this holder has children.
+     * These elements are not present if this holder has children.
      *
      * @return the {@link FileEditorTabList}, if present.
      */

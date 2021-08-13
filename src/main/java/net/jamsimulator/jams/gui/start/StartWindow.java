@@ -37,7 +37,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.BorderlessMainScene;
 import net.jamsimulator.jams.gui.util.AnchorUtils;

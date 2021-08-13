@@ -70,7 +70,7 @@ class EventGeneratorTest {
 
 	private static class TestEvent extends Event {
 
-		private int value;
+		private final int value;
 
 		public TestEvent(int value) {
 			this.value = value;

@@ -181,7 +181,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
     }
 
     /**
-     * Returns a instance with the immutable data of this simulation.
+     * Returns an instance with the immutable data of this simulation.
      *
      * @return the instance.
      */
@@ -214,7 +214,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
     }
 
     /**
-     * Returns the open files of this simulation. This small manager allows to open, get and close files.
+     * Returns the open files of this simulation. This small manager allows opening, getting and closing files.
      *
      * @return the {@link SimulationFiles file manager}.
      */
@@ -354,7 +354,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
      * @param pc the address to fetch.
      * @return the {@link InstructionExecution} or null.
      * @throws IllegalArgumentException  if the given address is not aligned to words.
-     * @throws IndexOutOfBoundsException if the address if out of bounds.
+     * @throws IndexOutOfBoundsException if the address is out of bounds.
      */
     public InstructionExecution<? super Arch, ?> fetch(int pc) {
         InstructionExecution<Arch, ?> cached;

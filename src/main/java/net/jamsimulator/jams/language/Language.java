@@ -153,7 +153,7 @@ public class Language implements Labeled {
      * Merges the contents of the given language with the nodes of this language. The result is stored in this
      * language.
      * <p>
-     * This method allows to load messages for a language from different files (and, in extension, from different plugins).
+     * This method allows loading messages for a language from different files (and, in extension, from different plugins).
      *
      * @param language the language to merge.
      */

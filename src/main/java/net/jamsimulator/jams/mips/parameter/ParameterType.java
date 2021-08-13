@@ -73,7 +73,7 @@ public enum ParameterType {
     LABEL("label", new ParameterMatcherLabel(), SimpleParameterSplitter.INSTANCE, ParameterPartType.LABEL, true);
 
 
-    protected final ParameterSplitter splitter;
+    private final ParameterSplitter splitter;
     private final String example;
     private final ParameterMatcher matcher;
     private final ParameterPartType[] parts;

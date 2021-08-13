@@ -27,7 +27,6 @@ package net.jamsimulator.jams.gui.explorer;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.image.icon.IconData;
@@ -36,7 +35,7 @@ import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 
 /**
  * This class allows {@link ExplorerSection}s to be represented inside the explorer.
- * It's functionality is similar to the class {@link ExplorerBasicElement}.
+ * Its functionality is similar to the class {@link ExplorerBasicElement}.
  */
 public class ExplorerSectionRepresentation extends HBox {
 

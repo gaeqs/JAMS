@@ -79,7 +79,7 @@ public class MIPSEditorInspectionBuilderManager extends Manager<MIPSEditorInspec
      * This method checks all registered inspections in this manager.
      *
      * @param element    the element to inspect.
-     * @param elements   the {@link MIPSFileElements} the given element is inside of.
+     * @param elements   the {@link MIPSFileElements} the given element is inside.
      * @param collection the collection where the inspections will be added.
      */
     public void getInspections(MIPSCodeElement element, MIPSFileElements elements, Collection<? super MIPSEditorInspection> collection) {

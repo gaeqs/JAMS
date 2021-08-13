@@ -68,34 +68,4 @@ public class LabelTable extends Explorer {
         hideMainSectionRepresentation();
         getChildren().add(mainSection);
     }
-
-    //    private void generateContextMenu(ContextMenuEvent event) {
-//        ContextMenu main = new ContextMenu();
-//
-//        var memory = new LanguageMenuItem(Messages.LABELS_CONTEXT_SHOW_IN_MEMORY);
-//        var instruction = new LanguageMenuItem(Messages.LABELS_CONTEXT_SHOW_IN_INSTRUCTION);
-//
-//        memory.setOnAction(e -> selectMemory(getSelectionModel().getSelectedItem().getAddressInt()));
-//        instruction.setOnAction(e -> selectInstruction(getSelectionModel().getSelectedItem().getAddressInt()));
-//
-//        main.getItems().addAll(memory, instruction);
-//
-//        JamsApplication.openContextMenu(main, this, event.getScreenX(), event.getScreenY());
-//    }
-//
-//    private void selectInstruction(int address) {
-//        var instructionGroup = simulationPane.getInstructionTableGroup();
-//
-//        var match = instructionGroup.getUser().selectAddress(address);
-//        if (match) {
-//            instructionGroup.selectUser();
-//        } else if (instructionGroup.getKernel() != null) {
-//            match = instructionGroup.getKernel().selectAddress(address);
-//            if (match) {
-//                instructionGroup.selectKernel();
-//            }
-//        }
-//    }
-//
-
 }

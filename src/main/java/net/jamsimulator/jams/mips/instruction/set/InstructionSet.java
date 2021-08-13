@@ -36,7 +36,7 @@ import net.jamsimulator.jams.utils.Validate;
 import java.util.*;
 
 /**
- * Represents an instruction set. An instruction set stores a collection of instruction and it's
+ * Represents an instruction set. An instruction set stores a collection of instruction, and it's
  * used in compile time to parse the code into {@link AssembledInstruction}s.
  * <p>
  * There may be several {@link InstructionSet} instances in the same runtime. The default one is located
@@ -110,7 +110,7 @@ public class InstructionSet implements Labeled {
     }
 
     /**
-     * Returns a unmodifiable {@link Set} with all {@link Instruction}s
+     * Returns an unmodifiable {@link Set} with all {@link Instruction}s
      * registered in this instruction set.
      * <p>
      * Any attempt to modify this {@link Set} results in an {@link UnsupportedOperationException}.

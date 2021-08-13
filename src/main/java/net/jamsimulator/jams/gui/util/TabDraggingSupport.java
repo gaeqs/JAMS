@@ -91,7 +91,7 @@ public class TabDraggingSupport {
                 current.getTabPane().getSelectionModel().select(current);
             }
 
-            //Check if should split
+            //Check if it should split
             double x = e.getX();
             double y = e.getY();
             double w = tabPane.getWidth();

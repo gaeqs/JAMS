@@ -99,7 +99,7 @@ public abstract class MIPSEditorInspectionBuilder<Error extends MIPSEditorInspec
      * this method returns an {@link Optional} containing an insance of the represented {@link MIPSEditorInspection}.
      *
      * @param element  the element to inspect.
-     * @param elements the {@link MIPSFileElements} instance the element is inside of.
+     * @param elements the {@link MIPSFileElements} instance the element is inside.
      * @return an instance of the represented inspection, if it matches.
      */
     public abstract Optional<Error> tryToBuild(MIPSCodeElement element, MIPSFileElements elements);

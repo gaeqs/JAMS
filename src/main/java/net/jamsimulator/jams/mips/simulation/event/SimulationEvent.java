@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.mips.simulation.event;
 
 import net.jamsimulator.jams.event.Event;
-import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 
 /**

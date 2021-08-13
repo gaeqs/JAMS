@@ -32,7 +32,7 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 /**
  * Represents an instruction inside a {@link FlowTable}.
  * <p>
- * Different {@link FlowTable} implementations should extends this class to provide their characteristics.
+ * Different {@link FlowTable} implementations should extend this class to provide their characteristics.
  */
 public class FlowEntry extends AnchorPane {
 

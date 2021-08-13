@@ -32,7 +32,7 @@ import java.util.Iterator;
 
 public class MIPSCodeFormatter {
 
-    private MIPSFileElements elements;
+    private final MIPSFileElements elements;
 
     private char tabChar;
     private int tabCharNumber;

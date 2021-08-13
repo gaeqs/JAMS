@@ -33,7 +33,7 @@ public class ImageFileType extends FileType {
 
 
     /**
-     * Creates a image file type.
+     * Creates an image file type.
      *
      * @param name       the name.
      * @param iconData   the name of the icon.

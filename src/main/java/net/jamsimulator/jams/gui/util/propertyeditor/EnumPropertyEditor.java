@@ -41,7 +41,7 @@ public class EnumPropertyEditor extends ComboBox<Enum<?>> implements PropertyEdi
     public EnumPropertyEditor(Property<? super Enum<?>> property) {
         this.property = property;
         Enum<?> value = (Enum<?>) property.getValue();
-        Class<? extends Enum> clazz = value.getClass();
+        var clazz = value.getClass();
 
         try {
             Enum<?>[] values = ReflectionUtils.getEnumValues(clazz);

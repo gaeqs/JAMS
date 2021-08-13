@@ -157,7 +157,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
 
     /**
      * Returns the {@link EditorHintBar hint bar} of this editor.
-     * The hint bar is used to show errors, warnings and information in the right side of the editor.
+     * The hint bar is used to show errors, warnings and information on the right side of the editor.
      *
      * @return the {@link EditorHintBar hint bar}.
      */
@@ -327,7 +327,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
 
     /**
      * Reformats the file.
-     * This method should be overridden by this children's classes.
+     * This method should be overridden by these children's classes.
      */
     public void reformat() {
     }

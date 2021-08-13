@@ -55,7 +55,7 @@ class WriteBackDirectCacheTest {
 		Memory memory = new MIPS32Memory();
 		WriteBackDirectCache cache = new WriteBackDirectCache(null, memory, 4, 4);
 		cache.setByte(memory.getFirstDataAddress(), (byte) 10);
-		assertEquals(1, cache.getStats().getMisses(), "Cache didn't miss!");
+		assertEquals(1, cache.getStats().misses(), "Cache didn't miss!");
 		byte b = cache.getByte(memory.getFirstDataAddress());
 		assertEquals((byte) 10, b, "Byte is not equals!");
 	}
@@ -65,7 +65,7 @@ class WriteBackDirectCacheTest {
 		Memory memory = new MIPS32Memory();
 		WriteBackDirectCache cache = new WriteBackDirectCache(null, memory, 4, 4);
 		cache.setWord(memory.getFirstDataAddress(), 23573);
-		assertEquals(1, cache.getStats().getMisses(), "Cache didn't miss!");
+		assertEquals(1, cache.getStats().misses(), "Cache didn't miss!");
 		int w = cache.getWord(memory.getFirstDataAddress());
 		assertEquals(23573, w, "Byte is not equals!");
 	}
@@ -98,7 +98,7 @@ class WriteBackDirectCacheTest {
 
 		CacheStats stats = mem.getStats();
 		System.out.println(stats);
-		System.out.print(stats.getHits() * 100F / stats.getOperations());
+		System.out.print(stats.hits() * 100F / stats.operations());
 		System.out.println("%");
 
 		int current;
@@ -110,9 +110,9 @@ class WriteBackDirectCacheTest {
 			assertEquals(current, mem.getWord(0x10010000 + i, false, false, true));
 		}
 
-		assertEquals(33408, stats.getOperations());
-		assertEquals(25216, stats.getHits());
-		assertEquals(8192, stats.getMisses());
+		assertEquals(33408, stats.operations());
+		assertEquals(25216, stats.hits());
+		assertEquals(8192, stats.misses());
 
 
 	}

@@ -142,7 +142,7 @@ public class NumberRepresentation implements Labeled {
     /**
      * Represents the given two numbers.
      * <p>
-     * If the representation only requires only one number, the second number will be ingnored.
+     * If the representation only requires one number, the second number will be ingnored.
      *
      * @param first  the first number.
      * @param second the second number.

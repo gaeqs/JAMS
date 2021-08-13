@@ -26,12 +26,10 @@ package net.jamsimulator.jams.gui.main;
 
 import javafx.application.Platform;
 import javafx.scene.control.Button;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.main.window.WindowButtonClose;

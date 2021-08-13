@@ -25,10 +25,8 @@
 package net.jamsimulator.jams.event;
 
 import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -48,7 +46,7 @@ public class SimpleEventBroadcast implements EventBroadcast {
     private final Map<Class<?>, SortedSet<ListenerMethod>> registeredListeners;
 
     /**
-     * Creates a event caller.
+     * Creates an event caller.
      */
     public SimpleEventBroadcast() {
         registeredListeners = new ConcurrentHashMap<>();
@@ -133,7 +131,7 @@ public class SimpleEventBroadcast implements EventBroadcast {
 
     /**
      * Calls the given event setting the caller as the given broadcast.
-     * This is useful for broadcasts that can't extends this class and use
+     * This is useful for broadcasts that can't extend this class and use
      * it as a parameter.
      *
      * @param event     the event to call.

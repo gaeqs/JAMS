@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 /**
  * This annotation tags methods to be registered by the method {@link EventBroadcast#registerListeners(Object, boolean)}.
  * These methods must have only one parameter with a type extending {@link Event}. They may be private or static.
- * Static listeners will still be holded by an instance of its class and they're not recommended.
+ * Static listeners will still be holded by an instance of its class, and they're not recommended.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

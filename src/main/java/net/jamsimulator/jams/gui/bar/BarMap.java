@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.bar;
 
-import javafx.scene.Node;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.*;
@@ -75,7 +74,7 @@ public class BarMap {
     }
 
     /**
-     * Returns a unmodifiable {@link Set} containing all {@link BarSnapshot snapshots} registered by this map.
+     * Returns an unmodifiable {@link Set} containing all {@link BarSnapshot snapshots} registered by this map.
      *
      * @return the {@link Set}.
      * @see Collections#unmodifiableSet(Set)

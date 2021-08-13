@@ -34,7 +34,7 @@ import java.util.Map;
  * <p>
  * Inspections inform the developer about errors and warnings.
  * <p>
- * Inspections are created using {@link MIPSEditorInspectionBuilder builder}s. You must implement a inspection and
+ * Inspections are created using {@link MIPSEditorInspectionBuilder builder}s. You must implement an inspection and
  * a builder class to create a new error or warning.
  */
 public class MIPSEditorInspection {

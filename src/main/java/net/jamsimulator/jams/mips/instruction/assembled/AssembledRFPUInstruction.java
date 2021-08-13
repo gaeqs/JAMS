@@ -28,7 +28,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 
 /**
- * Represents a compiled R-Type FPU instruction. A R-Type FPU instruction is composed of a function code,
+ * Represents a compiled R-Type FPU instruction. An R-Type FPU instruction is composed of a function code,
  * two source registers (source and target), one destination register, one operand type format specifier (FMT)
  * and one operation code.
  */
@@ -92,7 +92,7 @@ public abstract class AssembledRFPUInstruction extends AssembledInstruction {
 
 
     /**
-     * Creates a compiled I instruction using an operation code, a source register, a target register, a destination register,
+     * Creates a compiled I-Instruction using an operation code, a source register, a target register, a destination register,
      * a shift amount 5-bit immediate, a function code, an origin {@link Instruction} and an origin {@link BasicInstruction}.
      *
      * @param operationCode       the operation code.

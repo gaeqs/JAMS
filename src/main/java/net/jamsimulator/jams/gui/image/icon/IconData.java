@@ -32,7 +32,6 @@ import net.jamsimulator.jams.plugin.Plugin;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Optional;
 

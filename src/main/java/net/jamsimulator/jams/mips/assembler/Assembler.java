@@ -39,7 +39,7 @@ import java.util.Set;
 /**
  * Represents an assembler. An assembler transforms assembly code into machine code.
  * <p>
- * To use a implementation of this class you must invoke {@link #assemble()} to assemble the code.
+ * To use an implementation of this class you must invoke {@link #assemble()} to assemble the code.
  * Then, invoke {@link #createSimulation(Architecture, MIPSSimulationData)} to create a {@link MIPSSimulation}.
  */
 public interface Assembler {

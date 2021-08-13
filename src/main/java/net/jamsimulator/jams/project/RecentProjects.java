@@ -78,7 +78,7 @@ public class RecentProjects extends SimpleEventBroadcast implements Iterable<Pro
      * Adds a recent project.
      * <p>
      * This element will be added at the start of the collection.
-     * If this project is already inside this collection, the project will me moved a the start of the collection.
+     * If this project is already inside this collection, the project will be moved to the start of the collection.
      *
      * @param snapshot the recent project.
      */

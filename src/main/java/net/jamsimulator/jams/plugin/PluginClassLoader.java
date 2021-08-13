@@ -37,7 +37,7 @@ import java.util.Map;
 /**
  * This {@link ClassLoader} allows {@link Plugin}s to see each other's classes.
  * <p>
- * It is also responsible of creating the {@link Plugin} instance.
+ * It is also responsible for creating the {@link Plugin} instance.
  */
 public class PluginClassLoader extends URLClassLoader {
 

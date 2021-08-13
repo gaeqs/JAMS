@@ -24,33 +24,39 @@
 
 package net.jamsimulator.jams.mips.instruction.assembled;
 
+import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionJ;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class CompiledJInstructionTest {
 
-	static AssembledJInstruction instruction;
+    static AssembledJInstruction instruction;
 
-	@BeforeAll
-	static void initialize() {
-		//b this
-		//THERE IS NO J INSTRUCTIONS YET.
-	}
+    @BeforeAll
+    static void initialize() {
+        var instuctionJ = new InstructionJ();
+        instruction = new InstructionJ.Assembled(instuctionJ, instuctionJ, 0x00100000);
+        //b this
+        //THERE IS NO J INSTRUCTIONS YET.
+    }
 
 
-	@Test
-	void getOperationCode() {
-		//assertEquals(2, instruction.getOperationCode(), "Bad OP code.");
-	}
+    @Test
+    void getOperationCode() {
+        assertEquals(InstructionJ.OPERATION_CODE, instruction.getOperationCode(), "Bad OP code.");
+    }
 
-	@Test
-	void getAddress() {
-		//assertEquals(0x00100000, instruction.getAddress(), "Bad address.");
-	}
+    @Test
+    void getAddress() {
+        assertEquals(0x00100000 >> InstructionJ.Assembled.ADDRESS_SHIFT,
+                instruction.getAddress(), "Bad address.");
+    }
 
-	@Test
-	void getAbsoluteAddress() {
-		//int pc = 0x00400000;
-		//assertEquals(0x00400000, instruction.getAbsoluteAddress(pc), "Bad absolute address.");
-	}
+    @Test
+    void getAbsoluteAddress() {
+        int pc = 0x00400000;
+        assertEquals(0x00100000, instruction.getAbsoluteAddress(pc), "Bad absolute address.");
+    }
 }

@@ -155,11 +155,6 @@ public class ExplorerFile extends ExplorerBasicElement {
         return super.getParentSection().map(target -> (ExplorerFolder) target);
     }
 
-    @Override
-    public Explorer getExplorer() {
-        return super.getExplorer();
-    }
-
     @Listener
     private void onFileTypeRegister(FileTypeRegisterEvent.After event) {
         if (type != Jams.getFileTypeManager().getUnknownType()) return;

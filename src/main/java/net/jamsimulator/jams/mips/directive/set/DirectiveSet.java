@@ -60,7 +60,7 @@ public class DirectiveSet implements Labeled {
     }
 
     /**
-     * Returns a unmodifiable {@link Set} with all {@link Directive}s
+     * Returns an unmodifiable {@link Set} with all {@link Directive}s
      * registered in this directive set.
      * <p>
      * Any attempt to modify this {@link Set} results in an {@link UnsupportedOperationException}.

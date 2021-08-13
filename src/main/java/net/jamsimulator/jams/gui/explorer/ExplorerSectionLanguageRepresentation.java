@@ -32,7 +32,7 @@ import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
 /**
  * This class allows {@link ExplorerSection}s to be represented inside the explorer.
- * It's functionality is similar to the class {@link ExplorerBasicElement}.
+ * Its functionality is similar to the class {@link ExplorerBasicElement}.
  */
 public class ExplorerSectionLanguageRepresentation extends ExplorerSectionRepresentation {
 

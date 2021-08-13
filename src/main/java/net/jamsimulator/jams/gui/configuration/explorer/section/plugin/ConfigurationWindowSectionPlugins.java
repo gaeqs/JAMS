@@ -51,7 +51,7 @@ public class ConfigurationWindowSectionPlugins extends ConfigurationWindowSectio
     private final SplitPane pane;
 
     /**
-     * Creates the plugins explorer section.
+     * Creates the plugins' explorer section.
      *
      * @param explorer       the {@link Explorer} of this section.
      * @param parent         the {@link ExplorerSection} containing this section. This may be null.

@@ -30,7 +30,7 @@ import net.jamsimulator.jams.mips.memory.MemorySection;
 import java.util.Optional;
 
 /**
- * Represents a event invoked when a byte is get from a {@link Memory}.
+ * Represents an event invoked when a byte is get from a {@link Memory}.
  */
 public class MemoryByteGetEvent extends MemoryEvent {
 
@@ -65,7 +65,7 @@ public class MemoryByteGetEvent extends MemoryEvent {
     public static class After extends MemoryByteGetEvent {
 
         private byte value;
-        private MemorySection memorySection;
+        private final MemorySection memorySection;
 
         public After(Memory memory, MemorySection memorySection, int address, byte value) {
             super(memory, address);

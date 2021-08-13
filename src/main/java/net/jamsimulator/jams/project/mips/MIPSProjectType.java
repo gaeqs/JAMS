@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.project.mips;
 
-import javafx.scene.image.Image;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.project.ProjectType;

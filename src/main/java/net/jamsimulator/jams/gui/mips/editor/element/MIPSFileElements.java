@@ -74,7 +74,7 @@ public class MIPSFileElements {
     }
 
     /**
-     * Returns the {@link MIPSFilesToAssemble} this file is inside of, if present.
+     * Returns the {@link MIPSFilesToAssemble} this file is inside, if present.
      *
      * @return the {@link MIPSFilesToAssemble}, if present.
      */
@@ -83,7 +83,7 @@ public class MIPSFileElements {
     }
 
     /**
-     * Sets the {@link MIPSFilesToAssemble} this file is inside of.
+     * Sets the {@link MIPSFilesToAssemble} this file is inside.
      * <p>
      * This method should be used only by a {@link MIPSFilesToAssemble}.
      *

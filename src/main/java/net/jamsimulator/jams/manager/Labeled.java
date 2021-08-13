@@ -33,7 +33,7 @@ public interface Labeled {
 
     /**
      * Returns the name of the element.
-     * This name cannot be null and it must be unique!
+     * This name cannot be null, and it must be unique!
      *
      * @return the name of the element.
      */

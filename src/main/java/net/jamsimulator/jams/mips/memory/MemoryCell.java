@@ -28,7 +28,7 @@ import java.util.Arrays;
 
 /**
  * Represents a memory cell. A memory cell is a part of a {@link MemorySection} with a defined
- * length. It's responsible of storing part of the memory's data.
+ * length. It's responsible for storing part of the memory's data.
  * <p>
  * Addresses given to a memory cell must be relative.
  *

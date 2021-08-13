@@ -49,7 +49,7 @@ public abstract class MIPSCodeElement {
     /**
      * Creates the element.
      * <p>
-     * The start and end indices must be file absolute indices.
+     * The start and end indices must be file's absolute indices.
      *
      * @param startIndex the start index.
      * @param endIndex   the end index.
@@ -67,7 +67,7 @@ public abstract class MIPSCodeElement {
     }
 
     /**
-     * Returns the translated name of this code element in the current selected language..
+     * Returns the translated name of this code element in the current selected language.
      *
      * @return the translated name.
      */
@@ -218,7 +218,7 @@ public abstract class MIPSCodeElement {
     }
 
     /**
-     * Adds this label to the used labels collection.
+     * Adds this label to the used labels' collection.
      *
      * @param label the label.
      */

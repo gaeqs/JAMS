@@ -74,7 +74,7 @@ public abstract class AssembledRIInstruction extends AssembledInstruction {
      * an origin {@link Instruction} and an origin {@link BasicInstruction}.
      *
      * @param operationCode  the operation code.
-     * @param sourceRegister the source register .
+     * @param sourceRegister the source register.
      * @param functionCode   the function code.
      * @param immediate      the immediate.
      * @param origin         the origin instruction.

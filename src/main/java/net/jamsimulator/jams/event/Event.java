@@ -31,10 +31,10 @@ package net.jamsimulator.jams.event;
  * You can create you own event creating a child class of {@link Event}.
  * To listen your event, create a method with the event as a parameter
  * and a {@link Listener} annotation. This method can be privated or static.
- * Static listeners are not recommended and they will still require an instance
+ * Static listeners are not recommended, and they will still require an instance
  * of their class to work as a holder.
  * <p>
- * Events can be send through a {@link EventBroadcast} using the method
+ * Events can be sent through a {@link EventBroadcast} using the method
  * {@link EventBroadcast#callEvent(Event)}.
  * <p>
  * The value {@link #getCaller() caller} holds the last {@link EventBroadcast}

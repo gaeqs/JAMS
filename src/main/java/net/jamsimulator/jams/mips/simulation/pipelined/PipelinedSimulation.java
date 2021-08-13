@@ -333,7 +333,7 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
         var pcv = pipeline.getPc(MultiCycleStep.FETCH);
         if (pcv == 0) return false;
 
-        //Fetches the stored execution, but it can be a execution in a delay slot. That's why the new PC is not pcv + 4.
+        //Fetches the stored execution, but it can be an execution in a delay slot. That's why the new PC is not pcv + 4.
         pc.setValue(pc.getValue() + 4);
 
         MultiCycleExecution<?> newExecution = (MultiCycleExecution<?>) fetch(pcv);
@@ -376,7 +376,7 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
             var execution = pipeline.get(MultiCycleStep.EXECUTE);
             if (execution == null) return false;
 
-            //Don't execute if there's a exception. This may cause an unhandled exception.
+            //Don't execute if there's an exception. This may cause an unhandled exception.
             if (pipeline.getException(MultiCycleStep.EXECUTE) != null) return false;
 
             execution.execute();
@@ -400,7 +400,7 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
         var execution = pipeline.get(MultiCycleStep.MEMORY);
         if (execution == null) return;
 
-        //Don't execute if there's a exception. This may cause an unhandled exception.
+        //Don't execute if there's an exception. This may cause an unhandled exception.
         if (pipeline.getException(MultiCycleStep.MEMORY) != null) return;
 
         try {

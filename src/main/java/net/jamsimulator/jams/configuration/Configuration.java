@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Represents a configuration node. This class is use to manage configuration data easily.
+ * Represents a configuration node. This class is used to manage configuration data easily.
  * <p>
  * A configuration node may be a {@link RootConfiguration} or a
  * node of a {@link RootConfiguration}.
@@ -415,7 +415,7 @@ public class Configuration {
     /**
      * Returns all the children of this configuration. Maps are wrapped inside a configuration.
      * <p>
-     * The given {@link Map} is a unmodifiable {@link Map} and it cannot be edited.
+     * The given {@link Map} is an unmodifiable {@link Map} and it cannot be edited.
      * Any modification results in a {@link UnsupportedOperationException}.
      * <p>
      * Whether the boolean "deep" is true, the map will contain all it's children values, and not
@@ -500,7 +500,7 @@ public class Configuration {
      * {@link ValueConverter}
      * that matches the given type.
      * <p>
-     * If the converted is not found or it's not valid this method returns false.
+     * If the converted is not found, or it's not valid this method returns false.
      * <p>
      * You can store values into the child nodes of this configuration using the separator ".".
      * For example, if you want to store the value "data" inside the child "node", you must use the

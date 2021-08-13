@@ -48,7 +48,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Represents a explorer linked to a {@link Project}. These explorers can manager files to assemble and
+ * Represents an explorer linked to a {@link Project}. These explorers can manager files to assemble and
  * automatically hides the project's metadata folder.
  */
 public class ProjectFolderExplorer extends FolderExplorer {

@@ -74,7 +74,7 @@ public abstract class AssembledI16Instruction extends AssembledInstruction {
      * an origin {@link Instruction} and an origin {@link BasicInstruction}.
      *
      * @param operationCode  the operation code.
-     * @param sourceRegister the source register .
+     * @param sourceRegister the source register.
      * @param targetRegister the target register.
      * @param immediate      the immediate.
      * @param origin         the origin instruction.

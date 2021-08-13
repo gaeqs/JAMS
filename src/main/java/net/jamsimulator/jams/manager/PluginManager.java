@@ -171,7 +171,7 @@ public class PluginManager extends Manager<Plugin> {
      * Loads the {@link Plugin} in the given {@link File}.
      * <p>
      * WARNING! This method only loads the {@link Plugin}. To register it use {@link #add(Plugin)}.
-     * Plugins requires all it's dependencies registered in this manager to be loaded.
+     * Plugins require all it's dependencies registered in this manager to be loaded.
      *
      * @param file the {@link File} of the {@link Plugin}.
      * @return the loaded {@link Plugin}.
@@ -188,7 +188,7 @@ public class PluginManager extends Manager<Plugin> {
      * Loads the {@link Plugin} represented by the given {@link PluginHeader}.
      * <p>
      * WARNING! This method only loads the {@link Plugin}. To register it use {@link #add(Plugin)}.
-     * Plugins requires all it's dependencies registered in this manager to be loaded.
+     * Plugins require all it's dependencies registered in this manager to be loaded.
      *
      * @param header the {@link PluginHeader} of the {@link Plugin}.
      * @return the loaded {@link Plugin}.

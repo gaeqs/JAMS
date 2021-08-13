@@ -37,7 +37,7 @@ import java.util.List;
  * <p>
  * You can create a header using a JSON file with the method {@link #loadJSON(Configuration, File)}.
  * <p>
- * Spaces inside the plugin's name will be replaced by a underscore.
+ * Spaces inside the plugin's name will be replaced by an underscore.
  */
 public final record PluginHeader(String name,
                                  String version,

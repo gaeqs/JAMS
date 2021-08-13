@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.mips.simulator.label;
 
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
@@ -39,7 +38,7 @@ import java.util.Comparator;
 
 public class LabelTableLabel extends ExplorerSection {
 
-    private Label label;
+    private final Label label;
 
     /**
      * Creates the explorer section.

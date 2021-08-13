@@ -66,7 +66,7 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
     }
 
     /**
-     * Returns a unmodifiable {@link List} with all the
+     * Returns an unmodifiable {@link List} with all the
      * {@link ConfigurationWindowNode} of this section.
      *
      * @return the unmodifiable {@link List}.

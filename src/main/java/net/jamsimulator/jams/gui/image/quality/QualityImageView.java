@@ -115,7 +115,7 @@ public class QualityImageView extends Node {
 
 
     /**
-     * Creates the image view without a image.
+     * Creates the image view without an image.
      */
     public QualityImageView() {
         getStyleClass().add(DEFAULT_STYLE_CLASS);

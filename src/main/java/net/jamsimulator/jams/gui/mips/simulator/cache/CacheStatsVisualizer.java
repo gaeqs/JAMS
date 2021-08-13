@@ -94,20 +94,20 @@ public class CacheStatsVisualizer extends AnchorPane {
     }
 
     /**
-     * Refreshes the data of the stats visualizer.
+     * Refreshes the data of the stats' visualizer.
      */
     void refresh() {
         Platform.runLater(() -> {
             var cache = visualizer.getSelectedCache();
             var stats = cache.getStats();
-            var rate = stats.getHits() / (double) stats.getOperations();
+            var rate = stats.hits() / (double) stats.operations();
             if (Double.isNaN(rate)) rate = 1;
             hitRate.setPieValue(rate);
             missRate.setPieValue(1 - rate);
 
-            operationsCount.setText(String.valueOf(stats.getOperations()));
-            hitsCount.setText(String.valueOf(stats.getHits()));
-            missesCount.setText(String.valueOf(stats.getMisses()));
+            operationsCount.setText(String.valueOf(stats.operations()));
+            hitsCount.setText(String.valueOf(stats.hits()));
+            missesCount.setText(String.valueOf(stats.misses()));
         });
     }
 

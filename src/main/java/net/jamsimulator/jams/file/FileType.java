@@ -36,9 +36,9 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Represents a file type. A file type contains a name an a collection of all supported extensions.
+ * Represents a file type. A file type contains a name and a collection of all supported extensions.
  * <p>
- * Remember that if two file types contains the same extension and the're inside
+ * Remember that if two file types contains the same extension, and they're inside
  * the same manager some functions will cause unpredictable results.
  */
 public abstract class FileType implements Labeled {
@@ -74,7 +74,7 @@ public abstract class FileType implements Labeled {
     /**
      * Returns a mutable collection with all extensions.
      * <p>
-     * Remember that if two file types contains the same extension and the're inside
+     * Remember that if two file types contains the same extension, and they're inside
      * the same manager some functions will cause unpredictable results.
      * <p>
      * Extensions are case-insensitive.

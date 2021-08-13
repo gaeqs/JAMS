@@ -42,7 +42,7 @@ public interface ExplorerElement extends ActionRegion {
 
 
     /**
-     * Returns the name that this elements is currently showing to the user.
+     * Returns the name that these elements is currently showing to the user.
      * This is the string that should be used for filters and lists.
      *
      * @return the visible name.

@@ -30,9 +30,8 @@ import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 /**
- * Represents a R-Type FPU basic instruction. This subclass adds the FMT
- * of the instruction, allowing the simulator to find this instruction based on
- * a FMT.
+ * Represents an R-Type FPU basic instruction. This subclass adds the FMT
+ * of the instruction, allowing the simulator to find this instruction based on an FMT.
  */
 public abstract class BasicRFPUInstruction<Inst extends AssembledInstruction> extends BasicRInstruction<Inst> {
 
@@ -40,7 +39,7 @@ public abstract class BasicRFPUInstruction<Inst extends AssembledInstruction> ex
 
     /**
      * Creates a basic instruction using a mnemonic, a parameter types array, an operation code,
-     * a function code and a operand type format specifier .
+     * a function code and an operand type format specifier .
      *
      * @param mnemonic      the mnemonic.
      * @param parameters    the parameter types.
@@ -56,7 +55,7 @@ public abstract class BasicRFPUInstruction<Inst extends AssembledInstruction> ex
 
     /**
      * Creates a basic instruction using a mnemonic, a parameter types array, an operation code,
-     * a function code and a operand type format specifier .
+     * a function code and an operand type format specifier .
      *
      * @param mnemonic      the mnemonic.
      * @param parameters    the parameter types.

@@ -45,7 +45,7 @@ public class InstructionUtils {
      * If the instruction is valid, the split parameters will be stored inside the set 'parameters'.
      *
      * @param parameters    the set where split parameters will be stored.
-     * @param builder       the registers builder of the assembler.
+     * @param builder       the registers' builder of the assembler.
      * @param rawParameters the raw parameters.
      * @param instruction   the instruction.
      * @return whether the instruction is valid.

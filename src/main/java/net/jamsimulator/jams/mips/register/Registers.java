@@ -75,7 +75,7 @@ public class Registers extends SimpleEventBroadcast {
 
     /**
      * Returns the {@link Set} of valid registers' starts.
-     * This is is unmodifiable.
+     * This set is unmodifiable.
      * <p>
      * Every register should start using any of these characters.
      *

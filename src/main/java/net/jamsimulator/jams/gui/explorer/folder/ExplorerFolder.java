@@ -126,7 +126,7 @@ public class ExplorerFolder extends ExplorerSection {
      * Kills the {@link WatchService} of this folder. This prevents this folder
      * from receiving alerts from changes inside the folder.
      * <p>
-     * This method should be used when the folder is not longer used.
+     * This method should be used when the folder is no longer used.
      *
      * @throws IOException any exception thrown by {@link WatchService#close()}.
      */

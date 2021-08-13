@@ -36,7 +36,7 @@ import java.util.*;
 
 /**
  * Represents a simple memory. A simple memory is formed by several {@link MemorySection},
- * which are responsible of storing data in their {@link MemoryCell}s.
+ * which are responsible for storing data in their {@link MemoryCell}s.
  * <p>
  * Once created you cannot add or remove {@link MemorySection}s.
  * <p>
@@ -400,7 +400,7 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
     @Override
     public Set<MemorySection> getMemorySections() {
         List<MemorySection> list = Arrays.asList(sections);
-        return Collections.unmodifiableSet(new HashSet<>(list));
+        return Set.copyOf(list);
     }
 
     @Override

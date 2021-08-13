@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  * <p>
  * The "plugin.json" file must contain at least three fields:
  * <p>
- * name: the name of the plugin. Spaces are allowed and they will replaced by underscores when the plugin is loaded.
+ * name: the name of the plugin. Spaces are allowed, and they will be replaced by underscores when the plugin is loaded.
  * <p>
  * version: the version of the plugin as a string.
  * <p>
@@ -166,6 +166,7 @@ public class Plugin implements Labeled {
      * Events are usually loaded before JAMS. Use {@link net.jamsimulator.jams.event.general.JAMSPostInitEvent} if
      * you need to register elements to JAMS.
      */
+    @SuppressWarnings("EmptyMethod")
     public void onEnable() {
 
     }
@@ -175,6 +176,7 @@ public class Plugin implements Labeled {
     /**
      * This method is called when a plugin is disabled. Override it to implement funcionality to your plugin!
      */
+    @SuppressWarnings("EmptyMethod")
     public void onDisable() {
 
     }

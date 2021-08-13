@@ -35,7 +35,7 @@ import java.util.Objects;
 
 /**
  * Represents a directive. Directive are the direct equivalent to the preprocessor code in C.
- * They are used to give orders to the assembler.
+ * They are used to giving orders to the assembler.
  */
 public abstract class Directive {
 
@@ -64,7 +64,7 @@ public abstract class Directive {
 
     /**
      * Returns the documentation of the instruction.
-     * This string is a HTML-like formatted text containing a complete description of the directive.
+     * This string is an HTML-like formatted text containing a complete description of the directive.
      * <p>
      * This documentation depends on the current language of JAMS.
      *

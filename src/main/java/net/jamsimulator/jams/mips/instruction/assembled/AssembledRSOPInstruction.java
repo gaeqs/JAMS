@@ -28,7 +28,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 
 /**
- * Represents a compiled R-Type instruction. A R-Type instruction is composed of a function code,
+ * Represents a compiled R-Type instruction. An R-Type instruction is composed of a function code,
  * a sub-operation code, two source registers (source and target), one destination register
  * and one operation code.
  */

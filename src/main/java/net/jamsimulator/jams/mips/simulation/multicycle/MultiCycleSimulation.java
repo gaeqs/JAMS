@@ -212,7 +212,7 @@ public class MultiCycleSimulation extends MIPSSimulation<MultiCycleArchitecture>
         }
 
         if (data.canCallEvents()) {
-            //If fetch, call the event on the fetch section.
+            //If fetched, call the event on the fetch section.
             if (currentStep != MultiCycleStep.FETCH) {
                 MultiCycleStepEvent.Before before = callEvent(new MultiCycleStepEvent.Before(this, cycles, executedInstructions,
                         currentExecution.getAddress(), currentStep, currentExecution.getInstruction(), currentExecution));

@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 /**
- * Small helper record containing a file with it's raw text.
+ * Small helper record containing a file with its raw text.
  */
 public record RawFileData(String file, String data) {
 

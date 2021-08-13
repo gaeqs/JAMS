@@ -36,7 +36,7 @@ import java.util.*;
  * Represents a register. A register stores a 32-bit value. If {@link #isModifiable()} is true,
  * then it also can be modified.
  * <p>
- * A register can have several name. Those names shouldn't have a "$" character at the begin, as "$" represents
+ * A register can have several name. Those names shouldn't have a "$" character at the beginning, as "$" represents
  * that the string after it is a register; the character isn't part of the name.
  */
 public class Register {
@@ -51,7 +51,7 @@ public class Register {
     protected int defaultValue;
 
     /**
-     * Creates a register using a identifier and a list of names.
+     * Creates a register using an identifier and a list of names.
      *
      * @param registers  the {@link Registers register set} where this register is stored at.
      * @param identifier the identifies.
@@ -70,7 +70,7 @@ public class Register {
     }
 
     /**
-     * Creates a register using a identifier and a list of names.
+     * Creates a register using an identifier and a list of names.
      *
      * @param registers  the {@link Registers register set} where this register is stored at.
      * @param identifier the identifies.
@@ -89,7 +89,7 @@ public class Register {
     }
 
     /**
-     * Creates a register using a identifier, a value and a list of names. If the boolean
+     * Creates a register using an identifier, a value and a list of names. If the boolean
      * 'modifiable' is false this register will be read-only.
      *
      * @param registers  the {@link Registers register set} where this register is stored at.
@@ -111,7 +111,7 @@ public class Register {
     }
 
     /**
-     * Creates a register using a identifier, a value and a list of names. If the boolean
+     * Creates a register using an identifier, a value and a list of names. If the boolean
      * 'modifiable' is false this register will be read-only.
      *
      * @param registers  the {@link Registers register set} where this register is stored at.
@@ -133,7 +133,7 @@ public class Register {
     }
 
     /**
-     * Returns the {@link Registers register set} this register is inside of.
+     * Returns the {@link Registers register set} this register is inside.
      *
      * @return the {@link Registers register set}.
      */
@@ -151,7 +151,7 @@ public class Register {
     }
 
     /**
-     * Returns a immutable {@link Set} with all this register's names.
+     * Returns an immutable {@link Set} with all this register's names.
      *
      * @return the {@link Set}.
      */
@@ -207,7 +207,7 @@ public class Register {
     }
 
     /**
-     * This method should be use exclusively to undo steps.
+     * This method should be used exclusively to undo steps.
      * This method doesn't call any event.
      * <p>
      * Locks this register and sets the execution at the first position.
@@ -219,7 +219,7 @@ public class Register {
     }
 
     /**
-     * This method should be use exclusively to undo steps.
+     * This method should be used exclusively to undo steps.
      * This method doesn't call any event.
      * <p>
      * Unlocks this register, removing the last occurrence of the given execution.

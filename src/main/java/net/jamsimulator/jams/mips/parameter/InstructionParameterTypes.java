@@ -29,7 +29,7 @@ import net.jamsimulator.jams.utils.Validate;
 /**
  * Represents the {@link ParameterType}s of an {@link net.jamsimulator.jams.mips.instruction.Instruction}.
  * <p>
- * This class is immutable: you can made public constants with it.
+ * This class is immutable: you can make public constants with it.
  */
 public class InstructionParameterTypes {
 

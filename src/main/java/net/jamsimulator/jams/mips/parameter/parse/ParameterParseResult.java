@@ -35,11 +35,11 @@ import net.jamsimulator.jams.mips.parameter.parse.exception.BadParameterParseRes
  */
 public class ParameterParseResult {
 
-    private String label;
-    private int register;
-    private int immediate;
+    private final String label;
+    private final int register;
+    private final int immediate;
+    private final boolean hasLabel, hasRegister, hasImmediate;
     private int labelValue;
-    private boolean hasLabel, hasRegister, hasImmediate;
 
     ParameterParseResult(String label, int register, int immediate, boolean hasLabel, boolean hasRegister, boolean hasImmediate) {
         if (!hasLabel && !hasRegister && !hasImmediate)

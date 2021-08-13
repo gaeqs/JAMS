@@ -75,7 +75,7 @@ public abstract class AssembledPCREL19Instruction extends AssembledInstruction {
      * an origin {@link Instruction} and an origin {@link BasicInstruction}.
      *
      * @param operationCode  the operation code.
-     * @param sourceRegister the source register .
+     * @param sourceRegister the source register.
      * @param pcrel          the pc relative code.
      * @param immediate      the immediate.
      * @param origin         the origin instruction.

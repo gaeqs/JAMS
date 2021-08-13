@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents a JAMS windows theme. Themes contains CSS code used by JavaFX to style nodes.
+ * Represents a JAMS windows theme. Themes contain CSS code used by JavaFX to style nodes.
  * A Theme is represented by a name, this name must be unique.
  * If the theme is loaded from a file, this must contain a specific syntax:
  * <p>
@@ -85,7 +85,7 @@ public class Theme implements Labeled {
      * The contents must have a concrete syntax. See {@link Theme the main documentaiton} for more information.
      *
      * @param path the path representing the {@link java.io.File file} to load.
-     * @throws ThemeFailedLoadException whether the the couldn't be loaded.
+     * @throws ThemeFailedLoadException whether the theme couldn't be loaded.
      */
     public Theme(Path path) throws ThemeFailedLoadException {
         Validate.notNull(path, "Path cannot be null!");
@@ -110,7 +110,7 @@ public class Theme implements Labeled {
      * The contents must have a concrete syntax. See {@link Theme the main documentaiton} for more information.
      *
      * @param inputStream the  {@link InputStream}.
-     * @throws ThemeFailedLoadException whether the the couldn't be loaded.
+     * @throws ThemeFailedLoadException whether the theme couldn't be loaded.
      */
     public Theme(InputStream inputStream) throws ThemeFailedLoadException {
         Validate.notNull(inputStream, "InputStream cannot be null!");
@@ -163,7 +163,7 @@ public class Theme implements Labeled {
      * <p>
      * This CSS code will be placed at the end of the theme's code, so it will have the maximum priority.
      * <p>
-     * Nodes containing the CSS of the code WON'T be update automatically.
+     * Nodes containing the CSS of the code WON'T be updated automatically.
      * Use {@link ThemeManager#triggerRefresh()} to refresh all JAMS's nodes.
      *
      * @param css the CSS code to append.
@@ -177,7 +177,7 @@ public class Theme implements Labeled {
      * <p>
      * This CSS code will be placed at the start of the theme's code, so it will have the minimum priority.
      * <p>
-     * Nodes containing the CSS of the code WON'T be update automatically.
+     * Nodes containing the CSS of the code WON'T be updated automatically.
      * Use {@link ThemeManager#triggerRefresh()} to refresh all JAMS's nodes.
      *
      * @param css the CSS code to append.

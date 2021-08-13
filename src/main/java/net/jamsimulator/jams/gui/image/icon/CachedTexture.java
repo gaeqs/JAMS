@@ -24,8 +24,6 @@
 
 package net.jamsimulator.jams.gui.image.icon;
 
-import java.nio.IntBuffer;
-
 public record CachedTexture(int width, int height, int[] buffer) {
 
 }

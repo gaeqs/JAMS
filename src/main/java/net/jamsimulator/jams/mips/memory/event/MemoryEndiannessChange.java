@@ -28,7 +28,7 @@ import net.jamsimulator.jams.event.Cancellable;
 import net.jamsimulator.jams.mips.memory.Memory;
 
 /**
- * Represents a event invoked when the endianness of a {@link Memory} changes.
+ * Represents an event invoked when the endianness of a {@link Memory} changes.
  */
 public class MemoryEndiannessChange extends MemoryEvent {
 

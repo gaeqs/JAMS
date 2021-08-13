@@ -52,7 +52,7 @@ import java.util.List;
 public class ActionsExplorerAction extends ExplorerBasicElement {
 
     /**
-     * The amount of shortcuts an user can add.
+     * The amount of shortcuts a user can add.
      * This limit avoids a bad structure in the explorer.
      */
     public static final int MAX_SHORTCUTS = 3;

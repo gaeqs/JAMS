@@ -87,10 +87,8 @@ public interface Project {
      * <p>
      *
      * @param log The log debug messages will be print on. This log may be null.
-     * @throws IOException      any {@link IOException} occurred on assembly.
-     * @throws RuntimeException any assembler exception thrown by the assembler.
      */
-    void generateSimulation(Log log) throws IOException;
+    void generateSimulation(Log log);
 
     /**
      * Returns the assigned {@link ProjectTab}, if present.

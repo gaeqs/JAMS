@@ -37,7 +37,7 @@ import java.util.Set;
 
 /**
  * Represents a bar that hints errors, warnings and information about the current file.
- * This bar is usually located at the right side of the editor.
+ * This bar is usually located on the right side of the editor.
  */
 public class EditorHintBar extends Region {
 

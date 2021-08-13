@@ -31,7 +31,7 @@ import net.jamsimulator.jams.mips.memory.MemorySection;
 import java.util.Optional;
 
 /**
- * Represents a event invoked when a word is stored in a {@link Memory}.
+ * Represents an event invoked when a word is stored in a {@link Memory}.
  */
 public class MemoryWordSetEvent extends MemoryEvent {
 

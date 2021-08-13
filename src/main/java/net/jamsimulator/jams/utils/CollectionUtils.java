@@ -46,7 +46,7 @@ public class CollectionUtils {
 
     @SuppressWarnings("unchecked")
     public static <T> List<T> deepCopy(List<T> original) {
-        List<T> list = new LinkedList<T>();
+        List<T> list = new LinkedList<>();
         original.forEach(value -> {
             if (value instanceof List) {
                 list.add((T) deepCopy((List<?>) value));

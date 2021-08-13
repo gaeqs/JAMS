@@ -38,7 +38,7 @@ import java.util.List;
  * <p>
  * Instruction implementations must be immutable classes. The data of an instruction cannot change.
  * <p>
- * Several instructions with the same mnemonic but different parameters may coexists at the same time.
+ * Several instructions with the same mnemonic but different parameters may coexist at the same time.
  * For example, these two instructions are different {@link Instruction} instances:
  * <p>
  * add $t0,$t1,$t2
@@ -56,7 +56,7 @@ import java.util.List;
 public interface Instruction {
 
     /**
-     * Returns the name of the instruction. This is not the MIPS mnemonic, but an human-like name.
+     * Returns the name of the instruction. This is not the MIPS mnemonic, but a human-like name.
      * For example, the name for the "add" instruction may be "Addition".
      * <p>
      * This name depends on the current language of JAMS.
@@ -69,7 +69,7 @@ public interface Instruction {
 
     /**
      * Returns the documentation of the instruction.
-     * This string is a HTML-like formatted text containing a complete description of the instruction.
+     * This string is an HTML-like formatted text containing a complete description of the instruction.
      * <p>
      * This documentation depends on the current language of JAMS.
      *
@@ -81,7 +81,7 @@ public interface Instruction {
      * Returns the MIPS mnemonic of the instruction. This is the static short MIPS name of the instruction,
      * and it's used to filter and check the instruction in compile time.
      * <p>
-     * For an human-like name see {@link #getName()}.
+     * For a human-like name see {@link #getName()}.
      *
      * @return the MIPS mnemonic.
      */

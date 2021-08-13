@@ -74,7 +74,7 @@ public class SegmentedFlowEntry extends FlowEntry {
     }
 
     /**
-     * Adds an step to this entry.
+     * Adds a step to this entry.
      *
      * @param cycle      the cycle of the step.
      * @param step       the step type.

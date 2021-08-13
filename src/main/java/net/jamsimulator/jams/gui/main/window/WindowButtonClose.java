@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.gui.main.window;
 
 import javafx.stage.Stage;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 
 public class WindowButtonClose extends WindowButton {

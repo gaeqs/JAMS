@@ -28,7 +28,6 @@ import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 
-import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -190,7 +189,7 @@ public interface Simulation<Address extends Number> extends EventBroadcast {
 
     /**
      * Undoes the last step made by this simulation.
-     * This method won't do nothing if no steps were made.
+     * This method won't do anything if no steps were made.
      * <p>
      * If this simulation was executing all instructions and this method is used,
      * the simulation will stop.

@@ -32,8 +32,6 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.utils.RawFileData;
 
-import java.util.List;
-
 public class MIPS32AssemblerBuilder extends AssemblerBuilder {
 
     public static final String NAME = "MIPS32";

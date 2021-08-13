@@ -36,12 +36,12 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
- * Represents an storage for instances of the selected type.
+ * Represents a storage for instances of the selected type.
  * You can add, remove and get elements from this manager.
  * <p>
  * Elements stored by a manager must implement {@link Labeled}.
  * <p>
- * Every addition will call a register event, and every removal will call a unregister event.
+ * Every addition will call a register event, and every removal will call an unregister event.
  * <p>
  * Instances of this class are used to manage the storage of several kind of elements inside JAMS.
  *
@@ -133,10 +133,11 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
      * This method is called when the {@link #add(Labeled)}} execution was successful,
      * just before the after event is called.
      * <p>
-     * You can override this method to perform any extra operation when a element is added.
+     * You can override this method to perform any extra operation when an element is added.
      *
      * @param type the element that was added.
      */
+    @SuppressWarnings("EmptyMethod")
     protected void onElementAddition(Type type) {
     }
 
@@ -175,7 +176,7 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
      * This method is called when the {@link #remove(Object)}} execution was successful,
      * just before the after event is called.
      * <p>
-     * You can override this method to perform any extra operation when a element is removed.
+     * You can override this method to perform any extra operation when an element is removed.
      *
      * @param type the element that was added.
      */

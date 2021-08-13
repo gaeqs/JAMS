@@ -42,7 +42,6 @@ import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.FilesToAssemblerHolder;
 import net.jamsimulator.jams.project.Project;
-import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.io.File;
 import java.util.Optional;

@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * Represents a registers builder. Registers builders are used to create several {@link Registers}
+ * Represents a registers' builder. Registers builders are used to create several {@link Registers}
  * using the given parameters.
  * <p>
  * If a plugin wants to add a custom {@link Registers} to JAMS, it should create a child of this class and register
@@ -130,7 +130,7 @@ public abstract class RegistersBuilder implements Labeled {
     }
 
     /**
-     * Returns whether this builder will created a register with the given name.
+     * Returns whether this builder will create a register with the given name.
      * The name can't contain any start character.
      *
      * @param name the name.

@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.theme.event;
 import net.jamsimulator.jams.event.Event;
 
 /**
- * This event is called when the the JAMS style should refresh.
+ * This event is called when the JAMS style should refresh.
  */
 public class ThemeShouldRefreshEvent extends Event {
 }
