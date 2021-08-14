@@ -51,7 +51,7 @@ public class CodeFileEditorReplace extends CodeFileEditorSearch {
         AnchorUtils.setAnchor(searchHBox, 0, 30, 0, -1);
 
         var replaceHBox = new HBox();
-        AnchorUtils.setAnchor(replaceHBox, 30, 0, 0, -1);
+        AnchorUtils.setAnchor(replaceHBox, 30, 2, 0, -1);
 
         replaceHBox.setSpacing(5);
         replaceHBox.setAlignment(Pos.CENTER_LEFT);

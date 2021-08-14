@@ -98,7 +98,7 @@ public class CodeFileEditorSearch extends AnchorPane implements FileEditorTabTop
         closeButton.getStyleClass().add("code-file-editor-search-button");
         closeButton.setOnAction(event -> hide());
         closeButton.setFocusTraversable(false);
-        AnchorUtils.setAnchor(closeButton, 2, 2, -1, 0);
+        AnchorUtils.setAnchor(closeButton, 2, -1, -1, 0);
         getChildren().add(closeButton);
 
         results = new LinkedList<>();
