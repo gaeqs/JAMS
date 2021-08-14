@@ -43,6 +43,9 @@ public class Messages {
     public static final String START_NEW_PROJECT = "START_NEW_PROJECT";
     public static final String START_ABOUT = "START_ABOUT";
 
+    public static final String BOTTOM_BAR_MEMORY = "BOTTOM_BAR_MEMORY";
+    public static final String BOTTOM_BAR_MEMORY_TOOLTIP = "BOTTOM_BAR_MEMORY_TOOLTIP";
+
     public static final String PROJECT_CREATOR_MIPS_ASSEMBLER = "PROJECT_CREATOR_MIPS_ASSEMBLER";
     public static final String PROJECT_CREATOR_MIPS_INSTRUCTION_SET = "PROJECT_CREATOR_MIPS_INSTRUCTION_SET";
     public static final String PROJECT_CREATOR_MIPS_DIRECTIVE_SET = "PROJECT_CREATOR_MIPS_DIRECTIVE_SET";

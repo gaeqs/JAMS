@@ -28,6 +28,8 @@ import com.sun.javafx.geom.RectBounds;
 import com.sun.javafx.sg.prism.NGNode;
 import com.sun.javafx.tk.Toolkit;
 import com.sun.prism.*;
+import com.sun.prism.impl.BaseTexture;
+import com.sun.prism.impl.ManagedResource;
 import net.jamsimulator.jams.gui.image.icon.CachedTexture;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 
@@ -84,21 +86,21 @@ public class NGQualityImageView extends NGNode {
     @Override
     protected void renderContent(Graphics g) {
         if (w < 1 || h < 1) return;
-        var cached = getBestTexture(g.getResourceFactory(), (int) w, (int) h);
-        if (cached == null) return;
+        getBestTexture(g.getResourceFactory(), (int) w, (int) h);
+        if (currentCachedTexture == null) return;
         currentTexture.lock();
-        g.drawTexture(currentTexture, x, y, x + w, y + h, 0, 0, cached.width(), cached.height());
+        g.drawTexture(currentTexture, x, y, x + w, y + h, 0, 0,
+                currentCachedTexture.width(), currentCachedTexture.height());
         currentTexture.unlock();
     }
 
-    protected CachedTexture getBestTexture(ResourceFactory factory, int width, int height) {
-        if (width == textureWidth && height == textureHeight && representedIcon == icon) {
+    protected void getBestTexture(ResourceFactory factory, int width, int height) {
+        if (width == textureWidth && height == textureHeight && representedIcon == icon && !currentTexture.isSurfaceLost()) {
             // Nothing to do!
-            return currentCachedTexture;
+            return;
         }
 
         if (currentTexture != null) {
-            currentTexture.contentsNotUseful();
             currentTexture.dispose();
             currentTexture = null;
         }
@@ -114,12 +116,10 @@ public class NGQualityImageView extends NGNode {
                     Texture.Usage.DYNAMIC, Texture.WrapMode.CLAMP_TO_EDGE, cached.width(), cached.height());
         }
 
-        currentTexture.contentsUseful();
-
         textureWidth = width;
         textureHeight = height;
 
-        if (cached == null) return null;
+        if (cached == null) return;
         currentTexture.setLinearFiltering(width <= cached.width() && height <= cached.height());
 
         currentTexture.update(IntBuffer.wrap(cached.buffer()), PixelFormat.INT_ARGB_PRE,
@@ -128,8 +128,6 @@ public class NGQualityImageView extends NGNode {
 
         representedIcon = icon;
         currentTexture.unlock();
-
-        return currentCachedTexture;
     }
 
     @Override

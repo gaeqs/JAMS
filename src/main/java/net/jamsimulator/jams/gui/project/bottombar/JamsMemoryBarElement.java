@@ -26,13 +26,15 @@ package net.jamsimulator.jams.gui.project.bottombar;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.project.event.ProjectCloseEvent;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
+import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.language.wrapper.LanguageLabel;
+import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
 import net.jamsimulator.jams.project.Project;
 
 public class JamsMemoryBarElement extends AnchorPane implements ProjectBottomBarElement {
@@ -45,14 +47,21 @@ public class JamsMemoryBarElement extends AnchorPane implements ProjectBottomBar
     private final UpdateTimer timer;
 
     private final ProgressBar bar;
-    private final Label label;
+    private final LanguageLabel label;
+
+    private final String[] replacements = new String[]{"{USED}", "0", "{TOTAL}", "0"};
 
     public JamsMemoryBarElement(Project project) {
         getStyleClass().add(STYLE_CLASS);
         this.project = project;
 
         bar = new ProgressBar();
-        label = new Label();
+        label = new LanguageLabel(Messages.BOTTOM_BAR_MEMORY, replacements);
+        label.setTooltip(new LanguageTooltip(Messages.BOTTOM_BAR_MEMORY_TOOLTIP));
+        label.setOnMouseClicked(event -> {
+            System.gc();
+            event.consume();
+        });
 
         AnchorUtils.setAnchor(bar, 0, 0, 0, 0);
         AnchorUtils.setAnchor(label, 0, 0, 0, 0);
@@ -106,7 +115,10 @@ public class JamsMemoryBarElement extends AnchorPane implements ProjectBottomBar
             var used = total - free;
 
             bar.setProgress(used / (double) total);
-            label.setText(used / 1048576 + " of " + total / 1048576+"MiB");
+
+            replacements[1] = String.valueOf(used / 1048576);
+            replacements[3] = String.valueOf(total / 1048576);
+            label.refreshMessage();
         }
     }
 

@@ -57,7 +57,7 @@ public class LanguageLabel extends Label {
         refreshMessage();
     }
 
-    private void refreshMessage() {
+    public void refreshMessage() {
         if (node == null) {
             setText(null);
             return;
