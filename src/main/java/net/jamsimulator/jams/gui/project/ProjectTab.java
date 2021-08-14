@@ -113,7 +113,7 @@ public class ProjectTab extends Tab implements EventBroadcast {
                         ((ProjectPane) node).populateHBox(getButtonsHBox());
                     }
 
-                    AnchorUtils.setAnchor(node, 28, 20, 0, 0);
+                    AnchorUtils.setAnchor(node, 28, 22, 0, 0);
                     if (!pane.getChildren().contains(node)) {
                         pane.getChildren().add(node);
                     } else {
@@ -130,7 +130,7 @@ public class ProjectTab extends Tab implements EventBroadcast {
         AnchorUtils.setAnchor(projectTabPane, 0, 0, 0, 400);
         pane.getChildren().add(projectTabPane);
 
-        bottomBar = new ProjectBottomBar(project);
+        bottomBar = new ProjectBottomBar(this);
         bottomBar.setPrefHeight(20);
         bottomBar.setMaxHeight(20);
         AnchorUtils.setAnchor(bottomBar, -1, 0, 0, 0);

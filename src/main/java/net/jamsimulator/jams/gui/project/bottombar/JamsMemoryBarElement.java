@@ -25,28 +25,40 @@
 package net.jamsimulator.jams.gui.project.bottombar;
 
 import javafx.animation.AnimationTimer;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Tooltip;
+import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.project.event.ProjectCloseEvent;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.project.Project;
 
-public class JamsMemoryBar extends ProgressBar {
+public class JamsMemoryBarElement extends AnchorPane implements ProjectBottomBarElement {
+
+    public static final String NAME = "jams_memory_bar_element";
+    public static final String STYLE_CLASS = "jams-memory-bar-element";
 
     private final Project project;
 
     private final UpdateTimer timer;
-    private final Tooltip tooltip;
 
-    public JamsMemoryBar(Project project) {
+    private final ProgressBar bar;
+    private final Label label;
+
+    public JamsMemoryBarElement(Project project) {
+        getStyleClass().add(STYLE_CLASS);
         this.project = project;
-        tooltip = new Tooltip();
-        setTooltip(tooltip);
 
-        setPrefWidth(75);
+        bar = new ProgressBar();
+        label = new Label();
+
+        AnchorUtils.setAnchor(bar, 0, 0, 0, 0);
+        AnchorUtils.setAnchor(label, 0, 0, 0, 0);
+        getChildren().addAll(bar, label);
+
         JamsApplication.getProjectsTabPane().registerListeners(this, true);
-
         timer = new UpdateTimer();
         timer.start();
     }
@@ -57,6 +69,26 @@ public class JamsMemoryBar extends ProgressBar {
         if (project.equals(event.getProject())) {
             timer.stop();
         }
+    }
+
+    @Override
+    public ProjectBottomBarPosition getPosition() {
+        return ProjectBottomBarPosition.RIGHT;
+    }
+
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    @Override
+    public Node asNode() {
+        return this;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
     }
 
 
@@ -73,8 +105,8 @@ public class JamsMemoryBar extends ProgressBar {
             var free = Runtime.getRuntime().freeMemory();
             var used = total - free;
 
-            setProgress(used / (double) total);
-            tooltip.setText(used / 1048576 + " MiB / " + total / 1048576 +" MiB");
+            bar.setProgress(used / (double) total);
+            label.setText(used / 1048576 + " of " + total / 1048576+"MiB");
         }
     }
 

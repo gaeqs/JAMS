@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.project.bottombar;
 
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.event.Listener;
@@ -35,7 +36,10 @@ import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.task.JamsTask;
 
-public class ProjectTaskBar extends HBox {
+public class ProjectTaskBarElement extends HBox implements ProjectBottomBarElement {
+
+    public static final String NAME = "project_task_bar_element";
+    public static final String STYLE_CLASS = "project-task-bar-element";
 
     private final Project project;
 
@@ -45,7 +49,8 @@ public class ProjectTaskBar extends HBox {
 
     private JamsTask currentTask;
 
-    public ProjectTaskBar(Project project) {
+    public ProjectTaskBarElement(Project project) {
+        getStyleClass().add(STYLE_CLASS);
         this.project = project;
 
         label = new LanguageLabel(null);
@@ -53,12 +58,8 @@ public class ProjectTaskBar extends HBox {
         timer = new UpdateTimer();
 
         bar.setProgress(-1);
-        bar.setPrefWidth(150);
-        bar.setPrefHeight(10);
         bar.setVisible(false);
 
-        setAlignment(Pos.CENTER);
-        setSpacing(5);
         getChildren().addAll(label, bar);
         JamsApplication.getProjectsTabPane().registerListeners(this, true);
 
@@ -71,6 +72,26 @@ public class ProjectTaskBar extends HBox {
         if (project.equals(event.getProject())) {
             timer.stop();
         }
+    }
+
+    @Override
+    public ProjectBottomBarPosition getPosition() {
+        return ProjectBottomBarPosition.RIGHT;
+    }
+
+    @Override
+    public int getPriority() {
+        return Integer.MAX_VALUE - 100;
+    }
+
+    @Override
+    public Node asNode() {
+        return this;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
     }
 
 

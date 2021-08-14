@@ -25,6 +25,10 @@
 package net.jamsimulator.jams.gui.util.log;
 
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -46,12 +50,16 @@ import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class Console extends HBox implements Log, EventBroadcast {
+
+    protected final SimpleStringProperty lastLineProperty;
+    protected final SimpleObjectProperty<LocalDateTime> lastLineTimeProperty;
 
     protected final LinkedList<String> inputs;
     protected VBox buttons;
@@ -63,6 +71,7 @@ public class Console extends HBox implements Log, EventBroadcast {
     protected SimpleEventBroadcast broadcast;
 
     protected LinkedList<Pair> buffer;
+
 
     public Console() {
         super();
@@ -76,6 +85,20 @@ public class Console extends HBox implements Log, EventBroadcast {
         loadDisplay();
 
         loadInputListeners();
+
+        lastLineProperty = new SimpleStringProperty("");
+        lastLineTimeProperty = new SimpleObjectProperty<>(LocalDateTime.now());
+        display.textProperty().addListener((obs, old, val) -> {
+            var paragraphs = display.getParagraphs().size();
+            if (paragraphs == 0) lastLineProperty.set("");
+            else if (paragraphs == 1) lastLineProperty.set(val);
+            else {
+                var paragraph = display.getParagraph(paragraphs - 1);
+                if (paragraph.getText().isEmpty()) paragraph = display.getParagraph(paragraphs - 2);
+                lastLineProperty.set(paragraph.getText());
+            }
+            lastLineTimeProperty.set(LocalDateTime.now());
+        });
     }
 
     public Optional<String> popInput() {
@@ -177,6 +200,16 @@ public class Console extends HBox implements Log, EventBroadcast {
     @Override
     public void clear() {
         Platform.runLater(() -> display.clear());
+    }
+
+    @Override
+    public StringProperty lastLineProperty() {
+        return lastLineProperty;
+    }
+
+    @Override
+    public ObjectProperty<LocalDateTime> lastLineTimeProperty() {
+        return lastLineTimeProperty;
     }
 
     public void flush() {

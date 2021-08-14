@@ -160,6 +160,8 @@ public class Messages {
 
     public static final String FLOW_CYCLE = "FLOW_CYCLE";
 
+    public static final String TASK_ASSEMBLING = "TASK_ASSEMBLING";
+
     public static final String CONFIG = "CONFIG";
 
     public static final String CONFIG_ACTION = "CONFIG_ACTION";

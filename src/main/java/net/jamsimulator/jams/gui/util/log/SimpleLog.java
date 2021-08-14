@@ -25,6 +25,10 @@
 package net.jamsimulator.jams.gui.util.log;
 
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -35,11 +39,14 @@ import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 public class SimpleLog extends HBox implements Log {
 
     protected final CodeArea display;
+    protected final SimpleStringProperty lastLineProperty;
+    protected final SimpleObjectProperty<LocalDateTime> lastLineTimeProperty;
 
     public SimpleLog() {
         super();
@@ -59,6 +66,20 @@ public class SimpleLog extends HBox implements Log {
         getChildren().add(scroll);
 
         display.prefWidthProperty().bind(widthProperty().subtract(buttons.widthProperty()));
+
+        lastLineProperty = new SimpleStringProperty("");
+        lastLineTimeProperty = new SimpleObjectProperty<>(LocalDateTime.now());
+        display.textProperty().addListener((obs, old, val) -> {
+            var paragraphs = display.getParagraphs().size();
+            if (paragraphs == 0) lastLineProperty.set("");
+            else if (paragraphs == 1) lastLineProperty.set(val);
+            else {
+                var paragraph = display.getParagraph(paragraphs - 1);
+                if (paragraph.getText().isEmpty()) paragraph = display.getParagraph(paragraphs - 2);
+                lastLineProperty.set(paragraph.getText());
+            }
+            lastLineTimeProperty.set(LocalDateTime.now());
+        });
     }
 
     @Override
@@ -119,6 +140,16 @@ public class SimpleLog extends HBox implements Log {
     @Override
     public void clear() {
         Platform.runLater(display::clear);
+    }
+
+    @Override
+    public StringProperty lastLineProperty() {
+        return lastLineProperty;
+    }
+
+    @Override
+    public ObjectProperty<LocalDateTime> lastLineTimeProperty() {
+        return lastLineTimeProperty;
     }
 
     private void printAndStyle(Object object, String style) {

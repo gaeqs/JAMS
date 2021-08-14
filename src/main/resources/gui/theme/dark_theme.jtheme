@@ -759,6 +759,52 @@ AnchorPane {
     -fx-border-color: -theme-background-darker-2 -theme-background-darker-2 -theme-background-pressed -theme-background-darker-2;
 }
 
+/* PROJECT BOTTOM BAR */
+.project-bottom-bar {
+}
+
+.project-bottom-bar > HBox {
+    -fx-spacing: 10px;
+}
+
+.project-task-bar-element {
+    -fx-spacing: 10px;
+    -fx-alignment: center;
+}
+
+.project-task-bar-element > .progress-bar {
+    -fx-pref-width: 150px;
+    -fx-pref-height: 10px;
+}
+
+.jams-memory-bar-element {
+    -fx-pref-width: 100px;
+}
+
+.jams-memory-bar-element > .label {
+    -fx-font-size: 12px;
+    -fx-font-weight: lighter;
+    -fx-alignment: center;
+    -fx-text-fill: -theme-foreground-darker;
+}
+
+.jams-memory-bar-element > .progress-bar .track {
+    -fx-background-color: transparent;
+}
+
+.jams-memory-bar-element > .progress-bar .bar {
+    -fx-background-radius: 0px;
+    -fx-background-insets: 0px;
+}
+
+.project-last-log-bar-element {
+    -fx-font-size: 12px;
+    -fx-font-weight: lighter;
+    -fx-alignment: top-left;
+    -fx-padding: 0px 0px 0px 25px;
+    -fx-text-fill: -theme-foreground-darker;
+}
+
 .buttons-hbox {
     -fx-background-color: -theme-background-darker-2;
 }

@@ -22,24 +22,11 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.gui.project.bottombar;
 
-/**
- * Represents an element with a name.
- * <p>
- * {@link Manager}s must represent an element type that implements this interface.
- */
-public interface Labeled {
+public enum ProjectBottomBarPosition {
 
-    /**
-     * Returns the name of the element.
-     * This name cannot be null, and it must be unique!
-     * <p>
-     * This value must also be immutable. Changes to the value returned by this method
-     * retult in unpredictable behaviours.
-     *
-     * @return the name of the element.
-     */
-    String getName();
+    LEFT,
+    RIGHT
 
 }

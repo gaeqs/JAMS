@@ -48,7 +48,7 @@ import java.util.Optional;
 public class BarButton extends ToggleButton {
 
     public static final int IMAGE_SIZE = 16;
-    public static final String DRAG_DROP_PREFIX = "sidebar";
+    public static final String DRAG_DROP_PREFIX = "jams-bar";
 
     private final Bar bar;
     private final BarSnapshot snapshot;

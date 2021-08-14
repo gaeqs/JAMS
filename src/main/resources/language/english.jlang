@@ -299,6 +299,8 @@ CACHE_LOG_CLEAR_ALL=Clear all logs
 
 FLOW_CYCLE=Cycle: {CYCLE}
 
+TASK_ASSEMBLING=Assembling...
+
 CONFIG=Configuration
 
 CONFIG_ACTION=Actions

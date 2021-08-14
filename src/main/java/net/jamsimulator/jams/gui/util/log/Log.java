@@ -24,6 +24,12 @@
 
 package net.jamsimulator.jams.gui.util.log;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.StringProperty;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 public interface Log {
 
     void print(Object object);
@@ -49,4 +55,8 @@ public interface Log {
     void println();
 
     void clear();
+
+    StringProperty lastLineProperty();
+
+    ObjectProperty<LocalDateTime> lastLineTimeProperty();
 }

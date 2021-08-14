@@ -22,24 +22,48 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.gui.project.bottombar;
+
+import javafx.scene.Node;
+import net.jamsimulator.jams.manager.Labeled;
 
 /**
- * Represents an element with a name.
+ * Represents an element inside a {@link ProjectBottomBar}.
  * <p>
- * {@link Manager}s must represent an element type that implements this interface.
+ * This interface extends {@link Labeled}. You must provide an immutable name
+ * to this element for a proper behaviour.
  */
-public interface Labeled {
+public interface ProjectBottomBarElement extends Labeled {
 
     /**
-     * Returns the name of the element.
-     * This name cannot be null, and it must be unique!
+     * Returns the position where the element will be shown inside the {@link ProjectBottomBar}.
      * <p>
-     * This value must also be immutable. Changes to the value returned by this method
+     * This value must be immutable. Changes to the value returned by this method
      * retult in unpredictable behaviours.
      *
-     * @return the name of the element.
+     * @return the position.
      */
-    String getName();
+    ProjectBottomBarPosition getPosition();
+
+    /**
+     * Returns the priority of the element in the {@link ProjectBottomBar}. Elements with
+     * higher priorities will be shown first.
+     * <p>
+     * This value must be immutable. Changes to the value returned by this method
+     * retult in unpredictable behaviours.
+     *
+     * @return the priority.
+     */
+    int getPriority();
+
+    /**
+     * Return this element as a {@link Node}.
+     * <p>
+     * This method is used by the {@link ProjectBottomBar} to add
+     * this element to the JavaFX scene.
+     *
+     * @return this element as a {@link Node}.
+     */
+    Node asNode();
 
 }

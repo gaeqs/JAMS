@@ -299,6 +299,8 @@ CACHE_LOG_CLEAR_ALL=Eliminar registros
 
 FLOW_CYCLE=Ciclo: {CYCLE}
 
+TASK_ASSEMBLING=Ensamblando...
+
 CONFIG=Configuración
 
 CONFIG_ACTION=Acciones
