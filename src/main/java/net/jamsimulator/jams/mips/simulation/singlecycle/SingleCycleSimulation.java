@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.mips.simulation.singlecycle;
@@ -41,8 +41,8 @@ import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.COP0RegistersBits;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
-import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.mips.simulation.SimulationData;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 import net.jamsimulator.jams.mips.simulation.change.*;
 import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
@@ -65,19 +65,17 @@ import java.util.Optional;
  *
  * @see SingleCycleArchitecture
  */
-public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
+public class SingleCycleSimulation extends MIPSSimulation<SingleCycleArchitecture> {
 
     public static final int MAX_CHANGES = 10000;
 
     private final LinkedList<StepChanges<SingleCycleArchitecture>> changes;
-    private StepChanges<SingleCycleArchitecture> currentStepChanges;
-
-    private long instructions;
-    private long start;
-
     //Hard reference. Do not convert to local variable.
     @SuppressWarnings("FieldCanBeLocal")
     private final Listeners listeners;
+    private StepChanges<SingleCycleArchitecture> currentStepChanges;
+    private long instructions;
+    private long start;
 
     /**
      * Creates the single-cycle simulation.
@@ -88,7 +86,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
      * @param memory                 the memory to use in this simulation.
      * @param instructionStackBottom the address of the bottom of the instruction stack.
      */
-    public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, SimulationData data) {
+    public SingleCycleSimulation(SingleCycleArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, MIPSSimulationData data) {
         super(architecture, instructionSet, registers, memory, instructionStackBottom, kernelStackBottom, data, true);
         changes = data.isUndoEnabled() ? new LinkedList<>() : null;
         listeners = new Listeners();
@@ -108,7 +106,7 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
     }
 
     @Override
-    public void reset() {
+    public void reset() throws InterruptedException {
         super.reset();
         if (changes != null) {
             changes.clear();
@@ -137,13 +135,14 @@ public class SingleCycleSimulation extends Simulation<SingleCycleArchitecture> {
     }
 
     @Override
-    public boolean undoLastStep() {
+    public boolean undoLastStep() throws InterruptedException {
         if (!data.isUndoEnabled()) return false;
 
         if (callEvent(new SimulationUndoStepEvent.Before(this, cycles - 1)).isCancelled()) return false;
 
         stop();
         waitForExecutionFinish();
+
 
         if (changes.isEmpty()) return false;
         finished = false;

@@ -1,9 +1,32 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
 package net.jamsimulator.jams.plugin;
 
 import javafx.application.Platform;
-import javafx.scene.image.Image;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.image.icon.IconManager;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.manager.Labeled;
 
 import java.io.InputStream;
@@ -22,7 +45,7 @@ import java.util.stream.Collectors;
  * <p>
  * The "plugin.json" file must contain at least three fields:
  * <p>
- * name: the name of the plugin. Spaces are allowed and they will replaced by underscores when the plugin is loaded.
+ * name: the name of the plugin. Spaces are allowed, and they will be replaced by underscores when the plugin is loaded.
  * <p>
  * version: the version of the plugin as a string.
  * <p>
@@ -41,7 +64,18 @@ public class Plugin implements Labeled {
     private PluginHeader header;
     private boolean enabled;
     private Set<Plugin> dependencies, enabledSoftDepenedencies;
-    private Image favicon;
+    private IconData favicon;
+
+    /**
+     * Runs the given code in the JavaFX application thread.
+     * <p>
+     * This allows the code to modify JavaFX nodes.
+     *
+     * @param runnable the code to run.
+     */
+    public static void runInApplicationThread(Runnable runnable) {
+        Platform.runLater(runnable);
+    }
 
     @Override
     public String getName() {
@@ -81,31 +115,6 @@ public class Plugin implements Labeled {
     }
 
     /**
-     * Retuns an unmodifiable {@link Set} with all dependencies of this plugin.
-     *
-     * @return the dependencies.
-     */
-    public Set<Plugin> getDependencies() {
-        return Collections.unmodifiableSet(dependencies);
-    }
-
-
-    /**
-     * Retuns an unmodifiable {@link Set} with all loaded soft dependencies of this plugin.
-     * <p>
-     * Unloaded soft dependencies are not present in this {@link Set}.
-     *
-     * @return the soft dependencies.
-     */
-    public Set<Plugin> getEnabledSoftDepenedencies() {
-        return Collections.unmodifiableSet(enabledSoftDepenedencies);
-    }
-
-    public Optional<Image> getFavicon() {
-        return Optional.ofNullable(favicon);
-    }
-
-    /**
      * WARNING! This method should be used only by a {@link net.jamsimulator.jams.manager.PluginManager}!
      * <p>
      * Enables or disables this plugin.
@@ -128,24 +137,49 @@ public class Plugin implements Labeled {
     }
 
     /**
+     * Retuns an unmodifiable {@link Set} with all dependencies of this plugin.
+     *
+     * @return the dependencies.
+     */
+    public Set<Plugin> getDependencies() {
+        return Collections.unmodifiableSet(dependencies);
+    }
+
+    /**
+     * Retuns an unmodifiable {@link Set} with all loaded soft dependencies of this plugin.
+     * <p>
+     * Unloaded soft dependencies are not present in this {@link Set}.
+     *
+     * @return the soft dependencies.
+     */
+    public Set<Plugin> getEnabledSoftDepenedencies() {
+        return Collections.unmodifiableSet(enabledSoftDepenedencies);
+    }
+
+    public Optional<IconData> getFavicon() {
+        return Optional.ofNullable(favicon);
+    }
+
+    /**
      * This method is called when a plugin is enabled. Override it to implement funcionality to your plugin!
      * <p>
      * Events are usually loaded before JAMS. Use {@link net.jamsimulator.jams.event.general.JAMSPostInitEvent} if
      * you need to register elements to JAMS.
      */
+    @SuppressWarnings("EmptyMethod")
     public void onEnable() {
 
     }
 
+    // region helper methods
 
     /**
      * This method is called when a plugin is disabled. Override it to implement funcionality to your plugin!
      */
+    @SuppressWarnings("EmptyMethod")
     public void onDisable() {
 
     }
-
-    // region helper methods
 
     /**
      * Returns an {@link InputStream} representing the resource in the plugin JAR matching the given path if present.
@@ -155,17 +189,6 @@ public class Plugin implements Labeled {
      */
     public Optional<InputStream> resource(String path) {
         return Optional.ofNullable(getClass().getResourceAsStream(path));
-    }
-
-    /**
-     * Runs the given code in the JavaFX application thread.
-     * <p>
-     * This allows the code to modify JavaFX nodes.
-     *
-     * @param runnable the code to run.
-     */
-    public static void runInApplicationThread(Runnable runnable) {
-        Platform.runLater(runnable);
     }
 
     // endregion
@@ -178,7 +201,8 @@ public class Plugin implements Labeled {
             if (header.favicon() != null) {
                 var in = getClass().getResourceAsStream(header.favicon());
                 if (in != null) {
-                    favicon = new Image(in, IconManager.SIZE, IconManager.SIZE, false, false);
+                    favicon = new IconData("plugin_favicon_" + getName(), in, this);
+                    in.close();
                 }
             }
         } catch (Exception ex) {

@@ -245,13 +245,25 @@ AnchorPane {
     -fx-font-weight: bold;
 }
 
+.dark-2-bold-button {
+    -fx-background-color: -theme-background-darker-2;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0;
+    -fx-text-fill: -theme-foreground;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+
 .bold-button:hover,
-.dark-bold-button:hover {
+.dark-bold-button:hover,
+.dark-2-bold-button:hover {
     -fx-background-color: -theme-background-lighter;
 }
 
 .bold-button:pressed,
-.dark-bold-button:pressed {
+.dark-bold-button:pressed,
+.dark-2-bold-button:pressed {
     -fx-background-color: -theme-background-pressed;
 }
 
@@ -747,6 +759,52 @@ AnchorPane {
     -fx-border-color: -theme-background-darker-2 -theme-background-darker-2 -theme-background-pressed -theme-background-darker-2;
 }
 
+/* PROJECT BOTTOM BAR */
+.project-bottom-bar {
+}
+
+.project-bottom-bar > HBox {
+    -fx-spacing: 10px;
+}
+
+.project-task-bar-element {
+    -fx-spacing: 10px;
+    -fx-alignment: center;
+}
+
+.project-task-bar-element > .progress-bar {
+    -fx-pref-width: 150px;
+    -fx-pref-height: 10px;
+}
+
+.jams-memory-bar-element {
+    -fx-pref-width: 100px;
+}
+
+.jams-memory-bar-element > .label {
+    -fx-font-size: 12px;
+    -fx-font-weight: lighter;
+    -fx-alignment: center;
+    -fx-text-fill: -theme-foreground-darker;
+}
+
+.jams-memory-bar-element > .progress-bar .track {
+    -fx-background-color: transparent;
+}
+
+.jams-memory-bar-element > .progress-bar .bar {
+    -fx-background-radius: 0px;
+    -fx-background-insets: 0px;
+}
+
+.project-last-log-bar-element {
+    -fx-font-size: 12px;
+    -fx-font-weight: lighter;
+    -fx-alignment: top-left;
+    -fx-padding: 0px 0px 0px 25px;
+    -fx-text-fill: -theme-foreground-darker;
+}
+
 .buttons-hbox {
     -fx-background-color: -theme-background-darker-2;
 }
@@ -757,9 +815,19 @@ AnchorPane {
     -fx-border-color: transparent;
     -fx-background-insets: 2;
     -fx-background-radius: 5;
-    -fx-text-fill: -theme-background-darker-2;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
+}
+
+/* SPEED SLIDER */
+.speed-slider {
+    -fx-fill-height: true;
+    -fx-spacing: 2px;
+    -fx-alignment: center;
+}
+
+.speed-slider .slider {
+    -fx-pref-width: 200px;
 }
 
 /*ABOUT*/
@@ -1037,7 +1105,6 @@ AnchorPane {
 
 
 /* NUMBER LINE */
-
 .code-area .left-bar {
     -fx-border-width: 0 1 0 0;
     -fx-border-color: -theme-background-lighter;
@@ -1135,6 +1202,18 @@ AnchorPane {
     -fx-fill: #4c762e;
 }
 
+/* SEARCH */
+.code-area .search-result {
+    -rtfx-background-color: #213414;
+    -rtfx-border-stroke-color: #3c6321;
+    -rtfx-border-stroke-width: 1px;
+}
+
+.code-area .selected-search-result {
+    -rtfx-background-color: #2b3c6d;
+    -rtfx-border-stroke-color: #ffffff;
+    -rtfx-border-stroke-width: 1px;
+}
 
 /* LOG */
 .code-area .log_error {
@@ -1228,6 +1307,26 @@ AnchorPane {
     -rtfx-underline-width: 1px;
 }
 
+/* SEARCH AREA */
+.code-file-editor-search {
+    -fx-pref-height: 30px;
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.code-file-editor-search-text-field {
+    -fx-pref-width: 200px;
+}
+
+.code-file-editor-search-button {
+    -fx-background-color: -theme-background-darker-2;
+    -fx-border-color: transparent;
+    -fx-font-weight: bold;
+}
+
+.code-file-editor-search-results {
+    -fx-font-size: 12px;
+}
+
 /* MIPS POPUPS*/
 .mips-popup {
     -fx-background-color: -theme-background-lighter;
@@ -1239,7 +1338,6 @@ AnchorPane {
 .mips-popup .label {
     -fx-font-size: 12.5px;
 }
-
 
 /* MIPS EXPLORER */
 .mips-explorer-file-to-assemble {

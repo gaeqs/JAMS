@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.gui;
@@ -36,7 +36,6 @@ import javafx.stage.StageStyle;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.general.JAMSApplicationPostInitEvent;
 import net.jamsimulator.jams.gui.font.FontLoader;
-import net.jamsimulator.jams.gui.image.icon.IconManager;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.BorderlessMainScene;
 import net.jamsimulator.jams.gui.main.MainAnchorPane;
@@ -63,56 +62,6 @@ public class JamsApplication extends Application {
     private static MainAnchorPane mainAnchorPane;
 
     private static ContextMenu lastContextMenu;
-
-    @Override
-    public void start(Stage primaryStage) {
-        stage = primaryStage;
-
-        FontLoader.load();
-        primaryStage.setTitle("JAMS (Just Another MIPS Simulator)");
-
-        Optional<Boolean> useBorderless = Jams.getMainConfiguration().get("appearance.hide_top_bar");
-        boolean transparent = useBorderless.orElse(false);
-        mainAnchorPane = new MainAnchorPane(stage, transparent);
-
-        if (transparent) {
-            stage.initStyle(StageStyle.TRANSPARENT);
-            scene = new BorderlessMainScene(stage, mainAnchorPane);
-            ((BorderlessScene) scene).setMoveControl(mainAnchorPane.getTopBar().getMenuBar());
-        } else {
-            scene = new MainScene(mainAnchorPane, -1, -1, true);
-        }
-
-        stage.setScene(scene);
-        stage.setWidth(WIDTH);
-        stage.setHeight(HEIGHT);
-
-        stage.setMinWidth(MIN_WIDTH);
-        stage.setMinHeight(MIN_HEIGHT);
-
-        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
-
-        double x = bounds.getMinX() + (bounds.getWidth() - WIDTH) / 2;
-        double y = bounds.getMinY() + (bounds.getHeight() - HEIGHT) / 2;
-
-        stage.setX(x);
-        stage.setY(y);
-
-
-        getIconManager().getOrLoadSafe(Icons.LOGO).ifPresent(primaryStage.getIcons()::add);
-        if (getProjectsTabPane().getProjects().isEmpty()) {
-            StartWindow.INSTANCE.open();
-            if (!getProjectsTabPane().getProjects().isEmpty()) {
-                stage.show();
-            }
-        } else {
-            stage.show();
-        }
-
-        Jams.getMainConfiguration().registerListeners(this, true);
-        loaded = true;
-        Jams.getGeneralEventBroadcast().callEvent(new JAMSApplicationPostInitEvent());
-    }
 
     /**
      * Returns whether the application has finished loading.
@@ -157,15 +106,6 @@ public class JamsApplication extends Application {
      */
     public static ProjectListTabPane getProjectsTabPane() {
         return mainAnchorPane.getProjectListTabPane();
-    }
-
-    /**
-     * Returns the {@link IconManager}.
-     *
-     * @return the {@link IconManager}.
-     */
-    public static IconManager getIconManager() {
-        return IconManager.INSTANCE;
     }
 
     /**
@@ -232,5 +172,59 @@ public class JamsApplication extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        stage = primaryStage;
+
+        FontLoader.load();
+        primaryStage.setTitle("JAMS (Just Another MIPS Simulator)");
+
+        Optional<Boolean> useBorderless = Jams.getMainConfiguration().get("appearance.hide_top_bar");
+        boolean transparent = useBorderless.orElse(false);
+        mainAnchorPane = new MainAnchorPane(stage, transparent);
+
+        if (transparent) {
+            stage.initStyle(StageStyle.TRANSPARENT);
+            scene = new BorderlessMainScene(stage, mainAnchorPane);
+            ((BorderlessScene) scene).setMoveControl(mainAnchorPane.getTopBar().getMenuBar());
+        } else {
+            scene = new MainScene(mainAnchorPane, -1, -1, true);
+        }
+
+        stage.setScene(scene);
+        stage.setWidth(WIDTH);
+        stage.setHeight(HEIGHT);
+
+        stage.setMinWidth(MIN_WIDTH);
+        stage.setMinHeight(MIN_HEIGHT);
+
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+
+        double x = bounds.getMinX() + (bounds.getWidth() - WIDTH) / 2;
+        double y = bounds.getMinY() + (bounds.getHeight() - HEIGHT) / 2;
+
+        stage.setX(x);
+        stage.setY(y);
+
+
+        Icons.LOGO.getImage().ifPresent(primaryStage.getIcons()::add);
+        Jams.getMainConfiguration().registerListeners(this, true);
+
+        // Load projects
+        getProjectsTabPane().openSavedProjects();
+
+        if (getProjectsTabPane().getProjects().isEmpty()) {
+            StartWindow.INSTANCE.open();
+            if (!getProjectsTabPane().getProjects().isEmpty()) {
+                stage.show();
+            }
+        } else {
+            stage.show();
+        }
+
+        loaded = true;
+        Jams.getGeneralEventBroadcast().callEvent(new JAMSApplicationPostInitEvent());
     }
 }

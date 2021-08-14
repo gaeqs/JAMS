@@ -1,3 +1,27 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
 package net.jamsimulator.jams.mips.simulation;
 
 import net.jamsimulator.jams.gui.util.log.Console;
@@ -11,10 +35,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Represents the immutable data of a {@link Simulation}.
+ * Represents the immutable data of a {@link MIPSSimulation}.
  * An instance of this class should be used to build any simulation.
  */
-public class SimulationData {
+public class MIPSSimulationData {
 
     protected final SimulationSyscallExecutions syscallExecutions;
     protected final File workingDirectory;
@@ -23,9 +47,9 @@ public class SimulationData {
     protected final Set<Label> labels;
     protected final boolean callEvents, undoEnabled, enableForwarding, solveBranchOnDecode, enableDelaySlot;
 
-    public SimulationData(SimulationSyscallExecutions syscallExecutions, File workingDirectory, Console console,
-                          Map<Integer, String> originalInstructions, Set<Label> labels, boolean callEvents, boolean undoEnabled,
-                          boolean enableForwarding, boolean solveBranchOnDecode, boolean enableDelaySlot) {
+    public MIPSSimulationData(SimulationSyscallExecutions syscallExecutions, File workingDirectory, Console console,
+                              Map<Integer, String> originalInstructions, Set<Label> labels, boolean callEvents, boolean undoEnabled,
+                              boolean enableForwarding, boolean solveBranchOnDecode, boolean enableDelaySlot) {
         this.syscallExecutions = syscallExecutions;
         this.workingDirectory = workingDirectory;
         this.console = console;
@@ -38,8 +62,8 @@ public class SimulationData {
         this.enableDelaySlot = enableDelaySlot;
     }
 
-    public SimulationData(MIPSSimulationConfiguration configuration, File workingDirectory, Console console,
-                          Map<Integer, String> originalInstructions, Set<Label> labels) {
+    public MIPSSimulationData(MIPSSimulationConfiguration configuration, File workingDirectory, Console console,
+                              Map<Integer, String> originalInstructions, Set<Label> labels) {
         this.syscallExecutions = new SimulationSyscallExecutions();
         configuration.getSyscallExecutionBuilders().forEach((key, builder) ->
                 syscallExecutions.bindExecution(key, builder.build()));
@@ -109,7 +133,7 @@ public class SimulationData {
     }
 
     /**
-     * Allows to undo instruction executions.
+     * Allows undoing instruction executions.
      * <p>
      * This technology consumes memory and computational resources.
      * If this option is disable the simulation will be executed faster, but you won't be able to undo instructions.
@@ -132,7 +156,7 @@ public class SimulationData {
     }
 
     /**
-     * Allows to solve branches on decode. This only works on architectures with multiple steps.
+     * Allows solving branches on decode. This only works on architectures with multiple steps.
      *
      * @return whether branches should be solved on the decode step.
      */
@@ -142,7 +166,7 @@ public class SimulationData {
 
     /**
      * If this option is enabled, instructions right after a control
-     * transfer instruction that is not compact will be always executed.
+     * transfer instruction that is not compact will always be executed.
      *
      * @return whether delay slots are enabled.
      */

@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.configuration;
@@ -37,11 +37,12 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Represents a configuration node. This class is use to manage configuration data easily.
+ * Represents a configuration node. This class is used to manage configuration data easily.
  * <p>
  * A configuration node may be a {@link RootConfiguration} or a
  * node of a {@link RootConfiguration}.
  */
+@SuppressWarnings("unchecked")
 public class Configuration {
 
     public static final Set<Class<?>> NATIVE_CLASSES = Set.of(
@@ -53,18 +54,16 @@ public class Configuration {
             Double.class,
             Character.class,
             Boolean.class,
-            String.class,
-            List.class,
-            Map.class);
+            String.class);
 
-    public static boolean isObjectNativelySupported(Object o) {
-        return NATIVE_CLASSES.stream().anyMatch(target -> target.isInstance(o));
-    }
+    /**
+     * Objects natively supported but that can be overriden by a converter.
+     */
+    public static final Set<Class<?>> SECONDARY_NATIVE_CLASSES = Set.of(List.class, Map.class);
 
     protected String name;
     protected Map<String, Object> map;
     protected RootConfiguration root;
-
 
     /**
      * Creates a configuration using an absolute name, a data map and a root.
@@ -79,6 +78,14 @@ public class Configuration {
         this.name = name;
         this.map = map;
         this.root = root;
+    }
+
+    public static boolean isObjectNativelySupported(Object o) {
+        return NATIVE_CLASSES.stream().anyMatch(target -> target.isInstance(o));
+    }
+
+    public static boolean isObjectSeondaryNativelySupported(Object o) {
+        return SECONDARY_NATIVE_CLASSES.stream().anyMatch(target -> target.isInstance(o));
     }
 
     /**
@@ -355,7 +362,7 @@ public class Configuration {
         if (config.isPresent()) return config.get();
         set(key, new HashMap<>());
         config = get(key);
-        return config.get();
+        return config.orElseThrow();
     }
 
     /**
@@ -408,7 +415,7 @@ public class Configuration {
     /**
      * Returns all the children of this configuration. Maps are wrapped inside a configuration.
      * <p>
-     * The given {@link Map} is a unmodifiable {@link Map} and it cannot be edited.
+     * The given {@link Map} is an unmodifiable {@link Map} and it cannot be edited.
      * Any modification results in a {@link UnsupportedOperationException}.
      * <p>
      * Whether the boolean "deep" is true, the map will contain all it's children values, and not
@@ -424,8 +431,7 @@ public class Configuration {
         } else {
             this.map.forEach((key, value) -> {
                 value = parseMap(key, value);
-                if (value instanceof Configuration) {
-                    Configuration cConfig = (Configuration) value;
+                if (value instanceof Configuration cConfig) {
                     String relName = cConfig.getRelativeName();
                     cConfig.getAll(true).forEach((cKey, cValue) ->
                             map.put(relName + "." + cKey, cValue));
@@ -494,7 +500,7 @@ public class Configuration {
      * {@link ValueConverter}
      * that matches the given type.
      * <p>
-     * If the converted is not found or it's not valid this method returns false.
+     * If the converted is not found, or it's not valid this method returns false.
      * <p>
      * You can store values into the child nodes of this configuration using the separator ".".
      * For example, if you want to store the value "data" inside the child "node", you must use the
@@ -515,7 +521,13 @@ public class Configuration {
         }
 
         var c = ValueConverters.getByType(converter);
-        if (c.isEmpty() || !c.get().conversionClass().isInstance(value)) return false;
+        if (c.isEmpty() || !c.get().conversionClass().isInstance(value))  {
+            if(isObjectSeondaryNativelySupported(value)) {
+                set(key, value);
+                return true;
+            }
+            return false;
+        }
         c.get().save(this, key, value);
         return true;
     }

@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
@@ -38,128 +38,128 @@ import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembled> {
 
-	public static final String MNEMONIC = "align";
-	public static final int OPERATION_CODE = 0b011111;
-	public static final int FUNCTION_CODE = 0b100000;
-	public static final int ALIGN_CODE = 0b010;
+    public static final String MNEMONIC = "align";
+    public static final int OPERATION_CODE = 0b011111;
+    public static final int FUNCTION_CODE = 0b100000;
+    public static final int ALIGN_CODE = 0b010;
 
-	public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER,
-			ParameterType.REGISTER, ParameterType.UNSIGNED_5_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER,
+            ParameterType.REGISTER, ParameterType.UNSIGNED_5_BIT);
 
-	public InstructionAlign() {
-		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
-		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
-		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-		addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
-	}
-
-
-	@Override
-	public boolean match(int instructionCode) {
-		return super.match(instructionCode) &&
-				((instructionCode >> Assembled.ALIGN_CODE_SHIFT) & Assembled.ALIGN_CODE_MASK) == ALIGN_CODE;
-	}
-
-	@Override
-	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new Assembled(parameters[1].getRegister(), parameters[2].getRegister(),
-				parameters[0].getRegister(), parameters[3].getImmediate(), origin, this);
-	}
-
-	@Override
-	public AssembledInstruction assembleFromCode(int instructionCode) {
-		return new Assembled(instructionCode, this, this);
-	}
-
-	public static class Assembled extends AssembledRInstruction {
-
-		public static final int ALIGN_CODE_SHIFT = 8;
-		public static final int ALIGN_CODE_MASK = 0x7;
-		public static final int SHIFT_AMOUNT_MASK = 0x3;
-
-		public Assembled(int sourceRegister, int targetRegister, int destinationRegister, int shiftAmount,
-						 Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-			super(InstructionAlign.OPERATION_CODE, sourceRegister, targetRegister, destinationRegister,
-					(InstructionAlign.ALIGN_CODE << (ALIGN_CODE_SHIFT - SHIFT_AMOUNT_SHIFT)) + shiftAmount,
-					InstructionAlign.FUNCTION_CODE, origin, basicOrigin);
-		}
-
-		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-			super(instructionCode, origin, basicOrigin);
-		}
+    public InstructionAlign() {
+        super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+        addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+        addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+        addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+    }
 
 
-		@Override
-		public int getShiftAmount() {
-			return super.getShiftAmount() & SHIFT_AMOUNT_MASK;
-		}
+    @Override
+    public boolean match(int instructionCode) {
+        return super.match(instructionCode) &&
+                ((instructionCode >> Assembled.ALIGN_CODE_SHIFT) & Assembled.ALIGN_CODE_MASK) == ALIGN_CODE;
+    }
 
-		public int getAlignCode() {
-			return value >> ALIGN_CODE_SHIFT & ALIGN_CODE_MASK;
-		}
+    @Override
+    public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
+        return new Assembled(parameters[1].getRegister(), parameters[2].getRegister(),
+                parameters[0].getRegister(), parameters[3].getImmediate(), origin, this);
+    }
 
-		@Override
-		public String parametersToString(String registersStart) {
-			return registersStart + getDestinationRegister()
-					+ ", " + registersStart + getSourceRegister()
-					+ ", " + registersStart + getTargetRegister()
-					+ ", 0x" + Integer.toHexString(getShiftAmount());
-		}
-	}
+    @Override
+    public AssembledInstruction assembleFromCode(int instructionCode) {
+        return new Assembled(instructionCode, this, this);
+    }
 
-	public static class SingleCycle extends SingleCycleExecution<Assembled> {
+    public static class Assembled extends AssembledRInstruction {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address);
-		}
+        public static final int ALIGN_CODE_SHIFT = 8;
+        public static final int ALIGN_CODE_MASK = 0x7;
+        public static final int SHIFT_AMOUNT_MASK = 0x3;
 
-		@Override
-		public void execute() {
-			Register rt = register(instruction.getTargetRegister());
-			Register rs = register(instruction.getSourceRegister());
-			Register rd = register(instruction.getDestinationRegister());
+        public Assembled(int sourceRegister, int targetRegister, int destinationRegister, int shiftAmount,
+                         Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(InstructionAlign.OPERATION_CODE, sourceRegister, targetRegister, destinationRegister,
+                    (InstructionAlign.ALIGN_CODE << (ALIGN_CODE_SHIFT - SHIFT_AMOUNT_SHIFT)) + shiftAmount,
+                    InstructionAlign.FUNCTION_CODE, origin, basicOrigin);
+        }
 
-			int bp = instruction.getShiftAmount();
-			int tmpRtHi = rt.getValue() << (bp << 3);
-			int tmpRsLo = rs.getValue() >>> ((4 - bp) << 3);
-			rd.setValue(tmpRtHi | tmpRsLo);
-		}
-	}
+        public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(instructionCode, origin, basicOrigin);
+        }
 
-	public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
-		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address, false, true);
-		}
+        @Override
+        public int getShiftAmount() {
+            return super.getShiftAmount() & SHIFT_AMOUNT_MASK;
+        }
 
-		@Override
-		public void decode() {
-			requires(instruction.getTargetRegister());
-			requires(instruction.getSourceRegister());
-			lock(instruction.getDestinationRegister());
-		}
+        public int getAlignCode() {
+            return value >> ALIGN_CODE_SHIFT & ALIGN_CODE_MASK;
+        }
 
-		@Override
-		public void execute() {
-			int bp = instruction.getShiftAmount();
-			int tmpRtHi = value(instruction.getTargetRegister()) << (bp << 3);
-			int tmpRsLo = value(instruction.getSourceRegister()) >>> ((4 - bp) << 3);
-			executionResult = new int[]{tmpRtHi | tmpRsLo};
-			forward(instruction.getDestinationRegister(), executionResult[0], false);
-		}
+        @Override
+        public String parametersToString(String registersStart) {
+            return registersStart + getDestinationRegister()
+                    + ", " + registersStart + getSourceRegister()
+                    + ", " + registersStart + getTargetRegister()
+                    + ", 0x" + Integer.toHexString(getShiftAmount());
+        }
+    }
 
-		@Override
-		public void memory() {
-			forward(instruction.getDestinationRegister(), executionResult[0], true);
-		}
+    public static class SingleCycle extends SingleCycleExecution<Assembled> {
 
-		@Override
-		public void writeBack() {
-			setAndUnlock(instruction.getDestinationRegister(), executionResult[0]);
-		}
-	}
+        public SingleCycle(MIPSSimulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
+            super(simulation, instruction, address);
+        }
+
+        @Override
+        public void execute() {
+            Register rt = register(instruction.getTargetRegister());
+            Register rs = register(instruction.getSourceRegister());
+            Register rd = register(instruction.getDestinationRegister());
+
+            int bp = instruction.getShiftAmount();
+            int tmpRtHi = rt.getValue() << (bp << 3);
+            int tmpRsLo = rs.getValue() >>> ((4 - bp) << 3);
+            rd.setValue(tmpRtHi | tmpRsLo);
+        }
+    }
+
+    public static class MultiCycle extends MultiCycleExecution<Assembled> {
+
+        public MultiCycle(MIPSSimulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+            super(simulation, instruction, address, false, true);
+        }
+
+        @Override
+        public void decode() {
+            requires(instruction.getTargetRegister());
+            requires(instruction.getSourceRegister());
+            lock(instruction.getDestinationRegister());
+        }
+
+        @Override
+        public void execute() {
+            int bp = instruction.getShiftAmount();
+            int tmpRtHi = value(instruction.getTargetRegister()) << (bp << 3);
+            int tmpRsLo = value(instruction.getSourceRegister()) >>> ((4 - bp) << 3);
+            executionResult = new int[]{tmpRtHi | tmpRsLo};
+            forward(instruction.getDestinationRegister(), executionResult[0], false);
+        }
+
+        @Override
+        public void memory() {
+            forward(instruction.getDestinationRegister(), executionResult[0], true);
+        }
+
+        @Override
+        public void writeBack() {
+            setAndUnlock(instruction.getDestinationRegister(), executionResult[0]);
+        }
+    }
 }

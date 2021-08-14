@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.language.wrapper;
@@ -38,68 +38,67 @@ import java.lang.reflect.Field;
 
 public class LanguageTooltip extends Tooltip {
 
-	public static final int DEFAULT_DELAY = 200;
+    public static final int DEFAULT_DELAY = 200;
+    private final String[] replacements;
+    private String node;
 
-	private String node;
-	private final String[] replacements;
+    public LanguageTooltip(String node, String... replacements) {
+        this(node, DEFAULT_DELAY, replacements);
+    }
 
-	public LanguageTooltip(String node, String... replacements) {
-		this(node, DEFAULT_DELAY, replacements);
-	}
+    public LanguageTooltip(String node, int showDelay, String... replacements) {
+        this.node = node;
+        this.replacements = replacements;
+        hackTooltipStartTiming(this, showDelay);
+        refreshMessage();
+        Jams.getLanguageManager().registerListeners(this, true);
+    }
 
-	public LanguageTooltip(String node, int showDelay, String... replacements) {
-		this.node = node;
-		this.replacements = replacements;
-		hackTooltipStartTiming(this, showDelay);
-		refreshMessage();
-		Jams.getLanguageManager().registerListeners(this, true);
-	}
+    private static void hackTooltipStartTiming(Tooltip tooltip, int showDelay) {
+        try {
+            tooltip.setShowDelay(new Duration(showDelay));
+        } catch (NoSuchMethodError ex) {
+            try {
+                Field fieldBehavior = Tooltip.class.getDeclaredField("BEHAVIOR");
+                fieldBehavior.setAccessible(true);
+                Object objBehavior = fieldBehavior.get(tooltip);
 
-	public void setNode(String node, int showDelay) {
-		this.node = node;
-		hackTooltipStartTiming(this, showDelay);
-		refreshMessage();
-	}
+                Field fieldTimer = objBehavior.getClass().getDeclaredField("activationTimer");
+                fieldTimer.setAccessible(true);
+                Timeline objTimer = (Timeline) fieldTimer.get(objBehavior);
 
-	private void refreshMessage() {
-		if (node == null) return;
-		var parsed = StringUtils.parseEscapeCharacters(Jams.getLanguageManager().getSelected().getOrDefault(node));
+                objTimer.getKeyFrames().clear();
+                objTimer.getKeyFrames().add(new KeyFrame(new Duration(showDelay)));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-		for (int i = 0; i < replacements.length - 1; i += 2) {
-			parsed = parsed.replace(replacements[i], replacements[i + 1]);
-		}
+    public void setNode(String node, int showDelay) {
+        this.node = node;
+        hackTooltipStartTiming(this, showDelay);
+        refreshMessage();
+    }
 
-		setText(StringUtils.addLineJumps(parsed, 70));
-	}
+    private void refreshMessage() {
+        if (node == null) return;
+        var parsed = StringUtils.parseEscapeCharacters(Jams.getLanguageManager().getSelected().getOrDefault(node));
 
-	@Listener
-	public void onSelectedLanguageChange(SelectedLanguageChangeEvent.After event) {
-		refreshMessage();
-	}
+        for (int i = 0; i < replacements.length - 1; i += 2) {
+            parsed = parsed.replace(replacements[i], replacements[i + 1]);
+        }
 
-	@Listener
-	public void onDefaultLanguageChange(DefaultLanguageChangeEvent.After event) {
-		refreshMessage();
-	}
+        setText(StringUtils.addLineJumps(parsed, 70));
+    }
 
-	private static void hackTooltipStartTiming(Tooltip tooltip, int showDelay) {
-		try {
-			tooltip.setShowDelay(new Duration(showDelay));
-		} catch (NoSuchMethodError ex) {
-			try {
-				Field fieldBehavior = Tooltip.class.getDeclaredField("BEHAVIOR");
-				fieldBehavior.setAccessible(true);
-				Object objBehavior = fieldBehavior.get(tooltip);
+    @Listener
+    public void onSelectedLanguageChange(SelectedLanguageChangeEvent.After event) {
+        refreshMessage();
+    }
 
-				Field fieldTimer = objBehavior.getClass().getDeclaredField("activationTimer");
-				fieldTimer.setAccessible(true);
-				Timeline objTimer = (Timeline) fieldTimer.get(objBehavior);
-
-				objTimer.getKeyFrames().clear();
-				objTimer.getKeyFrames().add(new KeyFrame(new Duration(showDelay)));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    @Listener
+    public void onDefaultLanguageChange(DefaultLanguageChangeEvent.After event) {
+        refreshMessage();
+    }
 }

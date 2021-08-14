@@ -1,3 +1,27 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
 package net.jamsimulator.jams.gui.mips.simulator.instruction;
 
 import javafx.application.Platform;
@@ -18,7 +42,7 @@ import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.*;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.CodeArea;
@@ -33,47 +57,29 @@ import java.util.function.BiFunction;
  */
 public abstract class MIPSAssembledCodeViewer extends CodeArea {
 
-    public static Map<Architecture, BiFunction<Simulation<?>, Boolean, MIPSAssembledCodeViewer>> VIEWERS_PER_ARCHITECTURE = new HashMap<>();
-
-    static {
-        VIEWERS_PER_ARCHITECTURE.put(SingleCycleArchitecture.INSTANCE, MIPSSingleCycleAssembledCodeViewer::new);
-        VIEWERS_PER_ARCHITECTURE.put(MultiCycleArchitecture.INSTANCE, MIPSMultiCycleAssembledCodeViewer::new);
-        VIEWERS_PER_ARCHITECTURE.put(PipelinedArchitecture.INSTANCE, MIPSPipelinedAssembledCodeViewer::new);
-    }
-
-    public static void registerViewer(Architecture architecture,
-                                      BiFunction<Simulation<?>, Boolean, MIPSAssembledCodeViewer> builder) {
-        VIEWERS_PER_ARCHITECTURE.put(architecture, builder);
-    }
-
-    public static MIPSAssembledCodeViewer createViewer(Architecture architecture, Simulation<?> simulation, boolean kernel) {
-        BiFunction<Simulation<?>, Boolean, MIPSAssembledCodeViewer> builder =
-                VIEWERS_PER_ARCHITECTURE.get(architecture);
-        if (builder == null) return new MIPSSingleCycleAssembledCodeViewer(simulation, kernel);
-        return builder.apply(simulation, kernel);
-    }
-
     protected static final Set<String> IMMEDIATE = Collections.singleton("mips-instruction-parameter-immediate");
     protected static final Set<String> REGISTER = Collections.singleton("mips-instruction-parameter-register");
     protected static final Set<String> INSTRUCTION = Collections.singleton("mips-instruction");
     protected static final Set<String> COMMENT = Collections.singleton("mips-comment");
     protected static final Set<String> LABEL = Collections.singleton("mips-label");
     protected static final Set<String> BREAKPOINT = Collections.singleton("instruction-breakpoint");
-
     private static final String VIEWER_ELEMENTS_ORDER_NODE = "simulation.mips.viewer_elements_order";
     private static final String SHOW_LABELS_NODE = "simulation.mips.show_labels";
+    public static Map<Architecture, BiFunction<MIPSSimulation<?>, Boolean, MIPSAssembledCodeViewer>> VIEWERS_PER_ARCHITECTURE = new HashMap<>();
+
+    static {
+        VIEWERS_PER_ARCHITECTURE.put(SingleCycleArchitecture.INSTANCE, MIPSSingleCycleAssembledCodeViewer::new);
+        VIEWERS_PER_ARCHITECTURE.put(MultiCycleArchitecture.INSTANCE, MIPSMultiCycleAssembledCodeViewer::new);
+        //noinspection StaticInitializerReferencesSubClass
+        VIEWERS_PER_ARCHITECTURE.put(PipelinedArchitecture.INSTANCE, MIPSPipelinedAssembledCodeViewer::new);
+    }
 
     protected final List<MIPSAssembledLine> assembledLines;
-    protected final Simulation<?> simulation;
+    protected final MIPSSimulation<?> simulation;
     protected final boolean kernel;
     protected final Register pc;
-
     protected boolean shouldUpdate;
     protected boolean fullSpeed;
-
-    public Simulation<?> getSimulation() {
-        return simulation;
-    }
 
     /**
      * Creates the code viewer.
@@ -81,7 +87,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
      * @param simulation the simulation holding the instructions.
      * @param kernel     whether this view should show user or kernel instructions.
      */
-    public MIPSAssembledCodeViewer(Simulation<?> simulation, boolean kernel) {
+    public MIPSAssembledCodeViewer(MIPSSimulation<?> simulation, boolean kernel) {
         assembledLines = new ArrayList<>();
         this.simulation = simulation;
         this.kernel = kernel;
@@ -101,6 +107,22 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
         Jams.getMainConfiguration().registerListeners(this, true);
     }
 
+    public static void registerViewer(Architecture architecture,
+                                      BiFunction<MIPSSimulation<?>, Boolean, MIPSAssembledCodeViewer> builder) {
+        VIEWERS_PER_ARCHITECTURE.put(architecture, builder);
+    }
+
+    public static MIPSAssembledCodeViewer createViewer(Architecture architecture, MIPSSimulation<?> simulation, boolean kernel) {
+        BiFunction<MIPSSimulation<?>, Boolean, MIPSAssembledCodeViewer> builder =
+                VIEWERS_PER_ARCHITECTURE.get(architecture);
+        if (builder == null) return new MIPSSingleCycleAssembledCodeViewer(simulation, kernel);
+        return builder.apply(simulation, kernel);
+    }
+
+    public MIPSSimulation<?> getSimulation() {
+        return simulation;
+    }
+
     /**
      * Moves the view to the given address.
      *
@@ -112,7 +134,10 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
                 .filter(line -> line.getAddress().map(v -> v == address).orElse(false)).findAny();
         if (optional.isEmpty()) return false;
 
-        int line = optional.get().getLine() != 0 ? optional.get().getLine() - 1 : 0;
+        var prevous = assembledLines
+                .get(optional.get().getLine() != 0 ? optional.get().getLine() - 1 : 0);
+
+        int line = prevous.getAddress().isPresent() ? optional.get().getLine() : prevous.getLine();
         moveTo(line, 0);
         showParagraphAtTop(line);
         return true;
@@ -227,7 +252,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
 
     @Listener
     private void onBreakpointAdd(SimulationAddBreakpointEvent event) {
-        int address = event.getAddress();
+        int address = event.getAddress().intValue();
         var optional = assembledLines.stream()
                 .filter(line -> line.getAddress().map(v -> v == address).orElse(false)).findAny();
 
@@ -254,10 +279,9 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
             addElements(simulation);
             refresh();
 
-            var breakpoints = simulation.getBreakpoints();
             for (var line : assembledLines) {
                 if (line.getAddress().isEmpty()) continue;
-                if (breakpoints.contains(line.getAddress().get()) && !isLineBeingUsed(line.getLine())) {
+                if (simulation.hasBreakpoint(line.getAddress().get()) && !isLineBeingUsed(line.getLine())) {
                     try {
                         setParagraphStyle(line.getLine(), BREAKPOINT);
                     } catch (Exception ex) {
@@ -294,11 +318,11 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     //region add and style
 
     /**
-     * Adds all instructions of the {@link Simulation} to this viewer.
+     * Adds all instructions of the {@link MIPSSimulation} to this viewer.
      *
-     * @param simulation the {@link Simulation}.
+     * @param simulation the {@link MIPSSimulation}.
      */
-    private void addElements(Simulation<?> simulation) {
+    private void addElements(MIPSSimulation<?> simulation) {
         assembledLines.clear();
         var order = Jams.getMainConfiguration()
                 .getAndConvertOrElse(VIEWER_ELEMENTS_ORDER_NODE, MIPSAssembledInstructionViewerOrder.DEFAULT);
@@ -348,13 +372,13 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     /**
      * Adds and styles the given instruction.
      *
-     * @param simulation    the {@link Simulation}
+     * @param simulation    the {@link MIPSSimulation}
      * @param code          the code of the instruction.
      * @param registerStart the prefix of the registers.
      * @param stringBuilder the string builder.
      * @param styleBuilder  the style builder.
      */
-    private void generateInstructionDisplay(Simulation<?> simulation, int code,
+    private void generateInstructionDisplay(MIPSSimulation<?> simulation, int code,
                                             String registerStart, String original,
                                             MIPSAssembledInstructionViewerOrder order,
                                             StringBuilder stringBuilder, EasyStyleSpansBuilder styleBuilder) {

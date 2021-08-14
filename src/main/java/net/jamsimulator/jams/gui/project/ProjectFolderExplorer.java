@@ -1,28 +1,28 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.explorer;
+package net.jamsimulator.jams.gui.project;
 
 import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
@@ -33,6 +33,8 @@ import net.jamsimulator.jams.gui.explorer.event.ExplorerRemoveElementEvent;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
+import net.jamsimulator.jams.project.FilesToAssemble;
+import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
 import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
@@ -40,14 +42,22 @@ import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
-public class MipsFolderExplorer extends FolderExplorer {
+/**
+ * Represents an explorer linked to a {@link Project}. These explorers can manager files to assemble and
+ * automatically hides the project's metadata folder.
+ */
+public class ProjectFolderExplorer extends FolderExplorer {
 
     public static final String EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS = "mips-explorer-file-to-assemble";
     public static final String EXPLORER_OUT_FILE_STYLE_CLASS = "explorer-out-folder";
 
-    private final MIPSProject project;
+    private final Project project;
+    private final Set<FilesToAssemble> filesToAssemble;
 
     /**
      * Creates the mips explorer folder.
@@ -55,20 +65,24 @@ public class MipsFolderExplorer extends FolderExplorer {
      * @param project    the {@link MIPSProject} of this explorer.
      * @param scrollPane the {@link ScrollPane} handling this explorer.
      */
-    public MipsFolderExplorer(MIPSProject project, ScrollPane scrollPane) {
+    public ProjectFolderExplorer(Project project, Collection<? extends FilesToAssemble> filesToAssemble, ScrollPane scrollPane) {
         super(project.getFolder(), scrollPane,
                 file -> !file.toPath().startsWith(project.getData().getMetadataFolder().toPath()));
         this.project = project;
-        project.getData().getFilesToAssemble().registerListeners(this, true);
-        for (File file : project.getData().getFilesToAssemble().getFiles()) {
-            markFileToAssemble(file);
-        }
+        this.filesToAssemble = new HashSet<>(filesToAssemble);
 
-        setFileMoveAction((from, to) -> {
-            if (project.getData().getFilesToAssemble().containsFile(from)) {
-                Platform.runLater(() -> project.getData().getFilesToAssemble().addFile(to, true));
-            }
+
+        this.filesToAssemble.forEach(holder -> {
+            holder.registerListeners(this, true);
+            holder.getFiles().forEach(this::markFileToAssemble);
         });
+
+
+        setFileMoveAction((from, to) -> this.filesToAssemble.forEach(holder -> {
+            if (holder.containsFile(from)) {
+                Platform.runLater(() -> holder.addFile(to, true));
+            }
+        }));
 
         try {
             Files.walk(project.getData().getFilesFolder().toPath()).forEach(file -> markOutFile(file.toFile()));
@@ -80,11 +94,11 @@ public class MipsFolderExplorer extends FolderExplorer {
     }
 
     /**
-     * Returns the {@link MIPSProject} of this explorer.
+     * Returns the {@link Project} of this explorer.
      *
-     * @return the {@link MIPSProject}.
+     * @return the {@link Project}.
      */
-    public MIPSProject getProject() {
+    public Project getProject() {
         return project;
     }
 
@@ -93,7 +107,6 @@ public class MipsFolderExplorer extends FolderExplorer {
      */
     public void dispose() {
         killWatchers();
-        project.getData().getFilesToAssemble().unregisterListeners(this);
     }
 
     private void markFileToAssemble(File file) {
@@ -144,22 +157,23 @@ public class MipsFolderExplorer extends FolderExplorer {
 
     @Listener
     private void onFileAdded(ExplorerAddElementEvent.After event) {
-        if (event.getElement() instanceof ExplorerFile) {
-            var eFile = (ExplorerFile) event.getElement();
+        if (event.getElement() instanceof ExplorerFile eFile) {
             var file = eFile.getFile();
 
-            if (project.getData().getFilesToAssemble().containsFile(file)) {
+            if (filesToAssemble.stream().anyMatch(target -> target.containsFile(file))) {
                 if (!eFile.getStyleClass().contains(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS)) {
                     eFile.getStyleClass().add(EXPLORER_FILE_TO_ASSEMBLE_STYLE_CLASS);
                 }
             }
 
-            if (file.toPath().startsWith(project.getData().getFilesFolder().toPath())) {
+            if (file.toPath().toAbsolutePath()
+                    .startsWith(project.getData().getFilesFolder().toPath().toAbsolutePath())) {
                 ((Region) event.getElement()).getStyleClass().add(EXPLORER_OUT_FILE_STYLE_CLASS);
             }
         } else if (event.getElement() instanceof ExplorerFolder) {
             var file = ((ExplorerFolder) event.getElement()).getFolder();
-            if (file.toPath().startsWith(project.getData().getFilesFolder().toPath())) {
+            if (file.toPath().toAbsolutePath()
+                    .startsWith(project.getData().getFilesFolder().toPath().toAbsolutePath())) {
                 ((ExplorerFolder) event.getElement()).getRepresentation()
                         .getStyleClass().add(EXPLORER_OUT_FILE_STYLE_CLASS);
             }
@@ -168,6 +182,6 @@ public class MipsFolderExplorer extends FolderExplorer {
 
     @Listener
     private void onFileRemoved(ExplorerRemoveElementEvent.After event) {
-        project.getData().getFilesToAssemble().checkFiles();
+        filesToAssemble.forEach(FilesToAssemble::checkFiles);
     }
 }

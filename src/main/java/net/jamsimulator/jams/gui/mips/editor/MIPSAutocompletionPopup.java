@@ -1,35 +1,34 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.gui.mips.editor;
 
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
-import javafx.scene.image.Image;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.editor.element.*;
 import net.jamsimulator.jams.mips.directive.Directive;
@@ -47,11 +46,12 @@ import java.util.stream.Stream;
 
 public class MIPSAutocompletionPopup extends AutocompletionPopup {
 
-    private static final Image ICON_INSTRUCTION = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_INSTRUCTION).orElse(null);
-    private static final Image ICON_PSEUDO_INSTRUCTION = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_PSEUDO_INSTRUCTION).orElse(null);
-    private static final Image ICON_DIRECTIVE = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_DIRECTIVE).orElse(null);
-    private static final Image ICON_LABEL = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_LABEL).orElse(null);
-    private static final Image ICON_REGISTER = JamsApplication.getIconManager().getOrLoadSafe(Icons.AUTOCOMPLETION_REGISTER).orElse(null);
+    private static final IconData ICON_INSTRUCTION = Icons.AUTOCOMPLETION_INSTRUCTION;
+    private static final IconData ICON_PSEUDO_INSTRUCTION = Icons.AUTOCOMPLETION_PSEUDO_INSTRUCTION;
+    private static final IconData ICON_DIRECTIVE = Icons.AUTOCOMPLETION_DIRECTIVE;
+    private static final IconData ICON_LABEL = Icons.AUTOCOMPLETION_LABEL;
+    private static final IconData ICON_REGISTER = Icons.AUTOCOMPLETION_REGISTER;
+    private static final IconData ICON_MACRO = Icons.AUTOCOMPLETION_MACRO;
 
     private final MIPSFileElements mipsElements;
     private MIPSCodeElement element;
@@ -88,7 +88,22 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
             } else {
                 Bounds bounds = display.getCaretBounds().orElse(null);
                 if (bounds == null) return;
-                show(display, bounds.getMinX(), bounds.getMinY() + 20);
+
+                var zoomX = display.getZoom().getZoom().getX();
+                var zoomY = display.getZoom().getZoom().getY();
+
+                if (zoomX < 1 || zoomY < 1) {
+                    zoomX = zoomY = 1;
+                } else {
+                    zoomX = zoomX * 0.5 + 0.5;
+                    zoomY = zoomY * 0.5 + 0.5;
+                }
+
+                scroll.setScaleX(zoomX);
+                scroll.setScaleY(zoomY);
+
+                show(display, bounds.getMinX(), bounds.getMinY()
+                        + 20 * display.getZoom().getZoom().getY());
             }
         });
     }
@@ -109,7 +124,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
         else if (element instanceof MIPSDirectiveParameter) {
             start = refreshDisplayDirectiveParameter(start);
         } else if (element instanceof MIPSInstruction)
-            start = refreshInstructionAndDirectives(start);
+            start = refreshInstructionsMacrosAndDirectives(start);
         else if (element instanceof MIPSInstructionParameterPart)
             start = refreshDisplayInstructionParameterPart(start);
 
@@ -134,7 +149,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
         return directive;
     }
 
-    protected String refreshInstructionAndDirectives(String start) {
+    protected String refreshInstructionsMacrosAndDirectives(String start) {
         MIPSProject project = getDisplay().getProject().orElse(null);
         if (project == null) return start;
 
@@ -164,6 +179,10 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
         String directive = start.startsWith(".") ? start.substring(1) : start;
         addElements(project.getData().getDirectiveSet().getDirectives().stream().filter(target -> target.getName().startsWith(directive)),
                 Directive::getName, d -> "." + d.getName() + (d.hasParameters() ? space : ""), 0, ICON_DIRECTIVE);
+
+        // And macros!
+        addElements(mipsElements.getMacros().stream().filter(target -> target.getName().startsWith(directive)),
+                MIPSMacro::getName, m -> m.getName() + " (", 0, ICON_MACRO);
 
         return directive;
     }

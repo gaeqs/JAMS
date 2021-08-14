@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.gui.action.defaults.general;
@@ -38,16 +38,10 @@ import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
-import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
-import net.jamsimulator.jams.gui.mips.project.MIPSSimulationPane;
-import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
-import net.jamsimulator.jams.gui.util.log.SimpleLog;
+import net.jamsimulator.jams.gui.util.log.Log;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.project.mips.MIPSProject;
-
-import java.util.Optional;
+import net.jamsimulator.jams.project.Project;
 
 public class GeneralActionAssemble extends ContextAction {
 
@@ -55,67 +49,45 @@ public class GeneralActionAssemble extends ContextAction {
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
 
     public GeneralActionAssemble() {
-        super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_ASSEMBLE, DEFAULT_COMBINATION, GeneralActionRegions.MIPS_PRIORITY, MainMenuRegion.MIPS,
-                JamsApplication.getIconManager().getOrLoadSafe(Icons.PROJECT_ASSEMBLE).orElse(null));
+        super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_ASSEMBLE, DEFAULT_COMBINATION,
+                GeneralActionRegions.MIPS_PRIORITY, MainMenuRegion.SIMULATION, Icons.PROJECT_ASSEMBLE);
     }
 
-    @Override
-    public void run(Object node) {
-        if (node instanceof MIPSFileEditor) {
-            MIPSProject project = ((MIPSFileEditor) node).getProject().orElse(null);
-            if (project == null) return;
-            compileAndShow(project);
-        } else {
-            Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
-            if (optionalProject.isEmpty()) return;
-            ProjectTab tab = optionalProject.get();
-            if (tab.getProject() instanceof MIPSProject) {
-                compileAndShow((MIPSProject) tab.getProject());
-            }
-        }
-    }
-
-    public static void compileAndShow(MIPSProject project) {
+    public static void compileAndShow(Project project) {
         ProjectTab tab = project.getProjectTab().orElse(null);
         if (tab == null) return;
 
-        Thread thread = new Thread(() -> {
-            MIPSStructurePane pane = (MIPSStructurePane) tab.getProjectTabPane().getWorkingPane();
-            pane.getFileDisplayHolder().saveAll(true);
+        project.getTaskExecutor().execute("assemble", Messages.TASK_ASSEMBLING, () -> {
+            var pane = tab.getProjectTabPane().getWorkingPane();
+            pane.saveAllOpenedFiles();
 
             if (Jams.getMainConfiguration().getOrElse("simulation.open_log_on_assemble", true)) {
                 Platform.runLater(() -> pane.getBarMap().searchButton("log").ifPresent(BarButton::show));
             }
-            SimpleLog log = pane.getLog();
+            var log = pane.getBarMap().getSnapshotNodeOfType(Log.class);
 
             try {
-                Simulation<?> simulation = project.assemble(log);
-                if (simulation == null) return;
-
-                Platform.runLater(() ->
-                        project.getProjectTab().ifPresent(projectTab -> projectTab.getProjectTabPane()
-                                .createProjectPane((t, pt) ->
-                                        new MIPSSimulationPane(t, pt, project, simulation), true)));
-
+                project.generateSimulation(log.orElse(null));
             } catch (Exception ex) {
-                log.printErrorLn("ERROR:");
-                log.printErrorLn(ex.getMessage());
+                if (log.isPresent()) {
+                    log.get().printErrorLn("ERROR:");
+                    log.get().printErrorLn(ex.getMessage());
+                }
                 ex.printStackTrace();
             }
         });
+    }
 
-        thread.setName("Assembler");
-        thread.start();
+    @Override
+    public void run(Object node) {
+        runFromMenu();
     }
 
     @Override
     public void runFromMenu() {
-        Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
+        var optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
         if (optionalProject.isEmpty()) return;
-        ProjectTab tab = optionalProject.get();
-        if (tab.getProject() instanceof MIPSProject) {
-            compileAndShow((MIPSProject) tab.getProject());
-        }
+        compileAndShow(optionalProject.get().getProject());
     }
 
     @Override
@@ -130,7 +102,6 @@ public class GeneralActionAssemble extends ContextAction {
 
     @Override
     public boolean supportsMainMenuState(MainMenuBar bar) {
-        Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
-        return optionalProject.isPresent();
+        return JamsApplication.getProjectsTabPane().getFocusedProject().isPresent();
     }
 }

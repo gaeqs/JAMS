@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.project.mips;
@@ -30,6 +30,7 @@ import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
+import net.jamsimulator.jams.project.FilesToAssemblerHolder;
 import net.jamsimulator.jams.project.ProjectData;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.event.MIPSSimulationConfigurationAddEvent;
@@ -43,24 +44,21 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class MIPSProjectData extends ProjectData {
+public class MIPSProjectData extends ProjectData implements FilesToAssemblerHolder {
 
     public static final String NODE_ASSEMBLER = "mips.assembler";
     public static final String NODE_REGISTERS = "mips.registers";
     public static final String NODE_DIRECTIVES = "mips.directives";
     public static final String NODE_INSTRUCTIONS = "mips.instructions";
     public static final String NODE_CONFIGURATIONS = "mips.configurations";
-    public static final String NODE_SELECTED_CONFIGURATION = "mips.selectedConfiguration";
-
+    public static final String NODE_SELECTED_CONFIGURATION = "mips.selected_configuration";
+    protected final MIPSFilesToAssemble filesToAssemble;
     protected Set<MIPSSimulationConfiguration> configurations;
     protected MIPSSimulationConfiguration selectedConfiguration;
-
     protected AssemblerBuilder assemblerBuilder;
     protected RegistersBuilder registersBuilder;
     protected DirectiveSet directiveSet;
     protected InstructionSet instructionSet;
-
-    protected final MIPSFilesToAssemble filesToAssemble;
 
     public MIPSProjectData(MIPSProject project) {
         super(MIPSProjectType.INSTANCE, project.getFolder());
@@ -76,16 +74,15 @@ public class MIPSProjectData extends ProjectData {
         if (configurations.stream().anyMatch(target -> target.getName().equals(configuration.getName())))
             return false;
 
-        MIPSSimulationConfigurationAddEvent.Before before = callEvent(new MIPSSimulationConfigurationAddEvent.Before(this, configuration));
+        var before = callEvent(new MIPSSimulationConfigurationAddEvent.Before(this, configuration));
         if (before.isCancelled()) return false;
 
         boolean result = configurations.add(configuration);
         if (result) {
             callEvent(new MIPSSimulationConfigurationAddEvent.After(this, configuration));
-        }
-
-        if (selectedConfiguration == null) {
-            setSelectedConfiguration(configuration.getName());
+            if (selectedConfiguration == null) {
+                setSelectedConfiguration(configuration.getName());
+            }
         }
 
         return result;
@@ -96,7 +93,7 @@ public class MIPSProjectData extends ProjectData {
         MIPSSimulationConfiguration configuration = configurations.stream()
                 .filter(target -> target.getName().equals(name)).findAny().orElse(null);
         if (configuration == null) return false;
-        MIPSSimulationConfigurationRemoveEvent.Before before = callEvent(new MIPSSimulationConfigurationRemoveEvent.Before(this, configuration));
+        var before = callEvent(new MIPSSimulationConfigurationRemoveEvent.Before(this, configuration));
         if (before.isCancelled()) return false;
         boolean result = configurations.remove(configuration);
         if (result) {
@@ -161,6 +158,7 @@ public class MIPSProjectData extends ProjectData {
         this.instructionSet = instructionSet;
     }
 
+    @Override
     public MIPSFilesToAssemble getFilesToAssemble() {
         return filesToAssemble;
     }
@@ -249,5 +247,9 @@ public class MIPSProjectData extends ProjectData {
         String selectedConfig = data.getString(NODE_SELECTED_CONFIGURATION).orElse(null);
         selectedConfiguration = configurations.stream().filter(target -> target.getName().equals(selectedConfig)).findAny().orElse(null);
 
+        // Let's try to get a default configuration
+        if(selectedConfiguration == null) {
+            selectedConfiguration = configurations.stream().findAny().orElse(null);
+        }
     }
 }

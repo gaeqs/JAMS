@@ -1,3 +1,27 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
 package net.jamsimulator.jams.gui.configuration.explorer.section.plugin;
 
 import javafx.geometry.Insets;
@@ -9,9 +33,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.image.NearestImageView;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.popup.ConfirmationWindow;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.StringStyler;
@@ -54,7 +77,7 @@ public class PluginExplorerDisplay extends AnchorPane {
         hbox.setSpacing(5);
 
         plugin.getFavicon().ifPresent(favicon ->
-                hbox.getChildren().add(new NearestImageView(favicon, 60, 60)));
+                hbox.getChildren().add(new QualityImageView(favicon, 60, 60)));
 
         var pane = new GridPane();
         pane.setAlignment(Pos.CENTER_LEFT);
@@ -100,9 +123,7 @@ public class PluginExplorerDisplay extends AnchorPane {
     }
 
     private void loadDeleteButton(Plugin plugin) {
-        var view = new NearestImageView(JamsApplication.getIconManager()
-                .getOrLoadSafe(Icons.CONTROL_REMOVE).orElse(null), 16, 16);
-
+        var view = new QualityImageView(Icons.CONTROL_REMOVE, 16, 16);
         var button = new Button("", view);
         button.getStyleClass().add("dark-bold-button");
         button.setTooltip(new LanguageTooltip(Messages.CONFIG_PLUGIN_UNINSTALL));

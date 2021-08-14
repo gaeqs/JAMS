@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.gui.editor;
@@ -43,9 +43,6 @@ import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.editor.popup.DocumentationPopup;
-import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
-import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
-import net.jamsimulator.jams.gui.theme.event.SelectedThemeChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.ThemeShouldRefreshEvent;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.GUIReflectionUtils;
@@ -56,14 +53,13 @@ import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.model.PlainTextChange;
+import org.reactfx.Subscription;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,15 +74,24 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
     protected ScaledVirtualized<CodeFileEditor> zoom;
     protected EditorHintBar hintBar;
 
+    protected CodeFileEditorSearch search;
+    protected CodeFileEditorReplace replace;
+
     protected AutocompletionPopup autocompletionPopup;
     protected DocumentationPopup documentationPopup;
     private ChangeListener<? super Number> autocompletionMoveListener;
+
+    private final Subscription textRefreshSubscription;
+    private boolean textRefreshEnabled;
 
     public CodeFileEditor(FileEditorTab tab) {
         super(read(tab));
         this.tab = tab;
         this.original = getText();
         this.hintBar = new EditorHintBar(this);
+
+        search = new CodeFileEditorSearch(this);
+        replace = new CodeFileEditorReplace(this);
 
         zoom = new ScaledVirtualized<>(this);
         scrollPane = new VirtualizedScrollPane<>(zoom);
@@ -120,8 +125,26 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
                 }
             }
         });
+
+        textRefreshEnabled = true;
+        textRefreshSubscription = multiPlainChanges().subscribe(event -> {
+            if (textRefreshEnabled) event.forEach(this::onTextRefresh);
+            var top = tab.getTopNode().orElse(null);
+            if (top == search) search.refreshText();
+            if (top == replace) replace.refreshText();
+        });
     }
 
+    private static String read(FileEditorTab tab) {
+        if (tab == null) return "";
+        try {
+            return FileUtils.readAll(tab.getFile());
+        } catch (IOException ex) {
+            StringWriter writer = new StringWriter();
+            ex.printStackTrace(new PrintWriter(writer));
+            return writer.toString();
+        }
+    }
 
     /**
      * Returns the {@link FileEditorTab} holding this editor.
@@ -134,12 +157,30 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
 
     /**
      * Returns the {@link EditorHintBar hint bar} of this editor.
-     * The hint bar is used to show errors, warnings and information in the right side of the editor.
+     * The hint bar is used to show errors, warnings and information on the right side of the editor.
      *
      * @return the {@link EditorHintBar hint bar}.
      */
     public EditorHintBar getHintBar() {
         return hintBar;
+    }
+
+    /**
+     * Returns the {@link CodeFileEditorSearch search bar} linked to this editor.
+     *
+     * @return the {@link CodeFileEditorSearch search bar}.
+     */
+    public CodeFileEditorSearch getSearch() {
+        return search;
+    }
+
+    /**
+     * Returns the {@link CodeFileEditorReplace replace bar} linked to this editor.
+     *
+     * @return the {@link CodeFileEditorReplace replace bar}.
+     */
+    public CodeFileEditorReplace getReplace() {
+        return replace;
     }
 
     /**
@@ -151,6 +192,8 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
         return autocompletionPopup;
     }
 
+    //region actions
+
     /**
      * Returns the {@link Popup} showing the current documentation.
      *
@@ -159,8 +202,6 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
     public DocumentationPopup getDocumentationPopup() {
         return documentationPopup;
     }
-
-    //region actions
 
     /**
      * Returns a new {@link List} with all lines of this file inside.
@@ -243,10 +284,22 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
     }
 
     /**
-     * Reformats the file.
-     * This method should be overridden by this children's classes.
+     * Returns whether the text refresh event is enabled.
+     *
+     * @return whether the text refresh event is enabled.
+     * @see #enableRefreshEvent(boolean)
      */
-    public void reformat() {
+    public boolean isRefreshEventEnabled() {
+        return textRefreshEnabled;
+    }
+
+    /**
+     * Enables or disables {@link #onTextRefresh(PlainTextChange)} calls.
+     *
+     * @param enabled wheteher calls are enabled.
+     */
+    public void enableRefreshEvent(boolean enabled) {
+        textRefreshEnabled = enabled;
     }
 
     /**
@@ -255,19 +308,52 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
      */
     public void duplicateCurrentLine() {
         IndexRange selection = getSelection();
+
         if (selection.getStart() == selection.getEnd()) {
-            int caretPosition = getCaretPosition();
-            CodeFileLine line = getLineFromAbsolutePosition(getCaretPosition());
-            if (line == null) return;
-            int end = line.getStart() + line.getText().length();
-            replaceText(end, end, "\n" + line.getText());
-            moveTo(caretPosition + line.getText().length() + 1);
+            var start = getCaretPosition() - getCaretColumn();
+            var end = start + getParagraphLength(getCurrentParagraph());
+            selection = new IndexRange(start, end);
+
+            String text = getText(selection);
+            replaceText(selection.getEnd(), selection.getEnd(), "\n" + text);
+            moveTo(selection.getEnd() + text.length() + 1);
         } else {
             String text = getText(selection);
             replaceText(selection.getEnd(), selection.getEnd(), text);
             moveTo(selection.getEnd() + text.length());
             getCaretSelectionBind().selectRange(selection.getEnd(), selection.getEnd() + text.length());
         }
+    }
+
+    /**
+     * Reformats the file.
+     * This method should be overridden by these children's classes.
+     */
+    public void reformat() {
+    }
+
+    /**
+     * Replaces all the text of this editor with the given code.
+     * This method should be overriden by child implementations to grant good performance.
+     *
+     * @param text the new text.
+     * @return whether the operation was successfully executed.
+     * Returns false when the text to replace is the same to the text in the editor.
+     */
+    public boolean replaceAllText(String text) {
+        if (text.equals(getText())) return false;
+        replace(0, getLength(), text, Collections.emptySet());
+        tab.setSaveMark(true);
+        tab.layoutDisplay();
+        return true;
+    }
+
+    //endregion
+
+    //region refresh
+
+    protected void onTextRefresh(PlainTextChange change) {
+
     }
 
     //endregion
@@ -281,6 +367,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
         JamsApplication.getStage().yProperty().removeListener(autocompletionMoveListener);
         JamsApplication.getStage().widthProperty().removeListener(autocompletionMoveListener);
         JamsApplication.getStage().heightProperty().removeListener(autocompletionMoveListener);
+        textRefreshSubscription.unsubscribe();
     }
 
     @Override
@@ -325,21 +412,23 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
 
     @Override
     public boolean supportsActionRegion(String region) {
-        return RegionTags.TEXT_EDITOR.equals(region) || RegionTags.EDITOR_TAB.equals(region);
+        return RegionTags.TEXT_EDITOR.equals(region) ||
+                RegionTags.EDITOR.equals(region) ||
+                RegionTags.EDITOR_TAB.equals(region);
     }
 
     public VirtualizedScrollPane<?> getScrollPane() {
         return scrollPane;
     }
 
-    public ScaledVirtualized<?> getZoom() {
-        return zoom;
-    }
-
 
     //endregion
 
     //region configuration
+
+    public ScaledVirtualized<?> getZoom() {
+        return zoom;
+    }
 
     private void applyOldTextListener() {
         textProperty().addListener((obs, old, value) -> this.old = old);
@@ -472,19 +561,8 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
         return set;
     }
 
-    private static String read(FileEditorTab tab) {
-        if (tab == null) return "";
-        try {
-            return FileUtils.readAll(tab.getFile());
-        } catch (IOException ex) {
-            StringWriter writer = new StringWriter();
-            ex.printStackTrace(new PrintWriter(writer));
-            return writer.toString();
-        }
-    }
-
     @Listener
-    private void onThemeRefresh (ThemeShouldRefreshEvent event) {
+    private void onThemeRefresh(ThemeShouldRefreshEvent event) {
         JamsApplication.getThemeManager().apply(this);
     }
 

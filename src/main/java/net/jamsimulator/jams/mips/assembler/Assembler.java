@@ -1,3 +1,27 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
 package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.mips.architecture.Architecture;
@@ -6,8 +30,8 @@ import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.label.Label;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
-import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.mips.simulation.SimulationData;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 
 import java.util.Map;
 import java.util.Set;
@@ -15,8 +39,8 @@ import java.util.Set;
 /**
  * Represents an assembler. An assembler transforms assembly code into machine code.
  * <p>
- * To use a implementation of this class you must invoke {@link #assemble()} to assemble the code.
- * Then, invoke {@link #createSimulation(Architecture, SimulationData)} to create a {@link Simulation}.
+ * To use an implementation of this class you must invoke {@link #assemble()} to assemble the code.
+ * Then, invoke {@link #createSimulation(Architecture, MIPSSimulationData)} to create a {@link MIPSSimulation}.
  */
 public interface Assembler {
 
@@ -35,15 +59,15 @@ public interface Assembler {
     boolean isAssembled();
 
     /**
-     * Creates a {@link Simulation} that matches the given {@link Architecture}.
+     * Creates a {@link MIPSSimulation} that matches the given {@link Architecture}.
      *
      * @param architecture the {@link Architecture}.
      * @param data         all the data required for the simulation to be built.
      * @param <Arch>       the architecture type.
-     * @return the {@link Simulation}.
+     * @return the {@link MIPSSimulation}.
      * @throws IllegalStateException when the code is not assembled.
      */
-    <Arch extends Architecture> Simulation<Arch> createSimulation(Arch architecture, SimulationData data);
+    <Arch extends Architecture> MIPSSimulation<Arch> createSimulation(Arch architecture, MIPSSimulationData data);
 
     /**
      * Returns the {@link InstructionSet} used by this assembler.
@@ -61,7 +85,7 @@ public interface Assembler {
 
     /**
      * Returns the {@link Registers register set} used by this assembler.
-     * {@link Simulation}s created by this assembler will use a copy of these registers.
+     * {@link MIPSSimulation}s created by this assembler will use a copy of these registers.
      *
      * @return the {@link Registers register set}.
      */
@@ -73,7 +97,7 @@ public interface Assembler {
      * This memory should be an empty memory when the code is not assembled and a memory
      * with data and the assembled code when the code is assembled.
      * <p>
-     * {@link Simulation}s created by this assembler will use a copy of this memory.
+     * {@link MIPSSimulation}s created by this assembler will use a copy of this memory.
      *
      * @return the {@link Memory}.
      */

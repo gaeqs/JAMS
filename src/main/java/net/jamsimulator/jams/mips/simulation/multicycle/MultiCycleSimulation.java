@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.mips.simulation.multicycle;
@@ -43,8 +43,8 @@ import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterLockEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterUnlockEvent;
-import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.mips.simulation.SimulationData;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 import net.jamsimulator.jams.mips.simulation.change.*;
 import net.jamsimulator.jams.mips.simulation.change.multicycle.MultiCycleSimulationChangeCurrentExecution;
 import net.jamsimulator.jams.mips.simulation.change.multicycle.MultiCycleSimulationChangeStep;
@@ -67,21 +67,17 @@ import java.util.Optional;
  *
  * @see MultiCycleArchitecture
  */
-public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
+public class MultiCycleSimulation extends MIPSSimulation<MultiCycleArchitecture> {
 
     public static final int MAX_CHANGES = 10000;
-
-    private long executedInstructions;
-
     private final LinkedList<StepChanges<MultiCycleArchitecture>> changes;
-    private StepChanges<MultiCycleArchitecture> currentStepChanges;
-
-    private MultiCycleStep currentStep;
-    private MultiCycleExecution<?> currentExecution;
-
     //Hard reference. Do not convert to local variable.
     @SuppressWarnings("FieldCanBeLocal")
     private final Listeners listeners;
+    private long executedInstructions;
+    private StepChanges<MultiCycleArchitecture> currentStepChanges;
+    private MultiCycleStep currentStep;
+    private MultiCycleExecution<?> currentExecution;
 
     /**
      * Creates the single-cycle simulation.
@@ -92,7 +88,7 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
      * @param memory                 the memory to use in this simulation.
      * @param instructionStackBottom the address of the bottom of the instruction stack.
      */
-    public MultiCycleSimulation(MultiCycleArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, SimulationData data) {
+    public MultiCycleSimulation(MultiCycleArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, MIPSSimulationData data) {
         super(architecture, instructionSet, registers, memory, instructionStackBottom, kernelStackBottom, data, true);
         executedInstructions = 0;
         changes = data.isUndoEnabled() ? new LinkedList<>() : null;
@@ -146,7 +142,7 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
     }
 
     @Override
-    public void reset() {
+    public void reset() throws InterruptedException {
         super.reset();
         if (changes != null) {
             changes.clear();
@@ -183,13 +179,14 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
     }
 
     @Override
-    public boolean undoLastStep() {
+    public boolean undoLastStep() throws InterruptedException {
         if (!data.isUndoEnabled()) return false;
 
         if (callEvent(new SimulationUndoStepEvent.Before(this, cycles - 1)).isCancelled()) return false;
 
         stop();
         waitForExecutionFinish();
+
 
         if (changes.isEmpty()) return false;
         finished = false;
@@ -215,7 +212,7 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
         }
 
         if (data.canCallEvents()) {
-            //If fetch, call the event on the fetch section.
+            //If fetched, call the event on the fetch section.
             if (currentStep != MultiCycleStep.FETCH) {
                 MultiCycleStepEvent.Before before = callEvent(new MultiCycleStepEvent.Before(this, cycles, executedInstructions,
                         currentExecution.getAddress(), currentStep, currentExecution.getInstruction(), currentExecution));
@@ -228,21 +225,11 @@ public class MultiCycleSimulation extends Simulation<MultiCycleArchitecture> {
 
         try {
             switch (executingStep) {
-                case FETCH:
-                    fetch(first);
-                    break;
-                case DECODE:
-                    decode();
-                    break;
-                case MEMORY:
-                    memory();
-                    break;
-                case EXECUTE:
-                    execute();
-                    break;
-                case WRITE_BACK:
-                    writeBack();
-                    break;
+                case FETCH -> fetch(first);
+                case DECODE -> decode();
+                case MEMORY -> memory();
+                case EXECUTE -> execute();
+                case WRITE_BACK -> writeBack();
             }
         } catch (MIPSInterruptException ex) {
             if (!checkThreadInterrupted()) {

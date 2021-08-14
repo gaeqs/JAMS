@@ -1,8 +1,32 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
 package net.jamsimulator.jams.project;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.image.Image;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -11,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 /**
- * Represents the type of a {@link Project}. This type allows projects to be managed by
+ * Represents the type of {@link Project}. This type allows projects to be managed by
  * their respective {@link Project} class.
  *
  * @param <T> the project to load or create.
@@ -19,8 +43,8 @@ import java.util.Optional;
 public abstract class ProjectType<T extends Project> implements Labeled {
 
     protected final String name;
-    protected final Image icon;
-    protected final ObservableList<ProjectTemplateBuilder<?>> builderCreators;
+    protected final IconData icon;
+    protected final ObservableList<ProjectTemplateBuilder<?>> templateBuilders;
 
     /**
      * Creates the project type.
@@ -28,11 +52,11 @@ public abstract class ProjectType<T extends Project> implements Labeled {
      * @param name the name of the project type.
      * @param icon the icon representing this type. It may be null.
      */
-    public ProjectType(String name, Image icon) {
+    public ProjectType(String name, IconData icon) {
         Validate.notNull(name, "Name cannot be null!");
         this.name = name;
         this.icon = icon;
-        this.builderCreators = FXCollections.observableList(new ArrayList<>());
+        this.templateBuilders = FXCollections.observableList(new ArrayList<>());
     }
 
     @Override
@@ -41,11 +65,11 @@ public abstract class ProjectType<T extends Project> implements Labeled {
     }
 
     /**
-     * Returns the {@link Image icon} representing this type, if present.
+     * Returns the {@link IconData icon} representing this type, if present.
      *
-     * @return the {@link Image icon}.
+     * @return the {@link IconData icon}.
      */
-    public Optional<Image> getIcon() {
+    public Optional<IconData> getIcon() {
         return Optional.ofNullable(icon);
     }
 
@@ -59,8 +83,8 @@ public abstract class ProjectType<T extends Project> implements Labeled {
      *
      * @return the {@link ObservableList}.
      */
-    public ObservableList<ProjectTemplateBuilder<?>> getBuilderCreators() {
-        return builderCreators;
+    public ObservableList<ProjectTemplateBuilder<?>> getTemplateBuilders() {
+        return templateBuilders;
     }
 
     /**

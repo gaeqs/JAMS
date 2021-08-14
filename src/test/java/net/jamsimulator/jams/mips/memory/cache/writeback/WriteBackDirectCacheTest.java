@@ -1,3 +1,27 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
 package net.jamsimulator.jams.mips.memory.cache.writeback;
 
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
@@ -13,9 +37,10 @@ import net.jamsimulator.jams.mips.memory.cache.CacheStats;
 import net.jamsimulator.jams.mips.memory.cache.CacheTestsData;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.register.Registers;
-import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.mips.simulation.SimulationData;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
+import net.jamsimulator.jams.utils.RawFileData;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -30,7 +55,7 @@ class WriteBackDirectCacheTest {
 		Memory memory = new MIPS32Memory();
 		WriteBackDirectCache cache = new WriteBackDirectCache(null, memory, 4, 4);
 		cache.setByte(memory.getFirstDataAddress(), (byte) 10);
-		assertEquals(1, cache.getStats().getMisses(), "Cache didn't miss!");
+		assertEquals(1, cache.getStats().misses(), "Cache didn't miss!");
 		byte b = cache.getByte(memory.getFirstDataAddress());
 		assertEquals((byte) 10, b, "Byte is not equals!");
 	}
@@ -40,7 +65,7 @@ class WriteBackDirectCacheTest {
 		Memory memory = new MIPS32Memory();
 		WriteBackDirectCache cache = new WriteBackDirectCache(null, memory, 4, 4);
 		cache.setWord(memory.getFirstDataAddress(), 23573);
-		assertEquals(1, cache.getStats().getMisses(), "Cache didn't miss!");
+		assertEquals(1, cache.getStats().misses(), "Cache didn't miss!");
 		int w = cache.getWord(memory.getFirstDataAddress());
 		assertEquals(23573, w, "Byte is not equals!");
 	}
@@ -53,22 +78,27 @@ class WriteBackDirectCacheTest {
 		Registers reg = new MIPS32Registers();
 		Cache mem = new WriteBackDirectCache(null, new MIPS32Memory(), 4, 8);
 
-		MIPS32Assembler assembler = new MIPS32Assembler(Collections.singletonMap("test.asm", CacheTestsData.PROGRAM), inst, dir, reg, mem, null);
+		MIPS32Assembler assembler = new MIPS32Assembler(Collections.singleton(
+				new RawFileData("test.asm", CacheTestsData.PROGRAM)), inst, dir, reg, mem, null);
 		assembler.assemble();
 
-		SimulationData data = new SimulationData(new SimulationSyscallExecutions(), new File(""), null, assembler.getOriginals(), assembler.getAllLabels(), false, false, true, true, true);
-		Simulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE, data);
+		MIPSSimulationData data = new MIPSSimulationData(new SimulationSyscallExecutions(), new File(""), null, assembler.getOriginals(), assembler.getAllLabels(), false, false, true, true, true);
+		MIPSSimulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE, data);
 
 		mem = (Cache) simulation.getMemory();
 
 		//mem.resetCache();
 		simulation.executeAll();
 
-		simulation.waitForExecutionFinish();
+		try {
+			simulation.waitForExecutionFinish();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
 		CacheStats stats = mem.getStats();
 		System.out.println(stats);
-		System.out.print(stats.getHits() * 100F / stats.getOperations());
+		System.out.print(stats.hits() * 100F / stats.operations());
 		System.out.println("%");
 
 		int current;
@@ -80,9 +110,9 @@ class WriteBackDirectCacheTest {
 			assertEquals(current, mem.getWord(0x10010000 + i, false, false, true));
 		}
 
-		assertEquals(33408, stats.getOperations());
-		assertEquals(25216, stats.getHits());
-		assertEquals(8192, stats.getMisses());
+		assertEquals(33408, stats.operations());
+		assertEquals(25216, stats.hits());
+		assertEquals(8192, stats.misses());
 
 
 	}

@@ -1,3 +1,27 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
 package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.gui.util.log.Log;
@@ -9,8 +33,9 @@ import net.jamsimulator.jams.mips.label.Label;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.register.Registers;
-import net.jamsimulator.jams.mips.simulation.Simulation;
-import net.jamsimulator.jams.mips.simulation.SimulationData;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
+import net.jamsimulator.jams.utils.RawFileData;
 
 import java.util.*;
 
@@ -34,7 +59,7 @@ public class MIPS32Assembler implements Assembler {
 
     private boolean assembled = false;
 
-    public MIPS32Assembler(Map<String, String> rawFiles, InstructionSet instructionSet, DirectiveSet directiveSet, Registers registers, Memory memory, Log log) {
+    public MIPS32Assembler(Iterable<RawFileData> rawFiles, InstructionSet instructionSet, DirectiveSet directiveSet, Registers registers, Memory memory, Log log) {
         this.files = new ArrayList<>();
 
         this.assemblerData = new MIPS32AssemblerData(memory);
@@ -49,7 +74,7 @@ public class MIPS32Assembler implements Assembler {
 
         this.log = log;
 
-        rawFiles.forEach((name, data) -> files.add(new MIPS32AssemblingFile(name, data, this)));
+        rawFiles.forEach(raw -> files.add(new MIPS32AssemblingFile(raw.file(), raw.data(), this)));
     }
 
     /**
@@ -121,8 +146,9 @@ public class MIPS32Assembler implements Assembler {
         return assembled;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <Arch extends Architecture> Simulation<Arch> createSimulation(Arch architecture, SimulationData data) {
+    public <Arch extends Architecture> MIPSSimulation<Arch> createSimulation(Arch architecture, MIPSSimulationData data) {
         if (!assembled) throw new IllegalStateException("The program is still not assembled!");
 
         Memory memory = getMemory().copy();
@@ -132,10 +158,10 @@ public class MIPS32Assembler implements Assembler {
 
         Registers registers = getRegisters().copy();
 
-        Simulation<?> simulation = architecture.createSimulation(instructionSet, registers, memory,
+        MIPSSimulation<?> simulation = architecture.createSimulation(instructionSet, registers, memory,
                 assemblerData.getCurrentText() - 4,
                 assemblerData.getCurrentKText() - 4, data);
-        return (Simulation<Arch>) simulation;
+        return (MIPSSimulation<Arch>) simulation;
     }
 
     @Override

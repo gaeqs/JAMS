@@ -1,30 +1,29 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.gui.project;
 
-import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
@@ -107,6 +106,11 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
         return barMap;
     }
 
+    /**
+     * Saves all files opened by this working pane.
+     */
+    public abstract void saveAllOpenedFiles();
+
     @Override
     public void onClose() {
         barMap.forEachButton(BarButton::hide);
@@ -133,11 +137,7 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
         if (center == null) center = new AnchorPane();
         horizontalSplitPane.getItems().add(center);
 
-
         loadSidebars();
-        loadResizeEvents();
-
-
         Jams.getGeneralEventBroadcast().registerListeners(this, true);
     }
 
@@ -188,27 +188,6 @@ public abstract class WorkingPane extends AnchorPane implements ProjectPane {
         bar.getNode().setMaxHeight(BOTTOM_BAR_HEIGHT);
         bar.getNode().setMinWidth(100);
         return bar;
-    }
-
-    private void loadResizeEvents() {
-        //Rescaling AnchorPane inside a tab. Thanks JavaFX for the bug.
-        Platform.runLater(() -> {
-            if (getScene() == null) {
-                loadResizeEvents();
-                return;
-            }
-            getScene().heightProperty().addListener((obs, old, val) -> {
-                double height = val.doubleValue() - getLocalToSceneTransform().getTy();
-                setPrefHeight(height);
-                setMinHeight(height);
-            });
-
-            getScene().widthProperty().addListener((obs, old, val) -> {
-                double width = val.doubleValue() - getLocalToSceneTransform().getTx();
-                setPrefWidth(width);
-                setMinWidth(width);
-            });
-        });
     }
 
     //endregion

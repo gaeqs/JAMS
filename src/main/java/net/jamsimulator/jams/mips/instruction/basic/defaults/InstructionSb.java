@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
@@ -37,92 +37,92 @@ import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionSb extends BasicInstruction<InstructionSb.Assembled> {
 
-	public static final String MNEMONIC = "sb";
-	public static final int OPERATION_CODE = 0b101000;
+    public static final String MNEMONIC = "sb";
+    public static final int OPERATION_CODE = 0b101000;
 
-	public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.SIGNED_16_BIT_REGISTER_SHIFT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.SIGNED_16_BIT_REGISTER_SHIFT);
 
-	public InstructionSb() {
-		super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
-		addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
-		addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
-	}
+    public InstructionSb() {
+        super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
+        addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
+        addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
+        addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+    }
 
-	@Override
-	public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-		return new Assembled(parameters[1].getRegister(), parameters[0].getRegister(),
-				parameters[1].getImmediate(), origin, this);
-	}
+    @Override
+    public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
+        return new Assembled(parameters[1].getRegister(), parameters[0].getRegister(),
+                parameters[1].getImmediate(), origin, this);
+    }
 
-	@Override
-	public AssembledInstruction assembleFromCode(int instructionCode) {
-		return new Assembled(instructionCode, this, this);
-	}
+    @Override
+    public AssembledInstruction assembleFromCode(int instructionCode) {
+        return new Assembled(instructionCode, this, this);
+    }
 
-	public static class Assembled extends AssembledI16Instruction {
+    public static class Assembled extends AssembledI16Instruction {
 
-		public Assembled(int baseRegister, int targetRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-			super(InstructionSb.OPERATION_CODE, baseRegister, targetRegister, offset, origin, basicOrigin);
-		}
+        public Assembled(int baseRegister, int targetRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(InstructionSb.OPERATION_CODE, baseRegister, targetRegister, offset, origin, basicOrigin);
+        }
 
-		public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-			super(instructionCode, origin, basicOrigin);
-		}
+        public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(instructionCode, origin, basicOrigin);
+        }
 
-		@Override
-		public String parametersToString(String registersStart) {
-			return registersStart + getTargetRegister()
-					+ ", 0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 4)
-					+ "(" + registersStart + getSourceRegister() + ")";
-		}
-	}
+        @Override
+        public String parametersToString(String registersStart) {
+            return registersStart + getTargetRegister()
+                    + ", 0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 4)
+                    + "(" + registersStart + getSourceRegister() + ")";
+        }
+    }
 
-	public static class SingleCycle extends SingleCycleExecution<Assembled> {
+    public static class SingleCycle extends SingleCycleExecution<Assembled> {
 
-		public SingleCycle(Simulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address);
-		}
+        public SingleCycle(MIPSSimulation<SingleCycleArchitecture> simulation, Assembled instruction, int address) {
+            super(simulation, instruction, address);
+        }
 
-		@Override
-		public void execute() {
-			Register base = register(instruction.getSourceRegister());
-			Register rt = register(instruction.getTargetRegister());
-			int address = base.getValue() + instruction.getImmediateAsSigned();
-			simulation.getMemory().setByte(address, (byte) rt.getValue());
-		}
-	}
+        @Override
+        public void execute() {
+            Register base = register(instruction.getSourceRegister());
+            Register rt = register(instruction.getTargetRegister());
+            int address = base.getValue() + instruction.getImmediateAsSigned();
+            simulation.getMemory().setByte(address, (byte) rt.getValue());
+        }
+    }
 
-	public static class MultiCycle extends MultiCycleExecution<Assembled> {
+    public static class MultiCycle extends MultiCycleExecution<Assembled> {
 
-		public MultiCycle(Simulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-			super(simulation, instruction, address, true, false);
-		}
+        public MultiCycle(MIPSSimulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+            super(simulation, instruction, address, true, false);
+        }
 
-		@Override
-		public void decode() {
-			requires(instruction.getSourceRegister());
-			requires(instruction.getTargetRegister());
-		}
+        @Override
+        public void decode() {
+            requires(instruction.getSourceRegister());
+            requires(instruction.getTargetRegister());
+        }
 
-		@Override
-		public void execute() {
-			int address = value(instruction.getSourceRegister()) + instruction.getImmediateAsSigned();
-			executionResult = new int[]{address, value(instruction.getTargetRegister())};
-		}
+        @Override
+        public void execute() {
+            int address = value(instruction.getSourceRegister()) + instruction.getImmediateAsSigned();
+            executionResult = new int[]{address, value(instruction.getTargetRegister())};
+        }
 
-		@Override
-		public void memory() {
-			simulation.getMemory().setByte(executionResult[0], (byte) executionResult[1]);
-		}
+        @Override
+        public void memory() {
+            simulation.getMemory().setByte(executionResult[0], (byte) executionResult[1]);
+        }
 
-		@Override
-		public void writeBack() {
-		}
-	}
+        @Override
+        public void writeBack() {
+        }
+    }
 }

@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.gui.mips.editor.element;
@@ -42,16 +42,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MIPSFileElements {
 
     private final MIPSProject project;
-    private MIPSFilesToAssemble filesToAssemble;
-
     private final List<MIPSLine> lines;
-
     private final Bag<String> labels;
     private final Bag<String> setAsGlobalLabel;
     private final TreeSet<MIPSReplacement> replacements;
-
     private final TreeSet<Integer> requiresUpdate;
     private final TreeSet<MIPSMacro> macros;
+    private MIPSFilesToAssemble filesToAssemble;
 
     public MIPSFileElements(MIPSProject project) {
         this.project = project;
@@ -77,7 +74,7 @@ public class MIPSFileElements {
     }
 
     /**
-     * Returns the {@link MIPSFilesToAssemble} this file is inside of, if present.
+     * Returns the {@link MIPSFilesToAssemble} this file is inside, if present.
      *
      * @return the {@link MIPSFilesToAssemble}, if present.
      */
@@ -86,7 +83,7 @@ public class MIPSFileElements {
     }
 
     /**
-     * Sets the {@link MIPSFilesToAssemble} this file is inside of.
+     * Sets the {@link MIPSFilesToAssemble} this file is inside.
      * <p>
      * This method should be used only by a {@link MIPSFilesToAssemble}.
      *
@@ -181,6 +178,10 @@ public class MIPSFileElements {
      */
     public MIPSLine getLineWithPosition(int position) {
         return lines.get(lineOf(position));
+    }
+
+    public Set<MIPSMacro> getMacros () {
+        return Collections.unmodifiableSet(macros);
     }
 
     public Optional<MIPSMacro> getMacro(String name) {
@@ -322,7 +323,6 @@ public class MIPSFileElements {
 
         if (line.getDirective().isPresent()) {
             var directive = line.getDirective().get();
-            directive.getParameters().forEach(target -> setAsGlobalLabel.add(target.text));
             if (directive.isGlobal()) {
                 directive.getParameters().forEach(target -> setAsGlobalLabel.add(target.text));
             } else if (directive.isEndMacro()) {

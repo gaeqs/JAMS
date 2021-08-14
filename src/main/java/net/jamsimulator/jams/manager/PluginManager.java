@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.manager;
@@ -70,8 +70,8 @@ public class PluginManager extends Manager<Plugin> {
     /**
      * Attempts to register the given plugin.
      * If the plugin is null this method throws an {@link NullPointerException}.
-     * If the plugin is already present or the register event is cancelled this method returns {@link false}.
-     * If the operation was successful the method returns {@link true}.
+     * If the plugin is already present or the register event is cancelled this method returns {@code false}.
+     * If the operation was successful the method returns {@code true}.
      * <p>
      * If the plugin can be registered, this method calls {@link Plugin#onEnable()}
      *
@@ -100,9 +100,9 @@ public class PluginManager extends Manager<Plugin> {
     /**
      * Attempts to unregister the given plugin.
      * If the element is null this method throws a {@link NullPointerException}.
-     * If the element type is invalid this method returns {@link false}.
-     * If the element is not present or the unregister event is cancelled this method returns {@link false}.
-     * If the operation was successful the method returns {@link true}.
+     * If the element type is invalid this method returns {@code false}.
+     * If the element is not present or the unregister event is cancelled this method returns {@code false}.
+     * If the operation was successful the method returns {@code true}.
      * If the plugin is a dependency or a soft dependency of another plugin this method returns false.
      * <p>
      * If the plugin can be unregistered, this method calls {@link Plugin#onDisable()}
@@ -171,7 +171,7 @@ public class PluginManager extends Manager<Plugin> {
      * Loads the {@link Plugin} in the given {@link File}.
      * <p>
      * WARNING! This method only loads the {@link Plugin}. To register it use {@link #add(Plugin)}.
-     * Plugins requires all it's dependencies registered in this manager to be loaded.
+     * Plugins require all it's dependencies registered in this manager to be loaded.
      *
      * @param file the {@link File} of the {@link Plugin}.
      * @return the loaded {@link Plugin}.
@@ -188,7 +188,7 @@ public class PluginManager extends Manager<Plugin> {
      * Loads the {@link Plugin} represented by the given {@link PluginHeader}.
      * <p>
      * WARNING! This method only loads the {@link Plugin}. To register it use {@link #add(Plugin)}.
-     * Plugins requires all it's dependencies registered in this manager to be loaded.
+     * Plugins require all it's dependencies registered in this manager to be loaded.
      *
      * @param header the {@link PluginHeader} of the {@link Plugin}.
      * @return the loaded {@link Plugin}.
@@ -259,7 +259,7 @@ public class PluginManager extends Manager<Plugin> {
             try {
                 return add(loadPlugin(to));
             } catch (PluginLoadException e) {
-                to.delete();
+                if (!to.delete()) throw new RuntimeException("Couldn't delete destination file.", e);
                 e.printStackTrace();
                 return false;
             }

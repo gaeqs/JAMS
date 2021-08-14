@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.project.mips;
@@ -35,7 +35,10 @@ import net.jamsimulator.jams.gui.editor.FileEditorTab;
 import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.gui.project.ProjectTab;
+import net.jamsimulator.jams.project.FilesToAssemble;
+import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
+import net.jamsimulator.jams.project.mips.event.FileIndexChangedFromAssembleEvent;
 import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
 import net.jamsimulator.jams.utils.FileUtils;
 import net.jamsimulator.jams.utils.Validate;
@@ -49,39 +52,55 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class MIPSFilesToAssemble extends SimpleEventBroadcast {
+public class MIPSFilesToAssemble extends SimpleEventBroadcast implements FilesToAssemble {
 
     public static final String FILE_NAME = "files_to_assemble.json";
 
     private final MIPSProject project;
-    private final Map<File, MIPSFileElements> files;
+    private final List<File> files;
+    private final Map<File, MIPSFileElements> fileElements;
     private final Bag<String> globalLabels;
 
     public MIPSFilesToAssemble(MIPSProject project) {
         this.project = project;
-        files = new HashMap<>();
+        files = new ArrayList<>();
+        fileElements = new HashMap<>();
         globalLabels = new Bag<>();
     }
 
     public Optional<MIPSFileElements> getFileElements(File file) {
-        return Optional.ofNullable(files.get(file));
+        return Optional.ofNullable(fileElements.get(file));
     }
 
+    @Override
+    public Project getProject() {
+        return project;
+    }
+
+    @Override
+    public boolean supportsGlobalLabels() {
+        return true;
+    }
+
+    @Override
     public Bag<String> getGlobalLabels() {
         return globalLabels;
     }
 
-    public Set<File> getFiles() {
-        return Collections.unmodifiableSet(files.keySet());
+    @Override
+    public List<File> getFiles() {
+        return Collections.unmodifiableList(files);
     }
 
+    @Override
     public boolean containsFile(File file) {
-        return files.containsKey(file);
+        return files.contains(file);
     }
 
+    @Override
     public void addFile(File file, boolean refreshGlobalLabels) {
         Validate.notNull(file, "File cannot be null!");
-        if (files.containsKey(file)) return;
+        if (files.contains(file)) return;
 
         FileAddToAssembleEvent.Before before = callEvent(new FileAddToAssembleEvent.Before(file));
         if (before.isCancelled()) return;
@@ -91,12 +110,9 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
 
         try {
             String text = FileUtils.readAll(file);
-            if (!text.isEmpty()) {
-                text = text.substring(0, text.length() - 1);
-            }
-
             elements.refreshAll(text);
-            files.put(file, elements);
+            files.add(file);
+            fileElements.put(file, elements);
 
             if (refreshGlobalLabels) {
                 refreshGlobalLabels();
@@ -115,8 +131,9 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
         FileAddToAssembleEvent.Before before = callEvent(new FileAddToAssembleEvent.Before(file));
         if (before.isCancelled()) return;
 
-        if (files.containsKey(file)) return;
-        files.put(file, elements);
+        if (files.contains(file)) return;
+        files.add(file);
+        fileElements.put(file, elements);
         elements.setFilesToAssemble(this);
 
         if (refreshGlobalLabels) {
@@ -126,6 +143,7 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
         callEvent(new FileAddToAssembleEvent.After(file));
     }
 
+    @Override
     public void addFile(File file, FileEditorHolder holder, boolean refreshGlobalLabels) {
         Validate.notNull(file, "File cannot be null!");
         Validate.notNull(holder, "List cannot be null!");
@@ -138,14 +156,16 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
         addFile(file, ((MIPSFileEditor) tab.get().getDisplay()).getElements(), refreshGlobalLabels);
     }
 
+    @Override
     public void removeFile(File file) {
         Validate.notNull(file, "File cannot be null!");
 
         FileRemoveFromAssembleEvent.Before before = callEvent(new FileRemoveFromAssembleEvent.Before(file));
         if (before.isCancelled()) return;
 
-        if (!files.containsKey(file)) return;
-        MIPSFileElements elements = files.remove(file);
+        if (!files.contains(file)) return;
+        files.remove(file);
+        var elements = fileElements.remove(file);
         elements.setFilesToAssemble(null);
         refreshDeletedDisplay(file, elements);
 
@@ -154,11 +174,28 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
         callEvent(new FileRemoveFromAssembleEvent.After(file));
     }
 
+    @Override
+    public boolean moveFileToIndex(File file, int index) {
+        if (!files.contains(file) || index < 0 || index >= files.size()) return false;
+        int old = files.indexOf(file);
+        var before =
+                callEvent(new FileIndexChangedFromAssembleEvent.Before(file, old, index));
+        if (before.isCancelled()) return false;
+        index = before.getNewIndex();
+
+        if (index < 0 || index >= files.size()) return false;
+        files.remove(file);
+        files.add(index, file);
+        callEvent(new FileIndexChangedFromAssembleEvent.After(file, old, index));
+        return true;
+    }
+
+    @Override
     public void refreshGlobalLabels() {
         Set<String> toUpdate = new HashSet<>(globalLabels);
 
         globalLabels.clear();
-        for (MIPSFileElements elements : files.values()) {
+        for (MIPSFileElements elements : fileElements.values()) {
             globalLabels.addAll(elements.getExistingGlobalLabels());
         }
 
@@ -168,10 +205,9 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
 
         if (tab == null) return;
         Node node = tab.getProjectTabPane().getWorkingPane().getCenter();
-        if (!(node instanceof FileEditorHolder)) return;
-        FileEditorHolder holder = (FileEditorHolder) node;
+        if (!(node instanceof FileEditorHolder holder)) return;
 
-        files.forEach((file, elements) -> {
+        fileElements.forEach((file, elements) -> {
             elements.seachForLabelsUpdates(toUpdate);
             Optional<FileEditorTab> fTab = holder.getFileDisplayTab(file, true);
             if (fTab.isPresent()) {
@@ -204,15 +240,16 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
         File file = new File(folder, FILE_NAME);
         JSONArray array = new JSONArray();
         Path projectPath = project.getFolder().toPath();
-        files.keySet().stream().map(target -> projectPath.relativize(target.toPath())).forEach(array::put);
+        files.stream().map(target -> projectPath.relativize(target.toPath())).forEach(array::put);
 
         Writer writer = new FileWriter(file);
         writer.write(array.toString(1));
         writer.close();
     }
 
+    @Override
     public void checkFiles() {
-        List<File> toRemove = files.keySet().stream().filter(target -> !target.isFile()).collect(Collectors.toList());
+        var toRemove = files.stream().filter(target -> !target.isFile()).collect(Collectors.toList());
         for (File file : toRemove) {
             removeFile(file);
         }
@@ -222,8 +259,7 @@ public class MIPSFilesToAssemble extends SimpleEventBroadcast {
         ProjectTab tab = JamsApplication.getProjectsTabPane().getProjectTab(project).orElse(null);
         if (tab == null) return;
         Node node = tab.getProjectTabPane().getWorkingPane().getCenter();
-        if (!(node instanceof FileEditorHolder)) return;
-        FileEditorHolder holder = (FileEditorHolder) node;
+        if (!(node instanceof FileEditorHolder holder)) return;
 
         Optional<FileEditorTab> fTab = holder.getFileDisplayTab(file, true);
 

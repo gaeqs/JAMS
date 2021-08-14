@@ -1,3 +1,27 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
 package net.jamsimulator.jams.gui.mips.simulator.memory;
 
 import javafx.scene.control.TableColumn;
@@ -10,7 +34,7 @@ import net.jamsimulator.jams.language.wrapper.LanguageTableColumn;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationCachesResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
@@ -29,7 +53,7 @@ public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements M
 
     private final HashMap<Integer, SimpleMemoryEntry> entries;
 
-    protected Simulation<?> simulation;
+    protected MIPSSimulation<?> simulation;
     protected Memory memory;
     protected int offset;
     private NumberRepresentation representation;
@@ -38,7 +62,7 @@ public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements M
     private Runnable onPopulate = () -> {
     };
 
-    public SimpleMemoryTable(Simulation<?> simulation, Memory memory, int offset, NumberRepresentation representation) {
+    public SimpleMemoryTable(MIPSSimulation<?> simulation, Memory memory, int offset, NumberRepresentation representation) {
         this.simulation = simulation;
         this.memory = memory;
         this.offset = offset;
@@ -99,7 +123,7 @@ public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements M
     }
 
     @Override
-    public Simulation<?> getSimulation() {
+    public MIPSSimulation<?> getSimulation() {
         return simulation;
     }
 

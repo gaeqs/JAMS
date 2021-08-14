@@ -8,7 +8,7 @@ Just Another MIPS Simulator.
 Jams is a modern and extensible project-based MIPS assembler and simulator written in Java.
 It supports multiple themes and languages.
 
-> Currently on an alpha state, JAMS is aimed to support multiple architectures and instruction sets, allowing other developers to expand JAMS through plugins.
+> Now on a beta state, JAMS is aimed to support multiple architectures and instruction sets, allowing other developers to expand JAMS through plugins.
 
 ## Dependencies
 - Java 14.
@@ -26,7 +26,7 @@ It supports multiple themes and languages.
 - **Language**: language classes.
 - **Mips**: contains the MIPS32 assembler and simulator. This package doesn't contain project-related or gui-related classes.
 - **Project**: project-related classes.
-- **Util**: util classes that dont't match any other package.
+- **Util**: util classes that don't match any other package.
 
 ## Download and installation
 

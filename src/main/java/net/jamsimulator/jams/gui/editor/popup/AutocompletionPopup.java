@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.gui.editor.popup;
@@ -28,7 +28,6 @@ import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -40,6 +39,7 @@ import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.popup.event.AutocompletionPopupSelectElementEvent;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -55,12 +55,10 @@ import java.util.stream.Stream;
  */
 public abstract class AutocompletionPopup extends Popup implements EventBroadcast {
 
-    private final SimpleEventBroadcast broadcast;
-
     protected final CodeFileEditor display;
     protected final VBox content;
     protected final List<AutocompletionPopupElement> elements;
-
+    private final SimpleEventBroadcast broadcast;
     protected AutocompletionPopupElement selected;
     protected int selectedIndex;
 
@@ -197,7 +195,7 @@ public abstract class AutocompletionPopup extends Popup implements EventBroadcas
      * @param <T>                      the type of the elements.
      */
     public <T> void addElements(Collection<T> collection, Function<T, String> conversion,
-                                Function<T, String> autocompletionConversion, int offset, Image icon) {
+                                Function<T, String> autocompletionConversion, int offset, IconData icon) {
         addElements(collection.iterator(), conversion, autocompletionConversion, offset, icon);
     }
 
@@ -210,7 +208,7 @@ public abstract class AutocompletionPopup extends Popup implements EventBroadcas
      * @param <T>                      the type of the elements.
      */
     public <T> void addElements(Stream<T> collection, Function<T, String> conversion,
-                                Function<T, String> autocompletionConversion, int offset, Image icon) {
+                                Function<T, String> autocompletionConversion, int offset, IconData icon) {
         addElements(collection.iterator(), conversion, autocompletionConversion, offset, icon);
     }
 
@@ -223,7 +221,7 @@ public abstract class AutocompletionPopup extends Popup implements EventBroadcas
      * @param <T>                      the type of the elements.
      */
     public <T> void addElements(Iterator<T> iterator, Function<T, String> conversion,
-                                Function<T, String> autocompletionConversion, int offset, Image icon) {
+                                Function<T, String> autocompletionConversion, int offset, IconData icon) {
         AutocompletionPopupElement label;
         T next;
         while (iterator.hasNext()) {
@@ -304,7 +302,7 @@ public abstract class AutocompletionPopup extends Popup implements EventBroadcas
     }
 
     private boolean manageKeyEvent(KeyEvent event) {
-        if (event.getCode() == KeyCode.UNDEFINED) return true;
+        if (event.getCode() == KeyCode.UNDEFINED) return false;
         if (event.isControlDown() || event.isAltDown() || event.isMetaDown() || event.isShortcutDown()) return false;
 
         return switch (event.getCode()) {
@@ -345,6 +343,7 @@ public abstract class AutocompletionPopup extends Popup implements EventBroadcas
                 yield true;
             }
             case ESCAPE, SPACE -> {
+                if (!isShowing()) yield false;
                 hide();
                 yield true;
             }
@@ -361,7 +360,7 @@ public abstract class AutocompletionPopup extends Popup implements EventBroadcas
      * Tries to open the popup at the caret position, refreshing it.
      * The caret position can be modified using the parameter 'caretOffset'.
      * <p>
-     * If 'autocompleteIfOne' is true and there's only one element inside the popup the popup won't open
+     * If 'autocompleteIfOne' is true and there's only one element inside the popup won't open,
      * and it will call the method {@link #autocomplete()}.
      *
      * @param caretOffset       the caret offset.

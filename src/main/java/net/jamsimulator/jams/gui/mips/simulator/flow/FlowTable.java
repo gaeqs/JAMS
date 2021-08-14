@@ -1,3 +1,27 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
 package net.jamsimulator.jams.gui.mips.simulator.flow;
 
 import javafx.scene.control.ScrollPane;
@@ -19,90 +43,50 @@ import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 /**
- * This table watches the instruction flow inside a {@link Simulation}.
+ * This table watches the instruction flow inside a {@link MIPSSimulation}.
  * <p>
  * This class must be extended to provide specific functionalities.
  */
+@SuppressWarnings("unchecked")
 public abstract class FlowTable extends AnchorPane implements ActionRegion {
 
     //region static
 
-    private static final Map<Architecture, Function<Simulation<?>, FlowTable>> FLOW_PER_ARCHITECTURE = new HashMap<>();
+    private static final Map<Architecture, Function<MIPSSimulation<?>, FlowTable>> FLOW_PER_ARCHITECTURE = new HashMap<>();
 
     static {
         FLOW_PER_ARCHITECTURE.put(SingleCycleArchitecture.INSTANCE, s ->
-                new SingleCycleFlowTable((Simulation<? extends SingleCycleArchitecture>) s));
+                new SingleCycleFlowTable((MIPSSimulation<? extends SingleCycleArchitecture>) s));
         FLOW_PER_ARCHITECTURE.put(MultiCycleArchitecture.INSTANCE, s ->
-                new MultiCycleFlowTable((Simulation<? extends MultiCycleArchitecture>) s));
+                new MultiCycleFlowTable((MIPSSimulation<? extends MultiCycleArchitecture>) s));
         FLOW_PER_ARCHITECTURE.put(PipelinedArchitecture.INSTANCE, s ->
-                new PipelinedFlowTable((Simulation<? extends MultiCycleArchitecture>) s));
+                new PipelinedFlowTable((MIPSSimulation<? extends MultiCycleArchitecture>) s));
     }
 
-    /**
-     * Registers a flow table builder for the given {@link Architecture}.
-     *
-     * @param architecture the {@link Architecture}.
-     * @param builder      the builder.
-     */
-    public static void registerFlow(Architecture architecture, Function<Simulation<?>, FlowTable> builder) {
-        FLOW_PER_ARCHITECTURE.put(architecture, builder);
-    }
-
-    /**
-     * Creates a flow table for the given {@link Simulation}.
-     * <p>
-     * If the simulation's {@link Architecture} has no flow table registered,
-     * an empty flow table will be created.
-     * <p>
-     * Use {@link #registerFlow(Architecture, Function)} to register a flow table.
-     *
-     * @param simulation the simulation.
-     * @return the flow table.
-     */
-    public static FlowTable createFlow(Simulation<?> simulation) {
-        Function<Simulation<?>, FlowTable> builder = FLOW_PER_ARCHITECTURE.get(simulation.getArchitecture());
-        if (builder == null) return new FlowTable(simulation) {
-            @Override
-            public long getFirstCycle() {
-                return 0;
-            }
-
-            @Override
-            public long getLastCycle() {
-                return 0;
-            }
-        };
-        return builder.apply(simulation);
-    }
+    protected MIPSSimulation<?> simulation;
+    protected ScrollPane scrollPane;
 
     //endregion
-
-    protected Simulation<?> simulation;
-    protected ScrollPane scrollPane;
     protected double stepSize = 40;
     protected int maxItems;
-
     protected Slider sizeSlider;
-
     protected VBox flows;
     protected FlowTableCycleVisualizer cycleVisualizer;
     protected ScalableNode scalableNode;
-
     protected FlowEntry selected;
-
     /**
      * Creates the flow table.
      *
      * @param simulation the simulation.
      */
-    public FlowTable(Simulation<?> simulation) {
+    public FlowTable(MIPSSimulation<?> simulation) {
         this.simulation = simulation;
         this.scrollPane = new PixelScrollPane();
         this.sizeSlider = new Slider();
@@ -140,11 +124,48 @@ public abstract class FlowTable extends AnchorPane implements ActionRegion {
     }
 
     /**
-     * Returns the {@link Simulation} this table is watching.
+     * Registers a flow table builder for the given {@link Architecture}.
      *
-     * @return the {@link Simulation}.
+     * @param architecture the {@link Architecture}.
+     * @param builder      the builder.
      */
-    public Simulation<?> getSimulation() {
+    public static void registerFlow(Architecture architecture, Function<MIPSSimulation<?>, FlowTable> builder) {
+        FLOW_PER_ARCHITECTURE.put(architecture, builder);
+    }
+
+    /**
+     * Creates a flow table for the given {@link MIPSSimulation}.
+     * <p>
+     * If the simulation's {@link Architecture} has no flow table registered,
+     * an empty flow table will be created.
+     * <p>
+     * Use {@link #registerFlow(Architecture, Function)} to register a flow table.
+     *
+     * @param simulation the simulation.
+     * @return the flow table.
+     */
+    public static FlowTable createFlow(MIPSSimulation<?> simulation) {
+        Function<MIPSSimulation<?>, FlowTable> builder = FLOW_PER_ARCHITECTURE.get(simulation.getArchitecture());
+        if (builder == null) return new FlowTable(simulation) {
+            @Override
+            public long getFirstCycle() {
+                return 0;
+            }
+
+            @Override
+            public long getLastCycle() {
+                return 0;
+            }
+        };
+        return builder.apply(simulation);
+    }
+
+    /**
+     * Returns the {@link MIPSSimulation} this table is watching.
+     *
+     * @return the {@link MIPSSimulation}.
+     */
+    public MIPSSimulation<?> getSimulation() {
         return simulation;
     }
 

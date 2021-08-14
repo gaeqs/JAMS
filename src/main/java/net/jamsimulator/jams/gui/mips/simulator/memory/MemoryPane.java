@@ -1,3 +1,27 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
 package net.jamsimulator.jams.gui.mips.simulator.memory;
 
 import javafx.geometry.Pos;
@@ -12,14 +36,14 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
-import net.jamsimulator.jams.gui.util.LanguageStringComboBox;
+import net.jamsimulator.jams.gui.util.LanguageComboBox;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
 import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 import net.jamsimulator.jams.manager.NumberRepresentationManager;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
-import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.NumberRepresentation;
 import net.jamsimulator.jams.utils.representation.event.NumberRepresentationRegisterEvent;
 import net.jamsimulator.jams.utils.representation.event.NumberRepresentationUnregisterEvent;
@@ -27,29 +51,24 @@ import net.jamsimulator.jams.utils.representation.event.NumberRepresentationUnre
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Represents the main pane for the {@link MemoryPane}.
  * <p>
- * Use this to represents a set of memories of a {@link Simulation}.
+ * Use this to represents a set of memories of a {@link MIPSSimulation}.
  */
 public class MemoryPane extends AnchorPane implements ActionRegion {
 
-    private final Simulation<?> simulation;
-
+    private final MIPSSimulation<?> simulation;
+    private final ComboBox<String> memorySelector;
+    private final ComboBox<NumberRepresentation> representationSelection;
+    private final List<NumberRepresentation> representations = new ArrayList<>();
+    private final HBox headerHBox, buttonsHBox;
     private MemoryTable table;
     private Memory selected;
     private int savedOffset;
 
-    private final ComboBox<String> memorySelector;
-    private final ComboBox<String> representationSelection;
-
-    private final List<NumberRepresentation> representations = new ArrayList<>();
-
-    private final HBox headerHBox, buttonsHBox;
-
-    public MemoryPane(Simulation<?> simulation) {
+    public MemoryPane(MIPSSimulation<?> simulation) {
         this.simulation = simulation;
         this.savedOffset = 0;
 
@@ -129,8 +148,7 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
         var start = address - offset;
         var row = offset >>> 4;
 
-        if (table instanceof SimpleMemoryTable) {
-            var smt = (SimpleMemoryTable) table;
+        if (table instanceof SimpleMemoryTable smt) {
             smt.setOffset(start);
             smt.getSelectionModel().select(row);
             smt.scrollTo(row);
@@ -165,8 +183,8 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
     private void initButtons(HBox buttonsHBox) {
         buttonsHBox.setAlignment(Pos.CENTER);
         buttonsHBox.setFillHeight(true);
-        Button previous = new Button("←");
-        Button next = new Button("→");
+        Button previous = new Button("\u2190");
+        Button next = new Button("\u2192");
 
         previous.getStyleClass().add("bold-button");
         next.getStyleClass().add("bold-button");
@@ -180,19 +198,17 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
         buttonsHBox.getChildren().addAll(previous, next);
     }
 
-    private LanguageStringComboBox initRepresentationComboBox() {
+    private LanguageComboBox<NumberRepresentation> initRepresentationComboBox() {
         representations.addAll(Jams.getNumberRepresentationManager());
         representations.sort(Comparator.comparing(NumberRepresentation::getName));
+        var representationSelection = new LanguageComboBox<>(NumberRepresentation::getLanguageNode);
 
-        List<String> values = representations.stream().map(NumberRepresentation::getLanguageNode).collect(Collectors.toList());
+        representationSelection.setOnAction(event ->
+                table.setRepresentation(representationSelection.getSelectionModel().getSelectedItem()));
 
-        var representationSelection = new LanguageStringComboBox(values) {
-            @Override
-            public void onSelect(int index, String node) {
-                table.setRepresentation(representations.get(index));
-            }
-        };
-        representationSelection.getSelectionModel().select(representations.indexOf(NumberRepresentationManager.HEXADECIMAL));
+        representationSelection.getItems().addAll(representations);
+        representationSelection.getSelectionModel()
+                .select(representations.indexOf(NumberRepresentationManager.HEXADECIMAL));
         return representationSelection;
     }
 
@@ -225,8 +241,7 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
 
     private void refreshRepresentationComboBox() {
         representations.sort(Comparator.comparing(NumberRepresentation::getName));
-        List<String> values = representations.stream().map(NumberRepresentation::getLanguageNode).collect(Collectors.toList());
-        representationSelection.getItems().setAll(values);
+        representationSelection.getItems().setAll(representations);
         representationSelection.getSelectionModel().select(representations.indexOf(NumberRepresentationManager.HEXADECIMAL));
     }
 }

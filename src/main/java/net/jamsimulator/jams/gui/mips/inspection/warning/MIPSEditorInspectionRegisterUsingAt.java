@@ -1,3 +1,27 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
 package net.jamsimulator.jams.gui.mips.inspection.warning;
 
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSCodeElement;
@@ -17,7 +41,6 @@ import java.util.Set;
  */
 public class MIPSEditorInspectionRegisterUsingAt extends MIPSEditorInspection {
 
-    public static String NAME = "REGISTER_USING_AT";
     private static final Set<String> AT_NAMES = Set.of("$at", "$1");
     private static final Set<ParameterType> AT_PARAMETERS = Set.of(
             ParameterType.REGISTER,
@@ -27,6 +50,7 @@ public class MIPSEditorInspectionRegisterUsingAt extends MIPSEditorInspection {
             ParameterType.LABEL_SIGNED_32_BIT_SHIFT_REGISTER_SHIFT,
             ParameterType.LABEL_REGISTER_SHIFT
     );
+    public static String NAME = "REGISTER_USING_AT";
 
     public MIPSEditorInspectionRegisterUsingAt(MIPSEditorInspectionBuilder<?> builder) {
         super(builder, Map.of());
@@ -52,9 +76,9 @@ public class MIPSEditorInspectionRegisterUsingAt extends MIPSEditorInspection {
                 var parameters = instruction.getParameters();
 
                 int index = ((MIPSInstructionParameterPart) element).getIndex();
-                if(index >= parameters.length) return Optional.empty();
+                if (index >= parameters.length) return Optional.empty();
 
-                if(AT_PARAMETERS.contains(parameters[index]) && AT_NAMES.contains(element.getSimpleText())) {
+                if (AT_PARAMETERS.contains(parameters[index]) && AT_NAMES.contains(element.getSimpleText())) {
                     return Optional.of(new MIPSEditorInspectionRegisterUsingAt(this));
                 }
             }

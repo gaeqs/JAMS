@@ -6,6 +6,7 @@ GENERAL_FINISH=Finish
 GENERAL_CANCEL=Cancel
 GENERAL_CREATE=Create
 GENERAL_CONFIRMATION=Confirmation
+GENERAL_CONFIRMATION=Confirmation
 GENERAL_ADD=Add
 GENERAL_REMOVE=Remove
 GENERAL_COPY=Copy
@@ -17,6 +18,9 @@ START_PROJECTS=Projects
 START_NEW_PROJECT=New project
 START_ABOUT=About
 
+BOTTOM_BAR_MEMORY={USED} of {TOTAL}MiB
+BOTTOM_BAR_MEMORY_TOOLTIP=Click to execute the garbage collector.
+
 PROJECT_CREATOR_MIPS_ASSEMBLER=Assembler:
 PROJECT_CREATOR_MIPS_INSTRUCTION_SET=Instruction set:
 PROJECT_CREATOR_MIPS_DIRECTIVE_SET=Directive set:
@@ -26,7 +30,7 @@ PROJECT_CREATOR_MIPS_EMPTY=Empty MIPS project
 
 MAIN_MENU_FILE=File
 MAIN_MENU_EDIT=Edit
-MAIN_MENU_MIPS=MIPS
+MAIN_MENU_SIMULATION=Simulation
 MAIN_MENU_TOOLS=Tools
 MAIN_MENU_HELP=Help
 
@@ -50,6 +54,7 @@ BAR_VIEW_MODE_PERSISTENT_WINDOW=Show in persistent window
 BAR_EXPLORER_NAME=Explorer
 BAR_FILES_TO_ASSEMBLE_NAME=Files to assemble
 BAR_LOG_NAME=Log
+BAR_SEARCH_RESULTS={RESULTS} results
 
 SIMULATION_CONFIGURATION_CONFIGURATIONS=Configurations:
 SIMULATION_CONFIGURATION_INFO=Configurations settings
@@ -245,6 +250,7 @@ BAR_MEMORY_NAME=Memory
 BAR_FLOW_NAME=Flow
 BAR_CONSOLE_NAME=Console
 BAR_LABELS_NAME=Labels
+BAR_LAB_NAME=Lab
 BAR_CACHES_NAME=Caches
 
 INSTRUCTIONS_USER=Text
@@ -295,6 +301,8 @@ CACHE_LOG_CLEAR=Clear log
 CACHE_LOG_CLEAR_ALL=Clear all logs
 
 FLOW_CYCLE=Cycle: {CYCLE}
+
+TASK_ASSEMBLING=Assembling...
 
 CONFIG=Configuration
 
@@ -403,15 +411,15 @@ CONFIG_SIMULATION_MIPS_LAB_COUNTER_ADDRESS=Counter address:
 CONFIG_SIMULATION_MIPS_LAB_COUNTER_ADDRESS_TOOLTIP=The address used by the counter. The value in this address represents the amount of cycles the counter will wait before an interrupt.
 
 EDITOR_MIPS_ERROR_ILLEGAL_LABEL=The label '{TEXT}' has an invalid name.
-EDITOR_MIPS_ERROR_LABEL_NOT_FOUND=Couldn't found label '{NAME}'.
+EDITOR_MIPS_ERROR_LABEL_NOT_FOUND=Couldn't find label '{NAME}'.
 EDITOR_MIPS_ERROR_DUPLICATE_LABEL=Found duplicated label '{NAME}'.
 EDITOR_MIPS_ERROR_DUPLICATE_GLOBAL_LABEL=Found duplicated global label '{NAME}' on file '{FILE}'.
 EDITOR_MIPS_ERROR_INVALID_DIRECTIVE_PARAMETER=The parameter '{NAME}' is invalid.
-EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=Couldn't found instruction '{NAME}' with the given parameters.
-EDITOR_MIPS_ERROR_MACRO_NOT_FOUND=Couldn't found macro '{NAME}'.
+EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND=Couldn't find instruction '{NAME}' with the given parameters.
+EDITOR_MIPS_ERROR_MACRO_NOT_FOUND=Couldn't find macro '{NAME}'.
 EDITOR_MIPS_ERROR_INVALID_MACRO_PARAMETERS_AMOUNT=Invalid amount of arguments for macro '{NAME}'. (Expected: {EXPECTED}. Found: {FOUND})
 
-EDITOR_MIPS_WARNING_DIRECTIVE_NOT_FOUND=Couldn't found directive '{NAME}'.
+EDITOR_MIPS_WARNING_DIRECTIVE_NOT_FOUND=Couldn't find directive '{NAME}'.
 EDITOR_MIPS_WARNING_REGISTER_USING_AT=Avoid using the register $at. Its value may change unexpectedly when a pseudoinstruction is executed.
 EDITOR_MIPS_WARNING_USING_EQUIVALENT=Avoid using equivalents. Equivalents ofter make code less legible and prevents the inspector from working.
 
@@ -422,9 +430,11 @@ ACTION_GENERAL_OPEN_RECENT=Open recent
 ACTION_GENERAL_SETTINGS=Settings
 ACTION_GENERAL_ASSEMBLE=Assemble code
 
+ACTION_REGION_EDITOR=Editor
+ACTION_EDITOR_SAVE=Save file
+
 ACTION_REGION_TEXT_EDITOR=Text editor
 ACTION_TEXT_EDITOR_REFORMAT=Reformat code
-ACTION_TEXT_EDITOR_SAVE=Save file
 ACTION_TEXT_EDITOR_SHOW_AUTOCOMPLETION_POPUP=Show autocompletion popup
 ACTION_TEXT_EDITOR_SHOW_DOCUMENTATION_POPUP=Show documentation popup
 ACTION_TEXT_EDITOR_PREVIOUS_FILE=Move to the previous file
@@ -437,6 +447,8 @@ ACTION_TEXT_EDITOR_UNDO=Undo
 ACTION_TEXT_EDITOR_REDO=Redo
 ACTION_TEXT_EDITOR_SELECT_ALL=Select all
 ACTION_TEXT_EDITOR_DUPLICATE_LINE=Duplicate line
+ACTION_TEXT_EDITOR_FIND=Find
+ACTION_TEXT_EDITOR_REPLACE=Replace
 
 ACTION_REGION_EXPLORER_ELEMENT=Explorer elements
 ACTION_EXPLORER_ELEMENT_CONTRACT_OR_SELECT_PARENT=Contract folder / Select parent
@@ -467,8 +479,8 @@ ACTION_REGION_EDITOR_TAB=Editor tab
 ACTION_EDITOR_TAB_SPLIT_HORIZONTALLY=Split horizontally
 ACTION_EDITOR_TAB_SPLIT_VERTICALLY=Split vertically
 
-ACTION_REGION_MIPS_FILE_TO_ASSEMBLE=Files to assemble
-ACTION_MIPS_FILES_TO_ASSEMBLE_REMOVE=Remover from assembler
+ACTION_REGION_FILES_TO_ASSEMBLE=Files to assemble
+ACTION_FILES_TO_ASSEMBLE_REMOVE=Remover from assembler
 
 ACTION_REGION_MIPS_SIMULATION=MIPS Simulation
 ACTION_MIPS_SIMULATION_EXECUTE_ALL_INSTRUCTIONS=Execute all instructions
@@ -595,6 +607,20 @@ INSTRUCTION_SUB_S=Subtraction (single)
 INSTRUCTION_SUBU=Subtraction without overflow
 INSTRUCTION_SW=Save word
 INSTRUCTION_SYSCALL=System call
+INSTRUCTION_TEQ=Trap on equal
+INSTRUCTION_TEQI=Trap on equal immediate
+INSTRUCTION_TGE=Trap on greater or equal
+INSTRUCTION_TGEI=Trap on greater or equal immediate
+INSTRUCTION_TGEIU=Trap on greater or equal immediate unsigned
+INSTRUCTION_TGEU=Trap on greater or equal unsigne
+INSTRUCTION_TLT=Trap on less than
+INSTRUCTION_TLTI=Trap on less than immediate
+INSTRUCTION_TLTIU=Trap on less than immediate unsigned
+INSTRUCTION_TLTU=Trap on less than unsigned
+INSTRUCTION_TNE=Trap on not equal
+INSTRUCTION_TNEI=Trap on not equal immediate
+INSTRUCTION_XOR=Xor
+INSTRUCTION_XORI=Immediate xor
 
 //PSEUDO INSTRUCTIONS
 
@@ -3611,6 +3637,383 @@ SignalException(SystemCall)
 
 <b>Exceptions:</b>
 System Call
+\END
+
+INSTRUCTION_TEQ_DOCUMENTATION.=<u>Trap on equal</u>
+
+<b>Format:</b>
+teq rs, rt
+
+|SPECIAL     rs      rt      0         TEQ   |
+|000000                               110100 |
+|  6         5       5       10         6    |
+
+
+<b>Description:</b>
+if GPR[rs] = GPR[rt] then Trap
+
+Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers. If both values are equal, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if GPR[rs] = GPR[rt] then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TEQI_DOCUMENTATION.=<u>Trap on equal immediate</u>
+
+<b>Format:</b>
+teqi rs, immediate
+
+|REGIMM      rs     TEQI     immediate |
+|000001            01100               |
+|  6         5       5          16     |
+
+
+<b>Description:</b>
+if GPR[rs] = immediate then Trap
+
+Compares the contents of GPR <i>rs</i> and the immediate value as signed integers. If both values are equal, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if GPR[rs] = immediate then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TGE_DOCUMENTATION.=<u>Trap on greater or equal</u>
+
+<b>Format:</b>
+tge rs, rt
+
+|SPECIAL     rs      rt      0         TGE   |
+|000000                               110000 |
+|  6         5       5       10         6    |
+
+
+<b>Description:</b>
+if GPR[rs] >= GPR[rt] then Trap
+
+Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers. If the first value is greater or equal to the second value, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if GPR[rs] >= GPR[rt] then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TGEI_DOCUMENTATION.=<u>Trap on greater or equal immediate</u>
+
+<b>Format:</b>
+tgei rs, immediate
+
+|REGIMM      rs     TGEI     immediate |
+|000001            01000               |
+|  6         5       5          16     |
+
+
+<b>Description:</b>
+if GPR[rs] >= immediate then Trap
+
+Compares the contents of GPR <i>rs</i> and the immediate value as signed integers. If the first value is greater or equal to the second value, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if GPR[rs] >= immediate then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TGEIU_DOCUMENTATION.=<u>Trap on greater or equal immediate unsigned</u>
+
+<b>Format:</b>
+tgeiu rs, immediate
+
+|REGIMM     rs     TGEIU     immediate |
+|000001            01001               |
+|  6         5       5          16     |
+
+
+<b>Description:</b>
+if GPR[rs] >= immediate then Trap
+
+Compares the contents of GPR <i>rs</i> and the immediate value as unsigned integers. If the first value is greater or equal to the second value, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if unsigned_word(GPR[rs]) >= unsigned_word(immediate) then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TGEU_DOCUMENTATION.=<u>Trap on greater or equal unsigned</u>
+
+<b>Format:</b>
+tgeu rs, rt
+
+|SPECIAL     rs      rt      0         TGEU  |
+|000000                               110001 |
+|  6         5       5       10         6    |
+
+
+<b>Description:</b>
+if GPR[rs] >= GPR[rt] then Trap
+
+Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers. If the first value is greater or equal to the second value, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if unsigned_word(GPR[rs]) >= unsigned_word(GPR[rt]) then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TLT_DOCUMENTATION.=<u>Trap on less than</u>
+
+<b>Format:</b>
+tlt rs, rt
+
+|SPECIAL     rs      rt      0         TLT   |
+|000000                               110010 |
+|  6         5       5       10         6    |
+
+
+<b>Description:</b>
+if GPR[rs] < GPR[rt] then Trap
+
+Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers. If the first value is less than the second value, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if GPR[rs] < GPR[rt] then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TLTI_DOCUMENTATION.=<u>Trap on lower than immediate</u>
+
+<b>Format:</b>
+tlti rs, immediate
+
+|REGIMM      rs     TLTI     immediate |
+|000001            01010               |
+|  6         5       5          16     |
+
+
+<b>Description:</b>
+if GPR[rs] < immediate then Trap
+
+Compares the contents of GPR <i>rs</i> and the immediate value as signed integers. If the first value is less than the second value, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if GPR[rs] < immediate then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TLTIU_DOCUMENTATION.=<u>Trap on less than immediate unsigned</u>
+
+<b>Format:</b>
+tltiu rs, immediate
+
+|REGIMM     rs     TLTIU     immediate |
+|000001            01011               |
+|  6         5       5          16     |
+
+
+<b>Description:</b>
+if GPR[rs] < immediate then Trap
+
+Compares the contents of GPR <i>rs</i> and the immediate value as unsigned integers. If the first value is less than the second value, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if unsigned_word(GPR[rs]) < unsigned_word(immediate) then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TLTU_DOCUMENTATION.=<u>Trap on less than unsigned</u>
+
+<b>Format:</b>
+tltu rs, rt
+
+|SPECIAL     rs      rt      0         TLTU  |
+|000000                               110011 |
+|  6         5       5       10         6    |
+
+
+<b>Description:</b>
+if GPR[rs] < GPR[rt] then Trap
+
+Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers. If the first value is less than the second value, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if unsigned_word(GPR[rs]) < unsigned_word(GPR[rt]) then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TNE_DOCUMENTATION.=<u>Trap on not equal</u>
+
+<b>Format:</b>
+tne rs, rt
+
+|SPECIAL     rs      rt      0         TNE   |
+|000000                               110110 |
+|  6         5       5       10         6    |
+
+
+<b>Description:</b>
+if GPR[rs] != GPR[rt] then Trap
+
+Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers. If both values are not equal, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if GPR[rs] != GPR[rt] then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+INSTRUCTION_TNEI_DOCUMENTATION.=<u>Trap on not equal immediate</u>
+
+<b>Format:</b>
+tnei rs, immediate
+
+|REGIMM      rs     TNEI     immediate |
+|000001            01110               |
+|  6         5       5          16     |
+
+
+<b>Description:</b>
+if GPR[rs] != immediate then Trap
+
+Compares the contents of GPR <i>rs</i> and the immediate value as signed integers. If both values are not equal, throws a <black>Trap</black> exception.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+if GPR[rs] != immediate then
+    SignalException(Trap)
+endif
+
+<b>Exceptions:</b>
+Trap
+\END
+
+
+INSTRUCTION_XOR_DOCUMENTATION.=<u>Xor</u>
+
+<b>Format:</b>
+xor rd, rs, rt
+
+|SPECIAL     rs      rt     rd      0        XOR  |
+|000000                                    100110 |
+|  6         5       5      5       5        6    |
+
+
+<b>Description:</b>
+GPR[rd] <- GPR[rs] xor GPR[rt]
+
+Performs a bitwise logical XOR using the values inside GPR <i>rs</i> and GPR <i>rt</i>.
+The result is placed into GPR <i>rd</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+GPR[rd] <- GPR[rs] xor GPR[rt]
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_XORI_DOCUMENTATION.=<u>Immediate xor</u>
+
+<b>Format:</b>
+xori rt, rs, immediate
+
+| XORI      rs     rt     immediate |
+|001110                             |
+|  6        5      5         16     |
+
+
+<b>Description:</b>
+GPR[rt] <- GPR[rs] xor zero_extend(immediate)
+
+The 16-bit <i>immediate</i> is zero-extended to the left and combined with the value of GPR <i>rs</i> in a bitwise logical XOR operation.
+The result is placed into GPR <i>rt</i>.
+
+<b>Restrictions:</b>
+None
+
+<b>Operation:</b>
+GPR[rt] <- GPR[rs] xor zero_extend(immediate)
+
+<b>Exceptions:</b>
+None
 \END
 
 INSTRUCTION_ADDI_DOCUMENTATION.=<u>Immediate addition with overflow</u>

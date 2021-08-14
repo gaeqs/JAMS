@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.manager;
@@ -32,11 +32,12 @@ import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.defaults.editor.EditorActionSave;
 import net.jamsimulator.jams.gui.action.defaults.editortab.EditorTabActionSplitHorizontally;
 import net.jamsimulator.jams.gui.action.defaults.editortab.EditorTabActionSplitVertically;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.*;
 import net.jamsimulator.jams.gui.action.defaults.explorerelement.folder.*;
-import net.jamsimulator.jams.gui.action.defaults.explorerelement.mips.filestoassemble.MipsFilesToAssembleActionRemove;
+import net.jamsimulator.jams.gui.action.defaults.filestoassemble.FilesToAssembleActionRemove;
 import net.jamsimulator.jams.gui.action.defaults.general.*;
 import net.jamsimulator.jams.gui.action.defaults.mips.label.MIPSLabelsLabelActionShowInInstructionViewer;
 import net.jamsimulator.jams.gui.action.defaults.mips.label.MIPSLabelsLabelActionShowInMemory;
@@ -58,7 +59,7 @@ import java.util.stream.Collectors;
 /**
  * This singleton stores all {@link Action}s that JAMS may use.
  * <p>
- * To register an {@link Action} use {@link #add(Action)}.
+ * To register an {@link Action} use {@link Manager#add(Labeled)}}.
  * To unregister am {@link Action} use {@link #remove(Object)}.
  * <p>
  * To bind an {@link Action} to a {@link KeyCombination} use {@link #bind(KeyCombination, String)}.
@@ -317,13 +318,15 @@ public class ActionManager extends Manager<Action> {
         add(new TextEditorActionCopy());
         add(new TextEditorActionCut());
         add(new TextEditorActionDuplicateLine());
+        add(new TextEditorActionFind());
         add(new TextEditorActionNextFile());
         add(new TextEditorActionPaste());
         add(new TextEditorActionPreviousFile());
         add(new TextEditorActionRedo());
         add(new TextEditorActionReformat());
         add(new TextEditorActionRefreshFromDisk());
-        add(new TextEditorActionSave());
+        add(new TextEditorActionReplace());
+        add(new EditorActionSave());
         add(new TextEditorActionSelectAll());
         add(new TextEditorActionShowAutocompletionPopup());
         add(new TextEditorActionShowDocumentationPopup());
@@ -361,7 +364,7 @@ public class ActionManager extends Manager<Action> {
         add(new FolderActionRemoveFileFromAssembler());
         add(new FolderActionRemoveAllFilesFromAssembler());
 
-        add(new MipsFilesToAssembleActionRemove());
+        add(new FilesToAssembleActionRemove());
 
         //SIMULATION
         add(new SimulationActionExecuteAllInstructions());
@@ -380,7 +383,7 @@ public class ActionManager extends Manager<Action> {
     private List<Action> loadBinds() {
         List<Action> presentActions = new ArrayList<>();
         Optional<Configuration> optional = Jams.getMainConfiguration().get(ACTIONS_SECTION);
-        if (!optional.isPresent()) return presentActions;
+        if (optional.isEmpty()) return presentActions;
         Configuration configuration = optional.get();
 
         configuration.getAll(false).forEach((key, value) -> {
@@ -390,7 +393,7 @@ public class ActionManager extends Manager<Action> {
             }
             Action action = get(key).orElse(null);
             if (action == null) {
-                System.err.println("Couldn't found action " + key + ".");
+                System.err.println("Couldn't find action " + key + ".");
                 return;
             }
             presentActions.add(action);
@@ -417,7 +420,7 @@ public class ActionManager extends Manager<Action> {
         boolean requiresSave = false;
 
         for (Action action : this) {
-            if (!action.getDefaultCodeCombination().isPresent() || presentActions.contains(action)) continue;
+            if (action.getDefaultCodeCombination().isEmpty() || presentActions.contains(action)) continue;
             if (getBindAction(action.getRegionTag(), action.getDefaultCodeCombination().get()).isPresent()) continue;
 
             bind(action.getDefaultCodeCombination().get(), action.getName());

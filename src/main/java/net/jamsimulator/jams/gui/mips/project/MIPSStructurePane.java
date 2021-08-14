@@ -1,25 +1,25 @@
 /*
- * MIT License
+ *  MIT License
  *
- * Copyright (c) 2020 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.jamsimulator.jams.gui.mips.project;
@@ -28,17 +28,16 @@ import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
-import javafx.scene.image.Image;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
-import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.bar.BarSnapshot;
 import net.jamsimulator.jams.gui.bar.BarPosition;
+import net.jamsimulator.jams.gui.bar.BarSnapshot;
 import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModePane;
 import net.jamsimulator.jams.gui.editor.FileEditorHolder;
+import net.jamsimulator.jams.gui.editor.FileEditorHolderHolder;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.icon.Icons;
-import net.jamsimulator.jams.gui.mips.explorer.MipsFolderExplorer;
 import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebar;
+import net.jamsimulator.jams.gui.project.ProjectFolderExplorer;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
@@ -47,16 +46,17 @@ import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.io.File;
+import java.util.Set;
 
 /**
  * This class represent the working pane of a project.
  */
-public class MIPSStructurePane extends WorkingPane {
+public class MIPSStructurePane extends WorkingPane implements FileEditorHolderHolder {
 
     protected final MIPSProject project;
     protected final MIPSStructurePaneButtons paneButtons;
 
-    protected MipsFolderExplorer explorer;
+    protected ProjectFolderExplorer explorer;
     protected FilesToAssembleSidebar filesToAssembleSidebar;
 
     protected SimpleLog log;
@@ -93,12 +93,8 @@ public class MIPSStructurePane extends WorkingPane {
         return project;
     }
 
-    /**
-     * Returns the {@link FileEditorHolder} that handles files in this pane.
-     *
-     * @return the {@link FileEditorHolder}.
-     */
-    public FileEditorHolder getFileDisplayHolder() {
+    @Override
+    public FileEditorHolder getFileEditorHolder() {
         return (FileEditorHolder) center;
     }
 
@@ -117,55 +113,39 @@ public class MIPSStructurePane extends WorkingPane {
      * @param file the {@link File}.
      */
     public void openFile(File file) {
-        getFileDisplayHolder().openFile(file);
+        getFileEditorHolder().openFile(file);
     }
 
     private void loadExplorer() {
-        Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER
-        ).orElse(null);
-
         ScrollPane pane = new PixelScrollPane();
         pane.setFitToHeight(true);
         pane.setFitToWidth(true);
-        explorer = new MipsFolderExplorer(project, pane);
+        explorer = new ProjectFolderExplorer(project, Set.of(project.getData().getFilesToAssemble()), pane);
         pane.setContent(explorer);
 
-        pane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
-            double deltaY = scrollEvent.getDeltaY() * 0.003;
-            pane.setVvalue(pane.getVvalue() - deltaY);
-        });
-
-        manageBarAddition("explorer", pane, icon, Messages.BAR_EXPLORER_NAME, BarPosition.LEFT_TOP, BarSnapshotViewModePane.INSTANCE, true);
+        manageBarAddition("explorer", pane, Icons.SIDEBAR_EXPLORER, Messages.BAR_EXPLORER_NAME,
+                BarPosition.LEFT_TOP, BarSnapshotViewModePane.INSTANCE, true);
 
         explorer.setFileOpenAction(file -> openFile(file.getFile()));
     }
 
     private void loadFilesToAssembleSidebar() {
-        Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.SIDEBAR_EXPLORER
-        ).orElse(null);
-
         ScrollPane pane = new PixelScrollPane();
         pane.setFitToHeight(true);
         pane.setFitToWidth(true);
-        filesToAssembleSidebar = new FilesToAssembleSidebar(project, pane);
+        filesToAssembleSidebar = new FilesToAssembleSidebar(project, project.getData().getFilesToAssemble(), pane);
         pane.setContent(filesToAssembleSidebar);
-
-        pane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
-            double deltaY = scrollEvent.getDeltaY() * 0.003;
-            pane.setVvalue(pane.getVvalue() - deltaY);
-        });
-
-        manageBarAddition("files_to_assemble", pane, icon, Messages.BAR_FILES_TO_ASSEMBLE_NAME, BarPosition.LEFT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
+        manageBarAddition("files_to_assemble", pane, Icons.SIDEBAR_EXPLORER, Messages.BAR_FILES_TO_ASSEMBLE_NAME,
+                BarPosition.LEFT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
     }
 
     private void loadLogBottomBar() {
-        Image icon = JamsApplication.getIconManager().getOrLoadSafe(Icons.FILE_FILE).orElse(null);
         log = new SimpleLog();
-        manageBarAddition("log", log, icon, Messages.BAR_LOG_NAME, BarPosition.BOTTOM_LEFT, BarSnapshotViewModePane.INSTANCE, true);
+        manageBarAddition("log", log, Icons.FILE_FILE, Messages.BAR_LOG_NAME,
+                BarPosition.BOTTOM_LEFT, BarSnapshotViewModePane.INSTANCE, true);
     }
 
-
-    private void manageBarAddition(String name, Node node, Image icon, String languageNode, BarPosition defaultPosition,
+    private void manageBarAddition(String name, Node node, IconData icon, String languageNode, BarPosition defaultPosition,
                                    BarSnapshotViewModePane defaultViewMode, boolean defaultEnable) {
         barMap.registerSnapshot(new BarSnapshot(name, node, defaultPosition, defaultViewMode, defaultEnable, icon, languageNode));
     }
@@ -180,6 +160,11 @@ public class MIPSStructurePane extends WorkingPane {
     public void populateHBox(HBox buttonsHBox) {
         buttonsHBox.getChildren().clear();
         buttonsHBox.getChildren().addAll(paneButtons.getNodes());
+    }
+
+    @Override
+    public void saveAllOpenedFiles() {
+        getFileEditorHolder().saveAll(true);
     }
 
     @Override

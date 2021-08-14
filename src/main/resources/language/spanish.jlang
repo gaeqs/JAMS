@@ -17,31 +17,33 @@ START_PROJECTS=Proyectos
 START_NEW_PROJECT=Nuevo proyecto
 START_ABOUT=Acerca de
 
+BOTTOM_BAR_MEMORY={USED} de {TOTAL}MiB
+BOTTOM_BAR_MEMORY_TOOLTIP=Pulsa para ejecutar el recolector de basura.
+
 PROJECT_CREATOR_MIPS_ASSEMBLER=Ensamblador:
 PROJECT_CREATOR_MIPS_INSTRUCTION_SET=Conjunto de instrucciones:
 PROJECT_CREATOR_MIPS_DIRECTIVE_SET=Conjunto de directivas:
 PROJECT_CREATOR_MIPS_REGISTERS=Registros:
 
-
 PROJECT_CREATOR_MIPS_EMPTY=Proyecto MIPS vacío
 
 MAIN_MENU_FILE=Archivo
 MAIN_MENU_EDIT=Editar
-MAIN_MENU_MIPS=MIPS
+MAIN_MENU_SIMULATION=Simulación
 MAIN_MENU_TOOLS=Herramientas
 MAIN_MENU_HELP=Ayuda
 
 MAIN_MENU_FILE_EXIT=Salir
 MAIN_MENU_FILE_SETTINGS=Configuración
 MAIN_MENU_FILE_OPEN_PROJECT=Abrir proyecto
-MAIN_MENU_FILE_CREATE_PROJECT=Crear projecto
-MAIN_MENU_FILE_CREATE_PROJECT_TITLE=Crear projecto
+MAIN_MENU_FILE_CREATE_PROJECT=Crear proyecto
+MAIN_MENU_FILE_CREATE_PROJECT_TITLE=Crear proyecto
 MAIN_MENU_FILE_CREATE_PROJECT_NAME=Nombre:
 MAIN_MENU_FILE_CREATE_PROJECT_PATH=Dirección:
 
 MAIN_MENU_HELP_ABOUT=Acerca de
 
-PROJECT_TAB_STRUCTURE=Estructura del projecto
+PROJECT_TAB_STRUCTURE=Estructura del protecto
 PROJECT_TAB_SIMULATION=Simulación
 
 BAR_VIEW_MODE_PANE=Mostrar en el panel
@@ -51,6 +53,7 @@ BAR_VIEW_MODE_PERSISTENT_WINDOW=Mostrar en una ventana persistente
 BAR_EXPLORER_NAME=Explorador
 BAR_FILES_TO_ASSEMBLE_NAME=Archivos a ensamblar
 BAR_LOG_NAME=Log
+BAR_SEARCH_RESULTS={RESULTS} resultados
 
 SIMULATION_CONFIGURATION_CONFIGURATIONS=Configuraciones:
 SIMULATION_CONFIGURATION_INFO=Ajustes de las configuraciones
@@ -246,6 +249,7 @@ BAR_MEMORY_NAME=Memoria
 BAR_FLOW_NAME=Flujo
 BAR_CONSOLE_NAME=Consola
 BAR_LABELS_NAME=Etiquetas
+BAR_LAB_NAME=Lab
 BAR_CACHES_NAME=Cachés
 
 INSTRUCTIONS_USER=Texto
@@ -296,6 +300,8 @@ CACHE_LOG_CLEAR=Borrar registro
 CACHE_LOG_CLEAR_ALL=Eliminar registros
 
 FLOW_CYCLE=Ciclo: {CYCLE}
+
+TASK_ASSEMBLING=Ensamblando...
 
 CONFIG=Configuración
 
@@ -423,9 +429,11 @@ ACTION_GENERAL_OPEN_RECENT=Abrir reciente
 ACTION_GENERAL_SETTINGS=Configuración
 ACTION_GENERAL_ASSEMBLE=Ensamblar código
 
+ACTION_REGION_EDITOR=Editor
+ACTION_EDITOR_SAVE=Guardar archivo
+
 ACTION_REGION_TEXT_EDITOR=Editor de texto
 ACTION_TEXT_EDITOR_REFORMAT=Reestructurar código
-ACTION_TEXT_EDITOR_SAVE=Guardar archivo
 ACTION_TEXT_EDITOR_SHOW_AUTOCOMPLETION_POPUP=Mostrar autocompletador
 ACTION_TEXT_EDITOR_SHOW_DOCUMENTATION_POPUP=Mostrar documentación
 ACTION_TEXT_EDITOR_PREVIOUS_FILE=Ir al anterior archivo
@@ -438,6 +446,8 @@ ACTION_TEXT_EDITOR_UNDO=Deshacer
 ACTION_TEXT_EDITOR_REDO=Rehacer
 ACTION_TEXT_EDITOR_SELECT_ALL=Seleccionar todo
 ACTION_TEXT_EDITOR_DUPLICATE_LINE=Duplicar línea
+ACTION_TEXT_EDITOR_FIND=Buscar
+ACTION_TEXT_EDITOR_REPLACE=Reemplazar
 
 ACTION_REGION_EXPLORER_ELEMENT=Elementos del explorador
 ACTION_EXPLORER_ELEMENT_CONTRACT_OR_SELECT_PARENT=Contraer carpeta / seleccionar padre
@@ -468,8 +478,8 @@ ACTION_REGION_EDITOR_TAB=Pestaña del editor
 ACTION_EDITOR_TAB_SPLIT_HORIZONTALLY=Mover horizontalmente
 ACTION_EDITOR_TAB_SPLIT_VERTICALLY=Mover verticalmente
 
-ACTION_REGION_MIPS_FILE_TO_ASSEMBLE=Archivos a ensamblar
-ACTION_MIPS_FILES_TO_ASSEMBLE_REMOVE=Eliminar del ensamblador
+ACTION_REGION_FILES_TO_ASSEMBLE=Archivos a ensamblar
+ACTION_FILES_TO_ASSEMBLE_REMOVE=Eliminar del ensamblador
 
 ACTION_REGION_MIPS_SIMULATION=Simulación MIPS
 ACTION_MIPS_SIMULATION_EXECUTE_ALL_INSTRUCTIONS=Ejecutar todas las instrucciones
@@ -597,6 +607,20 @@ INSTRUCTION_SUB_S=Resta (coma flotante)
 INSTRUCTION_SUBU=Resta sin desbordamiento
 INSTRUCTION_SW=Guardar palabra
 INSTRUCTION_SYSCALL=Llamada al sistema
+INSTRUCTION_TEQ=Interrupción si es igual
+INSTRUCTION_TEQI=Interrupción si es igual que inmediato
+INSTRUCTION_TGE=Interrupción si es mayor o igual
+INSTRUCTION_TGEI=Interrupción si es mayor o igual que inmediato
+INSTRUCTION_TGEIU=Interrupción si es mayor o igual que inmediato sin signo
+INSTRUCTION_TGEU=Interrupción si es mayor o igual sin signo
+INSTRUCTION_TLT=Interrupción si es menor
+INSTRUCTION_TLTI=Interrupción si es menor que inmediato
+INSTRUCTION_TLTIU=Interrupción si es menor que inmediato sin signo
+INSTRUCTION_TLTU=Interrupción si es menor sin signo
+INSTRUCTION_TNE=Interrupción si no es igual
+INSTRUCTION_TNEI=Interrupción si no es igual que inmediato
+INSTRUCTION_XOR=Xor
+INSTRUCTION_XORI=Xor con inmediato
 
 //PSEUDO INSTRUCTIONS
 
@@ -3614,6 +3638,390 @@ SignalException(SystemCall)
 
 <b>Excepciones:</b>
 System Call
+\END
+
+INSTRUCTION_TEQ_DOCUMENTATION.=<u>Interrupción si es igual</u>
+
+<b>Formato:</b>
+teq rs, rt
+
+|SPECIAL     rs      rt      0         TEQ   |
+|000000                               110100 |
+|  6         5       5       10         6    |
+
+
+<b>Descripción:</b>
+if GPR[rs] = GPR[rt] then Trap
+
+Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros con signo. Si ambos valores son iguales, lanza una excepción <black>Trap</black>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+if GPR[rs] = GPR[rt] then
+    SignalException(Trap)
+endif
+
+<b>Excepciones:</b>
+Trap
+\END
+
+INSTRUCTION_TEQI_DOCUMENTATION.=<u>Interrupción si es igual a inmediato</u>
+
+<b>Formato:</b>
+teqi rs, inmediato
+
+|REGIMM      rs     TEQI     inmediato |
+|000001            01100               |
+|  6         5       5          16     |
+
+
+<b>Descripción:</b>
+if GPR[rs] = immediate then Trap
+
+Compara el contenido del registro <i>rs</i> e <i>inmediato</i> como enteros con signo. Si ambos valores son iguales, lanza una excepción <black>Trap</black>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+if GPR[rs] = immediate then
+    SignalException(Trap)
+endif
+
+<b>Excepciones:</b>
+Trap
+\END
+
+INSTRUCTION_TGE_DOCUMENTATION.=<u>Interrupción si es mayor o igual</u>
+
+<b>Formato:</b>
+tge rs, rt
+
+|SPECIAL     rs      rt      0         TGE   |
+|000000                               110000 |
+|  6         5       5       10         6    |
+
+
+<b>Descripción:</b>
+if GPR[rs] >= GPR[rt] then Trap
+
+Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros con signo.
+Si el primer valor es mayor o igual que el segundo valor, lanza una excepción <black>Trap</black>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+if GPR[rs] >= GPR[rt] then
+    SignalException(Trap)
+endif
+
+<b>Excepciones:</b>
+Trap
+\END
+
+INSTRUCTION_TGEI_DOCUMENTATION.=<u>Interrupción si es mayor o igual que inmediato</u>
+
+<b>Formato:</b>
+tgei rs, inmediato
+
+|REGIMM      rs     TGEI     inmediato |
+|000001            01000               |
+|  6         5       5          16     |
+
+
+<b>Descripción:</b>
+if GPR[rs] >= inmediato then Trap
+
+Compara el contenido del registro <i>rs</i> e <i>inmediato</i> como enteros con signo.
+Si el primer valor es mayor o igual que el segundo valor, lanza una excepción <black>Trap</black>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+if GPR[rs] >= inmediato then
+    SignalException(Trap)
+endif
+
+<b>Excepciones:</b>
+Trap
+\END
+
+INSTRUCTION_TGEIU_DOCUMENTATION.=<u>Interrupción si es mayor o igual que inmediato sin signo</u>
+
+<b>Formato:</b>
+tgeiu rs, inmediato
+
+|REGIMM     rs     TGEIU     inmediato |
+|000001            01001               |
+|  6         5       5          16     |
+
+
+<b>Descripción:</b>
+if GPR[rs] >= inmediato then Trap
+
+Compara el contenido del registro <i>rs</i> e <i>inmediato</i> como enteros sin signo.
+Si el primer valor es mayor o igual que el segundo valor, lanza una excepción <black>Trap</black>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+if unsigned_word(GPR[rs]) >= unsigned_word(inmediato) then
+    SignalException(Trap)
+endif
+
+<b>Excepciones:</b>
+Trap
+\END
+
+INSTRUCTION_TGEU_DOCUMENTATION.=<u>Interrupción si es mayor o igual sin signo</u>
+
+<b>Formato:</b>
+tgeu rs, rt
+
+|SPECIAL     rs      rt      0         TGEU  |
+|000000                               110001 |
+|  6         5       5       10         6    |
+
+
+<b>Descripción:</b>
+if GPR[rs] >= GPR[rt] then Trap
+
+Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros sin signo.
+Si el primer valor es mayor o igual que el segundo valor, lanza una excepción <black>Trap</black>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+if unsigned_word(GPR[rs]) >= unsigned_word(GPR[rt]) then
+    SignalException(Trap)
+endif
+
+<b>Excepciones:</b>
+Trap
+\END
+
+INSTRUCTION_TLT_DOCUMENTATION.=<u>Interrupción si es menor</u>
+
+<b>Formato:</b>
+tlt rs, rt
+
+|SPECIAL     rs      rt      0         TLT   |
+|000000                               110010 |
+|  6         5       5       10         6    |
+
+
+<b>Descripción:</b>
+if GPR[rs] < GPR[rt] then Trap
+
+Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros con signo.
+Si el primer valor es menor que el segundo valor, lanza una excepción <black>Trap</black>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+if GPR[rs] < GPR[rt] then
+    SignalException(Trap)
+endif
+
+<b>Excepciones:</b>
+Trap
+\END
+
+INSTRUCTION_TLTI_DOCUMENTATION.=<u>Interrupción si es menor que inmediato</u>
+
+<b>Formato:</b>
+tlti rs, inmediato
+
+|REGIMM      rs     TLTI     inmediato |
+|000001            01010               |
+|  6         5       5          16     |
+
+
+<b>Descripción:</b>
+if GPR[rs] < inmediato then Trap
+
+Compara el contenido del registro <i>rs</i> e <i>inmediato</i> como enteros con signo.
+Si el primer valor es menor que el segundo valor, lanza una excepción <black>Trap</black>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+if GPR[rs] < inmediato then
+    SignalException(Trap)
+endif
+
+<b>Excepciones:</b>
+Trap
+\END
+
+INSTRUCTION_TLTIU_DOCUMENTATION.=<u>Interrupción si es menor que inmediato sin signo</u>
+
+<b>Formato:</b>
+tltiu rs, inmediato
+
+|REGIMM     rs     TLTIU     inmediato |
+|000001            01011               |
+|  6         5       5          16     |
+
+
+<b>Descripción:</b>
+if GPR[rs] < inmediato then Trap
+
+Compara el contenido del registro <i>rs</i> e <i>inmediato</i> como enteros sin signo.
+Si el primer valor es menor que el segundo valor, lanza una excepción <black>Trap</black>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+if unsigned_word(GPR[rs]) < unsigned_word(inmediato) then
+    SignalException(Trap)
+endif
+
+<b>Excepciones:</b>
+Trap
+\END
+
+INSTRUCTION_TLTU_DOCUMENTATION.=<u>Interrupción si es menor sin signo</u>
+
+<b>Formato:</b>
+tltu rs, rt
+
+|SPECIAL     rs      rt      0         TLTU  |
+|000000                               110011 |
+|  6         5       5       10         6    |
+
+
+<b>Descripción:</b>
+if GPR[rs] < GPR[rt] then Trap
+
+Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros sin signo.
+Si el primer valor es menor que el segundo valor, lanza una excepción <black>Trap</black>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+if unsigned_word(GPR[rs]) < unsigned_word(GPR[rt]) then
+    SignalException(Trap)
+endif
+
+<b>Excepciones:</b>
+Trap
+\END
+
+INSTRUCTION_TNE_DOCUMENTATION.=<u>Interrupción si no es igual</u>
+
+<b>Formato:</b>
+tne rs, rt
+
+|SPECIAL     rs      rt      0         TNE   |
+|000000                               110110 |
+|  6         5       5       10         6    |
+
+
+<b>Descripción:</b>
+if GPR[rs] != GPR[rt] then Trap
+
+Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros con signo. Si ambos valores no son iguales, lanza una excepción <black>Trap</black>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+if GPR[rs] != GPR[rt] then
+    SignalException(Trap)
+endif
+
+<b>Excepciones:</b>
+Trap
+\END
+
+INSTRUCTION_TNEI_DOCUMENTATION.=<u>Interrupción si no es igual a inmediato</u>
+
+<b>Formato:</b>
+tnei rs, inmediato
+
+|REGIMM      rs     TNEI     immediate |
+|000001            01110               |
+|  6         5       5          16     |
+
+
+<b>Descripción:</b>
+if GPR[rs] != immediate then Trap
+
+Compara el contenido del registro <i>rs</i> e <i>inmediato</i> como enteros con signo. Si ambos valores no son iguales, lanza una excepción <black>Trap</black>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+if GPR[rs] != immediate then
+    SignalException(Trap)
+endif
+
+<b>Excepciones:</b>
+Trap
+\END
+
+INSTRUCTION_XOR_DOCUMENTATION.=<u>Xor</u>
+
+<b>Formato:</b>
+xor rd, rs, rt
+
+|SPECIAL     rs      rt     rd      0       XOR   |
+|000000                                    100110 |
+|  6         5       5      5       5        6    |
+
+
+<b>Descripción:</b>
+GPR[rd] <- GPR[rs] xor GPR[rt]
+
+Realiza la operación lógica XOR usando los valores dentro de los registros <i>rs</i> y <i>rt</i>.
+El resultado es asignado al registro <i>rd</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+GPR[rd] <- GPR[rs] xor GPR[rt]
+
+<b>Excepciones:</b>
+Ninguna
+\END
+
+INSTRUCTION_XORI_DOCUMENTATION.=<u>Xor con inmediato</u>
+
+<b>Formato:</b>
+xori rt, rs, inmediato
+
+| XORI      rs     rt     inmediato |
+|001110                             |
+|  6        5      5         16     |
+
+
+<b>Descripción:</b>
+GPR[rt] <- GPR[rs] or zero_extend(inmediato)
+
+El <i>inmediato</i> de 16 bits es extendido a la izquierda con ceros y combinado con el valor del registro <i>rs</i> usando la operación lógica XOR.
+El resultado es asignado al registro <i>rt</i>.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+GPR[rt] <- GPR[rs] xor zero_extend(immediate)
+
+<b>Excepciones:</b>
+Ninguna
 \END
 
 INSTRUCTION_ADDI_DOCUMENTATION.=<u>Suma con inmediato con desbordamiento</u>
