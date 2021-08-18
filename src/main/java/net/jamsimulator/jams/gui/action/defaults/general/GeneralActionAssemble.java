@@ -57,7 +57,8 @@ public class GeneralActionAssemble extends ContextAction {
         ProjectTab tab = project.getProjectTab().orElse(null);
         if (tab == null) return;
 
-        project.getTaskExecutor().execute("assemble", Messages.TASK_ASSEMBLING, () -> {
+        var title = Jams.getLanguageManager().getDefault().getOrDefault(Messages.TASK_ASSEMBLING);
+        project.getTaskExecutor().execute("assemble", title, () -> {
             var pane = tab.getProjectTabPane().getWorkingPane();
             pane.saveAllOpenedFiles();
 

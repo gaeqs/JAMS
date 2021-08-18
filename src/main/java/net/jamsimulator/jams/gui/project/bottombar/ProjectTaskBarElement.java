@@ -25,16 +25,15 @@
 package net.jamsimulator.jams.gui.project.bottombar;
 
 import javafx.animation.AnimationTimer;
-import javafx.geometry.Pos;
+import javafx.concurrent.Task;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.project.event.ProjectCloseEvent;
-import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.project.Project;
-import net.jamsimulator.jams.task.JamsTask;
 
 public class ProjectTaskBarElement extends HBox implements ProjectBottomBarElement {
 
@@ -43,17 +42,17 @@ public class ProjectTaskBarElement extends HBox implements ProjectBottomBarEleme
 
     private final Project project;
 
-    private final LanguageLabel label;
+    private final Label label;
     private final ProgressBar bar;
     private final UpdateTimer timer;
 
-    private JamsTask currentTask;
+    private Task<?> currentTask;
 
     public ProjectTaskBarElement(Project project) {
         getStyleClass().add(STYLE_CLASS);
         this.project = project;
 
-        label = new LanguageLabel(null);
+        label = new Label();
         bar = new ProgressBar(-1);
         timer = new UpdateTimer();
 
@@ -104,7 +103,7 @@ public class ProjectTaskBarElement extends HBox implements ProjectBottomBarEleme
             if (nextFrame > now) return;
             nextFrame = now + 100000000L;
 
-            if (currentTask == null || currentTask.future().isDone()) {
+            if (currentTask == null || currentTask.isDone()) {
                 findNewTask();
             }
         }
@@ -112,19 +111,15 @@ public class ProjectTaskBarElement extends HBox implements ProjectBottomBarEleme
         private void findNewTask() {
             currentTask = project.getTaskExecutor().getFirstTask().orElse(null);
             if (currentTask == null) {
-                label.setNode(null);
+                label.textProperty().unbind();
+                label.setText(null);
                 bar.progressProperty().unbind();
                 bar.setProgress(-1);
                 bar.setVisible(false);
             } else {
-                label.setNode(currentTask.languageNode());
+                label.textProperty().bind(currentTask.titleProperty());
                 bar.setVisible(true);
-                if (currentTask.progress() == null) {
-                    bar.progressProperty().unbind();
-                    bar.setProgress(-1);
-                } else {
-                    bar.progressProperty().bind(currentTask.progress());
-                }
+                bar.progressProperty().bind(currentTask.progressProperty());
             }
         }
     }
