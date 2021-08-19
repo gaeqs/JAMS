@@ -42,6 +42,7 @@ import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.util.log.Log;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.Project;
+import net.jamsimulator.jams.task.LanguageTask;
 
 public class GeneralActionAssemble extends ContextAction {
 
@@ -57,7 +58,7 @@ public class GeneralActionAssemble extends ContextAction {
         ProjectTab tab = project.getProjectTab().orElse(null);
         if (tab == null) return;
 
-        project.getTaskExecutor().execute("assemble", Messages.TASK_ASSEMBLING, () -> {
+        project.getTaskExecutor().execute("assemble", LanguageTask.of(Messages.TASK_ASSEMBLING, () -> {
             var pane = tab.getProjectTabPane().getWorkingPane();
             pane.saveAllOpenedFiles();
 
@@ -75,7 +76,7 @@ public class GeneralActionAssemble extends ContextAction {
                 }
                 ex.printStackTrace();
             }
-        });
+        }));
     }
 
     @Override
