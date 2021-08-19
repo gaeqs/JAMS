@@ -41,8 +41,8 @@ import java.util.concurrent.FutureTask;
 /**
  * Instances of this class allows developers to execute asynchronous tasks easily.
  * <p>
- * To execute a net.jamsimulator.jams.task, use the method {@link #execute(String, Runnable)},
- * {@link #execute(String, Callable)} or {@link #execute(String, Task)}. If you use the last one
+ * To execute a net.jamsimulator.jams.task, use the method {@link #execute(String, String, Runnable)},
+ * {@link #execute(String, String, Callable)} or {@link #execute(String, Task)}. If you use the last one
  * you can configure your task to implement a progression bar.
  * <p>
  * The runnables will be wrapped in a {@link Task} instance. You can access to all tasks being executed using
@@ -56,6 +56,9 @@ import java.util.concurrent.FutureTask;
  * <p>
  * Avoid creating tasks that invoke blocking methods: the thread used by the task won't be released while the thread
  * is waiting.
+ *
+ * @see Task
+ * @see LanguageTask
  */
 public class TaskExecutor {
 
@@ -96,6 +99,7 @@ public class TaskExecutor {
      * You must provide a name to the task.
      *
      * @param name     the name of the task.
+     * @param title    the title of the task. It may be null.
      * @param runnable the code to execute.
      * @return the {@link Task} being executed.
      * @see ExecutorService#submit(Runnable)
@@ -128,6 +132,7 @@ public class TaskExecutor {
      * You must provide a name to the task
      *
      * @param name     the name of the task.
+     * @param title    the title of the task. It may be null.
      * @param callable the code to execute.
      * @return the {@link Task} being executed.
      * @see ExecutorService#submit(Runnable)
