@@ -30,6 +30,7 @@ import javafx.scene.SceneAntialiasing;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.theme.event.ThemeRefreshEvent;
 import net.jamsimulator.jams.gui.theme.event.ThemeShouldRefreshEvent;
 
 public class ThemedScene extends Scene {
@@ -61,7 +62,7 @@ public class ThemedScene extends Scene {
     }
 
     @Listener
-    private void onThemeRefresh(ThemeShouldRefreshEvent event) {
+    private void onThemeRefresh(ThemeRefreshEvent event) {
         JamsApplication.getThemeManager().apply(this);
     }
 

@@ -43,7 +43,7 @@ import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.editor.popup.DocumentationPopup;
-import net.jamsimulator.jams.gui.theme.event.ThemeShouldRefreshEvent;
+import net.jamsimulator.jams.gui.theme.event.ThemeRefreshEvent;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.GUIReflectionUtils;
 import net.jamsimulator.jams.gui.util.KeyCombinationBuilder;
@@ -562,7 +562,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
     }
 
     @Listener
-    private void onThemeRefresh(ThemeShouldRefreshEvent event) {
+    private void onThemeRefresh(ThemeRefreshEvent event) {
         JamsApplication.getThemeManager().apply(this);
     }
 

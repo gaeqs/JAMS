@@ -22,23 +22,35 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.theme.exception;
+package net.jamsimulator.jams.gui.theme;
 
-public class ThemeFailedLoadException extends Exception {
+import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.utils.Validate;
 
-    public ThemeFailedLoadException() {
+import java.util.Objects;
+
+public record ThemeAttachment(String name, String data) implements Labeled {
+
+    public ThemeAttachment {
+        Validate.notNull(name, "Name cannot be null!");
+        Validate.notNull(data, "Data cannot be null!");
     }
 
-    public ThemeFailedLoadException(String message) {
-        super(message);
+    @Override
+    public String getName() {
+        return name;
     }
 
-    public ThemeFailedLoadException(Throwable cause) {
-        super(cause);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ThemeAttachment that = (ThemeAttachment) o;
+        return name.equals(that.name);
     }
 
-    public ThemeFailedLoadException(String message, Throwable cause) {
-        super(message, cause);
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
-
 }
