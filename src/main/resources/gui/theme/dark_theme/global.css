@@ -22,44 +22,16 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.theme.exception;
-
-public class ThemeLoadException extends Exception {
-
-    public Type type;
-
-    public ThemeLoadException(Type type) {
-        super(type.message);
-        this.type = type;
-    }
-
-    public ThemeLoadException(Throwable cause, Type type) {
-        super(type.message, cause);
-        this.type = type;
-    }
-
-    public ThemeLoadException(Throwable cause, boolean enableSuppression, boolean writableStackTrace, Type type) {
-        super(type.message, cause, enableSuppression, writableStackTrace);
-        this.type = type;
-    }
-
-    public enum Type {
-
-        RESOURCE_NOT_FOUND("Resource not found."),
-        INVALID_RESOURCE("Invalid resource."),
-        INVALID_HEADER("Invalid header."),
-        ALREADY_LOADED("Theme already loaded."),
-        NOT_LOADED("Theme not loaded."),
-        UNKNOWN("Unknown.");
-
-        private final String message;
-
-        Type(String message) {
-            this.message = message;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-    }
-}
+-theme-foreground: #ECECEC;
+-theme-foreground-darker: derive(-theme-foreground, -20%);
+-theme-foreground-darker-2: derive(-theme-foreground, -40%);
+-theme-foreground-lighter: #FFFFFF;
+-theme-background: #3C3F41;
+-theme-background-darker: derive(-theme-background, -20%);
+-theme-background-darker-2: derive(-theme-background, -10%);
+-theme-background-lighter: derive(-theme-background, 20%);
+-theme-background-pressed: derive(-theme-background, 40%);
+-theme-background-darkest: derive(-theme-background, -30%);
+-theme-header: #3B4754;
+-theme-menu-item-hover: #4D6EAF;
+-theme-element-selected: #4D6EAF;

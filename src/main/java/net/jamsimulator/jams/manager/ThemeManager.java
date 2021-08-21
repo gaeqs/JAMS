@@ -28,11 +28,18 @@ import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.theme.Theme;
+import net.jamsimulator.jams.gui.theme.ThemeLoader;
 import net.jamsimulator.jams.gui.theme.event.*;
+import net.jamsimulator.jams.gui.theme.exception.ThemeLoadException;
+import net.jamsimulator.jams.utils.DisposableFileSystem;
 import net.jamsimulator.jams.utils.TempUtils;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * This singleton stores all {@link Theme}s that projects may use.
@@ -125,7 +132,52 @@ public class ThemeManager extends SelectableManager<Theme> {
 
     @Override
     protected void loadDefaultElements() {
+        loadFonts();
 
+        load("/gui/theme/", getClass());
+    }
+
+    @Override
+    protected Theme loadDefaultElement() {
+        return null;
+    }
+
+    @Override
+    protected Theme loadSelectedElement() {
+        loadFonts();
+        return null;
+    }
+
+    private void loadFonts() {
+        var config = Jams.getMainConfiguration();
+        generalFont = config.getString(GENERAL_FONT_NODE).orElse("Noto Sans");
+        codeFont = config.getString(CODE_FONT_NODE).orElse("JetBrains Mono");
+    }
+
+    private void load(String path, Class<?> loader) {
+        try {
+            var url = loader.getResource(path);
+            if (url == null) return;
+            var uri = url.toURI();
+            var system = new DisposableFileSystem(uri);
+            walkAndLoad(Path.of(uri));
+            system.close();
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void walkAndLoad(Path path) throws IOException {
+        Files.walk(path, 1).forEach(it -> {
+            try {
+                if (Files.isSameFile(path, it)) return;
+                var loader = new ThemeLoader(it);
+                loader.load();
+                add(loader.createTheme());
+            } catch (IOException | ThemeLoadException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Listener

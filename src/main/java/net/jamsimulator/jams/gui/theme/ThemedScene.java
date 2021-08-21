@@ -31,7 +31,6 @@ import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.theme.event.ThemeRefreshEvent;
-import net.jamsimulator.jams.gui.theme.event.ThemeShouldRefreshEvent;
 
 public class ThemedScene extends Scene {
 
@@ -58,12 +57,12 @@ public class ThemedScene extends Scene {
     protected void initializeJamsListeners() {
         JamsApplication.getThemeManager().registerListeners(this, true);
         JamsApplication.getActionManager().registerListeners(this, true);
-        JamsApplication.getThemeManager().apply(this);
+        //JamsApplication.getThemeManager().apply(this);
     }
 
     @Listener
     private void onThemeRefresh(ThemeRefreshEvent event) {
-        JamsApplication.getThemeManager().apply(this);
+        //JamsApplication.getThemeManager().apply(this);
     }
 
 }
