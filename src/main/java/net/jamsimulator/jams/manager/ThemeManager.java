@@ -53,7 +53,7 @@ import java.nio.file.Path;
  */
 public class ThemeManager extends SelectableManager<Theme> {
 
-    public static final String FOLDER_NAME = "theme";
+    public static final String FOLDER_NAME = "themes";
     public static final String SELECTED_THEME_NODE = "appearance.theme";
     public static final String GENERAL_FONT_NODE = "appearance.general_font";
     public static final String CODE_FONT_NODE = "appearance.code_font";
@@ -143,7 +143,7 @@ public class ThemeManager extends SelectableManager<Theme> {
      * @param scene the {@link Scene}.
      */
     public void apply(Scene scene) {
-        if(!cacheFileLoaded) refreshFile();
+        if (!cacheFileLoaded) refreshFile();
         try {
             scene.getStylesheets().setAll(cacheFile.toURI().toURL().toExternalForm());
         } catch (IOException e) {
@@ -160,6 +160,7 @@ public class ThemeManager extends SelectableManager<Theme> {
     public boolean setSelected(Theme selected) {
         if (!super.setSelected(selected)) return false;
         refreshFile();
+        refresh();
         return true;
     }
 
@@ -170,16 +171,16 @@ public class ThemeManager extends SelectableManager<Theme> {
         loadFonts();
 
         try {
-            loadThemesInFolder(Path.of(Jams.class.getResource("/gui/theme/").toURI()));
-            loadThemesInFolder(folder.toPath());
-        } catch (URISyntaxException e) {
+            loadThemesInDirectory(Path.of(Jams.class.getResource("/gui/theme/").toURI()));
+            loadThemesInDirectory(folder.toPath());
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
 
     @Override
     protected Theme loadDefaultElement() {
-        return get("Dark Theme").orElse(null);
+        return defaultValue;
     }
 
     @Override
@@ -200,27 +201,29 @@ public class ThemeManager extends SelectableManager<Theme> {
         codeFont = config.getString(CODE_FONT_NODE).orElse("JetBrains Mono");
     }
 
-
-    public void loadThemesInFolder(Path path) {
+    public void loadThemesInDirectory(Path path) throws IOException {
         Validate.notNull(path, "Path cannot be null!");
-        try {
-            walkAndLoad(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void walkAndLoad(Path path) throws IOException {
         Files.walk(path, 1).forEach(it -> {
             try {
                 if (Files.isSameFile(path, it)) return;
-                var loader = new ThemeLoader(it);
-                loader.load();
-                add(loader.createTheme());
+                loadTheme(it);
             } catch (IOException | ThemeLoadException e) {
                 e.printStackTrace();
             }
         });
+    }
+
+    public void loadTheme(Path theme) throws ThemeLoadException {
+        var loader = new ThemeLoader(theme);
+        loader.load();
+
+        if (loader.getHeader().name().equals("Common")) {
+            if (defaultValue == null) {
+                defaultValue = loader.createTheme();
+            }
+        } else {
+            add(loader.createTheme());
+        }
     }
 
     private void refreshFile() {
