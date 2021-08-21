@@ -99,7 +99,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
 
         CustomLineNumberFactory factory = CustomLineNumberFactory.get(this);
 
-        //JamsApplication.getThemeManager().apply(this);
+        JamsApplication.getThemeManager().apply(this);
         JamsApplication.getThemeManager().registerListeners(this, true);
 
         setParagraphGraphicFactory(factory);

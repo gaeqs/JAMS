@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.manager;
 
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
@@ -31,11 +33,11 @@ import net.jamsimulator.jams.gui.theme.Theme;
 import net.jamsimulator.jams.gui.theme.ThemeLoader;
 import net.jamsimulator.jams.gui.theme.event.*;
 import net.jamsimulator.jams.gui.theme.exception.ThemeLoadException;
-import net.jamsimulator.jams.utils.DisposableFileSystem;
 import net.jamsimulator.jams.utils.TempUtils;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -58,8 +60,8 @@ public class ThemeManager extends SelectableManager<Theme> {
 
     public static final ThemeManager INSTANCE = new ThemeManager();
 
+    private boolean cacheFileLoaded = false;
     protected File cacheFile = TempUtils.createTemporalFile("currentTheme");
-    protected boolean cacheFileLoaded = false;
 
     private String generalFont, codeFont;
     private File folder;
@@ -126,26 +128,70 @@ public class ThemeManager extends SelectableManager<Theme> {
         refresh();
     }
 
+    /**
+     * Applies the current style to the given {@link Node}.
+     *
+     * @param node the  {@link Node}.
+     */
+    public void apply(Node node) {
+        node.setStyle(selected.build(this, true));
+    }
+
+    /**
+     * Applies the current style to all the nodes of the given {@link Scene}.
+     *
+     * @param scene the {@link Scene}.
+     */
+    public void apply(Scene scene) {
+        if(!cacheFileLoaded) refreshFile();
+        try {
+            scene.getStylesheets().setAll(cacheFile.toURI().toURL().toExternalForm());
+        } catch (IOException e) {
+            System.err.println("Error while applying themes " + defaultValue.getName() + ", " + selected.getName() + ": ");
+            e.printStackTrace();
+        }
+    }
+
     public void refresh() {
         callEvent(new ThemeRefreshEvent());
     }
 
     @Override
+    public boolean setSelected(Theme selected) {
+        if (!super.setSelected(selected)) return false;
+        refreshFile();
+        return true;
+    }
+
+    @Override
     protected void loadDefaultElements() {
+        folder = new File(Jams.getMainFolder(), FOLDER_NAME);
+
         loadFonts();
 
-        load("/gui/theme/", getClass());
+        try {
+            loadThemesInFolder(Path.of(Jams.class.getResource("/gui/theme/").toURI()));
+            loadThemesInFolder(folder.toPath());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected Theme loadDefaultElement() {
-        return null;
+        return get("Dark Theme").orElse(null);
     }
 
     @Override
     protected Theme loadSelectedElement() {
-        loadFonts();
-        return null;
+        var config = Jams.getMainConfiguration();
+        var selected = config.getString(SELECTED_THEME_NODE).orElse("Dark Theme");
+        var theme = get(selected).orElseGet(() -> get("Dark Theme").orElse(null));
+        if (theme == null) {
+            System.err.println("Dark Theme not found! Using the first found theme instead.");
+            theme = stream().findFirst().orElseThrow(NullPointerException::new);
+        }
+        return theme;
     }
 
     private void loadFonts() {
@@ -154,15 +200,12 @@ public class ThemeManager extends SelectableManager<Theme> {
         codeFont = config.getString(CODE_FONT_NODE).orElse("JetBrains Mono");
     }
 
-    private void load(String path, Class<?> loader) {
+
+    public void loadThemesInFolder(Path path) {
+        Validate.notNull(path, "Path cannot be null!");
         try {
-            var url = loader.getResource(path);
-            if (url == null) return;
-            var uri = url.toURI();
-            var system = new DisposableFileSystem(uri);
-            walkAndLoad(Path.of(uri));
-            system.close();
-        } catch (IOException | URISyntaxException e) {
+            walkAndLoad(path);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -178,6 +221,18 @@ public class ThemeManager extends SelectableManager<Theme> {
                 e.printStackTrace();
             }
         });
+    }
+
+    private void refreshFile() {
+        try {
+            var writer = new FileWriter(cacheFile);
+            writer.write(selected.build(this, true));
+            writer.close();
+            cacheFileLoaded = true;
+        } catch (IOException e) {
+            System.err.println("Error while applying themes " + defaultValue.getName() + ", " + selected.getName() + ": ");
+            e.printStackTrace();
+        }
     }
 
     @Listener

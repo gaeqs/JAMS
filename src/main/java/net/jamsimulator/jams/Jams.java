@@ -35,13 +35,20 @@ import net.jamsimulator.jams.manager.*;
 import net.jamsimulator.jams.plugin.exception.InvalidPluginHeaderException;
 import net.jamsimulator.jams.plugin.exception.PluginLoadException;
 import net.jamsimulator.jams.project.RecentProjects;
+import net.jamsimulator.jams.task.TaskExecutor;
 import net.jamsimulator.jams.utils.*;
 import org.json.JSONObject;
-import net.jamsimulator.jams.task.TaskExecutor;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
 
 public class Jams {
 
@@ -73,6 +80,9 @@ public class Jams {
     private static TaskExecutor taskExecutor;
     private static SimpleEventBroadcast generalEventBroadcast;
 
+    private static FileSystem fileSystem;
+    private static ProtectedFileSystem fileSystemWrapper;
+
     //JAMS main method.
     public static void main(String[] args) {
         var data = new ArgumentsData(args);
@@ -83,6 +93,20 @@ public class Jams {
         System.out.println("Loading JAMS version " + getVersion());
         mainFolder = FolderUtils.checkMainFolder();
         TempUtils.loadTemporalFolder();
+
+
+        try {
+            var path = Jams.class.getProtectionDomain().getCodeSource().getLocation().toURI();
+            if (Files.isDirectory(Path.of(path))) {
+                fileSystem = FileSystems.getDefault();
+            } else {
+                fileSystem = FileSystems.newFileSystem(URI.create("jar:" + path), Map.of("create", "true"));
+            }
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        fileSystemWrapper = new ProtectedFileSystem(fileSystem);
+
 
         pluginManager = PluginManager.INSTANCE;
         loadPluginsFromArguments(data);
@@ -122,6 +146,19 @@ public class Jams {
      */
     public static String getVersion() {
         return VERSION;
+    }
+
+    /**
+     * Returns the JAMS's jar {@link FileSystem}.
+     * <p>
+     * This {@link FileSystem} is used to access the data inside the JAMS's jar.
+     * <p>
+     * This {@link FileSystem} cannot be closed.
+     *
+     * @return the {@link FileSystem}.
+     */
+    public static FileSystem getFileSystem() {
+        return fileSystemWrapper;
     }
 
     /**
@@ -325,6 +362,13 @@ public class Jams {
 
         // Disables all plugins
         getPluginManager().forEach(p -> p.setEnabled(false));
+
+        try {
+            fileSystem.close();
+        } catch (UnsupportedOperationException ignore) {
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void loadPluginsFromArguments(ArgumentsData data) {

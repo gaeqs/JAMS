@@ -26,13 +26,16 @@ package net.jamsimulator.jams.gui.theme;
 
 import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.gui.theme.exception.ThemeLoadException;
-import net.jamsimulator.jams.utils.DisposableFileSystem;
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 public class ThemeLoader {
 
@@ -40,16 +43,30 @@ public class ThemeLoader {
     public static String GLOBAL_FILE = "global.css";
 
     private final Path path;
-    private final URI uri;
 
     private ThemeHeader header;
     private String globalData;
     private String filesData;
     private boolean loaded;
 
-    public ThemeLoader(Path path) {
-        this.path = path;
-        this.uri = path.toUri();
+    private FileSystem usedFileSystem = null;
+
+    public ThemeLoader(Path path) throws ThemeLoadException {
+        if (!Files.isDirectory(path)) {
+            // .zip handle
+            var uri = path.toUri();
+            try {
+                var newUri = new URI("jar:file", uri.getAuthority(),
+                        uri.getPath() + "!/", uri.getFragment());
+
+                usedFileSystem = FileSystems.newFileSystem(newUri, Map.of("create", "true"));
+                this.path = Path.of(newUri);
+            } catch (URISyntaxException | IOException e) {
+                throw new ThemeLoadException(e, ThemeLoadException.Type.RESOURCE_NOT_FOUND);
+            }
+        } else {
+            this.path = path;
+        }
     }
 
     public boolean isLoaded() {
@@ -74,36 +91,24 @@ public class ThemeLoader {
 
     public void load() throws ThemeLoadException {
         if (loaded) throw new ThemeLoadException(ThemeLoadException.Type.ALREADY_LOADED);
-
-        var system = loadSystem();
-
         header = loadHeader();
         globalData = loadGlobal();
-
         var builder = new StringBuilder();
         header.files().forEach(it -> builder.append(loadExtraFile(it)));
         filesData = builder.toString();
-
-        try {
-            system.close();
-        } catch (IOException e) {
-            throw new ThemeLoadException(e, ThemeLoadException.Type.INVALID_RESOURCE);
-        }
-
         loaded = true;
+        if (usedFileSystem != null) {
+            try {
+                usedFileSystem.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public Theme createTheme() throws ThemeLoadException {
         if (!loaded) throw new ThemeLoadException(ThemeLoadException.Type.NOT_LOADED);
         return new Theme(header, globalData, filesData);
-    }
-
-    private DisposableFileSystem loadSystem() throws ThemeLoadException {
-        try {
-            return new DisposableFileSystem(uri);
-        } catch (IOException ex) {
-            throw new ThemeLoadException(ex, ThemeLoadException.Type.RESOURCE_NOT_FOUND);
-        }
     }
 
     private ThemeHeader loadHeader() throws ThemeLoadException {

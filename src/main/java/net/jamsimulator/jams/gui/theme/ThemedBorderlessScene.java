@@ -52,12 +52,12 @@ public class ThemedBorderlessScene extends BorderlessScene {
 
     protected void initializeJamsListeners() {
         JamsApplication.getThemeManager().registerListeners(this, true);
-        //JamsApplication.getThemeManager().apply(this);
+        JamsApplication.getThemeManager().apply(this);
     }
 
     @Listener
     private void onThemeRefresh(ThemeRefreshEvent event) {
-        //  JamsApplication.getThemeManager().apply(this);
+        JamsApplication.getThemeManager().apply(this);
     }
 
 }

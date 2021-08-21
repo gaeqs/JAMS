@@ -57,12 +57,12 @@ public class ThemedScene extends Scene {
     protected void initializeJamsListeners() {
         JamsApplication.getThemeManager().registerListeners(this, true);
         JamsApplication.getActionManager().registerListeners(this, true);
-        //JamsApplication.getThemeManager().apply(this);
+        JamsApplication.getThemeManager().apply(this);
     }
 
     @Listener
     private void onThemeRefresh(ThemeRefreshEvent event) {
-        //JamsApplication.getThemeManager().apply(this);
+        JamsApplication.getThemeManager().apply(this);
     }
 
 }
