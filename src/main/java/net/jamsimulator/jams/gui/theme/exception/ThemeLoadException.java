@@ -24,6 +24,10 @@
 
 package net.jamsimulator.jams.gui.theme.exception;
 
+/**
+ * An exception thrown by a {@link net.jamsimulator.jams.gui.theme.ThemeLoader Theme loader} when
+ * something went wrong while loading a {@link net.jamsimulator.jams.gui.theme.Theme Theme}.
+ */
 public class ThemeLoadException extends Exception {
 
     public Type type;
@@ -50,6 +54,7 @@ public class ThemeLoadException extends Exception {
         INVALID_HEADER("Invalid header."),
         ALREADY_LOADED("Theme already loaded."),
         NOT_LOADED("Theme not loaded."),
+        THEME_ALREADY_EXIST("Theme already exist and attach is disabled."),
         UNKNOWN("Unknown.");
 
         private final String message;

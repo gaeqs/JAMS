@@ -37,6 +37,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
+/**
+ * Helper class used to load {@link Theme}s.
+ */
 public class ThemeLoader {
 
     public static String HEADER_FILE = "theme.json";
@@ -51,6 +54,12 @@ public class ThemeLoader {
 
     private FileSystem usedFileSystem = null;
 
+    /**
+     * Creates and initialized the theme loader.
+     *
+     * @param path the path of the theme to load.
+     * @throws ThemeLoadException whem whomething went wrong during initialization.
+     */
     public ThemeLoader(Path path) throws ThemeLoadException {
         if (!Files.isDirectory(path)) {
             // .zip handle
@@ -89,6 +98,11 @@ public class ThemeLoader {
         return filesData;
     }
 
+    /**
+     * Loads the theme data.
+     *
+     * @throws ThemeLoadException when something went wrong.
+     */
     public void load() throws ThemeLoadException {
         if (loaded) throw new ThemeLoadException(ThemeLoadException.Type.ALREADY_LOADED);
         header = loadHeader();
@@ -106,6 +120,12 @@ public class ThemeLoader {
         }
     }
 
+    /**
+     * Creates a new instance of the loaded theme.
+     *
+     * @return the {@link Theme}.
+     * @throws ThemeLoadException if the theme was not loaded.
+     */
     public Theme createTheme() throws ThemeLoadException {
         if (!loaded) throw new ThemeLoadException(ThemeLoadException.Type.NOT_LOADED);
         return new Theme(header, globalData, filesData);

@@ -24,33 +24,19 @@
 
 package net.jamsimulator.jams.gui.theme;
 
-import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.util.Objects;
+/**
+ * Represents a piece of CSS code attached to a theme.
+ */
+public record ThemeAttachment(String data) {
 
-public record ThemeAttachment(String name, String data) implements Labeled {
-
+    /**
+     * Creates the theme attachment.
+     *
+     * @param data the CSS code of the attachment.
+     */
     public ThemeAttachment {
-        Validate.notNull(name, "Name cannot be null!");
         Validate.notNull(data, "Data cannot be null!");
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ThemeAttachment that = (ThemeAttachment) o;
-        return name.equals(that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name);
     }
 }

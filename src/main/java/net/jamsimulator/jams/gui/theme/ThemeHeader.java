@@ -30,12 +30,37 @@ import net.jamsimulator.jams.gui.theme.exception.ThemeLoadException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Represents the 'theme.json' file inside a theme.
+ *
+ * @param name         the name of the theme.
+ * @param files        the theme's files to load. This field is optional.
+ * @param dependencies the dependencies of the theme. This field is optional.
+ */
 public record ThemeHeader(String name, List<String> files, List<String> dependencies) {
 
+    /**
+     * The name field of the JSON file. This field is required.
+     */
     public static final String NAME_NODE = "name";
+
+    /**
+     * The files field of the JSON file. This field is optional.
+     */
     public static final String FILES_NODE = "files";
+
+    /**
+     * The dependencies field of the JSON file. This field is optional.
+     */
     public static final String DEPENDENCIES_NODE = "dependencies";
 
+    /**
+     * Creates a new {@link ThemeHeader} with the information inside the given {@link Configuration}.
+     *
+     * @param configuration the {@link Configuration} representing the JSON file.
+     * @return the {@link  ThemeHeader}.
+     * @throws ThemeLoadException when something went wrong.
+     */
     public static ThemeHeader load(Configuration configuration) throws ThemeLoadException {
         var name = configuration.getString(NAME_NODE);
         if (name.isEmpty()) throw new ThemeLoadException(ThemeLoadException.Type.INVALID_HEADER);
