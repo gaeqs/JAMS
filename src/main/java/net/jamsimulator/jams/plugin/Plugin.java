@@ -28,12 +28,15 @@ import javafx.application.Platform;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.plugin.exception.PluginLoadException;
+import net.jamsimulator.jams.utils.ProtectedFileSystem;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -65,6 +68,8 @@ public class Plugin implements Labeled {
     private boolean enabled;
     private Set<Plugin> dependencies, enabledSoftDepenedencies;
     private IconData favicon;
+    private FileSystem fileSystem;
+    private ProtectedFileSystem fileSystemWrapper;
 
     /**
      * Runs the given code in the JavaFX application thread.
@@ -103,6 +108,19 @@ public class Plugin implements Labeled {
      */
     public PluginHeader getHeader() {
         return header;
+    }
+
+    /**
+     * Returns the plugin's {@link FileSystem}.
+     * <p>
+     * This {@link FileSystem} is used to access the data inside this plugin's jar.
+     * <p>
+     * This {@link FileSystem} cannot be closed.
+     *
+     * @return the plugin's {@link FileSystem}.
+     */
+    public FileSystem getFileSystem() {
+        return fileSystemWrapper;
     }
 
     /**
@@ -191,12 +209,30 @@ public class Plugin implements Labeled {
         return Optional.ofNullable(getClass().getResourceAsStream(path));
     }
 
+    /**
+     * Disposes the resource of this plugin.
+     * <p>
+     * THIS METHOD SHOULD BE USED ONLY BY {@link net.jamsimulator.jams.manager.PluginManager PluginManager}!!!
+     */
+    public void dispose() throws IOException {
+        classLoader.close();
+        fileSystem.close();
+    }
+
     // endregion
 
-    void init(PluginClassLoader classLoader, PluginHeader header) {
+    void init(PluginClassLoader classLoader, PluginHeader header) throws PluginLoadException {
         this.classLoader = classLoader;
         this.header = header;
         this.enabled = false;
+
+        try {
+            var path = header.file().toURI();
+            fileSystem = FileSystems.newFileSystem(URI.create("jar:" + path), Map.of("create", "true"));
+        } catch (Exception ex) {
+            throw new PluginLoadException(ex, "Couldn't load FileSystem", header);
+        }
+
         try {
             if (header.favicon() != null) {
                 var in = getClass().getResourceAsStream(header.favicon());

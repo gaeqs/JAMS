@@ -29,8 +29,12 @@ import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,6 +71,18 @@ public class RootConfiguration extends Configuration implements EventBroadcast {
     }
 
     /**
+     * Creates a root configuration using a JSON string.
+     *
+     * @param json the json.
+     */
+    public RootConfiguration(String json) {
+        super(null, new JSONObject(json).toMap(), null);
+        root = this;
+        file = null;
+        broadcast = new SimpleEventBroadcast();
+    }
+
+    /**
      * Creates a root configuration using a {@link Reader} that contains a JSON string.
      *
      * @param reader the reader.
@@ -81,10 +97,7 @@ public class RootConfiguration extends Configuration implements EventBroadcast {
 
     private static Map<String, Object> loadJSON(File file) throws IOException {
         if (!file.isFile()) return new HashMap<>();
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        Map<String, Object> map = loadJSON(reader);
-        reader.close();
-        return map;
+        return new JSONObject(Files.readString(file.toPath())).toMap();
     }
 
     private static Map<String, Object> loadJSON(Reader r) throws IOException {
@@ -102,7 +115,6 @@ public class RootConfiguration extends Configuration implements EventBroadcast {
         String string = builder.toString();
         //If empty, return a new HashMap.
         if (string.isEmpty()) return new HashMap<>();
-
         return new JSONObject(string).toMap();
     }
 

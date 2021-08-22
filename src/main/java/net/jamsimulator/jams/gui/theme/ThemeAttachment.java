@@ -22,23 +22,21 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.theme.exception;
+package net.jamsimulator.jams.gui.theme;
 
-public class ThemeFailedLoadException extends Exception {
+import net.jamsimulator.jams.utils.Validate;
 
-    public ThemeFailedLoadException() {
+/**
+ * Represents a piece of CSS code attached to a theme.
+ */
+public record ThemeAttachment(String data) {
+
+    /**
+     * Creates the theme attachment.
+     *
+     * @param data the CSS code of the attachment.
+     */
+    public ThemeAttachment {
+        Validate.notNull(data, "Data cannot be null!");
     }
-
-    public ThemeFailedLoadException(String message) {
-        super(message);
-    }
-
-    public ThemeFailedLoadException(Throwable cause) {
-        super(cause);
-    }
-
-    public ThemeFailedLoadException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
 }

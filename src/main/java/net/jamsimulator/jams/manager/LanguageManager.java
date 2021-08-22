@@ -53,7 +53,7 @@ import java.util.Map;
  */
 public class LanguageManager extends SelectableManager<Language> {
 
-    public static final String FOLDER_NAME = "language";
+    public static final String FOLDER_NAME = "languages";
     public static final String DEFAULT_LANGUAGE_NODE = "language.default";
     public static final String SELECTED_LANGUAGE_NODE = "language.selected";
 

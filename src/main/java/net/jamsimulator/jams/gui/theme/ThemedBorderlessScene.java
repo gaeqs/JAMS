@@ -30,7 +30,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.theme.event.ThemeShouldRefreshEvent;
+import net.jamsimulator.jams.gui.theme.event.ThemeRefreshEvent;
 
 public class ThemedBorderlessScene extends BorderlessScene {
 
@@ -56,7 +56,7 @@ public class ThemedBorderlessScene extends BorderlessScene {
     }
 
     @Listener
-    private void onThemeRefresh(ThemeShouldRefreshEvent event) {
+    private void onThemeRefresh(ThemeRefreshEvent event) {
         JamsApplication.getThemeManager().apply(this);
     }
 

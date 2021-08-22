@@ -223,7 +223,7 @@ public class PluginManager extends Manager<Plugin> {
 
         // Unloads
         try {
-            plugin.getClassLoader().close();
+            plugin.dispose();
         } catch (IOException e) {
             e.printStackTrace();
             return false;

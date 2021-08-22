@@ -22,12 +22,16 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.theme.event;
-
-import net.jamsimulator.jams.event.Event;
-
-/**
- * This event is called when the JAMS style should refresh.
- */
-public class ThemeShouldRefreshEvent extends Event {
-}
+-theme-foreground: #222222;
+-theme-foreground-darker: derive(-theme-foreground, 20%);
+-theme-foreground-darker-2: derive(-theme-foreground, 40%);
+-theme-foreground-lighter: #000000;
+-theme-background: #f2f2f2;
+-theme-background-darker: #d9d9d9;
+-theme-background-darker-2: #e6e6e6;
+-theme-background-lighter: #f7f7f7;
+-theme-background-pressed: derive(-theme-background, -20%);
+-theme-background-darkest: #FFFFFF;
+-theme-header: #8faccc;
+-theme-menu-item-hover: #4D6EAF;
+-theme-element-selected: #5a80cc;
