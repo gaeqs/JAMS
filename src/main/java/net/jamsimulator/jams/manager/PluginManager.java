@@ -29,8 +29,6 @@ import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.plugin.Plugin;
 import net.jamsimulator.jams.plugin.PluginClassLoader;
 import net.jamsimulator.jams.plugin.PluginHeader;
-import net.jamsimulator.jams.plugin.event.PluginRegisterEvent;
-import net.jamsimulator.jams.plugin.event.PluginUnregisterEvent;
 import net.jamsimulator.jams.plugin.exception.InvalidPluginHeaderException;
 import net.jamsimulator.jams.plugin.exception.PluginLoadException;
 import net.jamsimulator.jams.utils.FolderUtils;
@@ -57,14 +55,12 @@ import java.util.jar.JarFile;
  * Plugins that act as a dependency or as a soft dependency cannot be unregistered unless all dependent
  * plugins are unregistered before.
  */
-public class PluginManager extends Manager<Plugin> {
+public final class PluginManager extends Manager<Plugin> {
 
     public static final File PLUGIN_FOLDER = new File(Jams.getMainFolder(), "plugins");
     public static final PluginManager INSTANCE = new PluginManager();
 
     private PluginManager() {
-        super(PluginRegisterEvent.Before::new, PluginRegisterEvent.After::new,
-                PluginUnregisterEvent.Before::new, PluginUnregisterEvent.After::new);
     }
 
     /**

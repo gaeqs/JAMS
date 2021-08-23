@@ -40,10 +40,11 @@ import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionOpenProjec
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionUnbindEvent;
 import net.jamsimulator.jams.gui.bar.ToolsMenu;
+import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
-import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 import net.jamsimulator.jams.language.wrapper.LanguageMenu;
+import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
+import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 import net.jamsimulator.jams.project.ProjectSnapshot;
 
 import java.io.File;
@@ -150,12 +151,12 @@ public class MainMenuBar extends MenuBar {
     }
 
     @Listener
-    private void onLanguageChange(DefaultLanguageChangeEvent.After event) {
+    private void onLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
         Platform.runLater(this::refresh);
     }
 
     @Listener
-    private void onLanguageChange(SelectedLanguageChangeEvent.After event) {
+    private void onLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
         Platform.runLater(this::refresh);
     }
 

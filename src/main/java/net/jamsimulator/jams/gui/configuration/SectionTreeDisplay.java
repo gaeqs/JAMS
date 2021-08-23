@@ -28,7 +28,9 @@ import javafx.scene.control.Label;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
-import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
+import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +64,11 @@ public class SectionTreeDisplay extends Label {
     }
 
     @Listener(priority = -1)
-    private void onLanguageChange(SelectedLanguageChangeEvent.After event) {
+    private void onLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
+        setSection(current);
+    }
+
+    private void onLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
         setSection(current);
     }
 

@@ -41,11 +41,11 @@ import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
+import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.ProjectTemplateBuilder;
 import net.jamsimulator.jams.project.ProjectType;
-import net.jamsimulator.jams.project.event.ProjectTypeRegisterEvent;
-import net.jamsimulator.jams.project.event.ProjectTypeUnregisterEvent;
 import net.jamsimulator.jams.project.exception.MIPSTemplateBuildException;
 
 import java.util.HashMap;
@@ -168,15 +168,15 @@ public class StartWindowSectionNewProject extends SplitPane implements StartWind
     }
 
     @Listener
-    private void onTypeRegistered(ProjectTypeRegisterEvent.After event) {
-        event.getProjectType().getTemplateBuilders().forEach(this::addCreator);
-        event.getProjectType().getTemplateBuilders().addListener(listener);
+    private void onTypeRegistered(ManagerElementRegisterEvent.After<ProjectType<?>> event) {
+        event.getElement().getTemplateBuilders().forEach(this::addCreator);
+        event.getElement().getTemplateBuilders().addListener(listener);
     }
 
     @Listener
-    private void onTypeUnregistered(ProjectTypeUnregisterEvent.After event) {
-        event.getProjectType().getTemplateBuilders().forEach(this::removeCreator);
-        event.getProjectType().getTemplateBuilders().removeListener(listener);
+    private void onTypeUnregistered(ManagerElementUnregisterEvent.After<ProjectType<?>> event) {
+        event.getElement().getTemplateBuilders().forEach(this::removeCreator);
+        event.getElement().getTemplateBuilders().removeListener(listener);
     }
 
     @Override

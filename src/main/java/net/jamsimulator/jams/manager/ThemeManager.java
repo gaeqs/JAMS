@@ -32,7 +32,9 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.theme.Theme;
 import net.jamsimulator.jams.gui.theme.ThemeAttachment;
 import net.jamsimulator.jams.gui.theme.ThemeLoader;
-import net.jamsimulator.jams.gui.theme.event.*;
+import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
+import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
+import net.jamsimulator.jams.gui.theme.event.ThemeRefreshEvent;
 import net.jamsimulator.jams.gui.theme.exception.ThemeLoadException;
 import net.jamsimulator.jams.utils.FolderUtils;
 import net.jamsimulator.jams.utils.TempUtils;
@@ -65,7 +67,7 @@ import java.util.Map;
  * Just like the previous method, the path may be a path inside a plugin's .JAR. See these methods'
  * documentation for more information.
  */
-public class ThemeManager extends SelectableManager<Theme> {
+public final class ThemeManager extends SelectableManager<Theme> {
 
     public static final String FOLDER_NAME = "themes";
     public static final String SELECTED_THEME_NODE = "appearance.theme";
@@ -86,11 +88,6 @@ public class ThemeManager extends SelectableManager<Theme> {
     private String generalFont, codeFont;
 
     private ThemeManager() {
-        super(ThemeRegisterEvent.Before::new, ThemeRegisterEvent.After::new,
-                ThemeUnregisterEvent.Before::new, ThemeUnregisterEvent.After::new,
-                null, null,
-                DefaultThemeChangeEvent.Before::new, DefaultThemeChangeEvent.After::new);
-
         Jams.getMainConfiguration().registerListeners(this, true);
     }
 

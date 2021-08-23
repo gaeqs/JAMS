@@ -38,10 +38,11 @@ import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.popup.ConfirmationWindow;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.StringStyler;
+import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
-import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
+import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
+import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 import net.jamsimulator.jams.plugin.Plugin;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.StyleClassedTextArea;
@@ -144,12 +145,12 @@ public class PluginExplorerDisplay extends AnchorPane {
 
 
     @Listener
-    private void onLanguageChange(SelectedLanguageChangeEvent.After event) {
+    private void onLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
         display(selected);
     }
 
     @Listener
-    private void onLanguageChange(DefaultLanguageChangeEvent.After event) {
+    private void onLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
         display(selected);
     }
 

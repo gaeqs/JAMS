@@ -26,9 +26,6 @@ package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.instruction.set.MIPS32r6InstructionSet;
-import net.jamsimulator.jams.mips.instruction.set.event.DefaultInstructionSetChangeEvent;
-import net.jamsimulator.jams.mips.instruction.set.event.InstructionSetRegisterEvent;
-import net.jamsimulator.jams.mips.instruction.set.event.InstructionSetUnregisterEvent;
 
 /**
  * This singleton stores all {@link InstructionSet}s that projects may use.
@@ -38,14 +35,11 @@ import net.jamsimulator.jams.mips.instruction.set.event.InstructionSetUnregister
  * An {@link InstructionSet}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public class InstructionSetManager extends DefaultValuableManager<InstructionSet> {
+public final class InstructionSetManager extends DefaultValuableManager<InstructionSet> {
 
     public static final InstructionSetManager INSTANCE = new InstructionSetManager();
 
     private InstructionSetManager() {
-        super(InstructionSetRegisterEvent.Before::new, InstructionSetRegisterEvent.After::new,
-                InstructionSetUnregisterEvent.Before::new, InstructionSetUnregisterEvent.After::new,
-                DefaultInstructionSetChangeEvent.Before::new, DefaultInstructionSetChangeEvent.After::new);
     }
 
     @Override

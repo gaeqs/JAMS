@@ -26,9 +26,6 @@ package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
 import net.jamsimulator.jams.mips.assembler.builder.MIPS32AssemblerBuilder;
-import net.jamsimulator.jams.mips.assembler.builder.event.AssemblerBuilderRegisterEvent;
-import net.jamsimulator.jams.mips.assembler.builder.event.AssemblerBuilderUnregisterEvent;
-import net.jamsimulator.jams.mips.assembler.builder.event.DefaultAssemblerBuilderChangeEvent;
 
 /**
  * This singleton stores all {@link AssemblerBuilder}s that projects may use.
@@ -38,14 +35,11 @@ import net.jamsimulator.jams.mips.assembler.builder.event.DefaultAssemblerBuilde
  * An {@link AssemblerBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public class AssemblerBuilderManager extends DefaultValuableManager<AssemblerBuilder> {
+public final class AssemblerBuilderManager extends DefaultValuableManager<AssemblerBuilder> {
 
     public static final AssemblerBuilderManager INSTANCE = new AssemblerBuilderManager();
 
     private AssemblerBuilderManager() {
-        super(AssemblerBuilderRegisterEvent.Before::new, AssemblerBuilderRegisterEvent.After::new,
-                AssemblerBuilderUnregisterEvent.Before::new, AssemblerBuilderUnregisterEvent.After::new,
-                DefaultAssemblerBuilderChangeEvent.Before::new, DefaultAssemblerBuilderChangeEvent.After::new);
     }
 
     @Override

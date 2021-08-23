@@ -28,9 +28,6 @@ import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.event.ArchitectureRegisterEvent;
-import net.jamsimulator.jams.mips.architecture.event.ArchitectureUnregisterEvent;
-import net.jamsimulator.jams.mips.architecture.event.DefaultArchitectureChangeEvent;
 
 /**
  * This singleton stores all {@link Architecture}s that projects may use.
@@ -40,14 +37,11 @@ import net.jamsimulator.jams.mips.architecture.event.DefaultArchitectureChangeEv
  * An {@link Architecture}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public class ArchitectureManager extends DefaultValuableManager<Architecture> {
+public final class ArchitectureManager extends DefaultValuableManager<Architecture> {
 
     public static final ArchitectureManager INSTANCE = new ArchitectureManager();
 
-    public ArchitectureManager() {
-        super(ArchitectureRegisterEvent.Before::new, ArchitectureRegisterEvent.After::new,
-                ArchitectureUnregisterEvent.Before::new, ArchitectureUnregisterEvent.After::new,
-                DefaultArchitectureChangeEvent.Before::new, DefaultArchitectureChangeEvent.After::new);
+    private ArchitectureManager() {
     }
 
     @Override

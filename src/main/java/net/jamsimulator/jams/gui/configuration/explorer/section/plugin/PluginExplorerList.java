@@ -34,8 +34,9 @@ import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
-import net.jamsimulator.jams.plugin.event.PluginRegisterEvent;
-import net.jamsimulator.jams.plugin.event.PluginUnregisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
+import net.jamsimulator.jams.plugin.Plugin;
 
 public class PluginExplorerList extends VBox {
 
@@ -89,14 +90,14 @@ public class PluginExplorerList extends VBox {
     }
 
     @Listener
-    private void onPluginRegister(PluginRegisterEvent.After event) {
-        getChildren().add(getChildren().size() - 1, new PluginExplorerEntry(event.getPlugin(), this));
+    private void onPluginRegister(ManagerElementRegisterEvent.After<Plugin> event) {
+        getChildren().add(getChildren().size() - 1, new PluginExplorerEntry(event.getElement(), this));
     }
 
     @Listener
-    private void onPluginUnregister(PluginUnregisterEvent.After event) {
+    private void onPluginUnregister(ManagerElementUnregisterEvent.After<Plugin> event) {
         getChildren().removeIf(target -> target instanceof PluginExplorerEntry
-                && ((PluginExplorerEntry) target).getPlugin() == event.getPlugin());
-        if (selected.getPlugin() == event.getPlugin()) select(null);
+                && ((PluginExplorerEntry) target).getPlugin() == event.getElement());
+        if (selected.getPlugin() == event.getElement()) select(null);
     }
 }

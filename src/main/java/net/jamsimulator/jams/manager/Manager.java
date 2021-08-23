@@ -24,16 +24,17 @@
 
 package net.jamsimulator.jams.manager;
 
-import net.jamsimulator.jams.event.Cancellable;
 import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
+import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.HashSet;
 import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * Represents a storage for instances of the selected type.
@@ -44,6 +45,9 @@ import java.util.function.Function;
  * Every addition will call a register event, and every removal will call an unregister event.
  * <p>
  * Instances of this class are used to manage the storage of several kind of elements inside JAMS.
+ * <p>
+ * Make sure it's the final child class the one that sets the type of the manager.
+ * This allows {@link #getManagedType()} to work properly.
  *
  * @param <Type> the type of the managed elements.
  * @see DefaultValuableManager
@@ -56,28 +60,12 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
      */
     protected final SimpleEventBroadcast broadcast;
 
-    protected final Function<Type, Event> beforeRegisterEventBuilder;
-    protected final Function<Type, Event> afterRegisterEventBuilder;
-    protected final Function<Type, Event> afterUnregisterEventBuilder;
-    protected final Function<Type, Event> beforeUnregisterEventBuilder;
-
     /**
      * Creates the manager.
-     * These managers call events on addition and removal. You must provide the builder for these events.
-     *
-     * @param beforeRegisterEventBuilder   the builder that creates the event called before an element is added.
-     * @param afterRegisterEventBuilder    the builder that creates the event called after an element is added.
-     * @param afterUnregisterEventBuilder  the builder that creates the event called before an element is removed.
-     * @param beforeUnregisterEventBuilder the builder that creates the event called after an element is added.
+     * These managers call events on addition and removal.
      */
-    public Manager(Function<Type, Event> beforeRegisterEventBuilder, Function<Type, Event> afterRegisterEventBuilder,
-                   Function<Type, Event> beforeUnregisterEventBuilder, Function<Type, Event> afterUnregisterEventBuilder) {
-
+    public Manager() {
         this.broadcast = new SimpleEventBroadcast();
-        this.beforeRegisterEventBuilder = beforeRegisterEventBuilder;
-        this.afterRegisterEventBuilder = afterRegisterEventBuilder;
-        this.beforeUnregisterEventBuilder = beforeUnregisterEventBuilder;
-        this.afterUnregisterEventBuilder = afterUnregisterEventBuilder;
         loadDefaultElements();
     }
 
@@ -104,6 +92,14 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
         return get(name).orElse(null);
     }
 
+    /**
+     * Returns the managed {@link java.lang.reflect.Type Type} of this manager.
+     *
+     * @return the managed type.
+     */
+    public java.lang.reflect.Type getManagedType() {
+        return ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    }
 
     /**
      * Attempts to register the given element.
@@ -119,11 +115,11 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
     @Override
     public boolean add(Type element) {
         Validate.notNull(element, "The element cannot be null!");
-        var before = callEvent(beforeRegisterEventBuilder.apply(element));
-        if (before instanceof Cancellable && ((Cancellable) before).isCancelled()) return false;
+        var before = callEvent(new ManagerElementRegisterEvent.Before<>(this, element));
+        if (before.isCancelled()) return false;
         if (super.add(element)) {
             onElementAddition(element);
-            callEvent(afterRegisterEventBuilder.apply(element));
+            callEvent(new ManagerElementRegisterEvent.After<>(this, element));
             return true;
         }
         return false;
@@ -158,12 +154,13 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
     @Override
     public boolean remove(Object o) {
         Validate.notNull(o, "The element cannot be null!");
+        if (!contains(o)) return false;
         try {
-            var before = callEvent(beforeUnregisterEventBuilder.apply((Type) o));
-            if (before instanceof Cancellable && ((Cancellable) before).isCancelled()) return false;
+            var before = callEvent(new ManagerElementUnregisterEvent.Before<>(this, (Type) o));
+            if (before.isCancelled()) return false;
             if (super.remove(o)) {
                 onElementRemoval((Type) o);
-                callEvent(afterUnregisterEventBuilder.apply((Type) o));
+                callEvent(new ManagerElementUnregisterEvent.After<>(this, (Type) o));
                 return true;
             }
             return false;

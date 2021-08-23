@@ -28,10 +28,6 @@ import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Language;
-import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
-import net.jamsimulator.jams.language.event.LanguageRegisterEvent;
-import net.jamsimulator.jams.language.event.LanguageUnregisterEvent;
-import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 import net.jamsimulator.jams.language.exception.LanguageFailedLoadException;
 import net.jamsimulator.jams.utils.FolderUtils;
 import net.jamsimulator.jams.utils.Validate;
@@ -51,7 +47,7 @@ import java.util.Map;
  * <p>
  * The selected {@link Language} will be the one to be used by the GUI.
  */
-public class LanguageManager extends SelectableManager<Language> {
+public final class LanguageManager extends SelectableManager<Language> {
 
     public static final String FOLDER_NAME = "languages";
     public static final String DEFAULT_LANGUAGE_NODE = "language.default";
@@ -63,11 +59,6 @@ public class LanguageManager extends SelectableManager<Language> {
     private File folder;
 
     private LanguageManager() {
-        super(LanguageRegisterEvent.Before::new, LanguageRegisterEvent.After::new,
-                LanguageUnregisterEvent.Before::new, LanguageUnregisterEvent.After::new,
-                DefaultLanguageChangeEvent.Before::new, DefaultLanguageChangeEvent.After::new,
-                SelectedLanguageChangeEvent.Before::new, SelectedLanguageChangeEvent.After::new);
-
         Jams.getMainConfiguration().registerListeners(this, true);
     }
 

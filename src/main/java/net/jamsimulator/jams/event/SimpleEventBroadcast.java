@@ -157,7 +157,9 @@ public class SimpleEventBroadcast implements EventBroadcast {
             if (method.ignoresCancelledEvents()
                     || !(event instanceof Cancellable)
                     || !((Cancellable) event).isCancelled()) {
-                method.call(event);
+                if (event.suportsGenerics(method.getGenerics())) {
+                    method.call(event);
+                }
             }
         }
 

@@ -26,9 +26,6 @@ package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.directive.set.MIPS32DirectiveSet;
-import net.jamsimulator.jams.mips.directive.set.event.DefaultDirectiveSetChangeEvent;
-import net.jamsimulator.jams.mips.directive.set.event.DirectiveSetRegisterEvent;
-import net.jamsimulator.jams.mips.directive.set.event.DirectiveSetUnregisterEvent;
 
 /**
  * This singleton stores all {@link DirectiveSet}s that projects may use.
@@ -38,14 +35,11 @@ import net.jamsimulator.jams.mips.directive.set.event.DirectiveSetUnregisterEven
  * An {@link DirectiveSet}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public class DirectiveSetManager extends DefaultValuableManager<DirectiveSet> {
+public final class DirectiveSetManager extends DefaultValuableManager<DirectiveSet> {
 
     public static final DirectiveSetManager INSTANCE = new DirectiveSetManager();
 
     private DirectiveSetManager() {
-        super(DirectiveSetRegisterEvent.Before::new, DirectiveSetRegisterEvent.After::new,
-                DirectiveSetUnregisterEvent.Before::new, DirectiveSetUnregisterEvent.After::new,
-                DefaultDirectiveSetChangeEvent.Before::new, DefaultDirectiveSetChangeEvent.After::new);
     }
 
     @Override

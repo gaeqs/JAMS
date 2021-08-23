@@ -28,8 +28,6 @@ import net.jamsimulator.jams.file.AssemblyFileType;
 import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.file.ImageFileType;
 import net.jamsimulator.jams.file.TextFileType;
-import net.jamsimulator.jams.file.event.FileTypeRegisterEvent;
-import net.jamsimulator.jams.file.event.FileTypeUnregisterEvent;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -42,15 +40,13 @@ import java.util.Optional;
  * To register a {@link FileType} use {@link Manager#add(Labeled)}}.
  * To unregister a {@link FileType} use {@link #remove(Object)}.
  */
-public class FileTypeManager extends Manager<FileType> {
+public final class FileTypeManager extends Manager<FileType> {
 
     public static final FileTypeManager INSTANCE = new FileTypeManager();
 
     private FileType unknownType, folderType;
 
     private FileTypeManager() {
-        super(FileTypeRegisterEvent.Before::new, FileTypeRegisterEvent.After::new,
-                FileTypeUnregisterEvent.Before::new, FileTypeUnregisterEvent.After::new);
     }
 
     /**

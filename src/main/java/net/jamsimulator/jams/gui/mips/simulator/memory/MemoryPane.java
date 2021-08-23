@@ -37,16 +37,17 @@ import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.LanguageComboBox;
+import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
-import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 import net.jamsimulator.jams.manager.NumberRepresentationManager;
+import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.NumberRepresentation;
-import net.jamsimulator.jams.utils.representation.event.NumberRepresentationRegisterEvent;
-import net.jamsimulator.jams.utils.representation.event.NumberRepresentationUnregisterEvent;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -218,24 +219,24 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
     }
 
     @Listener
-    private void onLanguageChange(SelectedLanguageChangeEvent.After event) {
+    private void onLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
         loadMemorySelector(simulation.getMemory());
     }
 
     @Listener
-    private void onLanguageChange(DefaultLanguageChangeEvent.After event) {
+    private void onLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
         loadMemorySelector(simulation.getMemory());
     }
 
     @Listener
-    private void onRepresentationRegister(NumberRepresentationRegisterEvent.After event) {
-        representations.add(event.getNumberRepresentation());
+    private void onRepresentationRegister(ManagerElementRegisterEvent.After<NumberRepresentation> event) {
+        representations.add(event.getElement());
         refreshRepresentationComboBox();
     }
 
     @Listener
-    private void onRepresentationUnregister(NumberRepresentationUnregisterEvent.After event) {
-        representations.remove(event.getNumberRepresentation());
+    private void onRepresentationUnregister(ManagerElementUnregisterEvent.After<NumberRepresentation> event) {
+        representations.remove(event.getElement());
         refreshRepresentationComboBox();
     }
 

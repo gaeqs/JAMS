@@ -26,8 +26,6 @@ package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.project.ProjectData;
 import net.jamsimulator.jams.project.ProjectType;
-import net.jamsimulator.jams.project.event.ProjectTypeRegisterEvent;
-import net.jamsimulator.jams.project.event.ProjectTypeUnregisterEvent;
 import net.jamsimulator.jams.project.mips.MIPSProjectType;
 import net.jamsimulator.jams.utils.FileUtils;
 import org.json.JSONException;
@@ -45,16 +43,14 @@ import java.util.Optional;
  * An {@link ProjectType}'s removal from the manager doesn't make editors to stop using
  * it inmediatelly.
  */
-public class ProjectTypeManager extends Manager<ProjectType<?>> {
+public final class ProjectTypeManager extends Manager<ProjectType<?>> {
 
     public static final ProjectTypeManager INSTANCE = new ProjectTypeManager();
 
     /**
      * Creates the manager.
      */
-    public ProjectTypeManager() {
-        super(ProjectTypeRegisterEvent.Before::new, ProjectTypeRegisterEvent.After::new,
-                ProjectTypeUnregisterEvent.Before::new, ProjectTypeUnregisterEvent.After::new);
+    private ProjectTypeManager() {
     }
 
     public Optional<ProjectType<?>> getByProjectfolder(File folder) {

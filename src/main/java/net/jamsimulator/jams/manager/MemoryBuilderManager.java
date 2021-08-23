@@ -26,9 +26,6 @@ package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.mips.memory.builder.MIPS32MemoryBuilder;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
-import net.jamsimulator.jams.mips.memory.builder.event.DefaultMemoryBuilderChangeEvent;
-import net.jamsimulator.jams.mips.memory.builder.event.MemoryBuilderRegisterEvent;
-import net.jamsimulator.jams.mips.memory.builder.event.MemoryBuilderUnregisterEvent;
 
 /**
  * This singleton stores all {@link MemoryBuilder}s that projects may use.
@@ -38,15 +35,12 @@ import net.jamsimulator.jams.mips.memory.builder.event.MemoryBuilderUnregisterEv
  * An {@link MemoryBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public class MemoryBuilderManager extends DefaultValuableManager<MemoryBuilder> {
+public final class MemoryBuilderManager extends DefaultValuableManager<MemoryBuilder> {
 
     public static final MemoryBuilderManager INSTANCE = new MemoryBuilderManager();
 
 
     private MemoryBuilderManager() {
-        super(MemoryBuilderRegisterEvent.Before::new, MemoryBuilderRegisterEvent.After::new,
-                MemoryBuilderUnregisterEvent.Before::new, MemoryBuilderUnregisterEvent.After::new,
-                DefaultMemoryBuilderChangeEvent.Before::new, DefaultMemoryBuilderChangeEvent.After::new);
     }
 
     @Override

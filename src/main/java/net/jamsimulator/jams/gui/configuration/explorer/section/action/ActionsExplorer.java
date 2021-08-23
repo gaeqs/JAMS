@@ -29,9 +29,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ScrollPane;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.action.event.ActionRegisterEvent;
-import net.jamsimulator.jams.gui.action.event.ActionUnregisterEvent;
+import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.explorer.Explorer;
+import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 
 /**
  * Represents an explorer showing all actions registered in {@link JamsApplication#getActionManager()}.
@@ -71,13 +72,13 @@ public class ActionsExplorer extends Explorer {
     }
 
     @Listener
-    private void onActionRegister(ActionRegisterEvent.After event) {
-        ((ActionsExplorerMainSection) mainSection).addAction(event.getAction());
+    private void onActionRegister(ManagerElementRegisterEvent.After<Action> event) {
+        ((ActionsExplorerMainSection) mainSection).addAction(event.getElement());
     }
 
     @Listener
-    private void onActionUnregister(ActionUnregisterEvent.After event) {
-        ((ActionsExplorerMainSection) mainSection).removeAction(event.getAction());
+    private void onActionUnregister(ManagerElementUnregisterEvent.After<Action> event) {
+        ((ActionsExplorerMainSection) mainSection).removeAction(event.getElement());
     }
 
     @Override

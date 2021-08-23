@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.syscall.bundle;
 
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -32,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class SyscallExecutionBuilderBundle {
+public class SyscallExecutionBuilderBundle implements Labeled {
 
     private final String name;
     private final Map<Integer, String> builders;
@@ -50,6 +51,7 @@ public class SyscallExecutionBuilderBundle {
         this.builders = new HashMap<>(builders);
     }
 
+    @Override
     public String getName() {
         return name;
     }

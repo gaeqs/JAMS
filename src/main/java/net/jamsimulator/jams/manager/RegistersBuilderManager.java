@@ -26,9 +26,6 @@ package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.mips.register.builder.MIPS32RegistersBuilder;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
-import net.jamsimulator.jams.mips.register.builder.event.DefaultRegistersBuilderChangeEvent;
-import net.jamsimulator.jams.mips.register.builder.event.RegistersBuilderRegisterEvent;
-import net.jamsimulator.jams.mips.register.builder.event.RegistersBuilderUnregisterEvent;
 
 /**
  * This singleton stores all {@link RegistersBuilder}s that projects may use.
@@ -38,15 +35,12 @@ import net.jamsimulator.jams.mips.register.builder.event.RegistersBuilderUnregis
  * An {@link RegistersBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public class RegistersBuilderManager extends DefaultValuableManager<RegistersBuilder> {
+public final class RegistersBuilderManager extends DefaultValuableManager<RegistersBuilder> {
 
     public static final RegistersBuilderManager INSTANCE = new RegistersBuilderManager();
 
 
     private RegistersBuilderManager() {
-        super(RegistersBuilderRegisterEvent.Before::new, RegistersBuilderRegisterEvent.After::new,
-                RegistersBuilderUnregisterEvent.Before::new, RegistersBuilderUnregisterEvent.After::new,
-                DefaultRegistersBuilderChangeEvent.Before::new, DefaultRegistersBuilderChangeEvent.After::new);
     }
 
     @Override

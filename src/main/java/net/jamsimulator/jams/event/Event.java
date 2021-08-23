@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.event;
 
+import java.lang.reflect.Type;
+
 /**
  * Represents an event. Events are used by {@link EventBroadcast}s to
  * send notifications to {@link Listener} methods.
@@ -59,6 +61,10 @@ public class Event {
      */
     public EventBroadcast getCaller() {
         return caller;
+    }
+
+    protected boolean suportsGenerics(Type[] generics) {
+        return generics.length == 0;
     }
 
     /**

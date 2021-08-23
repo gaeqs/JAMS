@@ -35,8 +35,8 @@ import net.jamsimulator.jams.gui.util.converter.LanguageValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 import net.jamsimulator.jams.language.Language;
-import net.jamsimulator.jams.language.event.LanguageRegisterEvent;
-import net.jamsimulator.jams.language.event.LanguageUnregisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 
 import java.util.function.Consumer;
 
@@ -84,15 +84,15 @@ public class LanguageValueEditor extends ComboBox<Language> implements ValueEdit
     }
 
     @Listener
-    private void onLanguageRegister(LanguageRegisterEvent.After event) {
-        getItems().add(event.getLanguage());
+    private void onLanguageRegister(ManagerElementRegisterEvent.After<Language> event) {
+        getItems().add(event.getElement());
     }
 
     @Listener
-    private void onLanguageUnregister(LanguageUnregisterEvent.After event) {
-        if (getSelectionModel().getSelectedItem().equals(event.getLanguage()))
+    private void onLanguageUnregister(ManagerElementUnregisterEvent.After<Language> event) {
+        if (getSelectionModel().getSelectedItem().equals(event.getElement()))
             setValue(Jams.getLanguageManager().getDefault());
-        getItems().remove(event.getLanguage());
+        getItems().remove(event.getElement());
     }
 
     @Override

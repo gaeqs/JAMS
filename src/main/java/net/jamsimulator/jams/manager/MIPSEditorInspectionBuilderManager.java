@@ -29,8 +29,6 @@ import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspection;
 import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilder;
 import net.jamsimulator.jams.gui.mips.inspection.error.*;
-import net.jamsimulator.jams.gui.mips.inspection.event.MIPSEditorBuilderUnregisterEvent;
-import net.jamsimulator.jams.gui.mips.inspection.event.MIPSEditorErrorBuilderRegisterEvent;
 import net.jamsimulator.jams.gui.mips.inspection.warning.MIPSEditorInspectionDirectiveNotFound;
 import net.jamsimulator.jams.gui.mips.inspection.warning.MIPSEditorInspectionRegisterUsingAt;
 import net.jamsimulator.jams.gui.mips.inspection.warning.MIPSEditorInspectionUsingEquivalent;
@@ -45,16 +43,14 @@ import java.util.Collection;
  * An {@link MIPSEditorInspectionBuilder}'s removal from the manager doesn't make editors to stop using
  * it inmediatelly.
  */
-public class MIPSEditorInspectionBuilderManager extends Manager<MIPSEditorInspectionBuilder<?>> {
+public final class MIPSEditorInspectionBuilderManager extends Manager<MIPSEditorInspectionBuilder<?>> {
 
     public static final MIPSEditorInspectionBuilderManager INSTANCE = new MIPSEditorInspectionBuilderManager();
 
     /**
      * Creates the manager.
      */
-    public MIPSEditorInspectionBuilderManager() {
-        super(MIPSEditorErrorBuilderRegisterEvent.Before::new, MIPSEditorErrorBuilderRegisterEvent.After::new,
-                MIPSEditorBuilderUnregisterEvent.Before::new, MIPSEditorBuilderUnregisterEvent.After::new);
+    private MIPSEditorInspectionBuilderManager() {
     }
 
     @Override

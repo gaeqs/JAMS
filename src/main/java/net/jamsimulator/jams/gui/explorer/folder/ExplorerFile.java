@@ -28,13 +28,13 @@ import javafx.scene.input.*;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.file.FileType;
-import net.jamsimulator.jams.file.event.FileTypeRegisterEvent;
-import net.jamsimulator.jams.file.event.FileTypeUnregisterEvent;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerBasicElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
+import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 import net.jamsimulator.jams.utils.FileUtils;
 
 import java.io.File;
@@ -156,20 +156,20 @@ public class ExplorerFile extends ExplorerBasicElement {
     }
 
     @Listener
-    private void onFileTypeRegister(FileTypeRegisterEvent.After event) {
+    private void onFileTypeRegister(ManagerElementRegisterEvent.Before<FileType> event) {
         if (type != Jams.getFileTypeManager().getUnknownType()) return;
         int lastIndex = name.lastIndexOf(".");
         if (lastIndex == -1 || lastIndex == name.length()) return;
 
-        if (event.getFileType().supportsExtension(name.substring(lastIndex + 1))) {
-            type = event.getFileType();
+        if (event.getElement().supportsExtension(name.substring(lastIndex + 1))) {
+            type = event.getElement();
             icon.setIcon(type.getIcon());
         }
     }
 
     @Listener
-    private void onFileTypeUnregister(FileTypeUnregisterEvent.After event) {
-        if (type != event.getFileType()) return;
+    private void onFileTypeUnregister(ManagerElementUnregisterEvent.Before<FileType> event) {
+        if (type != event.getElement()) return;
         type = Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType());
         icon.setIcon(type.getIcon());
     }

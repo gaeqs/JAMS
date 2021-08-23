@@ -28,8 +28,6 @@ import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 import net.jamsimulator.jams.mips.memory.cache.builder.AssociativeCacheBuilder;
 import net.jamsimulator.jams.mips.memory.cache.builder.DirectCacheBuilder;
 import net.jamsimulator.jams.mips.memory.cache.builder.SetAssociativeCacheBuilder;
-import net.jamsimulator.jams.mips.memory.cache.event.CacheBuilderRegisterEvent;
-import net.jamsimulator.jams.mips.memory.cache.event.CacheBuilderUnregisterEvent;
 
 /**
  * This singleton stores all {@link CacheBuilder}s that projects may use.
@@ -39,13 +37,11 @@ import net.jamsimulator.jams.mips.memory.cache.event.CacheBuilderUnregisterEvent
  * A {@link CacheBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public class CacheBuilderManager extends Manager<CacheBuilder<?>> {
+public final class CacheBuilderManager extends Manager<CacheBuilder<?>> {
 
     public static final CacheBuilderManager INSTANCE = new CacheBuilderManager();
 
     private CacheBuilderManager() {
-        super(CacheBuilderRegisterEvent.Before::new, CacheBuilderRegisterEvent.After::new,
-                CacheBuilderUnregisterEvent.Before::new, CacheBuilderUnregisterEvent.After::new);
     }
 
     @Override

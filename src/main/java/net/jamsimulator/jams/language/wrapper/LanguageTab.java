@@ -28,8 +28,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
-import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
+import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 
 public class LanguageTab extends Tab {
 
@@ -62,12 +63,12 @@ public class LanguageTab extends Tab {
     }
 
     @Listener
-    public void onSelectedLanguageChange(SelectedLanguageChangeEvent.After event) {
+    public void onSelectedLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
         refreshMessage();
     }
 
     @Listener
-    public void onDefaultLanguageChange(DefaultLanguageChangeEvent.After event) {
+    public void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
         refreshMessage();
     }
 }

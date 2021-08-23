@@ -27,8 +27,6 @@ package net.jamsimulator.jams.manager;
 import net.jamsimulator.jams.utils.NumberRepresentation;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.StringUtils;
-import net.jamsimulator.jams.utils.representation.event.NumberRepresentationRegisterEvent;
-import net.jamsimulator.jams.utils.representation.event.NumberRepresentationUnregisterEvent;
 
 /**
  * This singleton stores all {@link NumberRepresentation}s that JAMs may use.
@@ -38,7 +36,7 @@ import net.jamsimulator.jams.utils.representation.event.NumberRepresentationUnre
  * A {@link NumberRepresentation}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public class NumberRepresentationManager extends Manager<NumberRepresentation> {
+public final class NumberRepresentationManager extends Manager<NumberRepresentation> {
 
     public static final NumberRepresentation HEXADECIMAL = new NumberRepresentation("HEXADECIMAL",
             false, false,
@@ -86,10 +84,6 @@ public class NumberRepresentationManager extends Manager<NumberRepresentation> {
     public static final NumberRepresentationManager INSTANCE = new NumberRepresentationManager();
 
     private NumberRepresentationManager() {
-        super(NumberRepresentationRegisterEvent.Before::new,
-                NumberRepresentationRegisterEvent.After::new,
-                NumberRepresentationUnregisterEvent.Before::new,
-                NumberRepresentationUnregisterEvent.After::new);
     }
 
     private static String getRGBAsString(int value) {

@@ -24,13 +24,10 @@
 
 package net.jamsimulator.jams.manager;
 
-import net.jamsimulator.jams.event.Cancellable;
-import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.HashSet;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * Represents a {@link Manager} that has a default value.
@@ -43,30 +40,13 @@ import java.util.function.Function;
  */
 public abstract class DefaultValuableManager<Type extends Labeled> extends Manager<Type> {
 
-
-    protected final BiFunction<Type, Type, Event> beforeSelectDefaultEventBuilder;
-    protected final BiFunction<Type, Type, Event> afterSelectDefaultEventBuilder;
-
     protected Type defaultValue;
 
     /**
      * Creates the manager.
-     * These managers call events on addition, removal and default set. You must provide the builder for these events.
-     *
-     * @param beforeRegisterEventBuilder      the builder that creates the event called before an element is added.
-     * @param afterRegisterEventBuilder       the builder that creates the event called after an element is added.
-     * @param afterUnregisterEventBuilder     the builder that creates the event called before an element is removed.
-     * @param beforeUnregisterEventBuilder    the builder that creates the event called after an element is added.
-     * @param beforeSelectDefaultEventBuilder the builder that creates the event called before the default element is changed.
-     * @param afterSelectDefaultEventBuilder  the builder that creates the event called after the default element is changed.
+     * These managers call events on addition, removal and default set.
      */
-    public DefaultValuableManager(Function<Type, Event> beforeRegisterEventBuilder, Function<Type, Event> afterRegisterEventBuilder,
-                                  Function<Type, Event> beforeUnregisterEventBuilder, Function<Type, Event> afterUnregisterEventBuilder,
-                                  BiFunction<Type, Type, Event> beforeSelectDefaultEventBuilder, BiFunction<Type, Type, Event> afterSelectDefaultEventBuilder) {
-        super(beforeRegisterEventBuilder, afterRegisterEventBuilder, beforeUnregisterEventBuilder, afterUnregisterEventBuilder);
-
-        this.beforeSelectDefaultEventBuilder = beforeSelectDefaultEventBuilder;
-        this.afterSelectDefaultEventBuilder = afterSelectDefaultEventBuilder;
+    public DefaultValuableManager() {
         this.defaultValue = loadDefaultElement();
     }
 
@@ -99,13 +79,14 @@ public abstract class DefaultValuableManager<Type extends Labeled> extends Manag
 
         if (defaultValue == this.defaultValue) return false;
 
-        var before = callEvent(beforeSelectDefaultEventBuilder.apply(defaultValue, this.defaultValue));
-        if (before instanceof Cancellable && ((Cancellable) before).isCancelled()) return false;
+        var before =
+                callEvent(new ManagerDefaultElementChangeEvent.Before<>(this, this.defaultValue, defaultValue));
+        if (before.isCancelled()) return false;
 
         var old = this.defaultValue;
         this.defaultValue = defaultValue;
 
-        callEvent(afterSelectDefaultEventBuilder.apply(old, defaultValue));
+        callEvent(new ManagerDefaultElementChangeEvent.After<>(this, old, defaultValue));
         return true;
     }
 

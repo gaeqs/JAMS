@@ -46,9 +46,7 @@ import net.jamsimulator.jams.gui.action.defaults.mips.label.MIPSLabelsReferenceA
 import net.jamsimulator.jams.gui.action.defaults.simulation.*;
 import net.jamsimulator.jams.gui.action.defaults.texteditor.*;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
-import net.jamsimulator.jams.gui.action.event.ActionRegisterEvent;
 import net.jamsimulator.jams.gui.action.event.ActionUnbindEvent;
-import net.jamsimulator.jams.gui.action.event.ActionUnregisterEvent;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
@@ -65,7 +63,7 @@ import java.util.stream.Collectors;
  * To bind an {@link Action} to a {@link KeyCombination} use {@link #bind(KeyCombination, String)}.
  * To unbind them use {@link #unbind(KeyCombination, String)}.
  */
-public class ActionManager extends Manager<Action> {
+public final class ActionManager extends Manager<Action> {
 
     public static final String ACTIONS_SECTION = "action";
     public static final String LANGUAGE_REGION_NODE_PREFIX = "ACTION_REGION_";
@@ -74,9 +72,7 @@ public class ActionManager extends Manager<Action> {
 
     private final Map<KeyCombination, Map<String, Action>> binds;
 
-    public ActionManager() {
-        super(ActionRegisterEvent.Before::new, ActionRegisterEvent.After::new,
-                ActionUnregisterEvent.Before::new, ActionUnregisterEvent.After::new);
+    private ActionManager() {
         this.binds = new HashMap<>();
         if (loadDefaultBinds(loadBinds())) {
             save();
