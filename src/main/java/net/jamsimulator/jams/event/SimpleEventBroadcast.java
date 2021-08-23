@@ -25,9 +25,7 @@
 package net.jamsimulator.jams.event;
 
 import java.lang.reflect.Method;
-import java.util.Map;
 import java.util.SortedSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
@@ -43,16 +41,21 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 public class SimpleEventBroadcast implements EventBroadcast {
 
-    private final Map<Class<?>, SortedSet<ListenerMethod>> registeredListeners;
+    private final SortedSet<ListenerMethod> registeredListeners;
 
     /**
      * Creates an event caller.
      */
+    @SuppressWarnings("ComparatorMethodParameterNotUsed")
     public SimpleEventBroadcast() {
-        registeredListeners = new ConcurrentHashMap<>();
+        registeredListeners = new ConcurrentSkipListSet<>(((o1, o2) -> {
+            int val = o2.getListener().priority() - o1.getListener().priority();
+            //Avoids override. Listeners registered first have priority.
+            return val == 0 ? -1 : val;
+        }));
     }
 
-    @SuppressWarnings({"ComparatorMethodParameterNotUsed", "unchecked"})
+    @SuppressWarnings("unchecked")
     public boolean registerListener(Object instance, Method method, boolean useWeakReferences) {
         if (method.getParameterCount() != 1) return false;
         var clazz = method.getParameters()[0].getType();
@@ -62,21 +65,9 @@ public class SimpleEventBroadcast implements EventBroadcast {
         var annotations = method.getAnnotationsByType(Listener.class);
         if (annotations.length != 1) return false;
         var annotation = annotations[0];
-
         method.setAccessible(true);
 
-        var listenerMethod = new ListenerMethod(instance, method, type, annotation, useWeakReferences);
-
-        var methods = registeredListeners.computeIfAbsent(type, k ->
-                new ConcurrentSkipListSet<>(((o1, o2) -> {
-                    int val = o2.getListener().priority() - o1.getListener().priority();
-                    //Avoids override. Listeners registered first have priority.
-                    return val == 0 ? -1 : val;
-                })));
-
-
-        if (methods.stream().anyMatch(target -> target.matches(instance, method))) return false;
-        methods.add(listenerMethod);
+        registeredListeners.add(new ListenerMethod(instance, method, type, annotation, useWeakReferences));
         return true;
     }
 
@@ -94,23 +85,13 @@ public class SimpleEventBroadcast implements EventBroadcast {
         return amount;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public boolean unregisterListener(Object instance, Method method) {
         if (method.getParameterCount() != 1) return false;
         var clazz = method.getParameters()[0].getType();
         if (!Event.class.isAssignableFrom(clazz)) return false;
-        var type = (Class<? extends Event>) clazz;
         if (method.getAnnotationsByType(Listener.class).length != 1) return false;
-
-        var methods = registeredListeners.get(type);
-        if (methods == null) return false;
-
-        boolean b = methods.removeIf(target -> target.isReferenceInvalid() || target.matches(instance, method));
-        if (!b) return false;
-
-        if (methods.isEmpty()) registeredListeners.remove(type);
-        return true;
+        return registeredListeners.removeIf(it -> it.isReferenceInvalid() || it.matches(instance, method));
     }
 
     @Override
@@ -142,24 +123,15 @@ public class SimpleEventBroadcast implements EventBroadcast {
      */
     public <T extends Event> T callEvent(T event, EventBroadcast broadcast) {
         event.setCaller(broadcast);
-        var methods = registeredListeners.get(event.getClass());
-        if (methods == null) return event;
+        var iterator = registeredListeners.iterator();
 
-        var iterator = methods.iterator();
-        ListenerMethod method;
         while (iterator.hasNext()) {
-            method = iterator.next();
-            if (method.isReferenceInvalid()) {
-                iterator.remove();
-                continue;
-            }
-
-            if (method.ignoresCancelledEvents()
-                    || !(event instanceof Cancellable)
-                    || !((Cancellable) event).isCancelled()) {
-                if (event.suportsGenerics(method.getGenerics())) {
-                    method.call(event);
-                }
+            var method = iterator.next();
+            if (method.isReferenceInvalid()) iterator.remove();
+            else if ((method.ignoresCancelledEvents() || !(event instanceof Cancellable c) || !c.isCancelled())
+                    && method.getEvent().isInstance(event)
+                    && event.suportsGenerics(method.getGenerics())) {
+                method.call(event);
             }
         }
 
