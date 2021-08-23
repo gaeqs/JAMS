@@ -43,7 +43,7 @@ import java.util.Optional;
  * An {@link ProjectType}'s removal from the manager doesn't make editors to stop using
  * it inmediatelly.
  */
-public final class ProjectTypeManager extends Manager<ProjectType<?>> {
+public final class ProjectTypeManager extends Manager<ProjectType> {
 
     public static final ProjectTypeManager INSTANCE = new ProjectTypeManager();
 
@@ -51,6 +51,7 @@ public final class ProjectTypeManager extends Manager<ProjectType<?>> {
      * Creates the manager.
      */
     private ProjectTypeManager() {
+        super(ProjectType.class);
     }
 
     public Optional<ProjectType<?>> getByProjectfolder(File folder) {
@@ -63,7 +64,7 @@ public final class ProjectTypeManager extends Manager<ProjectType<?>> {
             var data = new JSONObject(FileUtils.readAll(dataFile));
             var type = data.get("type");
             if (type == null) return Optional.empty();
-            return get(type.toString());
+            return get(type.toString()).map(it -> (ProjectType<?>) it);
         } catch (IOException | JSONException e) {
             return Optional.empty();
         }

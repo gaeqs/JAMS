@@ -47,6 +47,7 @@ public final class FileTypeManager extends Manager<FileType> {
     private FileType unknownType, folderType;
 
     private FileTypeManager() {
+        super(FileType.class);
     }
 
     /**

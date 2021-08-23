@@ -41,6 +41,7 @@ public final class MemoryBuilderManager extends DefaultValuableManager<MemoryBui
 
 
     private MemoryBuilderManager() {
+        super(MemoryBuilder.class);
     }
 
     @Override

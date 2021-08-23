@@ -32,7 +32,6 @@ import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -45,9 +44,6 @@ import java.util.Optional;
  * Every addition will call a register event, and every removal will call an unregister event.
  * <p>
  * Instances of this class are used to manage the storage of several kind of elements inside JAMS.
- * <p>
- * Make sure it's the final child class the one that sets the type of the manager.
- * This allows {@link #getManagedType()} to work properly.
  *
  * @param <Type> the type of the managed elements.
  * @see DefaultValuableManager
@@ -60,12 +56,15 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
      */
     protected final SimpleEventBroadcast broadcast;
 
+    protected final Class<Type> managedType;
+
     /**
      * Creates the manager.
      * These managers call events on addition and removal.
      */
-    public Manager() {
+    public Manager(Class<Type> managedType) {
         this.broadcast = new SimpleEventBroadcast();
+        this.managedType = managedType;
         loadDefaultElements();
     }
 
@@ -93,15 +92,6 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
     }
 
     /**
-     * Returns the managed {@link java.lang.reflect.Type Type} of this manager.
-     *
-     * @return the managed type.
-     */
-    public java.lang.reflect.Type getManagedType() {
-        return ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-    }
-
-    /**
      * Attempts to register the given element.
      * If the element is null this method throws an {@link NullPointerException}.
      * If the element is already present or the register event is cancelled this method returns {@code false}.
@@ -115,11 +105,12 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
     @Override
     public boolean add(Type element) {
         Validate.notNull(element, "The element cannot be null!");
-        var before = callEvent(new ManagerElementRegisterEvent.Before<>(this, element));
+        var before =
+                callEvent(new ManagerElementRegisterEvent.Before<>(this, managedType, element));
         if (before.isCancelled()) return false;
         if (super.add(element)) {
             onElementAddition(element);
-            callEvent(new ManagerElementRegisterEvent.After<>(this, element));
+            callEvent(new ManagerElementRegisterEvent.After<>(this, managedType, element));
             return true;
         }
         return false;
@@ -156,11 +147,12 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
         Validate.notNull(o, "The element cannot be null!");
         if (!contains(o)) return false;
         try {
-            var before = callEvent(new ManagerElementUnregisterEvent.Before<>(this, (Type) o));
+            var before =
+                    callEvent(new ManagerElementUnregisterEvent.Before<>(this, managedType, (Type) o));
             if (before.isCancelled()) return false;
             if (super.remove(o)) {
                 onElementRemoval((Type) o);
-                callEvent(new ManagerElementUnregisterEvent.After<>(this, (Type) o));
+                callEvent(new ManagerElementUnregisterEvent.After<>(this, managedType, (Type) o));
                 return true;
             }
             return false;

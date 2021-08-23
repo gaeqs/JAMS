@@ -37,11 +37,12 @@ import net.jamsimulator.jams.mips.memory.cache.builder.SetAssociativeCacheBuilde
  * A {@link CacheBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public final class CacheBuilderManager extends Manager<CacheBuilder<?>> {
+public final class CacheBuilderManager extends Manager<CacheBuilder> {
 
     public static final CacheBuilderManager INSTANCE = new CacheBuilderManager();
 
     private CacheBuilderManager() {
+        super(CacheBuilder.class);
     }
 
     @Override

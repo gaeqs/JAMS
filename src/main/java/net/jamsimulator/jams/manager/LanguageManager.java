@@ -59,6 +59,7 @@ public final class LanguageManager extends SelectableManager<Language> {
     private File folder;
 
     private LanguageManager() {
+        super(Language.class);
         Jams.getMainConfiguration().registerListeners(this, true);
     }
 

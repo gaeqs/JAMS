@@ -73,6 +73,7 @@ public final class ActionManager extends Manager<Action> {
     private final Map<KeyCombination, Map<String, Action>> binds;
 
     private ActionManager() {
+        super(Action.class);
         this.binds = new HashMap<>();
         if (loadDefaultBinds(loadBinds())) {
             save();

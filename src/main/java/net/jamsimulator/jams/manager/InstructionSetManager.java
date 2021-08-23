@@ -40,6 +40,7 @@ public final class InstructionSetManager extends DefaultValuableManager<Instruct
     public static final InstructionSetManager INSTANCE = new InstructionSetManager();
 
     private InstructionSetManager() {
+        super(InstructionSet.class);
     }
 
     @Override

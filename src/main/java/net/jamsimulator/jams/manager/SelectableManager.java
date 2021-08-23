@@ -47,7 +47,8 @@ public abstract class SelectableManager<Type extends Labeled> extends DefaultVal
      * Creates the manager.
      * These managers call events on addition, removal and default set. You must provide the builder for these events.
      */
-    public SelectableManager() {
+    public SelectableManager(Class<Type> managedType) {
+        super(managedType);
         this.selected = loadSelectedElement();
     }
 
@@ -81,13 +82,13 @@ public abstract class SelectableManager<Type extends Labeled> extends DefaultVal
         if (selected == this.selected) return false;
 
         var before =
-                callEvent(new ManagerSelectedElementChangeEvent.Before<>(this, this.selected, selected));
+                callEvent(new ManagerSelectedElementChangeEvent.Before<>(this, managedType, this.selected, selected));
         if (before.isCancelled()) return false;
 
         var old = this.selected;
         this.selected = selected;
 
-        callEvent(new ManagerSelectedElementChangeEvent.After<>(this, old, selected));
+        callEvent(new ManagerSelectedElementChangeEvent.After<>(this, managedType, old, selected));
         return true;
     }
 

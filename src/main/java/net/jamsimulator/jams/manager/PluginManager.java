@@ -61,6 +61,7 @@ public final class PluginManager extends Manager<Plugin> {
     public static final PluginManager INSTANCE = new PluginManager();
 
     private PluginManager() {
+        super(Plugin.class);
     }
 
     /**

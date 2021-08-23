@@ -40,6 +40,7 @@ public final class DirectiveSetManager extends DefaultValuableManager<DirectiveS
     public static final DirectiveSetManager INSTANCE = new DirectiveSetManager();
 
     private DirectiveSetManager() {
+        super(DirectiveSet.class);
     }
 
     @Override

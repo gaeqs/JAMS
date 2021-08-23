@@ -46,7 +46,8 @@ public abstract class DefaultValuableManager<Type extends Labeled> extends Manag
      * Creates the manager.
      * These managers call events on addition, removal and default set.
      */
-    public DefaultValuableManager() {
+    public DefaultValuableManager(Class<Type> managedType) {
+        super(managedType);
         this.defaultValue = loadDefaultElement();
     }
 
@@ -80,13 +81,13 @@ public abstract class DefaultValuableManager<Type extends Labeled> extends Manag
         if (defaultValue == this.defaultValue) return false;
 
         var before =
-                callEvent(new ManagerDefaultElementChangeEvent.Before<>(this, this.defaultValue, defaultValue));
+                callEvent(new ManagerDefaultElementChangeEvent.Before<>(this, managedType, this.defaultValue, defaultValue));
         if (before.isCancelled()) return false;
 
         var old = this.defaultValue;
         this.defaultValue = defaultValue;
 
-        callEvent(new ManagerDefaultElementChangeEvent.After<>(this, old, defaultValue));
+        callEvent(new ManagerDefaultElementChangeEvent.After<>(this, managedType, old, defaultValue));
         return true;
     }
 

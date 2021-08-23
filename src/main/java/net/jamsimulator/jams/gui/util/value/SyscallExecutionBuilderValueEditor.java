@@ -56,7 +56,8 @@ public class SyscallExecutionBuilderValueEditor extends ComboBox<SyscallExecutio
     private static final List<SyscallExecutionBuilder<?>> SORTED_BUILDERS = new LinkedList<>();
 
     static {
-        SORTED_BUILDERS.addAll(Jams.getSyscallExecutionBuilderManager());
+        SORTED_BUILDERS.addAll(Jams.getSyscallExecutionBuilderManager()
+                .stream().map(it -> (SyscallExecutionBuilder<?>) it).toList());
         sort();
         var listeners = new StaticListeners();
         Jams.getLanguageManager().registerListeners(listeners, false);

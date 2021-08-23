@@ -42,6 +42,7 @@ public final class BarSnapshotViewModeManager extends Manager<BarSnapshotViewMod
     public static final BarSnapshotViewModeManager INSTANCE = new BarSnapshotViewModeManager();
 
     private BarSnapshotViewModeManager() {
+        super(BarSnapshotViewMode.class);
     }
 
     @Override

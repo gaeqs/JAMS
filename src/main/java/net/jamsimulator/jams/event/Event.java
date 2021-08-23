@@ -41,6 +41,9 @@ import java.lang.reflect.Type;
  * <p>
  * The value {@link #getCaller() caller} holds the last {@link EventBroadcast}
  * this event was sent through.
+ *
+ * <h2>Generics</h2>
+ * If you need an event implementation that support generics use {@link GenericEvent}.
  */
 public class Event {
 

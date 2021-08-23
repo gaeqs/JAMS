@@ -88,6 +88,7 @@ public final class ThemeManager extends SelectableManager<Theme> {
     private String generalFont, codeFont;
 
     private ThemeManager() {
+        super(Theme.class);
         Jams.getMainConfiguration().registerListeners(this, true);
     }
 

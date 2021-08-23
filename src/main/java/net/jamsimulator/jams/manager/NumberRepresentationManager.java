@@ -84,6 +84,7 @@ public final class NumberRepresentationManager extends Manager<NumberRepresentat
     public static final NumberRepresentationManager INSTANCE = new NumberRepresentationManager();
 
     private NumberRepresentationManager() {
+        super(NumberRepresentation.class);
     }
 
     private static String getRGBAsString(int value) {

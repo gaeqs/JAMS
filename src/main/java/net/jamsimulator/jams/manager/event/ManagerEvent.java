@@ -24,44 +24,22 @@
 
 package net.jamsimulator.jams.manager.event;
 
-import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.event.GenericEvent;
 import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.lang.reflect.Type;
-import java.lang.reflect.WildcardType;
-
-public class ManagerEvent<T extends Labeled> extends Event {
+public class ManagerEvent<T extends Labeled> extends GenericEvent<T> {
 
     protected final Manager<T> manager;
 
-    public ManagerEvent(Manager<T> manager) {
+    public ManagerEvent(Manager<T> manager, Class<T> type) {
+        super(type);
         Validate.notNull(manager, "Manager cannot be null!");
         this.manager = manager;
     }
 
     public Manager<T> getManager() {
         return manager;
-    }
-
-    @Override
-    protected boolean suportsGenerics(Type[] generics) {
-        // Raw type
-        if (generics.length == 0) return true;
-        if (generics.length > 1) return false;
-        var type = generics[0];
-        var managed = manager.getManagedType();
-        if (type.equals(managed)) return true;
-
-        return type instanceof WildcardType wildcard
-                && wildcard.getLowerBounds().length == 0
-                && validUpperBounds(wildcard.getUpperBounds(), managed);
-    }
-
-    private boolean validUpperBounds(Type[] bounds, Type managed) {
-        return bounds.length == 0
-                || bounds.length <= 1 && (bounds[0].equals(Object.class)
-                || managed instanceof Class<?> mc && bounds[0] instanceof Class<?> tc && tc.isAssignableFrom(mc));
     }
 }

@@ -40,7 +40,7 @@ public class SyscallExecutionBuilderValueConverter extends ValueConverter<Syscal
 
     @Override
     public Optional<SyscallExecutionBuilder<?>> fromStringSafe(String value) {
-        return Jams.getSyscallExecutionBuilderManager().get(value);
+        return Jams.getSyscallExecutionBuilderManager().get(value).map(it -> (SyscallExecutionBuilder<?>) it);
     }
 
     @Override

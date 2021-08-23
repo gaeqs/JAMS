@@ -41,6 +41,7 @@ public final class RegistersBuilderManager extends DefaultValuableManager<Regist
 
 
     private RegistersBuilderManager() {
+        super(RegistersBuilder.class);
     }
 
     @Override

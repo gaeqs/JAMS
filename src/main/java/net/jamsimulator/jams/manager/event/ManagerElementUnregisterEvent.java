@@ -32,8 +32,8 @@ public class ManagerElementUnregisterEvent<Type extends Labeled> extends Manager
 
     protected final Type element;
 
-    private ManagerElementUnregisterEvent(Manager<Type> manager, Type element) {
-        super(manager);
+    private ManagerElementUnregisterEvent(Manager<Type> manager, Class<Type> type, Type element) {
+        super(manager, type);
         this.element = element;
     }
 
@@ -45,8 +45,8 @@ public class ManagerElementUnregisterEvent<Type extends Labeled> extends Manager
 
         private boolean cancelled = false;
 
-        public Before(Manager<Type> manager, Type element) {
-            super(manager, element);
+        public Before(Manager<Type> manager, Class<Type> type, Type element) {
+            super(manager, type, element);
         }
 
         @Override
@@ -62,8 +62,8 @@ public class ManagerElementUnregisterEvent<Type extends Labeled> extends Manager
 
     public static class After<Type extends Labeled> extends ManagerElementUnregisterEvent<Type> {
 
-        public After(Manager<Type> manager, Type element) {
-            super(manager, element);
+        public After(Manager<Type> manager, Class<Type> type, Type element) {
+            super(manager, type, element);
         }
     }
 }

@@ -43,7 +43,7 @@ import java.util.Collection;
  * An {@link MIPSEditorInspectionBuilder}'s removal from the manager doesn't make editors to stop using
  * it inmediatelly.
  */
-public final class MIPSEditorInspectionBuilderManager extends Manager<MIPSEditorInspectionBuilder<?>> {
+public final class MIPSEditorInspectionBuilderManager extends Manager<MIPSEditorInspectionBuilder> {
 
     public static final MIPSEditorInspectionBuilderManager INSTANCE = new MIPSEditorInspectionBuilderManager();
 
@@ -51,6 +51,7 @@ public final class MIPSEditorInspectionBuilderManager extends Manager<MIPSEditor
      * Creates the manager.
      */
     private MIPSEditorInspectionBuilderManager() {
+        super(MIPSEditorInspectionBuilder.class);
     }
 
     @Override

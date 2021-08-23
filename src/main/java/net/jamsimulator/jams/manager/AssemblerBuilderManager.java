@@ -40,6 +40,7 @@ public final class AssemblerBuilderManager extends DefaultValuableManager<Assemb
     public static final AssemblerBuilderManager INSTANCE = new AssemblerBuilderManager();
 
     private AssemblerBuilderManager() {
+        super(AssemblerBuilder.class);
     }
 
     @Override

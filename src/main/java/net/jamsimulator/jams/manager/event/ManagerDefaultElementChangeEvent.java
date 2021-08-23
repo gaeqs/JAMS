@@ -34,8 +34,8 @@ public class ManagerDefaultElementChangeEvent<Type extends Labeled> extends Mana
     protected final Type oldElement;
     protected Type newElement;
 
-    private ManagerDefaultElementChangeEvent(Manager<Type> manager, Type oldElement, Type newElement) {
-        super(manager);
+    private ManagerDefaultElementChangeEvent(Manager<Type> manager, Class<Type> type, Type oldElement, Type newElement) {
+        super(manager, type);
         this.oldElement = oldElement;
         this.newElement = newElement;
     }
@@ -52,8 +52,8 @@ public class ManagerDefaultElementChangeEvent<Type extends Labeled> extends Mana
 
         private boolean cancelled = false;
 
-        public Before(Manager<E> manager, E oldElement, E newElement) {
-            super(manager, oldElement, newElement);
+        public Before(Manager<E> manager, Class<E> type, E oldElement, E newElement) {
+            super(manager, type, oldElement, newElement);
         }
 
         @Override
@@ -73,8 +73,8 @@ public class ManagerDefaultElementChangeEvent<Type extends Labeled> extends Mana
     }
 
     public static class After<E extends Labeled> extends ManagerDefaultElementChangeEvent<E> {
-        public After(Manager<E> manager, E oldElement, E newElement) {
-            super(manager, oldElement, newElement);
+        public After(Manager<E> manager, Class<E> type, E oldElement, E newElement) {
+            super(manager, type, oldElement, newElement);
         }
     }
 }

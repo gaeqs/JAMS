@@ -35,11 +35,12 @@ import net.jamsimulator.jams.mips.syscall.defaults.*;
  * An {@link SyscallExecutionBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public final class SyscallExecutionBuilderManager extends Manager<SyscallExecutionBuilder<?>> {
+public final class SyscallExecutionBuilderManager extends Manager<SyscallExecutionBuilder> {
 
     public static final SyscallExecutionBuilderManager INSTANCE = new SyscallExecutionBuilderManager();
 
     private SyscallExecutionBuilderManager() {
+        super(SyscallExecutionBuilder.class);
     }
 
     @Override

@@ -41,6 +41,7 @@ public final class SyscallExecutionBuilderBundleManager extends Manager<SyscallE
     public static final SyscallExecutionBuilderBundleManager INSTANCE = new SyscallExecutionBuilderBundleManager();
 
     private SyscallExecutionBuilderBundleManager() {
+        super(SyscallExecutionBuilderBundle.class);
     }
 
     @Override

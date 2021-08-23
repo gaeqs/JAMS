@@ -42,6 +42,7 @@ public final class ArchitectureManager extends DefaultValuableManager<Architectu
     public static final ArchitectureManager INSTANCE = new ArchitectureManager();
 
     private ArchitectureManager() {
+        super(Architecture.class);
     }
 
     @Override

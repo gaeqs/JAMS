@@ -56,7 +56,7 @@ public class CacheBuilderValueEditor extends ComboBox<CacheBuilder<?>> implement
     private static final List<CacheBuilder<?>> SORTED_BUILDERS = new LinkedList<>();
 
     static {
-        SORTED_BUILDERS.addAll(Jams.getCacheBuilderManager());
+        SORTED_BUILDERS.addAll(Jams.getCacheBuilderManager().stream().map(it -> (CacheBuilder<?>) it).toList());
         sort();
         var listeners = new StaticListeners();
         Jams.getLanguageManager().registerListeners(listeners, false);
