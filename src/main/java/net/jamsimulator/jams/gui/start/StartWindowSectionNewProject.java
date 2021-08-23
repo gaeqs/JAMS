@@ -33,7 +33,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
@@ -41,6 +40,7 @@ import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
 import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 import net.jamsimulator.jams.project.Project;
@@ -77,7 +77,7 @@ public class StartWindowSectionNewProject extends SplitPane implements StartWind
 
         loadSectionMenu();
 
-        Jams.getProjectTypeManager().registerListeners(this, true);
+        Manager.of(ProjectType.class).registerListeners(this, true);
     }
 
     private void select(ProjectTemplateBuilder<?> creator, Node button) {
@@ -105,7 +105,7 @@ public class StartWindowSectionNewProject extends SplitPane implements StartWind
 
     private void refreshSections() {
         sectionsVBox.getChildren().clear();
-        Jams.getProjectTypeManager().forEach(this::addCreators);
+        Manager.of(ProjectType.class).forEach(this::addCreators);
     }
 
     private void addCreators(ProjectType<?> type) {

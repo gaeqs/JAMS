@@ -24,8 +24,8 @@
 
 package net.jamsimulator.jams.project.mips.configuration;
 
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
@@ -53,7 +53,7 @@ public class MIPSSimulationConfigurationPresets {
         PRESETS.add(new MIPSSimulationConfigurationNodePreset(ARCHITECTURE, Architecture.class, 100,
                 Messages.SIMULATION_CONFIGURATION_ARCHITECTURE, SingleCycleArchitecture.INSTANCE, null));
         PRESETS.add(new MIPSSimulationConfigurationNodePreset(MEMORY, MemoryBuilder.class, 100,
-                Messages.SIMULATION_CONFIGURATION_MEMORY, Jams.getMemoryBuilderManager().getDefault(), null));
+                Messages.SIMULATION_CONFIGURATION_MEMORY, Manager.ofD(MemoryBuilder.class).getDefault(), null));
         PRESETS.add(new MIPSSimulationConfigurationNodePreset(CALL_EVENTS, Boolean.class, 90,
                 Messages.SIMULATION_CONFIGURATION_CALL_EVENTS, true, null));
         PRESETS.add(new MIPSSimulationConfigurationNodePreset(UNDO_ENABLED, Boolean.class, 89,

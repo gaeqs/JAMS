@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.gui.action.defaults.explorerelement.folder;
 
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
@@ -37,6 +36,8 @@ import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.popup.NewFileWindow;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.file.FileTypeManager;
+import net.jamsimulator.jams.manager.Manager;
 
 import java.io.File;
 
@@ -49,7 +50,7 @@ public class FolderActionNewFile extends ContextAction {
     public FolderActionNewFile() {
         super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_NEW_FILE,
                 DEFAULT_COMBINATION, FolderActionRegions.NEW_GENERAL, null,
-                Jams.getFileTypeManager().getUnknownType().getIcon());
+                Manager.get(FileTypeManager.class).getUnknownType().getIcon());
     }
 
     @Override

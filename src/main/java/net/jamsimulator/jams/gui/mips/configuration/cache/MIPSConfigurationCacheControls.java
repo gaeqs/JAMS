@@ -28,13 +28,13 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 
 
@@ -66,7 +66,7 @@ public class MIPSConfigurationCacheControls extends AnchorPane {
         button.getStyleClass().add("bold-button");
 
         button.setOnAction(event -> {
-            var builder = Jams.getCacheBuilderManager().stream().findAny()
+            var builder = Manager.of(CacheBuilder.class).stream().findAny()
                     .map(CacheBuilder::makeNewInstance).orElse(null);
 
             cacheTab.getConfiguration().getCacheBuilders().add(builder);

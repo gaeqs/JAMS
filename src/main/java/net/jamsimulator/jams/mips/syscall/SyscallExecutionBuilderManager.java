@@ -22,9 +22,10 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.mips.syscall;
 
-import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
+import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.syscall.defaults.*;
 
 /**
@@ -37,10 +38,11 @@ import net.jamsimulator.jams.mips.syscall.defaults.*;
  */
 public final class SyscallExecutionBuilderManager extends Manager<SyscallExecutionBuilder> {
 
+    public static final String NAME = "syscall_execution_builder";
     public static final SyscallExecutionBuilderManager INSTANCE = new SyscallExecutionBuilderManager();
 
     private SyscallExecutionBuilderManager() {
-        super(SyscallExecutionBuilder.class);
+        super(SyscallExecutionBuilder.class, false);
     }
 
     @Override

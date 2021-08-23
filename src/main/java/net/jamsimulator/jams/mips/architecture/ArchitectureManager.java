@@ -22,34 +22,37 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.mips.architecture;
 
-import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
-import net.jamsimulator.jams.mips.assembler.builder.MIPS32AssemblerBuilder;
+import net.jamsimulator.jams.manager.DefaultValuableManager;
+import net.jamsimulator.jams.utils.Labeled;
 
 /**
- * This singleton stores all {@link AssemblerBuilder}s that projects may use.
+ * This singleton stores all {@link Architecture}s that projects may use.
  * <p>
- * To register an {@link AssemblerBuilder} use {@link #add(Labeled)}.
- * To unregister an {@link AssemblerBuilder} use {@link #remove(Object)}.
- * An {@link AssemblerBuilder}'s removal from the manager doesn't make projects
+ * To register an {@link Architecture} use {@link #add(Labeled)}.
+ * To unregister an {@link Architecture} use {@link #remove(Object)}.
+ * An {@link Architecture}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public final class AssemblerBuilderManager extends DefaultValuableManager<AssemblerBuilder> {
+public final class ArchitectureManager extends DefaultValuableManager<Architecture> {
 
-    public static final AssemblerBuilderManager INSTANCE = new AssemblerBuilderManager();
+    public static final String NAME = "architecture";
+    public static final ArchitectureManager INSTANCE = new ArchitectureManager();
 
-    private AssemblerBuilderManager() {
-        super(AssemblerBuilder.class);
+    private ArchitectureManager() {
+        super(Architecture.class, false);
     }
 
     @Override
-    protected AssemblerBuilder loadDefaultElement() {
-        return MIPS32AssemblerBuilder.INSTANCE;
+    protected Architecture loadDefaultElement() {
+        return SingleCycleArchitecture.INSTANCE;
     }
 
     @Override
     protected void loadDefaultElements() {
-        add(MIPS32AssemblerBuilder.INSTANCE);
+        add(SingleCycleArchitecture.INSTANCE);
+        add(MultiCycleArchitecture.INSTANCE);
+        add(PipelinedArchitecture.INSTANCE);
     }
 }

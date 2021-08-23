@@ -24,7 +24,7 @@
 
 package net.jamsimulator.jams.gui.util.converter;
 
-import net.jamsimulator.jams.manager.SyscallExecutionBuilderBundleManager;
+import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundleManager;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundle;
 

@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.gui.action;
 
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -30,8 +30,6 @@ import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.gui.ActionRegion;
-import net.jamsimulator.jams.gui.action.Action;
-import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.defaults.editor.EditorActionSave;
 import net.jamsimulator.jams.gui.action.defaults.editortab.EditorTabActionSplitHorizontally;
 import net.jamsimulator.jams.gui.action.defaults.editortab.EditorTabActionSplitVertically;
@@ -47,6 +45,8 @@ import net.jamsimulator.jams.gui.action.defaults.simulation.*;
 import net.jamsimulator.jams.gui.action.defaults.texteditor.*;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionUnbindEvent;
+import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
@@ -67,14 +67,19 @@ public final class ActionManager extends Manager<Action> {
 
     public static final String ACTIONS_SECTION = "action";
     public static final String LANGUAGE_REGION_NODE_PREFIX = "ACTION_REGION_";
+    public static final String NAME = "action";
 
     public static final ActionManager INSTANCE = new ActionManager();
 
-    private final Map<KeyCombination, Map<String, Action>> binds;
+    private final Map<KeyCombination, Map<String, Action>> binds = new HashMap<>();
 
     private ActionManager() {
-        super(Action.class);
-        this.binds = new HashMap<>();
+        super(Action.class, true);
+    }
+
+    @Override
+    public void load() {
+        super.load();
         if (loadDefaultBinds(loadBinds())) {
             save();
 

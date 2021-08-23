@@ -29,11 +29,11 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.util.converter.ActionValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
 import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 import net.jamsimulator.jams.mips.architecture.Architecture;
@@ -48,11 +48,12 @@ public class ArchitectureValueEditor extends ComboBox<Architecture> implements V
     };
 
     public ArchitectureValueEditor() {
+        var manager = Manager.ofD(Architecture.class);
         setConverter(ValueConverters.getByTypeUnsafe(Architecture.class));
-        getItems().addAll(Jams.getArchitectureManager());
-        getSelectionModel().select(Jams.getArchitectureManager().getDefault());
+        getItems().addAll(manager);
+        getSelectionModel().select(manager.getDefault());
         getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> listener.accept(val));
-        Jams.getArchitectureManager().registerListeners(this, true);
+        manager.registerListeners(this, true);
     }
 
     @Override
@@ -96,7 +97,7 @@ public class ArchitectureValueEditor extends ComboBox<Architecture> implements V
     @Listener
     private void onArchitectureUnregister(ManagerElementUnregisterEvent.After<Architecture> event) {
         if (getSelectionModel().getSelectedItem().equals(event.getElement()))
-            setValue(Jams.getArchitectureManager().getDefault());
+            setValue(Manager.ofD(Architecture.class).getDefault());
         getItems().remove(event.getElement());
     }
 

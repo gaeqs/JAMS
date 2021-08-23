@@ -22,35 +22,31 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.gui.bar.mode;
 
-import net.jamsimulator.jams.mips.memory.builder.MIPS32MemoryBuilder;
-import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
+import net.jamsimulator.jams.manager.Manager;
 
 /**
- * This singleton stores all {@link MemoryBuilder}s that projects may use.
+ * This singleton stores all {@link BarSnapshotViewMode}s that projects may use.
  * <p>
- * To register an {@link MemoryBuilder} use {@link #add(Labeled)}.
- * To unregister an {@link MemoryBuilder} use {@link #remove(Object)}.
- * An {@link MemoryBuilder}'s removal from the manager doesn't make projects
- * to stop using it if they're already using it.
+ * To register an {@link BarSnapshotViewMode} use {@link #add(Object)}.
+ * To unregister an {@link BarSnapshotViewMode} use {@link #remove(Object)}.
+ * An {@link BarSnapshotViewMode}'s removal from the manager doesn't make editors to stop using
+ * it inmediatelly.
  */
-public final class MemoryBuilderManager extends DefaultValuableManager<MemoryBuilder> {
+public final class BarSnapshotViewModeManager extends Manager<BarSnapshotViewMode> {
 
-    public static final MemoryBuilderManager INSTANCE = new MemoryBuilderManager();
+    public static final String NAME = "bar_snapshot_view_mode";
+    public static final BarSnapshotViewModeManager INSTANCE = new BarSnapshotViewModeManager();
 
-
-    private MemoryBuilderManager() {
-        super(MemoryBuilder.class);
+    private BarSnapshotViewModeManager() {
+        super(BarSnapshotViewMode.class, true);
     }
 
     @Override
     protected void loadDefaultElements() {
-        add(MIPS32MemoryBuilder.INSTANCE);
-    }
-
-    @Override
-    protected MemoryBuilder loadDefaultElement() {
-        return MIPS32MemoryBuilder.INSTANCE;
+        add(BarSnapshotViewModePane.INSTANCE);
+        add(BarSnapshotViewModeWindow.INSTANCE);
+        add(BarSnapshotViewModePersistentWindow.INSTANCE);
     }
 }

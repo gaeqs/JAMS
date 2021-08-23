@@ -27,7 +27,8 @@ package net.jamsimulator.jams.plugin;
 import javafx.application.Platform;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.image.icon.IconData;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.plugin.exception.PluginLoadException;
 import net.jamsimulator.jams.utils.ProtectedFileSystem;
 
@@ -133,7 +134,7 @@ public class Plugin implements Labeled {
     }
 
     /**
-     * WARNING! This method should be used only by a {@link net.jamsimulator.jams.manager.PluginManager}!
+     * WARNING! This method should be used only by a {@link PluginManager}!
      * <p>
      * Enables or disables this plugin.
      *
@@ -212,7 +213,7 @@ public class Plugin implements Labeled {
     /**
      * Disposes the resource of this plugin.
      * <p>
-     * THIS METHOD SHOULD BE USED ONLY BY {@link net.jamsimulator.jams.manager.PluginManager PluginManager}!!!
+     * THIS METHOD SHOULD BE USED ONLY BY {@link PluginManager PluginManager}!!!
      */
     public void dispose() throws IOException {
         classLoader.close();
@@ -248,11 +249,11 @@ public class Plugin implements Labeled {
 
     private void loadDependencies() {
         this.dependencies = header.dependencies().stream()
-                .map(target -> Jams.getPluginManager().get(target).orElse(null))
+                .map(target -> Manager.of(Plugin.class).get(target).orElse(null))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
         this.enabledSoftDepenedencies = header.softDependencies().stream()
-                .map(target -> Jams.getPluginManager().get(target).orElse(null))
+                .map(target -> Manager.of(Plugin.class).get(target).orElse(null))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }

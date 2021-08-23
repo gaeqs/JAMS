@@ -27,7 +27,7 @@ package net.jamsimulator.jams.project;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import net.jamsimulator.jams.gui.image.icon.IconData;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;

@@ -22,24 +22,14 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.manager.event;
 
-/**
- * Represents an element with a name.
- * <p>
- * {@link Manager}s must represent an element type that implements this interface.
- */
-public interface Labeled {
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.utils.Labeled;
 
-    /**
-     * Returns the name of the element.
-     * This name cannot be null, and it must be unique!
-     * <p>
-     * This value must also be immutable. Changes to the value returned by this method
-     * retult in unpredictable behaviours.
-     *
-     * @return the name of the element.
-     */
-    String getName();
+public class ManagerRequestingDefaultElementsEvent<Type extends Labeled> extends ManagerEvent<Type> {
 
+    public ManagerRequestingDefaultElementsEvent(Manager<Type> manager, Class<Type> type) {
+        super(manager, type);
+    }
 }

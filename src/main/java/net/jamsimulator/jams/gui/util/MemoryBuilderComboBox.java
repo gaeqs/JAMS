@@ -26,8 +26,8 @@ package net.jamsimulator.jams.gui.util;
 
 import javafx.scene.control.ComboBox;
 import javafx.util.StringConverter;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
 import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
@@ -35,7 +35,8 @@ import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
 public class MemoryBuilderComboBox extends ComboBox<MemoryBuilder> {
 
     public MemoryBuilderComboBox(MemoryBuilder selected) {
-        getItems().addAll(Jams.getMemoryBuilderManager());
+        var manager = Manager.ofD(MemoryBuilder.class);
+        getItems().addAll(manager);
         getSelectionModel().select(selected);
 
         setConverter(new StringConverter<>() {
@@ -46,11 +47,10 @@ public class MemoryBuilderComboBox extends ComboBox<MemoryBuilder> {
 
             @Override
             public MemoryBuilder fromString(String string) {
-                return Jams.getMemoryBuilderManager().get(string)
-                        .orElse(Jams.getMemoryBuilderManager().getDefault());
+                return manager.get(string).orElse(manager.getDefault());
             }
         });
-        Jams.getMemoryBuilderManager().registerListeners(this, true);
+        manager.registerListeners(this, true);
     }
 
     @Listener
@@ -61,7 +61,7 @@ public class MemoryBuilderComboBox extends ComboBox<MemoryBuilder> {
     @Listener
     private void onUnregister(ManagerElementUnregisterEvent.After<MemoryBuilder> event) {
         if (event.getElement().equals(getSelectionModel().getSelectedItem())) {
-            getSelectionModel().select(Jams.getMemoryBuilderManager().getDefault());
+            getSelectionModel().select(Manager.ofD(MemoryBuilder.class).getDefault());
         }
         getItems().remove(event.getElement());
     }

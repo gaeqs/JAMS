@@ -24,8 +24,7 @@
 
 package net.jamsimulator.jams.gui.theme;
 
-import net.jamsimulator.jams.manager.Labeled;
-import net.jamsimulator.jams.manager.ThemeManager;
+import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.HashSet;

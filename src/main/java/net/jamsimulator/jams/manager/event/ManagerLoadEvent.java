@@ -22,36 +22,28 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.manager.event;
 
-import net.jamsimulator.jams.mips.register.builder.MIPS32RegistersBuilder;
-import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.utils.Labeled;
 
-/**
- * This singleton stores all {@link RegistersBuilder}s that projects may use.
- * <p>
- * To register an {@link RegistersBuilder} use {@link #add(Labeled)}.
- * To unregister an {@link RegistersBuilder} use {@link #remove(Object)}.
- * An {@link RegistersBuilder}'s removal from the manager doesn't make projects
- * to stop using it if they're already using it.
- */
-public final class RegistersBuilderManager extends DefaultValuableManager<RegistersBuilder> {
+public class ManagerLoadEvent<Type extends Labeled> extends ManagerEvent<Type> {
 
-    public static final RegistersBuilderManager INSTANCE = new RegistersBuilderManager();
-
-
-    private RegistersBuilderManager() {
-        super(RegistersBuilder.class);
+    private ManagerLoadEvent(Manager<Type> manager, Class<Type> type) {
+        super(manager, type);
     }
 
-    @Override
-    protected void loadDefaultElements() {
-        add(MIPS32RegistersBuilder.INSTANCE);
+    public static class Before<Type extends Labeled> extends ManagerLoadEvent<Type> {
+
+        public Before(Manager<Type> manager, Class<Type> type) {
+            super(manager, type);
+        }
     }
 
-    @Override
-    protected RegistersBuilder loadDefaultElement() {
-        return MIPS32RegistersBuilder.INSTANCE;
-    }
+    public static class After<Type extends Labeled> extends ManagerLoadEvent<Type> {
 
+        public After(Manager<Type> manager, Class<Type> type) {
+            super(manager, type);
+        }
+    }
 }

@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.bar.mode;
 import net.jamsimulator.jams.gui.bar.BarButton;
 import net.jamsimulator.jams.gui.bar.BarSnapshot;
 import net.jamsimulator.jams.gui.bar.BarSnapshotHolder;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.utils.Labeled;
 
 import java.util.Optional;
 

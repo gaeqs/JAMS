@@ -24,7 +24,7 @@
 
 package net.jamsimulator.jams.mips.directive.set;
 
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.utils.Validate;
 

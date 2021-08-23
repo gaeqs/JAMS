@@ -24,7 +24,7 @@
 
 package net.jamsimulator.jams.gui.util.converter;
 
-import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 
 import java.util.Optional;
@@ -40,7 +40,7 @@ public class DirectiveSetValueConverter extends ValueConverter<DirectiveSet> {
 
     @Override
     public Optional<DirectiveSet> fromStringSafe(String value) {
-        return Jams.getDirectiveSetManager().get(value);
+        return Manager.of(DirectiveSet.class).get(value);
     }
 
     @Override

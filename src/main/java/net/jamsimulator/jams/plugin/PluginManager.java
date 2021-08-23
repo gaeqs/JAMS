@@ -22,13 +22,11 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.plugin;
 
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.RootConfiguration;
-import net.jamsimulator.jams.plugin.Plugin;
-import net.jamsimulator.jams.plugin.PluginClassLoader;
-import net.jamsimulator.jams.plugin.PluginHeader;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.plugin.exception.InvalidPluginHeaderException;
 import net.jamsimulator.jams.plugin.exception.PluginLoadException;
 import net.jamsimulator.jams.utils.FolderUtils;
@@ -40,6 +38,8 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.jar.JarFile;
 
 /**
@@ -58,10 +58,11 @@ import java.util.jar.JarFile;
 public final class PluginManager extends Manager<Plugin> {
 
     public static final File PLUGIN_FOLDER = new File(Jams.getMainFolder(), "plugins");
+    public static final String NAME = "plugin";
     public static final PluginManager INSTANCE = new PluginManager();
 
     private PluginManager() {
-        super(Plugin.class);
+        super(Plugin.class, false);
     }
 
     /**
@@ -154,7 +155,7 @@ public final class PluginManager extends Manager<Plugin> {
             }
             if (!loaded.contains(header)) {
                 try {
-                    add(loadPluginAndDependencies(header, headers, loaded));
+                    addAll(loadPluginAndDependencies(header, headers, loaded));
                 } catch (PluginLoadException e) {
                     System.err.println("Error while loading plugin " + header.name() + "!");
                     e.printStackTrace();
@@ -267,9 +268,9 @@ public final class PluginManager extends Manager<Plugin> {
         }
     }
 
-    private Plugin loadPluginAndDependencies(PluginHeader header, HashSet<PluginHeader> plugins,
-                                             HashSet<PluginHeader> loaded) throws PluginLoadException {
-
+    private List<Plugin> loadPluginAndDependencies(PluginHeader header, HashSet<PluginHeader> plugins,
+                                                   HashSet<PluginHeader> loaded) throws PluginLoadException {
+        var list = new LinkedList<Plugin>();
         // Searches for dependencies
         for (String dependency : header.dependencies()) {
             if (loaded.stream().anyMatch(t -> t.name().equals(dependency))) continue;
@@ -278,7 +279,7 @@ public final class PluginManager extends Manager<Plugin> {
                     .orElseThrow(() -> new PluginLoadException("Couldn't find dependency " + dependency + "!", header));
 
             // Here we don't capture any exception. If the dependency fails to load, the dependent plugin fails too!
-            loadPluginAndDependencies(dependencyHeader, plugins, loaded);
+            list.addAll(loadPluginAndDependencies(dependencyHeader, plugins, loaded));
         }
 
         // Searches for soft dependencies
@@ -288,13 +289,14 @@ public final class PluginManager extends Manager<Plugin> {
             var optional = plugins.stream().filter(t -> t.name().equals(dependency)).findAny();
 
             // Here we don't capture any exception. If the dependency fails to load, the dependent plugin fails too!
-            if (optional.isPresent()) loadPluginAndDependencies(optional.get(), plugins, loaded);
+            if (optional.isPresent()) list.addAll(loadPluginAndDependencies(optional.get(), plugins, loaded));
         }
 
         try {
             var plugin = new PluginClassLoader(Jams.class.getClassLoader(), header).getPlugin();
             loaded.add(header);
-            return plugin;
+            list.add(plugin);
+            return list;
         } catch (MalformedURLException ex) {
             throw new PluginLoadException(ex, header);
         }

@@ -30,11 +30,12 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
+import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.project.mips.MIPSProjectData;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 
@@ -82,7 +83,7 @@ public class MIPSConfigurationWindow extends SplitPane {
         stage.setX(main.getX() + main.getWidth() / 2 - (WIDTH >> 1));
         stage.setY(main.getY() + main.getHeight() / 2 - (HEIGHT >> 1));
 
-        stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.SIMULATION_CONFIGURATION_INFO));
+        stage.setTitle(Manager.ofS(Language.class).getSelected().getOrDefault(Messages.SIMULATION_CONFIGURATION_INFO));
         Icons.LOGO.getImage().ifPresent(stage.getIcons()::add);
 
         JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);

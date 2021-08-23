@@ -25,7 +25,7 @@
 package net.jamsimulator.jams.mips.memory.cache;
 
 import javafx.beans.property.Property;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.utils.Validate;
 

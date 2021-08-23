@@ -25,6 +25,8 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
 
 public enum FloatCondition {
 
@@ -71,6 +73,6 @@ public enum FloatCondition {
     }
 
     public String getName() {
-        return Jams.getLanguageManager().getSelected().getOrDefault("FLOAT_CONDITION_" + name());
+        return Manager.ofS(Language.class).getSelected().getOrDefault("FLOAT_CONDITION_" + name());
     }
 }

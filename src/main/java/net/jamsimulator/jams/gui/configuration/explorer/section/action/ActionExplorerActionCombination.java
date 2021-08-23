@@ -26,10 +26,11 @@ package net.jamsimulator.jams.gui.configuration.explorer.section.action;
 
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.popup.ConfirmationWindow;
+import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.Manager;
 
 /**
  * Represents a {@link net.jamsimulator.jams.gui.action.Action}'s {@link KeyCombination}.
@@ -48,7 +49,7 @@ public class ActionExplorerActionCombination extends Button {
         this.action = action;
         this.combination = combination;
 
-        setOnAction(event -> ConfirmationWindow.open(Jams.getLanguageManager().getSelected()
+        setOnAction(event -> ConfirmationWindow.open(Manager.ofS(Language.class).getSelected()
                 .getOrDefault(Messages.CONFIG_ACTION_UNBIND), this::deleteCombination, () -> {
         }));
         ellipsisStringProperty().set(combination.toString());

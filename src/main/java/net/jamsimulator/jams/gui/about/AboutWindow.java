@@ -36,8 +36,10 @@ import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
+import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
+import net.jamsimulator.jams.manager.Manager;
 
 public class AboutWindow extends AnchorPane {
 
@@ -82,7 +84,7 @@ public class AboutWindow extends AnchorPane {
         stage.setX(main.getX() + main.getWidth() / 2 - (WIDTH >> 1));
         stage.setY(main.getY() + main.getHeight() / 2 - (HEIGHT >> 1));
 
-        stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.MAIN_MENU_HELP_ABOUT));
+        stage.setTitle(Manager.ofS(Language.class).getSelected().getOrDefault(Messages.MAIN_MENU_HELP_ABOUT));
         Icons.LOGO.getImage().ifPresent(stage.getIcons()::add);
 
 
@@ -93,7 +95,7 @@ public class AboutWindow extends AnchorPane {
         });
 
         JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);
-        Jams.getLanguageManager().registerListeners(content, true);
+        Manager.of(Language.class).registerListeners(content, true);
 
         stage.show();
     }

@@ -50,6 +50,7 @@ import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
 import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 
@@ -201,7 +202,7 @@ public class ConfigurationWindow extends SplitPane {
             stage.setX(main.getX() + main.getWidth() / 2 - (WIDTH >> 1));
             stage.setY(main.getY() + main.getHeight() / 2 - (HEIGHT >> 1));
 
-            stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.CONFIG));
+            stage.setTitle(Manager.ofS(Language.class).getSelected().getOrDefault(Messages.CONFIG));
             Icons.LOGO.getImage().ifPresent(stage.getIcons()::add);
 
 
@@ -220,7 +221,7 @@ public class ConfigurationWindow extends SplitPane {
             });
 
             JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);
-            Jams.getLanguageManager().registerListeners(this, true);
+            Manager.of(Language.class).registerListeners(this, true);
         }
 
         stage.show();
@@ -233,7 +234,7 @@ public class ConfigurationWindow extends SplitPane {
 
     @Listener
     private void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
-        stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.CONFIG));
+        stage.setTitle(Manager.ofS(Language.class).getSelected().getOrDefault(Messages.CONFIG));
     }
 
     @Listener

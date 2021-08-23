@@ -22,11 +22,9 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.utils;
 
-import net.jamsimulator.jams.utils.NumberRepresentation;
-import net.jamsimulator.jams.utils.NumericUtils;
-import net.jamsimulator.jams.utils.StringUtils;
+import net.jamsimulator.jams.manager.Manager;
 
 /**
  * This singleton stores all {@link NumberRepresentation}s that JAMs may use.
@@ -81,10 +79,11 @@ public final class NumberRepresentationManager extends Manager<NumberRepresentat
             false, false,
             (o1, o2) -> NumericUtils.toRoman(o1));
 
+    public static final String NAME = "number_representation";
     public static final NumberRepresentationManager INSTANCE = new NumberRepresentationManager();
 
     private NumberRepresentationManager() {
-        super(NumberRepresentation.class);
+        super(NumberRepresentation.class, false);
     }
 
     private static String getRGBAsString(int value) {

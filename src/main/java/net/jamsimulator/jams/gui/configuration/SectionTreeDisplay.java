@@ -25,10 +25,10 @@
 package net.jamsimulator.jams.gui.configuration;
 
 import javafx.scene.control.Label;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
 import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 
@@ -42,7 +42,7 @@ public class SectionTreeDisplay extends Label {
     public SectionTreeDisplay() {
         super("");
         getStyleClass().add("configuration-section-tree-display");
-        Jams.getLanguageManager().registerListeners(this, true);
+        Manager.of(Language.class).registerListeners(this, true);
     }
 
     public void setSection(ExplorerSection section) {

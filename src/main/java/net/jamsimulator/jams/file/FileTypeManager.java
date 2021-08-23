@@ -22,13 +22,11 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.file;
 
-import net.jamsimulator.jams.file.AssemblyFileType;
-import net.jamsimulator.jams.file.FileType;
-import net.jamsimulator.jams.file.ImageFileType;
-import net.jamsimulator.jams.file.TextFileType;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
@@ -42,12 +40,13 @@ import java.util.Optional;
  */
 public final class FileTypeManager extends Manager<FileType> {
 
+    public static final String NAME = "file_type";
     public static final FileTypeManager INSTANCE = new FileTypeManager();
 
     private FileType unknownType, folderType;
 
     private FileTypeManager() {
-        super(FileType.class);
+        super(FileType.class, false);
     }
 
     /**

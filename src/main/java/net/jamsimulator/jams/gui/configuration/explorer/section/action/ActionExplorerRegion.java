@@ -24,9 +24,10 @@
 
 package net.jamsimulator.jams.gui.configuration.explorer.section.action;
 
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.explorer.*;
-import net.jamsimulator.jams.manager.ActionManager;
+import net.jamsimulator.jams.gui.action.ActionManager;
+import net.jamsimulator.jams.file.FileTypeManager;
+import net.jamsimulator.jams.manager.Manager;
 
 import java.util.Comparator;
 
@@ -73,7 +74,7 @@ public class ActionExplorerRegion extends ExplorerSection {
     @Override
     protected ExplorerSectionRepresentation loadRepresentation() {
         ExplorerSectionRepresentation representation = new ExplorerSectionLanguageRepresentation(this, hierarchyLevel, null);
-        representation.getIcon().setIcon(Jams.getFileTypeManager().getFolderType().getIcon());
+        representation.getIcon().setIcon(Manager.get(FileTypeManager.class).getFolderType().getIcon());
         return representation;
     }
 

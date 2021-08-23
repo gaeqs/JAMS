@@ -29,14 +29,15 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.util.converter.ActionValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverters;
-import net.jamsimulator.jams.manager.SyscallExecutionBuilderBundleManager;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundleManager;
 import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
 import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
+import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundle;
 
 import java.util.function.Consumer;
@@ -53,7 +54,7 @@ public class SyscallExecutionBuilderBundleValueEditor extends ComboBox<SyscallEx
         getItems().addAll(SyscallExecutionBuilderBundleManager.INSTANCE);
         getSelectionModel().select(0);
         getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> listener.accept(val));
-        Jams.getSyscallExecutionBuilderManager().registerListeners(this, true);
+        Manager.of(SyscallExecutionBuilder.class).registerListeners(this, true);
         SyscallExecutionBuilderBundleManager.INSTANCE.registerListeners(this, true);
     }
 

@@ -25,10 +25,10 @@
 package net.jamsimulator.jams.project.mips.configuration;
 
 import javafx.beans.property.Property;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.gui.util.converter.ValueConverters;
-import net.jamsimulator.jams.manager.SyscallExecutionBuilderBundleManager;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundleManager;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
@@ -237,7 +237,7 @@ public class MIPSSimulationConfiguration {
                 if (!(value instanceof Configuration config)) return;
 
                 if (!NumericUtils.isInteger(key)) return;
-                SyscallExecutionBuilder<?> builder = Jams.getSyscallExecutionBuilderManager()
+                SyscallExecutionBuilder<?> builder = Manager.of(SyscallExecutionBuilder.class)
                         .get(config.getString("name").orElse("")).orElse(null);
                 if (builder == null) return;
                 builder = builder.makeNewInstance();
@@ -271,7 +271,7 @@ public class MIPSSimulationConfiguration {
             while ((indexOptional = caches.get(String.valueOf(index))).isPresent()) {
                 if (!(indexOptional.get() instanceof Configuration config)) return;
 
-                CacheBuilder<?> builder = Jams.getCacheBuilderManager()
+                CacheBuilder<?> builder = Manager.of(CacheBuilder.class)
                         .get(config.getString("name").orElse("")).orElse(null);
                 if (builder == null) return;
                 builder = builder.makeNewInstance();

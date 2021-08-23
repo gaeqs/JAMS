@@ -43,6 +43,8 @@ import net.jamsimulator.jams.gui.bar.ToolsMenu;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageMenu;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.project.ProjectTypeManager;
 import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
 import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 import net.jamsimulator.jams.project.ProjectSnapshot;
@@ -61,7 +63,7 @@ public class MainMenuBar extends MenuBar {
 
     public MainMenuBar() {
         refresh();
-        Jams.getLanguageManager().registerListeners(this, true);
+        Manager.of(Language.class).registerListeners(this, true);
         JamsApplication.getActionManager().registerListeners(this, true);
     }
 
@@ -125,7 +127,7 @@ public class MainMenuBar extends MenuBar {
                 if (JamsApplication.getProjectsTabPane().isProjectOpen(file)) continue;
                 var item = new MenuItem(project.name());
                 item.setOnAction(action ->
-                        Jams.getProjectTypeManager().getByProjectfolder(file).ifPresent(type ->
+                        Manager.get(ProjectTypeManager.class).getByProjectfolder(file).ifPresent(type ->
                                 JamsApplication.getProjectsTabPane().openProject(type.loadProject(file))));
                 recentMenu.getItems().add(item);
                 if (recentMenu.getItems().size() >= MAX_RECENT_PROJECTS) break;

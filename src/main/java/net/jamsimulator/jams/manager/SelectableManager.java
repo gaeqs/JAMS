@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
+import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
 /**
@@ -43,13 +44,14 @@ public abstract class SelectableManager<Type extends Labeled> extends DefaultVal
 
     protected Type selected;
 
+    private boolean superclassLoaded = false;
+
     /**
      * Creates the manager.
      * These managers call events on addition, removal and default set. You must provide the builder for these events.
      */
-    public SelectableManager(Class<Type> managedType) {
-        super(managedType);
-        this.selected = loadSelectedElement();
+    public SelectableManager(Class<Type> managedType, boolean loadOnFXThread) {
+        super(managedType, loadOnFXThread);
     }
 
     /**
@@ -60,6 +62,7 @@ public abstract class SelectableManager<Type extends Labeled> extends DefaultVal
      * @return the selected element.
      */
     public Type getSelected() {
+        if (!loaded) loadPanic();
         return selected;
     }
 
@@ -78,6 +81,7 @@ public abstract class SelectableManager<Type extends Labeled> extends DefaultVal
     public boolean setSelected(Type selected) {
         Validate.notNull(selected, "The default value cannot be null!");
         Validate.isTrue(contains(selected), "The default value must be registered!");
+        if (!loaded) loadPanic();
 
         if (selected == this.selected) return false;
 
@@ -99,4 +103,17 @@ public abstract class SelectableManager<Type extends Labeled> extends DefaultVal
      * @return the selected element of this manager.
      */
     protected abstract Type loadSelectedElement();
+
+    @Override
+    public void load() {
+        super.load();
+        this.selected = loadSelectedElement();
+        callLoadAfterEvent();
+    }
+
+    @Override
+    protected void callLoadAfterEvent() {
+        if (!superclassLoaded) superclassLoaded = true;
+        else super.callLoadAfterEvent();
+    }
 }

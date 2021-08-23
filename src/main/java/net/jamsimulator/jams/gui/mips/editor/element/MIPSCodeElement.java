@@ -24,9 +24,9 @@
 
 package net.jamsimulator.jams.gui.mips.editor.element;
 
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspection;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ public abstract class MIPSCodeElement {
      * @return the translated name.
      */
     public String getTranslatedName() {
-        return getTranslatedName(Jams.getLanguageManager().getSelected());
+        return getTranslatedName(Manager.ofS(Language.class).getSelected());
     }
 
     /**

@@ -145,4 +145,10 @@ public class SimpleEventBroadcast implements EventBroadcast {
         registeredListeners.clear();
     }
 
+    @Override
+    public void transferListenersTo(EventBroadcast broadcast) {
+        if (!(broadcast instanceof SimpleEventBroadcast simple))
+            throw new IllegalArgumentException();
+        simple.registeredListeners.addAll(registeredListeners);
+    }
 }

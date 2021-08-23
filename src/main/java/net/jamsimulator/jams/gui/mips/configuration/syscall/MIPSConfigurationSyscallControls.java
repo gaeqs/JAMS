@@ -28,7 +28,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
@@ -37,6 +36,7 @@ import net.jamsimulator.jams.gui.util.value.ValueEditors;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundle;
 import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionRunExceptionHandler;
@@ -77,7 +77,7 @@ public class MIPSConfigurationSyscallControls extends AnchorPane {
 
         button.setOnAction(event -> {
             int id = syscallTab.getContents().getBiggestId() + 1;
-            var builder = Jams.getSyscallExecutionBuilderManager()
+            var builder = Manager.of(SyscallExecutionBuilder.class)
                     .get(SyscallExecutionRunExceptionHandler.NAME).map(SyscallExecutionBuilder::makeNewInstance).orElse(null);
 
             syscallTab.getConfiguration().getSyscallExecutionBuilders().put(id, builder);

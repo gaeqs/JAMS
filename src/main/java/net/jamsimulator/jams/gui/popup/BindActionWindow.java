@@ -34,7 +34,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
@@ -43,6 +42,7 @@ import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
+import net.jamsimulator.jams.manager.Manager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,7 +114,7 @@ public class BindActionWindow extends VBox {
 
     public static void open(Action action) {
         Stage stage = new Stage();
-        stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.CONFIG_ACTION_BIND_TITLE));
+        stage.setTitle(Manager.ofS(Language.class).getSelected().getOrDefault(Messages.CONFIG_ACTION_BIND_TITLE));
         PopupWindowHelper.open(stage, new BindActionWindow(stage, action), -1, -1, false);
     }
 
@@ -139,7 +139,7 @@ public class BindActionWindow extends VBox {
 
         if (!removed.isEmpty()) {
             StringBuilder builder = new StringBuilder();
-            Language language = Jams.getLanguageManager().getSelected();
+            Language language = Manager.ofS(Language.class).getSelected();
 
             removed.forEach(target -> builder.append(" - ").append(language
                     .getOrDefault(target.getLanguageNode().orElse(null))).append('\n'));

@@ -28,12 +28,13 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.plugin.PluginManager;
 import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
 import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 import net.jamsimulator.jams.plugin.Plugin;
@@ -52,10 +53,10 @@ public class PluginExplorerList extends VBox {
         getStyleClass().add(STYLE_CLASS);
         setAlignment(Pos.TOP_CENTER);
 
-        Jams.getPluginManager().forEach(plugin -> getChildren().add(new PluginExplorerEntry(plugin, this)));
+        Manager.of(Plugin.class).forEach(plugin -> getChildren().add(new PluginExplorerEntry(plugin, this)));
         loadInstallButton();
 
-        Jams.getPluginManager().registerListeners(this, true);
+        Manager.of(Plugin.class).registerListeners(this, true);
     }
 
     void select(PluginExplorerEntry entry) {
@@ -82,7 +83,7 @@ public class PluginExplorerList extends VBox {
             chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Plugin", "*.jar"));
             var file = chooser.showOpenDialog(getScene().getWindow());
             if (file != null) {
-                Jams.getPluginManager().installPLugin(file);
+                Manager.get(PluginManager.class).installPLugin(file);
             }
         });
 

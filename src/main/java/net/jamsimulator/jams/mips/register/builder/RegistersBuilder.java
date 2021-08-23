@@ -24,7 +24,7 @@
 
 package net.jamsimulator.jams.mips.register.builder;
 
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.utils.Validate;
 

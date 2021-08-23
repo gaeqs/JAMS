@@ -31,7 +31,10 @@ import net.jamsimulator.jams.event.general.JAMSPreInitEvent;
 import net.jamsimulator.jams.event.general.JAMSShutdownEvent;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.project.ProjectTab;
-import net.jamsimulator.jams.manager.*;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.plugin.PluginManager;
+import net.jamsimulator.jams.manager.Registry;
+import net.jamsimulator.jams.plugin.Plugin;
 import net.jamsimulator.jams.plugin.exception.InvalidPluginHeaderException;
 import net.jamsimulator.jams.plugin.exception.PluginLoadException;
 import net.jamsimulator.jams.project.RecentProjects;
@@ -52,31 +55,15 @@ import java.util.Map;
 
 public class Jams {
 
+    public final static Registry REGISTRY = new Registry();
+
     private static String VERSION;
 
     private static File mainFolder;
 
     private static RootConfiguration mainConfiguration;
 
-    private static PluginManager pluginManager;
-
-    private static LanguageManager languageManager;
-    private static FileTypeManager fileTypeManager;
-
-    private static ArchitectureManager architectureManager;
-    private static AssemblerBuilderManager assemblerBuilderManager;
-    private static MemoryBuilderManager memoryBuilderManager;
-    private static CacheBuilderManager cacheBuilderManager;
-    private static RegistersBuilderManager registersBuilderManager;
-    private static ProjectTypeManager projectTypeManager;
-
-    private static InstructionSetManager instructionSetManager;
-    private static DirectiveSetManager directiveSetManager;
-    private static SyscallExecutionBuilderManager syscallExecutionBuilderManager;
-    private static NumberRepresentationManager numberRepresentationManager;
-
     private static RecentProjects recentProjects;
-
     private static TaskExecutor taskExecutor;
     private static SimpleEventBroadcast generalEventBroadcast;
 
@@ -94,7 +81,6 @@ public class Jams {
         mainFolder = FolderUtils.checkMainFolder();
         TempUtils.loadTemporalFolder();
 
-
         try {
             var path = Jams.class.getProtectionDomain().getCodeSource().getLocation().toURI();
             if (Files.isDirectory(Path.of(path))) {
@@ -105,32 +91,16 @@ public class Jams {
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
+
         fileSystemWrapper = new ProtectedFileSystem(fileSystem);
+        REGISTRY.loadPluginManager();
 
-
-        pluginManager = PluginManager.INSTANCE;
         loadPluginsFromArguments(data);
 
         generalEventBroadcast.callEvent(new JAMSPreInitEvent());
-
         mainConfiguration = ConfigurationUtils.loadMainConfiguration();
-
-        languageManager = LanguageManager.INSTANCE;
-        fileTypeManager = FileTypeManager.INSTANCE;
-
-        architectureManager = ArchitectureManager.INSTANCE;
-        assemblerBuilderManager = AssemblerBuilderManager.INSTANCE;
-        memoryBuilderManager = MemoryBuilderManager.INSTANCE;
-        cacheBuilderManager = CacheBuilderManager.INSTANCE;
-        registersBuilderManager = RegistersBuilderManager.INSTANCE;
-        projectTypeManager = ProjectTypeManager.INSTANCE;
-
-        instructionSetManager = InstructionSetManager.INSTANCE;
-        directiveSetManager = DirectiveSetManager.INSTANCE;
-        syscallExecutionBuilderManager = SyscallExecutionBuilderManager.INSTANCE;
-        numberRepresentationManager = NumberRepresentationManager.INSTANCE;
+        REGISTRY.loadJAMSManagers();
         recentProjects = new RecentProjects();
-
         generalEventBroadcast.callEvent(new JAMSPostInitEvent());
 
         JamsApplication.main(args);
@@ -177,124 +147,6 @@ public class Jams {
      */
     public static RootConfiguration getMainConfiguration() {
         return mainConfiguration;
-    }
-
-    /**
-     * Returns the {@link LanguageManager}.
-     *
-     * @return the {@link LanguageManager}.
-     */
-    public static PluginManager getPluginManager() {
-        return pluginManager;
-    }
-
-    /**
-     * Returns the {@link LanguageManager}.
-     *
-     * @return the {@link LanguageManager}.
-     */
-    public static LanguageManager getLanguageManager() {
-        return languageManager;
-    }
-
-    /**
-     * Returns the {@link FileTypeManager}.
-     *
-     * @return the {@link FileTypeManager}.
-     */
-    public static FileTypeManager getFileTypeManager() {
-        return fileTypeManager;
-    }
-
-    /**
-     * Returns the {@link ArchitectureManager}.
-     *
-     * @return the {@link ArchitectureManager}.
-     */
-    public static ArchitectureManager getArchitectureManager() {
-        return architectureManager;
-    }
-
-    /**
-     * Return the {@link AssemblerBuilderManager}.
-     *
-     * @return the {@link AssemblerBuilderManager}.
-     * @see AssemblerBuilderManager
-     */
-    public static AssemblerBuilderManager getAssemblerBuilderManager() {
-        return assemblerBuilderManager;
-    }
-
-    /**
-     * Returns the {@link MemoryBuilderManager}.
-     *
-     * @return the {@link MemoryBuilderManager}.
-     */
-    public static MemoryBuilderManager getMemoryBuilderManager() {
-        return memoryBuilderManager;
-    }
-
-    /**
-     * Returns the {@link CacheBuilderManager}.
-     *
-     * @return the {@link CacheBuilderManager}.
-     */
-    public static CacheBuilderManager getCacheBuilderManager() {
-        return cacheBuilderManager;
-    }
-
-    /**
-     * Returns the {@link RegistersBuilderManager}.
-     *
-     * @return the {@link RegistersBuilderManager}.
-     */
-    public static RegistersBuilderManager getRegistersBuilderManager() {
-        return registersBuilderManager;
-    }
-
-    /**
-     * Returns the {@link ProjectTypeManager}.
-     *
-     * @return the {@link ProjectTypeManager}.
-     */
-    public static ProjectTypeManager getProjectTypeManager() {
-        return projectTypeManager;
-    }
-
-    /**
-     * Returns the {@link InstructionSetManager}.
-     *
-     * @return the {@link InstructionSetManager}.
-     */
-    public static InstructionSetManager getInstructionSetManager() {
-        return instructionSetManager;
-    }
-
-    /**
-     * Returns the {@link DirectiveSetManager}.
-     *
-     * @return the {@link DirectiveSetManager}.
-     */
-    public static DirectiveSetManager getDirectiveSetManager() {
-        return directiveSetManager;
-    }
-
-    /**
-     * Returns the {@link SyscallExecutionBuilderManager}.
-     *
-     * @return the {@link SyscallExecutionBuilderManager}.
-     */
-    public static SyscallExecutionBuilderManager getSyscallExecutionBuilderManager() {
-        return syscallExecutionBuilderManager;
-    }
-
-    /**
-     * Returns the {@link SyscallExecutionBuilderManager}.
-     *
-     * @return the {@link SyscallExecutionBuilderManager}.
-     */
-    public static NumberRepresentationManager getNumberRepresentationManager() {
-        return numberRepresentationManager;
     }
 
     /**
@@ -361,7 +213,7 @@ public class Jams {
         getGeneralEventBroadcast().callEvent(new JAMSShutdownEvent.After());
 
         // Disables all plugins
-        getPluginManager().forEach(p -> p.setEnabled(false));
+        Manager.of(Plugin.class).forEach(p -> p.setEnabled(false));
 
         try {
             fileSystem.close();
@@ -375,7 +227,8 @@ public class Jams {
         // Load plugins from the arguments
         for (File plugin : data.getPluginsToLoad()) {
             try {
-                pluginManager.add(pluginManager.loadPlugin(plugin));
+                var manager = REGISTRY.get(PluginManager.class);
+                manager.add(manager.loadPlugin(plugin));
             } catch (InvalidPluginHeaderException | PluginLoadException e) {
                 System.out.println("Couldn't load plugin " + plugin.getAbsolutePath());
                 e.printStackTrace();

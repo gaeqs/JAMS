@@ -24,9 +24,9 @@
 
 package net.jamsimulator.jams.language;
 
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.language.exception.LanguageFailedLoadException;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.*;
@@ -146,7 +146,7 @@ public class Language implements Labeled {
     public String getOrDefault(String node) {
         String string = messages.get(node);
         if (string != null) return string;
-        return Jams.getLanguageManager().getDefault().getOrEmpty(node);
+        return Manager.ofD(Language.class).getDefault().getOrEmpty(node);
     }
 
     /**

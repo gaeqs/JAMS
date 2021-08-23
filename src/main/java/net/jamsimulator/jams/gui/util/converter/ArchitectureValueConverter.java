@@ -24,7 +24,7 @@
 
 package net.jamsimulator.jams.gui.util.converter;
 
-import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 
 import java.util.Optional;
@@ -40,7 +40,7 @@ public class ArchitectureValueConverter extends ValueConverter<Architecture> {
 
     @Override
     public Optional<Architecture> fromStringSafe(String value) {
-        return Jams.getArchitectureManager().get(value);
+        return Manager.of(Architecture.class).get(value);
     }
 
     @Override

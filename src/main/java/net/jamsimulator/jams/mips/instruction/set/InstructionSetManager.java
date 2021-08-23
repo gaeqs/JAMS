@@ -22,34 +22,35 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.mips.instruction.set;
 
-import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
-import net.jamsimulator.jams.mips.memory.cache.builder.AssociativeCacheBuilder;
-import net.jamsimulator.jams.mips.memory.cache.builder.DirectCacheBuilder;
-import net.jamsimulator.jams.mips.memory.cache.builder.SetAssociativeCacheBuilder;
+import net.jamsimulator.jams.manager.DefaultValuableManager;
+import net.jamsimulator.jams.utils.Labeled;
 
 /**
- * This singleton stores all {@link CacheBuilder}s that projects may use.
+ * This singleton stores all {@link InstructionSet}s that projects may use.
  * <p>
- * To register an {@link CacheBuilder} use {@link Manager#add(Labeled)}}.
- * To unregister an {@link CacheBuilder} use {@link #remove(Object)}.
- * A {@link CacheBuilder}'s removal from the manager doesn't make projects
+ * To register an {@link InstructionSet} use {@link #add(Labeled)}.
+ * To unregister an {@link InstructionSet} use {@link #remove(Object)}.
+ * An {@link InstructionSet}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public final class CacheBuilderManager extends Manager<CacheBuilder> {
+public final class InstructionSetManager extends DefaultValuableManager<InstructionSet> {
 
-    public static final CacheBuilderManager INSTANCE = new CacheBuilderManager();
+    public static final String NAME = "instruction_set";
+    public static final InstructionSetManager INSTANCE = new InstructionSetManager();
 
-    private CacheBuilderManager() {
-        super(CacheBuilder.class);
+    private InstructionSetManager() {
+        super(InstructionSet.class, false);
     }
 
     @Override
     protected void loadDefaultElements() {
-        add(new AssociativeCacheBuilder());
-        add(new DirectCacheBuilder());
-        add(new SetAssociativeCacheBuilder());
+        add(MIPS32r6InstructionSet.INSTANCE);
     }
 
+    @Override
+    protected InstructionSet loadDefaultElement() {
+        return MIPS32r6InstructionSet.INSTANCE;
+    }
 }

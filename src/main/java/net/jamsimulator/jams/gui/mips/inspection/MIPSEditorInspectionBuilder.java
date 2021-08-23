@@ -24,10 +24,11 @@
 
 package net.jamsimulator.jams.gui.mips.inspection;
 
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSCodeElement;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.Manager;
 
 import java.util.Optional;
 
@@ -81,7 +82,7 @@ public abstract class MIPSEditorInspectionBuilder<Error extends MIPSEditorInspec
      * @return the description.
      */
     public String getDescription() {
-        return Jams.getLanguageManager().getSelected().getOrDefault(
+        return Manager.ofS(Language.class).getSelected().getOrDefault(
                 (error ? ERROR_LANGUAGE_NODE : WARNING_LANGUAGE_NODE) + name);
     }
 

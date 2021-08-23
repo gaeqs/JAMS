@@ -22,32 +22,36 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.mips.memory.builder;
 
-import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundle;
-import net.jamsimulator.jams.mips.syscall.bundle.defaults.MARSSyscallExecutionBuilderBundle;
-import net.jamsimulator.jams.mips.syscall.bundle.defaults.SPIMSyscallExecutionBuilderBundle;
+import net.jamsimulator.jams.manager.DefaultValuableManager;
+import net.jamsimulator.jams.utils.Labeled;
 
 /**
- * This singleton stores all {@link SyscallExecutionBuilderBundle}s that projects may use.
+ * This singleton stores all {@link MemoryBuilder}s that projects may use.
  * <p>
- * To register an {@link SyscallExecutionBuilderBundle} use {@link Manager#add(Labeled)}}.
- * To unregister an {@link SyscallExecutionBuilderBundle} use {@link #remove(Object)}.
- * An {@link SyscallExecutionBuilderBundle}'s removal from the manager doesn't make projects
+ * To register an {@link MemoryBuilder} use {@link #add(Labeled)}.
+ * To unregister an {@link MemoryBuilder} use {@link #remove(Object)}.
+ * An {@link MemoryBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public final class SyscallExecutionBuilderBundleManager extends Manager<SyscallExecutionBuilderBundle> {
+public final class MemoryBuilderManager extends DefaultValuableManager<MemoryBuilder> {
 
-    public static final SyscallExecutionBuilderBundleManager INSTANCE = new SyscallExecutionBuilderBundleManager();
+    public static final String NAME = "memory_builder";
+    public static final MemoryBuilderManager INSTANCE = new MemoryBuilderManager();
 
-    private SyscallExecutionBuilderBundleManager() {
-        super(SyscallExecutionBuilderBundle.class);
+
+    private MemoryBuilderManager() {
+        super(MemoryBuilder.class, false);
     }
 
     @Override
     protected void loadDefaultElements() {
-        add(new SyscallExecutionBuilderBundle("Empty"));
-        add(new SPIMSyscallExecutionBuilderBundle());
-        add(new MARSSyscallExecutionBuilderBundle());
+        add(MIPS32MemoryBuilder.INSTANCE);
+    }
+
+    @Override
+    protected MemoryBuilder loadDefaultElement() {
+        return MIPS32MemoryBuilder.INSTANCE;
     }
 }

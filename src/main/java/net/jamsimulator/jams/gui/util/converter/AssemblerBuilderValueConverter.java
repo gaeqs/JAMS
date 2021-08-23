@@ -24,7 +24,7 @@
 
 package net.jamsimulator.jams.gui.util.converter;
 
-import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
 
 import java.util.Optional;
@@ -40,7 +40,7 @@ public class AssemblerBuilderValueConverter extends ValueConverter<AssemblerBuil
 
     @Override
     public Optional<AssemblerBuilder> fromStringSafe(String value) {
-        return Jams.getAssemblerBuilderManager().get(value);
+        return Manager.of(AssemblerBuilder.class).get(value);
     }
 
     @Override

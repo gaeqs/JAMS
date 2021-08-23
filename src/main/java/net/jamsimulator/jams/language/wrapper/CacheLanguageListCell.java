@@ -25,9 +25,9 @@
 package net.jamsimulator.jams.language.wrapper;
 
 import javafx.scene.control.ListCell;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
 import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
@@ -38,7 +38,7 @@ public class CacheLanguageListCell extends ListCell<Cache> {
 
     public CacheLanguageListCell() {
         node = null;
-        Jams.getLanguageManager().registerListeners(this, true);
+        Manager.of(Language.class).registerListeners(this, true);
         refreshMessage();
 
         itemProperty().addListener((obs, old, val) -> setNode(val == null ? null : val.getBuilder().getLanguageNode()));
@@ -55,7 +55,7 @@ public class CacheLanguageListCell extends ListCell<Cache> {
         var cache = itemProperty().get();
         var extra = cache.getBlocksAmount() + " / " + cache.getBlockSize();
 
-        setText(Jams.getLanguageManager().getSelected().getOrDefault(node) + " " + extra);
+        setText(Manager.ofS(Language.class).getSelected().getOrDefault(node) + " " + extra);
     }
 
     @Listener

@@ -38,6 +38,8 @@ import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.project.ProjectTypeManager;
 import net.jamsimulator.jams.project.ProjectSnapshot;
 import net.jamsimulator.jams.project.event.RecentProjectAddEvent;
 import net.jamsimulator.jams.project.mips.MIPSProjectType;
@@ -82,7 +84,7 @@ public class StartWindowSectionProjects extends AnchorPane implements StartWindo
             var folder = chooser.showDialog(JamsApplication.getStage());
             if (folder == null || JamsApplication.getProjectsTabPane().isProjectOpen(folder)) return;
 
-            var type = Jams.getProjectTypeManager().getByProjectfolder(folder).orElse(MIPSProjectType.INSTANCE);
+            var type = Manager.get(ProjectTypeManager.class).getByProjectfolder(folder).orElse(MIPSProjectType.INSTANCE);
             JamsApplication.getProjectsTabPane().openProject(type.loadProject(folder));
             window.getStage().hide();
         });
@@ -133,7 +135,7 @@ public class StartWindowSectionProjects extends AnchorPane implements StartWindo
             title.getStyleClass().add("title");
             path.getStyleClass().add("path");
 
-            var type = Jams.getProjectTypeManager().getByProjectfolder(new File(snapshot.path()));
+            var type = Manager.get(ProjectTypeManager.class).getByProjectfolder(new File(snapshot.path()));
             if (type.isPresent() && type.get().getIcon().isPresent()) {
                 var image = new QualityImageView(type.get().getIcon().get(), 40, 40);
                 getChildren().addAll(image, new VBox(title, path));

@@ -22,29 +22,37 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.util.converter;
+package net.jamsimulator.jams.mips.register.builder;
 
-import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
+import net.jamsimulator.jams.manager.DefaultValuableManager;
+import net.jamsimulator.jams.utils.Labeled;
 
-import java.util.Optional;
+/**
+ * This singleton stores all {@link RegistersBuilder}s that projects may use.
+ * <p>
+ * To register an {@link RegistersBuilder} use {@link #add(Labeled)}.
+ * To unregister an {@link RegistersBuilder} use {@link #remove(Object)}.
+ * An {@link RegistersBuilder}'s removal from the manager doesn't make projects
+ * to stop using it if they're already using it.
+ */
+public final class RegistersBuilderManager extends DefaultValuableManager<RegistersBuilder> {
 
-public class SyscallExecutionBuilderValueConverter extends ValueConverter<SyscallExecutionBuilder<?>> {
+    public static final String NAME = "register_builder";
+    public static final RegistersBuilderManager INSTANCE = new RegistersBuilderManager();
 
-    public static final String NAME = "syscall_execution_builder";
 
-    @Override
-    public String toString(SyscallExecutionBuilder<?> value) {
-        return value == null ? null : value.getName();
+    private RegistersBuilderManager() {
+        super(RegistersBuilder.class, false);
     }
 
     @Override
-    public Optional<SyscallExecutionBuilder<?>> fromStringSafe(String value) {
-        return Manager.of(SyscallExecutionBuilder.class).get(value).map(it -> (SyscallExecutionBuilder<?>) it);
+    protected void loadDefaultElements() {
+        add(MIPS32RegistersBuilder.INSTANCE);
     }
 
     @Override
-    public Class<?> conversionClass() {
-        return SyscallExecutionBuilder.class;
+    protected RegistersBuilder loadDefaultElement() {
+        return MIPS32RegistersBuilder.INSTANCE;
     }
+
 }

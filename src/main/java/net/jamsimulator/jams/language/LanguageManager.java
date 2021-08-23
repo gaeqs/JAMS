@@ -22,13 +22,14 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.language;
 
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.exception.LanguageFailedLoadException;
+import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.SelectableManager;
 import net.jamsimulator.jams.utils.FolderUtils;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -52,14 +53,19 @@ public final class LanguageManager extends SelectableManager<Language> {
     public static final String FOLDER_NAME = "languages";
     public static final String DEFAULT_LANGUAGE_NODE = "language.default";
     public static final String SELECTED_LANGUAGE_NODE = "language.selected";
-
+    public static final String NAME = "language";
     public static final LanguageManager INSTANCE = new LanguageManager();
 
     private Map<String, String> bundledLanguages;
     private File folder;
 
     private LanguageManager() {
-        super(Language.class);
+        super(Language.class, false);
+    }
+
+    @Override
+    public void load() {
+        super.load();
         Jams.getMainConfiguration().registerListeners(this, true);
     }
 

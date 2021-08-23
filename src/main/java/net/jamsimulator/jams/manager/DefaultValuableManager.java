@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
+import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.HashSet;
@@ -42,13 +43,14 @@ public abstract class DefaultValuableManager<Type extends Labeled> extends Manag
 
     protected Type defaultValue;
 
+    private boolean superclassLoaded = false;
+
     /**
      * Creates the manager.
      * These managers call events on addition, removal and default set.
      */
-    public DefaultValuableManager(Class<Type> managedType) {
-        super(managedType);
-        this.defaultValue = loadDefaultElement();
+    public DefaultValuableManager(Class<Type> managedType, boolean loadOnFXThread) {
+        super(managedType, loadOnFXThread);
     }
 
     /**
@@ -59,6 +61,7 @@ public abstract class DefaultValuableManager<Type extends Labeled> extends Manag
      * @return the default element.
      */
     public Type getDefault() {
+        if (!loaded) loadPanic();
         return defaultValue;
     }
 
@@ -77,6 +80,7 @@ public abstract class DefaultValuableManager<Type extends Labeled> extends Manag
     public boolean setDefault(Type defaultValue) {
         Validate.notNull(defaultValue, "The default value cannot be null!");
         Validate.isTrue(contains(defaultValue), "The default value must be registered!");
+        if (!loaded) loadPanic();
 
         if (defaultValue == this.defaultValue) return false;
 
@@ -118,4 +122,17 @@ public abstract class DefaultValuableManager<Type extends Labeled> extends Manag
      * @return the default element of this manager.
      */
     protected abstract Type loadDefaultElement();
+
+    @Override
+    public void load() {
+        super.load();
+        this.defaultValue = loadDefaultElement();
+        callLoadAfterEvent();
+    }
+
+    @Override
+    protected void callLoadAfterEvent() {
+        if (!superclassLoaded) superclassLoaded = true;
+        else super.callLoadAfterEvent();
+    }
 }

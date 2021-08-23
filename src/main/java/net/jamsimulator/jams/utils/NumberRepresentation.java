@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.utils;
 
-import net.jamsimulator.jams.manager.Labeled;
 import net.jamsimulator.jams.mips.interrupt.MIPSAddressException;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.CacheBlock;

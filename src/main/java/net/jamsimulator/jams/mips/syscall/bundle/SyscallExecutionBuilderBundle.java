@@ -24,8 +24,8 @@
 
 package net.jamsimulator.jams.mips.syscall.bundle;
 
-import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -69,7 +69,7 @@ public class SyscallExecutionBuilderBundle implements Labeled {
         var map = new HashMap<Integer, SyscallExecutionBuilder<?>>();
 
         builders.forEach((id, name) ->
-                Jams.getSyscallExecutionBuilderManager().get(name).ifPresent(builder -> map.put(id, builder)));
+                Manager.of(SyscallExecutionBuilder.class).get(name).ifPresent(builder -> map.put(id, builder)));
 
         return map;
     }

@@ -25,7 +25,7 @@
 package net.jamsimulator.jams.manager.event;
 
 import net.jamsimulator.jams.event.Cancellable;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.utils.Validate;
 

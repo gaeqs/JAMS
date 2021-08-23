@@ -25,7 +25,7 @@
 package net.jamsimulator.jams.mips.assembler.builder;
 
 import net.jamsimulator.jams.gui.util.log.Log;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
@@ -41,7 +41,7 @@ import java.util.Objects;
  * using the given parameters.
  * <p>
  * If a plugin want to add a custom MIPS32 assembler to JAMS, it should create a child of this class and register
- * it on the {@link net.jamsimulator.jams.manager.AssemblerBuilderManager}.
+ * it on the {@link AssemblerBuilderManager}.
  */
 public abstract class AssemblerBuilder implements Labeled {
 

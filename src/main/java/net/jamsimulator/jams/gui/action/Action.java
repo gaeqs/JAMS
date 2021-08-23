@@ -25,7 +25,7 @@
 package net.jamsimulator.jams.gui.action;
 
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Objects;

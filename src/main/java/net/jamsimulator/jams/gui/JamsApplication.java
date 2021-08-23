@@ -42,10 +42,10 @@ import net.jamsimulator.jams.gui.main.MainAnchorPane;
 import net.jamsimulator.jams.gui.main.MainScene;
 import net.jamsimulator.jams.gui.project.ProjectListTabPane;
 import net.jamsimulator.jams.gui.start.StartWindow;
-import net.jamsimulator.jams.manager.ActionManager;
-import net.jamsimulator.jams.manager.BarSnapshotViewModeManager;
-import net.jamsimulator.jams.manager.MIPSEditorInspectionBuilderManager;
-import net.jamsimulator.jams.manager.ThemeManager;
+import net.jamsimulator.jams.gui.action.ActionManager;
+import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModeManager;
+import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilderManager;
+import net.jamsimulator.jams.gui.theme.ThemeManager;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Optional;
@@ -179,6 +179,8 @@ public class JamsApplication extends Application {
         stage = primaryStage;
 
         FontLoader.load();
+        Jams.REGISTRY.loadJAMSApplicationManagers();
+
         primaryStage.setTitle("JAMS (Just Another MIPS Simulator)");
 
         Optional<Boolean> useBorderless = Jams.getMainConfiguration().get("appearance.hide_top_bar");
@@ -207,7 +209,6 @@ public class JamsApplication extends Application {
 
         stage.setX(x);
         stage.setY(y);
-
 
         Icons.LOGO.getImage().ifPresent(primaryStage.getIcons()::add);
         Jams.getMainConfiguration().registerListeners(this, true);

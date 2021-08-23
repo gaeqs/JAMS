@@ -22,34 +22,35 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.mips.assembler.builder;
 
-import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
-import net.jamsimulator.jams.mips.instruction.set.MIPS32r6InstructionSet;
+import net.jamsimulator.jams.manager.DefaultValuableManager;
+import net.jamsimulator.jams.utils.Labeled;
 
 /**
- * This singleton stores all {@link InstructionSet}s that projects may use.
+ * This singleton stores all {@link AssemblerBuilder}s that projects may use.
  * <p>
- * To register an {@link InstructionSet} use {@link #add(Labeled)}.
- * To unregister an {@link InstructionSet} use {@link #remove(Object)}.
- * An {@link InstructionSet}'s removal from the manager doesn't make projects
+ * To register an {@link AssemblerBuilder} use {@link #add(Labeled)}.
+ * To unregister an {@link AssemblerBuilder} use {@link #remove(Object)}.
+ * An {@link AssemblerBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public final class InstructionSetManager extends DefaultValuableManager<InstructionSet> {
+public final class AssemblerBuilderManager extends DefaultValuableManager<AssemblerBuilder> {
 
-    public static final InstructionSetManager INSTANCE = new InstructionSetManager();
+    public static final String NAME = "assembler_builder";
+    public static final AssemblerBuilderManager INSTANCE = new AssemblerBuilderManager();
 
-    private InstructionSetManager() {
-        super(InstructionSet.class);
+    private AssemblerBuilderManager() {
+        super(AssemblerBuilder.class, false);
+    }
+
+    @Override
+    protected AssemblerBuilder loadDefaultElement() {
+        return MIPS32AssemblerBuilder.INSTANCE;
     }
 
     @Override
     protected void loadDefaultElements() {
-        add(MIPS32r6InstructionSet.INSTANCE);
-    }
-
-    @Override
-    protected InstructionSet loadDefaultElement() {
-        return MIPS32r6InstructionSet.INSTANCE;
+        add(MIPS32AssemblerBuilder.INSTANCE);
     }
 }

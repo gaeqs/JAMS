@@ -22,10 +22,10 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.mips.directive.set;
 
-import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
-import net.jamsimulator.jams.mips.directive.set.MIPS32DirectiveSet;
+import net.jamsimulator.jams.manager.DefaultValuableManager;
+import net.jamsimulator.jams.utils.Labeled;
 
 /**
  * This singleton stores all {@link DirectiveSet}s that projects may use.
@@ -37,10 +37,11 @@ import net.jamsimulator.jams.mips.directive.set.MIPS32DirectiveSet;
  */
 public final class DirectiveSetManager extends DefaultValuableManager<DirectiveSet> {
 
+    public static final String NAME = "directive";
     public static final DirectiveSetManager INSTANCE = new DirectiveSetManager();
 
     private DirectiveSetManager() {
-        super(DirectiveSet.class);
+        super(DirectiveSet.class, false);
     }
 
     @Override

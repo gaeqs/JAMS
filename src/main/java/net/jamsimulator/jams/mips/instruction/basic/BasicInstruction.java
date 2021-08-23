@@ -24,7 +24,8 @@
 
 package net.jamsimulator.jams.mips.instruction.basic;
 
-import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
@@ -78,13 +79,13 @@ public abstract class BasicInstruction<Inst extends AssembledInstruction> implem
     @Override
     public String getName() {
         var sufix = mnemonic.toUpperCase().replace('.', '_');
-        return Jams.getLanguageManager().getSelected().getOrDefault("INSTRUCTION_" + sufix);
+        return Manager.ofS(Language.class).getSelected().getOrDefault("INSTRUCTION_" + sufix);
     }
 
     @Override
     public String getDocumentation() {
         var sufix = mnemonic.toUpperCase().replace('.', '_');
-        return Jams.getLanguageManager().getSelected().getOrDefault("INSTRUCTION_" + sufix + "_DOCUMENTATION");
+        return Manager.ofS(Language.class).getSelected().getOrDefault("INSTRUCTION_" + sufix + "_DOCUMENTATION");
     }
 
     @Override

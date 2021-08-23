@@ -24,7 +24,8 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
-import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
@@ -67,13 +68,13 @@ public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionC
 
     @Override
     public String getName() {
-        var name = Jams.getLanguageManager().getSelected().getOrDefault("INSTRUCTION_" + NAME_SUFIX);
+        var name = Manager.ofS(Language.class).getSelected().getOrDefault("INSTRUCTION_" + NAME_SUFIX);
         return name.replace("{TYPE}", condition.getName());
     }
 
     @Override
     public String getDocumentation() {
-        var documentation = StringUtils.parseEscapeCharacters(Jams.getLanguageManager().getSelected().getOrDefault("INSTRUCTION_" + NAME_SUFIX + "_DOCUMENTATION"));
+        var documentation = StringUtils.parseEscapeCharacters(Manager.ofS(Language.class).getSelected().getOrDefault("INSTRUCTION_" + NAME_SUFIX + "_DOCUMENTATION"));
         return documentation.replace("{TYPE}", condition.getName())
                 .replace("{MNEMONIC}", condition.getMnemonic())
                 .replace("{CODE}", StringUtils.addZeros(Integer.toBinaryString(condition.getCode()), 5));

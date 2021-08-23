@@ -28,13 +28,15 @@ import javafx.scene.Parent;
 import javafx.stage.Stage;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.action.ActionManager;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionUnbindEvent;
+import net.jamsimulator.jams.gui.theme.ThemeManager;
 import net.jamsimulator.jams.gui.theme.ThemedBorderlessScene;
 
 /**
- * Represents the main scene. This class listens both the {@link net.jamsimulator.jams.manager.ThemeManager} and
- * the {@link net.jamsimulator.jams.manager.ActionManager}.
+ * Represents the main scene. This class listens both the {@link ThemeManager} and
+ * the {@link ActionManager}.
  */
 public class BorderlessMainScene extends ThemedBorderlessScene {
 

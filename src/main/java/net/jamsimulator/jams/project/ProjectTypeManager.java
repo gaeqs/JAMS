@@ -22,10 +22,9 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.project;
 
-import net.jamsimulator.jams.project.ProjectData;
-import net.jamsimulator.jams.project.ProjectType;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.project.mips.MIPSProjectType;
 import net.jamsimulator.jams.utils.FileUtils;
 import org.json.JSONException;
@@ -45,13 +44,14 @@ import java.util.Optional;
  */
 public final class ProjectTypeManager extends Manager<ProjectType> {
 
+    public static final String NAME = "project_type";
     public static final ProjectTypeManager INSTANCE = new ProjectTypeManager();
 
     /**
      * Creates the manager.
      */
     private ProjectTypeManager() {
-        super(ProjectType.class);
+        super(ProjectType.class, true);
     }
 
     public Optional<ProjectType<?>> getByProjectfolder(File folder) {

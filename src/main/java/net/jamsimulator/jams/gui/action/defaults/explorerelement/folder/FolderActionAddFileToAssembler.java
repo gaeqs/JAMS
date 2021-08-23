@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.gui.action.defaults.explorerelement.folder;
 
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.file.AssemblyFileType;
 import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.JamsApplication;
@@ -39,6 +38,8 @@ import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.file.FileTypeManager;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.project.FilesToAssemblerHolder;
 
 public class FolderActionAddFileToAssembler extends ContextAction {
@@ -62,7 +63,7 @@ public class FolderActionAddFileToAssembler extends ContextAction {
         if (elements.isEmpty()) return;
 
         if (!elements.stream().allMatch(target -> target instanceof ExplorerFile
-                && Jams.getFileTypeManager().getByFile(((ExplorerFile) target).getFile())
+                && Manager.get(FileTypeManager.class).getByFile(((ExplorerFile) target).getFile())
                 .map(FileType::getName).orElse("").equals(AssemblyFileType.NAME))) return;
 
         var tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
@@ -104,7 +105,7 @@ public class FolderActionAddFileToAssembler extends ContextAction {
             //Is not a file
             if (!(element instanceof ExplorerFile)) return false;
             //Is not an assembly file
-            if (!Jams.getFileTypeManager().getByFile(((ExplorerFile) element).getFile())
+            if (!Manager.get(FileTypeManager.class).getByFile(((ExplorerFile) element).getFile())
                     .map(FileType::getName).orElse("").equals(AssemblyFileType.NAME))
                 return false;
 

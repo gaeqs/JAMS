@@ -26,7 +26,6 @@ package net.jamsimulator.jams.gui.bar.mode;
 
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.bar.BarButton;
@@ -36,6 +35,7 @@ import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
 import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 
@@ -78,7 +78,7 @@ public class BarSnapshotViewModePersistentWindow implements BarSnapshotViewMode 
         @Override
         public boolean show(BarButton button) {
             snapshot = button.getSnapshot();
-            setTitle(Jams.getLanguageManager().getSelected().getOrDefault(snapshot.getLanguageNode().orElse(null)));
+            setTitle(Manager.ofS(Language.class).getSelected().getOrDefault(snapshot.getLanguageNode().orElse(null)));
             Icons.LOGO.getImage().ifPresent(getIcons()::add);
 
             var anchor = new AnchorPane(snapshot.getNode());
@@ -93,7 +93,7 @@ public class BarSnapshotViewModePersistentWindow implements BarSnapshotViewMode 
             setHeight(600);
             show();
 
-            Jams.getLanguageManager().registerListeners(this, true);
+            Manager.of(Language.class).registerListeners(this, true);
 
             return true;
         }
@@ -112,7 +112,7 @@ public class BarSnapshotViewModePersistentWindow implements BarSnapshotViewMode 
 
         @Listener
         private void onLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
-            setTitle(Jams.getLanguageManager().getSelected().getOrDefault(snapshot.getLanguageNode().orElse(null)));
+            setTitle(Manager.ofS(Language.class).getSelected().getOrDefault(snapshot.getLanguageNode().orElse(null)));
         }
     }
 }

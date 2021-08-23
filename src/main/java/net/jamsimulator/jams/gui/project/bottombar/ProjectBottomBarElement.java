@@ -25,7 +25,7 @@
 package net.jamsimulator.jams.gui.project.bottombar;
 
 import javafx.scene.Node;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.utils.Labeled;
 
 /**
  * Represents an element inside a {@link ProjectBottomBar}.

@@ -24,11 +24,15 @@
 
 package net.jamsimulator.jams.manager;
 
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
 import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerLoadEvent;
+import net.jamsimulator.jams.manager.event.ManagerRequestingDefaultElementsEvent;
+import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.lang.reflect.Method;
@@ -51,21 +55,94 @@ import java.util.Optional;
  */
 public abstract class Manager<Type extends Labeled> extends HashSet<Type> implements EventBroadcast {
 
+    public static <T extends Manager<?>> T get(Class<T> clazz) {
+        return Jams.REGISTRY.get(clazz);
+    }
+
+    public static <T extends Labeled> Manager<T> of(Class<T> clazz) {
+        return Jams.REGISTRY.of(clazz);
+    }
+
+    public static <T extends Labeled> DefaultValuableManager<T> ofD(Class<T> clazz) {
+        return (DefaultValuableManager<T>) Jams.REGISTRY.of(clazz);
+    }
+
+    public static <T extends Labeled> SelectableManager<T> ofS(Class<T> clazz) {
+        return (SelectableManager<T>) Jams.REGISTRY.of(clazz);
+    }
+
     /**
      * The event broadcast of the manager. This allows the manager to call events.
      */
     protected final SimpleEventBroadcast broadcast;
 
+    /**
+     * The managed type of this manager.
+     */
     protected final Class<Type> managedType;
+
+    /**
+     * Whether this manager should be loaded on the JavaXF thread.
+     */
+    protected final boolean loadOnFXThread;
+
+    /**
+     * Whether this manager is loaded.
+     */
+    protected boolean loaded;
 
     /**
      * Creates the manager.
      * These managers call events on addition and removal.
      */
-    public Manager(Class<Type> managedType) {
+    public Manager(Class<Type> managedType, boolean loadOnFXThread) {
         this.broadcast = new SimpleEventBroadcast();
         this.managedType = managedType;
+        this.loadOnFXThread = loadOnFXThread;
+        this.loaded = false;
+    }
+
+    /**
+     * Returns whether this manager should be loaded on the JavaFX thread.
+     *
+     * @return whether this manager should be loaded on the JavaFX thread.
+     */
+    public boolean shouldLoadOnFXThread() {
+        return loadOnFXThread;
+    }
+
+    /**
+     * Returns the type of elements this manager manages.
+     *
+     * @return the type of elements.
+     */
+    public Class<Type> getManagedType() {
+        return managedType;
+    }
+
+    /**
+     * Returns whether this manager is loaded.
+     *
+     * @return whether this manager is loaded.
+     */
+    public boolean isLoaded() {
+        return loaded;
+    }
+
+    /**
+     * Loads this manager.
+     */
+    public void load() {
+        if (loaded) throw new IllegalStateException("Manager " + this + " is already loaded!");
+        callEvent(new ManagerLoadEvent.Before<>(this, managedType));
+        loaded = true;
         loadDefaultElements();
+        callEvent(new ManagerRequestingDefaultElementsEvent<>(this, managedType));
+        callLoadAfterEvent();
+    }
+
+    protected void callLoadAfterEvent() {
+        callEvent(new ManagerLoadEvent.After<>(this, managedType));
     }
 
     /**
@@ -75,6 +152,7 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
      * @return the element, if present.
      */
     public Optional<Type> get(String name) {
+        if (!loaded) loadPanic();
         return stream().filter(t -> t.getName().equals(name)).findAny();
     }
 
@@ -88,6 +166,7 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
      * @return the element, or null if not present.
      */
     public Type getOrNull(String name) {
+        if (!loaded) loadPanic();
         return get(name).orElse(null);
     }
 
@@ -105,6 +184,7 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
     @Override
     public boolean add(Type element) {
         Validate.notNull(element, "The element cannot be null!");
+        if (!loaded) loadPanic();
         var before =
                 callEvent(new ManagerElementRegisterEvent.Before<>(this, managedType, element));
         if (before.isCancelled()) return false;
@@ -145,6 +225,7 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
     @Override
     public boolean remove(Object o) {
         Validate.notNull(o, "The element cannot be null!");
+        if (!loaded) loadPanic();
         if (!contains(o)) return false;
         try {
             var before =
@@ -178,6 +259,10 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
      */
     protected abstract void loadDefaultElements();
 
+    protected void loadPanic() {
+        throw new IllegalStateException("Manager " + this + " is not loaded!");
+    }
+
     //region BROADCAST
 
     @Override
@@ -203,6 +288,11 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
     @Override
     public <T extends Event> T callEvent(T event) {
         return broadcast.callEvent(event, this);
+    }
+
+    @Override
+    public void transferListenersTo(EventBroadcast broadcast) {
+        this.broadcast.transferListenersTo(broadcast);
     }
 
     //endregion

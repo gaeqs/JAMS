@@ -22,20 +22,19 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.gui.theme;
 
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.theme.Theme;
-import net.jamsimulator.jams.gui.theme.ThemeAttachment;
-import net.jamsimulator.jams.gui.theme.ThemeLoader;
 import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.ThemeRefreshEvent;
 import net.jamsimulator.jams.gui.theme.exception.ThemeLoadException;
+import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.SelectableManager;
 import net.jamsimulator.jams.utils.FolderUtils;
 import net.jamsimulator.jams.utils.TempUtils;
 import net.jamsimulator.jams.utils.Validate;
@@ -73,7 +72,7 @@ public final class ThemeManager extends SelectableManager<Theme> {
     public static final String SELECTED_THEME_NODE = "appearance.theme";
     public static final String GENERAL_FONT_NODE = "appearance.general_font";
     public static final String CODE_FONT_NODE = "appearance.code_font";
-
+    public static final String NAME = "theme";
     public static final File FOLDER = new File(Jams.getMainFolder(), FOLDER_NAME);
 
     static {
@@ -83,13 +82,12 @@ public final class ThemeManager extends SelectableManager<Theme> {
     public static final ThemeManager INSTANCE = new ThemeManager();
 
     private boolean cacheFileLoaded = false;
-    protected File cacheFile = TempUtils.createTemporalFile("currentTheme");
+    protected final File cacheFile = TempUtils.createTemporalFile("currentTheme");
 
     private String generalFont, codeFont;
 
     private ThemeManager() {
-        super(Theme.class);
-        Jams.getMainConfiguration().registerListeners(this, true);
+        super(Theme.class, true);
     }
 
     /**
@@ -256,6 +254,12 @@ public final class ThemeManager extends SelectableManager<Theme> {
                 add(loader.createTheme());
             }
         }
+    }
+
+    @Override
+    public void load() {
+        super.load();
+        Jams.getMainConfiguration().registerListeners(this, true);
     }
 
     @Override

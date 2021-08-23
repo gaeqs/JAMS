@@ -22,38 +22,36 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.mips.memory.cache;
 
-import net.jamsimulator.jams.mips.architecture.Architecture;
-import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
-import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
+import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.mips.memory.cache.builder.AssociativeCacheBuilder;
+import net.jamsimulator.jams.mips.memory.cache.builder.DirectCacheBuilder;
+import net.jamsimulator.jams.mips.memory.cache.builder.SetAssociativeCacheBuilder;
 
 /**
- * This singleton stores all {@link Architecture}s that projects may use.
+ * This singleton stores all {@link CacheBuilder}s that projects may use.
  * <p>
- * To register an {@link Architecture} use {@link #add(Labeled)}.
- * To unregister an {@link Architecture} use {@link #remove(Object)}.
- * An {@link Architecture}'s removal from the manager doesn't make projects
+ * To register an {@link CacheBuilder} use {@link Manager#add(Labeled)}}.
+ * To unregister an {@link CacheBuilder} use {@link #remove(Object)}.
+ * A {@link CacheBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
-public final class ArchitectureManager extends DefaultValuableManager<Architecture> {
+public final class CacheBuilderManager extends Manager<CacheBuilder> {
 
-    public static final ArchitectureManager INSTANCE = new ArchitectureManager();
+    public static final String NAME = "cache_builder";
+    public static final CacheBuilderManager INSTANCE = new CacheBuilderManager();
 
-    private ArchitectureManager() {
-        super(Architecture.class);
-    }
-
-    @Override
-    protected Architecture loadDefaultElement() {
-        return SingleCycleArchitecture.INSTANCE;
+    private CacheBuilderManager() {
+        super(CacheBuilder.class, false);
     }
 
     @Override
     protected void loadDefaultElements() {
-        add(SingleCycleArchitecture.INSTANCE);
-        add(MultiCycleArchitecture.INSTANCE);
-        add(PipelinedArchitecture.INSTANCE);
+        add(new AssociativeCacheBuilder());
+        add(new DirectCacheBuilder());
+        add(new SetAssociativeCacheBuilder());
     }
+
 }

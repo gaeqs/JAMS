@@ -24,8 +24,8 @@
 
 package net.jamsimulator.jams.project.mips;
 
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
@@ -228,10 +228,10 @@ public class MIPSProjectData extends ProjectData implements FilesToAssemblerHold
 
 
     protected void loadMipsConfiguration() {
-        assemblerBuilder = data.getAndConvertOrElse(NODE_ASSEMBLER, AssemblerBuilder.class, Jams.getAssemblerBuilderManager().getDefault());
-        registersBuilder = data.getAndConvertOrElse(NODE_REGISTERS, RegistersBuilder.class, Jams.getRegistersBuilderManager().getDefault());
-        directiveSet = data.getAndConvertOrElse(NODE_DIRECTIVES, DirectiveSet.class, Jams.getDirectiveSetManager().getDefault());
-        instructionSet = data.getAndConvertOrElse(NODE_INSTRUCTIONS, InstructionSet.class, Jams.getInstructionSetManager().getDefault());
+        assemblerBuilder = data.getAndConvertOrElse(NODE_ASSEMBLER, AssemblerBuilder.class, Manager.ofD(AssemblerBuilder.class).getDefault());
+        registersBuilder = data.getAndConvertOrElse(NODE_REGISTERS, RegistersBuilder.class, Manager.ofD(RegistersBuilder.class).getDefault());
+        directiveSet = data.getAndConvertOrElse(NODE_DIRECTIVES, DirectiveSet.class, Manager.ofD(DirectiveSet.class).getDefault());
+        instructionSet = data.getAndConvertOrElse(NODE_INSTRUCTIONS, InstructionSet.class, Manager.ofD(InstructionSet.class).getDefault());
 
         configurations = new HashSet<>();
         Optional<Configuration> configOptional = data.get(NODE_CONFIGURATIONS);
@@ -248,7 +248,7 @@ public class MIPSProjectData extends ProjectData implements FilesToAssemblerHold
         selectedConfiguration = configurations.stream().filter(target -> target.getName().equals(selectedConfig)).findAny().orElse(null);
 
         // Let's try to get a default configuration
-        if(selectedConfiguration == null) {
+        if (selectedConfiguration == null) {
             selectedConfiguration = configurations.stream().findAny().orElse(null);
         }
     }

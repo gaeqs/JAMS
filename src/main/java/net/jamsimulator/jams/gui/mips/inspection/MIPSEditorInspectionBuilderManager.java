@@ -22,16 +22,15 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.gui.mips.inspection;
 
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSCodeElement;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
-import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspection;
-import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilder;
 import net.jamsimulator.jams.gui.mips.inspection.error.*;
 import net.jamsimulator.jams.gui.mips.inspection.warning.MIPSEditorInspectionDirectiveNotFound;
 import net.jamsimulator.jams.gui.mips.inspection.warning.MIPSEditorInspectionRegisterUsingAt;
 import net.jamsimulator.jams.gui.mips.inspection.warning.MIPSEditorInspectionUsingEquivalent;
+import net.jamsimulator.jams.manager.Manager;
 
 import java.util.Collection;
 
@@ -45,13 +44,14 @@ import java.util.Collection;
  */
 public final class MIPSEditorInspectionBuilderManager extends Manager<MIPSEditorInspectionBuilder> {
 
+    public static final String NAME = "mips_editor_inspection_builder";
     public static final MIPSEditorInspectionBuilderManager INSTANCE = new MIPSEditorInspectionBuilderManager();
 
     /**
      * Creates the manager.
      */
     private MIPSEditorInspectionBuilderManager() {
-        super(MIPSEditorInspectionBuilder.class);
+        super(MIPSEditorInspectionBuilder.class, true);
     }
 
     @Override

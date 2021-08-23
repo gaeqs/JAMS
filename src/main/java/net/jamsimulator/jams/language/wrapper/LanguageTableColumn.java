@@ -25,9 +25,9 @@
 package net.jamsimulator.jams.language.wrapper;
 
 import javafx.scene.control.TableColumn;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
 import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 
@@ -37,7 +37,7 @@ public class LanguageTableColumn<S, T> extends TableColumn<S, T> {
 
     public LanguageTableColumn(String node) {
         this.node = node;
-        Jams.getLanguageManager().registerListeners(this, true);
+        Manager.of(Language.class).registerListeners(this, true);
         refreshMessage();
     }
 
@@ -48,7 +48,7 @@ public class LanguageTableColumn<S, T> extends TableColumn<S, T> {
 
     private void refreshMessage() {
         if (node == null) return;
-        setText(Jams.getLanguageManager().getSelected().getOrDefault(node));
+        setText(Manager.ofS(Language.class).getSelected().getOrDefault(node));
     }
 
     @Listener

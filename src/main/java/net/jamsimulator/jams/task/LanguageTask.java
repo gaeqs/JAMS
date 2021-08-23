@@ -25,9 +25,9 @@
 package net.jamsimulator.jams.task;
 
 import javafx.concurrent.Task;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
 import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 
@@ -272,7 +272,7 @@ public abstract class LanguageTask<E> extends Task<E> {
     public LanguageTask(String titleLanguageNode, String messageLanguageNode) {
         updateTitle(titleLanguageNode);
         updateMessage(messageLanguageNode);
-        Jams.getLanguageManager().registerListeners(this, true);
+        Manager.of(Language.class).registerListeners(this, true);
     }
 
     /**
@@ -286,7 +286,7 @@ public abstract class LanguageTask<E> extends Task<E> {
     @Override
     public void updateTitle(String title) {
         titleLanguageNode = title;
-        super.updateTitle(title == null ? null : Jams.getLanguageManager().getDefault().getOrDefault(title));
+        super.updateTitle(title == null ? null : Manager.ofD(Language.class).getDefault().getOrDefault(title));
     }
 
     /**
@@ -301,7 +301,7 @@ public abstract class LanguageTask<E> extends Task<E> {
     public void updateMessage(String message) {
         messageLanguageNode = message;
         super.updateMessage(message);
-        super.updateTitle(message == null ? null : Jams.getLanguageManager().getDefault().getOrDefault(message));
+        super.updateTitle(message == null ? null : Manager.ofD(Language.class).getDefault().getOrDefault(message));
     }
 
     @Override

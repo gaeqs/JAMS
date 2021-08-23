@@ -22,33 +22,26 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager;
+package net.jamsimulator.jams.utils;
 
-import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewMode;
-import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModePane;
-import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModePersistentWindow;
-import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModeWindow;
+import net.jamsimulator.jams.manager.Manager;
 
 /**
- * This singleton stores all {@link BarSnapshotViewMode}s that projects may use.
+ * Represents an element with a name.
  * <p>
- * To register an {@link BarSnapshotViewMode} use {@link #add(Object)}.
- * To unregister an {@link BarSnapshotViewMode} use {@link #remove(Object)}.
- * An {@link BarSnapshotViewMode}'s removal from the manager doesn't make editors to stop using
- * it inmediatelly.
+ * {@link Manager}s must represent an element type that implements this interface.
  */
-public final class BarSnapshotViewModeManager extends Manager<BarSnapshotViewMode> {
+public interface Labeled {
 
-    public static final BarSnapshotViewModeManager INSTANCE = new BarSnapshotViewModeManager();
+    /**
+     * Returns the name of the element.
+     * This name cannot be null, and it must be unique!
+     * <p>
+     * This value must also be immutable. Changes to the value returned by this method
+     * retult in unpredictable behaviours.
+     *
+     * @return the name of the element.
+     */
+    String getName();
 
-    private BarSnapshotViewModeManager() {
-        super(BarSnapshotViewMode.class);
-    }
-
-    @Override
-    protected void loadDefaultElements() {
-        add(BarSnapshotViewModePane.INSTANCE);
-        add(BarSnapshotViewModeWindow.INSTANCE);
-        add(BarSnapshotViewModePersistentWindow.INSTANCE);
-    }
 }

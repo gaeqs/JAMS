@@ -25,9 +25,9 @@
 package net.jamsimulator.jams.language.wrapper;
 
 import javafx.scene.control.ListCell;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
 import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
@@ -38,7 +38,7 @@ public class SyscallLanguageListCell extends ListCell<SyscallExecutionBuilder<?>
 
     public SyscallLanguageListCell() {
         node = null;
-        Jams.getLanguageManager().registerListeners(this, true);
+        Manager.of(Language.class).registerListeners(this, true);
         refreshMessage();
 
         itemProperty().addListener((obs, old, val) -> setNode(val == null ? null : val.getLanguageNode()));
@@ -51,7 +51,7 @@ public class SyscallLanguageListCell extends ListCell<SyscallExecutionBuilder<?>
 
     private void refreshMessage() {
         if (node == null) return;
-        setText(Jams.getLanguageManager().getSelected().getOrDefault(node));
+        setText(Manager.ofS(Language.class).getSelected().getOrDefault(node));
     }
 
     @Listener

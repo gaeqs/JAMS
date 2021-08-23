@@ -24,8 +24,9 @@
 
 package net.jamsimulator.jams.mips.directive;
 
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.Validate;
@@ -72,7 +73,7 @@ public abstract class Directive {
      */
     public String getDocumentation() {
         var sufix = name.toUpperCase().replace('.', '_');
-        return Jams.getLanguageManager().getSelected().getOrDefault("DIRECTIVE_" + sufix + "_DOCUMENTATION");
+        return Manager.ofS(Language.class).getSelected().getOrDefault("DIRECTIVE_" + sufix + "_DOCUMENTATION");
     }
 
     /**
