@@ -29,12 +29,13 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
 
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class ActionMenuItem extends MenuItem {
      * @param icon   the shown {@link Image icon} or null.
      */
     public ActionMenuItem(ContextAction action, Object node, IconData icon, boolean fromMainMenu) {
-        super(Jams.getLanguageManager().getSelected().getOrDefault(action.getLanguageNode().orElse(null)));
+        super(Manager.ofS(Language.class).getSelected().getOrDefault(action.getLanguageNode().orElse(null)));
         this.action = action;
         setGraphic(new QualityImageView(icon, FileType.IMAGE_SIZE, FileType.IMAGE_SIZE));
         if (fromMainMenu) {

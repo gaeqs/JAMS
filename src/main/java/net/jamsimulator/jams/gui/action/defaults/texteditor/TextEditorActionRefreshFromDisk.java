@@ -31,14 +31,15 @@ import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class TextEditorActionRefreshFromDisk extends Action {
 
     public static final String NAME = "TEXT_EDITOR_REFRESH_FROM_DISK";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.R, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
 
-    public TextEditorActionRefreshFromDisk() {
-        super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_REFRESH_FROM_DISK, DEFAULT_COMBINATION);
+    public TextEditorActionRefreshFromDisk(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_REFRESH_FROM_DISK, DEFAULT_COMBINATION);
     }
 
     @Override

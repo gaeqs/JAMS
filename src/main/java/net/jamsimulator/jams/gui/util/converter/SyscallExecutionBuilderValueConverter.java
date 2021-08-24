@@ -24,7 +24,7 @@
 
 package net.jamsimulator.jams.gui.util.converter;
 
-import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 import java.util.Optional;
@@ -40,7 +40,7 @@ public class SyscallExecutionBuilderValueConverter extends ValueConverter<Syscal
 
     @Override
     public Optional<SyscallExecutionBuilder<?>> fromStringSafe(String value) {
-        return Jams.getSyscallExecutionBuilderManager().get(value);
+        return Manager.of(SyscallExecutionBuilder.class).get(value).map(it -> (SyscallExecutionBuilder<?>) it);
     }
 
     @Override

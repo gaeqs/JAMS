@@ -40,6 +40,7 @@ import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.util.Optional;
 
@@ -48,8 +49,8 @@ public class TextEditorActionRedo extends ContextAction {
     public static final String NAME = "TEXT_EDITOR_REDO";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN);
 
-    public TextEditorActionRedo() {
-        super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_REDO, DEFAULT_COMBINATION, TextEditorActionRegions.UNDO_REDO, MainMenuRegion.EDIT, null);
+    public TextEditorActionRedo(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_REDO, DEFAULT_COMBINATION, TextEditorActionRegions.UNDO_REDO, MainMenuRegion.EDIT, null);
     }
 
     @Override

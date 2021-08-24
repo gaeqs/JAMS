@@ -28,10 +28,11 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.control.Tooltip;
 import javafx.util.Duration;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
-import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
+import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.lang.reflect.Field;
@@ -51,7 +52,7 @@ public class LanguageTooltip extends Tooltip {
         this.replacements = replacements;
         hackTooltipStartTiming(this, showDelay);
         refreshMessage();
-        Jams.getLanguageManager().registerListeners(this, true);
+        Manager.of(Language.class).registerListeners(this, true);
     }
 
     private static void hackTooltipStartTiming(Tooltip tooltip, int showDelay) {
@@ -83,7 +84,7 @@ public class LanguageTooltip extends Tooltip {
 
     private void refreshMessage() {
         if (node == null) return;
-        var parsed = StringUtils.parseEscapeCharacters(Jams.getLanguageManager().getSelected().getOrDefault(node));
+        var parsed = StringUtils.parseEscapeCharacters(Manager.ofS(Language.class).getSelected().getOrDefault(node));
 
         for (int i = 0; i < replacements.length - 1; i += 2) {
             parsed = parsed.replace(replacements[i], replacements[i + 1]);
@@ -93,12 +94,12 @@ public class LanguageTooltip extends Tooltip {
     }
 
     @Listener
-    public void onSelectedLanguageChange(SelectedLanguageChangeEvent.After event) {
+    public void onSelectedLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
         refreshMessage();
     }
 
     @Listener
-    public void onDefaultLanguageChange(DefaultLanguageChangeEvent.After event) {
+    public void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
         refreshMessage();
     }
 }

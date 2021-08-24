@@ -101,4 +101,11 @@ public interface EventBroadcast {
      * @return the {@link Event}.
      */
     <T extends Event> T callEvent(T event);
+
+    /**
+     * Transfers this broadcast's listeners to the given broadcast.
+     *
+     * @param broadcast the broadcast where the listeners will be registered.
+     */
+    void transferListenersTo(EventBroadcast broadcast);
 }

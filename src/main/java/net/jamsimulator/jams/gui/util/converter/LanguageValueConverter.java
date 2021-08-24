@@ -24,8 +24,8 @@
 
 package net.jamsimulator.jams.gui.util.converter;
 
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
 
 import java.util.Optional;
 
@@ -40,7 +40,7 @@ public class LanguageValueConverter extends ValueConverter<Language> {
 
     @Override
     public Optional<Language> fromStringSafe(String value) {
-        return Jams.getLanguageManager().get(value);
+        return Manager.of(Language.class).get(value);
     }
 
     @Override

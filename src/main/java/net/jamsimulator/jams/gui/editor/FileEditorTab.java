@@ -35,7 +35,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.event.file.FileEvent;
 import net.jamsimulator.jams.file.FileType;
@@ -48,6 +47,8 @@ import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
+import net.jamsimulator.jams.file.FileTypeManager;
+import net.jamsimulator.jams.manager.Manager;
 
 import java.io.File;
 import java.nio.file.StandardWatchEventKinds;
@@ -74,7 +75,7 @@ public class FileEditorTab extends Tab implements ActionRegion {
         this.file = file;
         this.saveMark = false;
 
-        FileType type = Jams.getFileTypeManager().getByFile(file).orElse(Jams.getFileTypeManager().getUnknownType());
+        FileType type = Manager.get(FileTypeManager.class).getByFile(file).orElse(Manager.get(FileTypeManager.class).getUnknownType());
         this.display = type.createDisplayTab(this);
 
         var view = new QualityImageView(type.getIcon(), FileType.IMAGE_SIZE, FileType.IMAGE_SIZE);

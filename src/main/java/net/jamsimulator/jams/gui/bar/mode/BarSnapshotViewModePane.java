@@ -27,6 +27,7 @@ package net.jamsimulator.jams.gui.bar.mode;
 import net.jamsimulator.jams.gui.bar.BarButton;
 import net.jamsimulator.jams.gui.bar.BarSnapshot;
 import net.jamsimulator.jams.gui.bar.BarSnapshotHolder;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.util.Optional;
 
@@ -34,12 +35,11 @@ import java.util.Optional;
  * Represents a {@link BarSnapshot snapshot}'s representation mode where
  * its content is placed in a pane.
  */
-public class BarSnapshotViewModePane implements BarSnapshotViewMode {
+public final class BarSnapshotViewModePane implements BarSnapshotViewMode {
 
     public static final String NAME = "pane";
-    public static final BarSnapshotViewModePane INSTANCE = new BarSnapshotViewModePane();
 
-    private BarSnapshotViewModePane() {
+    BarSnapshotViewModePane() {
     }
 
     @Override
@@ -50,6 +50,11 @@ public class BarSnapshotViewModePane implements BarSnapshotViewMode {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return ResourceProvider.JAMS;
     }
 
     @Override

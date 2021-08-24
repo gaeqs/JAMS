@@ -31,7 +31,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.bar.BarPosition;
 import net.jamsimulator.jams.gui.bar.BarSnapshot;
-import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModePane;
+import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewMode;
 import net.jamsimulator.jams.gui.editor.FileEditorHolder;
 import net.jamsimulator.jams.gui.editor.FileEditorHolderHolder;
 import net.jamsimulator.jams.gui.image.icon.IconData;
@@ -43,6 +43,7 @@ import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.gui.util.log.SimpleLog;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.io.File;
@@ -124,7 +125,7 @@ public class MIPSStructurePane extends WorkingPane implements FileEditorHolderHo
         pane.setContent(explorer);
 
         manageBarAddition("explorer", pane, Icons.SIDEBAR_EXPLORER, Messages.BAR_EXPLORER_NAME,
-                BarPosition.LEFT_TOP, BarSnapshotViewModePane.INSTANCE, true);
+                BarPosition.LEFT_TOP, Manager.ofD(BarSnapshotViewMode.class).getDefault(), true);
 
         explorer.setFileOpenAction(file -> openFile(file.getFile()));
     }
@@ -136,17 +137,17 @@ public class MIPSStructurePane extends WorkingPane implements FileEditorHolderHo
         filesToAssembleSidebar = new FilesToAssembleSidebar(project, project.getData().getFilesToAssemble(), pane);
         pane.setContent(filesToAssembleSidebar);
         manageBarAddition("files_to_assemble", pane, Icons.SIDEBAR_EXPLORER, Messages.BAR_FILES_TO_ASSEMBLE_NAME,
-                BarPosition.LEFT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
+                BarPosition.LEFT_BOTTOM, Manager.ofD(BarSnapshotViewMode.class).getDefault(), true);
     }
 
     private void loadLogBottomBar() {
         log = new SimpleLog();
         manageBarAddition("log", log, Icons.FILE_FILE, Messages.BAR_LOG_NAME,
-                BarPosition.BOTTOM_LEFT, BarSnapshotViewModePane.INSTANCE, true);
+                BarPosition.BOTTOM_LEFT, Manager.ofD(BarSnapshotViewMode.class).getDefault(), true);
     }
 
     private void manageBarAddition(String name, Node node, IconData icon, String languageNode, BarPosition defaultPosition,
-                                   BarSnapshotViewModePane defaultViewMode, boolean defaultEnable) {
+                                   BarSnapshotViewMode defaultViewMode, boolean defaultEnable) {
         barMap.registerSnapshot(new BarSnapshot(name, node, defaultPosition, defaultViewMode, defaultEnable, icon, languageNode));
     }
 

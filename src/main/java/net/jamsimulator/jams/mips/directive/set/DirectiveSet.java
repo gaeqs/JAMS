@@ -24,7 +24,8 @@
 
 package net.jamsimulator.jams.mips.directive.set;
 
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -36,27 +37,34 @@ import java.util.Set;
 /**
  * Represents the collection of {@link Directive}s a MIPS program may use.
  */
-public class DirectiveSet implements Labeled {
+public class DirectiveSet implements ManagerResource {
 
+    protected final ResourceProvider provider;
     protected final String name;
     protected final Set<Directive> directives;
 
     /**
      * Creates the directive set.
+     *
+     * @param provider the provider of this directive set.
+     * @param name     the name of this directive set.
      */
-    public DirectiveSet(String name) {
+    public DirectiveSet(ResourceProvider provider, String name) {
+        Validate.notNull(provider, "Provider cannot be null!");
+        Validate.notNull(name, "Name cannot be null!");
+        this.provider = provider;
         this.name = name;
         directives = new HashSet<>();
     }
 
-    /**
-     * Returns the name of this directive set.
-     *
-     * @return the name.
-     */
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return provider;
     }
 
     /**

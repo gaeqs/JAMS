@@ -24,50 +24,32 @@
 
 package net.jamsimulator.jams.manager;
 
-import net.jamsimulator.jams.event.Cancellable;
-import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.HashSet;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * Represents a {@link Manager} that has a default value.
  * <p>
- * The default value can be changed using {@link #setDefault(Labeled)}.
+ * The default value can be changed using {@link #setDefault(ManagerResource)}.
  * Implement {@link #loadDefaultElement()} to define the default value when the manager is created.
  *
  * @param <Type> the type of the managed elements.
  * @see Manager
  */
-public abstract class DefaultValuableManager<Type extends Labeled> extends Manager<Type> {
-
-
-    protected final BiFunction<Type, Type, Event> beforeSelectDefaultEventBuilder;
-    protected final BiFunction<Type, Type, Event> afterSelectDefaultEventBuilder;
+public abstract class DefaultValuableManager<Type extends ManagerResource> extends Manager<Type> {
 
     protected Type defaultValue;
 
+    private boolean superclassLoaded = false;
+
     /**
      * Creates the manager.
-     * These managers call events on addition, removal and default set. You must provide the builder for these events.
-     *
-     * @param beforeRegisterEventBuilder      the builder that creates the event called before an element is added.
-     * @param afterRegisterEventBuilder       the builder that creates the event called after an element is added.
-     * @param afterUnregisterEventBuilder     the builder that creates the event called before an element is removed.
-     * @param beforeUnregisterEventBuilder    the builder that creates the event called after an element is added.
-     * @param beforeSelectDefaultEventBuilder the builder that creates the event called before the default element is changed.
-     * @param afterSelectDefaultEventBuilder  the builder that creates the event called after the default element is changed.
+     * These managers call events on addition, removal and default set.
      */
-    public DefaultValuableManager(Function<Type, Event> beforeRegisterEventBuilder, Function<Type, Event> afterRegisterEventBuilder,
-                                  Function<Type, Event> beforeUnregisterEventBuilder, Function<Type, Event> afterUnregisterEventBuilder,
-                                  BiFunction<Type, Type, Event> beforeSelectDefaultEventBuilder, BiFunction<Type, Type, Event> afterSelectDefaultEventBuilder) {
-        super(beforeRegisterEventBuilder, afterRegisterEventBuilder, beforeUnregisterEventBuilder, afterUnregisterEventBuilder);
-
-        this.beforeSelectDefaultEventBuilder = beforeSelectDefaultEventBuilder;
-        this.afterSelectDefaultEventBuilder = afterSelectDefaultEventBuilder;
-        this.defaultValue = loadDefaultElement();
+    public DefaultValuableManager(ResourceProvider provider, String name, Class<Type> managedType, boolean loadOnFXThread) {
+        super(provider, name, managedType, loadOnFXThread);
     }
 
     /**
@@ -78,6 +60,7 @@ public abstract class DefaultValuableManager<Type extends Labeled> extends Manag
      * @return the default element.
      */
     public Type getDefault() {
+        if (!loaded) loadPanic();
         return defaultValue;
     }
 
@@ -96,16 +79,18 @@ public abstract class DefaultValuableManager<Type extends Labeled> extends Manag
     public boolean setDefault(Type defaultValue) {
         Validate.notNull(defaultValue, "The default value cannot be null!");
         Validate.isTrue(contains(defaultValue), "The default value must be registered!");
+        if (!loaded) loadPanic();
 
         if (defaultValue == this.defaultValue) return false;
 
-        var before = callEvent(beforeSelectDefaultEventBuilder.apply(defaultValue, this.defaultValue));
-        if (before instanceof Cancellable && ((Cancellable) before).isCancelled()) return false;
+        var before =
+                callEvent(new ManagerDefaultElementChangeEvent.Before<>(this, managedType, this.defaultValue, defaultValue));
+        if (before.isCancelled()) return false;
 
         var old = this.defaultValue;
         this.defaultValue = defaultValue;
 
-        callEvent(afterSelectDefaultEventBuilder.apply(old, defaultValue));
+        callEvent(new ManagerDefaultElementChangeEvent.After<>(this, managedType, old, defaultValue));
         return true;
     }
 
@@ -136,4 +121,17 @@ public abstract class DefaultValuableManager<Type extends Labeled> extends Manag
      * @return the default element of this manager.
      */
     protected abstract Type loadDefaultElement();
+
+    @Override
+    public void load() {
+        super.load();
+        this.defaultValue = loadDefaultElement();
+        callLoadAfterEvent();
+    }
+
+    @Override
+    protected void callLoadAfterEvent() {
+        if (!superclassLoaded) superclassLoaded = true;
+        else super.callLoadAfterEvent();
+    }
 }

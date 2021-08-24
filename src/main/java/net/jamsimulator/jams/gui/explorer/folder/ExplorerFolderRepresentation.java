@@ -24,9 +24,10 @@
 
 package net.jamsimulator.jams.gui.explorer.folder;
 
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.gui.explorer.ExplorerSectionRepresentation;
+import net.jamsimulator.jams.file.FileTypeManager;
+import net.jamsimulator.jams.manager.Manager;
 
 public class ExplorerFolderRepresentation extends ExplorerSectionRepresentation {
     /**
@@ -37,7 +38,7 @@ public class ExplorerFolderRepresentation extends ExplorerSectionRepresentation 
      */
     public ExplorerFolderRepresentation(ExplorerSection section, int hierarchyLevel) {
         super(section, hierarchyLevel);
-        icon.setIcon(Jams.getFileTypeManager().getFolderType().getIcon());
+        icon.setIcon(Manager.get(FileTypeManager.class).getFolderType().getIcon());
     }
 
 }

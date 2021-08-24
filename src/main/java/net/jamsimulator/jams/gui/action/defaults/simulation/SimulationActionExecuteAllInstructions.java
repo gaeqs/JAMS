@@ -37,14 +37,15 @@ import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.project.SimulationHolder;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class SimulationActionExecuteAllInstructions extends ContextAction {
 
     public static final String NAME = "ACTION_MIPS_SIMULATION_EXECUTE_ALL_INSTRUCTIONS";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.DOWN, KeyCombination.ALT_DOWN);
 
-    public SimulationActionExecuteAllInstructions() {
-        super(NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_EXECUTE_ALL_INSTRUCTIONS,
+    public SimulationActionExecuteAllInstructions(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_EXECUTE_ALL_INSTRUCTIONS,
                 DEFAULT_COMBINATION, SimulationActionRegions.MIPS, MainMenuRegion.SIMULATION, Icons.SIMULATION_PLAY);
     }
 

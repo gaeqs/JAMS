@@ -28,6 +28,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.memory.Memory;
@@ -86,8 +87,8 @@ public class SyscallExecutionPrintString implements SyscallExecution {
         private final IntegerProperty maxChars;
         private final IntegerProperty register;
 
-        public Builder() {
-            super(NAME, new LinkedList<>());
+        public Builder(ResourceProvider provider) {
+            super(provider, NAME, new LinkedList<>());
             properties.add(lineJump = new SimpleBooleanProperty(null, "LINE_JUMP", false));
             properties.add(maxChars = new SimpleIntegerProperty(null, "MAX_CHARACTERS", 4096));
             properties.add(register = new SimpleIntegerProperty(null, "REGISTER", 4));
@@ -100,12 +101,12 @@ public class SyscallExecutionPrintString implements SyscallExecution {
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionPrintString> makeNewInstance() {
-            return new Builder();
+            return new Builder(provider);
         }
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionPrintString> copy() {
-            var builder = new Builder();
+            var builder = new Builder(provider);
             builder.maxChars.setValue(maxChars.getValue());
             builder.lineJump.setValue(lineJump.getValue());
             builder.register.setValue(register.getValue());

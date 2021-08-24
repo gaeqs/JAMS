@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.syscall.defaults;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
@@ -49,8 +50,8 @@ public class SyscallExecutionRunExceptionHandler implements SyscallExecution {
 
     public static class Builder extends SyscallExecutionBuilder<SyscallExecutionRunExceptionHandler> {
 
-        public Builder() {
-            super(NAME, Collections.emptyList());
+        public Builder(ResourceProvider provider) {
+            super(provider, NAME, Collections.emptyList());
         }
 
         @Override
@@ -60,12 +61,12 @@ public class SyscallExecutionRunExceptionHandler implements SyscallExecution {
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionRunExceptionHandler> makeNewInstance() {
-            return new Builder();
+            return new Builder(provider);
         }
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionRunExceptionHandler> copy() {
-            return new Builder();
+            return new Builder(provider);
         }
     }
 }

@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.gui.action.defaults.explorerelement.folder;
 
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.file.AssemblyFileType;
 import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.JamsApplication;
@@ -39,6 +38,9 @@ import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.file.FileTypeManager;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.project.FilesToAssemblerHolder;
 
 import java.io.IOException;
@@ -50,8 +52,8 @@ public class FolderActionAddAllFilesToAssembler extends ContextAction {
     public static final String NAME = "FOLDER_EXPLORER_ELEMENT_ADD_ALL_FILES_TO_ASSEMBLER";
     public static final KeyCombination DEFAULT_COMBINATION = null;
 
-    public FolderActionAddAllFilesToAssembler() {
-        super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_ADD_ALL_FILES_TO_ASSEMBLER,
+    public FolderActionAddAllFilesToAssembler(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_ADD_ALL_FILES_TO_ASSEMBLER,
                 DEFAULT_COMBINATION, FolderActionRegions.ASSEMBLER, null, null);
     }
 
@@ -78,7 +80,7 @@ public class FolderActionAddAllFilesToAssembler extends ContextAction {
         try {
             Files.walk(folder.toPath()).forEach(path -> {
                 var file = path.toFile();
-                if (file.isFile() && Jams.getFileTypeManager().getByFile(file).map(FileType::getName)
+                if (file.isFile() && Manager.get(FileTypeManager.class).getByFile(file).map(FileType::getName)
                         .orElse("").equals(AssemblyFileType.NAME)) {
                     files.addFile(file, holder.getFileEditorHolder(), true);
                 }

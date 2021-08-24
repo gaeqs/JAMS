@@ -35,6 +35,8 @@ import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.project.event.ProjectOpenEvent;
 import net.jamsimulator.jams.gui.start.StartWindow;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.project.ProjectTypeManager;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.utils.FileUtils;
 import org.json.JSONArray;
@@ -168,7 +170,7 @@ public class ProjectListTabPane extends TabPane implements EventBroadcast {
                 File folder = new File(o.toString());
                 if (!folder.isDirectory()) continue;
 
-                Jams.getProjectTypeManager().getByProjectfolder(folder)
+                Manager.get(ProjectTypeManager.class).getByProjectfolder(folder)
                         .ifPresent(type -> openProject(type.loadProject(folder)));
             }
 
@@ -200,5 +202,10 @@ public class ProjectListTabPane extends TabPane implements EventBroadcast {
     @Override
     public <T extends Event> T callEvent(T event) {
         return broadcast.callEvent(event, this);
+    }
+
+    @Override
+    public void transferListenersTo(EventBroadcast broadcast) {
+        this.broadcast.transferListenersTo(broadcast);
     }
 }

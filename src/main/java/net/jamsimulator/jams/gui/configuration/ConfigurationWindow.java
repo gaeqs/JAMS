@@ -48,8 +48,11 @@ import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindow
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
+import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
+import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -199,7 +202,7 @@ public class ConfigurationWindow extends SplitPane {
             stage.setX(main.getX() + main.getWidth() / 2 - (WIDTH >> 1));
             stage.setY(main.getY() + main.getHeight() / 2 - (HEIGHT >> 1));
 
-            stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.CONFIG));
+            stage.setTitle(Manager.ofS(Language.class).getSelected().getOrDefault(Messages.CONFIG));
             Icons.LOGO.getImage().ifPresent(stage.getIcons()::add);
 
 
@@ -218,15 +221,20 @@ public class ConfigurationWindow extends SplitPane {
             });
 
             JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);
-            Jams.getLanguageManager().registerListeners(this, true);
+            Manager.of(Language.class).registerListeners(this, true);
         }
 
         stage.show();
     }
 
     @Listener
-    private void onSelectedLanguageChange(SelectedLanguageChangeEvent.After event) {
-        stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.CONFIG));
+    private void onSelectedLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
+        stage.setTitle(event.getNewElement().getOrDefault(Messages.CONFIG));
+    }
+
+    @Listener
+    private void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
+        stage.setTitle(Manager.ofS(Language.class).getSelected().getOrDefault(Messages.CONFIG));
     }
 
     @Listener

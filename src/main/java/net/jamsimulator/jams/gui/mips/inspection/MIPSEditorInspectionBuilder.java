@@ -24,10 +24,13 @@
 
 package net.jamsimulator.jams.gui.mips.inspection;
 
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSCodeElement;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Optional;
 
@@ -43,7 +46,7 @@ import java.util.Optional;
  *
  * @param <Error> the {@link MIPSEditorInspection} this builder is representing.
  */
-public abstract class MIPSEditorInspectionBuilder<Error extends MIPSEditorInspection> implements Labeled {
+public abstract class MIPSEditorInspectionBuilder<Error extends MIPSEditorInspection> implements ManagerResource {
 
     /**
      * The error node prefix for language messages.
@@ -55,16 +58,21 @@ public abstract class MIPSEditorInspectionBuilder<Error extends MIPSEditorInspec
      */
     public static final String WARNING_LANGUAGE_NODE = "EDITOR_MIPS_WARNING_";
 
-    private final String name;
-    private final boolean error;
+    protected final ResourceProvider provider;
+    protected final String name;
+    protected final boolean error;
 
     /**
      * Creates the builder.
      *
+     * @param provider the provider of this inspection.
      * @param name  the name of the inspection.
      * @param error whether the inspection is an error. If not, it is a warning.
      */
-    public MIPSEditorInspectionBuilder(String name, boolean error) {
+    public MIPSEditorInspectionBuilder(ResourceProvider provider, String name, boolean error) {
+        Validate.notNull(provider, "Provider cannot be null!");
+        Validate.notNull(name, "Name cannot be null!");
+        this.provider = provider;
         this.name = name;
         this.error = error;
     }
@@ -74,6 +82,11 @@ public abstract class MIPSEditorInspectionBuilder<Error extends MIPSEditorInspec
         return name;
     }
 
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return provider;
+    }
+
     /**
      * Returns the description of the inspection in the selected language.
      * This description won't have any placeholder replaced.
@@ -81,7 +94,7 @@ public abstract class MIPSEditorInspectionBuilder<Error extends MIPSEditorInspec
      * @return the description.
      */
     public String getDescription() {
-        return Jams.getLanguageManager().getSelected().getOrDefault(
+        return Manager.ofS(Language.class).getSelected().getOrDefault(
                 (error ? ERROR_LANGUAGE_NODE : WARNING_LANGUAGE_NODE) + name);
     }
 

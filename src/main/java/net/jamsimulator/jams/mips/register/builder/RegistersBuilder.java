@@ -24,7 +24,8 @@
 
 package net.jamsimulator.jams.mips.register.builder;
 
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -38,8 +39,9 @@ import java.util.Set;
  * If a plugin wants to add a custom {@link Registers} to JAMS, it should create a child of this class and register
  * it on the manager.
  */
-public abstract class RegistersBuilder implements Labeled {
+public abstract class RegistersBuilder implements ManagerResource {
 
+    protected final ResourceProvider provider;
     protected final String name;
 
     protected final Set<String> registersNames;
@@ -53,16 +55,20 @@ public abstract class RegistersBuilder implements Labeled {
     /**
      * Creates the builder.
      *
+     * @param provider             the provider of this register builder.
      * @param name                 the name of the builder. This name must be unique.
      * @param registersNames       the registers that will be created by this builder. These names don't contain any start character.
      * @param validRegistersStarts the valid starts for registers.
      */
-    public RegistersBuilder(String name, Set<String> registersNames, Set<String> generalRegistersNames,
+    public RegistersBuilder(ResourceProvider provider, String name,
+                            Set<String> registersNames, Set<String> generalRegistersNames,
                             Set<String> coprocessor0RegistersNames, Set<String> coprocessor1RegistersNames,
                             Set<Character> validRegistersStarts) {
+        Validate.notNull(provider, "Provider cannot be null!");
         Validate.notNull(name, "Name cannot be null!");
         Validate.notNull(registersNames, "Names cannot be null!");
         Validate.notNull(validRegistersStarts, "Valid registers starts cannot be null!");
+        this.provider = provider;
         this.name = name;
         this.registersNames = registersNames;
         this.generalRegistersNames = generalRegistersNames;
@@ -71,14 +77,14 @@ public abstract class RegistersBuilder implements Labeled {
         this.validRegistersStarts = validRegistersStarts;
     }
 
-    /**
-     * Returns the name of the builder. This name must be unique.
-     *
-     * @return the name of the builder.
-     */
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return provider;
     }
 
     /**

@@ -36,14 +36,15 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class GeneralActionSettings extends ContextAction {
 
     public static final String NAME = "GENERAL_SETTINGS";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
 
-    public GeneralActionSettings() {
-        super(NAME, RegionTags.GENERAL, Messages.MAIN_MENU_FILE_SETTINGS, DEFAULT_COMBINATION,
+    public GeneralActionSettings(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.GENERAL, Messages.MAIN_MENU_FILE_SETTINGS, DEFAULT_COMBINATION,
                 GeneralActionRegions.SETTINGS, MainMenuRegion.FILE, Icons.MENU_SETTINGS);
     }
 

@@ -29,7 +29,8 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Collection;
@@ -128,7 +129,7 @@ public class ContextActionMenuBuilder {
         @Override
         public Optional<ActionSubmenu> get(ContextSubmenu submenu) {
             return elements.stream().filter(target -> target instanceof ActionSubmenu
-                    && ((ActionSubmenu) target).getSubmenu().equals(submenu))
+                            && ((ActionSubmenu) target).getSubmenu().equals(submenu))
                     .map(target -> (ActionSubmenu) target).findAny();
         }
 
@@ -154,7 +155,7 @@ public class ContextActionMenuBuilder {
         @SuppressWarnings("ComparatorMethodParameterNotUsed")
         public ActionSubmenu(ContextSubmenu submenu, Object node) {
             super(submenu.getLanguageNode().isPresent()
-                    ? Jams.getLanguageManager().getSelected().getOrDefault(submenu.getLanguageNode().get())
+                    ? Manager.ofS(Language.class).getSelected().getOrDefault(submenu.getLanguageNode().get())
                     : submenu.getName());
             this.submenu = submenu;
             this.node = node;
@@ -178,7 +179,7 @@ public class ContextActionMenuBuilder {
         public Optional<ActionSubmenu> get(ContextSubmenu submenu) {
             if (this.submenu.equals(submenu)) return Optional.of(this);
             return elements.stream().filter(target -> target instanceof ActionSubmenu
-                    && ((ActionSubmenu) target).getSubmenu().equals(submenu))
+                            && ((ActionSubmenu) target).getSubmenu().equals(submenu))
                     .map(target -> (ActionSubmenu) target).findAny();
         }
 

@@ -37,14 +37,15 @@ import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.project.SimulationHolder;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class SimulationActionUndoOneStep extends ContextAction {
 
     public static final String NAME = "ACTION_MIPS_SIMULATION_UNDO_ONE_STEP";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.LEFT, KeyCombination.ALT_DOWN);
 
-    public SimulationActionUndoOneStep() {
-        super(NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_UNDO_ONE_STEP, DEFAULT_COMBINATION,
+    public SimulationActionUndoOneStep(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.MIPS_SIMULATION, Messages.ACTION_MIPS_SIMULATION_UNDO_ONE_STEP, DEFAULT_COMBINATION,
                 SimulationActionRegions.MIPS, MainMenuRegion.SIMULATION,
                 Icons.SIMULATION_UNDO_ONE);
     }

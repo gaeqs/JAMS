@@ -25,7 +25,8 @@
 package net.jamsimulator.jams.mips.memory.cache;
 
 import javafx.beans.property.Property;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -33,13 +34,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class CacheBuilder<C extends Cache> implements Labeled {
+public abstract class CacheBuilder<C extends Cache> implements ManagerResource {
 
+    protected final ResourceProvider provider;
     protected final String name;
     protected final List<Property<?>> properties;
 
-    public CacheBuilder(String name, List<Property<?>> properties) {
+    public CacheBuilder(ResourceProvider provider, String name, List<Property<?>> properties) {
+        Validate.notNull(provider, "Provider cannot be null!");
         Validate.notNull(name, "Name cannot be null!");
+        this.provider = provider;
         this.name = name;
         this.properties = properties == null ? Collections.emptyList() : properties;
     }
@@ -47,6 +51,11 @@ public abstract class CacheBuilder<C extends Cache> implements Labeled {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return provider;
     }
 
     public String getLanguageNode() {

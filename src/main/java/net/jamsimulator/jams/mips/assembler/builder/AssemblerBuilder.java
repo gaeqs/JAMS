@@ -25,7 +25,8 @@
 package net.jamsimulator.jams.mips.assembler.builder;
 
 import net.jamsimulator.jams.gui.util.log.Log;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
@@ -41,10 +42,11 @@ import java.util.Objects;
  * using the given parameters.
  * <p>
  * If a plugin want to add a custom MIPS32 assembler to JAMS, it should create a child of this class and register
- * it on the {@link net.jamsimulator.jams.manager.AssemblerBuilderManager}.
+ * it on the {@link AssemblerBuilderManager}.
  */
-public abstract class AssemblerBuilder implements Labeled {
+public abstract class AssemblerBuilder implements ManagerResource {
 
+    private final ResourceProvider resourceProvider;
     private final String name;
 
     /**
@@ -53,20 +55,21 @@ public abstract class AssemblerBuilder implements Labeled {
      *
      * @param name the name.
      */
-    public AssemblerBuilder(String name) {
+    public AssemblerBuilder(ResourceProvider resourceProvider, String name) {
+        Validate.notNull(resourceProvider, "ResourceProvider cannot be null!");
         Validate.notNull(name, "Name cannot be null!");
+        this.resourceProvider = resourceProvider;
         this.name = name;
     }
 
-    /**
-     * Returns the name of this assembler builder.
-     * This name must be unique for each assembler builder.
-     *
-     * @return the name of this assembler builder.
-     */
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return resourceProvider;
     }
 
     /**

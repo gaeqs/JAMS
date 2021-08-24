@@ -27,7 +27,9 @@ package net.jamsimulator.jams.plugin;
 import javafx.application.Platform;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.image.icon.IconData;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.plugin.exception.PluginLoadException;
 import net.jamsimulator.jams.utils.ProtectedFileSystem;
 
@@ -61,7 +63,7 @@ import java.util.stream.Collectors;
  * <p>
  * When a plugin is enabled it is registered in the {@link Jams#getGeneralEventBroadcast() general event broadcast}.
  */
-public class Plugin implements Labeled {
+public class Plugin implements ResourceProvider, ManagerResource {
 
     private PluginClassLoader classLoader;
     private PluginHeader header;
@@ -85,6 +87,12 @@ public class Plugin implements Labeled {
     @Override
     public String getName() {
         return header == null ? "NOT FOUND" : header.name();
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        // Plugins should be ALWAYS be provided by JAMS.
+        return ResourceProvider.JAMS;
     }
 
     /**
@@ -133,7 +141,7 @@ public class Plugin implements Labeled {
     }
 
     /**
-     * WARNING! This method should be used only by a {@link net.jamsimulator.jams.manager.PluginManager}!
+     * WARNING! This method should be used only by a {@link PluginManager}!
      * <p>
      * Enables or disables this plugin.
      *
@@ -151,6 +159,7 @@ public class Plugin implements Labeled {
             dependencies.clear();
             enabledSoftDepenedencies.clear();
             Jams.getGeneralEventBroadcast().unregisterListeners(this);
+            Jams.REGISTRY.removeProvidedBy(this);
         }
     }
 
@@ -212,7 +221,7 @@ public class Plugin implements Labeled {
     /**
      * Disposes the resource of this plugin.
      * <p>
-     * THIS METHOD SHOULD BE USED ONLY BY {@link net.jamsimulator.jams.manager.PluginManager PluginManager}!!!
+     * THIS METHOD SHOULD BE USED ONLY BY {@link PluginManager PluginManager}!!!
      */
     public void dispose() throws IOException {
         classLoader.close();
@@ -248,11 +257,11 @@ public class Plugin implements Labeled {
 
     private void loadDependencies() {
         this.dependencies = header.dependencies().stream()
-                .map(target -> Jams.getPluginManager().get(target).orElse(null))
+                .map(target -> Manager.of(Plugin.class).get(target).orElse(null))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
         this.enabledSoftDepenedencies = header.softDependencies().stream()
-                .map(target -> Jams.getPluginManager().get(target).orElse(null))
+                .map(target -> Manager.of(Plugin.class).get(target).orElse(null))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }

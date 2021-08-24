@@ -29,13 +29,13 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.gui.configuration.ConfigurationRegionDisplay;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.util.PathAndNameEditor;
 import net.jamsimulator.jams.gui.util.propertyeditor.PropertyEditors;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
@@ -62,13 +62,13 @@ public class MIPSEmptyProjectTemplate extends ProjectTemplate<MIPSProject> {
         super(MIPSProjectType.INSTANCE);
 
         assemblerBuilderProperty = new SimpleObjectProperty<>(null,
-                "assembler", Jams.getAssemblerBuilderManager().getDefault());
+                "assembler", Manager.ofD(AssemblerBuilder.class).getDefault());
         instructionSetProperty = new SimpleObjectProperty<>(null,
-                "instructionSet", Jams.getInstructionSetManager().getDefault());
+                "instructionSet", Manager.ofD(InstructionSet.class).getDefault());
         directiveSetProperty = new SimpleObjectProperty<>(null,
-                "directiveSet", Jams.getDirectiveSetManager().getDefault());
+                "directiveSet", Manager.ofD(DirectiveSet.class).getDefault());
         registersBuilderProperty = new SimpleObjectProperty<>(null,
-                "registers", Jams.getRegistersBuilderManager().getDefault());
+                "registers", Manager.ofD(RegistersBuilder.class).getDefault());
 
         editor = new PathAndNameEditor();
 

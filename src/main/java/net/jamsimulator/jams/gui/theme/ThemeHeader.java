@@ -26,6 +26,8 @@ package net.jamsimulator.jams.gui.theme;
 
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.gui.theme.exception.ThemeLoadException;
+import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.utils.Validate;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,8 +38,9 @@ import java.util.Optional;
  * @param name         the name of the theme.
  * @param files        the theme's files to load. This field is optional.
  * @param dependencies the dependencies of the theme. This field is optional.
+ * @param provider     the provider of this theme.
  */
-public record ThemeHeader(String name, List<String> files, List<String> dependencies) {
+public record ThemeHeader(String name, List<String> files, List<String> dependencies, ResourceProvider provider) {
 
     /**
      * The name field of the JSON file. This field is required.
@@ -61,19 +64,26 @@ public record ThemeHeader(String name, List<String> files, List<String> dependen
      * @return the {@link  ThemeHeader}.
      * @throws ThemeLoadException when something went wrong.
      */
-    public static ThemeHeader load(Configuration configuration) throws ThemeLoadException {
+    public static ThemeHeader load(ResourceProvider provider, Configuration configuration) throws ThemeLoadException {
         var name = configuration.getString(NAME_NODE);
         if (name.isEmpty()) throw new ThemeLoadException(ThemeLoadException.Type.INVALID_HEADER);
 
         var files = getListOrEmpty(configuration, FILES_NODE);
         var dependencies = getListOrEmpty(configuration, DEPENDENCIES_NODE);
 
-        return new ThemeHeader(name.get(), files, dependencies);
+        return new ThemeHeader(name.get(), files, dependencies, provider);
     }
 
     private static List<String> getListOrEmpty(Configuration configuration, String node) {
         Optional<List<String>> optional = configuration.get(node);
         return optional.map(List::copyOf).orElse(List.of());
+    }
+
+    public ThemeHeader {
+        Validate.notNull(name, "Name cannot be null!");
+        Validate.notNull(files, "Files cannot be null!");
+        Validate.notNull(dependencies, "Dependencies cannot be null!");
+        Validate.notNull(provider, "Provider cannot be null!");
     }
 
 }

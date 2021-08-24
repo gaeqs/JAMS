@@ -35,6 +35,7 @@ import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.project.FilesToAssemblerHolder;
 
 public class FolderActionRemoveFileFromAssembler extends ContextAction {
@@ -43,8 +44,8 @@ public class FolderActionRemoveFileFromAssembler extends ContextAction {
     public static final String NAME = "FOLDER_EXPLORER_ELEMENT_REMOVE_FILE_FROM_ASSEMBLER";
     public static final KeyCombination DEFAULT_COMBINATION = null;
 
-    public FolderActionRemoveFileFromAssembler() {
-        super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_REMOVE_FILE_FROM_ASSEMBLER,
+    public FolderActionRemoveFileFromAssembler(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_REMOVE_FILE_FROM_ASSEMBLER,
                 DEFAULT_COMBINATION, FolderActionRegions.ASSEMBLER, null, null);
     }
 

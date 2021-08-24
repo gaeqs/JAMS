@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.syscall.defaults;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Register;
@@ -173,8 +174,8 @@ public class SyscallExecutionOpenFile implements SyscallExecution {
         private final IntegerProperty modeRegister;
         private final IntegerProperty resultRegister;
 
-        public Builder() {
-            super(NAME, new LinkedList<>());
+        public Builder(ResourceProvider provider) {
+            super(provider, NAME, new LinkedList<>());
             properties.add(nameRegister = new SimpleIntegerProperty(null, "NAME_REGISTER", 4));
             properties.add(flagRegister = new SimpleIntegerProperty(null, "FLAG_REGISTER", 5));
             properties.add(modeRegister = new SimpleIntegerProperty(null, "MODE_REGISTER", 6));
@@ -188,12 +189,12 @@ public class SyscallExecutionOpenFile implements SyscallExecution {
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionOpenFile> makeNewInstance() {
-            return new Builder();
+            return new Builder(provider);
         }
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionOpenFile> copy() {
-            var builder = new Builder();
+            var builder = new Builder(provider);
             builder.nameRegister.setValue(nameRegister.getValue());
             builder.flagRegister.setValue(flagRegister.getValue());
             builder.modeRegister.setValue(modeRegister.getValue());

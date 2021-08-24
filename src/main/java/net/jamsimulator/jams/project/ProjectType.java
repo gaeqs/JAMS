@@ -27,7 +27,8 @@ package net.jamsimulator.jams.project;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import net.jamsimulator.jams.gui.image.icon.IconData;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
@@ -40,8 +41,9 @@ import java.util.Optional;
  *
  * @param <T> the project to load or create.
  */
-public abstract class ProjectType<T extends Project> implements Labeled {
+public abstract class ProjectType<T extends Project> implements ManagerResource {
 
+    protected final ResourceProvider provider;
     protected final String name;
     protected final IconData icon;
     protected final ObservableList<ProjectTemplateBuilder<?>> templateBuilders;
@@ -49,11 +51,14 @@ public abstract class ProjectType<T extends Project> implements Labeled {
     /**
      * Creates the project type.
      *
-     * @param name the name of the project type.
-     * @param icon the icon representing this type. It may be null.
+     * @param provider the provider of the project type.
+     * @param name     the name of the project type.
+     * @param icon     the icon representing this type. It may be null.
      */
-    public ProjectType(String name, IconData icon) {
+    public ProjectType(ResourceProvider provider, String name, IconData icon) {
+        Validate.notNull(provider, "Provider cannot be null!");
         Validate.notNull(name, "Name cannot be null!");
+        this.provider = provider;
         this.name = name;
         this.icon = icon;
         this.templateBuilders = FXCollections.observableList(new ArrayList<>());
@@ -62,6 +67,11 @@ public abstract class ProjectType<T extends Project> implements Labeled {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return provider;
     }
 
     /**

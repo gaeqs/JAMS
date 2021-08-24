@@ -33,14 +33,15 @@ import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class GeneralActionAbout extends ContextAction {
 
     public static final String NAME = "GENERAL_ABOUT";
     public static final KeyCombination DEFAULT_COMBINATION = null;
 
-    public GeneralActionAbout() {
-        super(NAME, RegionTags.GENERAL, Messages.MAIN_MENU_HELP_ABOUT, DEFAULT_COMBINATION, GeneralActionRegions.ABOUT, MainMenuRegion.HELP, null);
+    public GeneralActionAbout(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.GENERAL, Messages.MAIN_MENU_HELP_ABOUT, DEFAULT_COMBINATION, GeneralActionRegions.ABOUT, MainMenuRegion.HELP, null);
     }
 
     @Override

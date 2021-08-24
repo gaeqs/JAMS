@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.gui.action.defaults.explorerelement.folder;
 
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
@@ -40,6 +39,9 @@ import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.popup.NewAssemblyFileWindow;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.file.FileTypeManager;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.project.FilesToAssemblerHolder;
 import net.jamsimulator.jams.project.Project;
 
@@ -52,11 +54,11 @@ public class FolderActionNewAssemblyFile extends ContextAction {
     public static final String NAME = "FOLDER_EXPLORER_ELEMENT_NEW_ASSEMBLY_FILE";
     public static final KeyCombination DEFAULT_COMBINATION = null;
 
-    public FolderActionNewAssemblyFile() {
-        super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_NEW_ASSEMBLY_FILE,
+    public FolderActionNewAssemblyFile(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_NEW_ASSEMBLY_FILE,
                 DEFAULT_COMBINATION, FolderActionRegions.NEW_GENERAL, null,
-                Jams.getFileTypeManager().getByExtension("asm").map(FileType::getIcon).orElse(
-                        Jams.getFileTypeManager().getUnknownType().getIcon()));
+                Manager.get(FileTypeManager.class).getByExtension("asm").map(FileType::getIcon).orElse(
+                        Manager.get(FileTypeManager.class).getUnknownType().getIcon()));
     }
 
     @Override

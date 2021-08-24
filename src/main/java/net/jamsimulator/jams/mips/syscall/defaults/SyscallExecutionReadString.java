@@ -28,6 +28,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Register;
@@ -112,8 +113,8 @@ public class SyscallExecutionReadString implements SyscallExecution {
         private final IntegerProperty addressRegister;
         private final IntegerProperty maxCharsRegister;
 
-        public Builder() {
-            super(NAME, new LinkedList<>());
+        public Builder(ResourceProvider provider) {
+            super(provider, NAME, new LinkedList<>());
             properties.add(lineJump = new SimpleBooleanProperty(null, "LINE_JUMP", false));
             properties.add(addressRegister = new SimpleIntegerProperty(null, "ADDRESS_REGISTER", 4));
             properties.add(maxCharsRegister = new SimpleIntegerProperty(null, "MAX_CHARS_REGISTER", 5));
@@ -126,12 +127,12 @@ public class SyscallExecutionReadString implements SyscallExecution {
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionReadString> makeNewInstance() {
-            return new Builder();
+            return new Builder(provider);
         }
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionReadString> copy() {
-            var builder = new Builder();
+            var builder = new Builder(provider);
             builder.lineJump.setValue(lineJump.getValue());
             builder.addressRegister.setValue(addressRegister.getValue());
             builder.maxCharsRegister.setValue(maxCharsRegister.getValue());

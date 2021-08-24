@@ -25,10 +25,11 @@
 package net.jamsimulator.jams.language.wrapper;
 
 import javafx.scene.control.MenuItem;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
-import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
+import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 
 public class LanguageMenuItem extends MenuItem {
 
@@ -36,21 +37,21 @@ public class LanguageMenuItem extends MenuItem {
 
     public LanguageMenuItem(String node) {
         this.node = node;
-        Jams.getLanguageManager().registerListeners(this, true);
+        Manager.of(Language.class).registerListeners(this, true);
         refreshMessage();
     }
 
     private void refreshMessage() {
-        setText(Jams.getLanguageManager().getSelected().getOrDefault(node));
+        setText(Manager.ofS(Language.class).getSelected().getOrDefault(node));
     }
 
     @Listener
-    public void onSelectedLanguageChange(SelectedLanguageChangeEvent.After event) {
+    public void onSelectedLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
         refreshMessage();
     }
 
     @Listener
-    public void onDefaultLanguageChange(DefaultLanguageChangeEvent.After event) {
+    public void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
         refreshMessage();
     }
 }

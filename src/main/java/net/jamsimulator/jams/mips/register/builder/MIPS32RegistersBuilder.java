@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.register.builder;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.register.Registers;
 
@@ -40,8 +41,6 @@ public class MIPS32RegistersBuilder extends RegistersBuilder {
     private static final Set<String> GENERAL_NAMES = new HashSet<>();
     private static final Set<String> COP0_NAMES = new HashSet<>();
     private static final Set<String> COP1_NAMES = new HashSet<>();
-
-    public static final MIPS32RegistersBuilder INSTANCE = new MIPS32RegistersBuilder();
 
     static {
         NAMES.add("zero");
@@ -82,9 +81,9 @@ public class MIPS32RegistersBuilder extends RegistersBuilder {
         COP0_NAMES.add("14");
     }
 
-
-    private MIPS32RegistersBuilder() {
-        super(NAME, NAMES, GENERAL_NAMES, COP0_NAMES, COP1_NAMES, MIPS32Registers.VALID_REGISTERS_START);
+    MIPS32RegistersBuilder(ResourceProvider provider) {
+        super(provider, NAME, NAMES, GENERAL_NAMES, COP0_NAMES, COP1_NAMES,
+                MIPS32Registers.VALID_REGISTERS_START);
     }
 
     @Override

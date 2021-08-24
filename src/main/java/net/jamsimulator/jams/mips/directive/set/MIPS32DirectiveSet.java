@@ -24,14 +24,14 @@
 
 package net.jamsimulator.jams.mips.directive.set;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
+
 public class MIPS32DirectiveSet extends DirectiveSet {
 
     public static final String NAME = "MIPS32";
 
-    public static final MIPS32DirectiveSet INSTANCE = new MIPS32DirectiveSet();
-
-    private MIPS32DirectiveSet() {
-        super(NAME);
+    public MIPS32DirectiveSet(ResourceProvider provider) {
+        super(provider, NAME);
         directives.addAll(MIPS32DefaultDirectives.directives);
     }
 

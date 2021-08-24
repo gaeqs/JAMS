@@ -32,11 +32,11 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.theme.Theme;
-import net.jamsimulator.jams.gui.theme.event.ThemeRegisterEvent;
-import net.jamsimulator.jams.gui.theme.event.ThemeUnregisterEvent;
 import net.jamsimulator.jams.gui.util.converter.ThemeValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 
 import java.util.function.Consumer;
 
@@ -89,15 +89,15 @@ public class ThemeValueEditor extends ComboBox<Theme> implements ValueEditor<The
     }
 
     @Listener
-    private void onThemeRegister(ThemeRegisterEvent.After event) {
-        getItems().add(event.getTheme());
+    private void onThemeRegister(ManagerElementRegisterEvent.After<Theme> event) {
+        getItems().add(event.getElement());
     }
 
     @Listener
-    private void onThemeUnregister(ThemeUnregisterEvent.After event) {
-        if (getSelectionModel().getSelectedItem().equals(event.getTheme()))
+    private void onThemeUnregister(ManagerElementUnregisterEvent.After<Theme> event) {
+        if (getSelectionModel().getSelectedItem().equals(event.getElement()))
             setValue(JamsApplication.getThemeManager().stream().findAny().orElse(null));
-        getItems().remove(event.getTheme());
+        getItems().remove(event.getElement());
     }
 
     public static class Builder implements ValueEditor.Builder<Theme> {

@@ -29,14 +29,14 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.util.converter.MemoryBuilderValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
-import net.jamsimulator.jams.mips.memory.builder.event.MemoryBuilderRegisterEvent;
-import net.jamsimulator.jams.mips.memory.builder.event.MemoryBuilderUnregisterEvent;
 
 import java.util.function.Consumer;
 
@@ -48,11 +48,12 @@ public class MemoryBuilderValueEditor extends ComboBox<MemoryBuilder> implements
     };
 
     public MemoryBuilderValueEditor() {
+        var manager = Manager.ofD(MemoryBuilder.class);
         setConverter(ValueConverters.getByTypeUnsafe(MemoryBuilder.class));
-        getItems().addAll(Jams.getMemoryBuilderManager());
-        getSelectionModel().select(Jams.getMemoryBuilderManager().getDefault());
+        getItems().addAll(manager);
+        getSelectionModel().select(manager.getDefault());
         getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> listener.accept(val));
-        Jams.getMemoryBuilderManager().registerListeners(this, true);
+        manager.registerListeners(this, true);
     }
 
     @Override
@@ -89,15 +90,15 @@ public class MemoryBuilderValueEditor extends ComboBox<MemoryBuilder> implements
     }
 
     @Listener
-    private void onMemoryBuilderRegister(MemoryBuilderRegisterEvent.After event) {
-        getItems().add(event.getMemoryBuilder());
+    private void onMemoryBuilderRegister(ManagerElementRegisterEvent.After<MemoryBuilder> event) {
+        getItems().add(event.getElement());
     }
 
     @Listener
-    private void onMemoryBuilderUnregister(MemoryBuilderUnregisterEvent.After event) {
-        if (getSelectionModel().getSelectedItem().equals(event.getMemoryBuilder()))
-            setValue(Jams.getMemoryBuilderManager().getDefault());
-        getItems().remove(event.getMemoryBuilder());
+    private void onMemoryBuilderUnregister(ManagerElementUnregisterEvent.After<MemoryBuilder> event) {
+        if (getSelectionModel().getSelectedItem().equals(event.getElement()))
+            setValue(Manager.ofD(MemoryBuilder.class).getDefault());
+        getItems().remove(event.getElement());
     }
 
     public static class Builder implements ValueEditor.Builder<MemoryBuilder> {

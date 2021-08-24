@@ -24,22 +24,28 @@
 
 package net.jamsimulator.jams.manager;
 
-import net.jamsimulator.jams.event.Cancellable;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
+import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerLoadEvent;
+import net.jamsimulator.jams.manager.event.ManagerRequestingDefaultElementsEvent;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Represents a storage for instances of the selected type.
  * You can add, remove and get elements from this manager.
  * <p>
- * Elements stored by a manager must implement {@link Labeled}.
+ * Elements stored by a manager must implement {@link ManagerResource}.
  * <p>
  * Every addition will call a register event, and every removal will call an unregister event.
  * <p>
@@ -49,36 +55,179 @@ import java.util.function.Function;
  * @see DefaultValuableManager
  * @see SelectableManager
  */
-public abstract class Manager<Type extends Labeled> extends HashSet<Type> implements EventBroadcast {
+public abstract class Manager<Type extends ManagerResource> extends HashSet<Type>
+        implements EventBroadcast, ManagerResource {
+
+    /**
+     * Returns the primary manager who is instance the given class.
+     * <p>
+     * This is a shortcut for {@code Jams.REGISTRY.get(clazz)}.
+     *
+     * @param clazz the clazz.
+     * @param <T>   the type of the manager.
+     * @return the manager.
+     * @throws NoSuchElementException when the manager is not found.
+     * @see Registry#get(Class)
+     */
+    public static <T extends Manager<?>> T get(Class<T> clazz) {
+        return Jams.REGISTRY.get(clazz);
+    }
+
+    /**
+     * Returns the primary manager that manages the given type.
+     * <p>
+     * This is a shortcut for {@code Jams.REGISTRY.of(clazz)}.
+     *
+     * @param clazz the managed type class.
+     * @param <T>   the managed type.
+     * @return the manager.
+     * @throws NoSuchElementException when the manager is not found.
+     * @see Registry#of(Class)
+     */
+    public static <T extends ManagerResource> Manager<T> of(Class<T> clazz) {
+        return Jams.REGISTRY.of(clazz);
+    }
+
+    /**
+     * Returns the primary manager that manages the given type cast to a {@link DefaultValuableManager}.
+     * <p>
+     * This is a shortcut for {@code Jams.REGISTRY.of(clazz)}.
+     *
+     * @param clazz the managed type class.
+     * @param <T>   the managed type.
+     * @return the manager.
+     * @throws NoSuchElementException when the manager is not found.
+     * @throws ClassCastException     when the manager is not a {@link DefaultValuableManager}.
+     * @see Registry#of(Class)
+     */
+    public static <T extends ManagerResource> DefaultValuableManager<T> ofD(Class<T> clazz) {
+        return (DefaultValuableManager<T>) Jams.REGISTRY.of(clazz);
+    }
+
+    /**
+     * Returns the primary manager that manages the given type cast to a {@link SelectableManager}.
+     * <p>
+     * This is a shortcut for {@code Jams.REGISTRY.of(clazz)}.
+     *
+     * @param clazz the managed type class.
+     * @param <T>   the managed type.
+     * @return the manager.
+     * @throws NoSuchElementException when the manager is not found.
+     * @throws ClassCastException     when the manager is not a {@link SelectableManager}.
+     * @see Registry#of(Class)
+     */
+    public static <T extends ManagerResource> SelectableManager<T> ofS(Class<T> clazz) {
+        return (SelectableManager<T>) Jams.REGISTRY.of(clazz);
+    }
+
+    /**
+     * The {@link ResourceProvider} providing this manager.
+     */
+    protected final ResourceProvider provider;
+
+    /**
+     * THe name of the manager.
+     */
+    protected final String name;
 
     /**
      * The event broadcast of the manager. This allows the manager to call events.
      */
     protected final SimpleEventBroadcast broadcast;
 
-    protected final Function<Type, Event> beforeRegisterEventBuilder;
-    protected final Function<Type, Event> afterRegisterEventBuilder;
-    protected final Function<Type, Event> afterUnregisterEventBuilder;
-    protected final Function<Type, Event> beforeUnregisterEventBuilder;
+    /**
+     * The managed type of this manager.
+     */
+    protected final Class<Type> managedType;
+
+    /**
+     * Whether this manager should be loaded on the JavaXF thread.
+     */
+    protected final boolean loadOnFXThread;
+
+    /**
+     * Whether this manager is loaded.
+     */
+    protected boolean loaded;
 
     /**
      * Creates the manager.
-     * These managers call events on addition and removal. You must provide the builder for these events.
-     *
-     * @param beforeRegisterEventBuilder   the builder that creates the event called before an element is added.
-     * @param afterRegisterEventBuilder    the builder that creates the event called after an element is added.
-     * @param afterUnregisterEventBuilder  the builder that creates the event called before an element is removed.
-     * @param beforeUnregisterEventBuilder the builder that creates the event called after an element is added.
+     * These managers call events on addition and removal.
      */
-    public Manager(Function<Type, Event> beforeRegisterEventBuilder, Function<Type, Event> afterRegisterEventBuilder,
-                   Function<Type, Event> beforeUnregisterEventBuilder, Function<Type, Event> afterUnregisterEventBuilder) {
-
+    public Manager(ResourceProvider provider, String name, Class<Type> managedType, boolean loadOnFXThread) {
+        this.provider = provider;
+        this.name = name;
         this.broadcast = new SimpleEventBroadcast();
-        this.beforeRegisterEventBuilder = beforeRegisterEventBuilder;
-        this.afterRegisterEventBuilder = afterRegisterEventBuilder;
-        this.beforeUnregisterEventBuilder = beforeUnregisterEventBuilder;
-        this.afterUnregisterEventBuilder = afterUnregisterEventBuilder;
+        this.managedType = managedType;
+        this.loadOnFXThread = loadOnFXThread;
+        this.loaded = false;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return provider;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Returns whether this manager should be loaded on the JavaFX thread.
+     *
+     * @return whether this manager should be loaded on the JavaFX thread.
+     */
+    public boolean shouldLoadOnFXThread() {
+        return loadOnFXThread;
+    }
+
+    /**
+     * Returns the type of elements this manager manages.
+     *
+     * @return the type of elements.
+     */
+    public Class<Type> getManagedType() {
+        return managedType;
+    }
+
+    /**
+     * Returns whether this manager is loaded.
+     *
+     * @return whether this manager is loaded.
+     */
+    public boolean isLoaded() {
+        return loaded;
+    }
+
+    /**
+     * Loads this manager.
+     */
+    public void load() {
+        if (loaded) throw new IllegalStateException("Manager " + this + " is already loaded!");
+        callEvent(new ManagerLoadEvent.Before<>(this, managedType));
+        loaded = true;
         loadDefaultElements();
+        callEvent(new ManagerRequestingDefaultElementsEvent<>(this, managedType));
+        callLoadAfterEvent();
+    }
+
+    /**
+     * Calls the after laod event. This method is used by
+     * {@link DefaultValuableManager} and {@link SelectableManager} to edit the event call.
+     */
+    protected void callLoadAfterEvent() {
+        callEvent(new ManagerLoadEvent.After<>(this, managedType));
+    }
+
+    /**
+     * Returns whether this manager contains an element that matches the given name.
+     *
+     * @param name the name.
+     * @return whether this manager contains an element that matches the given name.
+     */
+    public boolean containsElement(String name) {
+        return stream().anyMatch(it -> it.getName().equals(name));
     }
 
     /**
@@ -88,7 +237,18 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
      * @return the element, if present.
      */
     public Optional<Type> get(String name) {
+        if (!loaded) loadPanic();
         return stream().filter(t -> t.getName().equals(name)).findAny();
+    }
+
+    /**
+     * Returns a new {@link Set} with all resources provided by the given {@link ResourceProvider}.
+     *
+     * @param provider the {@link ResourceProvider}.
+     * @return the resources.
+     */
+    public Set<Type> getProvidedBy(ResourceProvider provider) {
+        return stream().filter(t -> t.getResourceProvider().equals(provider)).collect(Collectors.toSet());
     }
 
     /**
@@ -101,9 +261,9 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
      * @return the element, or null if not present.
      */
     public Type getOrNull(String name) {
+        if (!loaded) loadPanic();
         return get(name).orElse(null);
     }
-
 
     /**
      * Attempts to register the given element.
@@ -119,18 +279,20 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
     @Override
     public boolean add(Type element) {
         Validate.notNull(element, "The element cannot be null!");
-        var before = callEvent(beforeRegisterEventBuilder.apply(element));
-        if (before instanceof Cancellable && ((Cancellable) before).isCancelled()) return false;
+        if (!loaded) loadPanic();
+        var before =
+                callEvent(new ManagerElementRegisterEvent.Before<>(this, managedType, element));
+        if (before.isCancelled()) return false;
         if (super.add(element)) {
             onElementAddition(element);
-            callEvent(afterRegisterEventBuilder.apply(element));
+            callEvent(new ManagerElementRegisterEvent.After<>(this, managedType, element));
             return true;
         }
         return false;
     }
 
     /**
-     * This method is called when the {@link #add(Labeled)}} execution was successful,
+     * This method is called when the {@link #add(ManagerResource)}} execution was successful,
      * just before the after event is called.
      * <p>
      * You can override this method to perform any extra operation when an element is added.
@@ -140,7 +302,6 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
     @SuppressWarnings("EmptyMethod")
     protected void onElementAddition(Type type) {
     }
-
 
     /**
      * Attempts to unregister the given element.
@@ -158,18 +319,46 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
     @Override
     public boolean remove(Object o) {
         Validate.notNull(o, "The element cannot be null!");
+        if (!loaded) loadPanic();
+        if (!contains(o)) return false;
         try {
-            var before = callEvent(beforeUnregisterEventBuilder.apply((Type) o));
-            if (before instanceof Cancellable && ((Cancellable) before).isCancelled()) return false;
+            var before =
+                    callEvent(new ManagerElementUnregisterEvent.Before<>(this, managedType, (Type) o));
+            if (before.isCancelled()) return false;
             if (super.remove(o)) {
                 onElementRemoval((Type) o);
-                callEvent(afterUnregisterEventBuilder.apply((Type) o));
+                callEvent(new ManagerElementUnregisterEvent.After<>(this, managedType, (Type) o));
                 return true;
             }
             return false;
         } catch (ClassCastException ex) {
             return false;
         }
+    }
+
+    /**
+     * Removes from this manager the element that matched the given name.
+     *
+     * @param name the name.
+     * @return whether the element was found and removed.
+     */
+    public boolean removeElement(String name) {
+        return removeIf(it -> it.getName().equals(name));
+    }
+
+    /**
+     * Tries to remove all elements provided by the given {@link ResourceProvider}.
+     *
+     * @param provider the {@link ResourceProvider}
+     * @return the amount of removed elements.
+     */
+    public int removeProvidedBy(ResourceProvider provider) {
+        var elements = getProvidedBy(provider);
+        int count = 0;
+        for (Type element : elements) {
+            if (remove(element)) count++;
+        }
+        return count;
     }
 
     /**
@@ -188,6 +377,14 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
      * Implement this method to add all default values of this manager.
      */
     protected abstract void loadDefaultElements();
+
+    /**
+     * Throws a {@link IllegalStateException}.
+     * This method is called when a manager requires access to its elements but it's not loaded.
+     */
+    protected void loadPanic() {
+        throw new IllegalStateException("Manager " + this + " is not loaded!");
+    }
 
     //region BROADCAST
 
@@ -214,6 +411,11 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
     @Override
     public <T extends Event> T callEvent(T event) {
         return broadcast.callEvent(event, this);
+    }
+
+    @Override
+    public void transferListenersTo(EventBroadcast broadcast) {
+        this.broadcast.transferListenersTo(broadcast);
     }
 
     //endregion

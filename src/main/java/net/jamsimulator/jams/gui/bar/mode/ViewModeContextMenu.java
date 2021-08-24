@@ -29,10 +29,10 @@ import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.bar.BarSnapshot;
-import net.jamsimulator.jams.gui.bar.mode.event.BarSnapshotViewModeRegisterEvent;
-import net.jamsimulator.jams.gui.bar.mode.event.BarSnapshotViewModeUnregisterEvent;
 import net.jamsimulator.jams.language.wrapper.LanguageCheckMenuItem;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 
 import java.util.Comparator;
 
@@ -65,7 +65,7 @@ public class ViewModeContextMenu extends ContextMenu {
     }
 
     @Listener
-    private void onViewModeRegister(BarSnapshotViewModeRegisterEvent.After event) {
+    private void onViewModeRegister(ManagerElementRegisterEvent.After<BarSnapshotViewMode> event) {
         getItems().clear();
         JamsApplication.getBarSnapshotViewModeManager().stream()
                 .sorted((Comparator.comparing(Labeled::getName)))
@@ -73,8 +73,8 @@ public class ViewModeContextMenu extends ContextMenu {
     }
 
     @Listener
-    private void onViewModeUnregister(BarSnapshotViewModeUnregisterEvent.After event) {
-        getItems().removeIf(item -> item instanceof Item && ((Item) item).viewMode.equals(event.getViewMode()));
+    private void onViewModeUnregister(ManagerElementUnregisterEvent.After<BarSnapshotViewMode> event) {
+        getItems().removeIf(item -> item instanceof Item && ((Item) item).viewMode.equals(event.getElement()));
     }
 
     /**

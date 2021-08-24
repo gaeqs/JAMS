@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.plugin;
 
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.plugin.exception.PluginLoadException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -85,8 +86,8 @@ public class PluginClassLoader extends URLClassLoader {
         if (local != null) return local;
 
         // Jams.getPluginManager() -> Avoids NullPointerException when the manager is being initialized.
-        if (checkOtherPlugins && Jams.getPluginManager() != null) {
-            for (Plugin plugin : Jams.getPluginManager()) {
+        if (checkOtherPlugins) {
+            for (Plugin plugin : Manager.of(Plugin.class)) {
                 try {
                     return plugin.getClassLoader().findClass(name, false);
                 } catch (ClassNotFoundException ignore) {

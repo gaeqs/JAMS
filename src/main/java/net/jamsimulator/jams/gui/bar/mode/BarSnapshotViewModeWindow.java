@@ -26,7 +26,6 @@ package net.jamsimulator.jams.gui.bar.mode;
 
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.bar.BarButton;
 import net.jamsimulator.jams.gui.bar.BarSnapshot;
@@ -34,8 +33,11 @@ import net.jamsimulator.jams.gui.bar.BarSnapshotHolder;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
-import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
-import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
+import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 
 import java.util.Optional;
 
@@ -46,9 +48,8 @@ import java.util.Optional;
 public class BarSnapshotViewModeWindow implements BarSnapshotViewMode {
 
     public static final String NAME = "window";
-    public static final BarSnapshotViewModeWindow INSTANCE = new BarSnapshotViewModeWindow();
 
-    private BarSnapshotViewModeWindow() {
+    BarSnapshotViewModeWindow() {
     }
 
     @Override
@@ -63,6 +64,11 @@ public class BarSnapshotViewModeWindow implements BarSnapshotViewMode {
     }
 
     @Override
+    public ResourceProvider getResourceProvider() {
+        return ResourceProvider.JAMS;
+    }
+
+    @Override
     public String getLanguageNode() {
         return "BAR_VIEW_MODE_WINDOW";
     }
@@ -74,7 +80,7 @@ public class BarSnapshotViewModeWindow implements BarSnapshotViewMode {
         @Override
         public boolean show(BarButton button) {
             snapshot = button.getSnapshot();
-            setTitle(Jams.getLanguageManager().getSelected().getOrDefault(snapshot.getLanguageNode().orElse(null)));
+            setTitle(Manager.ofS(Language.class).getSelected().getOrDefault(snapshot.getLanguageNode().orElse(null)));
             Icons.LOGO.getImage().ifPresent(getIcons()::add);
 
             var anchor = new AnchorPane(snapshot.getNode());
@@ -88,7 +94,7 @@ public class BarSnapshotViewModeWindow implements BarSnapshotViewMode {
             setHeight(600);
             show();
 
-            Jams.getLanguageManager().registerListeners(this, true);
+            Manager.of(Language.class).registerListeners(this, true);
 
             return true;
         }
@@ -101,13 +107,13 @@ public class BarSnapshotViewModeWindow implements BarSnapshotViewMode {
         }
 
         @Listener
-        private void onLanguageChange(SelectedLanguageChangeEvent.After event) {
-            setTitle(event.getNewLanguage().getOrDefault(snapshot.getLanguageNode().orElse(null)));
+        private void onLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
+            setTitle(event.getNewElement().getOrDefault(snapshot.getLanguageNode().orElse(null)));
         }
 
         @Listener
-        private void onLanguageChange(DefaultLanguageChangeEvent.After event) {
-            setTitle(Jams.getLanguageManager().getSelected().getOrDefault(snapshot.getLanguageNode().orElse(null)));
+        private void onLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
+            setTitle(Manager.ofS(Language.class).getSelected().getOrDefault(snapshot.getLanguageNode().orElse(null)));
         }
     }
 }

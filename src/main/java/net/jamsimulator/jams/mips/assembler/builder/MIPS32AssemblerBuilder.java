@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.assembler.builder;
 
 import net.jamsimulator.jams.gui.util.log.Log;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
@@ -32,17 +33,15 @@ import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.utils.RawFileData;
 
-public class MIPS32AssemblerBuilder extends AssemblerBuilder {
+public final class MIPS32AssemblerBuilder extends AssemblerBuilder {
 
     public static final String NAME = "MIPS32";
-
-    public static final MIPS32AssemblerBuilder INSTANCE = new MIPS32AssemblerBuilder();
 
     /**
      * Creates a MIPS32 builder.
      */
-    private MIPS32AssemblerBuilder() {
-        super(NAME);
+    MIPS32AssemblerBuilder(ResourceProvider provider) {
+        super(provider, NAME);
     }
 
     @Override

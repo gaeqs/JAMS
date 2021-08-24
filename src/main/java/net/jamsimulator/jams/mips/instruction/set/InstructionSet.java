@@ -24,7 +24,8 @@
 
 package net.jamsimulator.jams.mips.instruction.set;
 
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
@@ -48,10 +49,11 @@ import java.util.*;
  * @see Instruction
  * @see BasicInstruction
  */
-public class InstructionSet implements Labeled {
+public class InstructionSet implements ManagerResource {
 
     public static final CompatibleInstructionComparator COMPARATOR = new CompatibleInstructionComparator();
 
+    protected final ResourceProvider provider;
     protected final String name;
     protected final Set<Instruction> instructions;
 
@@ -68,7 +70,10 @@ public class InstructionSet implements Labeled {
      */
     protected final Map<String, Set<Instruction>> instructionsByMnemonic;
 
-    public InstructionSet(String name) {
+    public InstructionSet(ResourceProvider provider, String name) {
+        Validate.notNull(provider, "Provider cannot be null!");
+        Validate.notNull(name, "Name cannot be null!");
+        this.provider = provider;
         this.name = name;
         instructions = new HashSet<>();
         instructionsByMnemonic = new HashMap<>();
@@ -107,6 +112,11 @@ public class InstructionSet implements Labeled {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return provider;
     }
 
     /**

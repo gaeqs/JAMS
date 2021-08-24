@@ -24,8 +24,8 @@
 
 package net.jamsimulator.jams.project.mips.configuration;
 
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
@@ -51,9 +51,9 @@ public class MIPSSimulationConfigurationPresets {
 
     static {
         PRESETS.add(new MIPSSimulationConfigurationNodePreset(ARCHITECTURE, Architecture.class, 100,
-                Messages.SIMULATION_CONFIGURATION_ARCHITECTURE, SingleCycleArchitecture.INSTANCE, null));
+                Messages.SIMULATION_CONFIGURATION_ARCHITECTURE, Manager.of(Architecture.class).getOrNull(SingleCycleArchitecture.NAME), null));
         PRESETS.add(new MIPSSimulationConfigurationNodePreset(MEMORY, MemoryBuilder.class, 100,
-                Messages.SIMULATION_CONFIGURATION_MEMORY, Jams.getMemoryBuilderManager().getDefault(), null));
+                Messages.SIMULATION_CONFIGURATION_MEMORY, Manager.ofD(MemoryBuilder.class).getDefault(), null));
         PRESETS.add(new MIPSSimulationConfigurationNodePreset(CALL_EVENTS, Boolean.class, 90,
                 Messages.SIMULATION_CONFIGURATION_CALL_EVENTS, true, null));
         PRESETS.add(new MIPSSimulationConfigurationNodePreset(UNDO_ENABLED, Boolean.class, 89,
@@ -61,13 +61,13 @@ public class MIPSSimulationConfigurationPresets {
                 Map.of(CALL_EVENTS, new Object[]{true})));
         PRESETS.add(new MIPSSimulationConfigurationNodePreset(FORWARDING_ENABLED, Boolean.class, 80,
                 Messages.SIMULATION_CONFIGURATION_ENABLE_FORWARDING, true,
-                Set.of(PipelinedArchitecture.INSTANCE), null));
+                Set.of(Manager.of(Architecture.class).getOrNull(PipelinedArchitecture.NAME)), null));
         PRESETS.add(new MIPSSimulationConfigurationNodePreset(BRANCH_ON_DECODE, Boolean.class, 80,
                 Messages.SIMULATION_CONFIGURATION_SOLVE_BRANCH_ON_DECODE, true,
-                Set.of(PipelinedArchitecture.INSTANCE), null));
+                Set.of(Manager.of(Architecture.class).getOrNull(PipelinedArchitecture.NAME)), null));
         PRESETS.add(new MIPSSimulationConfigurationNodePreset(DELAY_SLOTS_ENABLED, Boolean.class, 79,
                 Messages.SIMULATION_CONFIGURATION_ENABLE_DELAY_SLOTS, false,
-                Set.of(PipelinedArchitecture.INSTANCE), Map.of(BRANCH_ON_DECODE, new Object[]{true})));
+                Set.of(Manager.of(Architecture.class).getOrNull(PipelinedArchitecture.NAME)), Map.of(BRANCH_ON_DECODE, new Object[]{true})));
     }
 
     public static Set<MIPSSimulationConfigurationNodePreset> getPresets() {

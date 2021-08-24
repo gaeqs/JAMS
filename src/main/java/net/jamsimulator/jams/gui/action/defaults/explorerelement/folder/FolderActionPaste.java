@@ -38,6 +38,7 @@ import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.util.ClipboardUtils;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.io.File;
 
@@ -47,8 +48,8 @@ public class FolderActionPaste extends ContextAction {
     public static final String NAME = "FOLDER_EXPLORER_ELEMENT_PASTE";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.V, KeyCombination.SHORTCUT_DOWN);
 
-    public FolderActionPaste() {
-        super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_PASTE, DEFAULT_COMBINATION,
+    public FolderActionPaste(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_PASTE, DEFAULT_COMBINATION,
                 FolderActionRegions.CLIPBOARD, null, null);
     }
 

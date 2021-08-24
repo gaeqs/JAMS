@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.syscall.defaults;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
@@ -79,8 +80,8 @@ public class SyscallExecutionRandomDouble implements SyscallExecution {
 
         private final IntegerProperty generatorRegister, valueRegister;
 
-        public Builder() {
-            super(NAME, new LinkedList<>());
+        public Builder(ResourceProvider provider) {
+            super(provider, NAME, new LinkedList<>());
             properties.add(generatorRegister = new SimpleIntegerProperty(null, "GENERATOR_REGISTER", 4));
             properties.add(valueRegister = new SimpleIntegerProperty(null, "VALUE_REGISTER", 0));
         }
@@ -92,12 +93,12 @@ public class SyscallExecutionRandomDouble implements SyscallExecution {
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionRandomDouble> makeNewInstance() {
-            return new Builder();
+            return new Builder(provider);
         }
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionRandomDouble> copy() {
-            var builder = new Builder();
+            var builder = new Builder(provider);
             builder.generatorRegister.setValue(generatorRegister.getValue());
             builder.valueRegister.setValue(valueRegister.getValue());
             return builder;

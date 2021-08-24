@@ -34,14 +34,15 @@ import net.jamsimulator.jams.gui.editor.popup.DocumentationPopup;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class TextEditorActionShowDocumentationPopup extends ContextAction {
 
     public static final String NAME = "TEXT_EDITOR_SHOW_DOCUMENTATION_POPUP";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN);
 
-    public TextEditorActionShowDocumentationPopup() {
-        super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_SHOW_DOCUMENTATION_POPUP, DEFAULT_COMBINATION, TextEditorActionRegions.CONTEXT, null, null);
+    public TextEditorActionShowDocumentationPopup(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_SHOW_DOCUMENTATION_POPUP, DEFAULT_COMBINATION, TextEditorActionRegions.CONTEXT, null, null);
     }
 
     @Override

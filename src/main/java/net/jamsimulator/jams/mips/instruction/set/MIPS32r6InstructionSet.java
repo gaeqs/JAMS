@@ -24,14 +24,14 @@
 
 package net.jamsimulator.jams.mips.instruction.set;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
+
 public class MIPS32r6InstructionSet extends InstructionSet {
 
     public static final String NAME = "MIPS32r6";
 
-    public static final MIPS32r6InstructionSet INSTANCE = new MIPS32r6InstructionSet();
-
-    private MIPS32r6InstructionSet() {
-        super(NAME);
+    public MIPS32r6InstructionSet(ResourceProvider provider) {
+        super(provider, NAME);
         MIPS32DefaultInstructions.basicInstructions.forEach(this::registerInstruction);
         MIPS32DefaultInstructions.pseudoInstructions.forEach(this::registerInstruction);
     }

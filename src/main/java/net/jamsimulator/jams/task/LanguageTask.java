@@ -25,10 +25,11 @@
 package net.jamsimulator.jams.task;
 
 import javafx.concurrent.Task;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
-import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
+import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
@@ -271,7 +272,7 @@ public abstract class LanguageTask<E> extends Task<E> {
     public LanguageTask(String titleLanguageNode, String messageLanguageNode) {
         updateTitle(titleLanguageNode);
         updateMessage(messageLanguageNode);
-        Jams.getLanguageManager().registerListeners(this, true);
+        Manager.of(Language.class).registerListeners(this, true);
     }
 
     /**
@@ -285,7 +286,7 @@ public abstract class LanguageTask<E> extends Task<E> {
     @Override
     public void updateTitle(String title) {
         titleLanguageNode = title;
-        super.updateTitle(title == null ? null : Jams.getLanguageManager().getDefault().getOrDefault(title));
+        super.updateTitle(title == null ? null : Manager.ofD(Language.class).getDefault().getOrDefault(title));
     }
 
     /**
@@ -300,7 +301,7 @@ public abstract class LanguageTask<E> extends Task<E> {
     public void updateMessage(String message) {
         messageLanguageNode = message;
         super.updateMessage(message);
-        super.updateTitle(message == null ? null : Jams.getLanguageManager().getDefault().getOrDefault(message));
+        super.updateTitle(message == null ? null : Manager.ofD(Language.class).getDefault().getOrDefault(message));
     }
 
     @Override
@@ -319,13 +320,13 @@ public abstract class LanguageTask<E> extends Task<E> {
     }
 
     @Listener
-    private void onLanguageChange(DefaultLanguageChangeEvent.After event) {
+    private void onLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
         updateTitle(titleLanguageNode);
         updateMessage(messageLanguageNode);
     }
 
     @Listener
-    private void onLanguageChange(SelectedLanguageChangeEvent.After event) {
+    private void onLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
         updateTitle(titleLanguageNode);
         updateMessage(messageLanguageNode);
     }

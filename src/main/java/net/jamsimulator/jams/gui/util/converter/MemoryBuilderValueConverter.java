@@ -24,7 +24,7 @@
 
 package net.jamsimulator.jams.gui.util.converter;
 
-import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
 
 import java.util.Optional;
@@ -40,7 +40,7 @@ public class MemoryBuilderValueConverter extends ValueConverter<MemoryBuilder> {
 
     @Override
     public Optional<MemoryBuilder> fromStringSafe(String value) {
-        return Jams.getMemoryBuilderManager().get(value);
+        return Manager.of(MemoryBuilder.class).get(value);
     }
 
     @Override

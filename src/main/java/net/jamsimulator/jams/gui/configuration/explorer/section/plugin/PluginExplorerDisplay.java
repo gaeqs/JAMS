@@ -31,17 +31,19 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.popup.ConfirmationWindow;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.StringStyler;
+import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
-import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.plugin.PluginManager;
+import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
+import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 import net.jamsimulator.jams.plugin.Plugin;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.StyleClassedTextArea;
@@ -59,7 +61,7 @@ public class PluginExplorerDisplay extends AnchorPane {
 
     public PluginExplorerDisplay() {
         getStyleClass().add(STYLE_CLASS);
-        Jams.getLanguageManager().registerListeners(this, true);
+        Manager.of(Language.class).registerListeners(this, true);
     }
 
     public void display(Plugin plugin) {
@@ -112,7 +114,7 @@ public class PluginExplorerDisplay extends AnchorPane {
 
         var scroll = new VirtualizedScrollPane<>(display);
 
-        var description = Jams.getLanguageManager().getSelected().getOrDefault(
+        var description = Manager.ofS(Language.class).getSelected().getOrDefault(
                 plugin.getHeader().descriptionLanguageNode());
         display.setWrapText(true);
 
@@ -130,10 +132,10 @@ public class PluginExplorerDisplay extends AnchorPane {
 
 
         button.setOnAction(event -> {
-            var message = Jams.getLanguageManager().getSelected()
+            var message = Manager.ofS(Language.class).getSelected()
                     .getOrDefault(Messages.CONFIG_PLUGIN_UNINSTALL_CONFIRM)
                     .replace("{PLUGIN}", selected.getName());
-            ConfirmationWindow.open(message, () -> Jams.getPluginManager().unistallPlugin(plugin),
+            ConfirmationWindow.open(message, () -> Manager.get(PluginManager.class).unistallPlugin(plugin),
                     () -> {
                     });
         });
@@ -144,12 +146,12 @@ public class PluginExplorerDisplay extends AnchorPane {
 
 
     @Listener
-    private void onLanguageChange(SelectedLanguageChangeEvent.After event) {
+    private void onLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
         display(selected);
     }
 
     @Listener
-    private void onLanguageChange(DefaultLanguageChangeEvent.After event) {
+    private void onLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
         display(selected);
     }
 

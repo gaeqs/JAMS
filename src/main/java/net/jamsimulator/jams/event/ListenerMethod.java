@@ -26,6 +26,8 @@ package net.jamsimulator.jams.event;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 class ListenerMethod {
 
@@ -35,6 +37,7 @@ class ListenerMethod {
     private final Method method;
     private final Listener listener;
     private final boolean ignoreCancelled;
+    private final Type[] generics;
 
     private final Object instance;
     private final WeakReference<Object> instanceWeakReference;
@@ -53,6 +56,14 @@ class ListenerMethod {
             this.instance = instance;
             this.instanceWeakReference = null;
         }
+
+
+        if (method.getGenericParameterTypes()[0] instanceof ParameterizedType parametrized) {
+            generics = parametrized.getActualTypeArguments();
+        } else {
+            generics = new Type[0];
+        }
+
     }
 
     Class<? extends Event> getEvent() {
@@ -69,6 +80,10 @@ class ListenerMethod {
 
     Method getMethod() {
         return method;
+    }
+
+    public Type[] getGenerics() {
+        return generics;
     }
 
     boolean matches(Object instance, Method method) {

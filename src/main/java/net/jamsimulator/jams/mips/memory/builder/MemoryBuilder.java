@@ -24,7 +24,9 @@
 
 package net.jamsimulator.jams.mips.memory.builder;
 
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilderManager;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -35,20 +37,24 @@ import java.util.Objects;
  * using the given parameters.
  * <p>
  * If a plugin wants to add a custom memory to JAMS, it should create a child of this class and register
- * it on the {@link net.jamsimulator.jams.manager.AssemblerBuilderManager}.
+ * it on the {@link AssemblerBuilderManager}.
  */
-public abstract class MemoryBuilder implements Labeled {
+public abstract class MemoryBuilder implements ManagerResource {
 
-    private final String name;
+    protected final ResourceProvider provider;
+    protected final String name;
 
     /**
      * Creates a memory builder using a name.
      * This name must be unique for each memory builder.
      *
-     * @param name the name.
+     * @param provider the provider of this memory builder.
+     * @param name     the name.
      */
-    public MemoryBuilder(String name) {
+    public MemoryBuilder(ResourceProvider provider, String name) {
+        Validate.notNull(provider, "Provider cannot be null!");
         Validate.notNull(name, "Name cannot be null!");
+        this.provider = provider;
         this.name = name;
     }
 
@@ -61,6 +67,11 @@ public abstract class MemoryBuilder implements Labeled {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return provider;
     }
 
     /**

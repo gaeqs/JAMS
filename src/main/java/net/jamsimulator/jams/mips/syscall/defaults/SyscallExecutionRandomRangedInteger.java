@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.syscall.defaults;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
@@ -71,8 +72,8 @@ public class SyscallExecutionRandomRangedInteger implements SyscallExecution {
 
         private final IntegerProperty generatorRegister, rangeRegister, valueRegister;
 
-        public Builder() {
-            super(NAME, new LinkedList<>());
+        public Builder(ResourceProvider provider) {
+            super(provider, NAME, new LinkedList<>());
             properties.add(generatorRegister = new SimpleIntegerProperty(null, "GENERATOR_REGISTER", 4));
             properties.add(rangeRegister = new SimpleIntegerProperty(null, "RANGE_REGISTER", 5));
             properties.add(valueRegister = new SimpleIntegerProperty(null, "VALUE_REGISTER", 4));
@@ -85,12 +86,12 @@ public class SyscallExecutionRandomRangedInteger implements SyscallExecution {
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionRandomRangedInteger> makeNewInstance() {
-            return new Builder();
+            return new Builder(provider);
         }
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionRandomRangedInteger> copy() {
-            var builder = new Builder();
+            var builder = new Builder(provider);
             builder.generatorRegister.setValue(generatorRegister.getValue());
             builder.rangeRegister.setValue(rangeRegister.getValue());
             builder.valueRegister.setValue(valueRegister.getValue());

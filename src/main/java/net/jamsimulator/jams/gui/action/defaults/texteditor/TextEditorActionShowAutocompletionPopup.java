@@ -34,14 +34,15 @@ import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class TextEditorActionShowAutocompletionPopup extends ContextAction {
 
     public static final String NAME = "TEXT_EDITOR_SHOW_AUTOCOMPLETION_POPUP";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.SPACE, KeyCombination.SHORTCUT_DOWN);
 
-    public TextEditorActionShowAutocompletionPopup() {
-        super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_SHOW_AUTOCOMPLETION_POPUP, DEFAULT_COMBINATION, TextEditorActionRegions.CONTEXT, null, null);
+    public TextEditorActionShowAutocompletionPopup(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_SHOW_AUTOCOMPLETION_POPUP, DEFAULT_COMBINATION, TextEditorActionRegions.CONTEXT, null, null);
     }
 
     @Override

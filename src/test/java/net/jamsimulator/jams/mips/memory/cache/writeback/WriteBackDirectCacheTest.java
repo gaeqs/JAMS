@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.memory.cache.writeback;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
@@ -73,8 +74,8 @@ class WriteBackDirectCacheTest {
 
 	@Test
 	void testSimpleProblem() {
-		InstructionSet inst = MIPS32r6InstructionSet.INSTANCE;
-		DirectiveSet dir = MIPS32DirectiveSet.INSTANCE;
+		InstructionSet inst = new MIPS32r6InstructionSet(ResourceProvider.JAMS);
+		DirectiveSet dir = new MIPS32DirectiveSet(ResourceProvider.JAMS);
 		Registers reg = new MIPS32Registers();
 		Cache mem = new WriteBackDirectCache(null, new MIPS32Memory(), 4, 8);
 

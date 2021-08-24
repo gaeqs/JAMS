@@ -27,8 +27,8 @@ package net.jamsimulator.jams.gui.util.propertyeditor;
 import javafx.beans.property.Property;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.util.converter.ValueConverters;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 
 import java.util.function.Consumer;
@@ -44,7 +44,7 @@ public class DirectiveSetPropertyEditor extends ComboBox<DirectiveSet> implement
         this.property = property;
 
         setConverter(ValueConverters.getByTypeUnsafe(DirectiveSet.class));
-        getItems().addAll(Jams.getDirectiveSetManager());
+        getItems().addAll(Manager.of(DirectiveSet.class));
         getSelectionModel().select(property.getValue());
         getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> {
             property.setValue(val);

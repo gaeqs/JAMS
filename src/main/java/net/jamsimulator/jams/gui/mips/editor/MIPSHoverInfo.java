@@ -24,9 +24,10 @@
 
 package net.jamsimulator.jams.gui.mips.editor;
 
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSCodeElement;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSInstruction;
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
@@ -72,7 +73,7 @@ public class MIPSHoverInfo extends VirtualizedScrollPane<StyleClassedTextArea> {
 
     private void addWarnings(MIPSCodeElement element) {
         if (element.hasWarnings()) {
-            getContent().append("\n" + Jams.getLanguageManager().getSelected().getOrDefault("MIPS_ELEMENT_WARNINGS"), List.of("bold"));
+            getContent().append("\n" + Manager.ofS(Language.class).getSelected().getOrDefault("MIPS_ELEMENT_WARNINGS"), List.of("bold"));
 
             element.forEachInspection(inspection -> {
                 if (!inspection.getBuilder().isError()) {
@@ -85,7 +86,7 @@ public class MIPSHoverInfo extends VirtualizedScrollPane<StyleClassedTextArea> {
     private void addErrors(MIPSCodeElement element) {
         if (element.hasErrors()) {
 
-            getContent().append("\n" + Jams.getLanguageManager().getSelected().getOrDefault("MIPS_ELEMENT_ERRORS"), List.of("bold"));
+            getContent().append("\n" + Manager.ofS(Language.class).getSelected().getOrDefault("MIPS_ELEMENT_ERRORS"), List.of("bold"));
 
             element.forEachInspection(inspection -> {
                 if (inspection.getBuilder().isError()) {

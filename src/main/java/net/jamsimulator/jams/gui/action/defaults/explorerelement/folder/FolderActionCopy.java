@@ -38,6 +38,7 @@ import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.util.ClipboardUtils;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.io.File;
 import java.util.HashSet;
@@ -49,8 +50,8 @@ public class FolderActionCopy extends ContextAction {
     public static final String NAME = "FOLDER_EXPLORER_ELEMENT_COPY";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN);
 
-    public FolderActionCopy() {
-        super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_COPY,
+    public FolderActionCopy(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_COPY,
                 DEFAULT_COMBINATION, FolderActionRegions.CLIPBOARD, null, null);
     }
 

@@ -29,19 +29,19 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.util.converter.SyscallExecutionBuilderValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 import net.jamsimulator.jams.language.Language;
-import net.jamsimulator.jams.language.event.DefaultLanguageChangeEvent;
-import net.jamsimulator.jams.language.event.SelectedLanguageChangeEvent;
 import net.jamsimulator.jams.language.wrapper.SyscallLanguageListCell;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionRunExceptionHandler;
-import net.jamsimulator.jams.mips.syscall.event.SyscallExecutionBuilderRegisterEvent;
-import net.jamsimulator.jams.mips.syscall.event.SyscallExecutionBuilderUnregisterEvent;
 import net.jamsimulator.jams.utils.representation.NumericStringComparator;
 
 import java.util.Comparator;
@@ -56,11 +56,12 @@ public class SyscallExecutionBuilderValueEditor extends ComboBox<SyscallExecutio
     private static final List<SyscallExecutionBuilder<?>> SORTED_BUILDERS = new LinkedList<>();
 
     static {
-        SORTED_BUILDERS.addAll(Jams.getSyscallExecutionBuilderManager());
+        SORTED_BUILDERS.addAll(Manager.of(SyscallExecutionBuilder.class)
+                .stream().map(it -> (SyscallExecutionBuilder<?>) it).toList());
         sort();
         var listeners = new StaticListeners();
-        Jams.getLanguageManager().registerListeners(listeners, false);
-        Jams.getSyscallExecutionBuilderManager().registerListeners(listeners, false);
+        Manager.of(Language.class).registerListeners(listeners, false);
+        Manager.of(SyscallExecutionBuilder.class).registerListeners(listeners, false);
     }
 
     private Consumer<SyscallExecutionBuilder<?>> listener = syscallExecutionBuilder -> {
@@ -72,13 +73,13 @@ public class SyscallExecutionBuilderValueEditor extends ComboBox<SyscallExecutio
         setButtonCell(new SyscallLanguageListCell());
 
         getItems().setAll(SORTED_BUILDERS);
-        getSelectionModel().select(Jams.getSyscallExecutionBuilderManager().get(SyscallExecutionRunExceptionHandler.NAME).orElse(null));
+        getSelectionModel().select(Manager.of(SyscallExecutionBuilder.class).get(SyscallExecutionRunExceptionHandler.NAME).orElse(null));
         getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> listener.accept(val));
-        Jams.getSyscallExecutionBuilderManager().registerListeners(this, true);
+        Manager.of(SyscallExecutionBuilder.class).registerListeners(this, true);
     }
 
     private static void sort() {
-        Language language = Jams.getLanguageManager().getSelected();
+        Language language = Manager.ofS(Language.class).getSelected();
         SORTED_BUILDERS.sort(Comparator.comparing(target -> language.getOrDefault(target.getLanguageNode()), new NumericStringComparator()));
     }
 
@@ -124,14 +125,14 @@ public class SyscallExecutionBuilderValueEditor extends ComboBox<SyscallExecutio
     }
 
     @Listener
-    private void onSyscallExecutionBuilderRegister(SyscallExecutionBuilderRegisterEvent.After event) {
+    private void onSyscallExecutionBuilderRegister(ManagerElementRegisterEvent.After<SyscallExecutionBuilder<?>> event) {
         refresh();
     }
 
     @Listener
-    private void onSyscallExecutionBuilderUnregister(SyscallExecutionBuilderUnregisterEvent.After event) {
-        if (getSelectionModel().getSelectedItem().equals(event.getSyscallExecutionBuilder()))
-            getSelectionModel().select(Jams.getSyscallExecutionBuilderManager()
+    private void onSyscallExecutionBuilderUnregister(ManagerElementUnregisterEvent.After<SyscallExecutionBuilder<?>> event) {
+        if (getSelectionModel().getSelectedItem().equals(event.getElement()))
+            getSelectionModel().select(Manager.of(SyscallExecutionBuilder.class)
                     .get(SyscallExecutionRunExceptionHandler.NAME).orElse(null));
         refresh();
     }
@@ -149,24 +150,24 @@ public class SyscallExecutionBuilderValueEditor extends ComboBox<SyscallExecutio
     private static class StaticListeners {
 
         @Listener(priority = Integer.MAX_VALUE)
-        private void onLanguageChange(SelectedLanguageChangeEvent.After event) {
+        private void onLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
             sort();
         }
 
         @Listener(priority = Integer.MAX_VALUE)
-        private void onLanguageChange(DefaultLanguageChangeEvent.After event) {
+        private void onLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
             sort();
         }
 
         @Listener(priority = Integer.MAX_VALUE)
-        private void onSyscallRegister(SyscallExecutionBuilderRegisterEvent.After event) {
-            SORTED_BUILDERS.add(event.getSyscallExecutionBuilder());
+        private void onSyscallRegister(ManagerElementRegisterEvent.After<SyscallExecutionBuilder<?>> event) {
+            SORTED_BUILDERS.add(event.getElement());
             sort();
         }
 
         @Listener(priority = Integer.MAX_VALUE)
-        private void onSyscallUnregister(SyscallExecutionBuilderUnregisterEvent.After event) {
-            SORTED_BUILDERS.add(event.getSyscallExecutionBuilder());
+        private void onSyscallUnregister(ManagerElementUnregisterEvent.After<SyscallExecutionBuilder<?>> event) {
+            SORTED_BUILDERS.add(event.getElement());
             sort();
         }
 

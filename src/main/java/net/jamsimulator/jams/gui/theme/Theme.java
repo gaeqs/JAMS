@@ -24,8 +24,9 @@
 
 package net.jamsimulator.jams.gui.theme;
 
-import net.jamsimulator.jams.manager.Labeled;
-import net.jamsimulator.jams.manager.ThemeManager;
+import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.HashSet;
@@ -82,7 +83,7 @@ import java.util.Set;
  * <p>
  * [FILES ATTACHMENTS]
  */
-public class Theme implements Labeled {
+public class Theme implements ManagerResource {
 
     private final ThemeHeader header;
     private final String globalData;
@@ -121,7 +122,7 @@ public class Theme implements Labeled {
 
     /**
      * Returns the name of the theme.
-     * This method is equivalent to {@code getHeader().getName()}.
+     * This method is equivalent to {@code getHeader().name()}.
      *
      * @return the name of the theme.
      * @see Labeled#getName()
@@ -129,6 +130,18 @@ public class Theme implements Labeled {
     @Override
     public String getName() {
         return header.name();
+    }
+
+    /**
+     * Returns the provider of this theme
+     * This method is equivalent to {@code getHeader().provider()}
+     *
+     * @return the provider.
+     * @see ManagerResource#getResourceProvider()
+     */
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return header.provider();
     }
 
     /**

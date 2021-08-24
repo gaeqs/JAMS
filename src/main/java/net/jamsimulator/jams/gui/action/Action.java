@@ -25,7 +25,8 @@
 package net.jamsimulator.jams.gui.action;
 
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Objects;
@@ -34,13 +35,13 @@ import java.util.Optional;
 /**
  * Represents an action that can be bind to a {@link javafx.scene.input.KeyCombination}.
  */
-public abstract class Action implements Labeled {
+public abstract class Action implements ManagerResource {
 
-    private final String name;
-    private final String regionTag;
-    private final String languageNode;
-
-    private final KeyCombination defaultCombination;
+    protected final ResourceProvider provider;
+    protected final String name;
+    protected final String regionTag;
+    protected final String languageNode;
+    protected final KeyCombination defaultCombination;
 
     /**
      * Creates the action.
@@ -50,23 +51,25 @@ public abstract class Action implements Labeled {
      * @param languageNode       the language node of this action.
      * @param defaultCombination the default combination of keys that a user needs to press to execute this action.
      */
-    public Action(String name, String regionTag, String languageNode, KeyCombination defaultCombination) {
+    public Action(ResourceProvider provider, String name, String regionTag, String languageNode, KeyCombination defaultCombination) {
+        Validate.notNull(provider, "Provider cannot be null!");
         Validate.notNull(name, "Name cannot be null!");
         Validate.notNull(regionTag, "Region tag cannot be null!");
+        this.provider = provider;
         this.name = name;
         this.regionTag = regionTag;
         this.languageNode = languageNode;
         this.defaultCombination = defaultCombination;
     }
 
-    /**
-     * Returns the name of the action. This name must be unique.
-     *
-     * @return the name.
-     */
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return provider;
     }
 
     /**

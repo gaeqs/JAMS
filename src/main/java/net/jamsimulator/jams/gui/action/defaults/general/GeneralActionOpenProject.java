@@ -28,7 +28,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.DirectoryChooser;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
@@ -37,6 +36,9 @@ import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.project.ProjectTypeManager;
 import net.jamsimulator.jams.project.mips.MIPSProjectType;
 
 import java.io.File;
@@ -46,8 +48,8 @@ public class GeneralActionOpenProject extends ContextAction {
     public static final String NAME = "GENERAL_OPEN_PROJECT";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.O, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN);
 
-    public GeneralActionOpenProject() {
-        super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_OPEN_PROJECT, DEFAULT_COMBINATION, GeneralActionRegions.PROJECT, MainMenuRegion.FILE, null);
+    public GeneralActionOpenProject(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_OPEN_PROJECT, DEFAULT_COMBINATION, GeneralActionRegions.PROJECT, MainMenuRegion.FILE, null);
     }
 
     @Override
@@ -61,7 +63,7 @@ public class GeneralActionOpenProject extends ContextAction {
         File folder = chooser.showDialog(JamsApplication.getStage());
         if (folder == null || JamsApplication.getProjectsTabPane().isProjectOpen(folder)) return;
 
-        var type = Jams.getProjectTypeManager()
+        var type = Manager.get(ProjectTypeManager.class)
                 .getByProjectfolder(folder).orElse(MIPSProjectType.INSTANCE);
         JamsApplication.getProjectsTabPane().openProject(type.loadProject(folder));
     }

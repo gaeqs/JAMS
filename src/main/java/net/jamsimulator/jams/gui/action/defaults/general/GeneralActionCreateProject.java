@@ -35,14 +35,15 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.popup.CreateProjectWindow;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class GeneralActionCreateProject extends ContextAction {
 
     public static final String NAME = "GENERAL_CREATE_PROJECT";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN);
 
-    public GeneralActionCreateProject() {
-        super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_CREATE_PROJECT, DEFAULT_COMBINATION, GeneralActionRegions.PROJECT, MainMenuRegion.FILE, null);
+    public GeneralActionCreateProject(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_CREATE_PROJECT, DEFAULT_COMBINATION, GeneralActionRegions.PROJECT, MainMenuRegion.FILE, null);
     }
 
     @Override

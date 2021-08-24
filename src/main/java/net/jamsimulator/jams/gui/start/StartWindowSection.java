@@ -25,7 +25,7 @@
 package net.jamsimulator.jams.gui.start;
 
 import javafx.scene.Node;
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.utils.Labeled;
 
 public interface StartWindowSection extends Labeled {
 

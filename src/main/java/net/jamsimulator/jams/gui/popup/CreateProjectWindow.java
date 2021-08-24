@@ -28,12 +28,13 @@ import javafx.application.Platform;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.start.StartWindowSectionNewProject;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
+import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.Manager;
 
 public class CreateProjectWindow extends VBox {
 
@@ -42,7 +43,7 @@ public class CreateProjectWindow extends VBox {
 
     public static void open() {
         Stage stage = new Stage();
-        stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.MAIN_MENU_FILE_CREATE_PROJECT_TITLE));
+        stage.setTitle(Manager.ofS(Language.class).getSelected().getOrDefault(Messages.MAIN_MENU_FILE_CREATE_PROJECT_TITLE));
         Icons.LOGO.getImage().ifPresent(stage.getIcons()::add);
         var node = new StartWindowSectionNewProject(() -> stage);
 

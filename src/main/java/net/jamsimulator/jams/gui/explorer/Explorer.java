@@ -420,6 +420,10 @@ public abstract class Explorer extends VBox implements EventBroadcast {
         return broadcast.callEvent(event, this);
     }
 
+    @Override
+    public void transferListenersTo(EventBroadcast broadcast) {
+        this.broadcast.transferListenersTo(broadcast);
+    }
 
     //endregion
 }

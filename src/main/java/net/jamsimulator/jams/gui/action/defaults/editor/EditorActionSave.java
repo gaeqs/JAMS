@@ -31,14 +31,15 @@ import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class EditorActionSave extends Action {
 
     public static final String NAME = "EDITOR_SAVE";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN);
 
-    public EditorActionSave() {
-        super(NAME, RegionTags.EDITOR, Messages.ACTION_EDITOR_SAVE, DEFAULT_COMBINATION);
+    public EditorActionSave(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.EDITOR, Messages.ACTION_EDITOR_SAVE, DEFAULT_COMBINATION);
     }
 
     @Override

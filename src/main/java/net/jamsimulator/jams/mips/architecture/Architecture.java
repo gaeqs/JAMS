@@ -24,7 +24,8 @@
 
 package net.jamsimulator.jams.mips.architecture;
 
-import net.jamsimulator.jams.manager.Labeled;
+import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
@@ -40,23 +41,26 @@ import java.util.Objects;
  * Each architecture is made by different elements and can run instructions
  * in a completely different way.
  */
-public abstract class Architecture implements Labeled {
+public abstract class Architecture implements ManagerResource {
 
-    private final String name;
+    protected final ResourceProvider provider;
+    protected final String name;
 
-    public Architecture(String name) {
+    public Architecture(ResourceProvider provider, String name) {
+        Validate.notNull(provider, "Provider cannot be null!");
         Validate.notNull(name, "Name cannot be null!");
+        this.provider = provider;
         this.name = name;
     }
 
-    /**
-     * Returns the name of the architecture. This name must be unique.
-     *
-     * @return the name.
-     */
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return provider;
     }
 
     /**

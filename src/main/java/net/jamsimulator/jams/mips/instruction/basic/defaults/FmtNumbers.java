@@ -25,6 +25,8 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.utils.NumericUtils;
 
@@ -60,7 +62,7 @@ public enum FmtNumbers {
     }
 
     public String getName() {
-        return Jams.getLanguageManager().getSelected().getOrDefault("FMT_" + name());
+        return Manager.ofS(Language.class).getSelected().getOrDefault("FMT_" + name());
     }
 
     public String getMnemonic() {

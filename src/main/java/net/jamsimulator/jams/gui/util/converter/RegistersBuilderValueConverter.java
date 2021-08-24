@@ -24,7 +24,7 @@
 
 package net.jamsimulator.jams.gui.util.converter;
 
-import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
 
 import java.util.Optional;
@@ -40,7 +40,7 @@ public class RegistersBuilderValueConverter extends ValueConverter<RegistersBuil
 
     @Override
     public Optional<RegistersBuilder> fromStringSafe(String value) {
-        return Jams.getRegistersBuilderManager().get(value);
+        return Manager.of(RegistersBuilder.class).get(value);
     }
 
     @Override

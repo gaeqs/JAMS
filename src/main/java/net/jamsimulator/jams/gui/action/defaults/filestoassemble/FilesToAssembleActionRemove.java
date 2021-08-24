@@ -33,6 +33,7 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebarElement;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class FilesToAssembleActionRemove extends ContextAction {
 
@@ -40,8 +41,8 @@ public class FilesToAssembleActionRemove extends ContextAction {
     public static final String NAME = "FILES_TO_ASSEMBLE_REMOVE";
     public static final KeyCombination DEFAULT_COMBINATION = null;
 
-    public FilesToAssembleActionRemove() {
-        super(NAME, RegionTags.MIPS_FILE_TO_ASSEMBLE, Messages.ACTION_FILES_TO_ASSEMBLE_REMOVE,
+    public FilesToAssembleActionRemove(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.MIPS_FILE_TO_ASSEMBLE, Messages.ACTION_FILES_TO_ASSEMBLE_REMOVE,
                 DEFAULT_COMBINATION, FolderActionRegions.ASSEMBLER, null, null);
     }
 

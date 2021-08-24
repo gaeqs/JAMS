@@ -29,14 +29,14 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.util.converter.LanguageValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 import net.jamsimulator.jams.language.Language;
-import net.jamsimulator.jams.language.event.LanguageRegisterEvent;
-import net.jamsimulator.jams.language.event.LanguageUnregisterEvent;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 
 import java.util.function.Consumer;
 
@@ -49,10 +49,10 @@ public class LanguageValueEditor extends ComboBox<Language> implements ValueEdit
 
     public LanguageValueEditor() {
         setConverter(ValueConverters.getByTypeUnsafe(Language.class));
-        getItems().addAll(Jams.getLanguageManager());
-        getSelectionModel().select(Jams.getLanguageManager().getSelected());
+        getItems().addAll(Manager.of(Language.class));
+        getSelectionModel().select(Manager.ofS(Language.class).getSelected());
         getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> listener.accept(val));
-        Jams.getLanguageManager().registerListeners(this, true);
+        Manager.of(Language.class).registerListeners(this, true);
     }
 
     @Override
@@ -84,15 +84,15 @@ public class LanguageValueEditor extends ComboBox<Language> implements ValueEdit
     }
 
     @Listener
-    private void onLanguageRegister(LanguageRegisterEvent.After event) {
-        getItems().add(event.getLanguage());
+    private void onLanguageRegister(ManagerElementRegisterEvent.After<Language> event) {
+        getItems().add(event.getElement());
     }
 
     @Listener
-    private void onLanguageUnregister(LanguageUnregisterEvent.After event) {
-        if (getSelectionModel().getSelectedItem().equals(event.getLanguage()))
-            setValue(Jams.getLanguageManager().getDefault());
-        getItems().remove(event.getLanguage());
+    private void onLanguageUnregister(ManagerElementUnregisterEvent.After<Language> event) {
+        if (getSelectionModel().getSelectedItem().equals(event.getElement()))
+            setValue(Manager.ofD(Language.class).getDefault());
+        getItems().remove(event.getElement());
     }
 
     @Override

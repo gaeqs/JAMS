@@ -32,9 +32,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
+import net.jamsimulator.jams.manager.Manager;
 
 public class ConfirmationWindow extends VBox {
 
@@ -88,7 +89,7 @@ public class ConfirmationWindow extends VBox {
 
     public static void open(String message, Runnable onYes, Runnable onCancel) {
         Stage stage = new Stage();
-        stage.setTitle(Jams.getLanguageManager().getSelected().getOrDefault(Messages.GENERAL_CONFIRMATION));
+        stage.setTitle(Manager.ofS(Language.class).getSelected().getOrDefault(Messages.GENERAL_CONFIRMATION));
         PopupWindowHelper.open(stage, new ConfirmationWindow(stage, message, onYes, onCancel), -1, -1, false);
     }
 }

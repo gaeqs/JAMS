@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.architecture;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
@@ -40,16 +41,15 @@ import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
  */
 public class PipelinedArchitecture extends MultiCycleArchitecture {
 
-    public static final PipelinedArchitecture INSTANCE = new PipelinedArchitecture();
-
     public static final String NAME = "Pipelined";
+    public static final PipelinedArchitecture INSTANCE = new PipelinedArchitecture(ResourceProvider.JAMS);
 
-    protected PipelinedArchitecture(String name) {
-        super(name);
+    protected PipelinedArchitecture(ResourceProvider provider, String name) {
+        super(provider, name);
     }
 
-    protected PipelinedArchitecture() {
-        super(NAME);
+    private PipelinedArchitecture(ResourceProvider provider) {
+        super(provider, NAME);
     }
 
     @Override
