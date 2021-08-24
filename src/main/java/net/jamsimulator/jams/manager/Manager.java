@@ -221,6 +221,16 @@ public abstract class Manager<Type extends ManagerResource> extends HashSet<Type
     }
 
     /**
+     * Returns whether this manager contains an element that matches the given name.
+     *
+     * @param name the name.
+     * @return whether this manager contains an element that matches the given name.
+     */
+    public boolean containsElement(String name) {
+        return stream().anyMatch(it -> it.getName().equals(name));
+    }
+
+    /**
      * Returns the elements that matches the given name, if present.
      *
      * @param name the name.
@@ -237,7 +247,7 @@ public abstract class Manager<Type extends ManagerResource> extends HashSet<Type
      * @param provider the {@link ResourceProvider}.
      * @return the resources.
      */
-    public Set<Type> providedBy(ResourceProvider provider) {
+    public Set<Type> getProvidedBy(ResourceProvider provider) {
         return stream().filter(t -> t.getResourceProvider().equals(provider)).collect(Collectors.toSet());
     }
 
@@ -293,7 +303,6 @@ public abstract class Manager<Type extends ManagerResource> extends HashSet<Type
     protected void onElementAddition(Type type) {
     }
 
-
     /**
      * Attempts to unregister the given element.
      * If the element is null this method throws a {@link NullPointerException}.
@@ -328,13 +337,23 @@ public abstract class Manager<Type extends ManagerResource> extends HashSet<Type
     }
 
     /**
+     * Removes from this manager the element that matched the given name.
+     *
+     * @param name the name.
+     * @return whether the element was found and removed.
+     */
+    public boolean removeElement(String name) {
+        return removeIf(it -> it.getName().equals(name));
+    }
+
+    /**
      * Tries to remove all elements provided by the given {@link ResourceProvider}.
      *
      * @param provider the {@link ResourceProvider}
      * @return the amount of removed elements.
      */
     public int removeProvidedBy(ResourceProvider provider) {
-        var elements = providedBy(provider);
+        var elements = getProvidedBy(provider);
         int count = 0;
         for (Type element : elements) {
             if (remove(element)) count++;
