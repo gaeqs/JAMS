@@ -41,67 +41,65 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilderManager;
 import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundleManager;
 import net.jamsimulator.jams.plugin.PluginManager;
 import net.jamsimulator.jams.project.ProjectTypeManager;
-import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.utils.NumberRepresentationManager;
-import net.jamsimulator.jams.utils.Validate;
 
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class Registry {
 
-    private final List<Manager<?>> managers;
-    private final Map<Class<? extends Manager<?>>, Manager<?>> managersByClass;
-    private final Map<Class<? extends Labeled>, Manager<?>> managersByManaged;
-    private final Map<String, Manager<?>> managersByName;
+    private final Map<String, Manager<?>> managers;
+    private final Map<String, Boolean> primary;
+    private final Map<Class<? extends Manager<?>>, Manager<?>> primaryManagersByClass;
+    private final Map<Class<? extends ManagerResource>, Manager<?>> primaryManagersByManaged;
+
 
     public Registry() {
-        managers = new LinkedList<>();
-        managersByClass = new HashMap<>();
-        managersByManaged = new HashMap<>();
-        managersByName = new HashMap<>();
+        managers = new HashMap<>();
+        primary = new HashMap<>();
+        primaryManagersByClass = new HashMap<>();
+        primaryManagersByManaged = new HashMap<>();
         addDefaultManagers();
     }
 
-    public void forEach(Consumer<Manager<?>> consumer) {
-        managers.forEach(consumer);
+    public synchronized void registerPrimary(Manager<?> manager) {
+        if (managers.containsKey(manager.getName()))
+            throw new IllegalArgumentException("There's already a manager with the name " + manager.getName() + "!");
+        if (primaryManagersByClass.containsKey(manager.getClass()))
+            throw new IllegalArgumentException("There's already a primary manager with the class " + manager.getClass() + "! " +
+                    "Create a child class to add this manager.");
+        if (primaryManagersByManaged.containsKey(manager.getManagedType()))
+            throw new IllegalArgumentException("There's already a primary manager with the managed type " + manager.getManagedType() + "!");
+
+        managers.put(manager.getName(), manager);
+        primary.put(manager.getName(), true);
+        primaryManagersByClass.put((Class<? extends Manager<?>>) manager.getClass(), manager);
+        primaryManagersByManaged.put(manager.getManagedType(), manager);
     }
 
-    public <T extends ManagerResource> void registerFully(Manager<T> manager, String name,
-                                                          boolean registerByClass, boolean registerByManaged) {
-        Validate.notNull(manager, "Manager cannot be null!");
-        registerFully(manager, registerByClass ? (Class<? extends Manager<T>>) manager.getClass() : null,
-                name, registerByManaged);
+    public synchronized void registerSecondary(Manager<?> manager) {
+        if (managers.containsKey(manager.getName()))
+            throw new IllegalArgumentException("There's already a manager with the name " + manager.getName() + "!");
+        managers.put(manager.getName(), manager);
+        primary.put(manager.getName(), false);
     }
 
-    public <T extends ManagerResource> void registerFully(Manager<T> manager, Class<? extends Manager<T>> managerClass,
-                                                          String name, boolean registerByManaged) {
-        Validate.notNull(manager, "Manager cannot be null!");
-        Validate.isTrue(managerClass == null || managerClass.isInstance(manager),
-                "Manager must be a instance of managerClass!");
-        managers.add(manager);
-        if (managerClass != null) {
-            managersByClass.put(managerClass, manager);
+    public synchronized boolean unregister(String name) {
+        if (name.equals(PluginManager.NAME))
+            throw new IllegalArgumentException("You cannot unregister the plugin manager!");
+        var manager = managers.remove(name);
+        if (manager == null) return false;
+        if (primary.remove(name)) {
+            primaryManagersByClass.remove(manager.getClass());
+            primaryManagersByManaged.remove(manager.getManagedType());
         }
-        if (registerByManaged) {
-            managersByManaged.put(manager.getManagedType(), manager);
-        }
-        if (name != null) {
-            managersByName.put(name, manager);
-        }
+        return true;
     }
 
-    public void unregister(Manager<?> manager) {
-        if (managers.remove(manager)) {
-            managersByClass.values().remove(manager);
-            managersByManaged.values().remove(manager);
-            managersByName.values().remove(manager);
-        }
-    }
-
-    public <T extends Manager<?>> T get(Class<T> clazz) {
+    public synchronized <T extends Manager<?>> T get(Class<T> clazz) {
         try {
-            var manager = (T) managersByClass.get(clazz);
+            var manager = (T) primaryManagersByClass.get(clazz);
             if (manager == null) throw new NoSuchElementException("Manager " + clazz + " not found.");
             return manager;
         } catch (ClassCastException ex) {
@@ -109,9 +107,9 @@ public class Registry {
         }
     }
 
-    public <T extends ManagerResource> Manager<T> of(Class<T> clazz) {
+    public synchronized <T extends ManagerResource> Manager<T> of(Class<T> clazz) {
         try {
-            var manager = (Manager<T>) managersByManaged.get(clazz);
+            var manager = (Manager<T>) primaryManagersByManaged.get(clazz);
             if (manager == null) throw new NoSuchElementException("Manager " + clazz + " not found.");
             return manager;
         } catch (ClassCastException ex) {
@@ -119,15 +117,15 @@ public class Registry {
         }
     }
 
-    public Manager<?> of(String name) {
-        var manager = (Manager<?>) managersByName.get(name);
+    public synchronized Manager<?> of(String name) {
+        var manager = (Manager<?>) managers.get(name);
         if (manager == null) throw new NoSuchElementException("Manager " + name + " not found.");
         return manager;
     }
 
-    public <T extends ManagerResource> Manager<T> of(String name, Class<T> clazz) {
+    public synchronized <T extends ManagerResource> Manager<T> of(String name, Class<T> clazz) {
         try {
-            var manager = (Manager<T>) managersByName.get(name);
+            var manager = (Manager<T>) managers.get(name);
             if (manager == null) throw new NoSuchElementException("Manager " + clazz + " not found.");
             return manager;
         } catch (ClassCastException ex) {
@@ -140,7 +138,7 @@ public class Registry {
     }
 
     public void loadJAMSManagers() {
-        for (Manager<?> manager : managers) {
+        for (Manager<?> manager : managers.values()) {
             if (!manager.isLoaded() && !manager.shouldLoadOnFXThread()) {
                 manager.load();
             }
@@ -148,7 +146,7 @@ public class Registry {
     }
 
     public void loadJAMSApplicationManagers() {
-        for (Manager<?> manager : managers) {
+        for (Manager<?> manager : managers.values()) {
             if (!manager.isLoaded() && manager.shouldLoadOnFXThread()) {
                 manager.load();
             }
@@ -156,24 +154,24 @@ public class Registry {
     }
 
     private void addDefaultManagers() {
-        registerFully(PluginManager.INSTANCE, PluginManager.NAME, true, true);
-        registerFully(ActionManager.INSTANCE, ActionManager.NAME, true, true);
-        registerFully(ArchitectureManager.INSTANCE, ArchitectureManager.NAME, true, true);
-        registerFully(AssemblerBuilderManager.INSTANCE, AssemblerBuilderManager.NAME, true, true);
-        registerFully(BarSnapshotViewModeManager.INSTANCE, BarSnapshotViewModeManager.NAME, true, true);
-        registerFully(CacheBuilderManager.INSTANCE, CacheBuilderManager.NAME, true, true);
-        registerFully(DirectiveSetManager.INSTANCE, DirectiveSetManager.NAME, true, true);
-        registerFully(FileTypeManager.INSTANCE, DirectiveSetManager.NAME, true, true);
-        registerFully(InstructionSetManager.INSTANCE, InstructionSetManager.NAME, true, true);
-        registerFully(LanguageManager.INSTANCE, LanguageManager.NAME, true, true);
-        registerFully(MemoryBuilderManager.INSTANCE, MemoryBuilderManager.NAME, true, true);
-        registerFully(MIPSEditorInspectionBuilderManager.INSTANCE, MIPSEditorInspectionBuilderManager.NAME, true, true);
-        registerFully(NumberRepresentationManager.INSTANCE, NumberRepresentationManager.NAME, true, true);
-        registerFully(ProjectTypeManager.INSTANCE, ProjectTypeManager.NAME, true, true);
-        registerFully(RegistersBuilderManager.INSTANCE, RegistersBuilderManager.NAME, true, true);
-        registerFully(SyscallExecutionBuilderBundleManager.INSTANCE, SyscallExecutionBuilderBundleManager.NAME, true, true);
-        registerFully(SyscallExecutionBuilderManager.INSTANCE, SyscallExecutionBuilderManager.NAME, true, true);
-        registerFully(ThemeManager.INSTANCE, ThemeManager.NAME, true, true);
+        registerPrimary(PluginManager.INSTANCE);
+        registerPrimary(ActionManager.INSTANCE);
+        registerPrimary(ArchitectureManager.INSTANCE);
+        registerPrimary(AssemblerBuilderManager.INSTANCE);
+        registerPrimary(BarSnapshotViewModeManager.INSTANCE);
+        registerPrimary(CacheBuilderManager.INSTANCE);
+        registerPrimary(DirectiveSetManager.INSTANCE);
+        registerPrimary(FileTypeManager.INSTANCE);
+        registerPrimary(InstructionSetManager.INSTANCE);
+        registerPrimary(LanguageManager.INSTANCE);
+        registerPrimary(MemoryBuilderManager.INSTANCE);
+        registerPrimary(MIPSEditorInspectionBuilderManager.INSTANCE);
+        registerPrimary(NumberRepresentationManager.INSTANCE);
+        registerPrimary(ProjectTypeManager.INSTANCE);
+        registerPrimary(RegistersBuilderManager.INSTANCE);
+        registerPrimary(SyscallExecutionBuilderBundleManager.INSTANCE);
+        registerPrimary(SyscallExecutionBuilderManager.INSTANCE);
+        registerPrimary(ThemeManager.INSTANCE);
     }
 
 }
