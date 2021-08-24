@@ -25,14 +25,13 @@
 package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
-import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
 /**
  * Represents a {@link Manager} that has a default value and a selected value.
  * <p>
- * The default value can be changed using {@link #setDefault(Labeled)}.
- * The selected value can be changed using {@link #setSelected(Labeled)}.
+ * The default value can be changed using {@link #setDefault(ManagerResource)}.
+ * The selected value can be changed using {@link #setSelected(ManagerResource)}.
  * Implement {@link #loadDefaultElement()} to define the default value when the manager is created.
  * Implement {@link #loadSelectedElement()} to define the selected value when the manager is created.
  *
@@ -40,7 +39,7 @@ import net.jamsimulator.jams.utils.Validate;
  * @see Manager
  * @see DefaultValuableManager
  */
-public abstract class SelectableManager<Type extends Labeled> extends DefaultValuableManager<Type> {
+public abstract class SelectableManager<Type extends ManagerResource> extends DefaultValuableManager<Type> {
 
     protected Type selected;
 
@@ -50,8 +49,8 @@ public abstract class SelectableManager<Type extends Labeled> extends DefaultVal
      * Creates the manager.
      * These managers call events on addition, removal and default set. You must provide the builder for these events.
      */
-    public SelectableManager(Class<Type> managedType, boolean loadOnFXThread) {
-        super(managedType, loadOnFXThread);
+    public SelectableManager(ResourceProvider provider, String name, Class<Type> managedType, boolean loadOnFXThread) {
+        super(provider, name, managedType, loadOnFXThread);
     }
 
     /**

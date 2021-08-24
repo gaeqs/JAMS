@@ -24,12 +24,13 @@
 
 package net.jamsimulator.jams.gui.theme;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.utils.Validate;
 
 /**
  * Represents a piece of CSS code attached to a theme.
  */
-public record ThemeAttachment(String data) {
+public record ThemeAttachment(String data, ResourceProvider provider) {
 
     /**
      * Creates the theme attachment.
@@ -38,5 +39,6 @@ public record ThemeAttachment(String data) {
      */
     public ThemeAttachment {
         Validate.notNull(data, "Data cannot be null!");
+        Validate.notNull(provider, "Provider cannot be null!");
     }
 }

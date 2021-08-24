@@ -25,39 +25,40 @@
 package net.jamsimulator.jams.utils;
 
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 /**
  * This singleton stores all {@link NumberRepresentation}s that JAMs may use.
  * <p>
- * To register an {@link NumberRepresentation} use {@link Manager#add(Labeled)}}.
+ * To register an {@link NumberRepresentation} use {@link Manager#add(net.jamsimulator.jams.manager.ManagerResource)}}.
  * To unregister an {@link NumberRepresentation} use {@link #remove(Object)}.
  * A {@link NumberRepresentation}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
 public final class NumberRepresentationManager extends Manager<NumberRepresentation> {
 
-    public static final NumberRepresentation HEXADECIMAL = new NumberRepresentation("HEXADECIMAL",
+    public static final NumberRepresentation HEXADECIMAL = new NumberRepresentation(ResourceProvider.JAMS, "HEXADECIMAL",
             false, false,
             (o1, o2) -> "0x" + StringUtils.addZeros(Integer.toHexString(o1), 8));
-    public static final NumberRepresentation DECIMAL = new NumberRepresentation("DECIMAL",
+    public static final NumberRepresentation DECIMAL = new NumberRepresentation(ResourceProvider.JAMS, "DECIMAL",
             false, false,
             (o1, o2) -> String.valueOf(o1));
-    public static final NumberRepresentation OCTAL = new NumberRepresentation("OCTAL",
+    public static final NumberRepresentation OCTAL = new NumberRepresentation(ResourceProvider.JAMS, "OCTAL",
             false, false,
             (o1, o2) -> "0" + Integer.toOctalString(o1));
-    public static final NumberRepresentation BINARY = new NumberRepresentation("BINARY",
+    public static final NumberRepresentation BINARY = new NumberRepresentation(ResourceProvider.JAMS, "BINARY",
             false, false,
             (o1, o2) -> "0b" + StringUtils.addZeros(Integer.toBinaryString(o1), 32));
-    public static final NumberRepresentation LONG = new NumberRepresentation("LONG",
+    public static final NumberRepresentation LONG = new NumberRepresentation(ResourceProvider.JAMS, "LONG",
             true, false,
             (o1, o2) -> String.valueOf(NumericUtils.intsToLong(o1, o2)));
-    public static final NumberRepresentation FLOAT = new NumberRepresentation("FLOAT",
+    public static final NumberRepresentation FLOAT = new NumberRepresentation(ResourceProvider.JAMS, "FLOAT",
             false, false,
             (o1, o2) -> String.valueOf(Float.intBitsToFloat(o1)));
-    public static final NumberRepresentation DOUBLE = new NumberRepresentation("DOUBLE",
+    public static final NumberRepresentation DOUBLE = new NumberRepresentation(ResourceProvider.JAMS, "DOUBLE",
             true, false,
             (o1, o2) -> String.valueOf(NumericUtils.intsToDouble(o1, o2)));
-    public static final NumberRepresentation CHAR = new NumberRepresentation("CHAR",
+    public static final NumberRepresentation CHAR = new NumberRepresentation(ResourceProvider.JAMS, "CHAR",
             false, false,
             (o1, o2) -> {
                 char[] array = new char[4];
@@ -66,24 +67,24 @@ public final class NumberRepresentationManager extends Manager<NumberRepresentat
                 }
                 return new String(array);
             });
-    public static final NumberRepresentation RGB = new NumberRepresentation("RGB",
+    public static final NumberRepresentation RGB = new NumberRepresentation(ResourceProvider.JAMS, "RGB",
             false, true,
             (o1, o2) -> getRGBAsString(o1));
-    public static final NumberRepresentation RGBA = new NumberRepresentation("RGBA",
+    public static final NumberRepresentation RGBA = new NumberRepresentation(ResourceProvider.JAMS, "RGBA",
             false, true,
             (o1, o2) -> getRGBAAsString(o1));
-    public static final NumberRepresentation ENGLISH = new NumberRepresentation("ENGLISH",
+    public static final NumberRepresentation ENGLISH = new NumberRepresentation(ResourceProvider.JAMS, "ENGLISH",
             false, false,
             (o1, o2) -> NumericUtils.toEnglish(o1));
-    public static final NumberRepresentation ROMAN = new NumberRepresentation("ROMAN",
+    public static final NumberRepresentation ROMAN = new NumberRepresentation(ResourceProvider.JAMS, "ROMAN",
             false, false,
             (o1, o2) -> NumericUtils.toRoman(o1));
 
     public static final String NAME = "number_representation";
-    public static final NumberRepresentationManager INSTANCE = new NumberRepresentationManager();
+    public static final NumberRepresentationManager INSTANCE = new NumberRepresentationManager(ResourceProvider.JAMS, NAME);
 
-    private NumberRepresentationManager() {
-        super(NumberRepresentation.class, false);
+    public NumberRepresentationManager(ResourceProvider provider, String name) {
+        super(provider, name, NumberRepresentation.class, false);
     }
 
     private static String getRGBAsString(int value) {

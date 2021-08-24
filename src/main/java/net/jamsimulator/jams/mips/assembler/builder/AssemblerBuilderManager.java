@@ -25,12 +25,12 @@
 package net.jamsimulator.jams.mips.assembler.builder;
 
 import net.jamsimulator.jams.manager.DefaultValuableManager;
-import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 /**
  * This singleton stores all {@link AssemblerBuilder}s that projects may use.
  * <p>
- * To register an {@link AssemblerBuilder} use {@link #add(Labeled)}.
+ * To register an {@link AssemblerBuilder} use {@link #add(net.jamsimulator.jams.manager.ManagerResource)}.
  * To unregister an {@link AssemblerBuilder} use {@link #remove(Object)}.
  * An {@link AssemblerBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
@@ -38,19 +38,19 @@ import net.jamsimulator.jams.utils.Labeled;
 public final class AssemblerBuilderManager extends DefaultValuableManager<AssemblerBuilder> {
 
     public static final String NAME = "assembler_builder";
-    public static final AssemblerBuilderManager INSTANCE = new AssemblerBuilderManager();
+    public static final AssemblerBuilderManager INSTANCE = new AssemblerBuilderManager(ResourceProvider.JAMS, NAME);
 
-    private AssemblerBuilderManager() {
-        super(AssemblerBuilder.class, false);
-    }
-
-    @Override
-    protected AssemblerBuilder loadDefaultElement() {
-        return MIPS32AssemblerBuilder.INSTANCE;
+    private AssemblerBuilderManager(ResourceProvider provider, String name) {
+        super(provider, name, AssemblerBuilder.class, false);
     }
 
     @Override
     protected void loadDefaultElements() {
-        add(MIPS32AssemblerBuilder.INSTANCE);
+        add(new MIPS32AssemblerBuilder(ResourceProvider.JAMS));
+    }
+
+    @Override
+    protected AssemblerBuilder loadDefaultElement() {
+        return get(MIPS32AssemblerBuilder.NAME).orElseThrow();
     }
 }

@@ -27,6 +27,7 @@ package net.jamsimulator.jams.plugin;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.plugin.exception.InvalidPluginHeaderException;
 import net.jamsimulator.jams.plugin.exception.PluginLoadException;
 import net.jamsimulator.jams.utils.FolderUtils;
@@ -59,10 +60,11 @@ public final class PluginManager extends Manager<Plugin> {
 
     public static final File PLUGIN_FOLDER = new File(Jams.getMainFolder(), "plugins");
     public static final String NAME = "plugin";
-    public static final PluginManager INSTANCE = new PluginManager();
+    public static final PluginManager INSTANCE = new PluginManager(ResourceProvider.JAMS, NAME);
 
-    private PluginManager() {
-        super(Plugin.class, false);
+    // Plugin manager should be private. There must be ONLY one plugin manager!
+    private PluginManager(ResourceProvider provider, String name) {
+        super(provider, name, Plugin.class, false);
     }
 
     /**

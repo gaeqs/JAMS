@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.architecture;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
@@ -40,16 +41,15 @@ import net.jamsimulator.jams.mips.simulation.singlecycle.SingleCycleSimulation;
  */
 public class SingleCycleArchitecture extends Architecture {
 
-    public static final SingleCycleArchitecture INSTANCE = new SingleCycleArchitecture();
-
     public static final String NAME = "Single-cycle";
+    public static final SingleCycleArchitecture INSTANCE = new SingleCycleArchitecture(ResourceProvider.JAMS);
 
-    protected SingleCycleArchitecture(String name) {
-        super(name);
+    protected SingleCycleArchitecture(ResourceProvider provider, String name) {
+        super(provider, name);
     }
 
-    protected SingleCycleArchitecture() {
-        super(NAME);
+    private SingleCycleArchitecture(ResourceProvider provider) {
+        super(provider, NAME);
     }
 
     @Override

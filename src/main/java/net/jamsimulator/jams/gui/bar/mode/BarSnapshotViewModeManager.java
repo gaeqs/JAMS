@@ -24,7 +24,8 @@
 
 package net.jamsimulator.jams.gui.bar.mode;
 
-import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.DefaultValuableManager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 /**
  * This singleton stores all {@link BarSnapshotViewMode}s that projects may use.
@@ -34,19 +35,24 @@ import net.jamsimulator.jams.manager.Manager;
  * An {@link BarSnapshotViewMode}'s removal from the manager doesn't make editors to stop using
  * it inmediatelly.
  */
-public final class BarSnapshotViewModeManager extends Manager<BarSnapshotViewMode> {
+public final class BarSnapshotViewModeManager extends DefaultValuableManager<BarSnapshotViewMode> {
 
     public static final String NAME = "bar_snapshot_view_mode";
-    public static final BarSnapshotViewModeManager INSTANCE = new BarSnapshotViewModeManager();
+    public static final BarSnapshotViewModeManager INSTANCE = new BarSnapshotViewModeManager(ResourceProvider.JAMS, NAME);
 
-    private BarSnapshotViewModeManager() {
-        super(BarSnapshotViewMode.class, true);
+    private BarSnapshotViewModeManager(ResourceProvider provider, String name) {
+        super(provider, name, BarSnapshotViewMode.class, true);
     }
 
     @Override
     protected void loadDefaultElements() {
-        add(BarSnapshotViewModePane.INSTANCE);
-        add(BarSnapshotViewModeWindow.INSTANCE);
-        add(BarSnapshotViewModePersistentWindow.INSTANCE);
+        add(new BarSnapshotViewModePane());
+        add(new BarSnapshotViewModeWindow());
+        add(new BarSnapshotViewModePersistentWindow());
+    }
+
+    @Override
+    protected BarSnapshotViewMode loadDefaultElement() {
+        return get(BarSnapshotViewModePane.NAME).orElseThrow();
     }
 }

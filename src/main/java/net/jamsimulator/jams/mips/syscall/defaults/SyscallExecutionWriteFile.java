@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.syscall.defaults;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Register;
@@ -122,8 +123,8 @@ public class SyscallExecutionWriteFile implements SyscallExecution {
         private final IntegerProperty amountRegister;
         private final IntegerProperty resultRegister;
 
-        public Builder() {
-            super(NAME, new LinkedList<>());
+        public Builder(ResourceProvider provider) {
+            super(provider, NAME, new LinkedList<>());
             properties.add(idRegister = new SimpleIntegerProperty(null, "ID_REGISTER", 4));
             properties.add(addressRegister = new SimpleIntegerProperty(null, "ADDRESS_REGISTER", 5));
             properties.add(amountRegister = new SimpleIntegerProperty(null, "AMOUNT_REGISTER", 6));
@@ -137,12 +138,12 @@ public class SyscallExecutionWriteFile implements SyscallExecution {
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionWriteFile> makeNewInstance() {
-            return new Builder();
+            return new Builder(provider);
         }
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionWriteFile> copy() {
-            var builder = new Builder();
+            var builder = new Builder(provider);
             builder.idRegister.setValue(idRegister.getValue());
             builder.addressRegister.setValue(addressRegister.getValue());
             builder.amountRegister.setValue(amountRegister.getValue());

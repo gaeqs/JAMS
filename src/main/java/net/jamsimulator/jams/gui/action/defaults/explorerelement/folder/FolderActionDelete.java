@@ -37,6 +37,7 @@ import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.utils.FileUtils;
 
 public class FolderActionDelete extends ContextAction {
@@ -45,8 +46,8 @@ public class FolderActionDelete extends ContextAction {
     public static final String NAME = "FOLDER_EXPLORER_ELEMENT_DELETE";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.DELETE);
 
-    public FolderActionDelete() {
-        super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_DELETE,
+    public FolderActionDelete(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_DELETE,
                 DEFAULT_COMBINATION, FolderActionRegions.CLIPBOARD, null, null);
     }
 

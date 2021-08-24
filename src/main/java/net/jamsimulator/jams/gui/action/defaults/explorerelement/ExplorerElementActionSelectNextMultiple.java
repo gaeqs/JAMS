@@ -33,6 +33,7 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class ExplorerElementActionSelectNextMultiple extends Action {
 
@@ -40,8 +41,8 @@ public class ExplorerElementActionSelectNextMultiple extends Action {
     public static final String NAME = "EXPLORER_ELEMENT_SELECT_NEXT_MULTIPLE";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.DOWN, KeyCombination.SHIFT_DOWN);
 
-    public ExplorerElementActionSelectNextMultiple() {
-        super(NAME, RegionTags.EXPLORER_ELEMENT, Messages.ACTION_EXPLORER_ELEMENT_SELECT_NEXT_MULTIPLE, DEFAULT_COMBINATION);
+    public ExplorerElementActionSelectNextMultiple(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.EXPLORER_ELEMENT, Messages.ACTION_EXPLORER_ELEMENT_SELECT_NEXT_MULTIPLE, DEFAULT_COMBINATION);
     }
 
     @Override

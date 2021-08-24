@@ -41,6 +41,7 @@ import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.util.log.Log;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.task.LanguageTask;
 
@@ -49,8 +50,8 @@ public class GeneralActionAssemble extends ContextAction {
     public static final String NAME = "GENERAL_ASSEMBLE";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
 
-    public GeneralActionAssemble() {
-        super(NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_ASSEMBLE, DEFAULT_COMBINATION,
+    public GeneralActionAssemble(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_ASSEMBLE, DEFAULT_COMBINATION,
                 GeneralActionRegions.MIPS_PRIORITY, MainMenuRegion.SIMULATION, Icons.PROJECT_ASSEMBLE);
     }
 

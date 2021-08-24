@@ -40,6 +40,7 @@ import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.util.Optional;
 
@@ -48,8 +49,8 @@ public class TextEditorActionPaste extends ContextAction {
     public static final String NAME = "TEXT_EDITOR_PASTE";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.V, KeyCombination.SHORTCUT_DOWN);
 
-    public TextEditorActionPaste() {
-        super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_PASTE, DEFAULT_COMBINATION, TextEditorActionRegions.CLIPBOARD, MainMenuRegion.EDIT, null);
+    public TextEditorActionPaste(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_PASTE, DEFAULT_COMBINATION, TextEditorActionRegions.CLIPBOARD, MainMenuRegion.EDIT, null);
     }
 
     @Override

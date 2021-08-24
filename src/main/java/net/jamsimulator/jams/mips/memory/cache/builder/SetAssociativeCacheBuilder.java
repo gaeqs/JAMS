@@ -27,6 +27,7 @@ package net.jamsimulator.jams.mips.memory.cache.builder;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
@@ -45,8 +46,8 @@ public class SetAssociativeCacheBuilder extends CacheBuilder<Cache> {
     private final SimpleIntegerProperty blockSize, blocksAmount, setSize;
     private final SimpleObjectProperty<CacheReplacementPolicy> replacementPolicy;
 
-    public SetAssociativeCacheBuilder() {
-        super(NAME, new LinkedList<>());
+    public SetAssociativeCacheBuilder(ResourceProvider provider) {
+        super(provider, NAME, new LinkedList<>());
         properties.add(writeBack = new SimpleBooleanProperty(null, "WRITE_BACK", false));
         properties.add(blockSize = new SimpleIntegerProperty(null, "BLOCK_SIZE", 4));
         properties.add(blocksAmount = new SimpleIntegerProperty(null, "BLOCKS_AMOUNT", 4));
@@ -86,12 +87,12 @@ public class SetAssociativeCacheBuilder extends CacheBuilder<Cache> {
 
     @Override
     public CacheBuilder<Cache> makeNewInstance() {
-        return new SetAssociativeCacheBuilder();
+        return new SetAssociativeCacheBuilder(provider);
     }
 
     @Override
     public CacheBuilder<Cache> copy() {
-        var builder = new SetAssociativeCacheBuilder();
+        var builder = new SetAssociativeCacheBuilder(provider);
         builder.writeBack.setValue(writeBack.getValue());
         builder.blockSize.setValue(blockSize.getValue());
         builder.blocksAmount.setValue(blocksAmount.getValue());

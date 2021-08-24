@@ -29,6 +29,7 @@ import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSInstructionParameterPart;
 import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspection;
 import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilder;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
 import java.util.Map;
@@ -58,8 +59,8 @@ public class MIPSEditorInspectionRegisterUsingAt extends MIPSEditorInspection {
 
     public static class Builder extends MIPSEditorInspectionBuilder<MIPSEditorInspectionRegisterUsingAt> {
 
-        public Builder() {
-            super(NAME, false);
+        public Builder(ResourceProvider provider) {
+            super(provider, NAME, false);
         }
 
         @Override

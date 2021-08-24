@@ -25,32 +25,32 @@
 package net.jamsimulator.jams.mips.directive.set;
 
 import net.jamsimulator.jams.manager.DefaultValuableManager;
-import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 /**
  * This singleton stores all {@link DirectiveSet}s that projects may use.
  * <p>
- * To register an {@link DirectiveSet} use {@link #add(Labeled)}.
+ * To register an {@link DirectiveSet} use {@link #add(net.jamsimulator.jams.manager.ManagerResource)}.
  * To unregister an {@link DirectiveSet} use {@link #remove(Object)}.
  * An {@link DirectiveSet}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
  */
 public final class DirectiveSetManager extends DefaultValuableManager<DirectiveSet> {
 
-    public static final String NAME = "directive";
-    public static final DirectiveSetManager INSTANCE = new DirectiveSetManager();
+    public static final String NAME = "directive_set";
+    public static final DirectiveSetManager INSTANCE = new DirectiveSetManager(ResourceProvider.JAMS, NAME);
 
-    private DirectiveSetManager() {
-        super(DirectiveSet.class, false);
+    private DirectiveSetManager(ResourceProvider provider, String name) {
+        super(provider, name, DirectiveSet.class, false);
     }
 
     @Override
     protected void loadDefaultElements() {
-        add(MIPS32DirectiveSet.INSTANCE);
+        add(new MIPS32DirectiveSet(ResourceProvider.JAMS));
     }
 
     @Override
     protected DirectiveSet loadDefaultElement() {
-        return MIPS32DirectiveSet.INSTANCE;
+        return get(MIPS32DirectiveSet.NAME).orElseThrow();
     }
 }

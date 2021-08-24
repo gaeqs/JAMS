@@ -28,7 +28,7 @@ import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.exception.LanguageFailedLoadException;
-import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.manager.SelectableManager;
 import net.jamsimulator.jams.utils.FolderUtils;
 import net.jamsimulator.jams.utils.Validate;
@@ -43,7 +43,7 @@ import java.util.Map;
 /**
  * This singleton stores all {@link Language}s that JAMS may use.
  * <p>
- * To register a {@link Language} use {@link #add(Labeled)}.
+ * To register a {@link Language} use {@link #add(net.jamsimulator.jams.manager.ManagerResource)}.
  * To unregister a {@link Language} use {@link #remove(Object)}.
  * <p>
  * The selected {@link Language} will be the one to be used by the GUI.
@@ -54,13 +54,13 @@ public final class LanguageManager extends SelectableManager<Language> {
     public static final String DEFAULT_LANGUAGE_NODE = "language.default";
     public static final String SELECTED_LANGUAGE_NODE = "language.selected";
     public static final String NAME = "language";
-    public static final LanguageManager INSTANCE = new LanguageManager();
+    public static final LanguageManager INSTANCE = new LanguageManager(ResourceProvider.JAMS, NAME);
 
     private Map<String, String> bundledLanguages;
     private File folder;
 
-    private LanguageManager() {
-        super(Language.class, false);
+    public LanguageManager(ResourceProvider provider, String name) {
+        super(provider, name, Language.class, false);
     }
 
     @Override
@@ -73,14 +73,15 @@ public final class LanguageManager extends SelectableManager<Language> {
      * Loads the languages present in the given streams.
      * If the language is already present, the language is merged. If not, the language is added to this manager.
      *
+     * @param provider     the {@link ResourceProvider} of these languages.
      * @param streams      the streams.
      * @param closeStreams whether the streams should be closed after the language is closed.
      */
-    public void loadLanguages(Collection<InputStream> streams, boolean closeStreams) {
+    public void loadLanguages(ResourceProvider provider, Collection<InputStream> streams, boolean closeStreams) {
         Validate.hasNoNulls(streams, "Streams cannot have any null value!");
         for (InputStream in : streams) {
             try {
-                var language = new Language(in);
+                var language = new Language(provider, in);
                 var other = get(language.getName());
 
                 if (other.isEmpty()) {
@@ -167,7 +168,7 @@ public final class LanguageManager extends SelectableManager<Language> {
             if (!file.getName().toLowerCase().endsWith(".jlang")) continue;
 
             try {
-                add(new Language(file));
+                add(new Language(ResourceProvider.JAMS, file));
             } catch (LanguageFailedLoadException ex) {
                 System.err.println("Failed to load language " + file.getName() + ": ");
                 ex.printStackTrace();
@@ -185,7 +186,7 @@ public final class LanguageManager extends SelectableManager<Language> {
             try {
                 var in = Jams.class.getResourceAsStream(value);
                 if (in != null) {
-                    Language bundled = new Language(in);
+                    Language bundled = new Language(ResourceProvider.JAMS, in);
                     in.close();
                     language.addNotPresentValues(bundled);
                     language.save();

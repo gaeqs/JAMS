@@ -31,14 +31,15 @@ import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class TextEditorActionReformat extends Action {
 
     public static final String NAME = "TEXT_EDITOR_REFORMAT";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
 
-    public TextEditorActionReformat() {
-        super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_REFORMAT, DEFAULT_COMBINATION);
+    public TextEditorActionReformat(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_REFORMAT, DEFAULT_COMBINATION);
     }
 
     @Override

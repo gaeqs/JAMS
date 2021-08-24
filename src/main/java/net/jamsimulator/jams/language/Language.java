@@ -25,8 +25,9 @@
 package net.jamsimulator.jams.language;
 
 import net.jamsimulator.jams.language.exception.LanguageFailedLoadException;
-import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.*;
@@ -52,11 +53,12 @@ import java.util.Optional;
  * You can use several styling options in these messages using the xml tag syntax.
  * The valid optiona are: b, code, u, i, sub.
  */
-public class Language implements Labeled {
+public class Language implements ManagerResource {
 
     public static final String MESSAGE_SEPARATOR = "=";
     public static final char LITERAL_CHARACTER = '.';
 
+    private final ResourceProvider provider;
     private final String name;
     private final File file;
     private final Map<String, String> messages;
@@ -64,11 +66,14 @@ public class Language implements Labeled {
     /**
      * Loads the language present in the given file.
      *
-     * @param file the file to load.
+     * @param provider the {@link ResourceProvider} of this language.
+     * @param file     the file to load.
      * @throws LanguageFailedLoadException whether an exception occurs while loading the language.
      */
-    public Language(File file) throws LanguageFailedLoadException {
+    public Language(ResourceProvider provider, File file) throws LanguageFailedLoadException {
+        Validate.notNull(provider, "Provider cannot be null!");
         Validate.notNull(file, "File cannot be null!");
+        this.provider = provider;
         this.file = file;
         this.messages = new HashMap<>();
 
@@ -85,11 +90,14 @@ public class Language implements Labeled {
     /**
      * Loads the language present in the given stream.
      *
+     * @param provider    the {@link ResourceProvider} of this language.
      * @param inputStream the stream.
      * @throws LanguageFailedLoadException whether an exception occurs while loading the language.
      */
-    public Language(InputStream inputStream) throws LanguageFailedLoadException {
+    public Language(ResourceProvider provider, InputStream inputStream) throws LanguageFailedLoadException {
+        Validate.notNull(provider, "Provider cannot be null!");
         Validate.notNull(inputStream, "Input stream cannot be null!");
+        this.provider = provider;
         this.file = null;
         this.messages = new HashMap<>();
 
@@ -105,6 +113,11 @@ public class Language implements Labeled {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return provider;
     }
 
     /**

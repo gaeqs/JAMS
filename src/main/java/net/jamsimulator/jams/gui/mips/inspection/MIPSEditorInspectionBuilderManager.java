@@ -31,6 +31,7 @@ import net.jamsimulator.jams.gui.mips.inspection.warning.MIPSEditorInspectionDir
 import net.jamsimulator.jams.gui.mips.inspection.warning.MIPSEditorInspectionRegisterUsingAt;
 import net.jamsimulator.jams.gui.mips.inspection.warning.MIPSEditorInspectionUsingEquivalent;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.util.Collection;
 
@@ -45,29 +46,29 @@ import java.util.Collection;
 public final class MIPSEditorInspectionBuilderManager extends Manager<MIPSEditorInspectionBuilder> {
 
     public static final String NAME = "mips_editor_inspection_builder";
-    public static final MIPSEditorInspectionBuilderManager INSTANCE = new MIPSEditorInspectionBuilderManager();
+    public static final MIPSEditorInspectionBuilderManager INSTANCE = new MIPSEditorInspectionBuilderManager(ResourceProvider.JAMS, NAME);
 
     /**
      * Creates the manager.
      */
-    private MIPSEditorInspectionBuilderManager() {
-        super(MIPSEditorInspectionBuilder.class, true);
+    public MIPSEditorInspectionBuilderManager(ResourceProvider provider, String name) {
+        super(provider, name, MIPSEditorInspectionBuilder.class, true);
     }
 
     @Override
     protected void loadDefaultElements() {
-        add(new MIPSEditorInspectionDuplicateGlobalLabel.Builder());
-        add(new MIPSEditorInspectionDuplicateLabel.Builder());
-        add(new MIPSEditorInspectionIllegalLabel.Builder());
-        add(new MIPSEditorInspectionInstructionNotFound.Builder());
-        add(new MIPSEditorInspectionInvalidDirectiveParameter.Builder());
-        add(new MIPSEditorInspectionInvalidMacroParametersAmount.Builder());
-        add(new MIPSEditorInspectionLabelNotFound.Builder());
-        add(new MIPSEditorInspectionMacroNotFound.Builder());
+        add(new MIPSEditorInspectionDuplicateGlobalLabel.Builder(ResourceProvider.JAMS));
+        add(new MIPSEditorInspectionDuplicateLabel.Builder(ResourceProvider.JAMS));
+        add(new MIPSEditorInspectionIllegalLabel.Builder(ResourceProvider.JAMS));
+        add(new MIPSEditorInspectionInstructionNotFound.Builder(ResourceProvider.JAMS));
+        add(new MIPSEditorInspectionInvalidDirectiveParameter.Builder(ResourceProvider.JAMS));
+        add(new MIPSEditorInspectionInvalidMacroParametersAmount.Builder(ResourceProvider.JAMS));
+        add(new MIPSEditorInspectionLabelNotFound.Builder(ResourceProvider.JAMS));
+        add(new MIPSEditorInspectionMacroNotFound.Builder(ResourceProvider.JAMS));
 
-        add(new MIPSEditorInspectionDirectiveNotFound.Builder());
-        add(new MIPSEditorInspectionRegisterUsingAt.Builder());
-        add(new MIPSEditorInspectionUsingEquivalent.Builder());
+        add(new MIPSEditorInspectionDirectiveNotFound.Builder(ResourceProvider.JAMS));
+        add(new MIPSEditorInspectionRegisterUsingAt.Builder(ResourceProvider.JAMS));
+        add(new MIPSEditorInspectionUsingEquivalent.Builder(ResourceProvider.JAMS));
     }
 
     /**

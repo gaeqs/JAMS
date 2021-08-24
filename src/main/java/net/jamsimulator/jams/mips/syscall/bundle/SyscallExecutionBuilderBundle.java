@@ -24,8 +24,9 @@
 
 package net.jamsimulator.jams.mips.syscall.bundle;
 
-import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -33,20 +34,25 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class SyscallExecutionBuilderBundle implements Labeled {
+public class SyscallExecutionBuilderBundle implements ManagerResource {
 
-    private final String name;
-    private final Map<Integer, String> builders;
+    protected final ResourceProvider provider;
+    protected final String name;
+    protected final Map<Integer, String> builders;
 
-    public SyscallExecutionBuilderBundle(String name) {
+    public SyscallExecutionBuilderBundle(ResourceProvider provider, String name) {
+        Validate.notNull(provider, "Provider cannot be null!");
         Validate.notNull(name, "Name cannot be null!");
+        this.provider = provider;
         this.name = name;
         this.builders = new HashMap<>();
     }
 
-    public SyscallExecutionBuilderBundle(String name, Map<Integer, String> builders) {
+    public SyscallExecutionBuilderBundle(ResourceProvider provider, String name, Map<Integer, String> builders) {
+        Validate.notNull(provider, "Provider cannot be null!");
         Validate.notNull(name, "Name cannot be null!");
         Validate.notNull(builders, "Builders cannot be null!");
+        this.provider = provider;
         this.name = name;
         this.builders = new HashMap<>(builders);
     }
@@ -54,6 +60,11 @@ public class SyscallExecutionBuilderBundle implements Labeled {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return provider;
     }
 
     public void addBuilder(int id, String name) {

@@ -35,6 +35,7 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class EditorTabActionSplitVertically extends ContextAction {
 
@@ -42,8 +43,8 @@ public class EditorTabActionSplitVertically extends ContextAction {
     public static final String NAME = "EDITOR_TAB_SPLIT_VERTICALLY";
     public static final KeyCombination DEFAULT_COMBINATION = null;
 
-    public EditorTabActionSplitVertically() {
-        super(NAME, RegionTags.EDITOR_TAB, Messages.ACTION_EDITOR_TAB_SPLIT_VERTICALLY,
+    public EditorTabActionSplitVertically(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.EDITOR_TAB, Messages.ACTION_EDITOR_TAB_SPLIT_VERTICALLY,
                 DEFAULT_COMBINATION, EditorTagRegions.SPLIT, null, Icons.TAB_SPLIT_VERTICALLY);
     }
 

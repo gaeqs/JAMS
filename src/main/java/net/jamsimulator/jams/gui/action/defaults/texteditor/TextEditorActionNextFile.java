@@ -33,14 +33,15 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditorTabList;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class TextEditorActionNextFile extends Action {
 
     public static final String NAME = "TEXT_EDITOR_NEXT_FILE";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.RIGHT, KeyCombination.ALT_DOWN);
 
-    public TextEditorActionNextFile() {
-        super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_NEXT_FILE, DEFAULT_COMBINATION);
+    public TextEditorActionNextFile(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_NEXT_FILE, DEFAULT_COMBINATION);
     }
 
     @Override

@@ -24,15 +24,15 @@
 
 package net.jamsimulator.jams.mips.syscall.bundle;
 
-import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.syscall.bundle.defaults.MARSSyscallExecutionBuilderBundle;
 import net.jamsimulator.jams.mips.syscall.bundle.defaults.SPIMSyscallExecutionBuilderBundle;
 
 /**
  * This singleton stores all {@link SyscallExecutionBuilderBundle}s that projects may use.
  * <p>
- * To register an {@link SyscallExecutionBuilderBundle} use {@link Manager#add(Labeled)}}.
+ * To register an {@link SyscallExecutionBuilderBundle} use {@link Manager#add(net.jamsimulator.jams.manager.ManagerResource)}}.
  * To unregister an {@link SyscallExecutionBuilderBundle} use {@link #remove(Object)}.
  * An {@link SyscallExecutionBuilderBundle}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
@@ -40,16 +40,16 @@ import net.jamsimulator.jams.mips.syscall.bundle.defaults.SPIMSyscallExecutionBu
 public final class SyscallExecutionBuilderBundleManager extends Manager<SyscallExecutionBuilderBundle> {
 
     public static final String NAME = "syscall_execution_builder_bundle";
-    public static final SyscallExecutionBuilderBundleManager INSTANCE = new SyscallExecutionBuilderBundleManager();
+    public static final SyscallExecutionBuilderBundleManager INSTANCE = new SyscallExecutionBuilderBundleManager(ResourceProvider.JAMS, NAME);
 
-    private SyscallExecutionBuilderBundleManager() {
-        super(SyscallExecutionBuilderBundle.class, false);
+    public SyscallExecutionBuilderBundleManager(ResourceProvider provider, String name) {
+        super(provider, name, SyscallExecutionBuilderBundle.class, false);
     }
 
     @Override
     protected void loadDefaultElements() {
-        add(new SyscallExecutionBuilderBundle("Empty"));
-        add(new SPIMSyscallExecutionBuilderBundle());
-        add(new MARSSyscallExecutionBuilderBundle());
+        add(new SyscallExecutionBuilderBundle(ResourceProvider.JAMS, "Empty"));
+        add(new SPIMSyscallExecutionBuilderBundle(ResourceProvider.JAMS));
+        add(new MARSSyscallExecutionBuilderBundle(ResourceProvider.JAMS));
     }
 }

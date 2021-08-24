@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.bar.mode;
 import net.jamsimulator.jams.gui.bar.BarButton;
 import net.jamsimulator.jams.gui.bar.BarSnapshot;
 import net.jamsimulator.jams.gui.bar.BarSnapshotHolder;
-import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.ManagerResource;
 
 import java.util.Optional;
 
@@ -37,7 +37,7 @@ import java.util.Optional;
  * Instances of this class manages the view of the snapshot when required. They also return the viewer holding
  * the node as a {@link BarSnapshotHolder}. This holder will be called when the snapshot should hide.
  */
-public interface BarSnapshotViewMode extends Labeled {
+public interface BarSnapshotViewMode extends ManagerResource {
 
     /**
      * Manages the visualization of the {@link BarSnapshot snapshot} inside the given {@link BarButton}.

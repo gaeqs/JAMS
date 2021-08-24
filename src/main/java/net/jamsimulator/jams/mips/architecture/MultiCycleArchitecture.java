@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.architecture;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
@@ -40,16 +41,15 @@ import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleSimulation;
  */
 public class MultiCycleArchitecture extends Architecture {
 
-    public static final MultiCycleArchitecture INSTANCE = new MultiCycleArchitecture();
-
     public static final String NAME = "Multi-cycle";
+    public static final MultiCycleArchitecture INSTANCE = new MultiCycleArchitecture(ResourceProvider.JAMS);
 
-    protected MultiCycleArchitecture(String name) {
-        super(name);
+    protected MultiCycleArchitecture(ResourceProvider provider, String name) {
+        super(provider, name);
     }
 
-    protected MultiCycleArchitecture() {
-        super(NAME);
+    private MultiCycleArchitecture(ResourceProvider provider) {
+        super(provider, NAME);
     }
 
     @Override

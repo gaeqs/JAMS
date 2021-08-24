@@ -25,12 +25,12 @@
 package net.jamsimulator.jams.mips.architecture;
 
 import net.jamsimulator.jams.manager.DefaultValuableManager;
-import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 /**
  * This singleton stores all {@link Architecture}s that projects may use.
  * <p>
- * To register an {@link Architecture} use {@link #add(Labeled)}.
+ * To register an {@link Architecture} use {@link #add(net.jamsimulator.jams.manager.ManagerResource)}.
  * To unregister an {@link Architecture} use {@link #remove(Object)}.
  * An {@link Architecture}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
@@ -38,15 +38,10 @@ import net.jamsimulator.jams.utils.Labeled;
 public final class ArchitectureManager extends DefaultValuableManager<Architecture> {
 
     public static final String NAME = "architecture";
-    public static final ArchitectureManager INSTANCE = new ArchitectureManager();
+    public static final ArchitectureManager INSTANCE = new ArchitectureManager(ResourceProvider.JAMS, NAME);
 
-    private ArchitectureManager() {
-        super(Architecture.class, false);
-    }
-
-    @Override
-    protected Architecture loadDefaultElement() {
-        return SingleCycleArchitecture.INSTANCE;
+    private ArchitectureManager(ResourceProvider provider, String name) {
+        super(provider, name, Architecture.class, false);
     }
 
     @Override
@@ -54,5 +49,10 @@ public final class ArchitectureManager extends DefaultValuableManager<Architectu
         add(SingleCycleArchitecture.INSTANCE);
         add(MultiCycleArchitecture.INSTANCE);
         add(PipelinedArchitecture.INSTANCE);
+    }
+
+    @Override
+    protected Architecture loadDefaultElement() {
+        return get(SingleCycleArchitecture.NAME).orElseThrow();
     }
 }

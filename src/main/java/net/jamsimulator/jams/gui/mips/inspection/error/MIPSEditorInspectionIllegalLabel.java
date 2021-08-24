@@ -30,6 +30,7 @@ import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSLabel;
 import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspection;
 import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilder;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.LabelUtils;
 
@@ -49,8 +50,8 @@ public class MIPSEditorInspectionIllegalLabel extends MIPSEditorInspection {
 
     public static class Builder extends MIPSEditorInspectionBuilder<MIPSEditorInspectionIllegalLabel> {
 
-        public Builder() {
-            super(NAME, true);
+        public Builder(ResourceProvider provider) {
+            super(provider,NAME, true);
         }
 
         @Override

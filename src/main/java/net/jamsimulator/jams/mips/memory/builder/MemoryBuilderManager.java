@@ -25,12 +25,12 @@
 package net.jamsimulator.jams.mips.memory.builder;
 
 import net.jamsimulator.jams.manager.DefaultValuableManager;
-import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 /**
  * This singleton stores all {@link MemoryBuilder}s that projects may use.
  * <p>
- * To register an {@link MemoryBuilder} use {@link #add(Labeled)}.
+ * To register an {@link MemoryBuilder} use {@link #add(net.jamsimulator.jams.manager.ManagerResource)}.
  * To unregister an {@link MemoryBuilder} use {@link #remove(Object)}.
  * An {@link MemoryBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
@@ -38,20 +38,20 @@ import net.jamsimulator.jams.utils.Labeled;
 public final class MemoryBuilderManager extends DefaultValuableManager<MemoryBuilder> {
 
     public static final String NAME = "memory_builder";
-    public static final MemoryBuilderManager INSTANCE = new MemoryBuilderManager();
+    public static final MemoryBuilderManager INSTANCE = new MemoryBuilderManager(ResourceProvider.JAMS, NAME);
 
 
-    private MemoryBuilderManager() {
-        super(MemoryBuilder.class, false);
+    public MemoryBuilderManager(ResourceProvider provider, String name) {
+        super(provider, name, MemoryBuilder.class, false);
     }
 
     @Override
     protected void loadDefaultElements() {
-        add(MIPS32MemoryBuilder.INSTANCE);
+        add(new MIPS32MemoryBuilder(ResourceProvider.JAMS));
     }
 
     @Override
     protected MemoryBuilder loadDefaultElement() {
-        return MIPS32MemoryBuilder.INSTANCE;
+        return get(MIPS32MemoryBuilder.NAME).orElseThrow();
     }
 }

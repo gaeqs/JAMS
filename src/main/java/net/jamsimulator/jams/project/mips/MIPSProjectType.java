@@ -26,6 +26,7 @@ package net.jamsimulator.jams.project.mips;
 
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.project.ProjectType;
 
 import java.io.File;
@@ -37,7 +38,7 @@ public class MIPSProjectType extends ProjectType<MIPSProject> {
     public static final MIPSProjectType INSTANCE = new MIPSProjectType();
 
     private MIPSProjectType() {
-        super(NAME, ICON);
+        super(ResourceProvider.JAMS, NAME, ICON);
         templateBuilders.add(new MIPSEmptyProjectTemplate.Builder());
     }
 

@@ -33,14 +33,15 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class ExplorerElementActionExpandOrSelectNext extends Action {
 
     public static final String NAME = "EXPLORER_ELEMENT_EXPAND_OR_NEXT";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.RIGHT);
 
-    public ExplorerElementActionExpandOrSelectNext() {
-        super(NAME, RegionTags.EXPLORER_ELEMENT, Messages.ACTION_EXPLORER_ELEMENT_EXPAND_OR_NEXT, DEFAULT_COMBINATION);
+    public ExplorerElementActionExpandOrSelectNext(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.EXPLORER_ELEMENT, Messages.ACTION_EXPLORER_ELEMENT_EXPAND_OR_NEXT, DEFAULT_COMBINATION);
     }
 
     @Override

@@ -30,6 +30,7 @@ import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Optional;
@@ -46,6 +47,7 @@ public abstract class ContextAction extends Action implements ContextRegionable 
     /**
      * Creates the context action.
      *
+     * @param provider           the provider of the action.
      * @param name               the name of the action. This name must be unique.
      * @param regionTag          the region tag of this action. This action will only interact on regions that support this tag.
      * @param languageNode       the language node of this action.
@@ -54,9 +56,9 @@ public abstract class ContextAction extends Action implements ContextRegionable 
      * @param mainMenuRegion     the main menu region this action will be shown on. May be null.
      * @param icon               the icon this action will show on the context menu or null.
      */
-    public ContextAction(String name, String regionTag, String languageNode,
+    public ContextAction(ResourceProvider provider, String name, String regionTag, String languageNode,
                          KeyCombination defaultCombination, ContextRegion contextRegion, MainMenuRegion mainMenuRegion, IconData icon) {
-        super(name, regionTag, languageNode, defaultCombination);
+        super(provider, name, regionTag, languageNode, defaultCombination);
         Validate.notNull(contextRegion, "Context region cannot be null!");
         this.contextRegion = contextRegion;
         this.mainMenuRegion = mainMenuRegion;

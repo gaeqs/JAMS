@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.theme;
 
 import net.jamsimulator.jams.configuration.RootConfiguration;
 import net.jamsimulator.jams.gui.theme.exception.ThemeLoadException;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -45,6 +46,7 @@ public class ThemeLoader {
     public static String HEADER_FILE = "theme.json";
     public static String GLOBAL_FILE = "global.css";
 
+    private final ResourceProvider provider;
     private final Path path;
 
     private ThemeHeader header;
@@ -60,7 +62,8 @@ public class ThemeLoader {
      * @param path the path of the theme to load.
      * @throws ThemeLoadException whem whomething went wrong during initialization.
      */
-    public ThemeLoader(Path path) throws ThemeLoadException {
+    public ThemeLoader(ResourceProvider provider, Path path) throws ThemeLoadException {
+        this.provider = provider;
         if (!Files.isDirectory(path)) {
             // .zip handle
             var uri = path.toUri();
@@ -84,6 +87,10 @@ public class ThemeLoader {
 
     public ThemeHeader getHeader() {
         return header;
+    }
+
+    public ResourceProvider getProvider() {
+        return provider;
     }
 
     public Path getPath() {
@@ -136,7 +143,7 @@ public class ThemeLoader {
         try {
             var json = Files.readString(headerPath);
             var config = new RootConfiguration(json);
-            return ThemeHeader.load(config);
+            return ThemeHeader.load(provider, config);
         } catch (IOException | JSONException e) {
             throw new ThemeLoadException(e, ThemeLoadException.Type.INVALID_HEADER);
         }

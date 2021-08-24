@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.syscall.bundle.defaults;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundle;
 import net.jamsimulator.jams.mips.syscall.defaults.*;
 
@@ -31,8 +32,8 @@ public class MARSSyscallExecutionBuilderBundle extends SyscallExecutionBuilderBu
 
     public static final String NAME = "MARS";
 
-    public MARSSyscallExecutionBuilderBundle() {
-        super(NAME);
+    public MARSSyscallExecutionBuilderBundle(ResourceProvider provider) {
+        super(provider, NAME);
         addBuilder(1, SyscallExecutionPrintInteger.NAME);
         addBuilder(2, SyscallExecutionPrintFloat.NAME);
         addBuilder(3, SyscallExecutionPrintDouble.NAME);

@@ -25,10 +25,10 @@
 package net.jamsimulator.jams.manager.event;
 
 import net.jamsimulator.jams.event.Cancellable;
-import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ManagerResource;
 
-public class ManagerElementRegisterEvent<Type extends Labeled> extends ManagerEvent<Type> {
+public class ManagerElementRegisterEvent<Type extends ManagerResource> extends ManagerEvent<Type> {
 
     protected final Type element;
 
@@ -41,7 +41,7 @@ public class ManagerElementRegisterEvent<Type extends Labeled> extends ManagerEv
         return element;
     }
 
-    public static class Before<Type extends Labeled> extends ManagerElementRegisterEvent<Type> implements Cancellable {
+    public static class Before<Type extends ManagerResource> extends ManagerElementRegisterEvent<Type> implements Cancellable {
 
         private boolean cancelled = false;
 
@@ -60,7 +60,7 @@ public class ManagerElementRegisterEvent<Type extends Labeled> extends ManagerEv
         }
     }
 
-    public static class After<Type extends Labeled> extends ManagerElementRegisterEvent<Type> {
+    public static class After<Type extends ManagerResource> extends ManagerElementRegisterEvent<Type> {
 
         public After(Manager<Type> manager, Class<Type> type, Type element) {
             super(manager, type, element);

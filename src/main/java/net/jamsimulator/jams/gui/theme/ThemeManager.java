@@ -33,7 +33,7 @@ import net.jamsimulator.jams.gui.theme.event.CodeFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.GeneralFontChangeEvent;
 import net.jamsimulator.jams.gui.theme.event.ThemeRefreshEvent;
 import net.jamsimulator.jams.gui.theme.exception.ThemeLoadException;
-import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.manager.SelectableManager;
 import net.jamsimulator.jams.utils.FolderUtils;
 import net.jamsimulator.jams.utils.TempUtils;
@@ -51,18 +51,18 @@ import java.util.Map;
 /**
  * This singleton stores all {@link Theme}s that projects may use.
  * <p>
- * To register a {@link Theme} use {@link #add(Labeled)}.
+ * To register a {@link Theme} use {@link #add(net.jamsimulator.jams.manager.ManagerResource)}.
  * To unregister a {@link Theme} use {@link #remove(Object)}.
  * <p>
  * The selected {@link Theme} will be the one to be used by the GUI.
  * <p>
  * The default theme will act as the common data for all themes.
  * <p>
- * You can load new themes using {@link #loadTheme(Path, boolean)}. This method will
+ * You can load new themes using {@link #loadTheme(ResourceProvider, Path, boolean)}. This method will
  * load the theme at the given Path. The path can be a .ZIP file or a folder. The path may be
  * a path inside a plugin's .JAR.
  * <p>
- * The method {@link #loadThemesInDirectory(Path, boolean)} loads all the themes inside a directory.
+ * The method {@link #loadThemesInDirectory(ResourceProvider, Path, boolean)} loads all the themes inside a directory.
  * Just like the previous method, the path may be a path inside a plugin's .JAR. See these methods'
  * documentation for more information.
  */
@@ -79,15 +79,15 @@ public final class ThemeManager extends SelectableManager<Theme> {
         if (!FolderUtils.checkFolder(FOLDER)) throw new RuntimeException("Couldn't create themes folder!");
     }
 
-    public static final ThemeManager INSTANCE = new ThemeManager();
+    public static final ThemeManager INSTANCE = new ThemeManager(ResourceProvider.JAMS, NAME);
 
     private boolean cacheFileLoaded = false;
-    protected final File cacheFile = TempUtils.createTemporalFile("currentTheme");
+    private final File cacheFile = TempUtils.createTemporalFile("currentTheme");
 
     private String generalFont, codeFont;
 
-    private ThemeManager() {
-        super(Theme.class, true);
+    public ThemeManager(ResourceProvider provider, String name) {
+        super(provider, name, Theme.class, true);
     }
 
     /**
@@ -197,18 +197,19 @@ public final class ThemeManager extends SelectableManager<Theme> {
      * This method won't throw any {@link ThemeLoadException}. Instead, it will return a {@link HashMap} with
      * all {@link ThemeLoadException} thrown by the theme loaded. This decision was made for simplicity reasons.
      *
-     * @param path   the path of the directory where the themes are. This path may be inside a plugin's .JAR.
-     * @param attach whether the themes should be attached to already loaded themes.
+     * @param provider the provider of the themes.
+     * @param path     the path of the directory where the themes are. This path may be inside a plugin's .JAR.
+     * @param attach   whether the themes should be attached to already loaded themes.
      * @throws IOException if there's something wrong with the given path.
      * @see #refresh()
      */
-    public Map<Path, ThemeLoadException> loadThemesInDirectory(Path path, boolean attach) throws IOException {
+    public Map<Path, ThemeLoadException> loadThemesInDirectory(ResourceProvider provider, Path path, boolean attach) throws IOException {
         Validate.notNull(path, "Path cannot be null!");
         var exceptions = new HashMap<Path, ThemeLoadException>();
         Files.walk(path, 1).forEach(it -> {
             try {
                 if (Files.isSameFile(path, it)) return;
-                loadTheme(it, attach);
+                loadTheme(provider, it, attach);
             } catch (IOException e) {
                 exceptions.put(path, new ThemeLoadException(e, ThemeLoadException.Type.INVALID_RESOURCE));
             } catch (ThemeLoadException e) {
@@ -229,13 +230,14 @@ public final class ThemeManager extends SelectableManager<Theme> {
      * You may need to refresh the selected theme after all loading operations are finished. See {@link #refresh()}
      * for more information.
      *
-     * @param path   the path of the theme. This path may be inside a plugin's .JAR.
-     * @param attach whether the theme should be attached to an already loaded theme with the same name.
+     * @param provider the provider of the theme to load.
+     * @param path     the path of the theme. This path may be inside a plugin's .JAR.
+     * @param attach   whether the theme should be attached to an already loaded theme with the same name.
      * @throws ThemeLoadException if something went wrong while the theme is loading.
      * @see #refresh()
      */
-    public void loadTheme(Path path, boolean attach) throws ThemeLoadException {
-        var loader = new ThemeLoader(path);
+    public void loadTheme(ResourceProvider provider, Path path, boolean attach) throws ThemeLoadException {
+        var loader = new ThemeLoader(provider, path);
         loader.load();
 
         if (loader.getHeader().name().equals("Common")) {
@@ -283,9 +285,11 @@ public final class ThemeManager extends SelectableManager<Theme> {
         try {
             var jarResource = Jams.class.getResource("/gui/theme");
             if (jarResource != null) {
-                loadThemesInDirectory(Path.of(jarResource.toURI()), true).forEach(ThemeManager::manageException);
+                loadThemesInDirectory(ResourceProvider.JAMS, Path.of(jarResource.toURI()), true)
+                        .forEach(ThemeManager::manageException);
             }
-            loadThemesInDirectory(FOLDER.toPath(), true).forEach(ThemeManager::manageException);
+            loadThemesInDirectory(ResourceProvider.JAMS, FOLDER.toPath(), true)
+                    .forEach(ThemeManager::manageException);
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
@@ -321,10 +325,10 @@ public final class ThemeManager extends SelectableManager<Theme> {
 
     private void attach(Theme theme, ThemeLoader attachment) {
         if (!attachment.getGlobalData().isEmpty()) {
-            theme.getGlobalAttachments().add(new ThemeAttachment(attachment.getGlobalData()));
+            theme.getGlobalAttachments().add(new ThemeAttachment(attachment.getGlobalData(), attachment.getProvider()));
         }
         if (!attachment.getFilesData().isEmpty()) {
-            theme.getFilesAttachments().add(new ThemeAttachment(attachment.getFilesData()));
+            theme.getFilesAttachments().add(new ThemeAttachment(attachment.getFilesData(), attachment.getProvider()));
         }
     }
 

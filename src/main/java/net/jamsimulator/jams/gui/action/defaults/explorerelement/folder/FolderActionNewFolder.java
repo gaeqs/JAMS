@@ -38,6 +38,7 @@ import net.jamsimulator.jams.gui.popup.NewFolderWindow;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.file.FileTypeManager;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.io.File;
 
@@ -47,8 +48,8 @@ public class FolderActionNewFolder extends ContextAction {
     public static final String NAME = "FOLDER_EXPLORER_ELEMENT_NEW_FOLDER";
     public static final KeyCombination DEFAULT_COMBINATION = null;
 
-    public FolderActionNewFolder() {
-        super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_NEW_FOLDER,
+    public FolderActionNewFolder(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_NEW_FOLDER,
                 DEFAULT_COMBINATION, FolderActionRegions.NEW_GENERAL, null, Manager.get(FileTypeManager.class).getFolderType().getIcon());
     }
 

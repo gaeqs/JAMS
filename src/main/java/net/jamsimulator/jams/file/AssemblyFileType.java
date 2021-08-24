@@ -28,6 +28,7 @@ import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditorTab;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.project.ProjectType;
 import net.jamsimulator.jams.project.mips.MIPSProjectType;
 import net.jamsimulator.jams.utils.Validate;
@@ -39,12 +40,11 @@ import java.util.function.Function;
 public class AssemblyFileType extends FileType {
 
     public static final String NAME = "Assembly";
-    public static final AssemblyFileType INSTANCE = new AssemblyFileType();
 
     private final Map<ProjectType<?>, Function<FileEditorTab, FileEditor>> builders = new HashMap<>();
 
-    private AssemblyFileType() {
-        super(NAME, Icons.FILE_ASSEMBLY, "asm", "s");
+    AssemblyFileType(ResourceProvider provider) {
+        super(provider, NAME, Icons.FILE_ASSEMBLY, "asm", "s");
         builders.put(MIPSProjectType.INSTANCE, MIPSFileEditor::new);
     }
 

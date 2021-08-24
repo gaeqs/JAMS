@@ -24,14 +24,14 @@
 
 package net.jamsimulator.jams.mips.syscall;
 
-import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.syscall.defaults.*;
 
 /**
  * This singleton stores all {@link SyscallExecutionBuilder}s that projects may use.
  * <p>
- * To register an {@link SyscallExecutionBuilder} use {@link Manager#add(Labeled)}}.
+ * To register an {@link SyscallExecutionBuilder} use {@link Manager#add(net.jamsimulator.jams.manager.ManagerResource)}}.
  * To unregister an {@link SyscallExecutionBuilder} use {@link #remove(Object)}.
  * An {@link SyscallExecutionBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
@@ -39,44 +39,44 @@ import net.jamsimulator.jams.mips.syscall.defaults.*;
 public final class SyscallExecutionBuilderManager extends Manager<SyscallExecutionBuilder> {
 
     public static final String NAME = "syscall_execution_builder";
-    public static final SyscallExecutionBuilderManager INSTANCE = new SyscallExecutionBuilderManager();
+    public static final SyscallExecutionBuilderManager INSTANCE = new SyscallExecutionBuilderManager(ResourceProvider.JAMS, NAME);
 
-    private SyscallExecutionBuilderManager() {
-        super(SyscallExecutionBuilder.class, false);
+    public SyscallExecutionBuilderManager(ResourceProvider provider, String name) {
+        super(provider, name, SyscallExecutionBuilder.class, false);
     }
 
     @Override
     protected void loadDefaultElements() {
-        add(new SyscallExecutionRunExceptionHandler.Builder());
-        add(new SyscallExecutionPrintInteger.Builder());
-        add(new SyscallExecutionPrintFloat.Builder());
-        add(new SyscallExecutionPrintDouble.Builder());
-        add(new SyscallExecutionPrintString.Builder());
-        add(new SyscallExecutionReadInteger.Builder());
-        add(new SyscallExecutionReadFloat.Builder());
-        add(new SyscallExecutionReadDouble.Builder());
-        add(new SyscallExecutionReadString.Builder());
-        add(new SyscallExecutionAllocateMemory.Builder());
-        add(new SyscallExecutionExit.Builder());
-        add(new SyscallExecutionPrintCharacter.Builder());
-        add(new SyscallExecutionReadCharacter.Builder());
-        add(new SyscallExecutionOpenFile.Builder());
-        add(new SyscallExecutionReadFile.Builder());
-        add(new SyscallExecutionWriteFile.Builder());
-        add(new SyscallExecutionCloseFile.Builder());
-        add(new SyscallExecutionExitWithValue.Builder());
+        add(new SyscallExecutionRunExceptionHandler.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionPrintInteger.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionPrintFloat.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionPrintDouble.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionPrintString.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionReadInteger.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionReadFloat.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionReadDouble.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionReadString.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionAllocateMemory.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionExit.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionPrintCharacter.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionReadCharacter.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionOpenFile.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionReadFile.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionWriteFile.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionCloseFile.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionExitWithValue.Builder(ResourceProvider.JAMS));
 
-        add(new SyscallExecutionSystemTime.Builder());
-        add(new SyscallExecutionSleep.Builder());
+        add(new SyscallExecutionSystemTime.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionSleep.Builder(ResourceProvider.JAMS));
 
-        add(new SyscallExecutionPrintHexadecimalInteger.Builder());
-        add(new SyscallExecutionPrintBinaryInteger.Builder());
-        add(new SyscallExecutionPrintUnsignedInteger.Builder());
-        add(new SyscallExecutionSetSeed.Builder());
-        add(new SyscallExecutionRandomInteger.Builder());
-        add(new SyscallExecutionRandomRangedInteger.Builder());
-        add(new SyscallExecutionRandomFloat.Builder());
-        add(new SyscallExecutionRandomDouble.Builder());
+        add(new SyscallExecutionPrintHexadecimalInteger.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionPrintBinaryInteger.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionPrintUnsignedInteger.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionSetSeed.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionRandomInteger.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionRandomRangedInteger.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionRandomFloat.Builder(ResourceProvider.JAMS));
+        add(new SyscallExecutionRandomDouble.Builder(ResourceProvider.JAMS));
     }
 
 }

@@ -24,8 +24,8 @@
 
 package net.jamsimulator.jams.mips.memory.cache;
 
-import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.memory.cache.builder.AssociativeCacheBuilder;
 import net.jamsimulator.jams.mips.memory.cache.builder.DirectCacheBuilder;
 import net.jamsimulator.jams.mips.memory.cache.builder.SetAssociativeCacheBuilder;
@@ -33,7 +33,7 @@ import net.jamsimulator.jams.mips.memory.cache.builder.SetAssociativeCacheBuilde
 /**
  * This singleton stores all {@link CacheBuilder}s that projects may use.
  * <p>
- * To register an {@link CacheBuilder} use {@link Manager#add(Labeled)}}.
+ * To register an {@link CacheBuilder} use {@link Manager#add(net.jamsimulator.jams.manager.ManagerResource)}}.
  * To unregister an {@link CacheBuilder} use {@link #remove(Object)}.
  * A {@link CacheBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
@@ -41,17 +41,17 @@ import net.jamsimulator.jams.mips.memory.cache.builder.SetAssociativeCacheBuilde
 public final class CacheBuilderManager extends Manager<CacheBuilder> {
 
     public static final String NAME = "cache_builder";
-    public static final CacheBuilderManager INSTANCE = new CacheBuilderManager();
+    public static final CacheBuilderManager INSTANCE = new CacheBuilderManager(ResourceProvider.JAMS, NAME);
 
-    private CacheBuilderManager() {
-        super(CacheBuilder.class, false);
+    public CacheBuilderManager(ResourceProvider provider, String name) {
+        super(provider, name, CacheBuilder.class, false);
     }
 
     @Override
     protected void loadDefaultElements() {
-        add(new AssociativeCacheBuilder());
-        add(new DirectCacheBuilder());
-        add(new SetAssociativeCacheBuilder());
+        add(new AssociativeCacheBuilder(ResourceProvider.JAMS));
+        add(new DirectCacheBuilder(ResourceProvider.JAMS));
+        add(new SetAssociativeCacheBuilder(ResourceProvider.JAMS));
     }
 
 }

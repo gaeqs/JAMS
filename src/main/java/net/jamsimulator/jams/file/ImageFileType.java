@@ -28,6 +28,7 @@ import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditorTab;
 import net.jamsimulator.jams.gui.editor.image.ImageFileEditor;
 import net.jamsimulator.jams.gui.image.icon.IconData;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class ImageFileType extends FileType {
 
@@ -35,12 +36,13 @@ public class ImageFileType extends FileType {
     /**
      * Creates an image file type.
      *
+     * @param provider   the provider.
      * @param name       the name.
      * @param iconData   the name of the icon.
      * @param extensions the extensions.
      */
-    public ImageFileType(String name, IconData iconData, String... extensions) {
-        super(name, iconData, extensions);
+    public ImageFileType(ResourceProvider provider, String name, IconData iconData, String... extensions) {
+        super(provider, name, iconData, extensions);
     }
 
     @Override

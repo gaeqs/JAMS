@@ -25,22 +25,22 @@
 package net.jamsimulator.jams.manager.event;
 
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.ManagerResource;
 
-public class ManagerLoadEvent<Type extends Labeled> extends ManagerEvent<Type> {
+public class ManagerLoadEvent<Type extends ManagerResource> extends ManagerEvent<Type> {
 
     private ManagerLoadEvent(Manager<Type> manager, Class<Type> type) {
         super(manager, type);
     }
 
-    public static class Before<Type extends Labeled> extends ManagerLoadEvent<Type> {
+    public static class Before<Type extends ManagerResource> extends ManagerLoadEvent<Type> {
 
         public Before(Manager<Type> manager, Class<Type> type) {
             super(manager, type);
         }
     }
 
-    public static class After<Type extends Labeled> extends ManagerLoadEvent<Type> {
+    public static class After<Type extends ManagerResource> extends ManagerLoadEvent<Type> {
 
         public After(Manager<Type> manager, Class<Type> type) {
             super(manager, type);

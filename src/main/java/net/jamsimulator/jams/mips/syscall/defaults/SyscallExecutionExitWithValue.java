@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.syscall.defaults;
 
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
@@ -73,8 +74,8 @@ public class SyscallExecutionExitWithValue implements SyscallExecution {
 
         private final SimpleIntegerProperty register;
 
-        public Builder() {
-            super(NAME, new LinkedList<>());
+        public Builder(ResourceProvider provider) {
+            super(provider, NAME, new LinkedList<>());
             properties.add(register = new SimpleIntegerProperty(null, "REGISTER", 4));
         }
 
@@ -85,12 +86,12 @@ public class SyscallExecutionExitWithValue implements SyscallExecution {
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionExitWithValue> makeNewInstance() {
-            return new Builder();
+            return new Builder(provider);
         }
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionExitWithValue> copy() {
-            var builder = new Builder();
+            var builder = new Builder(provider);
             builder.register.setValue(register.getValue());
             return builder;
         }

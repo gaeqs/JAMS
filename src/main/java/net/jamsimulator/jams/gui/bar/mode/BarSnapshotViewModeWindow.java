@@ -35,6 +35,7 @@ import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
 import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 
@@ -47,9 +48,8 @@ import java.util.Optional;
 public class BarSnapshotViewModeWindow implements BarSnapshotViewMode {
 
     public static final String NAME = "window";
-    public static final BarSnapshotViewModeWindow INSTANCE = new BarSnapshotViewModeWindow();
 
-    private BarSnapshotViewModeWindow() {
+    BarSnapshotViewModeWindow() {
     }
 
     @Override
@@ -61,6 +61,11 @@ public class BarSnapshotViewModeWindow implements BarSnapshotViewMode {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return ResourceProvider.JAMS;
     }
 
     @Override

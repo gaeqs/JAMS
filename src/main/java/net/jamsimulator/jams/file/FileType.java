@@ -27,7 +27,8 @@ package net.jamsimulator.jams.file;
 import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditorTab;
 import net.jamsimulator.jams.gui.image.icon.IconData;
-import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Arrays;
@@ -41,25 +42,28 @@ import java.util.Set;
  * Remember that if two file types contains the same extension, and they're inside
  * the same manager some functions will cause unpredictable results.
  */
-public abstract class FileType implements Labeled {
+public abstract class FileType implements ManagerResource {
 
     public static final int IMAGE_SIZE = 16;
 
-
-    private final String name;
-    private final Set<String> extensions;
-    private final IconData iconData;
+    protected final ResourceProvider provider;
+    protected final String name;
+    protected final Set<String> extensions;
+    protected final IconData iconData;
 
     /**
      * Creates a file type.
      *
+     * @param provider   the provider of this file type.
      * @param name       the name.
      * @param iconData   the name of the icon.
      * @param extensions the extensions.
      */
-    public FileType(String name, IconData iconData, String... extensions) {
+    public FileType(ResourceProvider provider, String name, IconData iconData, String... extensions) {
+        Validate.notNull(provider, "Provider cannot be null!");
         Validate.notNull(name, "Name cannot be null!");
         Validate.hasNoNulls(extensions, "There must be no null extensions!");
+        this.provider = provider;
         this.name = name;
         this.extensions = new HashSet<>();
         this.extensions.addAll(Arrays.asList(extensions));
@@ -69,6 +73,11 @@ public abstract class FileType implements Labeled {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return provider;
     }
 
     /**

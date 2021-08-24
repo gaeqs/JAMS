@@ -32,7 +32,6 @@ import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
 import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 import net.jamsimulator.jams.manager.event.ManagerLoadEvent;
 import net.jamsimulator.jams.manager.event.ManagerRequestingDefaultElementsEvent;
-import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.lang.reflect.Method;
@@ -43,7 +42,7 @@ import java.util.Optional;
  * Represents a storage for instances of the selected type.
  * You can add, remove and get elements from this manager.
  * <p>
- * Elements stored by a manager must implement {@link Labeled}.
+ * Elements stored by a manager must implement {@link ManagerResource}.
  * <p>
  * Every addition will call a register event, and every removal will call an unregister event.
  * <p>
@@ -53,23 +52,34 @@ import java.util.Optional;
  * @see DefaultValuableManager
  * @see SelectableManager
  */
-public abstract class Manager<Type extends Labeled> extends HashSet<Type> implements EventBroadcast {
+public abstract class Manager<Type extends ManagerResource> extends HashSet<Type>
+        implements EventBroadcast, ManagerResource {
 
     public static <T extends Manager<?>> T get(Class<T> clazz) {
         return Jams.REGISTRY.get(clazz);
     }
 
-    public static <T extends Labeled> Manager<T> of(Class<T> clazz) {
+    public static <T extends ManagerResource> Manager<T> of(Class<T> clazz) {
         return Jams.REGISTRY.of(clazz);
     }
 
-    public static <T extends Labeled> DefaultValuableManager<T> ofD(Class<T> clazz) {
+    public static <T extends ManagerResource> DefaultValuableManager<T> ofD(Class<T> clazz) {
         return (DefaultValuableManager<T>) Jams.REGISTRY.of(clazz);
     }
 
-    public static <T extends Labeled> SelectableManager<T> ofS(Class<T> clazz) {
+    public static <T extends ManagerResource> SelectableManager<T> ofS(Class<T> clazz) {
         return (SelectableManager<T>) Jams.REGISTRY.of(clazz);
     }
+
+    /**
+     * The {@link ResourceProvider} providing this manager.
+     */
+    protected final ResourceProvider provider;
+
+    /**
+     * THe name of the manager.
+     */
+    protected final String name;
 
     /**
      * The event broadcast of the manager. This allows the manager to call events.
@@ -95,11 +105,23 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
      * Creates the manager.
      * These managers call events on addition and removal.
      */
-    public Manager(Class<Type> managedType, boolean loadOnFXThread) {
+    public Manager(ResourceProvider provider, String name, Class<Type> managedType, boolean loadOnFXThread) {
+        this.provider = provider;
+        this.name = name;
         this.broadcast = new SimpleEventBroadcast();
         this.managedType = managedType;
         this.loadOnFXThread = loadOnFXThread;
         this.loaded = false;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return provider;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     /**
@@ -197,7 +219,7 @@ public abstract class Manager<Type extends Labeled> extends HashSet<Type> implem
     }
 
     /**
-     * This method is called when the {@link #add(Labeled)}} execution was successful,
+     * This method is called when the {@link #add(ManagerResource)}} execution was successful,
      * just before the after event is called.
      * <p>
      * You can override this method to perform any extra operation when an element is added.

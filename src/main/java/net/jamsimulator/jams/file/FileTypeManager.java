@@ -25,8 +25,8 @@
 package net.jamsimulator.jams.file;
 
 import net.jamsimulator.jams.gui.image.icon.Icons;
-import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
@@ -35,18 +35,18 @@ import java.util.Optional;
 /**
  * This singleton stores all {@link FileType}s that JAMS may use.
  * <p>
- * To register a {@link FileType} use {@link Manager#add(Labeled)}}.
+ * To register a {@link FileType} use {@link Manager#add(net.jamsimulator.jams.manager.ManagerResource)}}.
  * To unregister a {@link FileType} use {@link #remove(Object)}.
  */
 public final class FileTypeManager extends Manager<FileType> {
 
     public static final String NAME = "file_type";
-    public static final FileTypeManager INSTANCE = new FileTypeManager();
+    public static final FileTypeManager INSTANCE = new FileTypeManager(ResourceProvider.JAMS, NAME);
 
     private FileType unknownType, folderType;
 
-    private FileTypeManager() {
-        super(FileType.class, false);
+    public FileTypeManager(ResourceProvider provider, String name) {
+        super(provider, name, FileType.class, false);
     }
 
     /**
@@ -121,14 +121,15 @@ public final class FileTypeManager extends Manager<FileType> {
 
     @Override
     protected void loadDefaultElements() {
-        unknownType = new TextFileType("Unknown", Icons.FILE_UNKNOWN);
-        folderType = new TextFileType("Folder", Icons.FILE_FOLDER);
+        unknownType = new TextFileType(ResourceProvider.JAMS, "Unknown", Icons.FILE_UNKNOWN);
+        folderType = new TextFileType(ResourceProvider.JAMS, "Folder", Icons.FILE_FOLDER);
 
         add(unknownType);
         add(folderType);
-        add(new TextFileType("Text", Icons.FILE_TEXT, "txt"));
-        add(AssemblyFileType.INSTANCE);
-        add(new ImageFileType("Image", Icons.FILE_IMAGE, "png", "gif", "jpg", "jpeg", "tiff"));
+        add(new TextFileType(ResourceProvider.JAMS, "Text", Icons.FILE_TEXT, "txt"));
+        add(new AssemblyFileType(ResourceProvider.JAMS));
+        add(new ImageFileType(ResourceProvider.JAMS, "Image", Icons.FILE_IMAGE,
+                "png", "gif", "jpg", "jpeg", "tiff"));
     }
 
 }

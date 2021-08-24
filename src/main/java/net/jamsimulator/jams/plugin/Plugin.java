@@ -27,8 +27,9 @@ package net.jamsimulator.jams.plugin;
 import javafx.application.Platform;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.image.icon.IconData;
-import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.plugin.exception.PluginLoadException;
 import net.jamsimulator.jams.utils.ProtectedFileSystem;
 
@@ -62,7 +63,7 @@ import java.util.stream.Collectors;
  * <p>
  * When a plugin is enabled it is registered in the {@link Jams#getGeneralEventBroadcast() general event broadcast}.
  */
-public class Plugin implements Labeled {
+public class Plugin implements ResourceProvider, ManagerResource {
 
     private PluginClassLoader classLoader;
     private PluginHeader header;
@@ -86,6 +87,12 @@ public class Plugin implements Labeled {
     @Override
     public String getName() {
         return header == null ? "NOT FOUND" : header.name();
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        // Plugins should be ALWAYS be provided by JAMS.
+        return ResourceProvider.JAMS;
     }
 
     /**
@@ -129,6 +136,7 @@ public class Plugin implements Labeled {
      *
      * @return whether this plugin is enabled.
      */
+    @Override
     public boolean isEnabled() {
         return enabled;
     }

@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.syscall.defaults;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
@@ -68,8 +69,8 @@ public class SyscallExecutionSystemTime implements SyscallExecution {
 
         private final IntegerProperty low, high;
 
-        public Builder() {
-            super(NAME, new LinkedList<>());
+        public Builder(ResourceProvider provider) {
+            super(provider, NAME, new LinkedList<>());
             properties.add(low = new SimpleIntegerProperty(null, "LOW_REGISTER", 4));
             properties.add(high = new SimpleIntegerProperty(null, "HIGH_REGISTER", 5));
         }
@@ -81,12 +82,12 @@ public class SyscallExecutionSystemTime implements SyscallExecution {
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionSystemTime> makeNewInstance() {
-            return new Builder();
+            return new Builder(provider);
         }
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionSystemTime> copy() {
-            var builder = new Builder();
+            var builder = new Builder(provider);
             builder.low.setValue(low.getValue());
             builder.high.setValue(high.getValue());
             return builder;

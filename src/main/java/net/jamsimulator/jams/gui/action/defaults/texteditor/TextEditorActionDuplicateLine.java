@@ -31,14 +31,15 @@ import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class TextEditorActionDuplicateLine extends Action {
 
     public static final String NAME = "TEXT_EDITOR_DUPLICATE_LINE";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.D, KeyCombination.SHORTCUT_DOWN);
 
-    public TextEditorActionDuplicateLine() {
-        super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_DUPLICATE_LINE, DEFAULT_COMBINATION);
+    public TextEditorActionDuplicateLine(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_DUPLICATE_LINE, DEFAULT_COMBINATION);
     }
 
     @Override

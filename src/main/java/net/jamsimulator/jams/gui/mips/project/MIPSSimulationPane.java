@@ -33,7 +33,7 @@ import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.bar.BarPosition;
 import net.jamsimulator.jams.gui.bar.BarSnapshot;
-import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModePane;
+import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewMode;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.simulator.cache.CacheVisualizer;
@@ -54,6 +54,7 @@ import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.gui.util.ZoomUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.register.Register;
@@ -150,24 +151,24 @@ public class MIPSSimulationPane extends WorkingPane implements SimulationHolder<
 
         registersTabs.getTabs().forEach(tab -> tab.setClosable(false));
 
-        manageBarAddition("registers", registersTabs, icon, Messages.BAR_REGISTERS_NAME, BarPosition.RIGHT_TOP, BarSnapshotViewModePane.INSTANCE, true);
+        manageBarAddition("registers", registersTabs, icon, Messages.BAR_REGISTERS_NAME, BarPosition.RIGHT_TOP, Manager.ofD(BarSnapshotViewMode.class).getDefault(), true);
     }
 
     private void loadConsole() {
         var icon = Icons.SIMULATION_CONSOLE;
-        manageBarAddition("console", simulation.getConsole(), icon, Messages.BAR_CONSOLE_NAME, BarPosition.BOTTOM_RIGHT, BarSnapshotViewModePane.INSTANCE, true);
+        manageBarAddition("console", simulation.getConsole(), icon, Messages.BAR_CONSOLE_NAME, BarPosition.BOTTOM_RIGHT, Manager.ofD(BarSnapshotViewMode.class).getDefault(), true);
     }
 
     private void loadMemoryTab() {
         var icon = Icons.SIMULATION_MEMORY;
         memoryPane = new MemoryPane(simulation);
-        manageBarAddition("memory", memoryPane, icon, Messages.BAR_MEMORY_NAME, BarPosition.LEFT_TOP, BarSnapshotViewModePane.INSTANCE, true);
+        manageBarAddition("memory", memoryPane, icon, Messages.BAR_MEMORY_NAME, BarPosition.LEFT_TOP, Manager.ofD(BarSnapshotViewMode.class).getDefault(), true);
     }
 
     private void loadFlow() {
         var icon = Icons.SIMULATION_FLOW;
         FlowTable flow = FlowTable.createFlow(simulation);
-        manageBarAddition("flow", flow, icon, Messages.BAR_FLOW_NAME, BarPosition.BOTTOM_RIGHT, BarSnapshotViewModePane.INSTANCE, true);
+        manageBarAddition("flow", flow, icon, Messages.BAR_FLOW_NAME, BarPosition.BOTTOM_RIGHT, Manager.ofD(BarSnapshotViewMode.class).getDefault(), true);
     }
 
     private void loadLabels() {
@@ -178,7 +179,7 @@ public class MIPSSimulationPane extends WorkingPane implements SimulationHolder<
         scroll.setFitToHeight(true);
         scroll.setFitToWidth(true);
 
-        manageBarAddition("labels", scroll, icon, Messages.BAR_LABELS_NAME, BarPosition.RIGHT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
+        manageBarAddition("labels", scroll, icon, Messages.BAR_LABELS_NAME, BarPosition.RIGHT_BOTTOM, Manager.ofD(BarSnapshotViewMode.class).getDefault(), true);
     }
 
     private void loadCacheVisualizer() {
@@ -186,7 +187,7 @@ public class MIPSSimulationPane extends WorkingPane implements SimulationHolder<
         var memory = simulation.getMemory();
         if (memory instanceof Cache) {
             var visualizer = new CacheVisualizer(simulation);
-            manageBarAddition("cache_visualizer", visualizer, icon, Messages.BAR_CACHES_NAME, BarPosition.LEFT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
+            manageBarAddition("cache_visualizer", visualizer, icon, Messages.BAR_CACHES_NAME, BarPosition.LEFT_BOTTOM, Manager.ofD(BarSnapshotViewMode.class).getDefault(), true);
         }
     }
 
@@ -196,12 +197,12 @@ public class MIPSSimulationPane extends WorkingPane implements SimulationHolder<
         var scroll = new PixelScrollPane(lab);
         scroll.setFitToWidth(true);
         scroll.setFitToHeight(true);
-        manageBarAddition("lab", scroll, icon, Messages.BAR_LAB_NAME, BarPosition.LEFT_BOTTOM, BarSnapshotViewModePane.INSTANCE, true);
+        manageBarAddition("lab", scroll, icon, Messages.BAR_LAB_NAME, BarPosition.LEFT_BOTTOM, Manager.ofD(BarSnapshotViewMode.class).getDefault(), true);
     }
 
 
     private void manageBarAddition(String name, Node node, IconData icon, String languageNode, BarPosition defaultPosition,
-                                   BarSnapshotViewModePane defaultViewMode, boolean defaultEnable) {
+                                   BarSnapshotViewMode defaultViewMode, boolean defaultEnable) {
         barMap.registerSnapshot(new BarSnapshot(name, node, defaultPosition, defaultViewMode, defaultEnable, icon, languageNode));
     }
 

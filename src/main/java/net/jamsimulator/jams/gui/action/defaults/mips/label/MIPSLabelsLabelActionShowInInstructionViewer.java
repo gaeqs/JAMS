@@ -33,14 +33,15 @@ import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.mips.simulator.label.LabelTable;
 import net.jamsimulator.jams.gui.mips.simulator.label.LabelTableLabel;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class MIPSLabelsLabelActionShowInInstructionViewer extends ContextAction {
 
     public static final String NAME = "MIPS_LABELS_LABEL_SHOW_IN_INSTRUCTION_VIEWER";
     public static final KeyCombination DEFAULT_COMBINATION = null;
 
-    public MIPSLabelsLabelActionShowInInstructionViewer() {
-        super(
+    public MIPSLabelsLabelActionShowInInstructionViewer(ResourceProvider provider) {
+        super(provider,
                 NAME,
                 RegionTags.MIPS_SIMULATION_LABELS_LABEL,
                 Messages.ACTION_MIPS_SIMULATION_LABELS_LABEL_SHOW_IN_INSTRUCTION_VIEWER,

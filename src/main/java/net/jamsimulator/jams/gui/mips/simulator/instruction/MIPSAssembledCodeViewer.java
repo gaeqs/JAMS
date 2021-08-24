@@ -32,6 +32,7 @@ import net.jamsimulator.jams.gui.mips.simulator.instruction.type.MIPSMultiCycleA
 import net.jamsimulator.jams.gui.mips.simulator.instruction.type.MIPSPipelinedAssembledCodeViewer;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.type.MIPSSingleCycleAssembledCodeViewer;
 import net.jamsimulator.jams.gui.util.EasyStyleSpansBuilder;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
@@ -68,10 +69,10 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     public static Map<Architecture, BiFunction<MIPSSimulation<?>, Boolean, MIPSAssembledCodeViewer>> VIEWERS_PER_ARCHITECTURE = new HashMap<>();
 
     static {
-        VIEWERS_PER_ARCHITECTURE.put(SingleCycleArchitecture.INSTANCE, MIPSSingleCycleAssembledCodeViewer::new);
-        VIEWERS_PER_ARCHITECTURE.put(MultiCycleArchitecture.INSTANCE, MIPSMultiCycleAssembledCodeViewer::new);
+        VIEWERS_PER_ARCHITECTURE.put(Manager.of(Architecture.class).getOrNull(SingleCycleArchitecture.NAME), MIPSSingleCycleAssembledCodeViewer::new);
+        VIEWERS_PER_ARCHITECTURE.put(Manager.of(Architecture.class).getOrNull(MultiCycleArchitecture.NAME), MIPSMultiCycleAssembledCodeViewer::new);
         //noinspection StaticInitializerReferencesSubClass
-        VIEWERS_PER_ARCHITECTURE.put(PipelinedArchitecture.INSTANCE, MIPSPipelinedAssembledCodeViewer::new);
+        VIEWERS_PER_ARCHITECTURE.put(Manager.of(Architecture.class).getOrNull(PipelinedArchitecture.NAME), MIPSPipelinedAssembledCodeViewer::new);
     }
 
     protected final List<MIPSAssembledLine> assembledLines;

@@ -25,12 +25,12 @@
 package net.jamsimulator.jams.mips.register.builder;
 
 import net.jamsimulator.jams.manager.DefaultValuableManager;
-import net.jamsimulator.jams.utils.Labeled;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 /**
  * This singleton stores all {@link RegistersBuilder}s that projects may use.
  * <p>
- * To register an {@link RegistersBuilder} use {@link #add(Labeled)}.
+ * To register an {@link RegistersBuilder} use {@link #add(net.jamsimulator.jams.manager.ManagerResource)}.
  * To unregister an {@link RegistersBuilder} use {@link #remove(Object)}.
  * An {@link RegistersBuilder}'s removal from the manager doesn't make projects
  * to stop using it if they're already using it.
@@ -38,21 +38,20 @@ import net.jamsimulator.jams.utils.Labeled;
 public final class RegistersBuilderManager extends DefaultValuableManager<RegistersBuilder> {
 
     public static final String NAME = "register_builder";
-    public static final RegistersBuilderManager INSTANCE = new RegistersBuilderManager();
+    public static final RegistersBuilderManager INSTANCE = new RegistersBuilderManager(ResourceProvider.JAMS, NAME);
 
-
-    private RegistersBuilderManager() {
-        super(RegistersBuilder.class, false);
+    public RegistersBuilderManager(ResourceProvider provider, String name) {
+        super(provider, name, RegistersBuilder.class, false);
     }
 
     @Override
     protected void loadDefaultElements() {
-        add(MIPS32RegistersBuilder.INSTANCE);
+        add(new MIPS32RegistersBuilder(ResourceProvider.JAMS));
     }
 
     @Override
     protected RegistersBuilder loadDefaultElement() {
-        return MIPS32RegistersBuilder.INSTANCE;
+        return get(MIPS32RegistersBuilder.NAME).orElseThrow();
     }
 
 }

@@ -22,14 +22,22 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.manager.event;
+package net.jamsimulator.jams.manager;
 
-import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.utils.Labeled;
 
-public class ManagerRequestingDefaultElementsEvent<Type extends ManagerResource> extends ManagerEvent<Type> {
+/**
+ * Represents a resource provided by a {@link ResourceProvider}.
+ * <p>
+ * This resource must be deleted when the {@link ResourceProvider} is disabled.
+ */
+public interface ManagerResource extends Labeled {
 
-    public ManagerRequestingDefaultElementsEvent(Manager<Type> manager, Class<Type> type) {
-        super(manager, type);
-    }
+    /**
+     * The {@link ResourceProvider} provding this resource.
+     *
+     * @return the {@link ResourceProvider}.
+     */
+    ResourceProvider getResourceProvider();
+
 }

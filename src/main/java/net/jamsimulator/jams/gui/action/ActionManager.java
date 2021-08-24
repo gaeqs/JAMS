@@ -45,8 +45,8 @@ import net.jamsimulator.jams.gui.action.defaults.simulation.*;
 import net.jamsimulator.jams.gui.action.defaults.texteditor.*;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.action.event.ActionUnbindEvent;
-import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
 /**
  * This singleton stores all {@link Action}s that JAMS may use.
  * <p>
- * To register an {@link Action} use {@link Manager#add(Labeled)}}.
+ * To register an {@link Action} use {@link Manager#add(net.jamsimulator.jams.manager.ManagerResource)}}.
  * To unregister am {@link Action} use {@link #remove(Object)}.
  * <p>
  * To bind an {@link Action} to a {@link KeyCombination} use {@link #bind(KeyCombination, String)}.
@@ -69,12 +69,12 @@ public final class ActionManager extends Manager<Action> {
     public static final String LANGUAGE_REGION_NODE_PREFIX = "ACTION_REGION_";
     public static final String NAME = "action";
 
-    public static final ActionManager INSTANCE = new ActionManager();
+    public static final ActionManager INSTANCE = new ActionManager(ResourceProvider.JAMS, NAME);
 
     private final Map<KeyCombination, Map<String, Action>> binds = new HashMap<>();
 
-    private ActionManager() {
-        super(Action.class, true);
+    public ActionManager(ResourceProvider provider, String name) {
+        super(provider, name, Action.class, true);
     }
 
     @Override
@@ -310,76 +310,76 @@ public final class ActionManager extends Manager<Action> {
     @Override
     protected void loadDefaultElements() {
         //GENERAL
-        add(new GeneralActionCreateProject());
-        add(new GeneralActionOpenProject());
-        add(new GeneralActionSettings());
-        add(new GeneralActionAbout());
+        add(new GeneralActionCreateProject(ResourceProvider.JAMS));
+        add(new GeneralActionOpenProject(ResourceProvider.JAMS));
+        add(new GeneralActionSettings(ResourceProvider.JAMS));
+        add(new GeneralActionAbout(ResourceProvider.JAMS));
 
         //TEXT EDITOR
-        add(new GeneralActionAssemble());
-        add(new TextEditorActionCopy());
-        add(new TextEditorActionCut());
-        add(new TextEditorActionDuplicateLine());
-        add(new TextEditorActionFind());
-        add(new TextEditorActionNextFile());
-        add(new TextEditorActionPaste());
-        add(new TextEditorActionPreviousFile());
-        add(new TextEditorActionRedo());
-        add(new TextEditorActionReformat());
-        add(new TextEditorActionRefreshFromDisk());
-        add(new TextEditorActionReplace());
-        add(new EditorActionSave());
-        add(new TextEditorActionSelectAll());
-        add(new TextEditorActionShowAutocompletionPopup());
-        add(new TextEditorActionShowDocumentationPopup());
-        add(new TextEditorActionUndo());
+        add(new GeneralActionAssemble(ResourceProvider.JAMS));
+        add(new TextEditorActionCopy(ResourceProvider.JAMS));
+        add(new TextEditorActionCut(ResourceProvider.JAMS));
+        add(new TextEditorActionDuplicateLine(ResourceProvider.JAMS));
+        add(new TextEditorActionFind(ResourceProvider.JAMS));
+        add(new TextEditorActionNextFile(ResourceProvider.JAMS));
+        add(new TextEditorActionPaste(ResourceProvider.JAMS));
+        add(new TextEditorActionPreviousFile(ResourceProvider.JAMS));
+        add(new TextEditorActionRedo(ResourceProvider.JAMS));
+        add(new TextEditorActionReformat(ResourceProvider.JAMS));
+        add(new TextEditorActionRefreshFromDisk(ResourceProvider.JAMS));
+        add(new TextEditorActionReplace(ResourceProvider.JAMS));
+        add(new EditorActionSave(ResourceProvider.JAMS));
+        add(new TextEditorActionSelectAll(ResourceProvider.JAMS));
+        add(new TextEditorActionShowAutocompletionPopup(ResourceProvider.JAMS));
+        add(new TextEditorActionShowDocumentationPopup(ResourceProvider.JAMS));
+        add(new TextEditorActionUndo(ResourceProvider.JAMS));
 
         //EXPLORER ELEMENT
-        add(new ExplorerElementActionContractOrSelectParent());
-        add(new ExplorerElementActionExpandOrSelectNext());
-        add(new ExplorerElementActionSelectAll());
-        add(new ExplorerElementActionSelectNext());
-        add(new ExplorerElementActionSelectNextMultiple());
-        add(new ExplorerElementActionSelectPrevious());
-        add(new ExplorerElementActionSelectPreviousMultiple());
+        add(new ExplorerElementActionContractOrSelectParent(ResourceProvider.JAMS));
+        add(new ExplorerElementActionExpandOrSelectNext(ResourceProvider.JAMS));
+        add(new ExplorerElementActionSelectAll(ResourceProvider.JAMS));
+        add(new ExplorerElementActionSelectNext(ResourceProvider.JAMS));
+        add(new ExplorerElementActionSelectNextMultiple(ResourceProvider.JAMS));
+        add(new ExplorerElementActionSelectPrevious(ResourceProvider.JAMS));
+        add(new ExplorerElementActionSelectPreviousMultiple(ResourceProvider.JAMS));
 
         //FOLDER EXPLORER ELEMENT
-        add(new FolderActionCopy());
-        add(new FolderActionDelete());
-        add(new FolderActionPaste());
+        add(new FolderActionCopy(ResourceProvider.JAMS));
+        add(new FolderActionDelete(ResourceProvider.JAMS));
+        add(new FolderActionPaste(ResourceProvider.JAMS));
 
-        add(new FolderActionRename());
+        add(new FolderActionRename(ResourceProvider.JAMS));
 
-        add(new FolderActionShowInFiles());
+        add(new FolderActionShowInFiles(ResourceProvider.JAMS));
 
-        add(new FolderActionNewFile());
-        add(new FolderActionNewAssemblyFile());
-        add(new FolderActionNewFolder());
+        add(new FolderActionNewFile(ResourceProvider.JAMS));
+        add(new FolderActionNewAssemblyFile(ResourceProvider.JAMS));
+        add(new FolderActionNewFolder(ResourceProvider.JAMS));
 
         //TAB
-        add(new EditorTabActionSplitHorizontally());
-        add(new EditorTabActionSplitVertically());
+        add(new EditorTabActionSplitHorizontally(ResourceProvider.JAMS));
+        add(new EditorTabActionSplitVertically(ResourceProvider.JAMS));
 
         // MIPS EXPLORER ELEMENT
-        add(new FolderActionAddFileToAssembler());
-        add(new FolderActionAddAllFilesToAssembler());
-        add(new FolderActionRemoveFileFromAssembler());
-        add(new FolderActionRemoveAllFilesFromAssembler());
+        add(new FolderActionAddFileToAssembler(ResourceProvider.JAMS));
+        add(new FolderActionAddAllFilesToAssembler(ResourceProvider.JAMS));
+        add(new FolderActionRemoveFileFromAssembler(ResourceProvider.JAMS));
+        add(new FolderActionRemoveAllFilesFromAssembler(ResourceProvider.JAMS));
 
-        add(new FilesToAssembleActionRemove());
+        add(new FilesToAssembleActionRemove(ResourceProvider.JAMS));
 
         //SIMULATION
-        add(new SimulationActionExecuteAllInstructions());
-        add(new SimulationActionExecuteOneStep());
-        add(new SimulationActionReset());
-        add(new SimulationActionStop());
-        add(new SimulationActionUndoOneStep());
+        add(new SimulationActionExecuteAllInstructions(ResourceProvider.JAMS));
+        add(new SimulationActionExecuteOneStep(ResourceProvider.JAMS));
+        add(new SimulationActionReset(ResourceProvider.JAMS));
+        add(new SimulationActionStop(ResourceProvider.JAMS));
+        add(new SimulationActionUndoOneStep(ResourceProvider.JAMS));
 
         // LABEL TABLE
-        add(new MIPSLabelsLabelActionShowInInstructionViewer());
-        add(new MIPSLabelsLabelActionShowInMemory());
-        add(new MIPSLabelsReferenceActionShowInInstructionViewer());
-        add(new MIPSLabelsReferenceActionShowInMemory());
+        add(new MIPSLabelsLabelActionShowInInstructionViewer(ResourceProvider.JAMS));
+        add(new MIPSLabelsLabelActionShowInMemory(ResourceProvider.JAMS));
+        add(new MIPSLabelsReferenceActionShowInInstructionViewer(ResourceProvider.JAMS));
+        add(new MIPSLabelsReferenceActionShowInMemory(ResourceProvider.JAMS));
     }
 
     private List<Action> loadBinds() {

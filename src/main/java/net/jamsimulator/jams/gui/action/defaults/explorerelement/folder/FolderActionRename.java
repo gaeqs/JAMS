@@ -38,6 +38,7 @@ import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.popup.RenameWindow;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.io.File;
 
@@ -47,8 +48,8 @@ public class FolderActionRename extends ContextAction {
     public static final String NAME = "FOLDER_EXPLORER_ELEMENT_RENAME";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.R, KeyCombination.SHORTCUT_DOWN);
 
-    public FolderActionRename() {
-        super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_RENAME,
+    public FolderActionRename(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_RENAME,
                 DEFAULT_COMBINATION, FolderActionRegions.OTHER, null, null);
     }
 

@@ -25,11 +25,11 @@
 package net.jamsimulator.jams.manager.event;
 
 import net.jamsimulator.jams.event.GenericEvent;
-import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ManagerResource;
 import net.jamsimulator.jams.utils.Validate;
 
-public class ManagerEvent<T extends Labeled> extends GenericEvent<T> {
+public class ManagerEvent<T extends ManagerResource> extends GenericEvent<T> {
 
     protected final Manager<T> manager;
 

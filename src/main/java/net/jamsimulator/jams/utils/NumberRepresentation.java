@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.utils;
 
+import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.interrupt.MIPSAddressException;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
@@ -33,34 +35,44 @@ import java.util.function.BiFunction;
 /**
  * Represents a way a number (or a set of two numbers) can be represented in a String.
  */
-public class NumberRepresentation implements Labeled {
+public class NumberRepresentation implements ManagerResource {
 
-    private final String name;
-    private final boolean requiresNextWord;
-    private final boolean color;
+    protected final ResourceProvider provider;
+    protected final String name;
+    protected final boolean requiresNextWord;
+    protected final boolean color;
 
     private final BiFunction<Integer, Integer, String> transformer;
 
     /**
      * Creates the representation.
      *
+     * @param provider         the provider of the representation.
      * @param name             the name of the representation.
      * @param requiresNextWord whether this representation requires two numbers.
      * @param color            whether this representation is a color represnetation.
      * @param transformer      the function that transforms the number(s) into a String.
      */
-    public NumberRepresentation(String name, boolean requiresNextWord, boolean color, BiFunction<Integer, Integer, String> transformer) {
+    public NumberRepresentation(ResourceProvider provider, String name, boolean requiresNextWord, boolean color,
+                                BiFunction<Integer, Integer, String> transformer) {
+        Validate.notNull(provider, "Provider cannot be null!");
         Validate.notNull(name, "Name cannot be null!");
+        Validate.notNull(transformer, "Transformer cannot be null!");
+        this.provider = provider;
         this.name = name;
         this.requiresNextWord = requiresNextWord;
         this.color = color;
-
         this.transformer = transformer;
     }
 
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return provider;
     }
 
     /**

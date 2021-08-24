@@ -29,6 +29,7 @@ import net.jamsimulator.jams.gui.mips.editor.element.MIPSDirective;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspection;
 import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilder;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.util.Map;
 import java.util.Optional;
@@ -48,8 +49,8 @@ public class MIPSEditorInspectionDirectiveNotFound extends MIPSEditorInspection 
 
     public static class Builder extends MIPSEditorInspectionBuilder<MIPSEditorInspectionDirectiveNotFound> {
 
-        public Builder() {
-            super(NAME, false);
+        public Builder(ResourceProvider provider) {
+            super(provider, NAME, false);
         }
 
         @Override

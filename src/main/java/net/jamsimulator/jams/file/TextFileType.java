@@ -28,6 +28,7 @@ import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditorTab;
 import net.jamsimulator.jams.gui.image.icon.IconData;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class TextFileType extends FileType {
 
@@ -35,12 +36,13 @@ public class TextFileType extends FileType {
     /**
      * Creates a text file type.
      *
+     * @param provider   the provider.
      * @param name       the name.
      * @param iconName   the name of the icon.
      * @param extensions the extensions.
      */
-    public TextFileType(String name, IconData iconName, String... extensions) {
-        super(name, iconName, extensions);
+    public TextFileType(ResourceProvider provider, String name, IconData iconName, String... extensions) {
+        super(provider, name, iconName, extensions);
     }
 
     @Override

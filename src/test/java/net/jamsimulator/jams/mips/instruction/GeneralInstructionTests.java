@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.instruction;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAdd;
@@ -51,7 +52,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GeneralInstructionTests {
 
-    static MIPSSimulation<?> simulation = new SingleCycleSimulation(SingleCycleArchitecture.INSTANCE, MIPS32r6InstructionSet.INSTANCE,
+    static MIPSSimulation<?> simulation = new SingleCycleSimulation(SingleCycleArchitecture.INSTANCE,
+            new MIPS32r6InstructionSet(ResourceProvider.JAMS),
             new MIPS32Registers(), new MIPS32Memory(), MIPS32Memory.TEXT, MIPS32Memory.KERNEL_TEXT,
             new MIPSSimulationData(new SimulationSyscallExecutions(), new File(""), null, new HashMap<>(), new HashSet<>(), true, true, true, true, true));
 
@@ -65,7 +67,7 @@ class GeneralInstructionTests {
         t0.setValue(3);
         t1.setValue(20);
 
-       List<ParameterType>[] list = new List[]{Collections.singletonList(ParameterType.REGISTER),
+        List<ParameterType>[] list = new List[]{Collections.singletonList(ParameterType.REGISTER),
                 Collections.singletonList(ParameterType.REGISTER),
                 Collections.singletonList(ParameterType.REGISTER)};
 

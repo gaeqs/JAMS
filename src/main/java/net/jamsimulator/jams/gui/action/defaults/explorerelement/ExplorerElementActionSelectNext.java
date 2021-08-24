@@ -32,6 +32,7 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class ExplorerElementActionSelectNext extends Action {
 
@@ -39,8 +40,8 @@ public class ExplorerElementActionSelectNext extends Action {
     public static final String NAME = "EXPLORER_ELEMENT_SELECT_NEXT";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.DOWN);
 
-    public ExplorerElementActionSelectNext() {
-        super(NAME, RegionTags.EXPLORER_ELEMENT, Messages.ACTION_EXPLORER_ELEMENT_SELECT_NEXT, DEFAULT_COMBINATION);
+    public ExplorerElementActionSelectNext(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.EXPLORER_ELEMENT, Messages.ACTION_EXPLORER_ELEMENT_SELECT_NEXT, DEFAULT_COMBINATION);
     }
 
     @Override

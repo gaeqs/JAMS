@@ -34,14 +34,15 @@ import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.mips.simulator.label.LabelTable;
 import net.jamsimulator.jams.gui.mips.simulator.label.LabelTableReference;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class MIPSLabelsReferenceActionShowInMemory extends ContextAction {
 
     public static final String NAME = "MIPS_LABELS_REFERENCE_SHOW_IN_MEMORY";
     public static final KeyCombination DEFAULT_COMBINATION = null;
 
-    public MIPSLabelsReferenceActionShowInMemory() {
-        super(
+    public MIPSLabelsReferenceActionShowInMemory(ResourceProvider provider) {
+        super(provider,
                 NAME,
                 RegionTags.MIPS_SIMULATION_LABELS_REFERENCE,
                 Messages.ACTION_MIPS_SIMULATION_LABELS_REFERENCE_SHOW_IN_MEMORY,

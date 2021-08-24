@@ -33,14 +33,15 @@ import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 public class TextEditorActionFind extends ContextAction {
 
     public static final String NAME = "TEXT_EDITOR_FIND";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.F, KeyCombination.SHORTCUT_DOWN);
 
-    public TextEditorActionFind() {
-        super(NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_FIND, DEFAULT_COMBINATION,
+    public TextEditorActionFind(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_FIND, DEFAULT_COMBINATION,
                 TextEditorActionRegions.CONTEXT, null, null);
     }
 

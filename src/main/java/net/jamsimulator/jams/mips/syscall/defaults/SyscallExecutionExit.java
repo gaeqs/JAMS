@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.syscall.defaults;
 
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
@@ -57,8 +58,8 @@ public class SyscallExecutionExit implements SyscallExecution {
 
     public static class Builder extends SyscallExecutionBuilder<SyscallExecutionExit> {
 
-        public Builder() {
-            super(NAME, new LinkedList<>());
+        public Builder(ResourceProvider provider) {
+            super(provider, NAME, new LinkedList<>());
         }
 
         @Override
@@ -68,12 +69,12 @@ public class SyscallExecutionExit implements SyscallExecution {
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionExit> makeNewInstance() {
-            return new Builder();
+            return new Builder(provider);
         }
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionExit> copy() {
-            return new Builder();
+            return new Builder(provider);
         }
     }
 }

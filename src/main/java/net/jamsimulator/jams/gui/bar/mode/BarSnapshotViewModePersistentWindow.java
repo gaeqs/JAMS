@@ -36,6 +36,7 @@ import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
 import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 
@@ -50,9 +51,8 @@ import java.util.Optional;
 public class BarSnapshotViewModePersistentWindow implements BarSnapshotViewMode {
 
     public static final String NAME = "persistent_window";
-    public static final BarSnapshotViewModePersistentWindow INSTANCE = new BarSnapshotViewModePersistentWindow();
 
-    private BarSnapshotViewModePersistentWindow() {
+    BarSnapshotViewModePersistentWindow() {
     }
 
     @Override
@@ -69,6 +69,11 @@ public class BarSnapshotViewModePersistentWindow implements BarSnapshotViewMode 
     @Override
     public String getLanguageNode() {
         return "BAR_VIEW_MODE_PERSISTENT_WINDOW";
+    }
+
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return ResourceProvider.JAMS;
     }
 
     private static class Window extends Stage implements BarSnapshotHolder {

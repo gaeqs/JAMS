@@ -35,6 +35,7 @@ import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
 import java.awt.*;
 import java.io.File;
@@ -46,8 +47,8 @@ public class FolderActionShowInFiles extends ContextAction {
     public static final String NAME = "FOLDER_EXPLORER_ELEMENT_SHOW_IN_FILES";
     public static final KeyCombination DEFAULT_COMBINATION = null;
 
-    public FolderActionShowInFiles() {
-        super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_SHOW_IN_FILES,
+    public FolderActionShowInFiles(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_SHOW_IN_FILES,
                 DEFAULT_COMBINATION, FolderActionRegions.SHOW, null, null);
     }
 

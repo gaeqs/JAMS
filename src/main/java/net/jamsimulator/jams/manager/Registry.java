@@ -67,15 +67,15 @@ public class Registry {
         managers.forEach(consumer);
     }
 
-    public <T extends Labeled> void registerFully(Manager<T> manager, String name,
-                                                  boolean registerByClass, boolean registerByManaged) {
+    public <T extends ManagerResource> void registerFully(Manager<T> manager, String name,
+                                                          boolean registerByClass, boolean registerByManaged) {
         Validate.notNull(manager, "Manager cannot be null!");
         registerFully(manager, registerByClass ? (Class<? extends Manager<T>>) manager.getClass() : null,
                 name, registerByManaged);
     }
 
-    public <T extends Labeled> void registerFully(Manager<T> manager, Class<? extends Manager<T>> managerClass,
-                                                  String name, boolean registerByManaged) {
+    public <T extends ManagerResource> void registerFully(Manager<T> manager, Class<? extends Manager<T>> managerClass,
+                                                          String name, boolean registerByManaged) {
         Validate.notNull(manager, "Manager cannot be null!");
         Validate.isTrue(managerClass == null || managerClass.isInstance(manager),
                 "Manager must be a instance of managerClass!");
@@ -109,7 +109,7 @@ public class Registry {
         }
     }
 
-    public <T extends Labeled> Manager<T> of(Class<T> clazz) {
+    public <T extends ManagerResource> Manager<T> of(Class<T> clazz) {
         try {
             var manager = (Manager<T>) managersByManaged.get(clazz);
             if (manager == null) throw new NoSuchElementException("Manager " + clazz + " not found.");
@@ -125,7 +125,7 @@ public class Registry {
         return manager;
     }
 
-    public <T extends Labeled> Manager<T> of(String name, Class<T> clazz) {
+    public <T extends ManagerResource> Manager<T> of(String name, Class<T> clazz) {
         try {
             var manager = (Manager<T>) managersByName.get(name);
             if (manager == null) throw new NoSuchElementException("Manager " + clazz + " not found.");

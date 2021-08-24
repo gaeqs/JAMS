@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.manager;
 
 import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
-import net.jamsimulator.jams.utils.Labeled;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.HashSet;
@@ -33,13 +32,13 @@ import java.util.HashSet;
 /**
  * Represents a {@link Manager} that has a default value.
  * <p>
- * The default value can be changed using {@link #setDefault(Labeled)}.
+ * The default value can be changed using {@link #setDefault(ManagerResource)}.
  * Implement {@link #loadDefaultElement()} to define the default value when the manager is created.
  *
  * @param <Type> the type of the managed elements.
  * @see Manager
  */
-public abstract class DefaultValuableManager<Type extends Labeled> extends Manager<Type> {
+public abstract class DefaultValuableManager<Type extends ManagerResource> extends Manager<Type> {
 
     protected Type defaultValue;
 
@@ -49,8 +48,8 @@ public abstract class DefaultValuableManager<Type extends Labeled> extends Manag
      * Creates the manager.
      * These managers call events on addition, removal and default set.
      */
-    public DefaultValuableManager(Class<Type> managedType, boolean loadOnFXThread) {
-        super(managedType, loadOnFXThread);
+    public DefaultValuableManager(ResourceProvider provider, String name, Class<Type> managedType, boolean loadOnFXThread) {
+        super(provider, name, managedType, loadOnFXThread);
     }
 
     /**

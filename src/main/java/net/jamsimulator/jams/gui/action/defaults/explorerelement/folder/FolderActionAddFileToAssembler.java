@@ -40,6 +40,7 @@ import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.file.FileTypeManager;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.project.FilesToAssemblerHolder;
 
 public class FolderActionAddFileToAssembler extends ContextAction {
@@ -48,8 +49,8 @@ public class FolderActionAddFileToAssembler extends ContextAction {
     public static final String NAME = "FOLDER_EXPLORER_ELEMENT_ADD_FILE_TO_ASSEMBLER";
     public static final KeyCombination DEFAULT_COMBINATION = null;
 
-    public FolderActionAddFileToAssembler() {
-        super(NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_ADD_FILE_TO_ASSEMBLER,
+    public FolderActionAddFileToAssembler(ResourceProvider provider) {
+        super(provider,NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_ADD_FILE_TO_ASSEMBLER,
                 DEFAULT_COMBINATION, FolderActionRegions.ASSEMBLER, null, null);
     }
 

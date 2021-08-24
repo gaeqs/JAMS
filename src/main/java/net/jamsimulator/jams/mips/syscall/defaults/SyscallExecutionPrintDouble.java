@@ -28,6 +28,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
@@ -107,8 +108,8 @@ public class SyscallExecutionPrintDouble implements SyscallExecution {
         private final BooleanProperty lineJump;
         private final IntegerProperty register;
 
-        public Builder() {
-            super(NAME, new LinkedList<>());
+        public Builder(ResourceProvider provider) {
+            super(provider, NAME, new LinkedList<>());
             properties.add(hexProperty = new SimpleBooleanProperty(null, "PRINT_HEX", false));
             properties.add(lineJump = new SimpleBooleanProperty(null, "LINE_JUMP", false));
             properties.add(register = new SimpleIntegerProperty(null, "REGISTER", 0));
@@ -121,12 +122,12 @@ public class SyscallExecutionPrintDouble implements SyscallExecution {
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionPrintDouble> makeNewInstance() {
-            return new Builder();
+            return new Builder(provider);
         }
 
         @Override
         public SyscallExecutionBuilder<SyscallExecutionPrintDouble> copy() {
-            var builder = new Builder();
+            var builder = new Builder(provider);
             builder.hexProperty.setValue(hexProperty.getValue());
             builder.lineJump.setValue(lineJump.getValue());
             builder.register.setValue(register.getValue());
