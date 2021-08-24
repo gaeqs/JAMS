@@ -279,11 +279,11 @@ public class Console extends HBox implements Log, EventBroadcast {
         buttons = new VBox();
         Button clear = new Button("C");
         clear.setOnAction(event -> clear());
-        clear.getStyleClass().add("bold-button");
+        clear.getStyleClass().add("button-bold");
 
         Button clearInputs = new Button("Ci");
         clearInputs.setOnAction(event -> inputsDisplay.getChildren().clear());
-        clearInputs.getStyleClass().add("bold-button");
+        clearInputs.getStyleClass().add("button-bold");
 
         buttons.getChildren().addAll(clear, clearInputs);
         getChildren().add(buttons);

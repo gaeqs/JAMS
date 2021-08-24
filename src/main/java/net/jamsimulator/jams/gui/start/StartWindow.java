@@ -97,7 +97,7 @@ public class StartWindow extends AnchorPane {
     }
 
     private void init() {
-        getStyleClass().addAll("anchor-pane", "start-window");
+        getStyleClass().add("start-window");
 
         topBar = new StartWindowTopBar(stage);
         sectionsSplitPane = new SplitPane();
@@ -173,5 +173,10 @@ public class StartWindow extends AnchorPane {
             });
         }
         stage.showAndWait();
+    }
+
+    @Override
+    public String getTypeSelector() {
+        return "AnchorPane";
     }
 }

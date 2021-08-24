@@ -64,4 +64,9 @@ public class SyscallLanguageListCell extends ListCell<SyscallExecutionBuilder<?>
         refreshMessage();
     }
 
+    @Override
+    public String getTypeSelector() {
+        return "ListCell";
+    }
+
 }

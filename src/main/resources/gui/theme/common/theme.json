@@ -1,6 +1,8 @@
 {
   "name": "Common",
   "files": [
+    "javafx.css",
+    "jams_common.css",
     "extra.css"
   ]
 }

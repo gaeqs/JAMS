@@ -60,4 +60,9 @@ public class LanguageTextField extends TextField {
     public void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
         refreshMessage();
     }
+
+    @Override
+    public String getTypeSelector() {
+        return "TextField";
+    }
 }

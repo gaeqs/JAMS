@@ -102,4 +102,9 @@ public class LanguageTooltip extends Tooltip {
     public void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
         refreshMessage();
     }
+
+    @Override
+    public String getTypeSelector() {
+        return "Tooltip";
+    }
 }

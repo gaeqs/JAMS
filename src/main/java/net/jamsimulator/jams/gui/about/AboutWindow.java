@@ -48,7 +48,6 @@ public class AboutWindow extends AnchorPane {
     private static final int IMAGE_SIZE = 150;
 
     public AboutWindow() {
-        getStyleClass().add("anchor-pane");
         var contents = new VBox();
         AnchorUtils.setAnchor(contents, 0, 0, 0, 0);
         getChildren().add(contents);
@@ -98,5 +97,10 @@ public class AboutWindow extends AnchorPane {
         Manager.of(Language.class).registerListeners(content, true);
 
         stage.show();
+    }
+
+    @Override
+    public String getTypeSelector() {
+        return "AnchorPane";
     }
 }

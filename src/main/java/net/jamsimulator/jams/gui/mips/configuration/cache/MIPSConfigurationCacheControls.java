@@ -63,7 +63,7 @@ public class MIPSConfigurationCacheControls extends AnchorPane {
     private void generateAddButton() {
         var button = new Button(null, new QualityImageView(Icons.CONTROL_ADD, 16, 16));
         button.setTooltip(new LanguageTooltip(Messages.GENERAL_ADD));
-        button.getStyleClass().add("bold-button");
+        button.getStyleClass().add("button-bold");
 
         button.setOnAction(event -> {
             var builder = Manager.of(CacheBuilder.class).stream().findAny()
@@ -80,7 +80,7 @@ public class MIPSConfigurationCacheControls extends AnchorPane {
     private void generateRemoveButton() {
         var button = new Button(null, new QualityImageView(Icons.CONTROL_REMOVE, 16, 16));
         button.setTooltip(new LanguageTooltip(Messages.GENERAL_REMOVE));
-        button.getStyleClass().add("bold-button");
+        button.getStyleClass().add("button-bold");
 
         button.setOnAction(event -> {
             var contents = cacheTab.getContents();

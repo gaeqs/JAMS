@@ -187,8 +187,8 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
         Button previous = new Button("\u2190");
         Button next = new Button("\u2192");
 
-        previous.getStyleClass().add("bold-button");
-        next.getStyleClass().add("bold-button");
+        previous.getStyleClass().add("button-bold");
+        next.getStyleClass().add("button-bold");
         previous.setPrefWidth(300);
         next.setPrefWidth(300);
 

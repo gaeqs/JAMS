@@ -54,4 +54,9 @@ public class LanguageMenu extends Menu {
     public void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
         refreshMessage();
     }
+
+    @Override
+    public String getTypeSelector() {
+        return "Menu";
+    }
 }

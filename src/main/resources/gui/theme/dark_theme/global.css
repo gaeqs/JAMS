@@ -34,4 +34,6 @@
 -theme-background-darkest: derive(-theme-background, -30%);
 -theme-header: #3B4754;
 -theme-menu-item-hover: #4D6EAF;
+
 -theme-element-selected: #4D6EAF;
+-theme-element-invalid: #842020;

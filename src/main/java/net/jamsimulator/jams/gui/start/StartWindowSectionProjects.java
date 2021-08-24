@@ -77,7 +77,7 @@ public class StartWindowSectionProjects extends AnchorPane implements StartWindo
     private void loadButtons() {
         var openButton = new LanguageButton(Messages.ACTION_GENERAL_OPEN_PROJECT);
 
-        openButton.getStyleClass().add("light-button");
+        openButton.getStyleClass().add("button-light");
 
         openButton.setOnAction(event -> {
             var chooser = new DirectoryChooser();

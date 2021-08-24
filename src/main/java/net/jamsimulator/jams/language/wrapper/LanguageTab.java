@@ -71,4 +71,9 @@ public class LanguageTab extends Tab {
     public void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
         refreshMessage();
     }
+
+    @Override
+    public String getTypeSelector() {
+        return "Tab";
+    }
 }

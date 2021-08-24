@@ -30,6 +30,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import net.jamsimulator.jams.gui.util.InvalidableTextField;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.utils.Validate;
@@ -47,7 +48,7 @@ public class RenameWindow extends VBox {
         setAlignment(Pos.BOTTOM_CENTER);
         getChildren().add(new LanguageLabel(Messages.ACTION_FOLDER_EXPLORER_ELEMENT_RENAME));
 
-        TextField field = new TextField();
+        var field = new InvalidableTextField();
         getChildren().add(field);
 
         field.setOnAction(event -> {
@@ -64,13 +65,7 @@ public class RenameWindow extends VBox {
 
         field.textProperty().addListener((obs, old, val) -> {
             var newFile = new File(file.getParentFile(), val);
-            if (!newFile.equals(file) && newFile.exists()) {
-                if (!field.getStyleClass().contains("invalid-text-field")) {
-                    field.getStyleClass().add("invalid-text-field");
-                }
-            } else {
-                field.getStyleClass().remove("invalid-text-field");
-            }
+            field.setInvalid(!newFile.equals(file) && newFile.exists());
         });
 
         field.focusedProperty().addListener((obs, old, val) -> Platform.runLater(() -> {
