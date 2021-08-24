@@ -34,25 +34,5 @@ import net.jamsimulator.jams.utils.Labeled;
  * unregistering them when the plugin is unloaded.
  */
 public interface ResourceProvider extends Labeled {
-
-    ResourceProvider JAMS = new ResourceProvider() {
-        @Override
-        public boolean isEnabled() {
-            return true;
-        }
-
-        @Override
-        public String getName() {
-            return "JAMS";
-        }
-    };
-
-    /**
-     * Retusns whether this resource provider is enabled.
-     * The JAMS resource provider is always enabled.
-     *
-     * @return whether this provider is enabled.
-     */
-    boolean isEnabled();
-
+    ResourceProvider JAMS = () -> "JAMS";
 }

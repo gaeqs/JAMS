@@ -136,7 +136,6 @@ public class Plugin implements ResourceProvider, ManagerResource {
      *
      * @return whether this plugin is enabled.
      */
-    @Override
     public boolean isEnabled() {
         return enabled;
     }
@@ -160,6 +159,7 @@ public class Plugin implements ResourceProvider, ManagerResource {
             dependencies.clear();
             enabledSoftDepenedencies.clear();
             Jams.getGeneralEventBroadcast().unregisterListeners(this);
+            Jams.REGISTRY.removeProvidedBy(this);
         }
     }
 

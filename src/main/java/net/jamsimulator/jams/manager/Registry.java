@@ -317,6 +317,24 @@ public class Registry {
         }
     }
 
+    /**
+     * Removes all managers and resources provided by the given {@link ResourceProvider}.
+     * <p>
+     * This is automatically called for the main registry when a plugin is unloaded.
+     *
+     * @param provider the provider.
+     */
+    public void removeProvidedBy(ResourceProvider provider) {
+        // Unregister all managers provided by this provider.
+        var list = managers.entrySet().stream()
+                .filter(it -> it.getValue().getResourceProvider().equals(provider)).toList();
+        list.forEach(it -> unregister(it.getKey()));
+
+        // Unregister all resources.
+        managers.values().forEach(it -> it.removeProvidedBy(provider));
+
+    }
+
     private void addDefaultManagers() {
         registerPrimary(PluginManager.INSTANCE);
         registerPrimary(ActionManager.INSTANCE);

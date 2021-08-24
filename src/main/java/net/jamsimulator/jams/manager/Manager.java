@@ -36,7 +36,10 @@ import net.jamsimulator.jams.utils.Validate;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Represents a storage for instances of the selected type.
@@ -55,18 +58,64 @@ import java.util.Optional;
 public abstract class Manager<Type extends ManagerResource> extends HashSet<Type>
         implements EventBroadcast, ManagerResource {
 
+    /**
+     * Returns the primary manager who is instance the given class.
+     * <p>
+     * This is a shortcut for {@code Jams.REGISTRY.get(clazz)}.
+     *
+     * @param clazz the clazz.
+     * @param <T>   the type of the manager.
+     * @return the manager.
+     * @throws NoSuchElementException when the manager is not found.
+     * @see Registry#get(Class)
+     */
     public static <T extends Manager<?>> T get(Class<T> clazz) {
         return Jams.REGISTRY.get(clazz);
     }
 
+    /**
+     * Returns the primary manager that manages the given type.
+     * <p>
+     * This is a shortcut for {@code Jams.REGISTRY.of(clazz)}.
+     *
+     * @param clazz the managed type class.
+     * @param <T>   the managed type.
+     * @return the manager.
+     * @throws NoSuchElementException when the manager is not found.
+     * @see Registry#of(Class)
+     */
     public static <T extends ManagerResource> Manager<T> of(Class<T> clazz) {
         return Jams.REGISTRY.of(clazz);
     }
 
+    /**
+     * Returns the primary manager that manages the given type cast to a {@link DefaultValuableManager}.
+     * <p>
+     * This is a shortcut for {@code Jams.REGISTRY.of(clazz)}.
+     *
+     * @param clazz the managed type class.
+     * @param <T>   the managed type.
+     * @return the manager.
+     * @throws NoSuchElementException when the manager is not found.
+     * @throws ClassCastException     when the manager is not a {@link DefaultValuableManager}.
+     * @see Registry#of(Class)
+     */
     public static <T extends ManagerResource> DefaultValuableManager<T> ofD(Class<T> clazz) {
         return (DefaultValuableManager<T>) Jams.REGISTRY.of(clazz);
     }
 
+    /**
+     * Returns the primary manager that manages the given type cast to a {@link SelectableManager}.
+     * <p>
+     * This is a shortcut for {@code Jams.REGISTRY.of(clazz)}.
+     *
+     * @param clazz the managed type class.
+     * @param <T>   the managed type.
+     * @return the manager.
+     * @throws NoSuchElementException when the manager is not found.
+     * @throws ClassCastException     when the manager is not a {@link SelectableManager}.
+     * @see Registry#of(Class)
+     */
     public static <T extends ManagerResource> SelectableManager<T> ofS(Class<T> clazz) {
         return (SelectableManager<T>) Jams.REGISTRY.of(clazz);
     }
@@ -163,6 +212,10 @@ public abstract class Manager<Type extends ManagerResource> extends HashSet<Type
         callLoadAfterEvent();
     }
 
+    /**
+     * Calls the after laod event. This method is used by
+     * {@link DefaultValuableManager} and {@link SelectableManager} to edit the event call.
+     */
     protected void callLoadAfterEvent() {
         callEvent(new ManagerLoadEvent.After<>(this, managedType));
     }
@@ -176,6 +229,16 @@ public abstract class Manager<Type extends ManagerResource> extends HashSet<Type
     public Optional<Type> get(String name) {
         if (!loaded) loadPanic();
         return stream().filter(t -> t.getName().equals(name)).findAny();
+    }
+
+    /**
+     * Returns a new {@link Set} with all resources provided by the given {@link ResourceProvider}.
+     *
+     * @param provider the {@link ResourceProvider}.
+     * @return the resources.
+     */
+    public Set<Type> providedBy(ResourceProvider provider) {
+        return stream().filter(t -> t.getResourceProvider().equals(provider)).collect(Collectors.toSet());
     }
 
     /**
@@ -265,6 +328,21 @@ public abstract class Manager<Type extends ManagerResource> extends HashSet<Type
     }
 
     /**
+     * Tries to remove all elements provided by the given {@link ResourceProvider}.
+     *
+     * @param provider the {@link ResourceProvider}
+     * @return the amount of removed elements.
+     */
+    public int removeProvidedBy(ResourceProvider provider) {
+        var elements = providedBy(provider);
+        int count = 0;
+        for (Type element : elements) {
+            if (remove(element)) count++;
+        }
+        return count;
+    }
+
+    /**
      * This method is called when the {@link #remove(Object)}} execution was successful,
      * just before the after event is called.
      * <p>
@@ -281,6 +359,10 @@ public abstract class Manager<Type extends ManagerResource> extends HashSet<Type
      */
     protected abstract void loadDefaultElements();
 
+    /**
+     * Throws a {@link IllegalStateException}.
+     * This method is called when a manager requires access to its elements but it's not loaded.
+     */
     protected void loadPanic() {
         throw new IllegalStateException("Manager " + this + " is not loaded!");
     }
