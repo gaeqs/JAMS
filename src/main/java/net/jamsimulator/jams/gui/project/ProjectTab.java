@@ -242,6 +242,11 @@ public class ProjectTab extends Tab implements EventBroadcast {
         return folderEventBroadcast.callEvent(event, this);
     }
 
+    @Override
+    public void transferListenersTo(EventBroadcast broadcast) {
+        folderEventBroadcast.transferListenersTo(broadcast);
+    }
+
     @Listener(priority = Integer.MAX_VALUE)
     private void onFileAdd(FileEvent event) {
         if (event.getWatchEvent().kind() == ENTRY_CREATE) {

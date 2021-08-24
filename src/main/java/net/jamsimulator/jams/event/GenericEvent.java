@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.event;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 
@@ -51,7 +52,7 @@ import java.lang.reflect.WildcardType;
  * <p>
  * <p>
  * <h3>{@code @Listener void myListener (MyGenericEvent<Foo<Bar>>) {}}</h3>
- * WARNING! Only Foo is checked. The listener will be invoked with any {@code Foo<Baz>}.
+ * WARNING! Only Foo is checked. The listener will be invoked with any {@code Foo<T>}.
  * <p>
  * You can use {@code @Listener void myListener (MyGenericEvent<Foo<?>>) {}} without problems.
  *
@@ -86,9 +87,16 @@ public class GenericEvent<E> extends Event {
         var first = generics[0];
         if (first.equals(type)) return true;
 
-        return first instanceof WildcardType wildcard
-                && validLowerBounds(wildcard.getLowerBounds(), type)
-                && validUpperBounds(wildcard.getUpperBounds(), type);
+        if (first instanceof WildcardType wildcard) {
+            return validLowerBounds(wildcard.getLowerBounds(), type)
+                    && validUpperBounds(wildcard.getUpperBounds(), type);
+        }
+
+        if(first instanceof ParameterizedType parameterized) {
+            return type.equals(parameterized.getRawType());
+        }
+
+        return false;
     }
 
     private static boolean validUpperBounds(Type[] bounds, Type managed) {

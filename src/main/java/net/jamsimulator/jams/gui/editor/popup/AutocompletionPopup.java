@@ -408,6 +408,11 @@ public abstract class AutocompletionPopup extends Popup implements EventBroadcas
         return broadcast.callEvent(event, this);
     }
 
+    @Override
+    public void transferListenersTo(EventBroadcast broadcast) {
+        this.broadcast.transferListenersTo(broadcast);
+    }
+
     //endregion
 
 }

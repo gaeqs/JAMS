@@ -372,6 +372,11 @@ public class Console extends HBox implements Log, EventBroadcast {
         return broadcast.callEvent(event, this);
     }
 
+    @Override
+    public void transferListenersTo(EventBroadcast broadcast) {
+        this.broadcast.transferListenersTo(broadcast);
+    }
+
     private static class Pair {
         String text, style;
 

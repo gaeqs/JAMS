@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class EventTest {
 
-    private static final int SHOULD_COUNT = 7;
+    private static final int SHOULD_COUNT = 9;
     private int count;
 
     @Test
@@ -40,7 +40,7 @@ class EventTest {
         var broadcast = new SimpleEventBroadcast();
         broadcast.registerListeners(this, true);
 
-        var event = new TestEvent<>(new B());
+        var event = new TestEvent<>(new B<String>());
         broadcast.callEvent(event);
         assertEquals(SHOULD_COUNT, count);
     }
@@ -84,6 +84,18 @@ class EventTest {
     @Listener
     private void shoudCall7(TestEvent<? super C> event) {
         System.out.println("SC7");
+        count++;
+    }
+
+    @Listener
+    private void shoudCall8(TestEvent<B<String>> event) {
+        System.out.println("SC8");
+        count++;
+    }
+
+    @Listener
+    private void shoudCall9(TestEvent<B<C>> event) {
+        System.out.println("SC9");
         count++;
     }
 
@@ -140,10 +152,10 @@ class EventTest {
     private static class A {
     }
 
-    private static class B extends A {
+    private static class B<T> extends A {
     }
 
-    private static class C extends B {
+    private static class C extends B<C> {
     }
 
     private static class D extends A {
