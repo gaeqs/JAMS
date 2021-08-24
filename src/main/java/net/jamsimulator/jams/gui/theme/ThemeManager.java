@@ -73,6 +73,7 @@ public final class ThemeManager extends SelectableManager<Theme> {
     public static final String GENERAL_FONT_NODE = "appearance.general_font";
     public static final String CODE_FONT_NODE = "appearance.code_font";
     public static final String NAME = "theme";
+    public static final String COMMON_THEME = "Common";
     public static final File FOLDER = new File(Jams.getMainFolder(), FOLDER_NAME);
 
     static {
@@ -240,7 +241,7 @@ public final class ThemeManager extends SelectableManager<Theme> {
         var loader = new ThemeLoader(provider, path);
         loader.load();
 
-        if (loader.getHeader().name().equals("Common")) {
+        if (loader.getHeader().name().equals(COMMON_THEME)) {
             if (defaultValue == null) {
                 defaultValue = loader.createTheme();
             } else {
@@ -315,6 +316,29 @@ public final class ThemeManager extends SelectableManager<Theme> {
             theme = stream().findFirst().orElseThrow(NullPointerException::new);
         }
         return theme;
+    }
+
+    @Override
+    public int removeProvidedBy(ResourceProvider provider) {
+        int amount = super.removeProvidedBy(provider);
+
+        // Let's remove the attachments too!+
+
+        boolean refresh = false;
+        for (var theme : this) {
+            boolean u1 = theme.getGlobalAttachments().removeIf(attachment -> attachment.provider().equals(provider));
+            boolean u2 = theme.getFilesAttachments().removeIf(attachment -> attachment.provider().equals(provider));
+
+            if (theme == selected || theme.getName().equals(COMMON_THEME)) {
+                refresh |= u1 || u2;
+            }
+        }
+
+        if (refresh) {
+            refresh();
+        }
+
+        return amount;
     }
 
     private void loadFonts() {
