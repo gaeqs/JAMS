@@ -46,7 +46,29 @@ import net.jamsimulator.jams.utils.NumberRepresentationManager;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
+/**
+ * The registry class stores all {@link Manager}s JAMS is currently using.
+ * <p>
+ * There are two types of managers: primary and secondary managers.
+ * <p>
+ * Both type of managers can't collide in its names: you can't have two managers with the same name.
+ *
+ * <h2>Primary managers</h2>
+ * Primary managers are managers that can be indexed using its class or its managed element type.
+ * <p>
+ * Primary managers can't collide in its class or its managed element type. For example: you can only have one
+ * primary {@link ThemeManager} and one primary manager that manages
+ * {@link net.jamsimulator.jams.gui.theme.Theme Themes}.
+ *
+ * <h2>Secondary managers</h2>
+ * Secondary managers can only be indexed by its name. You can have multiple secondary managers that manages the same
+ * element type.
+ *
+ * <h2>JAMS's Registry</h2>
+ * You can access the JAMS's Registry using {@link net.jamsimulator.jams.Jams#REGISTRY Jams.REGISTRY}.
+ */
 public class Registry {
 
     private final Map<String, Manager<?>> managers;
@@ -54,15 +76,29 @@ public class Registry {
     private final Map<Class<? extends Manager<?>>, Manager<?>> primaryManagersByClass;
     private final Map<Class<? extends ManagerResource>, Manager<?>> primaryManagersByManaged;
 
-
-    public Registry() {
+    /**
+     * Creates a registry.
+     */
+    public Registry(boolean loadDefaultManagers) {
         managers = new HashMap<>();
         primary = new HashMap<>();
         primaryManagersByClass = new HashMap<>();
         primaryManagersByManaged = new HashMap<>();
-        addDefaultManagers();
+        if (loadDefaultManagers) {
+            addDefaultManagers();
+        }
     }
 
+    /**
+     * Registers the given {@link Manager} as a primary {@link Manager}.
+     * <p>
+     * Manager must have a unique name.
+     * Primary managers must have a unique managed type and a unique class.
+     *
+     * @param manager the manager.
+     * @throws IllegalArgumentException when the manager collides with another manager.
+     */
+    @SuppressWarnings("unchecked")
     public synchronized void registerPrimary(Manager<?> manager) {
         if (managers.containsKey(manager.getName()))
             throw new IllegalArgumentException("There's already a manager with the name " + manager.getName() + "!");
@@ -78,6 +114,14 @@ public class Registry {
         primaryManagersByManaged.put(manager.getManagedType(), manager);
     }
 
+    /**
+     * Registers the given {@link Manager} as a secondary {@link Manager}.
+     * <p>
+     * Manager must have a unique name.
+     *
+     * @param manager the manager.
+     * @throws IllegalArgumentException when there's already a manager registered with the same name.
+     */
     public synchronized void registerSecondary(Manager<?> manager) {
         if (managers.containsKey(manager.getName()))
             throw new IllegalArgumentException("There's already a manager with the name " + manager.getName() + "!");
@@ -85,18 +129,35 @@ public class Registry {
         primary.put(manager.getName(), false);
     }
 
-    public synchronized boolean unregister(String name) {
+    /**
+     * Unregister the registered manager that matched the given name.
+     * <p>
+     * You cannot unregister the plugin manager.
+     *
+     * @param name the name.
+     * @return the manager if found.
+     */
+    public synchronized Optional<Manager<?>> unregister(String name) {
         if (name.equals(PluginManager.NAME))
             throw new IllegalArgumentException("You cannot unregister the plugin manager!");
         var manager = managers.remove(name);
-        if (manager == null) return false;
+        if (manager == null) return Optional.empty();
         if (primary.remove(name)) {
             primaryManagersByClass.remove(manager.getClass());
             primaryManagersByManaged.remove(manager.getManagedType());
         }
-        return true;
+        return Optional.of(manager);
     }
 
+    /**
+     * Returns the primary manager who is instance the given class.
+     *
+     * @param clazz the clazz.
+     * @param <T>   the type of the manager.
+     * @return the manager.
+     * @throws NoSuchElementException when the manager is not found.
+     */
+    @SuppressWarnings("unchecked")
     public synchronized <T extends Manager<?>> T get(Class<T> clazz) {
         try {
             var manager = (T) primaryManagersByClass.get(clazz);
@@ -107,6 +168,30 @@ public class Registry {
         }
     }
 
+    /**
+     * Returns the primary manager who is instance the given class.
+     *
+     * @param clazz the clazz.
+     * @param <T>   the type of the manager.
+     * @return the manager if found.
+     */
+    public <T extends Manager<?>> Optional<T> getSafe(Class<T> clazz) {
+        try {
+            return Optional.of(get(clazz));
+        } catch (NoSuchElementException ex) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Returns the primary manager that manages the given type.
+     *
+     * @param clazz the managed type class.
+     * @param <T>   the managed type.
+     * @return the manager.
+     * @throws NoSuchElementException when the manager is not found.
+     */
+    @SuppressWarnings("unchecked")
     public synchronized <T extends ManagerResource> Manager<T> of(Class<T> clazz) {
         try {
             var manager = (Manager<T>) primaryManagersByManaged.get(clazz);
@@ -117,12 +202,57 @@ public class Registry {
         }
     }
 
+    /**
+     * Returns the primary manager that manages the given type.
+     *
+     * @param clazz the managed type class.
+     * @param <T>   the managed type.
+     * @return the manager if found.
+     */
+    public <T extends ManagerResource> Optional<Manager<T>> ofSafe(Class<T> clazz) {
+        try {
+            return Optional.of(of(clazz));
+        } catch (NoSuchElementException ex) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Returns the primary manager that matches the given name.
+     *
+     * @param name the name of the manager.
+     * @return the manager.
+     * @throws NoSuchElementException when the manager is not found.
+     */
     public synchronized Manager<?> of(String name) {
         var manager = (Manager<?>) managers.get(name);
         if (manager == null) throw new NoSuchElementException("Manager " + name + " not found.");
         return manager;
     }
 
+    /**
+     * Returns the primary manager that matches the given name.
+     *
+     * @param name the name of the manager.
+     * @return the manager if present.
+     */
+    public synchronized Optional<Manager<?>> ofSafe(String name) {
+        try {
+            return Optional.of(of(name));
+        } catch (NoSuchElementException ex) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Returns the primary manager that matched the given name cast to the given managed type.
+     *
+     * @param name  the name of the manager.
+     * @param clazz the managed type class.
+     * @param <T>   the managed type.
+     * @return the manager if found.
+     */
+    @SuppressWarnings("unchecked")
     public synchronized <T extends ManagerResource> Manager<T> of(String name, Class<T> clazz) {
         try {
             var manager = (Manager<T>) managers.get(name);
@@ -133,10 +263,39 @@ public class Registry {
         }
     }
 
-    public void loadPluginManager() {
-        get(PluginManager.class).load();
+    /**
+     * Returns the primary manager that matches the given name cast to the given managed type.
+     *
+     * @param name  the name of the manager.
+     * @param clazz the managed type class.
+     * @param <T>   the managed type.
+     * @return the manager if present.
+     */
+    public synchronized <T extends ManagerResource> Optional<Manager<T>> ofSafe(String name, Class<T> clazz) {
+        try {
+            return Optional.of(of(name, clazz));
+        } catch (NoSuchElementException ex) {
+            return Optional.empty();
+        }
     }
 
+    /**
+     * Calls the {@link PluginManager}'s {@link Manager#load()}.
+     * <p>
+     * This method does nothing if the manages is already loaded.
+     */
+    public void loadPluginManager() {
+        var manager = get(PluginManager.class);
+        if (!manager.isLoaded()) {
+            manager.load();
+        }
+    }
+
+    /**
+     * Calls all non JavaFX manager's {@link Manager#load()}.
+     * <p>
+     * This method does nothing if the manages is already loaded.
+     */
     public void loadJAMSManagers() {
         for (Manager<?> manager : managers.values()) {
             if (!manager.isLoaded() && !manager.shouldLoadOnFXThread()) {
@@ -145,6 +304,11 @@ public class Registry {
         }
     }
 
+    /**
+     * Calls all JavaFX manager's {@link Manager#load()}.
+     * <p>
+     * This method does nothing if the manages is already loaded.
+     */
     public void loadJAMSApplicationManagers() {
         for (Manager<?> manager : managers.values()) {
             if (!manager.isLoaded() && manager.shouldLoadOnFXThread()) {

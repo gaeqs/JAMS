@@ -32,9 +32,9 @@ import net.jamsimulator.jams.event.general.JAMSShutdownEvent;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.plugin.PluginManager;
 import net.jamsimulator.jams.manager.Registry;
 import net.jamsimulator.jams.plugin.Plugin;
+import net.jamsimulator.jams.plugin.PluginManager;
 import net.jamsimulator.jams.plugin.exception.InvalidPluginHeaderException;
 import net.jamsimulator.jams.plugin.exception.PluginLoadException;
 import net.jamsimulator.jams.project.RecentProjects;
@@ -55,7 +55,7 @@ import java.util.Map;
 
 public class Jams {
 
-    public final static Registry REGISTRY = new Registry();
+    public final static Registry REGISTRY = new Registry(true);
 
     private static String VERSION;
 
