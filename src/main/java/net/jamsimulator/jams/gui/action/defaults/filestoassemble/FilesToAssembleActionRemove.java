@@ -42,7 +42,7 @@ public class FilesToAssembleActionRemove extends ContextAction {
     public static final KeyCombination DEFAULT_COMBINATION = null;
 
     public FilesToAssembleActionRemove(ResourceProvider provider) {
-        super(provider,NAME, RegionTags.MIPS_FILE_TO_ASSEMBLE, Messages.ACTION_FILES_TO_ASSEMBLE_REMOVE,
+        super(provider,NAME, RegionTags.FILES_TO_ASSEMBLE, Messages.ACTION_FILES_TO_ASSEMBLE_REMOVE,
                 DEFAULT_COMBINATION, FolderActionRegions.ASSEMBLER, null, null);
     }
 

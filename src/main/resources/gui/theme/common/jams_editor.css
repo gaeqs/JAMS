@@ -89,7 +89,7 @@
 }
 
 .code-area .selection {
-    -fx-fill: #214182;
+    -fx-fill: -theme-text-selected;
 }
 
 
@@ -180,119 +180,120 @@
 
 /* HINT BAR */
 .hint-bar-error {
-    -fx-fill: #cb2f2f;
+    -fx-fill: -theme-error;
 }
 
 .hint-bar-warning {
-    -fx-fill: #efbe0a;
+    -fx-fill: -theme-warining;
 }
 
 .hint-bar-info {
-    -fx-fill: #4c762e;
+    -fx-fill: -theme-done;
 }
 
 /* SEARCH */
 .code-area .search-result {
-    -rtfx-background-color: #213414;
-    -rtfx-border-stroke-color: #3c6321;
+    -rtfx-background-color: -theme-search-result;
+    -rtfx-border-stroke-color: -theme-search-result-stroke;
     -rtfx-border-stroke-width: 1px;
 }
 
 .code-area .selected-search-result {
-    -rtfx-background-color: #2b3c6d;
-    -rtfx-border-stroke-color: #ffffff;
+    -rtfx-background-color: -theme-selected-search-result;
+    -rtfx-border-stroke-color: -theme-selected-search-result-stroke;
     -rtfx-border-stroke-width: 1px;
 }
 
 /* LOG */
 .code-area .log_error {
-    -fx-fill: #cb2f2f;
+    -fx-fill: -theme-error;
 }
 
 .code-area .log_info {
-    -fx-fill: #2f75cb;
+    -fx-fill: -theme-info;
 }
 
 .code-area .log_warning {
-    -fx-fill: #cbb62f;
+    -fx-fill: -theme-warining;
 }
 
 .code-area .log_done {
-    -fx-fill: #3fcb2f;
+    -fx-fill: -theme-done;
 }
 
 /* MIPS */
 .code-area .mips-comment {
-    -fx-fill: #8b8b8b;
+    -fx-fill: -theme-text-comment;
 }
 
 .code-area .mips-label {
+    -fx-fill: -theme-text-label;
     -fx-font-style: italic;
 }
 
 .code-area .mips-global-label {
-    -fx-fill: #d55746;
+    -fx-fill: -theme-text-global-label;
     -fx-font-style: italic;
 }
 
 .code-area .mips-directive {
-    -fx-fill: #f8a15e;
+    -fx-fill: -theme-text-directive;
 }
 
 .code-area .mips-directive-parameter {
-    -fx-fill: #f85ee3;
+    -fx-fill: -theme-text-directive-parameter;
 }
 
 .code-area .mips-directive-parameter-string {
-    -fx-fill: #4c762e;
+    -fx-fill: -theme-text-string;
 }
 
 .code-area .mips-instruction {
-    -fx-fill: #f8d75e;
+    -fx-fill: -theme-text-instruction;
 }
 
 .code-area .mips-pseudo-instruction {
-    -rtfx-underline-color: #7af85e;
+    -rtfx-underline-color: -theme-text-pseudo-instruction;
     -rtfx-underline-width: 1px;
 }
 
 .code-area .mips-instruction-parameter-label {
-    -fx-fill: #ffffff;
+    -fx-fill: -theme-text-label;
     -fx-font-style: italic;
 }
 
 .code-area .mips-instruction-parameter-global-label {
-    -fx-fill: #d55746;
+    -fx-fill: -theme-text-global-label;
     -fx-font-style: italic;
 }
 
 .code-area .mips-instruction-parameter-register {
-    -fx-fill: #90a3fd;
+    -fx-fill: -theme-text-register;
 }
 
 .code-area .mips-instruction-parameter-immediate {
-    -fx-fill: #7af85e;
+    -fx-fill: -theme-text-immediate;
 }
 
 .code-area .mips-instruction-parameter-string {
-    -fx-fill: #4c762e;
+    -fx-fill: -theme-text-string;
 }
 
 .code-area .mips-macro-call {
-    -fx-fill: #5ef8d4;
+    -fx-fill: -theme-text-macro;
 }
 
 .code-area .mips-macro-call-parameter {
-    -fx-fill: #875ef8;
+    -fx-fill: -theme-text-macro-parameter;
 }
 
 .code-area .mips-warning {
-    -rtfx-underline-color: #efbe0a;
+    -rtfx-underline-color: -theme-warining;
     -rtfx-underline-width: 1px;
 }
 
 .code-area .mips-error {
-    -rtfx-underline-color: #cb2f2f;
+    -rtfx-underline-color: -theme-error;
     -rtfx-underline-width: 1px;
 }
 
@@ -325,17 +326,7 @@
 }
 
 .mips-popup .label {
-    -fx-font-size: 12.5px;
-}
-
-/* MIPS EXPLORER */
-.mips-explorer-file-to-assemble {
-    -fx-background-color: #495c42;
-}
-
-/*Added and selected*/
-.mips-explorer-file-to-assemble.selected-explorer-element {
-    -fx-background-color: #4b6578;
+    -fx-font-size: 12.5;
 }
 
 /* MIPS CONFIGURATIONS */

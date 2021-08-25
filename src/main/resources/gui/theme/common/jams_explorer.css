@@ -90,3 +90,13 @@
 .explorer-out-folder.selected-explorer-element {
     -fx-background-color: -theme-element-selected;
 }
+
+/* MIPS EXPLORER */
+.mips-explorer-file-to-assemble {
+    -fx-background-color: -theme-explorer-file-to-assemble;
+}
+
+/*Added and selected*/
+.mips-explorer-file-to-assemble.selected-explorer-element {
+    -fx-background-color: -theme-explorer-selected-file-to-assemble;
+}

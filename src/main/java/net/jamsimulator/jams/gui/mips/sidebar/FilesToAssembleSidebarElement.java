@@ -82,7 +82,7 @@ public class FilesToAssembleSidebarElement extends DraggableListCell<File> imple
 
     @Override
     public boolean supportsActionRegion(String region) {
-        return RegionTags.MIPS_FILE_TO_ASSEMBLE.equals(region);
+        return RegionTags.FILES_TO_ASSEMBLE.equals(region);
     }
 
     @Override

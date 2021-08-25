@@ -91,7 +91,7 @@
 }
 
 .action-remove-button:hover {
-    -fx-background-color: darkred;
+    -fx-background-color: -theme-element-invalid;
 }
 
 .action-add-button {

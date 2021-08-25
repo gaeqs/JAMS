@@ -37,18 +37,25 @@ AnchorPane {
 }
 
 .button {
-    -fx-background-color: -theme-background-darker;
     -fx-border-color: transparent;
-    -fx-background-radius: 5px;
     -fx-text-fill: -theme-foreground;
+
+    -fx-background-color: -theme-background-darker-2;
+    -fx-border-width: 3px;
+    -fx-background-insets: 3px;
+    -fx-background-radius: 3px;
+
+    -fx-effect: dropshadow(gaussian, -theme-background-darkest, 3, 0.2, 1, 1);
 }
 
 .button:hover {
     -fx-background-color: -theme-background-lighter;
+    -fx-effect: dropshadow(gaussian, -theme-background-darkest, 4, 0.4, 1.2, 1.2);
 }
 
 .button:pressed {
     -fx-background-color: -theme-background-pressed;
+    -fx-effect: innershadow(gaussian, -theme-background-darkest, 3, 0.2, 1, 1);
 }
 
 .chart-legend {
@@ -70,8 +77,20 @@ AnchorPane {
 }
 
 .check-box .box {
-    -fx-background-color: -theme-background-darkest;
-    -fx-background-radius: 1px;
+    -fx-background-color: -theme-background-darker;
+    -fx-effect: dropshadow(gaussian, -theme-background-darkest, 3, 0.2, 1, 1);
+    -fx-background-radius: 3px;
+    -fx-border-width: 3px;
+}
+
+.check-box .box:hover {
+    -fx-background-color: -theme-background-lighter;
+    -fx-effect: dropshadow(gaussian, -theme-background-darkest, 4, 0.4, 1.2, 1.2);
+}
+
+.check-box .box:pressed {
+    -fx-background-color: -theme-background-pressed;
+    -fx-effect: innershadow(gaussian, -theme-background-darkest, 3, 0.2, 1, 1);
 }
 
 .check-box:selected > .box > .mark {
@@ -88,18 +107,26 @@ AnchorPane {
 }
 
 .combo-box-base {
-    -fx-background-color: -theme-background-darker;
+    -fx-background-color: transparent;
     -fx-border-color: transparent;
+    -fx-border-width: 3px;
+    -fx-effect: dropshadow(gaussian, -theme-background-darkest, 3, 0.2, 1, 1);
 }
 
 .combo-box-base .arrow-button {
-    -fx-background-color: -theme-background-darker;
+    -fx-background-color: -theme-background-lighter;
+    -fx-background-radius: 0px 3px 3px 0px;
+}
+
+.combo-box-base .arrow {
+    -fx-background-color: -theme-foreground-darker;
 }
 
 .combo-box-base .list-cell {
     -fx-text-fill: -theme-foreground;
     -fx-font-size: 14px;
-    -fx-background-color: -theme-background-darker;
+    -fx-background-color: -theme-background-lighter;
+    -fx-background-radius: 3px 0px 0px 3px;
     -fx-padding: 1px 1px 1px 3px;
 }
 
@@ -453,10 +480,14 @@ AnchorPane {
 
 .text-field {
     -fx-font-family: "{FONT_GENERAL}";
+
     -fx-background-color: -theme-background-darker;
     -fx-text-fill: -theme-foreground;
-    -fx-background-radius: 1px;
     -fx-border-color: transparent;
+    -fx-border-width: 3px;
+    -fx-background-insets: 3px;
+    -fx-background-radius: 3px;
+    -fx-effect: dropshadow(gaussian, -theme-background-darkest, 3, 0.2, 1, 1);
 }
 
 /*noinspection CssInvalidPseudoSelector*/
@@ -487,10 +518,9 @@ AnchorPane {
 
 .tooltip {
     -fx-background-color: -theme-background;
-    -fx-border-color: -theme-background-lighter;
-    -fx-border-width: 1px;
-    -fx-border-radius: 0px;
-    -fx-background-radius: 0px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
+    -fx-background-radius: 3px;
 }
 
 .tree-table-view {

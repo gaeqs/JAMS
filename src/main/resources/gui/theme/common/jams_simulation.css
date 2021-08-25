@@ -48,19 +48,19 @@
 }
 
 .console .input-string .label {
-    -fx-text-fill: #4c762e;
+    -fx-text-fill: -theme-text-string;
 }
 
 .console .input-integer .label {
-    -fx-text-fill: #7af85e;
+    -fx-text-fill: -theme-text-immediate;
 }
 
 .console .input-float .label {
-    -fx-text-fill: #5eb5f8;
+    -fx-text-fill: -theme-text-register;
 }
 
 .console .input:hover {
-    -fx-background-color: darkred;
+    -fx-background-color: -theme-element-invalid;
 }
 
 /* INSTRUCTION FLOW */
@@ -98,48 +98,48 @@
 
 /* INSTRUCTION TABLE */
 .code-area .instruction-fetch {
-    -fx-background-color: #4c4c37;
+    -fx-background-color: -theme-simulation-fetch;
 }
 
 .code-area .instruction-decode {
-    -fx-background-color: #404c34;
+    -fx-background-color: -theme-simulation-decode;
 }
 
 .code-area .instruction-execute {
-    -fx-background-color: #2f3f48;
+    -fx-background-color: -theme-simulation-execute;
 }
 
 .code-area .instruction-memory {
-    -fx-background-color: #41384c;
+    -fx-background-color: -theme-simulation-memory;
 }
 
 .code-area .instruction-write-back {
-    -fx-background-color: #4c3937;
+    -fx-background-color: -theme-simulation-write-back;
 }
 
 .code-area .instruction-breakpoint {
-    -fx-background-color: #763e3c;
+    -fx-background-color: -theme-simulation-breakpoint;
 }
 
 /*FLOW*/
 .flow-entry .instruction-fetch {
-    -fx-background-color: #92925a;
+    -fx-background-color: derive(-theme-simulation-fetch, 30%);
 }
 
 .flow-entry .instruction-decode {
-    -fx-background-color: #5f7749;
+    -fx-background-color: derive(-theme-simulation-decode, 30%);
 }
 
 .flow-entry .instruction-execute {
-    -fx-background-color: #5a6770;
+    -fx-background-color: derive(-theme-simulation-execute, 30%);
 }
 
 .flow-entry .instruction-memory {
-    -fx-background-color: #4f4b54;
+    -fx-background-color: derive(-theme-simulation-memory, 30%);
 }
 
 .flow-entry .instruction-write-back {
-    -fx-background-color: #665857;
+    -fx-background-color: derive(-theme-simulation-write-back, 30%);
 }
 
 /* LABELS */
@@ -175,7 +175,7 @@
 }
 
 .selected-segment {
-    -fx-fill: #cb1010;
+    -fx-fill: -theme-lab-selected-segment;
 }
 
 .lab {

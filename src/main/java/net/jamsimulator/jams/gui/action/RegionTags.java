@@ -36,7 +36,7 @@ public class RegionTags {
     public static final String TEXT_EDITOR = "TEXT_EDITOR";
     public static final String EDITOR_TAB = "EDITOR_TAB";
 
-    public static final String MIPS_FILE_TO_ASSEMBLE = "MIPS_FILE_TO_ASSEMBLE";
+    public static final String FILES_TO_ASSEMBLE = "FILES_TO_ASSEMBLE";
     public static final String MIPS_SIMULATION = "MIPS_SIMULATION";
 
     public static final String MIPS_SIMULATION_LABELS_LABEL = "MIPS_SIMULATION_LABELS_LABEL";

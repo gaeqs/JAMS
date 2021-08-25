@@ -79,6 +79,7 @@
     -fx-background-radius: 5px;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
+    -fx-effect: none;
 }
 
 .speed-slider {
@@ -89,6 +90,8 @@
 
 .speed-slider .slider {
     -fx-pref-width: 200px;
+    -fx-fill-height: true;
+    -fx-alignment: center;
 }
 
 .project-tab-pane {
