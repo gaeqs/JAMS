@@ -100,3 +100,12 @@
 .window-button:pressed {
     -fx-background-color: -theme-background-pressed;
 }
+
+.styled-node-list {
+    -fx-padding: 10, 10, 5, 10;
+    -fx-spacing: 5px;
+}
+
+.styled-node-list-entry {
+    -fx-spacing: 7px;
+}

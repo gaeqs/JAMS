@@ -24,7 +24,7 @@
 
 /*
 
-    JAMS GENERAL STYLE
+    JAMS MAIN WINDOW STYLE
 
     This CSS file contains all style information about the JAMS's main window.
 
@@ -79,6 +79,16 @@
     -fx-background-radius: 5px;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
+}
+
+.speed-slider {
+    -fx-fill-height: true;
+    -fx-spacing: 2px;
+    -fx-alignment: center;
+}
+
+.speed-slider .slider {
+    -fx-pref-width: 200px;
 }
 
 .project-tab-pane {

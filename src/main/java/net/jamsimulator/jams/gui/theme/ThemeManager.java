@@ -83,7 +83,7 @@ public final class ThemeManager extends SelectableManager<Theme> {
     public static final ThemeManager INSTANCE = new ThemeManager(ResourceProvider.JAMS, NAME);
 
     private boolean cacheFileLoaded = false;
-    private final File cacheFile = TempUtils.createTemporalFile("currentTheme");
+    private File cacheFile;
 
     private String generalFont, codeFont;
 
@@ -281,6 +281,7 @@ public final class ThemeManager extends SelectableManager<Theme> {
 
     @Override
     protected void loadDefaultElements() {
+        cacheFile = TempUtils.createTemporalFile("currentTheme");
         loadFonts();
 
         try {

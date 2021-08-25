@@ -9,6 +9,7 @@
     "jams_bar.css",
     "jams_explorer.css",
     "jams_editor.css",
+    "jams_simulation.css",
     "extra.css"
   ]
 }
