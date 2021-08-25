@@ -103,7 +103,6 @@ public class ConfigurationWindow extends SplitPane {
         basicSectionContentsScroll.setFitToHeight(true);
 
         basicSectionContents = new VBox();
-        basicSectionContents.setPadding(new Insets(5, 0, 0, 5));
         basicSectionContents.getStyleClass().add("configuration-window-display-contents");
         basicSectionContentsScroll.setContent(basicSectionContents);
 

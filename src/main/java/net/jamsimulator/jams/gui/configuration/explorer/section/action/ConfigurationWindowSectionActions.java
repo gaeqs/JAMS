@@ -71,7 +71,7 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
         scrollPane.setFitToWidth(true);
 
         box = new VBox();
-        box.setSpacing(SPACING);
+        box.setSpacing(1);
 
         searchbar = new LanguageTextField(Messages.CONFIG_ACTION_SEARCH);
         box.getChildren().add(searchbar);

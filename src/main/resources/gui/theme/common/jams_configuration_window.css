@@ -1,0 +1,135 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
+/*
+
+    JAMS GENERAL STYLE
+
+    This CSS file contains all style information about JAMS's configuration window.
+
+*/
+
+.configuration-window-explorer {
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.configuration-window-node {
+    -fx-spacing: 5px;
+}
+
+.configuration-window-node .label {
+    -fx-font-size: 14px;
+}
+
+.configuration-window-section .explorer-element {
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.configuration-window-section .selected-explorer-element {
+    -fx-background-color: -theme-element-selected;
+}
+
+.configuration-window-display {
+    -fx-spacing: 5px;
+}
+
+.configuration-window-display-contents {
+    -fx-spacing: 7px;
+}
+
+.configuration-window-display-contents .label {
+    -fx-padding: 0px 0px 0px 5px;
+}
+
+.configuration-section-tree-display {
+    -fx-font-weight: bold;
+    -fx-text-fill: -theme-foreground-darker-2;
+    -fx-font-size: 12px;
+    -fx-padding: 10px 0px 0px 15px;
+}
+
+.configuration-window-region {
+    -fx-spacing: 5px;
+}
+
+.configuration-window-region-label {
+    -fx-text-fill: -theme-foreground-darker-2;
+    -fx-alignment: top-left;
+}
+
+.configuration-window-region-separator {
+    -fx-background-color: transparent;
+    -fx-border-color: -theme-foreground-darker-2;
+    -fx-border-width: 0px 0px 1px 0px;
+
+    -fx-padding: 7px 0px 0px 0px;
+}
+
+.action-remove-button {
+    -fx-padding: 1px;
+}
+
+.action-remove-button:hover {
+    -fx-background-color: darkred;
+}
+
+.action-add-button {
+    -fx-padding: 1px 3px 1px 3px;
+}
+
+.plugin-section:horizontal .split-pane-divider {
+    -fx-background-color: -theme-background;
+}
+
+.plugin-list {
+    -fx-background-color: -theme-background-darker;
+}
+
+.plugin-display {
+    -fx-background-color: -theme-background-darker;
+}
+
+.plugin-entry:hover {
+    -fx-background-color: -theme-background-lighter;
+}
+
+.plugin-entry-selected,
+.plugin-entry-selected:hover {
+    -fx-background-color: -theme-background-pressed;
+}
+
+.plugin-entry-name,
+.plugin-display-name {
+    -fx-font-weight: bold;
+}
+
+.plugin-entry-version,
+.plugin-display-version {
+    -fx-text-fill: -theme-foreground-darker;
+}
+
+.plugin-entry-author,
+.plugin-display-author {
+    -fx-text-fill: -theme-foreground-darker;
+}

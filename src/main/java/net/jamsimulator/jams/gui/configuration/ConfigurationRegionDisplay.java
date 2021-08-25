@@ -33,8 +33,12 @@ import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
 public class ConfigurationRegionDisplay extends HBox {
 
+    public static final String STYLE_CLASS = "configuration-window-region";
+    public static final String STYLE_CLASS_LABEL = "configuration-window-region-label";
+    public static final String STYLE_CLASS_SEPARARTOR = "configuration-window-region-separator";
+
     public ConfigurationRegionDisplay(String languageNode, String region) {
-        setSpacing(5);
+        getStyleClass().add(STYLE_CLASS);
         if (languageNode != null) {
             languageNode += "_REGION_" + region.toUpperCase();
         }
@@ -42,7 +46,7 @@ public class ConfigurationRegionDisplay extends HBox {
     }
 
     public ConfigurationRegionDisplay(String languageNode) {
-        setSpacing(5);
+        getStyleClass().add(STYLE_CLASS);
         refresh(languageNode);
     }
 
@@ -53,8 +57,8 @@ public class ConfigurationRegionDisplay extends HBox {
         Label label = new LanguageLabel(languageNode);
         Separator separator = new Separator(Orientation.HORIZONTAL);
 
-        label.getStyleClass().add("configuration-window-region-label");
-        separator.getStyleClass().add("configuration-window-region-separator");
+        label.getStyleClass().add(STYLE_CLASS_LABEL);
+        separator.getStyleClass().add(STYLE_CLASS_SEPARARTOR);
         separator.prefWidthProperty().bind(widthProperty().subtract(label.widthProperty()).subtract(20));
 
         getChildren().add(new Group(label));

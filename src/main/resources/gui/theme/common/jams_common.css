@@ -80,6 +80,23 @@
 
 /* Special class used to hide the horizontal scroll bar */
 .table-view-horizontal-fit .scroll-bar:horizontal {
-    -fx-opacity: 0;
-    -fx-padding: -7;
+    -fx-opacity: 0px;
+    -fx-padding: -7px;
+}
+
+.window-button {
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
+    -fx-background-color: -theme-background;
+    -fx-background-radius: 0px;
+    -fx-pref-width: 30px;
+    -fx-pref-height: 30px;
+}
+
+.window-button:hover {
+    -fx-background-color: -theme-background-lighter;
+}
+
+.window-button:pressed {
+    -fx-background-color: -theme-background-pressed;
 }

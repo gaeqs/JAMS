@@ -65,7 +65,6 @@ public class MainAnchorPane extends AnchorPane {
         topBar = new TopBar(stage, transparent);
         getChildren().add(topBar);
         AnchorUtils.setAnchor(topBar, -1, -1, 0, 0);
-        topBar.setPrefHeight(30);
     }
 
     private void generateProjectsTabPane() {

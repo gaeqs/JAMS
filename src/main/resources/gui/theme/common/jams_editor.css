@@ -1,0 +1,346 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
+/*
+
+    JAMS GENERAL STYLE
+
+    This CSS file contains all style information about JAMS's file editor.
+
+*/
+
+
+/* FILE DISPLAY LIST */
+.file-editor-list {
+    -fx-background-color: -theme-background-darkest;
+}
+
+.file-editor-list .tab-header-area .tab-header-background {
+    -fx-background-color: -theme-background;
+}
+
+.file-editor-list .tab-header-area .tab:selected {
+    -fx-background-color: -theme-background-lighter;
+    -fx-border-color: -theme-background-lighter -theme-background-lighter -theme-background-pressed -theme-background-lighter;
+}
+
+.draggable-file-editor-list:hover {
+    -fx-background-color: -theme-header;
+}
+
+.draggable-file-editor-list .tab-header-area .tab-header-background:hover {
+    -fx-background-color: -theme-header;
+}
+
+/* WINDOW POPUPS */
+.window-popup-background {
+    -fx-border-color: -theme-background-lighter;
+    -fx-border-width: 1px;
+}
+
+/* CODE AREA */
+.code-area {
+    -fx-background-color: -theme-background-darkest;
+    -fx-text-fill: -theme-foreground;
+}
+
+.code-area .scroll-pane {
+    -fx-background-color: -theme-background-darkest;
+}
+
+.caret {
+    -fx-stroke: -theme-foreground;
+}
+
+.paragraph-box:has-caret {
+    -fx-background-color: -theme-background-darker;
+}
+
+/*Default text*/
+.styled-text-area .text {
+    -fx-fill: -theme-foreground;
+    -fx-font-family: "{FONT_CODE}";
+    -fx-font-size: 13.5;
+}
+
+.code-area .paragraph-text {
+    -fx-padding: 0px 0px 0px 5px;
+}
+
+.code-area .selection {
+    -fx-fill: #214182;
+}
+
+
+/* NUMBER LINE */
+.code-area .left-bar {
+    -fx-border-width: 0px 1px 0px 0px;
+    -fx-border-color: -theme-background-lighter;
+    -fx-background-color: -theme-background-darker;
+}
+
+.code-area .left-bar-background {
+    -fx-fill: -theme-background-darker;
+}
+
+.code-area .left-bar .line-number {
+    -fx-background-color: transparent;
+}
+
+.code-area .left-bar .line-number .text {
+    -fx-fill: -theme-foreground-darker-2;
+    -fx-font-family: "{FONT_CODE}";
+    -fx-font-size: 12px;
+}
+
+.paragraph-box:has-caret .left-bar .line-number .text {
+    -fx-fill: -theme-foreground;
+}
+
+/* AUTOCOMPLETION */
+.autocompletion-popup {
+    -fx-background-color: -theme-background;
+    -fx-border-color: -theme-background-darker-2;
+    -fx-border-width: 1px;
+}
+
+.autocompletion-popup-element .label {
+    -fx-padding: 0px 5px 0px 5px;
+    -fx-font-family: "{FONT_CODE}";
+    -fx-font-size: 13.5;
+}
+
+.autocompletion-popup-element-selected {
+    -fx-background-color: -theme-element-selected;
+}
+
+/* MIPS DOCUMENTATION */
+
+.documentation-top-message * {
+    -fx-background-color: -theme-background-lighter;
+    -fx-padding: 8px 0px 5px 10px;
+}
+
+.documentation * {
+    -fx-background-color: -theme-background-darker;
+    -fx-padding: 8px 0px 5px 10px;
+}
+
+.documentation .text {
+    -fx-font-family: "{FONT_GENERAL}";
+}
+
+.documentation .code {
+    -fx-font-family: "{FONT_CODE}";
+    -fx-font-size: 14.5;
+}
+
+.documentation .bold {
+    -fx-font-weight: bold;
+}
+
+.documentation .underline {
+    -rtfx-underline-color: -theme-foreground;
+    -rtfx-underline-width: 1px
+}
+
+.documentation .italic {
+    -fx-font-style: italic;
+}
+
+.documentation .sub {
+    -fx-font-size: 9px;
+}
+
+.documentation .black {
+    -fx-fill: -theme-foreground-darker;
+    -fx-font-weight: bolder;
+}
+
+/* HINT BAR */
+.hint-bar-error {
+    -fx-fill: #cb2f2f;
+}
+
+.hint-bar-warning {
+    -fx-fill: #efbe0a;
+}
+
+.hint-bar-info {
+    -fx-fill: #4c762e;
+}
+
+/* SEARCH */
+.code-area .search-result {
+    -rtfx-background-color: #213414;
+    -rtfx-border-stroke-color: #3c6321;
+    -rtfx-border-stroke-width: 1px;
+}
+
+.code-area .selected-search-result {
+    -rtfx-background-color: #2b3c6d;
+    -rtfx-border-stroke-color: #ffffff;
+    -rtfx-border-stroke-width: 1px;
+}
+
+/* LOG */
+.code-area .log_error {
+    -fx-fill: #cb2f2f;
+}
+
+.code-area .log_info {
+    -fx-fill: #2f75cb;
+}
+
+.code-area .log_warning {
+    -fx-fill: #cbb62f;
+}
+
+.code-area .log_done {
+    -fx-fill: #3fcb2f;
+}
+
+/* MIPS */
+.code-area .mips-comment {
+    -fx-fill: #8b8b8b;
+}
+
+.code-area .mips-label {
+    -fx-font-style: italic;
+}
+
+.code-area .mips-global-label {
+    -fx-fill: #d55746;
+    -fx-font-style: italic;
+}
+
+.code-area .mips-directive {
+    -fx-fill: #f8a15e;
+}
+
+.code-area .mips-directive-parameter {
+    -fx-fill: #f85ee3;
+}
+
+.code-area .mips-directive-parameter-string {
+    -fx-fill: #4c762e;
+}
+
+.code-area .mips-instruction {
+    -fx-fill: #f8d75e;
+}
+
+.code-area .mips-pseudo-instruction {
+    -rtfx-underline-color: #7af85e;
+    -rtfx-underline-width: 1px;
+}
+
+.code-area .mips-instruction-parameter-label {
+    -fx-fill: #ffffff;
+    -fx-font-style: italic;
+}
+
+.code-area .mips-instruction-parameter-global-label {
+    -fx-fill: #d55746;
+    -fx-font-style: italic;
+}
+
+.code-area .mips-instruction-parameter-register {
+    -fx-fill: #90a3fd;
+}
+
+.code-area .mips-instruction-parameter-immediate {
+    -fx-fill: #7af85e;
+}
+
+.code-area .mips-instruction-parameter-string {
+    -fx-fill: #4c762e;
+}
+
+.code-area .mips-macro-call {
+    -fx-fill: #5ef8d4;
+}
+
+.code-area .mips-macro-call-parameter {
+    -fx-fill: #875ef8;
+}
+
+.code-area .mips-warning {
+    -rtfx-underline-color: #efbe0a;
+    -rtfx-underline-width: 1px;
+}
+
+.code-area .mips-error {
+    -rtfx-underline-color: #cb2f2f;
+    -rtfx-underline-width: 1px;
+}
+
+/* SEARCH AREA */
+.code-file-editor-search {
+    -fx-pref-height: 30px;
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.code-file-editor-search-text-field {
+    -fx-pref-width: 200px;
+}
+
+.code-file-editor-search-button {
+    -fx-background-color: -theme-background-darker-2;
+    -fx-border-color: transparent;
+    -fx-font-weight: bold;
+}
+
+.code-file-editor-search-results {
+    -fx-font-size: 12px;
+}
+
+/* MIPS POPUPS*/
+.mips-popup {
+    -fx-background-color: -theme-background-lighter;
+    -fx-padding: 5px 5px 5px 5px;
+    -fx-border-color: -theme-background-lighter;
+    -fx-border-width: 1px;
+}
+
+.mips-popup .label {
+    -fx-font-size: 12.5px;
+}
+
+/* MIPS EXPLORER */
+.mips-explorer-file-to-assemble {
+    -fx-background-color: #495c42;
+}
+
+/*Added and selected*/
+.mips-explorer-file-to-assemble.selected-explorer-element {
+    -fx-background-color: #4b6578;
+}
+
+/* MIPS CONFIGURATIONS */
+.mips-configurations-window-name-field {
+    -fx-alignment: center-left;
+    -fx-spacing: 5px;
+    -fx-padding: 5px 5px 5px 5px;
+}
