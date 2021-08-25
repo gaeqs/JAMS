@@ -77,7 +77,7 @@ AnchorPane {
 }
 
 .check-box .box {
-    -fx-background-color: -theme-background-darker;
+    -fx-background-color: -theme-background-darker-2;
     -fx-effect: dropshadow(gaussian, -theme-background-darkest, 3, 0.2, 1, 1);
     -fx-background-radius: 3px;
     -fx-border-width: 3px;
