@@ -51,6 +51,7 @@ AnchorPane {
 .button:hover {
     -fx-background-color: -theme-background-lighter;
     -fx-effect: dropshadow(gaussian, -theme-background-darkest, 4, 0.4, 1.2, 1.2);
+    -fx-cursor: hand;
 }
 
 .button:pressed {
@@ -232,6 +233,7 @@ AnchorPane {
 
 .menu:hover {
     -fx-background-color: -theme-background-lighter;
+    -fx-cursor: hand;
 }
 
 .menu:showing {
@@ -401,7 +403,15 @@ AnchorPane {
     -fx-border-color: -theme-background;
 }
 
+
+.tab-pane .tab-header-area .tab:hover {
+    -fx-cursor: hand;
+    -fx-background-color: -theme-background-darker;
+}
+
 .tab-pane .tab-header-area .tab:selected {
+    -fx-background-color: -theme-background;
+    -fx-cursor: default;
     -fx-border-color: -theme-background -theme-background -theme-background-pressed -theme-background;
 }
 
@@ -507,6 +517,7 @@ AnchorPane {
     -fx-border-color: -theme-background-lighter;
     -fx-background-radius: 0px;
     -fx-text-fill: -theme-foreground;
+    -fx-cursor: hand;
 }
 
 .toggle-button:selected {

@@ -109,7 +109,21 @@
 
 .bar-pane-node-header-button {
     -fx-background-color: transparent;
+    -fx-border-color: transparent;
     -fx-background-radius: 0px;
+    -fx-border-width: 0px;
+    -fx-background-insets: 0px;
+    -fx-effect: none;
+}
+
+.bar-pane-node-header-button:hover {
+    -fx-border-color: transparent;
+    -fx-effect: none;
+}
+
+.bar-pane-node-header-button:pressed {
+    -fx-border-color: transparent;
+    -fx-effect: innershadow(gaussian, -theme-background-darkest, 3, 0.2, 1, 1);
 }
 
 /*********

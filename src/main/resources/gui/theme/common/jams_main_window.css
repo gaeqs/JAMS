@@ -113,5 +113,6 @@
 }
 
 .project-tab-pane .tab-header-area .tab:selected {
+    -fx-background-color: -theme-background-darker-2;
     -fx-border-color: -theme-background-darker-2 -theme-background-darker-2 -theme-background-pressed -theme-background-darker-2;
 }
