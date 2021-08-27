@@ -51,7 +51,7 @@ public class GeneralActionAssemble extends ContextAction {
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
 
     public GeneralActionAssemble(ResourceProvider provider) {
-        super(provider,NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_ASSEMBLE, DEFAULT_COMBINATION,
+        super(provider, NAME, RegionTags.GENERAL, Messages.ACTION_GENERAL_ASSEMBLE, DEFAULT_COMBINATION,
                 GeneralActionRegions.MIPS_PRIORITY, MainMenuRegion.SIMULATION, Icons.PROJECT_ASSEMBLE);
     }
 

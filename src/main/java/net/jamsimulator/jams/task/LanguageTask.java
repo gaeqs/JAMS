@@ -300,8 +300,7 @@ public abstract class LanguageTask<E> extends Task<E> {
     @Override
     public void updateMessage(String message) {
         messageLanguageNode = message;
-        super.updateMessage(message);
-        super.updateTitle(message == null ? null : Manager.ofD(Language.class).getDefault().getOrDefault(message));
+        super.updateMessage(message == null ? null : Manager.ofD(Language.class).getDefault().getOrDefault(message));
     }
 
     @Override
