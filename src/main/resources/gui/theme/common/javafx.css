@@ -110,7 +110,6 @@ AnchorPane {
 .combo-box-base {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
-    -fx-border-width: 3px;
     -fx-effect: dropshadow(gaussian, -theme-background-darkest, 3, 0.2, 1, 1);
 }
 
@@ -123,26 +122,40 @@ AnchorPane {
     -fx-background-color: -theme-foreground-darker;
 }
 
-.combo-box-base .list-cell {
+.combo-box-base > .list-cell {
+    -fx-background-color: -theme-background-lighter;
     -fx-text-fill: -theme-foreground;
     -fx-font-size: 14px;
-    -fx-background-color: -theme-background-lighter;
     -fx-background-radius: 3px 0px 0px 3px;
     -fx-padding: 1px 1px 1px 3px;
 }
 
-.combo-box-base .combo-box-popup .list-view {
-    -fx-background-color: -theme-background-darker;
+.combo-box-base .list-view {
+    -fx-background-color: -theme-background-lighter;
+    -fx-background-radius: 3px;
+    -fx-background-insets: 1px;
     -fx-text-fill: -theme-foreground;
-    -fx-font-size: 14px;
+}
+
+.combo-box-base .list-view .scroll-bar {
+    -fx-background-radius: 0px 3px 3px 0px;
+    -fx-effect: dropshadow(gaussian, -theme-background-darkest, 3, 0.2, -1, 0);
+}
+
+.combo-box-base .list-view .scroll-bar .thumb {
+    -fx-background-radius: 0px 3px 3px 0px;
 }
 
 .combo-box-base .list-view .list-cell {
     -fx-text-fill: -theme-foreground;
-    -fx-background-color: -theme-background-darker;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-font-size: 14px;
+    -fx-background-radius: 3px;
+    -fx-padding: 0px;
 }
 
-.combo-box-base .list-view .list-cell:hover {
+.combo-box-base .list-view .list-cell:hover:filled {
     -fx-text-fill: -theme-foreground;
     -fx-background-color: -theme-background-pressed;
 }
@@ -150,6 +163,7 @@ AnchorPane {
 .context-menu {
     -fx-background-color: -theme-background;
     -fx-padding: 0px;
+    -fx-background-radius: 3px;
 }
 
 .context-menu .separator {
@@ -248,6 +262,7 @@ AnchorPane {
 .menu-item {
     -fx-background-color: -theme-background;
     -fx-padding: 2px 5px 2px 5px;
+    -fx-background-radius: 3px;
 }
 
 .menu-item .label {
