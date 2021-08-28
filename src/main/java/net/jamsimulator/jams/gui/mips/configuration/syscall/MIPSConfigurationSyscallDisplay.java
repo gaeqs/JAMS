@@ -37,8 +37,8 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 public class MIPSConfigurationSyscallDisplay extends VBox {
 
-    public static final String STYLE_CLASS = "  display";
-    public static final String REPRESENTATION_STYLE_CLASS = "node";
+    public static final String STYLE_CLASS = "display";
+    public static final String REPRESENTATION_STYLE_CLASS = "representation";
 
     private final SyscallExecutionBuilder<?> builder;
 

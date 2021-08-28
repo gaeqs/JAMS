@@ -42,6 +42,8 @@ import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 public class MIPSConfigurationCacheDisplay extends VBox {
 
     public static final String STYLE_CLASS = "display";
+    public static final String REPRESENTATION_STYLE_CLASS = "representation";
+    public static final String SIZE_STYLE_CLASS = "size";
 
     private final CacheBuilder<?> builder;
     private Label sizeLabel;
@@ -60,7 +62,7 @@ public class MIPSConfigurationCacheDisplay extends VBox {
         for (Property<?> property : builder.getProperties()) {
 
             var hBox = new HBox();
-            hBox.setSpacing(5);
+            hBox.getStyleClass().add(REPRESENTATION_STYLE_CLASS);
 
             var languageNode = builder.getLanguageNode() + "_PROPERTY_" + property.getName();
             var label = new LanguageLabel(languageNode);
@@ -88,7 +90,7 @@ public class MIPSConfigurationCacheDisplay extends VBox {
         getChildren().addAll(new Group(), new ConfigurationRegionDisplay(Messages.SIMULATION_CONFIGURATION_CACHES_TAB_INFO));
 
         var sizeBox = new HBox();
-        sizeBox.setSpacing(5);
+        sizeBox.getStyleClass().add(SIZE_STYLE_CLASS);
         sizeBox.getChildren().add(new LanguageLabel(Messages.SIMULATION_CONFIGURATION_CACHES_TAB_SIZE));
         sizeBox.getChildren().add(sizeLabel = new Label(builder.getSizeInBytes() + " B"));
         getChildren().add(sizeBox);

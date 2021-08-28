@@ -43,11 +43,13 @@ import java.util.function.Consumer;
 public class MemoryBuilderValueEditor extends ComboBox<MemoryBuilder> implements ValueEditor<MemoryBuilder> {
 
     public static final String NAME = MemoryBuilderValueConverter.NAME;
+    public static final String STYLE_CLASS = GENERAL_STYLE_CLASS + "-" + NAME.replace("_", "-");
 
     private Consumer<MemoryBuilder> listener = memoryBuilder -> {
     };
 
     public MemoryBuilderValueEditor() {
+        getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
         var manager = Manager.ofD(MemoryBuilder.class);
         setConverter(ValueConverters.getByTypeUnsafe(MemoryBuilder.class));
         getItems().addAll(manager);
@@ -74,8 +76,8 @@ public class MemoryBuilderValueEditor extends ComboBox<MemoryBuilder> implements
     @Override
     public Node buildConfigNode(Label label) {
         var box = new HBox(label, this);
-        box.setSpacing(5);
-        box.setAlignment(Pos.CENTER_LEFT);
+        box.getStyleClass().add(GENERAL_STYLE_CLASS + "-hbox");
+        box.getStyleClass().add(STYLE_CLASS + "-hbox");
         return box;
     }
 

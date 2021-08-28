@@ -43,11 +43,13 @@ import java.util.function.Consumer;
 public class ArchitectureValueEditor extends ComboBox<Architecture> implements ValueEditor<Architecture> {
 
     public static final String NAME = ActionValueConverter.NAME;
+    public static final String STYLE_CLASS = GENERAL_STYLE_CLASS + "-" + NAME;
 
     private Consumer<Architecture> listener = architecture -> {
     };
 
     public ArchitectureValueEditor() {
+        getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
         var manager = Manager.ofD(Architecture.class);
         setConverter(ValueConverters.getByTypeUnsafe(Architecture.class));
         getItems().addAll(manager);
@@ -74,8 +76,8 @@ public class ArchitectureValueEditor extends ComboBox<Architecture> implements V
     @Override
     public Node buildConfigNode(Label label) {
         var box = new HBox(label, this);
-        box.setSpacing(5);
-        box.setAlignment(Pos.CENTER_LEFT);
+        box.getStyleClass().add(GENERAL_STYLE_CLASS + "-hbox");
+        box.getStyleClass().add(STYLE_CLASS + "-hbox");
         return box;
     }
 

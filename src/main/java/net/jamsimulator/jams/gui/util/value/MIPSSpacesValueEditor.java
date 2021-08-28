@@ -40,11 +40,13 @@ import java.util.function.Consumer;
 public class MIPSSpacesValueEditor extends ComboBox<MIPSSpaces> implements ValueEditor<MIPSSpaces> {
 
     public static final String NAME = MIPSSpacesValueConverter.NAME;
+    public static final String STYLE_CLASS = GENERAL_STYLE_CLASS + "-" + NAME.replace("_", "-");
 
     private Consumer<MIPSSpaces> listener = mipsSpaces -> {
     };
 
     public MIPSSpacesValueEditor() {
+        getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
         setCellFactory(param -> new MIPSSpacesListCell());
         setButtonCell(new MIPSSpacesListCell());
         setConverter(ValueConverters.getByTypeUnsafe(MIPSSpaces.class));
@@ -71,8 +73,8 @@ public class MIPSSpacesValueEditor extends ComboBox<MIPSSpaces> implements Value
     @Override
     public Node buildConfigNode(Label label) {
         var box = new HBox(label, this);
-        box.setSpacing(5);
-        box.setAlignment(Pos.CENTER_LEFT);
+        box.getStyleClass().add(GENERAL_STYLE_CLASS + "-hbox");
+        box.getStyleClass().add(STYLE_CLASS + "-hbox");
         return box;
     }
 

@@ -52,6 +52,7 @@ import java.util.function.Consumer;
 public class CacheBuilderValueEditor extends ComboBox<CacheBuilder<?>> implements ValueEditor<CacheBuilder<?>> {
 
     public static final String NAME = CacheBuilderValueConverter.NAME;
+    public static final String STYLE_CLASS = GENERAL_STYLE_CLASS + "-" + NAME.replace("_", "-");
 
     private static final List<CacheBuilder<?>> SORTED_BUILDERS = new LinkedList<>();
 
@@ -67,6 +68,7 @@ public class CacheBuilderValueEditor extends ComboBox<CacheBuilder<?>> implement
     };
 
     public CacheBuilderValueEditor() {
+        getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
         setCellFactory(list -> new CacheBuilderLanguageListCell());
         setButtonCell(new CacheBuilderLanguageListCell());
 
@@ -105,8 +107,8 @@ public class CacheBuilderValueEditor extends ComboBox<CacheBuilder<?>> implement
     @Override
     public Node buildConfigNode(Label label) {
         var box = new HBox(label, this);
-        box.setSpacing(5);
-        box.setAlignment(Pos.CENTER_LEFT);
+        box.getStyleClass().add(GENERAL_STYLE_CLASS + "-hbox");
+        box.getStyleClass().add(STYLE_CLASS + "-hbox");
         return box;
     }
 

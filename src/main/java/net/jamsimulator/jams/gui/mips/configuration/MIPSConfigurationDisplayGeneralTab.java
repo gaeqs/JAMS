@@ -45,7 +45,7 @@ import java.util.List;
 public class MIPSConfigurationDisplayGeneralTab extends VBox {
 
     public static final String STYLE_CLASS = "general";
-    public static final String REPRESENTATION_STYLE_CLASS = "node";
+    public static final String REPRESENTATION_STYLE_CLASS = "representation";
 
     private final MIPSSimulationConfiguration configuration;
     private final List<NodeRepresentation> representations;

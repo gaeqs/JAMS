@@ -22,38 +22,22 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.util.value;
+/*
 
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import net.jamsimulator.jams.gui.util.converter.ValueConverter;
+    JAMS CONFIGURATION WINDOW
 
-import java.util.function.Consumer;
+    This CSS file contains all style information about JAMS's value editors.
 
-public interface ValueEditor<E> {
+*/
 
-    String GENERAL_STYLE_CLASS = "value-editor";
+.value-editor {
+}
 
-    default void setCurrentValueUnsafe(Object value) {
-        setCurrentValue((E) value);
-    }
+.value-editor-hbox {
+    -fx-spacing: 5px;
+    -fx-alignment: center-left;
+}
 
-    E getCurrentValue();
-
-    void setCurrentValue(E value);
-
-    Node getAsNode();
-
-    Node buildConfigNode(Label label);
-
-    void addListener(Consumer<E> consumer);
-
-    ValueConverter<E> getLinkedConverter();
-
-    interface Builder<E> {
-
-        ValueEditor<E> build();
-
-    }
-
+.value-editor-assembled-instruction-viewer-order-hbox {
+    -fx-fill-width: true;
 }

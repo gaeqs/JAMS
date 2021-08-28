@@ -6,6 +6,7 @@
     "jams_start_window.css",
     "jams_main_window.css",
     "jams_configuration_window.css",
+    "jams_value_editors.css",
     "jams_bar.css",
     "jams_explorer.css",
     "jams_editor.css",

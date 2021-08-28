@@ -52,6 +52,7 @@ import java.util.function.Consumer;
 public class SyscallExecutionBuilderValueEditor extends ComboBox<SyscallExecutionBuilder<?>> implements ValueEditor<SyscallExecutionBuilder<?>> {
 
     public static final String NAME = SyscallExecutionBuilderValueConverter.NAME;
+    public static final String STYLE_CLASS = GENERAL_STYLE_CLASS + "-" + NAME.replace("_", "-");
 
     private static final List<SyscallExecutionBuilder<?>> SORTED_BUILDERS = new LinkedList<>();
 
@@ -68,7 +69,7 @@ public class SyscallExecutionBuilderValueEditor extends ComboBox<SyscallExecutio
     };
 
     public SyscallExecutionBuilderValueEditor() {
-
+        getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
         setCellFactory(list -> new SyscallLanguageListCell());
         setButtonCell(new SyscallLanguageListCell());
 
@@ -107,8 +108,8 @@ public class SyscallExecutionBuilderValueEditor extends ComboBox<SyscallExecutio
     @Override
     public Node buildConfigNode(Label label) {
         var box = new HBox(label, this);
-        box.setSpacing(5);
-        box.setAlignment(Pos.CENTER_LEFT);
+        box.getStyleClass().add(GENERAL_STYLE_CLASS + "-hbox");
+        box.getStyleClass().add(STYLE_CLASS + "-hbox");
         return box;
     }
 

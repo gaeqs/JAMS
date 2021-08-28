@@ -38,11 +38,13 @@ import java.util.function.Consumer;
 public class FontValueEditor extends ComboBox<String> implements ValueEditor<String> {
 
     public static final String NAME = "font";
+    public static final String STYLE_CLASS = GENERAL_STYLE_CLASS + "-" +NAME;
 
     private Consumer<String> listener = font -> {
     };
 
     public FontValueEditor() {
+        getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
         getItems().addAll(Font.getFamilies());
         getSelectionModel().select(0);
         getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> listener.accept(val));
@@ -66,8 +68,8 @@ public class FontValueEditor extends ComboBox<String> implements ValueEditor<Str
     @Override
     public Node buildConfigNode(Label label) {
         var box = new HBox(label, this);
-        box.setSpacing(5);
-        box.setAlignment(Pos.CENTER_LEFT);
+        box.getStyleClass().add(GENERAL_STYLE_CLASS + "-hbox");
+        box.getStyleClass().add(STYLE_CLASS + "-hbox");
         return box;
     }
 

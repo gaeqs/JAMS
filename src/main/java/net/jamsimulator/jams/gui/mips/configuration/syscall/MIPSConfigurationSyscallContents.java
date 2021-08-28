@@ -40,7 +40,7 @@ import java.util.List;
 public class MIPSConfigurationSyscallContents extends Explorer {
 
     public static final String STYLE_CLASS = "contents";
-    public static final String REPRESENTATION_STYLE_CLASS = "node";
+    public static final String REPRESENTATION_STYLE_CLASS = "representation";
 
     private final MIPSConfigurationDisplaySyscallTab syscallTab;
     private final List<Representation> representations;

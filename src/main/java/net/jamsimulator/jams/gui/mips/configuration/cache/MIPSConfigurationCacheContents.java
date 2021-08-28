@@ -41,6 +41,7 @@ import java.util.List;
 public class MIPSConfigurationCacheContents extends Explorer {
 
     public static final String STYLE_CLASS = "contents";
+    public static final String REPRESENTATION_STYLE_CLASS = "representation";
 
     private final MIPSConfigurationDisplayCacheTab cacheTab;
     private final List<Representation> representations;
@@ -121,6 +122,8 @@ public class MIPSConfigurationCacheContents extends Explorer {
             super(parent, String.valueOf(builder.getName()), 1);
             this.index = index;
             this.builder = builder;
+
+            getStyleClass().add(REPRESENTATION_STYLE_CLASS);
 
             label.setText(String.valueOf(index));
 
