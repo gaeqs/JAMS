@@ -38,7 +38,7 @@ import net.jamsimulator.jams.utils.Validate;
 
 public class ConfigurationWindowNode extends HBox {
 
-    public static final String STYLE_CLASS = "configuration-window-node";
+    public static final String STYLE_CLASS = "configuration-node";
     public static final String REGION_STYLE_CLASS = "region";
 
     protected Configuration configuration;

@@ -28,7 +28,7 @@ import javafx.beans.property.Property;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.configuration.ConfigurationRegionDisplay;
+import net.jamsimulator.jams.gui.configuration.RegionDisplay;
 import net.jamsimulator.jams.gui.util.propertyeditor.BooleanPropertyEditor;
 import net.jamsimulator.jams.gui.util.propertyeditor.PropertyEditors;
 import net.jamsimulator.jams.language.Messages;
@@ -49,7 +49,7 @@ public class MIPSConfigurationSyscallDisplay extends VBox {
     }
 
     private void populate() {
-        getChildren().add(new ConfigurationRegionDisplay(Messages.SIMULATION_CONFIGURATION_SYSTEM_CALLS_TAB_PROPERTIES));
+        getChildren().add(new RegionDisplay(Messages.SIMULATION_CONFIGURATION_SYSTEM_CALLS_TAB_PROPERTIES));
         getChildren().add(new Region());
 
         for (Property<?> property : builder.getProperties()) {

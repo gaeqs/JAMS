@@ -61,6 +61,10 @@ import java.util.Objects;
 
 public class ConfigurationWindow extends SplitPane {
 
+    public static final String STYLE_CLASS = "configuration";
+    public static final String DISPLAY_STYLE_CLASS = "display";
+    public static final String DISPLAY_CONTENTS_STYLE_CLASS = "contents";
+
     private static final int WIDTH = 900;
     private static final int HEIGHT = 600;
 
@@ -81,6 +85,8 @@ public class ConfigurationWindow extends SplitPane {
         this.configuration = configuration;
         this.meta = meta;
 
+        getStyleClass().add(STYLE_CLASS);
+
         explorerScrollPane = new PixelScrollPane();
         explorerScrollPane.setFitToHeight(true);
         explorerScrollPane.setFitToWidth(true);
@@ -96,14 +102,14 @@ public class ConfigurationWindow extends SplitPane {
         sectionTreeDisplay = new SectionTreeDisplay();
 
         sectionDisplay = new AnchorPane();
-        sectionDisplay.getStyleClass().add("configuration-window-display");
+        sectionDisplay.getStyleClass().add(DISPLAY_STYLE_CLASS);
 
         basicSectionContentsScroll = new PixelScrollPane();
         basicSectionContentsScroll.setFitToWidth(true);
         basicSectionContentsScroll.setFitToHeight(true);
 
         basicSectionContents = new VBox();
-        basicSectionContents.getStyleClass().add("configuration-window-display-contents");
+        basicSectionContents.getStyleClass().add(DISPLAY_CONTENTS_STYLE_CLASS);
         basicSectionContentsScroll.setContent(basicSectionContents);
 
         AnchorUtils.setAnchor(sectionTreeDisplay, 0, -1, 0, 0);
@@ -171,7 +177,7 @@ public class ConfigurationWindow extends SplitPane {
             if (currentRegion == null || !currentRegion.equals(node.getRegion())) {
                 currentRegion = node.getRegion();
                 if (currentRegion != null) {
-                    basicSectionContents.getChildren().add(new ConfigurationRegionDisplay(section.getLanguageNode(), currentRegion));
+                    basicSectionContents.getChildren().add(new RegionDisplay(section.getLanguageNode(), currentRegion));
                 }
             }
             basicSectionContents.getChildren().add(node);

@@ -33,7 +33,7 @@ import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.configuration.ConfigurationRegionDisplay;
+import net.jamsimulator.jams.gui.configuration.RegionDisplay;
 import net.jamsimulator.jams.gui.util.value.RangedIntegerValueEditor;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
@@ -61,7 +61,7 @@ public class LabCounter extends VBox {
         this.simulation = simulation;
         this.address = Jams.getMainConfiguration().getNumber(CONFIG_NODE).orElse(0).intValue();
 
-        getChildren().add(new ConfigurationRegionDisplay(Messages.LAB_COUNTER));
+        getChildren().add(new RegionDisplay(Messages.LAB_COUNTER));
         setSpacing(5);
         setFillWidth(true);
 

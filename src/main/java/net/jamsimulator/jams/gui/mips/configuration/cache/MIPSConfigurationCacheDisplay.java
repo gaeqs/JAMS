@@ -30,7 +30,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.configuration.ConfigurationRegionDisplay;
+import net.jamsimulator.jams.gui.configuration.RegionDisplay;
 import net.jamsimulator.jams.gui.util.propertyeditor.BooleanPropertyEditor;
 import net.jamsimulator.jams.gui.util.propertyeditor.Pow2PropertyEditor;
 import net.jamsimulator.jams.gui.util.propertyeditor.PropertyEditor;
@@ -56,7 +56,7 @@ public class MIPSConfigurationCacheDisplay extends VBox {
 
     @SuppressWarnings("unchecked")
     private void populate() {
-        getChildren().add(new ConfigurationRegionDisplay(Messages.SIMULATION_CONFIGURATION_CACHES_TAB_PROPERTIES));
+        getChildren().add(new RegionDisplay(Messages.SIMULATION_CONFIGURATION_CACHES_TAB_PROPERTIES));
         getChildren().add(new Region());
 
         for (Property<?> property : builder.getProperties()) {
@@ -87,7 +87,7 @@ public class MIPSConfigurationCacheDisplay extends VBox {
             getChildren().add(hBox);
         }
 
-        getChildren().addAll(new Group(), new ConfigurationRegionDisplay(Messages.SIMULATION_CONFIGURATION_CACHES_TAB_INFO));
+        getChildren().addAll(new Group(), new RegionDisplay(Messages.SIMULATION_CONFIGURATION_CACHES_TAB_INFO));
 
         var sizeBox = new HBox();
         sizeBox.getStyleClass().add(SIZE_STYLE_CLASS);

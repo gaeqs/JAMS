@@ -34,6 +34,8 @@ import java.util.HashMap;
 
 public class ConfigurationWindowExplorer extends Explorer {
 
+    public static final String STYLE_CLASS = "configuration-explorer";
+
     private final ConfigurationWindow configurationWindow;
 
     /**
@@ -41,7 +43,7 @@ public class ConfigurationWindowExplorer extends Explorer {
      */
     public ConfigurationWindowExplorer(ConfigurationWindow configurationWindow, ScrollPane scrollPane) {
         super(scrollPane, false, false);
-        getStyleClass().add("configuration-window-explorer");
+        getStyleClass().add(STYLE_CLASS);
         this.configurationWindow = configurationWindow;
         generateMainSection();
     }

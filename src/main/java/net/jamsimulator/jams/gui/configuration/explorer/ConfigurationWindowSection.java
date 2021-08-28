@@ -54,7 +54,6 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
                                       String languageNode, int hierarchyLevel, Configuration configuration,
                                       Configuration meta, Map<String, Integer> regions) {
         super(explorer, parent, name, hierarchyLevel, Comparator.comparing(ExplorerElement::getName), languageNode);
-        getStyleClass().add("configuration-window-section");
         this.configuration = configuration;
         this.meta = meta;
 

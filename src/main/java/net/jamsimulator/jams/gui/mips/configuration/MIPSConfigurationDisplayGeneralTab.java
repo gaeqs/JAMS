@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.mips.configuration;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.configuration.ConfigurationRegionDisplay;
+import net.jamsimulator.jams.gui.configuration.RegionDisplay;
 import net.jamsimulator.jams.gui.util.value.ValueEditor;
 import net.jamsimulator.jams.gui.util.value.ValueEditors;
 import net.jamsimulator.jams.language.Messages;
@@ -60,7 +60,7 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
         representations = new ArrayList<>();
 
 
-        getChildren().add(new ConfigurationRegionDisplay(Messages.SIMULATION_CONFIGURATION_GENERAL_REGION));
+        getChildren().add(new RegionDisplay(Messages.SIMULATION_CONFIGURATION_GENERAL_REGION));
         configuration.getNodes().forEach((preset, value) -> {
             var representation = new NodeRepresentation(preset, value);
             representation.refreshView(architecture);
@@ -75,7 +75,7 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
         configuration.setNodeValue(preset.getName(), value);
         if (preset.getType() == Architecture.class) {
             getChildren().clear();
-            getChildren().add(new ConfigurationRegionDisplay(Messages.SIMULATION_CONFIGURATION_GENERAL_REGION));
+            getChildren().add(new RegionDisplay(Messages.SIMULATION_CONFIGURATION_GENERAL_REGION));
             for (NodeRepresentation representation : representations) {
                 representation.refreshView((Architecture) value);
                 if (representation.isVisible()) {

@@ -122,6 +122,23 @@
     -fx-spacing: 7px;
 }
 
+.region-display {
+    -fx-spacing: 5px;
+}
+
+.region-display .label {
+    -fx-text-fill: -theme-foreground-darker-2;
+    -fx-alignment: top-left;
+}
+
+.region-display .separator {
+    -fx-background-color: transparent;
+    -fx-border-color: -theme-foreground-darker-2;
+    -fx-border-width: 0px 0px 1px 0px;
+
+    -fx-padding: 7px 0px 0px 0px;
+}
+
 .about-text {
     -fx-font-size: 18px;
     -fx-text-alignment: center;

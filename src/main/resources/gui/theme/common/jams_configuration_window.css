@@ -30,64 +30,51 @@
 
 */
 
-.configuration-window-explorer {
+.configuration {
+
+}
+
+.configuration-explorer {
     -fx-background-color: -theme-background-darker-2;
 }
 
-.configuration-window-node {
+.configuration-node {
     -fx-spacing: 5px;
 }
 
-.configuration-window-node .label {
+.configuration-node .label {
     -fx-font-size: 14px;
 }
 
-.configuration-window-node .region {
+.configuration-node .region {
     -fx-pref-width: 10px;
 }
 
-.configuration-window-section .explorer-element {
+.configuration-explorer .explorer-element {
     -fx-background-color: -theme-background-darker-2;
 }
 
-.configuration-window-section .selected-explorer-element {
+.configuration-explorer .selected-explorer-element {
     -fx-background-color: -theme-element-selected;
 }
 
-.configuration-window-display {
+.configuration .display {
     -fx-spacing: 5px;
 }
 
-.configuration-window-display-contents {
+.configuration .display .contents {
     -fx-spacing: 7px;
 }
 
-.configuration-window-display-contents .label {
+.configuration .display .contents .label {
     -fx-padding: 0px 0px 0px 5px;
 }
 
-.configuration-section-tree-display {
+.configuration .tree-display {
     -fx-font-weight: bold;
     -fx-text-fill: -theme-foreground-darker-2;
     -fx-font-size: 12px;
     -fx-padding: 10px 0px 0px 15px;
-}
-
-.configuration-window-region {
-    -fx-spacing: 5px;
-}
-
-.configuration-window-region-label {
-    -fx-text-fill: -theme-foreground-darker-2;
-    -fx-alignment: top-left;
-}
-
-.configuration-window-region-separator {
-    -fx-background-color: transparent;
-    -fx-border-color: -theme-foreground-darker-2;
-    -fx-border-width: 0px 0px 1px 0px;
-
-    -fx-padding: 7px 0px 0px 0px;
 }
 
 .action-remove-button {
@@ -186,9 +173,11 @@
 
 .mips-configuration .display .syscalls .display .representation {
     -fx-spacing: 5px;
+    -fx-alignment: center-left;
 }
 
 .mips-configuration .display .syscalls .contents {
+
 }
 
 .mips-configuration .display .syscalls .contents .representation {
@@ -215,6 +204,7 @@
 
 .mips-configuration .display .caches .display .representation {
     -fx-spacing: 5px;
+    -fx-alignment: center-left;
 }
 
 .mips-configuration .display .caches .display .size {
