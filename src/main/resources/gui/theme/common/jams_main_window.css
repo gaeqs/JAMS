@@ -80,6 +80,9 @@
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-effect: none;
+
+    -fx-pref-width: 28px;
+    -fx-pref-height: 28px;
 }
 
 .speed-slider {

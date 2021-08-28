@@ -38,10 +38,13 @@ import java.util.Set;
 
 public class MIPSConfigurationListControls extends HBox {
 
+    public static final String STYLE_CLASS = "controls";
+
     public MIPSConfigurationsList list;
 
     public MIPSConfigurationListControls(MIPSConfigurationsList list) {
         this.list = list;
+        getStyleClass().add(STYLE_CLASS);
         populate();
     }
 

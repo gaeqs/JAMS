@@ -41,6 +41,8 @@ import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurat
 
 public class MIPSConfigurationWindow extends SplitPane {
 
+    public static final String STYLE_CLASS = "mips-configuration";
+
     private static final int WIDTH = 900;
     private static final int HEIGHT = 600;
 
@@ -53,6 +55,8 @@ public class MIPSConfigurationWindow extends SplitPane {
 
     public MIPSConfigurationWindow(MIPSProjectData projectData) {
         this.projectData = projectData;
+
+        getStyleClass().add(STYLE_CLASS);
 
         list = new MIPSConfigurationsList(this);
         displayGroup = new AnchorPane();

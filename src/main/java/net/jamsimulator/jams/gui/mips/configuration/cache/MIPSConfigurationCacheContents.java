@@ -40,6 +40,8 @@ import java.util.List;
 
 public class MIPSConfigurationCacheContents extends Explorer {
 
+    public static final String STYLE_CLASS = "contents";
+
     private final MIPSConfigurationDisplayCacheTab cacheTab;
     private final List<Representation> representations;
 
@@ -47,6 +49,8 @@ public class MIPSConfigurationCacheContents extends Explorer {
         super(scrollPane, false, false);
         this.cacheTab = cacheTab;
         this.representations = new ArrayList<>();
+
+        getStyleClass().add(STYLE_CLASS);
 
         generateMainSection();
         hideMainSectionRepresentation();

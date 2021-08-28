@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.mips.configuration.syscall;
 
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -44,19 +43,26 @@ import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionRunExceptionH
 
 public class MIPSConfigurationSyscallControls extends AnchorPane {
 
+    public static final String STYLE_CLASS = "controls";
+    public static final String BUTTONS_STYLE_CLASS = "buttons";
+    public static final String BUNDLES_STYLE_CLASS = "bundles";
+
     private final MIPSConfigurationDisplaySyscallTab syscallTab;
     private final HBox buttonsHbox, bundleHbox;
 
     public MIPSConfigurationSyscallControls(MIPSConfigurationDisplaySyscallTab syscallTab) {
         this.syscallTab = syscallTab;
 
+        getStyleClass().add(STYLE_CLASS);
+
         buttonsHbox = new HBox();
         bundleHbox = new HBox();
+
+        buttonsHbox.getStyleClass().add(BUTTONS_STYLE_CLASS);
+        bundleHbox.getStyleClass().add(BUNDLES_STYLE_CLASS);
+
         AnchorUtils.setAnchor(buttonsHbox, 0, 0, 0, -1);
         AnchorUtils.setAnchor(bundleHbox, 0, 0, -1, 0);
-        buttonsHbox.setAlignment(Pos.CENTER_LEFT);
-        bundleHbox.setAlignment(Pos.CENTER_RIGHT);
-        bundleHbox.setSpacing(5);
         getChildren().addAll(bundleHbox, buttonsHbox);
 
         populate();

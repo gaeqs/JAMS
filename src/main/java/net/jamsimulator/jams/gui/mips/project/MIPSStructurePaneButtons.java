@@ -33,7 +33,6 @@ import net.jamsimulator.jams.gui.action.defaults.general.GeneralActionAssemble;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.gui.mips.configuration.MIPSConfigurationWindow;
-import net.jamsimulator.jams.gui.util.FixedButton;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.event.MIPSSimulationConfigurationAddEvent;
@@ -84,14 +83,14 @@ public class MIPSStructurePaneButtons {
     }
 
     private void loadAssembleButton(MIPSStructurePane structurePane) {
-        Button assemble = new FixedButton("", new QualityImageView(Icons.PROJECT_ASSEMBLE, 20, 20), 28, 28);
+        var assemble = new Button("", new QualityImageView(Icons.PROJECT_ASSEMBLE, 20, 20));
         assemble.getStyleClass().add("buttons-hbox-button");
         assemble.setOnAction(event -> GeneralActionAssemble.compileAndShow(structurePane.project));
         nodes.add(assemble);
     }
 
     private void loadConfigurationSettingsButton(MIPSStructurePane structurePane) {
-        Button configButton = new FixedButton("", new QualityImageView(Icons.PROJECT_SETTINGS, 20, 20), 28, 28);
+        var configButton = new Button("", new QualityImageView(Icons.PROJECT_SETTINGS, 20, 20));
         configButton.getStyleClass().add("buttons-hbox-button");
         configButton.setOnAction(event -> MIPSConfigurationWindow.open(structurePane.getProject().getData()));
         nodes.add(configButton);

@@ -40,13 +40,19 @@ import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 
 public class MIPSConfigurationCacheControls extends AnchorPane {
 
+    public static final String STYLE_CLASS = "controls";
+    public static final String BUTTONS_STYLE_CLASS = "buttons";
+
     private final MIPSConfigurationDisplayCacheTab cacheTab;
     private final HBox buttonsHbox;
 
     public MIPSConfigurationCacheControls(MIPSConfigurationDisplayCacheTab cacheTab) {
         this.cacheTab = cacheTab;
 
+        getStyleClass().add(STYLE_CLASS);
+
         buttonsHbox = new HBox();
+        buttonsHbox.getStyleClass().add(BUTTONS_STYLE_CLASS);
         AnchorUtils.setAnchor(buttonsHbox, 0, 0, 0, -1);
         buttonsHbox.setAlignment(Pos.CENTER_LEFT);
         getChildren().add(buttonsHbox);

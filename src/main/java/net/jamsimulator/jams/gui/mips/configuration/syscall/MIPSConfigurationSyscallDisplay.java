@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.gui.mips.configuration.syscall;
 
 import javafx.beans.property.Property;
-import javafx.geometry.Insets;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -38,12 +37,14 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 public class MIPSConfigurationSyscallDisplay extends VBox {
 
+    public static final String STYLE_CLASS = "  display";
+    public static final String REPRESENTATION_STYLE_CLASS = "node";
+
     private final SyscallExecutionBuilder<?> builder;
 
     public MIPSConfigurationSyscallDisplay(SyscallExecutionBuilder<?> builder) {
         this.builder = builder;
-        setSpacing(7);
-        setPadding(new Insets(5));
+        getStyleClass().add(STYLE_CLASS);
         populate();
     }
 
@@ -53,7 +54,7 @@ public class MIPSConfigurationSyscallDisplay extends VBox {
 
         for (Property<?> property : builder.getProperties()) {
             var hBox = new HBox();
-            hBox.setSpacing(5);
+            hBox.getStyleClass().add(REPRESENTATION_STYLE_CLASS);
 
             var languageNode = builder.getLanguageNode() + "_PROPERTY_" + property.getName();
             var label = new LanguageLabel(languageNode);

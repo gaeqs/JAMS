@@ -30,7 +30,6 @@ import javafx.scene.control.Button;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
-import net.jamsimulator.jams.gui.util.FixedButton;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
 import net.jamsimulator.jams.mips.simulation.Simulation;
@@ -68,16 +67,17 @@ public class ExecutionButtons {
         var undoOneIcon = Icons.SIMULATION_UNDO_ONE;
         var resetIcon = Icons.SIMULATION_RESET;
 
-        runOrStop = new FixedButton("", new QualityImageView(null, 16, 16), 28, 28);
+        runOrStop = new Button("", new QualityImageView(null, 16, 16));
+        runOrStop.getStyleClass().add(STYLE_CLASS);
         changeToRunAll(simulation);
 
-        runOne = new FixedButton("", new QualityImageView(runOneIcon, 16, 16), 28, 28);
+        runOne = new Button("", new QualityImageView(runOneIcon, 16, 16));
         runOne.getStyleClass().add(STYLE_CLASS);
         runOne.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_EXECUTE_ONE, LanguageTooltip.DEFAULT_DELAY));
         runOne.setOnAction(event -> simulation.executeOneStep());
 
 
-        Button undo = new FixedButton("", new QualityImageView(undoOneIcon, 16, 16), 28, 28);
+        Button undo = new Button("", new QualityImageView(undoOneIcon, 16, 16));
         undo.getStyleClass().add(STYLE_CLASS);
         undo.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_UNDO, LanguageTooltip.DEFAULT_DELAY));
         undo.setOnAction(event -> {
@@ -89,7 +89,7 @@ public class ExecutionButtons {
         });
         undo.setDisable(!simulation.isUndoEnabled());
 
-        Button reset = new FixedButton("", new QualityImageView(resetIcon, 16, 16), 28, 28);
+        Button reset = new Button("", new QualityImageView(resetIcon, 16, 16));
         reset.getStyleClass().add(STYLE_CLASS);
 
         reset.setTooltip(new LanguageTooltip(Messages.SIMULATION_BUTTON_TOOLTIP_RESET, LanguageTooltip.DEFAULT_DELAY));

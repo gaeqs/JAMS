@@ -133,3 +133,95 @@
 .plugin-display-author {
     -fx-text-fill: -theme-foreground-darker;
 }
+
+/****************
+
+ MIPS CONFIGURATION
+
+ ****************/
+
+.mips-configuration {
+
+}
+
+.mips-configuration .list {
+
+}
+
+.mips-configuration .list .controls {
+}
+
+.mips-configuration .list .contents {
+
+}
+
+.mips-configuration > .display {
+
+}
+
+.mips-configuration > .display .name-field {
+    -fx-alignment: center-left;
+    -fx-spacing: 5px;
+    -fx-padding: 5px 5px 5px 5px;
+}
+
+.mips-configuration .display .general {
+    -fx-padding: 5px;
+    -fx-spacing: 5px;
+}
+
+.mips-configuration > .display .general .node {
+    -fx-spacing: 5px;
+    -fx-alignment: center-left;
+}
+
+.mips-configuration > .display .syscalls .display {
+    -fx-spacing: 7px;
+    -fx-padding: 5px;
+}
+
+.mips-configuration > .display .syscalls .display .node {
+    -fx-spacing: 5px;
+}
+
+.mips-configuration > .display .syscalls .contents {
+
+}
+
+.mips-configuration > .display .syscalls .contents .node {
+
+}
+
+.mips-configuration > .display .syscalls .controls {
+
+}
+
+.mips-configuration > .display .syscalls .controls .buttons {
+    -fx-alignment: center-left;
+}
+
+.mips-configuration > .display .syscalls .controls .bundles {
+    -fx-alignment: center-right;
+    -fx-spacing: 5px;
+}
+
+.mips-configuration > .display .caches .display {
+    -fx-spacing: 7px;
+    -fx-padding: 5px;
+}
+
+.mips-configuration > .display .caches .controls {
+
+}
+
+.mips-configuration > .display .caches .controls .buttons {
+    -fx-alignment: center-left;
+}
+
+.mips-configuration > .display .caches .contents {
+
+}
+
+.mips-configuration > .display .caches .contents .node {
+
+}

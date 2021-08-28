@@ -35,8 +35,10 @@ import net.jamsimulator.jams.project.mips.event.MIPSSimulationConfigurationRefre
 
 public class MIPSConfigurationDisplayNameField extends HBox {
 
+    public static final String STYLE_CLASS = "name-field";
+
     public MIPSConfigurationDisplayNameField(MIPSConfigurationWindow window, MIPSSimulationConfiguration configuration) {
-        getStyleClass().add("mips-configurations-window-name-field");
+        getStyleClass().add(STYLE_CLASS);
         var data = window.getProjectData();
         var label = new LanguageLabel(Messages.SIMULATION_CONFIGURATION_NAME);
         var field = new TextField(configuration.getName());

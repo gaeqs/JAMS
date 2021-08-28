@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.gui.mips.configuration.cache;
 
 import javafx.beans.property.Property;
-import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -42,13 +41,14 @@ import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 
 public class MIPSConfigurationCacheDisplay extends VBox {
 
+    public static final String STYLE_CLASS = "display";
+
     private final CacheBuilder<?> builder;
     private Label sizeLabel;
 
     public MIPSConfigurationCacheDisplay(CacheBuilder<?> builder) {
         this.builder = builder;
-        setSpacing(7);
-        setPadding(new Insets(5));
+        getStyleClass().add(STYLE_CLASS);
         populate();
     }
 

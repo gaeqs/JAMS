@@ -31,6 +31,8 @@ import net.jamsimulator.jams.gui.util.PixelScrollPane;
 
 public class MIPSConfigurationsList extends AnchorPane {
 
+    public static final String STYLE_CLASS = "list";
+
     private final MIPSConfigurationWindow window;
 
     private final MIPSConfigurationListControls controls;
@@ -38,6 +40,8 @@ public class MIPSConfigurationsList extends AnchorPane {
 
     public MIPSConfigurationsList(MIPSConfigurationWindow window) {
         this.window = window;
+
+        getStyleClass().add(STYLE_CLASS);
 
         SplitPane.setResizableWithParent(this, false);
 

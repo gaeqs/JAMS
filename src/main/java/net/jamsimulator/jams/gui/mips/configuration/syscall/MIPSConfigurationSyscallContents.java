@@ -39,6 +39,9 @@ import java.util.List;
 
 public class MIPSConfigurationSyscallContents extends Explorer {
 
+    public static final String STYLE_CLASS = "contents";
+    public static final String REPRESENTATION_STYLE_CLASS = "node";
+
     private final MIPSConfigurationDisplaySyscallTab syscallTab;
     private final List<Representation> representations;
 
@@ -46,6 +49,8 @@ public class MIPSConfigurationSyscallContents extends Explorer {
         super(scrollPane, false, false);
         this.syscallTab = syscallTab;
         this.representations = new ArrayList<>();
+
+        getStyleClass().add(STYLE_CLASS);
 
         generateMainSection();
         hideMainSectionRepresentation();
@@ -128,6 +133,7 @@ public class MIPSConfigurationSyscallContents extends Explorer {
 
         public Representation(ExplorerSection parent, int syscallId, SyscallExecutionBuilder<?> builder) {
             super(parent, String.valueOf(syscallId), 1);
+            getStyleClass().add(REPRESENTATION_STYLE_CLASS);
             this.syscallId = syscallId;
             this.builder = builder;
 
