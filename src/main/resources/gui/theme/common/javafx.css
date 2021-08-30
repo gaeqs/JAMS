@@ -219,14 +219,9 @@ AnchorPane {
     -fx-background-color: -theme-background;
 }
 
-.list-view .list-cell:even {
+.list-view .list-cell {
     -fx-text-fill: -theme-foreground;
-    -fx-background-color: -theme-background-darker;
-}
-
-.list-view .list-cell:odd {
-    -fx-text-fill: -theme-foreground;
-    -fx-background-color: -theme-background-darker-2;
+    -fx-background-color: -theme-background;
 }
 
 .list-view .corner {
