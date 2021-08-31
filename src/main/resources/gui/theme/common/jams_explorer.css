@@ -82,7 +82,7 @@
 }
 
 .explorer-out-folder {
-    -fx-background-color: #4f4b41;
+    -fx-background-color: -theme-element-out;
 }
 
 .explorer-out-folder.selected-explorer-element {

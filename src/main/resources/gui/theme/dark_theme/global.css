@@ -32,14 +32,15 @@
 -theme-background-lighter: derive(-theme-background-darkest, 30%);
 -theme-background-pressed: derive(-theme-background-darkest, 40%);
 -theme-background-darkest: #121212;
--theme-header: #3B4754;
--theme-menu-item-hover: #4D6EAF;
+-theme-header: #2D363F;
+-theme-menu-item-hover: #2C4066;
 
--theme-element-selected: #4D6EAF;
+-theme-element-out: #3F3C34;
+-theme-element-selected: #273859;
 -theme-element-invalid: #842020;
 
--theme-explorer-file-to-assemble: #495c42;
--theme-explorer-selected-file-to-assemble: #4b6578;
+-theme-explorer-file-to-assemble: #323F2D;
+-theme-explorer-selected-file-to-assemble: #2C3B43;
 
 -theme-text-selected: #214182;
 -theme-text-comment: #8b8b8b;
