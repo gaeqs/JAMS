@@ -45,7 +45,7 @@ public class ActionExplorerActionCombination extends Button {
 
     public ActionExplorerActionCombination(ActionsExplorerAction action, KeyCombination combination) {
         super(combination.toString());
-        getStyleClass().add("action-remove-button");
+        getStyleClass().add("remove-button");
         this.action = action;
         this.combination = combination;
 

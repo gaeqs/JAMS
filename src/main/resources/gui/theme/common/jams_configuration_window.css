@@ -77,16 +77,57 @@
     -fx-padding: 10px 0px 0px 15px;
 }
 
-.action-remove-button {
-    -fx-padding: 1px;
+.configuration-actions {
+    -fx-spacing: 1px;
 }
 
-.action-remove-button:hover {
+.configuration-actions .scroll-pane {
+    -fx-fit-to-width: true;
+    -fx-fit-to-height: true;
+
+}
+
+.configuration-actions .search-bar {
+
+}
+
+.configuration-actions .explorer {
+
+}
+
+.configuration-actions .explorer .explorer-section {
+}
+
+.configuration-actions .explorer .explorer-section .contents {
+    -fx-spacing: 0px;
+}
+
+.configuration-actions .explorer .explorer-section .contents .label {
+    -fx-padding: 0px 0px 0px 5px;
+}
+
+.configuration-actions .explorer .explorer-action {
+    -fx-spacing: 5px;
+    -fx-alignment: center-left;
+}
+
+
+.configuration-actions .explorer .explorer-action .remove-button {
+    -fx-border-width: 0px;
+    -fx-background-insets: 0px;
+    -fx-background-radius: 3px;
+    -fx-font-size: 10px;
+}
+
+.configuration-actions .explorer .explorer-action .remove-button:hover {
     -fx-background-color: -theme-element-invalid;
 }
 
-.action-add-button {
-    -fx-padding: 1px 3px 1px 3px;
+.configuration-actions .explorer .explorer-action .add-button {
+    -fx-border-width: 0px;
+    -fx-background-insets: 0px;
+    -fx-background-radius: 3px;
+    -fx-font-size: 10px;
 }
 
 .plugin-section:horizontal .split-pane-divider {

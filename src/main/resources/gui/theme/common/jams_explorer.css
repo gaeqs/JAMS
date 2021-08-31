@@ -34,11 +34,9 @@
 }
 
 .explorer-section {
-    -fx-spacing: 1px;
 }
 
 .contents {
-    -fx-spacing: 1px;
 }
 
 .explorer-folder .label,

@@ -50,6 +50,9 @@ import java.util.Map;
  */
 public class ConfigurationWindowSectionActions extends ConfigurationWindowSection {
 
+    public static final String STYLE_CLASS = "configuration-actions";
+    public static final String SEARCH_STYLE_CLASS = "search-bar";
+
     private final VBox box;
     protected TextField searchbar;
     protected ScrollPane scrollPane;
@@ -66,14 +69,14 @@ public class ConfigurationWindowSectionActions extends ConfigurationWindowSectio
     public ConfigurationWindowSectionActions(ConfigurationWindowExplorer explorer, ExplorerSection parent, String name,
                                              String languageNode, int hierarchyLevel, Configuration configuration, Configuration meta, Map<String, Integer> regions) {
         super(explorer, parent, name, languageNode, hierarchyLevel, configuration, meta, regions);
+
         scrollPane = new PixelScrollPane();
-        scrollPane.setFitToHeight(true);
-        scrollPane.setFitToWidth(true);
 
         box = new VBox();
-        box.setSpacing(1);
+        box.getStyleClass().add(STYLE_CLASS);
 
         searchbar = new LanguageTextField(Messages.CONFIG_ACTION_SEARCH);
+        searchbar.getStyleClass().add(SEARCH_STYLE_CLASS);
         box.getChildren().add(searchbar);
 
         actionsExplorer = new ActionsExplorer(scrollPane, false);

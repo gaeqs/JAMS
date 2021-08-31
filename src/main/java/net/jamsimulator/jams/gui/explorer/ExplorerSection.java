@@ -51,7 +51,7 @@ import java.util.stream.Collectors;
 public class ExplorerSection extends VBox implements ExplorerElement {
 
     public static final String STYLE_CLASS = "explorer-section";
-    public static final String STYLE_CLASS_CONTENTS = "contents";
+    public static final String CONTENTS_STYLE_CLASS = "contents";
 
     public VBox contents;
     protected Explorer explorer;
@@ -94,7 +94,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
         representation = loadRepresentation();
 
         contents = new VBox();
-        contents.getStyleClass().add(STYLE_CLASS_CONTENTS);
+        contents.getStyleClass().add(CONTENTS_STYLE_CLASS);
         expanded = false;
 
         loadElements();
