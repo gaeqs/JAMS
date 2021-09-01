@@ -224,6 +224,12 @@ AnchorPane {
     -fx-background-color: -theme-background;
 }
 
+.list-view .list-cell:hover:filled {
+    -fx-text-fill: -theme-foreground;
+    -fx-background-color: -theme-background-pressed;
+}
+
+
 .list-view .corner {
     -fx-background-color: -theme-background;
 }
@@ -539,6 +545,7 @@ AnchorPane {
 
 .tooltip {
     -fx-background-color: -theme-background;
+    -fx-text-fill: -theme-foreground;
     -fx-border-color: transparent;
     -fx-border-width: 0px;
     -fx-background-radius: 3px;

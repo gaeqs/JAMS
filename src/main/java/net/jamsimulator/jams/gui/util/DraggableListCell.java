@@ -51,7 +51,7 @@ public class DraggableListCell<T> extends ListCell<T> {
         setOnDragExited(this::onDragExited);
         setOnDragDropped(this::onDragDropped);
         setOnDragDone(this::onDragDone);
-        setCursor(Cursor.CLOSED_HAND);
+        refreshCursor();
     }
 
     public boolean isDraggable() {
@@ -60,7 +60,7 @@ public class DraggableListCell<T> extends ListCell<T> {
 
     public void setDraggable(boolean draggable) {
         this.draggable = draggable;
-        setCursor(draggable ? Cursor.CLOSED_HAND : Cursor.DEFAULT);
+        refreshCursor();
     }
 
     protected void onDragDetected(MouseEvent event) {
@@ -125,5 +125,23 @@ public class DraggableListCell<T> extends ListCell<T> {
 
     protected void onDragDone(DragEvent event) {
         event.consume();
+    }
+
+    @Override
+    protected void updateItem(T item, boolean empty) {
+        super.updateItem(item, empty);
+        if (item == null || empty) {
+            setCursor(Cursor.DEFAULT);
+        } else {
+            setCursor(draggable ? Cursor.CLOSED_HAND : Cursor.DEFAULT);
+        }
+    }
+
+    private void refreshCursor() {
+        if (getItem() == null) {
+            setCursor(Cursor.DEFAULT);
+        } else {
+            setCursor(draggable ? Cursor.CLOSED_HAND : Cursor.DEFAULT);
+        }
     }
 }

@@ -46,16 +46,16 @@
 -theme-text-selected: #93aee7;
 -theme-text-comment: #3b3b3b;
 -theme-text-label: -theme-foreground;
--theme-text-global-label: #732f26;
--theme-text-directive: #6e472a;
--theme-text-directive-parameter: #8d3582;
--theme-text-string: #426528;
--theme-text-instruction: #72622a;
--theme-text-pseudo-instruction: #3a752d;
--theme-text-register: #4e5785;
--theme-text-immediate: #3a772c;
--theme-text-macro: #2d7564;
--theme-text-macro-parameter: #3a286c;
+-theme-text-global-label: #7c271b;
+-theme-text-directive: #7a3f13;
+-theme-text-directive-parameter: #931883;
+-theme-text-string: #376912;
+-theme-text-instruction: #6e5a13;
+-theme-text-pseudo-instruction: #247a11;
+-theme-text-register: #1f318c;
+-theme-text-immediate: #2c7c1a;
+-theme-text-macro: #14735d;
+-theme-text-macro-parameter: #391a8d;
 
 -theme-error: #5e1515;
 -theme-warining: #5b4805;
@@ -67,11 +67,11 @@
 -theme-selected-search-result: #4f6dc5;
 -theme-selected-search-result-stroke: #000000;
 
--theme-simulation-fetch: #ffff4c;
--theme-simulation-decode: #9fff41;
--theme-simulation-execute: #45bfff;
--theme-simulation-memory: #b179ff;
--theme-simulation-write-back: #ff7e70;
+-theme-simulation-fetch: #fafa97;
+-theme-simulation-decode: #d0faa8;
+-theme-simulation-execute: #afe0fa;
+-theme-simulation-memory: #d5b9fc;
+-theme-simulation-write-back: #fcbbb4;
 -theme-simulation-breakpoint: #ff2e29;
 
 -theme-cache-hit: #41592a;
