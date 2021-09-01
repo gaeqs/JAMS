@@ -32,6 +32,8 @@ import java.util.function.Consumer;
 
 public interface ValueEditor<E> {
 
+    String GENERAL_STYLE_CLASS = "value-editor";
+
     default void setCurrentValueUnsafe(Object value) {
         setCurrentValue((E) value);
     }

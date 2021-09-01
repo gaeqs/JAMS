@@ -38,10 +38,13 @@ import java.util.Set;
 
 public class MIPSConfigurationListControls extends HBox {
 
+    public static final String STYLE_CLASS = "controls";
+
     public MIPSConfigurationsList list;
 
     public MIPSConfigurationListControls(MIPSConfigurationsList list) {
         this.list = list;
+        getStyleClass().add(STYLE_CLASS);
         populate();
     }
 
@@ -55,7 +58,7 @@ public class MIPSConfigurationListControls extends HBox {
     private void generateAddButton() {
         var button = new Button(null, new QualityImageView(Icons.CONTROL_ADD, 16, 16));
         button.setTooltip(new LanguageTooltip(Messages.GENERAL_ADD));
-        button.getStyleClass().add("bold-button");
+        button.getStyleClass().add("button-bold");
 
         button.setOnAction(event -> {
             var baseName = "New Configuration";
@@ -81,7 +84,7 @@ public class MIPSConfigurationListControls extends HBox {
     private void generateRemoveButton() {
         var button = new Button(null, new QualityImageView(Icons.CONTROL_REMOVE, 16, 16));
         button.setTooltip(new LanguageTooltip(Messages.GENERAL_REMOVE));
-        button.getStyleClass().add("bold-button");
+        button.getStyleClass().add("button-bold");
 
         button.setOnAction(event -> {
             var selected = list.getContents().getSelectedElements();
@@ -102,7 +105,7 @@ public class MIPSConfigurationListControls extends HBox {
     private void generateCopyButton() {
         var button = new Button(null, new QualityImageView(Icons.CONTROL_COPY, 16, 16));
         button.setTooltip(new LanguageTooltip(Messages.GENERAL_COPY));
-        button.getStyleClass().add("bold-button");
+        button.getStyleClass().add("button-bold");
 
         button.setOnAction(event -> {
             var selected = list.getContents().getSelectedElements();

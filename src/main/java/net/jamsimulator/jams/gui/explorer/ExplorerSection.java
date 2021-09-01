@@ -50,7 +50,9 @@ import java.util.stream.Collectors;
  */
 public class ExplorerSection extends VBox implements ExplorerElement {
 
-    public static final int SPACING = 1;
+    public static final String STYLE_CLASS = "explorer-section";
+    public static final String CONTENTS_STYLE_CLASS = "contents";
+
     public VBox contents;
     protected Explorer explorer;
     protected ExplorerSection parent;
@@ -77,7 +79,7 @@ public class ExplorerSection extends VBox implements ExplorerElement {
      */
     public ExplorerSection(Explorer explorer, ExplorerSection parent, String name, int hierarchyLevel,
                            Comparator<ExplorerElement> comparator) {
-        getStyleClass().add("explorer-section");
+        getStyleClass().add(STYLE_CLASS);
         this.explorer = explorer;
         this.parent = parent;
         this.name = name;
@@ -92,11 +94,8 @@ public class ExplorerSection extends VBox implements ExplorerElement {
         representation = loadRepresentation();
 
         contents = new VBox();
-        contents.getStyleClass().add("contents");
+        contents.getStyleClass().add(CONTENTS_STYLE_CLASS);
         expanded = false;
-
-        setSpacing(SPACING);
-        contents.setSpacing(SPACING);
 
         loadElements();
         loadListeners();

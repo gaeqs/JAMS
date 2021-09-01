@@ -1,0 +1,147 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
+/*
+
+    JAMS GENERAL NODES
+
+    This CSS file contains all style information about general JAMS nodes.
+
+    This file is sorted in alphabetical order.
+
+ */
+
+.button-bold {
+    -fx-background-color: -theme-background;
+    -fx-border-color: transparent;
+    -fx-text-fill: -theme-foreground;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-effect: none;
+
+    -fx-border-width: 3px;
+    -fx-background-insets: 3px;
+    -fx-background-radius: 3px;
+}
+
+.button-dark-bold {
+    -fx-background-color: -theme-background-darker;
+    -fx-border-color: transparent;
+    -fx-text-fill: -theme-foreground;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-effect: none;
+
+    -fx-border-width: 3px;
+    -fx-background-insets: 3px;
+    -fx-background-radius: 3px;
+}
+
+.button-dark-2-bold {
+    -fx-background-color: -theme-background-darker-2;
+    -fx-border-color: transparent;
+    -fx-text-fill: -theme-foreground;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-effect: none;
+
+    -fx-border-width: 3px;
+    -fx-background-insets: 3px;
+    -fx-background-radius: 3px;
+}
+
+.button-bold:hover,
+.button-dark-bold:hover,
+.button-dark-2-bold:hover {
+    -fx-background-color: -theme-background-lighter;
+}
+
+.button-bold:pressed,
+.button-dark-bold:pressed,
+.button-dark-2-bold:pressed {
+    -fx-background-color: -theme-background-pressed;
+}
+
+.button-light {
+    -fx-background-color: -theme-background;
+    -fx-border-color: -theme-background-lighter;
+    -fx-background-radius: 5px;
+    -fx-text-fill: -theme-foreground;
+}
+
+/* Special class used to hide the horizontal scroll bar */
+.table-view-horizontal-fit .scroll-bar:horizontal {
+    -fx-opacity: 0px;
+    -fx-padding: -7px;
+}
+
+.window-button {
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
+    -fx-background-color: -theme-background;
+    -fx-background-radius: 0px;
+    -fx-pref-width: 30px;
+    -fx-pref-height: 30px;
+    -fx-text-fill: -theme-foreground;
+    -fx-effect: none;
+}
+
+.window-button:hover {
+    -fx-background-color: -theme-background-lighter;
+}
+
+.window-button:pressed {
+    -fx-background-color: -theme-background-pressed;
+}
+
+.styled-node-list {
+    -fx-padding: 10, 10, 5, 10;
+    -fx-spacing: 5px;
+}
+
+.styled-node-list-entry {
+    -fx-spacing: 7px;
+}
+
+.region-display {
+    -fx-spacing: 5px;
+}
+
+.region-display .label {
+    -fx-text-fill: -theme-foreground-darker-2;
+    -fx-alignment: top-left;
+}
+
+.region-display .separator {
+    -fx-background-color: transparent;
+    -fx-border-color: -theme-foreground-darker-2;
+    -fx-border-width: 0px 0px 1px 0px;
+
+    -fx-padding: 7px 0px 0px 0px;
+}
+
+.about-text {
+    -fx-font-size: 18px;
+    -fx-text-alignment: center;
+}

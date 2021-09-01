@@ -54,4 +54,9 @@ public class LanguageCheckMenuItem extends CheckMenuItem {
     public void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
         refreshMessage();
     }
+
+    @Override
+    public String getTypeSelector() {
+        return "CheckMenuItem";
+    }
 }

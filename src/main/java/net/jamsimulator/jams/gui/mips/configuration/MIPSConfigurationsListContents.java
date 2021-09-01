@@ -38,12 +38,15 @@ import java.util.Comparator;
 
 public class MIPSConfigurationsListContents extends Explorer {
 
+    public static final String STYLE_CLASS = "contents";
+
     private final MIPSConfigurationWindow window;
 
     public MIPSConfigurationsListContents(ScrollPane scrollPane, MIPSConfigurationWindow window) {
         super(scrollPane, false, false);
         this.window = window;
 
+        getStyleClass().add(STYLE_CLASS);
         generateMainSection();
         hideMainSectionRepresentation();
 

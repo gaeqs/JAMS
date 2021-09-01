@@ -35,6 +35,8 @@ import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurat
 
 public class MIPSConfigurationDisplayCacheTab extends AnchorPane {
 
+    public static final String STYLE_CLASS = "caches";
+
     private final MIPSSimulationConfiguration configuration;
 
     private final MIPSConfigurationCacheControls controls;
@@ -46,6 +48,8 @@ public class MIPSConfigurationDisplayCacheTab extends AnchorPane {
 
     public MIPSConfigurationDisplayCacheTab(MIPSSimulationConfiguration configuration) {
         this.configuration = configuration;
+
+        getStyleClass().add(STYLE_CLASS);
 
         controls = new MIPSConfigurationCacheControls(this);
         splitPane = new SplitPane();

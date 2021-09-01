@@ -25,14 +25,13 @@
 package net.jamsimulator.jams.gui.configuration;
 
 import javafx.application.Platform;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -47,6 +46,7 @@ import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowSecti
 import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNode;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
+import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.Messages;
@@ -61,6 +61,10 @@ import java.util.Objects;
 
 public class ConfigurationWindow extends SplitPane {
 
+    public static final String STYLE_CLASS = "configuration";
+    public static final String DISPLAY_STYLE_CLASS = "display";
+    public static final String DISPLAY_CONTENTS_STYLE_CLASS = "contents";
+
     private static final int WIDTH = 900;
     private static final int HEIGHT = 600;
 
@@ -70,7 +74,7 @@ public class ConfigurationWindow extends SplitPane {
     private final ConfigurationWindowExplorer explorer;
     private final ScrollPane explorerScrollPane;
     private final SectionTreeDisplay sectionTreeDisplay;
-    private final VBox sectionDisplay;
+    private final AnchorPane sectionDisplay;
     private final ScrollPane basicSectionContentsScroll;
     private final VBox basicSectionContents;
     private Stage stage;
@@ -80,6 +84,8 @@ public class ConfigurationWindow extends SplitPane {
         this.stage = null;
         this.configuration = configuration;
         this.meta = meta;
+
+        getStyleClass().add(STYLE_CLASS);
 
         explorerScrollPane = new PixelScrollPane();
         explorerScrollPane.setFitToHeight(true);
@@ -95,18 +101,18 @@ public class ConfigurationWindow extends SplitPane {
 
         sectionTreeDisplay = new SectionTreeDisplay();
 
-        sectionDisplay = new VBox();
-        sectionDisplay.getStyleClass().add("configuration-window-display");
+        sectionDisplay = new AnchorPane();
+        sectionDisplay.getStyleClass().add(DISPLAY_STYLE_CLASS);
 
         basicSectionContentsScroll = new PixelScrollPane();
         basicSectionContentsScroll.setFitToWidth(true);
         basicSectionContentsScroll.setFitToHeight(true);
 
         basicSectionContents = new VBox();
-        basicSectionContents.setPadding(new Insets(5, 0, 0, 5));
-        basicSectionContents.getStyleClass().add("configuration-window-display-contents");
+        basicSectionContents.getStyleClass().add(DISPLAY_CONTENTS_STYLE_CLASS);
         basicSectionContentsScroll.setContent(basicSectionContents);
 
+        AnchorUtils.setAnchor(sectionTreeDisplay, 0, -1, 0, 0);
         sectionDisplay.getChildren().add(sectionTreeDisplay);
 
         init();
@@ -152,10 +158,7 @@ public class ConfigurationWindow extends SplitPane {
 
         if (section.isSpecial()) {
             Node node = section.getSpecialNode();
-            if (node instanceof Region) {
-                ((Region) node).prefHeightProperty().bind(sectionDisplay.heightProperty()
-                        .subtract(sectionTreeDisplay.heightProperty()));
-            }
+            AnchorUtils.setAnchor(node, 35, 0, 0, 0);
             sectionDisplay.getChildren().add(node);
         } else {
             displayNormalSection(section);
@@ -174,13 +177,13 @@ public class ConfigurationWindow extends SplitPane {
             if (currentRegion == null || !currentRegion.equals(node.getRegion())) {
                 currentRegion = node.getRegion();
                 if (currentRegion != null) {
-                    basicSectionContents.getChildren().add(new ConfigurationRegionDisplay(section.getLanguageNode(), currentRegion));
+                    basicSectionContents.getChildren().add(new RegionDisplay(section.getLanguageNode(), currentRegion));
                 }
             }
             basicSectionContents.getChildren().add(node);
         }
 
-
+        AnchorUtils.setAnchor(basicSectionContentsScroll, 35, 0, 0, 0);
         sectionDisplay.getChildren().add(basicSectionContentsScroll);
     }
 

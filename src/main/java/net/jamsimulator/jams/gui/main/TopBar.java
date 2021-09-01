@@ -24,10 +24,7 @@
 
 package net.jamsimulator.jams.gui.main;
 
-import javafx.application.Platform;
-import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import net.jamsimulator.jams.gui.image.icon.Icons;
@@ -79,30 +76,10 @@ public class TopBar extends AnchorPane {
     }
 
     private void generateButtons(Stage stage) {
-        windowButtons.setSpacing(0);
-
-        Button minimize = new WindowButtonMinimize(stage);
-        Button maximize = new WindowButtonMaximize(stage);
-        Button close = new WindowButtonClose(stage);
-
-        minimize.getStyleClass().add("minimize");
-        maximize.getStyleClass().add("maximize");
-        close.getStyleClass().add("close");
-
-        minimize.setPrefWidth(30);
-        minimize.setPrefHeight(30);
-        maximize.setPrefWidth(30);
-        maximize.setPrefHeight(30);
-        close.setPrefWidth(30);
-        close.setPrefHeight(30);
-
+        var minimize = new WindowButtonMinimize(stage);
+        var maximize = new WindowButtonMaximize(stage);
+        var close = new WindowButtonClose(stage);
         windowButtons.getChildren().addAll(minimize, maximize, close);
-
-        Platform.runLater(() -> {
-            close.setBorder(Border.EMPTY);
-            maximize.setBorder(Border.EMPTY);
-            minimize.setBorder(Border.EMPTY);
-        });
     }
 
     public boolean isTransparentMode() {

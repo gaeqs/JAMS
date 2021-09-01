@@ -38,6 +38,7 @@ import java.util.function.Consumer;
 public class RangedIntegerValueEditor extends TextField implements ValueEditor<Integer> {
 
     public static final String NAME = "positive_integer";
+    public static final String STYLE_CLASS = GENERAL_STYLE_CLASS + "-" + NAME.replace("_", "-");
 
     protected String oldText;
     protected int min, max;
@@ -46,6 +47,7 @@ public class RangedIntegerValueEditor extends TextField implements ValueEditor<I
     };
 
     public RangedIntegerValueEditor() {
+        getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
         setText("0");
         oldText = getText();
         min = Integer.MIN_VALUE;
@@ -113,8 +115,8 @@ public class RangedIntegerValueEditor extends TextField implements ValueEditor<I
     @Override
     public Node buildConfigNode(Label label) {
         var box = new HBox(label, this);
-        box.setSpacing(5);
-        box.setAlignment(Pos.CENTER_LEFT);
+        box.getStyleClass().add(GENERAL_STYLE_CLASS + "-hbox");
+        box.getStyleClass().add(STYLE_CLASS + "-hbox");
         return box;
     }
 

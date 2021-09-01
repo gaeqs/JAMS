@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.mips.configuration.syscall;
 
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -44,19 +43,26 @@ import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionRunExceptionH
 
 public class MIPSConfigurationSyscallControls extends AnchorPane {
 
+    public static final String STYLE_CLASS = "controls";
+    public static final String BUTTONS_STYLE_CLASS = "buttons";
+    public static final String BUNDLES_STYLE_CLASS = "bundles";
+
     private final MIPSConfigurationDisplaySyscallTab syscallTab;
     private final HBox buttonsHbox, bundleHbox;
 
     public MIPSConfigurationSyscallControls(MIPSConfigurationDisplaySyscallTab syscallTab) {
         this.syscallTab = syscallTab;
 
+        getStyleClass().add(STYLE_CLASS);
+
         buttonsHbox = new HBox();
         bundleHbox = new HBox();
+
+        buttonsHbox.getStyleClass().add(BUTTONS_STYLE_CLASS);
+        bundleHbox.getStyleClass().add(BUNDLES_STYLE_CLASS);
+
         AnchorUtils.setAnchor(buttonsHbox, 0, 0, 0, -1);
         AnchorUtils.setAnchor(bundleHbox, 0, 0, -1, 0);
-        buttonsHbox.setAlignment(Pos.CENTER_LEFT);
-        bundleHbox.setAlignment(Pos.CENTER_RIGHT);
-        bundleHbox.setSpacing(5);
         getChildren().addAll(bundleHbox, buttonsHbox);
 
         populate();
@@ -73,7 +79,7 @@ public class MIPSConfigurationSyscallControls extends AnchorPane {
     private void generateAddButton() {
         var button = new Button(null, new QualityImageView(Icons.CONTROL_ADD, 16, 16));
         button.setTooltip(new LanguageTooltip(Messages.GENERAL_ADD));
-        button.getStyleClass().add("bold-button");
+        button.getStyleClass().add("button-bold");
 
         button.setOnAction(event -> {
             int id = syscallTab.getContents().getBiggestId() + 1;
@@ -91,7 +97,7 @@ public class MIPSConfigurationSyscallControls extends AnchorPane {
     private void generateRemoveButton() {
         var button = new Button(null, new QualityImageView(Icons.CONTROL_REMOVE, 16, 16));
         button.setTooltip(new LanguageTooltip(Messages.GENERAL_REMOVE));
-        button.getStyleClass().add("bold-button");
+        button.getStyleClass().add("button-bold");
 
         button.setOnAction(event -> {
             var contents = syscallTab.getContents();
@@ -124,7 +130,7 @@ public class MIPSConfigurationSyscallControls extends AnchorPane {
     private void generateSortButton() {
         var button = new Button(null, new QualityImageView(Icons.CONTROL_SORT, 16, 16));
         button.setTooltip(new LanguageTooltip(Messages.GENERAL_SORT));
-        button.getStyleClass().add("bold-button");
+        button.getStyleClass().add("button-bold");
 
         button.setOnAction(event -> syscallTab.getContents().sort());
 

@@ -64,4 +64,9 @@ public class CacheBuilderLanguageListCell extends ListCell<CacheBuilder<?>> {
         refreshMessage();
     }
 
+    @Override
+    public String getTypeSelector() {
+        return "ListCell";
+    }
+
 }

@@ -22,27 +22,22 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.util;
+/*
 
-import javafx.scene.Node;
-import javafx.scene.control.Button;
+    JAMS CONFIGURATION WINDOW
 
-public class FixedButton extends Button {
+    This CSS file contains all style information about JAMS's value editors.
 
-    public FixedButton(double width, double height) {
-        setPrefWidth(width);
-        setPrefHeight(height);
-    }
+*/
 
-    public FixedButton(String s, double width, double height) {
-        super(s);
-        setPrefWidth(width);
-        setPrefHeight(height);
-    }
+.value-editor {
+}
 
-    public FixedButton(String s, Node node, double width, double height) {
-        super(s, node);
-        setPrefWidth(width);
-        setPrefHeight(height);
-    }
+.value-editor-hbox {
+    -fx-spacing: 5px;
+    -fx-alignment: center-left;
+}
+
+.value-editor-assembled-instruction-viewer-order-hbox {
+    -fx-fill-width: true;
 }

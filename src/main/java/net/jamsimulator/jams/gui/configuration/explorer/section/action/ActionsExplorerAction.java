@@ -24,8 +24,6 @@
 
 package net.jamsimulator.jams.gui.configuration.explorer.section.action;
 
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
@@ -51,6 +49,8 @@ import java.util.List;
  */
 public class ActionsExplorerAction extends ExplorerBasicElement {
 
+    public static final String STYLE_CLASS = "explorer-action";
+
     /**
      * The amount of shortcuts a user can add.
      * This limit avoids a bad structure in the explorer.
@@ -73,6 +73,8 @@ public class ActionsExplorerAction extends ExplorerBasicElement {
      */
     public ActionsExplorerAction(ActionExplorerRegion parent, Action action, boolean smallRepresentation) {
         super(parent, action.getName(), 2);
+        getStyleClass().add(STYLE_CLASS);
+
         this.action = action;
         this.smallRepresentation = smallRepresentation;
         this.combinations = new ArrayList<>();
@@ -166,12 +168,7 @@ public class ActionsExplorerAction extends ExplorerBasicElement {
     protected void loadElements() {
         icon = new QualityImageView();
         label = new LanguageLabel(null);
-
         separator = new ExplorerSeparatorRegion(false, hierarchyLevel);
-
-        setSpacing(SPACING);
-        setPadding(new Insets(0, 5, 0, 0));
-        setAlignment(Pos.CENTER_LEFT);
     }
 
     @Listener

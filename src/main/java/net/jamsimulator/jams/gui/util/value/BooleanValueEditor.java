@@ -38,11 +38,13 @@ import java.util.function.Consumer;
 public class BooleanValueEditor extends CheckBox implements ValueEditor<Boolean> {
 
     public static final String NAME = BooleanValueConverter.NAME;
+    public static final String STYLE_CLASS = GENERAL_STYLE_CLASS + "-" +NAME;
 
     private Consumer<Boolean> listener = b -> {
     };
 
     public BooleanValueEditor() {
+        getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
         selectedProperty().addListener((obs, old, val) -> listener.accept(val));
     }
 
@@ -65,8 +67,8 @@ public class BooleanValueEditor extends CheckBox implements ValueEditor<Boolean>
     public Node buildConfigNode(Label label) {
         label.setOnMouseClicked(click -> setCurrentValueUnsafe(!((boolean) getCurrentValue())));
         var box = new HBox(this, label);
-        box.setSpacing(5);
-        box.setAlignment(Pos.CENTER_LEFT);
+        box.getStyleClass().add(GENERAL_STYLE_CLASS + "-hbox");
+        box.getStyleClass().add(STYLE_CLASS + "-hbox");
         return box;
     }
 

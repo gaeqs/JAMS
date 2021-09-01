@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.util.value;
 
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -43,11 +42,13 @@ import java.util.function.Consumer;
 public class ThemeValueEditor extends ComboBox<Theme> implements ValueEditor<Theme> {
 
     public static final String NAME = ThemeValueConverter.NAME;
+    public static final String STYLE_CLASS = GENERAL_STYLE_CLASS + "-" + NAME.replace("_", "-");
 
     private Consumer<Theme> listener = theme -> {
     };
 
     public ThemeValueEditor() {
+        getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
         setConverter(ValueConverters.getByTypeUnsafe(Theme.class));
         getItems().addAll(JamsApplication.getThemeManager());
         getSelectionModel().select(JamsApplication.getThemeManager().getSelected());
@@ -73,8 +74,8 @@ public class ThemeValueEditor extends ComboBox<Theme> implements ValueEditor<The
     @Override
     public Node buildConfigNode(Label label) {
         var box = new HBox(label, this);
-        box.setSpacing(5);
-        box.setAlignment(Pos.CENTER_LEFT);
+        box.getStyleClass().add(GENERAL_STYLE_CLASS + "-hbox");
+        box.getStyleClass().add(STYLE_CLASS + "-hbox");
         return box;
     }
 

@@ -1,0 +1,119 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
+/*
+
+    JAMS START WINDOW STYLE
+
+    This CSS file contains all style information about the JAMS's start window.
+
+*/
+
+.start-top-bar {
+    -fx-background-color: -theme-background;
+}
+
+.start-top-bar-window-button-minimize {
+    -fx-background-color: -theme-background;
+}
+
+.start-top-bar-window-button-close {
+    -fx-background-color: -theme-background;
+}
+
+.start-title {
+    -fx-text-fill: -theme-foreground-darker;
+}
+
+.start-window-section-display {
+    -fx-background-color: -theme-background-darker;
+}
+
+.start-window-section-list-entry {
+    -fx-padding: 8px 0px 8px 10px;
+    -fx-alignment: center-left;
+}
+
+.start-window-section-list-entry:hover {
+    -fx-background-color: -theme-background-lighter;
+}
+
+.start-window-section-list-entry-selected {
+    -fx-background-color: -theme-background-pressed;
+}
+
+.start-window-section-list-entry-selected:hover {
+    -fx-background-color: -theme-background-pressed;
+}
+
+/* START WINDOW PROJECTS */
+.start-window-project-buttons-box {
+    -fx-padding: 10px;
+    -fx-spacing: 5px;
+}
+
+.start-window-project-entry {
+    -fx-padding: 10px;
+    -fx-spacing: 5px;
+}
+
+.start-window-project-entry:hover {
+    -fx-background-color: -theme-background-lighter;
+}
+
+.start-window-project-entry .path {
+    -fx-text-fill: -theme-foreground-darker-2;
+}
+
+/* START WINDOW NEW PROJECT */
+.start-window-new-project-list {
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.start-window-new-project-list-entry {
+    -fx-padding: 8px 0px 8px 10px;
+    -fx-alignment: center-left;
+}
+
+.start-window-new-project-list-entry:hover {
+    -fx-background-color: -theme-background-lighter;
+}
+
+.start-window-new-project-list-entry-selected {
+    -fx-background-color: -theme-background-pressed;
+}
+
+.start-window-new-project-list-entry-selected:hover {
+    -fx-background-color: -theme-background-pressed;
+}
+
+.start-window-new-project-buttons {
+    -fx-alignment: center-right;
+    -fx-padding: 20px;
+}
+
+.start-window-new-project-buttons .button {
+    -fx-pref-width: 100px;
+    -fx-pref-height: 20px;
+}

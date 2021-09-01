@@ -68,4 +68,9 @@ public class CacheLanguageListCell extends ListCell<Cache> {
         refreshMessage();
     }
 
+    @Override
+    public String getTypeSelector() {
+        return "ListCell";
+    }
+
 }

@@ -44,6 +44,7 @@ import java.util.function.Consumer;
 public class MIPSAssembledInstructionViewerOrderValueEditor extends VBox implements ValueEditor<MIPSAssembledInstructionViewerOrder> {
 
     public static final String NAME = MIPSAssembledInstructionViewerOrderValueConverter.NAME;
+    public static final String STYLE_CLASS = GENERAL_STYLE_CLASS + "-" + NAME.replace("_", "-");
 
     private final HBox topBox, usingBox;
 
@@ -51,6 +52,7 @@ public class MIPSAssembledInstructionViewerOrderValueEditor extends VBox impleme
     };
 
     public MIPSAssembledInstructionViewerOrderValueEditor() {
+        getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
         setFillWidth(true);
         setAlignment(Pos.BOTTOM_CENTER);
         setPadding(new Insets(0, 0, 0, 10));
@@ -113,9 +115,8 @@ public class MIPSAssembledInstructionViewerOrderValueEditor extends VBox impleme
     @Override
     public Node buildConfigNode(Label label) {
         var box = new VBox(label, this);
-        box.setSpacing(5);
-        box.setFillWidth(true);
-        box.setAlignment(Pos.CENTER_LEFT);
+        box.getStyleClass().add(GENERAL_STYLE_CLASS + "-hbox");
+        box.getStyleClass().add(STYLE_CLASS + "-hbox");
         return box;
     }
 

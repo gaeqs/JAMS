@@ -43,7 +43,6 @@ public class MainAnchorPane extends AnchorPane {
      * Creates the main anchor pane.
      */
     public MainAnchorPane(Stage stage, boolean transparent) {
-        getStyleClass().add("anchor-pane");
         getStyleClass().add("main-anchor-pane");
         generateTopMenuBar(stage, transparent);
         generateProjectsTabPane();
@@ -66,12 +65,16 @@ public class MainAnchorPane extends AnchorPane {
         topBar = new TopBar(stage, transparent);
         getChildren().add(topBar);
         AnchorUtils.setAnchor(topBar, -1, -1, 0, 0);
-        topBar.setPrefHeight(30);
     }
 
     private void generateProjectsTabPane() {
         projectListTabPane = new ProjectListTabPane();
         getChildren().add(projectListTabPane);
         AnchorUtils.setAnchor(projectListTabPane, 30, 0, 0, 0);
+    }
+
+    @Override
+    public String getTypeSelector() {
+        return "AnchorPane";
     }
 }

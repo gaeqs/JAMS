@@ -1,0 +1,269 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
+/*
+
+    JAMS CONFIGURATION WINDOW
+
+    This CSS file contains all style information about JAMS's configuration window.
+
+*/
+
+.configuration {
+
+}
+
+.configuration-explorer {
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.configuration-node {
+    -fx-spacing: 5px;
+}
+
+.configuration-node .label {
+    -fx-font-size: 14px;
+}
+
+.configuration-node .region {
+    -fx-pref-width: 10px;
+}
+
+.configuration-explorer .explorer-element {
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.configuration-explorer .selected-explorer-element {
+    -fx-background-color: -theme-element-selected;
+}
+
+.configuration .display {
+    -fx-spacing: 5px;
+}
+
+.configuration .display .contents {
+    -fx-spacing: 7px;
+}
+
+.configuration .display .contents .label {
+    -fx-padding: 0px 0px 0px 5px;
+}
+
+.configuration .tree-display {
+    -fx-font-weight: bold;
+    -fx-text-fill: -theme-foreground-darker-2;
+    -fx-font-size: 12px;
+    -fx-padding: 10px 0px 0px 15px;
+}
+
+.configuration-actions {
+    -fx-spacing: 1px;
+}
+
+.configuration-actions .scroll-pane {
+    -fx-fit-to-width: true;
+    -fx-fit-to-height: true;
+
+}
+
+.configuration-actions .search-bar {
+
+}
+
+.configuration-actions .explorer {
+
+}
+
+.configuration-actions .explorer .explorer-section {
+}
+
+.configuration-actions .explorer .explorer-section .contents {
+    -fx-spacing: 0px;
+}
+
+.configuration-actions .explorer .explorer-section .contents .label {
+    -fx-padding: 0px 0px 0px 5px;
+}
+
+.configuration-actions .explorer .explorer-action {
+    -fx-spacing: 5px;
+    -fx-alignment: center-left;
+}
+
+
+.configuration-actions .explorer .explorer-action .remove-button {
+    -fx-border-width: 0px;
+    -fx-background-insets: 0px;
+    -fx-background-radius: 3px;
+    -fx-font-size: 10px;
+}
+
+.configuration-actions .explorer .explorer-action .remove-button:hover {
+    -fx-background-color: -theme-element-invalid;
+}
+
+.configuration-actions .explorer .explorer-action .add-button {
+    -fx-border-width: 0px;
+    -fx-background-insets: 0px;
+    -fx-background-radius: 3px;
+    -fx-font-size: 10px;
+}
+
+.plugin-section:horizontal .split-pane-divider {
+    -fx-background-color: -theme-background;
+}
+
+.plugin-list {
+    -fx-background-color: -theme-background-darker;
+}
+
+.plugin-display {
+    -fx-background-color: -theme-background-darker;
+}
+
+.plugin-entry:hover {
+    -fx-background-color: -theme-background-lighter;
+}
+
+.plugin-entry-selected,
+.plugin-entry-selected:hover {
+    -fx-background-color: -theme-background-pressed;
+}
+
+.plugin-entry-name,
+.plugin-display-name {
+    -fx-font-weight: bold;
+}
+
+.plugin-entry-version,
+.plugin-display-version {
+    -fx-text-fill: -theme-foreground-darker;
+}
+
+.plugin-entry-author,
+.plugin-display-author {
+    -fx-text-fill: -theme-foreground-darker;
+}
+
+/****************
+
+ MIPS CONFIGURATION
+
+ ****************/
+
+.mips-configuration {
+
+}
+
+.mips-configuration .list {
+
+}
+
+.mips-configuration .list .controls {
+}
+
+.mips-configuration .list .contents {
+
+}
+
+.mips-configuration .display {
+
+}
+
+.mips-configuration .display .name-field {
+    -fx-alignment: center-left;
+    -fx-spacing: 5px;
+    -fx-padding: 5px 5px 5px 5px;
+}
+
+.mips-configuration .display .general {
+    -fx-padding: 10px;
+    -fx-spacing: 7px;
+}
+
+.mips-configuration .display .general .representation {
+    -fx-spacing: 10px;
+    -fx-alignment: center-left;
+}
+
+.mips-configuration .display .syscalls .display {
+    -fx-spacing: 7px;
+    -fx-padding: 5px;
+}
+
+.mips-configuration .display .syscalls .display .representation {
+    -fx-spacing: 5px;
+    -fx-alignment: center-left;
+}
+
+.mips-configuration .display .syscalls .contents {
+
+}
+
+.mips-configuration .display .syscalls .contents .representation {
+
+}
+
+.mips-configuration .display .syscalls .controls {
+
+}
+
+.mips-configuration .display .syscalls .controls .buttons {
+    -fx-alignment: center-left;
+}
+
+.mips-configuration .display .syscalls .controls .bundles {
+    -fx-alignment: center-right;
+    -fx-spacing: 5px;
+}
+
+.mips-configuration .display .caches .display {
+    -fx-spacing: 7px;
+    -fx-padding: 5px;
+}
+
+.mips-configuration .display .caches .display .representation {
+    -fx-spacing: 5px;
+    -fx-alignment: center-left;
+}
+
+.mips-configuration .display .caches .display .size {
+    -fx-spacing: 5px;
+}
+
+.mips-configuration .display .caches .controls {
+
+}
+
+.mips-configuration .display .caches .controls .buttons {
+    -fx-alignment: center-left;
+}
+
+.mips-configuration .display .caches .contents {
+
+}
+
+.mips-configuration .display .caches .contents .representation {
+
+}

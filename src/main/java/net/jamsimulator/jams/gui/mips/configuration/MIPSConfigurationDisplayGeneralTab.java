@@ -24,12 +24,10 @@
 
 package net.jamsimulator.jams.gui.mips.configuration;
 
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.configuration.ConfigurationRegionDisplay;
+import net.jamsimulator.jams.gui.configuration.RegionDisplay;
 import net.jamsimulator.jams.gui.util.value.ValueEditor;
 import net.jamsimulator.jams.gui.util.value.ValueEditors;
 import net.jamsimulator.jams.language.Messages;
@@ -46,12 +44,14 @@ import java.util.List;
 
 public class MIPSConfigurationDisplayGeneralTab extends VBox {
 
+    public static final String STYLE_CLASS = "general";
+    public static final String REPRESENTATION_STYLE_CLASS = "representation";
+
     private final MIPSSimulationConfiguration configuration;
-    private final List<Representation> representations;
+    private final List<NodeRepresentation> representations;
 
     public MIPSConfigurationDisplayGeneralTab(MIPSSimulationConfiguration configuration) {
-        setPadding(new Insets(5));
-        setSpacing(5);
+        getStyleClass().add(STYLE_CLASS);
 
         this.configuration = configuration;
 
@@ -60,9 +60,9 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
         representations = new ArrayList<>();
 
 
-        getChildren().add(new ConfigurationRegionDisplay(Messages.SIMULATION_CONFIGURATION_GENERAL_REGION));
+        getChildren().add(new RegionDisplay(Messages.SIMULATION_CONFIGURATION_GENERAL_REGION));
         configuration.getNodes().forEach((preset, value) -> {
-            var representation = new Representation(preset, value);
+            var representation = new NodeRepresentation(preset, value);
             representation.refreshView(architecture);
             representations.add(representation);
         });
@@ -75,8 +75,8 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
         configuration.setNodeValue(preset.getName(), value);
         if (preset.getType() == Architecture.class) {
             getChildren().clear();
-            getChildren().add(new ConfigurationRegionDisplay(Messages.SIMULATION_CONFIGURATION_GENERAL_REGION));
-            for (Representation representation : representations) {
+            getChildren().add(new RegionDisplay(Messages.SIMULATION_CONFIGURATION_GENERAL_REGION));
+            for (NodeRepresentation representation : representations) {
                 representation.refreshView((Architecture) value);
                 if (representation.isVisible()) {
                     getChildren().add(representation);
@@ -84,20 +84,19 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
                 representation.refreshEnabled(representations);
             }
         } else {
-            for (Representation representation : representations) {
+            for (NodeRepresentation representation : representations) {
                 representation.refreshEnabled(representations);
             }
         }
     }
 
-    private class Representation extends HBox {
+    private class NodeRepresentation extends HBox {
 
         private final MIPSSimulationConfigurationNodePreset preset;
         private final ValueEditor<?> editor;
 
-        public Representation(MIPSSimulationConfigurationNodePreset preset, Object value) {
-            setSpacing(5);
-            setAlignment(Pos.CENTER_LEFT);
+        public NodeRepresentation(MIPSSimulationConfigurationNodePreset preset, Object value) {
+            getStyleClass().add(REPRESENTATION_STYLE_CLASS);
 
             this.preset = preset;
             var label = new LanguageLabel(preset.getLanguageNode());
@@ -123,7 +122,7 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
             setVisible(preset.supportArchitecture(architecture));
         }
 
-        public void refreshEnabled(Collection<Representation> representations) {
+        public void refreshEnabled(Collection<NodeRepresentation> representations) {
             setDisabled(representations.stream().anyMatch(target ->
                     !preset.supportsNode(target.preset.getName(), target.editor.getCurrentValue())));
         }

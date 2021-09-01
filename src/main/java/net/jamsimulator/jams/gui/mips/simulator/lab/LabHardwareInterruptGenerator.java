@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.mips.simulator.lab;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.configuration.ConfigurationRegionDisplay;
+import net.jamsimulator.jams.gui.configuration.RegionDisplay;
 import net.jamsimulator.jams.gui.util.value.RangedIntegerValueEditor;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
@@ -36,7 +36,7 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 public class LabHardwareInterruptGenerator extends VBox {
 
     public LabHardwareInterruptGenerator(MIPSSimulation<?> simulation) {
-        getChildren().add(new ConfigurationRegionDisplay(Messages.LAB_HARDWARE_INTERRUPTS));
+        getChildren().add(new RegionDisplay(Messages.LAB_HARDWARE_INTERRUPTS));
         setSpacing(5);
 
         setFillWidth(true);

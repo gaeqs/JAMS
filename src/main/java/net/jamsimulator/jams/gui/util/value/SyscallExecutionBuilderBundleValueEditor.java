@@ -45,11 +45,13 @@ import java.util.function.Consumer;
 public class SyscallExecutionBuilderBundleValueEditor extends ComboBox<SyscallExecutionBuilderBundle> implements ValueEditor<SyscallExecutionBuilderBundle> {
 
     public static final String NAME = ActionValueConverter.NAME;
+    public static final String STYLE_CLASS = GENERAL_STYLE_CLASS + "-" + NAME.replace("_", "-");
 
     private Consumer<SyscallExecutionBuilderBundle> listener = syscallExecutionBuilderBundle -> {
     };
 
     public SyscallExecutionBuilderBundleValueEditor() {
+        getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
         setConverter(ValueConverters.getByTypeUnsafe(SyscallExecutionBuilderBundle.class));
         getItems().addAll(SyscallExecutionBuilderBundleManager.INSTANCE);
         getSelectionModel().select(0);
@@ -76,8 +78,8 @@ public class SyscallExecutionBuilderBundleValueEditor extends ComboBox<SyscallEx
     @Override
     public Node buildConfigNode(Label label) {
         var box = new HBox(label, this);
-        box.setSpacing(5);
-        box.setAlignment(Pos.CENTER_LEFT);
+        box.getStyleClass().add(GENERAL_STYLE_CLASS + "-hbox");
+        box.getStyleClass().add(STYLE_CLASS + "-hbox");
         return box;
     }
 

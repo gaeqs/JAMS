@@ -48,6 +48,8 @@ import java.util.function.Predicate;
  */
 public abstract class Explorer extends VBox implements EventBroadcast {
 
+    public static final String STYLE_CLASS = "explorer";
+
     protected final boolean multiSelection;
     private final SimpleEventBroadcast broadcast;
     protected ScrollPane scrollPane;
@@ -65,6 +67,8 @@ public abstract class Explorer extends VBox implements EventBroadcast {
      * @param generateOnConstructor whether the method {@link #generateMainSection()} should be called on the constructor.
      */
     public Explorer(ScrollPane scrollPane, boolean multiSelection, boolean generateOnConstructor) {
+        getStyleClass().add(STYLE_CLASS);
+
         this.broadcast = new SimpleEventBroadcast();
         this.scrollPane = scrollPane;
         this.multiSelection = multiSelection;

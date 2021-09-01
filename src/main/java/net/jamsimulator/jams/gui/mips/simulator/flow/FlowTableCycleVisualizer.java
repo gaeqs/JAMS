@@ -37,7 +37,6 @@ public class FlowTableCycleVisualizer extends AnchorPane {
     private final LanguageLabel cycleLabel;
 
     public FlowTableCycleVisualizer(FlowTable flowTable, ScrollPane anchorScrollPane) {
-        getStyleClass().add("anchor-pane");
         this.flowTable = flowTable;
         this.cycleLabel = new LanguageLabel(Messages.FLOW_CYCLE);
         cycleLabel.getStyleClass().add("flow-current-cycle-label");
@@ -99,4 +98,8 @@ public class FlowTableCycleVisualizer extends AnchorPane {
         }
     }
 
+    @Override
+    public String getTypeSelector() {
+        return "AnchorPane";
+    }
 }

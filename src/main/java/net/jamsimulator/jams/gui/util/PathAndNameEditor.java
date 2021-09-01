@@ -26,13 +26,12 @@ package net.jamsimulator.jams.gui.util;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.file.FileTypeManager;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.file.FileTypeManager;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.utils.FileUtils;
 
@@ -42,18 +41,18 @@ import java.util.Objects;
 public class PathAndNameEditor extends StyledNodeList {
 
     private final SimpleBooleanProperty valid;
-    private final TextField nameField, pathField;
+    private final InvalidableTextField nameField, pathField;
 
     public PathAndNameEditor() {
         getStyleClass().add("path-and-name-editor");
         var defPath = new File(Jams.getMainFolder().getParentFile(), "JAMSProjects");
         this.valid = new SimpleBooleanProperty(false);
 
-        nameField = new TextField();
-        nameField.getStyleClass().add("invalid-text-field");
+        nameField = new InvalidableTextField();
+        nameField.setInvalid(true);
         addEntry(Messages.MAIN_MENU_FILE_CREATE_PROJECT_NAME, nameField);
 
-        pathField = new TextField(defPath.getAbsolutePath() + File.separator);
+        pathField = new InvalidableTextField(defPath.getAbsolutePath() + File.separator);
         var selectParent = new Button("", new QualityImageView(Manager.get(FileTypeManager.class).getFolderType().getIcon(), 16, 16));
         addEntry(Messages.MAIN_MENU_FILE_CREATE_PROJECT_PATH, pathField, selectParent);
 
@@ -88,15 +87,8 @@ public class PathAndNameEditor extends StyledNodeList {
             pathField.setText(pathField.getText().substring(0, index) + File.separator + value);
         }
 
-        if (value.isEmpty()) {
-            if (!nameField.getStyleClass().contains("invalid-text-field")) {
-                nameField.getStyleClass().add("invalid-text-field");
-            }
-            valid.set(false);
-        } else {
-            nameField.getStyleClass().remove("invalid-text-field");
-            valid.set(!pathField.getStyleClass().contains("invalid-text-field"));
-        }
+        nameField.setInvalid(value.isEmpty());
+        valid.set(!value.isEmpty() && !pathField.isInvalid());
     }
 
     private void refreshPath(String val) {
@@ -104,12 +96,10 @@ public class PathAndNameEditor extends StyledNodeList {
         if (!FileUtils.isValidPath(val)
                 || !file.isDirectory() && file.exists()
                 || file.isDirectory() && Objects.requireNonNull(file.listFiles()).length > 0) {
-            if (!pathField.getStyleClass().contains("invalid-text-field")) {
-                pathField.getStyleClass().add("invalid-text-field");
-            }
+            pathField.setInvalid(true);
             valid.set(false);
         } else {
-            pathField.getStyleClass().remove("invalid-text-field");
+            pathField.setInvalid(false);
             valid.set(!nameField.getText().isEmpty());
         }
     }

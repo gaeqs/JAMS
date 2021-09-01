@@ -54,7 +54,7 @@ public class SimpleLog extends HBox implements Log {
         VBox buttons = new VBox();
         Button clear = new Button("C");
         clear.setOnAction(event -> clear());
-        clear.getStyleClass().add("bold-button");
+        clear.getStyleClass().add("button-bold");
         buttons.getChildren().add(clear);
         getChildren().add(buttons);
 

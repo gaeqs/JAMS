@@ -37,11 +37,13 @@ import java.util.function.Consumer;
 public class StringValueEditor extends TextField implements ValueEditor<String> {
 
     public static final String NAME = "string";
+    public static final String STYLE_CLASS = GENERAL_STYLE_CLASS + "-" + NAME.replace("_", "-");
 
     private Consumer<String> listener = string -> {
     };
 
     public StringValueEditor() {
+        getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
         setOnAction(target -> listener.accept(getText()));
         focusedProperty().addListener((obs, old, val) -> {
             if (!val) listener.accept(getText());
@@ -67,8 +69,8 @@ public class StringValueEditor extends TextField implements ValueEditor<String> 
     @Override
     public Node buildConfigNode(Label label) {
         var box = new HBox(label, this);
-        box.setSpacing(5);
-        box.setAlignment(Pos.CENTER_LEFT);
+        box.getStyleClass().add(GENERAL_STYLE_CLASS + "-hbox");
+        box.getStyleClass().add(STYLE_CLASS + "-hbox");
         return box;
     }
 

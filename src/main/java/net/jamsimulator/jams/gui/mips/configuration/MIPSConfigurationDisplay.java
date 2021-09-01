@@ -38,14 +38,16 @@ import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurat
 
 public class MIPSConfigurationDisplay extends AnchorPane {
 
-    private final MIPSConfigurationWindow window;
+    public static final String STYLE_CLASS = "display";
 
+    private final MIPSConfigurationWindow window;
     private final MIPSSimulationConfiguration configuration;
 
     public MIPSConfigurationDisplay(MIPSConfigurationWindow window, MIPSSimulationConfiguration configuration) {
         this.window = window;
         this.configuration = configuration;
 
+        getStyleClass().add(STYLE_CLASS);
         AnchorUtils.setAnchor(this, 5, 5, 5, 5);
 
         populate();

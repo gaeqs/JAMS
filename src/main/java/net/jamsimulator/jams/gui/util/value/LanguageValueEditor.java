@@ -43,11 +43,13 @@ import java.util.function.Consumer;
 public class LanguageValueEditor extends ComboBox<Language> implements ValueEditor<Language> {
 
     public static final String NAME = LanguageValueConverter.NAME;
+    public static final String STYLE_CLASS = GENERAL_STYLE_CLASS + "-" + NAME.replace("_", "-");
 
     private Consumer<Language> listener = language -> {
     };
 
     public LanguageValueEditor() {
+        getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
         setConverter(ValueConverters.getByTypeUnsafe(Language.class));
         getItems().addAll(Manager.of(Language.class));
         getSelectionModel().select(Manager.ofS(Language.class).getSelected());
@@ -73,8 +75,8 @@ public class LanguageValueEditor extends ComboBox<Language> implements ValueEdit
     @Override
     public Node buildConfigNode(Label label) {
         var box = new HBox(label, this);
-        box.setSpacing(5);
-        box.setAlignment(Pos.CENTER_LEFT);
+        box.getStyleClass().add(GENERAL_STYLE_CLASS + "-hbox");
+        box.getStyleClass().add(STYLE_CLASS + "-hbox");
         return box;
     }
 

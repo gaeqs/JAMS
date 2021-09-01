@@ -60,4 +60,9 @@ public class LanguageButton extends Button {
     public void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
         refreshMessage();
     }
+
+    @Override
+    public String getTypeSelector() {
+        return "Button";
+    }
 }

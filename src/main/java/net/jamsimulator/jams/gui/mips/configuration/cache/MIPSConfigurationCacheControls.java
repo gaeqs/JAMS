@@ -40,13 +40,19 @@ import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 
 public class MIPSConfigurationCacheControls extends AnchorPane {
 
+    public static final String STYLE_CLASS = "controls";
+    public static final String BUTTONS_STYLE_CLASS = "buttons";
+
     private final MIPSConfigurationDisplayCacheTab cacheTab;
     private final HBox buttonsHbox;
 
     public MIPSConfigurationCacheControls(MIPSConfigurationDisplayCacheTab cacheTab) {
         this.cacheTab = cacheTab;
 
+        getStyleClass().add(STYLE_CLASS);
+
         buttonsHbox = new HBox();
+        buttonsHbox.getStyleClass().add(BUTTONS_STYLE_CLASS);
         AnchorUtils.setAnchor(buttonsHbox, 0, 0, 0, -1);
         buttonsHbox.setAlignment(Pos.CENTER_LEFT);
         getChildren().add(buttonsHbox);
@@ -63,7 +69,7 @@ public class MIPSConfigurationCacheControls extends AnchorPane {
     private void generateAddButton() {
         var button = new Button(null, new QualityImageView(Icons.CONTROL_ADD, 16, 16));
         button.setTooltip(new LanguageTooltip(Messages.GENERAL_ADD));
-        button.getStyleClass().add("bold-button");
+        button.getStyleClass().add("button-bold");
 
         button.setOnAction(event -> {
             var builder = Manager.of(CacheBuilder.class).stream().findAny()
@@ -80,7 +86,7 @@ public class MIPSConfigurationCacheControls extends AnchorPane {
     private void generateRemoveButton() {
         var button = new Button(null, new QualityImageView(Icons.CONTROL_REMOVE, 16, 16));
         button.setTooltip(new LanguageTooltip(Messages.GENERAL_REMOVE));
-        button.getStyleClass().add("bold-button");
+        button.getStyleClass().add("button-bold");
 
         button.setOnAction(event -> {
             var contents = cacheTab.getContents();

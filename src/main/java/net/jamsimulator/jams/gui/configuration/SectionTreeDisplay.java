@@ -37,11 +37,13 @@ import java.util.List;
 
 public class SectionTreeDisplay extends Label {
 
+    public static final String STYLE_CLASS = "tree-display";
+
     private ExplorerSection current;
 
     public SectionTreeDisplay() {
         super("");
-        getStyleClass().add("configuration-section-tree-display");
+        getStyleClass().add(STYLE_CLASS);
         Manager.of(Language.class).registerListeners(this, true);
     }
 

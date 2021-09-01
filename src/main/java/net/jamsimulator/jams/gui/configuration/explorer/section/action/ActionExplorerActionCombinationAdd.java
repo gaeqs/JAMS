@@ -34,7 +34,7 @@ public class ActionExplorerActionCombinationAdd extends Button {
 
     public ActionExplorerActionCombinationAdd(ActionsExplorerAction action) {
         super("+");
-        getStyleClass().add("action-add-button");
+        getStyleClass().add("add-button");
         setEllipsisString("+");
         setOnAction(event -> BindActionWindow.open(action.getAction()));
     }

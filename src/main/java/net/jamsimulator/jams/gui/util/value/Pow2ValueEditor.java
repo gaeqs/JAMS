@@ -37,6 +37,7 @@ import java.util.function.Consumer;
 public class Pow2ValueEditor extends ComboBox<String> implements ValueEditor<Integer> {
 
     public static final String NAME = "pow2";
+    public static final String STYLE_CLASS = GENERAL_STYLE_CLASS + "-" + NAME.replace("_", "-");
 
     private static final char[] EXPONENTS = new char[]{'\u2070', '\u00B9', '\u00B2', '\u00B3',
             '\u2074', '\u2075', '\u2076', '\u2077', '\u2078', '\u2079'};
@@ -45,6 +46,7 @@ public class Pow2ValueEditor extends ComboBox<String> implements ValueEditor<Int
     };
 
     public Pow2ValueEditor() {
+        getStyleClass().addAll(GENERAL_STYLE_CLASS, STYLE_CLASS);
         StringBuilder builder;
         for (int i = 0; i < 32; i++) {
             builder = new StringBuilder();
@@ -81,8 +83,8 @@ public class Pow2ValueEditor extends ComboBox<String> implements ValueEditor<Int
     @Override
     public Node buildConfigNode(Label label) {
         var box = new HBox(label, this);
-        box.setSpacing(5);
-        box.setAlignment(Pos.CENTER_LEFT);
+        box.getStyleClass().add(GENERAL_STYLE_CLASS + "-hbox");
+        box.getStyleClass().add(STYLE_CLASS + "-hbox");
         return box;
     }
 

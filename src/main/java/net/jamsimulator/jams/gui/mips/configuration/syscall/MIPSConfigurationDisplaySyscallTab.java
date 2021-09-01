@@ -35,6 +35,8 @@ import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurat
 
 public class MIPSConfigurationDisplaySyscallTab extends AnchorPane {
 
+    public static final String STYLE_CLASS = "syscalls";
+
     private final MIPSSimulationConfiguration configuration;
 
     private final MIPSConfigurationSyscallControls controls;
@@ -46,6 +48,8 @@ public class MIPSConfigurationDisplaySyscallTab extends AnchorPane {
 
     public MIPSConfigurationDisplaySyscallTab(MIPSSimulationConfiguration configuration) {
         this.configuration = configuration;
+
+        getStyleClass().add(STYLE_CLASS);
 
         controls = new MIPSConfigurationSyscallControls(this);
         splitPane = new SplitPane();

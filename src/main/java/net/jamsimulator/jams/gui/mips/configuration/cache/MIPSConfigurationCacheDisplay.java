@@ -25,13 +25,12 @@
 package net.jamsimulator.jams.gui.mips.configuration.cache;
 
 import javafx.beans.property.Property;
-import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import net.jamsimulator.jams.gui.configuration.ConfigurationRegionDisplay;
+import net.jamsimulator.jams.gui.configuration.RegionDisplay;
 import net.jamsimulator.jams.gui.util.propertyeditor.BooleanPropertyEditor;
 import net.jamsimulator.jams.gui.util.propertyeditor.Pow2PropertyEditor;
 import net.jamsimulator.jams.gui.util.propertyeditor.PropertyEditor;
@@ -42,25 +41,28 @@ import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 
 public class MIPSConfigurationCacheDisplay extends VBox {
 
+    public static final String STYLE_CLASS = "display";
+    public static final String REPRESENTATION_STYLE_CLASS = "representation";
+    public static final String SIZE_STYLE_CLASS = "size";
+
     private final CacheBuilder<?> builder;
     private Label sizeLabel;
 
     public MIPSConfigurationCacheDisplay(CacheBuilder<?> builder) {
         this.builder = builder;
-        setSpacing(7);
-        setPadding(new Insets(5));
+        getStyleClass().add(STYLE_CLASS);
         populate();
     }
 
     @SuppressWarnings("unchecked")
     private void populate() {
-        getChildren().add(new ConfigurationRegionDisplay(Messages.SIMULATION_CONFIGURATION_CACHES_TAB_PROPERTIES));
+        getChildren().add(new RegionDisplay(Messages.SIMULATION_CONFIGURATION_CACHES_TAB_PROPERTIES));
         getChildren().add(new Region());
 
         for (Property<?> property : builder.getProperties()) {
 
             var hBox = new HBox();
-            hBox.setSpacing(5);
+            hBox.getStyleClass().add(REPRESENTATION_STYLE_CLASS);
 
             var languageNode = builder.getLanguageNode() + "_PROPERTY_" + property.getName();
             var label = new LanguageLabel(languageNode);
@@ -85,10 +87,10 @@ public class MIPSConfigurationCacheDisplay extends VBox {
             getChildren().add(hBox);
         }
 
-        getChildren().addAll(new Group(), new ConfigurationRegionDisplay(Messages.SIMULATION_CONFIGURATION_CACHES_TAB_INFO));
+        getChildren().addAll(new Group(), new RegionDisplay(Messages.SIMULATION_CONFIGURATION_CACHES_TAB_INFO));
 
         var sizeBox = new HBox();
-        sizeBox.setSpacing(5);
+        sizeBox.getStyleClass().add(SIZE_STYLE_CLASS);
         sizeBox.getChildren().add(new LanguageLabel(Messages.SIMULATION_CONFIGURATION_CACHES_TAB_SIZE));
         sizeBox.getChildren().add(sizeLabel = new Label(builder.getSizeInBytes() + " B"));
         getChildren().add(sizeBox);

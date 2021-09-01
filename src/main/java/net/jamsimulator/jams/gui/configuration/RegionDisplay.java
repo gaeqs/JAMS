@@ -31,18 +31,20 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 
-public class ConfigurationRegionDisplay extends HBox {
+public class RegionDisplay extends HBox {
 
-    public ConfigurationRegionDisplay(String languageNode, String region) {
-        setSpacing(5);
+    public static final String STYLE_CLASS = "region-display";
+
+    public RegionDisplay(String languageNode, String region) {
+        getStyleClass().add(STYLE_CLASS);
         if (languageNode != null) {
             languageNode += "_REGION_" + region.toUpperCase();
         }
         refresh(languageNode);
     }
 
-    public ConfigurationRegionDisplay(String languageNode) {
-        setSpacing(5);
+    public RegionDisplay(String languageNode) {
+        getStyleClass().add(STYLE_CLASS);
         refresh(languageNode);
     }
 
@@ -53,8 +55,6 @@ public class ConfigurationRegionDisplay extends HBox {
         Label label = new LanguageLabel(languageNode);
         Separator separator = new Separator(Orientation.HORIZONTAL);
 
-        label.getStyleClass().add("configuration-window-region-label");
-        separator.getStyleClass().add("configuration-window-region-separator");
         separator.prefWidthProperty().bind(widthProperty().subtract(label.widthProperty()).subtract(20));
 
         getChildren().add(new Group(label));

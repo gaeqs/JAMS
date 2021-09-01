@@ -30,7 +30,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import net.jamsimulator.jams.configuration.RootConfiguration;
-import net.jamsimulator.jams.gui.configuration.ConfigurationRegionDisplay;
+import net.jamsimulator.jams.gui.configuration.RegionDisplay;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.util.PathAndNameEditor;
 import net.jamsimulator.jams.gui.util.propertyeditor.PropertyEditors;
@@ -81,7 +81,7 @@ public class MIPSEmptyProjectTemplate extends ProjectTemplate<MIPSProject> {
         PropertyEditors.getEditor(registersBuilderProperty).ifPresent(p ->
                 editor.addEntry(Messages.PROJECT_CREATOR_MIPS_REGISTERS, p.thisInstanceAsNode()));
 
-        editor.getChildren().add(0, new ConfigurationRegionDisplay(Builder.LANGUAGE_NODE));
+        editor.getChildren().add(0, new RegionDisplay(Builder.LANGUAGE_NODE));
         var region = new Region();
         region.setPrefHeight(20);
         editor.getChildren().add(1, region);

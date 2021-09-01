@@ -25,11 +25,13 @@
 package net.jamsimulator.jams.gui.popup;
 
 import javafx.application.Platform;
+import javafx.css.PseudoClass;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import net.jamsimulator.jams.gui.util.InvalidableTextField;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.utils.Validate;
@@ -42,7 +44,7 @@ public class PasteNewNameWindow extends VBox {
     public static int WIDTH = 300;
     public static int HEIGHT = 50;
 
-    private final TextField field;
+    private final InvalidableTextField field;
     private boolean hasNewName;
 
     private PasteNewNameWindow(Stage stage, File file) {
@@ -53,7 +55,7 @@ public class PasteNewNameWindow extends VBox {
 
         hasNewName = false;
 
-        field = new TextField();
+        field = new InvalidableTextField();
         getChildren().add(field);
 
         field.setOnAction(event -> {
@@ -66,13 +68,7 @@ public class PasteNewNameWindow extends VBox {
 
         field.textProperty().addListener((obs, old, val) -> {
             var newFile = new File(file.getParentFile(), val);
-            if (newFile.exists()) {
-                if (!field.getStyleClass().contains("invalid-text-field")) {
-                    field.getStyleClass().add("invalid-text-field");
-                }
-            } else {
-                field.getStyleClass().remove("invalid-text-field");
-            }
+            field.setInvalid(newFile.exists());
         });
 
         field.focusedProperty().addListener((obs, old, val) -> Platform.runLater(() -> {

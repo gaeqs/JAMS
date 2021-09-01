@@ -60,4 +60,9 @@ public class LanguageTableColumn<S, T> extends TableColumn<S, T> {
     public void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
         refreshMessage();
     }
+
+    @Override
+    public String getTypeSelector() {
+        return "TableColumn";
+    }
 }

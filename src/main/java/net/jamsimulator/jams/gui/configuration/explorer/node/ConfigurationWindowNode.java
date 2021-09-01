@@ -38,6 +38,9 @@ import net.jamsimulator.jams.utils.Validate;
 
 public class ConfigurationWindowNode extends HBox {
 
+    public static final String STYLE_CLASS = "configuration-node";
+    public static final String REGION_STYLE_CLASS = "region";
+
     protected Configuration configuration;
     protected String relativeNode;
     protected String languageNode;
@@ -49,7 +52,7 @@ public class ConfigurationWindowNode extends HBox {
 
     public ConfigurationWindowNode(Configuration configuration, String relativeNode,
                                    String languageNode, String region, String type) {
-        getStyleClass().add("configuration-window-node");
+        getStyleClass().add(STYLE_CLASS);
         this.configuration = configuration;
         this.relativeNode = relativeNode;
         this.languageNode = languageNode;
@@ -86,15 +89,15 @@ public class ConfigurationWindowNode extends HBox {
 
     protected void init() {
         setAlignment(Pos.CENTER_LEFT);
-        Label label = languageNode == null ? new Label(relativeNode) : new LanguageLabel(languageNode);
+        var label = languageNode == null ? new Label(relativeNode) : new LanguageLabel(languageNode);
         if (languageNode != null) {
             label.setTooltip(new LanguageTooltip(languageNode + "_TOOLTIP", LanguageTooltip.DEFAULT_DELAY));
         }
 
-        Region region = new Region();
-        region.setPrefWidth(10);
-
-        getChildren().addAll(region, editor.buildConfigNode(label));
+        var region = new Region();
+        region.getStyleClass().add(REGION_STYLE_CLASS);
+        var configNode = editor.buildConfigNode(label);
+        getChildren().addAll(region, configNode);
     }
 
 

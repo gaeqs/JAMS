@@ -27,7 +27,6 @@ package net.jamsimulator.jams.gui.project;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -102,7 +101,7 @@ public class ProjectTab extends Tab implements EventBroadcast {
         registerListeners(this, true);
         Jams.getGeneralEventBroadcast().registerListeners(this, true);
 
-        AnchorPane pane = new AnchorPane();
+        var pane = new AnchorPane();
         pane.getStyleClass().add("project-tab-anchor-pane");
 
         projectTabPane = new ProjectTabPane(this, (old, tab) -> {
@@ -131,18 +130,12 @@ public class ProjectTab extends Tab implements EventBroadcast {
         pane.getChildren().add(projectTabPane);
 
         bottomBar = new ProjectBottomBar(this);
-        bottomBar.setPrefHeight(20);
-        bottomBar.setMaxHeight(20);
         AnchorUtils.setAnchor(bottomBar, -1, 0, 0, 0);
         pane.getChildren().add(bottomBar);
 
         buttonsHBox = new HBox();
         AnchorUtils.setAnchor(buttonsHBox, 0, -1, -1, 0);
         buttonsHBox.getStyleClass().add("buttons-hbox");
-        buttonsHBox.setAlignment(Pos.CENTER_RIGHT);
-        buttonsHBox.setSpacing(2);
-        buttonsHBox.setPrefHeight(28);
-        buttonsHBox.setPrefWidth(400);
         pane.getChildren().add(buttonsHBox);
 
         setContent(pane);

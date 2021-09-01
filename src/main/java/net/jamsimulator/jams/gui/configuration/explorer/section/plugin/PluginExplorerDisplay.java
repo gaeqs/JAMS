@@ -127,7 +127,7 @@ public class PluginExplorerDisplay extends AnchorPane {
     private void loadDeleteButton(Plugin plugin) {
         var view = new QualityImageView(Icons.CONTROL_REMOVE, 16, 16);
         var button = new Button("", view);
-        button.getStyleClass().add("dark-bold-button");
+        button.getStyleClass().add("button-dark-bold");
         button.setTooltip(new LanguageTooltip(Messages.CONFIG_PLUGIN_UNINSTALL));
 
 

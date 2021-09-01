@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.language.wrapper;
 
+import javafx.css.CssMetaData;
+import javafx.css.Styleable;
 import javafx.scene.control.Label;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Language;
@@ -31,6 +33,8 @@ import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
 import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 import net.jamsimulator.jams.utils.StringUtils;
+
+import java.util.List;
 
 public class LanguageLabel extends Label {
 
@@ -80,5 +84,10 @@ public class LanguageLabel extends Label {
     @Listener
     public void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
         refreshMessage();
+    }
+
+    @Override
+    public String getTypeSelector() {
+        return "Label";
     }
 }

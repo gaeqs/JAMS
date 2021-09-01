@@ -1,0 +1,183 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
+/*
+
+    JAMS SIMULATION STYLE
+
+    This CSS file contains all style information about simulation nodes.
+
+*/
+
+.console .prompt {
+    -fx-background-color: -theme-background-darkest;
+    -fx-border-width: 1 0 0 0;
+    -fx-border-color: -theme-background;
+}
+
+.console .inputs {
+    -fx-background-color: -theme-background-darkest;
+    -fx-border-width: 0 0 0 1;
+    -fx-border-color: -theme-background;
+}
+
+.console .input {
+    -fx-padding: 0 0 0 3;
+    -fx-background-radius: 1;
+}
+
+.console .input-string .label {
+    -fx-text-fill: -theme-text-string;
+}
+
+.console .input-integer .label {
+    -fx-text-fill: -theme-text-immediate;
+}
+
+.console .input-float .label {
+    -fx-text-fill: -theme-text-register;
+}
+
+.console .input:hover {
+    -fx-background-color: -theme-element-invalid;
+}
+
+/* INSTRUCTION FLOW */
+.flow-entry-odd {
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.flow-entry-odd .flow-entry-instruction-label {
+    -fx-background-color: -theme-background-darker-2;
+}
+
+.flow-entry-even {
+    -fx-background-color: -theme-background-darker;
+}
+
+.flow-entry-even .flow-entry-instruction-label {
+    -fx-background-color: -theme-background-darker;
+}
+
+.flow-entry-selected {
+    -fx-background-color: -theme-background-lighter;
+}
+
+.flow-entry-selected .flow-entry-instruction-label {
+    -fx-background-color: -theme-background-lighter;
+}
+
+.flow-current-cycle-label {
+    -fx-background-color: -theme-background;
+}
+
+/* ---------------------- */
+/* MULTI CYCLE SIMULATION */
+/* ---------------------- */
+
+/* INSTRUCTION TABLE */
+.code-area .instruction-fetch {
+    -fx-background-color: -theme-simulation-fetch;
+}
+
+.code-area .instruction-decode {
+    -fx-background-color: -theme-simulation-decode;
+}
+
+.code-area .instruction-execute {
+    -fx-background-color: -theme-simulation-execute;
+}
+
+.code-area .instruction-memory {
+    -fx-background-color: -theme-simulation-memory;
+}
+
+.code-area .instruction-write-back {
+    -fx-background-color: -theme-simulation-write-back;
+}
+
+.code-area .instruction-breakpoint {
+    -fx-background-color: -theme-simulation-breakpoint;
+}
+
+/*FLOW*/
+.flow-entry .instruction-fetch {
+    -fx-background-color: derive(-theme-simulation-fetch, 30%);
+}
+
+.flow-entry .instruction-decode {
+    -fx-background-color: derive(-theme-simulation-decode, 30%);
+}
+
+.flow-entry .instruction-execute {
+    -fx-background-color: derive(-theme-simulation-execute, 30%);
+}
+
+.flow-entry .instruction-memory {
+    -fx-background-color: derive(-theme-simulation-memory, 30%);
+}
+
+.flow-entry .instruction-write-back {
+    -fx-background-color: derive(-theme-simulation-write-back, 30%);
+}
+
+/* LABELS */
+.label-table {
+    -fx-spacing: 5px;
+}
+
+.label-table-file-header {
+    -fx-spacing: 5px;
+    -fx-alignment: center-left;
+}
+
+.label-table-label-header-region {
+    -fx-pref-width: 50px;
+}
+
+/*CACHES*/
+.cache-log-message .hit {
+    -fx-text-fill: #b5f874;
+}
+
+.cache-log-message .miss {
+    -fx-text-fill: #e59d9c;
+}
+
+.cache-log-message .label {
+    -fx-font-size: 13px;
+}
+
+/*LAB*/
+.segment {
+    -fx-fill: -theme-background-pressed;
+}
+
+.selected-segment {
+    -fx-fill: -theme-lab-selected-segment;
+}
+
+.lab {
+    -fx-padding: 5px;
+}
