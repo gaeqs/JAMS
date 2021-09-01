@@ -123,7 +123,7 @@
 
 .bar-pane-node-header-button:pressed {
     -fx-border-color: transparent;
-    -fx-effect: innershadow(gaussian, -theme-background-darkest, 3, 0.2, 1, 1);
+    -fx-effect: innershadow(gaussian, -theme-shadow, 3, 0.2, 1, 1);
 }
 
 /*********

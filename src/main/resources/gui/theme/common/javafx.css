@@ -45,18 +45,18 @@ AnchorPane {
     -fx-background-insets: 3px;
     -fx-background-radius: 3px;
 
-    -fx-effect: dropshadow(gaussian, -theme-background-darkest, 3, 0.2, 1, 1);
+    -fx-effect: dropshadow(gaussian, -theme-shadow, 3, 0.2, 1, 1);
 }
 
 .button:hover {
     -fx-background-color: -theme-background-lighter;
-    -fx-effect: dropshadow(gaussian, -theme-background-darkest, 4, 0.4, 1.2, 1.2);
+    -fx-effect: dropshadow(gaussian, -theme-shadow, 4, 0.4, 1.2, 1.2);
     -fx-cursor: hand;
 }
 
 .button:pressed {
     -fx-background-color: -theme-background-pressed;
-    -fx-effect: innershadow(gaussian, -theme-background-darkest, 3, 0.2, 1, 1);
+    -fx-effect: innershadow(gaussian, -theme-shadow, 3, 0.2, 1, 1);
 }
 
 .chart-legend {
@@ -79,19 +79,19 @@ AnchorPane {
 
 .check-box .box {
     -fx-background-color: -theme-background-darker-2;
-    -fx-effect: dropshadow(gaussian, -theme-background-darkest, 3, 0.2, 1, 1);
+    -fx-effect: dropshadow(gaussian, -theme-shadow, 3, 0.2, 1, 1);
     -fx-background-radius: 3px;
     -fx-border-width: 3px;
 }
 
 .check-box .box:hover {
     -fx-background-color: -theme-background-lighter;
-    -fx-effect: dropshadow(gaussian, -theme-background-darkest, 4, 0.4, 1.2, 1.2);
+    -fx-effect: dropshadow(gaussian, -theme-shadow, 4, 0.4, 1.2, 1.2);
 }
 
 .check-box .box:pressed {
     -fx-background-color: -theme-background-pressed;
-    -fx-effect: innershadow(gaussian, -theme-background-darkest, 3, 0.2, 1, 1);
+    -fx-effect: innershadow(gaussian, -theme-shadow, 3, 0.2, 1, 1);
 }
 
 .check-box:selected > .box > .mark {
@@ -110,7 +110,7 @@ AnchorPane {
 .combo-box-base {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
-    -fx-effect: dropshadow(gaussian, -theme-background-darkest, 3, 0.2, 1, 1);
+    -fx-effect: dropshadow(gaussian, -theme-shadow, 3, 0.2, 1, 1);
 }
 
 .combo-box-base .arrow-button {
@@ -139,7 +139,7 @@ AnchorPane {
 
 .combo-box-base .list-view .scroll-bar {
     -fx-background-radius: 0px 3px 3px 0px;
-    -fx-effect: dropshadow(gaussian, -theme-background-darkest, 3, 0.2, -1, 0);
+    -fx-effect: dropshadow(gaussian, -theme-shadow, 3, 0.2, -1, 0);
 }
 
 .combo-box-base .list-view .scroll-bar .thumb {
@@ -507,7 +507,7 @@ AnchorPane {
     -fx-border-width: 3px;
     -fx-background-insets: 3px;
     -fx-background-radius: 3px;
-    -fx-effect: dropshadow(gaussian, -theme-background-darkest, 3, 0.2, 1, 1);
+    -fx-effect: dropshadow(gaussian, -theme-shadow, 3, 0.2, 1, 1);
 }
 
 /*noinspection CssInvalidPseudoSelector*/

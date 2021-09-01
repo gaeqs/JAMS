@@ -32,6 +32,7 @@
 -theme-background-lighter: derive(-theme-background-darkest, 30%);
 -theme-background-pressed: derive(-theme-background-darkest, 40%);
 -theme-background-darkest: #121212;
+-theme-shadow: -theme-background-darkest;
 -theme-header: #2D363F;
 -theme-menu-item-hover: #2C4066;
 
