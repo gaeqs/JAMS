@@ -66,12 +66,12 @@
 -theme-selected-search-result: #2b3c6d;
 -theme-selected-search-result-stroke: #ffffff;
 
--theme-simulation-fetch: #4c4c37;
--theme-simulation-decode: #404c34;
--theme-simulation-execute: #2f3f48;
--theme-simulation-memory: #41384c;
--theme-simulation-write-back: #4c3937;
--theme-simulation-breakpoint: #763e3c;
+-theme-simulation-fetch: #3B3B12;
+-theme-simulation-decode: #284011;
+-theme-simulation-execute: #133345;
+-theme-simulation-memory: #36254C;
+-theme-simulation-write-back: #49231F;
+-theme-simulation-breakpoint: #661210;
 
 -theme-cache-hit: #b5f874;
 -theme-cache-miss: #e59d9c;

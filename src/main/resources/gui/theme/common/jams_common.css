@@ -103,6 +103,8 @@
     -fx-background-radius: 0px;
     -fx-pref-width: 30px;
     -fx-pref-height: 30px;
+    -fx-text-fill: -theme-foreground;
+    -fx-effect: none;
 }
 
 .window-button:hover {

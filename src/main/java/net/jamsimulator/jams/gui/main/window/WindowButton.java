@@ -27,6 +27,9 @@ package net.jamsimulator.jams.gui.main.window;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.ColorInput;
 import javafx.stage.Stage;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
@@ -50,6 +53,17 @@ public class WindowButton extends Button {
             imageView.setFitWidth(FIT);
             imageView.setFitHeight(FIT);
         }));
+
+        var image = (QualityImageView) getGraphic();
+        var blend = new Blend();
+        blend.setMode(BlendMode.SRC_ATOP);
+        blend.setTopInput(new ColorInput(0, 0, 10000, 10000, getTextFill()));
+        image.setEffect(blend);
+
+        textFillProperty().addListener((obs, old, val) -> {
+            blend.setTopInput(new ColorInput(0, 0, 10000, 10000, val));
+        });
+
     }
 
     public Stage getStage() {
