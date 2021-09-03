@@ -27,6 +27,7 @@ package net.jamsimulator.jams.gui.editor;
 
 import javafx.scene.layout.AnchorPane;
 import net.jamsimulator.jams.gui.ActionRegion;
+import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 
 /**
  * Represents a file editor.

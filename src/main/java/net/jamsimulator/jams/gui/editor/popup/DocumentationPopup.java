@@ -30,7 +30,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
-import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.editorold.CodeFileEditor;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.StyleClassedTextArea;
 

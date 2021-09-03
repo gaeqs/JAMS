@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor;
+package net.jamsimulator.jams.gui.editor.holder;
 
 /**
  * Represents a {@link javafx.scene.layout.Pane pane} holding a {@link FileEditorHolder}.

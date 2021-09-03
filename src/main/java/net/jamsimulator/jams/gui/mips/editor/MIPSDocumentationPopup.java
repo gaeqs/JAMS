@@ -25,7 +25,7 @@
 package net.jamsimulator.jams.gui.mips.editor;
 
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.editorold.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.popup.DocumentationPopup;
 import net.jamsimulator.jams.gui.editor.popup.event.AutocompletionPopupSelectElementEvent;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSDirective;

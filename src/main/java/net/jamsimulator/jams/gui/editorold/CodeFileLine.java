@@ -22,37 +22,41 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.file;
+package net.jamsimulator.jams.gui.editorold;
 
-import net.jamsimulator.jams.gui.editor.FileEditor;
-import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
-import net.jamsimulator.jams.gui.editor.image.ImageFileEditor;
-import net.jamsimulator.jams.gui.image.icon.IconData;
-import net.jamsimulator.jams.manager.ResourceProvider;
+/**
+ * Represents a line inside a {@link CodeFileEditor}.
+ */
+public class CodeFileLine {
 
-public class ImageFileType extends FileType {
+    private final String text;
+    private final int index, start;
 
 
-    /**
-     * Creates an image file type.
-     *
-     * @param provider   the provider.
-     * @param name       the name.
-     * @param iconData   the name of the icon.
-     * @param extensions the extensions.
-     */
-    public ImageFileType(ResourceProvider provider, String name, IconData iconData, String... extensions) {
-        super(provider, name, iconData, extensions);
+    public CodeFileLine(int index, String text, int start) {
+        this.index = index;
+        this.text = text;
+        this.start = start;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public int getStart() {
+        return start;
     }
 
     @Override
-    public FileEditor createDisplayTab(FileEditorTab tab) {
-        try {
-            return new ImageFileEditor(tab);
-        } catch (Exception e) {
-            System.err.println("Exception while opening image " + tab.getFile() + ".");
-            e.printStackTrace();
-            return null;
-        }
+    public String toString() {
+        return "CodeFileLine{" +
+                "text='" + text + '\'' +
+                ", index=" + index +
+                ", start=" + start +
+                '}';
     }
 }

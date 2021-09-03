@@ -29,8 +29,8 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditor;
-import net.jamsimulator.jams.gui.editor.FileEditorTab;
-import net.jamsimulator.jams.gui.editor.FileOpenPosition;
+import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
+import net.jamsimulator.jams.gui.editor.holder.FileOpenPosition;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
@@ -44,7 +44,7 @@ public class EditorTabActionSplitHorizontally extends ContextAction {
     public static final KeyCombination DEFAULT_COMBINATION = null;
 
     public EditorTabActionSplitHorizontally(ResourceProvider provider) {
-        super(provider,NAME, RegionTags.EDITOR_TAB, Messages.ACTION_EDITOR_TAB_SPLIT_HORIZONTALLY,
+        super(provider, NAME, RegionTags.EDITOR_TAB, Messages.ACTION_EDITOR_TAB_SPLIT_HORIZONTALLY,
                 DEFAULT_COMBINATION, EditorTagRegions.SPLIT, null, Icons.TAB_SPLIT_HORIZONTALLY);
     }
 

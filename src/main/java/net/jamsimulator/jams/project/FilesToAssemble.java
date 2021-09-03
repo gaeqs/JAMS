@@ -26,7 +26,7 @@ package net.jamsimulator.jams.project;
 
 import net.jamsimulator.jams.collection.Bag;
 import net.jamsimulator.jams.event.EventBroadcast;
-import net.jamsimulator.jams.gui.editor.FileEditorHolder;
+import net.jamsimulator.jams.gui.editor.holder.FileEditorHolder;
 
 import java.io.File;
 import java.util.List;

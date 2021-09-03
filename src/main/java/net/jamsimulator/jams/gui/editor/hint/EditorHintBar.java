@@ -22,12 +22,13 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor;
+package net.jamsimulator.jams.gui.editor.hint;
 
 import javafx.collections.ListChangeListener;
 import javafx.scene.Cursor;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
+import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import org.fxmisc.richtext.model.Paragraph;
 
 import java.util.Collection;

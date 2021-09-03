@@ -22,7 +22,9 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor;
+package net.jamsimulator.jams.gui.editor.top;
+
+import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 
 /**
  * Represents a {@link javafx.scene.Node node} that can be displayed in the top edge of a {@link FileEditorTab}.

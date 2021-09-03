@@ -22,15 +22,17 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor;
+package net.jamsimulator.jams.gui.editor.top;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 
 import java.util.Collections;
+import java.util.Set;
 
 /**
  * Represents a search node for a text editor.
@@ -85,6 +87,6 @@ public class CodeFileEditorReplace extends CodeFileEditorSearch {
 
     private void replaceAll() {
         var result = editor.getText().replace(textField.getText(), replaceField.getText());
-        editor.replaceAllText(result);
+        editor.replace(0, editor.getLength(), result, Set.of());
     }
 }

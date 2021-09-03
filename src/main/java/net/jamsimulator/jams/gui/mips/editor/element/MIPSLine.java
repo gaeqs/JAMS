@@ -25,7 +25,7 @@
 package net.jamsimulator.jams.gui.mips.editor.element;
 
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.editor.EditorHintBar;
+import net.jamsimulator.jams.gui.editor.hint.EditorHintBar;
 import net.jamsimulator.jams.utils.LabelUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.CodeArea;

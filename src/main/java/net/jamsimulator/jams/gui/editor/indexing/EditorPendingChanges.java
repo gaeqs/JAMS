@@ -22,26 +22,38 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor;
+package net.jamsimulator.jams.gui.editor.indexing;
 
-public enum FileOpenPosition {
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.model.PlainTextChange;
 
-    TOP, BOTTOM, LEFT, RIGHT;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
 
-    public static FileOpenPosition getBestPositionByDistance(double x, double y) {
-        if (y < 0.5 && x < 0.5) {
-            return y < x ? TOP : LEFT;
-        } else if (y < 0.5 && x >= 0.5) {
-            return y < (1 - x) ? TOP : RIGHT;
-        } else if (y >= 0.5 && x < 0.5) {
-            return (1 - y) < x ? BOTTOM : LEFT;
-        } else {
-            return y > x ? BOTTOM : RIGHT;
-        }
+public class EditorPendingChanges {
+
+    private final ConcurrentLinkedQueue<EditorLineChange> changes = new ConcurrentLinkedQueue<>();
+
+    public EditorPendingChanges add(EditorLineChange change) {
+        changes.add(change);
+        return this;
     }
 
-    public boolean isHorizontal() {
-        return this == LEFT || this == RIGHT;
+    public EditorPendingChanges add(PlainTextChange change, CodeArea area) {
+        EditorLineChange.of(change, area, changes);
+        return this;
     }
 
+    public void flushAll(Consumer<? super EditorLineChange> consumer) {
+//        EditorLineChange previous = changes.poll();
+//        if (previous == null) return;
+//        EditorLineChange current;
+//        while ((current = changes.poll()) != null) {
+//            if(previous.text() == EditorLineChange.Type.EDIT
+//                    && current.type() == EditorLineChange.Type.EDIT
+//                    && current.line() == previous.line())
+//            consumer.accept(previous);
+//            previous = current;
+//        }
+    }
 }

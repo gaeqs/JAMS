@@ -34,7 +34,7 @@ import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
 import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditor;
-import net.jamsimulator.jams.gui.editor.FileEditorHolder;
+import net.jamsimulator.jams.gui.editor.holder.FileEditorHolder;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;

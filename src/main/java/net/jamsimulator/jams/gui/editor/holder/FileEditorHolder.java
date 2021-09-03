@@ -22,11 +22,12 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor;
+package net.jamsimulator.jams.gui.editor.holder;
 
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
+import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.gui.util.TabDraggingSupport;
 import net.jamsimulator.jams.utils.Validate;

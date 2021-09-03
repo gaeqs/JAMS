@@ -22,41 +22,25 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor;
+package net.jamsimulator.jams.gui.util;
 
-/**
- * Represents a line inside a {@link CodeFileEditor}.
- */
-public class CodeFileLine {
+import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
+import net.jamsimulator.jams.utils.FileUtils;
 
-    private final String text;
-    private final int index, start;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
+public class CodeFileEditorUtils {
 
-    public CodeFileLine(int index, String text, int start) {
-        this.index = index;
-        this.text = text;
-        this.start = start;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public int getStart() {
-        return start;
-    }
-
-    @Override
-    public String toString() {
-        return "CodeFileLine{" +
-                "text='" + text + '\'' +
-                ", index=" + index +
-                ", start=" + start +
-                '}';
+    public static String read(FileEditorTab tab) {
+        if (tab == null) return "";
+        try {
+            return FileUtils.readAll(tab.getFile());
+        } catch (IOException ex) {
+            StringWriter writer = new StringWriter();
+            ex.printStackTrace(new PrintWriter(writer));
+            return writer.toString();
+        }
     }
 }

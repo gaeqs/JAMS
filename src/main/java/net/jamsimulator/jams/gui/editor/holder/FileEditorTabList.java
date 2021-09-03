@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor;
+package net.jamsimulator.jams.gui.editor.holder;
 
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -31,6 +31,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Region;
+import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.project.WorkingPane;
 import net.jamsimulator.jams.utils.Validate;
 
