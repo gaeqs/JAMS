@@ -22,38 +22,41 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.indexing;
+package net.jamsimulator.jams.gui.editor.code.indexing.line;
 
-import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.model.PlainTextChange;
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndexedElement;
+import net.jamsimulator.jams.utils.Validate;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Consumer;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
-public class EditorPendingChanges {
+public abstract class EditorIndexedLine extends EditorIndexedElement {
 
-    private final ConcurrentLinkedQueue<EditorLineChange> changes = new ConcurrentLinkedQueue<>();
+    protected final Set<EditorIndexedElement> elements;
+    protected int index;
 
-    public EditorPendingChanges add(EditorLineChange change) {
-        changes.add(change);
-        return this;
+    public EditorIndexedLine(int start, int end, int index, String text) {
+        super(start, end, text);
+        Validate.isTrue(index >= 0, "Index cannot be negative!");
+        this.index = index;
+        elements = new HashSet<>();
+        computeElements();
     }
 
-    public EditorPendingChanges add(PlainTextChange change, CodeArea area) {
-        EditorLineChange.of(change, area, changes);
-        return this;
+    public int getIndex() {
+        return index;
     }
 
-    public void flushAll(Consumer<? super EditorLineChange> consumer) {
-//        EditorLineChange previous = changes.poll();
-//        if (previous == null) return;
-//        EditorLineChange current;
-//        while ((current = changes.poll()) != null) {
-//            if(previous.text() == EditorLineChange.Type.EDIT
-//                    && current.type() == EditorLineChange.Type.EDIT
-//                    && current.line() == previous.line())
-//            consumer.accept(previous);
-//            previous = current;
-//        }
+    public void moveIndex(int offset) {
+        Validate.isTrue(index + offset >= 0, "Resulted index cannot be negative!");
+        index += offset;
     }
+
+    public Optional<EditorIndexedElement> getElementAt(int position) {
+        return elements.stream().filter(it -> it.getStart() >= position && it.getEnd() < position).findAny();
+    }
+
+    protected abstract void computeElements();
+
 }

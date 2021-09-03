@@ -22,30 +22,44 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.action.defaults.texteditor;
+package net.jamsimulator.jams.gui.editor.code.indexing;
 
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.gui.action.Action;
-import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
-import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.manager.ResourceProvider;
 
-public class TextEditorActionSelectAll extends Action {
+public class IndexingThread extends Thread {
 
-    public static final String NAME = "TEXT_EDITOR_SELECT_ALL";
-    public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.A, KeyCombination.SHORTCUT_DOWN);
+    private final CodeFileEditor editor;
+    private volatile boolean running;
 
-    public TextEditorActionSelectAll(ResourceProvider provider) {
-        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_SELECT_ALL, DEFAULT_COMBINATION);
+    public IndexingThread(CodeFileEditor editor) {
+        this.editor = editor;
+        this.running = true;
+    }
+
+    public void kill() {
+        running = false;
     }
 
     @Override
-    public void run(Object node) {
-        if (node instanceof CodeFileEditor) {
-            ((CodeFileEditor) node).selectAll();
+    public void run() {
+        while (running) {
+            if (!waitForElements()) return;
+
+            editor.getPendingChanges().flushAll(System.out::println);
+
         }
+    }
+
+
+    private boolean waitForElements() {
+        try {
+            editor.getPendingChanges().waitForElements();
+            return true;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            running = false;
+            return false;
+        }
+
     }
 }

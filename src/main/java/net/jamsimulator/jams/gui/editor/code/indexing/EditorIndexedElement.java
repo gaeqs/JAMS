@@ -22,20 +22,43 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.popup.event;
+package net.jamsimulator.jams.gui.editor.code.indexing;
 
-import net.jamsimulator.jams.event.Event;
-import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopupElement;
+import net.jamsimulator.jams.utils.Validate;
 
-public class AutocompletionPopupSelectElementEvent extends Event {
+public class EditorIndexedElement implements Comparable<EditorIndexedElement> {
 
-    private final AutocompletionPopupElement selectedElement;
+    protected final String text;
+    protected int start, end;
 
-    public AutocompletionPopupSelectElementEvent(AutocompletionPopupElement selectedElement) {
-        this.selectedElement = selectedElement;
+    public EditorIndexedElement(int start, int end, String text) {
+        Validate.isTrue(start >= 0, "Start cannot be negative!");
+        Validate.isTrue(start <= end, "End is bigger than the start!");
+        this.start = start;
+        this.end = end;
+        this.text = text;
     }
 
-    public AutocompletionPopupElement getSelectedElement() {
-        return selectedElement;
+    public int getStart() {
+        return start;
+    }
+
+    public int getEnd() {
+        return end;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void move(int offset) {
+        Validate.isTrue(start + offset >= 0, "Resulted start cannot be negative!");
+        start += offset;
+        end += offset;
+    }
+
+    @Override
+    public int compareTo(EditorIndexedElement o) {
+        return Integer.compare(start, o.start);
     }
 }

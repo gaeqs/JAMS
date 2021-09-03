@@ -22,9 +22,10 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor;
+package net.jamsimulator.jams.gui.editor.code;
 
 import javafx.beans.value.ChangeListener;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
@@ -37,16 +38,21 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
-import net.jamsimulator.jams.gui.editor.hint.EditorHintBar;
+import net.jamsimulator.jams.gui.editor.FileEditor;
+import net.jamsimulator.jams.gui.editor.code.hint.EditorHintBar;
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorLineChange;
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorPendingChanges;
+import net.jamsimulator.jams.gui.editor.code.indexing.IndexingThread;
+import net.jamsimulator.jams.gui.editor.code.popup.AutocompletionPopup;
+import net.jamsimulator.jams.gui.editor.code.popup.DocumentationPopup;
+import net.jamsimulator.jams.gui.editor.code.top.CodeFileEditorReplace;
+import net.jamsimulator.jams.gui.editor.code.top.CodeFileEditorSearch;
 import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
-import net.jamsimulator.jams.gui.editor.indexing.EditorPendingChanges;
-import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
-import net.jamsimulator.jams.gui.editor.popup.DocumentationPopup;
-import net.jamsimulator.jams.gui.editor.top.CodeFileEditorReplace;
-import net.jamsimulator.jams.gui.editor.top.CodeFileEditorSearch;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.GUIReflectionUtils;
 import net.jamsimulator.jams.gui.util.ZoomUtils;
+import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.task.LanguageTask;
 import net.jamsimulator.jams.utils.FileUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -56,6 +62,7 @@ import org.reactfx.Subscription;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import static net.jamsimulator.jams.gui.util.CodeFileEditorUtils.read;
@@ -74,7 +81,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
     protected AutocompletionPopup autocompletionPopup;
     protected DocumentationPopup documentationPopup;
 
-    protected EditorPendingChanges changes = new EditorPendingChanges();
+    protected EditorPendingChanges pendingChanges = new EditorPendingChanges();
 
     protected EventHandler<?> popupHideHandler = event -> {
         if (autocompletionPopup != null) autocompletionPopup.hide();
@@ -84,7 +91,8 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
     protected ChangeListener<?> popupHideListener =
             (obs, old, val) -> popupHideHandler.handle(null);
 
-    protected Subscription subscription;
+    protected final IndexingThread indexingThread;
+    protected final Subscription subscription;
 
     public CodeFileEditor(FileEditorTab tab) {
         super(read(tab));
@@ -112,16 +120,19 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
             }
         });
 
+        indexingThread = new IndexingThread(this);
+        indexingThread.start();
 
-        subscription = plainTextChanges().reduceSuccessions(it -> {
-            changes.add(it, this);
-            return changes;
-        }, (list, it) -> {
-            list.add(it, this);
-            return list;
-        }, Duration.ofMillis(200)).subscribe(changes -> {
-            System.out.println("DONE!");
-        });
+        subscription = plainTextChanges()
+                .reduceSuccessions(it -> {
+                    var list = new LinkedList<EditorLineChange>();
+                    EditorLineChange.of(it, this, list);
+                    return list;
+                }, (list, it) -> {
+                    EditorLineChange.of(it, this, list);
+                    return list;
+                }, Duration.ofMillis(200))
+                .subscribe(list -> pendingChanges.addAll(list));
     }
 
     /**
@@ -180,6 +191,15 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
     }
 
     /**
+     * Returns the pending changes of this code editor.
+     *
+     * @return the pending changes to index.
+     */
+    public EditorPendingChanges getPendingChanges() {
+        return pendingChanges;
+    }
+
+    /**
      * Duplicates the current line.
      * If a selection is made, the selection will be duplicated instead.
      */
@@ -221,6 +241,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
         JamsApplication.getStage().widthProperty().removeListener((ChangeListener<? super Number>) popupHideListener);
         JamsApplication.getStage().heightProperty().removeListener((ChangeListener<? super Number>) popupHideListener);
         subscription.unsubscribe();
+        indexingThread.kill();
     }
 
     @Override
@@ -263,6 +284,13 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
                 AnchorUtils.setAnchor(hintBar, 0, 0, -1, val ? bar.getWidth() : 0));
     }
 
+    protected Task<?> supplyIndexingTask() {
+        var task = new IndexingTask();
+        var project = tab.getWorkingPane().getProjectTab().getProject();
+        project.getTaskExecutor().execute("indexing", task);
+        return task;
+    }
+
     protected void initializeAutocompletionPopupListeners() {
         //AUTO COMPLETION
         addEventHandler(KeyEvent.KEY_TYPED, event -> {
@@ -291,14 +319,14 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
         JamsApplication.getStage().heightProperty().addListener((ChangeListener<? super Number>) popupHideListener);
     }
 
-    private void createContextMenu(double screenX, double screenY) {
+    protected void createContextMenu(double screenX, double screenY) {
         Set<ContextAction> set = getSupportedContextActions();
         if (set.isEmpty()) return;
         ContextMenu main = new ContextActionMenuBuilder(this).addAll(set).build();
         JamsApplication.openContextMenu(main, this, screenX, screenY);
     }
 
-    private Set<ContextAction> getSupportedContextActions() {
+    protected Set<ContextAction> getSupportedContextActions() {
         Set<Action> actions = JamsApplication.getActionManager();
         Set<ContextAction> set = new HashSet<>();
         for (Action action : actions) {
@@ -308,5 +336,23 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
             }
         }
         return set;
+    }
+
+
+    private class IndexingTask extends LanguageTask<Void> {
+
+        public IndexingTask() {
+            super(Messages.CACHE_LOG_INDEX);
+        }
+
+        @Override
+        protected Void call() throws Exception {
+            System.out.println("TASK");
+
+            pendingChanges.flushAll(change -> {
+                System.out.println(change);
+            });
+            return null;
+        }
     }
 }

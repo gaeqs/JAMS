@@ -27,7 +27,7 @@ package net.jamsimulator.jams.gui.mips.editor;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
+import net.jamsimulator.jams.gui.editor.code.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.editor.element.*;

@@ -22,24 +22,35 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.top;
+package net.jamsimulator.jams.gui.editor.code.indexing.line;
 
-import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndexedElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorLineChange;
 
-/**
- * Represents a {@link javafx.scene.Node node} that can be displayed in the top edge of a {@link FileEditorTab}.
- */
-public interface FileEditorTabTopNode {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-    /**
-     * This method is invoked when the node is set to the top.
-     */
-    void onShow();
+public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements EditorIndex {
 
-    /**
-     * This method is invoked when the node is removed from the top.
-     */
-    void onHide();
+    private final List<Line> lines;
 
+    public EditorLineIndex() {
+        this.lines = new ArrayList<>();
+    }
+
+    @Override
+    public void change(EditorLineChange change) {
+    }
+
+    @Override
+    public Optional<EditorIndexedElement> getElementAt(int position) {
+        return lines.stream()
+                .filter(it -> it.getStart() >= position && it.getEnd() < position)
+                .findAny().flatMap(it -> it.getElementAt(position));
+    }
+
+    protected abstract Line generateNewLine(int start, int end, int index, String text);
 
 }

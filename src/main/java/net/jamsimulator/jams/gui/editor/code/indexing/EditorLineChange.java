@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.indexing;
+package net.jamsimulator.jams.gui.editor.code.indexing;
 
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.CodeArea;

@@ -22,30 +22,24 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.action.defaults.texteditor;
+package net.jamsimulator.jams.gui.editor.code.top;
 
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.gui.action.Action;
-import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
-import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 
-public class TextEditorActionSelectAll extends Action {
+/**
+ * Represents a {@link javafx.scene.Node node} that can be displayed in the top edge of a {@link FileEditorTab}.
+ */
+public interface FileEditorTabTopNode {
 
-    public static final String NAME = "TEXT_EDITOR_SELECT_ALL";
-    public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.A, KeyCombination.SHORTCUT_DOWN);
+    /**
+     * This method is invoked when the node is set to the top.
+     */
+    void onShow();
 
-    public TextEditorActionSelectAll(ResourceProvider provider) {
-        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_SELECT_ALL, DEFAULT_COMBINATION);
-    }
+    /**
+     * This method is invoked when the node is removed from the top.
+     */
+    void onHide();
 
-    @Override
-    public void run(Object node) {
-        if (node instanceof CodeFileEditor) {
-            ((CodeFileEditor) node).selectAll();
-        }
-    }
+
 }

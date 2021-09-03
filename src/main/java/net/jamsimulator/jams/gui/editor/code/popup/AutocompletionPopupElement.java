@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.popup;
+package net.jamsimulator.jams.gui.editor.code.popup;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;

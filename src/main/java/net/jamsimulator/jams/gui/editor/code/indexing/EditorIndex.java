@@ -22,30 +22,14 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.action.defaults.texteditor;
+package net.jamsimulator.jams.gui.editor.code.indexing;
 
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.gui.action.Action;
-import net.jamsimulator.jams.gui.action.RegionTags;
-import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
-import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.manager.ResourceProvider;
+import java.util.Optional;
 
-public class TextEditorActionSelectAll extends Action {
+public interface EditorIndex {
 
-    public static final String NAME = "TEXT_EDITOR_SELECT_ALL";
-    public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.A, KeyCombination.SHORTCUT_DOWN);
+    void change(EditorLineChange change);
 
-    public TextEditorActionSelectAll(ResourceProvider provider) {
-        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_SELECT_ALL, DEFAULT_COMBINATION);
-    }
+    Optional<EditorIndexedElement> getElementAt (int position);
 
-    @Override
-    public void run(Object node) {
-        if (node instanceof CodeFileEditor) {
-            ((CodeFileEditor) node).selectAll();
-        }
-    }
 }

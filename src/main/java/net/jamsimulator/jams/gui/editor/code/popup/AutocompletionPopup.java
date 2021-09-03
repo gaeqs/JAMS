@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.popup;
+package net.jamsimulator.jams.gui.editor.code.popup;
 
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
@@ -38,7 +38,7 @@ import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.editorold.CodeFileEditor;
-import net.jamsimulator.jams.gui.editor.popup.event.AutocompletionPopupSelectElementEvent;
+import net.jamsimulator.jams.gui.editor.code.popup.event.AutocompletionPopupSelectElementEvent;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.utils.StringUtils;

@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor;
+package net.jamsimulator.jams.gui.editor.code;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
