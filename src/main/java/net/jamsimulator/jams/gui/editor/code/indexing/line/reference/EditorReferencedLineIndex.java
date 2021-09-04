@@ -22,24 +22,12 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.indexing;
+package net.jamsimulator.jams.gui.editor.code.indexing.line.reference;
 
-import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.line.EditorLineIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.line.reference.EditorReferencedLine;
 
-import java.util.Optional;
-
-public interface EditorIndex {
-
-    void change(EditorLineChange change);
-
-    void indexAll(String text);
-
-    Optional<EditorIndexedElement> getElementAt(int position);
-
-    void startEditing();
-
-    void finishEditing();
-
-    boolean isEditing();
+public abstract class EditorReferencedLineIndex<Line extends EditorReferencedLine>
+        extends EditorLineIndex<Line> {
 
 }

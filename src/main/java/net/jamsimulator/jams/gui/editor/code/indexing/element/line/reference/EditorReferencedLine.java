@@ -22,41 +22,14 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.indexing.line;
+package net.jamsimulator.jams.gui.editor.code.indexing.element.line.reference;
 
-import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndexedElement;
-import net.jamsimulator.jams.utils.Validate;
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+public class EditorReferencedLine extends EditorIndexedLine {
 
-public abstract class EditorIndexedLine extends EditorIndexedElement {
-
-    protected final Set<EditorIndexedElement> elements;
-    protected int index;
-
-    public EditorIndexedLine(int start, int end, int index, String text) {
-        super(start, end, text);
-        Validate.isTrue(index >= 0, "Index cannot be negative!");
-        this.index = index;
-        elements = new HashSet<>();
-        computeElements();
+    public EditorReferencedLine(EditorIndex index, int start, int number, String text) {
+        super(index, start, number, text);
     }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void moveIndex(int offset) {
-        Validate.isTrue(index + offset >= 0, "Resulted index cannot be negative!");
-        index += offset;
-    }
-
-    public Optional<EditorIndexedElement> getElementAt(int position) {
-        return elements.stream().filter(it -> it.getStart() >= position && it.getEnd() < position).findAny();
-    }
-
-    protected abstract void computeElements();
-
 }

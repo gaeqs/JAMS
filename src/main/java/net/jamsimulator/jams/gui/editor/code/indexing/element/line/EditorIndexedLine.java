@@ -22,24 +22,34 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.indexing;
+package net.jamsimulator.jams.gui.editor.code.indexing.element.line;
 
-import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElementImpl;
+import net.jamsimulator.jams.utils.Validate;
 
-import java.util.Optional;
+public class EditorIndexedLine extends EditorIndexedParentElementImpl {
 
-public interface EditorIndex {
+    protected int number;
 
-    void change(EditorLineChange change);
+    public EditorIndexedLine(EditorIndex index, int start, int number, String text) {
+        super(index, start, text);
+        Validate.isTrue(number >= 0, "Index cannot be negative!");
+        this.number = number;
+    }
 
-    void indexAll(String text);
+    public int getNumber() {
+        return number;
+    }
 
-    Optional<EditorIndexedElement> getElementAt(int position);
+    public void moveNumber(int offset) {
+        Validate.isTrue(number + offset >= 0, "Resulted index cannot be negative!");
+        number += offset;
+    }
 
-    void startEditing();
-
-    void finishEditing();
-
-    boolean isEditing();
+    public void movePositionAndNumber(int numberOffset, int positionOffset) {
+        moveNumber(numberOffset);
+        move(positionOffset);
+    }
 
 }

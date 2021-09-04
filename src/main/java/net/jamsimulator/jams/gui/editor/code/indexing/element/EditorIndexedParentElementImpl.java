@@ -22,43 +22,36 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.indexing;
+package net.jamsimulator.jams.gui.editor.code.indexing.element;
 
-import net.jamsimulator.jams.utils.Validate;
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 
-public class EditorIndexedElement implements Comparable<EditorIndexedElement> {
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
 
-    protected final String text;
-    protected int start, end;
+public class EditorIndexedParentElementImpl extends EditorIndexedElementImpl implements EditorIndexedParentElement {
 
-    public EditorIndexedElement(int start, int end, String text) {
-        Validate.isTrue(start >= 0, "Start cannot be negative!");
-        Validate.isTrue(start <= end, "End is bigger than the start!");
-        this.start = start;
-        this.end = end;
-        this.text = text;
+    protected final Set<EditorIndexedElement> elements;
+
+    public EditorIndexedParentElementImpl(EditorIndex index, int start, String text) {
+        super(index, start, text);
+        this.elements = new HashSet<>();
     }
 
-    public int getStart() {
-        return start;
+    public Optional<? extends EditorIndexedElement> getElementAt(int position) {
+        return elements.stream().filter(it -> it.getStart() >= position && it.getEnd() < position).findAny();
     }
 
-    public int getEnd() {
-        return end;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void move(int offset) {
-        Validate.isTrue(start + offset >= 0, "Resulted start cannot be negative!");
-        start += offset;
-        end += offset;
+    public Stream<EditorIndexedElement> elementStream() {
+        //TODO
+        return null;
     }
 
     @Override
-    public int compareTo(EditorIndexedElement o) {
-        return Integer.compare(start, o.start);
+    public void invalidate() {
+        super.invalidate();
+        elements.forEach(EditorIndexedElement::invalidate);
     }
 }
