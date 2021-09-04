@@ -27,6 +27,8 @@ package net.jamsimulator.jams.gui.editor.code.indexing.element;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.utils.Validate;
 
+import java.util.stream.Stream;
+
 public class EditorIndexedElementImpl implements EditorIndexedElement {
 
     protected final EditorIndex index;
@@ -94,5 +96,10 @@ public class EditorIndexedElementImpl implements EditorIndexedElement {
     @Override
     public int compareTo(EditorIndexedElement o) {
         return Integer.compare(getStart(), o.getStart());
+    }
+
+    @Override
+    public Stream<? extends EditorIndexedElement> elementStream() {
+        return Stream.of(this);
     }
 }

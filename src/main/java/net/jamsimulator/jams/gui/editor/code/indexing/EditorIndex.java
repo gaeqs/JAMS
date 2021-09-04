@@ -24,11 +24,19 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing;
 
+import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
 
 public interface EditorIndex {
+
+    CodeFileEditor getEditor();
 
     void change(EditorLineChange change);
 
@@ -41,5 +49,13 @@ public interface EditorIndex {
     void finishEditing();
 
     boolean isEditing();
+
+    <T extends EditorReferencedElement>
+    Optional<T> getReferencedElement(EditorElementReference<T> reference);
+
+    <T extends EditorReferencedElement>
+    Set<EditorReferencingElement> getReferecingElements(EditorElementReference<T> reference);
+
+    Stream<? extends EditorIndexedElement> elementStream();
 
 }

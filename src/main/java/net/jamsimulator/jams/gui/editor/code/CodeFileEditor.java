@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.gui.editor.code;
 
 import javafx.beans.value.ChangeListener;
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
@@ -40,6 +39,7 @@ import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.code.hint.EditorHintBar;
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorLineChange;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorPendingChanges;
 import net.jamsimulator.jams.gui.editor.code.indexing.IndexingThread;
@@ -67,12 +67,14 @@ import java.util.Set;
 
 import static net.jamsimulator.jams.gui.util.CodeFileEditorUtils.read;
 
-public class CodeFileEditor extends CodeArea implements FileEditor {
+public abstract class CodeFileEditor extends CodeArea implements FileEditor {
 
     protected final FileEditorTab tab;
     protected final ScaledVirtualized<CodeFileEditor> zoom = new ScaledVirtualized<>(this);
     protected final VirtualizedScrollPane<ScaledVirtualized<CodeFileEditor>> scrollPane =
             new VirtualizedScrollPane<>(zoom);
+
+    protected final EditorIndex index;
 
     protected final EditorHintBar hintBar = new EditorHintBar(this);
     protected final CodeFileEditorSearch search = new CodeFileEditorSearch(this);
@@ -97,6 +99,8 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
     public CodeFileEditor(FileEditorTab tab) {
         super(read(tab));
         this.tab = tab;
+        this.index = generateIndex();
+        index.indexAll(getText());
 
         ZoomUtils.applyZoomListener(this, zoom);
         setParagraphGraphicFactory(CustomLineNumberFactory.get(this));
@@ -200,6 +204,15 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
     }
 
     /**
+     * Returns the indexed representation of this editor.
+     *
+     * @return the indexed representation.
+     */
+    public EditorIndex getIndex() {
+        return index;
+    }
+
+    /**
      * Duplicates the current line.
      * If a selection is made, the selection will be duplicated instead.
      */
@@ -284,12 +297,7 @@ public class CodeFileEditor extends CodeArea implements FileEditor {
                 AnchorUtils.setAnchor(hintBar, 0, 0, -1, val ? bar.getWidth() : 0));
     }
 
-    protected Task<?> supplyIndexingTask() {
-        var task = new IndexingTask();
-        var project = tab.getWorkingPane().getProjectTab().getProject();
-        project.getTaskExecutor().execute("indexing", task);
-        return task;
-    }
+    protected abstract EditorIndex generateIndex();
 
     protected void initializeAutocompletionPopupListeners() {
         //AUTO COMPLETION

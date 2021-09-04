@@ -44,14 +44,14 @@ public class EditorIndexedParentElementImpl extends EditorIndexedElementImpl imp
         return elements.stream().filter(it -> it.getStart() >= position && it.getEnd() < position).findAny();
     }
 
-    public Stream<EditorIndexedElement> elementStream() {
-        //TODO
-        return null;
-    }
-
     @Override
     public void invalidate() {
         super.invalidate();
         elements.forEach(EditorIndexedElement::invalidate);
+    }
+
+    @Override
+    public Stream<? extends EditorIndexedElement> elementStream() {
+        return Stream.concat(Stream.of(this), elements.stream().flatMap(EditorIndexedElement::elementStream));
     }
 }

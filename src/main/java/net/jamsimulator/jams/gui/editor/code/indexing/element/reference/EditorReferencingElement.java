@@ -22,12 +22,14 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.indexing.element.line.reference;
+package net.jamsimulator.jams.gui.editor.code.indexing.element.reference;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 
-public interface EditorReferencedElement extends EditorIndexedElement {
+import java.util.Set;
 
+public interface EditorReferencingElement extends EditorIndexedElement {
 
+    Set<EditorElementReference<?>> getReferences();
 
 }

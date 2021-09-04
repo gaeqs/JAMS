@@ -44,9 +44,11 @@ public class IndexingThread extends Thread {
     public void run() {
         while (running) {
             if (!waitForElements()) return;
+            var index = editor.getIndex();
 
-            editor.getPendingChanges().flushAll(System.out::println);
-
+            index.startEditing();
+            editor.getPendingChanges().flushAll(index::change);
+            index.finishEditing();
         }
     }
 

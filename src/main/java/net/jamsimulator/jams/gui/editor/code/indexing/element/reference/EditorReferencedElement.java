@@ -22,32 +22,14 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.indexing.element;
+package net.jamsimulator.jams.gui.editor.code.indexing.element.reference;
 
-import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 
-import java.util.stream.Stream;
+public interface EditorReferencedElement extends EditorIndexedElement {
 
-public interface EditorIndexedElement extends Comparable<EditorIndexedElement> {
-
-    EditorIndex getIndex();
-
-    String getIdentifier();
-
-    int getStart();
-
-    int getEnd();
-
-    int getLength();
-
-    String getText();
-
-    void move(int offset);
-
-    void invalidate();
-
-    boolean isValid();
-
-    Stream<? extends EditorIndexedElement> elementStream();
+    default EditorElementReference<?> getReference() {
+        return new EditorElementReference<>(getClass(), getIdentifier());
+    }
 
 }

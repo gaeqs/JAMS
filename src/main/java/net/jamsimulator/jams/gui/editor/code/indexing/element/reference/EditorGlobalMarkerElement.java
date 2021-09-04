@@ -22,12 +22,14 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.indexing.line.reference;
+package net.jamsimulator.jams.gui.editor.code.indexing.element.reference;
 
-import net.jamsimulator.jams.gui.editor.code.indexing.line.EditorLineIndex;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.line.reference.EditorReferencedLine;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 
-public abstract class EditorReferencedLineIndex<Line extends EditorReferencedLine>
-        extends EditorLineIndex<Line> {
+import java.util.Set;
+
+public interface EditorGlobalMarkerElement extends EditorIndexedElement {
+
+    Set<String> getGlobalIdentifiers();
 
 }

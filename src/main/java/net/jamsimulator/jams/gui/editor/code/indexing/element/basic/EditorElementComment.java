@@ -22,14 +22,14 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.indexing.element.line.reference;
+package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
 
-public class EditorReferencedLine extends EditorIndexedLine {
+public class EditorElementComment extends EditorIndexedElementImpl {
 
-    public EditorReferencedLine(EditorIndex index, int start, int number, String text) {
-        super(index, start, number, text);
+    public EditorElementComment(EditorIndex index, int start, String text) {
+        super(index, start, text);
     }
 }
