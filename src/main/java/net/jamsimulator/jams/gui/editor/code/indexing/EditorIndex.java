@@ -24,19 +24,24 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing;
 
-import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.global.ProjectGlobalIndex;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public interface EditorIndex {
 
-    CodeFileEditor getEditor();
+    Optional<ProjectGlobalIndex> getGlobalIndex();
+
+    void setGlobalIndex(ProjectGlobalIndex index);
+
+    boolean isInitialized();
 
     void change(EditorLineChange change);
 
@@ -44,18 +49,24 @@ public interface EditorIndex {
 
     Optional<EditorIndexedElement> getElementAt(int position);
 
-    void startEditing();
+    void lockIndex();
 
-    void finishEditing();
+    void unlockIndex();
 
-    boolean isEditing();
+    boolean isLocked();
 
     <T extends EditorReferencedElement>
-    Optional<T> getReferencedElement(EditorElementReference<T> reference);
+    Optional<T> getReferencedElement(EditorElementReference<T> reference, boolean globalContext);
 
     <T extends EditorReferencedElement>
     Set<EditorReferencingElement> getReferecingElements(EditorElementReference<T> reference);
 
     Stream<? extends EditorIndexedElement> elementStream();
+
+    default void withLock(Consumer<EditorIndex> consumer) {
+        lockIndex();
+        consumer.accept(this);
+        unlockIndex();
+    }
 
 }

@@ -52,6 +52,7 @@ import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.GUIReflectionUtils;
 import net.jamsimulator.jams.gui.util.ZoomUtils;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.project.GlobalIndexHolder;
 import net.jamsimulator.jams.task.LanguageTask;
 import net.jamsimulator.jams.utils.FileUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
@@ -99,7 +100,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     public CodeFileEditor(FileEditorTab tab) {
         super(read(tab));
         this.tab = tab;
-        this.index = generateIndex();
+        this.index = getOrGenerateIndex();
         index.indexAll(getText());
 
         ZoomUtils.applyZoomListener(this, zoom);
@@ -298,6 +299,16 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     }
 
     protected abstract EditorIndex generateIndex();
+
+    protected EditorIndex getOrGenerateIndex() {
+        var data = tab.getWorkingPane().getProjectTab().getProject().getData();
+        if (data instanceof GlobalIndexHolder holder) {
+            var index = holder.getGlobalIndex().getIndex(tab.getFile());
+            if (index.isPresent()) return index.get();
+        }
+
+        return generateIndex();
+    }
 
     protected void initializeAutocompletionPopupListeners() {
         //AUTO COMPLETION

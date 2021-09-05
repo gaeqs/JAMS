@@ -26,15 +26,22 @@ package net.jamsimulator.jams.gui.editor.code.indexing.global;
 
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
 import net.jamsimulator.jams.gui.editor.holder.FileEditorHolderHolder;
+import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.Project;
+import net.jamsimulator.jams.task.LanguageTask;
 import net.jamsimulator.jams.utils.Validate;
+import org.json.JSONArray;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.util.*;
 
 public abstract class ProjectGlobalIndex {
 
@@ -46,11 +53,42 @@ public abstract class ProjectGlobalIndex {
         this.project = project;
         this.indices = new HashMap<>();
         this.order = new LinkedList<>();
-        loadFiles();
     }
 
     public Project getProject() {
         return project;
+    }
+
+    public synchronized List<File> getFiles ()  {
+        return List.copyOf(order);
+    }
+
+    public synchronized boolean containsFile(File file) {
+        return indices.containsKey(file);
+    }
+
+    public synchronized Optional<EditorIndex> getIndex (File file) {
+        return Optional.ofNullable(indices.get(file));
+    }
+
+    public synchronized <R extends EditorReferencedElement>
+    Optional<R> searchReferencedElement(EditorElementReference<R> reference) {
+        for (EditorIndex index : indices.values()) {
+            index.lockIndex();
+            var optional = index.getReferencedElement(reference, true);
+            index.unlockIndex();
+            if (optional.isPresent()) return optional;
+        }
+        return Optional.empty();
+    }
+
+
+    public synchronized <R extends EditorReferencedElement>
+    Set<EditorReferencingElement> searchReferencingElements(EditorElementReference<R> reference) {
+        var set = new HashSet<EditorReferencingElement>();
+        indices.values().forEach(index ->
+                index.withLock(i -> set.addAll(i.getReferecingElements(reference))));
+        return set;
     }
 
     public synchronized boolean addFile(File file) {
@@ -77,9 +115,47 @@ public abstract class ProjectGlobalIndex {
         return true;
     }
 
-    public abstract void saveFiles();
+    public synchronized void saveFiles(File file) throws IOException {
+        Validate.notNull(file, "File cannot be null!");
+        var array = new JSONArray();
+        var path = project.getFolder().toPath();
+        order.stream().map(it -> path.relativize(it.toPath())).forEach(array::put);
+        Files.writeString(path, array.toString(1), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+    }
 
-    protected abstract void loadFiles();
+    public synchronized void loadFiles(File file) throws IOException {
+        Validate.notNull(file, "File cannot be null!");
+        if (!file.isFile()) return;
+        new JSONArray(Files.readString(file.toPath())).toList().stream()
+                .map(it -> new File(project.getFolder(), it.toString()))
+                .filter(File::isFile)
+                .forEach(this::addFile);
+
+        var newIndices = new HashMap<File, EditorIndex>();
+
+        // Load indices
+        order.forEach(it -> indices.computeIfAbsent(file, f -> {
+            var index = generateIndexForFile(f);
+            index.withLock(i -> i.setGlobalIndex(this));
+            newIndices.put(f, index);
+            return index;
+        }));
+
+        project.getTaskExecutor().execute(new LanguageTask<Void>(Messages.EDITOR_INDEXING) {
+            @Override
+            protected Void call() {
+                newIndices.forEach((file, index) -> index.withLock(i -> {
+                    try {
+                        i.indexAll(Files.readString(file.toPath()));
+                    } catch (IOException e) {
+                        System.err.println("Errror while indexing file " + file + "!");
+                        e.printStackTrace();
+                    }
+                }));
+                return null;
+            }
+        });
+    }
 
     protected abstract EditorIndex generateIndexForFile(File file);
 

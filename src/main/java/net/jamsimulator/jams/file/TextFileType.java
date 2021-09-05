@@ -53,7 +53,7 @@ public class TextFileType extends FileType {
         return new CodeFileEditor(tab) {
             @Override
             protected EditorIndex generateIndex() {
-                return new EditorLineIndex<>(this) {
+                return new EditorLineIndex<>() {
                     @Override
                     protected EditorIndexedLine generateNewLine(int start, int number, String text) {
                         return new EditorIndexedLine(this, start, number, text);

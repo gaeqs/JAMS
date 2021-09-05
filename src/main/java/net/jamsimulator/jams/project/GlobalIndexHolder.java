@@ -24,8 +24,10 @@
 
 package net.jamsimulator.jams.project;
 
-public interface FilesToAssemblerHolder {
+import net.jamsimulator.jams.gui.editor.code.indexing.global.ProjectGlobalIndex;
 
-    FilesToAssemble getFilesToAssemble ();
+public interface GlobalIndexHolder {
+
+    ProjectGlobalIndex getGlobalIndex();
 
 }

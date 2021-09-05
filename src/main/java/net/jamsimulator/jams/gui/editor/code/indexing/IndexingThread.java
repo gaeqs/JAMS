@@ -46,9 +46,9 @@ public class IndexingThread extends Thread {
             if (!waitForElements()) return;
             var index = editor.getIndex();
 
-            index.startEditing();
+            index.lockIndex();
             editor.getPendingChanges().flushAll(index::change);
-            index.finishEditing();
+            index.unlockIndex();
         }
     }
 

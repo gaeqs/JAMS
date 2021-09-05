@@ -72,6 +72,8 @@ public class Messages {
     public static final String BAR_LOG_NAME = "BAR_LOG_NAME";
     public static final String BAR_SEARCH_RESULTS = "BAR_SEARCH_RESULTS";
 
+    public static final String EDITOR_INDEXING = "EDITOR_INDEXING";
+
     public static final String SIMULATION_CONFIGURATION_CONFIGURATIONS = "SIMULATION_CONFIGURATION_CONFIGURATIONS";
     public static final String SIMULATION_CONFIGURATION_INFO = "SIMULATION_CONFIGURATION_INFO";
     public static final String SIMULATION_CONFIGURATION_GENERAL = "SIMULATION_CONFIGURATION_GENERAL";

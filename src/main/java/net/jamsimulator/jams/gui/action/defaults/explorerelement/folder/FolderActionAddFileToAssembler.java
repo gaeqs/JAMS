@@ -41,7 +41,7 @@ import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.ResourceProvider;
-import net.jamsimulator.jams.project.FilesToAssemblerHolder;
+import net.jamsimulator.jams.project.GlobalIndexHolder;
 
 public class FolderActionAddFileToAssembler extends ContextAction {
 
@@ -71,13 +71,11 @@ public class FolderActionAddFileToAssembler extends ContextAction {
         if (tab == null) return;
         var project = tab.getProject();
         var data = project.getData();
-        if (!(data instanceof FilesToAssemblerHolder)) return;
-        var files = ((FilesToAssemblerHolder) data).getFilesToAssemble();
-        var pane = tab.getProjectTabPane().getWorkingPane();
-        if (!(pane instanceof FileEditorHolderHolder holder)) return;
+        if (!(data instanceof GlobalIndexHolder)) return;
+        var files = ((GlobalIndexHolder) data).getGlobalIndex();
 
         for (ExplorerElement element : elements) {
-            files.addFile(((ExplorerFile) element).getFile(), holder.getFileEditorHolder(), true);
+            files.addFile(((ExplorerFile) element).getFile());
         }
     }
 
@@ -97,9 +95,9 @@ public class FolderActionAddFileToAssembler extends ContextAction {
         if (tab == null) return false;
         var project = tab.getProject();
         var data = project.getData();
-        if (!(data instanceof FilesToAssemblerHolder)) return false;
+        if (!(data instanceof GlobalIndexHolder)) return false;
 
-        var files = ((FilesToAssemblerHolder) data).getFilesToAssemble();
+        var files = ((GlobalIndexHolder) data).getGlobalIndex();
 
         boolean allPresent = true;
         for (ExplorerElement element : elements) {

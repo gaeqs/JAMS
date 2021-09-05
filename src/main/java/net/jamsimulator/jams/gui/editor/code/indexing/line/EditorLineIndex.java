@@ -34,6 +34,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorEl
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorGlobalMarkerElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.global.ProjectGlobalIndex;
 
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -42,28 +43,37 @@ import java.util.stream.Stream;
 
 public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements EditorIndex {
 
-    private final CodeFileEditor editor;
+    private ProjectGlobalIndex globalIndex;
 
     private final List<Line> lines = new ArrayList<>();
     private final Map<EditorElementReference<?>, Set<EditorReferencingElement>> referencingElements = new HashMap<>();
     private final Map<EditorElementReference<?>, Set<EditorReferencedElement>> referencedElements = new HashMap<>();
     private final Bag<String> globalIdentifiers = new Bag<>();
 
-    private final Lock editLock = new ReentrantLock();
-    private volatile boolean editing = false;
+    private final Lock lock = new ReentrantLock();
+    private volatile boolean locked = false;
 
-    public EditorLineIndex(CodeFileEditor editor) {
-        this.editor = editor;
+    private volatile boolean initialized = false;
+
+    @Override
+    public Optional<ProjectGlobalIndex> getGlobalIndex() {
+        return Optional.ofNullable(globalIndex);
     }
 
     @Override
-    public CodeFileEditor getEditor() {
-        return editor;
+    public void setGlobalIndex(ProjectGlobalIndex globalIndex) {
+        if (!locked) throw new IllegalStateException("Index is not locked!");
+        this.globalIndex = globalIndex;
+    }
+
+    @Override
+    public boolean isInitialized() {
+        return initialized;
     }
 
     @Override
     public void change(EditorLineChange change) {
-        if (!editing) throw new IllegalStateException("Index is not in edit mode!");
+        if (!locked) throw new IllegalStateException("Index is not locked!");
         switch (change.type()) {
             case EDIT -> editLine(change.line(), change.text());
             case REMOVE -> removeLine(change.line());
@@ -73,74 +83,92 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
 
     @Override
     public void indexAll(String text) {
-        lines.clear();
-        if (text.isEmpty()) {
-            lines.add(generateNewLine(0, 0, ""));
-            return;
-        }
-
-        int start = 0;
-        int end = 0;
-        var builder = new StringBuilder();
-
-        char c;
-        while (text.length() > end) {
-            c = text.charAt(end);
-            if (c == '\n' || c == '\r') {
-                lines.add(generateNewLine(start, lines.size(), builder.toString()));
-                builder = new StringBuilder();
-                start = end + 1;
-            } else {
-                builder.append(c);
+        if (!locked) throw new IllegalStateException("Index is not locked!");
+        try {
+            lines.clear();
+            if (text.isEmpty()) {
+                lines.add(generateNewLine(0, 0, ""));
+                return;
             }
-            end++;
-        }
 
-        if (end >= start) {
-            lines.add(generateNewLine(start, lines.size(), builder.toString()));
-        }
+            int start = 0;
+            int end = 0;
+            var builder = new StringBuilder();
 
-        lines.forEach(this::addReferences);
+            char c;
+            while (text.length() > end) {
+                c = text.charAt(end);
+                if (c == '\n' || c == '\r') {
+                    lines.add(generateNewLine(start, lines.size(), builder.toString()));
+                    builder = new StringBuilder();
+                    start = end + 1;
+                } else {
+                    builder.append(c);
+                }
+                end++;
+            }
+
+            if (end >= start) {
+                lines.add(generateNewLine(start, lines.size(), builder.toString()));
+            }
+
+            lines.forEach(this::addReferences);
+        } finally {
+            initialized = true;
+        }
     }
 
     @Override
     public Optional<EditorIndexedElement> getElementAt(int position) {
+        if (!locked) throw new IllegalStateException("Index is not locked!");
         return lines.stream()
                 .filter(it -> it.getStart() >= position && it.getEnd() < position)
                 .findAny().flatMap(it -> it.getElementAt(position));
     }
 
     @Override
-    public void startEditing() {
-        editLock.lock();
-        editing = true;
+    public void lockIndex() {
+        lock.lock();
+        locked = true;
     }
 
     @Override
-    public void finishEditing() {
-        editing = false;
-        editLock.unlock();
+    public void unlockIndex() {
+        locked = false;
+        lock.unlock();
     }
 
     @Override
-    public boolean isEditing() {
-        return editing;
+    public boolean isLocked() {
+        return locked;
     }
 
     @Override
     public Stream<? extends EditorIndexedElement> elementStream() {
+        if (!locked) throw new IllegalStateException("Index is not locked!");
         return lines.stream().flatMap(EditorIndexedElement::elementStream);
     }
 
     @Override
     public <T extends EditorReferencedElement>
-    Optional<T> getReferencedElement(EditorElementReference<T> reference) {
-        return Optional.ofNullable((T) referencedElements.get(reference));
+    Optional<T> getReferencedElement(EditorElementReference<T> reference, boolean globalContext) {
+        if (!locked) throw new IllegalStateException("Index is not locked!");
+        var set = referencedElements.get(reference);
+        if (set == null || set.isEmpty()) return Optional.empty();
+        if (globalContext) {
+            return set.stream()
+                    .filter(it -> globalIdentifiers.contains(it.getIdentifier()))
+                    .findAny()
+                    .map(it -> (T) it);
+        } else {
+            return set.stream().findAny().map(it -> (T) it);
+        }
     }
 
     @Override
     public <T extends EditorReferencedElement>
     Set<EditorReferencingElement> getReferecingElements(EditorElementReference<T> reference) {
+        if (!locked) throw new IllegalStateException("Index is not locked!");
         var set = referencingElements.get(reference);
         if (set == null) return Collections.emptySet();
         return Set.copyOf(set);
@@ -187,7 +215,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
                 var set = referencedElements.get(referenced.getReference());
                 if (set != null) set.remove(referenced);
             }
-            if(element instanceof EditorGlobalMarkerElement marker) {
+            if (element instanceof EditorGlobalMarkerElement marker) {
                 globalIdentifiers.removeAll(marker.getGlobalIdentifiers());
             }
         });
@@ -196,14 +224,13 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
     protected void addReferences(Line line) {
         line.elementStream().forEach(element -> {
             if (element instanceof EditorReferencingElement referencing) {
-                referencing.getReferences().forEach(reference -> {
-                    referencingElements.computeIfAbsent(reference, it -> new HashSet<>()).add(referencing);
-                });
+                referencing.getReferences().forEach(reference ->
+                        referencingElements.computeIfAbsent(reference, it -> new HashSet<>()).add(referencing));
             }
             if (element instanceof EditorReferencedElement referenced) {
                 referencedElements.computeIfAbsent(referenced.getReference(), it -> new HashSet<>()).add(referenced);
             }
-            if(element instanceof EditorGlobalMarkerElement marker) {
+            if (element instanceof EditorGlobalMarkerElement marker) {
                 globalIdentifiers.addAll(marker.getGlobalIdentifiers());
             }
         });

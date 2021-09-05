@@ -96,7 +96,7 @@ public class MIPSProject extends BasicProject {
         var rootPath = folder.toPath();
         var files = new LinkedList<RawFileData>();
 
-        for (File target : getData().getFilesToAssemble().getFiles()) {
+        for (File target : getData().getGlobalIndex().getFiles()) {
             if (log != null) {
                 log.printInfoLn("- " + target.getAbsolutePath());
             }

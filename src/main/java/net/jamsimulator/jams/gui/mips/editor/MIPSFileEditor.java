@@ -60,7 +60,7 @@ public class MIPSFileEditor extends CodeFileEditor {
         popup = new Popup();
         if (tab.getWorkingPane() instanceof MIPSStructurePane) {
             project = ((MIPSStructurePane) tab.getWorkingPane()).getProject();
-            Optional<MIPSFileElements> elementsOptional = project.getData().getFilesToAssemble().getFileElements(tab.getFile());
+            Optional<MIPSFileElements> elementsOptional = Optional.empty();// project.getData().getGlobalIndex().getFileElements(tab.getFile());
             elements = elementsOptional.orElseGet(() -> new MIPSFileElements(project));
         } else {
             project = null;
