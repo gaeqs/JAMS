@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.gui.editor.code.indexing.line;
 
 import net.jamsimulator.jams.collection.Bag;
-import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorLineChange;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
@@ -35,8 +34,11 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorGl
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.global.ProjectGlobalIndex;
+import net.jamsimulator.jams.gui.util.EasyStyleSpansBuilder;
+import org.fxmisc.richtext.model.StyleSpans;
 
 import java.util.*;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
@@ -51,8 +53,11 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
     private final Bag<String> globalIdentifiers = new Bag<>();
 
     private final Lock lock = new ReentrantLock();
-    private volatile boolean locked = false;
+    private volatile Thread lockOwner = null;
+    private volatile boolean editMode = false;
 
+    private final Lock initializationLock = new ReentrantLock();
+    private final Condition initializationCondition = initializationLock.newCondition();
     private volatile boolean initialized = false;
 
     @Override
@@ -62,7 +67,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
 
     @Override
     public void setGlobalIndex(ProjectGlobalIndex globalIndex) {
-        if (!locked) throw new IllegalStateException("Index is not locked!");
+        checkThread();
         this.globalIndex = globalIndex;
     }
 
@@ -72,8 +77,22 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
     }
 
     @Override
+    public void waitForInitialization() throws InterruptedException {
+        initializationLock.lock();
+        if (!initialized) {
+            initializationCondition.await();
+        }
+        initializationLock.unlock();
+    }
+
+    @Override
+    public boolean isInEditMode() {
+        return editMode;
+    }
+
+    @Override
     public void change(EditorLineChange change) {
-        if (!locked) throw new IllegalStateException("Index is not locked!");
+        checkThread();
         switch (change.type()) {
             case EDIT -> editLine(change.line(), change.text());
             case REMOVE -> removeLine(change.line());
@@ -83,7 +102,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
 
     @Override
     public void indexAll(String text) {
-        if (!locked) throw new IllegalStateException("Index is not locked!");
+        checkThread();
         try {
             lines.clear();
             if (text.isEmpty()) {
@@ -114,45 +133,33 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
 
             lines.forEach(this::addReferences);
         } finally {
-            initialized = true;
+            initializationLock.lock();
+            if (!initialized) {
+                initialized = true;
+                initializationCondition.signalAll();
+            }
+            initializationLock.unlock();
         }
     }
 
     @Override
     public Optional<EditorIndexedElement> getElementAt(int position) {
-        if (!locked) throw new IllegalStateException("Index is not locked!");
+        checkThread();
         return lines.stream()
                 .filter(it -> it.getStart() >= position && it.getEnd() < position)
                 .findAny().flatMap(it -> it.getElementAt(position));
     }
 
     @Override
-    public void lockIndex() {
-        lock.lock();
-        locked = true;
-    }
-
-    @Override
-    public void unlockIndex() {
-        locked = false;
-        lock.unlock();
-    }
-
-    @Override
-    public boolean isLocked() {
-        return locked;
-    }
-
-    @Override
     public Stream<? extends EditorIndexedElement> elementStream() {
-        if (!locked) throw new IllegalStateException("Index is not locked!");
+        checkThread();
         return lines.stream().flatMap(EditorIndexedElement::elementStream);
     }
 
     @Override
     public <T extends EditorReferencedElement>
     Optional<T> getReferencedElement(EditorElementReference<T> reference, boolean globalContext) {
-        if (!locked) throw new IllegalStateException("Index is not locked!");
+        checkThread();
         var set = referencedElements.get(reference);
         if (set == null || set.isEmpty()) return Optional.empty();
         if (globalContext) {
@@ -168,10 +175,50 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
     @Override
     public <T extends EditorReferencedElement>
     Set<EditorReferencingElement> getReferecingElements(EditorElementReference<T> reference) {
-        if (!locked) throw new IllegalStateException("Index is not locked!");
+        checkThread();
         var set = referencingElements.get(reference);
         if (set == null) return Collections.emptySet();
         return Set.copyOf(set);
+    }
+
+    @Override
+    public boolean isIdentifierGlobal(String global) {
+        checkThread();
+        return globalIdentifiers.contains(global);
+    }
+
+    @Override
+    public StyleSpans<Collection<String>> getStyleForLine(int line) {
+        checkThread();
+        if (line < 0 || line >= lines.size()) throw new IndexOutOfBoundsException("Index " + line + " out of bounds.");
+        var builder = new EasyStyleSpansBuilder();
+        builder.add(0, lines.get(0).getLength(), Set.of("mips-error"));
+        return builder.create();
+    }
+
+    @Override
+    public void lock(boolean editMode) {
+        lock.lock();
+        lockOwner = Thread.currentThread();
+        this.editMode = editMode;
+    }
+
+    @Override
+    public void unlock(boolean finishEditMode) {
+        lockOwner = null;
+
+        boolean editModeFinished = editMode && finishEditMode;
+        if (editModeFinished) editMode = false;
+        lock.unlock();
+
+        if (editModeFinished) {
+            //TODO
+        }
+    }
+
+    @Override
+    public boolean isLocked() {
+        return lockOwner != null;
     }
 
     protected void editLine(int number, String text) {
@@ -237,4 +284,8 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
     }
 
     protected abstract Line generateNewLine(int start, int number, String text);
+
+    private void checkThread() {
+        if (lockOwner != Thread.currentThread()) throw new IllegalStateException("Index is not locked!");
+    }
 }

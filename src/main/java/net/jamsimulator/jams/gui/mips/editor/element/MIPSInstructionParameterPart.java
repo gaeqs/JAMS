@@ -86,14 +86,14 @@ public class MIPSInstructionParameterPart extends MIPSCodeElement {
 
         if (type != InstructionParameterPartType.LABEL && type != InstructionParameterPartType.GLOBAL_LABEL) return;
 
-        var filesToAssemble = elements.getFilesToAssemble().orElse(null);
+//        var filesToAssemble = elements.getFilesToAssemble().orElse(null);
 
         boolean isGlobal;
-        if (filesToAssemble == null) {
+//        if (filesToAssemble == null) {
             isGlobal = elements.getLabels().contains(text) && elements.getSetAsGlobalLabel().contains(text);
-        } else {
-            isGlobal = filesToAssemble.getGlobalLabels().contains(text);
-        }
+//        } else {
+//            isGlobal = filesToAssemble.getGlobalLabels().contains(text);
+//        }
 
         type = isGlobal ? InstructionParameterPartType.GLOBAL_LABEL : InstructionParameterPartType.LABEL;
     }

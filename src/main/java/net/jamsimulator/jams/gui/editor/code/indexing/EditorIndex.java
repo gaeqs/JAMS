@@ -29,7 +29,9 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorEl
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.global.ProjectGlobalIndex;
+import org.fxmisc.richtext.model.StyleSpans;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -43,17 +45,15 @@ public interface EditorIndex {
 
     boolean isInitialized();
 
+    void waitForInitialization() throws InterruptedException;
+
+    boolean isInEditMode();
+
     void change(EditorLineChange change);
 
     void indexAll(String text);
 
     Optional<EditorIndexedElement> getElementAt(int position);
-
-    void lockIndex();
-
-    void unlockIndex();
-
-    boolean isLocked();
 
     <T extends EditorReferencedElement>
     Optional<T> getReferencedElement(EditorElementReference<T> reference, boolean globalContext);
@@ -63,10 +63,22 @@ public interface EditorIndex {
 
     Stream<? extends EditorIndexedElement> elementStream();
 
-    default void withLock(Consumer<EditorIndex> consumer) {
-        lockIndex();
-        consumer.accept(this);
-        unlockIndex();
-    }
+    boolean isIdentifierGlobal(String global);
 
+    StyleSpans<Collection<String>> getStyleForLine(int line);
+
+    void lock(boolean editMode);
+
+    void unlock(boolean finishEditMode);
+
+    boolean isLocked();
+
+    default void withLock(boolean editMode, Consumer<EditorIndex> consumer) {
+        lock(editMode);
+        try {
+            consumer.accept(this);
+        } finally {
+            unlock(editMode);
+        }
+    }
 }

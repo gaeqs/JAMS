@@ -79,7 +79,7 @@ public class NewAssemblyFileWindow extends VBox {
             }
 
             if (holder != null && check.isSelected()) {
-                holder.getFilesToAssemble().addFile(file, true);
+                holder.getGlobalIndex().addFile(file);
             }
         });
 

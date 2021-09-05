@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.editor.code;
 
 import javafx.beans.value.ChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
@@ -51,17 +52,17 @@ import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.GUIReflectionUtils;
 import net.jamsimulator.jams.gui.util.ZoomUtils;
-import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.GlobalIndexHolder;
-import net.jamsimulator.jams.task.LanguageTask;
 import net.jamsimulator.jams.utils.FileUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.model.Paragraph;
 import org.reactfx.Subscription;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -101,7 +102,6 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         super(read(tab));
         this.tab = tab;
         this.index = getOrGenerateIndex();
-        index.indexAll(getText());
 
         ZoomUtils.applyZoomListener(this, zoom);
         setParagraphGraphicFactory(CustomLineNumberFactory.get(this));
@@ -138,6 +138,8 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
                     return list;
                 }, Duration.ofMillis(200))
                 .subscribe(list -> pendingChanges.addAll(list));
+
+        getVisibleParagraphs().addListener(this::onVisibleParagraphsChange);
     }
 
     /**
@@ -357,21 +359,34 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         return set;
     }
 
+    private void onVisibleParagraphsChange(
+            ListChangeListener.Change<? extends Paragraph<Collection<String>, String, Collection<String>>> c) {
 
-    private class IndexingTask extends LanguageTask<Void> {
+        // The index is not initialized or is in edit mode. The indexer will warn
+        // us later that the index is initialized or the edit mode has finished, asking for a refresh.
+        if (!index.isInitialized() || index.isInEditMode()) return;
 
-        public IndexingTask() {
-            super(Messages.CACHE_LOG_INDEX);
-        }
+        // If the index is locked, but it's not in edit mode, someone is doing a quick information search.
+        // Enter the lock and wait for the resources to be free.
+        index.withLock(false, i -> {
+            try {
 
-        @Override
-        protected Void call() throws Exception {
-            System.out.println("TASK");
+                // The resources are now ours.
+                // Let's style the added lines.
 
-            pendingChanges.flushAll(change -> {
-                System.out.println(change);
-            });
-            return null;
-        }
+                int first = firstVisibleParToAllParIndex();
+                int last = lastVisibleParToAllParIndex();
+                System.out.println(first + " - " + last);
+
+                while (first <= last) {
+                    setStyleSpans(first, i.getStyleForLine(first++));
+                }
+                System.out.println(first - 1 == last);
+
+            } catch (Exception ex) {
+                System.err.println("Error " + ex);
+            }
+        });
     }
+
 }

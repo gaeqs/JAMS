@@ -27,7 +27,6 @@ package net.jamsimulator.jams.gui.mips.editor.element;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveExtern;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveLab;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
-import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.List;
@@ -98,9 +97,9 @@ public class MIPSDirectiveParameter extends MIPSCodeElement {
         if (directive.getDirective().isEmpty()) return;
 
         if (registeredLabel) {
-            MIPSFilesToAssemble filesToAssemble = elements.getFilesToAssemble().orElse(null);
-            if (filesToAssemble == null) return;
-            globalLabel = elements.getSetAsGlobalLabel().contains(text);
+//            MIPSFilesToAssemble filesToAssemble = elements.getFilesToAssemble().orElse(null);
+//            if (filesToAssemble == null) return;
+//            globalLabel = elements.getSetAsGlobalLabel().contains(text);
         }
     }
 

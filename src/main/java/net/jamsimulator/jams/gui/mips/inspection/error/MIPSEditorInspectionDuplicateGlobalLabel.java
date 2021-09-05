@@ -70,14 +70,14 @@ public class MIPSEditorInspectionDuplicateGlobalLabel extends MIPSEditorInspecti
                 return Optional.empty();
             }
 
-            var optional = elements.getFilesToAssemble();
-            if (optional.isEmpty()) return Optional.empty();
-            int amount = optional.get().getGlobalLabels().amount(label);
-            if (global) amount--;
-            if (amount > 0) {
-                return Optional.of(new MIPSEditorInspectionDuplicateGlobalLabel(this, label, "NOT IMPLEMENTED"));
-            }
-
+//            var optional = elements.getFilesToAssemble();
+//            if (optional.isEmpty()) return Optional.empty();
+//            int amount = optional.get().getGlobalLabels().amount(label);
+//            if (global) amount--;
+//            if (amount > 0) {
+//                return Optional.of(new MIPSEditorInspectionDuplicateGlobalLabel(this, label, "NOT IMPLEMENTED"));
+//            }
+//
             return Optional.empty();
         }
     }

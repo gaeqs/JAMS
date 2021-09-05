@@ -214,7 +214,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
                 case LABEL:
                     if (hasLabels) break;
                     Set<String> labels = new HashSet<>(mipsElements.getLabels());
-                    mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
+//                    mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
                     addElements(labels.stream().filter(target -> target.toLowerCase().startsWith(partStart)), s -> s, s -> s, partStartIndex.get(), ICON_LABEL);
                     hasLabels = true;
                     break;
@@ -260,7 +260,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
         switch (parameter.getType()) {
             case LABEL, INT_OR_LABEL -> {
                 Set<String> labels = new HashSet<>(mipsElements.getLabels());
-                mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
+//                mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
                 addElements(labels.stream().filter(target -> target.toLowerCase().startsWith(parameterStart)), s -> s, s -> s + space, 0, ICON_LABEL);
             }
         }

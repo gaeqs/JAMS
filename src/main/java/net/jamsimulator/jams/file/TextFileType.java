@@ -31,7 +31,9 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexed
 import net.jamsimulator.jams.gui.editor.code.indexing.line.EditorLineIndex;
 import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 import net.jamsimulator.jams.gui.image.icon.IconData;
+import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.task.LanguageTask;
 
 public class TextFileType extends FileType {
 
@@ -53,12 +55,23 @@ public class TextFileType extends FileType {
         return new CodeFileEditor(tab) {
             @Override
             protected EditorIndex generateIndex() {
-                return new EditorLineIndex<>() {
+                var index = new EditorLineIndex<>() {
                     @Override
                     protected EditorIndexedLine generateNewLine(int start, int number, String text) {
                         return new EditorIndexedLine(this, start, number, text);
                     }
                 };
+
+                tab.getWorkingPane().getProjectTab().getProject()
+                        .getTaskExecutor().execute(new LanguageTask<>(Messages.EDITOR_INDEXING) {
+                            @Override
+                            protected Void call() {
+                                index.withLock(true, i -> i.indexAll(getText()));
+                                return null;
+                            }
+                        });
+
+                return index;
             }
         };
     }

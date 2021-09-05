@@ -177,7 +177,7 @@ public class MIPSProjectData extends ProjectData implements GlobalIndexHolder {
 
     @Override
     public ProjectGlobalIndex getGlobalIndex() {
-        return null;
+        return globalIndex;
     }
 
     @Override

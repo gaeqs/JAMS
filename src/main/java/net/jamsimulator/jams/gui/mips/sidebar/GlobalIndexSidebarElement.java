@@ -44,16 +44,16 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-public class FilesToAssembleSidebarElement extends DraggableListCell<File> implements ActionRegion {
+public class GlobalIndexSidebarElement extends DraggableListCell<File> implements ActionRegion {
 
-    private final FilesToAssembleSidebar display;
+    private final GlobalIndexSidebar display;
 
-    public FilesToAssembleSidebarElement(FilesToAssembleSidebar display) {
+    public GlobalIndexSidebarElement(GlobalIndexSidebar display) {
         this.display = display;
         setOnContextMenuRequested(this::manageContextMenuRequest);
     }
 
-    public FilesToAssembleSidebar getDisplay() {
+    public GlobalIndexSidebar getDisplay() {
         return display;
     }
 
@@ -111,7 +111,7 @@ public class FilesToAssembleSidebarElement extends DraggableListCell<File> imple
             if (index < 0 || index >= items.size()) return;
             int to = getIndex();
             items.add(to, items.remove(index));
-            display.getFilesToAssemble().moveFileToIndex(getItem(), to);
+            display.getGlobalIndex().moveFile(getItem(), to);
         }
         event.consume();
     }

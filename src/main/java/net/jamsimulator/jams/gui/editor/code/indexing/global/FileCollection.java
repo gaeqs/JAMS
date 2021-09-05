@@ -22,50 +22,22 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.project.mips.event;
+package net.jamsimulator.jams.gui.editor.code.indexing.global;
 
-import net.jamsimulator.jams.event.Cancellable;
-import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.event.EventBroadcast;
 
 import java.io.File;
+import java.util.List;
 
-public class FileRemoveFromAssembleEvent extends Event {
+public interface FileCollection extends EventBroadcast {
 
-    protected File file;
+    List<File> getFiles();
 
-    public FileRemoveFromAssembleEvent(File file) {
-        this.file = file;
-    }
+    boolean containsFile(File file);
 
-    public File getFile() {
-        return file;
-    }
+    boolean addFile(File file);
 
-    public static class Before extends FileRemoveFromAssembleEvent implements Cancellable {
+    boolean removeFile(File file);
 
-        private boolean cancelled;
-
-        public Before(File file) {
-            super(file);
-        }
-
-        @Override
-        public boolean isCancelled() {
-            return cancelled;
-        }
-
-        @Override
-        public void setCancelled(boolean cancelled) {
-            this.cancelled = cancelled;
-        }
-    }
-
-    public static class After extends FileRemoveFromAssembleEvent {
-
-        public After(File file) {
-            super(file);
-        }
-    }
-
-
+    boolean moveFile(File file, int index);
 }

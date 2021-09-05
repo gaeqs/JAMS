@@ -29,14 +29,13 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Popup;
+import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 import net.jamsimulator.jams.gui.editorold.CodeFileEditor;
 import net.jamsimulator.jams.gui.editorold.CodeFileLine;
-import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSLabel;
 import net.jamsimulator.jams.gui.mips.editor.element.MIPSLine;
 import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;
-import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.event.MouseOverTextEvent;
@@ -178,11 +177,11 @@ public class MIPSFileEditor extends CodeFileEditor {
         int removedLines = StringUtils.charCount(removed, '\n', '\r');
 
         if (removedLines == 0 && addedLines == 0) {
-            if (refresh && elements.getFilesToAssemble().isPresent()) {
-                elements.getFilesToAssemble().ifPresent(MIPSFilesToAssemble::refreshGlobalLabels);
-            } else {
-                elements.update(this);
-            }
+//            if (refresh && elements.getFilesToAssemble().isPresent()) {
+//                elements.getFilesToAssemble().ifPresent(MIPSFilesToAssemble::refreshGlobalLabels);
+//            } else {
+//                elements.update(this);
+//            }
             return;
         }
 
@@ -206,11 +205,11 @@ public class MIPSFileEditor extends CodeFileEditor {
             }
         }
 
-        if (refresh && elements.getFilesToAssemble().isPresent()) {
-            elements.getFilesToAssemble().ifPresent(MIPSFilesToAssemble::refreshGlobalLabels);
-        } else {
-            elements.update(this);
-        }
+//        if (refresh && elements.getFilesToAssemble().isPresent()) {
+//            elements.getFilesToAssemble().ifPresent(MIPSFilesToAssemble::refreshGlobalLabels);
+//        } else {
+//            elements.update(this);
+//        }
     }
 
     private void index() {

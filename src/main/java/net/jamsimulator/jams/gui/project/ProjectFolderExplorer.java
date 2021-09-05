@@ -28,16 +28,15 @@ import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Region;
 import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.gui.editor.code.indexing.global.FileCollection;
+import net.jamsimulator.jams.gui.editor.code.indexing.global.event.FileCollectionAddFileEvent;
+import net.jamsimulator.jams.gui.editor.code.indexing.global.event.FileCollectionRemoveFileEvent;
 import net.jamsimulator.jams.gui.explorer.event.ExplorerAddElementEvent;
-import net.jamsimulator.jams.gui.explorer.event.ExplorerRemoveElementEvent;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
-import net.jamsimulator.jams.project.FilesToAssemble;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.project.mips.MIPSProject;
-import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
-import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,7 +56,7 @@ public class ProjectFolderExplorer extends FolderExplorer {
     public static final String EXPLORER_OUT_FILE_STYLE_CLASS = "explorer-out-folder";
 
     private final Project project;
-    private final Set<FilesToAssemble> filesToAssemble;
+    private final Set<FileCollection> filesToAssemble;
 
     /**
      * Creates the mips explorer folder.
@@ -65,7 +64,7 @@ public class ProjectFolderExplorer extends FolderExplorer {
      * @param project    the {@link MIPSProject} of this explorer.
      * @param scrollPane the {@link ScrollPane} handling this explorer.
      */
-    public ProjectFolderExplorer(Project project, Collection<? extends FilesToAssemble> filesToAssemble, ScrollPane scrollPane) {
+    public ProjectFolderExplorer(Project project, Collection<? extends FileCollection> filesToAssemble, ScrollPane scrollPane) {
         super(project.getFolder(), scrollPane,
                 file -> !file.toPath().startsWith(project.getData().getMetadataFolder().toPath()));
         this.project = project;
@@ -80,7 +79,7 @@ public class ProjectFolderExplorer extends FolderExplorer {
 
         setFileMoveAction((from, to) -> this.filesToAssemble.forEach(holder -> {
             if (holder.containsFile(from)) {
-                Platform.runLater(() -> holder.addFile(to, true));
+                Platform.runLater(() -> holder.addFile(to));
             }
         }));
 
@@ -144,13 +143,13 @@ public class ProjectFolderExplorer extends FolderExplorer {
     }
 
     @Listener
-    private void onFileAddedToAssemble(FileAddToAssembleEvent.After event) {
+    private void onFileAddedToAssemble(FileCollectionAddFileEvent.After event) {
         File file = event.getFile();
         markFileToAssemble(file);
     }
 
     @Listener
-    private void onFileRemoveFromAssemble(FileRemoveFromAssembleEvent.After event) {
+    private void onFileRemoveFromAssemble(FileCollectionRemoveFileEvent.After event) {
         File file = event.getFile();
         unmarkFileToAssemble(file);
     }
@@ -178,10 +177,5 @@ public class ProjectFolderExplorer extends FolderExplorer {
                         .getStyleClass().add(EXPLORER_OUT_FILE_STYLE_CLASS);
             }
         }
-    }
-
-    @Listener
-    private void onFileRemoved(ExplorerRemoveElementEvent.After event) {
-        filesToAssemble.forEach(FilesToAssemble::checkFiles);
     }
 }

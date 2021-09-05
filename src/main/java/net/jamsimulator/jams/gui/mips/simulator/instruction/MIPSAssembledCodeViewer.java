@@ -504,7 +504,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     private void addAndStyle(String element, Collection<String> style,
                              StringBuilder stringBuilder, EasyStyleSpansBuilder styleBuilder) {
         int size = stringBuilder.length();
-        styleBuilder.add(size, element, style);
+        styleBuilder.add(size, element.length(), style);
         stringBuilder.append(element);
     }
 

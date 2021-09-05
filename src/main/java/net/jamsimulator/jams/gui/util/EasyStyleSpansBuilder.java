@@ -40,12 +40,12 @@ public class EasyStyleSpansBuilder {
         to = 0;
     }
 
-    public void add(int index, String element, Collection<String> styles) {
+    public void add(int index, int length, Collection<String> styles) {
         if (to < index) {
             builder.add(Collections.emptyList(), index - to);
         }
-        builder.add(styles, element.length());
-        to = index + element.length();
+        builder.add(styles, length);
+        to = index + length;
     }
 
     public boolean isEmpty() {

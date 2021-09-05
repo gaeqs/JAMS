@@ -22,47 +22,35 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.project.mips.event;
+package net.jamsimulator.jams.gui.editor.code.indexing.global.event;
 
 import net.jamsimulator.jams.event.Cancellable;
-import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.gui.editor.code.indexing.global.FileCollection;
+import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
 
-/**
- * This event is invoked in {@link net.jamsimulator.jams.project.FilesToAssemble files to assemble collections}
- * when a file index is changed.
- */
-public class FileIndexChangedFromAssembleEvent extends Event {
+public class FileCollectionRemoveFileEvent extends FileCollectionEvent {
 
     protected final File file;
-    protected final int oldIndex;
-    protected int newIndex;
 
-    public FileIndexChangedFromAssembleEvent(File file, int oldIndex, int newIndex) {
+    private FileCollectionRemoveFileEvent(FileCollection globalIndex, File file) {
+        super(globalIndex);
+        Validate.notNull(file, "File cannot be null!");
         this.file = file;
-        this.oldIndex = oldIndex;
-        this.newIndex = newIndex;
     }
 
     public File getFile() {
         return file;
     }
 
-    public int getOldIndex() {
-        return oldIndex;
-    }
-
-    public int getNewIndex() {
-        return newIndex;
-    }
-
-    public static class Before extends FileIndexChangedFromAssembleEvent implements Cancellable {
+    public static class Before extends FileCollectionRemoveFileEvent implements Cancellable {
 
         private boolean cancelled;
 
-        public Before(File file, int oldIndex, int newIndex) {
-            super(file, oldIndex, newIndex);
+        public Before(FileCollection globalIndex, File file) {
+            super(globalIndex, file);
+            this.cancelled = false;
         }
 
         @Override
@@ -75,17 +63,12 @@ public class FileIndexChangedFromAssembleEvent extends Event {
             this.cancelled = cancelled;
         }
 
-        public void setNewIndex(int index) {
-            newIndex = index;
-        }
     }
 
-    public static class After extends FileIndexChangedFromAssembleEvent {
-
-        public After(File file, int oldIndex, int newIndex) {
-            super(file, oldIndex, newIndex);
+    public static class After extends FileCollectionRemoveFileEvent {
+        public After(FileCollection globalIndex, File file) {
+            super(globalIndex, file);
         }
     }
-
 
 }

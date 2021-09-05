@@ -22,18 +22,21 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.project.mips.event;
+package net.jamsimulator.jams.gui.editor.code.indexing.global.event;
 
 import net.jamsimulator.jams.event.Cancellable;
-import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.gui.editor.code.indexing.global.FileCollection;
+import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
 
-public class FileAddToAssembleEvent extends Event {
+public class FileCollectionAddFileEvent extends FileCollectionEvent {
 
     protected File file;
 
-    public FileAddToAssembleEvent(File file) {
+    private FileCollectionAddFileEvent(FileCollection globalIndex, File file) {
+        super(globalIndex);
+        Validate.notNull(file, "File cannot be null!");
         this.file = file;
     }
 
@@ -41,16 +44,13 @@ public class FileAddToAssembleEvent extends Event {
         return file;
     }
 
-    public static class Before extends FileAddToAssembleEvent implements Cancellable {
+    public static class Before extends FileCollectionAddFileEvent implements Cancellable {
 
         private boolean cancelled;
 
-        public Before(File file) {
-            super(file);
-        }
-
-        public void setFile(File file) {
-            this.file = file;
+        public Before(FileCollection globalIndex, File file) {
+            super(globalIndex, file);
+            this.cancelled = false;
         }
 
         @Override
@@ -62,14 +62,18 @@ public class FileAddToAssembleEvent extends Event {
         public void setCancelled(boolean cancelled) {
             this.cancelled = cancelled;
         }
+
+        public void setFile(File file) {
+            Validate.notNull(file, "File cannot be null!");
+            this.file = file;
+        }
+
     }
 
-    public static class After extends FileAddToAssembleEvent {
-
-        public After(File file) {
-            super(file);
+    public static class After extends FileCollectionAddFileEvent {
+        public After(FileCollection globalIndex, File file) {
+            super(globalIndex, file);
         }
     }
-
 
 }

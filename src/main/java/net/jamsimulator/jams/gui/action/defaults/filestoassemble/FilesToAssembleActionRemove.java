@@ -31,7 +31,7 @@ import net.jamsimulator.jams.gui.action.defaults.explorerelement.folder.FolderAc
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
-import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebarElement;
+import net.jamsimulator.jams.gui.mips.sidebar.GlobalIndexSidebarElement;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
 
@@ -48,8 +48,8 @@ public class FilesToAssembleActionRemove extends ContextAction {
 
     @Override
     public void run(Object node) {
-        if (!(node instanceof FilesToAssembleSidebarElement element)) return;
-        element.getDisplay().getFilesToAssemble().removeFile(element.getItem());
+        if (!(node instanceof GlobalIndexSidebarElement element)) return;
+        element.getDisplay().getGlobalIndex().removeFile(element.getItem());
     }
 
     @Override

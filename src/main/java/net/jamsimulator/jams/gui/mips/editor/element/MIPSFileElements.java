@@ -27,7 +27,6 @@ package net.jamsimulator.jams.gui.mips.editor.element;
 import net.jamsimulator.jams.collection.Bag;
 import net.jamsimulator.jams.gui.editor.code.hint.EditorHintBar;
 import net.jamsimulator.jams.gui.mips.editor.MIPSFileEditor;
-import net.jamsimulator.jams.project.mips.MIPSFilesToAssemble;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -48,7 +47,6 @@ public class MIPSFileElements {
     private final TreeSet<MIPSReplacement> replacements;
     private final TreeSet<Integer> requiresUpdate;
     private final TreeSet<MIPSMacro> macros;
-    private MIPSFilesToAssemble filesToAssemble;
 
     public MIPSFileElements(MIPSProject project) {
         this.project = project;
@@ -59,7 +57,7 @@ public class MIPSFileElements {
         this.replacements = new TreeSet<>();
 
         this.requiresUpdate = new TreeSet<>();
-        this.filesToAssemble = null;
+//        this.filesToAssemble = null;
 
         this.macros = new TreeSet<>();
     }
@@ -72,26 +70,26 @@ public class MIPSFileElements {
     public Optional<MIPSProject> getProject() {
         return Optional.ofNullable(project);
     }
-
-    /**
-     * Returns the {@link MIPSFilesToAssemble} this file is inside, if present.
-     *
-     * @return the {@link MIPSFilesToAssemble}, if present.
-     */
-    public Optional<MIPSFilesToAssemble> getFilesToAssemble() {
-        return Optional.ofNullable(filesToAssemble);
-    }
-
-    /**
-     * Sets the {@link MIPSFilesToAssemble} this file is inside.
-     * <p>
-     * This method should be used only by a {@link MIPSFilesToAssemble}.
-     *
-     * @param filesToAssemble the {@link MIPSFilesToAssemble}.
-     */
-    public void setFilesToAssemble(MIPSFilesToAssemble filesToAssemble) {
-        this.filesToAssemble = filesToAssemble;
-    }
+//
+//    /**
+//     * Returns the {@link MIPSFilesToAssemble} this file is inside, if present.
+//     *
+//     * @return the {@link MIPSFilesToAssemble}, if present.
+//     */
+//    public Optional<MIPSFilesToAssemble> getFilesToAssemble() {
+//        return Optional.ofNullable(filesToAssemble);
+//    }
+//
+//    /**
+//     * Sets the {@link MIPSFilesToAssemble} this file is inside.
+//     * <p>
+//     * This method should be used only by a {@link MIPSFilesToAssemble}.
+//     *
+//     * @param filesToAssemble the {@link MIPSFilesToAssemble}.
+//     */
+//    public void setFilesToAssemble(MIPSFilesToAssemble filesToAssemble) {
+//        this.filesToAssemble = filesToAssemble;
+//    }
 
     /**
      * Returns all lines of the represented file.
@@ -112,7 +110,7 @@ public class MIPSFileElements {
     }
 
     public boolean isLabelDeclared(String label) {
-        return labels.contains(label) || filesToAssemble != null && filesToAssemble.getGlobalLabels().contains(label);
+        return labels.contains(label); //|| filesToAssemble != null && filesToAssemble.getGlobalLabels().contains(label);
     }
 
     /**
@@ -180,7 +178,7 @@ public class MIPSFileElements {
         return lines.get(lineOf(position));
     }
 
-    public Set<MIPSMacro> getMacros () {
+    public Set<MIPSMacro> getMacros() {
         return Collections.unmodifiableSet(macros);
     }
 

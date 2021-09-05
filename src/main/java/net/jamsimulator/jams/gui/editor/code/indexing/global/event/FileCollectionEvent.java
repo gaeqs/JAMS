@@ -22,36 +22,22 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.project;
+package net.jamsimulator.jams.gui.editor.code.indexing.global.event;
 
-import net.jamsimulator.jams.collection.Bag;
-import net.jamsimulator.jams.event.EventBroadcast;
-import net.jamsimulator.jams.gui.editor.holder.FileEditorHolder;
+import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.gui.editor.code.indexing.global.FileCollection;
+import net.jamsimulator.jams.utils.Validate;
 
-import java.io.File;
-import java.util.List;
+public class FileCollectionEvent extends Event {
 
-public interface FilesToAssemble extends EventBroadcast {
+    private final FileCollection fileCollection;
 
-    Project getProject();
+    public FileCollectionEvent(FileCollection fileCollection) {
+        Validate.notNull(fileCollection, "File collection cannot be null!");
+        this.fileCollection = fileCollection;
+    }
 
-    boolean supportsGlobalLabels();
-
-    Bag<String> getGlobalLabels();
-
-    List<File> getFiles();
-
-    boolean containsFile(File file);
-
-    void addFile(File file, boolean refreshGlobalLabels);
-
-    void addFile(File file, FileEditorHolder holder, boolean refreshGlobalLabels);
-
-    void removeFile(File file);
-
-    boolean moveFileToIndex(File file, int index);
-
-    void refreshGlobalLabels();
-
-    void checkFiles();
+    public FileCollection getFileCollection() {
+        return fileCollection;
+    }
 }

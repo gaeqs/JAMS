@@ -42,16 +42,25 @@ public class IndexingThread extends Thread {
 
     @Override
     public void run() {
+        if (!waitForInitialization()) return;
         while (running) {
             if (!waitForElements()) return;
-            var index = editor.getIndex();
-
-            index.lockIndex();
-            editor.getPendingChanges().flushAll(index::change);
-            index.unlockIndex();
+            editor.getIndex().withLock(true, i -> editor.getPendingChanges().flushAll(i::change));
         }
     }
 
+
+    private boolean waitForInitialization() {
+        try {
+            editor.getIndex().waitForInitialization();
+            return true;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            running = false;
+            return false;
+        }
+
+    }
 
     private boolean waitForElements() {
         try {

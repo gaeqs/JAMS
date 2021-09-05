@@ -24,11 +24,17 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing.global;
 
+import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.event.SimpleEventBroadcast;
+import net.jamsimulator.jams.event.file.FileEvent;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.global.event.FileCollectionAddFileEvent;
+import net.jamsimulator.jams.gui.editor.code.indexing.global.event.FileCollectionChangeIndexEvent;
+import net.jamsimulator.jams.gui.editor.code.indexing.global.event.FileCollectionRemoveFileEvent;
 import net.jamsimulator.jams.gui.editor.holder.FileEditorHolderHolder;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.Project;
@@ -41,9 +47,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.StandardWatchEventKinds;
 import java.util.*;
 
-public abstract class ProjectGlobalIndex {
+public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements FileCollection {
 
     private final Project project;
     private final Map<File, EditorIndex> indices;
@@ -53,31 +60,38 @@ public abstract class ProjectGlobalIndex {
         this.project = project;
         this.indices = new HashMap<>();
         this.order = new LinkedList<>();
+
+        project.getProjectTab().ifPresent(tab -> tab.registerListeners(this, true));
     }
 
     public Project getProject() {
         return project;
     }
 
-    public synchronized List<File> getFiles ()  {
+    @Override
+    public synchronized List<File> getFiles() {
         return List.copyOf(order);
     }
 
+    @Override
     public synchronized boolean containsFile(File file) {
         return indices.containsKey(file);
     }
 
-    public synchronized Optional<EditorIndex> getIndex (File file) {
+    public synchronized Optional<EditorIndex> getIndex(File file) {
         return Optional.ofNullable(indices.get(file));
     }
 
     public synchronized <R extends EditorReferencedElement>
     Optional<R> searchReferencedElement(EditorElementReference<R> reference) {
         for (EditorIndex index : indices.values()) {
-            index.lockIndex();
-            var optional = index.getReferencedElement(reference, true);
-            index.unlockIndex();
-            if (optional.isPresent()) return optional;
+            index.lock(false);
+            try {
+                var optional = index.getReferencedElement(reference, true);
+                if (optional.isPresent()) return optional;
+            } finally {
+                index.unlock(false);
+            }
         }
         return Optional.empty();
     }
@@ -87,31 +101,63 @@ public abstract class ProjectGlobalIndex {
     Set<EditorReferencingElement> searchReferencingElements(EditorElementReference<R> reference) {
         var set = new HashSet<EditorReferencingElement>();
         indices.values().forEach(index ->
-                index.withLock(i -> set.addAll(i.getReferecingElements(reference))));
+                index.withLock(false, i -> set.addAll(i.getReferecingElements(reference))));
         return set;
     }
 
+    @Override
     public synchronized boolean addFile(File file) {
         Validate.notNull(file, "File cannot be null!");
         if (indices.containsKey(file)) return false;
+
+        var before =
+                callEvent(new FileCollectionAddFileEvent.Before(this, file));
+        if (before.isCancelled()) return false;
+        file = before.getFile();
+
         var index = getIndexFromEditor(file);
         if (index == null) index = generateIndexForFile(file);
         indices.put(file, index);
         order.add(file);
+
+        callEvent(new FileCollectionAddFileEvent.After(this, file));
         return true;
     }
 
-    public synchronized boolean removeFile(File file) {
-        if (indices.remove(file) == null) return false;
+    @Override
+    public boolean removeFile(File file) {
+        return removeFile(file, false);
+    }
+
+    private synchronized boolean removeFile(File file, boolean force) {
+        if (!indices.containsKey(file)) return false;
+
+        var before =
+                callEvent(new FileCollectionRemoveFileEvent.Before(this, file));
+        if (!force && before.isCancelled()) return false;
+
+        indices.remove(file);
         order.remove(file);
         return true;
     }
 
+    @Override
     public synchronized boolean moveFile(File file, int index) {
         if (!indices.containsKey(file)) return false;
         if (index < 0 || index >= order.size()) return false;
+
+        int old = order.indexOf(file);
+
+        var before =
+                callEvent(new FileCollectionChangeIndexEvent.Before(this, file, old, index));
+        if (before.isCancelled()) return false;
+        index = before.getNewIndex();
+        if (index >= order.size()) return false;
+
         order.remove(file);
         order.add(index, file);
+
+        callEvent(new FileCollectionChangeIndexEvent.After(this, file, old, index));
         return true;
     }
 
@@ -120,7 +166,7 @@ public abstract class ProjectGlobalIndex {
         var array = new JSONArray();
         var path = project.getFolder().toPath();
         order.stream().map(it -> path.relativize(it.toPath())).forEach(array::put);
-        Files.writeString(path, array.toString(1), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+        Files.writeString(file.toPath(), array.toString(1), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
     }
 
     public synchronized void loadFiles(File file) throws IOException {
@@ -136,7 +182,7 @@ public abstract class ProjectGlobalIndex {
         // Load indices
         order.forEach(it -> indices.computeIfAbsent(file, f -> {
             var index = generateIndexForFile(f);
-            index.withLock(i -> i.setGlobalIndex(this));
+            index.withLock(false, i -> i.setGlobalIndex(this));
             newIndices.put(f, index);
             return index;
         }));
@@ -144,7 +190,7 @@ public abstract class ProjectGlobalIndex {
         project.getTaskExecutor().execute(new LanguageTask<Void>(Messages.EDITOR_INDEXING) {
             @Override
             protected Void call() {
-                newIndices.forEach((file, index) -> index.withLock(i -> {
+                newIndices.forEach((file, index) -> index.withLock(true, i -> {
                     try {
                         i.indexAll(Files.readString(file.toPath()));
                     } catch (IOException e) {
@@ -172,4 +218,14 @@ public abstract class ProjectGlobalIndex {
         if (editor instanceof CodeFileEditor code) return code.getIndex();
         return null;
     }
+
+    @Listener
+    private void onFileRemove(FileEvent event) {
+        if (event.getWatchEvent().kind() != StandardWatchEventKinds.ENTRY_DELETE) return;
+        var file = event.getPath().toFile();
+        if (!removeFile(file, true)) {
+            System.err.println("Couldn't delete file " + file + " from global index.");
+        }
+    }
+
 }

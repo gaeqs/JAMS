@@ -25,35 +25,34 @@
 package net.jamsimulator.jams.gui.mips.sidebar;
 
 import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.file.FileType;
-import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.file.FileTypeManager;
+import net.jamsimulator.jams.gui.editor.code.indexing.global.ProjectGlobalIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.global.event.FileCollectionAddFileEvent;
+import net.jamsimulator.jams.gui.editor.code.indexing.global.event.FileCollectionRemoveFileEvent;
+import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.project.FilesToAssemble;
 import net.jamsimulator.jams.project.Project;
-import net.jamsimulator.jams.project.mips.event.FileAddToAssembleEvent;
-import net.jamsimulator.jams.project.mips.event.FileRemoveFromAssembleEvent;
 
 import java.io.File;
 
-public class FilesToAssembleSidebar extends ListView<File> {
+public class GlobalIndexSidebar extends ListView<File> {
 
     protected final IconData icon;
     protected final Project project;
-    protected final FilesToAssemble filesToAssemble;
+    protected final ProjectGlobalIndex globalIndex;
 
-    public FilesToAssembleSidebar(Project project, FilesToAssemble filesToAssemble, ScrollPane scrollPane) {
+    public GlobalIndexSidebar(Project project, ProjectGlobalIndex globalIndex) {
         this.project = project;
-        this.filesToAssemble = filesToAssemble;
+        this.globalIndex = globalIndex;
 
-        setCellFactory(target -> new FilesToAssembleSidebarElement(this));
+        setCellFactory(target -> new GlobalIndexSidebarElement(this));
 
-        filesToAssemble.registerListeners(this, true);
+        globalIndex.registerListeners(this, true);
         icon = Manager.get(FileTypeManager.class).getByExtension("asm").map(FileType::getIcon).orElse(null);
 
-        getItems().addAll(filesToAssemble.getFiles());
+        getItems().addAll(globalIndex.getFiles());
     }
 
     /**
@@ -66,21 +65,21 @@ public class FilesToAssembleSidebar extends ListView<File> {
     }
 
     /**
-     * Returns the {@link FilesToAssemble} this node is using.
+     * Returns the {@link ProjectGlobalIndex} this node is using.
      *
-     * @return the {@link FilesToAssemble}.
+     * @return the {@link ProjectGlobalIndex}.
      */
-    public FilesToAssemble getFilesToAssemble() {
-        return filesToAssemble;
+    public ProjectGlobalIndex getGlobalIndex() {
+        return globalIndex;
     }
 
     @Listener
-    private void onFileAdd(FileAddToAssembleEvent.After event) {
+    private void onFileAdd(FileCollectionAddFileEvent.After event) {
         getItems().add(event.getFile());
     }
 
     @Listener
-    private void onFileRemoved(FileRemoveFromAssembleEvent.After event) {
+    private void onFileRemoved(FileCollectionRemoveFileEvent.After event) {
         getItems().remove(event.getFile());
     }
 }
