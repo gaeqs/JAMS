@@ -46,6 +46,9 @@ public class IndexingThread extends Thread {
         while (running) {
             if (!waitForElements()) return;
             editor.getIndex().withLock(true, i -> editor.getPendingChanges().flushAll(i::change));
+            editor.getIndex().withLock(false, i -> {
+
+            });
         }
     }
 

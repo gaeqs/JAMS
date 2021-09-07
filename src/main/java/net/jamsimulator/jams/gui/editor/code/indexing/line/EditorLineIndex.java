@@ -36,6 +36,8 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorRe
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexFinishEditEvent;
 import net.jamsimulator.jams.gui.editor.code.indexing.global.ProjectGlobalIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspection;
+import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
 import net.jamsimulator.jams.gui.util.EasyStyleSpansBuilder;
 import org.fxmisc.richtext.model.StyleSpans;
 
@@ -43,6 +45,7 @@ import java.util.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends SimpleEventBroadcast implements EditorIndex {
@@ -202,6 +205,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     @Override
     public Optional<StyleSpans<Collection<String>>> getStyleRange(int from, int to) {
+        checkThread(false);
         if (from < 0 || from >= lines.size() || to < from) return Optional.empty();
 
         var builder = new EasyStyleSpansBuilder();
@@ -210,6 +214,24 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         int start = subList.get(0).getStart();
         subList.forEach(line -> line.addStyles(builder, start));
         return builder.isEmpty() ? Optional.empty() : Optional.of(builder.create());
+    }
+
+    @Override
+    public Set<Inspection> inspect(Collection<Inspector> inspectors) {
+        checkThread(false);
+        return inspectors.stream().flatMap(this::inspect).collect(Collectors.toSet());
+    }
+
+    private Stream<Inspection> inspect(Inspector inspector) {
+        var stream = switch (inspector.getType()) {
+            case REFERENCED_INSPECTOR -> referencedElements.values().stream().flatMap(Collection::stream);
+            case REFERENCING_INSPECTOR -> referencingElements.values().stream().flatMap(Collection::stream);
+            case GENERAL_INSPECTOR -> elementStream();
+        };
+        return stream.filter(inspector::supportsElement)
+                .map(inspector::inspect)
+                .filter(Optional::isPresent)
+                .map(Optional::get);
     }
 
     @Override
