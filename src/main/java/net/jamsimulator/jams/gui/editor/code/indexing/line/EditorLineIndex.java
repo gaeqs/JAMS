@@ -35,7 +35,6 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorGl
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexFinishEditEvent;
-import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexRequestRefreshEvent;
 import net.jamsimulator.jams.gui.editor.code.indexing.global.ProjectGlobalIndex;
 import net.jamsimulator.jams.gui.util.EasyStyleSpansBuilder;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -195,8 +194,10 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         checkThread(false);
         if (line < 0 || line >= lines.size()) return Optional.empty();
         var builder = new EasyStyleSpansBuilder();
+        var l = lines.get(line);
+        l.addStyles(builder, l.getLength());
         builder.add(0, lines.get(line).getLength(), Set.of("mips-error"));
-        return Optional.of(builder.create());
+        return builder.isEmpty() ? Optional.empty() : Optional.of(builder.create());
     }
 
     @Override
@@ -206,10 +207,9 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         var builder = new EasyStyleSpansBuilder();
 
         var subList = lines.subList(from, Math.min(to + 1, lines.size()));
-
         int start = subList.get(0).getStart();
-        subList.forEach(line -> builder.add(line.getStart() - start, line.getLength(), Set.of("mips-error")));
-        return Optional.of(builder.create());
+        subList.forEach(line -> line.addStyles(builder, start));
+        return builder.isEmpty() ? Optional.empty() : Optional.of(builder.create());
     }
 
     @Override
@@ -304,6 +304,6 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     private void checkThread(boolean edit) {
         if (lockOwner != Thread.currentThread()) throw new IllegalStateException("Index is not locked!");
-        if(edit && !editMode) throw new IllegalStateException("Index is not in edit mode!");
+        if (edit && !editMode) throw new IllegalStateException("Index is not in edit mode!");
     }
 }

@@ -25,8 +25,13 @@
 package net.jamsimulator.jams.gui.editor.code.indexing.element.line;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElementImpl;
+import net.jamsimulator.jams.gui.util.EasyStyleSpansBuilder;
 import net.jamsimulator.jams.utils.Validate;
+
+import java.util.Comparator;
 
 public class EditorIndexedLine extends EditorIndexedParentElementImpl {
 
@@ -52,4 +57,11 @@ public class EditorIndexedLine extends EditorIndexedParentElementImpl {
         move(positionOffset);
     }
 
+    public void addStyles(EasyStyleSpansBuilder builder, int offset) {
+        elementStream()
+                .filter(it -> it instanceof EditorIndexStyleableElement)
+                .sorted(Comparator.comparingInt(EditorIndexedElement::getStart))
+                .forEach(it -> builder.add(it.getStart() - offset, it.getLength(),
+                        ((EditorIndexStyleableElement) it).getStyles()));
+    }
 }
