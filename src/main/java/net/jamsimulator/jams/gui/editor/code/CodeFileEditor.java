@@ -24,8 +24,8 @@
 
 package net.jamsimulator.jams.gui.editor.code;
 
+import javafx.animation.AnimationTimer;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
@@ -57,12 +57,10 @@ import net.jamsimulator.jams.utils.FileUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.model.Paragraph;
 import org.reactfx.Subscription;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -97,6 +95,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
 
     protected final IndexingThread indexingThread;
     protected final Subscription subscription;
+    protected final AnimationTimer styleTimer;
 
     public CodeFileEditor(FileEditorTab tab) {
         super(read(tab));
@@ -139,7 +138,10 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
                 }, Duration.ofMillis(200))
                 .subscribe(list -> pendingChanges.addAll(list));
 
-        getVisibleParagraphs().addListener(this::onVisibleParagraphsChange);
+        styleTimer = new StyleAnimation();
+        styleTimer.start();
+
+
     }
 
     /**
@@ -258,6 +260,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         JamsApplication.getStage().heightProperty().removeListener((ChangeListener<? super Number>) popupHideListener);
         subscription.unsubscribe();
         indexingThread.kill();
+        styleTimer.stop();
     }
 
     @Override
@@ -359,34 +362,36 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         return set;
     }
 
-    private void onVisibleParagraphsChange(
-            ListChangeListener.Change<? extends Paragraph<Collection<String>, String, Collection<String>>> c) {
+    private class StyleAnimation extends AnimationTimer {
 
-        // The index is not initialized or is in edit mode. The indexer will warn
-        // us later that the index is initialized or the edit mode has finished, asking for a refresh.
-        if (!index.isInitialized() || index.isInEditMode()) return;
+        private static final long DELAY = 200000000L;
 
-        // If the index is locked, but it's not in edit mode, someone is doing a quick information search.
-        // Enter the lock and wait for the resources to be free.
-        index.withLock(false, i -> {
+        private int from = -1, to = -1;
+        private long nextTick = System.nanoTime();
+
+        @Override
+        public void handle(long now) {
+            if (now >= nextTick) {
+                nextTick = now + DELAY;
+            } else return;
+
+            // The index is not initialized or is in edit mode. The indexer will warn
+            // us later that the index is initialized or the edit mode has finished, asking for a refresh.
+            if (!index.isInitialized() || index.isInEditMode()) return;
+
             try {
-
-                // The resources are now ours.
-                // Let's style the added lines.
-
-                int first = firstVisibleParToAllParIndex();
-                int last = lastVisibleParToAllParIndex();
-                System.out.println(first + " - " + last);
-
-                while (first <= last) {
-                    setStyleSpans(first, i.getStyleForLine(first++));
-                }
-                System.out.println(first - 1 == last);
-
-            } catch (Exception ex) {
-                System.err.println("Error " + ex);
+                int newFrom = firstVisibleParToAllParIndex();
+                int newTo = lastVisibleParToAllParIndex();
+                if (newFrom == from && newTo == to) return;
+                from = newFrom;
+                to = newTo;
+            } catch (IllegalArgumentException ignore) {
+                return;
             }
-        });
+
+            index.withLockF(false, i -> i.getStyleRange(from, to))
+                    .ifPresent(s -> setStyleSpans(from, 0, s));
+        }
     }
 
 }

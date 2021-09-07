@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public interface EditorIndex {
@@ -65,7 +66,9 @@ public interface EditorIndex {
 
     boolean isIdentifierGlobal(String global);
 
-    StyleSpans<Collection<String>> getStyleForLine(int line);
+    Optional<StyleSpans<Collection<String>>> getStyleForLine(int line);
+
+    Optional<StyleSpans<Collection<String>>> getStyleRange(int from, int to);
 
     void lock(boolean editMode);
 
@@ -77,6 +80,15 @@ public interface EditorIndex {
         lock(editMode);
         try {
             consumer.accept(this);
+        } finally {
+            unlock(editMode);
+        }
+    }
+
+    default <T> T withLockF(boolean editMode, Function<EditorIndex, T> consumer) {
+        lock(editMode);
+        try {
+            return consumer.apply(this);
         } finally {
             unlock(editMode);
         }

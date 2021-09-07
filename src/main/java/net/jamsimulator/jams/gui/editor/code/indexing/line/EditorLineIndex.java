@@ -188,12 +188,25 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
     }
 
     @Override
-    public StyleSpans<Collection<String>> getStyleForLine(int line) {
+    public Optional<StyleSpans<Collection<String>>> getStyleForLine(int line) {
         checkThread();
-        if (line < 0 || line >= lines.size()) throw new IndexOutOfBoundsException("Index " + line + " out of bounds.");
+        if (line < 0 || line >= lines.size()) return Optional.empty();
         var builder = new EasyStyleSpansBuilder();
-        builder.add(0, lines.get(0).getLength(), Set.of("mips-error"));
-        return builder.create();
+        builder.add(0, lines.get(line).getLength(), Set.of("mips-error"));
+        return Optional.of(builder.create());
+    }
+
+    @Override
+    public Optional<StyleSpans<Collection<String>>> getStyleRange(int from, int to) {
+        if (from < 0 || from >= lines.size() || to < from) return Optional.empty();
+
+        var builder = new EasyStyleSpansBuilder();
+
+        var subList = lines.subList(from, Math.min(to + 1, lines.size()));
+
+        int start = subList.get(0).getStart();
+        subList.forEach(line -> builder.add(line.getStart() - start, line.getLength(), Set.of("mips-error")));
+        return Optional.of(builder.create());
     }
 
     @Override
