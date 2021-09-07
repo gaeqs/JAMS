@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.editor.code;
 
 import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
@@ -34,6 +35,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Popup;
+import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
@@ -44,6 +46,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorLineChange;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorPendingChanges;
 import net.jamsimulator.jams.gui.editor.code.indexing.IndexingThread;
+import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexRequestRefreshEvent;
 import net.jamsimulator.jams.gui.editor.code.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.editor.code.popup.DocumentationPopup;
 import net.jamsimulator.jams.gui.editor.code.top.CodeFileEditorReplace;
@@ -102,6 +105,8 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         this.tab = tab;
         this.index = getOrGenerateIndex();
 
+        index.registerListeners(this, true);
+
         ZoomUtils.applyZoomListener(this, zoom);
         setParagraphGraphicFactory(CustomLineNumberFactory.get(this));
 
@@ -141,7 +146,9 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         styleTimer = new StyleAnimation();
         styleTimer.start();
 
-
+        tab.selectedProperty().addListener((obs, old, val) -> {
+            if (val) styleVisibleArea();
+        });
     }
 
     /**
@@ -362,6 +369,26 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         return set;
     }
 
+    protected void styleVisibleArea() {
+        try {
+            // The index is not initialized or is in edit mode. The indexer will warn
+            // us later that the index is initialized or the edit mode has finished, asking for a refresh.
+            if (!index.isInitialized() || index.isInEditMode()) return;
+
+            int from = firstVisibleParToAllParIndex();
+            int to = lastVisibleParToAllParIndex();
+            index.withLockF(false, i -> i.getStyleRange(from, to))
+                    .ifPresent(s -> setStyleSpans(from, 0, s));
+        } catch (IllegalArgumentException ignore) {
+        }
+    }
+
+    @Listener
+    private void onIndexRefresh(IndexRequestRefreshEvent event) {
+        if (!tab.isSelected()) return;
+        Platform.runLater(this::styleVisibleArea);
+    }
+
     private class StyleAnimation extends AnimationTimer {
 
         private static final long DELAY = 200000000L;
@@ -371,13 +398,10 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
 
         @Override
         public void handle(long now) {
+            if (!tab.isSelected()) return;
             if (now >= nextTick) {
                 nextTick = now + DELAY;
             } else return;
-
-            // The index is not initialized or is in edit mode. The indexer will warn
-            // us later that the index is initialized or the edit mode has finished, asking for a refresh.
-            if (!index.isInitialized() || index.isInEditMode()) return;
 
             try {
                 int newFrom = firstVisibleParToAllParIndex();
@@ -388,9 +412,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
             } catch (IllegalArgumentException ignore) {
                 return;
             }
-
-            index.withLockF(false, i -> i.getStyleRange(from, to))
-                    .ifPresent(s -> setStyleSpans(from, 0, s));
+            styleVisibleArea();
         }
     }
 

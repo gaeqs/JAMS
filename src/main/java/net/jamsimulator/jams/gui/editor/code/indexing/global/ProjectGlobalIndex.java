@@ -32,6 +32,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexFinishEditEvent;
 import net.jamsimulator.jams.gui.editor.code.indexing.global.event.FileCollectionAddFileEvent;
 import net.jamsimulator.jams.gui.editor.code.indexing.global.event.FileCollectionChangeIndexEvent;
 import net.jamsimulator.jams.gui.editor.code.indexing.global.event.FileCollectionRemoveFileEvent;
@@ -106,7 +107,11 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
     }
 
     @Override
-    public synchronized boolean addFile(File file) {
+    public boolean addFile(File file) {
+        return addFile(file, true);
+    }
+
+    private synchronized boolean addFile(File file, boolean initialize) {
         Validate.notNull(file, "File cannot be null!");
         if (indices.containsKey(file)) return false;
 
@@ -119,6 +124,14 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
         if (index == null) index = generateIndexForFile(file);
         indices.put(file, index);
         order.add(file);
+
+        index.withLock(true, i -> i.setGlobalIndex(this));
+
+        if (initialize && !index.isInitialized()) {
+            indexFiles(Map.of(file, index));
+        } else {
+            index.registerListeners(this, true);
+        }
 
         callEvent(new FileCollectionAddFileEvent.After(this, file));
         return true;
@@ -136,8 +149,16 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
                 callEvent(new FileCollectionRemoveFileEvent.Before(this, file));
         if (!force && before.isCancelled()) return false;
 
-        indices.remove(file);
+        var index = indices.remove(file);
         order.remove(file);
+
+        index.withLock(true, i -> {
+            if (i.isInitialized()) {
+                i.unregisterListeners(this);
+                i.setGlobalIndex(null);
+            }
+        });
+
         return true;
     }
 
@@ -175,36 +196,56 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
         new JSONArray(Files.readString(file.toPath())).toList().stream()
                 .map(it -> new File(project.getFolder(), it.toString()))
                 .filter(File::isFile)
-                .forEach(this::addFile);
+                .forEach(f -> addFile(f, false));
 
         var newIndices = new HashMap<File, EditorIndex>();
 
-        // Load indices
-        order.forEach(it -> indices.computeIfAbsent(file, f -> {
-            var index = generateIndexForFile(f);
-            index.withLock(false, i -> i.setGlobalIndex(this));
-            newIndices.put(f, index);
-            return index;
-        }));
+        indices.forEach((f, index) -> {
+            if (!index.isInitialized()) {
+                newIndices.put(f, index);
+            } else {
+                index.registerListeners(this, true);
+                refreshAll(null);
+            }
+        });
 
+        indexFiles(newIndices);
+    }
+
+    public synchronized void refreshAll(EditorIndex ignored) {
+        for (EditorIndex index : indices.values()) {
+            if (index != ignored && index.isInitialized()) {
+                index.requestRefresh();
+            }
+        }
+    }
+
+    protected void indexFiles(Map<File, EditorIndex> indices) {
+        if (indices.isEmpty()) {
+            refreshAll(null);
+            return;
+        }
         project.getTaskExecutor().execute(new LanguageTask<Void>(Messages.EDITOR_INDEXING) {
             @Override
             protected Void call() {
-                newIndices.forEach((file, index) -> index.withLock(true, i -> {
-                    try {
-                        i.indexAll(Files.readString(file.toPath()));
-                    } catch (IOException e) {
-                        System.err.println("Errror while indexing file " + file + "!");
-                        e.printStackTrace();
-                    }
-                }));
+                indices.forEach((file, index) -> {
+                    index.withLock(true, i -> {
+                        try {
+                            i.indexAll(Files.readString(file.toPath()));
+                        } catch (IOException e) {
+                            System.err.println("Errror while indexing file " + file + "!");
+                            e.printStackTrace();
+                        }
+                    });
+                    index.registerListeners(this, true);
+                });
+                refreshAll(null);
                 return null;
             }
         });
     }
 
     protected abstract EditorIndex generateIndexForFile(File file);
-
 
     protected EditorIndex getIndexFromEditor(File file) {
         var projectTab = project.getProjectTab().orElse(null);
@@ -226,6 +267,11 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
         if (!removeFile(file, true)) {
             System.err.println("Couldn't delete file " + file + " from global index.");
         }
+    }
+
+    @Listener
+    private void finishEditEvent(IndexFinishEditEvent event) {
+        refreshAll(event.getIndex());
     }
 
 }

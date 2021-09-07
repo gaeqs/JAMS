@@ -24,10 +24,12 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing;
 
+import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexRequestRefreshEvent;
 import net.jamsimulator.jams.gui.editor.code.indexing.global.ProjectGlobalIndex;
 import org.fxmisc.richtext.model.StyleSpans;
 
@@ -38,7 +40,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public interface EditorIndex {
+public interface EditorIndex extends EventBroadcast {
 
     Optional<ProjectGlobalIndex> getGlobalIndex();
 
@@ -92,5 +94,9 @@ public interface EditorIndex {
         } finally {
             unlock(editMode);
         }
+    }
+
+    default void requestRefresh() {
+        callEvent(new IndexRequestRefreshEvent(this));
     }
 }

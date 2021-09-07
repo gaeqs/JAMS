@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.editor.code.indexing.line;
 
 import net.jamsimulator.jams.collection.Bag;
+import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorLineChange;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
@@ -33,6 +34,8 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorEl
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorGlobalMarkerElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexFinishEditEvent;
+import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexRequestRefreshEvent;
 import net.jamsimulator.jams.gui.editor.code.indexing.global.ProjectGlobalIndex;
 import net.jamsimulator.jams.gui.util.EasyStyleSpansBuilder;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -43,7 +46,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
 
-public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements EditorIndex {
+public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends SimpleEventBroadcast implements EditorIndex {
 
     private ProjectGlobalIndex globalIndex;
 
@@ -67,7 +70,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
 
     @Override
     public void setGlobalIndex(ProjectGlobalIndex globalIndex) {
-        checkThread();
+        checkThread(true);
         this.globalIndex = globalIndex;
     }
 
@@ -92,7 +95,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
 
     @Override
     public void change(EditorLineChange change) {
-        checkThread();
+        checkThread(true);
         switch (change.type()) {
             case EDIT -> editLine(change.line(), change.text());
             case REMOVE -> removeLine(change.line());
@@ -102,7 +105,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
 
     @Override
     public void indexAll(String text) {
-        checkThread();
+        checkThread(true);
         try {
             lines.clear();
             if (text.isEmpty()) {
@@ -144,7 +147,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
 
     @Override
     public Optional<EditorIndexedElement> getElementAt(int position) {
-        checkThread();
+        checkThread(false);
         return lines.stream()
                 .filter(it -> it.getStart() >= position && it.getEnd() < position)
                 .findAny().flatMap(it -> it.getElementAt(position));
@@ -152,14 +155,14 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
 
     @Override
     public Stream<? extends EditorIndexedElement> elementStream() {
-        checkThread();
+        checkThread(false);
         return lines.stream().flatMap(EditorIndexedElement::elementStream);
     }
 
     @Override
     public <T extends EditorReferencedElement>
     Optional<T> getReferencedElement(EditorElementReference<T> reference, boolean globalContext) {
-        checkThread();
+        checkThread(false);
         var set = referencedElements.get(reference);
         if (set == null || set.isEmpty()) return Optional.empty();
         if (globalContext) {
@@ -175,7 +178,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
     @Override
     public <T extends EditorReferencedElement>
     Set<EditorReferencingElement> getReferecingElements(EditorElementReference<T> reference) {
-        checkThread();
+        checkThread(false);
         var set = referencingElements.get(reference);
         if (set == null) return Collections.emptySet();
         return Set.copyOf(set);
@@ -183,13 +186,13 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
 
     @Override
     public boolean isIdentifierGlobal(String global) {
-        checkThread();
+        checkThread(false);
         return globalIdentifiers.contains(global);
     }
 
     @Override
     public Optional<StyleSpans<Collection<String>>> getStyleForLine(int line) {
-        checkThread();
+        checkThread(false);
         if (line < 0 || line >= lines.size()) return Optional.empty();
         var builder = new EasyStyleSpansBuilder();
         builder.add(0, lines.get(line).getLength(), Set.of("mips-error"));
@@ -225,7 +228,8 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
         lock.unlock();
 
         if (editModeFinished) {
-            //TODO
+            callEvent(new IndexFinishEditEvent(this));
+            requestRefresh();
         }
     }
 
@@ -298,7 +302,8 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> implements
 
     protected abstract Line generateNewLine(int start, int number, String text);
 
-    private void checkThread() {
+    private void checkThread(boolean edit) {
         if (lockOwner != Thread.currentThread()) throw new IllegalStateException("Index is not locked!");
+        if(edit && !editMode) throw new IllegalStateException("Index is not in edit mode!");
     }
 }
