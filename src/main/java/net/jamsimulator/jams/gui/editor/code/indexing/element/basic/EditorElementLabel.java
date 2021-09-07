@@ -31,16 +31,25 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedEleme
 import java.util.Collection;
 import java.util.Set;
 
-public class EditorElementComment extends EditorIndexedElementImpl implements EditorIndexStyleableElement {
+public class EditorElementLabel extends EditorIndexedElementImpl implements EditorIndexStyleableElement {
 
-    public static final Set<String> STYLE = Set.of("comment");
+    public static final Set<String> STYLE = Set.of("label");
+    public static final Set<String> GLOBAL_STYLE = Set.of("global-label");
 
-    public EditorElementComment(EditorIndex index, int start, String text) {
+    private final String identifier;
+
+    public EditorElementLabel(EditorIndex index, int start, String text) {
         super(index, start, text);
+        identifier = text.substring(0, text.length() - 1).trim();
+    }
+
+    @Override
+    public String getIdentifier() {
+        return identifier;
     }
 
     @Override
     public Collection<String> getStyles() {
-        return STYLE;
+        return index.isIdentifierGlobal(identifier) ? GLOBAL_STYLE : STYLE;
     }
 }
