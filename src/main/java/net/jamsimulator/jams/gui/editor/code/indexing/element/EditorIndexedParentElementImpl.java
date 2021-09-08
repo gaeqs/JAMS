@@ -26,18 +26,19 @@ package net.jamsimulator.jams.gui.editor.code.indexing.element;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 
 public class EditorIndexedParentElementImpl extends EditorIndexedElementImpl implements EditorIndexedParentElement {
 
-    protected final Set<EditorIndexedElement> elements;
+    protected final List<EditorIndexedElement> elements;
 
-    public EditorIndexedParentElementImpl(EditorIndex index, int start, String text) {
-        super(index, start, text);
-        this.elements = new HashSet<>();
+    public EditorIndexedParentElementImpl(EditorIndex index, EditorIndexedParentElement parent,
+                                          int start, String text) {
+        super(index, parent, start, text);
+        this.elements = new ArrayList<>();
     }
 
     public Optional<? extends EditorIndexedElement> getElementAt(int position) {

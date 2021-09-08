@@ -27,10 +27,15 @@ package net.jamsimulator.jams.gui.mips.editor;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 import net.jamsimulator.jams.gui.editor.code.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.icon.Icons;
-import net.jamsimulator.jams.gui.mips.editor.element.*;
+import net.jamsimulator.jams.gui.mips.editor.index.MIPSEditorIndex;
+import net.jamsimulator.jams.gui.mips.editor.index.element.MIPSEditorDirective;
+import net.jamsimulator.jams.gui.mips.editor.index.element.MIPSEditorDirectiveParameter;
+import net.jamsimulator.jams.gui.mips.editor.index.element.MIPSEditorInstruction;
+import net.jamsimulator.jams.gui.mips.editor.index.element.MIPSEditorInstructionParameter;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
@@ -53,12 +58,12 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
     private static final IconData ICON_REGISTER = Icons.AUTOCOMPLETION_REGISTER;
     private static final IconData ICON_MACRO = Icons.AUTOCOMPLETION_MACRO;
 
-    private final MIPSFileElements mipsElements;
-    private MIPSCodeElement element;
+    private final MIPSEditorIndex index;
+    private EditorIndexedElement element;
 
     public MIPSAutocompletionPopup(MIPSFileEditor display) {
         super(display);
-        this.mipsElements = display.getElements();
+        this.index = display.getIndex();
     }
 
     @Override
@@ -70,7 +75,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
     public void execute(int caretOffset, boolean autocompleteIfOne) {
         int caretPosition = display.getCaretPosition() + caretOffset;
         if (caretPosition <= 0) return;
-        element = mipsElements.getElementAt(caretPosition - 1).orElse(null);
+        element = index.getElementAt(caretPosition - 1).orElse(null);
         if (element == null) {
             hide();
             return;
@@ -112,20 +117,20 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
     public void refreshContents(int caretPosition) {
         elements.clear();
 
-        var to = caretPosition - element.getStartIndex();
-        var start = element.getSimpleText();
+        var to = caretPosition - element.getStart();
+        var start = element.getIdentifier();
 
         if (to > 0 && to < start.length()) {
-            start = start.substring(0, caretPosition - element.getStartIndex());
+            start = start.substring(0, caretPosition - element.getStart());
         }
 
-        if (element instanceof MIPSDirective)
+        if (element instanceof MIPSEditorDirective)
             start = refreshDirective(start);
-        else if (element instanceof MIPSDirectiveParameter) {
+        else if (element instanceof MIPSEditorDirectiveParameter) {
             start = refreshDisplayDirectiveParameter(start);
-        } else if (element instanceof MIPSInstruction)
+        } else if (element instanceof MIPSEditorInstruction)
             start = refreshInstructionsMacrosAndDirectives(start);
-        else if (element instanceof MIPSInstructionParameterPart)
+        else if (element instanceof MIPSEditorInstructionParameter)
             start = refreshDisplayInstructionParameterPart(start);
 
         sortAndShowElements(start);
@@ -136,8 +141,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
     }
 
     protected String refreshDirective(String start) {
-        MIPSProject project = getDisplay().getProject().orElse(null);
-        if (project == null) return start;
+        if (!(getDisplay().getProject() instanceof MIPSProject project)) return start;
 
         var space = Jams.getMainConfiguration()
                 .getEnum(MIPSSpaces.class, "editor.mips.space_after_directive")
@@ -150,9 +154,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
     }
 
     protected String refreshInstructionsMacrosAndDirectives(String start) {
-        MIPSProject project = getDisplay().getProject().orElse(null);
-        if (project == null) return start;
-
+        if (!(getDisplay().getProject() instanceof MIPSProject project)) return start;
 
         var space = Jams.getMainConfiguration()
                 .getEnum(MIPSSpaces.class, "editor.mips.space_after_instruction")
@@ -181,8 +183,8 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
                 Directive::getName, d -> "." + d.getName() + (d.hasParameters() ? space : ""), 0, ICON_DIRECTIVE);
 
         // And macros!
-        addElements(mipsElements.getMacros().stream().filter(target -> target.getName().startsWith(directive)),
-                MIPSMacro::getName, m -> m.getName() + " (", 0, ICON_MACRO);
+//        addElements(index.getMacros().stream().filter(target -> target.getName().startsWith(directive)),
+//                MIPSMacro::getName, m -> m.getName() + " (", 0, ICON_MACRO);
 
         return directive;
     }
@@ -197,7 +199,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 
         var line = getDisplay().getElements().getLineWithPosition(element.getStartIndex());
         var compatibleInstructions = line.getInstruction()
-                .map(target -> target.getCompatibleInstructions(mipsElements, parameterIndex))
+                .map(target -> target.getCompatibleInstructions(index, parameterIndex))
                 .orElse(Collections.emptySet());
 
         boolean hasLabels = false, hasRegisters = false;
@@ -213,7 +215,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
             switch (partType) {
                 case LABEL:
                     if (hasLabels) break;
-                    Set<String> labels = new HashSet<>(mipsElements.getLabels());
+                    Set<String> labels = new HashSet<>(index.getLabels());
 //                    mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
                     addElements(labels.stream().filter(target -> target.toLowerCase().startsWith(partStart)), s -> s, s -> s, partStartIndex.get(), ICON_LABEL);
                     hasLabels = true;
@@ -239,10 +241,10 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
     }
 
     protected String refreshDisplayDirectiveParameter(String start) {
-        MIPSProject project = getDisplay().getProject().orElse(null);
-        if (project == null || element == null) return start;
+        if (!(getDisplay().getProject() instanceof MIPSProject project)) return start;
+        if (element == null) return start;
 
-        var parameter = (MIPSDirectiveParameter) element;
+        var parameter = (MIPSEditorDirectiveParameter) element;
         var directive = parameter.getDirective().getDirective();
 
         //Checks whether and what space should add.
@@ -259,7 +261,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 
         switch (parameter.getType()) {
             case LABEL, INT_OR_LABEL -> {
-                Set<String> labels = new HashSet<>(mipsElements.getLabels());
+                Set<String> labels = new HashSet<>(index.getLabels());
 //                mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
                 addElements(labels.stream().filter(target -> target.toLowerCase().startsWith(parameterStart)), s -> s, s -> s + space, 0, ICON_LABEL);
             }
@@ -284,10 +286,10 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 
         int caretPosition = display.getCaretPosition();
         if (caretPosition == 0) return;
-        MIPSCodeElement element = mipsElements.getElementAt(caretPosition - 1).orElse(null);
+        var element = index.getElementAt(caretPosition - 1).orElse(null);
         if (element == null) return;
-        if (element.getText().substring(0, caretPosition - element.getStartIndex()).equals(replacement)) return;
+        if (element.getText().substring(0, caretPosition - element.getStart()).equals(replacement)) return;
 
-        display.replaceText(element.getStartIndex() + selected.getOffset(), caretPosition, replacement);
+        display.replaceText(element.getStart() + selected.getOffset(), caretPosition, replacement);
     }
 }

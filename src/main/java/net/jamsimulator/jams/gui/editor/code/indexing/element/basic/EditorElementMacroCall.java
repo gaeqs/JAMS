@@ -22,66 +22,32 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.editor.element;
+package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
 
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElementImpl;
 import net.jamsimulator.jams.utils.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class MIPSMacroCall extends MIPSCodeElement {
+public class EditorElementMacroCall extends EditorIndexedParentElementImpl {
 
-    private final List<MIPSMacroCallParameter> parameters;
-    private String name;
-
-    public MIPSMacroCall(MIPSLine line, int startIndex, int endIndex, int splitIndex, String text) {
-        super(line, startIndex, endIndex, text);
-        parameters = new ArrayList<>();
+    public EditorElementMacroCall(EditorIndex index, EditorIndexedParentElement parent,
+                                  int start, String text, int splitIndex) {
+        super(index, parent, start, text);
         parseText(splitIndex);
     }
 
-    @Override
-    public String getTranslatedNameNode() {
-        return "MIPS_ELEMENT_MACRO_CALL";
-    }
-
-    @Override
-    public String getSimpleText() {
-        return name;
-    }
-
-    public List<MIPSMacroCallParameter> getParameters() {
-        return parameters;
-    }
-
-    @Override
-    public void move(int offset) {
-        super.move(offset);
-        parameters.forEach(parameter -> parameter.move(offset));
-    }
-
-    @Override
-    public List<String> getStyles() {
-        return getGeneralStyles("mips-macro-call");
-    }
-
-    @Override
-    public void refreshMetadata(MIPSFileElements elements) {
-    }
-
-
     private void parseText(int splitIndex) {
-        name = text.substring(0, splitIndex).trim();
+        parseName(text.substring(0, splitIndex).trim());
 
         var rawParameters = text.substring(splitIndex + 1);
         var parts = StringUtils.multiSplitIgnoreInsideStringWithIndex(rawParameters, false, " ", ",", "\t");
         var stringParameters = parts.entrySet().stream()
                 .sorted(Comparator.comparingInt(Map.Entry::getKey)).collect(Collectors.toList());
-
-        int index = 0;
 
         for (var entry : stringParameters) {
             var value = entry.getValue();
@@ -93,17 +59,22 @@ public class MIPSMacroCall extends MIPSCodeElement {
                 startOffset++;
             }
 
-            parameters.add(new MIPSMacroCallParameter(
-                    line,
+            elements.add(new EditorElementMacroCallParameter(
+                    index,
                     this,
-                    index++,
-                    startIndex + entry.getKey() + splitIndex + startOffset,
-                    startIndex + entry.getKey() + splitIndex + value.length() + startOffset,
+                    start + entry.getKey() + splitIndex + startOffset,
                     value
             ));
         }
+    }
 
-        startIndex += text.indexOf(name);
-        endIndex = startIndex + name.length();
+    private void parseName(String name) {
+        var trimmed = name.trim();
+        if (trimmed.isEmpty()) {
+            elements.add(new EditorElementMacroCallMnemonic(index, this, start, name));
+            return;
+        }
+        var offset = name.indexOf(trimmed.charAt(0));
+        elements.add(new EditorElementMacroCallMnemonic(index, this, start + offset, trimmed));
     }
 }

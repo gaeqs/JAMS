@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
+package net.jamsimulator.jams.gui.mips.editor.index.element;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
@@ -32,12 +32,12 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParen
 import java.util.Collection;
 import java.util.Set;
 
-public class EditorElementComment extends EditorIndexedElementImpl implements EditorIndexStyleableElement {
+public class MIPSEditorDirectiveMnemonic extends EditorIndexedElementImpl implements EditorIndexStyleableElement {
 
-    public static final Set<String> STYLE = Set.of("comment");
+    public static final Set<String> STYLE = Set.of("directive");
 
-    public EditorElementComment(EditorIndex index, EditorIndexedParentElement parent,
-                                int start, String text) {
+    public MIPSEditorDirectiveMnemonic(EditorIndex index, EditorIndexedParentElement parent,
+                                       int start, String text) {
         super(index, parent, start, text);
     }
 

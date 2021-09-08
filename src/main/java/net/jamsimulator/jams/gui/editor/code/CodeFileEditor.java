@@ -56,6 +56,7 @@ import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.GUIReflectionUtils;
 import net.jamsimulator.jams.gui.util.ZoomUtils;
 import net.jamsimulator.jams.project.GlobalIndexHolder;
+import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.utils.FileUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -225,6 +226,27 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     }
 
     /**
+     * Returns the {@link Project} of this file editor.
+     * <p>
+     * This is a shortcut for {@code tab.getWorkingPane().getprojectTab().getProject()}.
+     *
+     * @return the {@link Project}.
+     */
+    public Project getProject() {
+        return tab.getWorkingPane().getProjectTab().getProject();
+    }
+
+    /**
+     * Returns the {@link ScaledVirtualized} instance that manages the zoom
+     * if this editor.
+     *
+     * @return the {@code ScaledVirtualized}.
+     */
+    public ScaledVirtualized<CodeFileEditor> getZoom() {
+        return zoom;
+    }
+
+    /**
      * Duplicates the current line.
      * If a selection is made, the selection will be duplicated instead.
      */
@@ -313,7 +335,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     protected abstract EditorIndex generateIndex();
 
     protected EditorIndex getOrGenerateIndex() {
-        var data = tab.getWorkingPane().getProjectTab().getProject().getData();
+        var data = getProject().getData();
         if (data instanceof GlobalIndexHolder holder) {
             var index = holder.getGlobalIndex().getIndex(tab.getFile());
             if (index.isPresent()) return index.get();

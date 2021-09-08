@@ -22,36 +22,31 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.editor.element;
+package net.jamsimulator.jams.gui.mips.editor.index.element;
 
-import java.util.Collections;
-import java.util.List;
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 
-public class MIPSComment extends MIPSCodeElement {
+import java.util.Collection;
+import java.util.Set;
 
-    public MIPSComment(MIPSLine line, int startIndex, int endIndex, String text) {
-        super(line, startIndex, endIndex, text);
+public class MIPSEditorDirectiveParameter extends EditorIndexedElementImpl implements EditorIndexStyleableElement {
+
+    public static final Set<String> STYLE = Set.of("directive-parameter");
+    public static final Set<String> STRING_STYLE = Set.of("directive-parameter-string");
+
+    protected boolean string;
+
+    public MIPSEditorDirectiveParameter(EditorIndex index, EditorIndexedParentElement parent,
+                                        int start, String text) {
+        super(index, parent, start, text);
+        string = text.startsWith("\"") && text.endsWith("\"");
     }
 
     @Override
-    public String getTranslatedNameNode() {
-        return "MIPS_ELEMENT_COMMENT";
+    public Collection<String> getStyles() {
+        return string ? STRING_STYLE : STYLE;
     }
-
-    @Override
-    public String getSimpleText() {
-        return text;
-    }
-
-    @Override
-    public List<String> getStyles() {
-        return Collections.singletonList("mips-comment");
-    }
-
-    @Override
-    public void refreshMetadata(MIPSFileElements elements) {
-
-    }
-
-
 }

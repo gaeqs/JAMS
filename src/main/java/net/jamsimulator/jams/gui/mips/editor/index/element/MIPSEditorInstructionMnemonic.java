@@ -22,46 +22,35 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.editor.element;
+package net.jamsimulator.jams.gui.mips.editor.index.element;
 
-import java.util.List;
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 
-public class MIPSMacroCallParameter extends MIPSCodeElement {
+import java.util.Collection;
+import java.util.Set;
 
-    protected final MIPSMacroCall macro;
-    protected final int index;
+public class MIPSEditorInstructionMnemonic extends EditorIndexedElementImpl implements EditorIndexStyleableElement {
 
-    public MIPSMacroCallParameter(MIPSLine line, MIPSMacroCall macro, int index, int startIndex, int endIndex, String text) {
-        super(line, startIndex, endIndex, text);
-        this.macro = macro;
-        this.index = index;
+    public static final Set<String> STYLE = Set.of("instruction");
+    public static final Set<String> PSEUDO_STYLE = Set.of("pseudo-instruction");
+
+    protected final boolean pseudo;
+
+    public MIPSEditorInstructionMnemonic(EditorIndex index, EditorIndexedParentElement parent,
+                                         int start, String text, boolean pseudo) {
+        super(index, parent, start, text);
+        this.pseudo = pseudo;
+    }
+
+    public boolean isPseudo() {
+        return pseudo;
     }
 
     @Override
-    public String getTranslatedNameNode() {
-        return "MIPS_ELEMENT_MACRO_CALL_PARAMETER";
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public MIPSMacroCall getMacro() {
-        return macro;
-    }
-
-    @Override
-    public String getSimpleText() {
-        return text;
-    }
-
-    @Override
-    public List<String> getStyles() {
-        String style = "mips-macro-call-parameter";
-        return getGeneralStyles(style);
-    }
-
-    @Override
-    public void refreshMetadata(MIPSFileElements elements) {
+    public Collection<String> getStyles() {
+        return pseudo ? PSEUDO_STYLE : STYLE;
     }
 }

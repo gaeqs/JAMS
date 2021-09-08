@@ -22,49 +22,27 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.editor.element;
+package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
 
-import java.util.Objects;
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 
-public class MIPSReplacement implements Comparable<MIPSReplacement> {
+import java.util.Collection;
+import java.util.Set;
 
-    private final MIPSLine line;
-    private final String key;
-    private final String value;
+public class EditorElementMacroCallMnemonic extends EditorIndexedElementImpl implements EditorIndexStyleableElement {
 
-    public MIPSReplacement(MIPSLine line, String key, String value) {
-        this.line = line;
-        this.key = key;
-        this.value = value;
-    }
+    public static final Set<String> STYLE = Set.of("macro-call");
 
-    public MIPSLine getLine() {
-        return line;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
+    public EditorElementMacroCallMnemonic(EditorIndex index, EditorIndexedParentElement parent,
+                                          int start, String text) {
+        super(index, parent, start, text);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MIPSReplacement that = (MIPSReplacement) o;
-        return line == that.line;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(line);
-    }
-
-    @Override
-    public int compareTo(MIPSReplacement o) {
-        return Integer.compare(line.getStart(), o.line.getStart());
+    public Collection<String> getStyles() {
+        return STYLE;
     }
 }

@@ -22,41 +22,27 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editorold;
+package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
 
-/**
- * Represents a line inside a {@link CodeFileEditor}.
- */
-public class CodeFileLine {
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 
-    private final String text;
-    private final int index, start;
+import java.util.Collection;
+import java.util.Set;
 
+public class EditorElementMacroCallParameter extends EditorIndexedElementImpl implements EditorIndexStyleableElement {
 
-    public CodeFileLine(int index, String text, int start) {
-        this.index = index;
-        this.text = text;
-        this.start = start;
-    }
+    public static final Set<String> STYLE = Set.of("macro-call-parameter");
 
-    public int getIndex() {
-        return index;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public int getStart() {
-        return start;
+    public EditorElementMacroCallParameter(EditorIndex index, EditorIndexedParentElement parent,
+                                           int start, String text) {
+        super(index, parent, start, text);
     }
 
     @Override
-    public String toString() {
-        return "CodeFileLine{" +
-                "text='" + text + '\'' +
-                ", index=" + index +
-                ", start=" + start +
-                '}';
+    public Collection<String> getStyles() {
+        return STYLE;
     }
 }

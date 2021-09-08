@@ -22,27 +22,19 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
+package net.jamsimulator.jams.gui.mips.editor.index;
 
-import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.line.EditorLineIndex;
+import net.jamsimulator.jams.project.Project;
 
-import java.util.Collection;
-import java.util.Set;
+public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
 
-public class EditorElementComment extends EditorIndexedElementImpl implements EditorIndexStyleableElement {
-
-    public static final Set<String> STYLE = Set.of("comment");
-
-    public EditorElementComment(EditorIndex index, EditorIndexedParentElement parent,
-                                int start, String text) {
-        super(index, parent, start, text);
+    public MIPSEditorIndex(Project project) {
+        super(project);
     }
 
     @Override
-    public Collection<String> getStyles() {
-        return STYLE;
+    protected MIPSEditorLine generateNewLine(int start, int number, String text) {
+        return new MIPSEditorLine(this, start, number, text);
     }
 }

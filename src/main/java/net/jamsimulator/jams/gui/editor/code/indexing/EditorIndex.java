@@ -31,8 +31,8 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorRe
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexRequestRefreshEvent;
 import net.jamsimulator.jams.gui.editor.code.indexing.global.ProjectGlobalIndex;
-import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspection;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
+import net.jamsimulator.jams.project.Project;
 import org.fxmisc.richtext.model.StyleSpans;
 
 import java.util.Collection;
@@ -43,6 +43,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 public interface EditorIndex extends EventBroadcast {
+
+    Project getProject();
 
     Optional<ProjectGlobalIndex> getGlobalIndex();
 
@@ -74,7 +76,7 @@ public interface EditorIndex extends EventBroadcast {
 
     Optional<StyleSpans<Collection<String>>> getStyleRange(int from, int to);
 
-    Set<Inspection> inspect(Collection<Inspector> inspectors);
+    void inspect(Collection<Inspector> inspectors);
 
     void lock(boolean editMode);
 

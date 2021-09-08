@@ -55,7 +55,7 @@ public class TextFileType extends FileType {
         return new CodeFileEditor(tab) {
             @Override
             protected EditorIndex generateIndex() {
-                var index = new EditorLineIndex<>() {
+                var index = new EditorLineIndex<>(tab.getWorkingPane().getProjectTab().getProject()) {
                     @Override
                     protected EditorIndexedLine generateNewLine(int start, int number, String text) {
                         return new EditorIndexedLine(this, start, number, text);

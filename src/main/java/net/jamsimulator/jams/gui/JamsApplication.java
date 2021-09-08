@@ -44,7 +44,6 @@ import net.jamsimulator.jams.gui.project.ProjectListTabPane;
 import net.jamsimulator.jams.gui.start.StartWindow;
 import net.jamsimulator.jams.gui.action.ActionManager;
 import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModeManager;
-import net.jamsimulator.jams.gui.mips.inspection.MIPSEditorInspectionBuilderManager;
 import net.jamsimulator.jams.gui.theme.ThemeManager;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -124,15 +123,6 @@ public class JamsApplication extends Application {
      */
     public static ActionManager getActionManager() {
         return ActionManager.INSTANCE;
-    }
-
-    /**
-     * Returns the {@link MIPSEditorInspectionBuilderManager}.
-     *
-     * @return the {@link MIPSEditorInspectionBuilderManager}.
-     */
-    public static MIPSEditorInspectionBuilderManager getMIPSEditorErrorBuilderManager() {
-        return MIPSEditorInspectionBuilderManager.INSTANCE;
     }
 
     /**

@@ -31,21 +31,15 @@ import java.util.Optional;
 public abstract class Inspector {
 
     protected final String languageNode;
-    protected final InspectorType type;
     protected final boolean error;
 
-    public Inspector(String languageNode, InspectorType type, boolean error) {
+    public Inspector(String languageNode, boolean error) {
         this.languageNode = languageNode;
-        this.type = type;
         this.error = error;
     }
 
     public String getLanguageNode() {
         return languageNode;
-    }
-
-    public InspectorType getType() {
-        return type;
     }
 
     public boolean isError() {
@@ -56,9 +50,4 @@ public abstract class Inspector {
 
     public abstract Optional<Inspection> inspect(EditorIndexedElement element);
 
-    public enum InspectorType {
-        REFERENCED_INSPECTOR,
-        REFERENCING_INSPECTOR,
-        GENERAL_INSPECTOR
-    }
 }

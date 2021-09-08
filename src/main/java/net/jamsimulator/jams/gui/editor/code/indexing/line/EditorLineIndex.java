@@ -36,34 +36,49 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorRe
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexFinishEditEvent;
 import net.jamsimulator.jams.gui.editor.code.indexing.global.ProjectGlobalIndex;
-import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspection;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
 import net.jamsimulator.jams.gui.util.EasyStyleSpansBuilder;
+import net.jamsimulator.jams.project.Project;
 import org.fxmisc.richtext.model.StyleSpans;
 
 import java.util.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends SimpleEventBroadcast implements EditorIndex {
 
-    private ProjectGlobalIndex globalIndex;
+    protected final Project project;
 
-    private final List<Line> lines = new ArrayList<>();
-    private final Map<EditorElementReference<?>, Set<EditorReferencingElement>> referencingElements = new HashMap<>();
-    private final Map<EditorElementReference<?>, Set<EditorReferencedElement>> referencedElements = new HashMap<>();
-    private final Bag<String> globalIdentifiers = new Bag<>();
+    protected ProjectGlobalIndex globalIndex;
 
-    private final Lock lock = new ReentrantLock();
-    private volatile Thread lockOwner = null;
-    private volatile boolean editMode = false;
+    protected final List<Line> lines = new ArrayList<>();
+    protected final Map<EditorElementReference<?>, Set<EditorReferencingElement>> referencingElements = new HashMap<>();
+    protected final Map<EditorElementReference<?>, Set<EditorReferencedElement>> referencedElements = new HashMap<>();
+    protected final Bag<String> globalIdentifiers = new Bag<>();
 
-    private final Lock initializationLock = new ReentrantLock();
-    private final Condition initializationCondition = initializationLock.newCondition();
-    private volatile boolean initialized = false;
+    protected final Lock lock = new ReentrantLock();
+    protected volatile Thread lockOwner = null;
+    protected volatile boolean editMode = false;
+
+    protected final Lock initializationLock = new ReentrantLock();
+    protected final Condition initializationCondition = initializationLock.newCondition();
+    protected volatile boolean initialized = false;
+
+    public EditorLineIndex(Project project) {
+        this.project = project;
+    }
+
+    public Line getLine(int line) {
+        checkThread(false);
+        return lines.get(line);
+    }
+
+    @Override
+    public Project getProject() {
+        return project;
+    }
 
     @Override
     public Optional<ProjectGlobalIndex> getGlobalIndex() {
@@ -217,21 +232,9 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     }
 
     @Override
-    public Set<Inspection> inspect(Collection<Inspector> inspectors) {
+    public void inspect(Collection<Inspector> inspectors) {
         checkThread(false);
-        return inspectors.stream().flatMap(this::inspect).collect(Collectors.toSet());
-    }
-
-    private Stream<Inspection> inspect(Inspector inspector) {
-        var stream = switch (inspector.getType()) {
-            case REFERENCED_INSPECTOR -> referencedElements.values().stream().flatMap(Collection::stream);
-            case REFERENCING_INSPECTOR -> referencingElements.values().stream().flatMap(Collection::stream);
-            case GENERAL_INSPECTOR -> elementStream();
-        };
-        return stream.filter(inspector::supportsElement)
-                .map(inspector::inspect)
-                .filter(Optional::isPresent)
-                .map(Optional::get);
+        elementStream().forEach(e -> e.inspect(inspectors));
     }
 
     @Override

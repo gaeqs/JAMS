@@ -29,121 +29,96 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Popup;
+import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
-import net.jamsimulator.jams.gui.editorold.CodeFileEditor;
-import net.jamsimulator.jams.gui.editorold.CodeFileLine;
-import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
-import net.jamsimulator.jams.gui.mips.editor.element.MIPSLabel;
-import net.jamsimulator.jams.gui.mips.editor.element.MIPSLine;
-import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;
+import net.jamsimulator.jams.gui.mips.editor.index.MIPSEditorIndex;
 import net.jamsimulator.jams.project.mips.MIPSProject;
-import net.jamsimulator.jams.utils.StringUtils;
 import org.fxmisc.richtext.event.MouseOverTextEvent;
-import org.fxmisc.richtext.model.PlainTextChange;
 
 import java.time.Duration;
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 
 public class MIPSFileEditor extends CodeFileEditor {
 
-    private final MIPSFileElements elements;
-
     private final Popup popup;
-    private final MIPSProject project;
-
 
     public MIPSFileEditor(FileEditorTab tab) {
         super(tab);
 
         popup = new Popup();
-        if (tab.getWorkingPane() instanceof MIPSStructurePane) {
-            project = ((MIPSStructurePane) tab.getWorkingPane()).getProject();
-            Optional<MIPSFileElements> elementsOptional = Optional.empty();// project.getData().getGlobalIndex().getFileElements(tab.getFile());
-            elements = elementsOptional.orElseGet(() -> new MIPSFileElements(project));
-        } else {
-            project = null;
-            elements = new MIPSFileElements(null);
-        }
-
         autocompletionPopup = new MIPSAutocompletionPopup(this);
         documentationPopup = new MIPSDocumentationPopup(this, (MIPSAutocompletionPopup) autocompletionPopup);
 
+        applyAutoIndent();
         initializePopupListeners();
         applyLabelTabRemover();
-
-        Platform.runLater(this::index);
     }
 
-    public Optional<MIPSProject> getProject() {
-        return Optional.ofNullable(project);
+    public Optional<MIPSProject> getMipsProject() {
+        return getProject() instanceof MIPSProject mProject ? Optional.of(mProject) : Optional.empty();
     }
 
-    public MIPSFileElements getElements() {
-        return elements;
+    @Override
+    public MIPSEditorIndex getIndex() {
+        return (MIPSEditorIndex) super.getIndex();
     }
 
     @Override
     public void reformat() {
-        enableRefreshEvent(false);
-        String reformattedCode = new MIPSCodeFormatter(elements).format();
-        String text = getText();
-        if (reformattedCode.equals(text)) return;
-        int oLine = getCurrentParagraph();
-        int oColumn = getCaretColumn();
-
-        replaceText(0, text.length(), reformattedCode);
-
-        List<CodeFileLine> lines = getLines();
-
-        int newSize = lines.size();
-        int line = Math.min(oLine, newSize - 1);
-        int column = Math.min(oColumn, lines.get(line).getText().length());
-        moveTo(line, column);
-
-
-        double height = totalHeightEstimateProperty().getValue() == null ? 0 : totalHeightEstimateProperty().getValue();
-
-        double toPixel = height * line / newSize - getLayoutBounds().getHeight() / 2;
-        toPixel = Math.max(0, Math.min(height, toPixel));
-
-        scrollPane.scrollYBy(toPixel);
-        index(reformattedCode);
-        tab.setSaveMark(true);
-        tab.layoutDisplay();
-        enableRefreshEvent(true);
+//        enableRefreshEvent(false);
+//        String reformattedCode = new MIPSCodeFormatter(elements).format();
+//        String text = getText();
+//        if (reformattedCode.equals(text)) return;
+//        int oLine = getCurrentParagraph();
+//        int oColumn = getCaretColumn();
+//
+//        replaceText(0, text.length(), reformattedCode);
+//
+//        List<CodeFileLine> lines = getLines();
+//
+//        int newSize = lines.size();
+//        int line = Math.min(oLine, newSize - 1);
+//        int column = Math.min(oColumn, lines.get(line).getText().length());
+//        moveTo(line, column);
+//
+//
+//        double height = totalHeightEstimateProperty().getValue() == null ? 0 : totalHeightEstimateProperty().getValue();
+//
+//        double toPixel = height * line / newSize - getLayoutBounds().getHeight() / 2;
+//        toPixel = Math.max(0, Math.min(height, toPixel));
+//
+//        scrollPane.scrollYBy(toPixel);
+//        index(reformattedCode);
+//        tab.setSaveMark(true);
+//        tab.layoutDisplay();
+//        enableRefreshEvent(true);
     }
 
-    @Override
     public boolean replaceAllText(String text) {
-        enableRefreshEvent(false);
-        var result = super.replaceAllText(text);
-        enableRefreshEvent(true);
-        if (!result) return false;
-        index();
+        replace(0, getText().length(), text, Collections.emptySet());
         return true;
     }
 
     @Override
-    public void reload() {
-        super.reload();
-        index();
+    protected EditorIndex generateIndex() {
+        return new MIPSEditorIndex(getProject());
     }
 
-    @Override
     protected void applyAutoIndent() {
         addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 int caretPosition = getCaretPosition();
-                int currentLine = elements.lineOf(caretPosition);
+                int currentLine = offsetToPosition(caretPosition, Bias.Forward).getMajor();
                 if (currentLine == -1) return;
 
                 String previous = getParagraph(currentLine - 1).getText();
 
-                MIPSLine line = elements.getLines().get(currentLine - 1);
+                var line = getIndex().getLine(currentLine - 1);
                 if (line.getLabel().isPresent()) {
-                    MIPSLabel label = line.getLabel().get();
-                    previous = previous.substring(label.getText().length());
+                    var label = line.getLabel().get();
+                    previous = previous.substring(label.getLength());
                 }
 
                 StringBuilder builder = new StringBuilder();
@@ -157,76 +132,11 @@ public class MIPSFileEditor extends CodeFileEditor {
         });
     }
 
-
-    @Override
-    protected void onTextRefresh(PlainTextChange change) {
-        String added = change.getInserted();
-        String removed = change.getRemoved();
-
-        //Check current line.
-        int currentLine = elements.lineOf(change.getPosition());
-        if (currentLine == -1) {
-            index();
-            return;
-        }
-
-        boolean refresh = elements.editLine(currentLine, getParagraph(currentLine).getText());
-
-        //Check next lines.
-        int addedLines = StringUtils.charCount(added, '\n', '\r');
-        int removedLines = StringUtils.charCount(removed, '\n', '\r');
-
-        if (removedLines == 0 && addedLines == 0) {
-//            if (refresh && elements.getFilesToAssemble().isPresent()) {
-//                elements.getFilesToAssemble().ifPresent(MIPSFilesToAssemble::refreshGlobalLabels);
-//            } else {
-//                elements.update(this);
-//            }
-            return;
-        }
-
-        currentLine++;
-        int editedLines = Math.min(addedLines, removedLines);
-        int linesToAdd = Math.max(0, addedLines - removedLines);
-        int linesToRemove = Math.max(0, removedLines - addedLines);
-
-        for (int i = 0; i < editedLines; i++) {
-            refresh |= elements.editLine(currentLine + i, getParagraph(currentLine + i).getText());
-        }
-
-        if (linesToRemove > 0) {
-            for (int i = 0; i < linesToRemove; i++) {
-                refresh |= elements.removeLine(currentLine + editedLines, hintBar);
-            }
-        } else if (linesToAdd > 0) {
-            for (int i = 0; i < linesToAdd; i++) {
-                refresh |= elements.addLine(currentLine + i + editedLines,
-                        getParagraph(currentLine + i + editedLines).getText(), hintBar);
-            }
-        }
-
-//        if (refresh && elements.getFilesToAssemble().isPresent()) {
-//            elements.getFilesToAssemble().ifPresent(MIPSFilesToAssemble::refreshGlobalLabels);
-//        } else {
-//            elements.update(this);
-//        }
-    }
-
-    private void index() {
-        elements.refreshAll(getText());
-        elements.styleAll(this, hintBar);
-    }
-
-    private void index(String text) {
-        elements.refreshAll(text);
-        elements.styleAll(this, hintBar);
-    }
-
     private void initializePopupListeners() {
         setMouseOverTextDelay(Duration.ofMillis(300));
         addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_BEGIN, event -> {
             int index = event.getCharacterIndex();
-            var optional = elements.getElementAt(index);
+            var optional = this.index.getElementAt(index);
             if (optional.isEmpty()) return;
 
             var content = new MIPSHoverInfo(optional.get());
@@ -257,11 +167,11 @@ public class MIPSFileEditor extends CodeFileEditor {
             if (event.getCharacter().equals(":")) {
                 int caretPosition = getCaretPosition();
                 int currentParagraph = getCurrentParagraph();
-                MIPSLine line = elements.getLines().get(currentParagraph);
+                var line = getIndex().getLine(currentParagraph);
 
                 if (line.getLabel().isEmpty()) return;
-                MIPSLabel label = line.getLabel().get();
-                if (label.getEndIndex() != caretPosition - 1) return;
+                var label = line.getLabel().get();
+                if (label.getEnd() != caretPosition - 1) return;
 
                 String text = label.getText();
 
@@ -274,7 +184,7 @@ public class MIPSFileEditor extends CodeFileEditor {
 
                 String first = text.substring(0, i);
                 String last = text.substring(i);
-                replaceText(label.getStartIndex(), label.getEndIndex() + 1, last + first);
+                replaceText(label.getStart(), label.getEnd() + 1, last + first);
             }
         });
     }

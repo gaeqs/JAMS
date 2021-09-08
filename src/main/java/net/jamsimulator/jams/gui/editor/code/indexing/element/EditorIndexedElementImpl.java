@@ -25,26 +25,38 @@
 package net.jamsimulator.jams.gui.editor.code.indexing.element;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.metadata.Metadata;
+import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
 import net.jamsimulator.jams.utils.Validate;
 
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class EditorIndexedElementImpl implements EditorIndexedElement {
+
+    protected final EditorIndexedParentElement parent;
 
     protected final EditorIndex index;
     protected final String text;
     protected int start;
 
     protected boolean valid;
+    protected Metadata metadata;
 
-    public EditorIndexedElementImpl(EditorIndex index, int start, String text) {
+    public EditorIndexedElementImpl(EditorIndex index, EditorIndexedParentElement parent,
+                                    int start, String text) {
         Validate.notNull(index, "Index cannot be null!");
         Validate.notNull(text, "Text cannot be null!");
         Validate.isTrue(start >= 0, "Start cannot be negative!");
         this.index = index;
+        this.parent = parent;
         this.start = start;
         this.text = text;
         this.valid = true;
+        this.metadata = Metadata.EMPTY;
     }
 
     @Override
@@ -78,6 +90,11 @@ public class EditorIndexedElementImpl implements EditorIndexedElement {
     }
 
     @Override
+    public Optional<EditorIndexedParentElement> getParent() {
+        return Optional.ofNullable(parent);
+    }
+
+    @Override
     public void move(int offset) {
         Validate.isTrue(start + offset >= 0, "Resulted start cannot be negative!");
         start += offset;
@@ -101,5 +118,20 @@ public class EditorIndexedElementImpl implements EditorIndexedElement {
     @Override
     public Stream<? extends EditorIndexedElement> elementStream() {
         return Stream.of(this);
+    }
+
+    @Override
+    public Metadata getMetadata() {
+        return metadata;
+    }
+
+    @Override
+    public Metadata inspect(Collection<Inspector> inspectors) {
+        var set = inspectors.stream()
+                .filter(i -> i.supportsElement(this))
+                .map(i -> i.inspect(this).orElse(null))
+                .filter(Objects::isNull).collect(Collectors.toSet());
+        metadata = new Metadata(set);
+        return metadata;
     }
 }

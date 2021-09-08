@@ -25,7 +25,11 @@
 package net.jamsimulator.jams.gui.editor.code.indexing.element;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.metadata.Metadata;
+import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
 
+import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface EditorIndexedElement extends Comparable<EditorIndexedElement> {
@@ -42,6 +46,8 @@ public interface EditorIndexedElement extends Comparable<EditorIndexedElement> {
 
     String getText();
 
+    Optional<EditorIndexedParentElement> getParent();
+
     void move(int offset);
 
     void invalidate();
@@ -50,4 +56,7 @@ public interface EditorIndexedElement extends Comparable<EditorIndexedElement> {
 
     Stream<? extends EditorIndexedElement> elementStream();
 
+    Metadata getMetadata();
+
+    Metadata inspect(Collection<Inspector> inspectors);
 }

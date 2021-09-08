@@ -27,19 +27,23 @@ package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 
 import java.util.Collection;
 import java.util.Set;
 
-public class EditorElementLabel extends EditorIndexedElementImpl implements EditorIndexStyleableElement {
+public class EditorElementLabel extends EditorIndexedElementImpl
+        implements EditorIndexStyleableElement, EditorReferencedElement {
 
     public static final Set<String> STYLE = Set.of("label");
     public static final Set<String> GLOBAL_STYLE = Set.of("global-label");
 
     private final String identifier;
 
-    public EditorElementLabel(EditorIndex index, int start, String text) {
-        super(index, start, text);
+    public EditorElementLabel(EditorIndex index, EditorIndexedParentElement parent,
+                              int start, String text) {
+        super(index, parent, start, text);
         identifier = text.substring(0, text.length() - 1).trim();
     }
 

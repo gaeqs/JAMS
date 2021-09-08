@@ -26,9 +26,8 @@ package net.jamsimulator.jams.project.mips;
 
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
 import net.jamsimulator.jams.gui.editor.code.indexing.global.ProjectGlobalIndex;
-import net.jamsimulator.jams.gui.editor.code.indexing.line.EditorLineIndex;
+import net.jamsimulator.jams.gui.mips.editor.index.MIPSEditorIndex;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
@@ -72,12 +71,7 @@ public class MIPSProjectData extends ProjectData implements GlobalIndexHolder {
         globalIndex = new ProjectGlobalIndex(project) {
             @Override
             protected EditorIndex generateIndexForFile(File file) {
-                return new EditorLineIndex<>() {
-                    @Override
-                    protected EditorIndexedLine generateNewLine(int start, int number, String text) {
-                        return new EditorIndexedLine(this, start, number, text);
-                    }
-                };
+                return new MIPSEditorIndex(getProject());
             }
         };
     }

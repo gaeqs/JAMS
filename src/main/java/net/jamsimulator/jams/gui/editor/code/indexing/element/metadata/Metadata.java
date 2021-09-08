@@ -22,47 +22,13 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.editor.element;
+package net.jamsimulator.jams.gui.editor.code.indexing.element.metadata;
 
-import java.util.List;
+import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspection;
 
-public class MIPSLabel extends MIPSCodeElement {
+import java.util.Collections;
+import java.util.Set;
 
-    private boolean global;
-
-    public MIPSLabel(MIPSLine line, int startIndex, int endIndex, String text) {
-        super(line, startIndex, endIndex, text);
-        global = false;
-        registerLabel(getLabel(), false);
-    }
-
-    @Override
-    public String getTranslatedNameNode() {
-        return global ? "MIPS_ELEMENT_GLOBAL_LABEL" : "MIPS_ELEMENT_LABEL";
-    }
-
-    @Override
-    public String getSimpleText() {
-        return text;
-    }
-
-    public String getLabel() {
-        return text.substring(0, text.length() - 1).trim();
-    }
-
-    public boolean isGlobal() {
-        return global;
-    }
-
-    @Override
-    public List<String> getStyles() {
-        return getGeneralStyles(global ? "mips-global-label" : "mips-label");
-    }
-
-    @Override
-    public void refreshMetadata(MIPSFileElements elements) {
-        String label = getLabel();
-        global = elements.getSetAsGlobalLabel().contains(label);
-    }
-
+public record Metadata(Set<Inspection> inspections) {
+    public static final Metadata EMPTY = new Metadata(Collections.emptySet());
 }
