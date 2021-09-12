@@ -95,6 +95,19 @@ public class EditorIndexedElementImpl implements EditorIndexedElement {
     }
 
     @Override
+    public <T extends EditorIndexedParentElement> Optional<T> getParentOfType(Class<T> type) {
+        Validate.notNull(type, "Type cannot be null!");
+        if (parent == null) return Optional.empty();
+        if (type.isInstance(parent)) return Optional.of((T) parent);
+        return parent.getParentOfType(type);
+    }
+
+    @Override
+    public int indexInParent() {
+        return parent == null ? -1 : parent.indexOf(this);
+    }
+
+    @Override
     public void move(int offset) {
         Validate.isTrue(start + offset >= 0, "Resulted start cannot be negative!");
         start += offset;

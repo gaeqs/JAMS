@@ -45,6 +45,7 @@ import java.util.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends SimpleEventBroadcast implements EditorIndex {
@@ -68,6 +69,10 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     public EditorLineIndex(Project project) {
         this.project = project;
+    }
+
+    public List<Line> getLines() {
+        return List.copyOf(lines);
     }
 
     public Line getLine(int line) {
@@ -194,6 +199,21 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     @Override
     public <T extends EditorReferencedElement>
+    Set<T> getReferencedElementsOfType(Class<T> type, boolean globalContext) {
+        if (globalContext) {
+            return referencedElements.values().stream()
+                    .flatMap(Collection::stream)
+                    .filter(it -> type.isInstance(it) && globalIdentifiers.contains(it.getIdentifier()))
+                    .map(it -> (T) it).collect(Collectors.toSet());
+        }
+        return referencedElements.values().stream()
+                .flatMap(Collection::stream)
+                .filter(type::isInstance)
+                .map(it -> (T) it).collect(Collectors.toSet());
+    }
+
+    @Override
+    public <T extends EditorReferencedElement>
     Set<EditorReferencingElement> getReferecingElements(EditorElementReference<T> reference) {
         checkThread(false);
         var set = referencingElements.get(reference);
@@ -213,8 +233,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         if (line < 0 || line >= lines.size()) return Optional.empty();
         var builder = new EasyStyleSpansBuilder();
         var l = lines.get(line);
-        l.addStyles(builder, l.getLength());
-        builder.add(0, lines.get(line).getLength(), Set.of("mips-error"));
+        l.addStyles(builder, l.getStart());
         return builder.isEmpty() ? Optional.empty() : Optional.of(builder.create());
     }
 
@@ -279,7 +298,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         var line = lines.remove(number);
         line.invalidate();
         lines.listIterator(number).forEachRemaining(it ->
-                it.movePositionAndNumber(-1, -line.getLength()));
+                it.movePositionAndNumber(-1, -line.getLength() - 1));
         removedReferences(line);
     }
 
@@ -288,7 +307,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         var line = generateNewLine(start, number, text);
         lines.add(number, line);
         lines.listIterator(number + 1).forEachRemaining(it ->
-                it.movePositionAndNumber(1, line.getLength()));
+                it.movePositionAndNumber(1, line.getLength() + 1));
         addReferences(line);
     }
 

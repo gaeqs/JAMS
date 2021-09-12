@@ -28,14 +28,12 @@ import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
 import net.jamsimulator.jams.gui.editor.code.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.mips.editor.index.MIPSEditorIndex;
-import net.jamsimulator.jams.gui.mips.editor.index.element.MIPSEditorDirective;
-import net.jamsimulator.jams.gui.mips.editor.index.element.MIPSEditorDirectiveParameter;
-import net.jamsimulator.jams.gui.mips.editor.index.element.MIPSEditorInstruction;
-import net.jamsimulator.jams.gui.mips.editor.index.element.MIPSEditorInstructionParameter;
+import net.jamsimulator.jams.gui.mips.editor.index.element.*;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
@@ -43,8 +41,6 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.StringUtils;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
@@ -190,18 +186,17 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
     }
 
     protected String refreshDisplayInstructionParameterPart(String start) {
-        MIPSProject project = getDisplay().getProject().orElse(null);
+        var project = getDisplay().getProject() instanceof MIPSProject p ? p : null;
         if (project == null) return start;
 
-        var part = (MIPSInstructionParameterPart) element;
-        var parameter = part.getParameter();
-        int parameterIndex = part.getParameter().getIndex();
+        var part = (MIPSEditorInstructionParameterPart) element;
+        var parameter = (MIPSEditorInstructionParameter) part.getParent().orElse(null);
+        if (parameter == null) return start;
+        var ins = (MIPSEditorInstruction) parameter.getParent().orElse(null);
+        if (ins == null) return start;
+        int parameterIndex = part.indexInParent();
 
-        var line = getDisplay().getElements().getLineWithPosition(element.getStartIndex());
-        var compatibleInstructions = line.getInstruction()
-                .map(target -> target.getCompatibleInstructions(index, parameterIndex))
-                .orElse(Collections.emptySet());
-
+        var compatibleInstructions = ins.getCompatibleInstructions(parameterIndex);
         boolean hasLabels = false, hasRegisters = false;
 
         for (Instruction instruction : compatibleInstructions) {
@@ -213,28 +208,27 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
                     getDisplay().getCaretPosition() - parameter.getStart()).toLowerCase();
 
             switch (partType) {
-                case LABEL:
+                case LABEL -> {
                     if (hasLabels) break;
-                    Set<String> labels = new HashSet<>(index.getLabels());
-//                    mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
-                    addElements(labels.stream().filter(target -> target.toLowerCase().startsWith(partStart)), s -> s, s -> s, partStartIndex.get(), ICON_LABEL);
+                    var labels =
+                            index.getReferencedElementsOfType(EditorElementLabel.class, false);
+                    index.getGlobalIndex().ifPresent(files ->
+                            labels.addAll(files.searchReferencedElementsOfType(EditorElementLabel.class)));
+                    addElements(labels.stream().filter(target ->
+                                    target.getIdentifier().toLowerCase().startsWith(partStart)),
+                            EditorElementLabel::getIdentifier, EditorElementLabel::getIdentifier,
+                            partStartIndex.get(), ICON_LABEL);
                     hasLabels = true;
-                    break;
-                case REGISTER:
+                }
+                case REGISTER -> {
                     if (hasRegisters) break;
                     Set<String> names = project.getData().getRegistersBuilder().getRegistersNames();
                     Set<Character> starts = project.getData().getRegistersBuilder().getValidRegistersStarts();
-
                     starts.forEach(c -> addElements(names.stream()
                             .filter(target -> target.toLowerCase().startsWith(partStart)
                                     || (c + target.toLowerCase()).startsWith(partStart)), s -> c + s, s -> c + s, partStartIndex.get(), ICON_REGISTER));
-
                     hasRegisters = true;
-                    break;
-                case STRING:
-                case IMMEDIATE:
-                default:
-                    break;
+                }
             }
         }
         return start;
@@ -245,25 +239,32 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
         if (element == null) return start;
 
         var parameter = (MIPSEditorDirectiveParameter) element;
-        var directive = parameter.getDirective().getDirective();
+        var editorDirective =
+                parameter.getParent().orElse(null) instanceof MIPSEditorDirective d ? d : null;
+        if (editorDirective == null) return start;
+        var directive = editorDirective.getDirective();
 
         //Checks whether and what space should add.
         var shouldAddSpace = directive.isPresent()
-                && (directive.get().canRepeatLastParameter() || directive.get().getParametersAmount() - 1 > parameter.getIndex());
+                && (directive.get().canRepeatLastParameter() ||
+                directive.get().getParametersAmount() - 1 > parameter.indexInParent());
         var space = shouldAddSpace
                 ? Jams.getMainConfiguration()
                 .getEnum(MIPSSpaces.class, "editor.mips.space_after_directive_parameter")
                 .orElse(MIPSSpaces.SPACE).getValue()
                 : "";
 
-        var offset = getDisplay().getCaretPosition() - parameter.getStartIndex();
+        var offset = getDisplay().getCaretPosition() - parameter.getStart();
         var parameterStart = parameter.getText().substring(0, offset).toLowerCase();
 
         switch (parameter.getType()) {
             case LABEL, INT_OR_LABEL -> {
-                Set<String> labels = new HashSet<>(index.getLabels());
-//                mipsElements.getFilesToAssemble().ifPresent(files -> labels.addAll(files.getGlobalLabels()));
-                addElements(labels.stream().filter(target -> target.toLowerCase().startsWith(parameterStart)), s -> s, s -> s + space, 0, ICON_LABEL);
+                var labels =
+                        index.getReferencedElementsOfType(EditorElementLabel.class, false);
+                index.getGlobalIndex().ifPresent(files ->
+                        labels.addAll(files.searchReferencedElementsOfType(EditorElementLabel.class)));
+                addElements(labels.stream().filter(target -> target.getIdentifier().toLowerCase().startsWith(parameterStart)),
+                        EditorElementLabel::getIdentifier, s -> s.getIdentifier() + space, 0, ICON_LABEL);
             }
         }
 

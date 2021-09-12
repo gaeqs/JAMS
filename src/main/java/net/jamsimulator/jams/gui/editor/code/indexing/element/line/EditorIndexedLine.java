@@ -61,7 +61,14 @@ public class EditorIndexedLine extends EditorIndexedParentElementImpl {
         elementStream()
                 .filter(it -> it instanceof EditorIndexStyleableElement)
                 .sorted(Comparator.comparingInt(EditorIndexedElement::getStart))
-                .forEach(it -> builder.add(it.getStart() - offset, it.getLength(),
-                        ((EditorIndexStyleableElement) it).getStyles()));
+                .forEach(it -> {
+                    try {
+                        builder.add(it.getStart() - offset, it.getLength(),
+                                ((EditorIndexStyleableElement) it).getStyles());
+                    } catch (IllegalStateException ex) {
+                        System.err.println("Error styling element "+ it.getIdentifier());
+                        throw ex;
+                    }
+                });
     }
 }

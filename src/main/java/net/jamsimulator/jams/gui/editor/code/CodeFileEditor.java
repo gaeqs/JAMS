@@ -52,6 +52,7 @@ import net.jamsimulator.jams.gui.editor.code.popup.DocumentationPopup;
 import net.jamsimulator.jams.gui.editor.code.top.CodeFileEditorReplace;
 import net.jamsimulator.jams.gui.editor.code.top.CodeFileEditorSearch;
 import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
+import net.jamsimulator.jams.gui.mips.editor.index.MIPSEditorIndex;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.GUIReflectionUtils;
 import net.jamsimulator.jams.gui.util.ZoomUtils;
@@ -131,6 +132,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         });
 
         indexingThread = new IndexingThread(this);
+        indexingThread.setDaemon(true);
         indexingThread.start();
 
         subscription = plainTextChanges()
@@ -141,7 +143,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
                 }, (list, it) -> {
                     EditorLineChange.of(it, this, list);
                     return list;
-                }, Duration.ofMillis(200))
+                }, Duration.ofMillis(100))
                 .subscribe(list -> pendingChanges.addAll(list));
 
         styleTimer = new StyleAnimation();
@@ -400,8 +402,11 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
             int from = firstVisibleParToAllParIndex();
             int to = lastVisibleParToAllParIndex();
             index.withLockF(false, i -> i.getStyleRange(from, to))
-                    .ifPresent(s -> setStyleSpans(from, 0, s));
+                    .ifPresent(s -> {
+                        setStyleSpans(from, 0, s);
+                    });
         } catch (IllegalArgumentException ignore) {
+            Platform.runLater(this::styleVisibleArea);
         }
     }
 
@@ -413,10 +418,10 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
 
     private class StyleAnimation extends AnimationTimer {
 
-        private static final long DELAY = 200000000L;
+        private static final long DELAY = 100000000L;
 
-        private int from = -1, to = -1;
         private long nextTick = System.nanoTime();
+        private double zoomY = -1, zoomX = -1, scrollY = -1, scrollX = -1;
 
         @Override
         public void handle(long now) {
@@ -426,11 +431,18 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
             } else return;
 
             try {
-                int newFrom = firstVisibleParToAllParIndex();
-                int newTo = lastVisibleParToAllParIndex();
-                if (newFrom == from && newTo == to) return;
-                from = newFrom;
-                to = newTo;
+                double scrollX = scrollPane.getEstimatedScrollX();
+                double scrollY = scrollPane.getEstimatedScrollY();
+                double zoomX = zoom.getZoom().getX();
+                double zoomY = zoom.getZoom().getY();
+
+                if (this.scrollX == scrollX && this.scrollY == scrollY && this.zoomX == zoomX && this.zoomY == zoomY)
+                    return;
+
+                this.scrollX = scrollX;
+                this.scrollY = scrollY;
+                this.zoomX = zoomX;
+                this.zoomY = zoomY;
             } catch (IllegalArgumentException ignore) {
                 return;
             }

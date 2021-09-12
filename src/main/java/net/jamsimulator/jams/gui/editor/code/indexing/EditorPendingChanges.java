@@ -78,6 +78,15 @@ public class EditorPendingChanges {
         return this;
     }
 
+    public boolean isEmpty() {
+        try {
+            emptyCheckLock.lock();
+            return changes.isEmpty();
+        } finally {
+            emptyCheckLock.unlock();
+        }
+    }
+
     public void waitForElements() throws InterruptedException {
         emptyCheckLock.lock();
         if (changes.isEmpty()) {

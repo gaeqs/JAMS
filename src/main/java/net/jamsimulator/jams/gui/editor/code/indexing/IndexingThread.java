@@ -38,6 +38,7 @@ public class IndexingThread extends Thread {
 
     public void kill() {
         running = false;
+        interrupt();
     }
 
     @Override
@@ -46,9 +47,6 @@ public class IndexingThread extends Thread {
         while (running) {
             if (!waitForElements()) return;
             editor.getIndex().withLock(true, i -> editor.getPendingChanges().flushAll(i::change));
-            editor.getIndex().withLock(false, i -> {
-
-            });
         }
     }
 
@@ -58,7 +56,6 @@ public class IndexingThread extends Thread {
             editor.getIndex().waitForInitialization();
             return true;
         } catch (InterruptedException e) {
-            e.printStackTrace();
             running = false;
             return false;
         }
@@ -70,7 +67,6 @@ public class IndexingThread extends Thread {
             editor.getPendingChanges().waitForElements();
             return true;
         } catch (InterruptedException e) {
-            e.printStackTrace();
             running = false;
             return false;
         }

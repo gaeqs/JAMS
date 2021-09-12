@@ -41,6 +41,9 @@ public class EasyStyleSpansBuilder {
     }
 
     public void add(int index, int length, Collection<String> styles) {
+        if (index < to) {
+            throw new IllegalStateException(index + " < " + to + ". Styles: " + styles);
+        }
         if (to < index) {
             builder.add(Collections.emptyList(), index - to);
         }

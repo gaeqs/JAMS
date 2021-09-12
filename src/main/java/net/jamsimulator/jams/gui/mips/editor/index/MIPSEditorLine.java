@@ -47,6 +47,7 @@ public class MIPSEditorLine extends EditorIndexedLine {
 
     public MIPSEditorLine(EditorIndex index, int start, int number, String text) {
         super(index, start, number, text);
+        parseLine();
     }
 
     public Optional<EditorElementComment> getComment() {
@@ -72,13 +73,12 @@ public class MIPSEditorLine extends EditorIndexedLine {
     protected void parseLine() {
         String parsing = text;
         int pStart = start;
-        int pEnd = start + parsing.length();
 
         //COMMENT
         int commentIndex = StringUtils.getCommentIndex(parsing);
         if (commentIndex != -1) {
             comment = new EditorElementComment(index, this, pStart + commentIndex, parsing.substring(commentIndex));
-            pEnd = start + commentIndex;
+            elements.add(comment);
             parsing = parsing.substring(0, commentIndex);
         }
 
@@ -86,6 +86,7 @@ public class MIPSEditorLine extends EditorIndexedLine {
         int labelIndex = LabelUtils.getLabelFinishIndex(parsing);
         if (labelIndex != -1) {
             label = new EditorElementLabel(index, this, pStart, parsing.substring(0, labelIndex + 1));
+            elements.add(label);
             pStart = pStart + labelIndex + 1;
             parsing = parsing.substring(labelIndex + 1);
         }
@@ -96,6 +97,7 @@ public class MIPSEditorLine extends EditorIndexedLine {
         pStart += parsing.indexOf(trim.charAt(0));
         if (trim.charAt(0) == '.') {
             directive = new MIPSEditorDirective(index, this, pStart, trim);
+            elements.add(directive);
 
 //            if (directive.isEqv() && !directive.getEqvKey().isEmpty()) {
 //                replacement = new MIPSReplacement(this, directive.getEqvKey(), directive.getEqvValue());
@@ -113,8 +115,10 @@ public class MIPSEditorLine extends EditorIndexedLine {
 
             if (split != Integer.MAX_VALUE && trim.substring(split + 1).trim().startsWith("(")) {
                 macroCall = new EditorElementMacroCall(index, this, pStart, trim, split);
+                elements.add(macroCall);
             } else {
                 instruction = new MIPSEditorInstruction(index, this, pStart, trim);
+                elements.add(instruction);
             }
         }
     }

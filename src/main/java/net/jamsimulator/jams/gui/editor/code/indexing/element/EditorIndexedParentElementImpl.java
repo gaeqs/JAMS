@@ -46,9 +46,25 @@ public class EditorIndexedParentElementImpl extends EditorIndexedElementImpl imp
     }
 
     @Override
+    public int indexOf(EditorIndexedElement element) {
+        return elements.indexOf(element);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return elements.isEmpty();
+    }
+
+    @Override
     public void invalidate() {
         super.invalidate();
         elements.forEach(EditorIndexedElement::invalidate);
+    }
+
+    @Override
+    public void move(int offset) {
+        super.move(offset);
+        elements.forEach(child -> child.move(offset));
     }
 
     @Override

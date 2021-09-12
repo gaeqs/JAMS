@@ -97,6 +97,14 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
         return Optional.empty();
     }
 
+    public <R extends EditorReferencedElement>
+    Set<R> searchReferencedElementsOfType(Class<R> type) {
+        var set = new HashSet<R>();
+        indices.values().forEach(index ->
+                index.withLock(false,
+                        i -> set.addAll(i.getReferencedElementsOfType(type, true))));
+        return set;
+    }
 
     public synchronized <R extends EditorReferencedElement>
     Set<EditorReferencingElement> searchReferencingElements(EditorElementReference<R> reference) {

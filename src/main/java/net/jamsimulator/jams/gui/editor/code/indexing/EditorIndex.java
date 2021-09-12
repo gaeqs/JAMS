@@ -66,6 +66,9 @@ public interface EditorIndex extends EventBroadcast {
     Optional<T> getReferencedElement(EditorElementReference<T> reference, boolean globalContext);
 
     <T extends EditorReferencedElement>
+    Set<T> getReferencedElementsOfType(Class<T> type, boolean globalContext);
+
+    <T extends EditorReferencedElement>
     Set<EditorReferencingElement> getReferecingElements(EditorElementReference<T> reference);
 
     Stream<? extends EditorIndexedElement> elementStream();

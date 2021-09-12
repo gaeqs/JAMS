@@ -48,6 +48,10 @@ public interface EditorIndexedElement extends Comparable<EditorIndexedElement> {
 
     Optional<EditorIndexedParentElement> getParent();
 
+    <T extends EditorIndexedParentElement> Optional<T> getParentOfType(Class<T> type);
+
+    int indexInParent();
+
     void move(int offset);
 
     void invalidate();

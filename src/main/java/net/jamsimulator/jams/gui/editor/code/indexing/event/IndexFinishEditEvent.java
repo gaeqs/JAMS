@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing.event;
 
-import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 
 public class IndexFinishEditEvent extends IndexEvent {

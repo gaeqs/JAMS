@@ -28,6 +28,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
+import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 
 import java.util.Collection;
 import java.util.Set;
@@ -48,5 +49,12 @@ public class MIPSEditorDirectiveParameter extends EditorIndexedElementImpl imple
     @Override
     public Collection<String> getStyles() {
         return string ? STRING_STYLE : STYLE;
+    }
+
+    public DirectiveParameterType getType() {
+        if (this.parent instanceof MIPSEditorDirective directive && directive.getDirective().isPresent()) {
+            return directive.getDirective().get().getParameterTypeFor(indexInParent());
+        }
+        return DirectiveParameterType.getAllCandidates(text).stream().findAny().orElse(DirectiveParameterType.ANY);
     }
 }

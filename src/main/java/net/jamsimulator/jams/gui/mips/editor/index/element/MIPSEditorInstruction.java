@@ -33,10 +33,7 @@ import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.InstructionUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MIPSEditorInstruction extends EditorIndexedParentElementImpl {
@@ -53,6 +50,34 @@ public class MIPSEditorInstruction extends EditorIndexedParentElementImpl {
         return Optional.ofNullable(instruction);
     }
 
+    public Set<Instruction> getCompatibleInstructions(int upTo) {
+        if (!(index.getProject() instanceof MIPSProject project)) return Collections.emptySet();
+
+        var instructionSet = project.getData().getInstructionSet();
+        var registerBuilder = project.getData().getRegistersBuilder();
+
+        var instructions = instructionSet.getInstructionByMnemonic(getIdentifier());
+
+        int i = 0;
+        Instruction current;
+        for (var parameter : elements.subList(1, elements.size())) {
+            if (i == upTo) return instructions;
+            var iterator = instructions.iterator();
+            while (iterator.hasNext()) {
+                current = iterator.next();
+                if (current.getParameters().length <= i
+                        //        || !current.getParameters()[i].match(parameter.getReplacedText(), registerBuilder)) {
+                        || !current.getParameters()[i].match(parameter.getText(), registerBuilder)) {
+                    iterator.remove();
+                }
+            }
+
+            i++;
+        }
+
+        return instructions;
+    }
+
     protected void parseText() {
         if (!(index.getProject() instanceof MIPSProject project)) return;
         var instructionSet = project.getData().getInstructionSet();
@@ -62,7 +87,7 @@ public class MIPSEditorInstruction extends EditorIndexedParentElementImpl {
         var trim = raw.trim();
         var offset = trim.isEmpty() ? 0 : raw.indexOf(trim.charAt(0));
         var mnemonicIndex = StringUtils.indexOf(trim, ' ', ',', '\t');
-        var mnemonic = mnemonicIndex == -1 ? trim : trim.substring(mnemonicIndex);
+        var mnemonic = mnemonicIndex == -1 ? trim : trim.substring(0, mnemonicIndex);
 
         if (mnemonicIndex == -1) {
             instruction = instructionSet.getInstructionByMnemonic(mnemonic)
@@ -90,7 +115,7 @@ public class MIPSEditorInstruction extends EditorIndexedParentElementImpl {
                 var type = best.get().getParameters()[i];
                 offset = raw.indexOf(rawParameter.charAt(0), offset);
                 elements.add(new MIPSEditorInstructionParameter(index, this,
-                        parametersStart + offset, rawParameter, type));
+                        start + parametersStart + offset, rawParameter, type));
                 offset += rawParameter.length();
                 i++;
             }
@@ -106,14 +131,14 @@ public class MIPSEditorInstruction extends EditorIndexedParentElementImpl {
 
             for (var entry : parameters) {
                 var parameter = new MIPSEditorInstructionParameter(index, this,
-                        parametersStart
-                                + entry.getKey(), entry.getValue(), null);
+                        start + parametersStart + entry.getKey(), entry.getValue(), null);
                 elements.add(parameter);
             }
         }
     }
 
     protected void parseMnemonic(String mnemonic, int offset, boolean pseudo) {
+        System.out.println("MNEMONIC '" + mnemonic + "'");
         elements.add(new MIPSEditorInstructionMnemonic(index, this,
                 start + offset, mnemonic, pseudo));
     }

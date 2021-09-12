@@ -35,7 +35,7 @@ import java.util.Set;
 public class MIPSEditorInstructionMnemonic extends EditorIndexedElementImpl implements EditorIndexStyleableElement {
 
     public static final Set<String> STYLE = Set.of("instruction");
-    public static final Set<String> PSEUDO_STYLE = Set.of("pseudo-instruction");
+    public static final Set<String> PSEUDO_STYLE = Set.of("instruction", "pseudo-instruction");
 
     protected final boolean pseudo;
 

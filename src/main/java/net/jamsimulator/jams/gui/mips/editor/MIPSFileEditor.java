@@ -33,7 +33,9 @@ import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 import net.jamsimulator.jams.gui.mips.editor.index.MIPSEditorIndex;
+import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.mips.MIPSProject;
+import net.jamsimulator.jams.task.LanguageTask;
 import org.fxmisc.richtext.event.MouseOverTextEvent;
 
 import java.time.Duration;
@@ -103,7 +105,16 @@ public class MIPSFileEditor extends CodeFileEditor {
 
     @Override
     protected EditorIndex generateIndex() {
-        return new MIPSEditorIndex(getProject());
+        var index = new MIPSEditorIndex(getProject());
+        tab.getWorkingPane().getProjectTab().getProject()
+                .getTaskExecutor().execute(new LanguageTask<>(Messages.EDITOR_INDEXING) {
+                    @Override
+                    protected Void call() {
+                        index.withLock(true, i -> i.indexAll(getText()));
+                        return null;
+                    }
+                });
+        return index;
     }
 
     protected void applyAutoIndent() {
@@ -136,7 +147,7 @@ public class MIPSFileEditor extends CodeFileEditor {
         setMouseOverTextDelay(Duration.ofMillis(300));
         addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_BEGIN, event -> {
             int index = event.getCharacterIndex();
-            var optional = this.index.getElementAt(index);
+            var optional = this.index.withLockF(false, i -> i.getElementAt(index));
             if (optional.isEmpty()) return;
 
             var content = new MIPSHoverInfo(optional.get());
