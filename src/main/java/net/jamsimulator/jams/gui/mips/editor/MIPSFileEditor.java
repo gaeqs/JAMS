@@ -180,26 +180,15 @@ public class MIPSFileEditor extends CodeFileEditor {
     private void applyLabelTabRemover() {
         addEventHandler(KeyEvent.KEY_TYPED, event -> {
             if (event.getCharacter().equals(":")) {
-                int caretPosition = getCaretPosition();
+                int column = getCaretColumn();
                 int currentParagraph = getCurrentParagraph();
-                var line = getIndex().getLine(currentParagraph);
+                var text = getParagraph(currentParagraph).getText();
+                var trimmed = text.trim();
+                if (trimmed.length() == 0) return;
+                var offset = text.indexOf(trimmed.charAt(0));
 
-                if (line.getLabel().isEmpty()) return;
-                var label = line.getLabel().get();
-                if (label.getEnd() != caretPosition - 1) return;
-
-                String text = label.getText();
-
-                int i = 0;
-                for (char c : text.toCharArray()) {
-                    if (c != '\t' && c != ' ') break;
-                    i++;
-                }
-                if (i == 0) return;
-
-                String first = text.substring(0, i);
-                String last = text.substring(i);
-                replaceText(label.getStart(), label.getEnd() + 1, last + first);
+                var label = trimmed.substring(0, trimmed.lastIndexOf(':') + 1) + text.substring(0, offset);
+                replaceText(currentParagraph, 0, currentParagraph, column, label);
             }
         });
     }
