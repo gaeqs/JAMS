@@ -42,7 +42,15 @@ public class EditorIndexedParentElementImpl extends EditorIndexedElementImpl imp
     }
 
     public Optional<? extends EditorIndexedElement> getElementAt(int position) {
-        return elements.stream().filter(it -> it.getStart() <= position && it.getEnd() > position).findAny();
+        var optional =
+                elements.stream().filter(it -> it.getStart() <= position && it.getEnd() > position).findAny();
+        if (optional.isPresent()) {
+            if (optional.get() instanceof EditorIndexedParentElement parent) {
+                return parent.getElementAt(position);
+            }
+            return optional;
+        }
+        return start <= position && getEnd() > position ? Optional.of(this) : Optional.empty();
     }
 
     @Override

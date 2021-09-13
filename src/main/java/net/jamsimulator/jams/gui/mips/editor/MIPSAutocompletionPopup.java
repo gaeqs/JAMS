@@ -128,13 +128,13 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
                 start = start.substring(0, caretPosition - element.getStart());
             }
 
-            if (element instanceof MIPSEditorDirective)
+            if (element instanceof MIPSEditorDirectiveMnemonic)
                 start = refreshDirective(start);
             else if (element instanceof MIPSEditorDirectiveParameter) {
                 start = refreshDisplayDirectiveParameter(start);
-            } else if (element instanceof MIPSEditorInstruction)
+            } else if (element instanceof MIPSEditorInstructionMnemonic)
                 start = refreshInstructionsMacrosAndDirectives(start);
-            else if (element instanceof MIPSEditorInstructionParameter)
+            else if (element instanceof MIPSEditorInstructionParameterPart)
                 start = refreshDisplayInstructionParameterPart(start);
 
             sortAndShowElements(start);
@@ -205,7 +205,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
         if (parameter == null) return start;
         var ins = (MIPSEditorInstruction) parameter.getParent().orElse(null);
         if (ins == null) return start;
-        int parameterIndex = part.indexInParent();
+        int parameterIndex = parameter.indexInParent() - 1;
 
         var compatibleInstructions = ins.getCompatibleInstructions(parameterIndex);
         boolean hasLabels = false, hasRegisters = false;

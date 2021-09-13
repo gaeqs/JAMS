@@ -95,6 +95,7 @@ public class MIPSEditorInstructionParameter extends EditorIndexedParentElementIm
             if (types.size() == 1 && types.get(0) == ParameterType.LABEL) {
                 elements.add(new MIPSEditorInstructionParameterPart(index, this,
                         start, part, ParameterPartType.LABEL));
+                return;
             }
         }
 

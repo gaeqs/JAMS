@@ -56,7 +56,7 @@ public class MIPSEditorInstruction extends EditorIndexedParentElementImpl {
         var instructionSet = project.getData().getInstructionSet();
         var registerBuilder = project.getData().getRegistersBuilder();
 
-        var instructions = instructionSet.getInstructionByMnemonic(getIdentifier());
+        var instructions = instructionSet.getInstructionByMnemonic(elements.get(0).getIdentifier());
 
         int i = 0;
         Instruction current;
@@ -129,9 +129,9 @@ public class MIPSEditorInstruction extends EditorIndexedParentElementImpl {
             var parameters = parts.entrySet().stream()
                     .sorted(Comparator.comparingInt(Map.Entry::getKey)).toList();
 
-            for (var entry : parameters) {
+            for (var entry : parameters.subList(1, parameters.size())) {
                 var parameter = new MIPSEditorInstructionParameter(index, this,
-                        start + parametersStart + entry.getKey(), entry.getValue(), null);
+                        start + entry.getKey(), entry.getValue(), null);
                 elements.add(parameter);
             }
         }
