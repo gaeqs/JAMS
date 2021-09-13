@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.editor.code.popup;
 
-import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.ScrollPane;
@@ -347,10 +346,7 @@ public abstract class AutocompletionPopup extends Popup implements EventBroadcas
                 hide();
                 yield true;
             }
-            default -> {
-                Platform.runLater(() -> execute(0, false));
-                yield false;
-            }
+            default -> false;
         };
     }
 

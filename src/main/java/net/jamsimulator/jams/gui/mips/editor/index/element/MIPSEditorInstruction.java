@@ -138,7 +138,6 @@ public class MIPSEditorInstruction extends EditorIndexedParentElementImpl {
     }
 
     protected void parseMnemonic(String mnemonic, int offset, boolean pseudo) {
-        System.out.println("MNEMONIC '" + mnemonic + "'");
         elements.add(new MIPSEditorInstructionMnemonic(index, this,
                 start + offset, mnemonic, pseudo));
     }

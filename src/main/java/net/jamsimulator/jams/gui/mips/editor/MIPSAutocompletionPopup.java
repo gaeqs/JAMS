@@ -71,10 +71,15 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
     public void execute(int caretOffset, boolean autocompleteIfOne) {
         int caretPosition = display.getCaretPosition() + caretOffset;
         if (caretPosition <= 0) return;
-        element = index.getElementAt(caretPosition - 1).orElse(null);
-        if (element == null) {
-            hide();
-            return;
+        try {
+            index.lock(false);
+            element = index.getElementAt(caretPosition - 1).orElse(null);
+            if (element == null) {
+                hide();
+                return;
+            }
+        } finally {
+            index.unlock(false);
         }
 
         Platform.runLater(() -> {
@@ -106,34 +111,40 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
                 show(display, bounds.getMinX(), bounds.getMinY()
                         + 20 * display.getZoom().getZoom().getY());
             }
+
         });
     }
 
     @Override
     public void refreshContents(int caretPosition) {
-        elements.clear();
+        try {
+            index.lock(false);
+            elements.clear();
 
-        var to = caretPosition - element.getStart();
-        var start = element.getIdentifier();
+            var to = caretPosition - element.getStart();
+            var start = element.getIdentifier();
 
-        if (to > 0 && to < start.length()) {
-            start = start.substring(0, caretPosition - element.getStart());
+            if (to > 0 && to < start.length()) {
+                start = start.substring(0, caretPosition - element.getStart());
+            }
+
+            if (element instanceof MIPSEditorDirective)
+                start = refreshDirective(start);
+            else if (element instanceof MIPSEditorDirectiveParameter) {
+                start = refreshDisplayDirectiveParameter(start);
+            } else if (element instanceof MIPSEditorInstruction)
+                start = refreshInstructionsMacrosAndDirectives(start);
+            else if (element instanceof MIPSEditorInstructionParameter)
+                start = refreshDisplayInstructionParameterPart(start);
+
+            sortAndShowElements(start);
+
+            if (isEmpty()) return;
+            selectedIndex = 0;
+            refreshSelected();
+        } finally {
+            index.unlock(false);
         }
-
-        if (element instanceof MIPSEditorDirective)
-            start = refreshDirective(start);
-        else if (element instanceof MIPSEditorDirectiveParameter) {
-            start = refreshDisplayDirectiveParameter(start);
-        } else if (element instanceof MIPSEditorInstruction)
-            start = refreshInstructionsMacrosAndDirectives(start);
-        else if (element instanceof MIPSEditorInstructionParameter)
-            start = refreshDisplayInstructionParameterPart(start);
-
-        sortAndShowElements(start);
-
-        if (isEmpty()) return;
-        selectedIndex = 0;
-        refreshSelected();
     }
 
     protected String refreshDirective(String start) {
@@ -287,7 +298,9 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 
         int caretPosition = display.getCaretPosition();
         if (caretPosition == 0) return;
-        var element = index.getElementAt(caretPosition - 1).orElse(null);
+
+        var element = index.withLockF(false,
+                i -> i.getElementAt(caretPosition - 1).orElse(null));
         if (element == null) return;
         if (element.getText().substring(0, caretPosition - element.getStart()).equals(replacement)) return;
 

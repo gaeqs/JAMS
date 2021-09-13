@@ -171,7 +171,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     public Optional<EditorIndexedElement> getElementAt(int position) {
         checkThread(false);
         return lines.stream()
-                .filter(it -> it.getStart() >= position && it.getEnd() < position)
+                .filter(it -> it.getStart() <= position && it.getEnd() > position)
                 .findAny().flatMap(it -> it.getElementAt(position));
     }
 

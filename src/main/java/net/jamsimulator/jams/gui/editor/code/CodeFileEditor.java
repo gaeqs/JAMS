@@ -52,7 +52,6 @@ import net.jamsimulator.jams.gui.editor.code.popup.DocumentationPopup;
 import net.jamsimulator.jams.gui.editor.code.top.CodeFileEditorReplace;
 import net.jamsimulator.jams.gui.editor.code.top.CodeFileEditorSearch;
 import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
-import net.jamsimulator.jams.gui.mips.editor.index.MIPSEditorIndex;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.GUIReflectionUtils;
 import net.jamsimulator.jams.gui.util.ZoomUtils;
@@ -101,6 +100,8 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     protected final IndexingThread indexingThread;
     protected final Subscription subscription;
     protected final AnimationTimer styleTimer;
+
+    protected boolean shouldOpenAutocompletionAfterEdit = false;
 
     public CodeFileEditor(FileEditorTab tab) {
         super(read(tab));
@@ -348,20 +349,31 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
 
     protected void initializeAutocompletionPopupListeners() {
         //AUTO COMPLETION
-        addEventHandler(KeyEvent.KEY_TYPED, event -> {
-            if (autocompletionPopup != null && autocompletionPopup.manageTypeEvent(event)) event.consume();
-            if (documentationPopup != null) documentationPopup.hide();
-        });
+        //addEventHandler(KeyEvent.KEY_TYPED, event -> {
+        //    if (autocompletionPopup != null) {
+        //        if (autocompletionPopup.manageTypeEvent(event)) {
+        //            event.consume();
+        //        } else {
+        //            System.out.println(event.getCode());
+        //        }
+        //    }
+        //    if (documentationPopup != null) documentationPopup.hide();
+        //});
 
         //AUTOCOMPLETION MOVEMENT
         addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (autocompletionPopup != null && autocompletionPopup.managePressEvent(event)) {
-                event.consume();
-                if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT) {
+            if (autocompletionPopup != null) {
+                if (autocompletionPopup.managePressEvent(event)) {
+                    event.consume();
+                    if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT) {
+                        if (documentationPopup != null) documentationPopup.hide();
+                    }
+                } else {
+                    shouldOpenAutocompletionAfterEdit =
+                            event.getCode().isLetterKey() || event.getCode().isDigitKey();
+
                     if (documentationPopup != null) documentationPopup.hide();
                 }
-            } else {
-                if (documentationPopup != null) documentationPopup.hide();
             }
         });
 
@@ -402,9 +414,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
             int from = firstVisibleParToAllParIndex();
             int to = lastVisibleParToAllParIndex();
             index.withLockF(false, i -> i.getStyleRange(from, to))
-                    .ifPresent(s -> {
-                        setStyleSpans(from, 0, s);
-                    });
+                    .ifPresent(s -> setStyleSpans(from, 0, s));
         } catch (IllegalArgumentException ignore) {
             Platform.runLater(this::styleVisibleArea);
         }
@@ -413,7 +423,15 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     @Listener
     private void onIndexRefresh(IndexRequestRefreshEvent event) {
         if (!tab.isSelected()) return;
-        Platform.runLater(this::styleVisibleArea);
+        Platform.runLater(() -> {
+            styleVisibleArea();
+            if (shouldOpenAutocompletionAfterEdit) {
+                shouldOpenAutocompletionAfterEdit = false;
+                if (autocompletionPopup != null) {
+                    autocompletionPopup.execute(0, false);
+                }
+            }
+        });
     }
 
     private class StyleAnimation extends AnimationTimer {

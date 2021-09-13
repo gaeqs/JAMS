@@ -42,7 +42,7 @@ public class EditorIndexedParentElementImpl extends EditorIndexedElementImpl imp
     }
 
     public Optional<? extends EditorIndexedElement> getElementAt(int position) {
-        return elements.stream().filter(it -> it.getStart() >= position && it.getEnd() < position).findAny();
+        return elements.stream().filter(it -> it.getStart() <= position && it.getEnd() > position).findAny();
     }
 
     @Override

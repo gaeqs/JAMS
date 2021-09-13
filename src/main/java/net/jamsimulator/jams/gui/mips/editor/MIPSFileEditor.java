@@ -121,15 +121,19 @@ public class MIPSFileEditor extends CodeFileEditor {
         addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 int caretPosition = getCaretPosition();
-                int currentLine = offsetToPosition(caretPosition, Bias.Forward).getMajor();
-                if (currentLine == -1) return;
+                int currentLine = getCaretSelectionBind().getParagraphIndex();
+                if (currentLine < 1) return;
 
                 String previous = getParagraph(currentLine - 1).getText();
 
-                var line = getIndex().getLine(currentLine - 1);
-                if (line.getLabel().isPresent()) {
-                    var label = line.getLabel().get();
-                    previous = previous.substring(label.getLength());
+                try {
+                    getIndex().lock(false);
+                    var line = getIndex().getLine(currentLine - 1);
+                    if (line.getLabel().isPresent()) {
+                        previous = previous.substring(line.getLabel().get().getLength());
+                    }
+                } finally {
+                    getIndex().unlock(false);
                 }
 
                 StringBuilder builder = new StringBuilder();
