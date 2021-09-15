@@ -31,10 +31,7 @@ import net.jamsimulator.jams.mips.parameter.ParameterPartType;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MIPSEditorInstructionParameter extends EditorIndexedParentElementImpl {
 
@@ -52,7 +49,7 @@ public class MIPSEditorInstructionParameter extends EditorIndexedParentElementIm
 
         for (int i = 0; i < amount; i++) {
             int partStart = start + indices[i << 1];
-            int partEnd = start + indices[(i << 1) + 1];
+            int partEnd = partStart + indices[(i << 1) + 1];
             if (partStart < partEnd) {
                 // add part
                 elements.add(new MIPSEditorInstructionParameterPart(
