@@ -29,10 +29,12 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParen
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElementImpl;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveEqv;
+import net.jamsimulator.jams.mips.directive.defaults.DirectiveMacro;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -70,27 +72,42 @@ public class MIPSEditorDirective extends EditorIndexedParentElementImpl {
 
         //The first entry is the directive itself.
         var first = stringParameters.get(0);
-        elements.add(new MIPSEditorDirectiveMnemonic(index, this,
-                start + first.getKey(), first.getValue()));
-
-        stringParameters.remove(0);
-
 
         if (index.getProject() instanceof MIPSProject project) {
             var set = project.getData().getDirectiveSet();
-            directive = set.getDirective(getIdentifier()).orElse(null);
+            directive = set.getDirective(first.getValue().substring(1)).orElse(null);
         } else {
             directive = null;
         }
 
+        elements.add(parseMnemonic(start + first.getKey(), first.getValue()));
+        stringParameters.remove(0);
+
+
         //Adds all parameters.
-        for (var entry : stringParameters) {
-            elements.add(new MIPSEditorDirectiveParameter(
-                    index,
-                    this,
-                    start + entry.getKey(),
-                    entry.getValue()
-            ));
+        parseParameters(stringParameters);
+    }
+
+    protected void parseParameters(List<Map.Entry<Integer, String>> parameters) {
+        int i = 0;
+        for (var entry : parameters) {
+            elements.add(parseParameter(i++, start + entry.getKey(), entry.getValue()));
+        }
+    }
+
+    protected MIPSEditorDirectiveMnemonic parseMnemonic(int start, String mnemonic) {
+        return new MIPSEditorDirectiveMnemonic(index, this, start, mnemonic);
+    }
+
+    protected MIPSEditorDirectiveParameter parseParameter(int index, int start, String parameter) {
+        if (directive instanceof DirectiveMacro) {
+            if (index == 0) {
+                return new MIPSEditorDirectiveMacroName(this.index, this, start, parameter);
+            } else {
+                return new MIPSEditorDirectiveParameter(this.index, this, start, parameter);
+            }
+        } else {
+            return new MIPSEditorDirectiveParameter(this.index, this, start, parameter);
         }
     }
 }

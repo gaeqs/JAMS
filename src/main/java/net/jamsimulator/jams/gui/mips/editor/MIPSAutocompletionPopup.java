@@ -190,8 +190,14 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
                 Directive::getName, d -> "." + d.getName() + (d.hasParameters() ? space : ""), 0, ICON_DIRECTIVE);
 
         // And macros!
-//        addElements(index.getMacros().stream().filter(target -> target.getName().startsWith(directive)),
-//                MIPSMacro::getName, m -> m.getName() + " (", 0, ICON_MACRO);
+
+        var macros =
+                index.getReferencedElementsOfType(MIPSEditorDirectiveMacroName.class, false);
+        index.getGlobalIndex().ifPresent(files ->
+                macros.addAll(files.searchReferencedElementsOfType(MIPSEditorDirectiveMacroName.class)));
+
+        addElements(macros.stream().filter(target -> target.getIdentifier().startsWith(directive)),
+                MIPSEditorDirectiveMacroName::getIdentifier, m -> m.getIdentifier() + " (", 0, ICON_MACRO);
 
         return directive;
     }

@@ -25,25 +25,18 @@
 package net.jamsimulator.jams.gui.mips.editor.index.element;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 
 import java.util.Collection;
 import java.util.Set;
 
-public class MIPSEditorDirectiveMnemonic extends EditorIndexedElementImpl implements EditorIndexStyleableElement {
+public class MIPSEditorDirectiveMacroName extends MIPSEditorDirectiveParameter implements EditorReferencedElement {
 
-    public static final Set<String> STYLE = Set.of("directive");
+    public static final Set<String> STYLE = Set.of("macro-call");
 
-    public MIPSEditorDirectiveMnemonic(EditorIndex index, EditorIndexedParentElement parent,
-                                       int start, String text) {
+    public MIPSEditorDirectiveMacroName(EditorIndex index, EditorIndexedParentElement parent, int start, String text) {
         super(index, parent, start, text);
-    }
-
-    @Override
-    public String getIdentifier() {
-        return text.substring(1);
     }
 
     @Override
