@@ -42,6 +42,7 @@ import net.jamsimulator.jams.project.Project;
 import org.fxmisc.richtext.model.StyleSpans;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -59,9 +60,8 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     protected final Map<EditorElementReference<?>, Set<EditorReferencedElement>> referencedElements = new HashMap<>();
     protected final Bag<String> globalIdentifiers = new Bag<>();
 
-    protected final Lock lock = new ReentrantLock();
-    protected volatile Thread lockOwner = null;
-    protected volatile boolean editMode = false;
+    protected final ReentrantLock lock = new ReentrantLock();
+    protected AtomicInteger editCount = new AtomicInteger(0);
 
     protected final Lock initializationLock = new ReentrantLock();
     protected final Condition initializationCondition = initializationLock.newCondition();
@@ -112,7 +112,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     @Override
     public boolean isInEditMode() {
-        return editMode;
+        return editCount.get() > 0;
     }
 
     @Override
@@ -258,17 +258,20 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     @Override
     public void lock(boolean editMode) {
+        // We want to add the edit mode count before locking.
+        // This prevents multiple refreshes when several threads edit this index.
+        if (editMode) editCount.incrementAndGet();
         lock.lock();
-        lockOwner = Thread.currentThread();
-        this.editMode = editMode;
     }
 
     @Override
     public void unlock(boolean finishEditMode) {
-        lockOwner = null;
+        if (!lock.isHeldByCurrentThread()) {
+            throw new IllegalStateException("This thread is not the owner of the lock! (" +
+                    Thread.currentThread() + ") " + lock);
+        }
 
-        boolean editModeFinished = editMode && finishEditMode;
-        if (editModeFinished) editMode = false;
+        boolean editModeFinished = finishEditMode && editCount.decrementAndGet() == 0;
         lock.unlock();
 
         if (editModeFinished) {
@@ -279,7 +282,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     @Override
     public boolean isLocked() {
-        return lockOwner != null;
+        return lock.isLocked();
     }
 
     protected void editLine(int number, String text) {
@@ -347,7 +350,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     protected abstract Line generateNewLine(int start, int number, String text);
 
     private void checkThread(boolean edit) {
-        if (lockOwner != Thread.currentThread()) throw new IllegalStateException("Index is not locked!");
-        if (edit && !editMode) throw new IllegalStateException("Index is not in edit mode!");
+        if (!lock.isHeldByCurrentThread()) throw new IllegalStateException("Index is not locked! " + lock);
+        if (edit && !isInEditMode()) throw new IllegalStateException("Index is not in edit mode!");
     }
 }

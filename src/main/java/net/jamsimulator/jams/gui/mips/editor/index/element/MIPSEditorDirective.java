@@ -29,6 +29,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParen
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElementImpl;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveEqv;
+import net.jamsimulator.jams.mips.directive.defaults.DirectiveGlobl;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveMacro;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.StringUtils;
@@ -106,8 +107,10 @@ public class MIPSEditorDirective extends EditorIndexedParentElementImpl {
             } else {
                 return new MIPSEditorDirectiveParameter(this.index, this, start, parameter);
             }
-        } else {
-            return new MIPSEditorDirectiveParameter(this.index, this, start, parameter);
         }
+        if(directive instanceof DirectiveGlobl) {
+            return new MIPSEditorDirectiveGlobalMarker(this.index, this, start, parameter);
+        }
+        return new MIPSEditorDirectiveParameter(this.index, this, start, parameter);
     }
 }
