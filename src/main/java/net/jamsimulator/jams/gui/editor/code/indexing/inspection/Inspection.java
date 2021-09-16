@@ -24,7 +24,5 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing.inspection;
 
-import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
-
-public record Inspection(EditorIndexedElement element, Inspector inspector, String message) {
+public class Inspection {
 }

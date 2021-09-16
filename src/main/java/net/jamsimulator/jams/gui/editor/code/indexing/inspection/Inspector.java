@@ -25,29 +25,37 @@
 package net.jamsimulator.jams.gui.editor.code.indexing.inspection;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
+import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
-import java.util.Optional;
+import java.util.Set;
 
-public abstract class Inspector {
+public abstract class Inspector<T extends EditorIndexedElement> implements ManagerResource {
 
-    protected final String languageNode;
-    protected final boolean error;
+    protected final ResourceProvider provider;
+    protected final String name;
+    protected final Class<T> elementType;
 
-    public Inspector(String languageNode, boolean error) {
-        this.languageNode = languageNode;
-        this.error = error;
+    public Inspector(ResourceProvider provider, String name, Class<T> elementType) {
+        this.provider = provider;
+        this.name = name;
+        this.elementType = elementType;
     }
 
-    public String getLanguageNode() {
-        return languageNode;
+    @Override
+    public ResourceProvider getResourceProvider() {
+        return provider;
     }
 
-    public boolean isError() {
-        return error;
+    @Override
+    public String getName() {
+        return name;
     }
 
-    public abstract boolean supportsElement(EditorIndexedElement element);
+    public Class<T> getElementType() {
+        return elementType;
+    }
 
-    public abstract Optional<Inspection> inspect(EditorIndexedElement element);
+    public abstract Set<Inspection> inspect(EditorIndexedElement element);
 
 }
