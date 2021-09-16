@@ -79,8 +79,6 @@ public interface EditorIndex extends EventBroadcast {
 
     Optional<StyleSpans<Collection<String>>> getStyleRange(int from, int to);
 
-    void inspect(Collection<Inspector> inspectors);
-
     void lock(boolean editMode);
 
     void unlock(boolean finishEditMode);

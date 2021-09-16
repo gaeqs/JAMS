@@ -62,5 +62,5 @@ public interface EditorIndexedElement extends Comparable<EditorIndexedElement> {
 
     Metadata getMetadata();
 
-    Metadata inspect(Collection<Inspector> inspectors);
+    Metadata inspect(Collection<Inspector<?>> inspectors);
 }

@@ -30,7 +30,6 @@ import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -139,11 +138,11 @@ public class EditorIndexedElementImpl implements EditorIndexedElement {
     }
 
     @Override
-    public Metadata inspect(Collection<Inspector> inspectors) {
+    public Metadata inspect(Collection<Inspector<?>> inspectors) {
         var set = inspectors.stream()
-                .filter(i -> i.supportsElement(this))
-                .map(i -> i.inspect(this).orElse(null))
-                .filter(Objects::isNull).collect(Collectors.toSet());
+                .filter(i -> i.getElementType().isInstance(this))
+                .flatMap(i -> i.inspect(this).stream())
+                .collect(Collectors.toSet());
         metadata = new Metadata(set);
         return metadata;
     }

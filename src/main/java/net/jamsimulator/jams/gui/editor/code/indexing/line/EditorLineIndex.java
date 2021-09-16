@@ -251,12 +251,6 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     }
 
     @Override
-    public void inspect(Collection<Inspector> inspectors) {
-        checkThread(false);
-        elementStream().forEach(e -> e.inspect(inspectors));
-    }
-
-    @Override
     public void lock(boolean editMode) {
         // We want to add the edit mode count before locking.
         // This prevents multiple refreshes when several threads edit this index.
@@ -349,8 +343,27 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     protected abstract Line generateNewLine(int start, int number, String text);
 
+    protected <R extends EditorReferencedElement>
+    void checkInspectionsOnReferencedUpdate(
+            Collection<Inspector<?>> inspectors,
+            Set<EditorElementReference<R>> updatedReferences) {
+        updatedReferences.forEach(reference -> {
+            var referencing = referencingElements.get(reference);
+            var referenced = referencedElements.get(reference);
+            if (referencing != null) {
+                referencing.forEach(element -> element.inspect(inspectors));
+            }
+            if (referenced != null) {
+                referenced.forEach(element -> element.inspect(inspectors));
+            }
+        });
+    }
+
+
     private void checkThread(boolean edit) {
         if (!lock.isHeldByCurrentThread()) throw new IllegalStateException("Index is not locked! " + lock);
         if (edit && !isInEditMode()) throw new IllegalStateException("Index is not in edit mode!");
     }
+
+
 }
