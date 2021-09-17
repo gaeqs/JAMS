@@ -34,6 +34,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Region;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Popup;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
@@ -78,6 +80,8 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     protected final VirtualizedScrollPane<ScaledVirtualized<CodeFileEditor>> scrollPane =
             new VirtualizedScrollPane<>(zoom);
 
+    protected final Rectangle lineBackground;
+
     protected final EditorIndex index;
 
     protected final EditorHintBar hintBar = new EditorHintBar(this);
@@ -112,7 +116,9 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         index.withLock(false, i -> i.setHintBar(hintBar));
 
         ZoomUtils.applyZoomListener(this, zoom);
-        setParagraphGraphicFactory(CustomLineNumberFactory.get(this));
+        var factory = CustomLineNumberFactory.get(this);
+        lineBackground = factory.getBackground();
+        setParagraphGraphicFactory(factory);
 
 
         initializeAutocompletionPopupListeners();
@@ -420,6 +426,19 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         } catch (IllegalArgumentException ignore) {
             Platform.runLater(this::styleVisibleArea);
         }
+    }
+
+    @Override
+    protected void layoutChildren() {
+        try {
+            var children = getChildren();
+            if (!children.get(0).equals(lineBackground)) children.add(0, lineBackground);
+            var index = visibleParToAAllParIndex(0);
+            var wd = getParagraphGraphic(index).prefWidth(-1);
+            lineBackground.setWidth(wd);
+        } catch (Exception ex) {
+        }
+        super.layoutChildren();
     }
 
     @Listener

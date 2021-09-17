@@ -95,8 +95,6 @@
 
 /* NUMBER LINE */
 .code-area .left-bar {
-    -fx-border-width: 0px 1px 0px 0px;
-    -fx-border-color: -theme-background-lighter;
     -fx-background-color: -theme-background-darker;
 }
 
