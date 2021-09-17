@@ -24,5 +24,25 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing.inspection;
 
-public class Inspection {
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
+
+import java.util.Map;
+
+public record Inspection(
+        Inspector<?> inspector, InspectionLevel level, String languageNode, Map<String, String> replacements
+) {
+
+    public String buildMessage() {
+        return buildMessage(Manager.ofS(Language.class).getSelected());
+    }
+
+    public String buildMessage(Language language) {
+        var string = language.getOrDefault(languageNode);
+        for (var entry : replacements.entrySet()) {
+            string = string.replace(entry.getKey(), entry.getValue());
+        }
+        return string;
+    }
+
 }

@@ -24,17 +24,17 @@
 
 package net.jamsimulator.jams.gui.editor.code.hint;
 
+import javafx.animation.AnimationTimer;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Cursor;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.code.indexing.inspection.InspectionLevel;
 import org.fxmisc.richtext.model.Paragraph;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Represents a bar that hints errors, warnings and information about the current file.
@@ -43,117 +43,95 @@ import java.util.Set;
 public class EditorHintBar extends Region {
 
     private final CodeFileEditor editor;
-    private final Set<Hint> linesHints;
+    private final Queue<QueuedHint> queue = new ConcurrentLinkedQueue<>();
+    private final Set<Hint> linesHints = new HashSet<>();
+    private final QueueConsumer consumer = new QueueConsumer();
 
-    /**
-     * Creates the hint bar and binds all events to the editor.
-     *
-     * @param editor the editor.
-     */
     public EditorHintBar(CodeFileEditor editor) {
         this.editor = editor;
-        this.linesHints = new HashSet<>();
+        consumer.start();
+        initListeners();
+    }
 
-        editor.getParagraphs().addListener(
-                (ListChangeListener<? super Paragraph<Collection<String>, String, Collection<String>>>) e -> {
-                    double heightPerLine = getHeight() / e.getList().size();
-                    double scaleFix = getScaleFix();
 
-                    linesHints.forEach(hint -> hint.rectangle.setLayoutY(heightPerLine * hint.line * scaleFix));
-                });
-
-        heightProperty().addListener((obs, old, val) -> {
-            double heightPerLine = val.doubleValue() / editor.getParagraphs().size();
-            double scaleFix = getScaleFix();
-
-            linesHints.forEach(hint -> hint.rectangle.setLayoutY(heightPerLine * hint.line * scaleFix));
-        });
-
-        editor.totalHeightEstimateProperty().addListener((obs, old, val) -> {
+    private void initListeners() {
+        Runnable run = () -> {
             double heightPerLine = getHeight() / editor.getParagraphs().size();
             double scaleFix = getScaleFix();
-
             linesHints.forEach(hint -> hint.rectangle.setLayoutY(heightPerLine * hint.line * scaleFix));
-        });
+        };
+        editor.getParagraphs().addListener(
+                (ListChangeListener<? super Paragraph<Collection<String>, String, Collection<String>>>) e -> run.run());
+        heightProperty().addListener((obs, old, val) -> run.run());
+        editor.totalHeightEstimateProperty().addListener((obs, old, val) -> run.run());
     }
 
-    /**
-     * Adds a hint, replacing any existing hint.
-     *
-     * @param line the line where the hint is located.
-     * @param type the type of the hint.
-     */
-    public void addHint(int line, HintType type) {
-        addHint(line, type.style);
+    public void addHint(int line, InspectionLevel level) {
+        queue.add(new QueuedHint(line, QueueAction.EDIT, level));
     }
 
-    /**
-     * Adds a hint, replacing any existing hint.
-     *
-     * @param line           the line where the hint is located.
-     * @param rectangleStyle the style of the rectangle representing the hint.
-     */
-    public void addHint(int line, String rectangleStyle) {
-        removeHint(line);
-
-        var rectangle = new Rectangle(0, 2);
-        rectangle.getStyleClass().add(rectangleStyle);
-        rectangle.widthProperty().bind(widthProperty());
-
-        double heightPerLine = getHeight() / editor.getParagraphs().size();
-        rectangle.layoutYProperty().set(line * heightPerLine * getScaleFix());
-
-        rectangle.setCursor(Cursor.HAND);
-        rectangle.setOnMouseClicked(event -> editor.showParagraphAtTop(line));
-
-        getChildren().add(rectangle);
-        linesHints.add(new Hint(rectangle, line));
-    }
-
-    /**
-     * Removes the hint located at the given line.
-     *
-     * @param line the line where the hint is located.
-     */
     public void removeHint(int line) {
-        getHint(line).ifPresent(value -> {
-            getChildren().remove(value.rectangle);
-            linesHints.remove(value);
-        });
+        addHint(line, InspectionLevel.NONE);
     }
 
-    /**
-     * Removes all hint from this bar.
-     */
-    public void clearHints() {
+    public void addLine(int line) {
+        queue.add(new QueuedHint(line, QueueAction.ADD, InspectionLevel.NONE));
+    }
+
+    public void removeLine(int line) {
+        queue.add(new QueuedHint(line, QueueAction.REMOVE, InspectionLevel.NONE));
+    }
+
+    public void clear() {
+        queue.clear();
+        linesHints.forEach(it -> getChildren().remove(it.rectangle));
         linesHints.clear();
-        getChildren().clear();
     }
 
-    /**
-     * Updates the internal data when the given line is being removed.
-     *
-     * @param line the line being removed.
-     */
-    public void applyLineRemoval(int line) {
-        removeHint(line);
-
-        double heightPerLine = getHeight() / editor.getParagraphs().size();
-        double scaleFix = getScaleFix();
-        linesHints.stream().filter(target -> target.line > line)
-                .forEach(target -> target.move(-1, heightPerLine, scaleFix));
+    public void dispose() {
+        consumer.stop();
     }
 
-    /**
-     * Updates the internal data when the given line is being added.
-     *
-     * @param line the line being added.
-     */
-    public void applyLineAddition(int line) {
+    private void queueRemove(int line) {
+        var hint = linesHints.stream().filter(it -> it.line == line).findAny();
+        if (hint.isEmpty()) return;
+        linesHints.remove(hint.get());
+        getChildren().remove(hint.get().rectangle);
+    }
+
+    private void queueAdd(int line, String style) {
+        var optional = linesHints.stream().filter(it -> it.line == line).findAny();
+        if (optional.isPresent()) {
+            optional.get().rectangle.getStyleClass().setAll(style);
+        } else {
+            var rectangle = new Rectangle(0, 2);
+            var hint = new Hint(rectangle, line);
+
+            rectangle.getStyleClass().add(style);
+            rectangle.widthProperty().bind(widthProperty());
+
+            double heightPerLine = getHeight() / editor.getParagraphs().size();
+            rectangle.layoutYProperty().set(line * heightPerLine * getScaleFix());
+
+            rectangle.setCursor(Cursor.HAND);
+            rectangle.setOnMouseClicked(event -> editor.showParagraphAtTop(hint.line));
+
+            getChildren().add(rectangle);
+            linesHints.add(hint);
+        }
+    }
+
+    private void queueAddLine(int line) {
         double heightPerLine = getHeight() / editor.getParagraphs().size();
         double scaleFix = getScaleFix();
-        linesHints.stream().filter(target -> target.line >= line)
-                .forEach(target -> target.move(1, heightPerLine, scaleFix));
+        linesHints.stream().filter(it -> it.line >= line).forEach(it -> it.move(1, heightPerLine, scaleFix));
+    }
+
+    private void queueRemoveLine(int line) {
+        double heightPerLine = getHeight() / editor.getParagraphs().size();
+        double scaleFix = getScaleFix();
+        queueRemove(line);
+        linesHints.stream().filter(it -> it.line > line).forEach(it -> it.move(-1, heightPerLine, scaleFix));
     }
 
     private double getScaleFix() {
@@ -165,33 +143,30 @@ public class EditorHintBar extends Region {
         return scaleFix;
     }
 
-    private Optional<Hint> getHint(int line) {
-        return linesHints.stream().filter(target -> target.line == line).findAny();
+    private class QueueConsumer extends AnimationTimer {
+
+        @Override
+        public void handle(long l) {
+            QueuedHint hint;
+            while ((hint = queue.poll()) != null) {
+                switch (hint.action()) {
+                    case EDIT -> {
+                        var style = hint.level().getHintStyle().orElse(null);
+                        if (style == null) queueRemove(hint.line());
+                        else queueAdd(hint.line(), style);
+                    }
+                    case ADD -> queueAddLine(hint.line());
+                    case REMOVE -> queueRemoveLine(hint.line());
+                }
+            }
+        }
     }
 
-    /**
-     * Small helper enum containing general hints.
-     */
-    public enum HintType {
+    private enum QueueAction {
+        EDIT, ADD, REMOVE
+    }
 
-        ERROR("hint-bar-error"),
-        WARNING("hint-bar-warning"),
-        INFO("hint-bar-info");
-
-        private final String style;
-
-        HintType(String style) {
-            this.style = style;
-        }
-
-        /**
-         * Returns style of the rectangle representing this hint type.
-         *
-         * @return the style.
-         */
-        public String getStyle() {
-            return style;
-        }
+    private static record QueuedHint(int line, QueueAction action, InspectionLevel level) {
     }
 
     private static class Hint {
@@ -208,6 +183,20 @@ public class EditorHintBar extends Region {
             line += amount;
             rectangle.setLayoutY(heightPerLine * line * scaleFix);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Hint hint = (Hint) o;
+            return line == hint.line;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(line);
+        }
     }
+
 
 }

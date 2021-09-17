@@ -50,6 +50,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.StandardWatchEventKinds;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements FileCollection {
 
@@ -97,6 +98,14 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
         return Optional.empty();
     }
 
+    public synchronized <R extends EditorReferencedElement>
+    Set<R> searchReferencedElements(EditorElementReference<R> reference) {
+        return indices.values().stream()
+                .flatMap(index -> index.withLockF(false,
+                        i -> i.getReferencedElements(reference, true).stream()))
+                .collect(Collectors.toSet());
+    }
+
     public <R extends EditorReferencedElement>
     Set<R> searchReferencedElementsOfType(Class<R> type) {
         var set = new HashSet<R>();
@@ -112,6 +121,12 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
         indices.values().forEach(index ->
                 index.withLock(false, i -> set.addAll(i.getReferecingElements(reference))));
         return set;
+    }
+
+    public synchronized void inspectElementsWithReferences(
+            Set<EditorElementReference<?>> references, Set<EditorIndex> ignoredIndices) {
+        indices.values().stream().filter(it -> !ignoredIndices.contains(it)).forEach(it ->
+                it.withLock(true, index -> index.inspectElementsWithReferences(references)));
     }
 
     @Override
@@ -134,6 +149,12 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
         order.add(file);
 
         index.withLock(true, i -> i.setGlobalIndex(this));
+
+        if (index.isInitialized()) {
+            // Inspect the added file too!
+            inspectElementsWithReferences(index.withLockF(false, EditorIndex::getAllReferencedReferences),
+                    Set.of());
+        }
 
         if (initialize && !index.isInitialized()) {
             indexFiles(Map.of(file, index));
@@ -166,6 +187,18 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
                 i.setGlobalIndex(null);
             }
         });
+
+        if (index.isInitialized()) {
+            var referenced = index.withLockF(true, i -> {
+                var set = i.getAllReferencedReferences();
+                i.inspectElementsWithReferences(set);
+                return set;
+            });
+
+            index.withLock(true, i -> i.inspectElementsWithReferences(referenced));
+            inspectElementsWithReferences(index.withLockF(false, EditorIndex::getAllReferencedReferences),
+                    Set.of(index));
+        }
 
         return true;
     }

@@ -24,13 +24,17 @@
 
 package net.jamsimulator.jams.gui.mips.editor.index;
 
+import net.jamsimulator.jams.gui.editor.code.indexing.inspection.defaults.DuplicatedLabelInspector;
 import net.jamsimulator.jams.gui.editor.code.indexing.line.EditorLineIndex;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.project.Project;
+
+import java.util.Set;
 
 public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
 
     public MIPSEditorIndex(Project project) {
-        super(project);
+        super(project,  Set.of(new DuplicatedLabelInspector(ResourceProvider.JAMS)));
     }
 
     @Override

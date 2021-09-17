@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.editor.code.indexing.line;
 
 import net.jamsimulator.jams.collection.Bag;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
+import net.jamsimulator.jams.gui.editor.code.hint.EditorHintBar;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorLineChange;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
@@ -52,8 +53,10 @@ import java.util.stream.Stream;
 public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends SimpleEventBroadcast implements EditorIndex {
 
     protected final Project project;
+    protected final Set<Inspector<?>> inspectors;
 
-    protected ProjectGlobalIndex globalIndex;
+    protected volatile ProjectGlobalIndex globalIndex;
+    protected volatile EditorHintBar hintBar;
 
     protected final List<Line> lines = new ArrayList<>();
     protected final Map<EditorElementReference<?>, Set<EditorReferencingElement>> referencingElements = new HashMap<>();
@@ -67,8 +70,14 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     protected final Condition initializationCondition = initializationLock.newCondition();
     protected volatile boolean initialized = false;
 
-    public EditorLineIndex(Project project) {
+    public EditorLineIndex(Project project, Set<? extends Inspector<?>> inspectors) {
         this.project = project;
+        this.inspectors = Set.copyOf(inspectors);
+    }
+
+    @Override
+    public Set<Inspector<?>> getInspectors() {
+        return inspectors;
     }
 
     public List<Line> getLines() {
@@ -94,6 +103,23 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     public void setGlobalIndex(ProjectGlobalIndex globalIndex) {
         checkThread(true);
         this.globalIndex = globalIndex;
+    }
+
+    @Override
+    public Optional<EditorHintBar> getHintBar() {
+        return Optional.ofNullable(hintBar);
+    }
+
+    @Override
+    public void setHintBar(EditorHintBar hintBar) {
+        checkThread(false);
+        this.hintBar = hintBar;
+        if (hintBar != null) {
+            int i = 0;
+            for (Line line : lines) {
+                hintBar.addHint(i++, line.getInspectionLevel());
+            }
+        }
     }
 
     @Override
@@ -128,8 +154,17 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     @Override
     public void indexAll(String text) {
         checkThread(true);
+
+        var oldGlobalReferences = globalIdentifiers == null
+                ? Stream.<EditorElementReference<?>>empty() :
+                referencedElements.keySet().stream().filter(it -> globalIdentifiers.contains(it.identifier()));
+
         try {
+            getHintBar().ifPresent(EditorHintBar::clear);
             lines.clear();
+            referencedElements.clear();
+            referencingElements.clear();
+            globalIdentifiers.clear();
             if (text.isEmpty()) {
                 lines.add(generateNewLine(0, 0, ""));
                 return;
@@ -165,6 +200,17 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
             }
             initializationLock.unlock();
         }
+
+        elementStream().forEach(it -> it.inspect(inspectors));
+        lines.forEach(EditorIndexedLine::recalculateInspectionLevel);
+
+        if (globalIndex != null) {
+            var newGlobalReferences = referencedElements.keySet().stream().filter(it ->
+                    globalIdentifiers.contains(it.identifier()));
+            var globalUpdates =
+                    Stream.concat(oldGlobalReferences, newGlobalReferences).collect(Collectors.toSet());
+            globalIndex.inspectElementsWithReferences(globalUpdates, Set.of(this));
+        }
     }
 
     @Override
@@ -173,6 +219,22 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         return lines.stream()
                 .filter(it -> it.getStart() <= position && it.getEnd() > position)
                 .findAny().flatMap(it -> it.getElementAt(position));
+    }
+
+    @Override
+    public Set<EditorElementReference<?>> getAllReferencedReferences() {
+        checkThread(false);
+        return referencedElements.keySet().stream()
+                .filter(it -> globalIdentifiers.contains(it.identifier()))
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<EditorElementReference<?>> getAllReferencingReferences() {
+        checkThread(false);
+        return referencingElements.keySet().stream()
+                .filter(it -> globalIdentifiers.contains(it.identifier()))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -194,6 +256,21 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
                     .map(it -> (T) it);
         } else {
             return set.stream().findAny().map(it -> (T) it);
+        }
+    }
+
+    @Override
+    public <T extends EditorReferencedElement>
+    Set<T> getReferencedElements(EditorElementReference<T> reference, boolean globalContext) {
+        checkThread(false);
+        var set = referencedElements.get(reference);
+        if (set == null || set.isEmpty()) return Collections.emptySet();
+        if (globalContext) {
+            return set.stream()
+                    .filter(it -> globalIdentifiers.contains(it.getIdentifier()))
+                    .map(it -> (T) it).collect(Collectors.toSet());
+        } else {
+            return set.stream().map(it -> (T) it).collect(Collectors.toSet());
         }
     }
 
@@ -251,6 +328,34 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     }
 
     @Override
+    public void inspectElementsWithReferences(Set<EditorElementReference<?>> references) {
+        checkThread(true);
+        var updatedLines = new HashSet<EditorIndexedLine>();
+        references.forEach(reference -> {
+            var referencing = referencingElements.get(reference);
+            var referenced = referencedElements.get(reference);
+            if (referencing != null) {
+                referencing.forEach(element -> element.inspect(inspectors));
+
+                updatedLines.addAll(referencing.stream()
+                        .map(it -> it.getParentOfType(EditorIndexedLine.class).orElse(null))
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toSet()));
+            }
+            if (referenced != null) {
+                referenced.forEach(element -> element.inspect(inspectors));
+
+                updatedLines.addAll(referenced.stream()
+                        .map(it -> it.getParentOfType(EditorIndexedLine.class).orElse(null))
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toSet()));
+            }
+        });
+
+        updatedLines.forEach(EditorIndexedLine::recalculateInspectionLevel);
+    }
+
+    @Override
     public void lock(boolean editMode) {
         // We want to add the edit mode count before locking.
         // This prevents multiple refreshes when several threads edit this index.
@@ -287,8 +392,11 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
         int difference = line.getLength() - old.getLength();
         lines.listIterator(number + 1).forEachRemaining(it -> it.move(difference));
-        removedReferences(old);
+        removeReferences(old);
         addReferences(line);
+        line.inspect(inspectors);
+        line.recalculateInspectionLevel();
+        checkInspectionsInReferences(old, line);
     }
 
     protected void removeLine(int number) {
@@ -296,7 +404,9 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         line.invalidate();
         lines.listIterator(number).forEachRemaining(it ->
                 it.movePositionAndNumber(-1, -line.getLength() - 1));
-        removedReferences(line);
+        getHintBar().ifPresent(it -> it.removeLine(number));
+        removeReferences(line);
+        checkInspectionsInReferences(line);
     }
 
     protected void addLine(int number, String text) {
@@ -305,20 +415,35 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         lines.add(number, line);
         lines.listIterator(number + 1).forEachRemaining(it ->
                 it.movePositionAndNumber(1, line.getLength() + 1));
+        getHintBar().ifPresent(it -> it.addLine(number));
         addReferences(line);
+        line.inspect(inspectors);
+        line.recalculateInspectionLevel();
+        checkInspectionsInReferences(line);
     }
 
-    protected void removedReferences(Line line) {
+    protected void removeReferences(Line line) {
         line.elementStream().forEach(element -> {
             if (element instanceof EditorReferencingElement referencing) {
                 referencing.getReferences().forEach(reference -> {
                     var set = referencingElements.get(reference);
-                    if (set != null) set.remove(referencing);
+                    if (set != null) {
+                        set.remove(referencing);
+                        if (set.isEmpty()) {
+                            referencingElements.remove(reference);
+                        }
+                    }
                 });
             }
             if (element instanceof EditorReferencedElement referenced) {
-                var set = referencedElements.get(referenced.getReference());
-                if (set != null) set.remove(referenced);
+                var reference = referenced.getReference();
+                var set = referencedElements.get(reference);
+                if (set != null) {
+                    set.remove(referenced);
+                    if (set.isEmpty()) {
+                        referencedElements.remove(reference);
+                    }
+                }
             }
             if (element instanceof EditorGlobalMarkerElement marker) {
                 globalIdentifiers.removeAll(marker.getGlobalIdentifiers());
@@ -343,20 +468,45 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     protected abstract Line generateNewLine(int start, int number, String text);
 
-    protected <R extends EditorReferencedElement>
-    void checkInspectionsOnReferencedUpdate(
-            Collection<Inspector<?>> inspectors,
-            Set<EditorElementReference<R>> updatedReferences) {
-        updatedReferences.forEach(reference -> {
-            var referencing = referencingElements.get(reference);
-            var referenced = referencedElements.get(reference);
-            if (referencing != null) {
-                referencing.forEach(element -> element.inspect(inspectors));
-            }
-            if (referenced != null) {
-                referenced.forEach(element -> element.inspect(inspectors));
-            }
+    protected void checkInspectionsInReferences(EditorIndexedLine... lines) {
+        var referenced = Arrays.stream(lines)
+                .flatMap(this::getReferencedReferencesInLine).collect(Collectors.toSet());
+
+        // Now we have all references that have been updated and needs refreshing.
+        // If the reference is a referenced element, we must update the referenced and referencing elements.
+        // If it's global we also have to update the other files!
+
+        // We don't have to do nothing with the referencing changes. They mustn't interfeere.
+
+        // We also have to update all references in the file that matches the identifiers of the updated markers.
+        // The markers must update only the inspectors of other files.
+
+        // Let's start updating our file:
+        inspectElementsWithReferences(referenced);
+
+        // Now let's update the global elements and the marked references:
+        getGlobalIndex().ifPresent(global -> {
+            var marks = Arrays.stream(lines).flatMap(this::getMarkersInLine).collect(Collectors.toSet());
+
+            var toUpdate = Stream.concat(
+                            referenced.stream().filter(it -> isIdentifierGlobal(it.identifier())),
+                            referencedElements.keySet().stream().filter(it -> marks.contains(it.identifier())))
+                    .collect(Collectors.toSet());
+
+            global.inspectElementsWithReferences(toUpdate, Set.of(this));
         });
+    }
+
+    protected Stream<EditorElementReference<?>> getReferencedReferencesInLine(EditorIndexedLine line) {
+        return line.elementStream()
+                .filter(it -> it instanceof EditorReferencedElement)
+                .map(it -> ((EditorReferencedElement) it).getReference());
+    }
+
+    protected Stream<String> getMarkersInLine(EditorIndexedLine line) {
+        return line.elementStream()
+                .filter(it -> it instanceof EditorGlobalMarkerElement)
+                .flatMap(it -> ((EditorGlobalMarkerElement) it).getGlobalIdentifiers().stream());
     }
 
 

@@ -28,6 +28,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedEleme
 import net.jamsimulator.jams.manager.ManagerResource;
 import net.jamsimulator.jams.manager.ResourceProvider;
 
+import java.util.Collections;
 import java.util.Set;
 
 public abstract class Inspector<T extends EditorIndexedElement> implements ManagerResource {
@@ -56,6 +57,14 @@ public abstract class Inspector<T extends EditorIndexedElement> implements Manag
         return elementType;
     }
 
-    public abstract Set<Inspection> inspect(EditorIndexedElement element);
+    public Set<Inspection> inspect(EditorIndexedElement element) {
+        try {
+            return inspectImpl((T) element);
+        } catch (ClassCastException ex) {
+            return Collections.emptySet();
+        }
+    }
+
+    protected abstract Set<Inspection> inspectImpl(T element);
 
 }

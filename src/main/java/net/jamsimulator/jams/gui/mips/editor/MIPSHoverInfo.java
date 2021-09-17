@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.mips.editor;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.inspection.InspectionLevel;
 import net.jamsimulator.jams.gui.mips.editor.index.element.MIPSEditorInstruction;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.manager.Manager;
@@ -74,19 +75,25 @@ public class MIPSHoverInfo extends VirtualizedScrollPane<StyleClassedTextArea> {
 
     private void addWarnings(EditorIndexedElement element) {
         var inspections = element.getMetadata().inspections();
-        var warnings = inspections.stream().filter(it -> !it.inspector().isError()).toList();
+        var warnings = inspections.stream()
+                .filter(it -> it.level().ordinal() < InspectionLevel.ERROR.ordinal()).toList();
         if (!warnings.isEmpty()) {
-            getContent().append("\n" + Manager.ofS(Language.class).getSelected().getOrDefault("MIPS_ELEMENT_WARNINGS"), List.of("bold"));
-            warnings.forEach(inspection -> getContent().append("\n- " + inspection.message(), Collections.emptyList()));
+            getContent().append("\n" + Manager.ofS(Language.class).getSelected()
+                    .getOrDefault("MIPS_ELEMENT_WARNINGS"), List.of("bold"));
+            warnings.forEach(inspection -> getContent().append("\n- " + inspection.buildMessage(),
+                    Collections.emptyList()));
         }
     }
 
     private void addErrors(EditorIndexedElement element) {
         var inspections = element.getMetadata().inspections();
-        var warnings = inspections.stream().filter(it -> it.inspector().isError()).toList();
+        var warnings = inspections.stream()
+                .filter(it -> it.level().ordinal() >= InspectionLevel.ERROR.ordinal()).toList();
         if (!warnings.isEmpty()) {
-            getContent().append("\n" + Manager.ofS(Language.class).getSelected().getOrDefault("MIPS_ELEMENT_ERRORS"), List.of("bold"));
-            warnings.forEach(inspection -> getContent().append("\n- " + inspection.message(), Collections.emptyList()));
+            getContent().append("\n" + Manager.ofS(Language.class).getSelected()
+                    .getOrDefault("MIPS_ELEMENT_ERRORS"), List.of("bold"));
+            warnings.forEach(inspection -> getContent().append("\n- " + inspection.buildMessage(),
+                    Collections.emptyList()));
         }
     }
 

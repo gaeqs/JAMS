@@ -28,12 +28,15 @@ import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
+import net.jamsimulator.jams.gui.editor.code.indexing.inspection.defaults.DuplicatedLabelInspector;
 import net.jamsimulator.jams.gui.editor.code.indexing.line.EditorLineIndex;
 import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.task.LanguageTask;
+
+import java.util.Set;
 
 public class TextFileType extends FileType {
 
@@ -55,7 +58,8 @@ public class TextFileType extends FileType {
         return new CodeFileEditor(tab) {
             @Override
             protected EditorIndex generateIndex() {
-                var index = new EditorLineIndex<>(tab.getWorkingPane().getProjectTab().getProject()) {
+                var inspections = Set.of(new DuplicatedLabelInspector(ResourceProvider.JAMS));
+                var index = new EditorLineIndex<>(tab.getWorkingPane().getProjectTab().getProject(), inspections) {
                     @Override
                     protected EditorIndexedLine generateNewLine(int start, int number, String text) {
                         return new EditorIndexedLine(this, start, number, text);

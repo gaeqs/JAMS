@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.editor.code.indexing;
 
 import net.jamsimulator.jams.event.EventBroadcast;
+import net.jamsimulator.jams.gui.editor.code.hint.EditorHintBar;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
@@ -46,9 +47,15 @@ public interface EditorIndex extends EventBroadcast {
 
     Project getProject();
 
+    Set<Inspector<?>> getInspectors();
+
     Optional<ProjectGlobalIndex> getGlobalIndex();
 
     void setGlobalIndex(ProjectGlobalIndex index);
+
+    Optional<EditorHintBar> getHintBar();
+
+    void setHintBar(EditorHintBar hintBar);
 
     boolean isInitialized();
 
@@ -62,8 +69,18 @@ public interface EditorIndex extends EventBroadcast {
 
     Optional<EditorIndexedElement> getElementAt(int position);
 
+    Set<EditorElementReference<?>> getAllReferencedReferences();
+
+    Set<EditorElementReference<?>> getAllReferencingReferences();
+
+    @Override
+    void transferListenersTo(EventBroadcast broadcast);
+
     <T extends EditorReferencedElement>
     Optional<T> getReferencedElement(EditorElementReference<T> reference, boolean globalContext);
+
+    <T extends EditorReferencedElement>
+    Set<T> getReferencedElements(EditorElementReference<T> reference, boolean globalContext);
 
     <T extends EditorReferencedElement>
     Set<T> getReferencedElementsOfType(Class<T> type, boolean globalContext);
@@ -78,6 +95,8 @@ public interface EditorIndex extends EventBroadcast {
     Optional<StyleSpans<Collection<String>>> getStyleForLine(int line);
 
     Optional<StyleSpans<Collection<String>>> getStyleRange(int from, int to);
+
+    void inspectElementsWithReferences(Set<EditorElementReference<?>> references);
 
     void lock(boolean editMode);
 

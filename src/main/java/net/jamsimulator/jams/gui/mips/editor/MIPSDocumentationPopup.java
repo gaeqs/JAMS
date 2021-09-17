@@ -103,8 +103,10 @@ public class MIPSDocumentationPopup extends DocumentationPopup {
 
                 topMessage.clear();
 
-                element.getMetadata().inspections().forEach(inspection ->
-                        topMessage.append(inspection.message() + "\n", ""));
+
+                element.getMetadata().inspections().forEach(inspection -> {
+                    topMessage.append(inspection.buildMessage() + "\n", "");
+                });
 
                 topMessage.setMaxHeight(topMessage.getLength() > 0 ? 50 : 0);
 
@@ -120,7 +122,7 @@ public class MIPSDocumentationPopup extends DocumentationPopup {
                 topMessage.clear();
 
                 element.getMetadata().inspections().forEach(inspection ->
-                        topMessage.append(inspection.message() + "\n", ""));
+                        topMessage.append(inspection.buildMessage() + "\n", ""));
 
                 topMessage.setMaxHeight(topMessage.getLength() > 0 ? 50 : 0);
 

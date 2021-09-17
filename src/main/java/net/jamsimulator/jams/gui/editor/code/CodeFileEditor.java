@@ -109,6 +109,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         this.index = getOrGenerateIndex();
 
         index.registerListeners(this, true);
+        index.withLock(false, i -> i.setHintBar(hintBar));
 
         ZoomUtils.applyZoomListener(this, zoom);
         setParagraphGraphicFactory(CustomLineNumberFactory.get(this));
@@ -293,6 +294,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         subscription.unsubscribe();
         indexingThread.kill();
         styleTimer.stop();
+        hintBar.dispose();
     }
 
     @Override

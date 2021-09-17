@@ -24,18 +24,23 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing.element.line;
 
+import javafx.application.Platform;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElementImpl;
+import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspection;
+import net.jamsimulator.jams.gui.editor.code.indexing.inspection.InspectionLevel;
 import net.jamsimulator.jams.gui.util.EasyStyleSpansBuilder;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Comparator;
+import java.util.HashSet;
 
 public class EditorIndexedLine extends EditorIndexedParentElementImpl {
 
     protected int number;
+    protected InspectionLevel inspectionLevel;
 
     public EditorIndexedLine(EditorIndex index, int start, int number, String text) {
         super(index, null, start, text);
@@ -45,6 +50,10 @@ public class EditorIndexedLine extends EditorIndexedParentElementImpl {
 
     public int getNumber() {
         return number;
+    }
+
+    public InspectionLevel getInspectionLevel() {
+        return inspectionLevel;
     }
 
     public void moveNumber(int offset) {
@@ -57,16 +66,32 @@ public class EditorIndexedLine extends EditorIndexedParentElementImpl {
         move(positionOffset);
     }
 
+    public void recalculateInspectionLevel() {
+        inspectionLevel = elementStream().flatMap(it -> it.getMetadata().inspections().stream())
+                .max(Comparator.comparingInt(o -> o.level().ordinal()))
+                .map(Inspection::level)
+                .orElse(InspectionLevel.NONE);
+       index.getHintBar().ifPresent(bar -> bar.addHint(number, inspectionLevel));
+    }
+
     public void addStyles(EasyStyleSpansBuilder builder, int offset) {
         elementStream()
                 .filter(it -> it instanceof EditorIndexStyleableElement)
                 .sorted(Comparator.comparingInt(EditorIndexedElement::getStart))
                 .forEach(it -> {
                     try {
-                        builder.add(it.getStart() - offset, it.getLength(),
-                                ((EditorIndexStyleableElement) it).getStyles());
+                        var inspectionStyle = it.getMetadata().getHigherLevelInspection()
+                                .flatMap(ins -> ins.level().getElementStyle());
+                        if (inspectionStyle.isEmpty()) {
+                            builder.add(it.getStart() - offset, it.getLength(),
+                                    ((EditorIndexStyleableElement) it).getStyles());
+                        } else {
+                            var set = new HashSet<>(((EditorIndexStyleableElement) it).getStyles());
+                            set.add(inspectionStyle.get());
+                            builder.add(it.getStart() - offset, it.getLength(), set);
+                        }
                     } catch (IllegalStateException ex) {
-                        System.err.println("Error styling element "+ it.getIdentifier());
+                        System.err.println("Error styling element " + it.getIdentifier());
                         throw ex;
                     }
                 });

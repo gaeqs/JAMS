@@ -22,20 +22,31 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.indexing.element.metadata;
+package net.jamsimulator.jams.gui.editor.code.indexing.inspection;
 
-import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspection;
-
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Optional;
-import java.util.Set;
 
-public record Metadata(Set<Inspection> inspections) {
-    public static final Metadata EMPTY = new Metadata(Collections.emptySet());
+public enum InspectionLevel {
 
-    public Optional<Inspection> getHigherLevelInspection() {
-        return inspections.stream().max(Comparator.comparingInt(it -> it.level().ordinal()));
+    NONE(null, null),
+    INFO("hint-bar-info", null),
+    LOW_WARNING("hint-bar-warning", "warning"),
+    WARNING("hint-bar-warning", "warning"),
+    ERROR("hint-bar-error", "error"),
+    BIG_ERROR("hint-bar-error", "error");
+
+    private final String hintStyle, elementStyle;
+
+    InspectionLevel(String hintStyle, String elementStyle) {
+        this.hintStyle = hintStyle;
+        this.elementStyle = elementStyle;
     }
 
+    public Optional<String> getHintStyle() {
+        return Optional.ofNullable(hintStyle);
+    }
+
+    public Optional<String> getElementStyle() {
+        return Optional.ofNullable(elementStyle);
+    }
 }
