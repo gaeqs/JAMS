@@ -433,7 +433,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         try {
             var children = getChildren();
             if (!children.get(0).equals(lineBackground)) children.add(0, lineBackground);
-            var index = visibleParToAAllParIndex(0);
+            var index = visibleParToAllParIndex(0);
             var wd = getParagraphGraphic(index).prefWidth(-1);
             lineBackground.setWidth(wd);
         } catch (Exception ex) {
