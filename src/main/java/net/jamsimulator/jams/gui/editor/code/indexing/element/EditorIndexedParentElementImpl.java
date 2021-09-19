@@ -54,6 +54,11 @@ public class EditorIndexedParentElementImpl extends EditorIndexedElementImpl imp
     }
 
     @Override
+    public List<EditorIndexedElement> getElements() {
+        return List.copyOf(elements);
+    }
+
+    @Override
     public int indexOf(EditorIndexedElement element) {
         return elements.indexOf(element);
     }
@@ -61,6 +66,11 @@ public class EditorIndexedParentElementImpl extends EditorIndexedElementImpl imp
     @Override
     public boolean isEmpty() {
         return elements.isEmpty();
+    }
+
+    @Override
+    public int size() {
+        return elements.size();
     }
 
     @Override

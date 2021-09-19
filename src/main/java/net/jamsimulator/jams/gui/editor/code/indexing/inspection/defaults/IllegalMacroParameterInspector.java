@@ -22,23 +22,35 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.editor.index;
+package net.jamsimulator.jams.gui.editor.code.indexing.inspection.defaults;
 
-import net.jamsimulator.jams.gui.editor.code.indexing.inspection.defaults.DuplicatedLabelInspector;
-import net.jamsimulator.jams.gui.editor.code.indexing.line.EditorLineIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroParameter;
+import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspection;
+import net.jamsimulator.jams.gui.editor.code.indexing.inspection.InspectionLevel;
+import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
+import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
-import net.jamsimulator.jams.project.Project;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
-public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
+public class IllegalMacroParameterInspector extends Inspector<EditorElementMacroParameter> {
 
-    public MIPSEditorIndex(Project project) {
-        super(project,  Set.of(new DuplicatedLabelInspector(ResourceProvider.JAMS)));
+    public static final String NAME = "illegal_macro_parameter";
+
+    public IllegalMacroParameterInspector(ResourceProvider provider) {
+        super(provider, NAME, EditorElementMacroParameter.class);
     }
 
     @Override
-    protected MIPSEditorLine generateNewLine(int start, int number, String text) {
-        return new MIPSEditorLine(this, start, number, text);
+    public Set<Inspection> inspectImpl(EditorElementMacroParameter element) {
+        return element.getIdentifier().startsWith("%") ? Collections.emptySet() : Set.of(illegalMacroParameter());
+    }
+
+
+    private Inspection illegalMacroParameter() {
+        return new Inspection(this, InspectionLevel.ERROR,
+                Messages.EDITOR_MIPS_ERROR_ILLEGAL_MACRO_PARAMETER, Map.of());
     }
 }

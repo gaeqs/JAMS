@@ -24,12 +24,13 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing.inspection.defaults;
 
-import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacro;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspection;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.InspectionLevel;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirectiveMacroName;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
 
@@ -37,32 +38,33 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-public class DuplicatedLabelInspector extends Inspector<EditorElementLabel> {
+public class DuplicatedMacroInspector extends Inspector<EditorElementMacro> {
 
-    public static final String NAME = "duplicated_label";
+    public static final String NAME = "duplicated_macro";
 
-    public DuplicatedLabelInspector(ResourceProvider provider) {
-        super(provider, NAME, EditorElementLabel.class);
+    public DuplicatedMacroInspector(ResourceProvider provider) {
+        super(provider, NAME, EditorElementMacro.class);
     }
 
     @Override
-    public Set<Inspection> inspectImpl(EditorElementLabel element) {
-        // Let's start getting the reference of this label.
-        var reference = (EditorElementReference<? extends EditorElementLabel>) element.getReference();
+    public Set<Inspection> inspectImpl(EditorElementMacro element) {
+        // Let's start getting the reference of this macro.
+        var reference = (EditorElementReference<? extends EditorElementMacro>) element.getReference();
 
-        // Now we search all labels with the same reference. (Same identifier / name)
+        // Now we search all macros with the same reference. (Same identifier / name)
         var elements = element.getIndex().getReferencedElements(reference, false);
 
-        // Do we have more than one label? Then there's a duplicated label.
+        // Do we have more than one macro? Then there's a duplicated macro.
         if (elements.size() > 1) {
+            // Let's get one of those duplicated macros for information purpose.
             var other = elements.stream().filter(it -> it != element).findAny().orElse(null);
 
             // Return the inspection.
-            return Set.of(duplicateLabel(element, other));
+            return Set.of(duplicateMacro(element, other));
         }
 
-        // We have only one label in our index! Let's check if there's an index in the global index
-        // that declares a global label with the same reference.
+        // We have only one macro in our index! Let's check if there's an index in the global index
+        // that declares a global macro with the same reference.
         var optional = element.getIndex().getGlobalIndex();
 
         // First we have to check if this index is registered in the global index of our project.
@@ -75,7 +77,7 @@ public class DuplicatedLabelInspector extends Inspector<EditorElementLabel> {
                 var other = elements.stream().filter(it -> it != element).findAny().orElse(null);
 
                 // Return the inspection.
-                return Set.of(duplicateGlobalLabel(element, other));
+                return Set.of(duplicateGlobalMacro(element, other));
             }
         }
 
@@ -83,26 +85,26 @@ public class DuplicatedLabelInspector extends Inspector<EditorElementLabel> {
     }
 
 
-    private Inspection duplicateLabel(EditorElementLabel label, EditorElementLabel other) {
+    private Inspection duplicateMacro(EditorElementMacro macro, EditorElementMacro other) {
         var replacements = Map.of(
-                "{LABEL}", label.getIdentifier(),
+                "{MACRO}", macro.getIdentifier(),
                 "{LINE}", other == null ? "-" : other.getParentOfType(EditorIndexedLine.class)
                         .map(it -> it.getNumber() + 1).map(Object::toString).orElse("-")
         );
 
         return new Inspection(this, InspectionLevel.ERROR,
-                Messages.EDITOR_MIPS_ERROR_DUPLICATE_LABEL, replacements);
+                Messages.EDITOR_MIPS_ERROR_DUPLICATE_MACRO, replacements);
     }
 
-    private Inspection duplicateGlobalLabel(EditorElementLabel label, EditorElementLabel other) {
+    private Inspection duplicateGlobalMacro(EditorElementMacro macro, EditorElementMacro other) {
         var replacements = Map.of(
-                "{LABEL}", label.getIdentifier(),
+                "{MACRO}", macro.getIdentifier(),
                 "{FILE}", other == null ? "-" : other.getIndex().getName(),
                 "{LINE}", other == null ? "-" : other.getParentOfType(EditorIndexedLine.class)
                         .map(it -> it.getNumber() + 1).map(Object::toString).orElse("-")
         );
 
         return new Inspection(this, InspectionLevel.ERROR,
-                Messages.EDITOR_MIPS_ERROR_DUPLICATE_GLOBAL_LABEL, replacements);
+                Messages.EDITOR_MIPS_ERROR_DUPLICATE_GLOBAL_MACRO, replacements);
     }
 }

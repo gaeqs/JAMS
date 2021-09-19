@@ -34,6 +34,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexRequestRefreshE
 import net.jamsimulator.jams.gui.editor.code.indexing.global.ProjectGlobalIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
 import net.jamsimulator.jams.project.Project;
+import net.jamsimulator.jams.utils.Labeled;
 import org.fxmisc.richtext.model.StyleSpans;
 
 import java.util.Collection;
@@ -43,7 +44,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public interface EditorIndex extends EventBroadcast {
+public interface EditorIndex extends EventBroadcast, Labeled {
 
     Project getProject();
 
@@ -86,7 +87,7 @@ public interface EditorIndex extends EventBroadcast {
     Set<T> getReferencedElementsOfType(Class<T> type, boolean globalContext);
 
     <T extends EditorReferencedElement>
-    Set<EditorReferencingElement> getReferecingElements(EditorElementReference<T> reference);
+    Set<EditorReferencingElement<?>> getReferecingElements(EditorElementReference<T> reference);
 
     Stream<? extends EditorIndexedElement> elementStream();
 

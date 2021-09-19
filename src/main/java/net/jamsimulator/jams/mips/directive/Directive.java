@@ -24,7 +24,7 @@
 
 package net.jamsimulator.jams.mips.directive;
 
-import net.jamsimulator.jams.gui.mips.editor.index.MIPSEditorIndex;
+import net.jamsimulator.jams.gui.mips.editor.indexing.MIPSEditorIndex;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;

@@ -22,25 +22,10 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.editor.index.element;
+package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
 
-import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 
-import java.util.Collection;
-import java.util.Set;
+public interface EditorElementMacroParameter extends EditorIndexedElement {
 
-public class MIPSEditorDirectiveMacroName extends MIPSEditorDirectiveParameter implements EditorReferencedElement {
-
-    public static final Set<String> STYLE = Set.of("macro-call");
-
-    public MIPSEditorDirectiveMacroName(EditorIndex index, EditorIndexedParentElement parent, int start, String text) {
-        super(index, parent, start, text);
-    }
-
-    @Override
-    public Collection<String> getStyles() {
-        return STYLE;
-    }
 }

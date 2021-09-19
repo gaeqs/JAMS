@@ -28,8 +28,8 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedEleme
 
 import java.util.Set;
 
-public interface EditorReferencingElement extends EditorIndexedElement {
+public interface EditorReferencingElement<R extends EditorReferencedElement> extends EditorIndexedElement {
 
-    Set<EditorElementReference<?>> getReferences();
+    Set<EditorElementReference<R>> getReferences();
 
 }

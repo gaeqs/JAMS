@@ -26,7 +26,7 @@ package net.jamsimulator.jams.gui.mips.editor;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.InspectionLevel;
-import net.jamsimulator.jams.gui.mips.editor.index.element.MIPSEditorInstruction;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstruction;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.manager.Manager;
 import org.fxmisc.flowless.VirtualizedScrollPane;

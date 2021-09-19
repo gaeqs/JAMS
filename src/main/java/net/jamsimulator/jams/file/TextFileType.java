@@ -28,7 +28,7 @@ import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
-import net.jamsimulator.jams.gui.editor.code.indexing.inspection.defaults.DuplicatedLabelInspector;
+import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
 import net.jamsimulator.jams.gui.editor.code.indexing.line.EditorLineIndex;
 import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 import net.jamsimulator.jams.gui.image.icon.IconData;
@@ -58,8 +58,9 @@ public class TextFileType extends FileType {
         return new CodeFileEditor(tab) {
             @Override
             protected EditorIndex generateIndex() {
-                var inspections = Set.of(new DuplicatedLabelInspector(ResourceProvider.JAMS));
-                var index = new EditorLineIndex<>(tab.getWorkingPane().getProjectTab().getProject(), inspections) {
+                var inspections = Set.<Inspector<?>>of();
+                var index = new EditorLineIndex<>(tab.getWorkingPane().getProjectTab().getProject(),
+                        tab.getFile().getName(), inspections) {
                     @Override
                     protected EditorIndexedLine generateNewLine(int start, int number, String text) {
                         return new EditorIndexedLine(this, start, number, text);

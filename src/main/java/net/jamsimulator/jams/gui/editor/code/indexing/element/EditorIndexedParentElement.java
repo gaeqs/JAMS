@@ -24,14 +24,19 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing.element;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface EditorIndexedParentElement extends EditorIndexedElement {
 
     Optional<? extends EditorIndexedElement> getElementAt(int position);
 
+    List<EditorIndexedElement> getElements();
+
     int indexOf(EditorIndexedElement element);
 
     boolean isEmpty();
+
+    int size();
 
 }

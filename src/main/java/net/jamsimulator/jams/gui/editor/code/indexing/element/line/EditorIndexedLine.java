@@ -40,7 +40,7 @@ import java.util.HashSet;
 public class EditorIndexedLine extends EditorIndexedParentElementImpl {
 
     protected int number;
-    protected InspectionLevel inspectionLevel;
+    protected InspectionLevel inspectionLevel = InspectionLevel.NONE;
 
     public EditorIndexedLine(EditorIndex index, int start, int number, String text) {
         super(index, null, start, text);

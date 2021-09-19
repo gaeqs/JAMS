@@ -22,35 +22,31 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.directive.defaults;
+package net.jamsimulator.jams.gui.mips.editor.indexing;
 
-import net.jamsimulator.jams.gui.mips.editor.indexing.MIPSEditorIndex;
-import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
-import net.jamsimulator.jams.mips.directive.Directive;
-import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
+import net.jamsimulator.jams.gui.editor.code.indexing.inspection.defaults.*;
+import net.jamsimulator.jams.gui.editor.code.indexing.line.EditorLineIndex;
+import net.jamsimulator.jams.gui.mips.editor.indexing.inspection.MIPSIllegalLabelInspector;
+import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.project.Project;
 
-public class DirectiveEndmacro extends Directive {
+import java.util.Set;
 
-    public static final String NAME = "endmacro";
-    private static final DirectiveParameterType[] PARAMETERS = {};
+public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
 
-    public DirectiveEndmacro() {
-        super(NAME, PARAMETERS, false, false);
+    public MIPSEditorIndex(Project project, String name) {
+        super(project, name, Set.of(
+                new DuplicatedLabelInspector(ResourceProvider.JAMS),
+                new DuplicatedMacroInspector(ResourceProvider.JAMS),
+                new MacroNotFoundInspector(ResourceProvider.JAMS),
+                new InvalidMacroParametersAmountInspector(ResourceProvider.JAMS),
+                new IllegalMacroParameterInspector(ResourceProvider.JAMS),
+                new MIPSIllegalLabelInspector(ResourceProvider.JAMS)
+        ));
     }
 
     @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
-        // This directive is implemented in the assembler itself!
-        return -1;
-    }
-
-    @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-
-    }
-
-    @Override
-    public boolean isParameterValidInContext(int index, String value, int amount, MIPSEditorIndex context) {
-        return false;
+    protected MIPSEditorLine generateNewLine(int start, int number, String text) {
+        return new MIPSEditorLine(this, start, number, text);
     }
 }

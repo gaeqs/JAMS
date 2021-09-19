@@ -22,38 +22,20 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
+package net.jamsimulator.jams.gui.mips.editor.indexing.element;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroParameter;
 
-import java.util.Collection;
 import java.util.Set;
 
-public class EditorElementMacroCallMnemonic extends EditorIndexedElementImpl
-        implements EditorIndexStyleableElement, EditorReferencingElement<EditorElementMacro> {
+public class MIPSEditorDirectiveMacroParameter extends MIPSEditorDirectiveParameter
+        implements EditorElementMacroParameter {
 
-    public static final Set<String> STYLE = Set.of("macro-call");
+    public static final Set<String> STYLE = Set.of("macro-call-parameter");
 
-    private final Set<EditorElementReference<EditorElementMacro>> references;
-
-    public EditorElementMacroCallMnemonic(EditorIndex index, EditorIndexedParentElement parent,
-                                          int start, String text) {
+    public MIPSEditorDirectiveMacroParameter(EditorIndex index, EditorIndexedParentElement parent, int start, String text) {
         super(index, parent, start, text);
-        references = Set.of(new EditorElementReference<>(EditorElementMacro.class, getIdentifier()));
-    }
-
-    @Override
-    public Collection<String> getStyles() {
-        return STYLE;
-    }
-
-    @Override
-    public Set<EditorElementReference<EditorElementMacro>> getReferences() {
-        return references;
     }
 }

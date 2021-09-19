@@ -22,29 +22,22 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
+package net.jamsimulator.jams.gui.mips.editor.indexing.element;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacro;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroParameter;
 
 import java.util.Collection;
 import java.util.Set;
 
-public class EditorElementMacroCallMnemonic extends EditorIndexedElementImpl
-        implements EditorIndexStyleableElement, EditorReferencingElement<EditorElementMacro> {
+public class MIPSEditorDirectiveMacroName extends MIPSEditorDirectiveParameter implements EditorElementMacro {
 
     public static final Set<String> STYLE = Set.of("macro-call");
 
-    private final Set<EditorElementReference<EditorElementMacro>> references;
-
-    public EditorElementMacroCallMnemonic(EditorIndex index, EditorIndexedParentElement parent,
-                                          int start, String text) {
+    public MIPSEditorDirectiveMacroName(EditorIndex index, EditorIndexedParentElement parent, int start, String text) {
         super(index, parent, start, text);
-        references = Set.of(new EditorElementReference<>(EditorElementMacro.class, getIdentifier()));
     }
 
     @Override
@@ -52,8 +45,10 @@ public class EditorElementMacroCallMnemonic extends EditorIndexedElementImpl
         return STYLE;
     }
 
+
     @Override
-    public Set<EditorElementReference<EditorElementMacro>> getReferences() {
-        return references;
+    public int parameters() {
+        if (parent == null) return 0;
+        return (int) parent.elementStream().filter(it -> it instanceof EditorElementMacroParameter).count();
     }
 }

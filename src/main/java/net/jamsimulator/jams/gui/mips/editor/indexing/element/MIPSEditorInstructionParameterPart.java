@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.editor.index.element;
+package net.jamsimulator.jams.gui.mips.editor.indexing.element;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
@@ -30,6 +30,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedEleme
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
 import net.jamsimulator.jams.mips.parameter.ParameterPartType;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.NumericUtils;
@@ -38,9 +39,11 @@ import net.jamsimulator.jams.utils.StringUtils;
 import java.util.Collection;
 import java.util.Set;
 
-public class MIPSEditorInstructionParameterPart extends EditorIndexedElementImpl implements EditorIndexStyleableElement {
+public class MIPSEditorInstructionParameterPart extends EditorIndexedElementImpl
+        implements EditorIndexStyleableElement, EditorReferencingElement<EditorElementLabel> {
 
     protected final Type type;
+    protected final Set<EditorElementReference<EditorElementLabel>> references;
 
     public MIPSEditorInstructionParameterPart(EditorIndex index, EditorIndexedParentElement parent,
                                               int start, String text, ParameterPartType partType) {
@@ -51,25 +54,36 @@ public class MIPSEditorInstructionParameterPart extends EditorIndexedElementImpl
         } else {
             type = Type.getByType(partType);
         }
+
+        if (type == Type.LABEL) {
+            references = Set.of(new EditorElementReference<>(EditorElementLabel.class, getIdentifier()));
+        } else {
+            references = Set.of();
+        }
     }
 
     @Override
     public Collection<String> getStyles() {
-        if(type == Type.LABEL) {
-            if(index.isIdentifierGlobal(getIdentifier())) {
+        if (type == Type.LABEL) {
+            if (index.isIdentifierGlobal(getIdentifier())) {
                 return Set.of(Type.GLOBAL_LABEL_STYLE);
             }
             var global = index.getGlobalIndex();
-            if(global.isPresent()) {
+            if (global.isPresent()) {
                 var reference = new EditorElementReference<>(EditorElementLabel.class, getIdentifier());
                 var value = global.get().searchReferencedElement(reference);
-                if(value.isPresent()) {
+                if (value.isPresent()) {
                     return Set.of(Type.GLOBAL_LABEL_STYLE);
                 }
             }
         }
 
         return Set.of(type.getCssClass());
+    }
+
+    @Override
+    public Set<EditorElementReference<EditorElementLabel>> getReferences() {
+        return references;
     }
 
     public enum Type {

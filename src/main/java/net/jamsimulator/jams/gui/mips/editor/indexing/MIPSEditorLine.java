@@ -22,15 +22,15 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.editor.index;
+package net.jamsimulator.jams.gui.mips.editor.indexing;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementComment;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroCall;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
-import net.jamsimulator.jams.gui.mips.editor.index.element.MIPSEditorDirective;
-import net.jamsimulator.jams.gui.mips.editor.index.element.MIPSEditorInstruction;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirective;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstruction;
 import net.jamsimulator.jams.utils.LabelUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -98,12 +98,6 @@ public class MIPSEditorLine extends EditorIndexedLine {
         if (trim.charAt(0) == '.') {
             directive = new MIPSEditorDirective(index, this, pStart, trim);
             elements.add(directive);
-
-//            if (directive.isEqv() && !directive.getEqvKey().isEmpty()) {
-//                replacement = new MIPSReplacement(this, directive.getEqvKey(), directive.getEqvValue());
-//            } else if (directive.isMacro()) {
-//                macro = new MIPSMacro(this, directive);
-//            }
         } else {
             int spaceIndex = trim.indexOf(" ");
             int commaIndex = trim.indexOf(",");

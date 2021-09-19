@@ -31,6 +31,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.InspectionLevel;
+import net.jamsimulator.jams.utils.Validate;
 import org.fxmisc.richtext.model.Paragraph;
 
 import java.util.*;
@@ -67,6 +68,7 @@ public class EditorHintBar extends Region {
     }
 
     public void addHint(int line, InspectionLevel level) {
+        Validate.notNull(level, "Level cannot be null!");
         queue.add(new QueuedHint(line, QueueAction.EDIT, level));
     }
 

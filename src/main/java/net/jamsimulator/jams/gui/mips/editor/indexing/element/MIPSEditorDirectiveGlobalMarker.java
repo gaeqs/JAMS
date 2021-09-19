@@ -22,39 +22,24 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.editor.index.element;
+package net.jamsimulator.jams.gui.mips.editor.indexing.element;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
-import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorGlobalMarkerElement;
 
-import java.util.Collection;
 import java.util.Set;
 
-public class MIPSEditorDirectiveParameter extends EditorIndexedElementImpl implements EditorIndexStyleableElement {
+public class MIPSEditorDirectiveGlobalMarker extends MIPSEditorDirectiveParameter implements EditorGlobalMarkerElement {
 
-    public static final Set<String> STYLE = Set.of("directive-parameter");
-    public static final Set<String> STRING_STYLE = Set.of("directive-parameter-string");
+    public static final Set<String> STYLE = Set.of("global-label");
 
-    protected boolean string;
-
-    public MIPSEditorDirectiveParameter(EditorIndex index, EditorIndexedParentElement parent,
-                                        int start, String text) {
+    public MIPSEditorDirectiveGlobalMarker(EditorIndex index, EditorIndexedParentElement parent, int start, String text) {
         super(index, parent, start, text);
-        string = text.startsWith("\"") && text.endsWith("\"");
     }
 
     @Override
-    public Collection<String> getStyles() {
-        return string ? STRING_STYLE : STYLE;
-    }
-
-    public DirectiveParameterType getType() {
-        if (this.parent instanceof MIPSEditorDirective directive && directive.getDirective().isPresent()) {
-            return directive.getDirective().get().getParameterTypeFor(indexInParent());
-        }
-        return DirectiveParameterType.getAllCandidates(text).stream().findAny().orElse(DirectiveParameterType.ANY);
+    public Set<String> getGlobalIdentifiers() {
+        return Set.of(text);
     }
 }

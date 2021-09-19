@@ -27,4 +27,10 @@ package net.jamsimulator.jams.gui.editor.code.indexing.element.reference;
 public record EditorElementReference<R extends EditorReferencedElement>(
         Class<R> referencedType, String identifier
 ) {
+
+    public boolean isChild(EditorElementReference<?> potentialChild) {
+        return referencedType.isAssignableFrom(potentialChild.referencedType)
+                && identifier.equals(potentialChild.identifier);
+    }
+
 }

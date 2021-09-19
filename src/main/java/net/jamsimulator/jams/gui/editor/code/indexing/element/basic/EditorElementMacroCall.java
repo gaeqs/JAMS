@@ -49,14 +49,23 @@ public class EditorElementMacroCall extends EditorIndexedParentElementImpl {
         var stringParameters = parts.entrySet().stream()
                 .sorted(Comparator.comparingInt(Map.Entry::getKey)).collect(Collectors.toList());
 
+        int parameterIndex = -1;
         for (var entry : stringParameters) {
+            parameterIndex++;
             var value = entry.getValue();
             int startOffset = 1;
-            if (value.equals(")") || value.equals("(") || value.equals("()")) continue;
-            if (value.endsWith(")")) value = value.substring(0, value.length() - 1);
-            if (value.startsWith("(")) {
-                value = value.substring(1);
-                startOffset++;
+
+            if (parameterIndex == 0) {
+                if (value.equals("(") || value.equals("()")) continue;
+                if (value.startsWith("(")) {
+                    value = value.substring(1);
+                    startOffset++;
+                }
+            }
+
+            if (parameterIndex == stringParameters.size() - 1) {
+                if (value.equals(")")) continue;
+                if (value.endsWith(")")) value = value.substring(0, value.length() - 1);
             }
 
             elements.add(new EditorElementMacroCallParameter(

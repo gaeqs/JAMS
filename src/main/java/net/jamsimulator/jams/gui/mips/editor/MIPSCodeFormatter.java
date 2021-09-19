@@ -26,7 +26,7 @@ package net.jamsimulator.jams.gui.mips.editor;
 
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
-import net.jamsimulator.jams.gui.mips.editor.index.MIPSEditorIndex;
+import net.jamsimulator.jams.gui.mips.editor.indexing.MIPSEditorIndex;
 
 public class MIPSCodeFormatter {
 

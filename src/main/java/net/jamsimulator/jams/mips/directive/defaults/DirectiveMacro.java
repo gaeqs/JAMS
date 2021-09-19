@@ -24,7 +24,7 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.gui.mips.editor.index.MIPSEditorIndex;
+import net.jamsimulator.jams.gui.mips.editor.indexing.MIPSEditorIndex;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.Macro;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
@@ -64,12 +64,19 @@ public class DirectiveMacro extends Directive {
         for (int i = 1; i < parameters.length; i++) {
             var value = parameters[i];
 
-            if (value.equals("(") || value.equals("()")) {
-                if (i == 1) continue;
-                panic(lineNumber, value, i);
-            } else if (value.equals(")")) {
-                if (i == parameters.length - 1) continue;
-                panic(lineNumber, value, i);
+            switch (value) {
+                case "(" -> {
+                    if (i == 1) continue;
+                    panic(lineNumber, value, i);
+                }
+                case "()" -> {
+                    if (i == 1 && parameters.length - 1 == 1) continue;
+                    panic(lineNumber, value, i);
+                }
+                case ")" -> {
+                    if (i == parameters.length - 1) continue;
+                    panic(lineNumber, value, i);
+                }
             }
 
             if (value.startsWith("(")) {

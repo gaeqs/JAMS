@@ -27,6 +27,7 @@ package net.jamsimulator.jams.gui.editor.code.indexing.element;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.metadata.Metadata;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
+import net.jamsimulator.jams.gui.mips.editor.indexing.MIPSEditorLine;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Collection;

@@ -32,7 +32,7 @@ import javafx.stage.Popup;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
-import net.jamsimulator.jams.gui.mips.editor.index.MIPSEditorIndex;
+import net.jamsimulator.jams.gui.mips.editor.indexing.MIPSEditorIndex;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.task.LanguageTask;
@@ -105,7 +105,7 @@ public class MIPSFileEditor extends CodeFileEditor {
 
     @Override
     protected EditorIndex generateIndex() {
-        var index = new MIPSEditorIndex(getProject());
+        var index = new MIPSEditorIndex(getProject(), tab.getFile().getName());
         tab.getWorkingPane().getProjectTab().getProject()
                 .getTaskExecutor().execute(new LanguageTask<>(Messages.EDITOR_INDEXING) {
                     @Override

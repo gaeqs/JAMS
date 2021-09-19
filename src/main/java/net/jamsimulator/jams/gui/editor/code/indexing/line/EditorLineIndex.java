@@ -53,13 +53,14 @@ import java.util.stream.Stream;
 public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends SimpleEventBroadcast implements EditorIndex {
 
     protected final Project project;
+    protected final String name;
     protected final Set<Inspector<?>> inspectors;
 
     protected volatile ProjectGlobalIndex globalIndex;
     protected volatile EditorHintBar hintBar;
 
     protected final List<Line> lines = new ArrayList<>();
-    protected final Map<EditorElementReference<?>, Set<EditorReferencingElement>> referencingElements = new HashMap<>();
+    protected final Map<EditorElementReference<?>, Set<EditorReferencingElement<?>>> referencingElements = new HashMap<>();
     protected final Map<EditorElementReference<?>, Set<EditorReferencedElement>> referencedElements = new HashMap<>();
     protected final Bag<String> globalIdentifiers = new Bag<>();
 
@@ -70,9 +71,15 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     protected final Condition initializationCondition = initializationLock.newCondition();
     protected volatile boolean initialized = false;
 
-    public EditorLineIndex(Project project, Set<? extends Inspector<?>> inspectors) {
+    public EditorLineIndex(Project project, String name, Set<? extends Inspector<?>> inspectors) {
         this.project = project;
+        this.name = name;
         this.inspectors = Set.copyOf(inspectors);
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -247,55 +254,72 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     public <T extends EditorReferencedElement>
     Optional<T> getReferencedElement(EditorElementReference<T> reference, boolean globalContext) {
         checkThread(false);
-        var set = referencedElements.get(reference);
-        if (set == null || set.isEmpty()) return Optional.empty();
         if (globalContext) {
-            return set.stream()
+            return referencedElements.entrySet().stream()
+                    .filter(it -> reference.isChild(it.getKey()))
+                    .flatMap(it -> it.getValue().stream())
                     .filter(it -> globalIdentifiers.contains(it.getIdentifier()))
                     .findAny()
                     .map(it -> (T) it);
-        } else {
-            return set.stream().findAny().map(it -> (T) it);
         }
+
+        return referencedElements.entrySet().stream()
+                .filter(it -> reference.isChild(it.getKey()) && !it.getValue().isEmpty())
+                .findAny()
+                .flatMap(it -> it.getValue().stream().findAny())
+                .map(it -> (T) it);
     }
 
     @Override
     public <T extends EditorReferencedElement>
     Set<T> getReferencedElements(EditorElementReference<T> reference, boolean globalContext) {
         checkThread(false);
-        var set = referencedElements.get(reference);
-        if (set == null || set.isEmpty()) return Collections.emptySet();
+
         if (globalContext) {
-            return set.stream()
+            return referencedElements.entrySet().stream()
+                    .filter(it -> reference.isChild(it.getKey()))
+                    .flatMap(it -> it.getValue().stream())
                     .filter(it -> globalIdentifiers.contains(it.getIdentifier()))
-                    .map(it -> (T) it).collect(Collectors.toSet());
-        } else {
-            return set.stream().map(it -> (T) it).collect(Collectors.toSet());
+                    .map(it -> (T) it)
+                    .collect(Collectors.toSet());
         }
+
+        return referencedElements.entrySet().stream()
+                .filter(it -> reference.isChild(it.getKey()))
+                .flatMap(it -> it.getValue().stream())
+                .map(it -> (T) it)
+                .collect(Collectors.toSet());
     }
 
     @Override
     public <T extends EditorReferencedElement>
     Set<T> getReferencedElementsOfType(Class<T> type, boolean globalContext) {
+        checkThread(false);
         if (globalContext) {
-            return referencedElements.values().stream()
-                    .flatMap(Collection::stream)
-                    .filter(it -> type.isInstance(it) && globalIdentifiers.contains(it.getIdentifier()))
-                    .map(it -> (T) it).collect(Collectors.toSet());
+            return referencedElements.entrySet().stream()
+                    .filter(it -> type.isAssignableFrom(it.getKey().referencedType()))
+                    .flatMap(it -> it.getValue().stream())
+                    .filter(it -> globalIdentifiers.contains(it.getIdentifier()))
+                    .map(it -> (T) it)
+                    .collect(Collectors.toSet());
         }
-        return referencedElements.values().stream()
-                .flatMap(Collection::stream)
-                .filter(type::isInstance)
-                .map(it -> (T) it).collect(Collectors.toSet());
+
+        return referencedElements.entrySet().stream()
+                .filter(it -> type.isAssignableFrom(it.getKey().referencedType()))
+                .flatMap(it -> it.getValue().stream())
+                .map(it -> (T) it)
+                .collect(Collectors.toSet());
     }
 
     @Override
     public <T extends EditorReferencedElement>
-    Set<EditorReferencingElement> getReferecingElements(EditorElementReference<T> reference) {
+    Set<EditorReferencingElement<?>> getReferecingElements(EditorElementReference<T> reference) {
         checkThread(false);
-        var set = referencingElements.get(reference);
-        if (set == null) return Collections.emptySet();
-        return Set.copyOf(set);
+
+        return referencingElements.entrySet().stream()
+                .filter(it -> it.getKey().isChild(reference))
+                .flatMap(it -> it.getValue().stream())
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -332,17 +356,16 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         checkThread(true);
         var updatedLines = new HashSet<EditorIndexedLine>();
         references.forEach(reference -> {
-            var referencing = referencingElements.get(reference);
-            var referenced = referencedElements.get(reference);
-            if (referencing != null) {
+            var referencing = getReferecingElements(reference);
+            var referenced = getReferencedElements(reference, false);
+            if (!referencing.isEmpty()) {
                 referencing.forEach(element -> element.inspect(inspectors));
-
                 updatedLines.addAll(referencing.stream()
                         .map(it -> it.getParentOfType(EditorIndexedLine.class).orElse(null))
                         .filter(Objects::nonNull)
                         .collect(Collectors.toSet()));
             }
-            if (referenced != null) {
+            if (!referenced.isEmpty()) {
                 referenced.forEach(element -> element.inspect(inspectors));
 
                 updatedLines.addAll(referenced.stream()
@@ -394,7 +417,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         lines.listIterator(number + 1).forEachRemaining(it -> it.move(difference));
         removeReferences(old);
         addReferences(line);
-        line.inspect(inspectors);
+        line.elementStream().forEach(element -> element.inspect(inspectors));
         line.recalculateInspectionLevel();
         checkInspectionsInReferences(old, line);
     }
@@ -417,14 +440,14 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
                 it.movePositionAndNumber(1, line.getLength() + 1));
         getHintBar().ifPresent(it -> it.addLine(number));
         addReferences(line);
-        line.inspect(inspectors);
+        line.elementStream().forEach(element -> element.inspect(inspectors));
         line.recalculateInspectionLevel();
         checkInspectionsInReferences(line);
     }
 
     protected void removeReferences(Line line) {
         line.elementStream().forEach(element -> {
-            if (element instanceof EditorReferencingElement referencing) {
+            if (element instanceof EditorReferencingElement<?> referencing) {
                 referencing.getReferences().forEach(reference -> {
                     var set = referencingElements.get(reference);
                     if (set != null) {
@@ -453,11 +476,22 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     protected void addReferences(Line line) {
         line.elementStream().forEach(element -> {
-            if (element instanceof EditorReferencingElement referencing) {
-                referencing.getReferences().forEach(reference ->
-                        referencingElements.computeIfAbsent(reference, it -> new HashSet<>()).add(referencing));
+            if (element instanceof EditorReferencingElement<?> referencing) {
+                var references = referencing.getReferences();
+                if (references == null) {
+                    System.err.println("Element " + referencing + " (" + referencing.getClass()
+                            + ") has a null reference set!");
+                    return;
+                }
+                references.forEach(reference -> referencingElements.computeIfAbsent(reference, it -> new HashSet<>())
+                        .add(referencing));
             }
             if (element instanceof EditorReferencedElement referenced) {
+                var reference = referenced.getReference();
+                if (reference == null) {
+                    System.err.println("Element " + referenced + " (" + referenced.getClass() + ") has a null reference!");
+                    return;
+                }
                 referencedElements.computeIfAbsent(referenced.getReference(), it -> new HashSet<>()).add(referenced);
             }
             if (element instanceof EditorGlobalMarkerElement marker) {

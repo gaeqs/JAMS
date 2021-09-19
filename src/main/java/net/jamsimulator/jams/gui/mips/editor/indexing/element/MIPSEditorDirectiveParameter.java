@@ -22,38 +22,39 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
+package net.jamsimulator.jams.gui.mips.editor.indexing.element;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
+import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 
 import java.util.Collection;
 import java.util.Set;
 
-public class EditorElementMacroCallMnemonic extends EditorIndexedElementImpl
-        implements EditorIndexStyleableElement, EditorReferencingElement<EditorElementMacro> {
+public class MIPSEditorDirectiveParameter extends EditorIndexedElementImpl implements EditorIndexStyleableElement {
 
-    public static final Set<String> STYLE = Set.of("macro-call");
+    public static final Set<String> STYLE = Set.of("directive-parameter");
+    public static final Set<String> STRING_STYLE = Set.of("directive-parameter-string");
 
-    private final Set<EditorElementReference<EditorElementMacro>> references;
+    protected boolean string;
 
-    public EditorElementMacroCallMnemonic(EditorIndex index, EditorIndexedParentElement parent,
-                                          int start, String text) {
+    public MIPSEditorDirectiveParameter(EditorIndex index, EditorIndexedParentElement parent,
+                                        int start, String text) {
         super(index, parent, start, text);
-        references = Set.of(new EditorElementReference<>(EditorElementMacro.class, getIdentifier()));
+        string = text.startsWith("\"") && text.endsWith("\"");
     }
 
     @Override
     public Collection<String> getStyles() {
-        return STYLE;
+        return string ? STRING_STYLE : STYLE;
     }
 
-    @Override
-    public Set<EditorElementReference<EditorElementMacro>> getReferences() {
-        return references;
+    public DirectiveParameterType getType() {
+        if (this.parent instanceof MIPSEditorDirective directive && directive.getDirective().isPresent()) {
+            return directive.getDirective().get().getParameterTypeFor(indexInParent());
+        }
+        return DirectiveParameterType.getAllCandidates(text).stream().findAny().orElse(DirectiveParameterType.ANY);
     }
 }

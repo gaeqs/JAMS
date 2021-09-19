@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.editor.index.element;
+package net.jamsimulator.jams.gui.mips.editor.indexing.element;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
@@ -92,7 +92,11 @@ public class MIPSEditorDirective extends EditorIndexedParentElementImpl {
     protected void parseParameters(List<Map.Entry<Integer, String>> parameters) {
         int i = 0;
         for (var entry : parameters) {
-            elements.add(parseParameter(i++, start + entry.getKey(), entry.getValue()));
+            var parameter = parseParameter(i++, start + entry.getKey(),
+                    parameters.size(), entry.getValue());
+            if (parameter != null) {
+                elements.add(parameter);
+            }
         }
     }
 
@@ -100,15 +104,29 @@ public class MIPSEditorDirective extends EditorIndexedParentElementImpl {
         return new MIPSEditorDirectiveMnemonic(index, this, start, mnemonic);
     }
 
-    protected MIPSEditorDirectiveParameter parseParameter(int index, int start, String parameter) {
+    protected MIPSEditorDirectiveParameter parseParameter(int index, int start, int size, String parameter) {
         if (directive instanceof DirectiveMacro) {
             if (index == 0) {
                 return new MIPSEditorDirectiveMacroName(this.index, this, start, parameter);
             } else {
-                return new MIPSEditorDirectiveParameter(this.index, this, start, parameter);
+                if (index == 1) {
+                    if (parameter.equals("(") || parameter.equals("()")) return null;
+                    if (parameter.startsWith("(")) {
+                        parameter = parameter.substring(1);
+                        start++;
+                    }
+                }
+                if (index == size - 1) {
+                    if (parameter.equals(")")) return null;
+                    if (parameter.endsWith(")")) {
+                        parameter = parameter.substring(0, parameter.length() - 1);
+                    }
+                }
+
+                return new MIPSEditorDirectiveMacroParameter(this.index, this, start, parameter);
             }
         }
-        if(directive instanceof DirectiveGlobl) {
+        if (directive instanceof DirectiveGlobl) {
             return new MIPSEditorDirectiveGlobalMarker(this.index, this, start, parameter);
         }
         return new MIPSEditorDirectiveParameter(this.index, this, start, parameter);

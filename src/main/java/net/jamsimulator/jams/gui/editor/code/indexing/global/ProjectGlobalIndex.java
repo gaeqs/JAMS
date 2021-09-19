@@ -116,8 +116,8 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
     }
 
     public synchronized <R extends EditorReferencedElement>
-    Set<EditorReferencingElement> searchReferencingElements(EditorElementReference<R> reference) {
-        var set = new HashSet<EditorReferencingElement>();
+    Set<EditorReferencingElement<?>> searchReferencingElements(EditorElementReference<R> reference) {
+        var set = new HashSet<EditorReferencingElement<?>>();
         indices.values().forEach(index ->
                 index.withLock(false, i -> set.addAll(i.getReferecingElements(reference))));
         return set;
@@ -273,7 +273,7 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
                     index.withLock(true, i -> {
                         try {
                             i.indexAll(Files.readString(file.toPath()));
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             System.err.println("Errror while indexing file " + file + "!");
                             e.printStackTrace();
                         }
