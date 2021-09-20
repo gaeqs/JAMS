@@ -27,6 +27,7 @@ package net.jamsimulator.jams.gui.mips.editor.indexing;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementComment;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabelImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroCall;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
 import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirective;
@@ -85,7 +86,7 @@ public class MIPSEditorLine extends EditorIndexedLine {
         //LABEL
         int labelIndex = LabelUtils.getLabelFinishIndex(parsing);
         if (labelIndex != -1) {
-            label = new EditorElementLabel(index, this, pStart, parsing.substring(0, labelIndex + 1));
+            label = new EditorElementLabelImpl(index, this, pStart, parsing.substring(0, labelIndex + 1));
             elements.add(label);
             pStart = pStart + labelIndex + 1;
             parsing = parsing.substring(labelIndex + 1);

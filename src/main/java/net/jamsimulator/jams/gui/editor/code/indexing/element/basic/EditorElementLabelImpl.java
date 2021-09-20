@@ -22,12 +22,35 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.indexing.element;
+package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
+
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 
 import java.util.Collection;
+import java.util.Set;
 
-public interface EditorIndexStyleableElement extends EditorIndexedElement {
+public class EditorElementLabelImpl extends EditorIndexedElementImpl implements EditorElementLabel {
 
-    Collection<String> getStyles();
+    public static final Set<String> STYLE = Set.of("label");
+    public static final Set<String> GLOBAL_STYLE = Set.of("global-label");
 
+    private final String identifier;
+
+    public EditorElementLabelImpl(EditorIndex index, EditorIndexedParentElement parent,
+                                  int start, String text) {
+        super(index, parent, start, text);
+        identifier = text.substring(0, text.length() - 1).trim();
+    }
+
+    @Override
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    @Override
+    public Collection<String> getStyles() {
+        return index.isIdentifierGlobal(identifier) ? GLOBAL_STYLE : STYLE;
+    }
 }
