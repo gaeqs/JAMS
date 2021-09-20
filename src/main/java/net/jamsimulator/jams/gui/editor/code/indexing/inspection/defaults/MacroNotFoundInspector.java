@@ -67,6 +67,6 @@ public class MacroNotFoundInspector extends Inspector<EditorElementMacroCallMnem
         var replacements = Map.of("{MACRO}", identifier);
 
         return new Inspection(this, InspectionLevel.ERROR,
-                Messages.EDITOR_MIPS_ERROR_MACRO_NOT_FOUND, replacements);
+                Messages.EDITOR_ERROR_MACRO_NOT_FOUND, replacements);
     }
 }

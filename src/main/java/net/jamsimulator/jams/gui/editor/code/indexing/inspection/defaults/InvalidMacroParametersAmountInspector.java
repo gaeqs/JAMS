@@ -86,6 +86,6 @@ public class InvalidMacroParametersAmountInspector extends Inspector<EditorEleme
         );
 
         return new Inspection(this, InspectionLevel.ERROR,
-                Messages.EDITOR_MIPS_ERROR_INVALID_MACRO_PARAMETERS_AMOUNT, replacements);
+                Messages.EDITOR_ERROR_INVALID_MACRO_PARAMETERS_AMOUNT, replacements);
     }
 }

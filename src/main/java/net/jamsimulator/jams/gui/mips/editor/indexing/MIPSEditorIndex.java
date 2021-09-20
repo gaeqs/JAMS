@@ -27,6 +27,7 @@ package net.jamsimulator.jams.gui.mips.editor.indexing;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.defaults.*;
 import net.jamsimulator.jams.gui.editor.code.indexing.line.EditorLineIndex;
 import net.jamsimulator.jams.gui.mips.editor.indexing.inspection.MIPSIllegalLabelInspector;
+import net.jamsimulator.jams.gui.mips.editor.indexing.inspection.MIPSInstructionNotFoundInspection;
 import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.project.Project;
 
@@ -41,7 +42,8 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
                 new MacroNotFoundInspector(ResourceProvider.JAMS),
                 new InvalidMacroParametersAmountInspector(ResourceProvider.JAMS),
                 new IllegalMacroParameterInspector(ResourceProvider.JAMS),
-                new MIPSIllegalLabelInspector(ResourceProvider.JAMS)
+                new MIPSIllegalLabelInspector(ResourceProvider.JAMS),
+                new MIPSInstructionNotFoundInspection(ResourceProvider.JAMS)
         ));
     }
 

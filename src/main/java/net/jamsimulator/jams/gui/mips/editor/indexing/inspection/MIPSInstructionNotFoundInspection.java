@@ -22,12 +22,13 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.indexing.inspection.defaults;
+package net.jamsimulator.jams.gui.mips.editor.indexing.inspection;
 
-import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroParameter;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspection;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.InspectionLevel;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstruction;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstructionMnemonic;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
 
@@ -35,22 +36,25 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-public class IllegalMacroParameterInspector extends Inspector<EditorElementMacroParameter> {
+public class MIPSInstructionNotFoundInspection extends Inspector<MIPSEditorInstructionMnemonic> {
 
-    public static final String NAME = "illegal_macro_parameter";
+    public static final String NAME = "instruction_not_found";
 
-    public IllegalMacroParameterInspector(ResourceProvider provider) {
-        super(provider, NAME, EditorElementMacroParameter.class);
+    public MIPSInstructionNotFoundInspection(ResourceProvider provider) {
+        super(provider, NAME, MIPSEditorInstructionMnemonic.class);
     }
 
     @Override
-    public Set<Inspection> inspectImpl(EditorElementMacroParameter element) {
-        return element.getIdentifier().startsWith("%") ? Collections.emptySet() : Set.of(illegalMacroParameter());
+    public Set<Inspection> inspectImpl(MIPSEditorInstructionMnemonic element) {
+        var instruction = element.getParent().orElse(null) instanceof MIPSEditorInstruction i ? i : null;
+        if (instruction == null) return Collections.emptySet();
+        return instruction.getInstruction().isEmpty() ? Set.of(instructionNotFound(element)) : Collections.emptySet();
     }
 
 
-    private Inspection illegalMacroParameter() {
+    private Inspection instructionNotFound(MIPSEditorInstructionMnemonic instruction) {
+        var replacements = Map.of("{INSTRUCTION}", instruction.getIdentifier());
         return new Inspection(this, InspectionLevel.ERROR,
-                Messages.EDITOR_ERROR_ILLEGAL_MACRO_PARAMETER, Map.of());
+                Messages.EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND, replacements);
     }
 }

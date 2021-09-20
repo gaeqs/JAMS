@@ -91,7 +91,7 @@ public class DuplicatedLabelInspector extends Inspector<EditorElementLabel> {
         );
 
         return new Inspection(this, InspectionLevel.ERROR,
-                Messages.EDITOR_MIPS_ERROR_DUPLICATE_LABEL, replacements);
+                Messages.EDITOR_ERROR_DUPLICATE_LABEL, replacements);
     }
 
     private Inspection duplicateGlobalLabel(EditorElementLabel label, EditorElementLabel other) {
@@ -103,6 +103,6 @@ public class DuplicatedLabelInspector extends Inspector<EditorElementLabel> {
         );
 
         return new Inspection(this, InspectionLevel.ERROR,
-                Messages.EDITOR_MIPS_ERROR_DUPLICATE_GLOBAL_LABEL, replacements);
+                Messages.EDITOR_ERROR_DUPLICATE_GLOBAL_LABEL, replacements);
     }
 }

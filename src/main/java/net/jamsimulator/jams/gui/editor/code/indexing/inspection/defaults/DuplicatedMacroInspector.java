@@ -30,7 +30,6 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorEl
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspection;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.InspectionLevel;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
-import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirectiveMacroName;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
 
@@ -93,7 +92,7 @@ public class DuplicatedMacroInspector extends Inspector<EditorElementMacro> {
         );
 
         return new Inspection(this, InspectionLevel.ERROR,
-                Messages.EDITOR_MIPS_ERROR_DUPLICATE_MACRO, replacements);
+                Messages.EDITOR_ERROR_DUPLICATE_MACRO, replacements);
     }
 
     private Inspection duplicateGlobalMacro(EditorElementMacro macro, EditorElementMacro other) {
@@ -105,6 +104,6 @@ public class DuplicatedMacroInspector extends Inspector<EditorElementMacro> {
         );
 
         return new Inspection(this, InspectionLevel.ERROR,
-                Messages.EDITOR_MIPS_ERROR_DUPLICATE_GLOBAL_MACRO, replacements);
+                Messages.EDITOR_ERROR_DUPLICATE_GLOBAL_MACRO, replacements);
     }
 }
