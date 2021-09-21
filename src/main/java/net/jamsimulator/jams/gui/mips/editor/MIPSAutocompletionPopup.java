@@ -154,10 +154,9 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
                 .getEnum(MIPSSpaces.class, "editor.mips.space_after_directive")
                 .orElse(MIPSSpaces.SPACE).getValue();
 
-        String directive = start.substring(1);
-        addElements(project.getData().getDirectiveSet().getDirectives().stream().filter(target -> target.getName().startsWith(directive)),
+        addElements(project.getData().getDirectiveSet().getDirectives().stream().filter(target -> target.getName().startsWith(start)),
                 Directive::getName, d -> "." + d.getName() + (d.hasParameters() ? space : ""), 0, ICON_DIRECTIVE);
-        return directive;
+        return start;
     }
 
     protected String refreshInstructionsMacrosAndDirectives(String start) {

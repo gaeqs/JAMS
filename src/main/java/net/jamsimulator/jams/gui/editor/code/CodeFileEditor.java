@@ -34,12 +34,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Popup;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.Action;
+import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.editor.FileEditor;
@@ -288,7 +288,9 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
 
     @Override
     public boolean supportsActionRegion(String region) {
-        return false;
+        return RegionTags.TEXT_EDITOR.equals(region) ||
+                RegionTags.EDITOR.equals(region) ||
+                RegionTags.EDITOR_TAB.equals(region);
     }
 
     @Override
