@@ -56,7 +56,6 @@ public class DuplicatedLabelInspector extends Inspector<EditorElementLabel> {
         // Do we have more than one label? Then there's a duplicated label.
         if (elements.size() > 1) {
             var other = elements.stream().filter(it -> it != element).findAny().orElse(null);
-
             // Return the inspection.
             return Set.of(duplicateLabel(element, other));
         }

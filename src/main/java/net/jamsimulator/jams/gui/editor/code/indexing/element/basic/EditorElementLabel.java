@@ -26,8 +26,14 @@ package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 
 public interface EditorElementLabel
         extends EditorIndexedElement, EditorIndexStyleableElement, EditorReferencedElement {
+
+    @Override
+    default EditorElementReference<?> getReference() {
+        return new EditorElementReference<>(EditorElementLabel.class, getIdentifier());
+    }
 }

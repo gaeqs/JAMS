@@ -30,6 +30,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParen
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveEqv;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveGlobl;
+import net.jamsimulator.jams.mips.directive.defaults.DirectiveLab;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveMacro;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.StringUtils;
@@ -125,6 +126,9 @@ public class MIPSEditorDirective extends EditorIndexedParentElementImpl {
 
                 return new MIPSEditorDirectiveMacroParameter(this.index, this, start, parameter);
             }
+        }
+        if (directive instanceof DirectiveLab) {
+            return new MIPSEditorDirectiveLabParameter(this.index, this, start, parameter);
         }
         if (directive instanceof DirectiveGlobl) {
             return new MIPSEditorDirectiveGlobalMarker(this.index, this, start, parameter);
