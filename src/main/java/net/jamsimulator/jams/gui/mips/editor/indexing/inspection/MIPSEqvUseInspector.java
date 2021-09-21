@@ -27,34 +27,33 @@ package net.jamsimulator.jams.gui.mips.editor.indexing.inspection;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspection;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.InspectionLevel;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
-import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstruction;
-import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstructionMnemonic;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirective;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirectiveMnemonic;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.mips.directive.defaults.DirectiveEqv;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-public class MIPSInstructionNotFoundInspection extends Inspector<MIPSEditorInstructionMnemonic> {
+public class MIPSEqvUseInspector extends Inspector<MIPSEditorDirectiveMnemonic> {
 
-    public static final String NAME = "instruction_not_found";
+    public static final String NAME = "eqv_use";
 
-    public MIPSInstructionNotFoundInspection(ResourceProvider provider) {
-        super(provider, NAME, MIPSEditorInstructionMnemonic.class);
+    public MIPSEqvUseInspector(ResourceProvider provider) {
+        super(provider, NAME, MIPSEditorDirectiveMnemonic.class);
     }
 
     @Override
-    public Set<Inspection> inspectImpl(MIPSEditorInstructionMnemonic element) {
-        var instruction = element.getParent().orElse(null) instanceof MIPSEditorInstruction i ? i : null;
-        if (instruction == null) return Collections.emptySet();
-        return instruction.getInstruction().isEmpty() ? Set.of(instructionNotFound(element)) : Collections.emptySet();
+    public Set<Inspection> inspectImpl(MIPSEditorDirectiveMnemonic element) {
+        var directive = element.getParentOfType(MIPSEditorDirective.class)
+                .flatMap(MIPSEditorDirective::getDirective).orElse(null);
+        return directive instanceof DirectiveEqv ? Set.of(eqvUse()) : Collections.emptySet();
     }
 
 
-    private Inspection instructionNotFound(MIPSEditorInstructionMnemonic instruction) {
-        var replacements = Map.of("{INSTRUCTION}", instruction.getIdentifier());
-        return new Inspection(this, InspectionLevel.ERROR,
-                Messages.EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND, replacements);
+    private Inspection eqvUse() {
+        return new Inspection(this, InspectionLevel.WARNING, Messages.EDITOR_MIPS_WARNING_EQV_USE, Map.of());
     }
 }

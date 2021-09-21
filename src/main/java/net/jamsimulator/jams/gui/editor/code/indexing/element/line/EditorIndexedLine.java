@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing.element.line;
 
-import javafx.application.Platform;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
@@ -35,12 +34,18 @@ import net.jamsimulator.jams.gui.util.EasyStyleSpansBuilder;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.function.BiConsumer;
 
 public class EditorIndexedLine extends EditorIndexedParentElementImpl {
 
+    protected final Map<String, String> replacements = new HashMap<>();
+
     protected int number;
     protected InspectionLevel inspectionLevel = InspectionLevel.NONE;
+
 
     public EditorIndexedLine(EditorIndex index, int start, int number, String text) {
         super(index, null, start, text);
@@ -54,6 +59,14 @@ public class EditorIndexedLine extends EditorIndexedParentElementImpl {
 
     public InspectionLevel getInspectionLevel() {
         return inspectionLevel;
+    }
+
+    public Map<String, String> getReplacements() {
+        return Map.copyOf(replacements);
+    }
+
+    public void forEachReplacement(BiConsumer<String, String> consumer) {
+        replacements.forEach(consumer);
     }
 
     public void moveNumber(int offset) {
@@ -71,7 +84,7 @@ public class EditorIndexedLine extends EditorIndexedParentElementImpl {
                 .max(Comparator.comparingInt(o -> o.level().ordinal()))
                 .map(Inspection::level)
                 .orElse(InspectionLevel.NONE);
-       index.getHintBar().ifPresent(bar -> bar.addHint(number, inspectionLevel));
+        index.getHintBar().ifPresent(bar -> bar.addHint(number, inspectionLevel));
     }
 
     public void addStyles(EasyStyleSpansBuilder builder, int offset) {
