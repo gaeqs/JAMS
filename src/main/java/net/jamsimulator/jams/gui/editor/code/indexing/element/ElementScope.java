@@ -22,30 +22,32 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.directive.defaults;
+package net.jamsimulator.jams.gui.editor.code.indexing.element;
 
-import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
-import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
-import net.jamsimulator.jams.mips.directive.Directive;
-import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
+public record ElementScope(Type type, String macroIdentifier) {
 
-public class DirectiveErr extends Directive {
+    public static final ElementScope GLOBAL = new ElementScope(Type.GLOBAL);
+    public static final ElementScope FILE = new ElementScope(Type.FILE);
+    public static final ElementScope INTERNAL = new ElementScope(Type.INTERNAL);
 
-    public static final String NAME = "err";
-    private static final DirectiveParameterType[] PARAMETERS = {};
-
-    public DirectiveErr() {
-        super(NAME, PARAMETERS, false, false);
+    private ElementScope(Type type) {
+        this(type, null);
     }
 
-    @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
-        throw new AssemblerException("Error directive found at line " + lineNumber);
+    public boolean canBeReachedFrom(ElementScope scope) {
+        if (scope.type.ordinal() > type.ordinal()) return true;
+        if (scope.type.ordinal() == type.ordinal()) {
+            if (type != Type.MACRO) return true;
+            return scope.macroIdentifier.equals(macroIdentifier);
+        }
+        return false;
     }
 
-    @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-        throw new AssemblerException("Error directive found at line " + lineNumber);
+    public enum Type {
+        GLOBAL,
+        FILE,
+        MACRO,
+        INTERNAL
     }
 
 }

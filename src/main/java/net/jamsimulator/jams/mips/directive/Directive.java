@@ -171,8 +171,6 @@ public abstract class Directive {
      */
     public abstract void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix);
 
-    public abstract boolean isParameterValidInContext(int index, String value, int amount, MIPSEditorIndex context);
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

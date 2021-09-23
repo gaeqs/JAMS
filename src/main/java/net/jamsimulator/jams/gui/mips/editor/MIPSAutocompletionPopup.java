@@ -191,7 +191,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
         // And macros!
 
         var macros =
-                index.getReferencedElementsOfType(MIPSEditorDirectiveMacroName.class, false);
+                index.getReferencedElementsOfType(MIPSEditorDirectiveMacroName.class, element.getScope());
         index.getGlobalIndex().ifPresent(files ->
                 macros.addAll(files.searchReferencedElementsOfType(MIPSEditorDirectiveMacroName.class)));
 
@@ -227,7 +227,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
                 case LABEL -> {
                     if (hasLabels) break;
                     var labels =
-                            index.getReferencedElementsOfType(EditorElementLabel.class, false);
+                            index.getReferencedElementsOfType(EditorElementLabel.class, element.getScope());
                     index.getGlobalIndex().ifPresent(files ->
                             labels.addAll(files.searchReferencedElementsOfType(EditorElementLabel.class)));
                     addElements(labels.stream().filter(target ->
@@ -276,7 +276,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
         switch (parameter.getType()) {
             case LABEL, INT_OR_LABEL -> {
                 var labels =
-                        index.getReferencedElementsOfType(EditorElementLabel.class, false);
+                        index.getReferencedElementsOfType(EditorElementLabel.class, element.getScope());
                 index.getGlobalIndex().ifPresent(files ->
                         labels.addAll(files.searchReferencedElementsOfType(EditorElementLabel.class)));
                 addElements(labels.stream().filter(target -> target.getIdentifier().toLowerCase().startsWith(parameterStart)),

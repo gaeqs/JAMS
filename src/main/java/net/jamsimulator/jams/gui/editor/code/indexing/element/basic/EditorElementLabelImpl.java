@@ -27,6 +27,7 @@ package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 
 import java.util.Collection;
 import java.util.Set;
@@ -38,9 +39,9 @@ public class EditorElementLabelImpl extends EditorIndexedElementImpl implements 
 
     private final String identifier;
 
-    public EditorElementLabelImpl(EditorIndex index, EditorIndexedParentElement parent,
+    public EditorElementLabelImpl(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                   int start, String text) {
-        super(index, parent, start, text);
+        super(index, scope, parent, start, text);
         identifier = text.substring(0, text.length() - 1).trim();
     }
 

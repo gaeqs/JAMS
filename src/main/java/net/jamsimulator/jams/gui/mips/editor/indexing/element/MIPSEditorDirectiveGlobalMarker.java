@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.mips.editor.indexing.element;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorGlobalMarkerElement;
 
 import java.util.Set;
@@ -34,8 +35,8 @@ public class MIPSEditorDirectiveGlobalMarker extends MIPSEditorDirectiveParamete
 
     public static final Set<String> STYLE = Set.of("global-label");
 
-    public MIPSEditorDirectiveGlobalMarker(EditorIndex index, EditorIndexedParentElement parent, int start, String text) {
-        super(index, parent, start, text);
+    public MIPSEditorDirectiveGlobalMarker(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent, int start, String text) {
+        super(index, scope, parent, start, text);
     }
 
     @Override

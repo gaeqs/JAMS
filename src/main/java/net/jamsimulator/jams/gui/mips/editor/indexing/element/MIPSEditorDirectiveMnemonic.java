@@ -28,6 +28,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 
 import java.util.Collection;
 import java.util.Set;
@@ -36,9 +37,9 @@ public class MIPSEditorDirectiveMnemonic extends EditorIndexedElementImpl implem
 
     public static final Set<String> STYLE = Set.of("directive");
 
-    public MIPSEditorDirectiveMnemonic(EditorIndex index, EditorIndexedParentElement parent,
+    public MIPSEditorDirectiveMnemonic(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                        int start, String text) {
-        super(index, parent, start, text);
+        super(index, scope, parent, start, text);
     }
 
     @Override

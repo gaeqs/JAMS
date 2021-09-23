@@ -26,8 +26,8 @@ package net.jamsimulator.jams.gui.mips.editor.indexing.element;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroParameter;
 
 import java.util.Collection;
 import java.util.Set;
@@ -37,8 +37,8 @@ public class MIPSEditorDirectiveLabParameter extends MIPSEditorDirectiveParamete
 
     public static final Set<String> STYLE = Set.of("label");
 
-    public MIPSEditorDirectiveLabParameter(EditorIndex index, EditorIndexedParentElement parent, int start, String text) {
-        super(index, parent, start, text);
+    public MIPSEditorDirectiveLabParameter(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent, int start, String text) {
+        super(index, scope, parent, start, text);
     }
 
     @Override

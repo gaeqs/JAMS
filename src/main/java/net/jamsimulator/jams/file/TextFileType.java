@@ -27,6 +27,7 @@ package net.jamsimulator.jams.file;
 import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
 import net.jamsimulator.jams.gui.editor.code.indexing.line.EditorLineIndex;
@@ -62,8 +63,8 @@ public class TextFileType extends FileType {
                 var index = new EditorLineIndex<>(tab.getWorkingPane().getProjectTab().getProject(),
                         tab.getFile().getName(), inspections) {
                     @Override
-                    protected EditorIndexedLine generateNewLine(int start, int number, String text) {
-                        return new EditorIndexedLine(this, start, number, text);
+                    protected EditorIndexedLine generateNewLine(int start, int number, String text, ElementScope scope) {
+                        return new EditorIndexedLine(this, scope, start, number, text);
                     }
                 };
 

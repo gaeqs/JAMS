@@ -24,9 +24,6 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
-import net.jamsimulator.jams.gui.mips.editor.indexing.MIPSEditorIndex;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
@@ -65,10 +62,4 @@ public class DirectiveGlobl extends Directive {
 
     }
 
-    @Override
-    public boolean isParameterValidInContext(int index, String value, int amount, MIPSEditorIndex context) {
-        if (!isParameterValid(index, value)) return false;
-        var reference = new EditorElementReference<>(EditorElementLabel.class, value);
-        return context.getReferencedElement(reference, false).isPresent();
-    }
 }

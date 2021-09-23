@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.mips.editor.indexing;
 
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.defaults.*;
 import net.jamsimulator.jams.gui.editor.code.indexing.line.EditorLineIndex;
 import net.jamsimulator.jams.gui.mips.editor.indexing.inspection.*;
@@ -52,7 +53,7 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
     }
 
     @Override
-    protected MIPSEditorLine generateNewLine(int start, int number, String text) {
-        return new MIPSEditorLine(this, start, number, text);
+    protected MIPSEditorLine generateNewLine(int start, int number, String text, ElementScope scope) {
+        return new MIPSEditorLine(this, scope, start, number, text);
     }
 }

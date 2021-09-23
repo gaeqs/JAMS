@@ -27,6 +27,7 @@ package net.jamsimulator.jams.gui.mips.editor.indexing.element;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElementImpl;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveEqv;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveGlobl;
@@ -45,9 +46,9 @@ public class MIPSEditorDirective extends EditorIndexedParentElementImpl {
 
     private Directive directive;
 
-    public MIPSEditorDirective(EditorIndex index, EditorIndexedParentElement parent,
+    public MIPSEditorDirective(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                int start, String text) {
-        super(index, parent, start, text);
+        super(index, scope, parent, start, text);
         parseText();
     }
 
@@ -102,13 +103,13 @@ public class MIPSEditorDirective extends EditorIndexedParentElementImpl {
     }
 
     protected MIPSEditorDirectiveMnemonic parseMnemonic(int start, String mnemonic) {
-        return new MIPSEditorDirectiveMnemonic(index, this, start, mnemonic);
+        return new MIPSEditorDirectiveMnemonic(index, scope, this, start, mnemonic);
     }
 
     protected MIPSEditorDirectiveParameter parseParameter(int index, int start, int size, String parameter) {
         if (directive instanceof DirectiveMacro) {
             if (index == 0) {
-                return new MIPSEditorDirectiveMacroName(this.index, this, start, parameter);
+                return new MIPSEditorDirectiveMacroName(this.index, scope, this, start, parameter);
             } else {
                 if (index == 1) {
                     if (parameter.equals("(") || parameter.equals("()")) return null;
@@ -124,15 +125,15 @@ public class MIPSEditorDirective extends EditorIndexedParentElementImpl {
                     }
                 }
 
-                return new MIPSEditorDirectiveMacroParameter(this.index, this, start, parameter);
+                return new MIPSEditorDirectiveMacroParameter(this.index, scope, this, start, parameter);
             }
         }
         if (directive instanceof DirectiveLab) {
-            return new MIPSEditorDirectiveLabParameter(this.index, this, start, parameter);
+            return new MIPSEditorDirectiveLabParameter(this.index, scope, this, start, parameter);
         }
         if (directive instanceof DirectiveGlobl) {
-            return new MIPSEditorDirectiveGlobalMarker(this.index, this, start, parameter);
+            return new MIPSEditorDirectiveGlobalMarker(this.index, scope, this, start, parameter);
         }
-        return new MIPSEditorDirectiveParameter(this.index, this, start, parameter);
+        return new MIPSEditorDirectiveParameter(this.index, scope, this, start, parameter);
     }
 }

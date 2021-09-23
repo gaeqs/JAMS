@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.gui.mips.editor.indexing.MIPSEditorIndex;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.Macro;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
@@ -105,25 +104,4 @@ public class DirectiveMacro extends Directive {
 
     }
 
-    @Override
-    public boolean isParameterValidInContext(int index, String value, int amount, MIPSEditorIndex context) {
-        if (index == 0) {
-            return !value.contains("(") && !value.contains(")");
-        }
-        if (index == 1) {
-            return value.equals("(")
-                    || value.equals("()")
-                    || value.startsWith("(%")
-                    && (index == amount - 1 || !value.contains(")"))
-                    && !value.substring(2).contains("(");
-        } else if (index == amount - 1) {
-            return value.equals(")")
-                    || value.startsWith("%")
-                    && value.endsWith(")")
-                    && !value.contains("(")
-                    && !value.substring(0, value.length() - 1).contains(")");
-        } else {
-            return value.startsWith("%") && !value.contains("(") && !value.contains(")");
-        }
-    }
 }

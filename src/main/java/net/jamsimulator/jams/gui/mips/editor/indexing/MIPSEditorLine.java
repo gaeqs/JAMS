@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.mips.editor.indexing;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementComment;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabelImpl;
@@ -46,8 +47,8 @@ public class MIPSEditorLine extends EditorIndexedLine {
     protected MIPSEditorInstruction instruction;
     protected MIPSEditorDirective directive;
 
-    public MIPSEditorLine(EditorIndex index, int start, int number, String text) {
-        super(index, start, number, text);
+    public MIPSEditorLine(EditorIndex index, ElementScope scope, int start, int number, String text) {
+        super(index, scope, start, number, text);
         parseLine();
     }
 
@@ -78,7 +79,7 @@ public class MIPSEditorLine extends EditorIndexedLine {
         //COMMENT
         int commentIndex = StringUtils.getCommentIndex(parsing);
         if (commentIndex != -1) {
-            comment = new EditorElementComment(index, this, pStart + commentIndex, parsing.substring(commentIndex));
+            comment = new EditorElementComment(index, scope, this, pStart + commentIndex, parsing.substring(commentIndex));
             elements.add(comment);
             parsing = parsing.substring(0, commentIndex);
         }
@@ -86,7 +87,7 @@ public class MIPSEditorLine extends EditorIndexedLine {
         //LABEL
         int labelIndex = LabelUtils.getLabelFinishIndex(parsing);
         if (labelIndex != -1) {
-            label = new EditorElementLabelImpl(index, this, pStart, parsing.substring(0, labelIndex + 1));
+            label = new EditorElementLabelImpl(index, scope, this, pStart, parsing.substring(0, labelIndex + 1));
             elements.add(label);
             pStart = pStart + labelIndex + 1;
             parsing = parsing.substring(labelIndex + 1);
@@ -97,7 +98,7 @@ public class MIPSEditorLine extends EditorIndexedLine {
         if (trim.isEmpty()) return;
         pStart += parsing.indexOf(trim.charAt(0));
         if (trim.charAt(0) == '.') {
-            directive = new MIPSEditorDirective(index, this, pStart, trim);
+            directive = new MIPSEditorDirective(index, scope, this, pStart, trim);
             elements.add(directive);
         } else {
             int spaceIndex = trim.indexOf(" ");
@@ -109,10 +110,10 @@ public class MIPSEditorLine extends EditorIndexedLine {
                             tabIndex == -1 ? Integer.MAX_VALUE : tabIndex));
 
             if (split != Integer.MAX_VALUE && trim.substring(split + 1).trim().startsWith("(")) {
-                macroCall = new EditorElementMacroCall(index, this, pStart, trim, split);
+                macroCall = new EditorElementMacroCall(index, scope, this, pStart, trim, split);
                 elements.add(macroCall);
             } else {
-                instruction = new MIPSEditorInstruction(index, this, pStart, trim);
+                instruction = new MIPSEditorInstruction(index, scope, this, pStart, trim);
                 elements.add(instruction);
             }
         }

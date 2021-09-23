@@ -27,6 +27,7 @@ package net.jamsimulator.jams.gui.editor.code.indexing;
 import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.gui.editor.code.hint.EditorHintBar;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
@@ -78,13 +79,13 @@ public interface EditorIndex extends EventBroadcast, Labeled {
     void transferListenersTo(EventBroadcast broadcast);
 
     <T extends EditorReferencedElement>
-    Optional<T> getReferencedElement(EditorElementReference<T> reference, boolean globalContext);
+    Optional<T> getReferencedElement(EditorElementReference<T> reference, ElementScope scope);
 
     <T extends EditorReferencedElement>
-    Set<T> getReferencedElements(EditorElementReference<T> reference, boolean globalContext);
+    Set<T> getReferencedElements(EditorElementReference<T> reference, ElementScope scope);
 
     <T extends EditorReferencedElement>
-    Set<T> getReferencedElementsOfType(Class<T> type, boolean globalContext);
+    Set<T> getReferencedElementsOfType(Class<T> type, ElementScope scope);
 
     <T extends EditorReferencedElement>
     Set<EditorReferencingElement<?>> getReferecingElements(EditorElementReference<T> reference);

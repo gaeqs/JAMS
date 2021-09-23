@@ -35,9 +35,9 @@ public class EditorIndexedParentElementImpl extends EditorIndexedElementImpl imp
 
     protected final List<EditorIndexedElement> elements;
 
-    public EditorIndexedParentElementImpl(EditorIndex index, EditorIndexedParentElement parent,
+    public EditorIndexedParentElementImpl(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                           int start, String text) {
-        super(index, parent, start, text);
+        super(index, scope, parent, start, text);
         this.elements = new ArrayList<>();
     }
 
@@ -83,6 +83,12 @@ public class EditorIndexedParentElementImpl extends EditorIndexedElementImpl imp
     public void move(int offset) {
         super.move(offset);
         elements.forEach(child -> child.move(offset));
+    }
+
+    @Override
+    public void changeScope(ElementScope scope) {
+        super.changeScope(scope);
+        elements.forEach(it -> it.changeScope(scope));
     }
 
     @Override

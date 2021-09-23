@@ -28,6 +28,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 
 import java.util.Collection;
 import java.util.Set;
@@ -39,9 +40,9 @@ public class MIPSEditorInstructionMnemonic extends EditorIndexedElementImpl impl
 
     protected final boolean pseudo;
 
-    public MIPSEditorInstructionMnemonic(EditorIndex index, EditorIndexedParentElement parent,
+    public MIPSEditorInstructionMnemonic(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                          int start, String text, boolean pseudo) {
-        super(index, parent, start, text);
+        super(index, scope, parent, start, text);
         this.pseudo = pseudo;
     }
 

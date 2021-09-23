@@ -27,6 +27,7 @@ package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElementImpl;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.Comparator;
@@ -35,9 +36,9 @@ import java.util.stream.Collectors;
 
 public class EditorElementMacroCall extends EditorIndexedParentElementImpl {
 
-    public EditorElementMacroCall(EditorIndex index, EditorIndexedParentElement parent,
+    public EditorElementMacroCall(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                   int start, String text, int splitIndex) {
-        super(index, parent, start, text);
+        super(index, scope, parent, start, text);
         parseText(splitIndex);
     }
 
@@ -70,6 +71,7 @@ public class EditorElementMacroCall extends EditorIndexedParentElementImpl {
 
             elements.add(new EditorElementMacroCallParameter(
                     index,
+                    scope,
                     this,
                     start + entry.getKey() + splitIndex + startOffset,
                     value
@@ -80,10 +82,10 @@ public class EditorElementMacroCall extends EditorIndexedParentElementImpl {
     private void parseName(String name) {
         var trimmed = name.trim();
         if (trimmed.isEmpty()) {
-            elements.add(new EditorElementMacroCallMnemonic(index, this, start, name));
+            elements.add(new EditorElementMacroCallMnemonic(index, scope, this, start, name));
             return;
         }
         var offset = name.indexOf(trimmed.charAt(0));
-        elements.add(new EditorElementMacroCallMnemonic(index, this, start + offset, trimmed));
+        elements.add(new EditorElementMacroCallMnemonic(index, scope, this, start + offset, trimmed));
     }
 }

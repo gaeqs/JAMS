@@ -53,7 +53,7 @@ public class InvalidMacroParametersAmountInspector extends Inspector<EditorEleme
         var set = new HashSet<Inspection>();
         for (var reference : element.getReferences()) {
             // Search on the file:
-            var macro = element.getIndex().getReferencedElement(reference, false);
+            var macro = element.getIndex().getReferencedElement(reference, element.getScope());
             if (macro.isPresent()) {
                 if (macro.get().parameters() != parameters) {
                     set.add(invalidParametersAmount(macro.get().getIdentifier(),

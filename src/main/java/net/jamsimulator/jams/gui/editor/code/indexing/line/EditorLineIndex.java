@@ -30,6 +30,7 @@ import net.jamsimulator.jams.gui.editor.code.hint.EditorHintBar;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorLineChange;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorGlobalMarkerElement;
@@ -173,7 +174,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
             referencingElements.clear();
             globalIdentifiers.clear();
             if (text.isEmpty()) {
-                lines.add(generateNewLine(0, 0, ""));
+                lines.add(generateNewLine(0, 0, "", ElementScope.FILE));
                 return;
             }
 
@@ -185,7 +186,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
             while (text.length() > end) {
                 c = text.charAt(end);
                 if (c == '\n' || c == '\r') {
-                    lines.add(generateNewLine(start, lines.size(), builder.toString()));
+                    lines.add(generateNewLine(start, lines.size(), builder.toString(), ElementScope.FILE));
                     builder = new StringBuilder();
                     start = end + 1;
                 } else {
@@ -195,7 +196,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
             }
 
             if (end >= start) {
-                lines.add(generateNewLine(start, lines.size(), builder.toString()));
+                lines.add(generateNewLine(start, lines.size(), builder.toString(), ElementScope.FILE));
             }
 
             lines.forEach(this::addReferences);
@@ -252,61 +253,36 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     @Override
     public <T extends EditorReferencedElement>
-    Optional<T> getReferencedElement(EditorElementReference<T> reference, boolean globalContext) {
+    Optional<T> getReferencedElement(EditorElementReference<T> reference, ElementScope scope) {
         checkThread(false);
-        if (globalContext) {
-            return referencedElements.entrySet().stream()
-                    .filter(it -> reference.isChild(it.getKey()))
-                    .flatMap(it -> it.getValue().stream())
-                    .filter(it -> globalIdentifiers.contains(it.getIdentifier()))
-                    .findAny()
-                    .map(it -> (T) it);
-        }
-
         return referencedElements.entrySet().stream()
-                .filter(it -> reference.isChild(it.getKey()) && !it.getValue().isEmpty())
+                .filter(it -> reference.isChild(it.getKey()))
+                .flatMap(it -> it.getValue().stream())
+                .filter(it -> it.getScope().canBeReachedFrom(scope))
                 .findAny()
-                .flatMap(it -> it.getValue().stream().findAny())
                 .map(it -> (T) it);
     }
 
     @Override
     public <T extends EditorReferencedElement>
-    Set<T> getReferencedElements(EditorElementReference<T> reference, boolean globalContext) {
+    Set<T> getReferencedElements(EditorElementReference<T> reference, ElementScope scope) {
         checkThread(false);
-
-        if (globalContext) {
-            return referencedElements.entrySet().stream()
-                    .filter(it -> reference.isChild(it.getKey()))
-                    .flatMap(it -> it.getValue().stream())
-                    .filter(it -> globalIdentifiers.contains(it.getIdentifier()))
-                    .map(it -> (T) it)
-                    .collect(Collectors.toSet());
-        }
-
         return referencedElements.entrySet().stream()
                 .filter(it -> reference.isChild(it.getKey()))
                 .flatMap(it -> it.getValue().stream())
+                .filter(it -> it.getScope().canBeReachedFrom(scope))
                 .map(it -> (T) it)
                 .collect(Collectors.toSet());
     }
 
     @Override
     public <T extends EditorReferencedElement>
-    Set<T> getReferencedElementsOfType(Class<T> type, boolean globalContext) {
+    Set<T> getReferencedElementsOfType(Class<T> type, ElementScope scope) {
         checkThread(false);
-        if (globalContext) {
-            return referencedElements.entrySet().stream()
-                    .filter(it -> type.isAssignableFrom(it.getKey().referencedType()))
-                    .flatMap(it -> it.getValue().stream())
-                    .filter(it -> globalIdentifiers.contains(it.getIdentifier()))
-                    .map(it -> (T) it)
-                    .collect(Collectors.toSet());
-        }
-
         return referencedElements.entrySet().stream()
                 .filter(it -> type.isAssignableFrom(it.getKey().referencedType()))
                 .flatMap(it -> it.getValue().stream())
+                .filter(it -> it.getScope().canBeReachedFrom(scope))
                 .map(it -> (T) it)
                 .collect(Collectors.toSet());
     }
@@ -357,7 +333,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         var updatedLines = new HashSet<EditorIndexedLine>();
         references.forEach(reference -> {
             var referencing = getReferecingElements(reference);
-            var referenced = getReferencedElements(reference, false);
+            var referenced = getReferencedElements(reference, ElementScope.INTERNAL);
             if (!referencing.isEmpty()) {
                 referencing.forEach(element -> element.inspect(inspectors));
                 updatedLines.addAll(referencing.stream()
@@ -409,7 +385,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     protected void editLine(int number, String text) {
         var old = lines.get(number);
-        var line = generateNewLine(old.getStart(), number, text);
+        var line = generateNewLine(old.getStart(), number, text, ElementScope.FILE);
         lines.set(number, line);
         old.invalidate();
 
@@ -434,7 +410,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     protected void addLine(int number, String text) {
         int start = number == 0 ? 0 : lines.get(number - 1).getEnd() + 1;
-        var line = generateNewLine(start, number, text);
+        var line = generateNewLine(start, number, text, ElementScope.FILE);
         lines.add(number, line);
         lines.listIterator(number + 1).forEachRemaining(it ->
                 it.movePositionAndNumber(1, line.getLength() + 1));
@@ -500,7 +476,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         });
     }
 
-    protected abstract Line generateNewLine(int start, int number, String text);
+    protected abstract Line generateNewLine(int start, int number, String text, ElementScope scope);
 
     protected void checkInspectionsInReferences(EditorIndexedLine... lines) {
         var referenced = Arrays.stream(lines)

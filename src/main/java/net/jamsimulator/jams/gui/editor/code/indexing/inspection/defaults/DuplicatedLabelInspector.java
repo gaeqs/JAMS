@@ -51,7 +51,7 @@ public class DuplicatedLabelInspector extends Inspector<EditorElementLabel> {
         var reference = (EditorElementReference<? extends EditorElementLabel>) element.getReference();
 
         // Now we search all labels with the same reference. (Same identifier / name)
-        var elements = element.getIndex().getReferencedElements(reference, false);
+        var elements = element.getIndex().getReferencedElements(reference, element.getScope());
 
         // Do we have more than one label? Then there's a duplicated label.
         if (elements.size() > 1) {

@@ -26,8 +26,8 @@ package net.jamsimulator.jams.gui.editor.code.indexing.element;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.metadata.Metadata;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
-import net.jamsimulator.jams.gui.mips.editor.indexing.MIPSEditorLine;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Collection;
@@ -41,17 +41,21 @@ public class EditorIndexedElementImpl implements EditorIndexedElement {
 
     protected final EditorIndex index;
     protected final String text;
+
+    protected ElementScope scope;
     protected int start;
 
     protected boolean valid;
     protected Metadata metadata;
 
-    public EditorIndexedElementImpl(EditorIndex index, EditorIndexedParentElement parent,
+    public EditorIndexedElementImpl(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                     int start, String text) {
         Validate.notNull(index, "Index cannot be null!");
         Validate.notNull(text, "Text cannot be null!");
         Validate.isTrue(start >= 0, "Start cannot be negative!");
+        Validate.notNull(scope, "Scope cannot be null!");
         this.index = index;
+        this.scope = scope;
         this.parent = parent;
         this.start = start;
         this.text = text;
@@ -90,6 +94,14 @@ public class EditorIndexedElementImpl implements EditorIndexedElement {
     }
 
     @Override
+    public ElementScope getScope() {
+        if (scope.type() == ElementScope.Type.FILE && this instanceof EditorReferencedElement) {
+            return index.isIdentifierGlobal(getIdentifier()) ? ElementScope.GLOBAL : scope;
+        }
+        return scope;
+    }
+
+    @Override
     public Optional<EditorIndexedParentElement> getParent() {
         return Optional.ofNullable(parent);
     }
@@ -111,6 +123,12 @@ public class EditorIndexedElementImpl implements EditorIndexedElement {
     public void move(int offset) {
         Validate.isTrue(start + offset >= 0, "Resulted start cannot be negative!");
         start += offset;
+    }
+
+    @Override
+    public void changeScope(ElementScope scope) {
+        Validate.notNull(scope, "Scope cannot be null!");
+        this.scope = scope;
     }
 
     @Override

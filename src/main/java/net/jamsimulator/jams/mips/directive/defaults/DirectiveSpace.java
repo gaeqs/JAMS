@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.gui.mips.editor.indexing.MIPSEditorIndex;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
@@ -63,8 +62,4 @@ public class DirectiveSpace extends Directive {
 
     }
 
-    @Override
-    public boolean isParameterValidInContext(int index, String value, int amount, MIPSEditorIndex context) {
-        return isParameterValid(index, value);
-    }
 }

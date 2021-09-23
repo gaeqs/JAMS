@@ -46,6 +46,8 @@ public interface EditorIndexedElement extends Comparable<EditorIndexedElement> {
 
     String getText();
 
+    ElementScope getScope();
+
     Optional<EditorIndexedParentElement> getParent();
 
     <T extends EditorIndexedParentElement> Optional<T> getParentOfType(Class<T> type);
@@ -53,6 +55,8 @@ public interface EditorIndexedElement extends Comparable<EditorIndexedElement> {
     int indexInParent();
 
     void move(int offset);
+
+    void changeScope(ElementScope scope);
 
     void invalidate();
 

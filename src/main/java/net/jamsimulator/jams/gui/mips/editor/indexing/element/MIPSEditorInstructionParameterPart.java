@@ -28,6 +28,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
@@ -45,9 +46,9 @@ public class MIPSEditorInstructionParameterPart extends EditorIndexedElementImpl
     protected final Type type;
     protected final Set<EditorElementReference<EditorElementLabel>> references;
 
-    public MIPSEditorInstructionParameterPart(EditorIndex index, EditorIndexedParentElement parent,
+    public MIPSEditorInstructionParameterPart(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                               int start, String text, ParameterPartType partType) {
-        super(index, parent, start, text);
+        super(index, scope, parent, start, text);
 
         if (partType == null) {
             type = Type.getByString(text, index.getProject() instanceof MIPSProject p ? p : null);

@@ -29,6 +29,7 @@ import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.event.file.FileEvent;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
@@ -89,7 +90,7 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
         for (EditorIndex index : indices.values()) {
             index.lock(false);
             try {
-                var optional = index.getReferencedElement(reference, true);
+                var optional = index.getReferencedElement(reference, ElementScope.GLOBAL);
                 if (optional.isPresent()) return optional;
             } finally {
                 index.unlock(false);
@@ -102,7 +103,7 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
     Set<R> searchReferencedElements(EditorElementReference<R> reference) {
         return indices.values().stream()
                 .flatMap(index -> index.withLockF(false,
-                        i -> i.getReferencedElements(reference, true).stream()))
+                        i -> i.getReferencedElements(reference, ElementScope.GLOBAL).stream()))
                 .collect(Collectors.toSet());
     }
 
@@ -111,7 +112,7 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
         var set = new HashSet<R>();
         indices.values().forEach(index ->
                 index.withLock(false,
-                        i -> set.addAll(i.getReferencedElementsOfType(type, true))));
+                        i -> set.addAll(i.getReferencedElementsOfType(type, ElementScope.GLOBAL))));
         return set;
     }
 

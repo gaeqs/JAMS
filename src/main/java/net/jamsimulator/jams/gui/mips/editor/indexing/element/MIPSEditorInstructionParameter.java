@@ -27,6 +27,7 @@ package net.jamsimulator.jams.gui.mips.editor.indexing.element;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElementImpl;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.mips.parameter.ParameterPartType;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.project.mips.MIPSProject;
@@ -35,9 +36,9 @@ import java.util.*;
 
 public class MIPSEditorInstructionParameter extends EditorIndexedParentElementImpl {
 
-    public MIPSEditorInstructionParameter(EditorIndex index, EditorIndexedParentElement parent,
+    public MIPSEditorInstructionParameter(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                           int start, String text, ParameterType hint) {
-        super(index, parent, start, text);
+        super(index, scope, parent, start, text);
         if (hint != null) parseWithHint(hint);
         else parseWithoutHint();
     }
@@ -54,6 +55,7 @@ public class MIPSEditorInstructionParameter extends EditorIndexedParentElementIm
                 // add part
                 elements.add(new MIPSEditorInstructionParameterPart(
                         index,
+                        scope,
                         this,
                         partStart,
                         text.substring(partStart - start, partEnd - start),
@@ -82,7 +84,7 @@ public class MIPSEditorInstructionParameter extends EditorIndexedParentElementIm
 
     protected void parsePartWithoutHint(String part, int start) {
         if (!(index.getProject() instanceof MIPSProject project)) {
-            elements.add(new MIPSEditorInstructionParameterPart(index, this, start, part, null));
+            elements.add(new MIPSEditorInstructionParameterPart(index, scope, this, start, part, null));
             return;
         }
 
@@ -90,7 +92,7 @@ public class MIPSEditorInstructionParameter extends EditorIndexedParentElementIm
             var types =
                     ParameterType.getCompatibleParameterTypes(part, project.getData().getRegistersBuilder());
             if (types.size() == 1 && types.get(0) == ParameterType.LABEL) {
-                elements.add(new MIPSEditorInstructionParameterPart(index, this,
+                elements.add(new MIPSEditorInstructionParameterPart(index, scope, this,
                         start, part, ParameterPartType.LABEL));
                 return;
             }
@@ -120,6 +122,7 @@ public class MIPSEditorInstructionParameter extends EditorIndexedParentElementIm
         for (var entry : sorted) {
             elements.add(new MIPSEditorInstructionParameterPart(
                     index,
+                    scope,
                     this,
                     start + entry.getKey(),
                     entry.getValue(),

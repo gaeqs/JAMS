@@ -27,6 +27,7 @@ package net.jamsimulator.jams.gui.mips.editor.indexing.element;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElementImpl;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.project.mips.MIPSProject;
@@ -40,9 +41,9 @@ public class MIPSEditorInstruction extends EditorIndexedParentElementImpl {
 
     private Instruction instruction;
 
-    public MIPSEditorInstruction(EditorIndex index, EditorIndexedParentElement parent,
+    public MIPSEditorInstruction(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                  int start, String text) {
-        super(index, parent, start, text);
+        super(index, scope, parent, start, text);
         parseText();
     }
 
@@ -114,7 +115,7 @@ public class MIPSEditorInstruction extends EditorIndexedParentElementImpl {
             for (String rawParameter : parametersReference.get()) {
                 var type = best.get().getParameters()[i];
                 offset = raw.indexOf(rawParameter.charAt(0), offset);
-                elements.add(new MIPSEditorInstructionParameter(index, this,
+                elements.add(new MIPSEditorInstructionParameter(index, scope, this,
                         start + parametersStart + offset, rawParameter, type));
                 offset += rawParameter.length();
                 i++;
@@ -130,7 +131,7 @@ public class MIPSEditorInstruction extends EditorIndexedParentElementImpl {
                     .sorted(Comparator.comparingInt(Map.Entry::getKey)).toList();
 
             for (var entry : parameters.subList(1, parameters.size())) {
-                var parameter = new MIPSEditorInstructionParameter(index, this,
+                var parameter = new MIPSEditorInstructionParameter(index, scope, this,
                         start + entry.getKey(), entry.getValue(), null);
                 elements.add(parameter);
             }
@@ -138,7 +139,7 @@ public class MIPSEditorInstruction extends EditorIndexedParentElementImpl {
     }
 
     protected void parseMnemonic(String mnemonic, int offset, boolean pseudo) {
-        elements.add(new MIPSEditorInstructionMnemonic(index, this,
+        elements.add(new MIPSEditorInstructionMnemonic(index, scope, this,
                 start + offset, mnemonic, pseudo));
     }
 

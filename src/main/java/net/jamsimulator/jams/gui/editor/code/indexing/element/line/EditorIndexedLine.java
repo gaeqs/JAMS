@@ -28,6 +28,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElementImpl;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspection;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.InspectionLevel;
 import net.jamsimulator.jams.gui.util.EasyStyleSpansBuilder;
@@ -47,8 +48,8 @@ public class EditorIndexedLine extends EditorIndexedParentElementImpl {
     protected InspectionLevel inspectionLevel = InspectionLevel.NONE;
 
 
-    public EditorIndexedLine(EditorIndex index, int start, int number, String text) {
-        super(index, null, start, text);
+    public EditorIndexedLine(EditorIndex index, ElementScope scope, int start, int number, String text) {
+        super(index, scope, null, start, text);
         Validate.isTrue(number >= 0, "Index cannot be negative!");
         this.number = number;
     }
