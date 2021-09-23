@@ -94,10 +94,15 @@ public class EditorIndexedElementImpl implements EditorIndexedElement {
     }
 
     @Override
-    public ElementScope getScope() {
+    public ElementScope getReferencedScope() {
         if (scope.type() == ElementScope.Type.FILE && this instanceof EditorReferencedElement) {
             return index.isIdentifierGlobal(getIdentifier()) ? ElementScope.GLOBAL : scope;
         }
+        return scope;
+    }
+
+    @Override
+    public ElementScope getReferencingScope() {
         return scope;
     }
 

@@ -33,6 +33,8 @@ public interface EditorIndexedParentElement extends EditorIndexedElement {
 
     List<EditorIndexedElement> getElements();
 
+    EditorIndexedElement getElement (int index);
+
     int indexOf(EditorIndexedElement element);
 
     boolean isEmpty();

@@ -46,7 +46,9 @@ public interface EditorIndexedElement extends Comparable<EditorIndexedElement> {
 
     String getText();
 
-    ElementScope getScope();
+    ElementScope getReferencedScope();
+
+    ElementScope getReferencingScope();
 
     Optional<EditorIndexedParentElement> getParent();
 

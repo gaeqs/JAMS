@@ -51,7 +51,7 @@ public class DuplicatedMacroInspector extends Inspector<EditorElementMacro> {
         var reference = (EditorElementReference<? extends EditorElementMacro>) element.getReference();
 
         // Now we search all macros with the same reference. (Same identifier / name)
-        var elements = element.getIndex().getReferencedElements(reference, element.getScope());
+        var elements = element.getIndex().getReferencedElements(reference, element.getReferencingScope());
 
         // Do we have more than one macro? Then there's a duplicated macro.
         if (elements.size() > 1) {

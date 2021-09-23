@@ -24,8 +24,6 @@
 
 package net.jamsimulator.jams.gui.mips.editor.indexing.inspection;
 
-import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroCallMnemonic;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspection;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.InspectionLevel;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
@@ -50,7 +48,7 @@ public class MIPSInstructionLabelNotFoundInspector extends Inspector<MIPSEditorI
         var set = new HashSet<Inspection>();
         for (var reference : element.getReferences()) {
             // Search on the file:
-            var macro = element.getIndex().getReferencedElement(reference, element.getScope());
+            var macro = element.getIndex().getReferencedElement(reference, element.getReferencingScope());
             if (macro.isPresent()) continue;
 
             // Search on global context:

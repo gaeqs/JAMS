@@ -33,6 +33,8 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElemen
 import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
 import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirective;
 import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstruction;
+import net.jamsimulator.jams.mips.directive.defaults.DirectiveEndmacro;
+import net.jamsimulator.jams.mips.directive.defaults.DirectiveMacro;
 import net.jamsimulator.jams.utils.LabelUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -70,6 +72,23 @@ public class MIPSEditorLine extends EditorIndexedLine {
 
     public Optional<MIPSEditorDirective> getDirective() {
         return Optional.ofNullable(directive);
+    }
+
+    @Override
+    public boolean isMacroStart() {
+        return directive != null && directive.getDirective().orElse(null) instanceof DirectiveMacro;
+    }
+
+    @Override
+    public boolean isMacroEnd() {
+        return directive != null && directive.getDirective().orElse(null) instanceof DirectiveEndmacro;
+    }
+
+    @Override
+    public Optional<String> getDefinedMacroIdentifier() {
+        return isMacroStart() && directive.size() > 0
+                ? Optional.of(directive.getElement(0).getIdentifier())
+                : Optional.empty();
     }
 
     protected void parseLine() {

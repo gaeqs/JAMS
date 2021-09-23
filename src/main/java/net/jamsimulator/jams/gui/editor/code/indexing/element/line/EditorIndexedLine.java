@@ -35,14 +35,10 @@ import net.jamsimulator.jams.gui.util.EasyStyleSpansBuilder;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.function.BiConsumer;
+import java.util.Optional;
 
-public class EditorIndexedLine extends EditorIndexedParentElementImpl {
-
-    protected final Map<String, String> replacements = new HashMap<>();
+public abstract class EditorIndexedLine extends EditorIndexedParentElementImpl {
 
     protected int number;
     protected InspectionLevel inspectionLevel = InspectionLevel.NONE;
@@ -60,14 +56,6 @@ public class EditorIndexedLine extends EditorIndexedParentElementImpl {
 
     public InspectionLevel getInspectionLevel() {
         return inspectionLevel;
-    }
-
-    public Map<String, String> getReplacements() {
-        return Map.copyOf(replacements);
-    }
-
-    public void forEachReplacement(BiConsumer<String, String> consumer) {
-        replacements.forEach(consumer);
     }
 
     public void moveNumber(int offset) {
@@ -110,4 +98,10 @@ public class EditorIndexedLine extends EditorIndexedParentElementImpl {
                     }
                 });
     }
+
+    public abstract boolean isMacroStart();
+
+    public abstract boolean isMacroEnd();
+
+    public abstract Optional<String> getDefinedMacroIdentifier();
 }

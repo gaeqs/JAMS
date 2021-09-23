@@ -37,6 +37,7 @@ import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.task.LanguageTask;
 
+import java.util.Optional;
 import java.util.Set;
 
 public class TextFileType extends FileType {
@@ -64,7 +65,22 @@ public class TextFileType extends FileType {
                         tab.getFile().getName(), inspections) {
                     @Override
                     protected EditorIndexedLine generateNewLine(int start, int number, String text, ElementScope scope) {
-                        return new EditorIndexedLine(this, scope, start, number, text);
+                        return new EditorIndexedLine(this, scope, start, number, text) {
+                            @Override
+                            public boolean isMacroStart() {
+                                return false;
+                            }
+
+                            @Override
+                            public boolean isMacroEnd() {
+                                return false;
+                            }
+
+                            @Override
+                            public Optional<String> getDefinedMacroIdentifier() {
+                                return Optional.empty();
+                            }
+                        };
                     }
                 };
 

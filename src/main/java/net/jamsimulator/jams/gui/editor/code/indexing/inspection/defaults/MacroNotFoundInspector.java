@@ -48,7 +48,7 @@ public class MacroNotFoundInspector extends Inspector<EditorElementMacroCallMnem
         var set = new HashSet<Inspection>();
         for (var reference : element.getReferences()) {
             // Search on the file:
-            var macro = element.getIndex().getReferencedElement(reference, element.getScope());
+            var macro = element.getIndex().getReferencedElement(reference, element.getReferencingScope());
             if (macro.isPresent()) continue;
 
             // Search on global context:

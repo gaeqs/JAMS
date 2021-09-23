@@ -59,6 +59,11 @@ public class EditorIndexedParentElementImpl extends EditorIndexedElementImpl imp
     }
 
     @Override
+    public EditorIndexedElement getElement(int index) {
+        return elements.get(index);
+    }
+
+    @Override
     public int indexOf(EditorIndexedElement element) {
         return elements.indexOf(element);
     }

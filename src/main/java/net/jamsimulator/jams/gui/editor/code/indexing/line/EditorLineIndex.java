@@ -181,12 +181,20 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
             int start = 0;
             int end = 0;
             var builder = new StringBuilder();
+            var scope = ElementScope.FILE;
 
             char c;
             while (text.length() > end) {
                 c = text.charAt(end);
                 if (c == '\n' || c == '\r') {
-                    lines.add(generateNewLine(start, lines.size(), builder.toString(), ElementScope.FILE));
+                    var line = generateNewLine(start, lines.size(), builder.toString(), scope);
+                    if (line.isMacroEnd() || line.isMacroStart()) {
+                        line.changeScope(ElementScope.FILE);
+                        scope = line.isMacroStart()
+                                ? new ElementScope(ElementScope.Type.MACRO, line.getDefinedMacroIdentifier().get())
+                                : ElementScope.FILE;
+                    }
+                    lines.add(line);
                     builder = new StringBuilder();
                     start = end + 1;
                 } else {
@@ -196,9 +204,10 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
             }
 
             if (end >= start) {
-                lines.add(generateNewLine(start, lines.size(), builder.toString(), ElementScope.FILE));
+                var line = generateNewLine(start, lines.size(), builder.toString(), ElementScope.FILE);
+                if (line.isMacroEnd() || line.isMacroStart()) line.changeScope(ElementScope.FILE);
+                lines.add(line);
             }
-
             lines.forEach(this::addReferences);
         } finally {
             initializationLock.lock();
@@ -258,7 +267,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         return referencedElements.entrySet().stream()
                 .filter(it -> reference.isChild(it.getKey()))
                 .flatMap(it -> it.getValue().stream())
-                .filter(it -> it.getScope().canBeReachedFrom(scope))
+                .filter(it -> it.getReferencedScope().canBeReachedFrom(scope))
                 .findAny()
                 .map(it -> (T) it);
     }
@@ -270,7 +279,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         return referencedElements.entrySet().stream()
                 .filter(it -> reference.isChild(it.getKey()))
                 .flatMap(it -> it.getValue().stream())
-                .filter(it -> it.getScope().canBeReachedFrom(scope))
+                .filter(it -> it.getReferencedScope().canBeReachedFrom(scope))
                 .map(it -> (T) it)
                 .collect(Collectors.toSet());
     }
@@ -282,7 +291,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         return referencedElements.entrySet().stream()
                 .filter(it -> type.isAssignableFrom(it.getKey().referencedType()))
                 .flatMap(it -> it.getValue().stream())
-                .filter(it -> it.getScope().canBeReachedFrom(scope))
+                .filter(it -> it.getReferencedScope().canBeReachedFrom(scope))
                 .map(it -> (T) it)
                 .collect(Collectors.toSet());
     }
@@ -385,7 +394,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     protected void editLine(int number, String text) {
         var old = lines.get(number);
-        var line = generateNewLine(old.getStart(), number, text, ElementScope.FILE);
+        var line = generateNewLine(old.getStart(), number, text, old.getReferencingScope());
         lines.set(number, line);
         old.invalidate();
 
@@ -395,7 +404,18 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         addReferences(line);
         line.elementStream().forEach(element -> element.inspect(inspectors));
         line.recalculateInspectionLevel();
-        checkInspectionsInReferences(old, line);
+
+        var refresh = refreshLinesScope(number, old, line);
+
+        // First let's refresh the references of all changed lines.
+        refresh.forEach(l -> {
+            l.elementStream().forEach(element -> element.inspect(inspectors));
+            l.recalculateInspectionLevel();
+        });
+
+        refresh.add(old);
+        refresh.add(line);
+        checkInspectionsInReferences(refresh);
     }
 
     protected void removeLine(int number) {
@@ -405,12 +425,24 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
                 it.movePositionAndNumber(-1, -line.getLength() - 1));
         getHintBar().ifPresent(it -> it.removeLine(number));
         removeReferences(line);
-        checkInspectionsInReferences(line);
+
+        var refresh = refreshLinesScope(number, line, null);
+
+        // First let's refresh the references of all changed lines.
+        refresh.forEach(l -> {
+            l.elementStream().forEach(element -> element.inspect(inspectors));
+            l.recalculateInspectionLevel();
+        });
+
+        refresh.add(line);
+        checkInspectionsInReferences(refresh);
     }
 
     protected void addLine(int number, String text) {
-        int start = number == 0 ? 0 : lines.get(number - 1).getEnd() + 1;
-        var line = generateNewLine(start, number, text, ElementScope.FILE);
+        var previous = number == 0 ? null : lines.get(number - 1);
+        int start = previous == null ? 0 : previous.getEnd() + 1;
+        var scope = previous == null ? ElementScope.FILE : previous.getReferencingScope();
+        var line = generateNewLine(start, number, text, scope);
         lines.add(number, line);
         lines.listIterator(number + 1).forEachRemaining(it ->
                 it.movePositionAndNumber(1, line.getLength() + 1));
@@ -418,7 +450,41 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         addReferences(line);
         line.elementStream().forEach(element -> element.inspect(inspectors));
         line.recalculateInspectionLevel();
-        checkInspectionsInReferences(line);
+
+        var refresh = refreshLinesScope(number, null, line);
+
+        // First let's refresh the references of all changed lines.
+        refresh.forEach(l -> {
+            l.elementStream().forEach(element -> element.inspect(inspectors));
+            l.recalculateInspectionLevel();
+        });
+
+        refresh.add(line);
+        checkInspectionsInReferences(refresh);
+    }
+
+    protected Set<Line> refreshLinesScope(int index, Line removed, Line added) {
+        if (index >= lines.size() - 1) return new HashSet<>();
+
+        ElementScope scope = null;
+        if (added != null && (added.isMacroStart() || added.isMacroEnd())) {
+            scope = added.isMacroStart()
+                    ? new ElementScope(ElementScope.Type.MACRO, added.getDefinedMacroIdentifier().get())
+                    : ElementScope.FILE;
+
+        } else if (removed != null && (removed.isMacroStart() || removed.isMacroEnd())) {
+            scope = index == 0 ? ElementScope.FILE : lines.get(index - 1).getReferencingScope();
+        }
+
+        if (scope == null) return new HashSet<>();
+
+        var list = new HashSet<Line>();
+        for (var line : lines.subList(index + 1, lines.size())) {
+            if (line.isMacroStart() || line.isMacroEnd()) break;
+            line.changeScope(scope);
+            list.add(line);
+        }
+        return list;
     }
 
     protected void removeReferences(Line line) {
@@ -478,8 +544,8 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     protected abstract Line generateNewLine(int start, int number, String text, ElementScope scope);
 
-    protected void checkInspectionsInReferences(EditorIndexedLine... lines) {
-        var referenced = Arrays.stream(lines)
+    protected void checkInspectionsInReferences(Collection<Line> lines) {
+        var referenced = lines.stream()
                 .flatMap(this::getReferencedReferencesInLine).collect(Collectors.toSet());
 
         // Now we have all references that have been updated and needs refreshing.
@@ -496,7 +562,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
         // Now let's update the global elements and the marked references:
         getGlobalIndex().ifPresent(global -> {
-            var marks = Arrays.stream(lines).flatMap(this::getMarkersInLine).collect(Collectors.toSet());
+            var marks = lines.stream().flatMap(this::getMarkersInLine).collect(Collectors.toSet());
 
             var toUpdate = Stream.concat(
                             referenced.stream().filter(it -> isIdentifierGlobal(it.identifier())),
