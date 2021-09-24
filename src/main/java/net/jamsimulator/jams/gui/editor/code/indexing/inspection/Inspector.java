@@ -25,6 +25,9 @@
 package net.jamsimulator.jams.gui.editor.code.indexing.inspection;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacro;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.manager.ManagerResource;
 import net.jamsimulator.jams.manager.ResourceProvider;
 
@@ -59,6 +62,21 @@ public abstract class Inspector<T extends EditorIndexedElement> implements Manag
 
     public Set<Inspection> inspect(EditorIndexedElement element) {
         try {
+            var scope = element.getReferencingScope();
+            if (element.getIdentifier().startsWith("%") && scope.type() == ElementScope.Type.MACRO) {
+
+                // If the element is inside a macro we must check if it is any of the parameters.
+                var reference = new EditorElementReference<>(EditorElementMacro.class, scope.macroIdentifier());
+                var macro = element.getIndex().getReferencedElement(reference, scope);
+
+                if (macro.isPresent()) {
+                    if (macro.get().getParameters().contains(element.getIdentifier())) {
+                        // If the element is a macro parameter, do nothing.
+                        return Collections.emptySet();
+                    }
+                }
+            }
+
             return inspectImpl((T) element);
         } catch (ClassCastException ex) {
             return Collections.emptySet();

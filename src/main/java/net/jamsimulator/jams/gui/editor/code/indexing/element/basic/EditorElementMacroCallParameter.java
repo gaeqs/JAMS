@@ -35,7 +35,7 @@ import java.util.Set;
 
 public class EditorElementMacroCallParameter extends EditorIndexedElementImpl implements EditorIndexStyleableElement {
 
-    public static final Set<String> STYLE = Set.of("macro-call-parameter");
+    public static final Set<String> STYLE = EditorElementMacro.PARAMETER_STYLE;
 
     public EditorElementMacroCallParameter(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                            int start, String text) {

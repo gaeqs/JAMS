@@ -30,6 +30,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedEleme
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacro;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
 import net.jamsimulator.jams.mips.parameter.ParameterPartType;
@@ -66,9 +67,15 @@ public class MIPSEditorInstructionParameterPart extends EditorIndexedElementImpl
     @Override
     public Collection<String> getStyles() {
         if (type == Type.LABEL) {
+
+            if (isMacroParameter()) {
+                return EditorElementMacro.PARAMETER_STYLE;
+            }
+
             if (index.isIdentifierGlobal(getIdentifier())) {
                 return Set.of(Type.GLOBAL_LABEL_STYLE);
             }
+
             var global = index.getGlobalIndex();
             if (global.isPresent()) {
                 var reference = new EditorElementReference<>(EditorElementLabel.class, getIdentifier());

@@ -56,6 +56,8 @@ public interface EditorIndexedElement extends Comparable<EditorIndexedElement> {
 
     int indexInParent();
 
+    boolean isMacroParameter();
+
     void move(int offset);
 
     void changeScope(ElementScope scope);

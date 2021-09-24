@@ -25,7 +25,9 @@
 package net.jamsimulator.jams.gui.editor.code.indexing.element;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacro;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.metadata.Metadata;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
 import net.jamsimulator.jams.utils.Validate;
@@ -122,6 +124,14 @@ public class EditorIndexedElementImpl implements EditorIndexedElement {
     @Override
     public int indexInParent() {
         return parent == null ? -1 : parent.indexOf(this);
+    }
+
+    @Override
+    public boolean isMacroParameter() {
+        if (scope.type() != ElementScope.Type.MACRO || !getIdentifier().startsWith("%")) return false;
+        var reference = new EditorElementReference<>(EditorElementMacro.class, scope.macroIdentifier());
+        var macro = index.getReferencedElement(reference, scope);
+        return macro.isPresent() && macro.get().getParameters().contains(getIdentifier());
     }
 
     @Override

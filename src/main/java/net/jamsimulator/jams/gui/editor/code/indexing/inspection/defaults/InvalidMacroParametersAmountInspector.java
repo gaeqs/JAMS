@@ -55,9 +55,9 @@ public class InvalidMacroParametersAmountInspector extends Inspector<EditorEleme
             // Search on the file:
             var macro = element.getIndex().getReferencedElement(reference, element.getReferencingScope());
             if (macro.isPresent()) {
-                if (macro.get().parameters() != parameters) {
+                if (macro.get().parametersAmount() != parameters) {
                     set.add(invalidParametersAmount(macro.get().getIdentifier(),
-                            parameters, macro.get().parameters()));
+                            parameters, macro.get().parametersAmount()));
                 }
                 continue;
             }
@@ -67,9 +67,9 @@ public class InvalidMacroParametersAmountInspector extends Inspector<EditorEleme
             if (global.isPresent()) {
                 macro = global.get().searchReferencedElement(reference);
                 if (macro.isPresent()) {
-                    if (macro.get().parameters() != parameters) {
+                    if (macro.get().parametersAmount() != parameters) {
                         set.add(invalidParametersAmount(macro.get().getIdentifier(),
-                                parameters, macro.get().parameters()));
+                                parameters, macro.get().parametersAmount()));
                     }
                 }
             }

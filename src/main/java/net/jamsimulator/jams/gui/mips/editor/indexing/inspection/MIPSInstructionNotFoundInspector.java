@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.mips.editor.indexing.inspection;
 
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspection;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.InspectionLevel;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
@@ -31,6 +32,7 @@ import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstruct
 import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstructionMnemonic;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.project.mips.MIPSProject;
 
 import java.util.Collections;
 import java.util.Map;
@@ -48,6 +50,16 @@ public class MIPSInstructionNotFoundInspector extends Inspector<MIPSEditorInstru
     public Set<Inspection> inspectImpl(MIPSEditorInstructionMnemonic element) {
         var instruction = element.getParent().orElse(null) instanceof MIPSEditorInstruction i ? i : null;
         if (instruction == null) return Collections.emptySet();
+
+        if (instruction.elementStream().anyMatch(EditorIndexedElement::isMacroParameter)) {
+            if (!(element.getIndex().getProject() instanceof MIPSProject project)) return Collections.emptySet();
+            var instructionSet = project.getData().getInstructionSet();
+            return instructionSet.getInstructionByMnemonic(element.getIdentifier())
+                    .stream().noneMatch(it -> it.getParameters().length == instruction.size() - 1)
+                    ? Set.of(instructionNotFound(element))
+                    : Collections.emptySet();
+        }
+
         return instruction.getInstruction().isEmpty() ? Set.of(instructionNotFound(element)) : Collections.emptySet();
     }
 

@@ -25,17 +25,19 @@
 package net.jamsimulator.jams.gui.mips.editor.indexing.element;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacro;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroParameter;
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.Collections;
+import java.util.List;
 
 public class MIPSEditorDirectiveMacroName extends MIPSEditorDirectiveParameter implements EditorElementMacro {
 
-    public static final Set<String> STYLE = Set.of("macro-call");
+    private List<String> parameters = null;
 
     public MIPSEditorDirectiveMacroName(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent, int start, String text) {
         super(index, scope, parent, start, text);
@@ -43,13 +45,28 @@ public class MIPSEditorDirectiveMacroName extends MIPSEditorDirectiveParameter i
 
     @Override
     public Collection<String> getStyles() {
-        return STYLE;
+        return EditorElementMacro.NAME_STYLE;
     }
 
-
     @Override
-    public int parameters() {
+    public int parametersAmount() {
         if (parent == null) return 0;
         return (int) parent.elementStream().filter(it -> it instanceof EditorElementMacroParameter).count();
+    }
+
+    @Override
+    public List<String> getParameters() {
+        if (parameters == null) {
+            if (parent == null) {
+                parameters = Collections.emptyList();
+            } else {
+
+                parameters = parent.elementStream()
+                        .filter(it -> it instanceof EditorElementMacroParameter)
+                        .map(EditorIndexedElement::getIdentifier)
+                        .toList();
+            }
+        }
+        return parameters;
     }
 }

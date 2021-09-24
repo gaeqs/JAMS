@@ -57,7 +57,7 @@ public class MIPSEditorInstruction extends EditorIndexedParentElementImpl {
         var instructionSet = project.getData().getInstructionSet();
         var registerBuilder = project.getData().getRegistersBuilder();
 
-        var instructions = instructionSet.getInstructionByMnemonic(elements.get(0).getIdentifier());
+        var instructions = new HashSet<>(instructionSet.getInstructionByMnemonic(elements.get(0).getIdentifier()));
 
         int i = 0;
         Instruction current;

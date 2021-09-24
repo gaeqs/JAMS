@@ -74,6 +74,7 @@ public class Icons {
     public static final IconData AUTOCOMPLETION_LABEL = new IconData("autocompletion_label", "/gui/icon/autocompletion/label.png");
     public static final IconData AUTOCOMPLETION_REGISTER = new IconData("autocompletion_register", "/gui/icon/autocompletion/register.png");
     public static final IconData AUTOCOMPLETION_MACRO = new IconData("autocompletion_macro", "/gui/icon/autocompletion/macro.png");
+    public static final IconData AUTOCOMPLETION_MACRO_PARAMETER = new IconData("autocompletion_macro_parameter", "/gui/icon/autocompletion/macro_parameter.png");
 
     public static final IconData TAB_SPLIT_VERTICALLY = new IconData("tab_split_vertically", "/gui/icon/tab/split_vertically.png");
     public static final IconData TAB_SPLIT_HORIZONTALLY = new IconData("tab_split_horizontally", "/gui/icon/tab/split_horizontally.png");

@@ -28,7 +28,10 @@ import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacro;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.icon.Icons;
@@ -53,6 +56,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
     private static final IconData ICON_LABEL = Icons.AUTOCOMPLETION_LABEL;
     private static final IconData ICON_REGISTER = Icons.AUTOCOMPLETION_REGISTER;
     private static final IconData ICON_MACRO = Icons.AUTOCOMPLETION_MACRO;
+    private static final IconData ICON_MACRO_PARAMETER = Icons.AUTOCOMPLETION_MACRO_PARAMETER;
 
     private final MIPSEditorIndex index;
     private EditorIndexedElement element;
@@ -136,6 +140,8 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
                 start = refreshInstructionsMacrosAndDirectives(start);
             else if (element instanceof MIPSEditorInstructionParameterPart)
                 start = refreshDisplayInstructionParameterPart(start);
+
+            addMacroParameters();
 
             sortAndShowElements(start);
 
@@ -242,7 +248,8 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
                     Set<Character> starts = project.getData().getRegistersBuilder().getValidRegistersStarts();
                     starts.forEach(c -> addElements(names.stream()
                             .filter(target -> target.toLowerCase().startsWith(partStart)
-                                    || (c + target.toLowerCase()).startsWith(partStart)), s -> c + s, s -> c + s, partStartIndex.get(), ICON_REGISTER));
+                                    || (c + target.toLowerCase()).startsWith(partStart)), s -> c + s, s -> c + s,
+                            partStartIndex.get(), ICON_REGISTER));
                     hasRegisters = true;
                 }
             }
@@ -285,6 +292,26 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
         }
 
         return start;
+    }
+
+    protected void addMacroParameters() {
+        var scope = element.getReferencingScope();
+        if (scope.type() == ElementScope.Type.MACRO) {
+            // Add macros!
+            var reference = new EditorElementReference<>(EditorElementMacro.class, scope.macroIdentifier());
+            var macro = index.getReferencedElement(reference, scope);
+            if (macro.isEmpty()) return;
+
+            var offset = getDisplay().getCaretPosition() - element.getStart();
+            var startWithPercentage = element.getIdentifier().startsWith("%");
+            var id = startWithPercentage
+                    ? element.getIdentifier().toLowerCase().substring(0, offset)
+                    : "%" + element.getIdentifier().toLowerCase().substring(0, offset);
+
+            addElements(macro.get().getParameters().stream().filter(it -> it.toLowerCase().startsWith(id)),
+                    it -> it, it -> it, 0, ICON_MACRO_PARAMETER);
+
+        }
     }
 
 

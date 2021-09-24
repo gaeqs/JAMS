@@ -27,9 +27,17 @@ package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 
+import java.util.List;
+import java.util.Set;
+
 public interface EditorElementMacro extends EditorReferencedElement {
 
-    int parameters();
+    Set<String> NAME_STYLE = Set.of("macro-call");
+    Set<String> PARAMETER_STYLE = Set.of("macro-call-parameter");
+
+    int parametersAmount();
+
+    List<String> getParameters();
 
     @Override
     default EditorElementReference<?> getReference() {
