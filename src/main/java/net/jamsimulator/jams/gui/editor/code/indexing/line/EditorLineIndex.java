@@ -469,7 +469,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         ElementScope scope = null;
         if (added != null && (added.isMacroStart() || added.isMacroEnd())) {
             scope = added.isMacroStart()
-                    ? new ElementScope(ElementScope.Type.MACRO, added.getDefinedMacroIdentifier().get())
+                    ? new ElementScope(ElementScope.Type.MACRO, added.getDefinedMacroIdentifier().orElse(""))
                     : ElementScope.FILE;
 
         } else if (removed != null && (removed.isMacroStart() || removed.isMacroEnd())) {

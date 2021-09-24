@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing.inspection.defaults;
 
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
@@ -47,6 +48,7 @@ public class DuplicatedLabelInspector extends Inspector<EditorElementLabel> {
 
     @Override
     public Set<Inspection> inspectImpl(EditorElementLabel element) {
+        var scope = element.getReferencingScope();
         // Let's start getting the reference of this label.
         var reference = (EditorElementReference<? extends EditorElementLabel>) element.getReference();
 
@@ -55,9 +57,24 @@ public class DuplicatedLabelInspector extends Inspector<EditorElementLabel> {
 
         // Do we have more than one label? Then there's a duplicated label.
         if (elements.size() > 1) {
-            var other = elements.stream().filter(it -> it != element).findAny().orElse(null);
-            // Return the inspection.
-            return Set.of(duplicateLabel(element, other));
+            if (scope.type() == ElementScope.Type.MACRO) {
+                if (elements.stream().noneMatch(it -> it.getReferencingScope().type() == ElementScope.Type.MACRO)) {
+                    var other = elements.stream()
+                            .filter(it -> it != element && it.getReferencingScope().type() == ElementScope.Type.MACRO)
+                            .findAny().orElse(null);
+                    // Return the inspection.
+                    return Set.of(duplicateLabel(element, other));
+                } else {
+                    // Macro label shadows file label!
+                    var other = elements.stream().filter(it -> it != element).findAny().orElse(null);
+                    // Return the inspection.
+                    return Set.of(shadowedLabel(element, other));
+                }
+            } else {
+                var other = elements.stream().filter(it -> it != element).findAny().orElse(null);
+                // Return the inspection.
+                return Set.of(duplicateLabel(element, other));
+            }
         }
 
         // We have only one label in our index! Let's check if there's an index in the global index
@@ -71,15 +88,46 @@ public class DuplicatedLabelInspector extends Inspector<EditorElementLabel> {
 
             // If the elements is empty or the element only contains our element, then there's no duplicated labels.
             if (!elements.isEmpty() && (elements.size() != 1 || !elements.contains(element))) {
-                var other = elements.stream().filter(it -> it != element).findAny().orElse(null);
-
-                // Return the inspection.
-                return Set.of(duplicateGlobalLabel(element, other));
+                if (scope.type() == ElementScope.Type.MACRO) {
+                    // Macro label shadows file label!
+                    var other = elements.stream().filter(it -> it != element).findAny().orElse(null);
+                    // Return the inspection.
+                    return Set.of(shadowedGlobalLabel(element, other));
+                } else {
+                    var other = elements.stream().filter(it -> it != element).findAny().orElse(null);
+                    // Return the inspection.
+                    return Set.of(duplicateGlobalLabel(element, other));
+                }
             }
         }
 
         return Collections.emptySet();
     }
+
+
+    private Inspection shadowedLabel(EditorElementLabel label, EditorElementLabel other) {
+        var replacements = Map.of(
+                "{LABEL}", label.getIdentifier(),
+                "{LINE}", other == null ? "-" : other.getParentOfType(EditorIndexedLine.class)
+                        .map(it -> it.getNumber() + 1).map(Object::toString).orElse("-")
+        );
+
+        return new Inspection(this, InspectionLevel.WARNING,
+                Messages.EDITOR_WARNING_SHADOWED_LABEL, replacements);
+    }
+
+    private Inspection shadowedGlobalLabel(EditorElementLabel label, EditorElementLabel other) {
+        var replacements = Map.of(
+                "{LABEL}", label.getIdentifier(),
+                "{FILE}", other == null ? "-" : other.getIndex().getName(),
+                "{LINE}", other == null ? "-" : other.getParentOfType(EditorIndexedLine.class)
+                        .map(it -> it.getNumber() + 1).map(Object::toString).orElse("-")
+        );
+
+        return new Inspection(this, InspectionLevel.WARNING,
+                Messages.EDITOR_WARNING_SHADOWED_GLOBAL_LABEL, replacements);
+    }
+
 
 
     private Inspection duplicateLabel(EditorElementLabel label, EditorElementLabel other) {

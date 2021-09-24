@@ -86,8 +86,8 @@ public class MIPSEditorLine extends EditorIndexedLine {
 
     @Override
     public Optional<String> getDefinedMacroIdentifier() {
-        return isMacroStart() && directive.size() > 0
-                ? Optional.of(directive.getElement(0).getIdentifier())
+        return isMacroStart() && directive.size() > 1
+                ? Optional.of(directive.getElement(1).getIdentifier())
                 : Optional.empty();
     }
 

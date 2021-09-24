@@ -52,6 +52,6 @@ public class EditorElementLabelImpl extends EditorIndexedElementImpl implements 
 
     @Override
     public Collection<String> getStyles() {
-        return index.isIdentifierGlobal(identifier) ? GLOBAL_STYLE : STYLE;
+        return getReferencedScope().type() == ElementScope.Type.GLOBAL ? GLOBAL_STYLE : STYLE;
     }
 }
