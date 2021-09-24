@@ -144,14 +144,12 @@ public class ProjectFolderExplorer extends FolderExplorer {
 
     @Listener
     private void onFileAddedToAssemble(FileCollectionAddFileEvent.After event) {
-        File file = event.getFile();
-        markFileToAssemble(file);
+        markFileToAssemble(event.getFile());
     }
 
     @Listener
     private void onFileRemoveFromAssemble(FileCollectionRemoveFileEvent.After event) {
-        File file = event.getFile();
-        unmarkFileToAssemble(file);
+        unmarkFileToAssemble(event.getFile());
     }
 
     @Listener

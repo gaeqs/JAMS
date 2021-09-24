@@ -201,6 +201,8 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
                     Set.of(index));
         }
 
+        callEvent(new FileCollectionRemoveFileEvent.After(this, file));
+
         return true;
     }
 
