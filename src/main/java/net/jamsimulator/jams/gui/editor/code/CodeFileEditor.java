@@ -113,8 +113,10 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         this.tab = tab;
         this.index = getOrGenerateIndex();
 
-        index.registerListeners(this, true);
-        index.withLock(false, i -> i.setHintBar(hintBar));
+        if(index != null) {
+            index.registerListeners(this, true);
+            index.withLock(false, i -> i.setHintBar(hintBar));
+        }
 
         ZoomUtils.applyZoomListener(this, zoom);
         var factory = CustomLineNumberFactory.get(this);
@@ -408,7 +410,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         try {
             // The index is not initialized or is in edit mode. The indexer will warn
             // us later that the index is initialized or the edit mode has finished, asking for a refresh.
-            if (!index.isInitialized() || index.isInEditMode()) return;
+            if (index == null || !index.isInitialized() || index.isInEditMode()) return;
 
             int from = firstVisibleParToAllParIndex();
             int to = lastVisibleParToAllParIndex();

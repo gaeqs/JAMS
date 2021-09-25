@@ -153,7 +153,7 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
 
         if (index.isInitialized()) {
             // Inspect the added file too!
-            inspectElementsWithReferences(index.withLockF(false, EditorIndex::getAllReferencedReferences),
+            inspectElementsWithReferences(index.withLockF(false, EditorIndex::getAllGlobalReferencedReferences),
                     Set.of());
         }
 
@@ -191,13 +191,13 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
 
         if (index.isInitialized()) {
             var referenced = index.withLockF(true, i -> {
-                var set = i.getAllReferencedReferences();
+                var set = i.getAllGlobalReferencedReferences();
                 i.inspectElementsWithReferences(set);
                 return set;
             });
 
             index.withLock(true, i -> i.inspectElementsWithReferences(referenced));
-            inspectElementsWithReferences(index.withLockF(false, EditorIndex::getAllReferencedReferences),
+            inspectElementsWithReferences(index.withLockF(false, EditorIndex::getAllGlobalReferencedReferences),
                     Set.of(index));
         }
 

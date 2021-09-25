@@ -25,31 +25,14 @@
 package net.jamsimulator.jams.gui.mips.editor.indexing;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
-import net.jamsimulator.jams.gui.editor.code.indexing.inspection.defaults.*;
 import net.jamsimulator.jams.gui.editor.code.indexing.line.EditorLineIndex;
-import net.jamsimulator.jams.gui.mips.editor.indexing.inspection.*;
-import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.gui.mips.editor.indexing.inspection.MIPSInspectorManager;
 import net.jamsimulator.jams.project.Project;
-
-import java.util.Set;
 
 public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
 
     public MIPSEditorIndex(Project project, String name) {
-        super(project, name, Set.of(
-                new DuplicatedLabelInspector(ResourceProvider.JAMS),
-                new DuplicatedMacroInspector(ResourceProvider.JAMS),
-                new MacroNotFoundInspector(ResourceProvider.JAMS),
-                new InvalidMacroParametersAmountInspector(ResourceProvider.JAMS),
-                new IllegalMacroParameterInspector(ResourceProvider.JAMS),
-                new MIPSIllegalLabelInspector(ResourceProvider.JAMS),
-                new MIPSInstructionNotFoundInspector(ResourceProvider.JAMS),
-                new MIPSInstructionLabelNotFoundInspector(ResourceProvider.JAMS),
-                // WARNINGS
-                new MIPSDirectiveNotFoundInspector(ResourceProvider.JAMS),
-                new MIPSEqvUseInspector(ResourceProvider.JAMS),
-                new MIPSRegisterAtUseInspector(ResourceProvider.JAMS)
-        ));
+        super(project, MIPSInspectorManager.INSTANCE, name);
     }
 
     @Override

@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.editor.code.indexing.line;
 
 import net.jamsimulator.jams.collection.Bag;
+import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.editor.code.hint.EditorHintBar;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
@@ -40,7 +41,11 @@ import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexFinishEditEvent
 import net.jamsimulator.jams.gui.editor.code.indexing.global.ProjectGlobalIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
 import net.jamsimulator.jams.gui.util.EasyStyleSpansBuilder;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 import net.jamsimulator.jams.project.Project;
+import net.jamsimulator.jams.utils.Validate;
 import org.fxmisc.richtext.model.StyleSpans;
 
 import java.util.*;
@@ -55,7 +60,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     protected final Project project;
     protected final String name;
-    protected final Set<Inspector<?>> inspectors;
+    protected final Manager<? extends Inspector<?>> inspectors;
 
     protected volatile ProjectGlobalIndex globalIndex;
     protected volatile EditorHintBar hintBar;
@@ -72,10 +77,19 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     protected final Condition initializationCondition = initializationLock.newCondition();
     protected volatile boolean initialized = false;
 
-    public EditorLineIndex(Project project, String name, Set<? extends Inspector<?>> inspectors) {
+    public EditorLineIndex(Project project, Manager<? extends Inspector> inspectors, String name) {
+        this(project, name, (Manager<? extends Inspector<?>>) inspectors);
+    }
+
+    public EditorLineIndex(Project project, String name, Manager<? extends Inspector<?>> inspectors) {
+        Validate.notNull(project, "Project cannot be null!");
+        Validate.notNull(name, "Name cannot be null!");
+        Validate.notNull(inspectors, "Inspectors cannot be null!");
         this.project = project;
         this.name = name;
-        this.inspectors = Set.copyOf(inspectors);
+        this.inspectors = inspectors;
+
+        inspectors.registerListeners(this, true);
     }
 
     @Override
@@ -84,7 +98,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     }
 
     @Override
-    public Set<Inspector<?>> getInspectors() {
+    public Manager<? extends Inspector<?>> getInspectorManager() {
         return inspectors;
     }
 
@@ -123,6 +137,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         checkThread(false);
         this.hintBar = hintBar;
         if (hintBar != null) {
+            hintBar.clear();
             int i = 0;
             for (Line line : lines) {
                 hintBar.addHint(i++, line.getInspectionLevel());
@@ -239,17 +254,9 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     }
 
     @Override
-    public Set<EditorElementReference<?>> getAllReferencedReferences() {
+    public Set<EditorElementReference<?>> getAllGlobalReferencedReferences() {
         checkThread(false);
         return referencedElements.keySet().stream()
-                .filter(it -> globalIdentifiers.contains(it.identifier()))
-                .collect(Collectors.toSet());
-    }
-
-    @Override
-    public Set<EditorElementReference<?>> getAllReferencingReferences() {
-        checkThread(false);
-        return referencingElements.keySet().stream()
                 .filter(it -> globalIdentifiers.contains(it.identifier()))
                 .collect(Collectors.toSet());
     }
@@ -308,9 +315,9 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     }
 
     @Override
-    public boolean isIdentifierGlobal(String global) {
+    public boolean isIdentifierGlobal(String identifier) {
         checkThread(false);
-        return globalIdentifiers.contains(global);
+        return globalIdentifiers.contains(identifier);
     }
 
     @Override
@@ -337,7 +344,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     }
 
     @Override
-    public void inspectElementsWithReferences(Set<EditorElementReference<?>> references) {
+    public void inspectElementsWithReferences(Collection<EditorElementReference<?>> references) {
         checkThread(true);
         var updatedLines = new HashSet<EditorIndexedLine>();
         references.forEach(reference -> {
@@ -591,5 +598,15 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         if (edit && !isInEditMode()) throw new IllegalStateException("Index is not in edit mode!");
     }
 
+
+    @Listener
+    private void onInspectorAdd(ManagerElementRegisterEvent<Inspector<?>> inspector) {
+        withLock(true, i ->  elementStream().forEach(element -> element.inspect(inspectors)));
+    }
+
+    @Listener
+    private void onInspectorRemove(ManagerElementUnregisterEvent<Inspector<?>> inspector) {
+        withLock(true, i ->  elementStream().forEach(element -> element.inspect(inspectors)));
+    }
 
 }

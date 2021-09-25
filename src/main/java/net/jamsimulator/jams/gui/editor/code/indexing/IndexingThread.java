@@ -43,7 +43,7 @@ public class IndexingThread extends Thread {
 
     @Override
     public void run() {
-        if (!waitForInitialization()) return;
+        if (editor.getIndex() == null || !waitForInitialization()) return;
         while (running) {
             if (!waitForElements()) return;
             editor.getIndex().withLock(true, i -> editor.getPendingChanges().flushAll(i::change));

@@ -172,7 +172,7 @@ public class EditorIndexedElementImpl implements EditorIndexedElement {
     }
 
     @Override
-    public Metadata inspect(Collection<Inspector<?>> inspectors) {
+    public Metadata inspect(Collection<? extends Inspector<?>> inspectors) {
         var set = inspectors.stream()
                 .filter(i -> i.getElementType().isInstance(this))
                 .flatMap(i -> i.inspect(this).stream())
