@@ -30,6 +30,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -77,8 +78,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
 
     protected final FileEditorTab tab;
     protected final ScaledVirtualized<CodeFileEditor> zoom = new ScaledVirtualized<>(this);
-    protected final VirtualizedScrollPane<ScaledVirtualized<CodeFileEditor>> scrollPane =
-            new VirtualizedScrollPane<>(zoom);
+    protected final VirtualizedScrollPane<ScaledVirtualized<CodeFileEditor>> scrollPane = new VirtualizedScrollPane<>(zoom);
 
     protected final Rectangle lineBackground;
 
@@ -359,18 +359,6 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     }
 
     protected void initializeAutocompletionPopupListeners() {
-        //AUTO COMPLETION
-        //addEventHandler(KeyEvent.KEY_TYPED, event -> {
-        //    if (autocompletionPopup != null) {
-        //        if (autocompletionPopup.manageTypeEvent(event)) {
-        //            event.consume();
-        //        } else {
-        //            System.out.println(event.getCode());
-        //        }
-        //    }
-        //    if (documentationPopup != null) documentationPopup.hide();
-        //});
-
         //AUTOCOMPLETION MOVEMENT
         addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (autocompletionPopup != null) {

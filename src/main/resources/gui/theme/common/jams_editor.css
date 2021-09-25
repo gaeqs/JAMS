@@ -65,10 +65,6 @@
     -fx-text-fill: -theme-foreground;
 }
 
-.code-area .scroll-pane {
-    -fx-background-color: -theme-background-darkest;
-}
-
 .caret {
     -fx-stroke: -theme-foreground;
 }
