@@ -41,7 +41,7 @@ public class TextEditorActionReplace extends ContextAction {
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.R, KeyCombination.SHORTCUT_DOWN);
 
     public TextEditorActionReplace(ResourceProvider provider) {
-        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_FIND, DEFAULT_COMBINATION,
+        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_REPLACE, DEFAULT_COMBINATION,
                 TextEditorActionRegions.CONTEXT, null, null);
     }
 

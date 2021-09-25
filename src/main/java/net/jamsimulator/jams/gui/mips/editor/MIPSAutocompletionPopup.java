@@ -46,6 +46,7 @@ import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MIPSAutocompletionPopup extends AutocompletionPopup {
@@ -197,12 +198,14 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
         // And macros!
 
         var macros =
-                index.getReferencedElementsOfType(MIPSEditorDirectiveMacroName.class, element.getReferencingScope());
+                index.getReferencedElementsOfType(EditorElementMacro.class, element.getReferencingScope())
+                        .stream().map(EditorIndexedElement::getIdentifier).collect(Collectors.toSet());
         index.getGlobalIndex().ifPresent(files ->
-                macros.addAll(files.searchReferencedElementsOfType(MIPSEditorDirectiveMacroName.class)));
+                macros.addAll(files.searchReferencedElementsOfType(EditorElementMacro.class)
+                        .stream().map(EditorIndexedElement::getIdentifier).collect(Collectors.toSet())));
 
-        addElements(macros.stream().filter(target -> target.getIdentifier().startsWith(directive)),
-                MIPSEditorDirectiveMacroName::getIdentifier, m -> m.getIdentifier() + " (", 0, ICON_MACRO);
+        addElements(macros.stream().filter(target -> target.startsWith(directive)),
+                m -> m, m -> m + " (", 0, ICON_MACRO);
 
         return directive;
     }
@@ -247,8 +250,8 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
                     Set<String> names = project.getData().getRegistersBuilder().getRegistersNames();
                     Set<Character> starts = project.getData().getRegistersBuilder().getValidRegistersStarts();
                     starts.forEach(c -> addElements(names.stream()
-                            .filter(target -> target.toLowerCase().startsWith(partStart)
-                                    || (c + target.toLowerCase()).startsWith(partStart)), s -> c + s, s -> c + s,
+                                    .filter(target -> target.toLowerCase().startsWith(partStart)
+                                            || (c + target.toLowerCase()).startsWith(partStart)), s -> c + s, s -> c + s,
                             partStartIndex.get(), ICON_REGISTER));
                     hasRegisters = true;
                 }
