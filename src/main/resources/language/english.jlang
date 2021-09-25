@@ -4683,6 +4683,8 @@ DIRECTIVE_LAB_DOCUMENTATION.=<u>Create label</u>
 <b>Description:</b>
 Creates the given label.
 
+\END
+
 DIRECTIVE_MACRO_DOCUMENTATION.=<u>Macro</u>
 
 <b>Format:</b>

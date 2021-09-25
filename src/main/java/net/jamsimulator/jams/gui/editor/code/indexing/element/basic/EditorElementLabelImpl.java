@@ -34,7 +34,7 @@ import java.util.Set;
 
 public class EditorElementLabelImpl extends EditorIndexedElementImpl implements EditorElementLabel {
 
-    public static final Set<String> STYLE = Set.of("label");
+    public static final Set<String> STYLE = Set.of("normal-label");
     public static final Set<String> GLOBAL_STYLE = Set.of("global-label");
 
     private final String identifier;

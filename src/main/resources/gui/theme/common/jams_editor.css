@@ -224,7 +224,8 @@
     -fx-fill: -theme-text-comment;
 }
 
-.code-area .label {
+/* called normal-label instead of label to avoid conflicts with the menu's labels */
+.code-area .normal-label {
     -fx-fill: -theme-text-label;
     -fx-font-style: italic;
 }

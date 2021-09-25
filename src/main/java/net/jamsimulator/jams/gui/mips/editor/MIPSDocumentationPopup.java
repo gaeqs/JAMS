@@ -29,7 +29,9 @@ import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.popup.DocumentationPopup;
 import net.jamsimulator.jams.gui.editor.code.popup.event.AutocompletionPopupSelectElementEvent;
 import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirective;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirectiveMnemonic;
 import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstruction;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstructionMnemonic;
 import net.jamsimulator.jams.gui.util.StringStyler;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.instruction.Instruction;
@@ -92,14 +94,16 @@ public class MIPSDocumentationPopup extends DocumentationPopup {
                 return true;
             }
         } else if (display instanceof MIPSFileEditor) {
-
-            var optional = ((MIPSFileEditor) display).getIndex()
-                    .getElementAt(display.getCaretPosition() + caretOffset);
+            var index = display.getIndex();
+            var optional = index.withLockF(false,
+                            i -> i.getElementAt(display.getCaretPosition() + caretOffset - 1));
 
             if (optional.isEmpty()) return false;
 
             var element = optional.get();
-            if (element instanceof MIPSEditorInstruction edInstruction) {
+            if (element instanceof MIPSEditorInstructionMnemonic) {
+                var parent = element.getParentOfType(MIPSEditorInstruction.class).orElse(null);
+                if(parent == null) return false;
 
                 topMessage.clear();
 
@@ -110,7 +114,7 @@ public class MIPSDocumentationPopup extends DocumentationPopup {
 
                 topMessage.setMaxHeight(topMessage.getLength() > 0 ? 50 : 0);
 
-                var instruction = edInstruction.getInstruction();
+                var instruction = parent.getInstruction();
                 if (instruction.isEmpty()) {
                     content.clear();
                     return topMessage.getMaxHeight() > 0;
@@ -118,7 +122,10 @@ public class MIPSDocumentationPopup extends DocumentationPopup {
 
                 StringStyler.style(instruction.get().getDocumentation(), content);
                 return true;
-            } else if (element instanceof MIPSEditorDirective edDirective) {
+            } else if (element instanceof MIPSEditorDirectiveMnemonic) {
+                var parent = element.getParentOfType(MIPSEditorDirective.class).orElse(null);
+                if(parent == null) return false;
+
                 topMessage.clear();
 
                 element.getMetadata().inspections().forEach(inspection ->
@@ -126,7 +133,7 @@ public class MIPSDocumentationPopup extends DocumentationPopup {
 
                 topMessage.setMaxHeight(topMessage.getLength() > 0 ? 50 : 0);
 
-                var directive = edDirective.getDirective();
+                var directive = parent.getDirective();
                 if (directive.isEmpty()) {
                     content.clear();
                     return topMessage.getMaxHeight() > 0;

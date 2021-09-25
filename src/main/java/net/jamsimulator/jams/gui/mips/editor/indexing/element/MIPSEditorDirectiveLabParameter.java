@@ -35,7 +35,7 @@ import java.util.Set;
 public class MIPSEditorDirectiveLabParameter extends MIPSEditorDirectiveParameter
         implements EditorElementLabel {
 
-    public static final Set<String> STYLE = Set.of("label");
+    public static final Set<String> STYLE = Set.of("normal-label");
 
     public MIPSEditorDirectiveLabParameter(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent, int start, String text) {
         super(index, scope, parent, start, text);

@@ -94,6 +94,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     protected EditorPendingChanges pendingChanges = new EditorPendingChanges();
 
     protected EventHandler<?> popupHideHandler = event -> {
+        JamsApplication.hideContextMenu();
         if (autocompletionPopup != null) autocompletionPopup.hide();
         if (documentationPopup != null) documentationPopup.hide();
     };
