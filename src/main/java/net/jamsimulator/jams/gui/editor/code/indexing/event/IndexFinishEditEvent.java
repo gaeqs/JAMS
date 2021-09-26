@@ -26,8 +26,16 @@ package net.jamsimulator.jams.gui.editor.code.indexing.event;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 
+/**
+ * Event sent when an {@link EditorIndex} exits the edit mode.
+ */
 public class IndexFinishEditEvent extends IndexEvent {
 
+    /**
+     * Creates the finish edit event.
+     *
+     * @param index the {@link EditorIndex}.
+     */
     public IndexFinishEditEvent(EditorIndex index) {
         super(index);
     }

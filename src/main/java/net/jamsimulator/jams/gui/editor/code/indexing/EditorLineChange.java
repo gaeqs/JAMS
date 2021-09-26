@@ -33,24 +33,47 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Represents a change in a {@link net.jamsimulator.jams.gui.editor.code.CodeFileEditor CodeFileEditor}.
+ */
 public record EditorLineChange(Type type, int line, String text) {
 
+    /**
+     * Returns a new {@link List} with the {@link EditorLineChange changes} made by the
+     * given {@link PlainTextChange}.
+     * <p>
+     * The given list is a new mutable list.
+     *
+     * @param change the change.
+     * @param area   the {@link CodeArea} where the change has occurred.
+     * @return the list with the {@link EditorLineChange}.
+     */
     public static List<EditorLineChange> of(PlainTextChange change, CodeArea area) {
         return of(change, area, new ArrayList<>());
     }
 
-    public static <T extends Collection<? super EditorLineChange>> T of(PlainTextChange change, CodeArea area, T list) {
+    /**
+     * Calculates the {@link EditorLineChange changes} made by the given {@link PlainTextChange} and
+     * adds them into the given {@link Collection}.
+     *
+     * @param change     the change.
+     * @param area       the {@link CodeArea} where the change has occurred.
+     * @param collection the collection where the changes will be added.
+     * @param <T>        the type of the collection.
+     * @return the given collection.
+     */
+    public static <T extends Collection<? super EditorLineChange>> T of(PlainTextChange change, CodeArea area, T collection) {
         var added = change.getInserted();
         var removed = change.getRemoved();
 
         var position = area.offsetToPosition(change.getPosition(), TwoDimensional.Bias.Forward);
         var line = position.getMajor();
 
-        list.add(new EditorLineChange(Type.EDIT, line, area.getParagraph(line).getText()));
+        collection.add(new EditorLineChange(Type.EDIT, line, area.getParagraph(line).getText()));
 
         int addedLines = StringUtils.charCount(added, '\n', '\r');
         int removedLines = StringUtils.charCount(removed, '\n', '\r');
-        if (addedLines == 0 && removedLines == 0) return list;
+        if (addedLines == 0 && removedLines == 0) return collection;
 
         line++;
 
@@ -59,19 +82,22 @@ public record EditorLineChange(Type type, int line, String text) {
         int linesToRemove = Math.max(0, removedLines - addedLines);
 
         for (int i = 0; i < editedLines; i++) {
-            list.add(new EditorLineChange(Type.EDIT, line + i, area.getParagraph(line + i).getText()));
+            collection.add(new EditorLineChange(Type.EDIT, line + i, area.getParagraph(line + i).getText()));
         }
 
         for (int i = 0; i < linesToRemove; i++) {
-            list.add(new EditorLineChange(Type.REMOVE, line + editedLines, null));
+            collection.add(new EditorLineChange(Type.REMOVE, line + editedLines, null));
         }
         for (int i = 0; i < linesToAdd; i++) {
             int n = line + i + editedLines;
-            list.add(new EditorLineChange(Type.ADD, n, area.getParagraph(n).getText()));
+            collection.add(new EditorLineChange(Type.ADD, n, area.getParagraph(n).getText()));
         }
-        return list;
+        return collection;
     }
 
+    /**
+     * Represents the type of the change. It may be an addition, a removal or an edit.
+     */
     public enum Type {
 
         EDIT,

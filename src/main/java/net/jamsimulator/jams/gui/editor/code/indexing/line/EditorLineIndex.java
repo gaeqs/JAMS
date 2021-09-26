@@ -56,6 +56,18 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Base {@link EditorIndex} representation for editors that are line-based.
+ * <p>
+ * In a line-based editor, a line is a separated, individual entity.
+ * A line contains elements that defines its behaviour.
+ * <p>
+ * Example of line-based editors is the MIPS editor: each line is independent of each other.
+ * <p>
+ * To implement your logic in this editor, start creating a child class of {@link EditorIndexedElement}.
+ *
+ * @param <Line> the type of the line.
+ */
 public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends SimpleEventBroadcast implements EditorIndex {
 
     protected final Project project;
@@ -223,7 +235,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
                 if (line.isMacroEnd() || line.isMacroStart()) line.changeScope(ElementScope.FILE);
                 lines.add(line);
             }
-            lines.forEach(this::addReferences);
+            lines.forEach(this::addCachedElements);
         } finally {
             initializationLock.lock();
             if (!initialized) {
@@ -399,6 +411,12 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         return lock.isLocked();
     }
 
+    /**
+     * This method is called by {@link #change(EditorLineChange)} when a line being edited.
+     *
+     * @param number the line number.
+     * @param text   the new text of the line.
+     */
     protected void editLine(int number, String text) {
         var old = lines.get(number);
         var line = generateNewLine(old.getStart(), number, text, old.getReferencingScope());
@@ -407,12 +425,12 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
         int difference = line.getLength() - old.getLength();
         lines.listIterator(number + 1).forEachRemaining(it -> it.move(difference));
-        removeReferences(old);
-        addReferences(line);
+        removeCachedElements(old);
+        addCachedElements(line);
         line.elementStream().forEach(element -> element.inspect(inspectors));
         line.recalculateInspectionLevel();
 
-        var refresh = refreshLinesScope(number, old, line);
+        var refresh = getLinesToRefreshOnScopeChange(number, old, line);
 
         // First let's refresh the references of all changed lines.
         refresh.forEach(l -> {
@@ -425,15 +443,20 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         checkInspectionsInReferences(refresh);
     }
 
+    /**
+     * This method is called by {@link #change(EditorLineChange)} when a line being removed.
+     *
+     * @param number the line number.
+     */
     protected void removeLine(int number) {
         var line = lines.remove(number);
         line.invalidate();
         lines.listIterator(number).forEachRemaining(it ->
                 it.movePositionAndNumber(-1, -line.getLength() - 1));
         getHintBar().ifPresent(it -> it.removeLine(number));
-        removeReferences(line);
+        removeCachedElements(line);
 
-        var refresh = refreshLinesScope(number, line, null);
+        var refresh = getLinesToRefreshOnScopeChange(number, line, null);
 
         // First let's refresh the references of all changed lines.
         refresh.forEach(l -> {
@@ -445,6 +468,12 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         checkInspectionsInReferences(refresh);
     }
 
+    /**
+     * This method is called by {@link #change(EditorLineChange)} when a line being added.
+     *
+     * @param number the line number.
+     * @param text   the text of the line.
+     */
     protected void addLine(int number, String text) {
         var previous = number == 0 ? null : lines.get(number - 1);
         int start = previous == null ? 0 : previous.getEnd() + 1;
@@ -454,11 +483,11 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         lines.listIterator(number + 1).forEachRemaining(it ->
                 it.movePositionAndNumber(1, line.getLength() + 1));
         getHintBar().ifPresent(it -> it.addLine(number));
-        addReferences(line);
+        addCachedElements(line);
         line.elementStream().forEach(element -> element.inspect(inspectors));
         line.recalculateInspectionLevel();
 
-        var refresh = refreshLinesScope(number, null, line);
+        var refresh = getLinesToRefreshOnScopeChange(number, null, line);
 
         // First let's refresh the references of all changed lines.
         refresh.forEach(l -> {
@@ -470,8 +499,16 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         checkInspectionsInReferences(refresh);
     }
 
-    protected Set<Line> refreshLinesScope(int index, Line removed, Line added) {
-        if (index >= lines.size() - 1) return new HashSet<>();
+    /**
+     * This method returns a {@link Set} with all lines that require reinspection when a scope changes.
+     *
+     * @param number  the line number.
+     * @param removed the line that has been removed. It may be null.
+     * @param added   the line that has beed added. It may be null.
+     * @return the set with the lines.
+     */
+    protected Set<Line> getLinesToRefreshOnScopeChange(int number, Line removed, Line added) {
+        if (number >= lines.size() - 1) return new HashSet<>();
 
         ElementScope scope = null;
         if (added != null && (added.isMacroStart() || added.isMacroEnd())) {
@@ -480,13 +517,13 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
                     : ElementScope.FILE;
 
         } else if (removed != null && (removed.isMacroStart() || removed.isMacroEnd())) {
-            scope = index == 0 ? ElementScope.FILE : lines.get(index - 1).getReferencingScope();
+            scope = number == 0 ? ElementScope.FILE : lines.get(number - 1).getReferencingScope();
         }
 
         if (scope == null) return new HashSet<>();
 
         var list = new HashSet<Line>();
-        for (var line : lines.subList(index + 1, lines.size())) {
+        for (var line : lines.subList(number + 1, lines.size())) {
             if (line.isMacroStart() || line.isMacroEnd()) break;
             line.changeScope(scope);
             list.add(line);
@@ -494,66 +531,114 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         return list;
     }
 
-    protected void removeReferences(Line line) {
-        line.elementStream().forEach(element -> {
-            if (element instanceof EditorReferencingElement<?> referencing) {
-                referencing.getReferences().forEach(reference -> {
-                    var set = referencingElements.get(reference);
-                    if (set != null) {
-                        set.remove(referencing);
-                        if (set.isEmpty()) {
-                            referencingElements.remove(reference);
-                        }
-                    }
-                });
-            }
-            if (element instanceof EditorReferencedElement referenced) {
-                var reference = referenced.getReference();
-                var set = referencedElements.get(reference);
+    /**
+     * This method removes all cached elements that are inside the given line.
+     *
+     * @param line the line.
+     */
+    protected void removeCachedElements(Line line) {
+        line.elementStream().forEach(this::processElementRemoval);
+    }
+
+    /**
+     * This method is called when an element is removed and its linked cached data should be freed.
+     * You can override this method to implement your custom cache logic.
+     *
+     * @param element the element being removed.
+     */
+    protected void processElementRemoval(EditorIndexedElement element) {
+        if (element instanceof EditorReferencingElement<?> referencing) {
+            referencing.getReferences().forEach(reference -> {
+                var set = referencingElements.get(reference);
                 if (set != null) {
-                    set.remove(referenced);
+                    set.remove(referencing);
                     if (set.isEmpty()) {
-                        referencedElements.remove(reference);
+                        referencingElements.remove(reference);
                     }
                 }
+            });
+        }
+        if (element instanceof EditorReferencedElement referenced) {
+            var reference = referenced.getReference();
+            var set = referencedElements.get(reference);
+            if (set != null) {
+                set.remove(referenced);
+                if (set.isEmpty()) {
+                    referencedElements.remove(reference);
+                }
             }
-            if (element instanceof EditorGlobalMarkerElement marker) {
-                globalIdentifiers.removeAll(marker.getGlobalIdentifiers());
-            }
-        });
+        }
+        if (element instanceof EditorGlobalMarkerElement marker) {
+            globalIdentifiers.removeAll(marker.getGlobalIdentifiers());
+        }
     }
 
-    protected void addReferences(Line line) {
-        line.elementStream().forEach(element -> {
-            if (element instanceof EditorReferencingElement<?> referencing) {
-                var references = referencing.getReferences();
-                if (references == null) {
-                    System.err.println("Element " + referencing + " (" + referencing.getClass()
-                            + ") has a null reference set!");
-                    return;
-                }
-                references.forEach(reference -> referencingElements.computeIfAbsent(reference, it -> new HashSet<>())
-                        .add(referencing));
-            }
-            if (element instanceof EditorReferencedElement referenced) {
-                var reference = referenced.getReference();
-                if (reference == null) {
-                    System.err.println("Element " + referenced + " (" + referenced.getClass() + ") has a null reference!");
-                    return;
-                }
-                referencedElements.computeIfAbsent(referenced.getReference(), it -> new HashSet<>()).add(referenced);
-            }
-            if (element instanceof EditorGlobalMarkerElement marker) {
-                globalIdentifiers.addAll(marker.getGlobalIdentifiers());
-            }
-        });
+    /**
+     * This method adds all cached elements that are inside the given line.
+     *
+     * @param line the line.
+     */
+    protected void addCachedElements(Line line) {
+        line.elementStream().forEach(this::processElementAddition);
     }
 
+    /**
+     * This method is called when an element is added and its linked cached data should be generated.
+     * You can override this method to implement your custom cache logic.
+     *
+     * @param element the element being added.
+     */
+    protected void processElementAddition(EditorIndexedElement element) {
+        if (element instanceof EditorReferencingElement<?> referencing) {
+            var references = referencing.getReferences();
+            if (references == null) {
+                System.err.println("Element " + referencing + " (" + referencing.getClass()
+                        + ") has a null reference set!");
+                return;
+            }
+            references.forEach(reference -> referencingElements.computeIfAbsent(reference, it -> new HashSet<>())
+                    .add(referencing));
+        }
+        if (element instanceof EditorReferencedElement referenced) {
+            var reference = referenced.getReference();
+            if (reference == null) {
+                System.err.println("Element " + referenced + " (" + referenced.getClass() + ") has a null reference!");
+                return;
+            }
+            referencedElements.computeIfAbsent(referenced.getReference(), it -> new HashSet<>()).add(referenced);
+        }
+        if (element instanceof EditorGlobalMarkerElement marker) {
+            globalIdentifiers.addAll(marker.getGlobalIdentifiers());
+        }
+    }
+
+    /**
+     * Method called when the index has to generate a new line.
+     * <p>
+     * This method must be implemented.
+     *
+     * @param start  the start of the line.
+     * @param number the line number.
+     * @param text   the text of the line.
+     * @param scope  the scope of the line.
+     * @return the new line.
+     */
     protected abstract Line generateNewLine(int start, int number, String text, ElementScope scope);
 
+    /**
+     * This method is used to reinspect the elements that contains any of the references declared
+     * in the given lines. Elements from other files in the {@link ProjectGlobalIndex} are also
+     * called for reinspection.
+     * <p>
+     * This method should be called when a line is added, removed or edited.
+     *
+     * @param lines the lines containing the references.
+     */
     protected void checkInspectionsInReferences(Collection<Line> lines) {
+        // Let's start getting the references of the referenced elements.
         var referenced = lines.stream()
-                .flatMap(this::getReferencedReferencesInLine).collect(Collectors.toSet());
+                .flatMap(this::getReferencedReferencesInLine)
+                .collect(Collectors.toSet());
 
         // Now we have all references that have been updated and needs refreshing.
         // If the reference is a referenced element, we must update the referenced and referencing elements.
@@ -580,12 +665,24 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         });
     }
 
+    /**
+     * Returns the references declared by all {@link EditorReferencedElement}s inside the given line.
+     *
+     * @param line the line.
+     * @return the references.
+     */
     protected Stream<EditorElementReference<?>> getReferencedReferencesInLine(EditorIndexedLine line) {
         return line.elementStream()
                 .filter(it -> it instanceof EditorReferencedElement)
                 .map(it -> ((EditorReferencedElement) it).getReference());
     }
 
+    /**
+     * Returns all identifiers marked as global by the given line.
+     *
+     * @param line the line.
+     * @return the identifiers.
+     */
     protected Stream<String> getMarkersInLine(EditorIndexedLine line) {
         return line.elementStream()
                 .filter(it -> it instanceof EditorGlobalMarkerElement)
@@ -601,12 +698,12 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     @Listener
     private void onInspectorAdd(ManagerElementRegisterEvent<Inspector<?>> inspector) {
-        withLock(true, i ->  elementStream().forEach(element -> element.inspect(inspectors)));
+        withLock(true, i -> elementStream().forEach(element -> element.inspect(inspectors)));
     }
 
     @Listener
     private void onInspectorRemove(ManagerElementUnregisterEvent<Inspector<?>> inspector) {
-        withLock(true, i ->  elementStream().forEach(element -> element.inspect(inspectors)));
+        withLock(true, i -> elementStream().forEach(element -> element.inspect(inspectors)));
     }
 
 }

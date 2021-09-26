@@ -26,8 +26,16 @@ package net.jamsimulator.jams.gui.editor.code.indexing.event;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 
+/**
+ * Event sent when a {@link EditorIndex} request a layout refresh.
+ */
 public class IndexRequestRefreshEvent extends IndexEvent {
 
+    /**
+     * Creates the request refresh event.
+     *
+     * @param index the {@link EditorIndex}.
+     */
     public IndexRequestRefreshEvent(EditorIndex index) {
         super(index);
     }

@@ -26,6 +26,9 @@ package net.jamsimulator.jams.gui.editor.code.indexing;
 
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 
+/**
+ * Small thread implementation used to send changes to a {@link EditorIndex} in an asynchronous way.
+ */
 public class IndexingThread extends Thread {
 
     private final CodeFileEditor editor;
@@ -36,6 +39,9 @@ public class IndexingThread extends Thread {
         this.running = true;
     }
 
+    /**
+     * Stops the thread.
+     */
     public void kill() {
         running = false;
         interrupt();

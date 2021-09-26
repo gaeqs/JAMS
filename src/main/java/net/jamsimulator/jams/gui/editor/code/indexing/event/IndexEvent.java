@@ -27,14 +27,30 @@ package net.jamsimulator.jams.gui.editor.code.indexing.event;
 import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 
+/**
+ * Base class for an event related to a {@link EditorIndex}.
+ */
 public class IndexEvent extends Event {
 
+    /**
+     * The editor index related to this event.
+     */
     protected final EditorIndex index;
 
+    /**
+     * Creates the event.
+     *
+     * @param index the {@link EditorIndex}.
+     */
     public IndexEvent(EditorIndex index) {
         this.index = index;
     }
 
+    /**
+     * Returns the {@link EditorIndex} related to this event.
+     *
+     * @return the {@link EditorIndex}.
+     */
     public EditorIndex getIndex() {
         return index;
     }

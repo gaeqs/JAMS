@@ -34,6 +34,11 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
+/**
+ * Helper class that stores the changes pending to be indexed by a {@link IndexingThread}.
+ * <p>
+ * This class is thread-safe.
+ */
 public class EditorPendingChanges {
 
     private final ConcurrentLinkedQueue<EditorLineChange> changes = new ConcurrentLinkedQueue<>();
