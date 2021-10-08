@@ -52,6 +52,7 @@ import net.jamsimulator.jams.mips.simulation.file.SimulationFiles;
 import net.jamsimulator.jams.mips.simulation.random.NumberGenerators;
 import net.jamsimulator.jams.utils.StringUtils;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -536,7 +537,9 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
             int address = (i << 2) + memory.getFirstTextAddress();
             int data = memory.getWord(address);
             var instruction =
-                    instructionSet.getInstructionByInstructionCode(data).orElseThrow();
+                    instructionSet.getInstructionByInstructionCode(data).orElseThrow(() -> new NoSuchElementException(
+                            "No instruction for code 0x" + StringUtils.addZeros(Integer.toHexString(data), 8)
+                                    + " at address 0x" + StringUtils.addZeros(Integer.toHexString(data), 8) + "."));
             var assembled = instruction.assembleFromCode(data);
             var execution = assembled.getBasicOrigin()
                     .generateExecution(this, assembled, address).orElseThrow();
