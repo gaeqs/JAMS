@@ -53,6 +53,11 @@ import java.nio.file.StandardWatchEventKinds;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * This is the collection containing the files to assemble of a project.
+ * <p>
+ * These files' indices are always loaded, and they can share common information.
+ */
 public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements FileCollection {
 
     private final Project project;
@@ -60,6 +65,7 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
     private final List<File> order;
 
     public ProjectGlobalIndex(Project project) {
+        Validate.notNull(project, "Project cannot be null!");
         this.project = project;
         this.indices = new HashMap<>();
         this.order = new LinkedList<>();
@@ -67,6 +73,11 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
         project.getProjectTab().ifPresent(tab -> tab.registerListeners(this, true));
     }
 
+    /**
+     * Returns the {@link Project} of this global index.
+     *
+     * @return the {@link Project}.
+     */
     public Project getProject() {
         return project;
     }
@@ -81,10 +92,24 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
         return indices.containsKey(file);
     }
 
+    /**
+     * Returns the {@link EditorIndex} linked to the given index if present.
+     *
+     * @param file the file.
+     * @return the index if present.
+     */
     public synchronized Optional<EditorIndex> getIndex(File file) {
         return Optional.ofNullable(indices.get(file));
     }
 
+    /**
+     * Searches for a global {@link EditorReferencedElement} that matches
+     * the given {@link EditorElementReference} inside any of the files.
+     *
+     * @param reference the reference.
+     * @param <R>       the type of the referenced element.
+     * @return the referenced element.
+     */
     public synchronized <R extends EditorReferencedElement>
     Optional<R> searchReferencedElement(EditorElementReference<R> reference) {
         for (EditorIndex index : indices.values()) {
@@ -99,6 +124,14 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
         return Optional.empty();
     }
 
+    /**
+     * Searches for all global {@link EditorReferencedElement}s that match
+     * the given {@link EditorElementReference} inside all the files.
+     *
+     * @param reference the reference.
+     * @param <R>       the type of the referenced element.
+     * @return the referenced elements.
+     */
     public synchronized <R extends EditorReferencedElement>
     Set<R> searchReferencedElements(EditorElementReference<R> reference) {
         return indices.values().stream()
@@ -107,6 +140,13 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Searches for all global {@link EditorReferencedElement}s that match the given type.
+     *
+     * @param type the type of the referenced element.
+     * @param <R>  the type of the referenced element.
+     * @return the referenced elements.
+     */
     public <R extends EditorReferencedElement>
     Set<R> searchReferencedElementsOfType(Class<R> type) {
         var set = new HashSet<R>();
@@ -116,6 +156,14 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
         return set;
     }
 
+    /**
+     * Searches for all {@link EditorReferencingElement} that references the given
+     * {@link EditorElementReference} inside all the files.
+     *
+     * @param reference the reference.
+     * @param <R>       the type of the referenced element.
+     * @return the referencing elements.
+     */
     public synchronized <R extends EditorReferencedElement>
     Set<EditorReferencingElement<?>> searchReferencingElements(EditorElementReference<R> reference) {
         var set = new HashSet<EditorReferencingElement<?>>();
@@ -124,6 +172,13 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
         return set;
     }
 
+    /**
+     * Inspects all the elements that contains the given {@link EditorElementReference}s.
+     * The {@link EditorIndex indices} inside the given set will be ingnored.
+     *
+     * @param references     the references.
+     * @param ignoredIndices the indices to ignore.
+     */
     public synchronized void inspectElementsWithReferences(
             Set<EditorElementReference<?>> references, Set<EditorIndex> ignoredIndices) {
         indices.values().stream().filter(it -> !ignoredIndices.contains(it)).forEach(it ->
@@ -226,6 +281,12 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
         return true;
     }
 
+    /**
+     * Saves this collection in the given file.
+     *
+     * @param file the file.
+     * @throws IOException when something bad happens with the file.
+     */
     public synchronized void saveFiles(File file) throws IOException {
         Validate.notNull(file, "File cannot be null!");
         var array = new JSONArray();
@@ -234,6 +295,14 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
         Files.writeString(file.toPath(), array.toString(1), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
     }
 
+    /**
+     * Fills this collection with the contents of the given file.
+     * <p>
+     * The previous elements WON'T be removed.
+     *
+     * @param file the file.
+     * @throws IOException when something bad happens with the file.
+     */
     public synchronized void loadFiles(File file) throws IOException {
         Validate.notNull(file, "File cannot be null!");
         if (!file.isFile()) return;

@@ -178,6 +178,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     @Override
     public void change(EditorLineChange change) {
+        Validate.notNull(change, "Change cannot be null!");
         checkThread(true);
         switch (change.type()) {
             case EDIT -> editLine(change.line(), change.text());
@@ -188,6 +189,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     @Override
     public void indexAll(String text) {
+        if (text == null) text = "";
         checkThread(true);
 
         var oldGlobalReferences = globalIdentifiers == null
@@ -282,6 +284,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     @Override
     public <T extends EditorReferencedElement>
     Optional<T> getReferencedElement(EditorElementReference<T> reference, ElementScope scope) {
+        Validate.notNull(reference, "Reference cannot be null!");
         checkThread(false);
         return referencedElements.entrySet().stream()
                 .filter(it -> reference.isChild(it.getKey()))
@@ -294,6 +297,8 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     @Override
     public <T extends EditorReferencedElement>
     Set<T> getReferencedElements(EditorElementReference<T> reference, ElementScope scope) {
+        Validate.notNull(reference, "Reference cannot be null!");
+        Validate.notNull(scope, "Scope cannot be null!");
         checkThread(false);
         return referencedElements.entrySet().stream()
                 .filter(it -> reference.isChild(it.getKey()))
@@ -306,6 +311,8 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     @Override
     public <T extends EditorReferencedElement>
     Set<T> getReferencedElementsOfType(Class<T> type, ElementScope scope) {
+        Validate.notNull(type, "Type cannot be null!");
+        Validate.notNull(scope, "Scope cannot be null!");
         checkThread(false);
         return referencedElements.entrySet().stream()
                 .filter(it -> type.isAssignableFrom(it.getKey().referencedType()))
@@ -318,6 +325,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     @Override
     public <T extends EditorReferencedElement>
     Set<EditorReferencingElement<?>> getReferecingElements(EditorElementReference<T> reference) {
+        Validate.notNull(reference, "Reference cannot be null!");
         checkThread(false);
 
         return referencingElements.entrySet().stream()
@@ -357,6 +365,8 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     @Override
     public void inspectElementsWithReferences(Collection<EditorElementReference<?>> references) {
+        Validate.notNull(references, "References cannot be null!");
+        Validate.hasNoNulls(references, "References cannot have any null value!");
         checkThread(true);
         var updatedLines = new HashSet<EditorIndexedLine>();
         references.forEach(reference -> {

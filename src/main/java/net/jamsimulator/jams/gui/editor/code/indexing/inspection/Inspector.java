@@ -30,17 +30,39 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElemen
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.manager.ManagerResource;
 import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Collections;
 import java.util.Set;
 
+/**
+ * Represents the base class for generators of {@link Inspection}s.
+ * <p>
+ * Children of this class must implement {@link #inspectImpl(EditorIndexedElement)}.
+ * This method must inspect the element and return the found {@link Inspection}s.
+ * <p>
+ * Inspectors are binded to one type of {@link EditorIndexedElement}, represented by {@link #getElementType()}.
+ * Only elements that are children of this class will be sent to the inspector.
+ *
+ * @param <T> the type of the element to inspect.
+ */
 public abstract class Inspector<T extends EditorIndexedElement> implements ManagerResource {
 
     protected final ResourceProvider provider;
     protected final String name;
     protected final Class<T> elementType;
 
+    /**
+     * Creates the inspector.
+     *
+     * @param provider    the provider providing this inspector.
+     * @param name        the name of the inspection. This must be unique and not null!
+     * @param elementType the type of the element to inspect.
+     */
     public Inspector(ResourceProvider provider, String name, Class<T> elementType) {
+        Validate.notNull(provider, "Provider cannot be null!");
+        Validate.notNull(name, "Name cannot be null!");
+        Validate.notNull(elementType, "Element type cannot be null!");
         this.provider = provider;
         this.name = name;
         this.elementType = elementType;
@@ -56,11 +78,27 @@ public abstract class Inspector<T extends EditorIndexedElement> implements Manag
         return name;
     }
 
+    /**
+     * Returns the type of the element this inspector inspects.
+     *
+     * @return the type of the element this inspector inspects.
+     */
     public Class<T> getElementType() {
         return elementType;
     }
 
+    /**
+     * Inspects the given element.
+     * <p>
+     * This method returns an empty set if the given element is null.
+     * <p>
+     * The returned set may be immutable!
+     *
+     * @param element the element.
+     * @return the inspections.
+     */
     public Set<Inspection> inspect(EditorIndexedElement element) {
+        if (element == null) return Collections.emptySet();
         try {
             var scope = element.getReferencingScope();
             if (element.getIdentifier().startsWith("%") && scope.type() == ElementScope.Type.MACRO) {
@@ -83,6 +121,13 @@ public abstract class Inspector<T extends EditorIndexedElement> implements Manag
         }
     }
 
+    /**
+     * The inspector's implementation. Children must override this method.
+     *
+     * @param element the element to inspect.
+     * @return the inspections.
+     * @see #inspect(EditorIndexedElement)
+     */
     protected abstract Set<Inspection> inspectImpl(T element);
 
 }

@@ -28,6 +28,9 @@ import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.gui.editor.code.indexing.global.FileCollection;
 import net.jamsimulator.jams.utils.Validate;
 
+/**
+ * Base class for {@link FileCollection}s' events.
+ */
 public class FileCollectionEvent extends Event {
 
     private final FileCollection fileCollection;

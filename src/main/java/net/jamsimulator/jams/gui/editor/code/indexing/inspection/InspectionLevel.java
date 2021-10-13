@@ -26,6 +26,9 @@ package net.jamsimulator.jams.gui.editor.code.indexing.inspection;
 
 import java.util.Optional;
 
+/**
+ * The level of a {@link Inspection}.
+ */
 public enum InspectionLevel {
 
     NONE(null, null),
@@ -42,10 +45,22 @@ public enum InspectionLevel {
         this.elementStyle = elementStyle;
     }
 
+    /**
+     * Returns the style for the inspection inside a
+     * {@link net.jamsimulator.jams.gui.editor.code.hint.EditorHintBar EditorHintBar}.
+     *
+     * @return the style.
+     */
     public Optional<String> getHintStyle() {
         return Optional.ofNullable(hintStyle);
     }
 
+    /**
+     * Returns the style for the inspection inside a
+     * {@link net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement Styleable element}.
+     *
+     * @return the style.
+     */
     public Optional<String> getElementStyle() {
         return Optional.ofNullable(elementStyle);
     }
