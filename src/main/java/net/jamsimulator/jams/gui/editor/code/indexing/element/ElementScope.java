@@ -79,7 +79,7 @@ public record ElementScope(Type type, String macroIdentifier) {
     }
 
     /**
-     * The scope file.
+     * The scope type.
      */
     public enum Type {
         /**
