@@ -30,6 +30,9 @@ import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
 
+/**
+ * This event is fired when a file inside a {@link FileCollection} changes its index.
+ */
 public class FileCollectionChangeIndexEvent extends FileCollectionEvent {
 
     protected final File file;

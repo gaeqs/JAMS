@@ -30,6 +30,9 @@ import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
 
+/**
+ * This event is fired when a file is added to a {@link FileCollection}.
+ */
 public class FileCollectionAddFileEvent extends FileCollectionEvent {
 
     protected File file;
