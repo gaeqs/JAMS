@@ -33,6 +33,9 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import java.util.Collection;
 import java.util.Set;
 
+/**
+ * Represents the parameter of a macro call.
+ */
 public class EditorElementMacroCallParameter extends EditorIndexedElementImpl implements EditorIndexStyleableElement {
 
     public static final Set<String> STYLE = EditorElementMacro.PARAMETER_STYLE;

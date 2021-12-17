@@ -26,8 +26,16 @@ package net.jamsimulator.jams.gui.editor.code.indexing.element;
 
 import java.util.Collection;
 
+/**
+ * Represents a {@link  EditorIndexedElement} that has an editor style.
+ */
 public interface EditorIndexStyleableElement extends EditorIndexedElement {
 
+    /**
+     * Returns the styles of this element.
+     *
+     * @return the styles.
+     */
     Collection<String> getStyles();
 
 }

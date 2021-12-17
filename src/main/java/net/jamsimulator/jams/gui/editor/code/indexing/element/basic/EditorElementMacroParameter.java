@@ -26,6 +26,9 @@ package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 
+/**
+ * Represesnta the parameter of a macro.
+ */
 public interface EditorElementMacroParameter extends EditorIndexedElement {
 
 }

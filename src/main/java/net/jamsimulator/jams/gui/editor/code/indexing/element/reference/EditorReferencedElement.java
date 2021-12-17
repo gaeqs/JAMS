@@ -26,8 +26,18 @@ package net.jamsimulator.jams.gui.editor.code.indexing.element.reference;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 
+/**
+ * Represents a {@link  EditorIndexedElement} that can be referenced.
+ */
 public interface EditorReferencedElement extends EditorIndexedElement {
 
+    /**
+     * Returns the reference of this element.
+     * <p>
+     * You may want to override this class!
+     *
+     * @return the reference.
+     */
     default EditorElementReference<?> getReference() {
         return new EditorElementReference<>(getClass(), getIdentifier());
     }

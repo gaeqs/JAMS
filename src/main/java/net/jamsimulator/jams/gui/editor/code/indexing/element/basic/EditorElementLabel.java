@@ -29,6 +29,9 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedEleme
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 
+/**
+ * Represents a label.
+ */
 public interface EditorElementLabel
         extends EditorIndexedElement, EditorIndexStyleableElement, EditorReferencedElement {
 

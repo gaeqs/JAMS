@@ -34,6 +34,9 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a macro call.
+ */
 public class EditorElementMacroCall extends EditorIndexedParentElementImpl {
 
     public EditorElementMacroCall(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,

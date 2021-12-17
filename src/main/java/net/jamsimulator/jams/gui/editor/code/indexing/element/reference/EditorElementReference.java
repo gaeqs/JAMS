@@ -24,10 +24,26 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing.element.reference;
 
+/**
+ * Represents a reference to an element.
+ *
+ * @param <R>            the referenced element's type.
+ * @param referencedType the referenced element's class.
+ * @param identifier     the identifier of the referenced element.
+ */
 public record EditorElementReference<R extends EditorReferencedElement>(
         Class<R> referencedType, String identifier
 ) {
 
+    /**
+     * Represents if this reference can hold the given reference.
+     * <p>
+     * This means that the given reference has the same identifier
+     * and this referenced type is a supertype of the given reference's referenced type.
+     *
+     * @param potentialChild the reference to check.
+     * @return whether the given reference is a child of this reference.
+     */
     public boolean isChild(EditorElementReference<?> potentialChild) {
         return referencedType.isAssignableFrom(potentialChild.referencedType)
                 && identifier.equals(potentialChild.identifier);

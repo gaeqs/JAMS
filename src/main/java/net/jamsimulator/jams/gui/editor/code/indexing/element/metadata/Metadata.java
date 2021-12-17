@@ -31,9 +31,21 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Represents the mutable data of a {@link
+ * net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement indexed element}.
+ *
+ * @param inspections the inspections of the element.
+ */
 public record Metadata(Set<Inspection> inspections) {
     public static final Metadata EMPTY = new Metadata(Collections.emptySet());
 
+    /**
+     * Returns the higher level inspection inside this metadata.
+     * Returns empty if there's no inspections.
+     *
+     * @return the inspection if found.
+     */
     public Optional<Inspection> getHigherLevelInspection() {
         return inspections.stream().max(Comparator.comparingInt(it -> it.level().ordinal()));
     }

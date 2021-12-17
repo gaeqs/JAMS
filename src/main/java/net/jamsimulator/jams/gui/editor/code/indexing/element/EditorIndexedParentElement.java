@@ -27,18 +27,57 @@ package net.jamsimulator.jams.gui.editor.code.indexing.element;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Represents a {@link EditorIndexedElement} that is the parent of other {@link EditorIndexedElement}s.
+ */
 public interface EditorIndexedParentElement extends EditorIndexedElement {
 
+    /**
+     * Returns the element that represents the given global position.
+     *
+     * @param position the position.
+     * @return the element if present.
+     */
     Optional<? extends EditorIndexedElement> getElementAt(int position);
 
+    /**
+     * Returns an immutable copy of the list with the elements inside this parent.
+     *
+     * @return the new immutable list.
+     */
     List<EditorIndexedElement> getElements();
 
-    EditorIndexedElement getElement (int index);
+    /**
+     * Returns the element located at the given index inside this parent.
+     *
+     * @param index the index.
+     * @return the element.
+     * @throws IndexOutOfBoundsException if the index is out of range.
+     */
+    EditorIndexedElement getElement(int index);
 
+    /**
+     * Returns the index of the given element inside this parent.
+     * <p>
+     * This method returns -1 if not found.
+     *
+     * @param element the element.
+     * @return the index or -1 if not found.
+     */
     int indexOf(EditorIndexedElement element);
 
+    /**
+     * Returns whether this parent has no children.
+     *
+     * @return whether this parent has no children.
+     */
     boolean isEmpty();
 
+    /**
+     * Returns the amount of elements this parent has.
+     *
+     * @return the amount of elements this parent has.
+     */
     int size();
 
 }

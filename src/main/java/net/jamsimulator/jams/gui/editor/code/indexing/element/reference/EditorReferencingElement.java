@@ -28,8 +28,18 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedEleme
 
 import java.util.Set;
 
+/**
+ * Represents an {@link  EditorIndexedElement} that references other elements.
+ *
+ * @param <R> the references' type.
+ */
 public interface EditorReferencingElement<R extends EditorReferencedElement> extends EditorIndexedElement {
 
+    /**
+     * Returns the references of this element.
+     *
+     * @return the references.
+     */
     Set<EditorElementReference<R>> getReferences();
 
 }

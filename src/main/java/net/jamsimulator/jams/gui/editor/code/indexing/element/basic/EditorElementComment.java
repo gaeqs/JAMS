@@ -33,6 +33,9 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import java.util.Collection;
 import java.util.Set;
 
+/**
+ * Represents a comment element.
+ */
 public class EditorElementComment extends EditorIndexedElementImpl implements EditorIndexStyleableElement {
 
     public static final Set<String> STYLE = Set.of("comment");

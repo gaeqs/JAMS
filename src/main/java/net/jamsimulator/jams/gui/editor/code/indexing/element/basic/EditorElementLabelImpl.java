@@ -32,6 +32,9 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import java.util.Collection;
 import java.util.Set;
 
+/**
+ * Basic label implementation.
+ */
 public class EditorElementLabelImpl extends EditorIndexedElementImpl implements EditorElementLabel {
 
     public static final Set<String> STYLE = Set.of("normal-label");

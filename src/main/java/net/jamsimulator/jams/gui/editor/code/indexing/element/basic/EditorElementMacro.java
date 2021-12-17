@@ -30,6 +30,9 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorRe
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Represents a macro.
+ */
 public interface EditorElementMacro extends EditorReferencedElement {
 
     Set<String> NAME_STYLE = Set.of("macro-call");

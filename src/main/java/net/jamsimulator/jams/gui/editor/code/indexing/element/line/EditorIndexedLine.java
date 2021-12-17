@@ -38,6 +38,9 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Optional;
 
+/**
+ * A line inside a {@link  net.jamsimulator.jams.gui.editor.code.indexing.line.EditorLineIndex EditorLineIndex}.
+ */
 public abstract class EditorIndexedLine extends EditorIndexedParentElementImpl {
 
     protected int number;
@@ -50,24 +53,48 @@ public abstract class EditorIndexedLine extends EditorIndexedParentElementImpl {
         this.number = number;
     }
 
+    /**
+     * Returns the number of this line. This value is mutable.
+     *
+     * @return the number of this line.
+     */
     public int getNumber() {
         return number;
     }
 
+    /**
+     * Returns the inspection level of this line. This value is mutable.
+     *
+     * @return the number of this line.
+     */
     public InspectionLevel getInspectionLevel() {
         return inspectionLevel;
     }
 
+    /**
+     * Moves this line the given number of lines.
+     *
+     * @param offset the number of lines.
+     */
     public void moveNumber(int offset) {
         Validate.isTrue(number + offset >= 0, "Resulted index cannot be negative!");
         number += offset;
     }
 
+    /**
+     * Moves this line in global positions and lines.
+     *
+     * @param numberOffset   the number of global positions to move.
+     * @param positionOffset the number of lines to move.
+     */
     public void movePositionAndNumber(int numberOffset, int positionOffset) {
         moveNumber(numberOffset);
         move(positionOffset);
     }
 
+    /**
+     * Recalculates the inspection level of this line.
+     */
     public void recalculateInspectionLevel() {
         inspectionLevel = elementStream().flatMap(it -> it.getMetadata().inspections().stream())
                 .max(Comparator.comparingInt(o -> o.level().ordinal()))
@@ -76,6 +103,13 @@ public abstract class EditorIndexedLine extends EditorIndexedParentElementImpl {
         index.getHintBar().ifPresent(bar -> bar.addHint(number, inspectionLevel));
     }
 
+    /**
+     * Inserts the styles of the {@link  EditorIndexStyleableElement}s inside this line
+     * into the given builder.
+     *
+     * @param builder the builder to edit.
+     * @param offset  the start position of the builder.
+     */
     public void addStyles(EasyStyleSpansBuilder builder, int offset) {
         elementStream()
                 .filter(it -> it instanceof EditorIndexStyleableElement)
@@ -99,9 +133,22 @@ public abstract class EditorIndexedLine extends EditorIndexedParentElementImpl {
                 });
     }
 
+    /**
+     * Returns whether this line is the start of a macro.
+     *
+     * @return whether this line is the start of a macro.
+     */
     public abstract boolean isMacroStart();
 
+    /**
+     * Returns whether this line is the end of a macro.
+     *
+     * @return whether this line is the end of a macro.
+     */
     public abstract boolean isMacroEnd();
 
+    /**
+     * @return returns the macro identifier defined by this line.
+     */
     public abstract Optional<String> getDefinedMacroIdentifier();
 }

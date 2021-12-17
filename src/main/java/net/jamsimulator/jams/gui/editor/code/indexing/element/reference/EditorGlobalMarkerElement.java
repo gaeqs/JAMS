@@ -28,6 +28,11 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedEleme
 
 import java.util.Set;
 
+/**
+ * Represents an {@link  EditorIndexedElement} that marks identifiers as globals.
+ *
+ * One example would be the directive '.globl'.
+ */
 public interface EditorGlobalMarkerElement extends EditorIndexedElement {
 
     Set<String> getGlobalIdentifiers();

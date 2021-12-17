@@ -35,6 +35,9 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorRe
 import java.util.Collection;
 import java.util.Set;
 
+/**
+ * Represents the mnemonic of a macro call.
+ */
 public class EditorElementMacroCallMnemonic extends EditorIndexedElementImpl
         implements EditorIndexStyleableElement, EditorReferencingElement<EditorElementMacro> {
 
