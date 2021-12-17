@@ -40,7 +40,7 @@ def bundleLibs = false
 def winConsole = false
 
 group projectGroup
-version '0.3-BETA'
+version '0.3.1-BETA'
 
 repositories {
     mavenCentral()
