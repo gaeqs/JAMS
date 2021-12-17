@@ -25,11 +25,13 @@
 package net.jamsimulator.jams.gui.mips.editor;
 
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.editor.CodeFileEditor;
-import net.jamsimulator.jams.gui.editor.popup.DocumentationPopup;
-import net.jamsimulator.jams.gui.editor.popup.event.AutocompletionPopupSelectElementEvent;
-import net.jamsimulator.jams.gui.mips.editor.element.MIPSDirective;
-import net.jamsimulator.jams.gui.mips.editor.element.MIPSInstruction;
+import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.code.popup.DocumentationPopup;
+import net.jamsimulator.jams.gui.editor.code.popup.event.AutocompletionPopupSelectElementEvent;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirective;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirectiveMnemonic;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstruction;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstructionMnemonic;
 import net.jamsimulator.jams.gui.util.StringStyler;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.instruction.Instruction;
@@ -92,34 +94,46 @@ public class MIPSDocumentationPopup extends DocumentationPopup {
                 return true;
             }
         } else if (display instanceof MIPSFileEditor) {
-
-            var optional = ((MIPSFileEditor) display).getElements()
-                    .getElementAt(display.getCaretPosition() + caretOffset);
+            var index = display.getIndex();
+            var optional = index.withLockF(false,
+                            i -> i.getElementAt(display.getCaretPosition() + caretOffset - 1));
 
             if (optional.isEmpty()) return false;
 
             var element = optional.get();
-            if (element instanceof MIPSInstruction) {
+            if (element instanceof MIPSEditorInstructionMnemonic) {
+                var parent = element.getParentOfType(MIPSEditorInstruction.class).orElse(null);
+                if(parent == null) return false;
 
                 topMessage.clear();
-                element.populatePopupWithInspections(topMessage);
+
+
+                element.getMetadata().inspections().forEach(inspection -> {
+                    topMessage.append(inspection.buildMessage() + "\n", "");
+                });
+
                 topMessage.setMaxHeight(topMessage.getLength() > 0 ? 50 : 0);
 
-                var instructions = ((MIPSInstruction) element).getMostCompatibleInstruction();
-                if (instructions.isEmpty()) {
+                var instruction = parent.getInstruction();
+                if (instruction.isEmpty()) {
                     content.clear();
                     return topMessage.getMaxHeight() > 0;
                 }
 
-                var instruction = instructions.stream().findFirst().orElseThrow();
-                StringStyler.style(instruction.getDocumentation(), content);
+                StringStyler.style(instruction.get().getDocumentation(), content);
                 return true;
-            } else if (element instanceof MIPSDirective) {
+            } else if (element instanceof MIPSEditorDirectiveMnemonic) {
+                var parent = element.getParentOfType(MIPSEditorDirective.class).orElse(null);
+                if(parent == null) return false;
+
                 topMessage.clear();
-                element.populatePopupWithInspections(topMessage);
+
+                element.getMetadata().inspections().forEach(inspection ->
+                        topMessage.append(inspection.buildMessage() + "\n", ""));
+
                 topMessage.setMaxHeight(topMessage.getLength() > 0 ? 50 : 0);
 
-                var directive = ((MIPSDirective) element).getDirective();
+                var directive = parent.getDirective();
                 if (directive.isEmpty()) {
                     content.clear();
                     return topMessage.getMaxHeight() > 0;

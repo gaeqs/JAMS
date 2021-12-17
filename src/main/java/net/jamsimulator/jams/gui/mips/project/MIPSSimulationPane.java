@@ -156,7 +156,7 @@ public class MIPSSimulationPane extends WorkingPane implements SimulationHolder<
 
     private void loadConsole() {
         var icon = Icons.SIMULATION_CONSOLE;
-        manageBarAddition("console", simulation.getConsole(), icon, Messages.BAR_CONSOLE_NAME, BarPosition.BOTTOM_RIGHT, Manager.ofD(BarSnapshotViewMode.class).getDefault(), true);
+        manageBarAddition("console", simulation.getConsole(), icon, Messages.BAR_CONSOLE_NAME, BarPosition.BOTTOM_LEFT, Manager.ofD(BarSnapshotViewMode.class).getDefault(), true);
     }
 
     private void loadMemoryTab() {

@@ -311,19 +311,24 @@ AnchorPane {
     -fx-background-color: -theme-background;
 }
 
+.scroll-bar:horizontal {
+    -fx-pref-height: 15px;
+}
+
+.scroll-bar:vertical {
+    -fx-pref-width: 15px;
+}
+
 .scroll-bar:horizontal .increment-button,
 .scroll-bar:horizontal .decrement-button {
     -fx-background-color: transparent;
     -fx-background-radius: 0px;
-    -fx-padding: 0px 10px 0px 0px;
 }
 
 .scroll-bar:vertical .increment-button,
 .scroll-bar:vertical .decrement-button {
     -fx-background-color: transparent;
     -fx-background-radius: 0px;
-    -fx-padding: 0px 10px 0px 0px;
-
 }
 
 .scroll-bar .increment-arrow,

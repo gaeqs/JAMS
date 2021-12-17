@@ -28,7 +28,7 @@ import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
-import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
@@ -36,7 +36,7 @@ import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
-import net.jamsimulator.jams.project.FilesToAssemblerHolder;
+import net.jamsimulator.jams.project.GlobalIndexHolder;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -63,8 +63,8 @@ public class FolderActionRemoveAllFilesFromAssembler extends ContextAction {
         if (tab == null) return;
         var project = tab.getProject();
         var data = project.getData();
-        if (!(data instanceof FilesToAssemblerHolder)) return;
-        var files = ((FilesToAssemblerHolder) data).getFilesToAssemble();
+        if (!(data instanceof GlobalIndexHolder)) return;
+        var files = ((GlobalIndexHolder) data).getGlobalIndex();
 
         var element = explorer.getSelectedElements().get(0);
         if (!(element instanceof ExplorerFolder)) return;
@@ -92,7 +92,7 @@ public class FolderActionRemoveAllFilesFromAssembler extends ContextAction {
         var tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
         if (tab == null) return false;
         var project = tab.getProject();
-        if (!(project.getData() instanceof FilesToAssemblerHolder)) return false;
+        if (!(project.getData() instanceof GlobalIndexHolder)) return false;
 
         var selected = explorer.getSelectedElements();
         return selected.size() == 1 && selected.get(0) instanceof ExplorerFolder;

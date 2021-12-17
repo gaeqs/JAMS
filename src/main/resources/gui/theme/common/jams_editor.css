@@ -65,10 +65,6 @@
     -fx-text-fill: -theme-foreground;
 }
 
-.code-area .scroll-pane {
-    -fx-background-color: -theme-background-darkest;
-}
-
 .caret {
     -fx-stroke: -theme-foreground;
 }
@@ -95,8 +91,6 @@
 
 /* NUMBER LINE */
 .code-area .left-bar {
-    -fx-border-width: 0px 1px 0px 0px;
-    -fx-border-color: -theme-background-lighter;
     -fx-background-color: -theme-background-darker;
 }
 
@@ -221,78 +215,79 @@
     -fx-fill: -theme-done;
 }
 
-/* MIPS */
-.code-area .mips-comment {
+/* ELEMENTS */
+.code-area .comment {
     -fx-fill: -theme-text-comment;
 }
 
-.code-area .mips-label {
+/* called normal-label instead of label to avoid conflicts with the menu's labels */
+.code-area .normal-label {
     -fx-fill: -theme-text-label;
     -fx-font-style: italic;
 }
 
-.code-area .mips-global-label {
+.code-area .global-label {
     -fx-fill: -theme-text-global-label;
     -fx-font-style: italic;
 }
 
-.code-area .mips-directive {
+.code-area .directive {
     -fx-fill: -theme-text-directive;
 }
 
-.code-area .mips-directive-parameter {
+.code-area .directive-parameter {
     -fx-fill: -theme-text-directive-parameter;
 }
 
-.code-area .mips-directive-parameter-string {
+.code-area .directive-parameter-string {
     -fx-fill: -theme-text-string;
 }
 
-.code-area .mips-instruction {
+.code-area .instruction {
     -fx-fill: -theme-text-instruction;
 }
 
-.code-area .mips-pseudo-instruction {
+.code-area .pseudo-instruction {
     -rtfx-underline-color: -theme-text-pseudo-instruction;
     -rtfx-underline-width: 1px;
 }
 
-.code-area .mips-instruction-parameter-label {
+.code-area .instruction-parameter-label {
     -fx-fill: -theme-text-label;
     -fx-font-style: italic;
 }
 
-.code-area .mips-instruction-parameter-global-label {
+.code-area .instruction-parameter-global-label {
     -fx-fill: -theme-text-global-label;
     -fx-font-style: italic;
 }
 
-.code-area .mips-instruction-parameter-register {
+.code-area .instruction-parameter-register {
     -fx-fill: -theme-text-register;
 }
 
-.code-area .mips-instruction-parameter-immediate {
+.code-area .instruction-parameter-immediate {
     -fx-fill: -theme-text-immediate;
 }
 
-.code-area .mips-instruction-parameter-string {
+.code-area .instruction-parameter-string {
     -fx-fill: -theme-text-string;
 }
 
-.code-area .mips-macro-call {
+.code-area .macro-call {
     -fx-fill: -theme-text-macro;
 }
 
-.code-area .mips-macro-call-parameter {
+.code-area .macro-call-parameter {
     -fx-fill: -theme-text-macro-parameter;
 }
 
-.code-area .mips-warning {
+.code-area .warning {
     -rtfx-underline-color: -theme-warining;
     -rtfx-underline-width: 1px;
 }
 
-.code-area .mips-error {
+.code-area .error {
     -rtfx-underline-color: -theme-error;
     -rtfx-underline-width: 1px;
 }

@@ -29,8 +29,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
-import net.jamsimulator.jams.gui.editor.CodeFileEditor;
-import net.jamsimulator.jams.gui.editor.popup.AutocompletionPopup;
+import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
@@ -42,14 +41,16 @@ public class TextEditorActionShowAutocompletionPopup extends ContextAction {
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.SPACE, KeyCombination.SHORTCUT_DOWN);
 
     public TextEditorActionShowAutocompletionPopup(ResourceProvider provider) {
-        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_SHOW_AUTOCOMPLETION_POPUP, DEFAULT_COMBINATION, TextEditorActionRegions.CONTEXT, null, null);
+        super(provider, NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_SHOW_AUTOCOMPLETION_POPUP, DEFAULT_COMBINATION, TextEditorActionRegions.CONTEXT, null, null);
     }
 
     @Override
     public void run(Object node) {
-        if (node instanceof CodeFileEditor) {
-            AutocompletionPopup popup = ((CodeFileEditor) node).getAutocompletionPopup();
-            popup.execute(0, true);
+        if (node instanceof CodeFileEditor editor) {
+            var popup = editor.getAutocompletionPopup();
+            if (popup != null) {
+                popup.execute(0, true);
+            }
         }
     }
 

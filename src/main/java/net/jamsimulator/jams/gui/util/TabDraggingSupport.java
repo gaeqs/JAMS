@@ -34,8 +34,8 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.editor.FileEditorTab;
-import net.jamsimulator.jams.gui.editor.FileOpenPosition;
+import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
+import net.jamsimulator.jams.gui.editor.holder.FileOpenPosition;
 
 import java.util.UUID;
 

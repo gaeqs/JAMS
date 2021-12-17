@@ -25,12 +25,15 @@
 package net.jamsimulator.jams.project.mips;
 
 import net.jamsimulator.jams.configuration.Configuration;
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.code.indexing.global.ProjectGlobalIndex;
+import net.jamsimulator.jams.gui.mips.editor.indexing.MIPSEditorIndex;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.register.builder.RegistersBuilder;
-import net.jamsimulator.jams.project.FilesToAssemblerHolder;
+import net.jamsimulator.jams.project.GlobalIndexHolder;
 import net.jamsimulator.jams.project.ProjectData;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.project.mips.event.MIPSSimulationConfigurationAddEvent;
@@ -38,13 +41,16 @@ import net.jamsimulator.jams.project.mips.event.MIPSSimulationConfigurationRemov
 import net.jamsimulator.jams.project.mips.event.SelectedMIPSSimulationConfigurationChangeEvent;
 import net.jamsimulator.jams.utils.Validate;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class MIPSProjectData extends ProjectData implements FilesToAssemblerHolder {
+public class MIPSProjectData extends ProjectData implements GlobalIndexHolder {
+
+    public static final String GLOBAL_INDEX_FILE_NAME = "files_to_assemble.json";
 
     public static final String NODE_ASSEMBLER = "mips.assembler";
     public static final String NODE_REGISTERS = "mips.registers";
@@ -52,7 +58,7 @@ public class MIPSProjectData extends ProjectData implements FilesToAssemblerHold
     public static final String NODE_INSTRUCTIONS = "mips.instructions";
     public static final String NODE_CONFIGURATIONS = "mips.configurations";
     public static final String NODE_SELECTED_CONFIGURATION = "mips.selected_configuration";
-    protected final MIPSFilesToAssemble filesToAssemble;
+    protected final ProjectGlobalIndex globalIndex;
     protected Set<MIPSSimulationConfiguration> configurations;
     protected MIPSSimulationConfiguration selectedConfiguration;
     protected AssemblerBuilder assemblerBuilder;
@@ -62,7 +68,12 @@ public class MIPSProjectData extends ProjectData implements FilesToAssemblerHold
 
     public MIPSProjectData(MIPSProject project) {
         super(MIPSProjectType.INSTANCE, project.getFolder());
-        filesToAssemble = new MIPSFilesToAssemble(project);
+        globalIndex = new ProjectGlobalIndex(project) {
+            @Override
+            protected EditorIndex generateIndexForFile(File file) {
+                return new MIPSEditorIndex(getProject(), file.getName());
+            }
+        };
     }
 
     public Set<MIPSSimulationConfiguration> getConfigurations() {
@@ -159,14 +170,15 @@ public class MIPSProjectData extends ProjectData implements FilesToAssemblerHold
     }
 
     @Override
-    public MIPSFilesToAssemble getFilesToAssemble() {
-        return filesToAssemble;
+    public ProjectGlobalIndex getGlobalIndex() {
+        return globalIndex;
     }
 
     @Override
     public void save() {
         try {
-            filesToAssemble.save(metadataFolder);
+            var file = new File(metadataFolder, GLOBAL_INDEX_FILE_NAME);
+            globalIndex.saveFiles(file);
             saveMipsConfiguration();
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -180,7 +192,8 @@ public class MIPSProjectData extends ProjectData implements FilesToAssemblerHold
         super.load();
         try {
             loadMipsConfiguration();
-            filesToAssemble.load(metadataFolder);
+            var file = new File(metadataFolder, GLOBAL_INDEX_FILE_NAME);
+            globalIndex.loadFiles(file);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -209,7 +222,8 @@ public class MIPSProjectData extends ProjectData implements FilesToAssemblerHold
                 .filter(target -> target.getName().equals(selected)).findAny().orElse(null);
 
         try {
-            filesToAssemble.load(metadataFolder);
+            var file = new File(metadataFolder, GLOBAL_INDEX_FILE_NAME);
+            globalIndex.loadFiles(file);
         } catch (IOException e) {
             e.printStackTrace();
         }

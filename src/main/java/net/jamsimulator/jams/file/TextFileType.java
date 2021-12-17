@@ -24,9 +24,10 @@
 
 package net.jamsimulator.jams.file;
 
-import net.jamsimulator.jams.gui.editor.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.FileEditor;
-import net.jamsimulator.jams.gui.editor.FileEditorTab;
+import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.manager.ResourceProvider;
 
@@ -47,6 +48,11 @@ public class TextFileType extends FileType {
 
     @Override
     public FileEditor createDisplayTab(FileEditorTab tab) {
-        return new CodeFileEditor(tab);
+        return new CodeFileEditor(tab) {
+            @Override
+            protected EditorIndex generateIndex() {
+                return null;
+            }
+        };
     }
 }

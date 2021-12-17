@@ -27,21 +27,21 @@ package net.jamsimulator.jams.gui.action.defaults.explorerelement.folder;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.file.AssemblyFileType;
 import net.jamsimulator.jams.file.FileType;
+import net.jamsimulator.jams.file.FileTypeManager;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
-import net.jamsimulator.jams.gui.editor.CodeFileEditor;
-import net.jamsimulator.jams.gui.editor.FileEditorHolderHolder;
+import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.holder.FileEditorHolderHolder;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFolder;
 import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.file.FileTypeManager;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.ResourceProvider;
-import net.jamsimulator.jams.project.FilesToAssemblerHolder;
+import net.jamsimulator.jams.project.GlobalIndexHolder;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -53,7 +53,7 @@ public class FolderActionAddAllFilesToAssembler extends ContextAction {
     public static final KeyCombination DEFAULT_COMBINATION = null;
 
     public FolderActionAddAllFilesToAssembler(ResourceProvider provider) {
-        super(provider,NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_ADD_ALL_FILES_TO_ASSEMBLER,
+        super(provider, NAME, RegionTags.FOLDER_EXPLORER_ELEMENT, Messages.ACTION_FOLDER_EXPLORER_ELEMENT_ADD_ALL_FILES_TO_ASSEMBLER,
                 DEFAULT_COMBINATION, FolderActionRegions.ASSEMBLER, null, null);
     }
 
@@ -68,8 +68,8 @@ public class FolderActionAddAllFilesToAssembler extends ContextAction {
         if (tab == null) return;
         var project = tab.getProject();
         var data = project.getData();
-        if (!(data instanceof FilesToAssemblerHolder)) return;
-        var files = ((FilesToAssemblerHolder) data).getFilesToAssemble();
+        if (!(data instanceof GlobalIndexHolder)) return;
+        var files = ((GlobalIndexHolder) data).getGlobalIndex();
         var pane = tab.getProjectTabPane().getWorkingPane();
         if (!(pane instanceof FileEditorHolderHolder holder)) return;
 
@@ -82,7 +82,7 @@ public class FolderActionAddAllFilesToAssembler extends ContextAction {
                 var file = path.toFile();
                 if (file.isFile() && Manager.get(FileTypeManager.class).getByFile(file).map(FileType::getName)
                         .orElse("").equals(AssemblyFileType.NAME)) {
-                    files.addFile(file, holder.getFileEditorHolder(), true);
+                    files.addFile(file);
                 }
             });
         } catch (IOException ex) {
@@ -105,7 +105,7 @@ public class FolderActionAddAllFilesToAssembler extends ContextAction {
         var tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
         if (tab == null) return false;
         var project = tab.getProject();
-        if (!(project.getData() instanceof FilesToAssemblerHolder)) return false;
+        if (!(project.getData() instanceof GlobalIndexHolder)) return false;
 
         var selected = explorer.getSelectedElements();
         return selected.size() == 1 && selected.get(0) instanceof ExplorerFolder;

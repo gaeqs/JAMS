@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.SelectedMemorySegment;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
@@ -71,8 +70,4 @@ public class DirectiveText extends Directive {
 
     }
 
-    @Override
-    public boolean isParameterValidInContext(int index, String value, int amount, MIPSFileElements context) {
-        return isParameterValid(index, value);
-    }
 }

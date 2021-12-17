@@ -58,11 +58,11 @@ import java.util.function.BiFunction;
  */
 public abstract class MIPSAssembledCodeViewer extends CodeArea {
 
-    protected static final Set<String> IMMEDIATE = Collections.singleton("mips-instruction-parameter-immediate");
-    protected static final Set<String> REGISTER = Collections.singleton("mips-instruction-parameter-register");
-    protected static final Set<String> INSTRUCTION = Collections.singleton("mips-instruction");
-    protected static final Set<String> COMMENT = Collections.singleton("mips-comment");
-    protected static final Set<String> LABEL = Collections.singleton("mips-label");
+    protected static final Set<String> IMMEDIATE = Collections.singleton("instruction-parameter-immediate");
+    protected static final Set<String> REGISTER = Collections.singleton("instruction-parameter-register");
+    protected static final Set<String> INSTRUCTION = Collections.singleton("instruction");
+    protected static final Set<String> COMMENT = Collections.singleton("comment");
+    protected static final Set<String> LABEL = Collections.singleton("label");
     protected static final Set<String> BREAKPOINT = Collections.singleton("instruction-breakpoint");
     private static final String VIEWER_ELEMENTS_ORDER_NODE = "simulation.mips.viewer_elements_order";
     private static final String SHOW_LABELS_NODE = "simulation.mips.show_labels";
@@ -504,7 +504,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     private void addAndStyle(String element, Collection<String> style,
                              StringBuilder stringBuilder, EasyStyleSpansBuilder styleBuilder) {
         int size = stringBuilder.length();
-        styleBuilder.add(size, element, style);
+        styleBuilder.add(size, element.length(), style);
         stringBuilder.append(element);
     }
 

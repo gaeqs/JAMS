@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.gui.mips.editor.element.MIPSFileElements;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.Macro;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
@@ -64,12 +63,19 @@ public class DirectiveMacro extends Directive {
         for (int i = 1; i < parameters.length; i++) {
             var value = parameters[i];
 
-            if (value.equals("(") || value.equals("()")) {
-                if (i == 1) continue;
-                panic(lineNumber, value, i);
-            } else if (value.equals(")")) {
-                if (i == parameters.length - 1) continue;
-                panic(lineNumber, value, i);
+            switch (value) {
+                case "(" -> {
+                    if (i == 1) continue;
+                    panic(lineNumber, value, i);
+                }
+                case "()" -> {
+                    if (i == 1 && parameters.length - 1 == 1) continue;
+                    panic(lineNumber, value, i);
+                }
+                case ")" -> {
+                    if (i == parameters.length - 1) continue;
+                    panic(lineNumber, value, i);
+                }
             }
 
             if (value.startsWith("(")) {
@@ -98,25 +104,4 @@ public class DirectiveMacro extends Directive {
 
     }
 
-    @Override
-    public boolean isParameterValidInContext(int index, String value, int amount, MIPSFileElements context) {
-        if (index == 0) {
-            return !value.contains("(") && !value.contains(")");
-        }
-        if (index == 1) {
-            return value.equals("(")
-                    || value.equals("()")
-                    || value.startsWith("(%")
-                    && (index == amount - 1 || !value.contains(")"))
-                    && !value.substring(2).contains("(");
-        } else if (index == amount - 1) {
-            return value.equals(")")
-                    || value.startsWith("%")
-                    && value.endsWith(")")
-                    && !value.contains("(")
-                    && !value.substring(0, value.length() - 1).contains(")");
-        } else {
-            return value.startsWith("%") && !value.contains("(") && !value.contains(")");
-        }
-    }
 }

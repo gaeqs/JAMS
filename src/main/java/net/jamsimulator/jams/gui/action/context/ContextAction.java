@@ -26,7 +26,7 @@ package net.jamsimulator.jams.gui.action.context;
 
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.Action;
-import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.main.MainMenuBar;

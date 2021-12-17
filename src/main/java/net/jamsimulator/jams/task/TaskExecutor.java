@@ -41,8 +41,8 @@ import java.util.concurrent.FutureTask;
 /**
  * Instances of this class allows developers to execute asynchronous tasks easily.
  * <p>
- * To execute a net.jamsimulator.jams.task, use the method {@link #execute(String, String, Runnable)},
- * {@link #execute(String, String, Callable)} or {@link #execute(String, Task)}. If you use the last one
+ * To execute a net.jamsimulator.jams.task, use the method {@link #execute(String, Runnable)},
+ * {@link #execute(String, Callable)} or {@link #execute(Task)}. If you use the last one
  * you can configure your task to implement a progression bar.
  * <p>
  * The runnables will be wrapped in a {@link Task} instance. You can access to all tasks being executed using
@@ -98,14 +98,12 @@ public class TaskExecutor {
      * Executes the given {@link Runnable} in this executor.
      * You must provide a name to the task.
      *
-     * @param name     the name of the task.
      * @param title    the title of the task. It may be null.
      * @param runnable the code to execute.
      * @return the {@link Task} being executed.
      * @see ExecutorService#submit(Runnable)
      */
-    public synchronized Task<?> execute(String name, String title, Runnable runnable) {
-        Validate.notNull(name, "Name cannot be null!");
+    public synchronized Task<?> execute(String title, Runnable runnable) {
         Validate.notNull(runnable, "Runnable cannot be null!");
 
         tasks.removeIf(FutureTask::isDone);
@@ -116,7 +114,7 @@ public class TaskExecutor {
             }
 
             @Override
-            protected Object call() throws Exception {
+            protected Object call() {
                 runnable.run();
                 return null;
             }
@@ -131,14 +129,12 @@ public class TaskExecutor {
      * Executes the given {@link Callable} in this executor.
      * You must provide a name to the task
      *
-     * @param name     the name of the task.
      * @param title    the title of the task. It may be null.
      * @param callable the code to execute.
      * @return the {@link Task} being executed.
      * @see ExecutorService#submit(Runnable)
      */
-    public synchronized <T> Task<T> execute(String name, String title, Callable<T> callable) {
-        Validate.notNull(name, "Name cannot be null!");
+    public synchronized <T> Task<T> execute(String title, Callable<T> callable) {
         Validate.notNull(callable, "Callable cannot be null!");
 
         tasks.removeIf(FutureTask::isDone);
@@ -163,12 +159,10 @@ public class TaskExecutor {
      * Executes the given runnable in this executor.
      * You must provide a name to the task
      *
-     * @param name the name of the task.
      * @param task the task to execute.
      * @see ExecutorService#submit(Runnable)
      */
-    public synchronized <T> void execute(String name, Task<T> task) {
-        Validate.notNull(name, "Name cannot be null!");
+    public synchronized <T> void execute(Task<T> task) {
         Validate.notNull(task, "Task cannot be null!");
         tasks.removeIf(FutureTask::isDone);
         executor.submit(task);

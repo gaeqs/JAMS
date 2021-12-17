@@ -34,7 +34,7 @@ import javafx.stage.Stage;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
-import net.jamsimulator.jams.project.FilesToAssemblerHolder;
+import net.jamsimulator.jams.project.GlobalIndexHolder;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
@@ -45,7 +45,7 @@ public class NewAssemblyFileWindow extends VBox {
     public static int WIDTH = 500;
     public static int HEIGHT = 50;
 
-    private NewAssemblyFileWindow(Stage stage, File folder, FilesToAssemblerHolder holder) {
+    private NewAssemblyFileWindow(Stage stage, File folder, GlobalIndexHolder holder) {
         getStyleClass().add("v-box");
         Validate.notNull(folder, "Folder cannot be null!");
         Validate.isTrue(folder.isDirectory(), "Folder must be a directory!");
@@ -79,7 +79,7 @@ public class NewAssemblyFileWindow extends VBox {
             }
 
             if (holder != null && check.isSelected()) {
-                holder.getFilesToAssemble().addFile(file, true);
+                holder.getGlobalIndex().addFile(file);
             }
         });
 
@@ -91,7 +91,7 @@ public class NewAssemblyFileWindow extends VBox {
         });
     }
 
-    public static void open(File folder, FilesToAssemblerHolder holder) {
+    public static void open(File folder, GlobalIndexHolder holder) {
         Stage stage = new Stage();
         PopupWindowHelper.open(stage, new NewAssemblyFileWindow(stage, folder, holder), WIDTH, HEIGHT, true);
     }

@@ -28,7 +28,7 @@ import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
-import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
@@ -36,7 +36,7 @@ import net.jamsimulator.jams.gui.explorer.folder.FolderExplorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
-import net.jamsimulator.jams.project.FilesToAssemblerHolder;
+import net.jamsimulator.jams.project.GlobalIndexHolder;
 
 public class FolderActionRemoveFileFromAssembler extends ContextAction {
 
@@ -62,11 +62,11 @@ public class FolderActionRemoveFileFromAssembler extends ContextAction {
         if (tab == null) return;
         var project = tab.getProject();
         var data = project.getData();
-        if (!(data instanceof FilesToAssemblerHolder)) return;
-        var files = ((FilesToAssemblerHolder) data).getFilesToAssemble();
+        if (!(data instanceof GlobalIndexHolder)) return;
+        var files = ((GlobalIndexHolder) data).getGlobalIndex();
 
         if (!elements.stream().allMatch(target -> target instanceof ExplorerFile
-                && files.getFiles().contains(((ExplorerFile) target).getFile()))) return;
+                && files.containsFile(((ExplorerFile) target).getFile()))) return;
 
         for (ExplorerElement element : elements) {
             files.removeFile(((ExplorerFile) element).getFile());
@@ -89,8 +89,8 @@ public class FolderActionRemoveFileFromAssembler extends ContextAction {
         if (tab == null) return false;
         var project = tab.getProject();
         var data = project.getData();
-        if (!(data instanceof FilesToAssemblerHolder)) return false;
-        var files = ((FilesToAssemblerHolder) data).getFilesToAssemble();
+        if (!(data instanceof GlobalIndexHolder)) return false;
+        var files = ((GlobalIndexHolder) data).getGlobalIndex();
 
         return elements.stream().allMatch(target -> target instanceof ExplorerFile
                 && files.getFiles().contains(((ExplorerFile) target).getFile()));

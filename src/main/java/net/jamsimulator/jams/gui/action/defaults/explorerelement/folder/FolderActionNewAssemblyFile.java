@@ -29,7 +29,7 @@ import net.jamsimulator.jams.file.FileType;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
-import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
@@ -42,7 +42,7 @@ import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.file.FileTypeManager;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.ResourceProvider;
-import net.jamsimulator.jams.project.FilesToAssemblerHolder;
+import net.jamsimulator.jams.project.GlobalIndexHolder;
 import net.jamsimulator.jams.project.Project;
 
 import java.io.File;
@@ -81,10 +81,10 @@ public class FolderActionNewAssemblyFile extends ContextAction {
         }
 
         Optional<Project> optional = JamsApplication.getProjectsTabPane().getFocusedProject().map(ProjectTab::getProject);
-        if (optional.isEmpty() || !(optional.get().getData() instanceof FilesToAssemblerHolder)) {
+        if (optional.isEmpty() || !(optional.get().getData() instanceof GlobalIndexHolder)) {
             NewAssemblyFileWindow.open(folder, null);
         } else {
-            NewAssemblyFileWindow.open(folder, (FilesToAssemblerHolder) optional.get().getData());
+            NewAssemblyFileWindow.open(folder, (GlobalIndexHolder) optional.get().getData());
         }
     }
 

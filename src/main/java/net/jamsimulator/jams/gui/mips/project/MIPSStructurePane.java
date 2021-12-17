@@ -32,11 +32,11 @@ import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.bar.BarPosition;
 import net.jamsimulator.jams.gui.bar.BarSnapshot;
 import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewMode;
-import net.jamsimulator.jams.gui.editor.FileEditorHolder;
-import net.jamsimulator.jams.gui.editor.FileEditorHolderHolder;
+import net.jamsimulator.jams.gui.editor.holder.FileEditorHolder;
+import net.jamsimulator.jams.gui.editor.holder.FileEditorHolderHolder;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.image.icon.Icons;
-import net.jamsimulator.jams.gui.mips.sidebar.FilesToAssembleSidebar;
+import net.jamsimulator.jams.gui.mips.sidebar.GlobalIndexSidebar;
 import net.jamsimulator.jams.gui.project.ProjectFolderExplorer;
 import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.project.WorkingPane;
@@ -58,7 +58,7 @@ public class MIPSStructurePane extends WorkingPane implements FileEditorHolderHo
     protected final MIPSStructurePaneButtons paneButtons;
 
     protected ProjectFolderExplorer explorer;
-    protected FilesToAssembleSidebar filesToAssembleSidebar;
+    protected GlobalIndexSidebar filesToAssembleSidebar;
 
     protected SimpleLog log;
 
@@ -121,7 +121,7 @@ public class MIPSStructurePane extends WorkingPane implements FileEditorHolderHo
         ScrollPane pane = new PixelScrollPane();
         pane.setFitToHeight(true);
         pane.setFitToWidth(true);
-        explorer = new ProjectFolderExplorer(project, Set.of(project.getData().getFilesToAssemble()), pane);
+        explorer = new ProjectFolderExplorer(project, Set.of(project.getData().getGlobalIndex()), pane);
         pane.setContent(explorer);
 
         manageBarAddition("explorer", pane, Icons.SIDEBAR_EXPLORER, Messages.BAR_EXPLORER_NAME,
@@ -134,7 +134,7 @@ public class MIPSStructurePane extends WorkingPane implements FileEditorHolderHo
         ScrollPane pane = new PixelScrollPane();
         pane.setFitToHeight(true);
         pane.setFitToWidth(true);
-        filesToAssembleSidebar = new FilesToAssembleSidebar(project, project.getData().getFilesToAssemble(), pane);
+        filesToAssembleSidebar = new GlobalIndexSidebar(project, project.getData().getGlobalIndex());
         pane.setContent(filesToAssembleSidebar);
         manageBarAddition("files_to_assemble", pane, Icons.SIDEBAR_EXPLORER, Messages.BAR_FILES_TO_ASSEMBLE_NAME,
                 BarPosition.LEFT_BOTTOM, Manager.ofD(BarSnapshotViewMode.class).getDefault(), true);

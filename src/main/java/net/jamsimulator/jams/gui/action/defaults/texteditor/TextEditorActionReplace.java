@@ -29,7 +29,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
-import net.jamsimulator.jams.gui.editor.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.language.Messages;
@@ -41,7 +41,7 @@ public class TextEditorActionReplace extends ContextAction {
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.R, KeyCombination.SHORTCUT_DOWN);
 
     public TextEditorActionReplace(ResourceProvider provider) {
-        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_FIND, DEFAULT_COMBINATION,
+        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_REPLACE, DEFAULT_COMBINATION,
                 TextEditorActionRegions.CONTEXT, null, null);
     }
 
