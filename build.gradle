@@ -24,6 +24,7 @@
 
 plugins {
     id 'java'
+    id 'java-library'
     id 'org.openjfx.javafxplugin' version '0.0.10'
     id 'org.beryx.runtime' version '1.12.4'
     id 'maven-publish'
@@ -202,5 +203,19 @@ tasks.jpackageImage.doLast {
         from "src/main/resources/gui/icon"
         include "logo.png"
         into "build/jpackage/$project.name/app"
+    }
+}
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            library(MavenPublication) {
+                //setGroupId groupId
+                setGroupId projectGroup
+                //setArtifactId artifactId
+                setArtifactId projectId
+                version this.version
+            }
+        }
     }
 }
