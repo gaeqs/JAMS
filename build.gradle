@@ -205,17 +205,3 @@ tasks.jpackageImage.doLast {
         into "build/jpackage/$project.name/app"
     }
 }
-
-project.afterEvaluate {
-    publishing {
-        publications {
-            library(MavenPublication) {
-                //setGroupId groupId
-                setGroupId 'com.github.gaeqs'
-                //setArtifactId artifactId
-                setArtifactId projectId
-                version this.version
-            }
-        }
-    }
-}
