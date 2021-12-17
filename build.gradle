@@ -26,6 +26,7 @@ plugins {
     id 'java'
     id 'org.openjfx.javafxplugin' version '0.0.10'
     id 'org.beryx.runtime' version '1.12.4'
+    id 'maven-publish'
 }
 
 def projectGroup = 'net.jamsimulator'
