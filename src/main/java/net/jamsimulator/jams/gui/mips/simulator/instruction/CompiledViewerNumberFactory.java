@@ -78,7 +78,7 @@ public class CompiledViewerNumberFactory implements IntFunction<Node> {
         var hBox = new HBox(lineNo, image);
         hBox.getStyleClass().add("left-bar");
 
-        if (idx < 9) {
+        if (idx >= 0 && idx < 9) {
             background.widthProperty().bind(hBox.widthProperty());
         }
 
@@ -94,6 +94,10 @@ public class CompiledViewerNumberFactory implements IntFunction<Node> {
         });
 
         return hBox;
+    }
+
+    public Rectangle getBackground() {
+        return background;
     }
 
     private String format(int x) {
