@@ -85,7 +85,7 @@
 
 .button-light {
     -fx-background-color: -theme-background;
-    -fx-border-color: -theme-background-lighter;
+    -fx-border-color: transparent;
     -fx-background-radius: 5px;
     -fx-text-fill: -theme-foreground;
 }
