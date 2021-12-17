@@ -211,7 +211,7 @@ project.afterEvaluate {
         publications {
             library(MavenPublication) {
                 //setGroupId groupId
-                setGroupId projectGroup
+                setGroupId 'com.github.gaeqs'
                 //setArtifactId artifactId
                 setArtifactId projectId
                 version this.version
