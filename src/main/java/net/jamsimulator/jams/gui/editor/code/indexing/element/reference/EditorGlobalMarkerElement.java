@@ -35,6 +35,10 @@ import java.util.Set;
  */
 public interface EditorGlobalMarkerElement extends EditorIndexedElement {
 
+    /**
+     * Returns the identifiers to mark as global.
+     * @return the identifiers.
+     */
     Set<String> getGlobalIdentifiers();
 
 }

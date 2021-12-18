@@ -108,9 +108,12 @@ public class PipelinedFlowTable extends FlowTable {
             });
         }
 
-
         long localCycle = firstCycle;
-        firstCycle = ((SegmentedFlowEntry) flows.getChildren().get(0)).getStartingCycle();
+
+
+        firstCycle = flows.getChildren().isEmpty()
+                ? 0
+                : ((SegmentedFlowEntry) flows.getChildren().get(0)).getStartingCycle();
 
         if (localCycle != firstCycle) {
             refresh();

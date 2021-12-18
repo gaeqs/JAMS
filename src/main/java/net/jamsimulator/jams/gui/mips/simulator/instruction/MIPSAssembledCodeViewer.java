@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.mips.simulator.instruction;
 
 import javafx.application.Platform;
+import javafx.scene.shape.Rectangle;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
@@ -79,6 +80,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     protected final MIPSSimulation<?> simulation;
     protected final boolean kernel;
     protected final Register pc;
+    protected final Rectangle lineBackground;
     protected boolean shouldUpdate;
     protected boolean fullSpeed;
 
@@ -98,7 +100,8 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
 
         addElements(simulation);
 
-        CompiledViewerNumberFactory factory = new CompiledViewerNumberFactory(this);
+        var factory = new CompiledViewerNumberFactory(this);
+        lineBackground = factory.getBackground();
         setParagraphGraphicFactory(factory);
 
         setEditable(false);
@@ -205,6 +208,19 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
             }
         }
 
+    }
+
+    @Override
+    protected void layoutChildren() {
+        try {
+            var children = getChildren();
+            if (!children.get(0).equals(lineBackground)) children.add(0, lineBackground);
+            var index = visibleParToAllParIndex(0);
+            var wd = getParagraphGraphic(index).prefWidth(-1);
+            lineBackground.setWidth(wd);
+        } catch (Exception ex) {
+        }
+        super.layoutChildren();
     }
 
     //region events
