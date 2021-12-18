@@ -203,6 +203,8 @@ public class JamsApplication extends Application {
         Icons.LOGO.getImage().ifPresent(primaryStage.getIcons()::add);
         Jams.getMainConfiguration().registerListeners(this, true);
 
+        Jams.getGeneralEventBroadcast().callEvent(new JAMSApplicationPostInitEvent());
+
         // Load projects
         getProjectsTabPane().openSavedProjects();
 
@@ -216,6 +218,5 @@ public class JamsApplication extends Application {
         }
 
         loaded = true;
-        Jams.getGeneralEventBroadcast().callEvent(new JAMSApplicationPostInitEvent());
     }
 }
