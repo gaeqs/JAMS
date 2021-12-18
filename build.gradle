@@ -85,6 +85,10 @@ compileJava {
     options.incremental = true
 }
 
+javadoc {
+    options.encoding = "UTF-8"
+}
+
 processResources {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from('src/main/resources') {
