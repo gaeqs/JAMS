@@ -76,6 +76,9 @@ public class Registry {
     private final Map<Class<? extends Manager<?>>, Manager<?>> primaryManagersByClass;
     private final Map<Class<? extends ManagerResource>, Manager<?>> primaryManagersByManaged;
 
+    private boolean normalManagersLoaded = false;
+    private boolean fxManagersLoaded = false;
+
     /**
      * Creates a registry.
      */
@@ -112,6 +115,7 @@ public class Registry {
         primary.put(manager.getName(), true);
         primaryManagersByClass.put((Class<? extends Manager<?>>) manager.getClass(), manager);
         primaryManagersByManaged.put(manager.getManagedType(), manager);
+        tryLoad(manager);
     }
 
     /**
@@ -127,6 +131,7 @@ public class Registry {
             throw new IllegalArgumentException("There's already a manager with the name " + manager.getName() + "!");
         managers.put(manager.getName(), manager);
         primary.put(manager.getName(), false);
+        tryLoad(manager);
     }
 
     /**
@@ -297,6 +302,7 @@ public class Registry {
      * This method does nothing if the manages is already loaded.
      */
     public void loadJAMSManagers() {
+        normalManagersLoaded = true;
         for (Manager<?> manager : managers.values()) {
             if (!manager.isLoaded() && !manager.shouldLoadOnFXThread()) {
                 manager.load();
@@ -310,6 +316,7 @@ public class Registry {
      * This method does nothing if the manages is already loaded.
      */
     public void loadJAMSApplicationManagers() {
+        fxManagersLoaded = true;
         for (Manager<?> manager : managers.values()) {
             if (!manager.isLoaded() && manager.shouldLoadOnFXThread()) {
                 manager.load();
@@ -333,6 +340,13 @@ public class Registry {
         // Unregister all resources.
         managers.values().forEach(it -> it.removeProvidedBy(provider));
 
+    }
+
+    private void tryLoad(Manager<?> manager) {
+        if (manager.isLoaded()) return;
+        if (!manager.shouldLoadOnFXThread() && normalManagersLoaded || fxManagersLoaded) {
+            manager.load();
+        }
     }
 
     private void addDefaultManagers() {
