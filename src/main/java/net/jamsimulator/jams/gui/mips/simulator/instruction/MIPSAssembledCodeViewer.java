@@ -178,7 +178,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
                 .getValidRegistersStarts().stream().findFirst().orElse('$'));
         var order = Jams.getMainConfiguration()
                 .getAndConvertOrElse(VIEWER_ELEMENTS_ORDER_NODE, MIPSAssembledInstructionViewerOrder.DEFAULT);
-        var originals = simulation.getData().getOriginalInstructions();
+        var originals = simulation.getSource().instructions();
 
 
         for (MIPSAssembledLine line : assembledLines) {
@@ -346,8 +346,8 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
         boolean showLabels = Jams.getMainConfiguration().getOrElse(SHOW_LABELS_NODE, false);
 
         var memory = simulation.getMemory();
-        var labels = simulation.getData().getLabels();
-        var originals = simulation.getData().getOriginalInstructions();
+        var labels = simulation.getSource().labels();
+        var originals = simulation.getSource().instructions();
 
         int current = kernel ? MIPS32Memory.EXCEPTION_HANDLER : MIPS32Memory.TEXT;
         int end = kernel ? simulation.getKernelStackBottom() : simulation.getInstructionStackBottom();

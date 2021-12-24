@@ -35,9 +35,9 @@ import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleSimulation;
  */
 public class MultiCycleSimulationChangeCurrentExecution extends SimulationChange<MultiCycleArchitecture> {
 
-    private final MultiCycleExecution<?> old;
+    private final MultiCycleExecution<?, ?> old;
 
-    public MultiCycleSimulationChangeCurrentExecution(MultiCycleExecution<?> old) {
+    public MultiCycleSimulationChangeCurrentExecution(MultiCycleExecution<?, ?> old) {
         this.old = old;
     }
 

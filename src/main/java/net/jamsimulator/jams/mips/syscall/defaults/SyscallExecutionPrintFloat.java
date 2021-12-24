@@ -63,7 +63,7 @@ public class SyscallExecutionPrintFloat implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?> execution) {
+    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var value = execution.valueCOP1(register);
         var console = execution.getSimulation().getConsole();
 

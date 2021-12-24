@@ -40,6 +40,7 @@ import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.simulation.pipelined.AbstractPipelinedSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionBgeuc extends BasicInstruction<InstructionBgeuc.Assembled> implements ControlTransferInstruction {
@@ -114,9 +115,9 @@ public class InstructionBgeuc extends BasicInstruction<InstructionBgeuc.Assemble
         }
     }
 
-    public static class MultiCycle extends MultiCycleExecution<Assembled> {
+    public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
 
-        public MultiCycle(MIPSSimulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+        public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, false);
         }
 
@@ -141,10 +142,10 @@ public class InstructionBgeuc extends BasicInstruction<InstructionBgeuc.Assemble
         }
     }
 
-    public static class Pipelined extends MultiCycleExecution<Assembled> {
+    public static class Pipelined extends MultiCycleExecution<PipelinedArchitecture, Assembled> {
 
-        public Pipelined(MIPSSimulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-            super(simulation, instruction, address, false, !simulation.getData().shouldSolveBranchesOnDecode());
+        public Pipelined(MIPSSimulation<? extends PipelinedArchitecture> simulation, Assembled instruction, int address) {
+            super(simulation, instruction, address, true, true);
         }
 
         @Override

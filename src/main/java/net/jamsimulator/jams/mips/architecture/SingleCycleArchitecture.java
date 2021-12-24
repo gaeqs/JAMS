@@ -25,9 +25,6 @@
 package net.jamsimulator.jams.mips.architecture;
 
 import net.jamsimulator.jams.manager.ResourceProvider;
-import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
-import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 import net.jamsimulator.jams.mips.simulation.singlecycle.SingleCycleSimulation;
@@ -53,12 +50,7 @@ public class SingleCycleArchitecture extends Architecture {
     }
 
     @Override
-    public MIPSSimulation<? extends SingleCycleArchitecture> createSimulation(InstructionSet instructionSet,
-                                                                              Registers registers,
-                                                                              Memory memory,
-                                                                              int instructionStackBottom,
-                                                                              int kernelStackBottom,
-                                                                              MIPSSimulationData data) {
-        return new SingleCycleSimulation(this, instructionSet, registers, memory, instructionStackBottom, kernelStackBottom, data);
+    public MIPSSimulation<? extends SingleCycleArchitecture> createSimulation(MIPSSimulationData data) {
+        return new SingleCycleSimulation(this, data);
     }
 }

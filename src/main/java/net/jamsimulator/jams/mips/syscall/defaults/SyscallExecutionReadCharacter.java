@@ -64,7 +64,7 @@ public class SyscallExecutionReadCharacter implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?> execution) {
+    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var simulation = execution.getSimulation();
         char value = simulation.popCharOrLock();
         if (simulation.checkThreadInterrupted()) return;

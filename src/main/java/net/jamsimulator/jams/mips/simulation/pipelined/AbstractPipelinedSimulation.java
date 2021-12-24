@@ -27,9 +27,32 @@ package net.jamsimulator.jams.mips.simulation.pipelined;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 /**
- * Represents a {@link MIPSSimulation} that supports forwarding.
+ * Represents a {@link MIPSSimulation} that implements a pipelined architecture.
  */
-public interface ForwardingSupporter {
+public interface AbstractPipelinedSimulation {
+
+    /**
+     * Returns whether this pipelined simulation has operand forwarding.
+     *
+     * @return whether this pipelined simulation has operand forwarding.
+     */
+    boolean isForwardingEnabled();
+
+    /**
+     * Returns whether this pipelined simulation solves branches on decode.
+     * <p>
+     * If false, this simulation solves branches on writeback.
+     *
+     * @return whether this pipelined simulation solves branches on decode.
+     */
+    boolean solvesBranchesOnDecode();
+
+    /**
+     * Returns whether this pipelined simulation has delay slots enabled.
+     *
+     * @return whether this pipelined simulation has delay slots enabled.
+     */
+    boolean isDelaySlotsEnabled();
 
     /**
      * Returns the {@link PipelineForwarding} of the simulation.

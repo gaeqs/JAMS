@@ -36,6 +36,7 @@ import net.jamsimulator.jams.mips.assembler.Assembler;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationSource;
 import net.jamsimulator.jams.project.BasicProject;
 import net.jamsimulator.jams.project.ProjectType;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
@@ -43,7 +44,6 @@ import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurat
 import net.jamsimulator.jams.utils.RawFileData;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.LinkedList;
 
 public class MIPSProject extends BasicProject {
@@ -128,8 +128,20 @@ public class MIPSProject extends BasicProject {
             log.printDoneLn("Assembly successful in " + (System.nanoTime() - nanos) / 1000000 + " millis.");
         }
 
-        var simulationData = new MIPSSimulationData(configuration, data.getFilesFolder(), new Console(),
-                assembler.getOriginals(), assembler.getAllLabels());
+        var simulationData = new MIPSSimulationData(
+                configuration,
+                data.getFilesFolder(),
+                new Console(),
+                new MIPSSimulationSource(assembler.getOriginals(), assembler.getAllLabels()),
+                assembler.getInstructionSet(),
+                assembler.getRegisters().copy(),
+                assembler.getMemory().copy(),
+                assembler.getStackBottom(),
+                assembler.getKernelStackBottom()
+        );
+
+        simulationData.memory().saveState();
+        simulationData.memory().restoreSavedState();
 
         return assembler.createSimulation(configuration.getNodeValue(MIPSSimulationConfigurationPresets.ARCHITECTURE), simulationData);
     }

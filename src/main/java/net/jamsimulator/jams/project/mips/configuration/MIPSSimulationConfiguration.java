@@ -28,12 +28,12 @@ import javafx.beans.property.Property;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundleManager;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundle;
+import net.jamsimulator.jams.mips.syscall.bundle.SyscallExecutionBuilderBundleManager;
 import net.jamsimulator.jams.mips.syscall.bundle.defaults.MARSSyscallExecutionBuilderBundle;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.Validate;
@@ -111,6 +111,27 @@ public class MIPSSimulationConfiguration {
 
         loadSyscalls(configuration);
         loadCaches(configuration);
+    }
+
+    /**
+     * Copy constructor
+     *
+     * @param name                     the name.
+     * @param nodes                    the nodes.
+     * @param rawValues                the raw values.
+     * @param cacheBuilders            the cache builders.
+     * @param syscallExecutionBuilders the syscall builders.
+     */
+    private MIPSSimulationConfiguration(String name,
+                                        Map<MIPSSimulationConfigurationNodePreset, Object> nodes,
+                                        Map<String, Object> rawValues,
+                                        List<CacheBuilder<?>> cacheBuilders,
+                                        Map<Integer, SyscallExecutionBuilder<?>> syscallExecutionBuilders) {
+        this.name = name;
+        this.nodes = new HashMap<>(nodes);
+        this.rawValues = new HashMap<>(rawValues);
+        this.cacheBuilders = new ArrayList<>(cacheBuilders);
+        this.syscallExecutionBuilders = new HashMap<>(syscallExecutionBuilders);
     }
 
     public String getName() {
@@ -216,6 +237,10 @@ public class MIPSSimulationConfiguration {
         }
     }
 
+    public MIPSSimulationConfiguration copy() {
+        return new MIPSSimulationConfiguration(name, nodes, rawValues, cacheBuilders, syscallExecutionBuilders);
+    }
+
     @Override
     public String toString() {
         return "MIPSSimulationConfiguration{" +
@@ -261,7 +286,7 @@ public class MIPSSimulationConfiguration {
     }
 
     @SuppressWarnings("rawtypes")
-    public void loadCaches(Configuration configuration) {
+    private void loadCaches(Configuration configuration) {
         cacheBuilders = new ArrayList<>();
         Optional<Configuration> cachesOptional = configuration.get("caches");
         if (cachesOptional.isPresent()) {

@@ -75,7 +75,7 @@ public class SyscallExecutionOpenFile implements SyscallExecution {
         if (path.isAbsolute()) {
             file = path.toFile();
         } else {
-            file = new File(simulation.getData().getWorkingDirectory(), name);
+            file = new File(simulation.getWorkingDirectory(), name);
         }
 
         boolean write, append;
@@ -108,7 +108,7 @@ public class SyscallExecutionOpenFile implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?> execution) {
+    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var nameAddress = execution.value(nameRegister);
         var flag = execution.value(flagRegister);
         var mode = execution.value(modeRegister);
@@ -125,7 +125,7 @@ public class SyscallExecutionOpenFile implements SyscallExecution {
         if (path.isAbsolute()) {
             file = path.toFile();
         } else {
-            file = new File(execution.getSimulation().getData().getWorkingDirectory(), name);
+            file = new File(execution.getSimulation().getWorkingDirectory(), name);
         }
 
         boolean write, append;

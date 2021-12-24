@@ -100,9 +100,9 @@ public class InstructionJal extends BasicInstruction<InstructionJal.Assembled> i
         }
     }
 
-    public static class MultiCycle extends MultiCycleExecution<Assembled> {
+    public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
 
-        public MultiCycle(MIPSSimulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+        public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, false);
         }
 
@@ -125,10 +125,10 @@ public class InstructionJal extends BasicInstruction<InstructionJal.Assembled> i
         }
     }
 
-    public static class Pipelined extends MultiCycleExecution<Assembled> {
+    public static class Pipelined extends MultiCycleExecution<PipelinedArchitecture, Assembled> {
 
-        public Pipelined(MIPSSimulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-            super(simulation, instruction, address, false, true);
+        public Pipelined(MIPSSimulation<? extends PipelinedArchitecture> simulation, Assembled instruction, int address) {
+            super(simulation, instruction, address, true, true);
         }
 
         @Override

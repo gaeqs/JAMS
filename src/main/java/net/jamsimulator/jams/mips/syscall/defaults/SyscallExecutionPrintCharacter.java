@@ -59,7 +59,7 @@ public class SyscallExecutionPrintCharacter implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?> execution) {
+    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var character = (char) (execution.value(register) & 0xFF);
         var console = execution.getSimulation().getConsole();
         console.print(character);

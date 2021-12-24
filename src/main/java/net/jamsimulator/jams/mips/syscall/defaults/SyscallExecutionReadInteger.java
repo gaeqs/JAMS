@@ -73,7 +73,7 @@ public class SyscallExecutionReadInteger implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?> execution) {
+    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var simulation = execution.getSimulation();
 
         boolean done = false;

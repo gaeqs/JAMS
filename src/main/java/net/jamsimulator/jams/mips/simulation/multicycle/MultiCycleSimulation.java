@@ -28,7 +28,6 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
-import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.MIPSAddressException;
 import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
@@ -39,7 +38,6 @@ import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.COP0RegistersBits;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterLockEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterUnlockEvent;
@@ -77,21 +75,18 @@ public class MultiCycleSimulation extends MIPSSimulation<MultiCycleArchitecture>
     private long executedInstructions;
     private StepChanges<MultiCycleArchitecture> currentStepChanges;
     private MultiCycleStep currentStep;
-    private MultiCycleExecution<?> currentExecution;
+    private MultiCycleExecution<?, ?> currentExecution;
 
     /**
      * Creates the single-cycle simulation.
      *
-     * @param architecture           the architecture of the simulation. This should be given by a simulation subclass.
-     * @param instructionSet         the instruction used by the simulation. This set should be the same as the set used to compile the code.
-     * @param registers              the registers to use on this simulation.
-     * @param memory                 the memory to use in this simulation.
-     * @param instructionStackBottom the address of the bottom of the instruction stack.
+     * @param architecture the architecture of the simulation. This should be given by a simulation subclass.
+     * @param data         the build data of this simulation.
      */
-    public MultiCycleSimulation(MultiCycleArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, MIPSSimulationData data) {
-        super(architecture, instructionSet, registers, memory, instructionStackBottom, kernelStackBottom, data, true);
+    public MultiCycleSimulation(MultiCycleArchitecture architecture, MIPSSimulationData data) {
+        super(architecture, data, true, true);
         executedInstructions = 0;
-        changes = data.isUndoEnabled() ? new LinkedList<>() : null;
+        changes = undoEnabled ? new LinkedList<>() : null;
         currentStep = MultiCycleStep.FETCH;
 
         listeners = new Listeners();
@@ -132,7 +127,7 @@ public class MultiCycleSimulation extends MIPSSimulation<MultiCycleArchitecture>
      *
      * @param execution the new {@link MultiCycleExecution}.
      */
-    public void forceCurrentExecutionChange(MultiCycleExecution<?> execution) {
+    public void forceCurrentExecutionChange(MultiCycleExecution<?, ?> execution) {
         currentExecution = execution;
     }
 
@@ -154,7 +149,7 @@ public class MultiCycleSimulation extends MIPSSimulation<MultiCycleArchitecture>
     @Override
     public boolean resetCaches() {
         if (!super.resetCaches()) return false;
-        if (!data.isUndoEnabled()) return true;
+        if (!undoEnabled) return true;
 
         //Gets the last memory level.
         var last = memory;
@@ -180,7 +175,7 @@ public class MultiCycleSimulation extends MIPSSimulation<MultiCycleArchitecture>
 
     @Override
     public boolean undoLastStep() throws InterruptedException {
-        if (!data.isUndoEnabled()) return false;
+        if (!undoEnabled) return false;
 
         if (callEvent(new SimulationUndoStepEvent.Before(this, cycles - 1)).isCancelled()) return false;
 
@@ -207,11 +202,11 @@ public class MultiCycleSimulation extends MIPSSimulation<MultiCycleArchitecture>
     protected synchronized void runStep(boolean first) {
         if (finished) return;
 
-        if (data.isUndoEnabled()) {
+        if (undoEnabled) {
             currentStepChanges = new StepChanges<>();
         }
 
-        if (data.canCallEvents()) {
+        if (canCallEvents) {
             //If fetched, call the event on the fetch section.
             if (currentStep != MultiCycleStep.FETCH) {
                 MultiCycleStepEvent.Before before = callEvent(new MultiCycleStepEvent.Before(this, cycles, executedInstructions,
@@ -246,13 +241,13 @@ public class MultiCycleSimulation extends MIPSSimulation<MultiCycleArchitecture>
 
         manageInterrupts(currentExecution);
 
-        if (data.isUndoEnabled() && currentStepChanges != null) {
+        if (undoEnabled && currentStepChanges != null) {
             changes.add(currentStepChanges);
             if (changes.size() > MAX_CHANGES) changes.removeFirst();
             currentStepChanges = null;
         }
 
-        if (data.canCallEvents()) {
+        if (canCallEvents) {
             callEvent(new MultiCycleStepEvent.After(this, cycles - 1, executedInstructionsLocal, currentExecution.getAddress(),
                     executingStep, currentExecution.getInstruction(), currentExecution));
         }
@@ -297,9 +292,9 @@ public class MultiCycleSimulation extends MIPSSimulation<MultiCycleArchitecture>
             currentStepChanges.addChange(new MultiCycleSimulationChangeCurrentExecution(currentExecution));
         }
 
-        MultiCycleExecution<?> newExecution = (MultiCycleExecution<?>) fetch(pc);
+        var newExecution = (MultiCycleExecution<?, ?>) fetch(pc);
 
-        if (data.canCallEvents()) {
+        if (canCallEvents) {
             MultiCycleStepEvent.Before before = callEvent(new MultiCycleStepEvent.Before(this, cycles, executedInstructions,
                     pc, currentStep, newExecution.getInstruction(), newExecution));
             if (before.isCancelled()) return;

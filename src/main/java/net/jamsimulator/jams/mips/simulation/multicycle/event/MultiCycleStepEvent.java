@@ -42,7 +42,7 @@ public class MultiCycleStepEvent extends MultiCycleSimulationEvent {
     protected final int instructionAddress;
     protected final MultiCycleStep executedStep;
     protected final AssembledInstruction instruction;
-    protected MultiCycleExecution<?> execution;
+    protected MultiCycleExecution<?, ?> execution;
 
 
     /**
@@ -59,7 +59,7 @@ public class MultiCycleStepEvent extends MultiCycleSimulationEvent {
     public MultiCycleStepEvent(MultiCycleSimulation simulation, long cycle, long instructionNumber, int instructionAddress,
                                MultiCycleStep executedStep,
                                AssembledInstruction instruction,
-                               MultiCycleExecution<?> execution) {
+                               MultiCycleExecution<?, ?> execution) {
         super(simulation);
         this.cycle = cycle;
         this.instructionNumber = instructionNumber;
@@ -119,7 +119,7 @@ public class MultiCycleStepEvent extends MultiCycleSimulationEvent {
      *
      * @return the execution, if present.
      */
-    public Optional<MultiCycleExecution<?>> getExecution() {
+    public Optional<MultiCycleExecution<?, ?>> getExecution() {
         return Optional.ofNullable(execution);
     }
 
@@ -130,7 +130,7 @@ public class MultiCycleStepEvent extends MultiCycleSimulationEvent {
      *
      * @param execution the execution.
      */
-    public void setExecution(MultiCycleExecution<?> execution) {
+    public void setExecution(MultiCycleExecution<?, ?> execution) {
         this.execution = execution;
     }
 
@@ -152,7 +152,7 @@ public class MultiCycleStepEvent extends MultiCycleSimulationEvent {
         public Before(MultiCycleSimulation simulation, long cycle, long instructionNumber, int instructionAddress,
                       MultiCycleStep executedStep,
                       AssembledInstruction instruction,
-                      MultiCycleExecution<?> execution) {
+                      MultiCycleExecution<?, ?> execution) {
             super(simulation, cycle, instructionNumber, instructionAddress, executedStep, instruction, execution);
             cancelled = false;
         }
@@ -186,12 +186,12 @@ public class MultiCycleStepEvent extends MultiCycleSimulationEvent {
         public After(MultiCycleSimulation simulation, long cycle, long instructionNumber, int instructionAddress,
                      MultiCycleStep executedStep,
                      AssembledInstruction instruction,
-                     MultiCycleExecution<?> execution) {
+                     MultiCycleExecution<?, ?> execution) {
             super(simulation, cycle, instructionNumber, instructionAddress, executedStep, instruction, execution);
             Validate.notNull(execution, "Execution cannot be null!");
         }
 
-        public MultiCycleExecution<?> getExecutionSafe() {
+        public MultiCycleExecution<?, ?> getExecutionSafe() {
             return execution;
         }
 

@@ -30,11 +30,15 @@ import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
-import net.jamsimulator.jams.mips.simulation.pipelined.ForwardingSupporter;
+import net.jamsimulator.jams.mips.simulation.pipelined.AbstractPipelinedSimulation;
 import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
 import net.jamsimulator.jams.mips.simulation.pipelined.exception.RAWHazardException;
 
-public abstract class MultiCycleExecution<Inst extends AssembledInstruction> extends InstructionExecution<MultiCycleArchitecture, Inst> {
+public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, Inst extends AssembledInstruction> extends InstructionExecution<Arch, Inst> {
+
+    protected final boolean forwardingEnabled;
+    protected final boolean solveBranchesOnDecode;
+    protected final boolean delaySlotsEnabled;
 
     protected int[] decodeResult;
     protected int[] executionResult;
@@ -45,9 +49,20 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
 
     protected boolean inDelaySlot;
 
-    public MultiCycleExecution(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Inst instruction, int address,
+    public MultiCycleExecution(MIPSSimulation<? extends Arch> simulation, Inst instruction, int address,
                                boolean executesMemory, boolean executesWriteBack) {
         super(simulation, instruction, address);
+
+        if (simulation instanceof AbstractPipelinedSimulation s) {
+            forwardingEnabled = s.isForwardingEnabled();
+            solveBranchesOnDecode = s.solvesBranchesOnDecode();
+            delaySlotsEnabled = s.isDelaySlotsEnabled();
+        } else {
+            forwardingEnabled = false;
+            solveBranchesOnDecode = false;
+            delaySlotsEnabled = false;
+        }
+
         this.executesMemory = executesMemory;
         this.executesWriteBack = executesWriteBack;
         this.inDelaySlot = false;
@@ -101,7 +116,7 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
     }
 
     public boolean solveBranchOnDecode() {
-        return simulation.getData().shouldSolveBranchesOnDecode();
+        return solveBranchesOnDecode;
     }
 
     //region requires
@@ -123,8 +138,7 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
     }
 
     public void requires(Register register) {
-        var supportsForwarding = simulation instanceof ForwardingSupporter
-                && simulation.getData().isForwardingEnabled();
+        var supportsForwarding = simulation instanceof AbstractPipelinedSimulation && forwardingEnabled;
 
         if (register.isLocked() && !supportsForwarding) {
             throw new RAWHazardException(register);
@@ -156,8 +170,8 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
             return register.getValue();
         }
 
-        if (simulation instanceof ForwardingSupporter) {
-            var optional = ((ForwardingSupporter) simulation).getForwarding().get(register);
+        if (simulation instanceof AbstractPipelinedSimulation) {
+            var optional = ((AbstractPipelinedSimulation) simulation).getForwarding().get(register);
             if (optional.isPresent()) return optional.getAsInt();
         }
 
@@ -258,8 +272,8 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
     }
 
     public void forward(Register register, int value, boolean memory) {
-        if (simulation instanceof ForwardingSupporter) {
-            ((ForwardingSupporter) simulation).getForwarding().forward(register, value, memory);
+        if (simulation instanceof AbstractPipelinedSimulation) {
+            ((AbstractPipelinedSimulation) simulation).getForwarding().forward(register, value, memory);
         }
     }
 
@@ -271,7 +285,7 @@ public abstract class MultiCycleExecution<Inst extends AssembledInstruction> ext
             throw new IllegalStateException("The instruction " + instruction.getBasicOrigin() + " is not a control transfer instruction!");
 
         if (simulation instanceof PipelinedSimulation) {
-            if (!simulation.getData().areDelaySlotsEnabled() || ((ControlTransferInstruction) instruction.getBasicOrigin()).isCompact()) {
+            if (!delaySlotsEnabled || ((ControlTransferInstruction) instruction.getBasicOrigin()).isCompact()) {
                 ((PipelinedSimulation) simulation).getPipeline().removeFetch();
 
                 setAndUnlock(pc(), address);

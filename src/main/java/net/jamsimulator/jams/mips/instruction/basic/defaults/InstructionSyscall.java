@@ -90,13 +90,13 @@ public class InstructionSyscall extends BasicRInstruction<InstructionSyscall.Ass
 
         @Override
         public void execute() {
-            simulation.getData().getSyscallExecutions().executeSyscall(simulation);
+            simulation.getSyscallExecutions().executeSyscall(simulation);
         }
     }
 
-    public static class MultiCycle extends MultiCycleExecution<Assembled> {
+    public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
 
-        public MultiCycle(MIPSSimulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+        public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, false);
         }
 
@@ -107,7 +107,7 @@ public class InstructionSyscall extends BasicRInstruction<InstructionSyscall.Ass
 
         @Override
         public void execute() {
-            simulation.getData().getSyscallExecutions().executeSyscallMultiCycle(this);
+            simulation.getSyscallExecutions().executeSyscallMultiCycle(this);
         }
 
         @Override

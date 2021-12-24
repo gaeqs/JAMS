@@ -56,7 +56,7 @@ public class SyscallExecutionRandomInteger implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?> execution) {
+    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var simulation = execution.getSimulation();
         var index = execution.value(generatorRegister);
 

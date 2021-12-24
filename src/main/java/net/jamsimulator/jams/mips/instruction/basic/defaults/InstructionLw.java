@@ -101,9 +101,9 @@ public class InstructionLw extends BasicInstruction<InstructionLw.Assembled> {
         }
     }
 
-    public static class MultiCycle extends MultiCycleExecution<Assembled> {
+    public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
 
-        public MultiCycle(MIPSSimulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+        public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, true, true);
         }
 

@@ -26,9 +26,6 @@ package net.jamsimulator.jams.mips.architecture;
 
 import net.jamsimulator.jams.manager.ManagerResource;
 import net.jamsimulator.jams.manager.ResourceProvider;
-import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
-import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 import net.jamsimulator.jams.utils.Validate;
@@ -66,17 +63,10 @@ public abstract class Architecture implements ManagerResource {
     /**
      * Creates a simulation of this architecture using the given parameters.
      *
-     * @param instructionSet the {@link InstructionSet} to use.
-     * @param registers      the {@link Registers}.
-     * @param memory         the {@link Memory}.
+     * @param data the construction data for the simulation.
      * @return the {@link MIPSSimulation}.
      */
-    public abstract MIPSSimulation<? extends Architecture> createSimulation(InstructionSet instructionSet,
-                                                                            Registers registers,
-                                                                            Memory memory,
-                                                                            int instructionStackBottom,
-                                                                            int kernelStackBottom,
-                                                                            MIPSSimulationData data);
+    public abstract MIPSSimulation<? extends Architecture> createSimulation(MIPSSimulationData data);
 
     @Override
     public boolean equals(Object o) {

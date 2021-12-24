@@ -46,7 +46,7 @@ public class SingleCycleFlowTable extends FlowTable {
     public SingleCycleFlowTable(MIPSSimulation<? extends SingleCycleArchitecture> simulation) {
         super(simulation);
 
-        if (simulation.getData().canCallEvents()) {
+        if (simulation.canCallEvents()) {
             toAdd = new LinkedList<>();
             simulation.registerListeners(this, true);
         } else {

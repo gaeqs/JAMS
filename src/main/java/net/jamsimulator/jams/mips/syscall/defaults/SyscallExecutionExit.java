@@ -52,7 +52,7 @@ public class SyscallExecutionExit implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?> execution) {
+    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         execute(execution.getSimulation());
     }
 

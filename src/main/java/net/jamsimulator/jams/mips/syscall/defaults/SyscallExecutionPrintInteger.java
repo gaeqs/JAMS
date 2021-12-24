@@ -61,7 +61,7 @@ public class SyscallExecutionPrintInteger implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?> execution) {
+    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var value = execution.value(register);
         var console = execution.getSimulation().getConsole();
         String toPrint = printHex ? Integer.toHexString(value) : String.valueOf(value);

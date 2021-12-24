@@ -150,17 +150,7 @@ public class MIPS32Assembler implements Assembler {
     @Override
     public <Arch extends Architecture> MIPSSimulation<Arch> createSimulation(Arch architecture, MIPSSimulationData data) {
         if (!assembled) throw new IllegalStateException("The program is still not assembled!");
-
-        Memory memory = getMemory().copy();
-        memory.saveState();
-
-        memory.restoreSavedState();
-
-        Registers registers = getRegisters().copy();
-
-        MIPSSimulation<?> simulation = architecture.createSimulation(instructionSet, registers, memory,
-                assemblerData.getCurrentText() - 4,
-                assemblerData.getCurrentKText() - 4, data);
+        MIPSSimulation<?> simulation = architecture.createSimulation(data);
         return (MIPSSimulation<Arch>) simulation;
     }
 
@@ -194,6 +184,16 @@ public class MIPS32Assembler implements Assembler {
         var set = new HashSet<>(globalLabels.values());
         files.forEach(file -> set.addAll(file.getLabels().values()));
         return Collections.unmodifiableSet(set);
+    }
+
+    @Override
+    public int getStackBottom() {
+        return assemblerData.getCurrentText() - 4;
+    }
+
+    @Override
+    public int getKernelStackBottom() {
+        return assemblerData.getCurrentKText() - 4;
     }
 
     @Override
