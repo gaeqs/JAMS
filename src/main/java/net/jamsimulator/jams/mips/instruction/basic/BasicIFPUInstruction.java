@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.instruction.basic;
 
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledIFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
@@ -44,11 +45,12 @@ public abstract class BasicIFPUInstruction<Inst extends AssembledInstruction> ex
      *
      * @param mnemonic      the mnemonic.
      * @param parameters    the parameter types.
+     * @param apuType       the type of the APU where this instruction will be executed.
      * @param operationCode the operation code.
      * @param subcode       the subcode.
      */
-    public BasicIFPUInstruction(String mnemonic, ParameterType[] parameters, int operationCode, int subcode) {
-        super(mnemonic, parameters, operationCode);
+    public BasicIFPUInstruction(String mnemonic, ParameterType[] parameters, APUType apuType, int operationCode, int subcode) {
+        super(mnemonic, parameters, apuType, operationCode);
         this.subcode = subcode;
     }
 
@@ -58,11 +60,12 @@ public abstract class BasicIFPUInstruction<Inst extends AssembledInstruction> ex
      *
      * @param mnemonic      the mnemonic.
      * @param parameters    the parameter types.
+     * @param apuType       the type of the APU where this instruction will be executed.
      * @param operationCode the operation code.
      * @param subcode       the subcode.
      */
-    public BasicIFPUInstruction(String mnemonic, InstructionParameterTypes parameters, int operationCode, int subcode) {
-        super(mnemonic, parameters, operationCode);
+    public BasicIFPUInstruction(String mnemonic, InstructionParameterTypes parameters, APUType apuType, int operationCode, int subcode) {
+        super(mnemonic, parameters, apuType, operationCode);
         this.subcode = subcode;
     }
 

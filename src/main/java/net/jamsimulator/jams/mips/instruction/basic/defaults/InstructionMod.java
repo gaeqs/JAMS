@@ -32,6 +32,7 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRSOPInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRSOPInstruction;
+import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -43,6 +44,7 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 public class InstructionMod extends BasicRSOPInstruction<InstructionMod.Assembled> {
 
     public static final String MNEMONIC = "mod";
+    public static final APUType APU_TYPE = APUType.INTEGER;
     public static final int OPERATION_CODE = 0;
     public static final int FUNCTION_CODE = 0b011010;
     public static final int SOP_CODE = 0b00011;
@@ -50,7 +52,7 @@ public class InstructionMod extends BasicRSOPInstruction<InstructionMod.Assemble
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER);
 
     public InstructionMod() {
-        super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, SOP_CODE);
+        super(MNEMONIC, PARAMETER_TYPES, APU_TYPE, OPERATION_CODE, FUNCTION_CODE, SOP_CODE);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
         addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

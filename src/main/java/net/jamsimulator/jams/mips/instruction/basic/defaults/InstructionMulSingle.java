@@ -32,6 +32,7 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
+import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -43,6 +44,7 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 public class InstructionMulSingle extends BasicRFPUInstruction<InstructionMulSingle.Assembled> {
 
     public static final String MNEMONIC = "mul.s";
+    public static final APUType APU_TYPE = APUType.FLOAT_MULTIPLICATION;
     public static final int OPERATION_CODE = 0b010001;
     public static final int FMT = 0b10000;
     public static final int FUNCTION_CODE = 0b000010;
@@ -50,7 +52,7 @@ public class InstructionMulSingle extends BasicRFPUInstruction<InstructionMulSin
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER);
 
     public InstructionMulSingle() {
-        super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE, FMT);
+        super(MNEMONIC, PARAMETER_TYPES, APU_TYPE, OPERATION_CODE, FUNCTION_CODE, FMT);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
         addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

@@ -31,6 +31,7 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -43,12 +44,13 @@ import net.jamsimulator.jams.utils.StringUtils;
 public class InstructionOri extends BasicInstruction<InstructionOri.Assembled> {
 
     public static final String MNEMONIC = "ori";
+    public static final APUType APU_TYPE = APUType.INTEGER;
     public static final int OPERATION_CODE = 0b001101;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
 
     public InstructionOri() {
-        super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE);
+        super(MNEMONIC, PARAMETER_TYPES, APU_TYPE, OPERATION_CODE);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
         addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);

@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.instruction.basic;
 
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
+import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
@@ -43,13 +44,14 @@ public abstract class BasicRFPUInstruction<Inst extends AssembledInstruction> ex
      *
      * @param mnemonic      the mnemonic.
      * @param parameters    the parameter types.
+     * @param apuType       the type of the APU where this instruction will be executed.
      * @param operationCode the operation code.
      * @param functionCode  the function code.
      * @param fmtCode       the operand type format specifier.
      */
-    public BasicRFPUInstruction(String mnemonic, ParameterType[] parameters, int operationCode,
+    public BasicRFPUInstruction(String mnemonic, ParameterType[] parameters, APUType apuType, int operationCode,
                                 int functionCode, int fmtCode) {
-        super(mnemonic, parameters, operationCode, functionCode);
+        super(mnemonic, parameters, apuType, operationCode, functionCode);
         this.fmtCode = fmtCode;
     }
 
@@ -59,13 +61,14 @@ public abstract class BasicRFPUInstruction<Inst extends AssembledInstruction> ex
      *
      * @param mnemonic      the mnemonic.
      * @param parameters    the parameter types.
+     * @param apuType       the type of the APU where this instruction will be executed.
      * @param operationCode the operation code.
      * @param functionCode  the function code.
      * @param fmtCode       the operand type format specifier.
      */
-    public BasicRFPUInstruction(String mnemonic, InstructionParameterTypes parameters, int operationCode,
+    public BasicRFPUInstruction(String mnemonic, InstructionParameterTypes parameters, APUType apuType, int operationCode,
                                 int functionCode, int fmtCode) {
-        super(mnemonic, parameters, operationCode, functionCode);
+        super(mnemonic, parameters, apuType, operationCode, functionCode);
         this.fmtCode = fmtCode;
     }
 

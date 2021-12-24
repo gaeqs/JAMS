@@ -33,6 +33,7 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledRIInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRIInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
+import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -45,13 +46,14 @@ import net.jamsimulator.jams.utils.StringUtils;
 public class InstructionBgez extends BasicRIInstruction<InstructionBgez.Assembled> implements ControlTransferInstruction {
 
     public static final String MNEMONIC = "bgez";
+    public static final APUType APU_TYPE = APUType.INTEGER;
     public static final int OPERATION_CODE = 0b000001;
     public static final int FUNCTION_CODE = 0b00001;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
 
     public InstructionBgez() {
-        super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+        super(MNEMONIC, PARAMETER_TYPES, APU_TYPE, OPERATION_CODE, FUNCTION_CODE);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
         addExecutionBuilder(PipelinedArchitecture.INSTANCE, Pipelined::new);

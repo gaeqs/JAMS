@@ -33,6 +33,7 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
+import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -44,13 +45,14 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled> implements ControlTransferInstruction {
 
     public static final String MNEMONIC = "jalr";
+    public static final APUType APU_TYPE = APUType.INTEGER;
     public static final int OPERATION_CODE = 0;
     public static final int FUNCTION_CODE = 0b001001;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER);
 
     public InstructionJalr() {
-        super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, FUNCTION_CODE);
+        super(MNEMONIC, PARAMETER_TYPES, APU_TYPE, OPERATION_CODE, FUNCTION_CODE);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
         addExecutionBuilder(PipelinedArchitecture.INSTANCE, Pipelined::new);

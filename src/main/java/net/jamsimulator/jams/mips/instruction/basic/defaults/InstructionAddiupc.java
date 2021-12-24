@@ -32,6 +32,7 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledPCREL19Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicPCREL19Instruction;
+import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -44,13 +45,14 @@ import net.jamsimulator.jams.utils.StringUtils;
 public class InstructionAddiupc extends BasicPCREL19Instruction<InstructionAddiupc.Assembled> {
 
     public static final String MNEMONIC = "addiupc";
+    public static final APUType APU_TYPE = APUType.INTEGER;
     public static final int OPERATION_CODE = 0b111011;
     public static final int PCREL_CODE = 0b00;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.SIGNED_32_BIT);
 
     public InstructionAddiupc() {
-        super(MNEMONIC, PARAMETER_TYPES, OPERATION_CODE, PCREL_CODE);
+        super(MNEMONIC, PARAMETER_TYPES, APU_TYPE, OPERATION_CODE, PCREL_CODE);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
         addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
