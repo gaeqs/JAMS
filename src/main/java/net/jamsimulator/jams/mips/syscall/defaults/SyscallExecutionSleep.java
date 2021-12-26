@@ -59,7 +59,7 @@ public class SyscallExecutionSleep implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?> execution) {
+    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var simulation = execution.getSimulation();
         var amount = execution.value(register);
         simulation.callEvent(new SimulationLockEvent(simulation));

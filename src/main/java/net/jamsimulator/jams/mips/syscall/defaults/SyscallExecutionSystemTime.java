@@ -59,7 +59,7 @@ public class SyscallExecutionSystemTime implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?> execution) {
+    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         int[] values = NumericUtils.longToInts(System.currentTimeMillis());
         execution.setAndUnlock(lowOrderRegister, values[0]);
         execution.setAndUnlock(highOrderRegister, values[1]);

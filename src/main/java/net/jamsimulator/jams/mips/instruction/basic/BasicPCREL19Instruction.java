@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.instruction.basic;
 
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledPCREL19Instruction;
+import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
@@ -43,12 +44,13 @@ public abstract class BasicPCREL19Instruction<Inst extends AssembledInstruction>
      *
      * @param mnemonic      the mnemonic.
      * @param parameters    the parameter types.
+     * @param apuType       the type of the APU where this instruction will be executed.
      * @param operationCode the operation code.
      * @param pcRelFunction the pc relative function code.
      */
-    public BasicPCREL19Instruction(String mnemonic, ParameterType[] parameters, int operationCode,
+    public BasicPCREL19Instruction(String mnemonic, ParameterType[] parameters, APUType apuType, int operationCode,
                                    int pcRelFunction) {
-        super(mnemonic, parameters, operationCode);
+        super(mnemonic, parameters, apuType, operationCode);
         this.pcRelFunction = pcRelFunction;
     }
 
@@ -57,12 +59,13 @@ public abstract class BasicPCREL19Instruction<Inst extends AssembledInstruction>
      *
      * @param mnemonic      the mnemonic.
      * @param parameters    the parameter types.
+     * @param apuType       the type of the APU where this instruction will be executed.
      * @param operationCode the operation code.
      * @param pcRelFunction the pc relative function code.
      */
-    public BasicPCREL19Instruction(String mnemonic, InstructionParameterTypes parameters, int operationCode,
+    public BasicPCREL19Instruction(String mnemonic, InstructionParameterTypes parameters, APUType apuType, int operationCode,
                                    int pcRelFunction) {
-        super(mnemonic, parameters, operationCode);
+        super(mnemonic, parameters, apuType, operationCode);
         this.pcRelFunction = pcRelFunction;
     }
 

@@ -22,15 +22,18 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.syscall;
+package net.jamsimulator.jams.mips.simulation;
 
-import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
-import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.label.Label;
 
-public interface SyscallExecution {
+import java.util.Map;
+import java.util.Set;
 
-    void execute(MIPSSimulation<?> simulation);
+public record MIPSSimulationSource(Map<Integer, String> instructions, Set<Label> labels) {
 
-    void executeMultiCycle(MultiCycleExecution<?, ?> execution);
+    public MIPSSimulationSource(Map<Integer, String> instructions, Set<Label> labels) {
+        this.instructions = Map.copyOf(instructions);
+        this.labels = Set.copyOf(labels);
+    }
 
 }

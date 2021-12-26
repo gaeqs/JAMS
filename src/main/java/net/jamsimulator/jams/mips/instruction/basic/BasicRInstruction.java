@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.instruction.basic;
 
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction;
+import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
@@ -43,12 +44,13 @@ public abstract class BasicRInstruction<Inst extends AssembledInstruction> exten
      *
      * @param mnemonic      the mnemonic.
      * @param parameters    the parameter types.
+     * @param apuType       the type of the APU where this instruction will be executed.
      * @param operationCode the operation code.
      * @param functionCode  the function code.
      */
-    public BasicRInstruction(String mnemonic, ParameterType[] parameters, int operationCode,
+    public BasicRInstruction(String mnemonic, ParameterType[] parameters, APUType apuType, int operationCode,
                              int functionCode) {
-        super(mnemonic, parameters, operationCode);
+        super(mnemonic, parameters, apuType, operationCode);
         this.functionCode = functionCode;
     }
 
@@ -57,12 +59,13 @@ public abstract class BasicRInstruction<Inst extends AssembledInstruction> exten
      *
      * @param mnemonic      the mnemonic.
      * @param parameters    the parameter types.
+     * @param apuType       the type of the APU where this instruction will be executed.
      * @param operationCode the operation code.
      * @param functionCode  the function code.
      */
-    public BasicRInstruction(String mnemonic, InstructionParameterTypes parameters, int operationCode,
+    public BasicRInstruction(String mnemonic, InstructionParameterTypes parameters, APUType apuType, int operationCode,
                              int functionCode) {
-        super(mnemonic, parameters, operationCode);
+        super(mnemonic, parameters, apuType, operationCode);
         this.functionCode = functionCode;
     }
 

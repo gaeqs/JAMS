@@ -59,7 +59,7 @@ public class SyscallExecutionCloseFile implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?> execution) {
+    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var id = execution.value(idRegister);
 
         try {

@@ -22,35 +22,36 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.architecture;
+package net.jamsimulator.jams.mips.instruction.data;
 
+import net.jamsimulator.jams.manager.ManagerResource;
 import net.jamsimulator.jams.manager.ResourceProvider;
-import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
-import net.jamsimulator.jams.mips.simulation.singlecycle.SingleCycleSimulation;
+import net.jamsimulator.jams.utils.Validate;
 
-/**
- * Represents the single-cycle architecture.
- * <p>
- * This architecture executes one instruction per cycle, starting and finishing the
- * execution of an instruction on the same cycle. This makes this architecture slow,
- * having high seconds per cycle.
- */
-public class SingleCycleArchitecture extends Architecture {
+public record APUType(
+        ResourceProvider provider,
+        String name,
+        int defaultCyclesPerExecution
+) implements ManagerResource {
 
-    public static final String NAME = "Single-cycle";
-    public static final SingleCycleArchitecture INSTANCE = new SingleCycleArchitecture(ResourceProvider.JAMS);
+    public static final APUType INTEGER = new APUType(ResourceProvider.JAMS, "integer", 1);
+    public static final APUType FLOAT_ADDTION = new APUType(ResourceProvider.JAMS, "float_adition", 1);
+    public static final APUType FLOAT_MULTIPLICATION = new APUType(ResourceProvider.JAMS, "float_multiplication", 4);
+    public static final APUType FLOAT_DIVISION = new APUType(ResourceProvider.JAMS, "float_division", 9);
 
-    protected SingleCycleArchitecture(ResourceProvider provider, String name) {
-        super(provider, name);
-    }
-
-    private SingleCycleArchitecture(ResourceProvider provider) {
-        super(provider, NAME);
+    public APUType {
+        Validate.notNull(provider, "Provider cannot be null!");
+        Validate.notNull(name, "Name cannot be null!");
     }
 
     @Override
-    public MIPSSimulation<? extends SingleCycleArchitecture> createSimulation(MIPSSimulationData data) {
-        return new SingleCycleSimulation(this, data);
+    public ResourceProvider getResourceProvider() {
+        return provider;
     }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
 }

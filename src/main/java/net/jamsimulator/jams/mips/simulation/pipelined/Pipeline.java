@@ -41,7 +41,7 @@ public class Pipeline {
 
     private final PipelinedSimulation simulation;
 
-    private final MultiCycleExecution<?>[] instructions;
+    private final MultiCycleExecution<?, ?>[] instructions;
     private final int[] pcs;
     private final MIPSInterruptException[] exceptions;
 
@@ -67,8 +67,8 @@ public class Pipeline {
      *
      * @return the {@link Map}.
      */
-    public Map<MultiCycleStep, MultiCycleExecution<?>> getAll() {
-        var map = new HashMap<MultiCycleStep, MultiCycleExecution<?>>();
+    public Map<MultiCycleStep, MultiCycleExecution<?, ?>> getAll() {
+        var map = new HashMap<MultiCycleStep, MultiCycleExecution<?, ?>>();
         for (int i = 0; i < instructions.length; i++) {
             if (instructions[i] != null) map.put(MultiCycleStep.values()[i], instructions[i]);
         }
@@ -83,7 +83,7 @@ public class Pipeline {
      * @param step the {@link MultiCycleStep step}.
      * @return the {@link MultiCycleExecution instruction} or {@code null}.
      */
-    public MultiCycleExecution<?> get(MultiCycleStep step) {
+    public MultiCycleExecution<?, ?> get(MultiCycleStep step) {
         return instructions[step.ordinal()];
     }
 
@@ -93,7 +93,7 @@ public class Pipeline {
      * @param step the {@link MultiCycleStep step}.
      * @return the {@link MultiCycleExecution instruction} or {@code Optional.empty()} if not present.
      */
-    public Optional<MultiCycleExecution<?>> getSafe(MultiCycleStep step) {
+    public Optional<MultiCycleExecution<?, ?>> getSafe(MultiCycleStep step) {
         return Optional.ofNullable(instructions[step.ordinal()]);
     }
 
@@ -189,7 +189,7 @@ public class Pipeline {
      * @param amount the amount of instructions to move.
      */
     public void shift(int pc, int amount) {
-        if (simulation.getData().canCallEvents()) {
+        if (simulation.canCallEvents()) {
             simulation.callEvent(new PipelineShiftEvent.Before(simulation, this, pc, amount));
             shift0(pc, amount);
             simulation.callEvent(new PipelineShiftEvent.After(simulation, this, pc, amount));
@@ -203,7 +203,7 @@ public class Pipeline {
      *
      * @param execution the {@link MultiCycleExecution instruction} to fetch.
      */
-    public void fetch(MultiCycleExecution<?> execution) {
+    public void fetch(MultiCycleExecution<?, ?> execution) {
         instructions[0] = execution;
     }
 

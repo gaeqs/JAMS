@@ -60,7 +60,7 @@ public class SyscallExecutionPrintString implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?> execution) {
+    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         print(execution.getSimulation().getMemory(), execution.getSimulation().getConsole(), execution.value(register));
     }
 

@@ -50,8 +50,11 @@ import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.event.*;
 import net.jamsimulator.jams.mips.simulation.file.SimulationFiles;
 import net.jamsimulator.jams.mips.simulation.random.NumberGenerators;
+import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
+import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurationPresets;
 import net.jamsimulator.jams.utils.StringUtils;
 
+import java.io.File;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -72,16 +75,22 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
 
     protected final Arch architecture;
     protected final InstructionSet instructionSet;
-    protected final MIPSSimulationData data;
-
     protected final Registers registers;
     protected final Memory memory;
+    protected final File workingDirectory;
     protected final SimulationFiles files;
     protected final ExternalInterruptController externalInterruptController;
     protected final LowHeapIntArrayList breakpoints;
     protected final NumberGenerators numberGenerators;
+    protected final Console console;
+    protected final SimulationSyscallExecutions syscallExecutions;
     protected final Object inputLock;
     protected final Object finishedRunningLock;
+
+    protected final MIPSSimulationSource source;
+
+    protected final boolean canCallEvents, undoEnabled;
+
     protected int instructionStackBottom, kernelStackBottom;
     protected InstructionExecution<Arch, ?>[] instructionCache;
     protected Thread thread;
@@ -104,28 +113,41 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
     /**
      * Creates the simulation.
      *
-     * @param architecture           the architecture of the simulation. This should be given by a simulation subclass.
-     * @param instructionSet         the instruction used by the simulation. This set should be the same as the set used to compile the code.
-     * @param registers              the registers to use on this simulation.
-     * @param memory                 the memory to use in this simulation.
-     * @param instructionStackBottom the address of the bottom of the instruction stack.
-     * @param data                   the immutable data of this simulation.
+     * @param architecture the architecture of the simulation. This should be given by a simulation subclass.
+     * @param data         the build data of this simulation.
+     * @param useCache     whether this simulation should use instruction execution caches.
+     * @param supportsUndo whether this simulation supports instruction undo.
      */
-    public MIPSSimulation(Arch architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, MIPSSimulationData data, boolean useCache) {
+    public MIPSSimulation(
+            Arch architecture,
+            MIPSSimulationData data,
+            boolean useCache,
+            boolean supportsUndo) {
         this.architecture = architecture;
-        this.instructionSet = instructionSet;
-        this.registers = registers;
-        this.memory = memory;
+        this.instructionSet = data.instructionSet();
+        this.registers = data.registers();
+        this.memory = data.memory();
+        this.instructionStackBottom = data.instructionStackBottom();
+        this.kernelStackBottom = data.kernelStackBottom();
+        this.console = data.console();
+        this.source = data.source();
+        this.workingDirectory = data.workingDirectory();
+
         this.externalInterruptController = new ExternalInterruptController();
-        this.instructionStackBottom = instructionStackBottom;
-        this.kernelStackBottom = kernelStackBottom;
-        this.data = data;
         this.files = new SimulationFiles(this);
         this.cycleDelay = 0;
-
         this.breakpoints = new LowHeapIntArrayList();
-
         this.numberGenerators = new NumberGenerators();
+        this.syscallExecutions = new SimulationSyscallExecutions();
+
+        data.configuration().getSyscallExecutionBuilders().forEach((key, builder) ->
+                syscallExecutions.bindExecution(key, builder.build()));
+
+        // Get configuration data
+
+        this.canCallEvents = data.configuration().getNodeValue(MIPSSimulationConfigurationPresets.CALL_EVENTS);
+        this.undoEnabled = supportsUndo && (boolean) data.configuration()
+                .getNodeValue(MIPSSimulationConfigurationPresets.UNDO_ENABLED);
 
         // 1 Instruction = 4 Bytes.
 
@@ -136,7 +158,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
             prefetch();
         }
 
-        if (data.canCallEvents() && data.isUndoEnabled()) {
+        if (canCallEvents && undoEnabled) {
             memory.getBottomMemory().registerListeners(this, true);
             registers.registerListeners(this, true);
             files.registerListeners(this, true);
@@ -173,21 +195,21 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
     }
 
     /**
+     * Returns the {@link MIPSSimulationSource} of this simulation's code.
+     *
+     * @return the {@link MIPSSimulationSource source code}.
+     */
+    public MIPSSimulationSource getSource() {
+        return source;
+    }
+
+    /**
      * Returns the {@link InstructionSet} used by this simulation. This set is used to decode instructions.
      *
      * @return the {@link InstructionSet}.
      */
     public InstructionSet getInstructionSet() {
         return instructionSet;
-    }
-
-    /**
-     * Returns an instance with the immutable data of this simulation.
-     *
-     * @return the instance.
-     */
-    public MIPSSimulationData getData() {
-        return data;
     }
 
     /**
@@ -233,6 +255,15 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
     }
 
     /**
+     * Returns the collection of syscall executions.
+     *
+     * @return the collection of syscall executions.
+     */
+    public SimulationSyscallExecutions getSyscallExecutions() {
+        return syscallExecutions;
+    }
+
+    /**
      * Returns the instruction stack bottom address.
      * This value may be modifiable if any instruction cell is modified in the {@link Memory}.
      *
@@ -250,6 +281,20 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
      */
     public int getKernelStackBottom() {
         return kernelStackBottom;
+    }
+
+    /**
+     * Returns whether this simulation has events enabled.
+     *
+     * @return whether this simulation has events enabled.
+     */
+    public boolean canCallEvents() {
+        return canCallEvents;
+    }
+
+    @Override
+    public boolean isUndoEnabled() {
+        return undoEnabled;
     }
 
     /**
@@ -296,7 +341,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
     public String popInputOrLock() {
         Optional<String> optional = Optional.empty();
         while (optional.isEmpty()) {
-            optional = data.getConsole().popInput();
+            optional = console.popInput();
 
             if (optional.isEmpty()) {
                 try {
@@ -326,7 +371,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
     public char popCharOrLock() {
         Optional<Character> optional = Optional.empty();
         while (optional.isEmpty()) {
-            optional = data.getConsole().popChar();
+            optional = console.popChar();
 
             if (optional.isEmpty()) {
                 try {
@@ -583,7 +628,12 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
 
     @Override
     public Console getConsole() {
-        return data.getConsole();
+        return console;
+    }
+
+    @Override
+    public File getWorkingDirectory() {
+        return workingDirectory;
     }
 
     @Override
@@ -720,8 +770,8 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
         running = true;
         interrupted = false;
 
-        memory.enableEventCalls(data.canCallEvents());
-        registers.enableEventCalls(data.canCallEvents());
+        memory.enableEventCalls(canCallEvents);
+        registers.enableEventCalls(canCallEvents);
 
         thread = new Thread(() -> {
             try {
@@ -751,15 +801,15 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
         running = true;
         interrupted = false;
 
-        memory.enableEventCalls(data.canCallEvents());
-        registers.enableEventCalls(data.canCallEvents());
+        memory.enableEventCalls(canCallEvents);
+        registers.enableEventCalls(canCallEvents);
 
         thread = new Thread(() -> {
             long cyclesStart = cycles;
             long start = System.nanoTime();
 
             try {
-                if (data.canCallEvents()) {
+                if (canCallEvents) {
                     executeAllWithEvents();
                 } else {
                     executeAllWithoutEvents();
@@ -819,10 +869,6 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
         runnable.run();
     }
 
-    @Override
-    public boolean isUndoEnabled() {
-        return data.isUndoEnabled();
-    }
     //endregion
 
 

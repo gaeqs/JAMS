@@ -118,4 +118,18 @@ public interface Assembler {
      */
     Set<Label> getAllLabels();
 
+    /**
+     * Returns the position of the stack bottom.
+     *
+     * @return the position.
+     */
+    int getStackBottom();
+
+    /**
+     * Returns the position of the kernel stack bottom.
+     *
+     * @return the position.
+     */
+    int getKernelStackBottom();
+
 }

@@ -54,7 +54,7 @@ public class MultiCycleFlowTable extends FlowTable {
 
         firstCycle = 0;
 
-        if (simulation.getData().canCallEvents()) {
+        if (simulation.canCallEvents()) {
             toAdd = new LinkedList<>();
             entries = new HashMap<>();
             simulation.registerListeners(this, true);

@@ -44,7 +44,7 @@ public class LabelTable extends Explorer {
         getStyleClass().add(STYLE_CLASS);
         this.simulationPane = simulationPane;
 
-        var labels = simulationPane.getSimulation().getData().getLabels();
+        var labels = simulationPane.getSimulation().getSource().labels();
         var files = new HashMap<String, LabelTableFile>();
         labels.forEach(label -> {
             var section = files.computeIfAbsent(label.getOriginFile(),

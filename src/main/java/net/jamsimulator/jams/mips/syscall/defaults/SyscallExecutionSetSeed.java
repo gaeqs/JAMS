@@ -57,7 +57,7 @@ public class SyscallExecutionSetSeed implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?> execution) {
+    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         int index = execution.value(generatorRegister);
         int seed = execution.value(seedRegister);
 

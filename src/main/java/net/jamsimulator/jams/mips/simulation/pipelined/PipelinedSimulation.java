@@ -30,7 +30,6 @@ import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
-import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.MIPSAddressException;
 import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
@@ -42,7 +41,6 @@ import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.COP0RegistersBits;
-import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterLockEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterUnlockEvent;
@@ -58,6 +56,7 @@ import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileOpenEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileWriteEvent;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 import net.jamsimulator.jams.mips.simulation.pipelined.exception.RAWHazardException;
+import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurationPresets;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.LinkedList;
@@ -72,15 +71,21 @@ import java.util.Optional;
  *
  * @see MultiCycleArchitecture
  */
-public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> implements ForwardingSupporter {
+public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> implements AbstractPipelinedSimulation {
 
     public static final int MAX_CHANGES = 10000;
     //Hard reference. Do not convert to local variable.
     @SuppressWarnings("FieldCanBeLocal")
     private static Listeners listeners;
+
     private final LinkedList<StepChanges<PipelinedArchitecture>> changes;
     private final Pipeline pipeline;
     private final PipelineForwarding forwarding;
+
+    private final boolean forwardingEnabled;
+    private final boolean solveBranchesOnDecode;
+    private final boolean delaySlotsEnabled;
+
     private long instructionsStarted, instructionsFinished;
     private boolean exitRequested;
     private StepChanges<PipelinedArchitecture> currentStepChanges;
@@ -88,21 +93,25 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
     /**
      * Creates the single-cycle simulation.
      *
-     * @param architecture           the architecture of the simulation. This should be given by a simulation subclass.
-     * @param instructionSet         the instruction used by the simulation. This set should be the same as the set used to compile the code.
-     * @param registers              the registers to use on this simulation.
-     * @param memory                 the memory to use in this simulation.
-     * @param instructionStackBottom the address of the bottom of the instruction stack.
+     * @param architecture the architecture of the simulation. This should be given by a simulation subclass.
+     * @param data         the build data of this simulation.
      */
-    public PipelinedSimulation(PipelinedArchitecture architecture, InstructionSet instructionSet, Registers registers, Memory memory, int instructionStackBottom, int kernelStackBottom, MIPSSimulationData data) {
-        super(architecture, instructionSet, registers, memory, instructionStackBottom, kernelStackBottom, data, false);
+    public PipelinedSimulation(PipelinedArchitecture architecture, MIPSSimulationData data) {
+        super(architecture, data, false, true);
         instructionsStarted = 0;
         instructionsFinished = 0;
-        changes = data.isUndoEnabled() ? new LinkedList<>() : null;
+        changes = undoEnabled ? new LinkedList<>() : null;
 
         pipeline = new Pipeline(this, registers.getProgramCounter().getValue());
         forwarding = new PipelineForwarding();
         exitRequested = false;
+
+        // Configuration data
+
+        this.forwardingEnabled = data.configuration().getNodeValue(MIPSSimulationConfigurationPresets.CALL_EVENTS);
+        this.solveBranchesOnDecode = data.configuration().getNodeValue(MIPSSimulationConfigurationPresets.BRANCH_ON_DECODE);
+        this.delaySlotsEnabled = solveBranchesOnDecode && (boolean) data.configuration()
+                .getNodeValue(MIPSSimulationConfigurationPresets.DELAY_SLOTS_ENABLED);
 
         listeners = new Listeners();
 
@@ -124,6 +133,25 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
         return pipeline;
     }
 
+    public void removeExitRequest() {
+        exitRequested = false;
+    }
+
+    @Override
+    public boolean isForwardingEnabled() {
+        return forwardingEnabled;
+    }
+
+    @Override
+    public boolean solvesBranchesOnDecode() {
+        return solveBranchesOnDecode;
+    }
+
+    @Override
+    public boolean isDelaySlotsEnabled() {
+        return delaySlotsEnabled;
+    }
+
     @Override
     public PipelineForwarding getForwarding() {
         return forwarding;
@@ -137,10 +165,6 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
         pipeline.removeFetch();
         pipeline.removeDecode();
         exitRequested = true;
-    }
-
-    public void removeExitRequest() {
-        exitRequested = false;
     }
 
     @Override
@@ -158,7 +182,7 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
     @Override
     public boolean resetCaches() {
         if (!super.resetCaches()) return false;
-        if (!data.isUndoEnabled()) return true;
+        if (!undoEnabled) return true;
 
         //Gets the last memory level.
         var last = memory;
@@ -185,7 +209,7 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
 
     @Override
     public boolean undoLastStep() throws InterruptedException {
-        if (!data.isUndoEnabled()) return false;
+        if (!undoEnabled) return false;
 
         if (callEvent(new SimulationUndoStepEvent.Before(this, cycles - 1)).isCancelled()) return false;
 
@@ -215,7 +239,7 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
         if (finished) return;
 
 
-        if (data.isUndoEnabled()) {
+        if (undoEnabled) {
             currentStepChanges = new StepChanges<>();
         }
 
@@ -282,7 +306,7 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
         pipeline.shift(nextCheck ? 0 : pcv, amount);
         if (nextCheck) checkExit();
 
-        if (data.isUndoEnabled() && currentStepChanges != null) {
+        if (undoEnabled && currentStepChanges != null) {
             changes.add(currentStepChanges);
             if (changes.size() > MAX_CHANGES) changes.removeFirst();
             currentStepChanges = null;
@@ -336,13 +360,13 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
         //Fetches the stored execution, but it can be an execution in a delay slot. That's why the new PC is not pcv + 4.
         pc.setValue(pc.getValue() + 4);
 
-        MultiCycleExecution<?> newExecution = (MultiCycleExecution<?>) fetch(pcv);
+        var newExecution = (MultiCycleExecution<?, ?>) fetch(pcv);
         if (newExecution == null) {
             pipeline.setException(MultiCycleStep.FETCH, new MIPSAddressException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION, pcv));
         } else {
 
             var onDecode = pipeline.get(MultiCycleStep.DECODE);
-            boolean isInDelaySlot = data.areDelaySlotsEnabled()
+            boolean isInDelaySlot = delaySlotsEnabled
                     && onDecode != null && onDecode.getInstruction().getBasicOrigin() instanceof ControlTransferInstruction;
 
             newExecution.setInstructionId(instructionsStarted);

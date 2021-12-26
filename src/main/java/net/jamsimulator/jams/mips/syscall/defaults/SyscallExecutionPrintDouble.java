@@ -79,7 +79,7 @@ public class SyscallExecutionPrintDouble implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?> execution) {
+    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         if (register % 2 != 0) {
             throw new IllegalStateException("Register " + register + " has not an even identifier!");
         }

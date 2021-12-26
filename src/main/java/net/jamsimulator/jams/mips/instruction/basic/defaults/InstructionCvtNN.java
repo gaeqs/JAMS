@@ -34,6 +34,7 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
+import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -46,6 +47,7 @@ public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Asse
 
     public static final String NAME_SUFIX = "CVT";
     public static final String MNEMONIC = "cvt.%s.%s";
+    public static final APUType APU_TYPE = APUType.INTEGER;
     public static final int OPERATION_CODE = 0b010001;
 
     private final FmtNumbers to, from;
@@ -55,6 +57,7 @@ public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Asse
                 String.format(MNEMONIC, to.getMnemonic(), from.getMnemonic()),
                 new ParameterType[]{to.requiresEvenRegister() ? ParameterType.EVEN_FLOAT_REGISTER : ParameterType.FLOAT_REGISTER,
                         from.requiresEvenRegister() ? ParameterType.EVEN_FLOAT_REGISTER : ParameterType.FLOAT_REGISTER},
+                APU_TYPE,
                 OPERATION_CODE, to.getCvt(), from.getFmt());
         this.to = to;
         this.from = from;
@@ -147,9 +150,9 @@ public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Asse
     }
 
 
-    public static class MultiCycle extends MultiCycleExecution<Assembled> {
+    public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
 
-        public MultiCycle(MIPSSimulation<MultiCycleArchitecture> simulation, Assembled instruction, int address) {
+        public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
         }
 

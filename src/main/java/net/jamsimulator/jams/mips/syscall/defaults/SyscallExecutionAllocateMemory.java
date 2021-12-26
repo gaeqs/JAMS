@@ -58,7 +58,7 @@ public class SyscallExecutionAllocateMemory implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?> execution) {
+    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var amount = execution.value(amountRegister);
         var address = execution.getSimulation().getMemory().allocateMemory(amount);
         execution.setAndUnlock(addressRegister, address);

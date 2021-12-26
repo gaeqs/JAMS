@@ -28,6 +28,7 @@ import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 
+import java.io.File;
 import java.util.function.Consumer;
 
 /**
@@ -47,6 +48,13 @@ public interface Simulation<Address extends Number> extends EventBroadcast {
      * @return the {@link Console}.
      */
     Console getConsole();
+
+    /**
+     * Returns the working directory of this simulation.
+     *
+     * @return the working directory.
+     */
+    File getWorkingDirectory();
 
     /**
      * Returns whether the given address has a breakpoint.

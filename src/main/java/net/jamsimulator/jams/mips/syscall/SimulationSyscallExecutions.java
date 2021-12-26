@@ -60,7 +60,7 @@ public class SimulationSyscallExecutions {
     }
 
 
-    public void executeSyscallMultiCycle(MultiCycleExecution<?> execution) {
+    public void executeSyscallMultiCycle(MultiCycleExecution<?, ?> execution) {
         var value = execution.value(2);
         var syscall = executions.getOrDefault(value, defaultExecution);
         syscall.executeMultiCycle(execution);

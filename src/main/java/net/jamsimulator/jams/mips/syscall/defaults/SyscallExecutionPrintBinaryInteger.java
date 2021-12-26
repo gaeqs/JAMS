@@ -60,7 +60,7 @@ public class SyscallExecutionPrintBinaryInteger implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?> execution) {
+    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var value = execution.value(register);
         var console = execution.getSimulation().getConsole();
         String toPrint = Integer.toBinaryString(value);
