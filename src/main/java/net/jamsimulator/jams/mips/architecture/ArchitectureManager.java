@@ -49,6 +49,7 @@ public final class ArchitectureManager extends DefaultValuableManager<Architectu
         add(SingleCycleArchitecture.INSTANCE);
         add(MultiCycleArchitecture.INSTANCE);
         add(PipelinedArchitecture.INSTANCE);
+        add(MultiAPUPipelinedArchitecture.INSTANCE);
     }
 
     @Override

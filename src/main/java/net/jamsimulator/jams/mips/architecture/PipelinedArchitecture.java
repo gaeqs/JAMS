@@ -30,11 +30,9 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
 
 /**
- * Represents the single-cycle architecture.
+ * Represents the pipelined architecture.
  * <p>
- * This architecture executes one instruction per cycle, starting and finishing the
- * execution of an instruction on the same cycle. This makes this architecture slow,
- * having high seconds per cycle.
+ * This architecture executes five instructions at the same time: one per step.
  */
 public class PipelinedArchitecture extends MultiCycleArchitecture {
 

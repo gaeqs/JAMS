@@ -63,15 +63,23 @@ public class PipelineForwarding {
      * @return the value if present.
      */
     public OptionalInt get(Register register) {
-        if (register.equals(memory)) {
-            return OptionalInt.of(memoryValue);
-        }
-
         if (register.equals(execution)) {
             return OptionalInt.of(executionValue);
         }
 
+        if (register.equals(memory)) {
+            return OptionalInt.of(memoryValue);
+        }
+
         return OptionalInt.empty();
+    }
+
+    /**
+     * Clears the forwarding values.
+     */
+    public void clear() {
+        memory = null;
+        execution = null;
     }
 
 }

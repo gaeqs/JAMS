@@ -28,7 +28,6 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
-import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.MIPSAddressException;
@@ -76,7 +75,7 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
     public static final int MAX_CHANGES = 10000;
     //Hard reference. Do not convert to local variable.
     @SuppressWarnings("FieldCanBeLocal")
-    private static Listeners listeners;
+    private final Listeners listeners;
 
     private final LinkedList<StepChanges<PipelinedArchitecture>> changes;
     private final Pipeline pipeline;
@@ -294,9 +293,10 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
             return;
         }
 
-        manageInterrupts(null);
+        manageInterrupts();
 
         addCycleCount();
+        forwarding.clear();
 
         var pcv = registers.getProgramCounter().getValue();
         var nextCheck = check || (isKernelMode()
@@ -314,7 +314,7 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
     }
 
     @Override
-    protected void manageInterrupts(InstructionExecution<?, ?> execution) {
+    protected void manageInterrupts() {
         if (!arePendingInterrupts()) return;
 
         int level = externalInterruptController.getRequestedIPL();

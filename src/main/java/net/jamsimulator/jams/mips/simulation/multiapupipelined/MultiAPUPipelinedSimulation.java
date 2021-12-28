@@ -1,0 +1,350 @@
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2021 Gael Rial Costas
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+
+package net.jamsimulator.jams.mips.simulation.multiapupipelined;
+
+import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.mips.architecture.MultiAPUPipelinedArchitecture;
+import net.jamsimulator.jams.mips.instruction.apu.APU;
+import net.jamsimulator.jams.mips.instruction.apu.APUType;
+import net.jamsimulator.jams.mips.interrupt.InterruptCause;
+import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
+import net.jamsimulator.jams.mips.memory.cache.event.CacheOperationEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryAllocateMemoryEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
+import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
+import net.jamsimulator.jams.mips.register.COP0RegistersBits;
+import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
+import net.jamsimulator.jams.mips.register.event.RegisterLockEvent;
+import net.jamsimulator.jams.mips.register.event.RegisterUnlockEvent;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
+import net.jamsimulator.jams.mips.simulation.change.*;
+import net.jamsimulator.jams.mips.simulation.change.multiapupipelined.pipelined.MultiAPUPipelinedSimulationChangePipeline;
+import net.jamsimulator.jams.mips.simulation.change.multiapupipelined.pipelined.MultiAPUPipelinedSimulationExitRequest;
+import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
+import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileCloseEvent;
+import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileOpenEvent;
+import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileWriteEvent;
+import net.jamsimulator.jams.mips.simulation.pipelined.AbstractPipelinedSimulation;
+import net.jamsimulator.jams.mips.simulation.pipelined.PipelineForwarding;
+import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurationPresets;
+
+import java.util.LinkedList;
+import java.util.Optional;
+import java.util.Set;
+
+public class MultiAPUPipelinedSimulation
+        extends MIPSSimulation<MultiAPUPipelinedArchitecture>
+        implements AbstractPipelinedSimulation {
+
+    public static final int MAX_CHANGES = 10000;
+
+    private final Listeners listeners;
+    private final LinkedList<StepChanges<MultiAPUPipelinedArchitecture>> changes;
+    private final MultiAPUPipeline pipeline;
+    private final PipelineForwarding forwarding;
+
+    private final boolean forwardingEnabled;
+    private final boolean solveBranchesOnDecode;
+    private final boolean delaySlotsEnabled;
+
+    private boolean exitRequested;
+    private StepChanges<MultiAPUPipelinedArchitecture> currentStepChanges;
+
+    public MultiAPUPipelinedSimulation(MultiAPUPipelinedArchitecture architecture, MIPSSimulationData data) {
+        super(architecture, data, false, true);
+
+        exitRequested = false;
+        changes = undoEnabled ? new LinkedList<>() : null;
+
+        forwardingEnabled = data.configuration().getNodeValue(MIPSSimulationConfigurationPresets.CALL_EVENTS);
+        solveBranchesOnDecode = data.configuration().getNodeValue(MIPSSimulationConfigurationPresets.BRANCH_ON_DECODE);
+        delaySlotsEnabled = solveBranchesOnDecode && (boolean) data.configuration()
+                .getNodeValue(MIPSSimulationConfigurationPresets.DELAY_SLOTS_ENABLED);
+
+        pipeline = new MultiAPUPipeline(this, delaySlotsEnabled, Set.of(
+                new APU(0, APUType.INTEGER, APUType.INTEGER.defaultCyclesPerExecution()),
+                new APU(1, APUType.FLOAT_ADDTION, APUType.FLOAT_ADDTION.defaultCyclesPerExecution()),
+                new APU(2, APUType.FLOAT_MULTIPLICATION, APUType.FLOAT_MULTIPLICATION.defaultCyclesPerExecution()),
+                new APU(3, APUType.FLOAT_DIVISION, APUType.FLOAT_DIVISION.defaultCyclesPerExecution()))
+        );
+
+        forwarding = new PipelineForwarding();
+        listeners = new Listeners();
+
+        registers.registerListeners(listeners, true);
+        files.registerListeners(listeners, true);
+        var current = Optional.of(memory);
+        while (current.isPresent()) {
+            current.get().registerListeners(listeners, true);
+            current = current.get().getNextLevelMemory();
+        }
+    }
+
+    public void removeExitRequest() {
+        exitRequested = false;
+    }
+
+    public MultiAPUPipeline getPipeline() {
+        return pipeline;
+    }
+
+    public boolean isExitRequested() {
+        return exitRequested;
+    }
+
+    @Override
+    public boolean isForwardingEnabled() {
+        return forwardingEnabled;
+    }
+
+    @Override
+    public boolean solvesBranchesOnDecode() {
+        return solveBranchesOnDecode;
+    }
+
+    @Override
+    public boolean isDelaySlotsEnabled() {
+        return delaySlotsEnabled;
+    }
+
+    @Override
+    public PipelineForwarding getForwarding() {
+        return forwarding;
+    }
+
+    @Override
+    public void requestExit() {
+        if (currentStepChanges != null) {
+            currentStepChanges.addChange(new MultiAPUPipelinedSimulationExitRequest());
+        }
+        pipeline.removeFetchAndDecode();
+        exitRequested = true;
+    }
+
+    @Override
+    public void reset() throws InterruptedException {
+        super.reset();
+        if (changes != null) {
+            changes.clear();
+        }
+        exitRequested = false;
+        pipeline.reset();
+    }
+
+    @Override
+    public boolean resetCaches() {
+        if (!super.resetCaches()) return false;
+        if (!undoEnabled) return true;
+
+        var last = memory.getBottomMemory();
+
+        for (StepChanges<?> change : changes) {
+            change.removeCacheChanges(last);
+        }
+
+        return true;
+    }
+
+    @Override
+    protected void invokeInterrupt(InterruptCause type, MIPSInterruptException exception, boolean delaySlot, int pc) {
+        pipeline.reset();
+        registers.unlockAllRegisters();
+        super.invokeInterrupt(type, exception, delaySlot, pc);
+    }
+
+    @Override
+    public boolean undoLastStep() throws InterruptedException {
+        if (!undoEnabled) return false;
+
+        if (callEvent(new SimulationUndoStepEvent.Before(this, cycles - 1)).isCancelled()) return false;
+
+        stop();
+        waitForExecutionFinish();
+
+        if (changes.isEmpty()) return false;
+        finished = false;
+        changes.removeLast().restore(this);
+        cycles--;
+
+        callEvent(new SimulationUndoStepEvent.After(this, cycles));
+
+        return true;
+    }
+
+    @Override
+    protected void manageInterrupts() {
+        if (!arePendingInterrupts()) return;
+
+        int level = externalInterruptController.getRequestedIPL();
+        causeRegister.modifyBits(level, COP0RegistersBits.CAUSE_RIPL, 6);
+
+        InterruptCause cause;
+        MIPSInterruptException exception;
+
+        if (level == 1) {
+            causeRegister.modifyBits(0, COP0RegistersBits.CAUSE_IP, 1);
+            exception = externalInterruptController.getSoftwareInterrupt();
+            cause = exception.getInterruptCause();
+        } else {
+            exception = null;
+            cause = InterruptCause.INTERRUPT;
+        }
+
+        var oldest = pipeline.getOldestStep().orElse(null);
+        if (oldest == null) {
+            invokeInterrupt(cause, exception, false, registers.getProgramCounter().getValue());
+        } else {
+            invokeInterrupt(cause, exception, oldest.execution.isInDelaySlot(), oldest.pc);
+        }
+    }
+
+    @Override
+    protected void runStep(boolean first) {
+        if (finished) return;
+        if (undoEnabled) currentStepChanges = new StepChanges<>();
+
+        var decode = pipeline.getDecode();
+        if (decode != null && breakpoints.contains(decode.pc) && !first) {
+            if (currentStepChanges != null) currentStepChanges = null;
+            interruptThread();
+            return;
+        }
+
+        if (currentStepChanges != null) {
+            currentStepChanges.addChange(new MultiAPUPipelinedSimulationChangePipeline(pipeline.copy()));
+        }
+
+        pipeline.executeAllSteps();
+
+        if (checkThreadInterrupted()) {
+            if (currentStepChanges != null) {
+                var temp = currentStepChanges;
+                currentStepChanges = null;
+                temp.restore(this);
+            }
+            return;
+        }
+
+        manageInterrupts();
+        addCycleCount();
+        forwarding.clear();
+        pipeline.shift();
+
+        if (pipeline.getFetch() == null) {
+            checkExit();
+        }
+        if (undoEnabled && currentStepChanges != null) {
+            changes.add(currentStepChanges);
+            if (changes.size() > MAX_CHANGES) changes.removeFirst();
+            currentStepChanges = null;
+        }
+    }
+
+    private void checkExit() {
+        if (pipeline.isEmpty()) {
+            finished = true;
+            if (getConsole() != null && !exitRequested) {
+                getConsole().println();
+                getConsole().printWarningLn("Execution finished. Dropped off bottom.");
+                getConsole().println();
+            }
+            callEvent(new SimulationFinishedEvent(this));
+        }
+    }
+
+    public class Listeners {
+
+        @Listener
+        private void onMemoryChange(MemoryWordSetEvent.After event) {
+            if (currentStepChanges == null) return;
+            currentStepChanges.addChange(new SimulationChangeMemoryWord(event.getMemory(), event.getAddress(), event.getOldValue()));
+        }
+
+        @Listener
+        private void onMemoryChange(MemoryByteSetEvent.After event) {
+            if (currentStepChanges == null) return;
+            currentStepChanges.addChange(new SimulationChangeMemoryByte(event.getMemory(), event.getAddress(), event.getOldValue()));
+        }
+
+        @Listener
+        private void onRegisterChange(RegisterChangeValueEvent.After event) {
+            if (currentStepChanges == null) return;
+            currentStepChanges.addChange(new SimulationChangeRegister(event.getRegister(), event.getOldValue()));
+        }
+
+        @Listener
+        private void onRegisterLock(RegisterLockEvent.After event) {
+            if (currentStepChanges == null) return;
+            currentStepChanges.addChange(new SimulationChangeRegisterLock(event.getRegister(), event.getExecution()));
+        }
+
+        @Listener
+        private void onRegisterUnlock(RegisterUnlockEvent.After event) {
+            if (currentStepChanges == null) return;
+            currentStepChanges.addChange(new SimulationChangeRegisterUnlock(event.getRegister(), event.getExecution()));
+        }
+
+        @Listener
+        private void onEndiannessChange(MemoryEndiannessChange.After event) {
+            if (currentStepChanges == null) return;
+            currentStepChanges.addChange(new SimulationChangeMemoryEndianness(!event.isNewEndiannessBigEndian()));
+        }
+
+        @Listener
+        private void onReserve(MemoryAllocateMemoryEvent.After event) {
+            if (currentStepChanges == null) return;
+            currentStepChanges.addChange(new SimulationChangeAllocatedMemory(event.getOldCurrentData()));
+        }
+
+        @Listener
+        private void onCacheOperation(CacheOperationEvent event) {
+            if (currentStepChanges == null) return;
+            currentStepChanges.addChange(new SimulationChangeCacheOperation(event.getCache(), event.isHit(),
+                    event.getBlockIndex(), event.getOldBlock()));
+        }
+
+        @Listener
+        private void onFileOpen(SimulationFileOpenEvent.After event) {
+            if (currentStepChanges == null) return;
+            currentStepChanges.addChange(new SimulationChangeFileOpen(event.getSimulationFile().getId()));
+        }
+
+        @Listener
+        private void onFileClose(SimulationFileCloseEvent.After event) {
+            if (currentStepChanges == null) return;
+            currentStepChanges.addChange(new SimulationChangeFileClose(event.getFile()));
+        }
+
+        @Listener
+        private void onFileWrite(SimulationFileWriteEvent.After event) {
+            if (currentStepChanges == null) return;
+            currentStepChanges.addChange(new SimulationChangeFileWrite(event.getFile(), event.getData().length));
+        }
+    }
+
+}

@@ -37,6 +37,7 @@ import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -53,7 +54,7 @@ public class RegistersTable extends TableView<RegisterPropertyWrapper> implement
         setEditable(true);
         setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn<RegisterPropertyWrapper, Number> identifierColumn = new LanguageTableColumn<>(Messages.REGISTERS_ID);
+        TableColumn<RegisterPropertyWrapper, String> identifierColumn = new LanguageTableColumn<>(Messages.REGISTERS_ID);
         TableColumn<RegisterPropertyWrapper, String> nameColumn = new LanguageTableColumn<>(Messages.REGISTERS_NAME);
         TableColumn<RegisterPropertyWrapper, String> valueColumn = new LanguageTableColumn<>(Messages.REGISTERS_VALUE);
         TableColumn<RegisterPropertyWrapper, String> hexColumn = new LanguageTableColumn<>(Messages.REGISTERS_HEX);
@@ -124,10 +125,15 @@ public class RegistersTable extends TableView<RegisterPropertyWrapper> implement
     }
 
     @Listener
+    private void onSimulationUndo(SimulationUndoStepEvent event) {
+        registers.values().forEach(RegisterPropertyWrapper::updateRegister);
+    }
+
+    @Listener
     private void onRegisterValueChange(RegisterChangeValueEvent.After event) {
         RegisterPropertyWrapper wrapper = registers.get(event.getRegister());
         if (wrapper == null) return;
         int value = event.getNewValue();
-        wrapper.updateRegister(value);
+        wrapper.updateRegister(value, event.getRegister().isLocked());
     }
 }

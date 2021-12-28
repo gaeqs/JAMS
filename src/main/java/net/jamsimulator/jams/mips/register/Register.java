@@ -169,21 +169,44 @@ public class Register {
         return names.contains(name);
     }
 
-
+    /**
+     * Returns whether this register is locked by any execution.
+     *
+     * @return whether this register is locked.
+     */
     public boolean isLocked() {
         return lockedBy.size() > 0;
     }
 
-    public boolean isLocked(InstructionExecution<?, ?> execution) {
-        if (lockedBy.size() == 0) return false;
-        var index = lockedBy.indexOf(execution);
-        return index == -1 || index > 0;
+    /**
+     * Returns whether the given execution is in the last position of the lock queue.
+     * If true, the execution may perform forwarding.
+     *
+     * @param execution the execution.
+     * @return whether this execution is in the last position of the lock queue.
+     */
+    public boolean isLastLocked(InstructionExecution<?, ?> execution) {
+        if (lockedBy.isEmpty()) return false;
+        return lockedBy.get(lockedBy.size() - 1).equals(execution);
+    }
+
+    /**
+     * Returns whether the given execution is in the first position of the lock queue.
+     * If true, the execution may enter the memory step.
+     *
+     * @param execution the execution.
+     * @return whether this execution is in the first position of the lock queue.
+     */
+    public boolean isFirstLocked(InstructionExecution<?, ?> execution) {
+        if (lockedBy.isEmpty()) return false;
+        return lockedBy.get(0).equals(execution);
     }
 
     public void lock(InstructionExecution<?, ?> execution) {
         if (registers.eventCallsEnabled) {
             var before = registers.callEvent(new RegisterLockEvent.Before(this, execution));
             if (before.isCancelled()) return;
+            execution = before.getExecution();
             lockedBy.add(execution);
             registers.callEvent(new RegisterLockEvent.After(this, execution));
         } else {
@@ -195,6 +218,7 @@ public class Register {
         if (registers.eventCallsEnabled) {
             var before = registers.callEvent(new RegisterUnlockEvent.Before(this, execution));
             if (before.isCancelled()) return;
+            execution = before.getExecution();
             if (!lockedBy.remove(execution)) return;
             registers.callEvent(new RegisterUnlockEvent.After(this, execution));
         } else {

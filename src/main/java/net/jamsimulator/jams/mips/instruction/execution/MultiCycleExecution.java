@@ -29,23 +29,48 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipelinedSimulation;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 import net.jamsimulator.jams.mips.simulation.pipelined.AbstractPipelinedSimulation;
+import net.jamsimulator.jams.mips.simulation.pipelined.PipelineForwarding;
 import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
 import net.jamsimulator.jams.mips.simulation.pipelined.exception.RAWHazardException;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, Inst extends AssembledInstruction> extends InstructionExecution<Arch, Inst> {
+
+    private final Map<Register, Integer> decodedRegisters = new HashMap<>();
+    private final Set<Register> lockedRegisters = new HashSet<>();
 
     protected final boolean forwardingEnabled;
     protected final boolean solveBranchesOnDecode;
     protected final boolean delaySlotsEnabled;
+    private final PipelineForwarding forwarding;
 
+    protected final boolean executesMemory, executesWriteBack;
+
+    /**
+     * Result of the decode step.
+     * DO NOT use this to storage register values:
+     * they will be stored separatly using the method requires().
+     */
     protected int[] decodeResult;
-    protected int[] executionResult;
-    protected int[] memoryResult;
-    protected long instructionId;
 
-    protected boolean executesMemory, executesWriteBack;
+    /**
+     * Result of the execution step.
+     */
+    protected int[] executionResult;
+
+    /**
+     * Result of the memory step.
+     */
+    protected int[] memoryResult;
+
+    protected long instructionId;
 
     protected boolean inDelaySlot;
 
@@ -57,10 +82,12 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
             forwardingEnabled = s.isForwardingEnabled();
             solveBranchesOnDecode = s.solvesBranchesOnDecode();
             delaySlotsEnabled = s.isDelaySlotsEnabled();
+            forwarding = forwardingEnabled ? s.getForwarding() : null;
         } else {
             forwardingEnabled = false;
             solveBranchesOnDecode = false;
             delaySlotsEnabled = false;
+            forwarding = null;
         }
 
         this.executesMemory = executesMemory;
@@ -138,11 +165,20 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
     }
 
     public void requires(Register register) {
-        var supportsForwarding = simulation instanceof AbstractPipelinedSimulation && forwardingEnabled;
-
-        if (register.isLocked() && !supportsForwarding) {
-            throw new RAWHazardException(register);
+        if (!register.isLocked()) {
+            decodedRegisters.put(register, register.getValue());
+            return;
         }
+
+        if (forwarding != null) {
+            var forwarded = forwarding.get(register);
+            if (forwarded.isPresent()) {
+                decodedRegisters.put(register, forwarded.getAsInt());
+                return;
+            }
+        }
+
+        throw new RAWHazardException(register);
     }
 
     //endregion
@@ -166,40 +202,38 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
     }
 
     public int value(Register register) {
-        if (!register.isLocked(this)) {
-            return register.getValue();
-        }
-
-        if (simulation instanceof AbstractPipelinedSimulation) {
-            var optional = ((AbstractPipelinedSimulation) simulation).getForwarding().get(register);
-            if (optional.isPresent()) return optional.getAsInt();
-        }
-
-        throw new RAWHazardException(register);
+        Integer value = decodedRegisters.get(register);
+        if (value != null) return value;
+        throw new IllegalStateException("Use of value(" + register.getIdentifier() + ") without using requires()");
     }
 
     //endregion value
 
     //region lock
 
+    public boolean canMoveToMemory() {
+        return lockedRegisters.stream().allMatch(it -> it.isFirstLocked(this));
+    }
+
     public void lock(int identifier) {
-        register(identifier).lock(this);
+        lock(register(identifier));
     }
 
     public void lockCOP0(int identifier) {
-        registerCop0(identifier).lock(this);
+        lock(registerCop0(identifier));
     }
 
     public void lockCOP0(int identifier, int sel) {
-        registerCop0(identifier, sel).lock(this);
+        lock((registerCop0(identifier, sel)));
     }
 
     public void lockCOP1(int identifier) {
-        registerCop1(identifier).lock(this);
+        lock(registerCop1(identifier));
     }
 
     public void lock(Register register) {
         register.lock(this);
+        lockedRegisters.add(register);
     }
 
     //endregion
@@ -223,7 +257,13 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
     }
 
     public void unlock(Register register) {
+        lockedRegisters.remove(register);
         register.unlock(this);
+    }
+
+    public void unlockAll() {
+        lockedRegisters.forEach(r -> r.unlock(this));
+        lockedRegisters.clear();
     }
 
     //endregion
@@ -247,8 +287,9 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
     }
 
     public void setAndUnlock(Register register, int value) {
-        register.setValue(value);
+        lockedRegisters.remove(register);
         register.unlock(this);
+        register.setValue(value);
     }
 
     //endregion
@@ -272,8 +313,10 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
     }
 
     public void forward(Register register, int value, boolean memory) {
-        if (simulation instanceof AbstractPipelinedSimulation) {
-            ((AbstractPipelinedSimulation) simulation).getForwarding().forward(register, value, memory);
+        if (forwarding != null) {
+            if (register.isLastLocked(this)) {
+                forwarding.forward(register, value, memory);
+            }
         }
     }
 
@@ -298,6 +341,21 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
             }
         } else {
             setAndUnlock(pc(), address);
+        }
+
+        if (simulation instanceof MultiAPUPipelinedSimulation) {
+            if (!delaySlotsEnabled || ((ControlTransferInstruction) instruction.getBasicOrigin()).isCompact()) {
+                ((MultiAPUPipelinedSimulation) simulation).getPipeline().removeFetch();
+
+                setAndUnlock(pc(), address);
+            } else {
+                //The fetch is not cancelled. If there's an instruction to fetch,
+                //the next one will be fetched at address + 4. We do not want that!
+                //The instruction at the fetch slot will always be null, so we check its PC instead.
+                boolean willFetch = ((MultiAPUPipelinedSimulation) simulation)
+                        .getPipeline().getFetch() != null;
+                setAndUnlock(pc(), willFetch ? address - 4 : address);
+            }
         }
     }
 

@@ -29,7 +29,7 @@ import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.instruction.data.APUType;
+import net.jamsimulator.jams.mips.instruction.apu.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.instruction.execution.InstructionExecutionBuilder;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
@@ -153,7 +153,7 @@ public abstract class BasicInstruction<Inst extends AssembledInstruction> implem
      *
      * @return the {@link  APUType}.
      */
-    APUType getDefaultAPUType() {
+    public APUType getDefaultAPUType() {
         return apuType;
     }
 
