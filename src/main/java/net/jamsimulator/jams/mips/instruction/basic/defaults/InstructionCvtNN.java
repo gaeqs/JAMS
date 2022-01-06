@@ -165,9 +165,9 @@ public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Asse
             if (instruction.from.requiresEvenRegister() && instruction.getSourceRegister() % 2 != 0)
                 evenFloatRegisterException();
 
-            requiresCOP1(instruction.getSourceRegister());
+            requiresCOP1(instruction.getSourceRegister(), false);
             if (instruction.from.requiresEvenRegister()) {
-                requiresCOP1(instruction.getSourceRegister() + 1);
+                requiresCOP1(instruction.getSourceRegister() + 1, false);
             }
 
             lockCOP1(instruction.getDestinationRegister());
@@ -183,17 +183,17 @@ public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Asse
             Number number = instruction.from.from(valueCOP1(instruction.getSourceRegister()), extension);
             executionResult = instruction.to.to(number);
 
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
             if (instruction.to.requiresEvenRegister()) {
-                forwardCOP1(instruction.getDestinationRegister(), executionResult[1], false);
+                forwardCOP1(instruction.getDestinationRegister(), executionResult[1]);
             }
         }
 
         @Override
         public void memory() {
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
             if (instruction.to.requiresEvenRegister()) {
-                forwardCOP1(instruction.getDestinationRegister(), executionResult[1], true);
+                forwardCOP1(instruction.getDestinationRegister(), executionResult[1]);
             }
         }
 

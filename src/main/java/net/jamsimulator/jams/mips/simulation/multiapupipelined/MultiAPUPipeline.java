@@ -32,6 +32,7 @@ import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.MIPSAddressException;
 import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 import net.jamsimulator.jams.mips.register.Register;
+import net.jamsimulator.jams.mips.simulation.multiapupipelined.event.MultiAPUPipelineShiftEvent;
 import net.jamsimulator.jams.mips.simulation.pipelined.exception.RAWHazardException;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -52,6 +53,7 @@ public class MultiAPUPipeline {
     private final MultiAPUPipelineSlot[] execute;
     private MultiAPUPipelineSlot memory;
     private MultiAPUPipelineSlot writeback;
+    private MultiAPUPipelineSlot finished;
 
     private final APU[] assignedAPUs;
     private final int[] timesExecuted;
@@ -85,6 +87,10 @@ public class MultiAPUPipeline {
         return memory;
     }
 
+    public MultiAPUPipelineSlot getFinished() {
+        return finished;
+    }
+
     public Set<MultiAPUPipelineSlot> getExecute() {
         return Arrays.stream(execute).filter(Objects::nonNull).collect(Collectors.toSet());
     }
@@ -106,14 +112,17 @@ public class MultiAPUPipeline {
 
     public void executeAllSteps() {
         writeBack();
-        memory();
-        if (execute()) return;
-        decode();
         fetch();
+        execute();
+        memory();
+        decode();
     }
 
     public void shift() {
+        simulation.callEvent(new MultiAPUPipelineShiftEvent.Before(simulation, this));
+        finished = null;
         if (writeback != null && writeback.status == MultiAPUPipelineSlotStatus.EXECUTED) {
+            finished = writeback;
             writeback = null;
             instructionsFinished++;
         }
@@ -150,9 +159,11 @@ public class MultiAPUPipeline {
                 fetch.status = MultiAPUPipelineSlotStatus.STALL;
             }
         }
+        simulation.callEvent(new MultiAPUPipelineShiftEvent.After(simulation, this));
     }
 
     public void reset() {
+        finished = null;
         writeback = null;
         memory = null;
         Arrays.fill(execute, null);
@@ -165,13 +176,46 @@ public class MultiAPUPipeline {
         apus.reset();
     }
 
-    public void removeFetch() {
-        fetch = null;
+    public void stallFetch() {
+        if (fetch != null) {
+            fetch.status = MultiAPUPipelineSlotStatus.STALL;
+        }
     }
 
     public void removeFetchAndDecode() {
         fetch = null;
         decode = null;
+    }
+
+    public OptionalInt forward(Register register, MultiCycleExecution<?, ?> execution, boolean checkWriteback) {
+        boolean fromMemory = memory != null && memory.execution == execution;
+
+        if (!fromMemory) {
+            for (MultiAPUPipelineSlot slot : execute) {
+                if (slot != null && slot.execution != null && slot.execution != execution) {
+                    if (register.isLastLockedBeforeId(slot.execution, execution.getInstructionId())) {
+                        var optional = slot.execution.getForwardedValue(register);
+                        if (optional.isPresent()) return optional;
+                    }
+                }
+            }
+
+            if (memory != null && memory.execution != null) {
+                if (register.isLastLockedBeforeId(memory.execution, execution.getInstructionId())) {
+                    var optional = memory.execution.getForwardedValue(register);
+                    if (optional.isPresent()) return optional;
+                }
+            }
+        }
+
+        if (checkWriteback && writeback != null && writeback.execution != null) {
+            if (fromMemory || register.isLastLockedBeforeId(writeback.execution, execution.getInstructionId())) {
+                var optional = writeback.execution.getForwardedValue(register);
+                if (optional.isPresent()) return optional;
+            }
+        }
+
+        return OptionalInt.empty();
     }
 
     public MultiAPUPipeline copy() {
@@ -183,6 +227,7 @@ public class MultiAPUPipeline {
         copy.decode = decode == null ? null : decode.copy();
         copy.memory = memory == null ? null : memory.copy();
         copy.writeback = writeback == null ? null : writeback.copy();
+        copy.finished = finished == null ? null : finished.copy();
 
         for (int i = 0; i < copy.execute.length; i++) {
             copy.execute[i] = execute[i] == null ? null : execute[i].copy();
@@ -201,6 +246,7 @@ public class MultiAPUPipeline {
         decode = old.decode == null ? null : old.decode.copy();
         memory = old.memory == null ? null : old.memory.copy();
         writeback = old.writeback == null ? null : old.writeback.copy();
+        finished = old.finished == null ? null : old.finished.copy();
 
         for (int i = 0; i < execute.length; i++) {
             execute[i] = old.execute[i] == null ? null : old.execute[i].copy();
@@ -266,7 +312,7 @@ public class MultiAPUPipeline {
                 execution.status = MultiAPUPipelineSlotStatus.EXECUTED;
             } else if (required - 1 > timesExecuted[i]) {
                 timesExecuted[i]++;
-                execution.status = MultiAPUPipelineSlotStatus.RUNNIG;
+                execution.status = MultiAPUPipelineSlotStatus.RUNNING;
             } else {
                 try {
                     execution.execution.execute();
@@ -310,10 +356,6 @@ public class MultiAPUPipeline {
 
     private void fetch() {
         var pc = simulation.getRegisters().getProgramCounter();
-        if (pc.isLocked()) {
-            return;
-        }
-
         var pcv = pc.getValue();
         boolean stackBottomReached = simulation.isKernelMode()
                 ? Integer.compareUnsigned(pcv, simulation.getKernelStackBottom()) > 0
@@ -323,11 +365,17 @@ public class MultiAPUPipeline {
             return;
         }
 
+        var execution = (MultiCycleExecution<?, ?>) simulation.fetch(pcv);
+        if (fetch != null && fetch.execution != null
+                && fetch.execution.getInstruction().equals(execution.getInstruction())) {
+            fetch.status = pc.isLocked() ? MultiAPUPipelineSlotStatus.RAW : MultiAPUPipelineSlotStatus.EXECUTED;
+            return;
+        }
 
         fetch = new MultiAPUPipelineSlot(null, pcv, null,
-                MultiAPUPipelineSlotStatus.EXECUTED);
+                pc.isLocked() ? MultiAPUPipelineSlotStatus.RAW : MultiAPUPipelineSlotStatus.EXECUTED);
 
-        var execution = (MultiCycleExecution<?, ?>) simulation.fetch(fetch.pc);
+
         if (execution == null) {
             fetch.exception = new MIPSAddressException(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION, fetch.pc);
         } else {
@@ -339,7 +387,6 @@ public class MultiAPUPipeline {
             instructionsStarted++;
             fetch.execution = execution;
         }
-        fetch.status = MultiAPUPipelineSlotStatus.EXECUTED;
     }
 
     private void shiftExecutionToMemory() {
@@ -347,8 +394,8 @@ public class MultiAPUPipeline {
         int executionToMove = 0;
         long executionId = 0;
 
-        int i = 0;
-        for (var e : execute) {
+        for (int i = 0; i < execute.length; i++) {
+            var e = execute[i];
             if (e == null || e.status != MultiAPUPipelineSlotStatus.EXECUTED) continue;
             if (!e.execution.canMoveToMemory()) {
                 e.status = MultiAPUPipelineSlotStatus.WAW;

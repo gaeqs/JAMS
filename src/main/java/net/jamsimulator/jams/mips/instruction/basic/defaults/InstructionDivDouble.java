@@ -133,10 +133,10 @@ public class InstructionDivDouble extends BasicRFPUInstruction<InstructionDivDou
             if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
             if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
 
-            requiresCOP1(instruction.getTargetRegister());
-            requiresCOP1(instruction.getTargetRegister() + 1);
-            requiresCOP1(instruction.getSourceRegister());
-            requiresCOP1(instruction.getSourceRegister() + 1);
+            requiresCOP1(instruction.getTargetRegister(), false);
+            requiresCOP1(instruction.getTargetRegister() + 1, false);
+            requiresCOP1(instruction.getSourceRegister(), false);
+            requiresCOP1(instruction.getSourceRegister() + 1, false);
             lockCOP1(instruction.getDestinationRegister());
             lockCOP1(instruction.getDestinationRegister() + 1);
         }
@@ -147,14 +147,14 @@ public class InstructionDivDouble extends BasicRFPUInstruction<InstructionDivDou
             double source = NumericUtils.intsToDouble(value(instruction.getSourceRegister()), value(instruction.getSourceRegister() + 1));
             double destination = source / target;
             executionResult = NumericUtils.doubleToInts(destination);
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
-            forwardCOP1(instruction.getDestinationRegister() + 1, executionResult[1], false);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
+            forwardCOP1(instruction.getDestinationRegister() + 1, executionResult[1]);
         }
 
         @Override
         public void memory() {
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
-            forwardCOP1(instruction.getDestinationRegister() + 1, executionResult[1], true);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
+            forwardCOP1(instruction.getDestinationRegister() + 1, executionResult[1]);
         }
 
         @Override

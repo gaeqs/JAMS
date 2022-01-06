@@ -143,8 +143,8 @@ public class InstructionBne extends BasicInstruction<InstructionBne.Assembled> i
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
-            requires(instruction.getTargetRegister());
+            requires(instruction.getSourceRegister(), false);
+            requires(instruction.getTargetRegister(), false);
             lock(pc());
 
             if (solveBranchOnDecode()) {
@@ -160,16 +160,15 @@ public class InstructionBne extends BasicInstruction<InstructionBne.Assembled> i
 
         @Override
         public void memory() {
-
-        }
-
-        @Override
-        public void writeBack() {
             if (!solveBranchOnDecode()) {
                 if (value(instruction.getTargetRegister()) != value(instruction.getSourceRegister())) {
                     jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
                 } else unlock(pc());
             }
+        }
+
+        @Override
+        public void writeBack() {
         }
     }
 }

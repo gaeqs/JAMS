@@ -22,43 +22,27 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.simulation.multicycle;
+package net.jamsimulator.jams.mips.simulation.multiapupipelined.event;
 
-import javafx.scene.Node;
+import net.jamsimulator.jams.mips.simulation.event.SimulationEvent;
+import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipelinedSimulation;
 
-public enum MultiCycleStep {
+/**
+ * Represents an {@link net.jamsimulator.jams.event.Event} related to a {@link MultiAPUPipelinedSimulation}.
+ */
+public class MultiAPUPipelinedSimulationEvent extends SimulationEvent {
 
-    FETCH("F", "instruction-fetch", null),
-    DECODE("D", "instruction-decode", FETCH),
-    EXECUTE("E", "instruction-execute", DECODE),
-    MEMORY("M", "instruction-memory", EXECUTE),
-    WRITE_BACK("W", "instruction-write-back", MEMORY);
-
-    private final String tag;
-    private final String style;
-    private final MultiCycleStep previous;
-
-    MultiCycleStep(String tag, String style, MultiCycleStep previous) {
-        this.tag = tag;
-        this.style = style;
-        this.previous = previous;
+    /**
+     * Creates the multi-cycle simulation event.
+     *
+     * @param simulation the {@link MultiAPUPipelinedSimulation} that has created this event.
+     */
+    public MultiAPUPipelinedSimulationEvent(MultiAPUPipelinedSimulation simulation) {
+        super(simulation);
     }
 
-    public static void removeAllStyles(Node node) {
-        for (MultiCycleStep value : values()) {
-            node.getStyleClass().remove(value.style);
-        }
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public String getStyle() {
-        return style;
-    }
-
-    public MultiCycleStep getPreviousStep() {
-        return previous == null ? FETCH : previous;
+    @Override
+    public MultiAPUPipelinedSimulation getSimulation() {
+        return (MultiAPUPipelinedSimulation) super.getSimulation();
     }
 }

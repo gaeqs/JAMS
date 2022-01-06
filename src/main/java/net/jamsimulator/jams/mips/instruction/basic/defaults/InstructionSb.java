@@ -110,8 +110,8 @@ public class InstructionSb extends BasicInstruction<InstructionSb.Assembled> {
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
-            requires(instruction.getTargetRegister());
+            requires(instruction.getSourceRegister(), false);
+            requires(instruction.getTargetRegister(), false);
         }
 
         @Override

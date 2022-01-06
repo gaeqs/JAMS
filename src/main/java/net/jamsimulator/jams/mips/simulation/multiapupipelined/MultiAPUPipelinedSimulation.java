@@ -28,6 +28,7 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.architecture.MultiAPUPipelinedArchitecture;
 import net.jamsimulator.jams.mips.instruction.apu.APU;
 import net.jamsimulator.jams.mips.instruction.apu.APUType;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 import net.jamsimulator.jams.mips.memory.cache.event.CacheOperationEvent;
@@ -36,25 +37,26 @@ import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.COP0RegistersBits;
+import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterLockEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterUnlockEvent;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 import net.jamsimulator.jams.mips.simulation.change.*;
-import net.jamsimulator.jams.mips.simulation.change.multiapupipelined.pipelined.MultiAPUPipelinedSimulationChangePipeline;
-import net.jamsimulator.jams.mips.simulation.change.multiapupipelined.pipelined.MultiAPUPipelinedSimulationExitRequest;
+import net.jamsimulator.jams.mips.simulation.change.multiapupipelined.MultiAPUPipelinedSimulationChangePipeline;
+import net.jamsimulator.jams.mips.simulation.change.multiapupipelined.MultiAPUPipelinedSimulationExitRequest;
 import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileCloseEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileOpenEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileWriteEvent;
 import net.jamsimulator.jams.mips.simulation.pipelined.AbstractPipelinedSimulation;
-import net.jamsimulator.jams.mips.simulation.pipelined.PipelineForwarding;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurationPresets;
 
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
 
 public class MultiAPUPipelinedSimulation
@@ -66,7 +68,6 @@ public class MultiAPUPipelinedSimulation
     private final Listeners listeners;
     private final LinkedList<StepChanges<MultiAPUPipelinedArchitecture>> changes;
     private final MultiAPUPipeline pipeline;
-    private final PipelineForwarding forwarding;
 
     private final boolean forwardingEnabled;
     private final boolean solveBranchesOnDecode;
@@ -81,7 +82,7 @@ public class MultiAPUPipelinedSimulation
         exitRequested = false;
         changes = undoEnabled ? new LinkedList<>() : null;
 
-        forwardingEnabled = data.configuration().getNodeValue(MIPSSimulationConfigurationPresets.CALL_EVENTS);
+        forwardingEnabled = data.configuration().getNodeValue(MIPSSimulationConfigurationPresets.FORWARDING_ENABLED);
         solveBranchesOnDecode = data.configuration().getNodeValue(MIPSSimulationConfigurationPresets.BRANCH_ON_DECODE);
         delaySlotsEnabled = solveBranchesOnDecode && (boolean) data.configuration()
                 .getNodeValue(MIPSSimulationConfigurationPresets.DELAY_SLOTS_ENABLED);
@@ -93,7 +94,6 @@ public class MultiAPUPipelinedSimulation
                 new APU(3, APUType.FLOAT_DIVISION, APUType.FLOAT_DIVISION.defaultCyclesPerExecution()))
         );
 
-        forwarding = new PipelineForwarding();
         listeners = new Listeners();
 
         registers.registerListeners(listeners, true);
@@ -133,8 +133,8 @@ public class MultiAPUPipelinedSimulation
     }
 
     @Override
-    public PipelineForwarding getForwarding() {
-        return forwarding;
+    public OptionalInt forward(Register register, MultiCycleExecution<?, ?> execution, boolean checkWriteback) {
+        return pipeline.forward(register, execution, checkWriteback);
     }
 
     @Override
@@ -250,10 +250,10 @@ public class MultiAPUPipelinedSimulation
             return;
         }
 
+        pipeline.shift();
         manageInterrupts();
         addCycleCount();
-        forwarding.clear();
-        pipeline.shift();
+
 
         if (pipeline.getFetch() == null) {
             checkExit();

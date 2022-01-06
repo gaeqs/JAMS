@@ -116,7 +116,7 @@ public class InstructionTgeiu extends BasicInstruction<InstructionTgeiu.Assemble
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
+            requires(instruction.getSourceRegister(), false);
         }
 
         @Override

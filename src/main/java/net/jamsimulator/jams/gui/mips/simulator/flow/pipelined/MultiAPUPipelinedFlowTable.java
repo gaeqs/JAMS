@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.simulator.flow.multicycle;
+package net.jamsimulator.jams.gui.mips.simulator.flow.pipelined;
 
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -36,27 +36,32 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
+import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipeline;
+import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipelineSlot;
 import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipelineSlotStatus;
-import net.jamsimulator.jams.mips.simulation.multicycle.event.MultiCycleStepEvent;
+import net.jamsimulator.jams.mips.simulation.multiapupipelined.event.MultiAPUPipelineShiftEvent;
+import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class MultiCycleFlowTable extends FlowTable {
+public class MultiAPUPipelinedFlowTable extends FlowTable {
 
-    private LinkedList<MultiCycleStepEvent.After> toAdd;
+    private LinkedList<MultiAPUPipelineShiftEvent> toAdd;
+    private LinkedList<MultiAPUPipeline> pipelines;
     private Map<Long, SegmentedFlowEntry> entries;
 
     private long firstCycle;
 
-    public MultiCycleFlowTable(MIPSSimulation<? extends MultiCycleArchitecture> simulation) {
+    public MultiAPUPipelinedFlowTable(MIPSSimulation<? extends MultiCycleArchitecture> simulation) {
         super(simulation);
 
         firstCycle = 0;
 
         if (simulation.canCallEvents()) {
             toAdd = new LinkedList<>();
+            pipelines = new LinkedList<>();
             entries = new HashMap<>();
             simulation.registerListeners(this, true);
         } else {
@@ -83,30 +88,22 @@ public class MultiCycleFlowTable extends FlowTable {
         String start = String.valueOf(simulation.getRegisters().getValidRegistersStarts()
                 .stream().findAny().orElse('$'));
 
-        MultiCycleStepEvent.After event;
-        SegmentedFlowEntry entry;
         while (!toAdd.isEmpty()) {
-            event = toAdd.pop();
-            entry = entries.get(event.getInstructionNumber());
-            if (entry == null) {
-                entry = new SegmentedFlowEntry(flows.getChildren().size(), this,
-                        event.getInstruction(), start, event.getInstructionNumber(), event.getCycle());
-                entries.put(event.getInstructionNumber(), entry);
-                flows.getChildren().add(entry);
-            }
+            var event = toAdd.pop();
+            var pipeline = pipelines.pop();
 
-            if (entries.size() > maxItems) {
-                SegmentedFlowEntry toRemove = (SegmentedFlowEntry) flows.getChildren().remove(0);
-                entries.remove(toRemove.getInstructionNumber());
-            }
-
-            entry.addStep(event.getCycle(), event.getExecutedStep(), stepSize, firstCycle,
-                    MultiAPUPipelineSlotStatus.EXECUTED);
+            addStep(pipeline.getFetch(), MultiCycleStep.FETCH, start, event.getCycle(), false);
+            addStep(pipeline.getDecode(), MultiCycleStep.DECODE, start, event.getCycle(), false);
+            addStep(pipeline.getMemory(), MultiCycleStep.MEMORY, start, event.getCycle(), false);
+            addStep(pipeline.getWriteback(), MultiCycleStep.WRITE_BACK, start, event.getCycle(), false);
+            addStep(pipeline.getFinished(), MultiCycleStep.WRITE_BACK, start, event.getCycle(), true);
+            pipeline.getExecute().forEach(ex -> addStep(ex, MultiCycleStep.EXECUTE, start, event.getCycle(), false));
         }
 
-
         long localCycle = firstCycle;
-        firstCycle = ((SegmentedFlowEntry) flows.getChildren().get(0)).getStartingCycle();
+        firstCycle = flows.getChildren().isEmpty()
+                ? 0
+                : ((SegmentedFlowEntry) flows.getChildren().get(0)).getStartingCycle();
 
         if (localCycle != firstCycle) {
             refresh();
@@ -115,11 +112,29 @@ public class MultiCycleFlowTable extends FlowTable {
         refreshVisualizer();
     }
 
+    private void addStep(MultiAPUPipelineSlot slot, MultiCycleStep step, String registerStart, long cycle, boolean isFinished) {
+        if (slot == null || slot.execution == null) return;
+        if(!isFinished && slot.status == MultiAPUPipelineSlotStatus.EXECUTED) step = step.getPreviousStep();
+        var entry = entries.get(slot.execution.getInstructionId());
+        if (entry == null) {
+            entry = new SegmentedFlowEntry(flows.getChildren().size(), this, slot.execution.getInstruction(),
+                    registerStart, slot.execution.getInstructionId(), cycle);
+            entries.put(slot.execution.getInstructionId(), entry);
+            flows.getChildren().add(entry);
+
+            if (entries.size() > maxItems) {
+                var toRemove = (SegmentedFlowEntry) flows.getChildren().remove(0);
+                entries.remove(toRemove.getInstructionNumber());
+            }
+        }
+
+        entry.addStep(cycle, step, stepSize, firstCycle, slot.status);
+    }
+
     @Override
     public long getFirstCycle() {
         return firstCycle;
     }
-
 
     @Override
     public long getLastCycle() {
@@ -138,18 +153,15 @@ public class MultiCycleFlowTable extends FlowTable {
         }
     }
 
-    @Listener
-    private void onInstructionExecuted(MultiCycleStepEvent.After event) {
+    @Listener(priority = Integer.MIN_VALUE)
+    private void onInstructionExecuted(MultiAPUPipelineShiftEvent.After event) {
         //Adding items to a separate list prevents the app to block.
         toAdd.add(event);
+        pipelines.add(event.getPipeline().copy());
 
-        if (event.getInstructionNumber() - toAdd.getFirst().getInstructionNumber() >= maxItems) {
-            long number = toAdd.removeFirst().getInstructionNumber();
-
-            while (toAdd.getFirst().getInstructionNumber() == number) {
-                toAdd.removeFirst();
-            }
-
+        if (toAdd.size() > maxItems << 2) {
+            toAdd.removeFirst();
+            pipelines.removeFirst();
         }
     }
 
@@ -167,10 +179,12 @@ public class MultiCycleFlowTable extends FlowTable {
 
     @Listener
     private void onSimulationUndo(SimulationUndoStepEvent.After event) {
-        SegmentedFlowEntry cycle = ((SegmentedFlowEntry) flows.getChildren().get(flows.getChildren().size() - 1));
-        if (cycle.removeCycle(event.getUndoCycle()) && cycle.isEmpty()) {
-            entries.remove(cycle.getInstructionNumber());
-            flows.getChildren().remove(flows.getChildren().size() - 1);
+        var index = flows.getChildren().size() - 1;
+        for (Node node : flows.getChildren()) {
+            if (node instanceof SegmentedFlowEntry entry && entry.removeCycle(event.getUndoCycle()) && entry.isEmpty()) {
+                entries.remove(entry.getInstructionNumber());
+                flows.getChildren().remove(index);
+            }
         }
         refreshVisualizer();
     }

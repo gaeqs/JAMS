@@ -29,11 +29,11 @@ import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.apu.APUType;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
-import net.jamsimulator.jams.mips.instruction.apu.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -162,8 +162,8 @@ public class InstructionBnvc extends BasicInstruction<InstructionBnvc.Assembled>
         @SuppressWarnings("ResultOfMethodCallIgnored")
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
-            requires(instruction.getTargetRegister());
+            requires(instruction.getSourceRegister(), false);
+            requires(instruction.getTargetRegister(), false);
             lock(pc());
 
             if (solveBranchOnDecode()) {
@@ -180,14 +180,9 @@ public class InstructionBnvc extends BasicInstruction<InstructionBnvc.Assembled>
         public void execute() {
         }
 
-        @Override
-        public void memory() {
-
-        }
-
         @SuppressWarnings("ResultOfMethodCallIgnored")
         @Override
-        public void writeBack() {
+        public void memory() {
             if (!solveBranchOnDecode()) {
                 try {
                     Math.addExact(value(instruction.getSourceRegister()), value(instruction.getTargetRegister()));
@@ -196,6 +191,10 @@ public class InstructionBnvc extends BasicInstruction<InstructionBnvc.Assembled>
                     unlock(pc());
                 }
             }
+        }
+
+        @Override
+        public void writeBack() {
         }
     }
 }

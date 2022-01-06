@@ -116,7 +116,7 @@ public class InstructionTltiu extends BasicInstruction<InstructionTltiu.Assemble
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
+            requires(instruction.getSourceRegister(), false);
         }
 
         @Override

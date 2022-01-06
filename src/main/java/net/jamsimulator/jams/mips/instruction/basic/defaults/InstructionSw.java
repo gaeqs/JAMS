@@ -29,10 +29,10 @@ import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.apu.APUType;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
-import net.jamsimulator.jams.mips.instruction.apu.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -110,19 +110,19 @@ public class InstructionSw extends BasicInstruction<InstructionSw.Assembled> {
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
-            requires(instruction.getTargetRegister());
+            requires(instruction.getSourceRegister(), false);
+            requires(instruction.getTargetRegister(), true);
         }
 
         @Override
         public void execute() {
             int address = value(instruction.getSourceRegister()) + instruction.getImmediateAsSigned();
-            executionResult = new int[]{address, value(instruction.getTargetRegister())};
+            executionResult = new int[]{address};
         }
 
         @Override
         public void memory() {
-            simulation.getMemory().setWord(executionResult[0], executionResult[1]);
+            simulation.getMemory().setWord(executionResult[0], value(instruction.getTargetRegister()));
         }
 
         @Override

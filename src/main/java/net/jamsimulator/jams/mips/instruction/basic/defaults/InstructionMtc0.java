@@ -108,7 +108,7 @@ public class InstructionMtc0 extends BasicIFPUInstruction<InstructionMtc0.Assemb
 
         @Override
         public void decode() {
-            requires(instruction.getTargetRegister());
+            requires(instruction.getTargetRegister(), false);
             if (registerCop0(instruction.getDestinationRegister()) != null) {
                 lockCOP0(instruction.getDestinationRegister());
             }
@@ -118,14 +118,14 @@ public class InstructionMtc0 extends BasicIFPUInstruction<InstructionMtc0.Assemb
         public void execute() {
             executionResult = new int[]{value(instruction.getTargetRegister())};
             if (registerCop0(instruction.getDestinationRegister()) != null) {
-                forwardCOP0(instruction.getDestinationRegister(), instruction.getImmediate(), executionResult[0], false);
+                forwardCOP0(instruction.getDestinationRegister(), instruction.getImmediate(), executionResult[0]);
             }
         }
 
         @Override
         public void memory() {
             if (registerCop0(instruction.getDestinationRegister()) != null) {
-                forwardCOP0(instruction.getDestinationRegister(), instruction.getImmediate(), executionResult[0], true);
+                forwardCOP0(instruction.getDestinationRegister(), instruction.getImmediate(), executionResult[0]);
             }
         }
 

@@ -32,24 +32,21 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipelinedSimulation;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 import net.jamsimulator.jams.mips.simulation.pipelined.AbstractPipelinedSimulation;
-import net.jamsimulator.jams.mips.simulation.pipelined.PipelineForwarding;
 import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
 import net.jamsimulator.jams.mips.simulation.pipelined.exception.RAWHazardException;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, Inst extends AssembledInstruction> extends InstructionExecution<Arch, Inst> {
 
     private final Map<Register, Integer> decodedRegisters = new HashMap<>();
+    private final Map<Register, Integer> forwardingRegisters;
     private final Set<Register> lockedRegisters = new HashSet<>();
 
     protected final boolean forwardingEnabled;
     protected final boolean solveBranchesOnDecode;
     protected final boolean delaySlotsEnabled;
-    private final PipelineForwarding forwarding;
+    protected final AbstractPipelinedSimulation pipelinedSimulation;
 
     protected final boolean executesMemory, executesWriteBack;
 
@@ -82,12 +79,14 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
             forwardingEnabled = s.isForwardingEnabled();
             solveBranchesOnDecode = s.solvesBranchesOnDecode();
             delaySlotsEnabled = s.isDelaySlotsEnabled();
-            forwarding = forwardingEnabled ? s.getForwarding() : null;
+            forwardingRegisters = new HashMap<>();
+            pipelinedSimulation = s;
         } else {
             forwardingEnabled = false;
             solveBranchesOnDecode = false;
             delaySlotsEnabled = false;
-            forwarding = null;
+            forwardingRegisters = null;
+            pipelinedSimulation = null;
         }
 
         this.executesMemory = executesMemory;
@@ -148,30 +147,37 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
 
     //region requires
 
-    public void requires(int identifier) {
-        requires(register(identifier));
+    public void requires(int identifier, boolean requiredOnMemory) {
+        requires(register(identifier), requiredOnMemory);
     }
 
-    public void requiresCOP0(int identifier) {
-        requires(registerCop0(identifier));
+    public void requiresCOP0(int identifier, boolean requiredOnMemory) {
+        requires(registerCop0(identifier), requiredOnMemory);
     }
 
-    public void requiresCOP0(int identifier, int sel) {
-        requires(registerCop0(identifier, sel));
+    public void requiresCOP0(int identifier, int sel, boolean requiredOnMemory) {
+        requires(registerCop0(identifier, sel), requiredOnMemory);
     }
 
-    public void requiresCOP1(int identifier) {
-        requires(registerCop1(identifier));
+    public void requiresCOP1(int identifier, boolean requiredOnMemory) {
+        requires(registerCop1(identifier), requiredOnMemory);
     }
 
-    public void requires(Register register) {
-        if (!register.isLocked()) {
+    public void requires(Register register, boolean requiredOnMemory) {
+        if (!register.isLocked() || register.isLockedOnlyBy(this)) {
             decodedRegisters.put(register, register.getValue());
             return;
         }
 
-        if (forwarding != null) {
-            var forwarded = forwarding.get(register);
+        if (forwardingEnabled) {
+            // The value will ALWAYS be available on the memory step
+            // (forwarded by the WB step or given by the registrer).
+            if (requiredOnMemory) return;
+
+            // The value will be required ON THE NEXT STEP. The value will be already forwarded in this step.
+            // (The decode step is always the last step to be executed).
+            // We can check the forwarded value now!
+            var forwarded = pipelinedSimulation.forward(register, this, false);
             if (forwarded.isPresent()) {
                 decodedRegisters.put(register, forwarded.getAsInt());
                 return;
@@ -204,7 +210,21 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
     public int value(Register register) {
         Integer value = decodedRegisters.get(register);
         if (value != null) return value;
-        throw new IllegalStateException("Use of value(" + register.getIdentifier() + ") without using requires()");
+
+        // The value might be a value required by the memory step. Let's check the register:
+        if (!register.isLockedBeforeId(instructionId)) {
+            return register.getValue();
+        }
+
+        // The register is locked by the WB execution. Let's check it:
+        var forwarded = pipelinedSimulation.forward(register, this, true);
+        if (forwarded.isPresent()) {
+            decodedRegisters.put(register, forwarded.getAsInt());
+            return forwarded.getAsInt();
+        }
+
+        throw new IllegalStateException("Value of register (" + register.getIdentifier() +
+                ") is still locked! Locked by: " + register.printLockingExecutions());
     }
 
     //endregion value
@@ -296,28 +316,31 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
 
     //region forward
 
-    public void forward(int identifier, int value, boolean memory) {
-        forward(register(identifier), value, memory);
+    public void forward(int identifier, int value) {
+        forward(register(identifier), value);
     }
 
-    public void forwardCOP0(int identifier, int value, boolean memory) {
-        forward(registerCop0(identifier), value, memory);
+    public void forwardCOP0(int identifier, int value) {
+        forward(registerCop0(identifier), value);
     }
 
-    public void forwardCOP0(int identifier, int sel, int value, boolean memory) {
-        forward(registerCop0(identifier, sel), value, memory);
+    public void forwardCOP0(int identifier, int sel, int value) {
+        forward(registerCop0(identifier, sel), value);
     }
 
-    public void forwardCOP1(int identifier, int value, boolean memory) {
-        forward(registerCop1(identifier), value, memory);
+    public void forwardCOP1(int identifier, int value) {
+        forward(registerCop1(identifier), value);
     }
 
-    public void forward(Register register, int value, boolean memory) {
-        if (forwarding != null) {
-            if (register.isLastLocked(this)) {
-                forwarding.forward(register, value, memory);
-            }
+    public void forward(Register register, int value) {
+        if (forwardingEnabled) {
+            forwardingRegisters.put(register, value);
         }
+    }
+
+    public OptionalInt getForwardedValue(Register register) {
+        var i = forwardingRegisters.get(register);
+        return i == null ? OptionalInt.empty() : OptionalInt.of(i);
     }
 
     //endregion
@@ -345,7 +368,7 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
 
         if (simulation instanceof MultiAPUPipelinedSimulation) {
             if (!delaySlotsEnabled || ((ControlTransferInstruction) instruction.getBasicOrigin()).isCompact()) {
-                ((MultiAPUPipelinedSimulation) simulation).getPipeline().removeFetch();
+                ((MultiAPUPipelinedSimulation) simulation).getPipeline().stallFetch();
 
                 setAndUnlock(pc(), address);
             } else {

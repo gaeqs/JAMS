@@ -120,8 +120,8 @@ public class InstructionSub extends BasicRInstruction<InstructionSub.Assembled> 
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
-            requires(instruction.getTargetRegister());
+            requires(instruction.getSourceRegister(), false);
+            requires(instruction.getTargetRegister(), false);
             lock(instruction.getDestinationRegister());
         }
 
@@ -130,7 +130,7 @@ public class InstructionSub extends BasicRInstruction<InstructionSub.Assembled> 
             try {
                 var result = Math.subtractExact(value(instruction.getSourceRegister()), value(instruction.getTargetRegister()));
                 executionResult = new int[]{result};
-                forward(instruction.getDestinationRegister(), result, false);
+                forward(instruction.getDestinationRegister(), result);
             } catch (ArithmeticException ex) {
                 executionResult = new int[]{0};
                 error(InterruptCause.ARITHMETIC_OVERFLOW_EXCEPTION, ex);
@@ -139,7 +139,7 @@ public class InstructionSub extends BasicRInstruction<InstructionSub.Assembled> 
 
         @Override
         public void memory() {
-            forward(instruction.getDestinationRegister(), executionResult[0], true);
+            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override

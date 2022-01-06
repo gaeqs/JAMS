@@ -172,8 +172,8 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
 
         @Override
         public void decode() {
-            requiresCOP1(instruction.getTargetRegister());
-            requiresCOP1(instruction.getSourceRegister());
+            requiresCOP1(instruction.getTargetRegister(), false);
+            requiresCOP1(instruction.getSourceRegister(), false);
             lockCOP1(instruction.getDestinationRegister());
         }
 
@@ -199,12 +199,12 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
 
             boolean condition = instruction.cond4() ^ ((instruction.cond2() && less) || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
             executionResult = new int[]{condition ? 0xFFFFFFFF : 0};
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override

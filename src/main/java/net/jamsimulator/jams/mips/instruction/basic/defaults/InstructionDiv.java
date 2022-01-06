@@ -121,8 +121,8 @@ public class InstructionDiv extends BasicRSOPInstruction<InstructionDiv.Assemble
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
-            requires(instruction.getTargetRegister());
+            requires(instruction.getSourceRegister(), false);
+            requires(instruction.getTargetRegister(), false);
             lock(instruction.getDestinationRegister());
         }
 
@@ -132,12 +132,12 @@ public class InstructionDiv extends BasicRSOPInstruction<InstructionDiv.Assemble
             var target = value(instruction.getTargetRegister());
 
             executionResult = new int[]{target == 0 ? 0 : source / target};
-            forward(instruction.getDestinationRegister(), executionResult[0], false);
+            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getDestinationRegister(), executionResult[0], true);
+            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override

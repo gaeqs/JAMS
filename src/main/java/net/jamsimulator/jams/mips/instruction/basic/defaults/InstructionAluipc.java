@@ -117,12 +117,12 @@ public class InstructionAluipc extends BasicPCREL16Instruction<InstructionAluipc
         @Override
         public void execute() {
             executionResult = new int[]{~0x0FFFF & (getAddress() + 4 + (instruction.getImmediate() << 16))};
-            forward(instruction.getSourceRegister(), executionResult[0], false);
+            forward(instruction.getSourceRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getSourceRegister(), executionResult[0], true);
+            forward(instruction.getSourceRegister(), executionResult[0]);
         }
 
         @Override

@@ -109,19 +109,19 @@ public class InstructionAddiu extends BasicInstruction<InstructionAddiu.Assemble
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
+            requires(instruction.getSourceRegister(), false);
             lock(instruction.getTargetRegister());
         }
 
         @Override
         public void execute() {
             executionResult = new int[]{value(instruction.getSourceRegister()) + instruction.getImmediateAsSigned()};
-            forward(instruction.getTargetRegister(), executionResult[0], false);
+            forward(instruction.getTargetRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getTargetRegister(), executionResult[0], true);
+            forward(instruction.getTargetRegister(), executionResult[0]);
         }
 
         @Override

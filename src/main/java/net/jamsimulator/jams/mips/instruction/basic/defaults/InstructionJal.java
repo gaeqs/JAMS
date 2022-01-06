@@ -29,11 +29,11 @@ import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.apu.APUType;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledJInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
-import net.jamsimulator.jams.mips.instruction.apu.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -146,22 +146,20 @@ public class InstructionJal extends BasicInstruction<InstructionJal.Assembled> i
         @Override
         public void execute() {
             if (solveBranchOnDecode()) {
-                forward(31, getAddress() + 4, false);
+                forward(31, getAddress() + 4);
             }
         }
 
         @Override
         public void memory() {
-            if (solveBranchOnDecode()) {
-                forward(31, getAddress() + 4, true);
+            if (!solveBranchOnDecode()) {
+                jump(instruction.getAbsoluteAddress(getAddress() + 4));
             }
+            forward(31, getAddress() + 4);
         }
 
         @Override
         public void writeBack() {
-            if (!solveBranchOnDecode()) {
-                jump(instruction.getAbsoluteAddress(getAddress() + 4));
-            }
             setAndUnlock(31, getAddress() + 4);
         }
     }

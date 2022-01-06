@@ -26,6 +26,20 @@ package net.jamsimulator.jams.mips.simulation.multiapupipelined;
 
 public enum MultiAPUPipelineSlotStatus {
 
-    EXECUTED, RUNNIG, RAW, WAR, WAW, STALL
+    EXECUTED(""),
+    RUNNING("..."),
+    RAW("RAW"),
+    WAR("WAR"),
+    WAW("WAW"),
+    STALL("-");
 
+    private final String name;
+
+    MultiAPUPipelineSlotStatus(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

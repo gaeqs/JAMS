@@ -115,8 +115,8 @@ public class InstructionAddSingle extends BasicRFPUInstruction<InstructionAddSin
 
         @Override
         public void decode() {
-            requiresCOP1(instruction.getTargetRegister());
-            requiresCOP1(instruction.getSourceRegister());
+            requiresCOP1(instruction.getTargetRegister(), false);
+            requiresCOP1(instruction.getSourceRegister(), false);
             lockCOP1(instruction.getDestinationRegister());
         }
 
@@ -126,12 +126,12 @@ public class InstructionAddSingle extends BasicRFPUInstruction<InstructionAddSin
             var target = Float.intBitsToFloat(valueCOP1(instruction.getTargetRegister()));
             var destination = source + target;
             executionResult = new int[]{Float.floatToIntBits(destination)};
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override

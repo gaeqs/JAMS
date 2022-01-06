@@ -35,9 +35,9 @@ public record APUType(
 ) implements ManagerResource {
 
     public static final APUType INTEGER = new APUType(ResourceProvider.JAMS, "integer", 1);
-    public static final APUType FLOAT_ADDTION = new APUType(ResourceProvider.JAMS, "float_adition", 1);
-    public static final APUType FLOAT_MULTIPLICATION = new APUType(ResourceProvider.JAMS, "float_multiplication", 4);
-    public static final APUType FLOAT_DIVISION = new APUType(ResourceProvider.JAMS, "float_division", 9);
+    public static final APUType FLOAT_ADDTION = new APUType(ResourceProvider.JAMS, "float_adition", 4);
+    public static final APUType FLOAT_MULTIPLICATION = new APUType(ResourceProvider.JAMS, "float_multiplication", 9);
+    public static final APUType FLOAT_DIVISION = new APUType(ResourceProvider.JAMS, "float_division", 17);
 
     public APUType {
         Validate.notNull(provider, "Provider cannot be null!");

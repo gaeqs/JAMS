@@ -108,19 +108,19 @@ public class InstructionMtc1 extends BasicIFPUInstruction<InstructionMtc1.Assemb
 
         @Override
         public void decode() {
-            requires(instruction.getTargetRegister());
+            requires(instruction.getTargetRegister(), false);
             lockCOP1(instruction.getDestinationRegister());
         }
 
         @Override
         public void execute() {
             executionResult = new int[]{value(instruction.getTargetRegister())};
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override

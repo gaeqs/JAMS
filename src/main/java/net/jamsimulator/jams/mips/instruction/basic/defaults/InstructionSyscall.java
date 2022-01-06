@@ -104,7 +104,7 @@ public class InstructionSyscall extends BasicRInstruction<InstructionSyscall.Ass
 
         @Override
         public void decode() {
-            requires(2);
+            requires(2, false);
         }
 
         @Override

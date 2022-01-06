@@ -111,8 +111,8 @@ public class InstructionSltu extends BasicRInstruction<InstructionSltu.Assembled
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
-            requires(instruction.getTargetRegister());
+            requires(instruction.getSourceRegister(), false);
+            requires(instruction.getTargetRegister(), false);
             lock(instruction.getDestinationRegister());
         }
 
@@ -120,12 +120,12 @@ public class InstructionSltu extends BasicRInstruction<InstructionSltu.Assembled
         public void execute() {
             executionResult = new int[]{Integer.compareUnsigned(value(instruction.getSourceRegister()),
                     value(instruction.getTargetRegister())) < 0 ? 1 : 0};
-            forward(instruction.getDestinationRegister(), executionResult[0], false);
+            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getDestinationRegister(), executionResult[0], false);
+            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override

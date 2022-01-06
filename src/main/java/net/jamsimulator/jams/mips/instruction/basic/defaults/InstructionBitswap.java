@@ -124,19 +124,19 @@ public class InstructionBitswap extends BasicRInstruction<InstructionBitswap.Ass
 
         @Override
         public void decode() {
-            requires(instruction.getTargetRegister());
+            requires(instruction.getTargetRegister(), false);
             lock(instruction.getDestinationRegister());
         }
 
         @Override
         public void execute() {
             executionResult = new int[]{NumericUtils.swapBits(value(instruction.getTargetRegister()))};
-            forward(instruction.getTargetRegister(), executionResult[0], false);
+            forward(instruction.getTargetRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getTargetRegister(), executionResult[0], true);
+            forward(instruction.getTargetRegister(), executionResult[0]);
         }
 
         @Override

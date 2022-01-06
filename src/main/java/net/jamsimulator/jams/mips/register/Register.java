@@ -25,9 +25,11 @@
 package net.jamsimulator.jams.mips.register;
 
 import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterLockEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterUnlockEvent;
+import net.jamsimulator.jams.utils.StringUtils;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.*;
@@ -179,6 +181,27 @@ public class Register {
     }
 
     /**
+     * Returns whether this register is locked by and only by the given execution.
+     *
+     * @param execution the execution.
+     * @return whether this register is locked by and only by the given execution.
+     */
+    public boolean isLockedOnlyBy(InstructionExecution<?, ?> execution) {
+        return lockedBy.size() == 1 && execution.equals(lockedBy.get(0));
+    }
+
+    /**
+     * Returns whether this register is locked by some execution older than the execution of the given id.
+     *
+     * @param id the id of the execution.
+     * @return whether this register is locked.
+     */
+    public boolean isLockedBeforeId(long id) {
+        return !lockedBy.isEmpty() && (!(lockedBy.get(0) instanceof MultiCycleExecution<?, ?> ex)
+                || ex.getInstructionId() < id);
+    }
+
+    /**
      * Returns whether the given execution is in the last position of the lock queue.
      * If true, the execution may perform forwarding.
      *
@@ -188,6 +211,39 @@ public class Register {
     public boolean isLastLocked(InstructionExecution<?, ?> execution) {
         if (lockedBy.isEmpty()) return false;
         return lockedBy.get(lockedBy.size() - 1).equals(execution);
+    }
+
+
+    /**
+     * Returns whether the given execution is in the last position of the lock queue.
+     * If true, the execution may perform forwarding.
+     *
+     * @param execution the execution.
+     * @return whether this execution is in the last position of the lock queue.
+     */
+    public boolean isLastLockedBeforeId(InstructionExecution<?, ?> execution, long id) {
+        if (lockedBy.isEmpty()) return false;
+
+        var iterator = lockedBy.listIterator(lockedBy.size());
+        while (iterator.hasPrevious()) {
+            var current = iterator.previous();
+            if (current instanceof MultiCycleExecution<?, ?> ex && ex.getInstructionId() < id) {
+                return current.equals(execution);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns whether the given execution is in the penultimate position of the lock queue.
+     * If true, the execution may perform forwarding.
+     *
+     * @param execution the execution.
+     * @return whether this execution is in the penultimate position of the lock queue.
+     */
+    public boolean isPenultimateLocked(InstructionExecution<?, ?> execution) {
+        if (lockedBy.size() < 2) return false;
+        return lockedBy.get(lockedBy.size() - 2).equals(execution);
     }
 
     /**
@@ -203,6 +259,7 @@ public class Register {
     }
 
     public void lock(InstructionExecution<?, ?> execution) {
+        if (lockedBy.contains(execution)) return;
         if (registers.eventCallsEnabled) {
             var before = registers.callEvent(new RegisterLockEvent.Before(this, execution));
             if (before.isCancelled()) return;
@@ -257,6 +314,11 @@ public class Register {
                 return;
             }
         }
+    }
+
+    public String printLockingExecutions() {
+        return lockedBy.stream().map(it ->
+                "0x" + StringUtils.addZeros(Integer.toHexString(it.getAddress()), 8)).toList().toString();
     }
 
     /**

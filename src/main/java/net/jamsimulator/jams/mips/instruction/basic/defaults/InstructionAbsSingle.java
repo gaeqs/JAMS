@@ -110,7 +110,7 @@ public class InstructionAbsSingle extends BasicRFPUInstruction<InstructionAbsSin
 
         @Override
         public void decode() {
-            requiresCOP1(instruction.getSourceRegister());
+            requiresCOP1(instruction.getSourceRegister(), false);
             lockCOP1(instruction.getDestinationRegister());
         }
 
@@ -118,12 +118,12 @@ public class InstructionAbsSingle extends BasicRFPUInstruction<InstructionAbsSin
         public void execute() {
             var abs = Math.abs(Float.intBitsToFloat(valueCOP1(instruction.getSourceRegister())));
             executionResult = new int[]{Float.floatToIntBits(abs)};
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override

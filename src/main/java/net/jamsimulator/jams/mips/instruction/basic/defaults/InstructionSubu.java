@@ -120,20 +120,20 @@ public class InstructionSubu extends BasicRInstruction<InstructionSubu.Assembled
 
         @Override
         public void decode() {
-            requires(instruction.getTargetRegister());
-            requires(instruction.getSourceRegister());
+            requires(instruction.getTargetRegister(), false);
+            requires(instruction.getSourceRegister(), false);
             lock(instruction.getDestinationRegister());
         }
 
         @Override
         public void execute() {
             executionResult = new int[]{value(instruction.getSourceRegister()) - value(instruction.getTargetRegister())};
-            forward(instruction.getTargetRegister(), executionResult[0], false);
+            forward(instruction.getTargetRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getTargetRegister(), executionResult[0], true);
+            forward(instruction.getTargetRegister(), executionResult[0]);
         }
 
         @Override

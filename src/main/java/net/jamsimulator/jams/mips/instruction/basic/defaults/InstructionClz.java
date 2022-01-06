@@ -110,19 +110,19 @@ public class InstructionClz extends BasicRInstruction<InstructionClz.Assembled> 
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
+            requires(instruction.getSourceRegister(), false);
             lock(instruction.getDestinationRegister());
         }
 
         @Override
         public void execute() {
             executionResult = new int[]{Integer.numberOfLeadingZeros(value(instruction.getSourceRegister()))};
-            forward(instruction.getDestinationRegister(), executionResult[0], false);
+            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getDestinationRegister(), executionResult[0], true);
+            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override

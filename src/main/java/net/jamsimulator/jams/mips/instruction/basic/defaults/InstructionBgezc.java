@@ -147,7 +147,7 @@ public class InstructionBgezc extends BasicInstruction<InstructionBgezc.Assemble
 
         @Override
         public void decode() {
-            requires(instruction.getTargetRegister());
+            requires(instruction.getTargetRegister(), false);
             lock(pc());
 
             if (solveBranchOnDecode()) {
@@ -163,16 +163,15 @@ public class InstructionBgezc extends BasicInstruction<InstructionBgezc.Assemble
 
         @Override
         public void memory() {
-
-        }
-
-        @Override
-        public void writeBack() {
             if (!solveBranchOnDecode()) {
                 if (value(instruction.getTargetRegister()) >= 0) {
                     jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
                 } else unlock(pc());
             }
+        }
+
+        @Override
+        public void writeBack() {
         }
     }
 }

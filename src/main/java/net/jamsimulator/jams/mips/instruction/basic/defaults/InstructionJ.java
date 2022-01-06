@@ -145,14 +145,13 @@ public class InstructionJ extends BasicInstruction<InstructionJ.Assembled> imple
 
         @Override
         public void memory() {
-
+            if (!solveBranchOnDecode()) {
+                jump(instruction.getAbsoluteAddress(getAddress()));
+            }
         }
 
         @Override
         public void writeBack() {
-            if (!solveBranchOnDecode()) {
-                jump(instruction.getAbsoluteAddress(getAddress()));
-            }
         }
     }
 }

@@ -115,8 +115,8 @@ public class InstructionCeilWDouble extends BasicRFPUInstruction<InstructionCeil
         public void decode() {
             if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
 
-            requiresCOP1(instruction.getSourceRegister());
-            requiresCOP1(instruction.getSourceRegister() + 1);
+            requiresCOP1(instruction.getSourceRegister(), false);
+            requiresCOP1(instruction.getSourceRegister() + 1, false);
             lockCOP1(instruction.getDestinationRegister());
         }
 
@@ -126,13 +126,13 @@ public class InstructionCeilWDouble extends BasicRFPUInstruction<InstructionCeil
             var to = instruction.getDestinationRegister();
             var ceil = (int) Math.ceil(NumericUtils.intsToDouble(valueCOP1(id), valueCOP1(id + 1)));
             executionResult = new int[]{ceil};
-            forwardCOP1(to, executionResult[0], false);
+            forwardCOP1(to, executionResult[0]);
         }
 
         @Override
         public void memory() {
             var to = instruction.getDestinationRegister();
-            forwardCOP1(to, executionResult[0], true);
+            forwardCOP1(to, executionResult[0]);
         }
 
         @Override

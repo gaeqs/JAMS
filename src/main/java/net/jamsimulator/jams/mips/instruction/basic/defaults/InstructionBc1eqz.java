@@ -142,7 +142,7 @@ public class InstructionBc1eqz extends BasicIFPUInstruction<InstructionBc1eqz.As
 
         @Override
         public void decode() {
-            requiresCOP1(instruction.getTargetRegister());
+            requiresCOP1(instruction.getTargetRegister(), false);
             lock(pc());
 
             if (solveBranchOnDecode()) {
@@ -159,16 +159,15 @@ public class InstructionBc1eqz extends BasicIFPUInstruction<InstructionBc1eqz.As
 
         @Override
         public void memory() {
-
-        }
-
-        @Override
-        public void writeBack() {
             if (!solveBranchOnDecode()) {
                 if ((valueCOP1(instruction.getTargetRegister()) & 1) == 0) {
                     jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
                 } else unlock(pc());
             }
+        }
+
+        @Override
+        public void writeBack() {
         }
     }
 }

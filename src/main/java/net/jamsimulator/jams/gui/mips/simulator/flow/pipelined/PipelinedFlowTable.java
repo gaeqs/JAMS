@@ -36,6 +36,7 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
+import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipelineSlotStatus;
 import net.jamsimulator.jams.mips.simulation.pipelined.Pipeline;
 import net.jamsimulator.jams.mips.simulation.pipelined.event.PipelineShiftEvent;
 
@@ -104,7 +105,8 @@ public class PipelinedFlowTable extends FlowTable {
                 }
 
                 var raw = 5 - event.getShiftAmount() > step.ordinal();
-                entry.addStep(event.getCycle(), step, stepSize, firstCycle, raw);
+                entry.addStep(event.getCycle(), step, stepSize, firstCycle,
+                        raw ? MultiAPUPipelineSlotStatus.RAW : MultiAPUPipelineSlotStatus.EXECUTED);
             });
         }
 

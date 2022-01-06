@@ -109,19 +109,19 @@ public class InstructionSltiu extends BasicInstruction<InstructionSltiu.Assemble
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
+            requires(instruction.getSourceRegister(), false);
             lock(instruction.getTargetRegister());
         }
 
         @Override
         public void execute() {
             executionResult = new int[]{Integer.compareUnsigned(value(instruction.getSourceRegister()), instruction.getImmediateAsSigned()) < 0 ? 1 : 0};
-            forward(instruction.getTargetRegister(), executionResult[0], false);
+            forward(instruction.getTargetRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getTargetRegister(), executionResult[0], true);
+            forward(instruction.getTargetRegister(), executionResult[0]);
         }
 
         @Override

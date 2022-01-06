@@ -40,6 +40,7 @@ import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.COP0RegistersBits;
+import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterLockEvent;
 import net.jamsimulator.jams.mips.register.event.RegisterUnlockEvent;
@@ -60,6 +61,7 @@ import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 /**
  * Represents the execution of a set of instruction inside a MIPS32 multi-cycle computer.
@@ -79,7 +81,6 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
 
     private final LinkedList<StepChanges<PipelinedArchitecture>> changes;
     private final Pipeline pipeline;
-    private final PipelineForwarding forwarding;
 
     private final boolean forwardingEnabled;
     private final boolean solveBranchesOnDecode;
@@ -102,7 +103,6 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
         changes = undoEnabled ? new LinkedList<>() : null;
 
         pipeline = new Pipeline(this, registers.getProgramCounter().getValue());
-        forwarding = new PipelineForwarding();
         exitRequested = false;
 
         // Configuration data
@@ -152,8 +152,8 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
     }
 
     @Override
-    public PipelineForwarding getForwarding() {
-        return forwarding;
+    public OptionalInt forward(Register register, MultiCycleExecution<?, ?> execution, boolean checkWriteback) {
+        return OptionalInt.empty();
     }
 
     @Override
@@ -296,7 +296,6 @@ public class PipelinedSimulation extends MIPSSimulation<PipelinedArchitecture> i
         manageInterrupts();
 
         addCycleCount();
-        forwarding.clear();
 
         var pcv = registers.getProgramCounter().getValue();
         var nextCheck = check || (isKernelMode()

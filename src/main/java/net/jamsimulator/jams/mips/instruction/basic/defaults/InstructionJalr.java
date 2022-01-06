@@ -145,7 +145,7 @@ public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
+            requires(instruction.getSourceRegister(), false);
             lock(pc());
             lock(instruction.getDestinationRegister());
 
@@ -160,22 +160,20 @@ public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled
                 //We save the source value before any modification.
                 executionResult = new int[]{value(instruction.getSourceRegister())};
 
-                forward(instruction.getDestinationRegister(), getAddress() + 4, false);
+                forward(instruction.getDestinationRegister(), getAddress() + 4);
             }
         }
 
         @Override
         public void memory() {
-            if (solveBranchOnDecode()) {
-                forward(instruction.getDestinationRegister(), getAddress() + 4, true);
+            if (!solveBranchOnDecode()) {
+                jump(executionResult[0]);
             }
+            forward(instruction.getDestinationRegister(), getAddress() + 4);
         }
 
         @Override
         public void writeBack() {
-            if (!solveBranchOnDecode()) {
-                jump(executionResult[0]);
-            }
             setAndUnlock(instruction.getDestinationRegister(), getAddress() + 4);
         }
     }

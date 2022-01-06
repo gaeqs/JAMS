@@ -149,14 +149,13 @@ public class InstructionBc extends BasicInstruction<InstructionBc.Assembled> imp
 
         @Override
         public void memory() {
-
+            if (!solveBranchOnDecode()) {
+                jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
+            }
         }
 
         @Override
         public void writeBack() {
-            if (!solveBranchOnDecode()) {
-                jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
-            }
         }
     }
 }

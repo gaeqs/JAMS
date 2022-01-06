@@ -116,7 +116,7 @@ public class InstructionTeqi extends BasicInstruction<InstructionTeqi.Assembled>
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
+            requires(instruction.getSourceRegister(), false);
         }
 
         @Override

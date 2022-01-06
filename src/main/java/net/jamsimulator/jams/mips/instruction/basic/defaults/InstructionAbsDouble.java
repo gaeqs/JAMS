@@ -121,8 +121,8 @@ public class InstructionAbsDouble extends BasicRFPUInstruction<InstructionAbsDou
             if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
             if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
 
-            requiresCOP1(instruction.getSourceRegister());
-            requiresCOP1(instruction.getSourceRegister() + 1);
+            requiresCOP1(instruction.getSourceRegister(), false);
+            requiresCOP1(instruction.getSourceRegister() + 1, false);
             lockCOP1(instruction.getDestinationRegister());
             lockCOP1(instruction.getDestinationRegister() + 1);
         }
@@ -133,15 +133,15 @@ public class InstructionAbsDouble extends BasicRFPUInstruction<InstructionAbsDou
             var to = instruction.getDestinationRegister();
             var abs = Math.abs(NumericUtils.intsToDouble(valueCOP1(id), valueCOP1(id + 1)));
             executionResult = NumericUtils.doubleToInts(abs);
-            forwardCOP1(to, executionResult[0], false);
-            forwardCOP1(to + 1, executionResult[1], false);
+            forwardCOP1(to, executionResult[0]);
+            forwardCOP1(to + 1, executionResult[1]);
         }
 
         @Override
         public void memory() {
             var to = instruction.getDestinationRegister();
-            forwardCOP1(to, executionResult[0], true);
-            forwardCOP1(to + 1, executionResult[1], true);
+            forwardCOP1(to, executionResult[0]);
+            forwardCOP1(to + 1, executionResult[1]);
         }
 
         @Override

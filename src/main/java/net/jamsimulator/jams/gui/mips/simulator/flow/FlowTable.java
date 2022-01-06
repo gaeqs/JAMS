@@ -34,15 +34,13 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.mips.simulator.flow.multicycle.MultiCycleFlowTable;
+import net.jamsimulator.jams.gui.mips.simulator.flow.pipelined.MultiAPUPipelinedFlowTable;
 import net.jamsimulator.jams.gui.mips.simulator.flow.pipelined.PipelinedFlowTable;
 import net.jamsimulator.jams.gui.mips.simulator.flow.singlecycle.SingleCycleFlowTable;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.gui.util.ScalableNode;
-import net.jamsimulator.jams.mips.architecture.Architecture;
-import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
-import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
+import net.jamsimulator.jams.mips.architecture.*;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 import java.util.HashMap;
@@ -68,6 +66,8 @@ public abstract class FlowTable extends AnchorPane implements ActionRegion {
                 new MultiCycleFlowTable((MIPSSimulation<? extends MultiCycleArchitecture>) s));
         FLOW_PER_ARCHITECTURE.put(PipelinedArchitecture.INSTANCE, s ->
                 new PipelinedFlowTable((MIPSSimulation<? extends MultiCycleArchitecture>) s));
+        FLOW_PER_ARCHITECTURE.put(MultiAPUPipelinedArchitecture.INSTANCE, s ->
+                new MultiAPUPipelinedFlowTable((MIPSSimulation<? extends MultiCycleArchitecture>) s));
     }
 
     protected MIPSSimulation<?> simulation;
@@ -81,6 +81,7 @@ public abstract class FlowTable extends AnchorPane implements ActionRegion {
     protected FlowTableCycleVisualizer cycleVisualizer;
     protected ScalableNode scalableNode;
     protected FlowEntry selected;
+
     /**
      * Creates the flow table.
      *

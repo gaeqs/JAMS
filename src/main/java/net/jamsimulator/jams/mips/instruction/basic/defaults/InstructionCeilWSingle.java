@@ -110,7 +110,7 @@ public class InstructionCeilWSingle extends BasicRFPUInstruction<InstructionCeil
 
         @Override
         public void decode() {
-            requiresCOP1(instruction.getSourceRegister());
+            requiresCOP1(instruction.getSourceRegister(), false);
             lockCOP1(instruction.getDestinationRegister());
         }
 
@@ -118,12 +118,12 @@ public class InstructionCeilWSingle extends BasicRFPUInstruction<InstructionCeil
         public void execute() {
             var ceil = (int) Math.ceil(Float.intBitsToFloat(valueCOP1(instruction.getSourceRegister())));
             executionResult = new int[]{ceil};
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override

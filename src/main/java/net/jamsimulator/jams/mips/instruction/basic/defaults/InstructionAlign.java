@@ -142,8 +142,8 @@ public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembl
 
         @Override
         public void decode() {
-            requires(instruction.getTargetRegister());
-            requires(instruction.getSourceRegister());
+            requires(instruction.getTargetRegister(), false);
+            requires(instruction.getSourceRegister(), false);
             lock(instruction.getDestinationRegister());
         }
 
@@ -153,12 +153,12 @@ public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembl
             int tmpRtHi = value(instruction.getTargetRegister()) << (bp << 3);
             int tmpRsLo = value(instruction.getSourceRegister()) >>> ((4 - bp) << 3);
             executionResult = new int[]{tmpRtHi | tmpRsLo};
-            forward(instruction.getDestinationRegister(), executionResult[0], false);
+            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getDestinationRegister(), executionResult[0], true);
+            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override

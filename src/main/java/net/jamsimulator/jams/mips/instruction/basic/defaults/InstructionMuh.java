@@ -117,8 +117,8 @@ public class InstructionMuh extends BasicRSOPInstruction<InstructionMuh.Assemble
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
-            requires(instruction.getTargetRegister());
+            requires(instruction.getSourceRegister(), false);
+            requires(instruction.getTargetRegister(), false);
             lock(instruction.getDestinationRegister());
         }
 
@@ -126,12 +126,12 @@ public class InstructionMuh extends BasicRSOPInstruction<InstructionMuh.Assemble
         public void execute() {
             long l = (long) value(instruction.getSourceRegister()) * value(instruction.getTargetRegister());
             executionResult = new int[]{(int) (l >> 32)};
-            forward(instruction.getDestinationRegister(), executionResult[0], false);
+            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getDestinationRegister(), executionResult[0], true);
+            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override

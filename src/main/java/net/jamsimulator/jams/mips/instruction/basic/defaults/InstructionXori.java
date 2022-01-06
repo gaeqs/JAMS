@@ -109,19 +109,19 @@ public class InstructionXori extends BasicInstruction<InstructionXori.Assembled>
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
+            requires(instruction.getSourceRegister(), false);
             lock(instruction.getTargetRegister());
         }
 
         @Override
         public void execute() {
             executionResult = new int[]{value(instruction.getSourceRegister()) ^ instruction.getImmediate()};
-            forward(instruction.getTargetRegister(), executionResult[0], false);
+            forward(instruction.getTargetRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getTargetRegister(), executionResult[0], true);
+            forward(instruction.getTargetRegister(), executionResult[0]);
         }
 
         @Override

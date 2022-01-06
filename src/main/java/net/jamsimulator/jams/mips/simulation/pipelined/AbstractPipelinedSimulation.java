@@ -24,7 +24,11 @@
 
 package net.jamsimulator.jams.mips.simulation.pipelined;
 
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
+import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+
+import java.util.OptionalInt;
 
 /**
  * Represents a {@link MIPSSimulation} that implements a pipelined architecture.
@@ -54,11 +58,6 @@ public interface AbstractPipelinedSimulation {
      */
     boolean isDelaySlotsEnabled();
 
-    /**
-     * Returns the {@link PipelineForwarding} of the simulation.
-     *
-     * @return the {@link PipelineForwarding}.
-     */
-    PipelineForwarding getForwarding();
+    OptionalInt forward(Register register, MultiCycleExecution<?, ?> execution, boolean checkWriteback);
 
 }

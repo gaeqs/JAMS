@@ -29,11 +29,11 @@ import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.apu.APUType;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
-import net.jamsimulator.jams.mips.instruction.apu.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -151,7 +151,7 @@ public class InstructionBltzalc extends BasicInstruction<InstructionBltzalc.Asse
 
         @Override
         public void decode() {
-            requires(instruction.getTargetRegister());
+            requires(instruction.getTargetRegister(), false);
             lock(pc());
             lock(31);
 
@@ -171,29 +171,31 @@ public class InstructionBltzalc extends BasicInstruction<InstructionBltzalc.Asse
         @Override
         public void execute() {
             if (solveBranchOnDecode() && decodeResult[1] == 1) {
-                forward(31, decodeResult[0], false);
+                forward(31, decodeResult[0]);
             }
         }
 
         @Override
         public void memory() {
-            if (solveBranchOnDecode() && decodeResult[1] == 1) {
-                forward(31, decodeResult[0], true);
+            if (!solveBranchOnDecode()) {
+                if (value(instruction.getTargetRegister()) < 0) {
+                    decodeResult[1] = 1;
+                    jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
+                } else {
+                    unlock(pc());
+                }
+            }
+            if (decodeResult[1] == 1) {
+                forward(31, decodeResult[0]);
             }
         }
 
         @Override
         public void writeBack() {
-            if (!solveBranchOnDecode()) {
-                if (value(instruction.getTargetRegister()) < 0) {
-                    setAndUnlock(31, decodeResult[0]);
-                    jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
-                } else {
-                    unlock(31);
-                    unlock(pc());
-                }
-            } else if (decodeResult[1] == 1) {
+            if (decodeResult[1] == 1) {
                 setAndUnlock(31, decodeResult[0]);
+            } else {
+                unlock(31);
             }
         }
     }

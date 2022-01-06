@@ -111,7 +111,7 @@ public class InstructionLw extends BasicInstruction<InstructionLw.Assembled> {
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
+            requires(instruction.getSourceRegister(), false);
             lock(instruction.getTargetRegister());
         }
 
@@ -124,7 +124,7 @@ public class InstructionLw extends BasicInstruction<InstructionLw.Assembled> {
         @Override
         public void memory() {
             memoryResult = new int[]{simulation.getMemory().getWord(executionResult[0])};
-            forward(instruction.getTargetRegister(), memoryResult[0], true);
+            forward(instruction.getTargetRegister(), memoryResult[0]);
         }
 
         @Override

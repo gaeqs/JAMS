@@ -151,8 +151,8 @@ public class InstructionBgeuc extends BasicInstruction<InstructionBgeuc.Assemble
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
-            requires(instruction.getTargetRegister());
+            requires(instruction.getSourceRegister(), false);
+            requires(instruction.getTargetRegister(), false);
             lock(pc());
 
             if (solveBranchOnDecode()) {
@@ -168,16 +168,15 @@ public class InstructionBgeuc extends BasicInstruction<InstructionBgeuc.Assemble
 
         @Override
         public void memory() {
-
-        }
-
-        @Override
-        public void writeBack() {
             if (!solveBranchOnDecode()) {
                 if (Integer.compareUnsigned(value(instruction.getSourceRegister()), value(instruction.getTargetRegister())) >= 0) {
                     jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
                 } else unlock(pc());
             }
+        }
+
+        @Override
+        public void writeBack() {
         }
     }
 }
