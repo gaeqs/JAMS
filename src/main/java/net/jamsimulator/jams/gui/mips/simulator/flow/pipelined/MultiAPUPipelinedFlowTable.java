@@ -180,10 +180,13 @@ public class MultiAPUPipelinedFlowTable extends FlowTable {
     @Listener
     private void onSimulationUndo(SimulationUndoStepEvent.After event) {
         var index = flows.getChildren().size() - 1;
-        for (Node node : flows.getChildren()) {
+
+        var iterator = flows.getChildren().iterator();
+        while (iterator.hasNext()) {
+            var node = iterator.next();
             if (node instanceof SegmentedFlowEntry entry && entry.removeCycle(event.getUndoCycle()) && entry.isEmpty()) {
                 entries.remove(entry.getInstructionNumber());
-                flows.getChildren().remove(index);
+                iterator.remove();
             }
         }
         refreshVisualizer();

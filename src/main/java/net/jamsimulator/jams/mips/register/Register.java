@@ -235,18 +235,6 @@ public class Register {
     }
 
     /**
-     * Returns whether the given execution is in the penultimate position of the lock queue.
-     * If true, the execution may perform forwarding.
-     *
-     * @param execution the execution.
-     * @return whether this execution is in the penultimate position of the lock queue.
-     */
-    public boolean isPenultimateLocked(InstructionExecution<?, ?> execution) {
-        if (lockedBy.size() < 2) return false;
-        return lockedBy.get(lockedBy.size() - 2).equals(execution);
-    }
-
-    /**
      * Returns whether the given execution is in the first position of the lock queue.
      * If true, the execution may enter the memory step.
      *
@@ -256,6 +244,21 @@ public class Register {
     public boolean isFirstLocked(InstructionExecution<?, ?> execution) {
         if (lockedBy.isEmpty()) return false;
         return lockedBy.get(0).equals(execution);
+    }
+
+    public boolean isLockedBy(InstructionExecution<?, ?> execution) {
+        return lockedBy.contains(execution);
+    }
+
+    public boolean isFirstLockedIgnoringMemoryAndWriteback(InstructionExecution<?, ?> execution,
+                                                           InstructionExecution<?, ?> memory,
+                                                           InstructionExecution<?, ?> writeback) {
+        if (lockedBy.isEmpty()) return false;
+        for (var target : lockedBy) {
+            if (target.equals(execution)) return true;
+            if (!target.equals(memory) && !target.equals(writeback)) return false;
+        }
+        return false;
     }
 
     public void lock(InstructionExecution<?, ?> execution) {
@@ -272,6 +275,7 @@ public class Register {
     }
 
     public void unlock(InstructionExecution<?, ?> execution) {
+        if (!lockedBy.contains(execution)) return;
         if (registers.eventCallsEnabled) {
             var before = registers.callEvent(new RegisterUnlockEvent.Before(this, execution));
             if (before.isCancelled()) return;

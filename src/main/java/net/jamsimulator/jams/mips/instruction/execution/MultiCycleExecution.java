@@ -231,8 +231,10 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
 
     //region lock
 
-    public boolean canMoveToMemory() {
-        return lockedRegisters.stream().allMatch(it -> it.isFirstLocked(this));
+    public boolean canMoveToMemory(MultiCycleExecution<?, ?> memory, MultiCycleExecution<?, ?> writeback) {
+        return lockedRegisters.stream().allMatch(it ->
+                !it.isLockedBy(this) ||
+                        it.isFirstLockedIgnoringMemoryAndWriteback(this, memory, writeback));
     }
 
     public void lock(int identifier) {
@@ -277,13 +279,11 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
     }
 
     public void unlock(Register register) {
-        lockedRegisters.remove(register);
         register.unlock(this);
     }
 
     public void unlockAll() {
         lockedRegisters.forEach(r -> r.unlock(this));
-        lockedRegisters.clear();
     }
 
     //endregion
@@ -307,7 +307,6 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
     }
 
     public void setAndUnlock(Register register, int value) {
-        lockedRegisters.remove(register);
         register.unlock(this);
         register.setValue(value);
     }

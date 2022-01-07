@@ -71,6 +71,21 @@ public class MultiAPUPipeline {
         this.timesExecuted = new int[apus.size()];
     }
 
+    private MultiAPUPipeline(
+            MultiAPUPipelinedSimulation simulation,
+            boolean delaySlotsEnabled,
+            APUCollection apus
+    ) {
+        this.simulation = simulation;
+        this.delaySlotsEnabled = delaySlotsEnabled;
+        this.apus = apus.copy();
+
+        var apuSize = apus.getApus().size();
+        execute = new MultiAPUPipelineSlot[apuSize];
+        this.assignedAPUs = new APU[apuSize];
+        this.timesExecuted = new int[apuSize];
+    }
+
     public APUCollection getApus() {
         return apus;
     }
@@ -219,7 +234,7 @@ public class MultiAPUPipeline {
     }
 
     public MultiAPUPipeline copy() {
-        var copy = new MultiAPUPipeline(simulation, delaySlotsEnabled, apus.getApus());
+        var copy = new MultiAPUPipeline(simulation, delaySlotsEnabled, apus);
         copy.instructionsStarted = instructionsStarted;
         copy.instructionsFinished = instructionsFinished;
 
@@ -240,6 +255,7 @@ public class MultiAPUPipeline {
     }
 
     public void restore(MultiAPUPipeline old) {
+        apus.restore(old.apus);
         instructionsStarted = old.instructionsStarted;
         instructionsFinished = old.instructionsFinished;
         fetch = old.fetch == null ? null : old.fetch.copy();
@@ -298,7 +314,7 @@ public class MultiAPUPipeline {
         memory.status = MultiAPUPipelineSlotStatus.EXECUTED;
     }
 
-    private boolean execute() {
+    private void execute() {
         for (int i = 0; i < execute.length; i++) {
             var execution = execute[i];
             if (execution == null) continue;
@@ -320,14 +336,13 @@ public class MultiAPUPipeline {
                     execution.exception = ex;
                 }
 
-                if (simulation.checkThreadInterrupted()) return true;
+                if (simulation.checkThreadInterrupted()) return;
 
                 timesExecuted[i] = required;
                 execution.status = MultiAPUPipelineSlotStatus.EXECUTED;
             }
         }
 
-        return false;
     }
 
     private void decode() {
@@ -397,7 +412,10 @@ public class MultiAPUPipeline {
         for (int i = 0; i < execute.length; i++) {
             var e = execute[i];
             if (e == null || e.status != MultiAPUPipelineSlotStatus.EXECUTED) continue;
-            if (!e.execution.canMoveToMemory()) {
+            if (!e.execution.canMoveToMemory(
+                    memory == null ? null : memory.execution,
+                    writeback == null ? null : writeback.execution
+            )) {
                 e.status = MultiAPUPipelineSlotStatus.WAW;
                 continue;
             }
@@ -411,8 +429,6 @@ public class MultiAPUPipeline {
             } else {
                 e.status = MultiAPUPipelineSlotStatus.STALL;
             }
-
-            i++;
         }
 
         if (move) {

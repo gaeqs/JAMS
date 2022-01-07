@@ -36,6 +36,11 @@ public class APUCollection {
         availableAPUs.addAll(apus);
     }
 
+    private APUCollection(Set<? extends APU> apus, Set<APU> available) {
+        this.apus.addAll(apus);
+        availableAPUs.addAll(available);
+    }
+
     public Set<APU> getApus() {
         return apus;
     }
@@ -57,5 +62,14 @@ public class APUCollection {
     public void reset() {
         availableAPUs.clear();
         availableAPUs.addAll(apus);
+    }
+
+    public APUCollection copy() {
+        return new APUCollection(apus, availableAPUs);
+    }
+
+    public void restore(APUCollection collection) {
+        availableAPUs.clear();
+        availableAPUs.addAll(collection.availableAPUs);
     }
 }

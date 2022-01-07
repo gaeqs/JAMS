@@ -51,7 +51,7 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
 
     public static final String NAME_SUFIX = "CMP_S";
     public static final String MNEMONIC = "cmp.%s.s";
-    public static final APUType APU_TYPE = APUType.INTEGER;
+    public static final APUType APU_TYPE = APUType.FLOAT_ADDTION;
     public static final int OPERATION_CODE = 0b010001;
     public static final int FMT = 0b10100;
 
