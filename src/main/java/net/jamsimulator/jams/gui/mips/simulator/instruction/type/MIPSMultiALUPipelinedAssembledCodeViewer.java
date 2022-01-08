@@ -29,9 +29,9 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledCodeViewer;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledLine;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipeline;
-import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipelineSlot;
-import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipelinedSimulation;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipeline;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelineSlot;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelinedSimulation;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 import net.jamsimulator.jams.mips.simulation.pipelined.event.PipelineShiftEvent;
 
@@ -40,11 +40,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class MIPSMultiAPUPipelinedAssembledCodeViewer extends MIPSAssembledCodeViewer {
+public class MIPSMultiALUPipelinedAssembledCodeViewer extends MIPSAssembledCodeViewer {
 
     private final Set<Integer> previousLines = new HashSet<>();
 
-    public MIPSMultiAPUPipelinedAssembledCodeViewer(MIPSSimulation<?> simulation, boolean kernel) {
+    public MIPSMultiALUPipelinedAssembledCodeViewer(MIPSSimulation<?> simulation, boolean kernel) {
         super(simulation, kernel);
         refreshLines();
     }
@@ -66,7 +66,7 @@ public class MIPSMultiAPUPipelinedAssembledCodeViewer extends MIPSAssembledCodeV
     }
 
     private void refreshLines() {
-        var sim = (MultiAPUPipelinedSimulation) simulation;
+        var sim = (MultiALUPipelinedSimulation) simulation;
         var pipeline = sim.getPipeline();
 
         for (MultiCycleStep step : MultiCycleStep.values()) {
@@ -97,7 +97,7 @@ public class MIPSMultiAPUPipelinedAssembledCodeViewer extends MIPSAssembledCodeV
 
     }
 
-    private Set<MultiAPUPipelineSlot> getSlots(MultiAPUPipeline pipeline, MultiCycleStep step) {
+    private Set<MultiALUPipelineSlot> getSlots(MultiALUPipeline pipeline, MultiCycleStep step) {
         return switch (step) {
             case FETCH -> pipeline.getFetch() == null ? Collections.emptySet() : Set.of(pipeline.getFetch());
             case DECODE -> pipeline.getDecode() == null ? Collections.emptySet() : Set.of(pipeline.getDecode());

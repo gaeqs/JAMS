@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,34 +22,35 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.instruction.apu;
+package net.jamsimulator.jams.gui.util.converter;
 
-import net.jamsimulator.jams.utils.Validate;
-import org.jetbrains.annotations.NotNull;
+import net.jamsimulator.jams.mips.instruction.alu.ALU;
+import org.json.JSONException;
 
-import java.util.Objects;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
-public record APU(int id, APUType type, int cyclesRequired) implements Comparable<APU> {
+public class ALUValueConverter extends ValueConverter<ALU> {
 
-    public APU {
-        Validate.notNull(type, "Type cannot be null!");
+    public static final String NAME = "alu";
+
+    @Override
+    public Optional<ALU> fromStringSafe(String node) {
+        try {
+            return Optional.of(ALU.fromJSON(node));
+        } catch (JSONException | NoSuchElementException ex) {
+            ex.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        APU apu = (APU) o;
-        return id == apu.id;
+    public String toString(ALU object) {
+        return object.toJSON().toString();
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public int compareTo(@NotNull APU o) {
-        return id - o.id;
+    public Class<?> conversionClass() {
+        return ALU.class;
     }
 }

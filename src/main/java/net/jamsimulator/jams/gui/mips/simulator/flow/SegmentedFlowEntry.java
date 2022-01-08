@@ -28,7 +28,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipelineSlotStatus;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelineSlotStatus;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 
 import java.util.HashMap;
@@ -83,8 +83,8 @@ public class SegmentedFlowEntry extends FlowEntry {
      * @param firstCycle the first cycle the table is showing.
      * @param status     the status of the step.
      */
-    public void addStep(long cycle, MultiCycleStep step, double stepSize, long firstCycle, MultiAPUPipelineSlotStatus status) {
-        var label = new Label(status == MultiAPUPipelineSlotStatus.EXECUTED ? step.getTag() : status.getName());
+    public void addStep(long cycle, MultiCycleStep step, double stepSize, long firstCycle, MultiALUPipelineSlotStatus status) {
+        var label = new Label(status == MultiALUPipelineSlotStatus.EXECUTED ? step.getTag() : status.getName());
         label.getStyleClass().add(step.getStyle());
         label.setPrefWidth(stepSize);
         label.setAlignment(Pos.CENTER);

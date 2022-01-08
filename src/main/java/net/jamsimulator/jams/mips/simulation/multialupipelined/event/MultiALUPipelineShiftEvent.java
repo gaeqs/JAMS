@@ -22,21 +22,21 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.simulation.multiapupipelined.event;
+package net.jamsimulator.jams.mips.simulation.multialupipelined.event;
 
-import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipeline;
-import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipelinedSimulation;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipeline;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelinedSimulation;
 import net.jamsimulator.jams.mips.simulation.pipelined.Pipeline;
 
 /**
- * This event is called when a {@link MultiAPUPipeline} shifts its instructions.
+ * This event is called when a {@link MultiALUPipeline} shifts its instructions.
  */
-public class MultiAPUPipelineShiftEvent extends MultiAPUPipelinedSimulationEvent {
+public class MultiALUPipelineShiftEvent extends MultiALUPipelinedSimulationEvent {
 
     protected final long cycle;
-    protected final MultiAPUPipeline pipeline;
+    protected final MultiALUPipeline pipeline;
 
-    private MultiAPUPipelineShiftEvent(MultiAPUPipelinedSimulation simulation, MultiAPUPipeline pipeline) {
+    private MultiALUPipelineShiftEvent(MultiALUPipelinedSimulation simulation, MultiALUPipeline pipeline) {
         super(simulation);
         this.cycle = simulation.getCycles();
         this.pipeline = pipeline;
@@ -56,27 +56,27 @@ public class MultiAPUPipelineShiftEvent extends MultiAPUPipelinedSimulationEvent
      *
      * @return the {@link Pipeline}.
      */
-    public MultiAPUPipeline getPipeline() {
+    public MultiALUPipeline getPipeline() {
         return pipeline;
     }
 
     /**
-     * This event is called before a {@link MultiAPUPipeline}'s shift.
+     * This event is called before a {@link MultiALUPipeline}'s shift.
      */
-    public static class Before extends MultiAPUPipelineShiftEvent {
+    public static class Before extends MultiALUPipelineShiftEvent {
 
-        public Before(MultiAPUPipelinedSimulation simulation, MultiAPUPipeline status) {
+        public Before(MultiALUPipelinedSimulation simulation, MultiALUPipeline status) {
             super(simulation, status);
         }
 
     }
 
     /**
-     * This event is called after a {@link MultiAPUPipeline}'s shift.
+     * This event is called after a {@link MultiALUPipeline}'s shift.
      */
-    public static class After extends MultiAPUPipelineShiftEvent {
+    public static class After extends MultiALUPipelineShiftEvent {
 
-        public After(MultiAPUPipelinedSimulation simulation, MultiAPUPipeline status) {
+        public After(MultiALUPipelinedSimulation simulation, MultiALUPipeline status) {
             super(simulation, status);
         }
     }

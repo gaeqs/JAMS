@@ -29,7 +29,7 @@ import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.instruction.apu.APUType;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.instruction.execution.InstructionExecutionBuilder;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
@@ -48,7 +48,7 @@ public abstract class BasicInstruction<Inst extends AssembledInstruction> implem
 
     private final String mnemonic;
     private final int operationCode;
-    private final APUType apuType;
+    private final ALUType aluType;
     private final ParameterType[] parameters;
     private final Map<Architecture, InstructionExecutionBuilder<? extends Architecture, Inst>> executionBuilders;
 
@@ -58,13 +58,13 @@ public abstract class BasicInstruction<Inst extends AssembledInstruction> implem
      *
      * @param mnemonic      the mnemonic.
      * @param parameters    the parameter types.
-     * @param apuType       the type of the APU where this instruction will be executed.
+     * @param aluType       the type of the ALU where this instruction will be executed.
      * @param operationCode the operation code.
      */
-    public BasicInstruction(String mnemonic, ParameterType[] parameters, APUType apuType, int operationCode) {
+    public BasicInstruction(String mnemonic, ParameterType[] parameters, ALUType aluType, int operationCode) {
         this.mnemonic = mnemonic;
         this.parameters = parameters;
-        this.apuType = apuType;
+        this.aluType = aluType;
         this.operationCode = operationCode;
         this.executionBuilders = new HashMap<>();
     }
@@ -74,11 +74,11 @@ public abstract class BasicInstruction<Inst extends AssembledInstruction> implem
      *
      * @param mnemonic      the mnemonic.
      * @param parameters    the parameter types.
-     * @param apuType       the type of the APU where this instruction will be executed.
+     * @param aluType       the type of the ALU where this instruction will be executed.
      * @param operationCode the operation code.
      */
-    public BasicInstruction(String mnemonic, InstructionParameterTypes parameters, APUType apuType, int operationCode) {
-        this(mnemonic, parameters.getParameters(), apuType, operationCode);
+    public BasicInstruction(String mnemonic, InstructionParameterTypes parameters, ALUType aluType, int operationCode) {
+        this(mnemonic, parameters.getParameters(), aluType, operationCode);
     }
 
 
@@ -146,15 +146,15 @@ public abstract class BasicInstruction<Inst extends AssembledInstruction> implem
     }
 
     /**
-     * Returns the default {@link APUType} of this instruction.
+     * Returns the default {@link ALUType} of this instruction.
      * <p>
-     * In architures with different APU types, this class indicates
-     * the APU where this instruction will be executed.
+     * In architures with different ALU types, this class indicates
+     * the ALU where this instruction will be executed.
      *
-     * @return the {@link  APUType}.
+     * @return the {@link  ALUType}.
      */
-    public APUType getDefaultAPUType() {
-        return apuType;
+    public ALUType getDefaultALUType() {
+        return aluType;
     }
 
     /**

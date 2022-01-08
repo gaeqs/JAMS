@@ -27,9 +27,12 @@ package net.jamsimulator.jams.project.mips.configuration;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.architecture.Architecture;
-import net.jamsimulator.jams.mips.architecture.MultiAPUPipelinedArchitecture;
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
+import net.jamsimulator.jams.mips.instruction.alu.ALU;
+import net.jamsimulator.jams.mips.instruction.alu.ALUCollectionSnapshot;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
 
 import java.util.HashSet;
@@ -48,6 +51,7 @@ public class MIPSSimulationConfigurationPresets {
     public static final String FORWARDING_ENABLED = "forwarding_enabled";
     public static final String BRANCH_ON_DECODE = "branch_on_decode";
     public static final String DELAY_SLOTS_ENABLED = "delay_slots_enabled";
+    public static final String ALUS = "alus";
 
     private final static Set<MIPSSimulationConfigurationNodePreset> PRESETS = new HashSet<>();
 
@@ -55,7 +59,7 @@ public class MIPSSimulationConfigurationPresets {
         var architectureManager = Manager.of(Architecture.class);
         var pipelinedArchitectures = architectureManager.stream()
                 .filter(it -> it.getName().equals(PipelinedArchitecture.NAME)
-                        || it.getName().equals(MultiAPUPipelinedArchitecture.NAME))
+                        || it.getName().equals(MultiALUPipelinedArchitecture.NAME))
                 .collect(Collectors.toSet());
 
         PRESETS.add(new MIPSSimulationConfigurationNodePreset(ARCHITECTURE, Architecture.class, 100,
@@ -76,6 +80,9 @@ public class MIPSSimulationConfigurationPresets {
         PRESETS.add(new MIPSSimulationConfigurationNodePreset(DELAY_SLOTS_ENABLED, Boolean.class, 79,
                 Messages.SIMULATION_CONFIGURATION_ENABLE_DELAY_SLOTS, false,
                 pipelinedArchitectures, Map.of(BRANCH_ON_DECODE, new Object[]{true})));
+        PRESETS.add(new MIPSSimulationConfigurationNodePreset(ALUS, ALUCollectionSnapshot.class, 70,
+                Messages.SIMULATION_CONFIGURATION_ALUS, new ALUCollectionSnapshot(Set.of(new ALU(ALUType.INTEGER, 1))),
+                pipelinedArchitectures, null));
     }
 
     public static Set<MIPSSimulationConfigurationNodePreset> getPresets() {

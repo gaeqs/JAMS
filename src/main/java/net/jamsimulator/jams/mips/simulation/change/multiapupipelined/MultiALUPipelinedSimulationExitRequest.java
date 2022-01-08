@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,27 +22,20 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.simulation.multiapupipelined.event;
+package net.jamsimulator.jams.mips.simulation.change.multialupipelined;
 
-import net.jamsimulator.jams.mips.simulation.event.SimulationEvent;
-import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipelinedSimulation;
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.simulation.change.SimulationChange;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelinedSimulation;
 
 /**
- * Represents an {@link net.jamsimulator.jams.event.Event} related to a {@link MultiAPUPipelinedSimulation}.
+ * A {@link SimulationChange} that registers the exit request of a {@link MultiALUPipelinedSimulation}.
  */
-public class MultiAPUPipelinedSimulationEvent extends SimulationEvent {
-
-    /**
-     * Creates the multi-cycle simulation event.
-     *
-     * @param simulation the {@link MultiAPUPipelinedSimulation} that has created this event.
-     */
-    public MultiAPUPipelinedSimulationEvent(MultiAPUPipelinedSimulation simulation) {
-        super(simulation);
-    }
+public class MultiALUPipelinedSimulationExitRequest extends SimulationChange<MultiALUPipelinedArchitecture> {
 
     @Override
-    public MultiAPUPipelinedSimulation getSimulation() {
-        return (MultiAPUPipelinedSimulation) super.getSimulation();
+    public void restore(MIPSSimulation<? extends MultiALUPipelinedArchitecture> simulation) {
+        ((MultiALUPipelinedSimulation) simulation).removeExitRequest();
     }
 }

@@ -36,25 +36,25 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
-import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipeline;
-import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipelineSlot;
-import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipelineSlotStatus;
-import net.jamsimulator.jams.mips.simulation.multiapupipelined.event.MultiAPUPipelineShiftEvent;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipeline;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelineSlot;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelineSlotStatus;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.event.MultiALUPipelineShiftEvent;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class MultiAPUPipelinedFlowTable extends FlowTable {
+public class MultiALUPipelinedFlowTable extends FlowTable {
 
-    private LinkedList<MultiAPUPipelineShiftEvent> toAdd;
-    private LinkedList<MultiAPUPipeline> pipelines;
+    private LinkedList<MultiALUPipelineShiftEvent> toAdd;
+    private LinkedList<MultiALUPipeline> pipelines;
     private Map<Long, SegmentedFlowEntry> entries;
 
     private long firstCycle;
 
-    public MultiAPUPipelinedFlowTable(MIPSSimulation<? extends MultiCycleArchitecture> simulation) {
+    public MultiALUPipelinedFlowTable(MIPSSimulation<? extends MultiCycleArchitecture> simulation) {
         super(simulation);
 
         firstCycle = 0;
@@ -112,9 +112,9 @@ public class MultiAPUPipelinedFlowTable extends FlowTable {
         refreshVisualizer();
     }
 
-    private void addStep(MultiAPUPipelineSlot slot, MultiCycleStep step, String registerStart, long cycle, boolean isFinished) {
+    private void addStep(MultiALUPipelineSlot slot, MultiCycleStep step, String registerStart, long cycle, boolean isFinished) {
         if (slot == null || slot.execution == null) return;
-        if(!isFinished && slot.status == MultiAPUPipelineSlotStatus.EXECUTED) step = step.getPreviousStep();
+        if(!isFinished && slot.status == MultiALUPipelineSlotStatus.EXECUTED) step = step.getPreviousStep();
         var entry = entries.get(slot.execution.getInstructionId());
         if (entry == null) {
             entry = new SegmentedFlowEntry(flows.getChildren().size(), this, slot.execution.getInstruction(),
@@ -154,7 +154,7 @@ public class MultiAPUPipelinedFlowTable extends FlowTable {
     }
 
     @Listener(priority = Integer.MIN_VALUE)
-    private void onInstructionExecuted(MultiAPUPipelineShiftEvent.After event) {
+    private void onInstructionExecuted(MultiALUPipelineShiftEvent.After event) {
         //Adding items to a separate list prevents the app to block.
         toAdd.add(event);
         pipelines.add(event.getPipeline().copy());

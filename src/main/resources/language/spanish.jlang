@@ -76,6 +76,10 @@ SIMULATION_CONFIGURATION_SOLVE_BRANCH_ON_DECODE=Resolver saltos en la fase de de
 SIMULATION_CONFIGURATION_SOLVE_BRANCH_ON_DECODE_TOOLTIP=Permite resolver saltos en la fase de decodificación. Esta opción solo funciona en arquitecturas con varias etapas.
 SIMULATION_CONFIGURATION_ENABLE_DELAY_SLOTS=Habilitar salto retardado.
 SIMULATION_CONFIGURATION_ENABLE_DELAY_SLOTS_TOOLTIP=Habilita el relleno de ranura.\n\nSi esta opción está habilitada, toda instrucción situada después de una instruction de control no compacta será ejecutada.
+SIMULATION_CONFIGURATION_ALUS=ALUs:
+SIMULATION_CONFIGURATION_ALUS_TOOLTIP=El conjunto de ALUs usado por el simulador.
+SIMULATION_CONFIGURATION_ALUS_TYPE=Tipo:
+SIMULATION_CONFIGURATION_ALUS_CYCLES=Ciclos:
 SIMULATION_CONFIGURATION_SYSTEM_CALLS_TAB=Llamadas al sistema
 SIMULATION_CONFIGURATION_SYSTEM_CALLS_TAB_LOAD_BUNDLE=Cargar conjunto
 SIMULATION_CONFIGURATION_SYSTEM_CALLS_TAB_PROPERTIES=Propiedades de la llamada
@@ -515,6 +519,11 @@ NUMBER_FORMAT_RGB=RGB
 NUMBER_FORMAT_RGBA=RGBA
 NUMBER_FORMAT_ENGLISH=Texto inglés
 NUMBER_FORMAT_ROMAN=Romano
+
+ALU_TYPE_INTEGER=Enteros
+ALU_TYPE_FLOAT_ADITION=Suma en coma flotante
+ALU_TYPE_FLOAT_MULTIPLICATION=Multiplicación en coma flotante
+ALU_TYPE_FLOAT_DIVISION=División en coma flotante
 
 //INSTRUCTIONS
 

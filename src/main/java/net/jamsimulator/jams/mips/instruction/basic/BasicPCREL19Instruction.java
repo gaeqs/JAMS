@@ -26,7 +26,7 @@ package net.jamsimulator.jams.mips.instruction.basic;
 
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledPCREL19Instruction;
-import net.jamsimulator.jams.mips.instruction.apu.APUType;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
@@ -44,13 +44,13 @@ public abstract class BasicPCREL19Instruction<Inst extends AssembledInstruction>
      *
      * @param mnemonic      the mnemonic.
      * @param parameters    the parameter types.
-     * @param apuType       the type of the APU where this instruction will be executed.
+     * @param aluType       the type of the ALU where this instruction will be executed.
      * @param operationCode the operation code.
      * @param pcRelFunction the pc relative function code.
      */
-    public BasicPCREL19Instruction(String mnemonic, ParameterType[] parameters, APUType apuType, int operationCode,
+    public BasicPCREL19Instruction(String mnemonic, ParameterType[] parameters, ALUType aluType, int operationCode,
                                    int pcRelFunction) {
-        super(mnemonic, parameters, apuType, operationCode);
+        super(mnemonic, parameters, aluType, operationCode);
         this.pcRelFunction = pcRelFunction;
     }
 
@@ -59,13 +59,13 @@ public abstract class BasicPCREL19Instruction<Inst extends AssembledInstruction>
      *
      * @param mnemonic      the mnemonic.
      * @param parameters    the parameter types.
-     * @param apuType       the type of the APU where this instruction will be executed.
+     * @param aluType       the type of the ALU where this instruction will be executed.
      * @param operationCode the operation code.
      * @param pcRelFunction the pc relative function code.
      */
-    public BasicPCREL19Instruction(String mnemonic, InstructionParameterTypes parameters, APUType apuType, int operationCode,
+    public BasicPCREL19Instruction(String mnemonic, InstructionParameterTypes parameters, ALUType aluType, int operationCode,
                                    int pcRelFunction) {
-        super(mnemonic, parameters, apuType, operationCode);
+        super(mnemonic, parameters, aluType, operationCode);
         this.pcRelFunction = pcRelFunction;
     }
 

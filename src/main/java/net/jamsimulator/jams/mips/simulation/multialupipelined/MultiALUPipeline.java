@@ -22,17 +22,17 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.simulation.multiapupipelined;
+package net.jamsimulator.jams.mips.simulation.multialupipelined;
 
-import net.jamsimulator.jams.mips.instruction.apu.APU;
-import net.jamsimulator.jams.mips.instruction.apu.APUCollection;
+import net.jamsimulator.jams.mips.instruction.alu.ALU;
+import net.jamsimulator.jams.mips.instruction.alu.ALUCollection;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.MIPSAddressException;
 import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 import net.jamsimulator.jams.mips.register.Register;
-import net.jamsimulator.jams.mips.simulation.multiapupipelined.event.MultiAPUPipelineShiftEvent;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.event.MultiALUPipelineShiftEvent;
 import net.jamsimulator.jams.mips.simulation.pipelined.exception.RAWHazardException;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -40,81 +40,81 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MultiAPUPipeline {
+public class MultiALUPipeline {
 
-    private final MultiAPUPipelinedSimulation simulation;
+    private final MultiALUPipelinedSimulation simulation;
     private final boolean delaySlotsEnabled;
-    private final APUCollection apus;
+    private final ALUCollection alus;
 
     private long instructionsStarted, instructionsFinished;
 
-    private MultiAPUPipelineSlot fetch;
-    private MultiAPUPipelineSlot decode;
-    private final MultiAPUPipelineSlot[] execute;
-    private MultiAPUPipelineSlot memory;
-    private MultiAPUPipelineSlot writeback;
-    private MultiAPUPipelineSlot finished;
+    private MultiALUPipelineSlot fetch;
+    private MultiALUPipelineSlot decode;
+    private final MultiALUPipelineSlot[] execute;
+    private MultiALUPipelineSlot memory;
+    private MultiALUPipelineSlot writeback;
+    private MultiALUPipelineSlot finished;
 
-    private final APU[] assignedAPUs;
+    private final ALU[] assignedALUs;
     private final int[] timesExecuted;
 
-    public MultiAPUPipeline(
-            MultiAPUPipelinedSimulation simulation,
+    public MultiALUPipeline(
+            MultiALUPipelinedSimulation simulation,
             boolean delaySlotsEnabled,
-            Set<APU> apus
+            List<ALU> alus
     ) {
         this.simulation = simulation;
         this.delaySlotsEnabled = delaySlotsEnabled;
-        this.apus = new APUCollection(apus);
-        execute = new MultiAPUPipelineSlot[apus.size()];
-        this.assignedAPUs = new APU[apus.size()];
-        this.timesExecuted = new int[apus.size()];
+        this.alus = new ALUCollection(alus);
+        execute = new MultiALUPipelineSlot[alus.size()];
+        this.assignedALUs = new ALU[alus.size()];
+        this.timesExecuted = new int[alus.size()];
     }
 
-    private MultiAPUPipeline(
-            MultiAPUPipelinedSimulation simulation,
+    private MultiALUPipeline(
+            MultiALUPipelinedSimulation simulation,
             boolean delaySlotsEnabled,
-            APUCollection apus
+            ALUCollection alus
     ) {
         this.simulation = simulation;
         this.delaySlotsEnabled = delaySlotsEnabled;
-        this.apus = apus.copy();
+        this.alus = alus.copy();
 
-        var apuSize = apus.getApus().size();
-        execute = new MultiAPUPipelineSlot[apuSize];
-        this.assignedAPUs = new APU[apuSize];
-        this.timesExecuted = new int[apuSize];
+        var aluSize = alus.getAlus().size();
+        execute = new MultiALUPipelineSlot[aluSize];
+        this.assignedALUs = new ALU[aluSize];
+        this.timesExecuted = new int[aluSize];
     }
 
-    public APUCollection getApus() {
-        return apus;
+    public ALUCollection getAlus() {
+        return alus;
     }
 
-    public MultiAPUPipelineSlot getFetch() {
+    public MultiALUPipelineSlot getFetch() {
         return fetch;
     }
 
-    public MultiAPUPipelineSlot getDecode() {
+    public MultiALUPipelineSlot getDecode() {
         return decode;
     }
 
-    public MultiAPUPipelineSlot getMemory() {
+    public MultiALUPipelineSlot getMemory() {
         return memory;
     }
 
-    public MultiAPUPipelineSlot getFinished() {
+    public MultiALUPipelineSlot getFinished() {
         return finished;
     }
 
-    public Set<MultiAPUPipelineSlot> getExecute() {
+    public Set<MultiALUPipelineSlot> getExecute() {
         return Arrays.stream(execute).filter(Objects::nonNull).collect(Collectors.toSet());
     }
 
-    public MultiAPUPipelineSlot getWriteback() {
+    public MultiALUPipelineSlot getWriteback() {
         return writeback;
     }
 
-    public Optional<MultiAPUPipelineSlot> getOldestStep() {
+    public Optional<MultiALUPipelineSlot> getOldestStep() {
         return Stream.concat(Stream.of(fetch, decode, memory, writeback), Arrays.stream(execute))
                 .filter(it -> it != null && it.execution != null)
                 .min(Comparator.comparing(it -> it.execution.getInstructionId()));
@@ -134,20 +134,20 @@ public class MultiAPUPipeline {
     }
 
     public void shift() {
-        simulation.callEvent(new MultiAPUPipelineShiftEvent.Before(simulation, this));
+        simulation.callEvent(new MultiALUPipelineShiftEvent.Before(simulation, this));
         finished = null;
-        if (writeback != null && writeback.status == MultiAPUPipelineSlotStatus.EXECUTED) {
+        if (writeback != null && writeback.status == MultiALUPipelineSlotStatus.EXECUTED) {
             finished = writeback;
             writeback = null;
             instructionsFinished++;
         }
 
-        if (memory != null && memory.status == MultiAPUPipelineSlotStatus.EXECUTED) {
+        if (memory != null && memory.status == MultiALUPipelineSlotStatus.EXECUTED) {
             if (writeback == null) {
                 writeback = memory;
                 memory = null;
             } else {
-                memory.status = MultiAPUPipelineSlotStatus.STALL;
+                memory.status = MultiALUPipelineSlotStatus.STALL;
             }
         }
 
@@ -156,25 +156,25 @@ public class MultiAPUPipeline {
             shiftExecutionToMemory();
         } else {
             for (var e : execute) {
-                if (e != null) e.status = MultiAPUPipelineSlotStatus.STALL;
+                if (e != null) e.status = MultiALUPipelineSlotStatus.STALL;
             }
         }
 
-        if (decode != null && decode.status == MultiAPUPipelineSlotStatus.EXECUTED) {
+        if (decode != null && decode.status == MultiALUPipelineSlotStatus.EXECUTED) {
             shiftDecodeToExecute();
         }
 
-        if (fetch != null && fetch.status == MultiAPUPipelineSlotStatus.EXECUTED) {
+        if (fetch != null && fetch.status == MultiALUPipelineSlotStatus.EXECUTED) {
             if (decode == null) {
                 decode = fetch;
                 fetch = null;
                 Register pc = simulation.getRegisters().getProgramCounter();
                 pc.setValue(pc.getValue() + 4);
             } else {
-                fetch.status = MultiAPUPipelineSlotStatus.STALL;
+                fetch.status = MultiALUPipelineSlotStatus.STALL;
             }
         }
-        simulation.callEvent(new MultiAPUPipelineShiftEvent.After(simulation, this));
+        simulation.callEvent(new MultiALUPipelineShiftEvent.After(simulation, this));
     }
 
     public void reset() {
@@ -186,14 +186,14 @@ public class MultiAPUPipeline {
         fetch = null;
         instructionsStarted = 0;
         instructionsFinished = 0;
-        Arrays.fill(assignedAPUs, null);
+        Arrays.fill(assignedALUs, null);
         Arrays.fill(timesExecuted, 0);
-        apus.reset();
+        alus.reset();
     }
 
     public void stallFetch() {
         if (fetch != null) {
-            fetch.status = MultiAPUPipelineSlotStatus.STALL;
+            fetch.status = MultiALUPipelineSlotStatus.STALL;
         }
     }
 
@@ -206,7 +206,7 @@ public class MultiAPUPipeline {
         boolean fromMemory = memory != null && memory.execution == execution;
 
         if (!fromMemory) {
-            for (MultiAPUPipelineSlot slot : execute) {
+            for (MultiALUPipelineSlot slot : execute) {
                 if (slot != null && slot.execution != null && slot.execution != execution) {
                     if (register.isLastLockedBeforeId(slot.execution, execution.getInstructionId())) {
                         var optional = slot.execution.getForwardedValue(register);
@@ -233,8 +233,8 @@ public class MultiAPUPipeline {
         return OptionalInt.empty();
     }
 
-    public MultiAPUPipeline copy() {
-        var copy = new MultiAPUPipeline(simulation, delaySlotsEnabled, apus);
+    public MultiALUPipeline copy() {
+        var copy = new MultiALUPipeline(simulation, delaySlotsEnabled, alus);
         copy.instructionsStarted = instructionsStarted;
         copy.instructionsFinished = instructionsFinished;
 
@@ -248,14 +248,14 @@ public class MultiAPUPipeline {
             copy.execute[i] = execute[i] == null ? null : execute[i].copy();
         }
 
-        System.arraycopy(assignedAPUs, 0, copy.assignedAPUs, 0, assignedAPUs.length);
+        System.arraycopy(assignedALUs, 0, copy.assignedALUs, 0, assignedALUs.length);
         System.arraycopy(timesExecuted, 0, copy.timesExecuted, 0, timesExecuted.length);
 
         return copy;
     }
 
-    public void restore(MultiAPUPipeline old) {
-        apus.restore(old.apus);
+    public void restore(MultiALUPipeline old) {
+        alus.restore(old.alus);
         instructionsStarted = old.instructionsStarted;
         instructionsFinished = old.instructionsFinished;
         fetch = old.fetch == null ? null : old.fetch.copy();
@@ -268,7 +268,7 @@ public class MultiAPUPipeline {
             execute[i] = old.execute[i] == null ? null : old.execute[i].copy();
         }
 
-        System.arraycopy(old.assignedAPUs, 0, assignedAPUs, 0, assignedAPUs.length);
+        System.arraycopy(old.assignedALUs, 0, assignedALUs, 0, assignedALUs.length);
         System.arraycopy(old.timesExecuted, 0, timesExecuted, 0, timesExecuted.length);
     }
 
@@ -278,7 +278,7 @@ public class MultiAPUPipeline {
         var exception = writeback.exception;
         if (exception != null) {
             simulation.requestSoftwareInterrupt(exception);
-            writeback.status = MultiAPUPipelineSlotStatus.EXECUTED;
+            writeback.status = MultiALUPipelineSlotStatus.EXECUTED;
             return;
         }
 
@@ -291,13 +291,13 @@ public class MultiAPUPipeline {
                         + "' when the instruction was on WriteBack");
             }
         }
-        writeback.status = MultiAPUPipelineSlotStatus.EXECUTED;
+        writeback.status = MultiALUPipelineSlotStatus.EXECUTED;
     }
 
     private void memory() {
         if (memory == null) return;
         if (memory.exception != null) {
-            memory.status = MultiAPUPipelineSlotStatus.EXECUTED;
+            memory.status = MultiALUPipelineSlotStatus.EXECUTED;
             return;
         }
         try {
@@ -311,7 +311,7 @@ public class MultiAPUPipeline {
             System.err.println("Exception " + ex);
             ex.printStackTrace();
         }
-        memory.status = MultiAPUPipelineSlotStatus.EXECUTED;
+        memory.status = MultiALUPipelineSlotStatus.EXECUTED;
     }
 
     private void execute() {
@@ -319,16 +319,16 @@ public class MultiAPUPipeline {
             var execution = execute[i];
             if (execution == null) continue;
             if (execution.exception != null) {
-                execution.status = MultiAPUPipelineSlotStatus.EXECUTED;
+                execution.status = MultiALUPipelineSlotStatus.EXECUTED;
                 continue;
             }
 
-            var required = assignedAPUs[i].cyclesRequired();
+            var required = assignedALUs[i].cyclesRequired();
             if (required == timesExecuted[i]) {
-                execution.status = MultiAPUPipelineSlotStatus.EXECUTED;
+                execution.status = MultiALUPipelineSlotStatus.EXECUTED;
             } else if (required - 1 > timesExecuted[i]) {
                 timesExecuted[i]++;
-                execution.status = MultiAPUPipelineSlotStatus.RUNNING;
+                execution.status = MultiALUPipelineSlotStatus.RUNNING;
             } else {
                 try {
                     execution.execution.execute();
@@ -339,7 +339,7 @@ public class MultiAPUPipeline {
                 if (simulation.checkThreadInterrupted()) return;
 
                 timesExecuted[i] = required;
-                execution.status = MultiAPUPipelineSlotStatus.EXECUTED;
+                execution.status = MultiALUPipelineSlotStatus.EXECUTED;
             }
         }
 
@@ -348,7 +348,7 @@ public class MultiAPUPipeline {
     private void decode() {
         if (decode == null) return;
         if (decode.exception != null) {
-            memory.status = MultiAPUPipelineSlotStatus.EXECUTED;
+            memory.status = MultiALUPipelineSlotStatus.EXECUTED;
             return;
         }
         if (decode.execution.isInDelaySlot() && decode.execution.getInstruction().getBasicOrigin()
@@ -359,12 +359,12 @@ public class MultiAPUPipeline {
         } else {
             try {
                 decode.execution.decode();
-                decode.status = MultiAPUPipelineSlotStatus.EXECUTED;
+                decode.status = MultiALUPipelineSlotStatus.EXECUTED;
             } catch (RAWHazardException ex) {
-                decode.status = MultiAPUPipelineSlotStatus.RAW;
+                decode.status = MultiALUPipelineSlotStatus.RAW;
             } catch (MIPSInterruptException ex) {
                 decode.exception = ex;
-                decode.status = MultiAPUPipelineSlotStatus.EXECUTED;
+                decode.status = MultiALUPipelineSlotStatus.EXECUTED;
             }
         }
     }
@@ -383,12 +383,12 @@ public class MultiAPUPipeline {
         var execution = (MultiCycleExecution<?, ?>) simulation.fetch(pcv);
         if (fetch != null && fetch.execution != null
                 && fetch.execution.getInstruction().equals(execution.getInstruction())) {
-            fetch.status = pc.isLocked() ? MultiAPUPipelineSlotStatus.RAW : MultiAPUPipelineSlotStatus.EXECUTED;
+            fetch.status = pc.isLocked() ? MultiALUPipelineSlotStatus.RAW : MultiALUPipelineSlotStatus.EXECUTED;
             return;
         }
 
-        fetch = new MultiAPUPipelineSlot(null, pcv, null,
-                pc.isLocked() ? MultiAPUPipelineSlotStatus.RAW : MultiAPUPipelineSlotStatus.EXECUTED);
+        fetch = new MultiALUPipelineSlot(null, pcv, null,
+                pc.isLocked() ? MultiALUPipelineSlotStatus.RAW : MultiALUPipelineSlotStatus.EXECUTED);
 
 
         if (execution == null) {
@@ -411,44 +411,45 @@ public class MultiAPUPipeline {
 
         for (int i = 0; i < execute.length; i++) {
             var e = execute[i];
-            if (e == null || e.status != MultiAPUPipelineSlotStatus.EXECUTED) continue;
+            if (e == null || e.status != MultiALUPipelineSlotStatus.EXECUTED) continue;
             if (!e.execution.canMoveToMemory(
                     memory == null ? null : memory.execution,
                     writeback == null ? null : writeback.execution
             )) {
-                e.status = MultiAPUPipelineSlotStatus.WAW;
+                e.status = MultiALUPipelineSlotStatus.WAW;
                 continue;
             }
             if (!move || executionId < e.execution.getInstructionId()) {
                 if (move) {
-                    execute[executionToMove].status = MultiAPUPipelineSlotStatus.STALL;
+                    execute[executionToMove].status = MultiALUPipelineSlotStatus.STALL;
                 }
                 move = true;
                 executionToMove = i;
                 executionId = e.execution.getInstructionId();
             } else {
-                e.status = MultiAPUPipelineSlotStatus.STALL;
+                e.status = MultiALUPipelineSlotStatus.STALL;
             }
         }
 
         if (move) {
-            apus.releaseAPU(assignedAPUs[executionToMove]);
+            alus.releaseALU(executionToMove);
             memory = execute[executionToMove];
             execute[executionToMove] = null;
         }
     }
 
     private void shiftDecodeToExecute() {
-        var apu = apus.requestAPU(decode.execution
-                .getInstruction().getBasicOrigin().getDefaultAPUType());
-        if (apu.isPresent()) {
-            int index = apu.get().id();
-            assignedAPUs[index] = apu.get();
+        var pair = alus.requestALU(decode.execution
+                .getInstruction().getBasicOrigin().getDefaultALUType());
+        if (pair.isPresent()) {
+            var index = pair.get().getKey();
+            var alu = pair.get().getValue();
+            assignedALUs[index] = alu;
             timesExecuted[index] = 0;
             execute[index] = decode;
             decode = null;
         } else {
-            decode.status = MultiAPUPipelineSlotStatus.STALL;
+            decode.status = MultiALUPipelineSlotStatus.STALL;
         }
     }
 

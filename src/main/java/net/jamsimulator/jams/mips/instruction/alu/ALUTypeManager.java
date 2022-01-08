@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,36 +22,25 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.instruction.apu;
+package net.jamsimulator.jams.mips.instruction.alu;
 
-import net.jamsimulator.jams.manager.ManagerResource;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.ResourceProvider;
-import net.jamsimulator.jams.utils.Validate;
 
-public record APUType(
-        ResourceProvider provider,
-        String name,
-        int defaultCyclesPerExecution
-) implements ManagerResource {
+public class ALUTypeManager extends Manager<ALUType> {
 
-    public static final APUType INTEGER = new APUType(ResourceProvider.JAMS, "integer", 1);
-    public static final APUType FLOAT_ADDTION = new APUType(ResourceProvider.JAMS, "float_adition", 4);
-    public static final APUType FLOAT_MULTIPLICATION = new APUType(ResourceProvider.JAMS, "float_multiplication", 9);
-    public static final APUType FLOAT_DIVISION = new APUType(ResourceProvider.JAMS, "float_division", 17);
+    public static final String NAME = "alu_type";
+    public static final ALUTypeManager INSTANCE = new ALUTypeManager(ResourceProvider.JAMS, NAME);
 
-    public APUType {
-        Validate.notNull(provider, "Provider cannot be null!");
-        Validate.notNull(name, "Name cannot be null!");
+    public ALUTypeManager(ResourceProvider provider, String name) {
+        super(provider, name, ALUType.class, false);
     }
 
     @Override
-    public ResourceProvider getResourceProvider() {
-        return provider;
+    protected void loadDefaultElements() {
+        add(ALUType.INTEGER);
+        add(ALUType.FLOAT_ADDTION);
+        add(ALUType.FLOAT_MULTIPLICATION);
+        add(ALUType.FLOAT_DIVISION);
     }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
 }

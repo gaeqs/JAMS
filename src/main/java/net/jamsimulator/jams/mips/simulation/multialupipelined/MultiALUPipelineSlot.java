@@ -22,24 +22,33 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.simulation.multiapupipelined;
+package net.jamsimulator.jams.mips.simulation.multialupipelined;
 
-public enum MultiAPUPipelineSlotStatus {
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
+import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 
-    EXECUTED(""),
-    RUNNING("..."),
-    RAW("RAW"),
-    WAR("WAR"),
-    WAW("WAW"),
-    STALL("-");
+public class MultiALUPipelineSlot {
 
-    private final String name;
+    public MultiCycleExecution<?, ?> execution;
+    public int pc;
+    public MIPSInterruptException exception;
+    public MultiALUPipelineSlotStatus status;
 
-    MultiAPUPipelineSlotStatus(String name) {
-        this.name = name;
+
+    public MultiALUPipelineSlot(
+            MultiCycleExecution<?, ?> instruction,
+            int pc,
+            MIPSInterruptException exception,
+            MultiALUPipelineSlotStatus status
+    ) {
+        this.execution = instruction;
+        this.pc = pc;
+        this.exception = exception;
+        this.status = status;
     }
 
-    public String getName() {
-        return name;
+    public MultiALUPipelineSlot copy() {
+        return new MultiALUPipelineSlot(execution, pc, exception, status);
     }
+
 }

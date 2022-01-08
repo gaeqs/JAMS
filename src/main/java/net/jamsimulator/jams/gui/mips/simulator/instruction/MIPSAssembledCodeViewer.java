@@ -29,7 +29,7 @@ import javafx.scene.shape.Rectangle;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.mips.simulator.instruction.type.MIPSMultiAPUPipelinedAssembledCodeViewer;
+import net.jamsimulator.jams.gui.mips.simulator.instruction.type.MIPSMultiALUPipelinedAssembledCodeViewer;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.type.MIPSMultiCycleAssembledCodeViewer;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.type.MIPSPipelinedAssembledCodeViewer;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.type.MIPSSingleCycleAssembledCodeViewer;
@@ -73,7 +73,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
         VIEWERS_PER_ARCHITECTURE.put(m.getOrNull(MultiCycleArchitecture.NAME), MIPSMultiCycleAssembledCodeViewer::new);
         VIEWERS_PER_ARCHITECTURE.put(m.getOrNull(PipelinedArchitecture.NAME), MIPSPipelinedAssembledCodeViewer::new);
         //noinspection StaticInitializerReferencesSubClass
-        VIEWERS_PER_ARCHITECTURE.put(m.getOrNull(MultiAPUPipelinedArchitecture.NAME), MIPSMultiAPUPipelinedAssembledCodeViewer::new);
+        VIEWERS_PER_ARCHITECTURE.put(m.getOrNull(MultiALUPipelinedArchitecture.NAME), MIPSMultiALUPipelinedAssembledCodeViewer::new);
     }
 
     protected final List<MIPSAssembledLine> assembledLines;

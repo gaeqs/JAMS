@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.gui.mips.configuration;
 
 import javafx.scene.Node;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import net.jamsimulator.jams.gui.configuration.RegionDisplay;
 import net.jamsimulator.jams.gui.util.value.ValueEditor;
@@ -67,7 +66,7 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
             representations.add(representation);
         });
         representations.sort((o1, o2) -> o2.getPreset().getPriority() - o1.getPreset().getPriority());
-        representations.stream().filter(Node::isVisible).forEach(getChildren()::add);
+        representations.stream().filter(it -> it.node.isVisible()).forEach(it -> getChildren().add(it.node));
         representations.forEach(target -> target.refreshEnabled(representations));
     }
 
@@ -78,8 +77,8 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
             getChildren().add(new RegionDisplay(Messages.SIMULATION_CONFIGURATION_GENERAL_REGION));
             for (NodeRepresentation representation : representations) {
                 representation.refreshView((Architecture) value);
-                if (representation.isVisible()) {
-                    getChildren().add(representation);
+                if (representation.getNode().isVisible()) {
+                    getChildren().add(representation.getNode());
                 }
                 representation.refreshEnabled(representations);
             }
@@ -90,25 +89,20 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
         }
     }
 
-    private class NodeRepresentation extends HBox {
+    private class NodeRepresentation {
 
         private final MIPSSimulationConfigurationNodePreset preset;
         private final ValueEditor<?> editor;
+        private final Node node;
 
         public NodeRepresentation(MIPSSimulationConfigurationNodePreset preset, Object value) {
             getStyleClass().add(REPRESENTATION_STYLE_CLASS);
-
             this.preset = preset;
-            var label = new LanguageLabel(preset.getLanguageNode());
-            label.setTooltip(new LanguageTooltip(preset.getLanguageNode() + "_TOOLTIP"));
-            editor = ValueEditors.getByTypeUnsafe(preset.getType()).build();
 
-            if (value instanceof Boolean) {
-                label.setOnMouseClicked(event -> editor.setCurrentValueUnsafe(!(boolean) editor.getCurrentValue()));
-                getChildren().addAll(editor.getAsNode(), label);
-            } else {
-                getChildren().addAll(label, editor.getAsNode());
-            }
+            editor = ValueEditors.getByTypeUnsafe(preset.getType()).build();
+            var languageNode = new LanguageLabel(preset.getLanguageNode());
+            languageNode.setTooltip(new LanguageTooltip(preset.getLanguageNode() + "_TOOLTIP"));
+            node = editor.buildConfigNode(languageNode);
 
             editor.setCurrentValueUnsafe(value);
             editor.addListener(v -> update(preset, v));
@@ -118,12 +112,16 @@ public class MIPSConfigurationDisplayGeneralTab extends VBox {
             return preset;
         }
 
+        public Node getNode() {
+            return node;
+        }
+
         public void refreshView(Architecture architecture) {
-            setVisible(preset.supportArchitecture(architecture));
+            node.setVisible(preset.supportArchitecture(architecture));
         }
 
         public void refreshEnabled(Collection<NodeRepresentation> representations) {
-            setDisabled(representations.stream().anyMatch(target ->
+            node.setDisable(representations.stream().anyMatch(target ->
                     !preset.supportsNode(target.preset.getName(), target.editor.getCurrentValue())));
         }
 

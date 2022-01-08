@@ -29,7 +29,7 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipelinedSimulation;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelinedSimulation;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 import net.jamsimulator.jams.mips.simulation.pipelined.AbstractPipelinedSimulation;
 import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
@@ -365,16 +365,16 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
             setAndUnlock(pc(), address);
         }
 
-        if (simulation instanceof MultiAPUPipelinedSimulation) {
+        if (simulation instanceof MultiALUPipelinedSimulation) {
             if (!delaySlotsEnabled || ((ControlTransferInstruction) instruction.getBasicOrigin()).isCompact()) {
-                ((MultiAPUPipelinedSimulation) simulation).getPipeline().stallFetch();
+                ((MultiALUPipelinedSimulation) simulation).getPipeline().stallFetch();
 
                 setAndUnlock(pc(), address);
             } else {
                 //The fetch is not cancelled. If there's an instruction to fetch,
                 //the next one will be fetched at address + 4. We do not want that!
                 //The instruction at the fetch slot will always be null, so we check its PC instead.
-                boolean willFetch = ((MultiAPUPipelinedSimulation) simulation)
+                boolean willFetch = ((MultiALUPipelinedSimulation) simulation)
                         .getPipeline().getFetch() != null;
                 setAndUnlock(pc(), willFetch ? address - 4 : address);
             }

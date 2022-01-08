@@ -36,7 +36,7 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
-import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipelineSlotStatus;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelineSlotStatus;
 import net.jamsimulator.jams.mips.simulation.multicycle.event.MultiCycleStepEvent;
 
 import java.util.HashMap;
@@ -101,7 +101,7 @@ public class MultiCycleFlowTable extends FlowTable {
             }
 
             entry.addStep(event.getCycle(), event.getExecutedStep(), stepSize, firstCycle,
-                    MultiAPUPipelineSlotStatus.EXECUTED);
+                    MultiALUPipelineSlotStatus.EXECUTED);
         }
 
 

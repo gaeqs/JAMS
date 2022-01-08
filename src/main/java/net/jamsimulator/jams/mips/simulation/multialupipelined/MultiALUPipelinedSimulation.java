@@ -22,12 +22,13 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.simulation.multiapupipelined;
+package net.jamsimulator.jams.mips.simulation.multialupipelined;
 
 import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.mips.architecture.MultiAPUPipelinedArchitecture;
-import net.jamsimulator.jams.mips.instruction.apu.APU;
-import net.jamsimulator.jams.mips.instruction.apu.APUType;
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
+import net.jamsimulator.jams.mips.instruction.alu.ALU;
+import net.jamsimulator.jams.mips.instruction.alu.ALUCollectionSnapshot;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
@@ -44,8 +45,8 @@ import net.jamsimulator.jams.mips.register.event.RegisterUnlockEvent;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 import net.jamsimulator.jams.mips.simulation.change.*;
-import net.jamsimulator.jams.mips.simulation.change.multiapupipelined.MultiAPUPipelinedSimulationChangePipeline;
-import net.jamsimulator.jams.mips.simulation.change.multiapupipelined.MultiAPUPipelinedSimulationExitRequest;
+import net.jamsimulator.jams.mips.simulation.change.multialupipelined.MultiALUPipelinedSimulationChangePipeline;
+import net.jamsimulator.jams.mips.simulation.change.multialupipelined.MultiALUPipelinedSimulationExitRequest;
 import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileCloseEvent;
@@ -55,28 +56,28 @@ import net.jamsimulator.jams.mips.simulation.pipelined.AbstractPipelinedSimulati
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurationPresets;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
-import java.util.Set;
 
-public class MultiAPUPipelinedSimulation
-        extends MIPSSimulation<MultiAPUPipelinedArchitecture>
+public class MultiALUPipelinedSimulation
+        extends MIPSSimulation<MultiALUPipelinedArchitecture>
         implements AbstractPipelinedSimulation {
 
     public static final int MAX_CHANGES = 10000;
 
     private final Listeners listeners;
-    private final LinkedList<StepChanges<MultiAPUPipelinedArchitecture>> changes;
-    private final MultiAPUPipeline pipeline;
+    private final LinkedList<StepChanges<MultiALUPipelinedArchitecture>> changes;
+    private final MultiALUPipeline pipeline;
 
     private final boolean forwardingEnabled;
     private final boolean solveBranchesOnDecode;
     private final boolean delaySlotsEnabled;
 
     private boolean exitRequested;
-    private StepChanges<MultiAPUPipelinedArchitecture> currentStepChanges;
+    private StepChanges<MultiALUPipelinedArchitecture> currentStepChanges;
 
-    public MultiAPUPipelinedSimulation(MultiAPUPipelinedArchitecture architecture, MIPSSimulationData data) {
+    public MultiALUPipelinedSimulation(MultiALUPipelinedArchitecture architecture, MIPSSimulationData data) {
         super(architecture, data, false, true);
 
         exitRequested = false;
@@ -87,12 +88,9 @@ public class MultiAPUPipelinedSimulation
         delaySlotsEnabled = solveBranchesOnDecode && (boolean) data.configuration()
                 .getNodeValue(MIPSSimulationConfigurationPresets.DELAY_SLOTS_ENABLED);
 
-        pipeline = new MultiAPUPipeline(this, delaySlotsEnabled, Set.of(
-                new APU(0, APUType.INTEGER, APUType.INTEGER.defaultCyclesPerExecution()),
-                new APU(1, APUType.FLOAT_ADDTION, APUType.FLOAT_ADDTION.defaultCyclesPerExecution()),
-                new APU(2, APUType.FLOAT_MULTIPLICATION, APUType.FLOAT_MULTIPLICATION.defaultCyclesPerExecution()),
-                new APU(3, APUType.FLOAT_DIVISION, APUType.FLOAT_DIVISION.defaultCyclesPerExecution()))
-        );
+        ALUCollectionSnapshot list = data.configuration().getNodeValue(MIPSSimulationConfigurationPresets.ALUS);
+
+        pipeline = new MultiALUPipeline(this, delaySlotsEnabled, list);
 
         listeners = new Listeners();
 
@@ -109,7 +107,7 @@ public class MultiAPUPipelinedSimulation
         exitRequested = false;
     }
 
-    public MultiAPUPipeline getPipeline() {
+    public MultiALUPipeline getPipeline() {
         return pipeline;
     }
 
@@ -140,7 +138,7 @@ public class MultiAPUPipelinedSimulation
     @Override
     public void requestExit() {
         if (currentStepChanges != null) {
-            currentStepChanges.addChange(new MultiAPUPipelinedSimulationExitRequest());
+            currentStepChanges.addChange(new MultiALUPipelinedSimulationExitRequest());
         }
         pipeline.removeFetchAndDecode();
         exitRequested = true;
@@ -236,7 +234,7 @@ public class MultiAPUPipelinedSimulation
         }
 
         if (currentStepChanges != null) {
-            currentStepChanges.addChange(new MultiAPUPipelinedSimulationChangePipeline(pipeline.copy()));
+            currentStepChanges.addChange(new MultiALUPipelinedSimulationChangePipeline(pipeline.copy()));
         }
 
         pipeline.executeAllSteps();

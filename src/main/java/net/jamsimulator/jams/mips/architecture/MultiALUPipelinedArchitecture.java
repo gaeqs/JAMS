@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2022 Gael Rial Costas
+ *  Copyright (c) 2021 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,27 +22,34 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.simulation.change.multiapupipelined;
+package net.jamsimulator.jams.mips.architecture;
 
-import net.jamsimulator.jams.mips.architecture.MultiAPUPipelinedArchitecture;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.change.SimulationChange;
-import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipeline;
-import net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipelinedSimulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelinedSimulation;
 
 /**
- * A {@link SimulationChange} that registers the change of the pipelin of a {@link  net.jamsimulator.jams.mips.simulation.multiapupipelined.MultiAPUPipelinedSimulation}.
+ * Represents the multiple ALU pipelined architecture.
+ * <p>
+ * Behaves the same as the pipelined simulations, but it adds support for multiple ALUs.
+ * These ALUs can be executed simultaneously and may need diferent ticks to be executed.
  */
-public class MultiAPUPipelinedSimulationChangePipeline extends SimulationChange<MultiAPUPipelinedArchitecture> {
+public class MultiALUPipelinedArchitecture extends PipelinedArchitecture {
 
-    private final MultiAPUPipeline old;
+    public static final String NAME = "MultiALU Pipelined";
+    public static final MultiALUPipelinedArchitecture INSTANCE = new MultiALUPipelinedArchitecture(ResourceProvider.JAMS);
 
-    public MultiAPUPipelinedSimulationChangePipeline(MultiAPUPipeline old) {
-        this.old = old;
+    protected MultiALUPipelinedArchitecture(ResourceProvider provider, String name) {
+        super(provider, name);
+    }
+
+    private MultiALUPipelinedArchitecture(ResourceProvider provider) {
+        super(provider, NAME);
     }
 
     @Override
-    public void restore(MIPSSimulation<? extends MultiAPUPipelinedArchitecture> simulation) {
-        ((MultiAPUPipelinedSimulation) simulation).getPipeline().restore(old);
+    public MIPSSimulation<? extends MultiALUPipelinedArchitecture> createSimulation(MIPSSimulationData data) {
+        return new MultiALUPipelinedSimulation(this, data);
     }
 }

@@ -26,7 +26,7 @@ package net.jamsimulator.jams.mips.instruction.basic;
 
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRSOPInstruction;
-import net.jamsimulator.jams.mips.instruction.apu.APUType;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
@@ -45,13 +45,13 @@ public abstract class BasicRSOPInstruction<Inst extends AssembledInstruction> ex
      *
      * @param mnemonic      the mnemonic.
      * @param parameters    the parameter types.
-     * @param apuType       the type of the APU where this instruction will be executed.
+     * @param aluType       the type of the ALU where this instruction will be executed.
      * @param operationCode the operation code.
      * @param functionCode  the function code.
      */
-    public BasicRSOPInstruction(String mnemonic, ParameterType[] parameters, APUType apuType, int operationCode,
+    public BasicRSOPInstruction(String mnemonic, ParameterType[] parameters, ALUType aluType, int operationCode,
                                 int functionCode, int sopCode) {
-        super(mnemonic, parameters, apuType, operationCode);
+        super(mnemonic, parameters, aluType, operationCode);
         this.functionCode = functionCode;
         this.sopCode = sopCode;
     }
@@ -61,13 +61,13 @@ public abstract class BasicRSOPInstruction<Inst extends AssembledInstruction> ex
      *
      * @param mnemonic      the mnemonic.
      * @param parameters    the parameter types.
-     * @param apuType       the type of the APU where this instruction will be executed.
+     * @param aluType       the type of the ALU where this instruction will be executed.
      * @param operationCode the operation code.
      * @param functionCode  the function code.
      */
-    public BasicRSOPInstruction(String mnemonic, InstructionParameterTypes parameters, APUType apuType, int operationCode,
+    public BasicRSOPInstruction(String mnemonic, InstructionParameterTypes parameters, ALUType aluType, int operationCode,
                                 int functionCode, int sopCode) {
-        super(mnemonic, parameters, apuType, operationCode);
+        super(mnemonic, parameters, aluType, operationCode);
         this.functionCode = functionCode;
         this.sopCode = sopCode;
     }

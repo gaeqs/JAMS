@@ -24,12 +24,12 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
-import net.jamsimulator.jams.mips.architecture.MultiAPUPipelinedArchitecture;
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
-import net.jamsimulator.jams.mips.instruction.apu.APUType;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
@@ -46,17 +46,17 @@ import net.jamsimulator.jams.utils.StringUtils;
 public class InstructionBlezalc extends BasicInstruction<InstructionBlezalc.Assembled> implements ControlTransferInstruction {
 
     public static final String MNEMONIC = "blezalc";
-    public static final APUType APU_TYPE = APUType.INTEGER;
+    public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b000110;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
 
     public InstructionBlezalc() {
-        super(MNEMONIC, PARAMETER_TYPES, APU_TYPE, OPERATION_CODE);
+        super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
         addExecutionBuilder(PipelinedArchitecture.INSTANCE, Pipelined::new);
-        addExecutionBuilder(MultiAPUPipelinedArchitecture.INSTANCE, Pipelined::new);
+        addExecutionBuilder(MultiALUPipelinedArchitecture.INSTANCE, Pipelined::new);
     }
 
     @Override

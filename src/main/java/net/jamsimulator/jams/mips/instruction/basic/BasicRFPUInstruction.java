@@ -26,7 +26,7 @@ package net.jamsimulator.jams.mips.instruction.basic;
 
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
-import net.jamsimulator.jams.mips.instruction.apu.APUType;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 
@@ -44,14 +44,14 @@ public abstract class BasicRFPUInstruction<Inst extends AssembledInstruction> ex
      *
      * @param mnemonic      the mnemonic.
      * @param parameters    the parameter types.
-     * @param apuType       the type of the APU where this instruction will be executed.
+     * @param aluType       the type of the ALU where this instruction will be executed.
      * @param operationCode the operation code.
      * @param functionCode  the function code.
      * @param fmtCode       the operand type format specifier.
      */
-    public BasicRFPUInstruction(String mnemonic, ParameterType[] parameters, APUType apuType, int operationCode,
+    public BasicRFPUInstruction(String mnemonic, ParameterType[] parameters, ALUType aluType, int operationCode,
                                 int functionCode, int fmtCode) {
-        super(mnemonic, parameters, apuType, operationCode, functionCode);
+        super(mnemonic, parameters, aluType, operationCode, functionCode);
         this.fmtCode = fmtCode;
     }
 
@@ -61,14 +61,14 @@ public abstract class BasicRFPUInstruction<Inst extends AssembledInstruction> ex
      *
      * @param mnemonic      the mnemonic.
      * @param parameters    the parameter types.
-     * @param apuType       the type of the APU where this instruction will be executed.
+     * @param aluType       the type of the ALU where this instruction will be executed.
      * @param operationCode the operation code.
      * @param functionCode  the function code.
      * @param fmtCode       the operand type format specifier.
      */
-    public BasicRFPUInstruction(String mnemonic, InstructionParameterTypes parameters, APUType apuType, int operationCode,
+    public BasicRFPUInstruction(String mnemonic, InstructionParameterTypes parameters, ALUType aluType, int operationCode,
                                 int functionCode, int fmtCode) {
-        super(mnemonic, parameters, apuType, operationCode, functionCode);
+        super(mnemonic, parameters, aluType, operationCode, functionCode);
         this.fmtCode = fmtCode;
     }
 

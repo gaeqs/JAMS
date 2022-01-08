@@ -30,6 +30,9 @@ import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledInstruc
 import net.jamsimulator.jams.gui.theme.Theme;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.mips.architecture.Architecture;
+import net.jamsimulator.jams.mips.instruction.alu.ALU;
+import net.jamsimulator.jams.mips.instruction.alu.ALUCollectionSnapshot;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
@@ -140,8 +143,22 @@ public class ValueEditors {
         var compiledViewerEditor = new MIPSAssembledInstructionViewerOrderValueEditor.Builder();
         editorByName.put(MIPSAssembledInstructionViewerOrderValueEditor.NAME, compiledViewerEditor);
         editorByType.put(MIPSAssembledInstructionViewerOrder.class, compiledViewerEditor);
-    }
 
+        // ALU TYPE
+        var aluTypeEditor = new ALUTypeValueEditor.Builder();
+        editorByName.put(ALUTypeValueEditor.NAME, aluTypeEditor);
+        editorByType.put(ALUType.class, aluTypeEditor);
+
+        // ALU
+        var aluEditor = new ALUValueEditor.Builder();
+        editorByName.put(ALUValueEditor.NAME, aluEditor);
+        editorByType.put(ALU.class, aluEditor);
+
+        // ALU COLLECTION SNAPSHOT
+        var aluCollectionSnapshotEditor = new ALUCollectionSnapshotValueEditor.Builder();
+        editorByName.put(ALUCollectionSnapshotValueEditor.NAME, aluCollectionSnapshotEditor);
+        editorByType.put(ALUCollectionSnapshot.class, aluCollectionSnapshotEditor);
+    }
 
     public static Optional<ValueEditor.Builder<?>> getByName(String name) {
         if (name == null) return Optional.empty();
