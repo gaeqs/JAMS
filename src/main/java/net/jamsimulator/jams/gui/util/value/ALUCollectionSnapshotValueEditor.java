@@ -131,7 +131,7 @@ public class ALUCollectionSnapshotValueEditor extends ListView<ALU> implements V
             } else {
                 setDraggable(true);
                 var editor = new ALUValueEditor();
-                editor.getChildren().add(0, new QualityImageView(Icons.CONTROL_REMOVE, ICON_SIZE, ICON_SIZE));
+                editor.getChildren().add(0, new QualityImageView(Icons.CONTROL_DRAG, ICON_SIZE, ICON_SIZE));
                 editor.getChildren().add(createRemoveButton());
                 editor.setCurrentValueUnsafe(item);
                 editor.addListener(it -> {
@@ -144,7 +144,7 @@ public class ALUCollectionSnapshotValueEditor extends ListView<ALU> implements V
 
         private Button createRemoveButton() {
             var button = new Button(null, new QualityImageView(Icons.CONTROL_REMOVE, ICON_SIZE, ICON_SIZE));
-            button.getStyleClass().add("dar-2-bold-button");
+            button.getStyleClass().add("button-bold");
             button.setCursor(Cursor.HAND);
             button.setOnAction(it -> {
                 getItems().remove(getIndex());
@@ -155,7 +155,7 @@ public class ALUCollectionSnapshotValueEditor extends ListView<ALU> implements V
 
         private Button createAddButton() {
             var button = new Button(null, new QualityImageView(Icons.CONTROL_ADD, ICON_SIZE, ICON_SIZE));
-            button.getStyleClass().add("dar-2-bold-button");
+            button.getStyleClass().add("button-bold");
             button.setCursor(Cursor.HAND);
             button.setOnAction(it -> {
                 getItems().add(getItems().size() - 1, new ALU(ALUType.INTEGER, 1));

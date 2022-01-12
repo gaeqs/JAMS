@@ -41,3 +41,24 @@
 .value-editor-assembled-instruction-viewer-order-hbox {
     -fx-fill-width: true;
 }
+
+.value-editor-alu-collection-snapshot .list-cell {
+    -fx-alignment: center;
+}
+
+.value-editor-alu {
+    -fx-spacing: 5px;
+    -fx-alignment: center;
+}
+
+.value-editor-alu .text-field {
+    -fx-pref-width: 60px;
+}
+
+.value-editor-alu .combo-box {
+    -fx-pref-width: 160px;
+}
+
+.value-editor-alu .add-button-wrapper {
+    -fx-alignment: center;
+}
