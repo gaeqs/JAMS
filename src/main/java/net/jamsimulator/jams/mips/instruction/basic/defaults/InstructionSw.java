@@ -33,6 +33,7 @@ import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.MemoryInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -42,7 +43,7 @@ import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
-public class InstructionSw extends BasicInstruction<InstructionSw.Assembled> {
+public class InstructionSw extends BasicInstruction<InstructionSw.Assembled> implements MemoryInstruction {
 
     public static final String MNEMONIC = "sw";
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
@@ -67,6 +68,11 @@ public class InstructionSw extends BasicInstruction<InstructionSw.Assembled> {
     @Override
     public AssembledInstruction assembleFromCode(int instructionCode) {
         return new Assembled(instructionCode, this, this);
+    }
+
+    @Override
+    public boolean isWriteInstruction() {
+        return true;
     }
 
     public static class Assembled extends AssembledI16Instruction {

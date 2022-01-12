@@ -27,8 +27,10 @@ package net.jamsimulator.jams.mips.instruction.execution;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.MemoryInstruction;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelineSlot;
 import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelinedSimulation;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 import net.jamsimulator.jams.mips.simulation.pipelined.AbstractPipelinedSimulation;
@@ -231,7 +233,22 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
 
     //region lock
 
-    public boolean canMoveToMemory(MultiCycleExecution<?, ?> memory, MultiCycleExecution<?, ?> writeback) {
+    public boolean canMoveToMemory(MultiALUPipelineSlot[] execute,
+                                   MultiCycleExecution<?, ?> memory,
+                                   MultiCycleExecution<?, ?> writeback) {
+
+        if (instruction.getBasicOrigin() instanceof MemoryInstruction memInstruction) {
+            for (MultiALUPipelineSlot current : execute) {
+                if (current == null || current.execution == this) continue;
+                if (current.execution.instructionId < instructionId &&
+                        current.execution.instruction.getBasicOrigin() instanceof MemoryInstruction memC) {
+                    if (memC.isWriteInstruction() || memInstruction.isWriteInstruction()) {
+                        return false;
+                    }
+                }
+            }
+        }
+
         return lockedRegisters.stream().allMatch(it ->
                 !it.isLockedBy(this) ||
                         it.isFirstLockedIgnoringMemoryAndWriteback(this, memory, writeback));

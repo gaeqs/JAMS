@@ -413,6 +413,7 @@ public class MultiALUPipeline {
             var e = execute[i];
             if (e == null || e.status != MultiALUPipelineSlotStatus.EXECUTED) continue;
             if (!e.execution.canMoveToMemory(
+                    execute,
                     memory == null ? null : memory.execution,
                     writeback == null ? null : writeback.execution
             )) {
