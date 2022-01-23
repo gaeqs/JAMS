@@ -26,7 +26,6 @@ package net.jamsimulator.jams.mips.simulation.multialupipelined.event;
 
 import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipeline;
 import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelinedSimulation;
-import net.jamsimulator.jams.mips.simulation.pipelined.Pipeline;
 
 /**
  * This event is called when a {@link MultiALUPipeline} shifts its instructions.
@@ -52,9 +51,9 @@ public class MultiALUPipelineShiftEvent extends MultiALUPipelinedSimulationEvent
     }
 
     /**
-     * Returns the {@link Pipeline} that is shifting.
+     * Returns the {@link MultiALUPipeline} that is shifting.
      *
-     * @return the {@link Pipeline}.
+     * @return the {@link MultiALUPipeline}.
      */
     public MultiALUPipeline getPipeline() {
         return pipeline;

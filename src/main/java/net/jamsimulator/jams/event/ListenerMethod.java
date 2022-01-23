@@ -28,9 +28,14 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 class ListenerMethod {
 
+    private static final AtomicLong ID_GENERATOR = new AtomicLong();
+
+    private final long id = ID_GENERATOR.getAndIncrement();
     private final Class<? extends Event> event;
     private final boolean weakReference;
 
@@ -64,6 +69,10 @@ class ListenerMethod {
             generics = new Type[0];
         }
 
+    }
+
+    public long getId() {
+        return id;
     }
 
     Class<? extends Event> getEvent() {

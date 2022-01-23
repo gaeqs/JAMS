@@ -32,8 +32,8 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipeline;
 import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelineSlot;
 import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelinedSimulation;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.event.MultiALUPipelineShiftEvent;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
-import net.jamsimulator.jams.mips.simulation.pipelined.event.PipelineShiftEvent;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -126,7 +126,7 @@ public class MIPSMultiALUPipelinedAssembledCodeViewer extends MIPSAssembledCodeV
     }
 
     @Listener
-    private void onPipelineShift(PipelineShiftEvent.After event) {
+    private void onPipelineShift(MultiALUPipelineShiftEvent.After event) {
         boolean newFullSpeed = simulation.getCycleDelay() == 0;
         if (!fullSpeed && newFullSpeed) {
             clearStyles();

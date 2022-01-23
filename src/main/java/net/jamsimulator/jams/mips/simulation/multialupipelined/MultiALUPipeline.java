@@ -33,7 +33,7 @@ import net.jamsimulator.jams.mips.interrupt.MIPSAddressException;
 import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.multialupipelined.event.MultiALUPipelineShiftEvent;
-import net.jamsimulator.jams.mips.simulation.pipelined.exception.RAWHazardException;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.exception.RAWHazardException;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.*;

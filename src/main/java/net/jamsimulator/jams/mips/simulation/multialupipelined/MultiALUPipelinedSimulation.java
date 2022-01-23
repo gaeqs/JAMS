@@ -26,9 +26,7 @@ package net.jamsimulator.jams.mips.simulation.multialupipelined;
 
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
-import net.jamsimulator.jams.mips.instruction.alu.ALU;
 import net.jamsimulator.jams.mips.instruction.alu.ALUCollectionSnapshot;
-import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
@@ -52,11 +50,9 @@ import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileCloseEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileOpenEvent;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileWriteEvent;
-import net.jamsimulator.jams.mips.simulation.pipelined.AbstractPipelinedSimulation;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurationPresets;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
 

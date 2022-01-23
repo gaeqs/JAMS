@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,28 +22,33 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.simulation.change.pipelined;
+package net.jamsimulator.jams.mips.simulation.multialupipelined.exception;
 
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
-import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.change.SimulationChange;
-import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
-import net.jamsimulator.jams.mips.simulation.pipelined.Pipeline;
-import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
+import net.jamsimulator.jams.mips.register.Register;
 
 /**
- * A {@link SimulationChange} that registers the change of the {@link MultiCycleStep} of a multi-cycle simulation.
+ * Represents a Read After Write hazard.
  */
-public class PipelinedSimulationChangePipeline extends SimulationChange<PipelinedArchitecture> {
+public class RAWHazardException extends RuntimeException {
 
-    private final Pipeline old;
+    private final Register register;
 
-    public PipelinedSimulationChangePipeline(Pipeline old) {
-        this.old = old;
+    /**
+     * Creates the hazard.
+     *
+     * @param register the {@link Register} that caused the RAW hazard.
+     */
+    public RAWHazardException(Register register) {
+        super("RAW hazard at register " + register);
+        this.register = register;
     }
 
-    @Override
-    public void restore(MIPSSimulation<? extends PipelinedArchitecture> simulation) {
-        ((PipelinedSimulation) simulation).getPipeline().restore(old);
+    /**
+     * Returns the {@link Register} that caused the hazard.
+     *
+     * @return the {@link Register}.
+     */
+    public Register getRegister() {
+        return register;
     }
 }

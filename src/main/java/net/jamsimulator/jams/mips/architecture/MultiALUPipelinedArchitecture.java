@@ -33,9 +33,10 @@ import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelined
  * Represents the multiple ALU pipelined architecture.
  * <p>
  * Behaves the same as the pipelined simulations, but it adds support for multiple ALUs.
+ * Behaves the same as the pipelined simulations, but it adds support for multiple ALUs.
  * These ALUs can be executed simultaneously and may need diferent ticks to be executed.
  */
-public class MultiALUPipelinedArchitecture extends PipelinedArchitecture {
+public class MultiALUPipelinedArchitecture extends MultiCycleArchitecture {
 
     public static final String NAME = "MultiALU Pipelined";
     public static final MultiALUPipelinedArchitecture INSTANCE = new MultiALUPipelinedArchitecture(ResourceProvider.JAMS);

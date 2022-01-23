@@ -30,12 +30,10 @@ import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.MemoryInstruction;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.AbstractPipelinedSimulation;
 import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelineSlot;
 import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelinedSimulation;
-import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
-import net.jamsimulator.jams.mips.simulation.pipelined.AbstractPipelinedSimulation;
-import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
-import net.jamsimulator.jams.mips.simulation.pipelined.exception.RAWHazardException;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.exception.RAWHazardException;
 
 import java.util.*;
 
@@ -379,22 +377,6 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
         //The instruction should be a control transfer instruction to perform a jump.
         if (!(instruction.getBasicOrigin() instanceof ControlTransferInstruction))
             throw new IllegalStateException("The instruction " + instruction.getBasicOrigin() + " is not a control transfer instruction!");
-
-        if (simulation instanceof PipelinedSimulation) {
-            if (!delaySlotsEnabled || ((ControlTransferInstruction) instruction.getBasicOrigin()).isCompact()) {
-                ((PipelinedSimulation) simulation).getPipeline().removeFetch();
-
-                setAndUnlock(pc(), address);
-            } else {
-                //The fetch is not cancelled. If there's an instruction to fetch,
-                //the next one will be fetched at address + 4. We do not want that!
-                //The instruction at the fetch slot will always be null, so we check its PC instead.
-                boolean willFetch = ((PipelinedSimulation) simulation).getPipeline().getPc(MultiCycleStep.FETCH) != 0;
-                setAndUnlock(pc(), willFetch ? address - 4 : address);
-            }
-        } else {
-            setAndUnlock(pc(), address);
-        }
 
         if (simulation instanceof MultiALUPipelinedSimulation) {
             if (!solveBranchesOnDecode) {

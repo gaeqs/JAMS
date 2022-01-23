@@ -48,7 +48,6 @@ public final class ArchitectureManager extends DefaultValuableManager<Architectu
     protected void loadDefaultElements() {
         add(SingleCycleArchitecture.INSTANCE);
         add(MultiCycleArchitecture.INSTANCE);
-        add(PipelinedArchitecture.INSTANCE);
         add(MultiALUPipelinedArchitecture.INSTANCE);
     }
 

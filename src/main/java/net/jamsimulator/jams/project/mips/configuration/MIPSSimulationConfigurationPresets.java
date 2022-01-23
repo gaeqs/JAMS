@@ -28,7 +28,6 @@ import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.alu.ALU;
 import net.jamsimulator.jams.mips.instruction.alu.ALUCollectionSnapshot;
@@ -58,8 +57,7 @@ public class MIPSSimulationConfigurationPresets {
     static {
         var architectureManager = Manager.of(Architecture.class);
         var pipelinedArchitectures = architectureManager.stream()
-                .filter(it -> it.getName().equals(PipelinedArchitecture.NAME)
-                        || it.getName().equals(MultiALUPipelinedArchitecture.NAME))
+                .filter(it -> it.getName().equals(MultiALUPipelinedArchitecture.NAME))
                 .collect(Collectors.toSet());
 
         PRESETS.add(new MIPSSimulationConfigurationNodePreset(ARCHITECTURE, Architecture.class, 100,
