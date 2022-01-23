@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
+import java.util.Set;
 
 public class SyscallExecutionOpenFile implements SyscallExecution {
 
@@ -46,11 +47,16 @@ public class SyscallExecutionOpenFile implements SyscallExecution {
 
     private final int nameRegister, flagRegister, modeRegister, resultRegister;
 
+    private final Set<Integer> requiredRegisters, lockedRegisters;
+
     public SyscallExecutionOpenFile(int nameRegister, int flagRegister, int modeRegister, int resultRegister) {
         this.nameRegister = nameRegister;
         this.flagRegister = flagRegister;
         this.modeRegister = modeRegister;
         this.resultRegister = resultRegister;
+
+        requiredRegisters = Set.of(nameRegister, flagRegister, modeRegister);
+        lockedRegisters = Set.of(resultRegister);
     }
 
     @Override
@@ -154,6 +160,16 @@ public class SyscallExecutionOpenFile implements SyscallExecution {
         } catch (IOException ex) {
             execution.setAndUnlock(resultRegister, -1);
         }
+    }
+
+    @Override
+    public Set<Integer> getRequiredRegisters() {
+        return requiredRegisters;
+    }
+
+    @Override
+    public Set<Integer> getLockedRegisters() {
+        return lockedRegisters;
     }
 
     private String getString(MIPSSimulation<?> simulation, int address) {

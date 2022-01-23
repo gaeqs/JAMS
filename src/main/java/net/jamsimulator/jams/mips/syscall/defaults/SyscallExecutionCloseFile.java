@@ -34,7 +34,9 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Set;
 
 public class SyscallExecutionCloseFile implements SyscallExecution {
 
@@ -42,8 +44,11 @@ public class SyscallExecutionCloseFile implements SyscallExecution {
 
     private final int idRegister;
 
+    private final Set<Integer> requiredRegisters;
+
     public SyscallExecutionCloseFile(int idRegister) {
         this.idRegister = idRegister;
+        requiredRegisters = Set.of(idRegister);
     }
 
     @Override
@@ -67,6 +72,17 @@ public class SyscallExecutionCloseFile implements SyscallExecution {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+
+    @Override
+    public Set<Integer> getRequiredRegisters() {
+        return requiredRegisters;
+    }
+
+    @Override
+    public Set<Integer> getLockedRegisters() {
+        return Collections.emptySet();
     }
 
     public static class Builder extends SyscallExecutionBuilder<SyscallExecutionCloseFile> {

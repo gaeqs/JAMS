@@ -33,13 +33,17 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.MemoryInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
-public class InstructionSyscall extends BasicRInstruction<InstructionSyscall.Assembled> {
+// The syscall instruciton implements ControlTransferInstruction and MemoryInstruction to avoid external hazards.
+public class InstructionSyscall extends BasicRInstruction<InstructionSyscall.Assembled>
+        implements ControlTransferInstruction, MemoryInstruction {
 
     public static final String MNEMONIC = "syscall";
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
@@ -63,6 +67,18 @@ public class InstructionSyscall extends BasicRInstruction<InstructionSyscall.Ass
     @Override
     public AssembledInstruction assembleFromCode(int instructionCode) {
         return new Assembled(instructionCode, this, this);
+    }
+
+    @Override
+    public boolean isCompact() {
+        // Syscalls doesn't have delay slots!
+        return true;
+    }
+
+    @Override
+    public boolean isWriteInstruction() {
+        // True to prevent reordenation.
+        return true;
     }
 
     public static class Assembled extends AssembledRInstruction {
@@ -103,6 +119,7 @@ public class InstructionSyscall extends BasicRInstruction<InstructionSyscall.Ass
         @Override
         public void decode() {
             requires(2, false);
+            simulation.getSyscallExecutions().manageSyscallRequireAndLock(this);
         }
 
         @Override

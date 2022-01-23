@@ -34,16 +34,22 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 import java.util.LinkedList;
+import java.util.Set;
 
 public class SyscallExecutionRandomRangedInteger implements SyscallExecution {
 
     public static final String NAME = "RANDOM_RANGED_INTEGER";
     private final int generatorRegister, rangeRegister, valueRegister;
 
+    private final Set<Integer> requiredRegisters, lockedRegisters;
+
     public SyscallExecutionRandomRangedInteger(int generatorRegister, int rangeRegister, int valueRegister) {
         this.generatorRegister = generatorRegister;
         this.rangeRegister = rangeRegister;
         this.valueRegister = valueRegister;
+
+        requiredRegisters = Set.of(generatorRegister, rangeRegister);
+        lockedRegisters = Set.of(valueRegister);
     }
 
     @Override
@@ -66,6 +72,16 @@ public class SyscallExecutionRandomRangedInteger implements SyscallExecution {
         var range = execution.value(rangeRegister);
 
         execution.setAndUnlock(valueRegister, simulation.getNumberGenerators().getGenerator(index).nextInt(range));
+    }
+
+    @Override
+    public Set<Integer> getRequiredRegisters() {
+        return requiredRegisters;
+    }
+
+    @Override
+    public Set<Integer> getLockedRegisters() {
+        return lockedRegisters;
     }
 
     public static class Builder extends SyscallExecutionBuilder<SyscallExecutionRandomRangedInteger> {

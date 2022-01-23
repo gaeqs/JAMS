@@ -47,6 +47,10 @@ public class SimulationSyscallExecutions {
         return Collections.unmodifiableMap(executions);
     }
 
+    public SyscallExecution getExecution(int v0Code) {
+        return executions.getOrDefault(v0Code, defaultExecution);
+    }
+
     public void bindExecution(int v0Code, SyscallExecution execution) {
         executions.put(v0Code, execution);
     }
@@ -59,6 +63,12 @@ public class SimulationSyscallExecutions {
         execution.execute(simulation);
     }
 
+    public void manageSyscallRequireAndLock(MultiCycleExecution<?, ?> execution) {
+        var value = execution.value(2);
+        var syscall = executions.getOrDefault(value, defaultExecution);
+        syscall.getRequiredRegisters().forEach(it -> execution.requires(it, false));
+        syscall.getLockedRegisters().forEach(execution::lock);
+    }
 
     public void executeSyscallMultiCycle(MultiCycleExecution<?, ?> execution) {
         var value = execution.value(2);

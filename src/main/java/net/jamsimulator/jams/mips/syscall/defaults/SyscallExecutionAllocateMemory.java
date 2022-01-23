@@ -34,15 +34,20 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 import java.util.LinkedList;
+import java.util.Set;
 
 public class SyscallExecutionAllocateMemory implements SyscallExecution {
 
     public static final String NAME = "ALLOCATE_MEMORY";
     private final int amountRegister, addressRegister;
 
+    private final Set<Integer> requiredRegisters, lockedRegisters;
+
     public SyscallExecutionAllocateMemory(int amountRegister, int addressRegister) {
         this.amountRegister = amountRegister;
         this.addressRegister = addressRegister;
+        requiredRegisters = Set.of(amountRegister);
+        lockedRegisters = Set.of(addressRegister);
     }
 
     @Override
@@ -62,6 +67,16 @@ public class SyscallExecutionAllocateMemory implements SyscallExecution {
         var amount = execution.value(amountRegister);
         var address = execution.getSimulation().getMemory().allocateMemory(amount);
         execution.setAndUnlock(addressRegister, address);
+    }
+
+    @Override
+    public Set<Integer> getRequiredRegisters() {
+        return requiredRegisters;
+    }
+
+    @Override
+    public Set<Integer> getLockedRegisters() {
+        return lockedRegisters;
     }
 
     public static class Builder extends SyscallExecutionBuilder<SyscallExecutionAllocateMemory> {

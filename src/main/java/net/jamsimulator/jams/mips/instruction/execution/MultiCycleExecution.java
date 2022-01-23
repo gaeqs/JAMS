@@ -243,7 +243,6 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
                 if (current.execution.instructionId < instructionId &&
                         current.execution.instruction.getBasicOrigin() instanceof MemoryInstruction memC) {
                     if (memC.isWriteInstruction() || memInstruction.isWriteInstruction()) {
-                        System.out.println("NOOOOOO");
                         return false;
                     }
                 }

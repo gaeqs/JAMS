@@ -33,16 +33,22 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Set;
 
 public class SyscallExecutionSetSeed implements SyscallExecution {
 
     public static final String NAME = "SET_SEED";
     private final int generatorRegister, seedRegister;
 
+    private final Set<Integer> requiredRegisters;
+
     public SyscallExecutionSetSeed(int generatorRegister, int seedRegister) {
         this.generatorRegister = generatorRegister;
         this.seedRegister = seedRegister;
+
+        requiredRegisters = Set.of(generatorRegister, seedRegister);
     }
 
     @Override
@@ -62,6 +68,16 @@ public class SyscallExecutionSetSeed implements SyscallExecution {
         int seed = execution.value(seedRegister);
 
         execution.getSimulation().getNumberGenerators().getGenerator(index).setSeed(seed);
+    }
+
+    @Override
+    public Set<Integer> getRequiredRegisters() {
+        return requiredRegisters;
+    }
+
+    @Override
+    public Set<Integer> getLockedRegisters() {
+        return Collections.emptySet();
     }
 
     public static class Builder extends SyscallExecutionBuilder<SyscallExecutionSetSeed> {

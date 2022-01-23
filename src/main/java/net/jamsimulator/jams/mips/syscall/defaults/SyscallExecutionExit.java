@@ -31,7 +31,9 @@ import net.jamsimulator.jams.mips.simulation.event.SimulationFinishedEvent;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Set;
 
 public class SyscallExecutionExit implements SyscallExecution {
 
@@ -49,6 +51,17 @@ public class SyscallExecutionExit implements SyscallExecution {
             simulation.getConsole().println();
         }
         simulation.callEvent(new SimulationFinishedEvent(simulation));
+    }
+
+
+    @Override
+    public Set<Integer> getRequiredRegisters() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Set<Integer> getLockedRegisters() {
+        return Collections.emptySet();
     }
 
     @Override

@@ -34,16 +34,21 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.utils.NumericUtils;
 
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Set;
 
 public class SyscallExecutionSystemTime implements SyscallExecution {
 
     public static final String NAME = "SYSTEM_TIME";
     private final int lowOrderRegister, highOrderRegister;
 
+    private final Set<Integer> lockedRegisters;
+
     public SyscallExecutionSystemTime(int lowOrderRegister, int highOrderRegister) {
         this.lowOrderRegister = lowOrderRegister;
         this.highOrderRegister = highOrderRegister;
+        lockedRegisters = Set.of(lowOrderRegister, highOrderRegister);
     }
 
     @Override
@@ -63,6 +68,16 @@ public class SyscallExecutionSystemTime implements SyscallExecution {
         int[] values = NumericUtils.longToInts(System.currentTimeMillis());
         execution.setAndUnlock(lowOrderRegister, values[0]);
         execution.setAndUnlock(highOrderRegister, values[1]);
+    }
+
+    @Override
+    public Set<Integer> getRequiredRegisters() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Set<Integer> getLockedRegisters() {
+        return lockedRegisters;
     }
 
     public static class Builder extends SyscallExecutionBuilder<SyscallExecutionSystemTime> {
