@@ -30,7 +30,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
-import javafx.scene.control.ScrollBar;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -107,13 +106,14 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     protected final AnimationTimer styleTimer;
 
     protected boolean shouldOpenAutocompletionAfterEdit = false;
+    protected boolean styled = false;
 
     public CodeFileEditor(FileEditorTab tab) {
         super(read(tab));
         this.tab = tab;
         this.index = getOrGenerateIndex();
 
-        if(index != null) {
+        if (index != null) {
             index.registerListeners(this, true);
             index.withLock(false, i -> i.setHintBar(hintBar));
         }
@@ -163,6 +163,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         tab.selectedProperty().addListener((obs, old, val) -> {
             if (val) styleVisibleArea();
         });
+
     }
 
     /**
@@ -416,6 +417,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
             int to = lastVisibleParToAllParIndex();
             index.withLockF(false, i -> i.getStyleRange(from, to))
                     .ifPresent(s -> setStyleSpans(from, 0, s));
+            styled = true;
         } catch (IllegalArgumentException ignore) {
             Platform.runLater(this::styleVisibleArea);
         }
@@ -429,14 +431,14 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
             var index = visibleParToAllParIndex(0);
             var wd = getParagraphGraphic(index).prefWidth(-1);
             lineBackground.setWidth(wd);
-        } catch (Exception ex) {
+        } catch (Exception ignore) {
         }
         super.layoutChildren();
     }
 
     @Listener
     private void onIndexRefresh(IndexRequestRefreshEvent event) {
-        if (!tab.isSelected()) return;
+        if (!tab.isSelected() && styled) return;
         Platform.runLater(() -> {
             styleVisibleArea();
             if (shouldOpenAutocompletionAfterEdit) {
