@@ -237,14 +237,28 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
                                    MultiCycleExecution<?, ?> memory,
                                    MultiCycleExecution<?, ?> writeback) {
 
+        // Check for older memory instructions if this instruction is a memory instruction.
+        // Ignore RAR 'hazards'.
         if (instruction.getBasicOrigin() instanceof MemoryInstruction memInstruction) {
             for (MultiALUPipelineSlot current : execute) {
                 if (current == null || current.execution == this) continue;
                 if (current.execution.instructionId < instructionId &&
                         current.execution.instruction.getBasicOrigin() instanceof MemoryInstruction memC) {
                     if (memC.isWriteInstruction() || memInstruction.isWriteInstruction()) {
+                        System.out.println("NOOOOOO");
                         return false;
                     }
+                }
+            }
+        }
+
+        // Check for older branch instructions if branch on decode is not enabled.
+        if (!solveBranchesOnDecode) {
+            for (MultiALUPipelineSlot current : execute) {
+                if (current == null || current.execution == this) continue;
+                if (current.execution.instructionId < instructionId &&
+                        current.execution.instruction.getBasicOrigin() instanceof ControlTransferInstruction) {
+                    return false;
                 }
             }
         }
@@ -383,9 +397,11 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
         }
 
         if (simulation instanceof MultiALUPipelinedSimulation) {
-            if (!delaySlotsEnabled || ((ControlTransferInstruction) instruction.getBasicOrigin()).isCompact()) {
-                ((MultiALUPipelinedSimulation) simulation).getPipeline().stallFetch();
-
+            if (!solveBranchesOnDecode) {
+                setAndUnlock(pc(), address);
+                ((MultiALUPipelinedSimulation) simulation).getPipeline().executeFullJumpRemoval(instructionId);
+            } else if (!delaySlotsEnabled || ((ControlTransferInstruction) instruction.getBasicOrigin()).isCompact()) {
+                ((MultiALUPipelinedSimulation) simulation).getPipeline().removeFetch();
                 setAndUnlock(pc(), address);
             } else {
                 //The fetch is not cancelled. If there's an instruction to fetch,

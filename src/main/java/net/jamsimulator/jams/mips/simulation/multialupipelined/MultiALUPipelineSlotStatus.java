@@ -31,6 +31,7 @@ public enum MultiALUPipelineSlotStatus {
     RAW("RAW"),
     WAR("WAR"),
     WAW("WAW"),
+    REMOVED("/"),
     STALL("-");
 
     private final String name;

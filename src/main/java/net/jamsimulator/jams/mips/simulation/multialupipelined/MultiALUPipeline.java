@@ -126,8 +126,8 @@ public class MultiALUPipeline {
     }
 
     public void executeAllSteps() {
-        writeBack();
         fetch();
+        writeBack();
         execute();
         memory();
         decode();
@@ -136,18 +136,35 @@ public class MultiALUPipeline {
     public void shift() {
         simulation.callEvent(new MultiALUPipelineShiftEvent.Before(simulation, this));
         finished = null;
-        if (writeback != null && writeback.status == MultiALUPipelineSlotStatus.EXECUTED) {
-            finished = writeback;
-            writeback = null;
-            instructionsFinished++;
+
+        if (writeback != null) {
+            switch (writeback.status) {
+                case REMOVED -> {
+                    if (writeback.execution != null) writeback.execution.unlockAll();
+                    writeback = null;
+                }
+                case EXECUTED -> {
+                    finished = writeback;
+                    writeback = null;
+                    instructionsFinished++;
+                }
+            }
         }
 
-        if (memory != null && memory.status == MultiALUPipelineSlotStatus.EXECUTED) {
-            if (writeback == null) {
-                writeback = memory;
-                memory = null;
-            } else {
-                memory.status = MultiALUPipelineSlotStatus.STALL;
+        if (memory != null) {
+            switch (memory.status) {
+                case REMOVED -> {
+                    if (memory.execution != null) memory.execution.unlockAll();
+                    memory = null;
+                }
+                case EXECUTED -> {
+                    if (writeback == null) {
+                        writeback = memory;
+                        memory = null;
+                    } else {
+                        memory.status = MultiALUPipelineSlotStatus.STALL;
+                    }
+                }
             }
         }
 
@@ -156,24 +173,40 @@ public class MultiALUPipeline {
             shiftExecutionToMemory();
         } else {
             for (var e : execute) {
-                if (e != null) e.status = MultiALUPipelineSlotStatus.STALL;
+                if (e != null && e.status == MultiALUPipelineSlotStatus.EXECUTED)
+                    e.status = MultiALUPipelineSlotStatus.STALL;
             }
         }
 
-        if (decode != null && decode.status == MultiALUPipelineSlotStatus.EXECUTED) {
-            shiftDecodeToExecute();
-        }
-
-        if (fetch != null && fetch.status == MultiALUPipelineSlotStatus.EXECUTED) {
-            if (decode == null) {
-                decode = fetch;
-                fetch = null;
-                Register pc = simulation.getRegisters().getProgramCounter();
-                pc.setValue(pc.getValue() + 4);
-            } else {
-                fetch.status = MultiALUPipelineSlotStatus.STALL;
+        if (decode != null) {
+            switch (decode.status) {
+                case REMOVED -> {
+                    if (decode.execution != null) decode.execution.unlockAll();
+                    decode = null;
+                }
+                case EXECUTED -> shiftDecodeToExecute();
             }
         }
+
+        if (fetch != null) {
+            switch (fetch.status) {
+                case REMOVED -> {
+                    if (fetch.execution != null) fetch.execution.unlockAll();
+                    fetch = null;
+                }
+                case EXECUTED -> {
+                    if (decode == null) {
+                        decode = fetch;
+                        fetch = null;
+                        var pc = simulation.getRegisters().getProgramCounter();
+                        pc.setValue(pc.getValue() + 4);
+                    } else {
+                        fetch.status = MultiALUPipelineSlotStatus.STALL;
+                    }
+                }
+            }
+        }
+
         simulation.callEvent(new MultiALUPipelineShiftEvent.After(simulation, this));
     }
 
@@ -191,15 +224,34 @@ public class MultiALUPipeline {
         alus.reset();
     }
 
-    public void stallFetch() {
-        if (fetch != null) {
-            fetch.status = MultiALUPipelineSlotStatus.STALL;
+    public void removeFetch() {
+        if (fetch != null) fetch.status = MultiALUPipelineSlotStatus.STALL;
+    }
+
+    public void executeFullJumpRemoval(long instructionId) {
+        // We are sure fetch and decore are newer then the jump instruction.
+        if (fetch != null) fetch.status = MultiALUPipelineSlotStatus.REMOVED;
+        if (decode != null) decode.status = MultiALUPipelineSlotStatus.REMOVED;
+
+
+        for (int i = 0; i < execute.length; i++) {
+            var current = execute[i];
+            if (current != null && current.execution.getInstructionId() > instructionId) {
+                alus.releaseALU(i);
+                current.status = MultiALUPipelineSlotStatus.REMOVED;
+            }
+        }
+
+
+        if (memory != null && memory.execution.getInstructionId() > instructionId) {
+            memory.status = MultiALUPipelineSlotStatus.REMOVED;
         }
     }
 
     public void removeFetchAndDecode() {
-        fetch = null;
-        decode = null;
+        if (fetch != null) fetch.status = MultiALUPipelineSlotStatus.REMOVED;
+        if (decode != null) decode.status = MultiALUPipelineSlotStatus.REMOVED;
+
     }
 
     public OptionalInt forward(Register register, MultiCycleExecution<?, ?> execution, boolean checkWriteback) {
@@ -273,7 +325,7 @@ public class MultiALUPipeline {
     }
 
     private void writeBack() {
-        if (writeback == null) return;
+        if (writeback == null || writeback.status == MultiALUPipelineSlotStatus.REMOVED) return;
         var execution = writeback.execution;
         var exception = writeback.exception;
         if (exception != null) {
@@ -295,7 +347,7 @@ public class MultiALUPipeline {
     }
 
     private void memory() {
-        if (memory == null) return;
+        if (memory == null || memory.status == MultiALUPipelineSlotStatus.REMOVED) return;
         if (memory.exception != null) {
             memory.status = MultiALUPipelineSlotStatus.EXECUTED;
             return;
@@ -317,7 +369,7 @@ public class MultiALUPipeline {
     private void execute() {
         for (int i = 0; i < execute.length; i++) {
             var execution = execute[i];
-            if (execution == null) continue;
+            if (execution == null || execution.status == MultiALUPipelineSlotStatus.REMOVED) continue;
             if (execution.exception != null) {
                 execution.status = MultiALUPipelineSlotStatus.EXECUTED;
                 continue;
@@ -346,7 +398,7 @@ public class MultiALUPipeline {
     }
 
     private void decode() {
-        if (decode == null) return;
+        if (decode == null || decode.status == MultiALUPipelineSlotStatus.REMOVED) return;
         if (decode.exception != null) {
             memory.status = MultiALUPipelineSlotStatus.EXECUTED;
             return;
@@ -383,12 +435,11 @@ public class MultiALUPipeline {
         var execution = (MultiCycleExecution<?, ?>) simulation.fetch(pcv);
         if (fetch != null && fetch.execution != null
                 && fetch.execution.getInstruction().equals(execution.getInstruction())) {
-            fetch.status = pc.isLocked() ? MultiALUPipelineSlotStatus.RAW : MultiALUPipelineSlotStatus.EXECUTED;
+            fetch.status = MultiALUPipelineSlotStatus.EXECUTED;
             return;
         }
 
-        fetch = new MultiALUPipelineSlot(null, pcv, null,
-                pc.isLocked() ? MultiALUPipelineSlotStatus.RAW : MultiALUPipelineSlotStatus.EXECUTED);
+        fetch = new MultiALUPipelineSlot(null, pcv, null, MultiALUPipelineSlotStatus.EXECUTED);
 
 
         if (execution == null) {
@@ -411,7 +462,14 @@ public class MultiALUPipeline {
 
         for (int i = 0; i < execute.length; i++) {
             var e = execute[i];
-            if (e == null || e.status != MultiALUPipelineSlotStatus.EXECUTED) continue;
+            if (e == null) continue;
+            if (e.status == MultiALUPipelineSlotStatus.REMOVED) {
+                alus.releaseALU(i);
+                execute[i] = null;
+                if (e.execution != null) e.execution.unlockAll();
+                continue;
+            }
+            if (e.status != MultiALUPipelineSlotStatus.EXECUTED) continue;
             if (!e.execution.canMoveToMemory(
                     execute,
                     memory == null ? null : memory.execution,
@@ -420,7 +478,7 @@ public class MultiALUPipeline {
                 e.status = MultiALUPipelineSlotStatus.WAW;
                 continue;
             }
-            if (!move || executionId < e.execution.getInstructionId()) {
+            if (!move || executionId > e.execution.getInstructionId()) {
                 if (move) {
                     execute[executionToMove].status = MultiALUPipelineSlotStatus.STALL;
                 }
