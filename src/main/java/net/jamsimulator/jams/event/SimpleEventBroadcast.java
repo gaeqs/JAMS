@@ -97,10 +97,16 @@ public class SimpleEventBroadcast implements EventBroadcast {
     @Override
     public int unregisterListeners(Object instance) {
         int amount = 0;
-        for (Method declaredMethod : instance.getClass().getDeclaredMethods()) {
-            if (unregisterListener(instance, declaredMethod))
-                amount++;
+
+        Class<?> c = instance.getClass();
+        while (c != null) {
+            for (Method declaredMethod : c.getDeclaredMethods()) {
+                if (unregisterListener(instance, declaredMethod))
+                    amount++;
+            }
+            c = c.getSuperclass();
         }
+
         return amount;
     }
 

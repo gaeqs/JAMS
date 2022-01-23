@@ -118,7 +118,7 @@ public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements M
 
         simulation.registerListeners(this, true);
         if (!simulation.isRunning()) {
-            memory.registerListeners(this, true);
+            System.out.println(memory.registerListeners(this, true));
         }
     }
 
@@ -194,7 +194,8 @@ public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements M
 
     @Listener
     private void onSimulationStart(SimulationStartEvent event) {
-        memory.unregisterListeners(this);
+        System.out.println("UNREGISTERING");
+        System.out.println(memory.unregisterListeners(this));
     }
 
     @Listener
@@ -225,6 +226,7 @@ public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements M
 
     @Listener
     private void onMemoryChange(MemoryWordSetEvent.After event) {
+        System.out.println("CHANGE "+ event.getCaller());
         int offset = event.getAddress() & 0xF;
         int address = event.getAddress() >> 4 << 4;
         SimpleMemoryEntry entry = entries.get(address);
