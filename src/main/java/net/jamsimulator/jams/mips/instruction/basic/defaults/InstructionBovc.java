@@ -24,15 +24,15 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
-import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -45,16 +45,16 @@ import net.jamsimulator.jams.utils.StringUtils;
 public class InstructionBovc extends BasicInstruction<InstructionBovc.Assembled> implements ControlTransferInstruction {
 
     public static final String MNEMONIC = "bovc";
-    public static final APUType APU_TYPE = APUType.INTEGER;
+    public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b001000;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
 
     public InstructionBovc() {
-        super(MNEMONIC, PARAMETER_TYPES, APU_TYPE, OPERATION_CODE);
+        super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-        addExecutionBuilder(PipelinedArchitecture.INSTANCE, Pipelined::new);
+        addExecutionBuilder(MultiALUPipelinedArchitecture.INSTANCE, Pipelined::new);
     }
 
     @Override
@@ -152,17 +152,17 @@ public class InstructionBovc extends BasicInstruction<InstructionBovc.Assembled>
         }
     }
 
-    public static class Pipelined extends MultiCycleExecution<PipelinedArchitecture, Assembled> {
+    public static class Pipelined extends MultiCycleExecution<MultiALUPipelinedArchitecture, Assembled> {
 
-        public Pipelined(MIPSSimulation<? extends PipelinedArchitecture> simulation, Assembled instruction, int address) {
+        public Pipelined(MIPSSimulation<? extends MultiALUPipelinedArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, true, true);
         }
 
         @SuppressWarnings("ResultOfMethodCallIgnored")
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
-            requires(instruction.getTargetRegister());
+            requires(instruction.getSourceRegister(), false);
+            requires(instruction.getTargetRegister(), false);
             lock(pc());
 
             if (solveBranchOnDecode()) {
@@ -179,14 +179,9 @@ public class InstructionBovc extends BasicInstruction<InstructionBovc.Assembled>
         public void execute() {
         }
 
-        @Override
-        public void memory() {
-
-        }
-
         @SuppressWarnings("ResultOfMethodCallIgnored")
         @Override
-        public void writeBack() {
+        public void memory() {
             if (!solveBranchOnDecode()) {
                 try {
                     Math.addExact(value(instruction.getSourceRegister()), value(instruction.getTargetRegister()));
@@ -195,6 +190,10 @@ public class InstructionBovc extends BasicInstruction<InstructionBovc.Assembled>
                     jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
                 }
             }
+        }
+
+        @Override
+        public void writeBack() {
         }
     }
 }

@@ -35,7 +35,9 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Set;
 
 public class SyscallExecutionReadCharacter implements SyscallExecution {
 
@@ -44,9 +46,12 @@ public class SyscallExecutionReadCharacter implements SyscallExecution {
     private final boolean lineJump;
     private final int register;
 
+    private final Set<Integer> lockedRegisters;
+
     public SyscallExecutionReadCharacter(boolean lineJump, int register) {
         this.lineJump = lineJump;
         this.register = register;
+        lockedRegisters = Set.of(register);
     }
 
     @Override
@@ -73,6 +78,16 @@ public class SyscallExecutionReadCharacter implements SyscallExecution {
 
         simulation.getConsole().printDone(value);
         if (lineJump) simulation.getConsole().println();
+    }
+
+    @Override
+    public Set<Integer> getRequiredRegisters() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Set<Integer> getLockedRegisters() {
+        return lockedRegisters;
     }
 
     public static class Builder extends SyscallExecutionBuilder<SyscallExecutionReadCharacter> {

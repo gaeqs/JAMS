@@ -28,18 +28,20 @@ import javafx.scene.Node;
 
 public enum MultiCycleStep {
 
-    FETCH("F", "instruction-fetch"),
-    DECODE("D", "instruction-decode"),
-    EXECUTE("E", "instruction-execute"),
-    MEMORY("M", "instruction-memory"),
-    WRITE_BACK("W", "instruction-write-back");
+    FETCH("F", "instruction-fetch", null),
+    DECODE("D", "instruction-decode", FETCH),
+    EXECUTE("E", "instruction-execute", DECODE),
+    MEMORY("M", "instruction-memory", EXECUTE),
+    WRITE_BACK("W", "instruction-write-back", MEMORY);
 
     private final String tag;
     private final String style;
+    private final MultiCycleStep previous;
 
-    MultiCycleStep(String tag, String style) {
+    MultiCycleStep(String tag, String style, MultiCycleStep previous) {
         this.tag = tag;
         this.style = style;
+        this.previous = previous;
     }
 
     public static void removeAllStyles(Node node) {
@@ -54,5 +56,9 @@ public enum MultiCycleStep {
 
     public String getStyle() {
         return style;
+    }
+
+    public MultiCycleStep getPreviousStep() {
+        return previous == null ? FETCH : previous;
     }
 }

@@ -26,15 +26,15 @@ package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
-import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
@@ -50,7 +50,7 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
 
     public static final String NAME_SUFIX = "CMP_S";
     public static final String MNEMONIC = "cmp.%s.s";
-    public static final APUType APU_TYPE = APUType.INTEGER;
+    public static final ALUType ALU_TYPE = ALUType.FLOAT_ADDTION;
     public static final int OPERATION_CODE = 0b010001;
     public static final int FMT = 0b10100;
 
@@ -59,11 +59,11 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
     private final FloatCondition condition;
 
     public InstructionCmpCondnSingle(FloatCondition condition) {
-        super(String.format(MNEMONIC, condition.getMnemonic()), PARAMETER_TYPES, APU_TYPE, OPERATION_CODE, condition.getCode(), FMT);
+        super(String.format(MNEMONIC, condition.getMnemonic()), PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, condition.getCode(), FMT);
         this.condition = condition;
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-        addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+        addExecutionBuilder(MultiALUPipelinedArchitecture.INSTANCE, MultiCycle::new);
     }
 
     @Override
@@ -170,8 +170,8 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
 
         @Override
         public void decode() {
-            requiresCOP1(instruction.getTargetRegister());
-            requiresCOP1(instruction.getSourceRegister());
+            requiresCOP1(instruction.getTargetRegister(), false);
+            requiresCOP1(instruction.getSourceRegister(), false);
             lockCOP1(instruction.getDestinationRegister());
         }
 
@@ -197,12 +197,12 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
 
             boolean condition = instruction.cond4() ^ ((instruction.cond2() && less) || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
             executionResult = new int[]{condition ? 0xFFFFFFFF : 0};
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override

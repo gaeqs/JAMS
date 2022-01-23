@@ -36,7 +36,9 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.utils.NumericUtils;
 
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Set;
 
 public class SyscallExecutionPrintDouble implements SyscallExecution {
 
@@ -45,10 +47,13 @@ public class SyscallExecutionPrintDouble implements SyscallExecution {
     private final boolean printHex, lineJump;
     private final int register;
 
+    private final Set<Integer> requiredRegisters;
+
     public SyscallExecutionPrintDouble(boolean printHex, boolean lineJump, int register) {
         this.printHex = printHex;
         this.lineJump = lineJump;
         this.register = register;
+        requiredRegisters = Set.of(register);
     }
 
     @Override
@@ -100,6 +105,16 @@ public class SyscallExecutionPrintDouble implements SyscallExecution {
 
         console.print(toPrint);
         if (lineJump) console.println();
+    }
+
+    @Override
+    public Set<Integer> getRequiredRegisters() {
+        return requiredRegisters;
+    }
+
+    @Override
+    public Set<Integer> getLockedRegisters() {
+        return Collections.emptySet();
     }
 
     public static class Builder extends SyscallExecutionBuilder<SyscallExecutionPrintDouble> {

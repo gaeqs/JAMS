@@ -37,6 +37,7 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.Set;
 
 public class SyscallExecutionReadFile implements SyscallExecution {
 
@@ -44,11 +45,16 @@ public class SyscallExecutionReadFile implements SyscallExecution {
 
     private final int idRegister, addressRegister, maxBytesRegister, resultRegister;
 
+    private final Set<Integer> requiredRegisters, lockedRegisters;
+
     public SyscallExecutionReadFile(int idRegister, int addressRegister, int maxBytesRegister, int resultRegister) {
         this.idRegister = idRegister;
         this.addressRegister = addressRegister;
         this.maxBytesRegister = maxBytesRegister;
         this.resultRegister = resultRegister;
+
+        requiredRegisters = Set.of(idRegister, addressRegister, maxBytesRegister);
+        lockedRegisters = Set.of(resultRegister);
     }
 
     @Override
@@ -113,6 +119,16 @@ public class SyscallExecutionReadFile implements SyscallExecution {
         } catch (RuntimeException ex) {
             execution.setAndUnlock(resultRegister, -1);
         }
+    }
+
+    @Override
+    public Set<Integer> getRequiredRegisters() {
+        return requiredRegisters;
+    }
+
+    @Override
+    public Set<Integer> getLockedRegisters() {
+        return lockedRegisters;
     }
 
     public static class Builder extends SyscallExecutionBuilder<SyscallExecutionReadFile> {

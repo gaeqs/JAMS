@@ -24,15 +24,15 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI11Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicIFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
-import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -44,17 +44,17 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 public class InstructionMtc1 extends BasicIFPUInstruction<InstructionMtc1.Assembled> {
 
     public static final String MNEMONIC = "mtc1";
-    public static final APUType APU_TYPE = APUType.INTEGER;
+    public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b010001;
     public static final int SUBCODE = 0b00100;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.FLOAT_REGISTER);
 
     public InstructionMtc1() {
-        super(MNEMONIC, PARAMETER_TYPES, APU_TYPE, OPERATION_CODE, SUBCODE);
+        super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, SUBCODE);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-        addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+        addExecutionBuilder(MultiALUPipelinedArchitecture.INSTANCE, MultiCycle::new);
     }
 
     @Override
@@ -106,19 +106,19 @@ public class InstructionMtc1 extends BasicIFPUInstruction<InstructionMtc1.Assemb
 
         @Override
         public void decode() {
-            requires(instruction.getTargetRegister());
+            requires(instruction.getTargetRegister(), false);
             lockCOP1(instruction.getDestinationRegister());
         }
 
         @Override
         public void execute() {
             executionResult = new int[]{value(instruction.getTargetRegister())};
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override

@@ -24,8 +24,6 @@
 
 package net.jamsimulator.jams.gui.mips.simulator.register;
 
-import javafx.beans.property.ReadOnlyIntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import net.jamsimulator.jams.mips.register.Register;
@@ -43,7 +41,7 @@ public class RegisterPropertyWrapper {
     private final Register register;
     private final boolean useDecimals;
     private boolean updating;
-    private SimpleIntegerProperty identifierProperty;
+    private SimpleStringProperty identifierProperty;
     private SimpleStringProperty nameProperty;
     private SimpleStringProperty valueProperty;
     private SimpleStringProperty hexProperty;
@@ -57,10 +55,10 @@ public class RegisterPropertyWrapper {
         return register;
     }
 
-    public ReadOnlyIntegerProperty identifierProperty() {
+    public SimpleStringProperty identifierProperty() {
         if (identifierProperty == null) {
-            identifierProperty = new SimpleIntegerProperty(this, "identifier");
-            identifierProperty.setValue(register.getIdentifier());
+            identifierProperty = new SimpleStringProperty(this, "identifier");
+            identifierProperty.setValue(String.valueOf(register.getIdentifier()));
         }
         return identifierProperty;
     }
@@ -139,14 +137,21 @@ public class RegisterPropertyWrapper {
     }
 
     public void updateRegister() {
-        updateRegister(register.getValue());
+        updateRegister(register.getValue(), register.isLocked());
     }
 
-    public void updateRegister(int newValue) {
+    public void updateRegister(int newValue, boolean locked) {
         synchronized (lock) {
             updating = true;
+            if (identifierProperty == null) identifierProperty();
             if (valueProperty == null) valueProperty();
             if (hexProperty == null) hexProperty();
+
+            if (locked) {
+                identifierProperty.setValue(register.getIdentifier() + " \uD83D\uDD12");
+            } else {
+                identifierProperty.setValue(String.valueOf(register.getIdentifier()));
+            }
 
             if (useDecimals) {
                 valueProperty.setValue(String.valueOf(Float.intBitsToFloat(newValue)));

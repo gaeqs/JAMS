@@ -83,6 +83,7 @@ public class Icons {
     public static final IconData CONTROL_REMOVE = new IconData("control_remove", "/gui/icon/controls/remove.png");
     public static final IconData CONTROL_COPY = new IconData("control_copy", "/gui/icon/controls/copy.png");
     public static final IconData CONTROL_SORT = new IconData("control_sort", "/gui/icon/controls/sort.png");
+    public static final IconData CONTROL_DRAG = new IconData("control_drag", "/gui/icon/controls/drag.png");
 
     public static final IconData BAR_CLOSE = new IconData("bar_close", "/gui/icon/bar/close.png");
 

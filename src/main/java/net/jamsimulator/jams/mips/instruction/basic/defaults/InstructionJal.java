@@ -24,15 +24,15 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledJInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
-import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -44,16 +44,16 @@ import net.jamsimulator.jams.utils.StringUtils;
 public class InstructionJal extends BasicInstruction<InstructionJal.Assembled> implements ControlTransferInstruction {
 
     public static final String MNEMONIC = "jal";
-    public static final APUType APU_TYPE = APUType.INTEGER;
+    public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b000011;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.SIGNED_32_BIT);
 
     public InstructionJal() {
-        super(MNEMONIC, PARAMETER_TYPES, APU_TYPE, OPERATION_CODE);
+        super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-        addExecutionBuilder(PipelinedArchitecture.INSTANCE, Pipelined::new);
+        addExecutionBuilder(MultiALUPipelinedArchitecture.INSTANCE, Pipelined::new);
     }
 
     @Override
@@ -125,9 +125,9 @@ public class InstructionJal extends BasicInstruction<InstructionJal.Assembled> i
         }
     }
 
-    public static class Pipelined extends MultiCycleExecution<PipelinedArchitecture, Assembled> {
+    public static class Pipelined extends MultiCycleExecution<MultiALUPipelinedArchitecture, Assembled> {
 
-        public Pipelined(MIPSSimulation<? extends PipelinedArchitecture> simulation, Assembled instruction, int address) {
+        public Pipelined(MIPSSimulation<? extends MultiALUPipelinedArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, true, true);
         }
 
@@ -144,22 +144,20 @@ public class InstructionJal extends BasicInstruction<InstructionJal.Assembled> i
         @Override
         public void execute() {
             if (solveBranchOnDecode()) {
-                forward(31, getAddress() + 4, false);
+                forward(31, getAddress() + 4);
             }
         }
 
         @Override
         public void memory() {
-            if (solveBranchOnDecode()) {
-                forward(31, getAddress() + 4, true);
+            if (!solveBranchOnDecode()) {
+                jump(instruction.getAbsoluteAddress(getAddress() + 4));
             }
+            forward(31, getAddress() + 4);
         }
 
         @Override
         public void writeBack() {
-            if (!solveBranchOnDecode()) {
-                jump(instruction.getAbsoluteAddress(getAddress() + 4));
-            }
             setAndUnlock(31, getAddress() + 4);
         }
     }

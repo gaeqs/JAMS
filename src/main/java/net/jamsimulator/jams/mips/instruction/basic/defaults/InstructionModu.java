@@ -24,15 +24,15 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRSOPInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRSOPInstruction;
-import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -44,7 +44,7 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 public class InstructionModu extends BasicRSOPInstruction<InstructionModu.Assembled> {
 
     public static final String MNEMONIC = "modu";
-    public static final APUType APU_TYPE = APUType.INTEGER;
+    public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0;
     public static final int FUNCTION_CODE = 0b011011;
     public static final int SOP_CODE = 0b00011;
@@ -52,10 +52,10 @@ public class InstructionModu extends BasicRSOPInstruction<InstructionModu.Assemb
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER);
 
     public InstructionModu() {
-        super(MNEMONIC, PARAMETER_TYPES, APU_TYPE, OPERATION_CODE, FUNCTION_CODE, SOP_CODE);
+        super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE, SOP_CODE);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-        addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+        addExecutionBuilder(MultiALUPipelinedArchitecture.INSTANCE, MultiCycle::new);
     }
 
     @Override
@@ -119,8 +119,8 @@ public class InstructionModu extends BasicRSOPInstruction<InstructionModu.Assemb
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
-            requires(instruction.getTargetRegister());
+            requires(instruction.getSourceRegister(), false);
+            requires(instruction.getTargetRegister(), false);
             lock(instruction.getDestinationRegister());
         }
 
@@ -129,12 +129,12 @@ public class InstructionModu extends BasicRSOPInstruction<InstructionModu.Assemb
             var source = value(instruction.getSourceRegister());
             var target = value(instruction.getTargetRegister());
             executionResult = new int[]{target == 0 ? 0 : Integer.remainderUnsigned(source, target)};
-            forward(instruction.getDestinationRegister(), executionResult[0], false);
+            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getDestinationRegister(), executionResult[0], false);
+            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override

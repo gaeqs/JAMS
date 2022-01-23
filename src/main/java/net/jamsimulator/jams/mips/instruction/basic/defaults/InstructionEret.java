@@ -24,16 +24,16 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
-import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -45,17 +45,17 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 public class InstructionEret extends BasicRInstruction<InstructionEret.Assembled> implements ControlTransferInstruction {
 
     public static final String MNEMONIC = "eret";
-    public static final APUType APU_TYPE = APUType.INTEGER;
+    public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b010000;
     public static final int FUNCTION_CODE = 0b011000;
 
     public static final ParameterType[] PARAMETER_TYPES = new ParameterType[0];
 
     public InstructionEret() {
-        super(MNEMONIC, PARAMETER_TYPES, APU_TYPE, OPERATION_CODE, FUNCTION_CODE);
+        super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-        addExecutionBuilder(PipelinedArchitecture.INSTANCE, Pipelined::new);
+        addExecutionBuilder(MultiALUPipelinedArchitecture.INSTANCE, Pipelined::new);
     }
 
     @Override
@@ -145,17 +145,17 @@ public class InstructionEret extends BasicRInstruction<InstructionEret.Assembled
         }
     }
 
-    public static class Pipelined extends MultiCycleExecution<PipelinedArchitecture, Assembled> {
+    public static class Pipelined extends MultiCycleExecution<MultiALUPipelinedArchitecture, Assembled> {
 
-        public Pipelined(MIPSSimulation<? extends PipelinedArchitecture> simulation, Assembled instruction, int address) {
+        public Pipelined(MIPSSimulation<? extends MultiALUPipelinedArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, true, true);
         }
 
         @Override
         public void decode() {
-            requiresCOP0(12, 0);
-            requiresCOP0(14, 0);
-            requiresCOP0(30, 0);
+            requiresCOP0(12, 0, false);
+            requiresCOP0(14, 0, false);
+            requiresCOP0(30, 0, false);
             lock(pc());
             lockCOP0(12, 0);
 
@@ -167,26 +167,24 @@ public class InstructionEret extends BasicRInstruction<InstructionEret.Assembled
         @Override
         public void execute() {
             if (solveBranchOnDecode()) {
-                forwardCOP0(12, 0, valueCOP0(12, 0), false);
-                forwardCOP0(14, 0, valueCOP0(14, 0), false);
-                forwardCOP0(30, 0, valueCOP0(30, 0), false);
+                forwardCOP0(12, 0, valueCOP0(12, 0));
+                forwardCOP0(14, 0, valueCOP0(14, 0));
+                forwardCOP0(30, 0, valueCOP0(30, 0));
             }
         }
 
         @Override
         public void memory() {
-            if (solveBranchOnDecode()) {
-                forwardCOP0(12, 0, valueCOP0(12, 0), true);
-                forwardCOP0(14, 0, valueCOP0(14, 0), true);
-                forwardCOP0(30, 0, valueCOP0(30, 0), true);
+            if (!solveBranchOnDecode()) {
+                solve();
             }
+            forwardCOP0(12, 0, valueCOP0(12, 0));
+            forwardCOP0(14, 0, valueCOP0(14, 0));
+            forwardCOP0(30, 0, valueCOP0(30, 0));
         }
 
         @Override
         public void writeBack() {
-            if (!solveBranchOnDecode()) {
-                solve();
-            }
             unlockCOP0(12, 0);
             unlockCOP0(14, 0);
             unlockCOP0(30, 0);

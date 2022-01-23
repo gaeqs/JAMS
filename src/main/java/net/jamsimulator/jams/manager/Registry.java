@@ -33,6 +33,7 @@ import net.jamsimulator.jams.language.LanguageManager;
 import net.jamsimulator.jams.mips.architecture.ArchitectureManager;
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilderManager;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSetManager;
+import net.jamsimulator.jams.mips.instruction.alu.ALUTypeManager;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSetManager;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilderManager;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilderManager;
@@ -368,6 +369,7 @@ public class Registry {
         registerPrimary(SyscallExecutionBuilderManager.INSTANCE);
         registerPrimary(ThemeManager.INSTANCE);
         registerPrimary(MIPSInspectorManager.INSTANCE);
+        registerPrimary(ALUTypeManager.INSTANCE);
     }
 
 }

@@ -32,6 +32,9 @@ import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.assembler.builder.AssemblerBuilder;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
+import net.jamsimulator.jams.mips.instruction.alu.ALU;
+import net.jamsimulator.jams.mips.instruction.alu.ALUCollectionSnapshot;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
@@ -147,6 +150,21 @@ public class ValueConverters {
         var assemblerBuilderConverter = new AssemblerBuilderValueConverter();
         converterByName.put(AssemblerBuilderValueConverter.NAME, assemblerBuilderConverter);
         converterByType.put(AssemblerBuilder.class, assemblerBuilderConverter);
+
+        // ALU
+        var aluConverter = new ALUValueConverter();
+        converterByName.put(ALUValueConverter.NAME, aluConverter);
+        converterByType.put(ALU.class, aluConverter);
+
+        // ALU TYPE
+        var aluTypeConverter = new ALUTypeValueConverter();
+        converterByName.put(ALUTypeValueConverter.NAME, aluTypeConverter);
+        converterByType.put(ALUType.class, aluTypeConverter);
+
+        // ALU COLLECTION SNAPSHOT
+        var aluCollectionSnapshotConverter = new ALUCollectionSnapshotValueConverter();
+        converterByName.put(ALUCollectionSnapshotValueConverter.NAME, aluCollectionSnapshotConverter);
+        converterByType.put(ALUCollectionSnapshot.class, aluCollectionSnapshotConverter);
     }
 
 

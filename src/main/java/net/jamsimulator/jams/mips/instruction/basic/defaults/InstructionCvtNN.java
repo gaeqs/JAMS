@@ -26,15 +26,15 @@ package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
-import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
@@ -47,7 +47,7 @@ public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Asse
 
     public static final String NAME_SUFIX = "CVT";
     public static final String MNEMONIC = "cvt.%s.%s";
-    public static final APUType APU_TYPE = APUType.INTEGER;
+    public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b010001;
 
     private final FmtNumbers to, from;
@@ -57,13 +57,13 @@ public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Asse
                 String.format(MNEMONIC, to.getMnemonic(), from.getMnemonic()),
                 new ParameterType[]{to.requiresEvenRegister() ? ParameterType.EVEN_FLOAT_REGISTER : ParameterType.FLOAT_REGISTER,
                         from.requiresEvenRegister() ? ParameterType.EVEN_FLOAT_REGISTER : ParameterType.FLOAT_REGISTER},
-                APU_TYPE,
+                ALU_TYPE,
                 OPERATION_CODE, to.getCvt(), from.getFmt());
         this.to = to;
         this.from = from;
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-        addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+        addExecutionBuilder(MultiALUPipelinedArchitecture.INSTANCE, MultiCycle::new);
     }
 
     @Override
@@ -163,9 +163,9 @@ public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Asse
             if (instruction.from.requiresEvenRegister() && instruction.getSourceRegister() % 2 != 0)
                 evenFloatRegisterException();
 
-            requiresCOP1(instruction.getSourceRegister());
+            requiresCOP1(instruction.getSourceRegister(), false);
             if (instruction.from.requiresEvenRegister()) {
-                requiresCOP1(instruction.getSourceRegister() + 1);
+                requiresCOP1(instruction.getSourceRegister() + 1, false);
             }
 
             lockCOP1(instruction.getDestinationRegister());
@@ -181,17 +181,17 @@ public class InstructionCvtNN extends BasicRFPUInstruction<InstructionCvtNN.Asse
             Number number = instruction.from.from(valueCOP1(instruction.getSourceRegister()), extension);
             executionResult = instruction.to.to(number);
 
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
             if (instruction.to.requiresEvenRegister()) {
-                forwardCOP1(instruction.getDestinationRegister(), executionResult[1], false);
+                forwardCOP1(instruction.getDestinationRegister(), executionResult[1]);
             }
         }
 
         @Override
         public void memory() {
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
             if (instruction.to.requiresEvenRegister()) {
-                forwardCOP1(instruction.getDestinationRegister(), executionResult[1], true);
+                forwardCOP1(instruction.getDestinationRegister(), executionResult[1]);
             }
         }
 

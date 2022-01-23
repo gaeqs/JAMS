@@ -27,10 +27,16 @@ package net.jamsimulator.jams.mips.syscall;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
+import java.util.Set;
+
 public interface SyscallExecution {
 
     void execute(MIPSSimulation<?> simulation);
 
     void executeMultiCycle(MultiCycleExecution<?, ?> execution);
+
+    Set<Integer> getRequiredRegisters();
+
+    Set<Integer> getLockedRegisters();
 
 }

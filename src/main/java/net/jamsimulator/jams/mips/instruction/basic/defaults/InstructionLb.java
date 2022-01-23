@@ -24,14 +24,15 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
-import net.jamsimulator.jams.mips.instruction.data.APUType;
+import net.jamsimulator.jams.mips.instruction.basic.MemoryInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -41,19 +42,19 @@ import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
-public class InstructionLb extends BasicInstruction<InstructionLb.Assembled> {
+public class InstructionLb extends BasicInstruction<InstructionLb.Assembled> implements MemoryInstruction {
 
     public static final String MNEMONIC = "lb";
-    public static final APUType APU_TYPE = APUType.INTEGER;
+    public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b100000;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.SIGNED_16_BIT_REGISTER_SHIFT);
 
     public InstructionLb() {
-        super(MNEMONIC, PARAMETER_TYPES, APU_TYPE, OPERATION_CODE);
+        super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-        addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+        addExecutionBuilder(MultiALUPipelinedArchitecture.INSTANCE, MultiCycle::new);
     }
 
     @Override
@@ -65,6 +66,11 @@ public class InstructionLb extends BasicInstruction<InstructionLb.Assembled> {
     @Override
     public AssembledInstruction assembleFromCode(int instructionCode) {
         return new Assembled(instructionCode, this, this);
+    }
+
+    @Override
+    public boolean isWriteInstruction() {
+        return false;
     }
 
     public static class Assembled extends AssembledI16Instruction {
@@ -109,7 +115,7 @@ public class InstructionLb extends BasicInstruction<InstructionLb.Assembled> {
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
+            requires(instruction.getSourceRegister(), false);
             lock(instruction.getTargetRegister());
         }
 
@@ -122,7 +128,7 @@ public class InstructionLb extends BasicInstruction<InstructionLb.Assembled> {
         @Override
         public void memory() {
             memoryResult = new int[]{simulation.getMemory().getByte(executionResult[0])};
-            forward(instruction.getTargetRegister(), memoryResult[0], true);
+            forward(instruction.getTargetRegister(), memoryResult[0]);
         }
 
         @Override

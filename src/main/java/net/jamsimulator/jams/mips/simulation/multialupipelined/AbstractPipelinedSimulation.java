@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,9 +22,13 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.simulation.pipelined;
+package net.jamsimulator.jams.mips.simulation.multialupipelined;
 
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
+import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+
+import java.util.OptionalInt;
 
 /**
  * Represents a {@link MIPSSimulation} that implements a pipelined architecture.
@@ -54,11 +58,6 @@ public interface AbstractPipelinedSimulation {
      */
     boolean isDelaySlotsEnabled();
 
-    /**
-     * Returns the {@link PipelineForwarding} of the simulation.
-     *
-     * @return the {@link PipelineForwarding}.
-     */
-    PipelineForwarding getForwarding();
+    OptionalInt forward(Register register, MultiCycleExecution<?, ?> execution, boolean checkWriteback);
 
 }

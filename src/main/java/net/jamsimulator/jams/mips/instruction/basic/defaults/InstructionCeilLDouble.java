@@ -24,15 +24,15 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
-import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -45,7 +45,7 @@ import net.jamsimulator.jams.utils.NumericUtils;
 public class InstructionCeilLDouble extends BasicRFPUInstruction<InstructionCeilLDouble.Assembled> {
 
     public static final String MNEMONIC = "ceil.l.d";
-    public static final APUType APU_TYPE = APUType.FLOAT_ADDTION;
+    public static final ALUType ALU_TYPE = ALUType.FLOAT_ADDTION;
     public static final int OPERATION_CODE = 0b010001;
     public static final int FMT = 0b10001;
     public static final int FUNCTION_CODE = 0b001010;
@@ -53,10 +53,10 @@ public class InstructionCeilLDouble extends BasicRFPUInstruction<InstructionCeil
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER);
 
     public InstructionCeilLDouble() {
-        super(MNEMONIC, PARAMETER_TYPES, APU_TYPE, OPERATION_CODE, FUNCTION_CODE, FMT);
+        super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE, FMT);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-        addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+        addExecutionBuilder(MultiALUPipelinedArchitecture.INSTANCE, MultiCycle::new);
     }
 
     @Override
@@ -120,8 +120,8 @@ public class InstructionCeilLDouble extends BasicRFPUInstruction<InstructionCeil
             if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
             if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
 
-            requiresCOP1(instruction.getSourceRegister());
-            requiresCOP1(instruction.getSourceRegister() + 1);
+            requiresCOP1(instruction.getSourceRegister(), false);
+            requiresCOP1(instruction.getSourceRegister() + 1, false);
             lockCOP1(instruction.getDestinationRegister());
             lockCOP1(instruction.getDestinationRegister() + 1);
         }
@@ -132,15 +132,15 @@ public class InstructionCeilLDouble extends BasicRFPUInstruction<InstructionCeil
             var to = instruction.getDestinationRegister();
             var ceil = (long) Math.ceil(NumericUtils.intsToDouble(valueCOP1(id), valueCOP1(id + 1)));
             executionResult = NumericUtils.longToInts(ceil);
-            forwardCOP1(to, executionResult[0], false);
-            forwardCOP1(to + 1, executionResult[1], false);
+            forwardCOP1(to, executionResult[0]);
+            forwardCOP1(to + 1, executionResult[1]);
         }
 
         @Override
         public void memory() {
             var to = instruction.getDestinationRegister();
-            forwardCOP1(to, executionResult[0], true);
-            forwardCOP1(to + 1, executionResult[1], true);
+            forwardCOP1(to, executionResult[0]);
+            forwardCOP1(to + 1, executionResult[1]);
         }
 
         @Override

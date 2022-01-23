@@ -24,15 +24,15 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
-import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -44,7 +44,7 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 public class InstructionDivSingle extends BasicRFPUInstruction<InstructionDivSingle.Assembled> {
 
     public static final String MNEMONIC = "div.s";
-    public static final APUType APU_TYPE = APUType.FLOAT_DIVISION;
+    public static final ALUType ALU_TYPE = ALUType.FLOAT_DIVISION;
     public static final int OPERATION_CODE = 0b010001;
     public static final int FMT = 0b10000;
     public static final int FUNCTION_CODE = 0b000011;
@@ -52,10 +52,10 @@ public class InstructionDivSingle extends BasicRFPUInstruction<InstructionDivSin
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER);
 
     public InstructionDivSingle() {
-        super(MNEMONIC, PARAMETER_TYPES, APU_TYPE, OPERATION_CODE, FUNCTION_CODE, FMT);
+        super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE, FMT);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-        addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+        addExecutionBuilder(MultiALUPipelinedArchitecture.INSTANCE, MultiCycle::new);
     }
 
     @Override
@@ -112,8 +112,8 @@ public class InstructionDivSingle extends BasicRFPUInstruction<InstructionDivSin
 
         @Override
         public void decode() {
-            requiresCOP1(instruction.getTargetRegister());
-            requiresCOP1(instruction.getSourceRegister());
+            requiresCOP1(instruction.getTargetRegister(), false);
+            requiresCOP1(instruction.getSourceRegister(), false);
             lockCOP1(instruction.getDestinationRegister());
         }
 
@@ -123,12 +123,12 @@ public class InstructionDivSingle extends BasicRFPUInstruction<InstructionDivSin
             var target = Float.intBitsToFloat(valueCOP1(instruction.getTargetRegister()));
             var destination = source / target;
             executionResult = new int[]{Float.floatToIntBits(destination)};
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], false);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0], true);
+            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override

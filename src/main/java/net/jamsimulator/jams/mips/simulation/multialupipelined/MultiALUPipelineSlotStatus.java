@@ -22,27 +22,25 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.simulation.pipelined.event;
+package net.jamsimulator.jams.mips.simulation.multialupipelined;
 
-import net.jamsimulator.jams.mips.simulation.event.SimulationEvent;
-import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
+public enum MultiALUPipelineSlotStatus {
 
-/**
- * Represents an {@link net.jamsimulator.jams.event.Event} related to a {@link PipelinedSimulation}.
- */
-public class PipelinedSimulationEvent extends SimulationEvent {
+    EXECUTED(""),
+    RUNNING("..."),
+    RAW("RAW"),
+    WAR("WAR"),
+    WAW("WAW"),
+    REMOVED("/"),
+    STALL("-");
 
-    /**
-     * Creates the multi-cycle simulation event.
-     *
-     * @param simulation the {@link PipelinedSimulation} that has created this event.
-     */
-    public PipelinedSimulationEvent(PipelinedSimulation simulation) {
-        super(simulation);
+    private final String name;
+
+    MultiALUPipelineSlotStatus(String name) {
+        this.name = name;
     }
 
-    @Override
-    public PipelinedSimulation getSimulation() {
-        return (PipelinedSimulation) super.getSimulation();
+    public String getName() {
+        return name;
     }
 }

@@ -26,7 +26,6 @@ package net.jamsimulator.jams.mips.simulation.multicycle;
 
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.MIPSAddressException;
@@ -239,7 +238,7 @@ public class MultiCycleSimulation extends MIPSSimulation<MultiCycleArchitecture>
 
         addCycleCount();
 
-        manageInterrupts(currentExecution);
+        manageInterrupts();
 
         if (undoEnabled && currentStepChanges != null) {
             changes.add(currentStepChanges);
@@ -254,7 +253,7 @@ public class MultiCycleSimulation extends MIPSSimulation<MultiCycleArchitecture>
     }
 
     @Override
-    protected void manageInterrupts(InstructionExecution<?, ?> execution) {
+    protected void manageInterrupts() {
         if (!arePendingInterrupts()) return;
 
         int level = externalInterruptController.getRequestedIPL();

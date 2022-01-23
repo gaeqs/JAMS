@@ -22,35 +22,41 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.architecture;
+package net.jamsimulator.jams.mips.instruction.alu;
 
+import net.jamsimulator.jams.manager.ManagerResource;
 import net.jamsimulator.jams.manager.ResourceProvider;
-import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
-import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
+import net.jamsimulator.jams.utils.Validate;
 
-/**
- * Represents the single-cycle architecture.
- * <p>
- * This architecture executes one instruction per cycle, starting and finishing the
- * execution of an instruction on the same cycle. This makes this architecture slow,
- * having high seconds per cycle.
- */
-public class PipelinedArchitecture extends MultiCycleArchitecture {
+public record ALUType(
+        ResourceProvider provider,
+        String name,
+        String languageNode,
+        int defaultCyclesPerExecution
+) implements ManagerResource {
 
-    public static final String NAME = "Pipelined";
-    public static final PipelinedArchitecture INSTANCE = new PipelinedArchitecture(ResourceProvider.JAMS);
+    public static final ALUType INTEGER = new ALUType(ResourceProvider.JAMS, "integer",
+            "ALU_TYPE_INTEGER", 1);
+    public static final ALUType FLOAT_ADDTION = new ALUType(ResourceProvider.JAMS, "float_adition",
+            "ALU_TYPE_FLOAT_ADITION", 4);
+    public static final ALUType FLOAT_MULTIPLICATION = new ALUType(ResourceProvider.JAMS, "float_multiplication",
+            "ALU_TYPE_FLOAT_MULTIPLICATION", 9);
+    public static final ALUType FLOAT_DIVISION = new ALUType(ResourceProvider.JAMS, "float_division",
+            "ALU_TYPE_FLOAT_DIVISION", 17);
 
-    protected PipelinedArchitecture(ResourceProvider provider, String name) {
-        super(provider, name);
-    }
-
-    private PipelinedArchitecture(ResourceProvider provider) {
-        super(provider, NAME);
+    public ALUType {
+        Validate.notNull(provider, "Provider cannot be null!");
+        Validate.notNull(name, "Name cannot be null!");
     }
 
     @Override
-    public MIPSSimulation<? extends PipelinedArchitecture> createSimulation(MIPSSimulationData data) {
-        return new PipelinedSimulation(this, data);
+    public ResourceProvider getResourceProvider() {
+        return provider;
     }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
 }

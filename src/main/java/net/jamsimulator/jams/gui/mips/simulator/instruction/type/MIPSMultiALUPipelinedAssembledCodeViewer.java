@@ -29,38 +29,24 @@ import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledCodeViewer;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledLine;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipeline;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelineSlot;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelinedSimulation;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.event.MultiALUPipelineShiftEvent;
 import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
-import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
-import net.jamsimulator.jams.mips.simulation.pipelined.event.PipelineShiftEvent;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-public class MIPSPipelinedAssembledCodeViewer extends MIPSAssembledCodeViewer {
+public class MIPSMultiALUPipelinedAssembledCodeViewer extends MIPSAssembledCodeViewer {
 
-    private final int[] previousLines;
+    private final Set<Integer> previousLines = new HashSet<>();
 
-    public MIPSPipelinedAssembledCodeViewer(MIPSSimulation<?> simulation, boolean kernel) {
+    public MIPSMultiALUPipelinedAssembledCodeViewer(MIPSSimulation<?> simulation, boolean kernel) {
         super(simulation, kernel);
-
-        previousLines = new int[MultiCycleStep.values().length];
-
-        var sim = (PipelinedSimulation) simulation;
-        var pipeline = sim.getPipeline();
-
-        for (MultiCycleStep step : MultiCycleStep.values()) {
-            int pcVal = pipeline.getPc(step);
-
-            var optional = assembledLines.stream()
-                    .filter(target -> target.getAddress().filter(v -> v == pcVal).isPresent())
-                    .findFirst();
-            previousLines[step.ordinal()] = optional.map(MIPSAssembledLine::getLine).orElse(-1);
-
-            if (previousLines[step.ordinal()] != -1) {
-                setParagraphStyle(previousLines[step.ordinal()], Set.of(step.getStyle()));
-            }
-        }
+        refreshLines();
     }
 
     @Override
@@ -75,21 +61,50 @@ public class MIPSPipelinedAssembledCodeViewer extends MIPSAssembledCodeViewer {
                 }
             }
 
-            var sim = (PipelinedSimulation) simulation;
-            var pipeline = sim.getPipeline();
-            for (MultiCycleStep step : MultiCycleStep.values()) {
-                int pcVal = pipeline.getPc(step);
-
-                var optional = assembledLines.stream()
-                        .filter(target -> target.getAddress().filter(v -> v == pcVal).isPresent())
-                        .findFirst();
-                previousLines[step.ordinal()] = optional.map(MIPSAssembledLine::getLine).orElse(-1);
-
-                if (previousLines[step.ordinal()] != -1) {
-                    setParagraphStyle(previousLines[step.ordinal()], Set.of(step.getStyle()));
-                }
-            }
+            refreshLines();
         });
+    }
+
+    private void refreshLines() {
+        var sim = (MultiALUPipelinedSimulation) simulation;
+        var pipeline = sim.getPipeline();
+
+        for (MultiCycleStep step : MultiCycleStep.values()) {
+            // Ignore fetch step.
+            if (step == MultiCycleStep.FETCH) continue;
+            var slots = getSlots(pipeline, step).stream().map(it -> it.pc).collect(Collectors.toSet());
+            var lines = assembledLines.stream()
+                    .filter(it -> it.getAddress().filter(slots::contains).isPresent())
+                    .map(MIPSAssembledLine::getLine)
+                    .collect(Collectors.toSet());
+            previousLines.addAll(lines);
+
+            var styles = Set.of(step.getStyle());
+            lines.forEach(it -> setParagraphStyle(it, styles));
+        }
+
+        // Execute fetch.
+        sim.runSynchronized(() -> {
+            var pc = sim.getRegisters().getProgramCounter().getValue();
+            var lines = assembledLines.stream()
+                    .filter(it -> it.getAddress().filter(v -> v == pc).isPresent())
+                    .map(MIPSAssembledLine::getLine)
+                    .collect(Collectors.toSet());
+            previousLines.addAll(lines);
+            var styles = Set.of(MultiCycleStep.FETCH.getStyle());
+            lines.forEach(it -> setParagraphStyle(it, styles));
+        });
+
+    }
+
+    private Set<MultiALUPipelineSlot> getSlots(MultiALUPipeline pipeline, MultiCycleStep step) {
+        return switch (step) {
+            case FETCH -> pipeline.getFetch() == null ? Collections.emptySet() : Set.of(pipeline.getFetch());
+            case DECODE -> pipeline.getDecode() == null ? Collections.emptySet() : Set.of(pipeline.getDecode());
+            case EXECUTE -> pipeline.getExecute();
+            case MEMORY -> pipeline.getMemory() == null ? Collections.emptySet() : Set.of(pipeline.getMemory());
+            case WRITE_BACK -> pipeline.getWriteback() == null ? Collections.emptySet() : Set.of(pipeline.getWriteback());
+        };
     }
 
     @Override
@@ -107,11 +122,11 @@ public class MIPSPipelinedAssembledCodeViewer extends MIPSAssembledCodeViewer {
 
     @Override
     protected boolean isLineBeingUsed(int line) {
-        return line != -1 && Arrays.stream(previousLines).anyMatch(v -> v == line);
+        return line != -1 && previousLines.contains(line);
     }
 
     @Listener
-    private void onPipelineShift(PipelineShiftEvent.After event) {
+    private void onPipelineShift(MultiALUPipelineShiftEvent.After event) {
         boolean newFullSpeed = simulation.getCycleDelay() == 0;
         if (!fullSpeed && newFullSpeed) {
             clearStyles();
@@ -123,4 +138,5 @@ public class MIPSPipelinedAssembledCodeViewer extends MIPSAssembledCodeViewer {
 
         fullSpeed = newFullSpeed;
     }
+
 }

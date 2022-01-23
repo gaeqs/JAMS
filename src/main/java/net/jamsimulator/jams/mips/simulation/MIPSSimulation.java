@@ -620,7 +620,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
      */
     protected abstract void runStep(boolean first);
 
-    protected abstract void manageInterrupts(InstructionExecution<?, ?> execution);
+    protected abstract void manageInterrupts();
 
 
     //region overridden methods

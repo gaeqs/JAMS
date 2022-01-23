@@ -34,15 +34,20 @@ import net.jamsimulator.jams.mips.simulation.event.SimulationLockEvent;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Set;
 
 public class SyscallExecutionSleep implements SyscallExecution {
 
     public static final String NAME = "SLEEP";
     private final int register;
 
+    private final Set<Integer> requiredRegisters;
+
     public SyscallExecutionSleep(int register) {
         this.register = register;
+        requiredRegisters = Set.of(register);
     }
 
     @Override
@@ -68,6 +73,16 @@ public class SyscallExecutionSleep implements SyscallExecution {
         } catch (InterruptedException e) {
             simulation.interruptThread();
         }
+    }
+
+    @Override
+    public Set<Integer> getRequiredRegisters() {
+        return requiredRegisters;
+    }
+
+    @Override
+    public Set<Integer> getLockedRegisters() {
+        return Collections.emptySet();
     }
 
     public static class Builder extends SyscallExecutionBuilder<SyscallExecutionSleep> {

@@ -26,7 +26,6 @@ package net.jamsimulator.jams.mips.simulation.singlecycle;
 
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
-import net.jamsimulator.jams.mips.instruction.execution.InstructionExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.MIPSAddressException;
@@ -200,7 +199,7 @@ public class SingleCycleSimulation extends MIPSSimulation<SingleCycleArchitectur
             return;
         }
 
-        manageInterrupts(execution);
+        manageInterrupts();
 
         addCycleCount();
 
@@ -230,7 +229,7 @@ public class SingleCycleSimulation extends MIPSSimulation<SingleCycleArchitectur
     }
 
     @Override
-    protected void manageInterrupts(InstructionExecution<?, ?> execution) {
+    protected void manageInterrupts() {
         if (!arePendingInterrupts()) return;
 
         int level = externalInterruptController.getRequestedIPL();

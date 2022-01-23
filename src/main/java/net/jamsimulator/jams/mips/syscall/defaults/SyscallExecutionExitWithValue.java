@@ -32,7 +32,9 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Set;
 
 public class SyscallExecutionExitWithValue implements SyscallExecution {
 
@@ -40,8 +42,11 @@ public class SyscallExecutionExitWithValue implements SyscallExecution {
 
     private final int register;
 
+    private final Set<Integer> requiredRegisters;
+
     public SyscallExecutionExitWithValue(int register) {
         this.register = register;
+        requiredRegisters = Set.of(register);
     }
 
     @Override
@@ -68,6 +73,17 @@ public class SyscallExecutionExitWithValue implements SyscallExecution {
             simulation.getConsole().printDoneLn("Execution finished with code " + value);
             simulation.getConsole().println();
         }
+    }
+
+
+    @Override
+    public Set<Integer> getRequiredRegisters() {
+        return requiredRegisters;
+    }
+
+    @Override
+    public Set<Integer> getLockedRegisters() {
+        return Collections.emptySet();
     }
 
     public static class Builder extends SyscallExecutionBuilder<SyscallExecutionExitWithValue> {

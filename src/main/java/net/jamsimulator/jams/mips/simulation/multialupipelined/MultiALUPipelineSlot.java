@@ -22,36 +22,33 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.instruction.data;
+package net.jamsimulator.jams.mips.simulation.multialupipelined;
 
-import net.jamsimulator.jams.manager.ManagerResource;
-import net.jamsimulator.jams.manager.ResourceProvider;
-import net.jamsimulator.jams.utils.Validate;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
+import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 
-public record APUType(
-        ResourceProvider provider,
-        String name,
-        int defaultCyclesPerExecution
-) implements ManagerResource {
+public class MultiALUPipelineSlot {
 
-    public static final APUType INTEGER = new APUType(ResourceProvider.JAMS, "integer", 1);
-    public static final APUType FLOAT_ADDTION = new APUType(ResourceProvider.JAMS, "float_adition", 1);
-    public static final APUType FLOAT_MULTIPLICATION = new APUType(ResourceProvider.JAMS, "float_multiplication", 4);
-    public static final APUType FLOAT_DIVISION = new APUType(ResourceProvider.JAMS, "float_division", 9);
+    public MultiCycleExecution<?, ?> execution;
+    public int pc;
+    public MIPSInterruptException exception;
+    public MultiALUPipelineSlotStatus status;
 
-    public APUType {
-        Validate.notNull(provider, "Provider cannot be null!");
-        Validate.notNull(name, "Name cannot be null!");
+
+    public MultiALUPipelineSlot(
+            MultiCycleExecution<?, ?> instruction,
+            int pc,
+            MIPSInterruptException exception,
+            MultiALUPipelineSlotStatus status
+    ) {
+        this.execution = instruction;
+        this.pc = pc;
+        this.exception = exception;
+        this.status = status;
     }
 
-    @Override
-    public ResourceProvider getResourceProvider() {
-        return provider;
-    }
-
-    @Override
-    public String getName() {
-        return name;
+    public MultiALUPipelineSlot copy() {
+        return new MultiALUPipelineSlot(execution, pc, exception, status);
     }
 
 }

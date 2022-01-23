@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.event;
 
 import java.lang.reflect.Method;
+import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -46,13 +47,10 @@ public class SimpleEventBroadcast implements EventBroadcast {
     /**
      * Creates an event caller.
      */
-    @SuppressWarnings("ComparatorMethodParameterNotUsed")
     public SimpleEventBroadcast() {
-        registeredListeners = new ConcurrentSkipListSet<>(((o1, o2) -> {
-            int val = o2.getListener().priority() - o1.getListener().priority();
-            //Avoids override. Listeners registered first have priority.
-            return val == 0 ? -1 : val;
-        }));
+        Comparator<ListenerMethod> comparator = Comparator.comparingInt(it -> it.getListener().priority());
+        comparator = comparator.thenComparingLong(ListenerMethod::getId);
+        registeredListeners = new ConcurrentSkipListSet<>(comparator);
     }
 
     @SuppressWarnings("unchecked")
@@ -91,16 +89,23 @@ public class SimpleEventBroadcast implements EventBroadcast {
         var clazz = method.getParameters()[0].getType();
         if (!Event.class.isAssignableFrom(clazz)) return false;
         if (method.getAnnotationsByType(Listener.class).length != 1) return false;
-        return registeredListeners.removeIf(it -> it.isReferenceInvalid() || it.matches(instance, method));
+        registeredListeners.removeIf(ListenerMethod::isReferenceInvalid);
+        return registeredListeners.removeIf(it -> it.matches(instance, method));
     }
 
     @Override
     public int unregisterListeners(Object instance) {
         int amount = 0;
-        for (Method declaredMethod : instance.getClass().getDeclaredMethods()) {
-            if (unregisterListener(instance, declaredMethod))
-                amount++;
+
+        Class<?> c = instance.getClass();
+        while (c != null) {
+            for (Method declaredMethod : c.getDeclaredMethods()) {
+                if (unregisterListener(instance, declaredMethod))
+                    amount++;
+            }
+            c = c.getSuperclass();
         }
+
         return amount;
     }
 

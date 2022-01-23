@@ -36,22 +36,25 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
-import net.jamsimulator.jams.mips.simulation.pipelined.Pipeline;
-import net.jamsimulator.jams.mips.simulation.pipelined.event.PipelineShiftEvent;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipeline;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelineSlot;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelineSlotStatus;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.event.MultiALUPipelineShiftEvent;
+import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class PipelinedFlowTable extends FlowTable {
+public class MultiALUPipelinedFlowTable extends FlowTable {
 
-    private LinkedList<PipelineShiftEvent.Before> toAdd;
-    private LinkedList<Pipeline> pipelines;
+    private LinkedList<MultiALUPipelineShiftEvent> toAdd;
+    private LinkedList<MultiALUPipeline> pipelines;
     private Map<Long, SegmentedFlowEntry> entries;
 
     private long firstCycle;
 
-    public PipelinedFlowTable(MIPSSimulation<? extends MultiCycleArchitecture> simulation) {
+    public MultiALUPipelinedFlowTable(MIPSSimulation<? extends MultiCycleArchitecture> simulation) {
         super(simulation);
 
         firstCycle = 0;
@@ -88,29 +91,16 @@ public class PipelinedFlowTable extends FlowTable {
         while (!toAdd.isEmpty()) {
             var event = toAdd.pop();
             var pipeline = pipelines.pop();
-            pipeline.getAll().forEach((step, instruction) -> {
 
-                var entry = entries.get(instruction.getInstructionId());
-                if (entry == null) {
-                    entry = new SegmentedFlowEntry(flows.getChildren().size(), this, instruction.getInstruction(),
-                            start, instruction.getInstructionId(), event.getCycle());
-                    entries.put(instruction.getInstructionId(), entry);
-                    flows.getChildren().add(entry);
-
-                    if (entries.size() > maxItems) {
-                        SegmentedFlowEntry toRemove = (SegmentedFlowEntry) flows.getChildren().remove(0);
-                        entries.remove(toRemove.getInstructionNumber());
-                    }
-                }
-
-                var raw = 5 - event.getShiftAmount() > step.ordinal();
-                entry.addStep(event.getCycle(), step, stepSize, firstCycle, raw);
-            });
+            addStep(pipeline.getFetch(), MultiCycleStep.FETCH, start, event.getCycle(), false);
+            addStep(pipeline.getDecode(), MultiCycleStep.DECODE, start, event.getCycle(), false);
+            addStep(pipeline.getMemory(), MultiCycleStep.MEMORY, start, event.getCycle(), false);
+            addStep(pipeline.getWriteback(), MultiCycleStep.WRITE_BACK, start, event.getCycle(), false);
+            addStep(pipeline.getFinished(), MultiCycleStep.WRITE_BACK, start, event.getCycle(), true);
+            pipeline.getExecute().forEach(ex -> addStep(ex, MultiCycleStep.EXECUTE, start, event.getCycle(), false));
         }
 
         long localCycle = firstCycle;
-
-
         firstCycle = flows.getChildren().isEmpty()
                 ? 0
                 : ((SegmentedFlowEntry) flows.getChildren().get(0)).getStartingCycle();
@@ -120,6 +110,25 @@ public class PipelinedFlowTable extends FlowTable {
         }
 
         refreshVisualizer();
+    }
+
+    private void addStep(MultiALUPipelineSlot slot, MultiCycleStep step, String registerStart, long cycle, boolean isFinished) {
+        if (slot == null || slot.execution == null) return;
+        if(!isFinished && slot.status == MultiALUPipelineSlotStatus.EXECUTED) step = step.getPreviousStep();
+        var entry = entries.get(slot.execution.getInstructionId());
+        if (entry == null) {
+            entry = new SegmentedFlowEntry(flows.getChildren().size(), this, slot.execution.getInstruction(),
+                    registerStart, slot.execution.getInstructionId(), cycle);
+            entries.put(slot.execution.getInstructionId(), entry);
+            flows.getChildren().add(entry);
+
+            if (entries.size() > maxItems) {
+                var toRemove = (SegmentedFlowEntry) flows.getChildren().remove(0);
+                entries.remove(toRemove.getInstructionNumber());
+            }
+        }
+
+        entry.addStep(cycle, step, stepSize, firstCycle, slot.status);
     }
 
     @Override
@@ -145,7 +154,7 @@ public class PipelinedFlowTable extends FlowTable {
     }
 
     @Listener(priority = Integer.MIN_VALUE)
-    private void onInstructionExecuted(PipelineShiftEvent.Before event) {
+    private void onInstructionExecuted(MultiALUPipelineShiftEvent.After event) {
         //Adding items to a separate list prevents the app to block.
         toAdd.add(event);
         pipelines.add(event.getPipeline().copy());
@@ -171,14 +180,14 @@ public class PipelinedFlowTable extends FlowTable {
     @Listener
     private void onSimulationUndo(SimulationUndoStepEvent.After event) {
         var index = flows.getChildren().size() - 1;
-        SegmentedFlowEntry entry;
-        while (index >= 0) {
-            entry = ((SegmentedFlowEntry) flows.getChildren().get(index));
-            if (entry.removeCycle(event.getUndoCycle()) && entry.isEmpty()) {
+
+        var iterator = flows.getChildren().iterator();
+        while (iterator.hasNext()) {
+            var node = iterator.next();
+            if (node instanceof SegmentedFlowEntry entry && entry.removeCycle(event.getUndoCycle()) && entry.isEmpty()) {
                 entries.remove(entry.getInstructionNumber());
-                flows.getChildren().remove(index);
+                iterator.remove();
             }
-            index--;
         }
         refreshVisualizer();
     }

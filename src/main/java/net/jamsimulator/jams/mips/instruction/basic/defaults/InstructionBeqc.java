@@ -24,15 +24,15 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
-import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -45,16 +45,16 @@ import net.jamsimulator.jams.utils.StringUtils;
 public class InstructionBeqc extends BasicInstruction<InstructionBeqc.Assembled> implements ControlTransferInstruction {
 
     public static final String MNEMONIC = "beqc";
-    public static final APUType APU_TYPE = APUType.INTEGER;
+    public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b001000;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
 
     public InstructionBeqc() {
-        super(MNEMONIC, PARAMETER_TYPES, APU_TYPE, OPERATION_CODE);
+        super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-        addExecutionBuilder((PipelinedArchitecture) PipelinedArchitecture.INSTANCE, Pipelined::new);
+        addExecutionBuilder(MultiALUPipelinedArchitecture.INSTANCE, Pipelined::new);
     }
 
     @Override
@@ -142,16 +142,16 @@ public class InstructionBeqc extends BasicInstruction<InstructionBeqc.Assembled>
         }
     }
 
-    public static class Pipelined extends MultiCycleExecution<PipelinedArchitecture, Assembled> {
+    public static class Pipelined extends MultiCycleExecution<MultiALUPipelinedArchitecture, Assembled> {
 
-        public Pipelined(MIPSSimulation<? extends PipelinedArchitecture> simulation, Assembled instruction, int address) {
+        public Pipelined(MIPSSimulation<? extends MultiALUPipelinedArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, true, true);
         }
 
         @Override
         public void decode() {
-            requires(instruction.getSourceRegister());
-            requires(instruction.getTargetRegister());
+            requires(instruction.getSourceRegister(), false);
+            requires(instruction.getTargetRegister(), false);
             lock(pc());
 
             if (solveBranchOnDecode()) {
@@ -167,16 +167,15 @@ public class InstructionBeqc extends BasicInstruction<InstructionBeqc.Assembled>
 
         @Override
         public void memory() {
-
-        }
-
-        @Override
-        public void writeBack() {
             if (!solveBranchOnDecode()) {
                 if (value(instruction.getTargetRegister()) == value(instruction.getSourceRegister())) {
                     jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
                 } else unlock(pc());
             }
+        }
+
+        @Override
+        public void writeBack() {
         }
     }
 }

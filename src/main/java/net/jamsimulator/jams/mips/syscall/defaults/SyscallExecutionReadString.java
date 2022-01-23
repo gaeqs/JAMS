@@ -36,7 +36,9 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Set;
 
 public class SyscallExecutionReadString implements SyscallExecution {
 
@@ -44,10 +46,13 @@ public class SyscallExecutionReadString implements SyscallExecution {
     private final boolean lineJump;
     private final int addressRegister, maxCharsRegister;
 
+    private final Set<Integer> requiredRegisters;
+
     public SyscallExecutionReadString(boolean lineJump, int addressRegister, int maxCharsRegister) {
         this.lineJump = lineJump;
         this.addressRegister = addressRegister;
         this.maxCharsRegister = maxCharsRegister;
+        requiredRegisters = Set.of(addressRegister, maxCharsRegister);
     }
 
     @Override
@@ -105,6 +110,16 @@ public class SyscallExecutionReadString implements SyscallExecution {
 
         simulation.getConsole().printDone(value);
         if (lineJump) simulation.getConsole().println();
+    }
+
+    @Override
+    public Set<Integer> getRequiredRegisters() {
+        return requiredRegisters;
+    }
+
+    @Override
+    public Set<Integer> getLockedRegisters() {
+        return Collections.emptySet();
     }
 
     public static class Builder extends SyscallExecutionBuilder<SyscallExecutionReadString> {

@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,25 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.simulation.change.pipelined;
+package net.jamsimulator.jams.mips.instruction.alu;
 
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
-import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.change.SimulationChange;
-import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
-import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 
-/**
- * A {@link SimulationChange} that registers the change of the {@link MultiCycleStep} of a multi-cycle simulation.
- */
-public class PipelinedSimulationExitRequest extends SimulationChange<PipelinedArchitecture> {
+public class ALUTypeManager extends Manager<ALUType> {
+
+    public static final String NAME = "alu_type";
+    public static final ALUTypeManager INSTANCE = new ALUTypeManager(ResourceProvider.JAMS, NAME);
+
+    public ALUTypeManager(ResourceProvider provider, String name) {
+        super(provider, name, ALUType.class, false);
+    }
 
     @Override
-    public void restore(MIPSSimulation<? extends PipelinedArchitecture> simulation) {
-        ((PipelinedSimulation) simulation).removeExitRequest();
+    protected void loadDefaultElements() {
+        add(ALUType.INTEGER);
+        add(ALUType.FLOAT_ADDTION);
+        add(ALUType.FLOAT_MULTIPLICATION);
+        add(ALUType.FLOAT_DIVISION);
     }
 }

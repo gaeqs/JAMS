@@ -29,14 +29,14 @@ import javafx.scene.shape.Rectangle;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.gui.mips.simulator.instruction.type.MIPSMultiALUPipelinedAssembledCodeViewer;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.type.MIPSMultiCycleAssembledCodeViewer;
-import net.jamsimulator.jams.gui.mips.simulator.instruction.type.MIPSPipelinedAssembledCodeViewer;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.type.MIPSSingleCycleAssembledCodeViewer;
 import net.jamsimulator.jams.gui.util.EasyStyleSpansBuilder;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.mips.architecture.Architecture;
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.label.Label;
@@ -70,10 +70,11 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
     public static Map<Architecture, BiFunction<MIPSSimulation<?>, Boolean, MIPSAssembledCodeViewer>> VIEWERS_PER_ARCHITECTURE = new HashMap<>();
 
     static {
-        VIEWERS_PER_ARCHITECTURE.put(Manager.of(Architecture.class).getOrNull(SingleCycleArchitecture.NAME), MIPSSingleCycleAssembledCodeViewer::new);
-        VIEWERS_PER_ARCHITECTURE.put(Manager.of(Architecture.class).getOrNull(MultiCycleArchitecture.NAME), MIPSMultiCycleAssembledCodeViewer::new);
+        var m = Manager.of(Architecture.class);
+        VIEWERS_PER_ARCHITECTURE.put(m.getOrNull(SingleCycleArchitecture.NAME), MIPSSingleCycleAssembledCodeViewer::new);
+        VIEWERS_PER_ARCHITECTURE.put(m.getOrNull(MultiCycleArchitecture.NAME), MIPSMultiCycleAssembledCodeViewer::new);
         //noinspection StaticInitializerReferencesSubClass
-        VIEWERS_PER_ARCHITECTURE.put(Manager.of(Architecture.class).getOrNull(PipelinedArchitecture.NAME), MIPSPipelinedAssembledCodeViewer::new);
+        VIEWERS_PER_ARCHITECTURE.put(m.getOrNull(MultiALUPipelinedArchitecture.NAME), MIPSMultiALUPipelinedAssembledCodeViewer::new);
     }
 
     protected final List<MIPSAssembledLine> assembledLines;
@@ -218,7 +219,7 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
             var index = visibleParToAllParIndex(0);
             var wd = getParagraphGraphic(index).prefWidth(-1);
             lineBackground.setWidth(wd);
-        } catch (Exception ex) {
+        } catch (Exception ignore) {
         }
         super.layoutChildren();
     }

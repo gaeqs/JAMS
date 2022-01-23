@@ -22,28 +22,27 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.simulation.change.pipelined;
+package net.jamsimulator.jams.mips.simulation.multialupipelined.event;
 
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
-import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.change.SimulationChange;
-import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleStep;
-import net.jamsimulator.jams.mips.simulation.pipelined.Pipeline;
-import net.jamsimulator.jams.mips.simulation.pipelined.PipelinedSimulation;
+import net.jamsimulator.jams.mips.simulation.event.SimulationEvent;
+import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelinedSimulation;
 
 /**
- * A {@link SimulationChange} that registers the change of the {@link MultiCycleStep} of a multi-cycle simulation.
+ * Represents an {@link net.jamsimulator.jams.event.Event} related to a {@link MultiALUPipelinedSimulation}.
  */
-public class PipelinedSimulationChangePipeline extends SimulationChange<PipelinedArchitecture> {
+public class MultiALUPipelinedSimulationEvent extends SimulationEvent {
 
-    private final Pipeline old;
-
-    public PipelinedSimulationChangePipeline(Pipeline old) {
-        this.old = old;
+    /**
+     * Creates the multi-cycle simulation event.
+     *
+     * @param simulation the {@link MultiALUPipelinedSimulation} that has created this event.
+     */
+    public MultiALUPipelinedSimulationEvent(MultiALUPipelinedSimulation simulation) {
+        super(simulation);
     }
 
     @Override
-    public void restore(MIPSSimulation<? extends PipelinedArchitecture> simulation) {
-        ((PipelinedSimulation) simulation).getPipeline().restore(old);
+    public MultiALUPipelinedSimulation getSimulation() {
+        return (MultiALUPipelinedSimulation) super.getSimulation();
     }
 }

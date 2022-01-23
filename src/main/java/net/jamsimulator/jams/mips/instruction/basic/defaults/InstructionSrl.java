@@ -24,15 +24,15 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
-import net.jamsimulator.jams.mips.architecture.PipelinedArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
-import net.jamsimulator.jams.mips.instruction.data.APUType;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
@@ -44,17 +44,17 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 public class InstructionSrl extends BasicRInstruction<InstructionSrl.Assembled> {
 
     public static final String MNEMONIC = "srl";
-    public static final APUType APU_TYPE = APUType.INTEGER;
+    public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0;
     public static final int FUNCTION_CODE = 0b000010;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.UNSIGNED_5_BIT);
 
     public InstructionSrl() {
-        super(MNEMONIC, PARAMETER_TYPES, APU_TYPE, OPERATION_CODE, FUNCTION_CODE);
+        super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
-        addExecutionBuilder(PipelinedArchitecture.INSTANCE, MultiCycle::new);
+        addExecutionBuilder(MultiALUPipelinedArchitecture.INSTANCE, MultiCycle::new);
     }
 
     @Override
@@ -108,19 +108,19 @@ public class InstructionSrl extends BasicRInstruction<InstructionSrl.Assembled> 
 
         @Override
         public void decode() {
-            requires(instruction.getTargetRegister());
+            requires(instruction.getTargetRegister(), false);
             lock(instruction.getDestinationRegister());
         }
 
         @Override
         public void execute() {
             executionResult = new int[]{value(instruction.getTargetRegister()) >> instruction.getShiftAmount()};
-            forward(instruction.getDestinationRegister(), executionResult[0], false);
+            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getDestinationRegister(), executionResult[0], true);
+            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override

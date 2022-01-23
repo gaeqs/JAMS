@@ -28,6 +28,8 @@ import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 
+import java.util.Objects;
+
 /**
  * Represents an assembled instruction.
  */
@@ -116,4 +118,17 @@ public abstract class AssembledInstruction {
      * @return the parameters as a string.
      */
     public abstract String parametersToString(String registersStart);
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AssembledInstruction that = (AssembledInstruction) o;
+        return value == that.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
 }

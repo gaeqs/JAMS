@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,33 +22,35 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.simulation.pipelined.exception;
+package net.jamsimulator.jams.gui.util.converter;
 
-import net.jamsimulator.jams.mips.register.Register;
+import net.jamsimulator.jams.mips.instruction.alu.ALU;
+import org.json.JSONException;
 
-/**
- * Represents a Read After Write hazard.
- */
-public class RAWHazardException extends RuntimeException {
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
-    private final Register register;
+public class ALUValueConverter extends ValueConverter<ALU> {
 
-    /**
-     * Creates the hazard.
-     *
-     * @param register the {@link Register} that caused the RAW hazard.
-     */
-    public RAWHazardException(Register register) {
-        super("RAW hazard at register " + register);
-        this.register = register;
+    public static final String NAME = "alu";
+
+    @Override
+    public Optional<ALU> fromStringSafe(String node) {
+        try {
+            return Optional.of(ALU.fromJSON(node));
+        } catch (JSONException | NoSuchElementException ex) {
+            ex.printStackTrace();
+            return Optional.empty();
+        }
     }
 
-    /**
-     * Returns the {@link Register} that caused the hazard.
-     *
-     * @return the {@link Register}.
-     */
-    public Register getRegister() {
-        return register;
+    @Override
+    public String toString(ALU object) {
+        return object.toJSON().toString();
+    }
+
+    @Override
+    public Class<?> conversionClass() {
+        return ALU.class;
     }
 }

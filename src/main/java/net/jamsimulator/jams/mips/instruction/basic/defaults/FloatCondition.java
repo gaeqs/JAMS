@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.manager.Manager;
 

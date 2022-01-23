@@ -28,8 +28,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.gui.util.log.Console;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Register;
@@ -37,7 +37,9 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Set;
 
 public class SyscallExecutionPrintString implements SyscallExecution {
 
@@ -46,10 +48,14 @@ public class SyscallExecutionPrintString implements SyscallExecution {
     private final boolean lineJump;
     private final int maxChars, register;
 
+    private final Set<Integer> requiredRegisters;
+
     public SyscallExecutionPrintString(boolean lineJump, int maxChars, int register) {
         this.lineJump = lineJump;
         this.maxChars = Math.max(maxChars, 0);
         this.register = register;
+
+        requiredRegisters = Set.of(register);
     }
 
     @Override
@@ -62,6 +68,16 @@ public class SyscallExecutionPrintString implements SyscallExecution {
     @Override
     public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         print(execution.getSimulation().getMemory(), execution.getSimulation().getConsole(), execution.value(register));
+    }
+
+    @Override
+    public Set<Integer> getRequiredRegisters() {
+        return requiredRegisters;
+    }
+
+    @Override
+    public Set<Integer> getLockedRegisters() {
+        return Collections.emptySet();
     }
 
     private void print(Memory memory, Console console, int address) {
