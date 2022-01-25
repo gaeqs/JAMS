@@ -79,7 +79,12 @@ public class MIPSSimulationConfigurationPresets {
                 Messages.SIMULATION_CONFIGURATION_ENABLE_DELAY_SLOTS, false,
                 pipelinedArchitectures, Map.of(BRANCH_ON_DECODE, new Object[]{true})));
         PRESETS.add(new MIPSSimulationConfigurationNodePreset(ALUS, ALUCollectionSnapshot.class, 70,
-                Messages.SIMULATION_CONFIGURATION_ALUS, new ALUCollectionSnapshot(Set.of(new ALU(ALUType.INTEGER, 1))),
+                Messages.SIMULATION_CONFIGURATION_ALUS, new ALUCollectionSnapshot(Set.of(
+                        new ALU(ALUType.INTEGER, 1),
+                        new ALU(ALUType.FLOAT_ADDTION, 4),
+                        new ALU(ALUType.FLOAT_MULTIPLICATION, 9),
+                        new ALU(ALUType.FLOAT_DIVISION, 17)
+        )),
                 pipelinedArchitectures, null));
     }
 

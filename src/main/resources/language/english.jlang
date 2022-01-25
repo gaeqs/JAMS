@@ -521,7 +521,7 @@ NUMBER_FORMAT_ENGLISH=English text
 NUMBER_FORMAT_ROMAN=Roman
 
 ALU_TYPE_INTEGER=Integer
-ALU_TYPE_FLOAT_ADITION=Float adition
+ALU_TYPE_FLOAT_ADDITION=Float addition
 ALU_TYPE_FLOAT_MULTIPLICATION=Float multiplication
 ALU_TYPE_FLOAT_DIVISION=Float division
 
@@ -730,7 +730,7 @@ add rd, rs, rt
 GPR[rd] <- GPR[rs] + GPR[rt]
 
 The 32-bit word value in GPR <i>rt</i> is added to the 32-bit value in GPR <i>rs</i> to produce a 32-bit result.
- - If the adition results in 32-bit 2's complement arithmetic overflow, the destination register is not modified and an <black>Integer Overflow</black> exception occurs.
+ - If the addition results in 32-bit 2's complement arithmetic overflow, the destination register is not modified and an <black>Integer Overflow</black> exception occurs.
  - If the addition does not overflow, the 32-bit result is placed intoto GPR <i>rd</i>.
 
 <b>Restrictions:</b>
@@ -4044,7 +4044,7 @@ add rt, $at, rs
 GPR[rt] <- GPR[rs] + immediate
 
 The 16-bit signed <i>immediate</i> is added to the 32-bit value in GRP <i>rs</i> to produce a 32-bit arithmetic result.
- - If the adition results in 32-bit 2's complement arithmetic overflow, the destination register is not modified and an <black>Integer Overflow</black> exception occurs.
+ - If the addition results in 32-bit 2's complement arithmetic overflow, the destination register is not modified and an <black>Integer Overflow</black> exception occurs.
  - If the addition does not overflow, the 32-bit result is placed into GPR <i>rt</i>.
 
 <b>Restrictions:</b>

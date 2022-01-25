@@ -521,7 +521,7 @@ NUMBER_FORMAT_ENGLISH=Texto inglés
 NUMBER_FORMAT_ROMAN=Romano
 
 ALU_TYPE_INTEGER=Enteros
-ALU_TYPE_FLOAT_ADITION=Suma en coma flotante
+ALU_TYPE_FLOAT_ADDITION=Suma en coma flotante
 ALU_TYPE_FLOAT_MULTIPLICATION=Multiplicación en coma flotante
 ALU_TYPE_FLOAT_DIVISION=División en coma flotante
 

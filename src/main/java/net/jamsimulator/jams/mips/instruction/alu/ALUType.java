@@ -37,8 +37,8 @@ public record ALUType(
 
     public static final ALUType INTEGER = new ALUType(ResourceProvider.JAMS, "integer",
             "ALU_TYPE_INTEGER", 1);
-    public static final ALUType FLOAT_ADDTION = new ALUType(ResourceProvider.JAMS, "float_adition",
-            "ALU_TYPE_FLOAT_ADITION", 4);
+    public static final ALUType FLOAT_ADDTION = new ALUType(ResourceProvider.JAMS, "float_addition",
+            "ALU_TYPE_FLOAT_ADDITION", 4);
     public static final ALUType FLOAT_MULTIPLICATION = new ALUType(ResourceProvider.JAMS, "float_multiplication",
             "ALU_TYPE_FLOAT_MULTIPLICATION", 9);
     public static final ALUType FLOAT_DIVISION = new ALUType(ResourceProvider.JAMS, "float_division",
