@@ -30,6 +30,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.DragEvent;
 import javafx.scene.layout.HBox;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.image.quality.QualityImageView;
@@ -140,6 +141,23 @@ public class ALUCollectionSnapshotValueEditor extends ListView<ALU> implements V
                 });
                 setGraphic(editor);
             }
+        }
+
+        @Override
+        protected void onDragDropped(DragEvent event) {
+            if (getItem() == null) return;
+            var dragboard = event.getDragboard();
+
+            if (dragboard.hasString()) {
+                var items = getListView().getItems();
+
+                int index = Integer.parseInt(dragboard.getString());
+                if (index < 0 || index >= items.size()) return;
+                int to = getIndex();
+                items.add(to, items.remove(index));
+                refreshValues();
+            }
+            event.consume();
         }
 
         private Button createRemoveButton() {

@@ -34,10 +34,7 @@ import net.jamsimulator.jams.mips.instruction.alu.ALUCollectionSnapshot;
 import net.jamsimulator.jams.mips.instruction.alu.ALUType;
 import net.jamsimulator.jams.mips.memory.builder.MemoryBuilder;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -79,7 +76,7 @@ public class MIPSSimulationConfigurationPresets {
                 Messages.SIMULATION_CONFIGURATION_ENABLE_DELAY_SLOTS, false,
                 pipelinedArchitectures, Map.of(BRANCH_ON_DECODE, new Object[]{true})));
         PRESETS.add(new MIPSSimulationConfigurationNodePreset(ALUS, ALUCollectionSnapshot.class, 70,
-                Messages.SIMULATION_CONFIGURATION_ALUS, new ALUCollectionSnapshot(Set.of(
+                Messages.SIMULATION_CONFIGURATION_ALUS, new ALUCollectionSnapshot(List.of(
                         new ALU(ALUType.INTEGER, 1),
                         new ALU(ALUType.FLOAT_ADDTION, 4),
                         new ALU(ALUType.FLOAT_MULTIPLICATION, 9),
