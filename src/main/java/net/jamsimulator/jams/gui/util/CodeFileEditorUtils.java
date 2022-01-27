@@ -24,14 +24,30 @@
 
 package net.jamsimulator.jams.gui.util;
 
+import net.jamsimulator.jams.gui.JamsApplication;
+import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.holder.FileEditorHolderHolder;
 import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 import net.jamsimulator.jams.utils.FileUtils;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Optional;
 
 public class CodeFileEditorUtils {
+
+    public static Optional<CodeFileEditor> getFocusedCodeFileEditor() {
+        var project = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
+        if (project == null) return Optional.empty();
+
+        var node = project.getProjectTabPane().getSelectionModel().getSelectedItem().getContent();
+        if (!(node instanceof FileEditorHolderHolder holder)) return Optional.empty();
+
+        var editor = holder.getFileEditorHolder().getLastFocusedEditor().orElse(null);
+        if (!(editor instanceof CodeFileEditor fileEditor)) return Optional.empty();
+        return Optional.of(fileEditor);
+    }
 
     public static String read(FileEditorTab tab) {
         if (tab == null) return "";

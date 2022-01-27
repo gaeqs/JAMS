@@ -283,6 +283,12 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         }
     }
 
+    public void deleteCurrentLine() {
+        var start = getCaretPosition() - getCaretColumn();
+        var end = start + getParagraphLength(getCurrentParagraph());
+        replaceText(start == 0 ? 0 : start - 1, end, "");
+    }
+
     /**
      * Reformats the file.
      * This method should be overridden by these children's classes.
