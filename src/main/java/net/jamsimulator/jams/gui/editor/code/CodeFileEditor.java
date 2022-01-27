@@ -63,6 +63,7 @@ import net.jamsimulator.jams.utils.FileUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.GenericStyledAreaBehaviorParameters;
 import org.reactfx.Subscription;
 
 import java.io.IOException;
@@ -74,6 +75,18 @@ import java.util.Set;
 import static net.jamsimulator.jams.gui.util.CodeFileEditorUtils.read;
 
 public abstract class CodeFileEditor extends CodeArea implements FileEditor {
+
+    private static final GenericStyledAreaBehaviorParameters PARAMETERS = new GenericStyledAreaBehaviorParameters();
+
+    static {
+        PARAMETERS.setIncludeCopy(false);
+        PARAMETERS.setIncludeCut(false);
+        PARAMETERS.setIncludePaste(false);
+        PARAMETERS.setIncludeRedo(false);
+        PARAMETERS.setIncludeUndo(false);
+        PARAMETERS.setIncludeSelectAll(false);
+        PARAMETERS.setIncludeShiftZRedo(false);
+    }
 
     protected final FileEditorTab tab;
     protected final ScaledVirtualized<CodeFileEditor> zoom = new ScaledVirtualized<>(this);
@@ -109,7 +122,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     protected boolean styled = false;
 
     public CodeFileEditor(FileEditorTab tab) {
-        super(read(tab));
+        super(read(tab), PARAMETERS);
         this.tab = tab;
         this.index = getOrGenerateIndex();
 

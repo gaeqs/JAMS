@@ -68,7 +68,7 @@ dependencies {
     implementation group: 'org.json', name: 'json', version: '20210307'
     implementation 'org.jetbrains:annotations:22.0.0'
 
-    implementation 'com.github.gaeqs:RichTextFX:e8eb1b8f'
+    implementation 'com.github.gaeqs:RichTextFX:fcdb504a'
     implementation group: 'org.reactfx', name: 'reactfx', version: '2.0-M5'
     implementation group: 'org.fxmisc.undo', name: 'undofx', version: '2.1.1'
     implementation group: 'org.fxmisc.flowless', name: 'flowless', version: '0.6.7'
@@ -84,7 +84,7 @@ dependencies {
     jarLib group: 'org.json', name: 'json', version: '20210307'
 
 
-    jarLib 'com.github.gaeqs:RichTextFX:e8eb1b8f'
+    jarLib 'com.github.gaeqs:RichTextFX:fcdb504a'
     jarLib group: 'org.reactfx', name: 'reactfx', version: '2.0-M5'
     jarLib group: 'org.fxmisc.undo', name: 'undofx', version: '2.1.1'
     jarLib group: 'org.fxmisc.flowless', name: 'flowless', version: '0.6.7'
