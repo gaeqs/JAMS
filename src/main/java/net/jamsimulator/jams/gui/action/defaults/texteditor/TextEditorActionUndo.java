@@ -24,25 +24,19 @@
 
 package net.jamsimulator.jams.gui.action.defaults.texteditor;
 
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
-import net.jamsimulator.jams.gui.editor.FileEditor;
-import net.jamsimulator.jams.gui.editor.holder.FileEditorHolder;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
-import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;
-import net.jamsimulator.jams.gui.project.ProjectTab;
+import net.jamsimulator.jams.gui.util.CodeFileEditorUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
-
-import java.util.Optional;
+import org.fxmisc.richtext.UndoActions;
 
 public class TextEditorActionUndo extends ContextAction {
 
@@ -50,7 +44,7 @@ public class TextEditorActionUndo extends ContextAction {
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHORTCUT_DOWN);
 
     public TextEditorActionUndo(ResourceProvider provider) {
-        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_UNDO, DEFAULT_COMBINATION, TextEditorActionRegions.UNDO_REDO, MainMenuRegion.EDIT, null);
+        super(provider, NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_UNDO, DEFAULT_COMBINATION, TextEditorActionRegions.UNDO_REDO, MainMenuRegion.EDIT, null);
     }
 
     @Override
@@ -62,16 +56,7 @@ public class TextEditorActionUndo extends ContextAction {
 
     @Override
     public void runFromMenu() {
-        Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
-        if (optionalProject.isEmpty()) return;
-        Node pane = optionalProject.get().getProjectTabPane().getSelectionModel().getSelectedItem().getContent();
-        if (!(pane instanceof MIPSStructurePane)) return;
-
-        FileEditorHolder holder = ((MIPSStructurePane) pane).getFileEditorHolder();
-        Optional<FileEditor> optionalEditor = holder.getLastFocusedEditor();
-        if (optionalEditor.isPresent() && optionalEditor.get() instanceof CodeFileEditor) {
-            ((CodeFileEditor) optionalEditor.get()).undo();
-        }
+        CodeFileEditorUtils.getFocusedCodeFileEditor().ifPresent(UndoActions::undo);
     }
 
     @Override
@@ -81,20 +66,13 @@ public class TextEditorActionUndo extends ContextAction {
 
     @Override
     public boolean supportsTextEditorState(CodeFileEditor editor) {
-        return editor.getUndoManager().isUndoAvailable();
+        return !editor.getSelectedText().isEmpty();
     }
 
     @Override
     public boolean supportsMainMenuState(MainMenuBar bar) {
-        Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
-        if (optionalProject.isEmpty()) return false;
-        Node pane = optionalProject.get().getProjectTabPane().getSelectionModel().getSelectedItem().getContent();
-        if (!(pane instanceof MIPSStructurePane)) return false;
-
-        FileEditorHolder holder = ((MIPSStructurePane) pane).getFileEditorHolder();
-        Optional<FileEditor> optionalEditor = holder.getLastFocusedEditor();
-        if (optionalEditor.isEmpty() || !(optionalEditor.get() instanceof CodeFileEditor)) return false;
-
-        return ((CodeFileEditor) optionalEditor.get()).getUndoManager().isUndoAvailable();
+        return CodeFileEditorUtils.getFocusedCodeFileEditor()
+                .map(UndoActions::isUndoAvailable)
+                .orElse(false);
     }
 }
