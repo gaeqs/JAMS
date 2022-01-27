@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.mips.memory.cache.writeback;
 
+import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
@@ -40,8 +42,11 @@ import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationSource;
 import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
+import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.utils.RawFileData;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -50,6 +55,11 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class WriteBackDirectCacheTest {
+
+	@BeforeAll
+	static void initRegistry() {
+		Jams.initForTests();
+	}
 
 	@Test
 	void bytes() {
@@ -83,7 +93,18 @@ class WriteBackDirectCacheTest {
 				new RawFileData("test.asm", CacheTestsData.PROGRAM)), inst, dir, reg, mem, null);
 		assembler.assemble();
 
-		MIPSSimulationData data = new MIPSSimulationData(new SimulationSyscallExecutions(), new File(""), null, assembler.getOriginals(), assembler.getAllLabels(), false, false, true, true, true);
+		var configuration = new MIPSSimulationConfiguration("default");
+		var data = new MIPSSimulationData(
+				configuration,
+				new File(""),
+				null,
+				new MIPSSimulationSource(assembler.getOriginals(), assembler.getAllLabels()),
+				assembler.getInstructionSet(),
+				assembler.getRegisters().copy(),
+				assembler.getMemory().copy(),
+				assembler.getStackBottom(),
+				assembler.getKernelStackBottom()
+		);
 		MIPSSimulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE, data);
 
 		mem = (Cache) simulation.getMemory();

@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.assembler;
 
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.directive.set.MIPS32DirectiveSet;
@@ -32,8 +33,10 @@ import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.register.MIPS32Registers;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
-import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationSource;
+import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.utils.RawFileData;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -42,6 +45,11 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AssemblerTest {
+
+    @BeforeAll
+    static void initRegistry() {
+        Jams.initForTests();
+    }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Test
@@ -76,10 +84,20 @@ class AssemblerTest {
                 new MIPS32DirectiveSet(ResourceProvider.JAMS),
                 new MIPS32Registers(), new MIPS32Memory(), null);
         assembler.assemble();
-        SimulationSyscallExecutions executions = new SimulationSyscallExecutions();
 
-        MIPSSimulationData data = new MIPSSimulationData(executions, new File(""), null, assembler.getOriginals(), assembler.getAllLabels(),
-                true, true, true, true, true);
+        var configuration = new MIPSSimulationConfiguration("default");
+        var data = new MIPSSimulationData(
+                configuration,
+                new File(""),
+                null,
+                new MIPSSimulationSource(assembler.getOriginals(), assembler.getAllLabels()),
+                assembler.getInstructionSet(),
+                assembler.getRegisters().copy(),
+                assembler.getMemory().copy(),
+                assembler.getStackBottom(),
+                assembler.getKernelStackBottom()
+        );
+
         MIPSSimulation<?> simulation = assembler.createSimulation(SingleCycleArchitecture.INSTANCE, data);
 
         assertEquals(0x02508820, simulation.getMemory().getWord(simulation.getRegisters().getProgramCounter().getValue()));

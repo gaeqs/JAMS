@@ -49,6 +49,7 @@ public class SimpleEventBroadcast implements EventBroadcast {
      */
     public SimpleEventBroadcast() {
         Comparator<ListenerMethod> comparator = Comparator.comparingInt(it -> it.getListener().priority());
+        comparator = comparator.reversed();
         comparator = comparator.thenComparingLong(ListenerMethod::getId);
         registeredListeners = new ConcurrentSkipListSet<>(comparator);
     }

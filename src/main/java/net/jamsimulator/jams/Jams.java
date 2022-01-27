@@ -109,6 +109,40 @@ public class Jams {
         onClose();
     }
 
+    private static boolean testInit = false;
+
+    public static void initForTests () {
+        if(testInit) return;
+
+        generalEventBroadcast = new SimpleEventBroadcast();
+        taskExecutor = new TaskExecutor();
+
+        loadVersion();
+        System.out.println("Loading JAMS version " + getVersion());
+        mainFolder = FolderUtils.checkMainFolder();
+        TempUtils.loadTemporalFolder();
+
+        try {
+            var path = Jams.class.getProtectionDomain().getCodeSource().getLocation().toURI();
+            if (Files.isDirectory(Path.of(path))) {
+                fileSystem = FileSystems.getDefault();
+            } else {
+                fileSystem = FileSystems.newFileSystem(URI.create("jar:" + path), Map.of("create", "true"));
+            }
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+        fileSystemWrapper = new ProtectedFileSystem(fileSystem);
+        generalEventBroadcast.callEvent(new JAMSPreInitEvent());
+        mainConfiguration = ConfigurationUtils.loadMainConfiguration();
+        REGISTRY.loadJAMSManagers();
+        recentProjects = new RecentProjects();
+        generalEventBroadcast.callEvent(new JAMSPostInitEvent());
+
+        testInit = true;
+    }
+
     /**
      * Returns the version of this instance of JAMS.
      *
