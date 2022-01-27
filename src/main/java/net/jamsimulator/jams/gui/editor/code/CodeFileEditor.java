@@ -281,8 +281,8 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         IndexRange selection = getSelection();
 
         if (selection.getStart() == selection.getEnd()) {
-            var start = getCaretPosition() - getCaretColumn();
-            var end = start + getParagraphLength(getCurrentParagraph());
+            int start = getCaretPosition() - getCaretColumn();
+            int end = start + getParagraphLength(getCurrentParagraph());
             selection = new IndexRange(start, end);
 
             String text = getText(selection);
@@ -296,9 +296,43 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         }
     }
 
+    public void moveCurrentLineUp() {
+        int line = getCurrentParagraph();
+        if (line == 0) return;
+
+        int column = getCaretColumn();
+        int start = getCaretPosition() - column;
+
+        var textPrevious = getParagraph(line - 1).getText();
+        var textCurrent = getParagraph(line).getText();
+
+        int end = start + textCurrent.length();
+        int startPrevious = start - textPrevious.length() - 1;
+
+        replaceText(startPrevious, end, textCurrent + "\n" + textPrevious);
+        moveTo(startPrevious + column);
+    }
+
+    public void moveCurrentLineDown() {
+        int line = getCurrentParagraph();
+        if (line == getParagraphs().size() - 1) return;
+
+        int column = getCaretColumn();
+        int start = getCaretPosition() - column;
+
+        var textNext = getParagraph(line + 1).getText();
+        var textCurrent = getParagraph(line).getText();
+
+        int end = start + textCurrent.length();
+        int endNext = end + 1 + textNext.length();
+
+        replaceText(start, endNext, textNext + "\n" + textCurrent);
+        moveTo(start + textNext.length() + 1 + column);
+    }
+
     public void deleteCurrentLine() {
-        var start = getCaretPosition() - getCaretColumn();
-        var end = start + getParagraphLength(getCurrentParagraph());
+        int start = getCaretPosition() - getCaretColumn();
+        int end = start + getParagraphLength(getCurrentParagraph());
         replaceText(start == 0 ? 0 : start - 1, end, "");
     }
 
@@ -316,6 +350,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
                 RegionTags.EDITOR_TAB.equals(region);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onClose() {
         JamsApplication.getStage().xProperty().removeListener((ChangeListener<? super Number>) popupHideListener);
@@ -380,6 +415,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         return generateIndex();
     }
 
+    @SuppressWarnings("unchecked")
     protected void initializeAutocompletionPopupListeners() {
         //AUTOCOMPLETION MOVEMENT
         addEventFilter(KeyEvent.KEY_PRESSED, event -> {
