@@ -39,8 +39,11 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;
 import net.jamsimulator.jams.gui.project.ProjectTab;
+import net.jamsimulator.jams.gui.util.CodeFileEditorUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
+import org.fxmisc.richtext.ClipboardActions;
+import org.fxmisc.richtext.UndoActions;
 
 import java.util.Optional;
 
@@ -62,16 +65,7 @@ public class TextEditorActionRedo extends ContextAction {
 
     @Override
     public void runFromMenu() {
-        Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
-        if (optionalProject.isEmpty()) return;
-        Node pane = optionalProject.get().getProjectTabPane().getSelectionModel().getSelectedItem().getContent();
-        if (!(pane instanceof MIPSStructurePane)) return;
-
-        FileEditorHolder holder = ((MIPSStructurePane) pane).getFileEditorHolder();
-        Optional<FileEditor> optionalEditor = holder.getLastFocusedEditor();
-        if (optionalEditor.isPresent() && optionalEditor.get() instanceof CodeFileEditor) {
-            ((CodeFileEditor) optionalEditor.get()).redo();
-        }
+        CodeFileEditorUtils.getFocusedCodeFileEditor().ifPresent(UndoActions::redo);
     }
 
     @Override
@@ -81,19 +75,13 @@ public class TextEditorActionRedo extends ContextAction {
 
     @Override
     public boolean supportsTextEditorState(CodeFileEditor editor) {
-        return editor.getUndoManager().isRedoAvailable();
+        return !editor.getSelectedText().isEmpty();
     }
 
     @Override
     public boolean supportsMainMenuState(MainMenuBar bar) {
-        Optional<ProjectTab> optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
-        if (optionalProject.isEmpty()) return false;
-        Node pane = optionalProject.get().getProjectTabPane().getSelectionModel().getSelectedItem().getContent();
-        if (!(pane instanceof MIPSStructurePane)) return false;
-
-        FileEditorHolder holder = ((MIPSStructurePane) pane).getFileEditorHolder();
-        Optional<FileEditor> optionalEditor = holder.getLastFocusedEditor();
-        if (optionalEditor.isEmpty() || !(optionalEditor.get() instanceof CodeFileEditor)) return false;
-        return ((CodeFileEditor) optionalEditor.get()).getUndoManager().isRedoAvailable();
+        return CodeFileEditorUtils.getFocusedCodeFileEditor()
+                .map(UndoActions::isRedoAvailable)
+                .orElse(false);
     }
 }

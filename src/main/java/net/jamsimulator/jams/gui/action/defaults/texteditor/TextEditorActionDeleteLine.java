@@ -36,27 +36,27 @@ import net.jamsimulator.jams.gui.main.MainMenuBar;
 import net.jamsimulator.jams.gui.util.CodeFileEditorUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
-import org.fxmisc.richtext.ClipboardActions;
 
-public class TextEditorActionCopy extends ContextAction {
+public class TextEditorActionDeleteLine extends ContextAction {
 
-    public static final String NAME = "TEXT_EDITOR_COPY";
-    public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN);
+    public static final String NAME = "TEXT_EDITOR_DELETE_LINE";
+    public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN);
 
-    public TextEditorActionCopy(ResourceProvider provider) {
-        super(provider, NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_COPY, DEFAULT_COMBINATION, TextEditorActionRegions.CLIPBOARD, MainMenuRegion.EDIT, null);
+    public TextEditorActionDeleteLine(ResourceProvider provider) {
+        super(provider, NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_DELETE_LINE, DEFAULT_COMBINATION,
+                TextEditorActionRegions.TEXT_MODIFICATION, MainMenuRegion.EDIT, null);
     }
 
     @Override
     public void run(Object node) {
         if (node instanceof CodeFileEditor) {
-            ((CodeFileEditor) node).copy();
+            ((CodeFileEditor) node).deleteCurrentLine();
         }
     }
 
     @Override
     public void runFromMenu() {
-        CodeFileEditorUtils.getFocusedCodeFileEditor().ifPresent(ClipboardActions::copy);
+        CodeFileEditorUtils.getFocusedCodeFileEditor().ifPresent(CodeFileEditor::deleteCurrentLine);
     }
 
     @Override
@@ -66,13 +66,12 @@ public class TextEditorActionCopy extends ContextAction {
 
     @Override
     public boolean supportsTextEditorState(CodeFileEditor editor) {
-        return !editor.getSelectedText().isEmpty();
+        System.out.println("STATE TRUE");
+        return true;
     }
 
     @Override
     public boolean supportsMainMenuState(MainMenuBar bar) {
-        return CodeFileEditorUtils.getFocusedCodeFileEditor()
-                .map(it -> !it.getSelectedText().isEmpty())
-                .orElse(false);
+        return CodeFileEditorUtils.getFocusedCodeFileEditor().isPresent();
     }
 }

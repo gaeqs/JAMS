@@ -27,19 +27,24 @@ package net.jamsimulator.jams.gui.action.defaults.texteditor;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.gui.action.Action;
 import net.jamsimulator.jams.gui.action.RegionTags;
+import net.jamsimulator.jams.gui.action.context.ContextAction;
+import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
+import net.jamsimulator.jams.gui.explorer.Explorer;
+import net.jamsimulator.jams.gui.main.MainMenuBar;
+import net.jamsimulator.jams.gui.util.CodeFileEditorUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
 
-public class TextEditorActionSelectAll extends Action {
+public class TextEditorActionSelectAll extends ContextAction {
 
     public static final String NAME = "TEXT_EDITOR_SELECT_ALL";
     public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.A, KeyCombination.SHORTCUT_DOWN);
 
     public TextEditorActionSelectAll(ResourceProvider provider) {
-        super(provider,NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_SELECT_ALL, DEFAULT_COMBINATION);
+        super(provider, NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_SELECT_ALL, DEFAULT_COMBINATION,
+                TextEditorActionRegions.CLIPBOARD, MainMenuRegion.EDIT, null);
     }
 
     @Override
@@ -47,5 +52,25 @@ public class TextEditorActionSelectAll extends Action {
         if (node instanceof CodeFileEditor) {
             ((CodeFileEditor) node).selectAll();
         }
+    }
+
+    @Override
+    public void runFromMenu() {
+        CodeFileEditorUtils.getFocusedCodeFileEditor().ifPresent(CodeFileEditor::selectAll);
+    }
+
+    @Override
+    public boolean supportsExplorerState(Explorer explorer) {
+        return false;
+    }
+
+    @Override
+    public boolean supportsTextEditorState(CodeFileEditor editor) {
+        return true;
+    }
+
+    @Override
+    public boolean supportsMainMenuState(MainMenuBar bar) {
+        return CodeFileEditorUtils.getFocusedCodeFileEditor().isPresent();
     }
 }

@@ -333,6 +333,9 @@ public final class ActionManager extends Manager<Action> {
         add(new TextEditorActionShowAutocompletionPopup(ResourceProvider.JAMS));
         add(new TextEditorActionShowDocumentationPopup(ResourceProvider.JAMS));
         add(new TextEditorActionUndo(ResourceProvider.JAMS));
+        add(new TextEditorActionDeleteLine(ResourceProvider.JAMS));
+        add(new TextEditorActionMoveLineUp(ResourceProvider.JAMS));
+        add(new TextEditorActionMoveLineDown(ResourceProvider.JAMS));
 
         //EXPLORER ELEMENT
         add(new ExplorerElementActionContractOrSelectParent(ResourceProvider.JAMS));

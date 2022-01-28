@@ -63,6 +63,7 @@ import net.jamsimulator.jams.utils.FileUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.GenericStyledAreaBehaviorParameters;
 import org.reactfx.Subscription;
 
 import java.io.IOException;
@@ -74,6 +75,18 @@ import java.util.Set;
 import static net.jamsimulator.jams.gui.util.CodeFileEditorUtils.read;
 
 public abstract class CodeFileEditor extends CodeArea implements FileEditor {
+
+    private static final GenericStyledAreaBehaviorParameters PARAMETERS = new GenericStyledAreaBehaviorParameters();
+
+    static {
+        PARAMETERS.setIncludeCopy(false);
+        PARAMETERS.setIncludeCut(false);
+        PARAMETERS.setIncludePaste(false);
+        PARAMETERS.setIncludeRedo(false);
+        PARAMETERS.setIncludeUndo(false);
+        PARAMETERS.setIncludeSelectAll(false);
+        PARAMETERS.setIncludeShiftZRedo(false);
+    }
 
     protected final FileEditorTab tab;
     protected final ScaledVirtualized<CodeFileEditor> zoom = new ScaledVirtualized<>(this);
@@ -109,7 +122,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     protected boolean styled = false;
 
     public CodeFileEditor(FileEditorTab tab) {
-        super(read(tab));
+        super(read(tab), PARAMETERS);
         this.tab = tab;
         this.index = getOrGenerateIndex();
 
@@ -268,8 +281,8 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         IndexRange selection = getSelection();
 
         if (selection.getStart() == selection.getEnd()) {
-            var start = getCaretPosition() - getCaretColumn();
-            var end = start + getParagraphLength(getCurrentParagraph());
+            int start = getCaretPosition() - getCaretColumn();
+            int end = start + getParagraphLength(getCurrentParagraph());
             selection = new IndexRange(start, end);
 
             String text = getText(selection);
@@ -281,6 +294,46 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
             moveTo(selection.getEnd() + text.length());
             getCaretSelectionBind().selectRange(selection.getEnd(), selection.getEnd() + text.length());
         }
+    }
+
+    public void moveCurrentLineUp() {
+        int line = getCurrentParagraph();
+        if (line == 0) return;
+
+        int column = getCaretColumn();
+        int start = getCaretPosition() - column;
+
+        var textPrevious = getParagraph(line - 1).getText();
+        var textCurrent = getParagraph(line).getText();
+
+        int end = start + textCurrent.length();
+        int startPrevious = start - textPrevious.length() - 1;
+
+        replaceText(startPrevious, end, textCurrent + "\n" + textPrevious);
+        moveTo(startPrevious + column);
+    }
+
+    public void moveCurrentLineDown() {
+        int line = getCurrentParagraph();
+        if (line == getParagraphs().size() - 1) return;
+
+        int column = getCaretColumn();
+        int start = getCaretPosition() - column;
+
+        var textNext = getParagraph(line + 1).getText();
+        var textCurrent = getParagraph(line).getText();
+
+        int end = start + textCurrent.length();
+        int endNext = end + 1 + textNext.length();
+
+        replaceText(start, endNext, textNext + "\n" + textCurrent);
+        moveTo(start + textNext.length() + 1 + column);
+    }
+
+    public void deleteCurrentLine() {
+        int start = getCaretPosition() - getCaretColumn();
+        int end = start + getParagraphLength(getCurrentParagraph());
+        replaceText(start == 0 ? 0 : start - 1, end, "");
     }
 
     /**
@@ -297,6 +350,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
                 RegionTags.EDITOR_TAB.equals(region);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onClose() {
         JamsApplication.getStage().xProperty().removeListener((ChangeListener<? super Number>) popupHideListener);
@@ -361,6 +415,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         return generateIndex();
     }
 
+    @SuppressWarnings("unchecked")
     protected void initializeAutocompletionPopupListeners() {
         //AUTOCOMPLETION MOVEMENT
         addEventFilter(KeyEvent.KEY_PRESSED, event -> {
