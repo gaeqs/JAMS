@@ -130,6 +130,15 @@ public interface Simulation<Address extends Number> extends EventBroadcast {
     long getExecutedInstructions();
 
     /**
+     * Returns the amount of time in nanoseconds this simulation was running.
+     *
+     * Reseting the simulation clears this value, but stopping and running again does not.
+     *
+     * @return the amount of time in nanoseconds this simulation was running.
+     */
+    long getExecutionTime();
+
+    /**
      * Increases the cycle count by one.
      */
     void addCycleCount();

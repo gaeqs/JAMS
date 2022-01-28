@@ -100,6 +100,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
 
     protected int cycleDelay;
     protected long cycles;
+    protected long executionTime;
 
     protected COP0Register badAddressRegister;
     protected COP0Register countRegister;
@@ -690,6 +691,11 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
     }
 
     @Override
+    public long getExecutionTime() {
+        return executionTime;
+    }
+
+    @Override
     public boolean isRunning() {
         return running;
     }
@@ -744,6 +750,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
         memory.restoreSavedState();
         finished = false;
         cycles = 0;
+        executionTime = 0;
         externalInterruptController.reset();
 
         callEvent(new SimulationResetEvent(this));
@@ -774,6 +781,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
         registers.enableEventCalls(canCallEvents);
 
         thread = new Thread(() -> {
+            long start = System.nanoTime();
             try {
                 var before = callEvent(new SimulationCycleEvent.Before(this, cycles));
                 if (before.isCancelled()) return;
@@ -782,6 +790,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+            executionTime += System.nanoTime() - start;
             manageSimulationFinish();
         });
         callEvent(new SimulationStartEvent(this));
@@ -817,6 +826,8 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+
+            executionTime += System.nanoTime() - start;
 
             if (getConsole() != null) {
                 long millis = (System.nanoTime() - start) / 1000000;

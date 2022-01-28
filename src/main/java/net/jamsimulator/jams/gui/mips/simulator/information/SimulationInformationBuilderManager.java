@@ -40,5 +40,6 @@ public class SimulationInformationBuilderManager extends Manager<SimulationInfor
     @Override
     protected void loadDefaultElements() {
         add(new SingleCycleSimulationInformation.Builder());
+        add(new MuliALUPipelinedSimulationInformation.Builder());
     }
 }

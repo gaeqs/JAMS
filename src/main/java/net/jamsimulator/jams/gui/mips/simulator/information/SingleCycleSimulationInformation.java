@@ -34,14 +34,19 @@ import net.jamsimulator.jams.language.wrapper.LanguageLabel;
 import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
 
 public class SingleCycleSimulationInformation extends VBox {
 
-    protected Simulation<?> simulation;
-    protected LanguageLabel textCycles;
-    protected LanguageLabel textInsturctions;
-    protected LanguageLabel textCPI;
+    protected final Simulation<?> simulation;
+    protected final LanguageLabel textCycles;
+    protected final LanguageLabel textInsturctions;
+    protected final LanguageLabel textExecutionTime;
+    protected final LanguageLabel textCPI;
+    protected final LanguageLabel textCyclesPerSecond;
+    protected final LanguageLabel textInsturctionsPerSecond;
 
     public SingleCycleSimulationInformation(Simulation<?> simulation) {
         this.simulation = simulation;
@@ -50,31 +55,60 @@ public class SingleCycleSimulationInformation extends VBox {
 
         textCycles = new LanguageLabel(Messages.SIMULATION_INFORMATION_CYCLES);
         textInsturctions = new LanguageLabel(Messages.SIMULATION_INFORMATION_INSTRUCTIONS);
+        textExecutionTime = new LanguageLabel(Messages.SIMULATION_INFORMATION_EXECUTION_TIME);
         textCPI = new LanguageLabel(Messages.SIMULATION_INFORMATION_CPI);
+        textCyclesPerSecond = new LanguageLabel(Messages.SIMULATION_INFORMATION_CYCLES_PER_SECOND);
+        textInsturctionsPerSecond = new LanguageLabel(Messages.SIMULATION_INFORMATION_INSTRUCTIONS_PER_SECOND);
 
         getChildren().add(new RegionDisplay(Messages.SIMULATION_INFORMATION_SECTION_EXECUTION));
         getChildren().add(textCycles);
         getChildren().add(textInsturctions);
+        getChildren().add(textExecutionTime);
         getChildren().add(textCPI);
+        getChildren().add(textCyclesPerSecond);
+        getChildren().add(textInsturctionsPerSecond);
 
         simulation.registerListeners(this, true);
-        refresValues();
+        refreshValues();
     }
 
     public Simulation<?> getSimulation() {
         return simulation;
     }
 
-    protected void refresValues() {
+    protected void refreshValues() {
         textCycles.setReplacements(new String[]{"{CYCLES}", String.valueOf(simulation.getCycles())});
         textInsturctions.setReplacements(new String[]{"{INSTRUCTIONS}", String.valueOf(simulation.getExecutedInstructions())});
-        textCPI.setReplacements(new String[]{"{CPI}",
-                String.format("%.4f", simulation.getCycles() / (double) simulation.getExecutedInstructions())});
+
+        double executionTime = simulation.getExecutionTime() / 1_000_000_000.0;
+        textExecutionTime.setReplacements(new String[]{"{TIME}", String.format("%.4f", executionTime)});
+
+        double cpi = simulation.getCycles() / (double) simulation.getExecutedInstructions();
+        textCPI.setReplacements(new String[]{"{CPI}", isValid(cpi) ? "-" : String.format("%.4f", cpi)});
+
+        double cps = simulation.getCycles() / executionTime;
+        double ips = simulation.getExecutedInstructions() / executionTime;
+        textCyclesPerSecond.setReplacements(new String[]{"{CPS}", isValid(cps) ? "-" : String.format("%.4f", cps)});
+        textInsturctionsPerSecond.setReplacements(new String[]{"{IPS}", isValid(ips) ? "-" : String.format("%.4f", ips)});
+    }
+
+    private static boolean isValid(double d) {
+        return Double.isInfinite(d) || Double.isNaN(d);
     }
 
     @Listener
     private void onSimulationStop(SimulationStopEvent event) {
-        Platform.runLater(this::refresValues);
+        Platform.runLater(this::refreshValues);
+    }
+
+    @Listener
+    private void onSimulationUndo(SimulationUndoStepEvent event) {
+        Platform.runLater(this::refreshValues);
+    }
+
+    @Listener
+    private void onSimulationReset(SimulationResetEvent event) {
+        Platform.runLater(this::refreshValues);
     }
 
     public static final class Builder implements SimulationInformationBuilder {
