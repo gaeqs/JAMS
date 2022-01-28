@@ -116,6 +116,7 @@ public class Messages {
     public static final String BAR_LABELS_NAME = "BAR_LABELS_NAME";
     public static final String BAR_LAB_NAME = "BAR_LAB_NAME";
     public static final String BAR_CACHES_NAME = "BAR_CACHES_NAME";
+    public static final String BAR_INFO_NAME = "BAR_INFO_NAME";
 
     public static final String INSTRUCTIONS_USER = "INSTRUCTIONS_USER";
     public static final String INSTRUCTIONS_KERNEL = "INSTRUCTIONS_KERNEL";
@@ -166,6 +167,11 @@ public class Messages {
     public static final String CACHE_LOG_CLEAR_ALL = "CACHE_LOG_CLEAR_ALL";
 
     public static final String FLOW_CYCLE = "FLOW_CYCLE";
+
+    public static final String SIMULATION_INFORMATION_SECTION_EXECUTION = "SIMULATION_INFORMATION_SECTION_EXECUTION";
+    public static final String SIMULATION_INFORMATION_CYCLES = "SIMULATION_INFORMATION_CYCLES";
+    public static final String SIMULATION_INFORMATION_INSTRUCTIONS = "SIMULATION_INFORMATION_INSTRUCTIONS";
+    public static final String SIMULATION_INFORMATION_CPI = "SIMULATION_INFORMATION_CPI";
 
     public static final String TASK_ASSEMBLING = "TASK_ASSEMBLING";
 

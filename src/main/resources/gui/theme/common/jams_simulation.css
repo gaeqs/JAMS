@@ -181,3 +181,8 @@
 .lab {
     -fx-padding: 5px;
 }
+
+.simulation-information {
+    -fx-spacing: 5px;
+    -fx-padding: 0px 5px 0 5px;
+}

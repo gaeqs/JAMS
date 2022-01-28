@@ -136,6 +136,11 @@ public class MultiCycleSimulation extends MIPSSimulation<MultiCycleArchitecture>
     }
 
     @Override
+    public long getExecutedInstructions() {
+        return executedInstructions;
+    }
+
+    @Override
     public void reset() throws InterruptedException {
         super.reset();
         if (changes != null) {

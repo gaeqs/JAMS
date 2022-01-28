@@ -38,7 +38,7 @@ import net.jamsimulator.jams.mips.simulation.multialupipelined.MultiALUPipelined
  */
 public class MultiALUPipelinedArchitecture extends MultiCycleArchitecture {
 
-    public static final String NAME = "MultiALU Pipelined";
+    public static final String NAME = "multi_alu_pipelined";
     public static final MultiALUPipelinedArchitecture INSTANCE = new MultiALUPipelinedArchitecture(ResourceProvider.JAMS);
 
     protected MultiALUPipelinedArchitecture(ResourceProvider provider, String name) {

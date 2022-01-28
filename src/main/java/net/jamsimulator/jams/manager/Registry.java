@@ -28,6 +28,7 @@ import net.jamsimulator.jams.file.FileTypeManager;
 import net.jamsimulator.jams.gui.action.ActionManager;
 import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModeManager;
 import net.jamsimulator.jams.gui.mips.editor.indexing.inspection.MIPSInspectorManager;
+import net.jamsimulator.jams.gui.mips.simulator.information.SimulationInformationBuilderManager;
 import net.jamsimulator.jams.gui.theme.ThemeManager;
 import net.jamsimulator.jams.language.LanguageManager;
 import net.jamsimulator.jams.mips.architecture.ArchitectureManager;
@@ -370,6 +371,7 @@ public class Registry {
         registerPrimary(ThemeManager.INSTANCE);
         registerPrimary(MIPSInspectorManager.INSTANCE);
         registerPrimary(ALUTypeManager.INSTANCE);
+        registerPrimary(SimulationInformationBuilderManager.INSTANCE);
     }
 
 }

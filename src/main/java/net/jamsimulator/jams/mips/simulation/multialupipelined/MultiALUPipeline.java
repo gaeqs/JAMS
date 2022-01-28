@@ -106,6 +106,14 @@ public class MultiALUPipeline {
         return finished;
     }
 
+    public long getInstructionsStarted() {
+        return instructionsStarted;
+    }
+
+    public long getInstructionsFinished() {
+        return instructionsFinished;
+    }
+
     public Set<MultiALUPipelineSlot> getExecute() {
         return Arrays.stream(execute).filter(Objects::nonNull).collect(Collectors.toSet());
     }

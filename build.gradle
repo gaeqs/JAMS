@@ -74,6 +74,8 @@ dependencies {
     implementation group: 'org.fxmisc.flowless', name: 'flowless', version: '0.6.7'
     implementation group: 'org.fxmisc.wellbehaved', name: 'wellbehavedfx', version: '0.3.3'
 
+    implementation 'com.github.gaeqs:RichTextFX:-SNAPSHOT'
+
     javafxDependencies.each {
         jarLib group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'win'
         jarLib group: 'org.openjfx', name: it, version: javafxVersion, classifier: 'mac'
@@ -89,6 +91,8 @@ dependencies {
     jarLib group: 'org.fxmisc.undo', name: 'undofx', version: '2.1.1'
     jarLib group: 'org.fxmisc.flowless', name: 'flowless', version: '0.6.7'
     jarLib group: 'org.fxmisc.wellbehaved', name: 'wellbehavedfx', version: '0.3.3'
+
+    jarLib 'com.github.gaeqs:RichTextFX:-SNAPSHOT'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
 }

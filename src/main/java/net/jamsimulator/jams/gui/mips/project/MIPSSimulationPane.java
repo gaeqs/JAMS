@@ -40,6 +40,7 @@ import net.jamsimulator.jams.gui.mips.simulator.cache.CacheVisualizer;
 import net.jamsimulator.jams.gui.mips.simulator.execution.ExecutionButtons;
 import net.jamsimulator.jams.gui.mips.simulator.execution.SpeedSlider;
 import net.jamsimulator.jams.gui.mips.simulator.flow.FlowTable;
+import net.jamsimulator.jams.gui.mips.simulator.information.SimulationInformationBuilder;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.InstructionViewerGroup;
 import net.jamsimulator.jams.gui.mips.simulator.instruction.MIPSAssembledCodeViewer;
 import net.jamsimulator.jams.gui.mips.simulator.lab.LabPane;
@@ -55,6 +56,7 @@ import net.jamsimulator.jams.gui.util.ZoomUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTab;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.register.Register;
@@ -116,6 +118,7 @@ public class MIPSSimulationPane extends WorkingPane implements SimulationHolder<
         loadLabels();
         loadCacheVisualizer();
         loadLab();
+        loadInformation();
 
         SplitPane.setResizableWithParent(center, true);
     }
@@ -198,6 +201,22 @@ public class MIPSSimulationPane extends WorkingPane implements SimulationHolder<
         scroll.setFitToWidth(true);
         scroll.setFitToHeight(true);
         manageBarAddition("lab", scroll, icon, Messages.BAR_LAB_NAME, BarPosition.LEFT_BOTTOM, Manager.ofD(BarSnapshotViewMode.class).getDefault(), true);
+    }
+
+    private void loadInformation() {
+        var m = Manager.of(SimulationInformationBuilder.class);
+
+        var icon = Icons.FILE_TEXT;
+        var builder = m.get(simulation.getArchitecture().getName())
+                .orElseGet(() -> m.get(SingleCycleArchitecture.NAME).orElse(null));
+        if (builder == null) return;
+        var info = builder.buildNewNode(simulation);
+        var scroll = new PixelScrollPane(info);
+        scroll.setFitToWidth(true);
+        scroll.setFitToHeight(true);
+        manageBarAddition("information", scroll, icon, Messages.BAR_INFO_NAME, BarPosition.RIGHT_BOTTOM,
+                Manager.ofD(BarSnapshotViewMode.class).getDefault(), true);
+
     }
 
 

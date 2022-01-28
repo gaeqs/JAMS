@@ -100,6 +100,11 @@ public class SingleCycleSimulation extends MIPSSimulation<SingleCycleArchitectur
     }
 
     @Override
+    public long getExecutedInstructions() {
+        return cycles;
+    }
+
+    @Override
     public void reset() throws InterruptedException {
         super.reset();
         if (changes != null) {

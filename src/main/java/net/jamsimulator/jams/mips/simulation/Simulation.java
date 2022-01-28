@@ -115,12 +115,19 @@ public interface Simulation<Address extends Number> extends EventBroadcast {
     void setCycleDelay(int cycleDelay);
 
     /**
-     * Returns the current cycle of this {@link MIPSSimulation}.
+     * Returns the current cycle of this {@link Simulation}.
      * This is also the amount of executed cycles.
      *
-     * @return the current cycle of this {@link MIPSSimulation}.
+     * @return the current cycle of this {@link Simulation}.
      */
     long getCycles();
+
+    /**
+     * Returns the amount of instructions executed in this {@link Simulation}.
+     *
+     * @return the amount of instructions executed in this {@link Simulation}.
+     */
+    long getExecutedInstructions();
 
     /**
      * Increases the cycle count by one.
