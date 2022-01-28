@@ -392,6 +392,8 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
                         .getPipeline().getFetch() != null;
                 setAndUnlock(pc(), willFetch ? address - 4 : address);
             }
+        } else {
+            setAndUnlock(pc(), address);
         }
     }
 
