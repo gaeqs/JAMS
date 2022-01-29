@@ -66,7 +66,6 @@ public class TextEditorActionDeleteLine extends ContextAction {
 
     @Override
     public boolean supportsTextEditorState(CodeFileEditor editor) {
-        System.out.println("STATE TRUE");
         return true;
     }
 
