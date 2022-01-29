@@ -206,7 +206,7 @@ public class MIPSSimulationPane extends WorkingPane implements SimulationHolder<
     private void loadInformation() {
         var m = Manager.of(SimulationInformationBuilder.class);
 
-        var icon = Icons.FILE_TEXT;
+        var icon = Icons.SIMULATION_INFO;
         var builder = m.get(simulation.getArchitecture().getName())
                 .orElseGet(() -> m.get(SingleCycleArchitecture.NAME).orElse(null));
         if (builder == null) return;
