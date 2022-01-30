@@ -521,7 +521,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         private static final long DELAY = 100000000L;
 
         private long nextTick = System.nanoTime();
-        private double zoomY = -1, zoomX = -1, scrollY = -1, scrollX = -1;
+        private double from = -1, to = -1;
 
         @Override
         public void handle(long now) {
@@ -531,18 +531,13 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
             } else return;
 
             try {
-                double scrollX = scrollPane.getEstimatedScrollX();
-                double scrollY = scrollPane.getEstimatedScrollY();
-                double zoomX = zoom.getZoom().getX();
-                double zoomY = zoom.getZoom().getY();
+                int from = firstVisibleParToAllParIndex();
+                int to = lastVisibleParToAllParIndex();
 
-                if (this.scrollX == scrollX && this.scrollY == scrollY && this.zoomX == zoomX && this.zoomY == zoomY)
-                    return;
+                if (from == this.from && to == this.to) return;
 
-                this.scrollX = scrollX;
-                this.scrollY = scrollY;
-                this.zoomX = zoomX;
-                this.zoomY = zoomY;
+                this.from = from;
+                this.to = to;
             } catch (IllegalArgumentException ignore) {
                 return;
             }
