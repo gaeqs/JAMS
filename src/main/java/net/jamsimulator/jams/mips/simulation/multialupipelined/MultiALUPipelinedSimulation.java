@@ -141,6 +141,11 @@ public class MultiALUPipelinedSimulation
     }
 
     @Override
+    public long getExecutedInstructions() {
+        return pipeline.getInstructionsFinished();
+    }
+
+    @Override
     public void reset() throws InterruptedException {
         super.reset();
         if (changes != null) {

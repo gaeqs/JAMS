@@ -38,7 +38,7 @@ import net.jamsimulator.jams.mips.simulation.multicycle.MultiCycleSimulation;
  */
 public class MultiCycleArchitecture extends Architecture {
 
-    public static final String NAME = "Multi-cycle";
+    public static final String NAME = "multi_cycle";
     public static final MultiCycleArchitecture INSTANCE = new MultiCycleArchitecture(ResourceProvider.JAMS);
 
     protected MultiCycleArchitecture(ResourceProvider provider, String name) {

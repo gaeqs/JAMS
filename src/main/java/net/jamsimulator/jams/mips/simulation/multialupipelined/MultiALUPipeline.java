@@ -58,6 +58,8 @@ public class MultiALUPipeline {
     private final ALU[] assignedALUs;
     private final int[] timesExecuted;
 
+    private long raws, waws, otherStalls;
+
     public MultiALUPipeline(
             MultiALUPipelinedSimulation simulation,
             boolean delaySlotsEnabled,
@@ -104,6 +106,26 @@ public class MultiALUPipeline {
 
     public MultiALUPipelineSlot getFinished() {
         return finished;
+    }
+
+    public long getRAWs() {
+        return raws;
+    }
+
+    public long getWAWs() {
+        return waws;
+    }
+
+    public long getOtherStalls() {
+        return otherStalls;
+    }
+
+    public long getInstructionsStarted() {
+        return instructionsStarted;
+    }
+
+    public long getInstructionsFinished() {
+        return instructionsFinished;
     }
 
     public Set<MultiALUPipelineSlot> getExecute() {
@@ -163,6 +185,7 @@ public class MultiALUPipeline {
                         memory = null;
                     } else {
                         memory.status = MultiALUPipelineSlotStatus.STALL;
+                        otherStalls++;
                     }
                 }
             }
@@ -173,8 +196,10 @@ public class MultiALUPipeline {
             shiftExecutionToMemory();
         } else {
             for (var e : execute) {
-                if (e != null && e.status == MultiALUPipelineSlotStatus.EXECUTED)
+                if (e != null && e.status == MultiALUPipelineSlotStatus.EXECUTED) {
                     e.status = MultiALUPipelineSlotStatus.STALL;
+                    otherStalls++;
+                }
             }
         }
 
@@ -202,6 +227,7 @@ public class MultiALUPipeline {
                         pc.setValue(pc.getValue() + 4);
                     } else {
                         fetch.status = MultiALUPipelineSlotStatus.STALL;
+                        otherStalls++;
                     }
                 }
             }
@@ -222,10 +248,17 @@ public class MultiALUPipeline {
         Arrays.fill(assignedALUs, null);
         Arrays.fill(timesExecuted, 0);
         alus.reset();
+
+        raws = 0;
+        waws = 0;
+        otherStalls = 0;
     }
 
     public void removeFetch() {
-        if (fetch != null) fetch.status = MultiALUPipelineSlotStatus.STALL;
+        if (fetch != null) {
+            fetch.status = MultiALUPipelineSlotStatus.STALL;
+            otherStalls++;
+        }
     }
 
     public void executeFullJumpRemoval(long instructionId) {
@@ -303,6 +336,10 @@ public class MultiALUPipeline {
         System.arraycopy(assignedALUs, 0, copy.assignedALUs, 0, assignedALUs.length);
         System.arraycopy(timesExecuted, 0, copy.timesExecuted, 0, timesExecuted.length);
 
+        copy.raws = raws;
+        copy.waws = waws;
+        copy.otherStalls = otherStalls;
+
         return copy;
     }
 
@@ -322,6 +359,10 @@ public class MultiALUPipeline {
 
         System.arraycopy(old.assignedALUs, 0, assignedALUs, 0, assignedALUs.length);
         System.arraycopy(old.timesExecuted, 0, timesExecuted, 0, timesExecuted.length);
+
+        raws = old.raws;
+        waws = old.waws;
+        otherStalls = old.otherStalls;
     }
 
     private void writeBack() {
@@ -414,6 +455,7 @@ public class MultiALUPipeline {
                 decode.status = MultiALUPipelineSlotStatus.EXECUTED;
             } catch (RAWHazardException ex) {
                 decode.status = MultiALUPipelineSlotStatus.RAW;
+                raws++;
             } catch (MIPSInterruptException ex) {
                 decode.exception = ex;
                 decode.status = MultiALUPipelineSlotStatus.EXECUTED;
@@ -476,17 +518,20 @@ public class MultiALUPipeline {
                     writeback == null ? null : writeback.execution
             )) {
                 e.status = MultiALUPipelineSlotStatus.WAW;
+                waws++;
                 continue;
             }
             if (!move || executionId > e.execution.getInstructionId()) {
                 if (move) {
                     execute[executionToMove].status = MultiALUPipelineSlotStatus.STALL;
+                    otherStalls++;
                 }
                 move = true;
                 executionToMove = i;
                 executionId = e.execution.getInstructionId();
             } else {
                 e.status = MultiALUPipelineSlotStatus.STALL;
+                otherStalls++;
             }
         }
 
@@ -509,6 +554,7 @@ public class MultiALUPipeline {
             decode = null;
         } else {
             decode.status = MultiALUPipelineSlotStatus.STALL;
+            otherStalls++;
         }
     }
 

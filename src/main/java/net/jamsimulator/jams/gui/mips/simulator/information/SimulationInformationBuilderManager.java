@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,35 +22,24 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.architecture;
+package net.jamsimulator.jams.gui.mips.simulator.information;
 
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.ResourceProvider;
-import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
-import net.jamsimulator.jams.mips.simulation.singlecycle.SingleCycleSimulation;
 
-/**
- * Represents the single-cycle architecture.
- * <p>
- * This architecture executes one instruction per cycle, starting and finishing the
- * execution of an instruction on the same cycle. This makes this architecture slow,
- * having high seconds per cycle.
- */
-public class SingleCycleArchitecture extends Architecture {
+public class SimulationInformationBuilderManager extends Manager<SimulationInformationBuilder> {
 
-    public static final String NAME = "single_cycle";
-    public static final SingleCycleArchitecture INSTANCE = new SingleCycleArchitecture(ResourceProvider.JAMS);
+    public static final String NAME = "simulation_information_builder";
+    public static final SimulationInformationBuilderManager INSTANCE =
+            new SimulationInformationBuilderManager(ResourceProvider.JAMS, NAME);
 
-    protected SingleCycleArchitecture(ResourceProvider provider, String name) {
-        super(provider, name);
-    }
-
-    private SingleCycleArchitecture(ResourceProvider provider) {
-        super(provider, NAME);
+    private SimulationInformationBuilderManager(ResourceProvider provider, String name) {
+        super(provider, name, SimulationInformationBuilder.class, true);
     }
 
     @Override
-    public MIPSSimulation<? extends SingleCycleArchitecture> createSimulation(MIPSSimulationData data) {
-        return new SingleCycleSimulation(this, data);
+    protected void loadDefaultElements() {
+        add(new SingleCycleSimulationInformation.Builder());
+        add(new MuliALUPipelinedSimulationInformation.Builder());
     }
 }

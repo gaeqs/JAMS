@@ -67,6 +67,7 @@ public class Icons {
     public static final IconData SIMULATION_CACHES = new IconData("simulation_caches", "/gui/icon/simulation/cache.png");
     public static final IconData SIMULATION_BREAKPOINT = new IconData("simulation_breakpoint", "/gui/icon/simulation/breakpoint.png");
     public static final IconData SIMULATION_LAB = new IconData("simulation_lab", "/gui/icon/simulation/lab.png");
+    public static final IconData SIMULATION_INFO = new IconData("simulation_info", "/gui/icon/simulation/info.png");
 
     public static final IconData AUTOCOMPLETION_DIRECTIVE = new IconData("autocompletion_directive", "/gui/icon/autocompletion/directive.png");
     public static final IconData AUTOCOMPLETION_INSTRUCTION = new IconData("autocompletion_instruction", "/gui/icon/autocompletion/instruction.png");
