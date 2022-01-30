@@ -57,7 +57,7 @@ public class AboutWindow extends AnchorPane {
 
         contents.getChildren().add(new QualityImageView(Icons.LOGO, IMAGE_SIZE, IMAGE_SIZE));
 
-        var label = new LanguageLabel(Messages.ABOUT, "{VERSION}", Jams.getVersion());
+        var label = new LanguageLabel(Messages.ABOUT, "{VERSION}", Jams.getVersion(), "{YEAR}", "2022");
         label.getStyleClass().add("about-text");
         contents.getChildren().add(label);
 

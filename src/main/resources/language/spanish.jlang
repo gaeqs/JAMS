@@ -4818,4 +4818,4 @@ FMT_DOUBLE=coma flotante doble
 FMT_WORD=palabra
 FMT_LONG=doble palabra
 
-ABOUT=JAMS\nVersión {VERSION}\n\nCopyright 2020-2021\nCreado por Gael Rial Costas
+ABOUT=JAMS\nVersión {VERSION}\n\nCopyright 2020-{YEAR}\nCreado por Gael Rial Costas

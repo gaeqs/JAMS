@@ -4810,4 +4810,4 @@ FMT_DOUBLE=double
 FMT_WORD=word
 FMT_LONG=long
 
-ABOUT=JAMS\nVersion {VERSION}\n\nCopyright 2020-2021\nMade by Gael Rial Costas
+ABOUT=JAMS\nVersion {VERSION}\n\nCopyright 2020-{YEAR}\nMade by Gael Rial Costas
