@@ -105,16 +105,7 @@ public class MIPSFileEditor extends CodeFileEditor {
 
     @Override
     protected EditorIndex generateIndex() {
-        var index = new MIPSEditorIndex(getProject(), tab.getFile().getName());
-        tab.getWorkingPane().getProjectTab().getProject()
-                .getTaskExecutor().execute(new LanguageTask<>(Messages.EDITOR_INDEXING) {
-                    @Override
-                    protected Void call() {
-                        index.withLock(true, i -> i.indexAll(getText()));
-                        return null;
-                    }
-                });
-        return index;
+        return new MIPSEditorIndex(getProject(), tab.getFile().getName());
     }
 
     protected void applyAutoIndent() {

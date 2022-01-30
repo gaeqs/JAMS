@@ -57,8 +57,10 @@ import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.GUIReflectionUtils;
 import net.jamsimulator.jams.gui.util.ZoomUtils;
+import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.GlobalIndexHolder;
 import net.jamsimulator.jams.project.Project;
+import net.jamsimulator.jams.task.LanguageTask;
 import net.jamsimulator.jams.utils.FileUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -119,7 +121,6 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     protected final AnimationTimer styleTimer;
 
     protected boolean shouldOpenAutocompletionAfterEdit = false;
-    protected boolean styled = false;
 
     public CodeFileEditor(FileEditorTab tab) {
         super(read(tab), PARAMETERS);
@@ -174,7 +175,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         styleTimer.start();
 
         tab.selectedProperty().addListener((obs, old, val) -> {
-            if (val) styleVisibleArea();
+            if (val) Platform.runLater(this::styleVisibleArea);
         });
 
     }
@@ -409,10 +410,20 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         var data = getProject().getData();
         if (data instanceof GlobalIndexHolder holder) {
             var index = holder.getGlobalIndex().getIndex(tab.getFile());
-            if (index.isPresent()) return index.get();
+            if (index.isPresent()) {
+                return index.get();
+            }
         }
-
-        return generateIndex();
+        var index = generateIndex();
+        tab.getWorkingPane().getProjectTab().getProject()
+                .getTaskExecutor().execute(new LanguageTask<>(Messages.EDITOR_INDEXING) {
+                    @Override
+                    protected Void call() {
+                        index.withLock(true, i -> i.indexAll(getText()));
+                        return null;
+                    }
+                });
+        return index;
     }
 
     @SuppressWarnings("unchecked")
@@ -470,9 +481,9 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
 
             int from = firstVisibleParToAllParIndex();
             int to = lastVisibleParToAllParIndex();
+
             index.withLockF(false, i -> i.getStyleRange(from, to))
                     .ifPresent(s -> setStyleSpans(from, 0, s));
-            styled = true;
         } catch (IllegalArgumentException ignore) {
             Platform.runLater(this::styleVisibleArea);
         }
@@ -493,7 +504,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
 
     @Listener
     private void onIndexRefresh(IndexRequestRefreshEvent event) {
-        if (!tab.isSelected() && styled) return;
+        if (!tab.isSelected()) return;
         Platform.runLater(() -> {
             styleVisibleArea();
             if (shouldOpenAutocompletionAfterEdit) {
