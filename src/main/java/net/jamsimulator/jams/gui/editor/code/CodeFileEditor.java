@@ -378,7 +378,10 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
 
     @Override
     public void reload() {
-        replaceText(0, getText().length(), read(tab));
+        var read = read(tab);
+        var text = getText();
+        if (text.equals(read)) return;
+        replaceText(0, text.length(), read);
         tab.setSaveMark(false);
         tab.layoutDisplay();
     }
