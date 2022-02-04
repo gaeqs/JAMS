@@ -148,7 +148,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
 
         this.canCallEvents = data.configuration().getNodeValue(MIPSSimulationConfigurationPresets.CALL_EVENTS);
         this.undoEnabled = supportsUndo && (boolean) data.configuration()
-                .getNodeValue(MIPSSimulationConfigurationPresets.UNDO_ENABLED);
+                .getNodeValue(MIPSSimulationConfigurationPresets.UNDO_ENABLED) && canCallEvents;
 
         // 1 Instruction = 4 Bytes.
 
@@ -159,7 +159,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
             prefetch();
         }
 
-        if (canCallEvents && undoEnabled) {
+        if (undoEnabled) {
             memory.getBottomMemory().registerListeners(this, true);
             registers.registerListeners(this, true);
             files.registerListeners(this, true);
