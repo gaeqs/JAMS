@@ -38,7 +38,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -48,7 +47,10 @@ public class InstructionSw extends BasicInstruction<InstructionSw.Assembled> imp
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b101011;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.SIGNED_16_BIT_REGISTER_SHIFT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.SIGNED_16_BIT_REGISTER_SHIFT
+    );
 
     public InstructionSw() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
@@ -59,8 +61,13 @@ public class InstructionSw extends BasicInstruction<InstructionSw.Assembled> imp
 
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-        return new Assembled(parameters[1].getRegister(), parameters[0].getRegister(),
-                parameters[1].getImmediate(), origin, this);
+        return new Assembled(
+                parameters[1].getRegister(),
+                parameters[0].getRegister(),
+                parameters[1].getImmediate(),
+                origin,
+                this
+        );
     }
 
     @Override
@@ -75,8 +82,9 @@ public class InstructionSw extends BasicInstruction<InstructionSw.Assembled> imp
 
     public static class Assembled extends AssembledI16Instruction {
 
-        public Assembled(int baseRegister, int targetRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionSw.OPERATION_CODE, baseRegister, targetRegister, offset, origin, basicOrigin);
+        public Assembled(int baseRegister, int targetRegister, int offset,
+                         Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(OPERATION_CODE, baseRegister, targetRegister, offset, origin, basicOrigin);
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -99,10 +107,8 @@ public class InstructionSw extends BasicInstruction<InstructionSw.Assembled> imp
 
         @Override
         public void execute() {
-            Register base = register(instruction.getSourceRegister());
-            Register rt = register(instruction.getTargetRegister());
-            int address = base.getValue() + instruction.getImmediateAsSigned();
-            simulation.getMemory().setWord(address, rt.getValue());
+            int address = value(instruction.getSourceRegister()) + instruction.getImmediateAsSigned();
+            simulation.getMemory().setWord(address, value(instruction.getTargetRegister()));
         }
     }
 
@@ -120,13 +126,12 @@ public class InstructionSw extends BasicInstruction<InstructionSw.Assembled> imp
 
         @Override
         public void execute() {
-            int address = value(instruction.getSourceRegister()) + instruction.getImmediateAsSigned();
-            executionResult = new int[]{address};
         }
 
         @Override
         public void memory() {
-            simulation.getMemory().setWord(executionResult[0], value(instruction.getTargetRegister()));
+            int address = value(instruction.getSourceRegister()) + instruction.getImmediateAsSigned();
+            simulation.getMemory().setWord(address, value(instruction.getTargetRegister()));
         }
 
         @Override

@@ -336,7 +336,7 @@ public class Register {
 
     /**
      * Sets the value stored in the register.
-     * If this register is not modifiable this method will do nothing.
+     * If this register is not modifiable, this method will do nothing.
      *
      * @param value the value.
      * @see #isModifiable()
@@ -356,6 +356,18 @@ public class Register {
         setValue0(before.getNewValue());
 
         registers.callEvent(new RegisterChangeValueEvent.After(this, old, this.value));
+    }
+
+    /**
+     * Sets the value stored in the register.
+     * If this register is not modificable, this method will do nothing.
+     * <p>
+     * This method is a shortcut for setValue(Float.floatTointBits(value)).
+     *
+     * @param value the value.
+     */
+    public void setValue(float value) {
+        setValue(Float.floatToIntBits(value));
     }
 
     /**

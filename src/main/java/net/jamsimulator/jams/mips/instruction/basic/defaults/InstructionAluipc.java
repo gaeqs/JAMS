@@ -38,7 +38,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -49,7 +48,10 @@ public class InstructionAluipc extends BasicPCREL16Instruction<InstructionAluipc
     public static final int OPERATION_CODE = 0b111011;
     public static final int PCREL_CODE = 0b11111;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.SIGNED_16_BIT
+    );
 
     public InstructionAluipc() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, PCREL_CODE);
@@ -71,7 +73,7 @@ public class InstructionAluipc extends BasicPCREL16Instruction<InstructionAluipc
     public static class Assembled extends AssembledPCREL16Instruction {
 
         public Assembled(int sourceRegister, int immediate, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionAluipc.OPERATION_CODE, sourceRegister, InstructionAluipc.PCREL_CODE, immediate, origin, basicOrigin);
+            super(OPERATION_CODE, sourceRegister, PCREL_CODE, immediate, origin, basicOrigin);
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -93,15 +95,15 @@ public class InstructionAluipc extends BasicPCREL16Instruction<InstructionAluipc
 
         @Override
         public void execute() {
-            Register rs = register(instruction.getSourceRegister());
-
-            int result = ~0x0FFFF & (getAddress() + 4 + (instruction.getImmediate() << 16));
-            rs.setValue(result);
+            register(instruction.getSourceRegister())
+                    .setValue(~0x0FFFF & (getAddress() + 4 + (instruction.getImmediate() << 16)));
         }
     }
 
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -114,18 +116,17 @@ public class InstructionAluipc extends BasicPCREL16Instruction<InstructionAluipc
 
         @Override
         public void execute() {
-            executionResult = new int[]{~0x0FFFF & (getAddress() + 4 + (instruction.getImmediate() << 16))};
-            forward(instruction.getSourceRegister(), executionResult[0]);
+            result = ~0x0FFFF & (getAddress() + 4 + (instruction.getImmediate() << 16));
+            forward(instruction.getSourceRegister(), result);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getSourceRegister(), executionResult[0]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlock(instruction.getSourceRegister(), executionResult[0]);
+            setAndUnlock(instruction.getSourceRegister(), result);
         }
     }
 }

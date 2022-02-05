@@ -38,7 +38,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -48,7 +47,11 @@ public class InstructionBgeuc extends BasicInstruction<InstructionBgeuc.Assemble
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b000110;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER,
+            ParameterType.SIGNED_16_BIT
+    );
 
     public InstructionBgeuc() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
@@ -81,8 +84,9 @@ public class InstructionBgeuc extends BasicInstruction<InstructionBgeuc.Assemble
 
     public static class Assembled extends AssembledI16Instruction {
 
-        public Assembled(int sourceRegister, int targetRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionBgeuc.OPERATION_CODE, sourceRegister, targetRegister, offset, origin, basicOrigin);
+        public Assembled(int sourceRegister, int targetRegister, int offset,
+                         Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(OPERATION_CODE, sourceRegister, targetRegister, offset, origin, basicOrigin);
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -105,10 +109,10 @@ public class InstructionBgeuc extends BasicInstruction<InstructionBgeuc.Assemble
 
         @Override
         public void execute() {
-            Register rt = register(instruction.getTargetRegister());
-            Register rs = register(instruction.getSourceRegister());
-            if (Integer.compareUnsigned(rs.getValue(), rt.getValue()) < 0) return;
-            Register pc = pc();
+            int rt = value(instruction.getTargetRegister());
+            int rs = value(instruction.getSourceRegister());
+            if (Integer.compareUnsigned(rs, rt) < 0) return;
+            var pc = pc();
             pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
 
         }
@@ -122,12 +126,17 @@ public class InstructionBgeuc extends BasicInstruction<InstructionBgeuc.Assemble
 
         @Override
         public void decode() {
+            requires(instruction.getSourceRegister(), false);
+            requires(instruction.getTargetRegister(), false);
+            lock(pc());
         }
 
         @Override
         public void execute() {
             if (Integer.compareUnsigned(value(instruction.getSourceRegister()), value(instruction.getTargetRegister())) >= 0) {
                 jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
+            } else {
+                unlock(pc());
             }
         }
 

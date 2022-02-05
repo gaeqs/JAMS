@@ -39,7 +39,6 @@ import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class InstructionTeq extends BasicRInstruction<InstructionTeq.Assembled> {
@@ -49,7 +48,10 @@ public class InstructionTeq extends BasicRInstruction<InstructionTeq.Assembled> 
     public static final int OPERATION_CODE = 0;
     public static final int FUNCTION_CODE = 0b110100;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER
+    );
 
     public InstructionTeq() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
@@ -72,7 +74,16 @@ public class InstructionTeq extends BasicRInstruction<InstructionTeq.Assembled> 
 
         public Assembled(int sourceRegister, int targetRegister, Instruction origin,
                          BasicInstruction<InstructionTeq.Assembled> basicOrigin) {
-            super(OPERATION_CODE, sourceRegister, targetRegister, 0, 0, FUNCTION_CODE, origin, basicOrigin);
+            super(
+                    OPERATION_CODE,
+                    sourceRegister,
+                    targetRegister,
+                    0,
+                    0,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<InstructionTeq.Assembled> basicOrigin) {
@@ -93,9 +104,7 @@ public class InstructionTeq extends BasicRInstruction<InstructionTeq.Assembled> 
 
         @Override
         public void execute() {
-            Register rs = register(instruction.getSourceRegister());
-            Register rt = register(instruction.getTargetRegister());
-            if (rs.getValue() != rt.getValue()) return;
+            if (value(instruction.getSourceRegister()) != value(instruction.getTargetRegister())) return;
             error(InterruptCause.TRAP_EXCEPTION);
         }
     }

@@ -41,7 +41,6 @@ import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.NumericUtils;
 
@@ -54,8 +53,10 @@ public class InstructionCrc32 extends BasicRInstruction<InstructionCrc32.Assembl
 
     private static final int POLY = 0xEDB88320;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES =
-            new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER
+    );
 
     private final Type type;
 
@@ -90,8 +91,16 @@ public class InstructionCrc32 extends BasicRInstruction<InstructionCrc32.Assembl
 
         public Assembled(int sourceRegister, int targetRegister, int sz,
                          Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(OPERATION_CODE, sourceRegister, targetRegister, 0, sz,
-                    FUNCTION_CODE, origin, basicOrigin);
+            super(
+                    OPERATION_CODE,
+                    sourceRegister,
+                    targetRegister,
+                    0,
+                    sz,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -118,8 +127,8 @@ public class InstructionCrc32 extends BasicRInstruction<InstructionCrc32.Assembl
 
         @Override
         public void execute() {
-            Register rt = register(instruction.getTargetRegister());
-            Register rs = register(instruction.getSourceRegister());
+            var rt = register(instruction.getTargetRegister());
+            var rs = value(instruction.getSourceRegister());
             int rz = instruction.getShiftAmount();
             if (rz == 4) {
                 error(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION);
@@ -127,9 +136,9 @@ public class InstructionCrc32 extends BasicRInstruction<InstructionCrc32.Assembl
             }
 
             int value = switch (rz) {
-                case 0 -> NumericUtils.crc32(rt.getValue(), rs.getValue(), 1, POLY);
-                case 1 -> NumericUtils.crc32(rt.getValue(), rs.getValue(), 2, POLY);
-                default -> NumericUtils.crc32(rt.getValue(), rs.getValue(), 4, POLY);
+                case 0 -> NumericUtils.crc32(rt.getValue(), rs, 1, POLY);
+                case 1 -> NumericUtils.crc32(rt.getValue(), rs, 2, POLY);
+                default -> NumericUtils.crc32(rt.getValue(), rs, 4, POLY);
             };
             rt.setValue(value);
         }
@@ -137,6 +146,8 @@ public class InstructionCrc32 extends BasicRInstruction<InstructionCrc32.Assembl
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
 
+        private int result;
+        
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
         }
@@ -159,14 +170,13 @@ public class InstructionCrc32 extends BasicRInstruction<InstructionCrc32.Assembl
             int rt = value(instruction.getTargetRegister());
             int rs = value(instruction.getSourceRegister());
 
-            int value = switch (rz) {
+            result = switch (rz) {
                 case 0 -> NumericUtils.crc32(rt, rs, 1, POLY);
                 case 1 -> NumericUtils.crc32(rt, rs, 2, POLY);
                 default -> NumericUtils.crc32(rt, rs, 4, POLY);
             };
-
-            executionResult = new int[]{value};
-            forward(instruction.getTargetRegister(), executionResult[0]);
+            
+            forward(instruction.getTargetRegister(), result);
         }
 
         @Override
@@ -175,7 +185,7 @@ public class InstructionCrc32 extends BasicRInstruction<InstructionCrc32.Assembl
 
         @Override
         public void writeBack() {
-            setAndUnlock(instruction.getTargetRegister(), executionResult[0]);
+            setAndUnlock(instruction.getTargetRegister(), result);
         }
     }
 

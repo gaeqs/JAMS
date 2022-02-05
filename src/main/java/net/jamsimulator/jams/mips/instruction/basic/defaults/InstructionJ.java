@@ -47,7 +47,9 @@ public class InstructionJ extends BasicInstruction<InstructionJ.Assembled> imple
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b000010;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.SIGNED_32_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.SIGNED_32_BIT
+    );
 
     public InstructionJ() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
@@ -107,6 +109,7 @@ public class InstructionJ extends BasicInstruction<InstructionJ.Assembled> imple
 
         @Override
         public void decode() {
+            lock(pc());
         }
 
         @Override

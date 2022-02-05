@@ -39,7 +39,6 @@ import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class InstructionTltu extends BasicRInstruction<InstructionTltu.Assembled> {
@@ -49,7 +48,10 @@ public class InstructionTltu extends BasicRInstruction<InstructionTltu.Assembled
     public static final int OPERATION_CODE = 0;
     public static final int FUNCTION_CODE = 0b110011;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER
+    );
 
     public InstructionTltu() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
@@ -72,7 +74,16 @@ public class InstructionTltu extends BasicRInstruction<InstructionTltu.Assembled
 
         public Assembled(int sourceRegister, int targetRegister, Instruction origin,
                          BasicInstruction<InstructionTltu.Assembled> basicOrigin) {
-            super(OPERATION_CODE, sourceRegister, targetRegister, 0, 0, FUNCTION_CODE, origin, basicOrigin);
+            super(
+                    OPERATION_CODE,
+                    sourceRegister,
+                    targetRegister,
+                    0,
+                    0,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<InstructionTltu.Assembled> basicOrigin) {
@@ -93,9 +104,8 @@ public class InstructionTltu extends BasicRInstruction<InstructionTltu.Assembled
 
         @Override
         public void execute() {
-            Register rs = register(instruction.getSourceRegister());
-            Register rt = register(instruction.getTargetRegister());
-            if (Integer.compareUnsigned(rs.getValue(), rt.getValue()) >= 0) return;
+            if (Integer.compareUnsigned(value(instruction.getSourceRegister()),
+                    value(instruction.getTargetRegister())) >= 0) return;
             error(InterruptCause.TRAP_EXCEPTION);
         }
     }

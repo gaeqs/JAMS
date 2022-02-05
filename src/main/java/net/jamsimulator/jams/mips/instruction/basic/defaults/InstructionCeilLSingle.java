@@ -33,12 +33,11 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
-import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
+import net.jamsimulator.jams.mips.instruction.execution.NumericMultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.NumericUtils;
 
@@ -50,7 +49,10 @@ public class InstructionCeilLSingle extends BasicRFPUInstruction<InstructionCeil
     public static final int FMT = 0b10000;
     public static final int FUNCTION_CODE = 0b001010;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.EVEN_FLOAT_REGISTER, ParameterType.FLOAT_REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.EVEN_FLOAT_REGISTER,
+            ParameterType.FLOAT_REGISTER
+    );
 
     public InstructionCeilLSingle() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE, FMT);
@@ -71,9 +73,18 @@ public class InstructionCeilLSingle extends BasicRFPUInstruction<InstructionCeil
 
     public static class Assembled extends AssembledRFPUInstruction {
 
-        public Assembled(int sourceRegister, int destinationRegister, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionCeilLSingle.OPERATION_CODE, InstructionCeilLSingle.FMT, 0, sourceRegister,
-                    destinationRegister, InstructionCeilLSingle.FUNCTION_CODE, origin, basicOrigin);
+        public Assembled(int sourceRegister, int destinationRegister,
+                         Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(
+                    OPERATION_CODE,
+                    InstructionCeilLSingle.FMT,
+                    0,
+                    sourceRegister,
+                    destinationRegister,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -94,19 +105,15 @@ public class InstructionCeilLSingle extends BasicRFPUInstruction<InstructionCeil
 
         @Override
         public void execute() {
-            if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
-            Register rs0 = registerCop1(instruction.getSourceRegister());
-            float f = Float.intBitsToFloat(rs0.getValue());
-            long l = (long) Math.ceil(f);
-            int[] ints = NumericUtils.longToInts(l);
-
-            registerCop1(instruction.getDestinationRegister()).setValue(ints[0]);
-            registerCop1(instruction.getDestinationRegister() + 1).setValue(ints[1]);
+            int s = instruction.getSourceRegister();
+            int d = instruction.getDestinationRegister();
+            checkEvenRegister(d);
+            NumericUtils.longToInts((long) Math.ceil(floatCOP1(s)), registerCOP1(d), registerCOP1(d + 1));
         }
     }
 
 
-    public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+    public static class MultiCycle extends NumericMultiCycleExecution<MultiCycleArchitecture, Assembled> {
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -114,32 +121,28 @@ public class InstructionCeilLSingle extends BasicRFPUInstruction<InstructionCeil
 
         @Override
         public void decode() {
-            if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
-            requiresCOP1(instruction.getSourceRegister(), false);
-            lockCOP1(instruction.getDestinationRegister());
-            lockCOP1(instruction.getDestinationRegister() + 1);
+            int s = instruction.getSourceRegister();
+            int d = instruction.getDestinationRegister();
+            checkEvenRegister(d);
+            requiresCOP1(s, false);
+            lockCOP1Double(d);
         }
 
         @Override
         public void execute() {
-            var to = instruction.getDestinationRegister();
-            var ceil = (long) Math.ceil(Float.intBitsToFloat(valueCOP1(instruction.getSourceRegister())));
-            executionResult = NumericUtils.longToInts(ceil);
-            forwardCOP1(to, executionResult[0]);
-            forwardCOP1(to + 1, executionResult[1]);
+            longToInts((long) Math.ceil(floatCOP1(instruction.getSourceRegister())));
+            forwardCOP1(instruction.getDestinationRegister(), lowResult);
+            forwardCOP1(instruction.getDestinationRegister() + 1, highResult);
         }
 
         @Override
         public void memory() {
-            var to = instruction.getDestinationRegister();
-            forwardCOP1(to, executionResult[0]);
-            forwardCOP1(to + 1, executionResult[1]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlockCOP1(instruction.getDestinationRegister(), executionResult[0]);
-            setAndUnlockCOP1(instruction.getDestinationRegister() + 1, executionResult[1]);
+            setAndUnlockCOP1(instruction.getDestinationRegister(), lowResult);
+            setAndUnlockCOP1(instruction.getDestinationRegister() + 1, highResult);
         }
     }
 }

@@ -42,7 +42,6 @@ import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -54,12 +53,17 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
     public static final int OPERATION_CODE = 0b010001;
     public static final int FMT = 0b10100;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.FLOAT_REGISTER,
+            ParameterType.FLOAT_REGISTER,
+            ParameterType.FLOAT_REGISTER
+    );
 
     private final FloatCondition condition;
 
     public InstructionCmpCondnSingle(FloatCondition condition) {
-        super(String.format(MNEMONIC, condition.getMnemonic()), PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, condition.getCode(), FMT);
+        super(String.format(MNEMONIC, condition.getMnemonic()),
+                PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, condition.getCode(), FMT);
         this.condition = condition;
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
@@ -74,7 +78,8 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
 
     @Override
     public String getDocumentation() {
-        var documentation = StringUtils.parseEscapeCharacters(Manager.ofS(Language.class).getSelected().getOrDefault("INSTRUCTION_" + NAME_SUFIX + "_DOCUMENTATION"));
+        var documentation = StringUtils.parseEscapeCharacters(Manager.ofS(Language.class)
+                .getSelected().getOrDefault("INSTRUCTION_" + NAME_SUFIX + "_DOCUMENTATION"));
         return documentation.replace("{TYPE}", condition.getName())
                 .replace("{MNEMONIC}", condition.getMnemonic())
                 .replace("{CODE}", StringUtils.addZeros(Integer.toBinaryString(condition.getCode()), 5));
@@ -82,7 +87,14 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
 
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-        return new Assembled(parameters[2].getRegister(), parameters[1].getRegister(), parameters[0].getRegister(), getFunctionCode(), origin, this);
+        return new Assembled(
+                parameters[2].getRegister(),
+                parameters[1].getRegister(),
+                parameters[0].getRegister(),
+                getFunctionCode(),
+                origin,
+                this
+        );
     }
 
     @Override
@@ -94,10 +106,20 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
 
         public Assembled(int targetRegister, int sourceRegister, int destinationRegister, int function_code,
                          Instruction origin, BasicInstruction<InstructionCmpCondnSingle.Assembled> basicOrigin) {
-            super(OPERATION_CODE, FMT, targetRegister, sourceRegister, destinationRegister, function_code, origin, basicOrigin);
+            super(
+                    OPERATION_CODE,
+                    FMT,
+                    targetRegister,
+                    sourceRegister,
+                    destinationRegister,
+                    function_code,
+                    origin,
+                    basicOrigin
+            );
         }
 
-        public Assembled(int instructionCode, Instruction origin, BasicInstruction<InstructionCmpCondnSingle.Assembled> basicOrigin) {
+        public Assembled(int instructionCode, Instruction origin,
+                         BasicInstruction<InstructionCmpCondnSingle.Assembled> basicOrigin) {
             super(instructionCode, origin, basicOrigin);
         }
 
@@ -138,9 +160,8 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
 
         @Override
         public void execute() {
-            float fs = Float.intBitsToFloat(registerCop1(instruction.getSourceRegister()).getValue());
-            float ft = Float.intBitsToFloat(registerCop1(instruction.getTargetRegister()).getValue());
-            Register fd = registerCop1(instruction.getDestinationRegister());
+            float fs = floatCOP1(instruction.getSourceRegister());
+            float ft = floatCOP1(instruction.getTargetRegister());
 
             boolean less, equal, unordered;
 
@@ -157,12 +178,15 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
                 unordered = false;
             }
 
-            boolean condition = instruction.cond4() ^ ((instruction.cond2() && less) || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
-            fd.setValue(condition ? 0xFFFFFFFF : 0);
+            boolean condition = instruction.cond4() ^ ((instruction.cond2() && less)
+                    || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
+            registerCOP1(instruction.getDestinationRegister()).setValue(condition ? 0xFFFFFFFF : 0);
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -177,8 +201,8 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
 
         @Override
         public void execute() {
-            float fs = Float.intBitsToFloat(valueCOP1(instruction.getSourceRegister()));
-            float ft = Float.intBitsToFloat(valueCOP1(instruction.getTargetRegister()));
+            float fs = floatCOP1(instruction.getSourceRegister());
+            float ft = floatCOP1(instruction.getTargetRegister());
 
             boolean less, equal, unordered;
 
@@ -195,19 +219,20 @@ public class InstructionCmpCondnSingle extends BasicRFPUInstruction<InstructionC
                 unordered = false;
             }
 
-            boolean condition = instruction.cond4() ^ ((instruction.cond2() && less) || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
-            executionResult = new int[]{condition ? 0xFFFFFFFF : 0};
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
+            boolean condition = instruction.cond4() ^ ((instruction.cond2() && less)
+                    || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
+            result = condition ? 0xFFFFFFFF : 0;
+            forwardCOP1(instruction.getDestinationRegister(), result);
         }
 
         @Override
         public void memory() {
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
+            forwardCOP1(instruction.getDestinationRegister(), result);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlockCOP1(instruction.getDestinationRegister(), executionResult[0]);
+            setAndUnlockCOP1(instruction.getDestinationRegister(), result);
         }
     }
 }

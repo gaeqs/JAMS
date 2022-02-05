@@ -39,7 +39,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -50,7 +49,8 @@ public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled>
     public static final int OPERATION_CODE = 0b000001;
     public static final int FUNCTION_CODE = 0b10001;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.SIGNED_16_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES =
+            new InstructionParameterTypes(ParameterType.SIGNED_16_BIT);
 
     public InstructionBal() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
@@ -77,7 +77,7 @@ public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled>
     public static class Assembled extends AssembledRIInstruction {
 
         public Assembled(Instruction origin, BasicInstruction<Assembled> basicOrigin, int offset) {
-            super(InstructionBal.OPERATION_CODE, 0, InstructionBal.FUNCTION_CODE, offset, origin, basicOrigin);
+            super(OPERATION_CODE, 0, FUNCTION_CODE, offset, origin, basicOrigin);
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -98,9 +98,8 @@ public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled>
 
         @Override
         public void execute() {
-            Register ra = register(31);
-            Register pc = pc();
-            ra.setValue(pc.getValue());
+            var pc = pc();
+            register(31).setValue(pc.getValue());
             pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
         }
     }
@@ -108,18 +107,18 @@ public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled>
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-            super(simulation, instruction, address, false, false);
+            super(simulation, instruction, address, false, true);
         }
 
         @Override
         public void decode() {
-            decodeResult = new int[]{getAddress() + 4};
+            lock(pc());
+            lock(31);
         }
 
         @Override
         public void execute() {
             jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
-            setAndUnlock(31, decodeResult[0]);
         }
 
         @Override
@@ -128,6 +127,7 @@ public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled>
 
         @Override
         public void writeBack() {
+            setAndUnlock(31, getAddress() + 4);
         }
     }
 
@@ -141,7 +141,6 @@ public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled>
         public void decode() {
             lock(31);
             lock(pc());
-            decodeResult = new int[]{getAddress() + 4};
             if (solveBranchOnDecode()) {
                 jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
             }
@@ -149,24 +148,22 @@ public class InstructionBal extends BasicRIInstruction<InstructionBal.Assembled>
 
         @Override
         public void execute() {
-            if (!solveBranchOnDecode()) {
-                executionResult = new int[]{getAddress() + 4 + (instruction.getImmediateAsSigned() << 2)};
-            } else {
-                forward(31, decodeResult[0]);
+            if (solveBranchOnDecode()) {
+                forward(31, getAddress() + 4);
             }
         }
 
         @Override
         public void memory() {
             if (!solveBranchOnDecode()) {
-                jump(executionResult[0]);
+                jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
+                forward(31, getAddress() + 4);
             }
-            forward(31, decodeResult[0]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlock(31, decodeResult[0]);
+            setAndUnlock(31, getAddress() + 4);
         }
     }
 }

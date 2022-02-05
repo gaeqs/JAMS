@@ -50,7 +50,10 @@ public class InstructionBc1eqz extends BasicIFPUInstruction<InstructionBc1eqz.As
     public static final int OPERATION_CODE = 0b010001;
     public static final int BASE_CODE = 0b01001;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.FLOAT_REGISTER, ParameterType.SIGNED_16_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.FLOAT_REGISTER,
+            ParameterType.SIGNED_16_BIT
+    );
 
     public InstructionBc1eqz() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, BASE_CODE);
@@ -77,7 +80,7 @@ public class InstructionBc1eqz extends BasicIFPUInstruction<InstructionBc1eqz.As
     public static class Assembled extends AssembledIFPUInstruction {
 
         public Assembled(int targetRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionBc1eqz.OPERATION_CODE, InstructionBc1eqz.BASE_CODE, targetRegister, offset, origin, basicOrigin);
+            super(OPERATION_CODE, BASE_CODE, targetRegister, offset, origin, basicOrigin);
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -99,8 +102,7 @@ public class InstructionBc1eqz extends BasicIFPUInstruction<InstructionBc1eqz.As
 
         @Override
         public void execute() {
-            Register rt = registerCop1(instruction.getTargetRegister());
-            if ((rt.getValue() & 1) != 0) return;
+            if ((value(instruction.getTargetRegister()) & 1) != 0) return;
             Register pc = pc();
             pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
         }
@@ -114,12 +116,16 @@ public class InstructionBc1eqz extends BasicIFPUInstruction<InstructionBc1eqz.As
 
         @Override
         public void decode() {
+            requiresCOP1(instruction.getTargetRegister(), false);
+            lock(pc());
         }
 
         @Override
         public void execute() {
             if ((valueCOP1(instruction.getTargetRegister()) & 1) == 0) {
                 jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
+            } else {
+                unlock(pc());
             }
         }
 

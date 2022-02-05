@@ -38,7 +38,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class InstructionSrlv extends BasicRInstruction<InstructionSrlv.Assembled> {
@@ -48,7 +47,11 @@ public class InstructionSrlv extends BasicRInstruction<InstructionSrlv.Assembled
     public static final int OPERATION_CODE = 0;
     public static final int FUNCTION_CODE = 0b000110;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER,
+            ParameterType.REGISTER
+    );
 
     public InstructionSrlv() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
@@ -94,14 +97,14 @@ public class InstructionSrlv extends BasicRInstruction<InstructionSrlv.Assembled
 
         @Override
         public void execute() {
-            Register rs = register(instruction.getSourceRegister());
-            Register rt = register(instruction.getTargetRegister());
-            Register rd = register(instruction.getDestinationRegister());
-            rd.setValue(rt.getValue() >> rs.getValue());
+            register(instruction.getDestinationRegister())
+                    .setValue(value(instruction.getTargetRegister()) >> value(instruction.getSourceRegister()));
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -116,18 +119,17 @@ public class InstructionSrlv extends BasicRInstruction<InstructionSrlv.Assembled
 
         @Override
         public void execute() {
-            executionResult = new int[]{value(instruction.getTargetRegister()) >> value(instruction.getSourceRegister())};
-            forward(instruction.getDestinationRegister(), executionResult[0]);
+            result = value(instruction.getTargetRegister()) >> value(instruction.getSourceRegister());
+            forward(instruction.getDestinationRegister(), result);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlock(instruction.getDestinationRegister(), executionResult[0]);
+            setAndUnlock(instruction.getDestinationRegister(), result);
         }
     }
 }

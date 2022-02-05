@@ -70,8 +70,16 @@ public class InstructionBreak extends BasicRInstruction<InstructionBreak.Assembl
     public static class Assembled extends AssembledRInstruction {
 
         public Assembled(Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionBreak.OPERATION_CODE, 0, 0, 0, 0,
-                    InstructionBreak.FUNCTION_CODE, origin, basicOrigin);
+            super(
+                    OPERATION_CODE,
+                    0,
+                    0,
+                    0,
+                    0,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {

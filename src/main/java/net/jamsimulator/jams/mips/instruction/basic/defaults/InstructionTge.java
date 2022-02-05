@@ -49,7 +49,10 @@ public class InstructionTge extends BasicRInstruction<InstructionTge.Assembled> 
     public static final int OPERATION_CODE = 0;
     public static final int FUNCTION_CODE = 0b110000;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER
+    );
 
     public InstructionTge() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
@@ -72,7 +75,16 @@ public class InstructionTge extends BasicRInstruction<InstructionTge.Assembled> 
 
         public Assembled(int sourceRegister, int targetRegister, Instruction origin,
                          BasicInstruction<InstructionTge.Assembled> basicOrigin) {
-            super(OPERATION_CODE, sourceRegister, targetRegister, 0, 0, FUNCTION_CODE, origin, basicOrigin);
+            super(
+                    OPERATION_CODE,
+                    sourceRegister,
+                    targetRegister,
+                    0,
+                    0,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<InstructionTge.Assembled> basicOrigin) {
@@ -93,9 +105,7 @@ public class InstructionTge extends BasicRInstruction<InstructionTge.Assembled> 
 
         @Override
         public void execute() {
-            Register rs = register(instruction.getSourceRegister());
-            Register rt = register(instruction.getTargetRegister());
-            if (rs.getValue() < rt.getValue()) return;
+            if (value(instruction.getSourceRegister()) < value(instruction.getTargetRegister())) return;
             error(InterruptCause.TRAP_EXCEPTION);
         }
     }

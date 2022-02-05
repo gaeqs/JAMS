@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.utils;
 
+import net.jamsimulator.jams.mips.register.Register;
+
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Optional;
@@ -221,11 +223,33 @@ public class NumericUtils {
         return array;
     }
 
+    public static void doubleToInts(double d, int[] array) {
+        long l = Double.doubleToLongBits(d);
+        array[0] = (int) l;
+        array[1] = (int) (l >> 32);
+    }
+
+    public static void doubleToInts(double d, Register low, Register high) {
+        long l = Double.doubleToLongBits(d);
+        low.setValue((int) l);
+        high.setValue((int) (l >> 32));
+    }
+
     public static int[] longToInts(long l) {
         int[] array = new int[2];
         array[0] = (int) l;
         array[1] = (int) (l >> 32);
         return array;
+    }
+
+    public static void longToInts(long l, int[] array) {
+        array[0] = (int) l;
+        array[1] = (int) (l >> 32);
+    }
+
+    public static void longToInts(long l, Register low, Register high) {
+        low.setValue((int) l);
+        high.setValue((int) (l >> 32));
     }
 
     public static long intsToLong(int low, int high) {

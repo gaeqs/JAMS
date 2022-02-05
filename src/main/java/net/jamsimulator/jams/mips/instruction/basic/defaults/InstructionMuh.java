@@ -38,7 +38,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class InstructionMuh extends BasicRSOPInstruction<InstructionMuh.Assembled> {
@@ -49,7 +48,11 @@ public class InstructionMuh extends BasicRSOPInstruction<InstructionMuh.Assemble
     public static final int FUNCTION_CODE = 0b011000;
     public static final int SOP_CODE = 0b00011;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER,
+            ParameterType.REGISTER
+    );
 
     public InstructionMuh() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE, SOP_CODE);
@@ -60,9 +63,13 @@ public class InstructionMuh extends BasicRSOPInstruction<InstructionMuh.Assemble
 
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-        return new Assembled(parameters[1].getRegister(),
+        return new Assembled(
+                parameters[1].getRegister(),
                 parameters[2].getRegister(),
-                parameters[0].getRegister(), origin, this);
+                parameters[0].getRegister(),
+                origin,
+                this
+        );
     }
 
     @Override
@@ -74,8 +81,16 @@ public class InstructionMuh extends BasicRSOPInstruction<InstructionMuh.Assemble
 
         public Assembled(int sourceRegister, int targetRegister, int destinationRegister,
                          Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionMuh.OPERATION_CODE, sourceRegister, targetRegister, destinationRegister, InstructionMuh.SOP_CODE,
-                    InstructionMuh.FUNCTION_CODE, origin, basicOrigin);
+            super(
+                    OPERATION_CODE,
+                    sourceRegister,
+                    targetRegister,
+                    destinationRegister,
+                    SOP_CODE,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -98,16 +113,14 @@ public class InstructionMuh extends BasicRSOPInstruction<InstructionMuh.Assemble
 
         @Override
         public void execute() {
-            Register rt = register(instruction.getTargetRegister());
-            Register rs = register(instruction.getSourceRegister());
-            Register rd = register(instruction.getDestinationRegister());
-
-            long l = (long) rs.getValue() * rt.getValue();
-            rd.setValue((int) (l >> 32));
+            long l = (long) value(instruction.getSourceRegister()) * value(instruction.getTargetRegister());
+            register(instruction.getDestinationRegister()).setValue((int) (l >> 32));
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -123,18 +136,17 @@ public class InstructionMuh extends BasicRSOPInstruction<InstructionMuh.Assemble
         @Override
         public void execute() {
             long l = (long) value(instruction.getSourceRegister()) * value(instruction.getTargetRegister());
-            executionResult = new int[]{(int) (l >> 32)};
-            forward(instruction.getDestinationRegister(), executionResult[0]);
+            result = (int) (l >> 32);
+            forward(instruction.getDestinationRegister(), result);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlock(instruction.getDestinationRegister(), executionResult[0]);
+            setAndUnlock(instruction.getDestinationRegister(), result);
         }
     }
 }

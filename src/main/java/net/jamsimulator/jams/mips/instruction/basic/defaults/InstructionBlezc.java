@@ -48,7 +48,10 @@ public class InstructionBlezc extends BasicInstruction<InstructionBlezc.Assemble
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b010110;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.SIGNED_16_BIT
+    );
 
     public InstructionBlezc() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
@@ -82,7 +85,7 @@ public class InstructionBlezc extends BasicInstruction<InstructionBlezc.Assemble
     public static class Assembled extends AssembledI16Instruction {
 
         public Assembled(int targetRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionBlezc.OPERATION_CODE, 0, targetRegister, offset, origin, basicOrigin);
+            super(OPERATION_CODE, 0, targetRegister, offset, origin, basicOrigin);
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -104,11 +107,9 @@ public class InstructionBlezc extends BasicInstruction<InstructionBlezc.Assemble
 
         @Override
         public void execute() {
-            Register rt = register(instruction.getTargetRegister());
-            if (rt.getValue() > 0) return;
-            Register pc = pc();
+            if (value(instruction.getTargetRegister()) > 0) return;
+            var pc = pc();
             pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
-
         }
     }
 
@@ -120,12 +121,16 @@ public class InstructionBlezc extends BasicInstruction<InstructionBlezc.Assemble
 
         @Override
         public void decode() {
+            requires(instruction.getTargetRegister(), false);
+            lock(pc());
         }
 
         @Override
         public void execute() {
             if (value(instruction.getTargetRegister()) <= 0) {
                 jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
+            } else {
+                unlock(pc());
             }
         }
 

@@ -31,6 +31,7 @@ import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.Validate;
 
 public abstract class InstructionExecution<Arch extends Architecture, Inst extends AssembledInstruction> {
@@ -86,8 +87,47 @@ public abstract class InstructionExecution<Arch extends Architecture, Inst exten
         throw new MIPSInterruptException(cause);
     }
 
+    /**
+     * Throws a {@link MIPSInterruptException} with the cause {@link InterruptCause#FLOATING_POINT_EXCEPTION}.
+     */
     protected void evenFloatRegisterException() {
         throw new MIPSInterruptException(InterruptCause.FLOATING_POINT_EXCEPTION);
+    }
+
+    /**
+     * Throws a {@link MIPSInterruptException} with the cause {@link InterruptCause#FLOATING_POINT_EXCEPTION} if the
+     * given id is not even.
+     *
+     * @param id the id.
+     */
+    public void checkEvenRegister(int id) {
+        if ((id & 1) != 0) evenFloatRegisterException();
+    }
+
+    /**
+     * Throws a {@link MIPSInterruptException} with the cause {@link InterruptCause#FLOATING_POINT_EXCEPTION}
+     * if any of the given ids is not even.
+     *
+     * @param id1 the first id.
+     * @param id2 the second id.
+     */
+    public void checkEvenRegister(int id1, int id2) {
+        if ((id1 & 1) != 0) evenFloatRegisterException();
+        if ((id2 & 1) != 0) evenFloatRegisterException();
+    }
+
+    /**
+     * Throws a {@link MIPSInterruptException} with the cause {@link InterruptCause#FLOATING_POINT_EXCEPTION}
+     * if any of the given ids is not even.
+     *
+     * @param id1 the first id.
+     * @param id2 the second id.
+     * @param id3 the third id.
+     */
+    public void checkEvenRegister(int id1, int id2, int id3) {
+        if ((id1 & 1) != 0) evenFloatRegisterException();
+        if ((id2 & 1) != 0) evenFloatRegisterException();
+        if ((id3 & 1) != 0) evenFloatRegisterException();
     }
 
     /**
@@ -121,14 +161,36 @@ public abstract class InstructionExecution<Arch extends Architecture, Inst exten
     }
 
     /**
+     * Returns the value of the register that matches the given identifier.
+     *
+     * @param identifier the identifier.
+     * @return the value.
+     * @throws MIPSInterruptException if the register is not present.
+     */
+    protected int value(int identifier) {
+        return registers.getRegisterUnchecked(identifier).getValue();
+    }
+
+    /**
      * Returns the COP0 register that matches the given identifier.
      *
      * @param identifier the identifier.
      * @return the register.
      * @throws MIPSInterruptException if the register is not present.
      */
-    protected Register registerCop0(int identifier) {
+    protected Register registerCOP0(int identifier) {
         return registers.getCoprocessor0RegisterUnchecked(identifier, 0);
+    }
+
+    /**
+     * Returns the value of the COP0 register that matches the given identifier.
+     *
+     * @param identifier the identifier.
+     * @return the value.
+     * @throws MIPSInterruptException if the register is not present.
+     */
+    protected int valueCOP0(int identifier) {
+        return registers.getCoprocessor0RegisterUnchecked(identifier, 0).getValue();
     }
 
     /**
@@ -139,8 +201,20 @@ public abstract class InstructionExecution<Arch extends Architecture, Inst exten
      * @return the register.
      * @throws MIPSInterruptException if the register is not present.
      */
-    protected Register registerCop0(int identifier, int sel) {
+    protected Register registerCOP0(int identifier, int sel) {
         return registers.getCoprocessor0RegisterUnchecked(identifier, sel);
+    }
+
+    /**
+     * Returns the value of the COP0 register that matches the given identifier.
+     *
+     * @param identifier the identifier.
+     * @param sel        the sub-index.
+     * @return the value.
+     * @throws MIPSInterruptException if the register is not present.
+     */
+    protected int valueCOP0(int identifier, int sel) {
+        return registers.getCoprocessor0RegisterUnchecked(identifier, sel).getValue();
     }
 
     /**
@@ -150,7 +224,42 @@ public abstract class InstructionExecution<Arch extends Architecture, Inst exten
      * @return the register.
      * @throws MIPSInterruptException if the register is not present.
      */
-    protected Register registerCop1(int identifier) {
+    protected Register registerCOP1(int identifier) {
         return registers.getCoprocessor1RegisterUnchecked(identifier);
     }
+
+    /**
+     * Returns the value of the COP1 register that matches the given identifier.
+     *
+     * @param identifier the identifier.
+     * @return the value.
+     * @throws MIPSInterruptException if the register is not present.
+     */
+    protected int valueCOP1(int identifier) {
+        return registers.getCoprocessor1RegisterUnchecked(identifier).getValue();
+    }
+
+    /**
+     * Returns the float value of the COP register that matches the given identifier.
+     *
+     * @param identifier the identifier.
+     * @return the value.
+     * @throws MIPSInterruptException if the register is not present.
+     */
+    protected float floatCOP1(int identifier) {
+        return Float.intBitsToFloat(valueCOP1(identifier));
+    }
+
+    /**
+     * Returns the double value of the COP register that matches the given identifier.
+     *
+     * @param identifier the identifier.
+     * @return the value.
+     * @throws MIPSInterruptException if the register is not present.
+     */
+    protected double doubleCOP1(int identifier) {
+        return NumericUtils.intsToDouble(valueCOP1(identifier), valueCOP1(identifier + 1));
+    }
+
+
 }

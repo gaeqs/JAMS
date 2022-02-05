@@ -38,7 +38,6 @@ import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -49,7 +48,10 @@ public class InstructionTeqi extends BasicInstruction<InstructionTeqi.Assembled>
     public static final int OPERATION_CODE = 0b000001;
     public static final int FUNCTION_CODE = 0b01100;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.SIGNED_16_BIT
+    );
 
     public InstructionTeqi() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
@@ -100,8 +102,7 @@ public class InstructionTeqi extends BasicInstruction<InstructionTeqi.Assembled>
 
         @Override
         public void execute() {
-            Register rs = register(instruction.getSourceRegister());
-            if (rs.getValue() != instruction.getImmediateAsSigned()) return;
+            if (value(instruction.getSourceRegister()) != instruction.getImmediateAsSigned()) return;
             error(InterruptCause.TRAP_EXCEPTION);
         }
     }

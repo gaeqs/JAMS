@@ -38,7 +38,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class InstructionMtc1 extends BasicIFPUInstruction<InstructionMtc1.Assembled> {
@@ -48,7 +47,10 @@ public class InstructionMtc1 extends BasicIFPUInstruction<InstructionMtc1.Assemb
     public static final int OPERATION_CODE = 0b010001;
     public static final int SUBCODE = 0b00100;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.FLOAT_REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.FLOAT_REGISTER
+    );
 
     public InstructionMtc1() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, SUBCODE);
@@ -69,7 +71,8 @@ public class InstructionMtc1 extends BasicIFPUInstruction<InstructionMtc1.Assemb
 
     public static class Assembled extends AssembledI11Instruction {
 
-        public Assembled(int targetRegister, int destinationRegister, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+        public Assembled(int targetRegister, int destinationRegister,
+                         Instruction origin, BasicInstruction<Assembled> basicOrigin) {
             super(OPERATION_CODE, SUBCODE, targetRegister, destinationRegister, 0, origin, basicOrigin);
         }
 
@@ -92,13 +95,13 @@ public class InstructionMtc1 extends BasicIFPUInstruction<InstructionMtc1.Assemb
 
         @Override
         public void execute() {
-            Register rt = register(instruction.getTargetRegister());
-            Register rd = registerCop1(instruction.getDestinationRegister());
-            rd.setValue(rt.getValue());
+            registerCOP1(instruction.getDestinationRegister()).setValue(value(instruction.getTargetRegister()));
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -112,18 +115,17 @@ public class InstructionMtc1 extends BasicIFPUInstruction<InstructionMtc1.Assemb
 
         @Override
         public void execute() {
-            executionResult = new int[]{value(instruction.getTargetRegister())};
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
+            result = value(instruction.getTargetRegister());
+            forwardCOP1(instruction.getDestinationRegister(), result);
         }
 
         @Override
         public void memory() {
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlockCOP1(instruction.getDestinationRegister(), executionResult[0]);
+            setAndUnlockCOP1(instruction.getDestinationRegister(), result);
         }
     }
 }

@@ -37,7 +37,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -47,7 +46,11 @@ public class InstructionAndi extends BasicInstruction<InstructionAndi.Assembled>
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b001100;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER,
+            ParameterType.SIGNED_16_BIT
+    );
 
     public InstructionAndi() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
@@ -58,8 +61,13 @@ public class InstructionAndi extends BasicInstruction<InstructionAndi.Assembled>
 
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-        return new Assembled(parameters[1].getRegister(), parameters[0].getRegister(),
-                parameters[2].getImmediate(), origin, this);
+        return new Assembled(
+                parameters[1].getRegister(),
+                parameters[0].getRegister(),
+                parameters[2].getImmediate(),
+                origin,
+                this
+        );
     }
 
     @Override
@@ -93,14 +101,16 @@ public class InstructionAndi extends BasicInstruction<InstructionAndi.Assembled>
 
         @Override
         public void execute() {
-            Register rt = register(instruction.getTargetRegister());
-            Register rs = register(instruction.getSourceRegister());
-            rt.setValue(rs.getValue() & instruction.getImmediate());
+            register(instruction.getTargetRegister()).setValue(
+                    value(instruction.getSourceRegister()) & instruction.getImmediate()
+            );
         }
     }
 
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -114,18 +124,17 @@ public class InstructionAndi extends BasicInstruction<InstructionAndi.Assembled>
 
         @Override
         public void execute() {
-            executionResult = new int[]{value(instruction.getSourceRegister()) & instruction.getImmediate()};
-            forward(instruction.getTargetRegister(), executionResult[0]);
+            result = value(instruction.getSourceRegister()) & instruction.getImmediate();
+            forward(instruction.getTargetRegister(), result);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getTargetRegister(), executionResult[0]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlock(instruction.getTargetRegister(), executionResult[0]);
+            setAndUnlock(instruction.getTargetRegister(), result);
         }
     }
 }

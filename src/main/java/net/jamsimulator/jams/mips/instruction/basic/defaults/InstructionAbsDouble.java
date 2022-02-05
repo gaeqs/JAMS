@@ -33,12 +33,11 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
-import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
+import net.jamsimulator.jams.mips.instruction.execution.NumericMultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.NumericUtils;
 
@@ -49,8 +48,10 @@ public class InstructionAbsDouble extends BasicRFPUInstruction<InstructionAbsDou
     public static final int OPERATION_CODE = 0b010001;
     public static final int FMT = 0b10001;
     public static final int FUNCTION_CODE = 0b000101;
-
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.EVEN_FLOAT_REGISTER,
+            ParameterType.EVEN_FLOAT_REGISTER
+    );
 
     public InstructionAbsDouble() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE, FMT);
@@ -71,9 +72,18 @@ public class InstructionAbsDouble extends BasicRFPUInstruction<InstructionAbsDou
 
     public static class Assembled extends AssembledRFPUInstruction {
 
-        public Assembled(int sourceRegister, int destinationRegister, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionAbsDouble.OPERATION_CODE, InstructionAbsDouble.FMT, 0, sourceRegister,
-                    destinationRegister, InstructionAbsDouble.FUNCTION_CODE, origin, basicOrigin);
+        public Assembled(int sourceRegister, int destinationRegister,
+                         Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(
+                    OPERATION_CODE,
+                    FMT,
+                    0,
+                    sourceRegister,
+                    destinationRegister,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -94,21 +104,14 @@ public class InstructionAbsDouble extends BasicRFPUInstruction<InstructionAbsDou
 
         @Override
         public void execute() {
-            if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
-            if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
-
-            Register rs0 = registerCop1(instruction.getSourceRegister());
-            Register rs1 = registerCop1(instruction.getSourceRegister() + 1);
-
-            double abs = Math.abs(NumericUtils.intsToDouble(rs0.getValue(), rs1.getValue()));
-            int[] ints = NumericUtils.doubleToInts(abs);
-
-            registerCop1(instruction.getDestinationRegister()).setValue(ints[0]);
-            registerCop1(instruction.getDestinationRegister() + 1).setValue(ints[1]);
+            int s = instruction.getSourceRegister();
+            int d = instruction.getDestinationRegister();
+            checkEvenRegister(s, d);
+            NumericUtils.doubleToInts(Math.abs(doubleCOP1(s)), registerCOP1(d), registerCOP1(d + 1));
         }
     }
 
-    public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+    public static class MultiCycle extends NumericMultiCycleExecution<MultiCycleArchitecture, Assembled> {
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -116,36 +119,28 @@ public class InstructionAbsDouble extends BasicRFPUInstruction<InstructionAbsDou
 
         @Override
         public void decode() {
-            if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
-            if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
-
-            requiresCOP1(instruction.getSourceRegister(), false);
-            requiresCOP1(instruction.getSourceRegister() + 1, false);
-            lockCOP1(instruction.getDestinationRegister());
-            lockCOP1(instruction.getDestinationRegister() + 1);
+            int s = instruction.getSourceRegister();
+            int d = instruction.getDestinationRegister();
+            checkEvenRegister(s, d);
+            requiresCOP1Double(s, false);
+            lockCOP1Double(d);
         }
 
         @Override
         public void execute() {
-            var id = instruction.getSourceRegister();
-            var to = instruction.getDestinationRegister();
-            var abs = Math.abs(NumericUtils.intsToDouble(valueCOP1(id), valueCOP1(id + 1)));
-            executionResult = NumericUtils.doubleToInts(abs);
-            forwardCOP1(to, executionResult[0]);
-            forwardCOP1(to + 1, executionResult[1]);
+            doubleToInts(Math.abs(doubleCOP1(instruction.getSourceRegister())));
+            forwardCOP1(instruction.getDestinationRegister(), lowResult);
+            forwardCOP1(instruction.getDestinationRegister() + 1, highResult);
         }
 
         @Override
         public void memory() {
-            var to = instruction.getDestinationRegister();
-            forwardCOP1(to, executionResult[0]);
-            forwardCOP1(to + 1, executionResult[1]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlockCOP1(instruction.getDestinationRegister(), executionResult[0]);
-            setAndUnlockCOP1(instruction.getDestinationRegister() + 1, executionResult[1]);
+            setAndUnlockCOP1(instruction.getDestinationRegister(), lowResult);
+            setAndUnlockCOP1(instruction.getDestinationRegister() + 1, highResult);
         }
     }
 }
