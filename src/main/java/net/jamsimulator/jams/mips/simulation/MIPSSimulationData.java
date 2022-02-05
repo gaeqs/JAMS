@@ -24,18 +24,13 @@
 
 package net.jamsimulator.jams.mips.simulation;
 
-import net.jamsimulator.jams.gui.util.log.Console;
+import net.jamsimulator.jams.gui.util.log.Log;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
-import net.jamsimulator.jams.mips.label.Label;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
-import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
-import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfigurationPresets;
 
 import java.io.File;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Wrapper of the information required to build a {@link MIPSSimulation}.
@@ -45,7 +40,7 @@ import java.util.Set;
 public record MIPSSimulationData(
         MIPSSimulationConfiguration configuration,
         File workingDirectory,
-        Console console,
+        Log log,
         MIPSSimulationSource source,
         InstructionSet instructionSet,
         Registers registers,
@@ -76,12 +71,12 @@ public record MIPSSimulationData(
 //
     ///**
     // * Returns the {@link Console} of this simulation.
-    // * This console is used to print the output of the simulation and to receive data from the user.
+    // * This log is used to print the output of the simulation and to receive data from the user.
     // *
     // * @return the {@link Console}.
     // */
     //public Console getConsole() {
-    //    return console;
+    //    return log;
     //}
 //
     //public Map<Integer, String> getOriginalInstructions() {

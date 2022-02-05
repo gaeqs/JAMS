@@ -134,8 +134,8 @@ public class MIPSProject extends BasicProject {
                 new Console(),
                 new MIPSSimulationSource(assembler.getOriginals(), assembler.getAllLabels()),
                 assembler.getInstructionSet(),
-                assembler.getRegisters().copy(),
-                assembler.getMemory().copy(),
+                assembler.getRegisters(),
+                assembler.getMemory(),
                 assembler.getStackBottom(),
                 assembler.getKernelStackBottom()
         );

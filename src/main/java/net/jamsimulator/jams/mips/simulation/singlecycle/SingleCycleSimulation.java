@@ -95,7 +95,8 @@ public class SingleCycleSimulation extends MIPSSimulation<SingleCycleArchitectur
     }
 
     @Override
-    public void requestExit() {
+    public void requestExit(int exitCode, long executionId) {
+        this.exitCode = exitCode;
         exit();
     }
 
@@ -224,10 +225,11 @@ public class SingleCycleSimulation extends MIPSSimulation<SingleCycleArchitectur
 
         if (check && !finished) {
             finished = true;
-            if (getConsole() != null) {
-                getConsole().println();
-                getConsole().printWarningLn("Execution finished. Dropped off bottom.");
-                getConsole().println();
+            if (getLog() != null) {
+                getLog().println();
+                getLog().printWarningLn("Execution finished. Dropped off bottom.");
+                getLog().println();
+                exitCode = 0;
             }
             callEvent(new SimulationFinishedEvent(this));
         }

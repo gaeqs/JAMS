@@ -68,8 +68,8 @@ public class SyscallExecutionReadInteger implements SyscallExecution {
                 int input = NumericUtils.decodeInteger(value);
                 register.setValue(input);
 
-                simulation.getConsole().printDone(value);
-                if (lineJump) simulation.getConsole().println();
+                simulation.getLog().printDone(value);
+                if (lineJump) simulation.getLog().println();
                 done = true;
             } catch (NumberFormatException ignore) {
             }
@@ -90,8 +90,8 @@ public class SyscallExecutionReadInteger implements SyscallExecution {
                 int input = NumericUtils.decodeInteger(value);
                 execution.setAndUnlock(register, input);
 
-                simulation.getConsole().printDone(value);
-                if (lineJump) simulation.getConsole().println();
+                simulation.getLog().printDone(value);
+                if (lineJump) simulation.getLog().println();
                 done = true;
             } catch (NumberFormatException ignore) {
             }

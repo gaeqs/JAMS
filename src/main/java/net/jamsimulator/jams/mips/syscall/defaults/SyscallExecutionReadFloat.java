@@ -68,8 +68,8 @@ public class SyscallExecutionReadFloat implements SyscallExecution {
                 float input = Float.parseFloat(value);
                 register.setValue(Float.floatToIntBits(input));
 
-                simulation.getConsole().printDone(value);
-                if (lineJump) simulation.getConsole().println();
+                simulation.getLog().printDone(value);
+                if (lineJump) simulation.getLog().println();
                 done = true;
             } catch (NumberFormatException ignore) {
             }
@@ -89,8 +89,8 @@ public class SyscallExecutionReadFloat implements SyscallExecution {
                 float input = Float.parseFloat(value);
                 execution.setAndUnlock(register, Float.floatToIntBits(input));
 
-                simulation.getConsole().printDone(value);
-                if (lineJump) simulation.getConsole().println();
+                simulation.getLog().printDone(value);
+                if (lineJump) simulation.getLog().println();
                 done = true;
             } catch (NumberFormatException ignore) {
             }

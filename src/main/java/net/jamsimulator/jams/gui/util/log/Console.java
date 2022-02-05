@@ -75,7 +75,7 @@ public class Console extends HBox implements Log, EventBroadcast {
 
     public Console() {
         super();
-        getStyleClass().add("console");
+        getStyleClass().add("log");
 
         inputs = new LinkedList<>();
         broadcast = new SimpleEventBroadcast();

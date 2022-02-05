@@ -44,11 +44,11 @@ public class SyscallExecutionExit implements SyscallExecution {
 
     @Override
     public void execute(MIPSSimulation<?> simulation) {
-        simulation.requestExit();
-        if (simulation.getConsole() != null) {
-            simulation.getConsole().println();
-            simulation.getConsole().printDoneLn("Execution finished successfully");
-            simulation.getConsole().println();
+        simulation.requestExit(0, 0);
+        if (simulation.getLog() != null) {
+            simulation.getLog().println();
+            simulation.getLog().printDoneLn("Execution finished successfully");
+            simulation.getLog().println();
         }
         simulation.callEvent(new SimulationFinishedEvent(simulation));
     }
@@ -66,7 +66,14 @@ public class SyscallExecutionExit implements SyscallExecution {
 
     @Override
     public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
-        execute(execution.getSimulation());
+        var simulation = execution.getSimulation();
+        simulation.requestExit(0, execution.getInstructionId());
+        if (simulation.getLog() != null) {
+            simulation.getLog().println();
+            simulation.getLog().printDoneLn("Execution finished successfully");
+            simulation.getLog().println();
+        }
+        simulation.callEvent(new SimulationFinishedEvent(simulation));
     }
 
     public static class Builder extends SyscallExecutionBuilder<SyscallExecutionExit> {

@@ -79,8 +79,8 @@ public class SyscallExecutionPrintDouble implements SyscallExecution {
             toPrint = String.valueOf(value);
         }
 
-        simulation.getConsole().print(toPrint);
-        if (lineJump) simulation.getConsole().println();
+        simulation.getLog().print(toPrint);
+        if (lineJump) simulation.getLog().println();
     }
 
     @Override
@@ -101,7 +101,7 @@ public class SyscallExecutionPrintDouble implements SyscallExecution {
             toPrint = String.valueOf(value);
         }
 
-        var console = execution.getSimulation().getConsole();
+        var console = execution.getSimulation().getLog();
 
         console.print(toPrint);
         if (lineJump) console.println();

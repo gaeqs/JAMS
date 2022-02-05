@@ -63,14 +63,14 @@ public class SyscallExecutionPrintFloat implements SyscallExecution {
 
         int value = register.getValue();
         String toPrint = printHex ? Integer.toHexString(value) : String.valueOf(Float.intBitsToFloat(value));
-        simulation.getConsole().print(toPrint);
-        if (lineJump) simulation.getConsole().println();
+        simulation.getLog().print(toPrint);
+        if (lineJump) simulation.getLog().println();
     }
 
     @Override
     public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var value = execution.valueCOP1(register);
-        var console = execution.getSimulation().getConsole();
+        var console = execution.getSimulation().getLog();
 
         String toPrint = printHex ? Integer.toHexString(value) : String.valueOf(Float.intBitsToFloat(value));
         console.print(toPrint);

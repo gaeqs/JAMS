@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.simulation;
 
 import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.gui.util.log.Console;
+import net.jamsimulator.jams.gui.util.log.Log;
 import net.jamsimulator.jams.mips.instruction.exception.InstructionNotFoundException;
 
 import java.io.File;
@@ -42,12 +43,13 @@ import java.util.function.Consumer;
 public interface Simulation<Address extends Number> extends EventBroadcast {
 
     /**
-     * Returns the {@link Console} of this simulation.
-     * This console is used to print the output of the simulation and to receive data from the user.
+     * Returns the {@link Log} of this simulation.
+     * This log is used to print the output of the simulation.
+     * This log can be a {@link Console} that can be used to receive data from the user.
      *
      * @return the {@link Console}.
      */
-    Console getConsole();
+    Log getLog();
 
     /**
      * Returns the working directory of this simulation.
@@ -131,7 +133,7 @@ public interface Simulation<Address extends Number> extends EventBroadcast {
 
     /**
      * Returns the amount of time in nanoseconds this simulation was running.
-     *
+     * <p>
      * Reseting the simulation clears this value, but stopping and running again does not.
      *
      * @return the amount of time in nanoseconds this simulation was running.

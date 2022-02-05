@@ -82,8 +82,8 @@ public class SyscallExecutionReadString implements SyscallExecution {
         }
         memory.setByte(address, (byte) 0);
 
-        simulation.getConsole().printDone(value);
-        if (lineJump) simulation.getConsole().println();
+        simulation.getLog().printDone(value);
+        if (lineJump) simulation.getLog().println();
     }
 
     @Override
@@ -108,8 +108,8 @@ public class SyscallExecutionReadString implements SyscallExecution {
         }
         memory.setByte(address, (byte) 0);
 
-        simulation.getConsole().printDone(value);
-        if (lineJump) simulation.getConsole().println();
+        simulation.getLog().printDone(value);
+        if (lineJump) simulation.getLog().println();
     }
 
     @Override

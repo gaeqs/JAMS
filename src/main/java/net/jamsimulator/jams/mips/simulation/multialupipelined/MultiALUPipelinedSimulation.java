@@ -132,11 +132,12 @@ public class MultiALUPipelinedSimulation
     }
 
     @Override
-    public void requestExit() {
+    public void requestExit(int exitCode, long executionId) {
+        this.exitCode = exitCode;
         if (currentStepChanges != null) {
             currentStepChanges.addChange(new MultiALUPipelinedSimulationExitRequest());
         }
-        pipeline.removeFetchAndDecode();
+        pipeline.executeFullJumpRemoval(executionId);
         exitRequested = true;
     }
 
@@ -266,11 +267,11 @@ public class MultiALUPipelinedSimulation
 
     private void checkExit() {
         if (pipeline.isEmpty()) {
-            finished = true;
-            if (getConsole() != null && !exitRequested) {
-                getConsole().println();
-                getConsole().printWarningLn("Execution finished. Dropped off bottom.");
-                getConsole().println();
+            if (getLog() != null && !exitRequested) {
+                getLog().println();
+                getLog().printWarningLn("Execution finished. Dropped off bottom.");
+                getLog().println();
+                exitCode = 0;
             }
             callEvent(new SimulationFinishedEvent(this));
         }

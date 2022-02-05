@@ -45,8 +45,8 @@ public class SimulationFiles extends SimpleEventBroadcast {
         files = new HashMap<>();
 
         files.put(0, new ConsoleInSimulationFile(this, 0, simulation));
-        files.put(1, new ConsoleOutSimulationFile(this, 1, simulation.getConsole(), false));
-        files.put(2, new ConsoleOutSimulationFile(this, 2, simulation.getConsole(), true));
+        files.put(1, new ConsoleOutSimulationFile(this, 1, simulation.getLog(), false));
+        files.put(2, new ConsoleOutSimulationFile(this, 2, simulation.getLog(), true));
     }
 
     public MIPSSimulation<?> getSimulation() {
