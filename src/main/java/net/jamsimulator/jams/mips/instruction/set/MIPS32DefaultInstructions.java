@@ -226,6 +226,7 @@ class MIPS32DefaultInstructions {
         pseudoInstructions.add(new PseudoInstructionLiRI32());
         pseudoInstructions.add(new PseudoInstructionLuiRI());
         pseudoInstructions.add(new PseudoInstructionLifRF());
+        pseudoInstructions.add(new PseudoInstructionLidRD());
 
         pseudoInstructions.add(new PseudoInstructionLbRL());
         pseudoInstructions.add(new PseudoInstructionLbRLr());

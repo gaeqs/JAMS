@@ -666,6 +666,7 @@ INSTRUCTION_LA=Load address
 INSTRUCTION_LI=Load immediate
 INSTRUCTION_LUI=Load upper immediate
 INSTRUCTION_LIF=Load immediate float
+INSTRUCTION_LID=Load immediate double
 INSTRUCTION_MOVE=Value movement
 INSTRUCTION_NOP=No operation
 INSTRUCTION_SGE=Set on greater than or equal
@@ -4251,6 +4252,30 @@ Loads the <i>float</i> into the FPR <i>fd</i>.
 
 <b>Restrictions:</b>
 None
+
+<b>Exceptions:</b>
+None
+\END
+
+INSTRUCTION_LID_DOCUMENTATION.=<u>Load immediate double</u>
+
+<b>Format:</b>
+lid fd, double
+
+<b>Conversion:</b>
+aui $at, $zero, double<sub>31..16</sub>
+ori $at, $at, double<sub>15..0</sub>
+mtc1 $at, fd
+
+aui $at, $zero, double<sub>63..58</sub>
+ori $at, $at, double<sub>57..32</sub>
+mtc1 $at, fd+1
+
+<b>Description:</b>
+Loads the <i>double</i> into the FPR <i>fd</i> and FPR <i>fd+1</i>
+
+<b>Restrictions:</b>
+The field <i>fd</i> must be an even FPR. If the field is not valid, the result is <black>UNPREDICTABLE</black>.
 
 <b>Exceptions:</b>
 None

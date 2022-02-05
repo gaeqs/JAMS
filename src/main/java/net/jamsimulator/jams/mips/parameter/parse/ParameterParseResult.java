@@ -38,18 +38,22 @@ public class ParameterParseResult {
     private final String label;
     private final int register;
     private final int immediate;
-    private final boolean hasLabel, hasRegister, hasImmediate;
+    private final Object undefined;
+    private final boolean hasLabel, hasRegister, hasImmediate, hasUndefined;
     private int labelValue;
 
-    ParameterParseResult(String label, int register, int immediate, boolean hasLabel, boolean hasRegister, boolean hasImmediate) {
-        if (!hasLabel && !hasRegister && !hasImmediate)
+    ParameterParseResult(String label, int register, int immediate, Object undefined,
+                         boolean hasLabel, boolean hasRegister, boolean hasImmediate, boolean hasUndefined) {
+        if (!hasLabel && !hasRegister && !hasImmediate && !hasUndefined)
             throw new BadParameterParseResultException("Result has no label, register or result.");
         this.label = label;
         this.register = register;
         this.immediate = immediate;
+        this.undefined = undefined;
         this.hasLabel = hasLabel;
         this.hasRegister = hasRegister;
         this.hasImmediate = hasImmediate;
+        this.hasUndefined = hasUndefined;
     }
 
     public static Builder builder() {
@@ -68,16 +72,24 @@ public class ParameterParseResult {
         return immediate;
     }
 
-    public boolean isHasLabel() {
+    public Object getUndefined() {
+        return undefined;
+    }
+
+    public boolean hasLabel() {
         return hasLabel;
     }
 
-    public boolean isHasRegister() {
+    public boolean hasRegister() {
         return hasRegister;
     }
 
-    public boolean isHasImmediate() {
+    public boolean hasImmediate() {
         return hasImmediate;
+    }
+
+    public boolean hasUndefined() {
+        return hasUndefined;
     }
 
     public int getLabelValue() {
@@ -132,25 +144,22 @@ public class ParameterParseResult {
         private String label;
         private int register;
         private int immediate;
+        private Object undefined;
 
-        private boolean hasLabel, hasRegister, hasImmediate;
+        private boolean hasLabel, hasRegister, hasImmediate, hasUndefined;
 
         public Builder() {
-            this.label = null;
-            this.register = 0;
-            this.immediate = 0;
-            this.hasLabel = false;
-            this.hasRegister = false;
-            this.hasImmediate = false;
         }
 
         public Builder reset() {
             this.label = null;
             this.register = 0;
             this.immediate = 0;
+            this.undefined = null;
             this.hasLabel = false;
             this.hasRegister = false;
             this.hasImmediate = false;
+            this.hasUndefined = false;
             return this;
         }
 
@@ -172,6 +181,12 @@ public class ParameterParseResult {
             return this;
         }
 
+        public Builder undefined(Object object) {
+            this.undefined = object;
+            this.hasUndefined = true;
+            return this;
+        }
+
         /**
          * Builds a {@link ParameterParseResult}. If no label, register or immediate are given, this method
          * will throw a {@link BadParameterParseResultException}.
@@ -180,7 +195,8 @@ public class ParameterParseResult {
          * @throws BadParameterParseResultException when no data is given.
          */
         public ParameterParseResult build() {
-            return new ParameterParseResult(label, register, immediate, hasLabel, hasRegister, hasImmediate);
+            return new ParameterParseResult(label, register, immediate, undefined,
+                    hasLabel, hasRegister, hasImmediate, hasUndefined);
         }
     }
 }

@@ -666,6 +666,7 @@ INSTRUCTION_LA=Cargar dirección
 INSTRUCTION_LI=Cargar inmediato
 INSTRUCTION_LUI=Cargar inmediato en los bits más significantes
 INSTRUCTION_LIF=Cargar float inmediato
+INSTRUCTION_LID=Cargar double inmediato
 INSTRUCTION_MOVE=Mover valor
 INSTRUCTION_NOP=Operación nula
 INSTRUCTION_SGE=Asignar si menor o igual que valor
@@ -4262,6 +4263,30 @@ Ninguna
 
 <b>Excepciones:</b>
 Ninguna
+\END
+
+INSTRUCTION_LID_DOCUMENTATION.=<u>Cargar double inmediato</u>
+
+<b>Formato:</b>
+lid fd, double
+
+<b>Conversión:</b>
+aui $at, $zero, double<sub>31..16</sub>
+ori $at, $at, double<sub>15..0</sub>
+mtc1 $at, fd
+
+aui $at, $zero, double<sub>63..58</sub>
+ori $at, $at, double<sub>57..32</sub>
+mtc1 $at, fd+1
+
+<b>Descripción:</b>
+Carga el <i>double</i> en los registros de coma flotante <i>fd</i> y <i>fd+1</i>.
+
+<b>Restrictions:</b>
+El registro <i>fd</i> deben ser un FPR par. Si el registro no es válido, el resultado es <black>IMPREDECIBLE</black>.
+
+<b>Exceptions:</b>
+None
 \END
 
 INSTRUCTION_MOVE_DOCUMENTATION.=<u>Mover valor</u>

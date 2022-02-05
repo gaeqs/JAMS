@@ -212,7 +212,9 @@ public class NumericUtils {
     }
 
     public static double intsToDouble(int low, int high) {
-        return Double.longBitsToDouble((((long) high) << 32) + low);
+        long h = (long) high << 32;
+        long l = ((long) low) & 0xFFFFFFFFL;
+        return Double.longBitsToDouble(h | l);
     }
 
     public static int[] doubleToInts(double d) {
@@ -253,7 +255,7 @@ public class NumericUtils {
     }
 
     public static long intsToLong(int low, int high) {
-        return ((long) high << 32) + low;
+        return ((long) high << 32) + ((long) low & 0xFFFFFFFFL);
     }
 
     private static String toEnglishLessThanOneThousand(int number) {
