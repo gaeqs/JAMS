@@ -38,6 +38,7 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
+import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class InstructionMtc0 extends BasicIFPUInstruction<InstructionMtc0.Assembled> {
@@ -110,14 +111,18 @@ public class InstructionMtc0 extends BasicIFPUInstruction<InstructionMtc0.Assemb
 
         @Override
         public void execute() {
-            registerCOP0(instruction.getDestinationRegister(), instruction.getImmediate())
-                    .setValue(value(instruction.getTargetRegister()));
+            try {
+                registerCOP0(instruction.getDestinationRegister(), instruction.getImmediate())
+                        .setValue(value(instruction.getTargetRegister()));
+            } catch (ArrayIndexOutOfBoundsException ignore) {
+            }
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
 
         private int result;
+        private Register register;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -125,14 +130,25 @@ public class InstructionMtc0 extends BasicIFPUInstruction<InstructionMtc0.Assemb
 
         @Override
         public void decode() {
+            try {
+                register = registerCOP0(instruction.getDestinationRegister(), instruction.getImmediate());
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                register = null;
+            }
+
             requires(instruction.getTargetRegister(), false);
-            lockCOP0(instruction.getDestinationRegister(), instruction.getImmediate());
+
+            if (register != null) {
+                lock(register);
+            }
         }
 
         @Override
         public void execute() {
             result = value(instruction.getTargetRegister());
-            forwardCOP0(instruction.getDestinationRegister(), instruction.getImmediate(), result);
+            if (register != null) {
+                forward(register, result);
+            }
         }
 
         @Override
@@ -141,7 +157,9 @@ public class InstructionMtc0 extends BasicIFPUInstruction<InstructionMtc0.Assemb
 
         @Override
         public void writeBack() {
-            setAndUnlockCOP0(instruction.getDestinationRegister(), instruction.getImmediate(), result);
+            if (register != null) {
+                setAndUnlock(register, result);
+            }
         }
     }
 }
