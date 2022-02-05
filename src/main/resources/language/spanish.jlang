@@ -599,6 +599,9 @@ INSTRUCTION_CLO=Conteo de los primeros unos en una palabra
 INSTRUCTION_CLZ=Conteo de los primeros ceros en una palabra
 INSTRUCTION_CMP_D=Comparación en coma flotante doble ({TYPE})
 INSTRUCTION_CMP_S=Comparación en coma flotante ({TYPE})
+INSTRUCTION_CRC32B=Generar CRC con el polinomio invertido 0xEDB88320 (byte)
+INSTRUCTION_CRC32H=Generar CRC con el polinomio invertido 0xEDB88320 (media palabra)
+INSTRUCTION_CRC32W=Generar CRC con el polinomio invertido 0xEDB88320 (palabra)
 INSTRUCTION_CVT=Convertir número de {FROM} a {TO}
 INSTRUCTION_DIV=División
 INSTRUCTION_DIV_D=División (coma flotante doble)
@@ -2485,6 +2488,53 @@ StoreFPR(fd, fmt, extend_bit.fmt(condition))
 
 <b>Excepciones:</b>
 Floating Point Exception
+\END
+
+INSTRUCTION_CRC32_DOCUMENTATION.=<u>Generar CRC con el polinomio invertido 0xEDB88320</u>
+
+<b>Formato:</b>
+crc32b rt, rs
+crc32h rt, rs
+crc32w rt, rs
+
+|SPECIAL3    rs    rt    0    sz     CRC  |
+| 011111                           001111 |
+|   6        5     5     8    2      6    |
+
+
+<b>Descripción:</b>
+GPR[rt] <- CRC32(GRP[rt], GPR[rs])
+
+Genera un valor CRC basado en el polinomio inverso 0xEDB88320.
+El valor generado sobreescribe el valor guardado en el registro <i>rt</i>, ya que el valor anterior es considerado redundante una vez que el valor CRC acumulativo es regenerado.
+El valor del registro <i>rt</i> es considerado el CRC, mientras que el valor del registro <i>rs</i> es considerado el mensaje.
+
+El campo <i>sz</i> representa el tamaño del mensaje:
+- Si <i>sz</i> es 0, el mensaje es un byte.
+- Si <i>sz</i> es 1, el mensaje es una media palabra.
+- Si <i>sz</i> es 2, el mensaje es una palabra.
+Este campo es asignado dependiendo del nombre de la instrucción.
+
+<b>Restricciones:</b>
+Ninguna
+
+<b>Operación:</b>
+poly <- 0xEDB88320
+if(sz = 0b00) then
+    temp <- CRC32(GPR[rt], GPR[rs], 1, poly)
+else if (sz = 0b01) then
+    temp <- CRC32(GPR[rt], GPR[rs], 2, poly)
+else if (sz = 0b10) then
+    temp <- CRC32(GPR[rt], GPR[rs], 4, poly)
+else then
+    SignalException(ReservedInstruction)
+endif
+
+GPR[rt] <- temp
+
+<b>Excepciones:</b>
+Reserved Instruction
+
 \END
 
 INSTRUCTION_CVT_DOCUMENTATION.=<u>Convertir número de {FROM} a {TO}</u>

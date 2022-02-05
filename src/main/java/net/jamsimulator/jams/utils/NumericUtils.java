@@ -330,4 +330,18 @@ public class NumericUtils {
         result += n & 1;
         return result;
     }
+
+    public static int crc32(int crc, int message, int bytes, int poly) {
+        int mask = switch (bytes) {
+            case 2 -> 0xFFFF;
+            case 1 -> 0xFF;
+            default -> 0xFFFFFFFF;
+        };
+        crc = crc ^ (message & mask);
+        for (int i = 0; i < bytes << 3; i++) {
+            int bitMask = -(crc & 1);
+            crc = (crc >> 1) ^ (poly & bitMask);
+        }
+        return ~crc;
+    }
 }
