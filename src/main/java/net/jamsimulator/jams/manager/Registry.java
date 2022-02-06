@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.manager;
 
+import net.jamsimulator.jams.configuration.format.ConfigurationFormatManager;
 import net.jamsimulator.jams.file.FileTypeManager;
 import net.jamsimulator.jams.gui.action.ActionManager;
 import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModeManager;
@@ -353,6 +354,7 @@ public class Registry {
 
     private void addDefaultManagers() {
         registerPrimary(PluginManager.INSTANCE);
+        registerPrimary(ConfigurationFormatManager.INSTANCE);
         registerPrimary(ActionManager.INSTANCE);
         registerPrimary(ArchitectureManager.INSTANCE);
         registerPrimary(AssemblerBuilderManager.INSTANCE);

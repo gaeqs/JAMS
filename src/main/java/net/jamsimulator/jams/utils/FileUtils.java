@@ -85,6 +85,21 @@ public class FileUtils {
         return builder.toString();
     }
 
+    public static String readAll(Reader r) throws IOException {
+        BufferedReader reader = new BufferedReader(r);
+        //Loads the string first. This allows us to check if the file is empty.
+        StringBuilder builder = new StringBuilder();
+        boolean first = true;
+        String line;
+        while ((line = reader.readLine()) != null) {
+            if (!first) {
+                builder.append('\n');
+            } else first = false;
+            builder.append(line);
+        }
+        return builder.toString();
+    }
+
     public static void writeAll(File file, String text) throws IOException {
         Validate.notNull(file, "File cannot be null!");
         Validate.isTrue(!file.exists() || file.isFile(), "File must not exist or be a file!");
