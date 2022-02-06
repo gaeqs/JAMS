@@ -54,7 +54,7 @@ public class ThemeLoadException extends Exception {
         INVALID_HEADER("Invalid header."),
         ALREADY_LOADED("Theme already loaded."),
         NOT_LOADED("Theme not loaded."),
-        THEME_ALREADY_EXIST("Theme already exist and attach is disabled."),
+        ALREADY_EXIST("Theme already exist and attach is disabled."),
         UNKNOWN("Unknown.");
 
         private final String message;

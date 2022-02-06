@@ -24,17 +24,12 @@
 
 package net.jamsimulator.jams.language.wrapper;
 
-import javafx.css.CssMetaData;
-import javafx.css.Styleable;
 import javafx.scene.control.Label;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
-import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 import net.jamsimulator.jams.utils.StringUtils;
-
-import java.util.List;
 
 public class LanguageLabel extends Label {
 
@@ -63,11 +58,16 @@ public class LanguageLabel extends Label {
     }
 
     public void refreshMessage() {
+        refreshMessage(Manager.ofS(Language.class).getSelected());
+    }
+
+
+    protected void refreshMessage(Language language) {
         if (node == null) {
             setText(null);
             return;
         }
-        var parsed = StringUtils.parseEscapeCharacters(Manager.ofS(Language.class).getSelected().getOrDefault(node));
+        var parsed = StringUtils.parseEscapeCharacters(language.getOrDefault(node));
 
         for (int i = 0; i < replacements.length - 1; i += 2) {
             parsed = parsed.replace(replacements[i], replacements[i + 1]);
@@ -76,18 +76,14 @@ public class LanguageLabel extends Label {
         setText(StringUtils.addLineJumps(parsed, 70));
     }
 
-    @Listener
-    public void onSelectedLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
-        refreshMessage();
-    }
-
-    @Listener
-    public void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
-        refreshMessage();
-    }
 
     @Override
     public String getTypeSelector() {
         return "Label";
+    }
+
+    @Listener
+    public void onRefresh(LanguageRefreshEvent event) {
+        refreshMessage(event.getSelectedLanguage());
     }
 }

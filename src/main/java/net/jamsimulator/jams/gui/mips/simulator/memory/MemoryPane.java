@@ -38,6 +38,7 @@ import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.LanguageComboBox;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.utils.NumberRepresentationManager;
 import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
@@ -219,12 +220,7 @@ public class MemoryPane extends AnchorPane implements ActionRegion {
     }
 
     @Listener
-    private void onLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
-        loadMemorySelector(simulation.getMemory());
-    }
-
-    @Listener
-    private void onLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
+    public void onRefresh(LanguageRefreshEvent event) {
         loadMemorySelector(simulation.getMemory());
     }
 

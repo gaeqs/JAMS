@@ -22,39 +22,45 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.language.wrapper;
+package net.jamsimulator.jams.language.exception;
 
-import javafx.scene.control.MenuItem;
-import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.language.Language;
-import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
-import net.jamsimulator.jams.manager.Manager;
+public class LanguageLoadException extends Exception {
 
-public class LanguageMenuItem extends MenuItem {
+    public Type type;
 
-    private final String node;
-
-    public LanguageMenuItem(String node) {
-        this.node = node;
-        Manager.of(Language.class).registerListeners(this, true);
-        refreshMessage();
+    public LanguageLoadException(Type type) {
+        super(type.message);
+        this.type = type;
     }
 
-    private void refreshMessage() {
-        refreshMessage(Manager.ofS(Language.class).getSelected());
+    public LanguageLoadException(Throwable cause, Type type) {
+        super(type.message, cause);
+        this.type = type;
     }
 
-    private void refreshMessage(Language language) {
-        setText(language.getOrDefault(node));
+    public LanguageLoadException(Throwable cause, boolean enableSuppression, boolean writableStackTrace, Type type) {
+        super(type.message, cause, enableSuppression, writableStackTrace);
+        this.type = type;
     }
 
-    @Override
-    public String getTypeSelector() {
-        return "MenuItem";
-    }
+    public enum Type {
 
-    @Listener
-    public void onRefresh(LanguageRefreshEvent event) {
-        refreshMessage(event.getSelectedLanguage());
+        RESOURCE_NOT_FOUND("Resource not found."),
+        INVALID_RESOURCE("Invalid resource."),
+        INVALID_HEADER("Invalid header."),
+        ALREADY_LOADED("Language already loaded."),
+        NOT_LOADED("Language not loaded."),
+        ALREADY_EXIST("Language already exist and attach is disabled."),
+        UNKNOWN("Unknown.");
+
+        private final String message;
+
+        Type(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
     }
 }

@@ -190,13 +190,13 @@ public final class ThemeManager extends SelectableManager<Theme> {
      * If 'attach' is true and some of these themes have the same name as one of the themes already loaded,
      * the new theme will be considered an attachment to the already loaded theme. If 'attach' is false and
      * one of these cases occurs, a {@link ThemeLoadException} with the type
-     * {@link ThemeLoadException.Type#THEME_ALREADY_EXIST} will be thrown.
+     * {@link ThemeLoadException.Type#ALREADY_EXIST} will be thrown.
      * <p>
      * You may need to refresh the selected theme after all loading operations are finished. See {@link #refresh()}
      * for more information.
      * <p>
      * This method won't throw any {@link ThemeLoadException}. Instead, it will return a {@link HashMap} with
-     * all {@link ThemeLoadException} thrown by the theme loaded. This decision was made for simplicity reasons.
+     * all {@link ThemeLoadException} thrown by the theme loader. This decision was made for simplicity reasons.
      *
      * @param provider the provider of the themes.
      * @param path     the path of the directory where the themes are. This path may be inside a plugin's .JAR.
@@ -226,7 +226,7 @@ public final class ThemeManager extends SelectableManager<Theme> {
      * If 'attach' is true and some the theme have the same name as one of the themes already loaded,
      * the new theme will be considered an attachment to the already loaded theme. If 'attach' is false and
      * one of these cases occurs, a {@link ThemeLoadException} with the type
-     * {@link ThemeLoadException.Type#THEME_ALREADY_EXIST} will be thrown.
+     * {@link ThemeLoadException.Type#ALREADY_EXIST} will be thrown.
      * <p>
      * You may need to refresh the selected theme after all loading operations are finished. See {@link #refresh()}
      * for more information.
@@ -245,13 +245,13 @@ public final class ThemeManager extends SelectableManager<Theme> {
             if (defaultValue == null) {
                 defaultValue = loader.createTheme();
             } else {
-                if (!attach) throw new ThemeLoadException(ThemeLoadException.Type.THEME_ALREADY_EXIST);
+                if (!attach) throw new ThemeLoadException(ThemeLoadException.Type.ALREADY_EXIST);
                 attach(defaultValue, loader);
             }
         } else {
             var optional = get(loader.getHeader().name());
             if (optional.isPresent()) {
-                if (!attach) throw new ThemeLoadException(ThemeLoadException.Type.THEME_ALREADY_EXIST);
+                if (!attach) throw new ThemeLoadException(ThemeLoadException.Type.ALREADY_EXIST);
                 attach(optional.get(), loader);
             } else {
                 add(loader.createTheme());
@@ -267,7 +267,7 @@ public final class ThemeManager extends SelectableManager<Theme> {
 
     @Override
     public boolean setDefault(Theme defaultValue) {
-        if (!super.setDefault(selected)) return false;
+        if (!super.setDefault(defaultValue)) return false;
         refresh();
         return true;
     }
@@ -323,7 +323,7 @@ public final class ThemeManager extends SelectableManager<Theme> {
     public int removeProvidedBy(ResourceProvider provider) {
         int amount = super.removeProvidedBy(provider);
 
-        // Let's remove the attachments too!+
+        // Let's remove the attachments too!
 
         boolean refresh = false;
         for (var theme : this) {
