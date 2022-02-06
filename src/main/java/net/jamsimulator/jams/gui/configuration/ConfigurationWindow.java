@@ -38,6 +38,8 @@ import javafx.stage.Stage;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.configuration.RootConfiguration;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormat;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormatJSON;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
@@ -121,9 +123,10 @@ public class ConfigurationWindow extends SplitPane {
     public static ConfigurationWindow getInstance() {
         if (INSTANCE == null) {
             try {
+                var format = Manager.of(ConfigurationFormat.class).getOrNull(ConfigurationFormatJSON.NAME);
                 Configuration types = new RootConfiguration(new InputStreamReader(
                         Objects.requireNonNull(Jams.class.getResourceAsStream(
-                                "/configuration/main_config_meta.jconfig"))));
+                                "/configuration/main_config_meta.jconfig"))), format);
                 INSTANCE = new ConfigurationWindow(Jams.getMainConfiguration(), types);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -211,7 +214,10 @@ public class ConfigurationWindow extends SplitPane {
 
             stage.setOnCloseRequest(event -> {
                 try {
-                    configuration.save(true);
+                    configuration.save(
+                            Manager.of(ConfigurationFormat.class).getOrNull(ConfigurationFormatJSON.NAME),
+                            true
+                    );
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

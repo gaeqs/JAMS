@@ -25,7 +25,10 @@
 package net.jamsimulator.jams.project;
 
 import net.jamsimulator.jams.configuration.RootConfiguration;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormat;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormatJSON;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.utils.FolderUtils;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -88,7 +91,7 @@ public abstract class ProjectData extends SimpleEventBroadcast {
         data.set(NAME_NODE, name);
         data.set(TYPE_NODE, type.getName());
         try {
-            data.save(true);
+            data.save(Manager.of(ConfigurationFormat.class).getOrNull(ConfigurationFormatJSON.NAME), true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -98,7 +101,10 @@ public abstract class ProjectData extends SimpleEventBroadcast {
         if (loaded) return;
         loaded = true;
         try {
-            data = new RootConfiguration(new File(metadataFolder, METADATA_DATA_NAME));
+            data = new RootConfiguration(
+                    new File(metadataFolder, METADATA_DATA_NAME),
+                    Manager.of(ConfigurationFormat.class).getOrNull(ConfigurationFormatJSON.NAME)
+            );
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

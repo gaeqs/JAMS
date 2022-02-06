@@ -24,19 +24,17 @@
 
 package net.jamsimulator.jams.configuration;
 
+import net.jamsimulator.jams.configuration.format.ConfigurationFormat;
 import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
-import org.json.JSONObject;
+import net.jamsimulator.jams.utils.FileUtils;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Represents the root of a configuration. This instance should be created using a JSON string or
@@ -60,62 +58,42 @@ public class RootConfiguration extends Configuration implements EventBroadcast {
     /**
      * Creates a root configuration using a file that contains a JSON string.
      *
-     * @param json the json file to parse.
+     * @param file the file to parse.
+     * @param format the format of the file.
      * @throws IOException when the file cannot be readed.
      */
-    public RootConfiguration(File json) throws IOException {
-        super(null, loadJSON(json), null);
-        root = this;
-        file = json;
-        broadcast = new SimpleEventBroadcast();
+    public RootConfiguration(File file, ConfigurationFormat format) throws IOException {
+        super(null, format.deserialize(FileUtils.readAll(file)), null);
+        this.root = this;
+        this.file = file;
+        this.broadcast = new SimpleEventBroadcast();
     }
 
     /**
-     * Creates a root configuration using a JSON string.
+     * Creates a root configuration using a string.
      *
-     * @param json the json.
+     * @param data the data.
+     * @param format the format of the data.
      */
-    public RootConfiguration(String json) {
-        super(null, new JSONObject(json).toMap(), null);
+    public RootConfiguration(String data, ConfigurationFormat format) {
+        super(null, format.deserialize(data), null);
         root = this;
         file = null;
         broadcast = new SimpleEventBroadcast();
     }
 
     /**
-     * Creates a root configuration using a {@link Reader} that contains a JSON string.
+     * Creates a root configuration using a {@link Reader} that contains a string.
      *
      * @param reader the reader.
+     * @param format the format of the data.
      * @throws IOException when the file cannot be readed.
      */
-    public RootConfiguration(Reader reader) throws IOException {
-        super(null, loadJSON(reader), null);
+    public RootConfiguration(Reader reader, ConfigurationFormat format) throws IOException {
+        super(null, format.deserialize(FileUtils.readAll(reader)), null);
         root = this;
         file = null;
         broadcast = new SimpleEventBroadcast();
-    }
-
-    private static Map<String, Object> loadJSON(File file) throws IOException {
-        if (!file.isFile()) return new HashMap<>();
-        return new JSONObject(Files.readString(file.toPath())).toMap();
-    }
-
-    private static Map<String, Object> loadJSON(Reader r) throws IOException {
-        BufferedReader reader = new BufferedReader(r);
-        //Loads the string first. This allows us to check if the file is empty.
-        StringBuilder builder = new StringBuilder();
-        boolean first = true;
-        String line;
-        while ((line = reader.readLine()) != null) {
-            if (!first) {
-                builder.append('\n');
-            } else first = false;
-            builder.append(line);
-        }
-        String string = builder.toString();
-        //If empty, return a new HashMap.
-        if (string.isEmpty()) return new HashMap<>();
-        return new JSONObject(string).toMap();
     }
 
     /**
@@ -129,13 +107,15 @@ public class RootConfiguration extends Configuration implements EventBroadcast {
 
     /**
      * Saves the {@link RootConfiguration} into the file that loaded it, if present.
+     * The output depends on the selected format.
      *
-     * @param useFormat whether the output text should be formatted.
+     * @param format       the output format.
+     * @param prettyOutput whether the output text should be stylized.
      * @throws IOException writer IOException.
      */
-    public void save(boolean useFormat) throws IOException {
+    public void save(ConfigurationFormat format, boolean prettyOutput) throws IOException {
         if (file != null)
-            save(file, useFormat);
+            save(file, format, prettyOutput);
     }
 
     //region broadcast methods

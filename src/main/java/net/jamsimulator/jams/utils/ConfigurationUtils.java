@@ -26,6 +26,9 @@ package net.jamsimulator.jams.utils;
 
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.RootConfiguration;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormat;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormatJSON;
+import net.jamsimulator.jams.manager.Manager;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,11 +55,16 @@ public class ConfigurationUtils {
                 "a directory with the same name!");
 
         try {
-            RootConfiguration config = new RootConfiguration(file);
-            RootConfiguration def = new RootConfiguration(new InputStreamReader(
-                    Objects.requireNonNull(Jams.class.getResourceAsStream(DEFAULT_MAIN_CONFIGURATION_PATH))));
+            // We can't use managers yet!
+            var format = ConfigurationFormatJSON.INSTANCE;
+
+            RootConfiguration config = new RootConfiguration(file, format);
+            RootConfiguration def = new RootConfiguration(
+                    new InputStreamReader(
+                            Objects.requireNonNull(Jams.class.getResourceAsStream(DEFAULT_MAIN_CONFIGURATION_PATH))),
+                    format);
             config.addNotPresentValues(def);
-            config.save(true);
+            config.save(format, true);
             return config;
         } catch (IOException ex) {
             throw new RuntimeException("Couldn't load main configuration file!", ex);

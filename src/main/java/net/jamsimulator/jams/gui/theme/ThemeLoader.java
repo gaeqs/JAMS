@@ -25,7 +25,10 @@
 package net.jamsimulator.jams.gui.theme;
 
 import net.jamsimulator.jams.configuration.RootConfiguration;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormat;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormatJSON;
 import net.jamsimulator.jams.gui.theme.exception.ThemeLoadException;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.ResourceProvider;
 import org.json.JSONException;
 
@@ -141,8 +144,10 @@ public class ThemeLoader {
     private ThemeHeader loadHeader() throws ThemeLoadException {
         var headerPath = path.resolve(HEADER_FILE);
         try {
-            var json = Files.readString(headerPath);
-            var config = new RootConfiguration(json);
+            var config = new RootConfiguration(
+                    Files.readString(headerPath),
+                    Manager.of(ConfigurationFormat.class).getOrNull(ConfigurationFormatJSON.NAME)
+            );
             return ThemeHeader.load(provider, config);
         } catch (IOException | JSONException e) {
             throw new ThemeLoadException(e, ThemeLoadException.Type.INVALID_HEADER);

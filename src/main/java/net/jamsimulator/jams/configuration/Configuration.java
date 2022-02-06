@@ -25,15 +25,16 @@
 package net.jamsimulator.jams.configuration;
 
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormat;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 import net.jamsimulator.jams.utils.CollectionUtils;
 import net.jamsimulator.jams.utils.Validate;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -521,8 +522,8 @@ public class Configuration {
         }
 
         var c = ValueConverters.getByType(converter);
-        if (c.isEmpty() || !c.get().conversionClass().isInstance(value))  {
-            if(isObjectSeondaryNativelySupported(value)) {
+        if (c.isEmpty() || !c.get().conversionClass().isInstance(value)) {
+            if (isObjectSeondaryNativelySupported(value)) {
                 set(key, value);
                 return true;
             }
@@ -592,19 +593,17 @@ public class Configuration {
 
 
     /**
-     * Saves this {@link Configuration} as a JSON string into the given file.
+     * Saves this {@link Configuration} as a string into the given file.
+     * The string depends on the selected format.
      *
-     * @param useFormat whether the output text should be formatted.
-     * @param file      the file.
+     * @param file         the file.
+     * @param format       the output format.
+     * @param prettyOutput whether the output text should be stylized.
      * @throws IOException writer IOException.
      */
-    public void save(File file, boolean useFormat) throws IOException {
-        FileWriter writer = new FileWriter(file);
-        JSONObject object = new JSONObject(map);
-
-        if (useFormat)
-            writer.write(object.toString(1));
-        else writer.write(object.toString());
+    public void save(File file, ConfigurationFormat format, boolean prettyOutput) throws IOException {
+        var writer = new FileWriter(file, StandardCharsets.UTF_8);
+        writer.write(format.serialize(map, prettyOutput));
         writer.close();
     }
 
