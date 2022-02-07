@@ -1,0 +1,115 @@
+CONFIG: Configuration
+CONFIG_ACTION: Actions
+CONFIG_ACTION_SEARCH: Search...
+CONFIG_ACTION_BIND_TITLE: Bind combination to action
+CONFIG_ACTION_BIND_ENTER: Press the combination of keys to bind
+CONFIG_ACTION_BIND_CONFIRM: 'The following actions will be unbound from the given combination:'
+CONFIG_ACTION_BIND_CONFIRM_2: Do you want to continue?
+CONFIG_ACTION_UNBIND: Are you sure you want to unbind this combination?
+CONFIG_PLUGIN: Plugins
+CONFIG_PLUGIN_INSTALL: Install
+CONFIG_PLUGIN_UNINSTALL: Unistall
+CONFIG_PLUGIN_UNINSTALL_CONFIRM: Are you sure you want to unistall the plugin {PLUGIN}?
+CONFIG_APPEARANCE: Appearance
+CONFIG_APPEARANCE_REGION_THEME: Theme
+CONFIG_APPEARANCE_REGION_TWEAKS: Tweaks
+CONFIG_APPEARANCE_THEME: 'Theme:'
+CONFIG_APPEARANCE_THEME_TOOLTIP: Theme changes the whole appearance of the application.
+CONFIG_APPEARANCE_GENERAL_FONT: 'General font:'
+CONFIG_APPEARANCE_GENERAL_FONT_TOOLTIP: This font is used on all JAMS except text editors.
+CONFIG_APPEARANCE_CODE_FONT: 'Editor font:'
+CONFIG_APPEARANCE_CODE_FONT_TOOLTIP: This font is used on text editors.
+CONFIG_APPEARANCE_HIDE_TOP_BAR: Hide top bar\t(Windows only, requires restart)
+CONFIG_APPEARANCE_HIDE_TOP_BAR_TOOLTIP: This option integrates the main window's bar into the taskbar.
+CONFIG_APPEARANCE_ANTIALIASING: Antialiasing\t(Requires restart)
+CONFIG_APPEARANCE_ANTIALIASING_TOOLTIP: Enables the antialiasing in all scenes.
+CONFIG_EDITOR: Editor
+CONFIG_EDITOR_REGION_MOUSE_CONTROL: Mouse control
+CONFIG_EDITOR_ZOOM_USING_MOUSE_WHEEL: Zoom with Shortcut+Mouse Wheel
+CONFIG_EDITOR_ZOOM_USING_MOUSE_WHEEL_TOOLTIP: If this option is enable you can zoom
+  using the mouse wheel while pressing the Shortcut key.
+CONFIG_EDITOR_RESET_ZOOM_USING_MIDDLE_BUTTON: Reset zoom with Shortcut+Mouse Middle Button
+CONFIG_EDITOR_RESET_ZOOM_USING_MIDDLE_BUTTON_TOOLTIP: If this option is enable you
+  can reset the zoom using the mouse middle button while pressing the Shortcut key.
+CONFIG_EDITOR_RESET_ZOOM_SENSIBILITY: 'Zoom sensibility:'
+CONFIG_EDITOR_RESET_ZOOM_SENSIBILITY_TOOLTIP: This option configures the zoom made
+  in each wheel scroll.\n\nRemember that the default zoom value is '1' and the 2x
+  zoom value is '2'.
+CONFIG_EDITOR_MIPS: MIPS
+CONFIG_EDITOR_MIPS_REGION_TABS: Tabs
+CONFIG_EDITOR_MIPS_REGION_SPACES: Spaces
+CONFIG_EDITOR_MIPS_REGION_BLANK_LINES: Blank lines
+CONFIG_EDITOR_MIPS_USE_TABS: Use tabs character
+CONFIG_EDITOR_MIPS_USE_TABS_TOOLTIP: If this option is enabled JAMS will use TABs
+  instead of spaces on the code editor.
+CONFIG_EDITOR_MIPS_PRESERVE_TABS: Preserve tabs after the label
+CONFIG_EDITOR_MIPS_PRESERVE_TABS_TOOLTIP: This option sets whether tabs added by the
+  user between the label and the instruction / directive should be preserved when formatting.
+CONFIG_EDITOR_MIPS_PRESERVE_TABS_BEFORE_LABELS: Preserve tabs before the label
+CONFIG_EDITOR_MIPS_PRESERVE_TABS_BEFORE_LABELS_TOOLTIP: This option sets whether tabs
+  added before labels should be preserved when formatting.
+CONFIG_EDITOR_MIPS_SPACE_AFTER_INSTRUCTION: 'After instruction:'
+CONFIG_EDITOR_MIPS_SPACE_AFTER_INSTRUCTION_TOOLTIP: This option tells JAMS what to add after an instruction.
+CONFIG_EDITOR_MIPS_SPACE_AFTER_INSTRUCTION_PARAMETER: 'After instruction parameter:'
+CONFIG_EDITOR_MIPS_SPACE_AFTER_INSTRUCTION_PARAMETER_TOOLTIP: This option tells JAMS what to
+  add after an instruction's parameter.
+CONFIG_EDITOR_MIPS_SPACE_AFTER_DIRECTIVE: 'After directive:'
+CONFIG_EDITOR_MIPS_SPACE_AFTER_DIRECTIVE_TOOLTIP: This option tells JAMS what to add after a directive.
+CONFIG_EDITOR_MIPS_SPACE_AFTER_DIRECTIVE_PARAMETER: 'After directive parameter:'
+CONFIG_EDITOR_MIPS_SPACE_AFTER_DIRECTIVE_PARAMETER_TOOLTIP: This option tells JAMS
+  what to add after a directive's parameter.
+CONFIG_EDITOR_MIPS_MAXIMUM_BLANK_LINES: 'Maximum blank lines:'
+CONFIG_EDITOR_MIPS_MAXIMUM_BLANK_LINES_TOOLTIP: The maximum amount of blank lines JAMS will keep on formatting.
+CONFIG_EXPLORER: Explorer
+CONFIG_EXPLORER_REGION_SIZE: Size
+CONFIG_EXPLORER_SECTION_SEPARATOR_WIDTH: 'Width per hierarchy level for sections:'
+CONFIG_EXPLORER_SECTION_SEPARATOR_WIDTH_TOOLTIP: Represents the width that a section will shift per hierarchy level
+CONFIG_EXPLORER_ELEMENT_SEPARATOR_WIDTH: 'Width per hierarchy level for elements:'
+CONFIG_EXPLORER_ELEMENT_SEPARATOR_WIDTH_TOOLTIP: Represents the width that an element will shift per hierarchy level
+CONFIG_EXPLORER_MIPS: MIPS
+CONFIG_EXPLORER_MIPS_REGION_CREATION: Creation
+CONFIG_EXPLORER_MIPS_ADD_CREATED_ASM_FILES_TO_ASSEMBLE: Add created asm files to assemble automatically
+CONFIG_EXPLORER_MIPS_ADD_CREATED_ASM_FILES_TO_ASSEMBLE_TOOLTIP: Assembly files will
+  be added automatically into the assembly list if this option is enabled.\n\nThis
+  option can be changed when you create an assembly file.
+CONFIG_LANGUAGE: Language
+CONFIG_LANGUAGE_REGION_LANGUAGE: Language
+CONFIG_LANGUAGE_DEFAULT: 'Fallback language:'
+CONFIG_LANGUAGE_DEFAULT_TOOLTIP: This language will be used when the selected language
+  doesn't have the required message.\n\nThis language is the English language by default.
+CONFIG_LANGUAGE_SELECTED: 'Selected language:'
+CONFIG_LANGUAGE_SELECTED_TOOLTIP: This language will be used by JAMS to show all its messages.
+CONFIG_SIMULATION: Simulation
+CONFIG_SIMULATION_MIPS: MIPS
+CONFIG_SIMULATION_REGION_ASSEMBLY: Assembly
+CONFIG_SIMULATION_OPEN_LOG_ON_ASSEMBLE: Open log pane when assembling.
+CONFIG_SIMULATION_REGION_MEMORY: Memory
+CONFIG_SIMULATION_MEMORY_ROWS: 'Rows:'
+CONFIG_SIMULATION_MEMORY_ROWS_TOOLTIP: The amount of rows the memory display can show at the same time.
+CONFIG_SIMULATION_MIPS_REGION_FLOW: Flow
+CONFIG_SIMULATION_MIPS_FLOW_MAX_ITEMS: 'Maximum entries:'
+CONFIG_SIMULATION_MIPS_FLOW_MAX_ITEMS_TOOLTIP: The maximum amount of entries the flow pane can hold at the same time.
+CONFIG_SIMULATION_MIPS_REGION_INSTRUCTIONS: Instruction viewer
+CONFIG_SIMULATION_MIPS_INSTRUCTIONS_VIEWER_ELEMENTS_ORDER: 'Viewer''s elements order:'
+CONFIG_SIMULATION_MIPS_INSTRUCTIONS_VIEWER_ELEMENTS_ORDER_TOOLTIP: In this panel you
+  can change the order of the elements in the instruction viewer.
+CONFIG_SIMULATION_MIPS_INSTRUCTIONS_VIEWER_ELEMENTS_ORDER_USING: 'Using:'
+CONFIG_SIMULATION_MIPS_INSTRUCTIONS_VIEWER_ELEMENTS_ORDER_NOT_USING: 'Not using:'
+CONFIG_SIMULATION_MIPS_INSTRUCTIONS_SHOW_LABELS: Show labels.
+CONFIG_SIMULATION_MIPS_INSTRUCTIONS_SHOW_LABELS_TOOLTIP: This option allows labels
+  to be shown in the instruction viewer.
+CONFIG_SIMULATION_MIPS_REGION_LAB: Lab
+CONFIG_SIMULATION_MIPS_LAB_FIRST_SEGMENT_ADDRESS: 'First display address:'
+CONFIG_SIMULATION_MIPS_LAB_FIRST_SEGMENT_ADDRESS_TOOLTIP: The address used by the first display of the lab.
+CONFIG_SIMULATION_MIPS_LAB_SECOND_SEGMENT_ADDRESS: 'Second display address:'
+CONFIG_SIMULATION_MIPS_LAB_SECOND_SEGMENT_ADDRESS_TOOLTIP: The address used by the second display of the lab.
+CONFIG_SIMULATION_MIPS_LAB_FIRST_HEX_KERBOARD_ADDRESS: 'First hex kerboard address:'
+CONFIG_SIMULATION_MIPS_LAB_FIRST_HEX_KERBOARD_ADDRESS_TOOLTIP: The address used by
+  the least 8 significant numbers of the hexadeximal keyboard.
+CONFIG_SIMULATION_MIPS_LAB_SECOND_HEX_KERBOARD_ADDRESS: 'Second hex kerboard address:'
+CONFIG_SIMULATION_MIPS_LAB_SECOND_HEX_KERBOARD_ADDRESS_TOOLTIP: The address used by
+  the most 8 significant numbers of the hexadeximal keyboard.
+CONFIG_SIMULATION_MIPS_LAB_COUNTER_ADDRESS: 'Counter address:'
+CONFIG_SIMULATION_MIPS_LAB_COUNTER_ADDRESS_TOOLTIP: The address used by the counter.
+  The value in this address represents the amount of cycles the counter will wait
+  before an interrupt.

@@ -34,6 +34,7 @@ import net.jamsimulator.jams.gui.util.converter.CacheBuilderValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
 import net.jamsimulator.jams.language.wrapper.CacheBuilderLanguageListCell;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
@@ -150,13 +151,8 @@ public class CacheBuilderValueEditor extends ComboBox<CacheBuilder<?>> implement
     private static class StaticListeners {
 
         @Listener(priority = Integer.MAX_VALUE)
-        private void onLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
-            sort();
-        }
-
-        @Listener(priority = Integer.MAX_VALUE)
-        private void onLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
-            sort();
+        public void onRefresh(LanguageRefreshEvent event) {
+           sort();
         }
 
         @Listener(priority = Integer.MAX_VALUE)

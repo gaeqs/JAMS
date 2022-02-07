@@ -27,6 +27,8 @@ package net.jamsimulator.jams.manager;
 import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 import net.jamsimulator.jams.utils.Validate;
 
+import java.util.HashSet;
+
 /**
  * Represents a {@link Manager} that has a default value and a selected value.
  * <p>
@@ -93,6 +95,33 @@ public abstract class SelectableManager<Type extends ManagerResource> extends De
 
         callEvent(new ManagerSelectedElementChangeEvent.After<>(this, managedType, old, selected));
         return true;
+    }
+
+    /**
+     * Attempts to unregister the given element.
+     * <p>
+     * If the element is null this method throws a {@link NullPointerException}.
+     * If the element type is invalid this method returns {@code false}.
+     * If the element is not present or the unregister event is cancelled this method returns {@code false}.
+     * If the operation was successful the method returns {@code true}.
+     * <p>
+     * If the default element equals to the given element selects the first found element.
+     * If the selected element equals to the given element selects the default value.
+     *
+     * @param o the element to register.
+     * @return whether the operation was successful.
+     * @throws NullPointerException when the given element is null.
+     * @see HashSet#add(Object)
+     */
+    @Override
+    public boolean remove(Object o) {
+        if (super.remove(o)) {
+            if (selected.equals(o)) {
+                selected = defaultValue;
+            }
+            return true;
+        }
+        return false;
     }
 
     /**

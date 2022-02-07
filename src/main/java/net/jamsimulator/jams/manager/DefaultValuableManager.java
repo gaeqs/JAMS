@@ -100,8 +100,9 @@ public abstract class DefaultValuableManager<Type extends ManagerResource> exten
      * If the element is null this method throws a {@link NullPointerException}.
      * If the element type is invalid this method returns {@code false}.
      * If the element is not present or the unregister event is cancelled this method returns {@code false}.
-     * If the default element equals to the given element this method returns {@code false} and does nothing.
      * If the operation was successful the method returns {@code true}.
+     * <p>
+     * If the default element equals to the given element selects the first found element.
      *
      * @param o the element to register.
      * @return whether the operation was successful.
@@ -110,8 +111,13 @@ public abstract class DefaultValuableManager<Type extends ManagerResource> exten
      */
     @Override
     public boolean remove(Object o) {
-        if (defaultValue.equals(o)) return false;
-        return super.remove(o);
+        if(super.remove(o)) {
+            if (defaultValue.equals(o)) {
+                defaultValue = stream().filter(it -> it != defaultValue).findFirst().orElse(null);
+            }
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -27,9 +27,8 @@ package net.jamsimulator.jams.language.wrapper;
 import javafx.scene.control.TextField;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
-import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 
 public class LanguageTextField extends TextField {
 
@@ -48,21 +47,21 @@ public class LanguageTextField extends TextField {
 
     private void refreshMessage() {
         if (node == null) return;
-        setPromptText(Manager.ofS(Language.class).getSelected().getOrDefault(node));
+        refreshMessage(Manager.ofS(Language.class).getSelected());
     }
 
-    @Listener
-    public void onSelectedLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
-        refreshMessage();
-    }
-
-    @Listener
-    public void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
-        refreshMessage();
+    private void refreshMessage(Language language) {
+        if (node == null) return;
+        setPromptText(language.getOrDefault(node));
     }
 
     @Override
     public String getTypeSelector() {
         return "TextField";
+    }
+
+    @Listener
+    public void onRefresh(LanguageRefreshEvent event) {
+        refreshMessage(event.getSelectedLanguage());
     }
 }

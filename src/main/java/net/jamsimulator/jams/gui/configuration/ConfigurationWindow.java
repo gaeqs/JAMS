@@ -52,9 +52,8 @@ import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
-import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -237,13 +236,8 @@ public class ConfigurationWindow extends SplitPane {
     }
 
     @Listener
-    private void onSelectedLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
-        stage.setTitle(event.getNewElement().getOrDefault(Messages.CONFIG));
-    }
-
-    @Listener
-    private void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
-        stage.setTitle(Manager.ofS(Language.class).getSelected().getOrDefault(Messages.CONFIG));
+    public void onRefresh(LanguageRefreshEvent event) {
+        stage.setTitle(event.getSelectedLanguage().getOrDefault(Messages.CONFIG));
     }
 
     @Listener

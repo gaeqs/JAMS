@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.ProviderNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,16 +75,11 @@ public final class ThemeManager extends SelectableManager<Theme> {
     public static final String CODE_FONT_NODE = "appearance.code_font";
     public static final String NAME = "theme";
     public static final String COMMON_THEME = "Common";
-    public static final File FOLDER = new File(Jams.getMainFolder(), FOLDER_NAME);
-
-    static {
-        if (!FolderUtils.checkFolder(FOLDER)) throw new RuntimeException("Couldn't create themes folder!");
-    }
-
     public static final ThemeManager INSTANCE = new ThemeManager(ResourceProvider.JAMS, NAME);
 
     private boolean cacheFileLoaded = false;
     private File cacheFile;
+    public File folder;
 
     private String generalFont, codeFont;
 
@@ -190,13 +186,13 @@ public final class ThemeManager extends SelectableManager<Theme> {
      * If 'attach' is true and some of these themes have the same name as one of the themes already loaded,
      * the new theme will be considered an attachment to the already loaded theme. If 'attach' is false and
      * one of these cases occurs, a {@link ThemeLoadException} with the type
-     * {@link ThemeLoadException.Type#THEME_ALREADY_EXIST} will be thrown.
+     * {@link ThemeLoadException.Type#ALREADY_EXIST} will be thrown.
      * <p>
      * You may need to refresh the selected theme after all loading operations are finished. See {@link #refresh()}
      * for more information.
      * <p>
      * This method won't throw any {@link ThemeLoadException}. Instead, it will return a {@link HashMap} with
-     * all {@link ThemeLoadException} thrown by the theme loaded. This decision was made for simplicity reasons.
+     * all {@link ThemeLoadException} thrown by the theme loader. This decision was made for simplicity reasons.
      *
      * @param provider the provider of the themes.
      * @param path     the path of the directory where the themes are. This path may be inside a plugin's .JAR.
@@ -226,7 +222,7 @@ public final class ThemeManager extends SelectableManager<Theme> {
      * If 'attach' is true and some the theme have the same name as one of the themes already loaded,
      * the new theme will be considered an attachment to the already loaded theme. If 'attach' is false and
      * one of these cases occurs, a {@link ThemeLoadException} with the type
-     * {@link ThemeLoadException.Type#THEME_ALREADY_EXIST} will be thrown.
+     * {@link ThemeLoadException.Type#ALREADY_EXIST} will be thrown.
      * <p>
      * You may need to refresh the selected theme after all loading operations are finished. See {@link #refresh()}
      * for more information.
@@ -245,13 +241,13 @@ public final class ThemeManager extends SelectableManager<Theme> {
             if (defaultValue == null) {
                 defaultValue = loader.createTheme();
             } else {
-                if (!attach) throw new ThemeLoadException(ThemeLoadException.Type.THEME_ALREADY_EXIST);
+                if (!attach) throw new ThemeLoadException(ThemeLoadException.Type.ALREADY_EXIST);
                 attach(defaultValue, loader);
             }
         } else {
             var optional = get(loader.getHeader().name());
             if (optional.isPresent()) {
-                if (!attach) throw new ThemeLoadException(ThemeLoadException.Type.THEME_ALREADY_EXIST);
+                if (!attach) throw new ThemeLoadException(ThemeLoadException.Type.ALREADY_EXIST);
                 attach(optional.get(), loader);
             } else {
                 add(loader.createTheme());
@@ -261,13 +257,17 @@ public final class ThemeManager extends SelectableManager<Theme> {
 
     @Override
     public void load() {
+        folder = new File(Jams.getMainFolder(), FOLDER_NAME);
+        if (!FolderUtils.checkFolder(folder)) throw new RuntimeException("Couldn't create language folder!");
+
         super.load();
+
         Jams.getMainConfiguration().registerListeners(this, true);
     }
 
     @Override
     public boolean setDefault(Theme defaultValue) {
-        if (!super.setDefault(selected)) return false;
+        if (!super.setDefault(defaultValue)) return false;
         refresh();
         return true;
     }
@@ -290,9 +290,9 @@ public final class ThemeManager extends SelectableManager<Theme> {
                 loadThemesInDirectory(ResourceProvider.JAMS, Path.of(jarResource.toURI()), true)
                         .forEach(ThemeManager::manageException);
             }
-            loadThemesInDirectory(ResourceProvider.JAMS, FOLDER.toPath(), true)
+            loadThemesInDirectory(ResourceProvider.JAMS, folder.toPath(), true)
                     .forEach(ThemeManager::manageException);
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException | URISyntaxException | ProviderNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -323,7 +323,7 @@ public final class ThemeManager extends SelectableManager<Theme> {
     public int removeProvidedBy(ResourceProvider provider) {
         int amount = super.removeProvidedBy(provider);
 
-        // Let's remove the attachments too!+
+        // Let's remove the attachments too!
 
         boolean refresh = false;
         for (var theme : this) {

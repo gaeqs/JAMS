@@ -27,9 +27,8 @@ package net.jamsimulator.jams.language.wrapper;
 import javafx.scene.control.CheckMenuItem;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
-import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 
 public class LanguageCheckMenuItem extends CheckMenuItem {
 
@@ -42,21 +41,20 @@ public class LanguageCheckMenuItem extends CheckMenuItem {
     }
 
     private void refreshMessage() {
-        setText(Manager.ofS(Language.class).getSelected().getOrDefault(node));
+        refreshMessage(Manager.ofS(Language.class).getSelected());
     }
 
-    @Listener
-    public void onSelectedLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
-        refreshMessage();
-    }
-
-    @Listener
-    public void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
-        refreshMessage();
+    private void refreshMessage(Language language) {
+        setText(language.getOrDefault(node));
     }
 
     @Override
     public String getTypeSelector() {
         return "CheckMenuItem";
+    }
+
+    @Listener
+    public void onRefresh(LanguageRefreshEvent event) {
+        refreshMessage(event.getSelectedLanguage());
     }
 }

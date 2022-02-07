@@ -27,6 +27,7 @@ package net.jamsimulator.jams.language.wrapper;
 import javafx.scene.control.ListCell;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
 import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
@@ -59,12 +60,7 @@ public class CacheLanguageListCell extends ListCell<Cache> {
     }
 
     @Listener
-    public void onSelectedLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
-        refreshMessage();
-    }
-
-    @Listener
-    public void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
+    public void onRefresh(LanguageRefreshEvent event) {
         refreshMessage();
     }
 
