@@ -54,11 +54,11 @@ public class SyscallExecutionExitWithValue implements SyscallExecution {
         Register register = simulation.getRegisters().getRegister(this.register).orElse(null);
         if (register == null) throw new IllegalStateException("Register " + this.register + " not found");
 
-        simulation.requestExit();
-        if (simulation.getConsole() != null) {
-            simulation.getConsole().println();
-            simulation.getConsole().printDoneLn("Execution finished with code " + register.getValue());
-            simulation.getConsole().println();
+        simulation.requestExit(register.getValue(), 0);
+        if (simulation.getLog() != null) {
+            simulation.getLog().println();
+            simulation.getLog().printDoneLn("Execution finished with code " + register.getValue());
+            simulation.getLog().println();
         }
     }
 
@@ -66,12 +66,11 @@ public class SyscallExecutionExitWithValue implements SyscallExecution {
     public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var value = execution.value(register);
         var simulation = execution.getSimulation();
-
-        simulation.exit();
-        if (simulation.getConsole() != null) {
-            simulation.getConsole().println();
-            simulation.getConsole().printDoneLn("Execution finished with code " + value);
-            simulation.getConsole().println();
+        simulation.requestExit(value, execution.getInstructionId());
+        if (simulation.getLog() != null) {
+            simulation.getLog().println();
+            simulation.getLog().printDoneLn("Execution finished with code " + value);
+            simulation.getLog().println();
         }
     }
 

@@ -64,8 +64,8 @@ public class SyscallExecutionReadCharacter implements SyscallExecution {
 
         register.setValue(((int) value) & 0xFF);
 
-        simulation.getConsole().printDone(value);
-        if (lineJump) simulation.getConsole().println();
+        simulation.getLog().printDone(value);
+        if (lineJump) simulation.getLog().println();
     }
 
     @Override
@@ -76,8 +76,8 @@ public class SyscallExecutionReadCharacter implements SyscallExecution {
 
         execution.setAndUnlock(register, ((int) value) & 0xFF);
 
-        simulation.getConsole().printDone(value);
-        if (lineJump) simulation.getConsole().println();
+        simulation.getLog().printDone(value);
+        if (lineJump) simulation.getLog().println();
     }
 
     @Override

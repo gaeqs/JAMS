@@ -61,14 +61,14 @@ public class SyscallExecutionPrintBinaryInteger implements SyscallExecution {
         if (register == null) throw new IllegalStateException("Register " + this.register + " not found");
         int value = register.getValue();
         String toPrint = Integer.toBinaryString(value);
-        simulation.getConsole().print(toPrint);
-        if (lineJump) simulation.getConsole().println();
+        simulation.getLog().print(toPrint);
+        if (lineJump) simulation.getLog().println();
     }
 
     @Override
     public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var value = execution.value(register);
-        var console = execution.getSimulation().getConsole();
+        var console = execution.getSimulation().getLog();
         String toPrint = Integer.toBinaryString(value);
         console.print(toPrint);
         if (lineJump) console.println();

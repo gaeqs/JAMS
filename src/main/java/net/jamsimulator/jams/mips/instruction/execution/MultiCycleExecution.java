@@ -50,23 +50,6 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
 
     protected final boolean executesMemory, executesWriteBack;
 
-    /**
-     * Result of the decode step.
-     * DO NOT use this to storage register values:
-     * they will be stored separatly using the method requires().
-     */
-    protected int[] decodeResult;
-
-    /**
-     * Result of the execution step.
-     */
-    protected int[] executionResult;
-
-    /**
-     * Result of the memory step.
-     */
-    protected int[] memoryResult;
-
     protected long instructionId;
 
     protected boolean inDelaySlot;
@@ -152,15 +135,20 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
     }
 
     public void requiresCOP0(int identifier, boolean requiredOnMemory) {
-        requires(registerCop0(identifier), requiredOnMemory);
+        requires(registerCOP0(identifier), requiredOnMemory);
     }
 
     public void requiresCOP0(int identifier, int sel, boolean requiredOnMemory) {
-        requires(registerCop0(identifier, sel), requiredOnMemory);
+        requires(registerCOP0(identifier, sel), requiredOnMemory);
     }
 
     public void requiresCOP1(int identifier, boolean requiredOnMemory) {
-        requires(registerCop1(identifier), requiredOnMemory);
+        requires(registerCOP1(identifier), requiredOnMemory);
+    }
+
+    public void requiresCOP1Double(int identifier, boolean requiredOnMemory) {
+        requires(registerCOP1(identifier), requiredOnMemory);
+        requires(registerCOP1(identifier + 1), requiredOnMemory);
     }
 
     public void requires(Register register, boolean requiredOnMemory) {
@@ -191,20 +179,24 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
 
     //region value
 
+    @Override
     public int value(int identifier) {
         return value(register(identifier));
     }
 
+    @Override
     public int valueCOP0(int identifier) {
-        return value(registerCop0(identifier));
+        return value(registerCOP0(identifier));
     }
 
+    @Override
     public int valueCOP0(int identifier, int sel) {
-        return value(registerCop0(identifier, sel));
+        return value(registerCOP0(identifier, sel));
     }
 
+    @Override
     public int valueCOP1(int identifier) {
-        return value(registerCop1(identifier));
+        return value(registerCOP1(identifier));
     }
 
     public int value(Register register) {
@@ -270,15 +262,20 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
     }
 
     public void lockCOP0(int identifier) {
-        lock(registerCop0(identifier));
+        lock(registerCOP0(identifier));
     }
 
     public void lockCOP0(int identifier, int sel) {
-        lock((registerCop0(identifier, sel)));
+        lock((registerCOP0(identifier, sel)));
     }
 
     public void lockCOP1(int identifier) {
-        lock(registerCop1(identifier));
+        lock(registerCOP1(identifier));
+    }
+
+    public void lockCOP1Double(int identifier) {
+        lock(registerCOP1(identifier));
+        lock(registerCOP1(identifier + 1));
     }
 
     public void lock(Register register) {
@@ -295,15 +292,15 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
     }
 
     public void unlockCOP0(int identifier) {
-        registerCop0(identifier).unlock(this);
+        registerCOP0(identifier).unlock(this);
     }
 
     public void unlockCOP0(int identifier, int sel) {
-        registerCop0(identifier, sel).unlock(this);
+        registerCOP0(identifier, sel).unlock(this);
     }
 
     public void unlockCOP1(int identifier) {
-        registerCop1(identifier).unlock(this);
+        registerCOP1(identifier).unlock(this);
     }
 
     public void unlock(Register register) {
@@ -323,15 +320,19 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
     }
 
     public void setAndUnlockCOP0(int identifier, int value) {
-        setAndUnlock(registerCop0(identifier), value);
+        setAndUnlock(registerCOP0(identifier), value);
     }
 
     public void setAndUnlockCOP0(int identifier, int sel, int value) {
-        setAndUnlock(registerCop0(identifier, sel), value);
+        setAndUnlock(registerCOP0(identifier, sel), value);
     }
 
     public void setAndUnlockCOP1(int identifier, int value) {
-        setAndUnlock(registerCop1(identifier), value);
+        setAndUnlock(registerCOP1(identifier), value);
+    }
+
+    public void setAndUnlockCOP1(int identifier, float value) {
+        setAndUnlock(registerCOP1(identifier), Float.floatToIntBits(value));
     }
 
     public void setAndUnlock(Register register, int value) {
@@ -348,15 +349,19 @@ public abstract class MultiCycleExecution<Arch extends MultiCycleArchitecture, I
     }
 
     public void forwardCOP0(int identifier, int value) {
-        forward(registerCop0(identifier), value);
+        forward(registerCOP0(identifier), value);
     }
 
     public void forwardCOP0(int identifier, int sel, int value) {
-        forward(registerCop0(identifier, sel), value);
+        forward(registerCOP0(identifier, sel), value);
     }
 
     public void forwardCOP1(int identifier, int value) {
-        forward(registerCop1(identifier), value);
+        forward(registerCOP1(identifier), value);
+    }
+
+    public void forwardCOP1(int identifier, float value) {
+        forward(registerCOP1(identifier), Float.floatToIntBits(value));
     }
 
     public void forward(Register register, int value) {

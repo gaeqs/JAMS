@@ -33,7 +33,7 @@ public class ConsoleInput extends Region {
     private final Label label;
 
     /**
-     * Creates the console input.
+     * Creates the log input.
      *
      * @param text the handled input.
      */

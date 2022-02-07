@@ -226,7 +226,11 @@ public class Registers extends SimpleEventBroadcast {
      * @return the {@link Register}, if present.
      */
     public Optional<Register> getCoprocessor0Register(int identifier, int sel) {
-        return Optional.ofNullable(coprocessor0Registers[identifier][sel]);
+        try {
+            return Optional.ofNullable(coprocessor0Registers[identifier][sel]);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            return Optional.empty();
+        }
     }
 
     /**

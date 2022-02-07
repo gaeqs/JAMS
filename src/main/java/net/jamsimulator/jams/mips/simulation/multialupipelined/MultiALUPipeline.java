@@ -262,7 +262,7 @@ public class MultiALUPipeline {
     }
 
     public void executeFullJumpRemoval(long instructionId) {
-        // We are sure fetch and decore are newer then the jump instruction.
+        // We are sure fetch and decore are newer than the jump instruction.
         if (fetch != null) fetch.status = MultiALUPipelineSlotStatus.REMOVED;
         if (decode != null) decode.status = MultiALUPipelineSlotStatus.REMOVED;
 
@@ -378,7 +378,7 @@ public class MultiALUPipeline {
         try {
             execution.writeBack();
         } catch (MIPSInterruptException ex) {
-            var console = simulation.getConsole();
+            var console = simulation.getLog();
             if (console != null) {
                 console.printWarningLn("Found exception '" + ex.getMessage()
                         + "' when the instruction was on WriteBack");

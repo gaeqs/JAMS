@@ -181,7 +181,7 @@ public class MIPS32Registers extends Registers {
         coprocessor0Registers[16][2] = new COP0Register(this, 16, 2, 0x80000000, 0x7FFFFFFF, "Config2", "16.2");
         coprocessor0Registers[16][3] = new COP0Register(this, 16, 3, 0x80000020, 0x00000000, "Config3", "16.3");
         coprocessor0Registers[16][4] = new COP0Register(this, 16, 4, 0x80000000, 0x7FFFFFFF, "Config4", "16.4");
-        coprocessor0Registers[16][5] = new COP0Register(this, 16, 5, 0x00000000, 0x7FFFFFFF, "Config5", "16.5");
+        coprocessor0Registers[16][5] = new COP0Register(this, 16, 5, 0x00000000, 0x68000320, "Config5", "16.5");
 
         coprocessor0Registers[17] = new Register[1];
         coprocessor0Registers[17][0] = new COP0Register(this, 17, 0, 0xFFFFFFFF, "LLAddr", "17");

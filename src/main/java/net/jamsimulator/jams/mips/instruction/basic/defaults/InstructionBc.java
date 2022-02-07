@@ -48,7 +48,8 @@ public class InstructionBc extends BasicInstruction<InstructionBc.Assembled> imp
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b110010;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.SIGNED_32_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES =
+            new InstructionParameterTypes(ParameterType.SIGNED_32_BIT);
 
     public InstructionBc() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
@@ -75,7 +76,7 @@ public class InstructionBc extends BasicInstruction<InstructionBc.Assembled> imp
     public static class Assembled extends AssembledI26Instruction {
 
         public Assembled(Instruction origin, BasicInstruction<Assembled> basicOrigin, int offset) {
-            super(InstructionBc.OPERATION_CODE, offset, origin, basicOrigin);
+            super(OPERATION_CODE, offset, origin, basicOrigin);
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -111,6 +112,7 @@ public class InstructionBc extends BasicInstruction<InstructionBc.Assembled> imp
 
         @Override
         public void decode() {
+            lock(pc());
         }
 
         @Override

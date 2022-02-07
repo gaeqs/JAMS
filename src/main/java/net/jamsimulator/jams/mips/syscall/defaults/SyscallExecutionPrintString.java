@@ -29,6 +29,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import net.jamsimulator.jams.gui.util.log.Console;
+import net.jamsimulator.jams.gui.util.log.Log;
 import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.memory.Memory;
@@ -62,12 +63,12 @@ public class SyscallExecutionPrintString implements SyscallExecution {
     public void execute(MIPSSimulation<?> simulation) {
         Register register = simulation.getRegisters().getRegister(this.register).orElse(null);
         if (register == null) throw new IllegalStateException("Register " + this.register + " not found");
-        print(simulation.getMemory(), simulation.getConsole(), register.getValue());
+        print(simulation.getMemory(), simulation.getLog(), register.getValue());
     }
 
     @Override
     public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
-        print(execution.getSimulation().getMemory(), execution.getSimulation().getConsole(), execution.value(register));
+        print(execution.getSimulation().getMemory(), execution.getSimulation().getLog(), execution.value(register));
     }
 
     @Override
@@ -80,7 +81,7 @@ public class SyscallExecutionPrintString implements SyscallExecution {
         return Collections.emptySet();
     }
 
-    private void print(Memory memory, Console console, int address) {
+    private void print(Memory memory, Log log, int address) {
         char[] chars = new char[maxChars];
         int amount = 0;
         int c;
@@ -91,10 +92,10 @@ public class SyscallExecutionPrintString implements SyscallExecution {
 
         if (amount > 0) {
             String string = new String(chars, 0, amount);
-            console.print(string);
+            log.print(string);
         }
 
-        if (lineJump) console.println();
+        if (lineJump) log.println();
     }
 
     public static class Builder extends SyscallExecutionBuilder<SyscallExecutionPrintString> {

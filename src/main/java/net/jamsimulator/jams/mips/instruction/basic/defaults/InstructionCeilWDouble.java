@@ -38,9 +38,7 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.utils.NumericUtils;
 
 public class InstructionCeilWDouble extends BasicRFPUInstruction<InstructionCeilWDouble.Assembled> {
 
@@ -50,7 +48,10 @@ public class InstructionCeilWDouble extends BasicRFPUInstruction<InstructionCeil
     public static final int FMT = 0b10001;
     public static final int FUNCTION_CODE = 0b001110;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.FLOAT_REGISTER,
+            ParameterType.EVEN_FLOAT_REGISTER
+    );
 
     public InstructionCeilWDouble() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE, FMT);
@@ -72,8 +73,16 @@ public class InstructionCeilWDouble extends BasicRFPUInstruction<InstructionCeil
     public static class Assembled extends AssembledRFPUInstruction {
 
         public Assembled(int sourceRegister, int destinationRegister, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionCeilWDouble.OPERATION_CODE, InstructionCeilWDouble.FMT, 0, sourceRegister,
-                    destinationRegister, InstructionCeilWDouble.FUNCTION_CODE, origin, basicOrigin);
+            super(
+                    OPERATION_CODE,
+                    FMT,
+                    0,
+                    sourceRegister,
+                    destinationRegister,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -94,16 +103,16 @@ public class InstructionCeilWDouble extends BasicRFPUInstruction<InstructionCeil
 
         @Override
         public void execute() {
-            if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
-            Register rs0 = registerCop1(instruction.getSourceRegister());
-            Register rs1 = registerCop1(instruction.getSourceRegister() + 1);
-            double d = NumericUtils.intsToDouble(rs0.getValue(), rs1.getValue());
-            int i = (int) Math.ceil(d);
-            registerCop1(instruction.getDestinationRegister()).setValue(i);
+            int s = instruction.getSourceRegister();
+            int d = instruction.getDestinationRegister();
+            checkEvenRegister(s);
+            registerCOP1(d).setValue((int) Math.ceil(doubleCOP1(s)));
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -111,31 +120,26 @@ public class InstructionCeilWDouble extends BasicRFPUInstruction<InstructionCeil
 
         @Override
         public void decode() {
-            if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
-
-            requiresCOP1(instruction.getSourceRegister(), false);
-            requiresCOP1(instruction.getSourceRegister() + 1, false);
-            lockCOP1(instruction.getDestinationRegister());
+            int s = instruction.getSourceRegister();
+            int d = instruction.getDestinationRegister();
+            checkEvenRegister(s);
+            requiresCOP1Double(s, false);
+            lockCOP1(d);
         }
 
         @Override
         public void execute() {
-            var id = instruction.getSourceRegister();
-            var to = instruction.getDestinationRegister();
-            var ceil = (int) Math.ceil(NumericUtils.intsToDouble(valueCOP1(id), valueCOP1(id + 1)));
-            executionResult = new int[]{ceil};
-            forwardCOP1(to, executionResult[0]);
+            result = (int) Math.ceil(doubleCOP1(instruction.getSourceRegister()));
+            forwardCOP1(instruction.getDestinationRegister(), result);
         }
 
         @Override
         public void memory() {
-            var to = instruction.getDestinationRegister();
-            forwardCOP1(to, executionResult[0]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlockCOP1(instruction.getDestinationRegister(), executionResult[0]);
+            setAndUnlockCOP1(instruction.getDestinationRegister(), result);
         }
     }
 }

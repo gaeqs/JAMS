@@ -38,7 +38,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembled> {
@@ -49,8 +48,12 @@ public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembl
     public static final int FUNCTION_CODE = 0b100000;
     public static final int ALIGN_CODE = 0b010;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER,
-            ParameterType.REGISTER, ParameterType.UNSIGNED_5_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER,
+            ParameterType.REGISTER,
+            ParameterType.UNSIGNED_5_BIT
+    );
 
     public InstructionAlign() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
@@ -68,8 +71,14 @@ public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembl
 
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-        return new Assembled(parameters[1].getRegister(), parameters[2].getRegister(),
-                parameters[0].getRegister(), parameters[3].getImmediate(), origin, this);
+        return new Assembled(
+                parameters[1].getRegister(),
+                parameters[2].getRegister(),
+                parameters[0].getRegister(),
+                parameters[3].getImmediate(),
+                origin,
+                this
+        );
     }
 
     @Override
@@ -85,9 +94,16 @@ public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembl
 
         public Assembled(int sourceRegister, int targetRegister, int destinationRegister, int shiftAmount,
                          Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionAlign.OPERATION_CODE, sourceRegister, targetRegister, destinationRegister,
-                    (InstructionAlign.ALIGN_CODE << (ALIGN_CODE_SHIFT - SHIFT_AMOUNT_SHIFT)) + shiftAmount,
-                    InstructionAlign.FUNCTION_CODE, origin, basicOrigin);
+            super(
+                    OPERATION_CODE,
+                    sourceRegister,
+                    targetRegister,
+                    destinationRegister,
+                    (ALIGN_CODE << (ALIGN_CODE_SHIFT - SHIFT_AMOUNT_SHIFT)) + shiftAmount,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -121,18 +137,16 @@ public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembl
 
         @Override
         public void execute() {
-            Register rt = register(instruction.getTargetRegister());
-            Register rs = register(instruction.getSourceRegister());
-            Register rd = register(instruction.getDestinationRegister());
-
             int bp = instruction.getShiftAmount();
-            int tmpRtHi = rt.getValue() << (bp << 3);
-            int tmpRsLo = rs.getValue() >>> ((4 - bp) << 3);
-            rd.setValue(tmpRtHi | tmpRsLo);
+            int tmpRtHi = value(instruction.getTargetRegister()) << (bp << 3);
+            int tmpRsLo = value(instruction.getSourceRegister()) >>> ((4 - bp) << 3);
+            register(instruction.getDestinationRegister()).setValue(tmpRtHi | tmpRsLo);
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -150,18 +164,17 @@ public class InstructionAlign extends BasicRInstruction<InstructionAlign.Assembl
             int bp = instruction.getShiftAmount();
             int tmpRtHi = value(instruction.getTargetRegister()) << (bp << 3);
             int tmpRsLo = value(instruction.getSourceRegister()) >>> ((4 - bp) << 3);
-            executionResult = new int[]{tmpRtHi | tmpRsLo};
-            forward(instruction.getDestinationRegister(), executionResult[0]);
+            result = tmpRtHi | tmpRsLo;
+            forward(instruction.getDestinationRegister(), result);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlock(instruction.getDestinationRegister(), executionResult[0]);
+            setAndUnlock(instruction.getDestinationRegister(), result);
         }
     }
 }

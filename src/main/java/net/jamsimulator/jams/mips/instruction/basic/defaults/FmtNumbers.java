@@ -101,6 +101,7 @@ public enum FmtNumbers {
             }
             case SINGLE -> register.setValue(Float.floatToIntBits(number.floatValue()));
             case DOUBLE -> {
+                NumericUtils.doubleToInts(number.doubleValue(), register, aux);
                 int[] ints = NumericUtils.doubleToInts(number.doubleValue());
                 register.setValue(ints[0]);
                 aux.setValue(ints[1]);
@@ -108,12 +109,12 @@ public enum FmtNumbers {
         }
     }
 
-    public int[] to(Number number) {
+    public long to(Number number) {
         return switch (this) {
-            case WORD -> new int[]{number.intValue()};
-            case LONG -> new int[]{number.intValue(), (int) (number.longValue() >> 32)};
-            case SINGLE -> new int[]{Float.floatToIntBits(number.floatValue())};
-            case DOUBLE -> NumericUtils.doubleToInts(number.doubleValue());
+            case WORD -> number.intValue();
+            case LONG -> number.longValue();
+            case SINGLE -> Float.floatToIntBits(number.floatValue());
+            case DOUBLE -> Double.doubleToLongBits(number.doubleValue());
         };
     }
 }

@@ -38,7 +38,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -48,7 +47,11 @@ public class InstructionBovc extends BasicInstruction<InstructionBovc.Assembled>
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b001000;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER,
+            ParameterType.SIGNED_16_BIT
+    );
 
     public InstructionBovc() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
@@ -84,7 +87,7 @@ public class InstructionBovc extends BasicInstruction<InstructionBovc.Assembled>
     public static class Assembled extends AssembledI16Instruction {
 
         public Assembled(int sourceRegister, int targetRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionBovc.OPERATION_CODE, sourceRegister, targetRegister, offset, origin, basicOrigin);
+            super(OPERATION_CODE, sourceRegister, targetRegister, offset, origin, basicOrigin);
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -108,15 +111,12 @@ public class InstructionBovc extends BasicInstruction<InstructionBovc.Assembled>
         @SuppressWarnings("ResultOfMethodCallIgnored")
         @Override
         public void execute() {
-            Register rs = register(instruction.getSourceRegister());
-            Register rt = register(instruction.getTargetRegister());
-
             try {
-                Math.addExact(rs.getValue(), rt.getValue());
+                Math.addExact(value(instruction.getSourceRegister()), value(instruction.getTargetRegister()));
                 return;
             } catch (ArithmeticException ignore) {
             }
-            Register pc = pc();
+            var pc = pc();
             pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
         }
     }
@@ -130,6 +130,9 @@ public class InstructionBovc extends BasicInstruction<InstructionBovc.Assembled>
 
         @Override
         public void decode() {
+            requires(instruction.getSourceRegister(), false);
+            requires(instruction.getTargetRegister(), false);
+            lock(pc());
         }
 
         @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -137,6 +140,7 @@ public class InstructionBovc extends BasicInstruction<InstructionBovc.Assembled>
         public void execute() {
             try {
                 Math.addExact(value(instruction.getSourceRegister()), value(instruction.getTargetRegister()));
+                unlock(pc());
             } catch (ArithmeticException ex) {
                 jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
             }

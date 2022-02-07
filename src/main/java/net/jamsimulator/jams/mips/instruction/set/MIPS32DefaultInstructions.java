@@ -91,13 +91,19 @@ class MIPS32DefaultInstructions {
         basicInstructions.add(new InstructionCeilWSingle());
         basicInstructions.add(new InstructionClo());
         basicInstructions.add(new InstructionClz());
-        for (FloatCondition condition : FloatCondition.values()) {
+
+        for (var condition : FloatCondition.values()) {
             basicInstructions.add(new InstructionCmpCondnSingle(condition));
             basicInstructions.add(new InstructionCmpCondnDouble(condition));
         }
 
-        for (FmtNumbers to : FmtNumbers.values()) {
-            for (FmtNumbers from : FmtNumbers.values()) {
+        for (var type : CRCType.values()) {
+            basicInstructions.add(new InstructionCrc32(type, false));
+            basicInstructions.add(new InstructionCrc32(type, true));
+        }
+
+        for (var to : FmtNumbers.values()) {
+            for (var from : FmtNumbers.values()) {
                 if (to == from) continue;
                 basicInstructions.add(new InstructionCvtNN(to, from));
             }
@@ -221,6 +227,7 @@ class MIPS32DefaultInstructions {
         pseudoInstructions.add(new PseudoInstructionLiRI32());
         pseudoInstructions.add(new PseudoInstructionLuiRI());
         pseudoInstructions.add(new PseudoInstructionLifRF());
+        pseudoInstructions.add(new PseudoInstructionLidRD());
 
         pseudoInstructions.add(new PseudoInstructionLbRL());
         pseudoInstructions.add(new PseudoInstructionLbRLr());

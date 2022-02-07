@@ -25,19 +25,20 @@
 package net.jamsimulator.jams.mips.simulation.file;
 
 import net.jamsimulator.jams.gui.util.log.Console;
+import net.jamsimulator.jams.gui.util.log.Log;
 import net.jamsimulator.jams.mips.simulation.file.event.SimulationFileWriteEvent;
 
 public class ConsoleOutSimulationFile implements SimulationFile {
 
     protected final SimulationFiles files;
     protected final int id;
-    protected final Console console;
+    protected final Log log;
     protected final boolean error;
 
-    public ConsoleOutSimulationFile(SimulationFiles files, int id, Console console, boolean error) {
+    public ConsoleOutSimulationFile(SimulationFiles files, int id, Log log, boolean error) {
         this.files = files;
         this.id = id;
-        this.console = console;
+        this.log = log;
         this.error = error;
     }
 
@@ -63,9 +64,9 @@ public class ConsoleOutSimulationFile implements SimulationFile {
         bytes = before.getData();
 
         if (error) {
-            console.printError(new String(bytes));
+            log.printError(new String(bytes));
         } else {
-            console.print(new String(bytes));
+            log.print(new String(bytes));
         }
 
         files.callEvent(new SimulationFileWriteEvent.After(this, bytes));

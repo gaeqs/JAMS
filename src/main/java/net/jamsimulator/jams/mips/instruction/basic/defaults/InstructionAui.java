@@ -37,7 +37,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -47,7 +46,11 @@ public class InstructionAui extends BasicInstruction<InstructionAui.Assembled> {
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b001111;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER,
+            ParameterType.SIGNED_16_BIT
+    );
 
     public InstructionAui() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
@@ -58,8 +61,13 @@ public class InstructionAui extends BasicInstruction<InstructionAui.Assembled> {
 
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-        return new Assembled(parameters[1].getRegister(), parameters[0].getRegister(),
-                parameters[2].getImmediate(), origin, this);
+        return new Assembled(
+                parameters[1].getRegister(),
+                parameters[0].getRegister(),
+                parameters[2].getImmediate(),
+                origin,
+                this
+        );
     }
 
     @Override
@@ -69,8 +77,9 @@ public class InstructionAui extends BasicInstruction<InstructionAui.Assembled> {
 
     public static class Assembled extends AssembledI16Instruction {
 
-        public Assembled(int sourceRegister, int targetRegister, int immediate, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionAui.OPERATION_CODE, sourceRegister, targetRegister, immediate, origin, basicOrigin);
+        public Assembled(int sourceRegister, int targetRegister, int immediate,
+                         Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(OPERATION_CODE, sourceRegister, targetRegister, immediate, origin, basicOrigin);
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -93,14 +102,15 @@ public class InstructionAui extends BasicInstruction<InstructionAui.Assembled> {
 
         @Override
         public void execute() {
-            Register rt = register(instruction.getTargetRegister());
-            Register rs = register(instruction.getSourceRegister());
-            rt.setValue(rs.getValue() + (instruction.getImmediate() << 16));
+            register(instruction.getTargetRegister())
+                    .setValue(value(instruction.getSourceRegister()) + (instruction.getImmediate() << 16));
         }
     }
 
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -114,18 +124,17 @@ public class InstructionAui extends BasicInstruction<InstructionAui.Assembled> {
 
         @Override
         public void execute() {
-            executionResult = new int[]{value(instruction.getSourceRegister()) + (instruction.getImmediate() << 16)};
-            forward(instruction.getTargetRegister(), executionResult[0]);
+            result = value(instruction.getSourceRegister()) + (instruction.getImmediate() << 16);
+            forward(instruction.getTargetRegister(), result);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getTargetRegister(), executionResult[0]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlock(instruction.getTargetRegister(), executionResult[0]);
+            setAndUnlock(instruction.getTargetRegister(), result);
         }
     }
 }

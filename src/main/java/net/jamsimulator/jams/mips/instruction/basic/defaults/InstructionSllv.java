@@ -48,7 +48,11 @@ public class InstructionSllv extends BasicRInstruction<InstructionSllv.Assembled
     public static final int OPERATION_CODE = 0;
     public static final int FUNCTION_CODE = 0b000100;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER,
+            ParameterType.REGISTER
+    );
 
     public InstructionSllv() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
@@ -59,7 +63,13 @@ public class InstructionSllv extends BasicRInstruction<InstructionSllv.Assembled
 
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-        return new Assembled(parameters[2].getRegister(), parameters[1].getRegister(), parameters[0].getRegister(), origin, this);
+        return new Assembled(
+                parameters[2].getRegister(),
+                parameters[1].getRegister(),
+                parameters[0].getRegister(),
+                origin,
+                this
+        );
     }
 
     @Override
@@ -71,7 +81,16 @@ public class InstructionSllv extends BasicRInstruction<InstructionSllv.Assembled
 
         public Assembled(int sourceRegister, int targetRegister, int destinationRegister,
                          Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(OPERATION_CODE, sourceRegister, targetRegister, destinationRegister, 0, FUNCTION_CODE, origin, basicOrigin);
+            super(
+                    OPERATION_CODE,
+                    sourceRegister,
+                    targetRegister,
+                    destinationRegister,
+                    0,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -94,14 +113,14 @@ public class InstructionSllv extends BasicRInstruction<InstructionSllv.Assembled
 
         @Override
         public void execute() {
-            Register rs = register(instruction.getSourceRegister());
-            Register rt = register(instruction.getTargetRegister());
-            Register rd = register(instruction.getDestinationRegister());
-            rd.setValue(rt.getValue() << rs.getValue());
+            register(instruction.getDestinationRegister())
+                    .setValue(value(instruction.getTargetRegister()) << value(instruction.getSourceRegister()));
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -116,18 +135,17 @@ public class InstructionSllv extends BasicRInstruction<InstructionSllv.Assembled
 
         @Override
         public void execute() {
-            executionResult = new int[]{value(instruction.getTargetRegister()) << value(instruction.getSourceRegister())};
-            forward(instruction.getDestinationRegister(), executionResult[0]);
+            result = value(instruction.getTargetRegister()) << value(instruction.getSourceRegister());
+            forward(instruction.getDestinationRegister(), result);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlock(instruction.getDestinationRegister(), executionResult[0]);
+            setAndUnlock(instruction.getDestinationRegister(), result);
         }
     }
 }

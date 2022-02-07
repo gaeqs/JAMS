@@ -39,7 +39,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled> implements ControlTransferInstruction {
@@ -49,7 +48,10 @@ public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled
     public static final int OPERATION_CODE = 0;
     public static final int FUNCTION_CODE = 0b001001;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER
+    );
 
     public InstructionJalr() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
@@ -77,8 +79,16 @@ public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled
 
         public Assembled(int sourceRegister, int destinationRegister,
                          Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionJalr.OPERATION_CODE, sourceRegister, 0, destinationRegister, 0,
-                    InstructionJalr.FUNCTION_CODE, origin, basicOrigin);
+            super(
+                    OPERATION_CODE,
+                    sourceRegister,
+                    0,
+                    destinationRegister,
+                    0,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -100,30 +110,27 @@ public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled
 
         @Override
         public void execute() {
-            Register rs = register(instruction.getSourceRegister());
-            Register rd = register(instruction.getDestinationRegister());
-
-            pc().setValue(rs.getValue());
-            rd.setValue(getAddress() + 4);
+            pc().setValue(value(instruction.getSourceRegister()));
+            register(instruction.getDestinationRegister()).setValue(getAddress() + 4);
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-            super(simulation, instruction, address, false, false);
+            super(simulation, instruction, address, false, true);
         }
 
         @Override
         public void decode() {
+            requires(instruction.getSourceRegister(), false);
+            lock(pc());
+            lock(instruction.getDestinationRegister());
         }
 
         @Override
         public void execute() {
-            if (!solveBranchOnDecode()) {
-                jump(instruction.getSourceRegister());
-            }
-            setAndUnlock(instruction.getDestinationRegister(), getAddress() + 4);
+            jump(instruction.getSourceRegister());
         }
 
         @Override
@@ -132,6 +139,7 @@ public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled
 
         @Override
         public void writeBack() {
+            setAndUnlock(instruction.getDestinationRegister(), getAddress() + 4);
         }
     }
 
@@ -155,9 +163,6 @@ public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled
         @Override
         public void execute() {
             if (solveBranchOnDecode()) {
-                //We save the source value before any modification.
-                executionResult = new int[]{value(instruction.getSourceRegister())};
-
                 forward(instruction.getDestinationRegister(), getAddress() + 4);
             }
         }
@@ -165,9 +170,9 @@ public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled
         @Override
         public void memory() {
             if (!solveBranchOnDecode()) {
-                jump(executionResult[0]);
+                jump(value(instruction.getSourceRegister()));
+                forward(instruction.getDestinationRegister(), getAddress() + 4);
             }
-            forward(instruction.getDestinationRegister(), getAddress() + 4);
         }
 
         @Override

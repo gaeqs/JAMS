@@ -38,7 +38,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class InstructionSrl extends BasicRInstruction<InstructionSrl.Assembled> {
@@ -48,7 +47,11 @@ public class InstructionSrl extends BasicRInstruction<InstructionSrl.Assembled> 
     public static final int OPERATION_CODE = 0;
     public static final int FUNCTION_CODE = 0b000010;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.UNSIGNED_5_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER,
+            ParameterType.UNSIGNED_5_BIT
+    );
 
     public InstructionSrl() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
@@ -59,7 +62,13 @@ public class InstructionSrl extends BasicRInstruction<InstructionSrl.Assembled> 
 
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-        return new Assembled(parameters[1].getRegister(), parameters[0].getRegister(), parameters[2].getImmediate(), origin, this);
+        return new Assembled(
+                parameters[1].getRegister(),
+                parameters[0].getRegister(),
+                parameters[2].getImmediate(),
+                origin,
+                this
+        );
     }
 
     @Override
@@ -71,7 +80,16 @@ public class InstructionSrl extends BasicRInstruction<InstructionSrl.Assembled> 
 
         public Assembled(int targetRegister, int destinationRegister, int shiftAmount,
                          Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(OPERATION_CODE, 0, targetRegister, destinationRegister, shiftAmount, FUNCTION_CODE, origin, basicOrigin);
+            super(
+                    OPERATION_CODE,
+                    0,
+                    targetRegister,
+                    destinationRegister,
+                    shiftAmount,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -94,13 +112,14 @@ public class InstructionSrl extends BasicRInstruction<InstructionSrl.Assembled> 
 
         @Override
         public void execute() {
-            Register rt = register(instruction.getTargetRegister());
-            Register rd = register(instruction.getDestinationRegister());
-            rd.setValue(rt.getValue() >> instruction.getShiftAmount());
+            register(instruction.getTargetRegister())
+                    .setValue(value(instruction.getTargetRegister()) >> instruction.getShiftAmount());
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -114,18 +133,17 @@ public class InstructionSrl extends BasicRInstruction<InstructionSrl.Assembled> 
 
         @Override
         public void execute() {
-            executionResult = new int[]{value(instruction.getTargetRegister()) >> instruction.getShiftAmount()};
-            forward(instruction.getDestinationRegister(), executionResult[0]);
+            result = value(instruction.getTargetRegister()) >> instruction.getShiftAmount();
+            forward(instruction.getDestinationRegister(), result);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlock(instruction.getDestinationRegister(), executionResult[0]);
+            setAndUnlock(instruction.getDestinationRegister(), result);
         }
     }
 }

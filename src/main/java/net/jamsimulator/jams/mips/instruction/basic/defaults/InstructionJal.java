@@ -47,7 +47,9 @@ public class InstructionJal extends BasicInstruction<InstructionJal.Assembled> i
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b000011;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.SIGNED_32_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.SIGNED_32_BIT
+    );
 
     public InstructionJal() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
@@ -103,17 +105,18 @@ public class InstructionJal extends BasicInstruction<InstructionJal.Assembled> i
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-            super(simulation, instruction, address, false, false);
+            super(simulation, instruction, address, false, true);
         }
 
         @Override
         public void decode() {
+            lock(pc());
+            lock(31);
         }
 
         @Override
         public void execute() {
             jump(instruction.getAbsoluteAddress(getAddress() + 4));
-            setAndUnlock(31, getAddress() + 4);
         }
 
         @Override
@@ -122,6 +125,7 @@ public class InstructionJal extends BasicInstruction<InstructionJal.Assembled> i
 
         @Override
         public void writeBack() {
+            setAndUnlock(31, getAddress() + 4);
         }
     }
 
@@ -152,8 +156,8 @@ public class InstructionJal extends BasicInstruction<InstructionJal.Assembled> i
         public void memory() {
             if (!solveBranchOnDecode()) {
                 jump(instruction.getAbsoluteAddress(getAddress() + 4));
+                forward(31, getAddress() + 4);
             }
-            forward(31, getAddress() + 4);
         }
 
         @Override

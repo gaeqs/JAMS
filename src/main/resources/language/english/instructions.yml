@@ -56,6 +56,9 @@ INSTRUCTION_CMP_S: Floating point compare ({TYPE}) (single)
 INSTRUCTION_CRC32B: Generate CRC with reversed polynomial 0xEDB88320 (byte)
 INSTRUCTION_CRC32H: Generate CRC with reversed polynomial 0xEDB88320 (half)
 INSTRUCTION_CRC32W: Generate CRC with reversed polynomial 0xEDB88320 (word)
+INSTRUCTION_CRC32CB: Generate CRC with reversed polynomial 0x82F63B78 (byte)
+INSTRUCTION_CRC32CH: Generate CRC with reversed polynomial 0x82F63B78 (half)
+INSTRUCTION_CRC32CW: Generate CRC with reversed polynomial 0x82F63B78 (word)
 INSTRUCTION_CVT: Convert from {FROM} to {TO}
 INSTRUCTION_DIV: Division
 INSTRUCTION_DIV_D: Division (double)
@@ -1896,7 +1899,7 @@ INSTRUCTION_CRC32_DOCUMENTATION: |
   crc32w rt, rs
 
   |SPECIAL3    rs    rt    0    sz     CRC  |
-  | 011111                           001111 |
+  | 011111                     000   001111 |
   |   6        5     5     8    2      6    |
 
 
@@ -1918,6 +1921,51 @@ INSTRUCTION_CRC32_DOCUMENTATION: |
 
   <b>Operation:</b>
   poly ⇽ 0xEDB88320
+  if(sz = 0b00) then
+      temp ⇽ CRC32(GPR[rt], GPR[rs], 1, poly)
+  else if (sz = 0b01) then
+      temp ⇽ CRC32(GPR[rt], GPR[rs], 2, poly)
+  else if (sz = 0b10) then
+      temp ⇽ CRC32(GPR[rt], GPR[rs], 4, poly)
+  else then
+      SignalException(ReservedInstruction)
+  endif
+
+  GPR[rt] ⇽ temp
+
+  <b>Exceptions:</b>
+  Reserved Instruction
+INSTRUCTION_CRC32C_DOCUMENTATION: |
+  <u>Generate CRC with reversed polynomial 0x82F63B78</u>
+
+  <b>Format:</b>
+  crc32b rt, rs
+  crc32h rt, rs
+  crc32w rt, rs
+
+  |SPECIAL3    rs    rt    0    sz     CRC  |
+  | 011111                     001   001111 |
+  |   6        5     5     8    2      6    |
+
+
+  <b>Description:</b>
+  GPR[rt] ⇽ CRC32(GRP[rt], GPR[rs])
+
+  Generates a CRC value based on the reversed polynomial 0x82F63B78.
+  The generated value overwrites the input CRC value at GPR <i>rt</i>, as the original value is considered redundant once the cumulative CRC value is regenerated.
+  The value in GPR <i>rt</i> is considered the CRC, while the value in GPR <i>rs</i> is considered the message.
+
+  The <i>sz</i> field represents the size of the message:
+  - If <i>sz</i> is 0, the meesage is a byte.
+  - If <i>sz</i> is 1, the meesage is a half word.
+  - If <i>sz</i> is 2, the meesage is a word.
+  This field is assigned depending on the mnemonic of the instruction.
+
+  <b>Restrictions:</b>
+  Ninguna
+
+  <b>Operation:</b>
+  poly ⇽ 0x82F63B78
   if(sz = 0b00) then
       temp ⇽ CRC32(GPR[rt], GPR[rs], 1, poly)
   else if (sz = 0b01) then

@@ -38,7 +38,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -48,7 +47,10 @@ public class InstructionBlezalc extends BasicInstruction<InstructionBlezalc.Asse
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b000110;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.SIGNED_16_BIT
+    );
 
     public InstructionBlezalc() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
@@ -82,7 +84,7 @@ public class InstructionBlezalc extends BasicInstruction<InstructionBlezalc.Asse
     public static class Assembled extends AssembledI16Instruction {
 
         public Assembled(int targetRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionBlezalc.OPERATION_CODE, 0, targetRegister, offset, origin, basicOrigin);
+            super(OPERATION_CODE, 0, targetRegister, offset, origin, basicOrigin);
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -104,11 +106,9 @@ public class InstructionBlezalc extends BasicInstruction<InstructionBlezalc.Asse
 
         @Override
         public void execute() {
-            Register rt = register(instruction.getTargetRegister());
-            Register ra = register(31);
-            if (rt.getValue() > 0) return;
-            Register pc = pc();
-            ra.setValue(pc.getValue());
+            if (value(instruction.getTargetRegister()) > 0) return;
+            var pc = pc();
+            register(31).setValue(pc.getValue());
             pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
         }
     }
@@ -116,20 +116,27 @@ public class InstructionBlezalc extends BasicInstruction<InstructionBlezalc.Asse
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
 
+
+        private boolean jumped;
+
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-            super(simulation, instruction, address, false, false);
+            super(simulation, instruction, address, false, true);
         }
 
         @Override
         public void decode() {
-            decodeResult = new int[]{getAddress() + 4};
+            requires(instruction.getTargetRegister(), false);
+            lock(pc());
+            lock(31);
         }
 
         @Override
         public void execute() {
-            if (value(instruction.getTargetRegister()) <= 0) {
-                setAndUnlock(31, decodeResult[0]);
+            jumped = value(instruction.getTargetRegister()) <= 0;
+            if (jumped) {
                 jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
+            } else {
+                unlock(pc());
             }
         }
 
@@ -139,10 +146,17 @@ public class InstructionBlezalc extends BasicInstruction<InstructionBlezalc.Asse
 
         @Override
         public void writeBack() {
+            if (jumped) {
+                setAndUnlock(31, getAddress() + 4);
+            } else {
+                unlock(31);
+            }
         }
     }
 
     public static class Pipelined extends MultiCycleExecution<MultiALUPipelinedArchitecture, Assembled> {
+
+        private boolean jumped;
 
         public Pipelined(MIPSSimulation<? extends MultiALUPipelinedArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, true, true);
@@ -154,14 +168,11 @@ public class InstructionBlezalc extends BasicInstruction<InstructionBlezalc.Asse
             lock(pc());
             lock(31);
 
-            decodeResult = new int[]{getAddress() + 4, 0};
-
             if (solveBranchOnDecode()) {
-                if (value(instruction.getTargetRegister()) <= 0) {
-                    decodeResult[1] = 1;
+                jumped = value(instruction.getTargetRegister()) <= 0;
+                if (jumped) {
                     jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
                 } else {
-                    unlock(31);
                     unlock(pc());
                 }
             }
@@ -169,30 +180,28 @@ public class InstructionBlezalc extends BasicInstruction<InstructionBlezalc.Asse
 
         @Override
         public void execute() {
-            if (solveBranchOnDecode() && decodeResult[1] == 1) {
-                forward(31, decodeResult[0]);
+            if (solveBranchOnDecode() && jumped) {
+                forward(31, getAddress() + 4);
             }
         }
 
         @Override
         public void memory() {
             if (!solveBranchOnDecode()) {
-                if (value(instruction.getTargetRegister()) <= 0) {
-                    decodeResult[1] = 1;
+                jumped = value(instruction.getTargetRegister()) <= 0;
+                if (jumped) {
                     jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
+                    forward(31, getAddress() + 4);
                 } else {
                     unlock(pc());
                 }
-            }
-            if (decodeResult[1] == 1) {
-                forward(31, decodeResult[0]);
             }
         }
 
         @Override
         public void writeBack() {
-            if (decodeResult[1] == 1) {
-                setAndUnlock(31, decodeResult[0]);
+            if (jumped) {
+                setAndUnlock(31, getAddress() + 4);
             } else {
                 unlock(31);
             }

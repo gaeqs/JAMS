@@ -38,7 +38,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -48,7 +47,11 @@ public class InstructionBeqc extends BasicInstruction<InstructionBeqc.Assembled>
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b001000;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER,
+            ParameterType.SIGNED_16_BIT
+    );
 
     public InstructionBeqc() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
@@ -83,8 +86,9 @@ public class InstructionBeqc extends BasicInstruction<InstructionBeqc.Assembled>
 
     public static class Assembled extends AssembledI16Instruction {
 
-        public Assembled(int sourceRegister, int targetRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionBeqc.OPERATION_CODE, sourceRegister, targetRegister, offset, origin, basicOrigin);
+        public Assembled(int sourceRegister, int targetRegister, int offset,
+                         Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(OPERATION_CODE, sourceRegister, targetRegister, offset, origin, basicOrigin);
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -107,10 +111,8 @@ public class InstructionBeqc extends BasicInstruction<InstructionBeqc.Assembled>
 
         @Override
         public void execute() {
-            Register rt = register(instruction.getTargetRegister());
-            Register rs = register(instruction.getSourceRegister());
-            if (rt.getValue() != rs.getValue()) return;
-            Register pc = pc();
+            if (value(instruction.getTargetRegister()) != value(instruction.getSourceRegister())) return;
+            var pc = pc();
             pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
 
         }
@@ -124,12 +126,17 @@ public class InstructionBeqc extends BasicInstruction<InstructionBeqc.Assembled>
 
         @Override
         public void decode() {
+            requires(instruction.getSourceRegister(), false);
+            requires(instruction.getTargetRegister(), false);
+            lock(pc());
         }
 
         @Override
         public void execute() {
             if (value(instruction.getTargetRegister()) == value(instruction.getSourceRegister())) {
                 jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
+            } else {
+                unlock(pc());
             }
         }
 

@@ -38,7 +38,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -48,7 +47,11 @@ public class InstructionBgec extends BasicInstruction<InstructionBgec.Assembled>
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b010110;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER,
+            ParameterType.SIGNED_16_BIT
+    );
 
     public InstructionBgec() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
@@ -105,9 +108,7 @@ public class InstructionBgec extends BasicInstruction<InstructionBgec.Assembled>
 
         @Override
         public void execute() {
-            Register rt = register(instruction.getTargetRegister());
-            Register rs = register(instruction.getSourceRegister());
-            if (rs.getValue() < rt.getValue()) return;
+            if (value(instruction.getSourceRegister()) < valueCOP0(instruction.getTargetRegister())) return;
             pc().setValue(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
         }
     }
@@ -120,12 +121,17 @@ public class InstructionBgec extends BasicInstruction<InstructionBgec.Assembled>
 
         @Override
         public void decode() {
+            requires(instruction.getSourceRegister(), false);
+            requires(instruction.getTargetRegister(), false);
+            lock(pc());
         }
 
         @Override
         public void execute() {
             if (value(instruction.getSourceRegister()) >= value(instruction.getTargetRegister())) {
                 jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
+            } else {
+                unlock(pc());
             }
         }
 

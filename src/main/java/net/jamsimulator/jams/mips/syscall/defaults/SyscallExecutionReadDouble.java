@@ -75,8 +75,8 @@ public class SyscallExecutionReadDouble implements SyscallExecution {
                 register.setValue(ints[0]);
                 register2.setValue(ints[1]);
 
-                simulation.getConsole().printDone(value);
-                if (lineJump) simulation.getConsole().println();
+                simulation.getLog().printDone(value);
+                if (lineJump) simulation.getLog().println();
                 done = true;
             } catch (NumberFormatException ignore) {
             }
@@ -99,8 +99,8 @@ public class SyscallExecutionReadDouble implements SyscallExecution {
                 execution.setAndUnlockCOP1(register, ints[0]);
                 execution.setAndUnlockCOP1(register + 1, ints[1]);
 
-                simulation.getConsole().printDone(value);
-                if (lineJump) simulation.getConsole().println();
+                simulation.getLog().printDone(value);
+                if (lineJump) simulation.getLog().println();
                 done = true;
             } catch (NumberFormatException ignore) {
             }

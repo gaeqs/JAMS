@@ -39,7 +39,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -50,7 +49,10 @@ public class InstructionBltz extends BasicRIInstruction<InstructionBltz.Assemble
     public static final int OPERATION_CODE = 0b000001;
     public static final int FUNCTION_CODE = 0b00000;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.SIGNED_16_BIT
+    );
 
     public InstructionBltz() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
@@ -77,7 +79,7 @@ public class InstructionBltz extends BasicRIInstruction<InstructionBltz.Assemble
     public static class Assembled extends AssembledRIInstruction {
 
         public Assembled(int sourceRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionBltz.OPERATION_CODE, sourceRegister, InstructionBltz.FUNCTION_CODE, offset, origin, basicOrigin);
+            super(OPERATION_CODE, sourceRegister, FUNCTION_CODE, offset, origin, basicOrigin);
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -99,9 +101,8 @@ public class InstructionBltz extends BasicRIInstruction<InstructionBltz.Assemble
 
         @Override
         public void execute() {
-            Register rs = register(instruction.getSourceRegister());
-            if (rs.getValue() >= 0) return;
-            Register pc = pc();
+            if (value(instruction.getSourceRegister()) >= 0) return;
+            var pc = pc();
             pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
         }
     }
@@ -114,12 +115,16 @@ public class InstructionBltz extends BasicRIInstruction<InstructionBltz.Assemble
 
         @Override
         public void decode() {
+            requires(instruction.getSourceRegister(), false);
+            lock(pc());
         }
 
         @Override
         public void execute() {
             if (value(instruction.getSourceRegister()) < 0) {
                 jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
+            } else {
+                unlock(pc());
             }
         }
 

@@ -38,7 +38,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -48,7 +47,10 @@ public class InstructionBnezc extends BasicInstruction<InstructionBnezc.Assemble
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b111110;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.SIGNED_32_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.SIGNED_32_BIT
+    );
 
     public InstructionBnezc() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
@@ -81,7 +83,7 @@ public class InstructionBnezc extends BasicInstruction<InstructionBnezc.Assemble
     public static class Assembled extends AssembledI21Instruction {
 
         public Assembled(int sourceRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionBnezc.OPERATION_CODE, sourceRegister, offset, origin, basicOrigin);
+            super(OPERATION_CODE, sourceRegister, offset, origin, basicOrigin);
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -103,11 +105,9 @@ public class InstructionBnezc extends BasicInstruction<InstructionBnezc.Assemble
 
         @Override
         public void execute() {
-            Register rs = register(instruction.getDestinationRegister());
-            if (rs.getValue() == 0) return;
-            Register pc = pc();
+            if (value(instruction.getDestinationRegister()) == 0) return;
+            var pc = pc();
             pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
-
         }
     }
 
@@ -119,12 +119,16 @@ public class InstructionBnezc extends BasicInstruction<InstructionBnezc.Assemble
 
         @Override
         public void decode() {
+            requires(instruction.getDestinationRegister(), false);
+            lock(pc());
         }
 
         @Override
         public void execute() {
             if (value(instruction.getDestinationRegister()) != 0) {
                 jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
+            } else {
+                unlock(pc());
             }
         }
 

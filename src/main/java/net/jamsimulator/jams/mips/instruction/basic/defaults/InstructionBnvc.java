@@ -38,7 +38,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
@@ -48,7 +47,11 @@ public class InstructionBnvc extends BasicInstruction<InstructionBnvc.Assembled>
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b011000;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.SIGNED_16_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER,
+            ParameterType.SIGNED_16_BIT
+    );
 
     public InstructionBnvc() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
@@ -108,15 +111,12 @@ public class InstructionBnvc extends BasicInstruction<InstructionBnvc.Assembled>
         @SuppressWarnings("ResultOfMethodCallIgnored")
         @Override
         public void execute() {
-            Register rs = register(instruction.getSourceRegister());
-            Register rt = register(instruction.getTargetRegister());
-
             try {
-                Math.addExact(rs.getValue(), rt.getValue());
+                Math.addExact(value(instruction.getSourceRegister()), value(instruction.getTargetRegister()));
             } catch (ArithmeticException ex) {
                 return;
             }
-            Register pc = pc();
+            var pc = pc();
             pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
         }
     }
@@ -129,6 +129,9 @@ public class InstructionBnvc extends BasicInstruction<InstructionBnvc.Assembled>
 
         @Override
         public void decode() {
+            requires(instruction.getSourceRegister(), false);
+            requires(instruction.getTargetRegister(), false);
+            lock(pc());
         }
 
         @SuppressWarnings("ResultOfMethodCallIgnored")

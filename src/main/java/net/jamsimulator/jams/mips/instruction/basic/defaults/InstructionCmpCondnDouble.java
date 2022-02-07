@@ -42,9 +42,7 @@ import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
 public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionCmpCondnDouble.Assembled> {
@@ -55,7 +53,11 @@ public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionC
     public static final int OPERATION_CODE = 0b010001;
     public static final int FMT = 0b10101;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER, ParameterType.EVEN_FLOAT_REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.EVEN_FLOAT_REGISTER,
+            ParameterType.EVEN_FLOAT_REGISTER,
+            ParameterType.EVEN_FLOAT_REGISTER
+    );
 
     private final FloatCondition condition;
 
@@ -75,7 +77,8 @@ public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionC
 
     @Override
     public String getDocumentation() {
-        var documentation = StringUtils.parseEscapeCharacters(Manager.ofS(Language.class).getSelected().getOrDefault("INSTRUCTION_" + NAME_SUFIX + "_DOCUMENTATION"));
+        var documentation = StringUtils.parseEscapeCharacters(Manager.ofS(Language.class).getSelected()
+                .getOrDefault("INSTRUCTION_" + NAME_SUFIX + "_DOCUMENTATION"));
         return documentation.replace("{TYPE}", condition.getName())
                 .replace("{MNEMONIC}", condition.getMnemonic())
                 .replace("{CODE}", StringUtils.addZeros(Integer.toBinaryString(condition.getCode()), 5));
@@ -83,7 +86,14 @@ public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionC
 
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-        return new Assembled(parameters[2].getRegister(), parameters[1].getRegister(), parameters[0].getRegister(), getFunctionCode(), origin, this);
+        return new Assembled(
+                parameters[2].getRegister(),
+                parameters[1].getRegister(),
+                parameters[0].getRegister(),
+                getFunctionCode(),
+                origin,
+                this
+        );
     }
 
     @Override
@@ -95,10 +105,20 @@ public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionC
 
         public Assembled(int targetRegister, int sourceRegister, int destinationRegister, int function_code,
                          Instruction origin, BasicInstruction<InstructionCmpCondnDouble.Assembled> basicOrigin) {
-            super(OPERATION_CODE, FMT, targetRegister, sourceRegister, destinationRegister, function_code, origin, basicOrigin);
+            super(
+                    OPERATION_CODE,
+                    FMT,
+                    targetRegister,
+                    sourceRegister,
+                    destinationRegister,
+                    function_code,
+                    origin,
+                    basicOrigin
+            );
         }
 
-        public Assembled(int instructionCode, Instruction origin, BasicInstruction<InstructionCmpCondnDouble.Assembled> basicOrigin) {
+        public Assembled(int instructionCode, Instruction origin,
+                         BasicInstruction<InstructionCmpCondnDouble.Assembled> basicOrigin) {
             super(instructionCode, origin, basicOrigin);
         }
 
@@ -139,19 +159,13 @@ public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionC
 
         @Override
         public void execute() {
-            if (instruction.getTargetRegister() % 2 != 0) evenFloatRegisterException();
-            if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
-            if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
+            int t = instruction.getTargetRegister();
+            int s = instruction.getSourceRegister();
+            int d = instruction.getDestinationRegister();
+            checkEvenRegister(t, s, d);
 
-            Register rt0 = registerCop1(instruction.getTargetRegister());
-            Register rt1 = registerCop1(instruction.getTargetRegister() + 1);
-            Register rs0 = registerCop1(instruction.getSourceRegister());
-            Register rs1 = registerCop1(instruction.getSourceRegister() + 1);
-            Register rd0 = registerCop1(instruction.getDestinationRegister());
-            Register rd1 = registerCop1(instruction.getDestinationRegister() + 1);
-
-            double ft = NumericUtils.intsToDouble(rt0.getValue(), rt1.getValue());
-            double fs = NumericUtils.intsToDouble(rs0.getValue(), rs1.getValue());
+            double ft = doubleCOP1(t);
+            double fs = doubleCOP1(s);
 
             boolean less, equal, unordered;
 
@@ -168,13 +182,16 @@ public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionC
                 unordered = false;
             }
 
-            boolean condition = instruction.cond4() ^ ((instruction.cond2() && less) || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
-            rd0.setValue(condition ? 0xFFFFFFFF : 0);
-            rd1.setValue(condition ? 0xFFFFFFFF : 0);
+            boolean condition = instruction.cond4() ^ ((instruction.cond2() && less)
+                    || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
+            registerCOP1(instruction.getDestinationRegister()).setValue(condition ? 0xFFFFFFFF : 0);
+            registerCOP1(instruction.getDestinationRegister() + 1).setValue(condition ? 0xFFFFFFFF : 0);
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -182,22 +199,19 @@ public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionC
 
         @Override
         public void decode() {
-            if (instruction.getTargetRegister() % 2 != 0) evenFloatRegisterException();
-            if (instruction.getSourceRegister() % 2 != 0) evenFloatRegisterException();
-            if (instruction.getDestinationRegister() % 2 != 0) evenFloatRegisterException();
-
-            requiresCOP1(instruction.getTargetRegister(), false);
-            requiresCOP1(instruction.getTargetRegister() + 1, false);
-            requiresCOP1(instruction.getSourceRegister(), false);
-            requiresCOP1(instruction.getSourceRegister() + 1, false);
-            lockCOP1(instruction.getDestinationRegister());
-            lockCOP1(instruction.getDestinationRegister() + 1);
+            int t = instruction.getTargetRegister();
+            int s = instruction.getSourceRegister();
+            int d = instruction.getDestinationRegister();
+            checkEvenRegister(t, s, d);
+            requiresCOP1Double(t, false);
+            requiresCOP1Double(s, false);
+            lockCOP1Double(d);
         }
 
         @Override
         public void execute() {
-            double ft = NumericUtils.intsToDouble(valueCOP1(instruction.getTargetRegister()), valueCOP1(instruction.getTargetRegister() + 1));
-            double fs = NumericUtils.intsToDouble(valueCOP1(instruction.getSourceRegister()), valueCOP1(instruction.getSourceRegister() + 1));
+            double ft = doubleCOP1(instruction.getTargetRegister());
+            double fs = doubleCOP1(instruction.getSourceRegister());
 
             boolean less, equal, unordered;
 
@@ -214,23 +228,22 @@ public class InstructionCmpCondnDouble extends BasicRFPUInstruction<InstructionC
                 unordered = false;
             }
 
-            boolean condition = instruction.cond4() ^ ((instruction.cond2() && less) || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
-            executionResult = new int[]{condition ? 0xFFFFFFFF : 0, condition ? 0xFFFFFFFF : 0};
+            boolean condition = instruction.cond4() ^ ((instruction.cond2() && less)
+                    || (instruction.cond1() && equal) || (instruction.cond0() && unordered));
+            result = condition ? 0xFFFFFFFF : 0;
 
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
-            forwardCOP1(instruction.getDestinationRegister() + 1, executionResult[1]);
+            forwardCOP1(instruction.getDestinationRegister(), result);
+            forwardCOP1(instruction.getDestinationRegister() + 1, result);
         }
 
         @Override
         public void memory() {
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
-            forwardCOP1(instruction.getDestinationRegister() + 1, executionResult[1]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlockCOP1(instruction.getDestinationRegister(), executionResult[0]);
-            setAndUnlockCOP1(instruction.getDestinationRegister() + 1, executionResult[1]);
+            setAndUnlockCOP1(instruction.getDestinationRegister(), result);
+            setAndUnlockCOP1(instruction.getDestinationRegister() + 1, result);
         }
     }
 }

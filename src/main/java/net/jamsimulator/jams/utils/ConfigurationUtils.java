@@ -26,9 +26,7 @@ package net.jamsimulator.jams.utils;
 
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.RootConfiguration;
-import net.jamsimulator.jams.configuration.format.ConfigurationFormat;
 import net.jamsimulator.jams.configuration.format.ConfigurationFormatJSON;
-import net.jamsimulator.jams.manager.Manager;
 
 import java.io.File;
 import java.io.IOException;

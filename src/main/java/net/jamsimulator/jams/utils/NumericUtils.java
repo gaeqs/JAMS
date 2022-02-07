@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.utils;
 
+import net.jamsimulator.jams.mips.register.Register;
+
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Optional;
@@ -210,7 +212,9 @@ public class NumericUtils {
     }
 
     public static double intsToDouble(int low, int high) {
-        return Double.longBitsToDouble((((long) high) << 32) + low);
+        long h = (long) high << 32;
+        long l = ((long) low) & 0xFFFFFFFFL;
+        return Double.longBitsToDouble(h | l);
     }
 
     public static int[] doubleToInts(double d) {
@@ -221,6 +225,18 @@ public class NumericUtils {
         return array;
     }
 
+    public static void doubleToInts(double d, int[] array) {
+        long l = Double.doubleToLongBits(d);
+        array[0] = (int) l;
+        array[1] = (int) (l >> 32);
+    }
+
+    public static void doubleToInts(double d, Register low, Register high) {
+        long l = Double.doubleToLongBits(d);
+        low.setValue((int) l);
+        high.setValue((int) (l >> 32));
+    }
+
     public static int[] longToInts(long l) {
         int[] array = new int[2];
         array[0] = (int) l;
@@ -228,8 +244,18 @@ public class NumericUtils {
         return array;
     }
 
+    public static void longToInts(long l, int[] array) {
+        array[0] = (int) l;
+        array[1] = (int) (l >> 32);
+    }
+
+    public static void longToInts(long l, Register low, Register high) {
+        low.setValue((int) l);
+        high.setValue((int) (l >> 32));
+    }
+
     public static long intsToLong(int low, int high) {
-        return ((long) high << 32) + low;
+        return ((long) high << 32) + ((long) low & 0xFFFFFFFFL);
     }
 
     private static String toEnglishLessThanOneThousand(int number) {
@@ -329,5 +355,19 @@ public class NumericUtils {
         }
         result += n & 1;
         return result;
+    }
+
+    public static int crc32(int crc, int message, int bytes, int poly) {
+        int mask = switch (bytes) {
+            case 2 -> 0xFFFF;
+            case 1 -> 0xFF;
+            default -> 0xFFFFFFFF;
+        };
+        crc = crc ^ (message & mask);
+        for (int i = 0; i < bytes << 3; i++) {
+            int bitMask = -(crc & 1);
+            crc = (crc >> 1) ^ (poly & bitMask);
+        }
+        return ~crc;
     }
 }

@@ -38,7 +38,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class InstructionAddSingle extends BasicRFPUInstruction<InstructionAddSingle.Assembled> {
@@ -49,7 +48,11 @@ public class InstructionAddSingle extends BasicRFPUInstruction<InstructionAddSin
     public static final int FMT = 0b10000;
     public static final int FUNCTION_CODE = 0b000000;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER, ParameterType.FLOAT_REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.FLOAT_REGISTER,
+            ParameterType.FLOAT_REGISTER,
+            ParameterType.FLOAT_REGISTER
+    );
 
     public InstructionAddSingle() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE, FMT);
@@ -71,9 +74,17 @@ public class InstructionAddSingle extends BasicRFPUInstruction<InstructionAddSin
 
     public static class Assembled extends AssembledRFPUInstruction {
 
-        public Assembled(int targetRegister, int sourceRegister, int destinationRegister, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionAddSingle.OPERATION_CODE, InstructionAddSingle.FMT, targetRegister,
-                    sourceRegister, destinationRegister, InstructionAddSingle.FUNCTION_CODE, origin, basicOrigin);
+        public Assembled(int targetRegister, int sourceRegister, int destinationRegister,
+                         Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(OPERATION_CODE,
+                    FMT,
+                    targetRegister,
+                    sourceRegister,
+                    destinationRegister,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -97,15 +108,15 @@ public class InstructionAddSingle extends BasicRFPUInstruction<InstructionAddSin
 
         @Override
         public void execute() {
-            Register rt = registerCop1(instruction.getTargetRegister());
-            Register rs = registerCop1(instruction.getSourceRegister());
-            Register rd = registerCop1(instruction.getDestinationRegister());
-            float f = Float.intBitsToFloat(rt.getValue()) + Float.intBitsToFloat(rs.getValue());
-            rd.setValue(Float.floatToIntBits(f));
+            registerCOP1(instruction.getDestinationRegister()).setValue(
+                    floatCOP1(instruction.getSourceRegister()) + floatCOP1(instruction.getTargetRegister())
+            );
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private float result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -120,21 +131,17 @@ public class InstructionAddSingle extends BasicRFPUInstruction<InstructionAddSin
 
         @Override
         public void execute() {
-            var source = Float.intBitsToFloat(valueCOP1(instruction.getSourceRegister()));
-            var target = Float.intBitsToFloat(valueCOP1(instruction.getTargetRegister()));
-            var destination = source + target;
-            executionResult = new int[]{Float.floatToIntBits(destination)};
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
+            result = floatCOP1(instruction.getSourceRegister()) + floatCOP1(instruction.getTargetRegister());
+            forwardCOP1(instruction.getDestinationRegister(), result);
         }
 
         @Override
         public void memory() {
-            forwardCOP1(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlockCOP1(instruction.getDestinationRegister(), executionResult[0]);
+            setAndUnlockCOP1(instruction.getDestinationRegister(), result);
         }
     }
 }

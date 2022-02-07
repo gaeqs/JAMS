@@ -47,7 +47,11 @@ public class InstructionSltiu extends BasicInstruction<InstructionSltiu.Assemble
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b001011;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.UNSIGNED_16_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER,
+            ParameterType.UNSIGNED_16_BIT
+    );
 
     public InstructionSltiu() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
@@ -58,8 +62,13 @@ public class InstructionSltiu extends BasicInstruction<InstructionSltiu.Assemble
 
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-        return new Assembled(parameters[1].getRegister(), parameters[0].getRegister(),
-                parameters[2].getImmediate(), origin, this);
+        return new Assembled(
+                parameters[1].getRegister(),
+                parameters[0].getRegister(),
+                parameters[2].getImmediate(),
+                origin,
+                this
+        );
     }
 
     @Override
@@ -69,7 +78,8 @@ public class InstructionSltiu extends BasicInstruction<InstructionSltiu.Assemble
 
     public static class Assembled extends AssembledI16Instruction {
 
-        public Assembled(int sourceRegister, int targetRegister, int immediate, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+        public Assembled(int sourceRegister, int targetRegister, int immediate,
+                         Instruction origin, BasicInstruction<Assembled> basicOrigin) {
             super(InstructionSltiu.OPERATION_CODE, sourceRegister, targetRegister, immediate, origin, basicOrigin);
         }
 
@@ -93,13 +103,15 @@ public class InstructionSltiu extends BasicInstruction<InstructionSltiu.Assemble
 
         @Override
         public void execute() {
-            Register rs = register(instruction.getSourceRegister());
-            Register rt = register(instruction.getTargetRegister());
-            rt.setValue(Integer.compareUnsigned(rs.getValue(), instruction.getImmediateAsSigned()) < 0 ? 1 : 0);
+            register(instruction.getSourceRegister())
+                    .setValue(Integer.compareUnsigned(value(instruction.getSourceRegister()),
+                            instruction.getImmediateAsSigned()) < 0 ? 1 : 0);
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -113,18 +125,18 @@ public class InstructionSltiu extends BasicInstruction<InstructionSltiu.Assemble
 
         @Override
         public void execute() {
-            executionResult = new int[]{Integer.compareUnsigned(value(instruction.getSourceRegister()), instruction.getImmediateAsSigned()) < 0 ? 1 : 0};
-            forward(instruction.getTargetRegister(), executionResult[0]);
+           result = Integer.compareUnsigned(value(instruction.getSourceRegister()),
+                   instruction.getImmediateAsSigned()) < 0 ? 1 : 0;
+            forward(instruction.getTargetRegister(), result);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getTargetRegister(), executionResult[0]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlock(instruction.getTargetRegister(), executionResult[0]);
+            setAndUnlock(instruction.getTargetRegister(), result);
         }
     }
 }

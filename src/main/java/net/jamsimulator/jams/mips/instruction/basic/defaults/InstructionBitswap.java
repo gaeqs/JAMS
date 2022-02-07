@@ -50,7 +50,10 @@ public class InstructionBitswap extends BasicRInstruction<InstructionBitswap.Ass
     public static final int FUNCTION_CODE = 0b100000;
     public static final int SPECIAL_CODE = 0b00000;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER
+    );
 
     public InstructionBitswap() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
@@ -78,8 +81,18 @@ public class InstructionBitswap extends BasicRInstruction<InstructionBitswap.Ass
 
     public static class Assembled extends AssembledRInstruction {
 
-        public Assembled(int targetRegister, int destinationRegister, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(OPERATION_CODE, 0, targetRegister, destinationRegister, SPECIAL_CODE, FUNCTION_CODE, origin, basicOrigin);
+        public Assembled(int targetRegister, int destinationRegister,
+                         Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(
+                    OPERATION_CODE,
+                    0,
+                    targetRegister,
+                    destinationRegister,
+                    SPECIAL_CODE,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -108,13 +121,14 @@ public class InstructionBitswap extends BasicRInstruction<InstructionBitswap.Ass
 
         @Override
         public void execute() {
-            Register rt = register(instruction.getTargetRegister());
-            Register rd = register(instruction.getDestinationRegister());
-            rd.setValue(NumericUtils.swapBits(rt.getValue()));
+            register(instruction.getDestinationRegister())
+                    .setValue(NumericUtils.swapBits(value(instruction.getTargetRegister())));
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -128,18 +142,17 @@ public class InstructionBitswap extends BasicRInstruction<InstructionBitswap.Ass
 
         @Override
         public void execute() {
-            executionResult = new int[]{NumericUtils.swapBits(value(instruction.getTargetRegister()))};
-            forward(instruction.getTargetRegister(), executionResult[0]);
+            result = NumericUtils.swapBits(value(instruction.getTargetRegister()));
+            forward(instruction.getTargetRegister(), result);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getTargetRegister(), executionResult[0]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlock(instruction.getDestinationRegister(), executionResult[0]);
+            setAndUnlock(instruction.getDestinationRegister(), result);
         }
     }
 }

@@ -39,7 +39,6 @@ import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class InstructionAdd extends BasicRInstruction<InstructionAdd.Assembled> {
@@ -48,8 +47,11 @@ public class InstructionAdd extends BasicRInstruction<InstructionAdd.Assembled> 
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0;
     public static final int FUNCTION_CODE = 0b100000;
-
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER,
+            ParameterType.REGISTER
+    );
 
     public InstructionAdd() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
@@ -60,9 +62,13 @@ public class InstructionAdd extends BasicRInstruction<InstructionAdd.Assembled> 
 
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-        return new Assembled(parameters[1].getRegister(),
+        return new Assembled(
+                parameters[1].getRegister(),
                 parameters[2].getRegister(),
-                parameters[0].getRegister(), origin, this);
+                parameters[0].getRegister(),
+                origin,
+                this
+        );
     }
 
     @Override
@@ -74,8 +80,16 @@ public class InstructionAdd extends BasicRInstruction<InstructionAdd.Assembled> 
 
         public Assembled(int sourceRegister, int targetRegister, int destinationRegister,
                          Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionAdd.OPERATION_CODE, sourceRegister, targetRegister, destinationRegister, 0,
-                    InstructionAdd.FUNCTION_CODE, origin, basicOrigin);
+            super(
+                    OPERATION_CODE,
+                    sourceRegister,
+                    targetRegister,
+                    destinationRegister,
+                    0,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -98,12 +112,12 @@ public class InstructionAdd extends BasicRInstruction<InstructionAdd.Assembled> 
 
         @Override
         public void execute() {
-            Register rs = register(instruction.getSourceRegister());
-            Register rt = register(instruction.getTargetRegister());
-            Register rd = register(instruction.getDestinationRegister());
+            var rs = value(instruction.getSourceRegister());
+            var rt = value(instruction.getTargetRegister());
+            var rd = register(instruction.getDestinationRegister());
 
             try {
-                rd.setValue(Math.addExact(rs.getValue(), rt.getValue()));
+                rd.setValue(Math.addExact(rs, rt));
             } catch (ArithmeticException ex) {
                 error(InterruptCause.ARITHMETIC_OVERFLOW_EXCEPTION, ex);
             }
@@ -111,6 +125,8 @@ public class InstructionAdd extends BasicRInstruction<InstructionAdd.Assembled> 
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -126,23 +142,21 @@ public class InstructionAdd extends BasicRInstruction<InstructionAdd.Assembled> 
         @Override
         public void execute() {
             try {
-                var result = Math.addExact(value(instruction.getSourceRegister()), value(instruction.getTargetRegister()));
-                executionResult = new int[]{result};
+                result = Math.addExact(value(instruction.getSourceRegister()), value(instruction.getTargetRegister()));
                 forward(instruction.getDestinationRegister(), result);
             } catch (ArithmeticException ex) {
-                executionResult = new int[]{0};
+                result = 0;
                 error(InterruptCause.ARITHMETIC_OVERFLOW_EXCEPTION, ex);
             }
         }
 
         @Override
         public void memory() {
-            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlock(instruction.getDestinationRegister(), executionResult[0]);
+            setAndUnlock(instruction.getDestinationRegister(), result);
         }
     }
 }

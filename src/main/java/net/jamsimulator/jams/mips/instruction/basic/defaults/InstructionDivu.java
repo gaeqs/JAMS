@@ -38,7 +38,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class InstructionDivu extends BasicRSOPInstruction<InstructionDivu.Assembled> {
@@ -49,7 +48,11 @@ public class InstructionDivu extends BasicRSOPInstruction<InstructionDivu.Assemb
     public static final int FUNCTION_CODE = 0b011011;
     public static final int SOP_CODE = 0b00010;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER, ParameterType.REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER,
+            ParameterType.REGISTER
+    );
 
     public InstructionDivu() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE, SOP_CODE);
@@ -60,9 +63,13 @@ public class InstructionDivu extends BasicRSOPInstruction<InstructionDivu.Assemb
 
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-        return new Assembled(parameters[1].getRegister(),
+        return new Assembled(
+                parameters[1].getRegister(),
                 parameters[2].getRegister(),
-                parameters[0].getRegister(), origin, this);
+                parameters[0].getRegister(),
+                origin,
+                this
+        );
     }
 
     @Override
@@ -74,8 +81,16 @@ public class InstructionDivu extends BasicRSOPInstruction<InstructionDivu.Assemb
 
         public Assembled(int sourceRegister, int targetRegister, int destinationRegister,
                          Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionDivu.OPERATION_CODE, sourceRegister, targetRegister, destinationRegister, InstructionDivu.SOP_CODE,
-                    InstructionDivu.FUNCTION_CODE, origin, basicOrigin);
+            super(
+                    OPERATION_CODE,
+                    sourceRegister,
+                    targetRegister,
+                    destinationRegister,
+                    SOP_CODE,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -98,20 +113,22 @@ public class InstructionDivu extends BasicRSOPInstruction<InstructionDivu.Assemb
 
         @Override
         public void execute() {
-            Register rt = register(instruction.getTargetRegister());
-            Register rs = register(instruction.getSourceRegister());
-            Register rd = register(instruction.getDestinationRegister());
+            int rt = value(instruction.getTargetRegister());
+            int rs = value(instruction.getSourceRegister());
+            var rd = register(instruction.getDestinationRegister());
 
-            if (rt.getValue() == 0) {
+            if (rt == 0) {
                 //MIP rev 6: If the divisor in GPR rt is zero, the result value is UNPREDICTABLE.
                 rd.setValue(0);
                 return;
             }
-            rd.setValue(Integer.divideUnsigned(rs.getValue(), rt.getValue()));
+            rd.setValue(Integer.divideUnsigned(rs, rt));
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -129,18 +146,17 @@ public class InstructionDivu extends BasicRSOPInstruction<InstructionDivu.Assemb
             var source = value(instruction.getSourceRegister());
             var target = value(instruction.getTargetRegister());
 
-            executionResult = new int[]{target == 0 ? 0 : Integer.divideUnsigned(source, target)};
-            forward(instruction.getDestinationRegister(), executionResult[0]);
+            result = target == 0 ? 0 : Integer.divideUnsigned(source, target);
+            forward(instruction.getDestinationRegister(), result);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlock(instruction.getDestinationRegister(), executionResult[0]);
+            setAndUnlock(instruction.getDestinationRegister(), result);
         }
     }
 }

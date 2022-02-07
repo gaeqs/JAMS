@@ -126,7 +126,7 @@ public class InstructionSnapshot {
             result = parameter.parse(parameters.get(index), file.getAssembler().getRegisters());
 
             //Parse label
-            if (result.isHasLabel()) {
+            if (result.hasLabel()) {
                 var optional = file.getLabel(result.getLabel());
 
                 if (optional.isEmpty()) {

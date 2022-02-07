@@ -62,14 +62,14 @@ public class SyscallExecutionPrintInteger implements SyscallExecution {
         if (register == null) throw new IllegalStateException("Register " + this.register + " not found");
         int value = register.getValue();
         String toPrint = printHex ? Integer.toHexString(value) : String.valueOf(value);
-        simulation.getConsole().print(toPrint);
-        if (lineJump) simulation.getConsole().println();
+        simulation.getLog().print(toPrint);
+        if (lineJump) simulation.getLog().println();
     }
 
     @Override
     public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var value = execution.value(register);
-        var console = execution.getSimulation().getConsole();
+        var console = execution.getSimulation().getLog();
         String toPrint = printHex ? Integer.toHexString(value) : String.valueOf(value);
         console.print(toPrint);
         if (lineJump) console.println();

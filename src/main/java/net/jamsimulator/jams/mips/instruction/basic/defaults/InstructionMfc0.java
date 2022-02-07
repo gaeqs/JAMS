@@ -48,7 +48,11 @@ public class InstructionMfc0 extends BasicIFPUInstruction<InstructionMfc0.Assemb
     public static final int OPERATION_CODE = 0b010000;
     public static final int SUBCODE = 0b00000;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.COPROCESSOR_0_REGISTER, ParameterType.UNSIGNED_5_BIT);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.COPROCESSOR_0_REGISTER,
+            ParameterType.UNSIGNED_5_BIT
+    );
 
     public InstructionMfc0() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, SUBCODE);
@@ -59,7 +63,13 @@ public class InstructionMfc0 extends BasicIFPUInstruction<InstructionMfc0.Assemb
 
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-        return new Assembled(parameters[0].getRegister(), parameters[1].getRegister(), parameters[2].getImmediate() & 0b111, origin, this);
+        return new Assembled(
+                parameters[0].getRegister(),
+                parameters[1].getRegister(),
+                parameters[2].getImmediate() & 0b111,
+                origin,
+                this
+        );
     }
 
     @Override
@@ -69,7 +79,8 @@ public class InstructionMfc0 extends BasicIFPUInstruction<InstructionMfc0.Assemb
 
     public static class Assembled extends AssembledI11Instruction {
 
-        public Assembled(int targetRegister, int destinationRegister, int selection, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+        public Assembled(int targetRegister, int destinationRegister, int selection,
+                         Instruction origin, BasicInstruction<Assembled> basicOrigin) {
             super(OPERATION_CODE, SUBCODE, targetRegister, destinationRegister, selection, origin, basicOrigin);
         }
 
@@ -93,13 +104,19 @@ public class InstructionMfc0 extends BasicIFPUInstruction<InstructionMfc0.Assemb
 
         @Override
         public void execute() {
-            Register rt = register(instruction.getTargetRegister());
-            Register rd = registerCop0(instruction.getDestinationRegister());
-            rt.setValue(rd.getValue());
+            try {
+                var register = registerCOP0(instruction.getDestinationRegister(), instruction.getImmediate());
+                register(instruction.getTargetRegister()).setValue(register.getValue());
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                register(instruction.getTargetRegister()).setValue(0);
+            }
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private Register register;
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -107,29 +124,32 @@ public class InstructionMfc0 extends BasicIFPUInstruction<InstructionMfc0.Assemb
 
         @Override
         public void decode() {
-            if (registerCop0(instruction.getDestinationRegister()) != null) {
-                requiresCOP0(instruction.getDestinationRegister(), false);
+            try {
+                register = registerCOP0(instruction.getDestinationRegister(), instruction.getImmediate());
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                register = null;
             }
+
+            if (register != null) {
+                requires(register, false);
+            }
+
             lock(instruction.getTargetRegister());
         }
 
         @Override
         public void execute() {
-            executionResult = new int[]{registerCop0(instruction.getDestinationRegister()) != null
-                    ? valueCOP0(instruction.getDestinationRegister())
-                    : 0,
-                    instruction.getImmediate()};
-            forward(instruction.getTargetRegister(), executionResult[0]);
+            result = register == null ? 0 : value(register);
+            forward(instruction.getTargetRegister(), result);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getTargetRegister(), executionResult[0]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlock(instruction.getTargetRegister(), executionResult[0]);
+            setAndUnlock(instruction.getTargetRegister(), result);
         }
     }
 }

@@ -38,7 +38,6 @@ import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
 public class InstructionClo extends BasicRInstruction<InstructionClo.Assembled> {
@@ -48,7 +47,10 @@ public class InstructionClo extends BasicRInstruction<InstructionClo.Assembled> 
     public static final int OPERATION_CODE = 0;
     public static final int FUNCTION_CODE = 0b010001;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.REGISTER, ParameterType.REGISTER);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
+            ParameterType.REGISTER,
+            ParameterType.REGISTER
+    );
 
     public InstructionClo() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
@@ -59,8 +61,7 @@ public class InstructionClo extends BasicRInstruction<InstructionClo.Assembled> 
 
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-        return new Assembled(parameters[1].getRegister(),
-                parameters[0].getRegister(), origin, this);
+        return new Assembled(parameters[1].getRegister(), parameters[0].getRegister(), origin, this);
     }
 
     @Override
@@ -72,8 +73,16 @@ public class InstructionClo extends BasicRInstruction<InstructionClo.Assembled> 
 
         public Assembled(int sourceRegister, int destinationRegister,
                          Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionClo.OPERATION_CODE, sourceRegister, 0, destinationRegister, 1,
-                    InstructionClo.FUNCTION_CODE, origin, basicOrigin);
+            super(
+                    OPERATION_CODE,
+                    sourceRegister,
+                    0,
+                    destinationRegister,
+                    1,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -94,13 +103,14 @@ public class InstructionClo extends BasicRInstruction<InstructionClo.Assembled> 
 
         @Override
         public void execute() {
-            Register rs = register(instruction.getSourceRegister());
-            Register rd = register(instruction.getDestinationRegister());
-            rd.setValue(Integer.numberOfLeadingZeros(~rs.getValue()));
+            register(instruction.getDestinationRegister())
+                    .setValue(Integer.numberOfLeadingZeros(~value(instruction.getSourceRegister())));
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -114,18 +124,17 @@ public class InstructionClo extends BasicRInstruction<InstructionClo.Assembled> 
 
         @Override
         public void execute() {
-            executionResult = new int[]{Integer.numberOfLeadingZeros(~value(instruction.getSourceRegister()))};
-            forward(instruction.getDestinationRegister(), executionResult[0]);
+            result = Integer.numberOfLeadingZeros(~value(instruction.getSourceRegister()));
+            forward(instruction.getDestinationRegister(), result);
         }
 
         @Override
         public void memory() {
-            forward(instruction.getDestinationRegister(), executionResult[0]);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlock(instruction.getDestinationRegister(), executionResult[0]);
+            setAndUnlock(instruction.getDestinationRegister(), result);
         }
     }
 }

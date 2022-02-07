@@ -76,7 +76,16 @@ public class InstructionEret extends BasicRInstruction<InstructionEret.Assembled
     public static class Assembled extends AssembledRInstruction {
 
         public Assembled(Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(OPERATION_CODE, 0b10000, 0, 0, 0, FUNCTION_CODE, origin, basicOrigin);
+            super(
+                    OPERATION_CODE,
+                    0b10000,
+                    0,
+                    0,
+                    0,
+                    FUNCTION_CODE,
+                    origin,
+                    basicOrigin
+            );
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -97,13 +106,13 @@ public class InstructionEret extends BasicRInstruction<InstructionEret.Assembled
 
         @Override
         public void execute() {
-            COP0Register status = (COP0Register) registerCop0(12, 0);
+            var status = (COP0Register) registerCOP0(12, 0);
             int temp;
             if (status.getBit(COP0RegistersBits.STATUS_ERL)) {
-                temp = registerCop0(30, 0).getValue();
+                temp = registerCOP0(30, 0).getValue();
                 status.modifyBits(0, COP0RegistersBits.STATUS_ERL, 1);
             } else {
-                temp = registerCop0(14, 0).getValue();
+                temp = registerCOP0(14, 0).getValue();
                 status.modifyBits(0, COP0RegistersBits.STATUS_EXL, 1);
             }
             status.modifyBits(0, COP0RegistersBits.STATUS_IPL, 6);
@@ -114,25 +123,23 @@ public class InstructionEret extends BasicRInstruction<InstructionEret.Assembled
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
-            super(simulation, instruction, address, false, false);
+            super(simulation, instruction, address, false, true);
         }
 
         @Override
         public void decode() {
+            requiresCOP0(12, 0, false);
+            requiresCOP0(14, 0, false);
+            requiresCOP0(30, 0, false);
+            lock(pc());
+            lockCOP0(12, 0);
         }
 
         @Override
         public void execute() {
-            COP0Register status = (COP0Register) registerCop0(12, 0);
-            int temp;
-            if (status.getBit(COP0RegistersBits.STATUS_ERL)) {
-                temp = valueCOP0(30, 0);
-                status.modifyBits(0, COP0RegistersBits.STATUS_ERL, 1);
-            } else {
-                temp = valueCOP0(14, 0);
-                status.modifyBits(0, COP0RegistersBits.STATUS_EXL, 1);
-            }
-            status.modifyBits(0, COP0RegistersBits.STATUS_IPL, 6);
+            var status = (COP0Register) registerCOP0(12, 0);
+            int temp = status.getBit(COP0RegistersBits.STATUS_ERL)
+                    ? valueCOP0(30, 0) : valueCOP0(14, 0);
             jump(temp);
         }
 
@@ -142,10 +149,18 @@ public class InstructionEret extends BasicRInstruction<InstructionEret.Assembled
 
         @Override
         public void writeBack() {
+            var status = (COP0Register) registerCOP0(12, 0);
+            int bit = status.getBit(COP0RegistersBits.STATUS_ERL)
+                    ? COP0RegistersBits.STATUS_ERL : COP0RegistersBits.STATUS_EXL;
+            status.modifyBits(0, bit, 1);
+            status.modifyBits(0, COP0RegistersBits.STATUS_IPL, 6);
+            unlockCOP0(12, 0);
         }
     }
 
     public static class Pipelined extends MultiCycleExecution<MultiALUPipelinedArchitecture, Assembled> {
+
+        private int result;
 
         public Pipelined(MIPSSimulation<? extends MultiALUPipelinedArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, true, true);
@@ -160,48 +175,65 @@ public class InstructionEret extends BasicRInstruction<InstructionEret.Assembled
             lockCOP0(12, 0);
 
             if (solveBranchOnDecode()) {
-                solve();
+                solveJump();
             }
         }
 
         @Override
         public void execute() {
-            if (solveBranchOnDecode()) {
-                forwardCOP0(12, 0, valueCOP0(12, 0));
-                forwardCOP0(14, 0, valueCOP0(14, 0));
-                forwardCOP0(30, 0, valueCOP0(30, 0));
-            }
+            result = solveStatusValue();
+            forwardCOP0(12, 0, result);
         }
 
         @Override
         public void memory() {
             if (!solveBranchOnDecode()) {
-                solve();
+                solveJump();
             }
-            forwardCOP0(12, 0, valueCOP0(12, 0));
-            forwardCOP0(14, 0, valueCOP0(14, 0));
-            forwardCOP0(30, 0, valueCOP0(30, 0));
         }
 
         @Override
         public void writeBack() {
-            unlockCOP0(12, 0);
-            unlockCOP0(14, 0);
-            unlockCOP0(30, 0);
+            setAndUnlockCOP0(12, 0, result);
         }
 
-        private void solve() {
-            COP0Register status = (COP0Register) registerCop0(12, 0);
+        private void solveJump() {
+            int status = valueCOP0(12, 0);
             int temp;
-            if (status.getBit(COP0RegistersBits.STATUS_ERL)) {
+            if (getBit(status)) {
                 temp = valueCOP0(30, 0);
-                status.modifyBits(0, COP0RegistersBits.STATUS_ERL, 1);
             } else {
                 temp = valueCOP0(14, 0);
-                status.modifyBits(0, COP0RegistersBits.STATUS_EXL, 1);
             }
-            status.modifyBits(0, COP0RegistersBits.STATUS_IPL, 6);
             jump(temp);
+        }
+
+        private int solveStatusValue() {
+            int status = valueCOP0(12, 0);
+
+            if (getBit(status)) {
+                status = modifyBits(status, COP0RegistersBits.STATUS_ERL, 1);
+            } else {
+                status = modifyBits(status, COP0RegistersBits.STATUS_EXL, 1);
+            }
+            return modifyBits(status, COP0RegistersBits.STATUS_IPL, 6);
+        }
+
+        private boolean getBit(int value) {
+            return ((value >> COP0RegistersBits.STATUS_ERL) & 1) == 1;
+        }
+
+        private int modifyBits(int original, int from, int length) {
+            if (from > 31 || length < 1) return original;
+            if (from + length > 32) {
+                length = 32 - from;
+            }
+            int mask = ((1 << length) - 1) << from;
+            return mask(original, mask);
+        }
+
+        private int mask(int original, int mask) {
+            return original & ~mask;
         }
     }
 }

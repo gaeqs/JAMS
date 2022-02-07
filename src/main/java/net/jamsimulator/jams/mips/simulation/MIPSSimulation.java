@@ -28,6 +28,7 @@ import net.jamsimulator.jams.collection.LowHeapIntArrayList;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.util.log.Console;
+import net.jamsimulator.jams.gui.util.log.Log;
 import net.jamsimulator.jams.gui.util.log.event.ConsoleInputEvent;
 import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
@@ -82,7 +83,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
     protected final ExternalInterruptController externalInterruptController;
     protected final LowHeapIntArrayList breakpoints;
     protected final NumberGenerators numberGenerators;
-    protected final Console console;
+    protected final Log log;
     protected final SimulationSyscallExecutions syscallExecutions;
     protected final Object inputLock;
     protected final Object finishedRunningLock;
@@ -111,6 +112,8 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
     protected COP0Register intCtlRegister;
     protected COP0Register srsCtlRegister;
 
+    protected int exitCode;
+
     /**
      * Creates the simulation.
      *
@@ -130,7 +133,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
         this.memory = data.memory();
         this.instructionStackBottom = data.instructionStackBottom();
         this.kernelStackBottom = data.kernelStackBottom();
-        this.console = data.console();
+        this.log = data.log();
         this.source = data.source();
         this.workingDirectory = data.workingDirectory();
 
@@ -165,8 +168,8 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
             files.registerListeners(this, true);
         }
 
-        if (getConsole() != null) {
-            getConsole().registerListeners(this, true);
+        if (log instanceof Console console) {
+            console.registerListeners(this, true);
         }
 
         inputLock = new Object();
@@ -321,8 +324,21 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
 
     /**
      * Request a simulation exit. This method doesn't exit the simulation automatically.
+     *
+     * @param exitCode    the exit code.
+     * @param executionId the id of the execution. 0 if the execution has no id.
      */
-    public abstract void requestExit();
+    public abstract void requestExit(int exitCode, long executionId);
+
+    /**
+     * Returns the exit code of the simulation.
+     * This value can't be undone, as it is set at the end of a simulation.
+     *
+     * @return the exit code.
+     */
+    public int getExitCode() {
+        return exitCode;
+    }
 
     /**
      * Returns whether this simulation has finished its execution.
@@ -340,6 +356,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
      * This method should be called only by the execution thread.
      */
     public String popInputOrLock() {
+        if (!(log instanceof Console console)) return "";
         Optional<String> optional = Optional.empty();
         while (optional.isEmpty()) {
             optional = console.popInput();
@@ -348,8 +365,8 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
                 try {
                     callEvent(new SimulationLockEvent(this));
 
-                    //Flushes the console. This call is important.
-                    getConsole().flush();
+                    //Flushes the log. This call is important.
+                    console.flush();
 
                     synchronized (inputLock) {
                         inputLock.wait();
@@ -370,6 +387,7 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
      * This method should be called only by the execution thread.
      */
     public char popCharOrLock() {
+        if (!(log instanceof Console console)) return '\0';
         Optional<Character> optional = Optional.empty();
         while (optional.isEmpty()) {
             optional = console.popChar();
@@ -378,8 +396,8 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
                 try {
                     callEvent(new SimulationLockEvent(this));
 
-                    //Flushes the console. This call is important.
-                    getConsole().flush();
+                    //Flushes the log. This call is important.
+                    console.flush();
 
                     synchronized (inputLock) {
                         inputLock.wait();
@@ -518,12 +536,13 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
 
         if (memory.getWord(jump, false, true, true) == 0) {
             finished = true;
-            if (getConsole() != null) {
-                getConsole().println();
-                getConsole().printErrorLn("Execution finished. Runtime exception at 0x"
+            if (getLog() != null) {
+                getLog().println();
+                getLog().printErrorLn("Execution finished. Runtime exception at 0x"
                         + StringUtils.addZeros(Integer.toHexString(pc), 8)
                         + ": Code " + type.getValue() + " (" + type + ")");
-                getConsole().println();
+                getLog().println();
+                exitCode = 0x1000 + type.getValue();
             }
             callEvent(new SimulationFinishedEvent(this));
         }
@@ -536,8 +555,8 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
             registers.enableEventCalls(true);
             finishedRunningLock.notifyAll();
             callEvent(new SimulationStopEvent(this));
-            if (getConsole() != null) {
-                getConsole().flush();
+            if (getLog() instanceof Console console) {
+                console.flush();
             }
         }
     }
@@ -628,8 +647,8 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
 
 
     @Override
-    public Console getConsole() {
-        return console;
+    public Log getLog() {
+        return log;
     }
 
     @Override
@@ -829,14 +848,14 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
 
             executionTime += System.nanoTime() - start;
 
-            if (getConsole() != null) {
+            if (getLog() != null) {
                 long millis = (System.nanoTime() - start) / 1000000;
-                getConsole().println();
-                getConsole().printInfoLn(cycles - cyclesStart + " cycles executed in " + millis + " millis.");
+                getLog().println();
+                getLog().printInfoLn(cycles - cyclesStart + " cycles executed in " + millis + " millis.");
 
                 int performance = (int) ((cycles - cyclesStart) / (((double) millis) / 1000));
-                getConsole().printInfoLn(performance + " cycle/s");
-                getConsole().println();
+                getLog().printInfoLn(performance + " cycle/s");
+                getLog().println();
             }
 
             manageSimulationFinish();
