@@ -1,4 +1,4 @@
-DIRECTIVE_ALIGN_DOCUMENTATION: |
+DIRECTIVE_ALIGN_DOCUMENTATION: |-
   <u>Align</u>
 
   <b>Format:</b>
@@ -6,7 +6,7 @@ DIRECTIVE_ALIGN_DOCUMENTATION: |
 
   <b>Description:</b>
   Aligns the next memory insertion to a 2^n multiple address.
-DIRECTIVE_ASCII_DOCUMENTATION: |
+DIRECTIVE_ASCII_DOCUMENTATION: |-
   <u>Insert ASCII strings</u>
 
   <b>Format:</b>
@@ -14,7 +14,7 @@ DIRECTIVE_ASCII_DOCUMENTATION: |
 
   <b>Description:</b>
   Inserts into the memory the given ASCII strings.
-DIRECTIVE_ASCIIZ_DOCUMENTATION: |
+DIRECTIVE_ASCIIZ_DOCUMENTATION: |-
   <u>Insert ASCII strings, ending with a null character</u>
 
   <b>Format:</b>
@@ -22,7 +22,7 @@ DIRECTIVE_ASCIIZ_DOCUMENTATION: |
 
   <b>Description:</b>
   Inserts into the memory the given ASCII strings, adding at the end of each string a null (\0) character.
-DIRECTIVE_BYTE_DOCUMENTATION: |
+DIRECTIVE_BYTE_DOCUMENTATION: |-
   <u>Insert doubles</u>
 
   <b>Format:</b>
@@ -30,7 +30,7 @@ DIRECTIVE_BYTE_DOCUMENTATION: |
 
   <b>Description:</b>
   Inserts into the memory the given doubles.
-DIRECTIVE_DATA_DOCUMENTATION: |
+DIRECTIVE_DATA_DOCUMENTATION: |-
   <u>Change to data section</u>
 
   <b>Format:</b>
@@ -39,7 +39,7 @@ DIRECTIVE_DATA_DOCUMENTATION: |
   <b>Description:</b>
   Makes the next memory insertions to be placed into the data section.
   If an address is given, the next memory insertions will be placed starting from the given address.
-DIRECTIVE_DWORD_DOCUMENTATION: |
+DIRECTIVE_DWORD_DOCUMENTATION: |-
   <u>Insert double words / longs</u>
 
   <b>Format:</b>
@@ -47,7 +47,7 @@ DIRECTIVE_DWORD_DOCUMENTATION: |
 
   <b>Description:</b>
   Inserts into the memory the given double words.
-DIRECTIVE_ENDMACRO_DOCUMENTATION: |
+DIRECTIVE_ENDMACRO_DOCUMENTATION: |-
   <u>End macro</u>
 
   <b>Format:</b>
@@ -56,7 +56,7 @@ DIRECTIVE_ENDMACRO_DOCUMENTATION: |
   <b>Description:</b>
   Ends the current macro definition.
   If no macro is being defined this directive will be ignored.
-DIRECTIVE_EQV_DOCUMENTATION: |
+DIRECTIVE_EQV_DOCUMENTATION: |-
   <u>Equivalent</u>
 
   <b>Format:</b>
@@ -68,7 +68,7 @@ DIRECTIVE_EQV_DOCUMENTATION: |
   <b>Programming Notes:</b>
   Avoid using this directive for complex replacements.
   It should be used only for registers and immediates.
-DIRECTIVE_ERR_DOCUMENTATION: |
+DIRECTIVE_ERR_DOCUMENTATION: |-
   <u>Error</u>
 
   <b>Format:</b>
@@ -76,7 +76,7 @@ DIRECTIVE_ERR_DOCUMENTATION: |
 
   <b>Description:</b>
   Produces an assemble exception.
-DIRECTIVE_EXTERN_DOCUMENTATION: |
+DIRECTIVE_EXTERN_DOCUMENTATION: |-
   <u>Allocate extern memory</u>
 
   <b>Format:</b>
@@ -85,7 +85,7 @@ DIRECTIVE_EXTERN_DOCUMENTATION: |
   <b>Description:</b>
   Allocates the given amount of bytes into the extern section of the memory.
   The created label will be considered a global label.
-DIRECTIVE_FLOAT_DOCUMENTATION: |
+DIRECTIVE_FLOAT_DOCUMENTATION: |-
   <u>Insert float</u>
 
   <b>Format:</b>
@@ -93,7 +93,7 @@ DIRECTIVE_FLOAT_DOCUMENTATION: |
 
   <b>Description:</b>
   Inserts into the memory the given floats.
-DIRECTIVE_GLOBL_DOCUMENTATION: |
+DIRECTIVE_GLOBL_DOCUMENTATION: |-
   <u>Make label global</u>
 
   <b>Format:</b>
@@ -101,7 +101,7 @@ DIRECTIVE_GLOBL_DOCUMENTATION: |
 
   <b>Description:</b>
   Makes the given label global.
-DIRECTIVE_HALF_DOCUMENTATION: |
+DIRECTIVE_HALF_DOCUMENTATION: |-
   <u>Insert half words</u>
 
   <b>Format:</b>
@@ -109,7 +109,7 @@ DIRECTIVE_HALF_DOCUMENTATION: |
 
   <b>Description:</b>
   Inserts into the memory the given half words.
-DIRECTIVE_INCLUDE_DOCUMENTATION: |
+DIRECTIVE_INCLUDE_DOCUMENTATION: |-
   <u>Include file</u>
 
   <b>Format:</b>
@@ -121,7 +121,7 @@ DIRECTIVE_INCLUDE_DOCUMENTATION: |
 
   <b>Programming Notes:</b>
   Avoid using this directive: it may cause recursive loops and prevents the inspector from working properly.
-DIRECTIVE_KDATA_DOCUMENTATION: |
+DIRECTIVE_KDATA_DOCUMENTATION: |-
   <u>Change to kernel data section</u>
 
   <b>Format:</b>
@@ -130,7 +130,7 @@ DIRECTIVE_KDATA_DOCUMENTATION: |
   <b>Description:</b>
   Makes the next memory insertions to be placed into the kernel data section.
   If an address is given, the next memory insertions will be placed starting from the given address.
-DIRECTIVE_KTEXT_DOCUMENTATION: |
+DIRECTIVE_KTEXT_DOCUMENTATION: |-
   <u>Change to text section</u>
 
   <b>Format:</b>
@@ -139,7 +139,7 @@ DIRECTIVE_KTEXT_DOCUMENTATION: |
   <b>Description:</b>
   Makes the next memory insertions to be placed into the text section.
   If an address is given, the next memory insertions will be placed starting from the given address.
-DIRECTIVE_LAB_DOCUMENTATION: |
+DIRECTIVE_LAB_DOCUMENTATION: |-
   <u>Create label</u>
 
   <b>Format:</b>
@@ -147,18 +147,41 @@ DIRECTIVE_LAB_DOCUMENTATION: |
 
   <b>Description:</b>
   Creates the given label.
-DIRECTIVE_MACRO_DOCUMENTATION: "<u>Macro</u>\n\n<b>Format:</b>\n.macro <name>\n.macro\
-  \ <name> ()\n.macro <name> ({%parameter})\n\n<b>Description:</b>\nStarts a macro\
-  \ definition.\nA macro can be used to define a set of instructions that will be\
-  \ used constantly.\nMacros can have parameters. All parameters should start with\
-  \ \"%\" and they will\nreplaced when a call to the macro is executed.\n\nA macro\
-  \ call must have this format: name (param1, param2). The space between the name\
-  \ and the first parentheses can be replaced with a comma or a tab.\n\n<b>Example:</b>\n\
-  \nThis code creates a macro that prints a string:\n\n\t.macro print (%string)\n\t\
-  .data\ntext:\t.asciiz %string\n\t.text\n\tla $a0, text\n\tli $v0, 4\n\tsyscall\n\
-  \t.endmacro\n\t.text\n\tprint (\"Hi!\\n\")\n\tprint (\"I'm using macros!\\n\")\n\
-  \n\nOutput:\n\nHi!\nI'm using macros!\n"
-DIRECTIVE_SPACE_DOCUMENTATION: |
+DIRECTIVE_MACRO_DOCUMENTATION: |- 
+  <u>Macro</u>
+  
+  <b>Format:</b>
+  .macro <name>
+  .macro <name> ()
+  .macro <name> ({%parameter})
+  
+  <b>Description:</b>
+  Starts a macro definition.
+  A macro can be used to define a set of instructions that will be used constantly.
+  Macros can have parameters. All parameters should start with "%" and they will be replaced when a call to the macro is executed.
+  A macro call must have this format: name (param1, param2). The space between the name and the first parentheses can be replaced with a comma or a tab.
+  
+  <b>Example:</b>
+  
+  This code creates a macro that prints a string:
+  
+  El siguiente código crea una macro que imprime una cadena de caracteres:
+    .macro print (%string)
+    .data
+  text: .asciiz %string
+    .text
+    la $a0, text
+    li $v0, 4
+    syscall
+    .endmacro
+    .text
+    print ("Hi!\\n")
+    print ("I'm using macros!\\n\")
+  
+  Output:
+  Hi!
+  I'm using macros!
+DIRECTIVE_SPACE_DOCUMENTATION: |-
   <u>Allocate memory</u>
 
   <b>Format:</b>
@@ -166,7 +189,7 @@ DIRECTIVE_SPACE_DOCUMENTATION: |
 
   <b>Description:</b>
   Allocates the given amount of bytes into memory.
-DIRECTIVE_WORD_DOCUMENTATION: |
+DIRECTIVE_WORD_DOCUMENTATION: |-
   <u>Insert words</u>
 
   <b>Format:</b>

@@ -143,7 +143,7 @@ INSTRUCTION_ABS_D_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  FPR[fd] <- abs(FPR[fs])
+  FPR[fd] ⇽ abs(FPR[fs])
 
   Places the absolute value of <i>fs</i> in <i>fd</i>. The operand and result are values in double precision floating point.
 
@@ -152,7 +152,7 @@ INSTRUCTION_ABS_D_DOCUMENTATION: |-
   The operand must be a value in double precision floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
 
   <b>Operation:</b>
-  fmt <- double
+  fmt ⇽ double
   StoreFPR(fd, fmt, AbsoluteValue(ValueFPR(fs, fmt)))
 
   <b>Exceptions:</b>
@@ -169,7 +169,7 @@ INSTRUCTION_ABS_S_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  FPR[fd] <- abs(FPR[fs])
+  FPR[fd] ⇽ abs(FPR[fs])
 
   Places the absolute value of <i>fs</i> in <i>fd</i>. The operand and result are values in floating point.
 
@@ -177,7 +177,7 @@ INSTRUCTION_ABS_S_DOCUMENTATION: |-
   The operand must be a value in floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
 
   <b>Operation:</b>
-  fmt <- float
+  fmt ⇽ float
   StoreFPR(fd, fmt, AbsoluteValue(ValueFPR(fs, fmt)))
 
   <b>Exceptions:</b>
@@ -194,7 +194,7 @@ INSTRUCTION_ADD_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- GPR[rs] + GPR[rt]
+  GPR[rd] ⇽ GPR[rs] + GPR[rt]
 
   The 32-bit word value in GPR <i>rt</i> is added to the 32-bit value in GPR <i>rs</i> to produce a 32-bit result.
    - If the addition results in 32-bit 2's complement arithmetic overflow, the destination register is not modified and an <black>Integer Overflow</black> exception occurs.
@@ -204,11 +204,11 @@ INSTRUCTION_ADD_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  temp <- (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (GPR[rt]<sub>31</sub> || GPR[rt]<sub>31..0</sub>)
+  temp ⇽ (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (GPR[rt]<sub>31</sub> || GPR[rt]<sub>31..0</sub>)
   if temp<sub>32</sub> != temp<sub>31</sub> then
       SignalException(IntegerOverflow)
   else
-      GPR[rd] <- temp<sub>31..0</sub>
+      GPR[rd] ⇽ temp<sub>31..0</sub>
   endif
 
   <b>Exceptions:</b>
@@ -228,7 +228,7 @@ INSTRUCTION_ADD_D_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  FPR[fd] <- FPR[fs] + FPR[ft]
+  FPR[fd] ⇽ FPR[fs] + FPR[ft]
 
   The value in FPR <i>ft</i> is added to the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
   The operands and result are values in double precision floating point.
@@ -238,7 +238,7 @@ INSTRUCTION_ADD_D_DOCUMENTATION: |-
   The operand must be a value in double precision floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
 
   <b>Operation:</b>
-  fmt <- double
+  fmt ⇽ double
   StoreFPR(fd, fmt, ValueFPR(fs, fmt) +<sub>fmt</sub> ValueFPR(ft, fmt))
 
   <b>Exceptions:</b>
@@ -255,7 +255,7 @@ INSTRUCTION_ADD_S_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  FPR[fd] <- FPR[fs] + FPR[ft]
+  FPR[fd] ⇽ FPR[fs] + FPR[ft]
 
   The value in FPR <i>ft</i> is added to the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
   The operands and result are values in floating point.
@@ -264,7 +264,7 @@ INSTRUCTION_ADD_S_DOCUMENTATION: |-
   The operand must be a value in floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
 
   <b>Operation:</b>
-  fmt <- float
+  fmt ⇽ float
   StoreFPR(fd, fmt, ValueFPR(fs, fmt) +<sub>fmt</sub> ValueFPR(ft, fmt))
 
   <b>Exceptions:</b>
@@ -281,7 +281,7 @@ INSTRUCTION_ADDIU_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rt] <- GPR[rs] + immediate
+  GPR[rt] ⇽ GPR[rs] + immediate
 
   The 16-bit signed <i>immediate</i> is added to the 32-bit value in GRP <i>rs</i> and the 32-bit arithmetic result is placed into GPR <i>rt</i>.
   No <black>Integer Overflow</black> exception occurs under any circumstances.
@@ -290,8 +290,8 @@ INSTRUCTION_ADDIU_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  temp <- GPR[rs] + sign_extend(immediate)
-  GPR[rt] <- temp
+  temp ⇽ GPR[rs] + sign_extend(immediate)
+  GPR[rt] ⇽ temp
 
   <b>Exceptions:</b>
   None
@@ -310,7 +310,7 @@ INSTRUCTION_ADDIUPC_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rs] <- PC + sign_extend(immediate << 2)
+  GPR[rs] ⇽ PC + sign_extend(immediate << 2)
 
   This instruction performs a PC-relative address calculation. The 19-bit <i>immediate</i> is shifted left by 2 bits, sign-extended and added to the address of the instruction.
   The result is placed into GPR <i>rs</i>.
@@ -319,7 +319,7 @@ INSTRUCTION_ADDIUPC_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  GPR[rs] <- PC + sign_extend(immediate << 2)
+  GPR[rs] ⇽ PC + sign_extend(immediate << 2)
 
   <b>Exceptions:</b>
   None
@@ -338,7 +338,7 @@ INSTRUCTION_ADDU_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- GPR[rs] + GPR[rt]
+  GPR[rd] ⇽ GPR[rs] + GPR[rt]
 
   The 32-bit word value in GPR <i>rt</i> is added to the 32-bit value in GPR <i>rs</i> to produce a 32-bit result.
   The 32-bit result is placed into GPR <i>rd</i>.
@@ -348,8 +348,8 @@ INSTRUCTION_ADDU_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  temp <- GPR[rs] + GPR[rt]
-  GPR[rd] <- temp
+  temp ⇽ GPR[rs] + GPR[rt]
+  GPR[rd] ⇽ temp
 
   <b>Exceptions:</b>
   None
@@ -368,7 +368,7 @@ INSTRUCTION_ALIGN_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- (GPR[rt] << 8 * bp) or (GPR[rs] >> 8 * (4 - bp))
+  GPR[rd] ⇽ (GPR[rt] << 8 * bp) or (GPR[rs] >> 8 * (4 - bp))
 
   The input registers GPR <i>rt</i> and GPR <i>rs</i> are concatenated, and a register width contiguous subset is extracted, which is specified by the byte pointer <i>bp</i>.
   The <black>align</black> instruction operates on 32-bit words, and has a 2-bit byte position field <i>bp</i>.
@@ -377,9 +377,9 @@ INSTRUCTION_ALIGN_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  tmp_rt_hi <- unsigned_word(GPR[rt]) << 8 * bp
-  tmp_rs_lo <- unsigned_word(GPR[rs]) >> 8 * (4 - bp)
-  GPR[rd] <- tmp_rt_hi or tmp_rs_lo
+  tmp_rt_hi ⇽ unsigned_word(GPR[rt]) << 8 * bp
+  tmp_rs_lo ⇽ unsigned_word(GPR[rs]) >> 8 * (4 - bp)
+  GPR[rd] ⇽ tmp_rt_hi or tmp_rs_lo
 
   <b>Exceptions:</b>
   None
@@ -395,7 +395,7 @@ INSTRUCTION_ALUIPC_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rs] <- not 0x0FFFF and PC + sign_extend(immediate << 16)
+  GPR[rs] ⇽ not 0x0FFFF and PC + sign_extend(immediate << 16)
 
   This instruction performs a PC-relative address calculation. The 16-bit <i>immediate</i> is shifted left by 16 bits, sign-extended and added to the address of the instruction.
   The low 16 bits of the result are cleard. The result is placed into GPR <i>rs</i>.
@@ -404,7 +404,7 @@ INSTRUCTION_ALUIPC_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  GPR[rs] <- not 0x0FFFF and PC + sign_extend(immediate << 16)
+  GPR[rs] ⇽ not 0x0FFFF and PC + sign_extend(immediate << 16)
 
   <b>Exceptions:</b>
   None
@@ -420,7 +420,7 @@ INSTRUCTION_AND_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- GPR[rs] and GPR[rt]
+  GPR[rd] ⇽ GPR[rs] and GPR[rt]
 
   Performs a bitwise logical AND using the values inside GPR <i>rs</i> and GPR <i>rt</i>.
   The result is placed into GPR <i>rd</i>.
@@ -429,7 +429,7 @@ INSTRUCTION_AND_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  GPR[rd] <- GPR[rs] and GPR[rt]
+  GPR[rd] ⇽ GPR[rs] and GPR[rt]
 
   <b>Exceptions:</b>
   None
@@ -445,7 +445,7 @@ INSTRUCTION_ANDI_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rt] <- GPR[rs] and zero_extend(immediate)
+  GPR[rt] ⇽ GPR[rs] and zero_extend(immediate)
 
   The 16-bit <i>immediate</i> is zero-extended to the left and combined with the value of GPR <i>rs</i> in a bitwise logical AND operation.
   The result is placed into GPR <i>rt</i>.
@@ -454,7 +454,7 @@ INSTRUCTION_ANDI_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  GPR[rt] <- GPR[rs] and zero_extend(immediate)
+  GPR[rt] ⇽ GPR[rs] and zero_extend(immediate)
 
   <b>Exceptions:</b>
   None
@@ -470,7 +470,7 @@ INSTRUCTION_AUI_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rt] <- GPR[rs] + sign_extend(immediate << 16)
+  GPR[rt] ⇽ GPR[rs] + sign_extend(immediate << 16)
 
   The 16-bit <i>immediate</i> is shifted left 16 bits, sign-extended and added to the GPR <i>rs</i>.
   The result is placed into GPR <i>rt</i>.
@@ -480,7 +480,7 @@ INSTRUCTION_AUI_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  GPR[rt] <- GPR[rs] + sign_extend(immediate << 16)
+  GPR[rt] ⇽ GPR[rs] + sign_extend(immediate << 16)
 
   <b>Exceptions:</b>
   None
@@ -499,7 +499,7 @@ INSTRUCTION_AUIPC_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rs] <- PC + (immediate << 16)
+  GPR[rs] ⇽ PC + (immediate << 16)
 
   This instruction performs a PC-relative address calculation. The 16-bit <i>immediate</i> is shifted left by 16 bits and added to the address of the instruction.
   The result is placed into GPR <i>rs</i>.
@@ -508,7 +508,7 @@ INSTRUCTION_AUIPC_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  GPR[rs] <- PC + (immediate << 16)
+  GPR[rs] ⇽ PC + (immediate << 16)
 
   <b>Exceptions:</b>
   None
@@ -533,11 +533,11 @@ INSTRUCTION_BAL_DOCUMENTATION: |-
 
   <b>Operation:</b>
   <black>I:</black>
-  target_offset <- sign_extend(offset || 00)
-  GPR[31] <- PC + 4
+  target_offset ⇽ sign_extend(offset || 00)
+  GPR[31] ⇽ PC + 4
 
   <black>I+1:</black>
-  PC <- PC + target_offset
+  PC ⇽ PC + target_offset
 
   <b>Exceptions:</b>
   None
@@ -564,9 +564,9 @@ INSTRUCTION_BALC_DOCUMENTATION: |-
   This instruction is an unconditional, always taken, compact branch. It does not have a forbidden slot nor a delay slot.
 
   <b>Operation:</b>
-  target_offset <- sign_extend(offset || 00)
-  GPR[31] <- PC + 4
-  PC <- PC + 4 + target_offset
+  target_offset ⇽ sign_extend(offset || 00)
+  GPR[31] ⇽ PC + 4
+  PC ⇽ PC + 4 + target_offset
 
   <b>Exceptions:</b>
   None
@@ -589,8 +589,8 @@ INSTRUCTION_BC_DOCUMENTATION: |-
   This instruction is an unconditional, always taken, compact branch. It does not have a forbidden slot nor a delay slot.
 
   <b>Operation:</b>
-  target_offset <- sign_extend(offset || 00)
-  PC <- PC + 4 + target_offset
+  target_offset ⇽ sign_extend(offset || 00)
+  PC ⇽ PC + 4 + target_offset
 
   <b>Exceptions:</b>
   None
@@ -621,9 +621,9 @@ INSTRUCTION_BC1EQZ_DOCUMENTATION: |-
   cond = temp & 1 = 0
   if cond then
       <black>I:</black>
-      target_PC <- PC + 4 + sign_extend(offset << 2)
+      target_PC ⇽ PC + 4 + sign_extend(offset << 2)
       <black>I+1:</black>
-      PC <- target_PC
+      PC ⇽ target_PC
   endif
 
   <b>Exceptions:</b>
@@ -655,9 +655,9 @@ INSTRUCTION_BC1NEZ_DOCUMENTATION: |-
   cond = temp & 1 != 0
   if cond then
       <black>I:</black>
-      target_PC <- PC + 4 + sign_extend(offset << 2)
+      target_PC ⇽ PC + 4 + sign_extend(offset << 2)
       <black>I+1:</black>
-      PC <- target_PC
+      PC ⇽ target_PC
   endif
 
   <b>Exceptions:</b>
@@ -685,11 +685,11 @@ INSTRUCTION_BEQ_DOCUMENTATION: |-
 
   <b>Operation:</b>
   <black>I:</black>
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rs] = GPR[rt]
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rs] = GPR[rt]
   <black>I+1:</black>
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -710,7 +710,7 @@ INSTRUCTION_BGEZ_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  if GPR[rs] >= 0 then branch
+  if GPR[rs] ≥ 0 then branch
 
   An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
   If the contents of GPR <i>rs</i> are greater than or equal to zero, branch to the effective target address.
@@ -721,11 +721,11 @@ INSTRUCTION_BGEZ_DOCUMENTATION: |-
 
   <b>Operation:</b>
   <black>I:</black>
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rs] >= 0
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rs] ≥ 0
   <black>I+1:</black>
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -745,7 +745,7 @@ INSTRUCTION_BLEZALC_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  Compact branch and link if GPR[rt] <= 0.
+  Compact branch and link if GPR[rt] ≤ 0.
 
   Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
 
@@ -760,12 +760,12 @@ INSTRUCTION_BLEZALC_DOCUMENTATION: |-
 
   <b>Operation:</b>
   <black>I:</black>
-  GPR[31] <- PC + 4
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rt] <= 0
+  GPR[31] ⇽ PC + 4
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] ≤ 0
   <black>I+1:</black>
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -785,7 +785,7 @@ INSTRUCTION_BGEZALC_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  Compact branch and link if GPR[rt] >= 0.
+  Compact branch and link if GPR[rt] ≥ 0.
 
   Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
   An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
@@ -798,12 +798,12 @@ INSTRUCTION_BGEZALC_DOCUMENTATION: |-
 
   <b>Operation:</b>
   <black>I:</black>
-  GPR[31] <- PC + 4
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rt] >= 0
+  GPR[31] ⇽ PC + 4
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] ≥ 0
   <black>I+1:</black>
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -838,12 +838,12 @@ INSTRUCTION_BGTZALC_DOCUMENTATION: |-
 
   <b>Operation:</b>
   <black>I:</black>
-  GPR[31] <- PC + 4
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rt] > 0
+  GPR[31] ⇽ PC + 4
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] > 0
   <black>I+1:</black>
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -878,12 +878,12 @@ INSTRUCTION_BLTZALC_DOCUMENTATION: |-
 
   <b>Operation:</b>
   <black>I:</black>
-  GPR[31] <- PC + 4
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rt] < 0
+  GPR[31] ⇽ PC + 4
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] < 0
   <black>I+1:</black>
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -918,12 +918,12 @@ INSTRUCTION_BEQZALC_DOCUMENTATION: |-
 
   <b>Operation:</b>
   <black>I:</black>
-  GPR[31] <- PC + 4
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rt] = 0
+  GPR[31] ⇽ PC + 4
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] = 0
   <black>I+1:</black>
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -958,12 +958,12 @@ INSTRUCTION_BNEZALC_DOCUMENTATION: |-
 
   <b>Operation:</b>
   <black>I:</black>
-  GPR[31] <- PC + 4
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rt] != 0
+  GPR[31] ⇽ PC + 4
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] != 0
   <black>I+1:</black>
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -983,7 +983,7 @@ INSTRUCTION_BLEZC_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  Compact branch if GPR[rt] <= 0.
+  Compact branch if GPR[rt] ≤ 0.
 
   An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
   If the contents of GPR <i>rt</i> less than or equal to zero, branch to the effective target address.
@@ -993,10 +993,10 @@ INSTRUCTION_BLEZC_DOCUMENTATION: |-
   If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
   <b>Operation:</b>
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rt] <= 0
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] ≤ 0
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -1013,7 +1013,7 @@ INSTRUCTION_BGEZC_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  Compact branch if GPR[rt] >= 0.
+  Compact branch if GPR[rt] ≥ 0.
 
   An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
   If the contents of GPR <i>rt</i> greater than or equal to zero, branch to the effective target address.
@@ -1023,10 +1023,10 @@ INSTRUCTION_BGEZC_DOCUMENTATION: |-
   If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
   <b>Operation:</b>
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rt] >= 0
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] ≥ 0
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -1053,10 +1053,10 @@ INSTRUCTION_BGTZC_DOCUMENTATION: |-
   If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
   <b>Operation:</b>
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rt] > 0
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] > 0
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -1083,10 +1083,10 @@ INSTRUCTION_BLTZC_DOCUMENTATION: |-
   If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
   <b>Operation:</b>
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rt] < 0
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] < 0
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -1103,7 +1103,7 @@ INSTRUCTION_BGEC_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  Compact branch if GPR[rs] >= GPR[rt].
+  Compact branch if GPR[rs] ≥ GPR[rt].
 
   An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
   If the contents of GPR <i>rs</i> are greater than or equal to the contents of GPR <i>rt</i>, branch to the effective target address.
@@ -1113,10 +1113,10 @@ INSTRUCTION_BGEC_DOCUMENTATION: |-
   If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
   <b>Operation:</b>
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rs] >= GPR[rt]
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rs] ≥ GPR[rt]
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -1143,10 +1143,10 @@ INSTRUCTION_BLTC_DOCUMENTATION: |-
   If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
   <b>Operation:</b>
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rt] < GPR[rt]
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] < GPR[rt]
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -1163,7 +1163,7 @@ INSTRUCTION_BGEUC_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  Compact branch if GPR[rs] >= GPR[rt].
+  Compact branch if GPR[rs] ≥ GPR[rt].
 
   An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
   If the contents of GPR <i>rs</i> are greater than or equal to the contents of GPR <i>rt</i>, branch to the effective target address.
@@ -1173,10 +1173,10 @@ INSTRUCTION_BGEUC_DOCUMENTATION: |-
   If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
   <b>Operation:</b>
-  target_offset <- sign_extend(offset || 00)
-  condition <- unsigned_word(GPR[rt]) >= unsigned_word(GPR[rt])
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ unsigned_word(GPR[rt]) ≥ unsigned_word(GPR[rt])
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -1203,10 +1203,10 @@ INSTRUCTION_BLTUC_DOCUMENTATION: |-
   If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
   <b>Operation:</b>
-  target_offset <- sign_extend(offset || 00)
-  condition <- unsigned_word(GPR[rt]) < unsigned_word(GPR[rt])
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ unsigned_word(GPR[rt]) < unsigned_word(GPR[rt])
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -1233,10 +1233,10 @@ INSTRUCTION_BEQC_DOCUMENTATION: |-
   If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
   <b>Operation:</b>
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rt] = GPR[rt]
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] = GPR[rt]
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -1263,10 +1263,10 @@ INSTRUCTION_BNEC_DOCUMENTATION: |-
   If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
   <b>Operation:</b>
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rt] != GPR[rt]
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] != GPR[rt]
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -1293,10 +1293,10 @@ INSTRUCTION_BEQZC_DOCUMENTATION: |-
   If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
   <b>Operation:</b>
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rt] == 0
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] == 0
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -1323,10 +1323,10 @@ INSTRUCTION_BNEZC_DOCUMENTATION: |-
   If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
   <b>Operation:</b>
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rt] != 0
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] != 0
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -1354,11 +1354,11 @@ INSTRUCTION_BGTZ_DOCUMENTATION: |-
 
   <b>Operation:</b>
   <black>I:</black>
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rs] > 0
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rs] > 0
   <black>I+1:</black>
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -1378,7 +1378,7 @@ INSTRUCTION_BITSWAP_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd].byte[i] <- reverse_bits(GPR[rt].byte[i]), for all bytes i
+  GPR[rd].byte[i] ⇽ reverse_bits(GPR[rt].byte[i]), for all bytes i
 
   Each byte in GPR <i>rt</i> has its bytes reversed and moved to the same position in GPR <i>rd</i>.
   This instruction operates on all 4 bytes of a 32-bit word.
@@ -1389,19 +1389,19 @@ INSTRUCTION_BITSWAP_DOCUMENTATION: |-
   <b>Operation:</b>
 
   function reverse_bits (in)
-      out<sub>7</sub> <- in<sub>0</sub>
-      out<sub>6</sub> <- in<sub>1</sub>
-      out<sub>5</sub> <- in<sub>2</sub>
-      out<sub>4</sub> <- in<sub>3</sub>
-      out<sub>3</sub> <- in<sub>4</sub>
-      out<sub>2</sub> <- in<sub>5</sub>
-      out<sub>1</sub> <- in<sub>6</sub>
-      out<sub>0</sub> <- in<sub>7</sub>
+      out<sub>7</sub> ⇽ in<sub>0</sub>
+      out<sub>6</sub> ⇽ in<sub>1</sub>
+      out<sub>5</sub> ⇽ in<sub>2</sub>
+      out<sub>4</sub> ⇽ in<sub>3</sub>
+      out<sub>3</sub> ⇽ in<sub>4</sub>
+      out<sub>2</sub> ⇽ in<sub>5</sub>
+      out<sub>1</sub> ⇽ in<sub>6</sub>
+      out<sub>0</sub> ⇽ in<sub>7</sub>
       return out
   end function
 
   for i in 0 to 3 do
-      GPR[rd].byte[i] <- reverse_bits(GPR[rt].byte[i])
+      GPR[rd].byte[i] ⇽ reverse_bits(GPR[rt].byte[i])
   endfor
 
   <b>Exceptions:</b>
@@ -1418,7 +1418,7 @@ INSTRUCTION_BLEZ_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  if GPR[rs] <= 0 then branch
+  if GPR[rs] ≤ 0 then branch
 
   An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
   If the contents of GPR <i>rs</i> are less than or equal to zero, branch to the effective target address.
@@ -1429,11 +1429,11 @@ INSTRUCTION_BLEZ_DOCUMENTATION: |-
 
   <b>Operation:</b>
   <black>I:</black>
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rs] <= 0
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rs] ≤ 0
   <black>I+1:</black>
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -1464,11 +1464,11 @@ INSTRUCTION_BLTZ_DOCUMENTATION: |-
 
   <b>Operation:</b>
   <black>I:</black>
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rs] < 0
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rs] < 0
   <black>I+1:</black>
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -1499,11 +1499,11 @@ INSTRUCTION_BNE_DOCUMENTATION: |-
 
   <b>Operation:</b>
   <black>I:</black>
-  target_offset <- sign_extend(offset || 00)
-  condition <- GPR[rs] != GPR[rt]
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rs] != GPR[rt]
   <black>I+1:</black>
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -1518,7 +1518,7 @@ INSTRUCTION_BOVC_DOCUMENTATION: |-
   bovc rs, rt, offset
 
   | POP10     rs        rt      offset  |
-  |001000       rs >= rt                |
+  |001000       rs ≥ rt                 |
   |  6        5         5         16    |
 
 
@@ -1533,12 +1533,12 @@ INSTRUCTION_BOVC_DOCUMENTATION: |-
   If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
   <b>Operation:</b>
-  target_offset <- sign_extend(offset || 00)
+  target_offset ⇽ sign_extend(offset || 00)
   temp_d = GPR[rs] + GPR[rt]
-  condition <- temp_d<sub>32</sub> != temp_d<sub>31</sub>
+  condition ⇽ temp_d<sub>32</sub> != temp_d<sub>31</sub>
 
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -1550,7 +1550,7 @@ INSTRUCTION_BNVC_DOCUMENTATION: |-
   bnvc rs, rt, offset
 
   | POP30     rs        rt      offset  |
-  |011000       rs >= rt                |
+  |011000       rs ≥ rt                 |
   |  6        5         5         16    |
 
 
@@ -1565,12 +1565,12 @@ INSTRUCTION_BNVC_DOCUMENTATION: |-
   If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
 
   <b>Operation:</b>
-  target_offset <- sign_extend(offset || 00)
+  target_offset ⇽ sign_extend(offset || 00)
   temp_d = GPR[rs] + GPR[rt]
-  condition <- temp_d<sub>32</sub> = temp_d<sub>31</sub>
+  condition ⇽ temp_d<sub>32</sub> = temp_d<sub>31</sub>
 
   if condition then
-      PC <- PC + target_offset
+      PC ⇽ PC + target_offset
   endif
 
   <b>Exceptions:</b>
@@ -1611,19 +1611,19 @@ INSTRUCTION_CEIL_L_D_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  FPR[fd] <- convert_and_round(FPR[fs])
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
 
   The double precission floating point value of FPR <i>fs</i> is converted to a ceiled 64-bit word.
   The result is placed in FPR <i>fd</i>.
 
-  When the source value is <black>Infinity</black>, <black>NaN</black> or is outside of a 64-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
+  When the source value is <black>Infinity</black>, <black>NaN</black> or is outside a 64-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
 
   <b>Restrictions:</b>
   The fields <i>fs</i> and <i>fd</i> must be even FPRs. If the fields are not valid, the result is <black>UNPREDICTABLE</black>.
   The operand must be a value in double precision floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
 
   <b>Operation:</b>
-  fmt <- double
+  fmt ⇽ double
   StoreFPR(fd, L, ConvertFmt(ValueFPR(fs, fmt), fmt, L))
 
   <b>Exceptions:</b>
@@ -1640,19 +1640,19 @@ INSTRUCTION_CEIL_W_D_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  FPR[fd] <- convert_and_round(FPR[fs])
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
 
   The double precission floating point value of FPR <i>fs</i> is converted to a ceiled 32-bit word.
   The result is placed in FPR <i>fd</i>.
 
-  When the source value is <black>Infinity</black>, <black>NaN</black> or is outside of a 32-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
+  When the source value is <black>Infinity</black>, <black>NaN</black> or is outside a 32-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
 
   <b>Restrictions:</b>
-  The field <i>fs</i> must be a even FPR. If the field is not valid, the result is <black>UNPREDICTABLE</black>.
+  The field <i>fs</i> must be an even FPR. If the field is not valid, the result is <black>UNPREDICTABLE</black>.
   The operand must be a value in double precision floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
 
   <b>Operation:</b>
-  fmt <- double
+  fmt ⇽ double
   StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
 
   <b>Exceptions:</b>
@@ -1669,19 +1669,19 @@ INSTRUCTION_CEIL_L_S_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  FPR[fd] <- convert_and_round(FPR[fs])
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
 
   The floating point value of FPR <i>fs</i> is converted to a ceiled 64-bit word.
   The result is placed in FPR <i>fd</i>.
 
-  When the source value is <black>Infinity</black>, <black>NaN</black> or is outside of a 64-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
+  When the source value is <black>Infinity</black>, <black>NaN</black> or is outside a 64-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
 
   <b>Restrictions:</b>
-  The field <i>fd</i> must be a even FPR. If the field is not valid, the result is <black>UNPREDICTABLE</black>.
+  The field <i>fd</i> must be an even FPR. If the field is not valid, the result is <black>UNPREDICTABLE</black>.
   The operand must be a value in floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
 
   <b>Operation:</b>
-  fmt <- float
+  fmt ⇽ float
   StoreFPR(fd, L, ConvertFmt(ValueFPR(fs, fmt), fmt, L))
 
   <b>Exceptions:</b>
@@ -1698,18 +1698,18 @@ INSTRUCTION_CEIL_W_S_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  FPR[fd] <- convert_and_round(FPR[fs])
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
 
   The floating point value of FPR <i>fs</i> is converted to a ceiled 32-bit word.
   The result is placed in FPR <i>fd</i>.
 
-  When the source value is <black>Infinity</black>, <black>NaN</black> or is outside of a 32-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
+  When the source value is <black>Infinity</black>, <black>NaN</black> or is outside a 32-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
 
   <b>Restrictions:</b>
   The operand must be a value in floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
 
   <b>Operation:</b>
-  fmt <- float
+  fmt ⇽ float
   StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
 
   <b>Exceptions:</b>
@@ -1726,7 +1726,7 @@ INSTRUCTION_CLO_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- count_leading_ones(GPR[rs])
+  GPR[rd] ⇽ count_leading_ones(GPR[rs])
 
   Bits 31 to 0 of GPR <i>rs</i> are scanned from most significant to least significant bit. The number of leading ones is counted and the result is written to GPR <i>rd</i>.
 
@@ -1735,14 +1735,14 @@ INSTRUCTION_CLO_DOCUMENTATION: |-
 
   <b>Operation:</b>
 
-  temp <- 32
+  temp ⇽ 32
   for i in 31 to 0
       if GPR[rs]<sub>i</sub> = 0 then
-          temp <- 31 - i
+          temp ⇽ 31 - i
           break
       endif
   endfor
-  GPR[rd] <- temp
+  GPR[rd] ⇽ temp
 
   <b>Exceptions:</b>
   None
@@ -1758,7 +1758,7 @@ INSTRUCTION_CLZ_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- count_leading_zeros(GPR[rs])
+  GPR[rd] ⇽ count_leading_zeros(GPR[rs])
 
   Bits 31 to 0 of GPR <i>rs</i> are scanned from most significant to least significant bit. The number of leading zeros is counted and the result is written to GPR <i>rd</i>.
 
@@ -1767,14 +1767,14 @@ INSTRUCTION_CLZ_DOCUMENTATION: |-
 
   <b>Operation:</b>
 
-  temp <- 32
+  temp ⇽ 32
   for i in 31 to 0
       if GPR[rs]<sub>i</sub> = 1 then
-          temp <- 31 - i
+          temp ⇽ 31 - i
           break
       endif
   endfor
-  GPR[rd] <- temp
+  GPR[rd] ⇽ temp
 
   <b>Exceptions:</b>
   None
@@ -1790,7 +1790,7 @@ INSTRUCTION_CMP_D_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  FPR[fd] <- FPR[fs] compare_cond FPR[ft] where compare_cond = {TYPE}.
+  FPR[fd] ⇽ FPR[fs] compare_cond FPR[ft] where compare_cond = {TYPE}.
 
   The value in FPR <i>fs</i> is compared to the value in FPR <i>ft</i>.
   The FPR <i>fd</i> is filled with zeros if the result is false or ones of the result is true.
@@ -1811,24 +1811,24 @@ INSTRUCTION_CMP_D_DOCUMENTATION: |-
   Operands must be values in double precision floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
 
   <b>Operation:</b>
-  fmt <- double
-  fsv <- ValueFPR(fs, fmt)
-  ftv <- ValueFPR(ft, fmt)
+  fmt ⇽ double
+  fsv ⇽ ValueFPR(fs, fmt)
+  ftv ⇽ ValueFPR(ft, fmt)
 
   if is_NaN(fsv) or is_NaN(ftv) then
-      less <- false
-      equal <- false
-      unordered <- true
+      less ⇽ false
+      equal ⇽ false
+      unordered ⇽ true
       if cond<sub>3</sub> then
           SignalException(FloatingPointException)
       endif
   else
-      less <- fsv <<sub>fmt</sub> ftv
-      less <- fsv =<sub>fmt</sub> ftv
-      unordered <- false
+      less ⇽ fsv <<sub>fmt</sub> ftv
+      less ⇽ fsv =<sub>fmt</sub> ftv
+      unordered ⇽ false
   endif
 
-  condition <- cond<sub>4</sub> xor ((cond<sub>2</sub> and less) or (cond<sub>1</sub> and equal) or (cond<sub>0</sub> and unordered))
+  condition ⇽ cond<sub>4</sub> xor ((cond<sub>2</sub> and less) or (cond<sub>1</sub> and equal) or (cond<sub>0</sub> and unordered))
   StoreFPR(fd, fmt, extend_bit.fmt(condition))
 
   <b>Exceptions:</b>
@@ -1845,7 +1845,7 @@ INSTRUCTION_CMP_S_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  FPR[fd] <- FPR[fs] compare_cond FPR[ft] where compare_cond = {TYPE}.
+  FPR[fd] ⇽ FPR[fs] compare_cond FPR[ft] where compare_cond = {TYPE}.
 
   The value in FPR <i>fs</i> is compared to the value in FPR <i>ft</i>.
   The FPR <i>fd</i> is filled with zeros if the result is false or ones of the result is true.
@@ -1865,24 +1865,24 @@ INSTRUCTION_CMP_S_DOCUMENTATION: |-
   Operands must be values in floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
 
   <b>Operation:</b>
-  fmt <- float
-  fsv <- ValueFPR(fs, fmt)
-  ftv <- ValueFPR(ft, fmt)
+  fmt ⇽ float
+  fsv ⇽ ValueFPR(fs, fmt)
+  ftv ⇽ ValueFPR(ft, fmt)
 
   if is_NaN(fsv) or is_NaN(ftv) then
-      less <- false
-      equal <- false
-      unordered <- true
+      less ⇽ false
+      equal ⇽ false
+      unordered ⇽ true
       if cond<sub>3</sub> then
           SignalException(FloatingPointException)
       endif
   else
-      less <- fsv <<sub>fmt</sub> ftv
-      less <- fsv =<sub>fmt</sub> ftv
-      unordered <- false
+      less ⇽ fsv <<sub>fmt</sub> ftv
+      less ⇽ fsv =<sub>fmt</sub> ftv
+      unordered ⇽ false
   endif
 
-  condition <- cond<sub>4</sub> xor ((cond<sub>2</sub> and less) or (cond<sub>1</sub> and equal) or (cond<sub>0</sub> and unordered))
+  condition ⇽ cond<sub>4</sub> xor ((cond<sub>2</sub> and less) or (cond<sub>1</sub> and equal) or (cond<sub>0</sub> and unordered))
   StoreFPR(fd, fmt, extend_bit.fmt(condition))
 
   <b>Exceptions:</b>
@@ -1901,7 +1901,7 @@ INSTRUCTION_CRC32_DOCUMENTATION: |
 
 
   <b>Description:</b>
-  GPR[rt] <- CRC32(GRP[rt], GPR[rs])
+  GPR[rt] ⇽ CRC32(GRP[rt], GPR[rs])
 
   Generates a CRC value based on the reversed polynomial 0xEDB88320.
   The generated value overwrites the input CRC value at GPR <i>rt</i>, as the original value is considered redundant once the cumulative CRC value is regenerated.
@@ -1911,24 +1911,24 @@ INSTRUCTION_CRC32_DOCUMENTATION: |
   - If <i>sz</i> is 0, the meesage is a byte.
   - If <i>sz</i> is 1, the meesage is a half word.
   - If <i>sz</i> is 2, the meesage is a word.
-  This field is assigned depending of the mnemonic of the instruction.
+  This field is assigned depending on the mnemonic of the instruction.
 
   <b>Restrictions:</b>
   Ninguna
 
   <b>Operation:</b>
-  poly <- 0xEDB88320
+  poly ⇽ 0xEDB88320
   if(sz = 0b00) then
-      temp <- CRC32(GPR[rt], GPR[rs], 1, poly)
+      temp ⇽ CRC32(GPR[rt], GPR[rs], 1, poly)
   else if (sz = 0b01) then
-      temp <- CRC32(GPR[rt], GPR[rs], 2, poly)
+      temp ⇽ CRC32(GPR[rt], GPR[rs], 2, poly)
   else if (sz = 0b10) then
-      temp <- CRC32(GPR[rt], GPR[rs], 4, poly)
+      temp ⇽ CRC32(GPR[rt], GPR[rs], 4, poly)
   else then
       SignalException(ReservedInstruction)
   endif
 
-  GPR[rt] <- temp
+  GPR[rt] ⇽ temp
 
   <b>Exceptions:</b>
   Reserved Instruction
@@ -1944,7 +1944,7 @@ INSTRUCTION_CVT_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  FPR[fd] <- convert_and_round(FPR[fs])
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
 
   The value of FPR <i>fs</i> in the format of {FROM} is converted to a value in the format of {TO}.
   The result is placed in FPR <i>fd</i>.
@@ -1954,8 +1954,8 @@ INSTRUCTION_CVT_DOCUMENTATION: |-
   The operand must be in the value of its respective format. If it is not, the result is <black>UNPREDICTABLE</black>.
 
   <b>Operation:</b>
-  from <- {FROM_MNEMONIC}
-  to <- {TO_MNEMONIC}
+  from ⇽ {FROM_MNEMONIC}
+  to ⇽ {TO_MNEMONIC}
   StoreFPR(fd, to, ConvertFmt(ValueFPR(fs, from), from, to))
 
   <b>Exceptions:</b>
@@ -1972,7 +1972,7 @@ INSTRUCTION_DIV_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- GPR[rs] / GPR[rt]
+  GPR[rd] ⇽ GPR[rs] / GPR[rt]
 
   The 32-bit word value in GPR <i>rs</i> is divided by the 32-bit value in GPR <i>rt</i> to produce a 32-bit quotient.
   The 32-bit quotient is placed into GPR <i>rd</i>.
@@ -1982,13 +1982,13 @@ INSTRUCTION_DIV_DOCUMENTATION: |-
 
   <b>Operation:</b>
 
-  GPR[rd] <- GPR[rs] / GPR[rt]
+  GPR[rd] ⇽ GPR[rs] / GPR[rt]
 
   <b>Exceptions:</b>
   None
 
   <b>Programming Notes:</b>
-  Because the divide and modulo instructions are define to not trap if dividing by zero, it is safe to emit code that checks for zero-divide after the divide or modulo instruction.
+  Because the divide and modulo instructions are defined to not trap if dividing by zero, it is safe to emit code that checks for zero-divide after the divide or modulo instruction.
 INSTRUCTION_MOD_DOCUMENTATION: |-
   <u>Modulo</u>
 
@@ -2001,7 +2001,7 @@ INSTRUCTION_MOD_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- GPR[rs] % GPR[rt]
+  GPR[rd] ⇽ GPR[rs] % GPR[rt]
 
   The 32-bit word value in GPR <i>rs</i> is divided by the 32-bit value in GPR <i>rt</i> to produce a 32-bit remainder.
   The 32-bit remainder is placed into GPR <i>rd</i>.
@@ -2011,13 +2011,13 @@ INSTRUCTION_MOD_DOCUMENTATION: |-
 
   <b>Operation:</b>
 
-  GPR[rd] <- GPR[rs] % GPR[rt]
+  GPR[rd] ⇽ GPR[rs] % GPR[rt]
 
   <b>Exceptions:</b>
   None
 
   <b>Programming Notes:</b>
-  Because the divide and modulo instructions are define to not trap if dividing by zero, it is safe to emit code that checks for zero-divide after the divide or modulo instruction.
+  Because the divide and modulo instructions are defined to not trap if dividing by zero, it is safe to emit code that checks for zero-divide after the divide or modulo instruction.
 INSTRUCTION_DIVU_DOCUMENTATION: |-
   <u>Unsigned division</u>
 
@@ -2030,7 +2030,7 @@ INSTRUCTION_DIVU_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- GPR[rs] / GPR[rt]
+  GPR[rd] ⇽ GPR[rs] / GPR[rt]
 
   The 32-bit word value in GPR <i>rs</i> is divided by the 32-bit value in GPR <i>rt</i> to produce a 32-bit quotient.
   The 32-bit quotient is placed into GPR <i>rd</i>.
@@ -2040,13 +2040,13 @@ INSTRUCTION_DIVU_DOCUMENTATION: |-
 
   <b>Operation:</b>
 
-  GPR[rd] <- unsigned_word(GPR[rs]) / unsigned_word(GPR[rt])
+  GPR[rd] ⇽ unsigned_word(GPR[rs]) / unsigned_word(GPR[rt])
 
   <b>Exceptions:</b>
   None
 
   <b>Programming Notes:</b>
-  Because the divide and modulo instructions are define to not trap if dividing by zero, it is safe to emit code that checks for zero-divide after the divide or modulo instruction.
+  Because the divide and modulo instructions are defined to not trap if dividing by zero, it is safe to emit code that checks for zero-divide after the divide or modulo instruction.
 INSTRUCTION_MODU_DOCUMENTATION: |-
   <u>Unsigned modulo</u>
 
@@ -2059,7 +2059,7 @@ INSTRUCTION_MODU_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- GPR[rs] % GPR[rt]
+  GPR[rd] ⇽ GPR[rs] % GPR[rt]
 
   The 32-bit word value in GPR <i>rs</i> is divided by the 32-bit value in GPR <i>rt</i> to produce a 32-bit remainder.
   The 32-bit remainder is placed into GPR <i>rd</i>.
@@ -2069,13 +2069,13 @@ INSTRUCTION_MODU_DOCUMENTATION: |-
 
   <b>Operation:</b>
 
-  GPR[rd] <- unsigned_word(GPR[rs]) % unsigned_word(GPR[rt])
+  GPR[rd] ⇽ unsigned_word(GPR[rs]) % unsigned_word(GPR[rt])
 
   <b>Exceptions:</b>
   None
 
   <b>Programming Notes:</b>
-  Because the divide and modulo instructions are define to not trap if dividing by zero, it is safe to emit code that checks for zero-divide after the divide or modulo instruction.
+  Because the divide and modulo instructions are defined to not trap if dividing by zero, it is safe to emit code that checks for zero-divide after the divide or modulo instruction.
 INSTRUCTION_DIV_D_DOCUMENTATION: |-
   <u>Double precision floating point division</u>
 
@@ -2088,7 +2088,7 @@ INSTRUCTION_DIV_D_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  FPR[fd] <- FPR[fs] / FPR[ft]
+  FPR[fd] ⇽ FPR[fs] / FPR[ft]
 
   The value in FPR <i>ft</i> is divided by the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
   The operands and result are values in double precision floating point.
@@ -2098,7 +2098,7 @@ INSTRUCTION_DIV_D_DOCUMENTATION: |-
   Operands must be values in double precision floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
 
   <b>Operation:</b>
-  fmt <- double
+  fmt ⇽ double
   StoreFPR(fd, fmt, ValueFPR(fs, fmt) /<sub>fmt</sub> ValueFPR(ft, fmt))
 
   <b>Exceptions:</b>
@@ -2115,7 +2115,7 @@ INSTRUCTION_DIV_S_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  FPR[fd] <- FPR[fs] / FPR[ft]
+  FPR[fd] ⇽ FPR[fs] / FPR[ft]
 
   The value in FPR <i>ft</i> is divided by the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
   The operands and result are values in floating point.
@@ -2124,7 +2124,7 @@ INSTRUCTION_DIV_S_DOCUMENTATION: |-
   Operands must be values in floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
 
   <b>Operation:</b>
-  fmt <- float
+  fmt ⇽ float
   StoreFPR(fd, fmt, ValueFPR(fs, fmt) /<sub>fmt</sub> ValueFPR(ft, fmt))
 
   <b>Exceptions:</b>
@@ -2150,14 +2150,14 @@ INSTRUCTION_ERET_DOCUMENTATION: |-
 
   <b>Operation:</b>
   if Status<sub>ERL</sub> = 1 then
-      temp <- ErrorEPC
-      Status<sub>ERL</sub> <- 0
+      temp ⇽ ErrorEPC
+      Status<sub>ERL</sub> ⇽ 0
   else
-      temp <- EPC
-      Status<sub>EXL</sub> <- 0
+      temp ⇽ EPC
+      Status<sub>EXL</sub> ⇽ 0
   endif
 
-  PC <- temp
+  PC ⇽ temp
 
   ClearHazards()
 
@@ -2186,7 +2186,7 @@ INSTRUCTION_J_DOCUMENTATION: |-
   <b>Operation:</b>
   <black>I:</black>
   <black>I+1:</black>
-  PC <- PC<sub>31..28</sub> || index || 00
+  PC ⇽ PC<sub>31..28</sub> || index || 00
 
   <b>Exceptions:</b>
   None
@@ -2219,9 +2219,9 @@ INSTRUCTION_JAL_DOCUMENTATION: |-
 
   <b>Operation:</b>
   <black>I:</black>
-  GPR[31] <- PC + 4
+  GPR[31] ⇽ PC + 4
   <black>I+1:</black>
-  PC <- PC<sub>31..28</sub> || index || 00
+  PC ⇽ PC<sub>31..28</sub> || index || 00
 
   <b>Exceptions:</b>
   None
@@ -2243,7 +2243,7 @@ INSTRUCTION_JALR_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- return_addr, PC <- GPR[rs]
+  GPR[rd] ⇽ return_addr, PC ⇽ GPR[rs]
 
   Places the return address link in GPR <i>rd</i>. The return link is the address of the instruction where the execution continues after a procedure call.
 
@@ -2258,10 +2258,10 @@ INSTRUCTION_JALR_DOCUMENTATION: |-
 
   <b>Operation:</b>
   <black>I:</black>
-  temp <- GPR[rs]
-  GPR[31] <- PC + 4
+  temp ⇽ GPR[rs]
+  GPR[31] ⇽ PC + 4
   <black>I+1:</black>
-  PC <- temp
+  PC ⇽ temp
 
   <b>Exceptions:</b>
   None
@@ -2281,7 +2281,7 @@ INSTRUCTION_LB_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rt] <- memory[GPR[base] + offset]
+  GPR[rt] ⇽ memory[GPR[base] + offset]
 
   The contents of the 8-bit byte at the memory location by the effective address are fetched, sign-extended and placed in GPR <i>rt</i>.
   The 16-bit signed <i>offset</i> is added to the contents of GPR <i>base</i> to form the effective address.
@@ -2290,10 +2290,10 @@ INSTRUCTION_LB_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  v_addr <- sign_extend(offset) + GPR[base]
-  (p_addr, cca) <- AddressTranslation(v_addr, DATA, LOAD)
-  mem_byte <- LoadMemory(CCA, BYTE, p_addr, v_addr, DATA)
-  GPR[rt] <- sign_extend(mem_byte)
+  v_addr ⇽ sign_extend(offset) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+  mem_byte ⇽ LoadMemory(CCA, BYTE, p_addr, v_addr, DATA)
+  GPR[rt] ⇽ sign_extend(mem_byte)
 
   <b>Exceptions:</b>
   Address Error
@@ -2309,7 +2309,7 @@ INSTRUCTION_LW_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rt] <- memory[GPR[base] + offset]
+  GPR[rt] ⇽ memory[GPR[base] + offset]
 
   The contents of the 32-bit word at the memory location by the effective address are fetched, sign-extended and placed in GPR <i>rt</i>.
   The 16-bit signed <i>offset</i> is added to the contents of GPR <i>base</i> to form the effective address.
@@ -2318,10 +2318,10 @@ INSTRUCTION_LW_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  v_addr <- sign_extend(offset) + GPR[base]
-  (p_addr, cca) <- AddressTranslation(v_addr, DATA, LOAD)
-  mem_word <- LoadMemory(CCA, WORD, p_addr, v_addr, DATA)
-  GPR[rt] <- sign_extend(mem_word)
+  v_addr ⇽ sign_extend(offset) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+  mem_word ⇽ LoadMemory(CCA, WORD, p_addr, v_addr, DATA)
+  GPR[rt] ⇽ sign_extend(mem_word)
 
   <b>Exceptions:</b>
   Address Error
@@ -2338,7 +2338,7 @@ INSTRUCTION_MFC0_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rt] <- CPR[0, rd, sel]
+  GPR[rt] ⇽ CPR[0, rd, sel]
 
   The contents of the coprocessor 0 register specified by the combination of <i>rd</i> and <i>sel</i> are loaded into the general register <i>rt</i>.
 
@@ -2347,9 +2347,9 @@ INSTRUCTION_MFC0_DOCUMENTATION: |-
 
   <b>Operation:</b>
   if IsCoprocessorRegisterImplemented(0, rd, sel) then
-      GPR[rt] <- CPR[0, rd, sel]
+      GPR[rt] ⇽ CPR[0, rd, sel]
   else
-      GPR[rt] <- 0
+      GPR[rt] ⇽ 0
   endif
 
   <b>Exceptions:</b>
@@ -2366,7 +2366,7 @@ INSTRUCTION_MFC1_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rt] <- FPR[fs]
+  GPR[rt] ⇽ FPR[fs]
 
   The contents of the coprocessor 1 register <i>fs</i> are loaded into the general register <i>rt</i>.
 
@@ -2374,7 +2374,7 @@ INSTRUCTION_MFC1_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  GPR[rt] <- ValueFPR(fs, UNINTERPRETED_WORD)
+  GPR[rt] ⇽ ValueFPR(fs, UNINTERPRETED_WORD)
 
   <b>Exceptions:</b>
   None
@@ -2391,7 +2391,7 @@ INSTRUCTION_MTC0_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  CPR[0, rd, sel] <- GPR[rt]
+  CPR[0, rd, sel] ⇽ GPR[rt]
 
   The contents of the general register <i>rt</i> are loaded into the coprocessor 0 register specified by the combination of <i>rd</i> and <i>sel</i>.
 
@@ -2400,7 +2400,7 @@ INSTRUCTION_MTC0_DOCUMENTATION: |-
 
   <b>Operation:</b>
   if IsCoprocessorRegisterImplemented(0, rd, sel) then
-      CPR[0, rd, sel] <- GPR[rt]
+      CPR[0, rd, sel] ⇽ GPR[rt]
   endif
 
   <b>Exceptions:</b>
@@ -2417,7 +2417,7 @@ INSTRUCTION_MTC1_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  FPR[fs] <- GPR[rt]
+  FPR[fs] ⇽ GPR[rt]
 
   The contents of the general register <i>rt</i> are loaded into the coprocessor 1 register <i>fs</i>.
 
@@ -2441,7 +2441,7 @@ INSTRUCTION_MUL_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- lo_word(GPR[rs] * GPR[rt])
+  GPR[rd] ⇽ lo_word(GPR[rs] * GPR[rt])
 
   The 32-bit word value in GPR <i>rs</i> is multiplied by the 32-bit value in GPR <i>rt</i> to produce a 32-bit word contaning the low 32 bits of the result.
   The 32-bit word is placed into GPR <i>rd</i>.
@@ -2451,7 +2451,7 @@ INSTRUCTION_MUL_DOCUMENTATION: |-
 
   <b>Operation:</b>
 
-  GPR[rd] <- lo_word(GPR[rs] * GPR[rt])
+  GPR[rd] ⇽ lo_word(GPR[rs] * GPR[rt])
 
   <b>Exceptions:</b>
   None
@@ -2471,7 +2471,7 @@ INSTRUCTION_MUH_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- hi_word(GPR[rs] * GPR[rt])
+  GPR[rd] ⇽ hi_word(GPR[rs] * GPR[rt])
 
   The 32-bit word value in GPR <i>rs</i> is multiplied by the 32-bit value in GPR <i>rt</i> to produce a 32-bit word contaning the upper 32 bits of the result.
   The 32-bit word is placed into GPR <i>rd</i>.
@@ -2481,7 +2481,7 @@ INSTRUCTION_MUH_DOCUMENTATION: |-
 
   <b>Operation:</b>
 
-  GPR[rd] <- hi_word(GPR[rs] * GPR[rt])
+  GPR[rd] ⇽ hi_word(GPR[rs] * GPR[rt])
 
   <b>Exceptions:</b>
   None
@@ -2501,7 +2501,7 @@ INSTRUCTION_MULU_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- lo_word(GPR[rs] * GPR[rt])
+  GPR[rd] ⇽ lo_word(GPR[rs] * GPR[rt])
 
   The 32-bit word value in GPR <i>rs</i> is multiplied by the 32-bit value in GPR <i>rt</i> to produce a 32-bit word contaning the low 32 bits of the result.
   The 32-bit word is placed into GPR <i>rd</i>.
@@ -2511,7 +2511,7 @@ INSTRUCTION_MULU_DOCUMENTATION: |-
 
   <b>Operation:</b>
 
-  GPR[rd] <- lo_word(unsigned_word(GPR[rs]) * unsigned_word(GPR[rt]))
+  GPR[rd] ⇽ lo_word(unsigned_word(GPR[rs]) * unsigned_word(GPR[rt]))
 
   <b>Exceptions:</b>
   None
@@ -2531,7 +2531,7 @@ INSTRUCTION_MUHU_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- hi_word(GPR[rs] * GPR[rt])
+  GPR[rd] ⇽ hi_word(GPR[rs] * GPR[rt])
 
   The 32-bit word value in GPR <i>rs</i> is multiplied by the 32-bit value in GPR <i>rt</i> to produce a 32-bit word contaning the upper 32 bits of the result.
   The 32-bit word is placed into GPR <i>rd</i>.
@@ -2541,7 +2541,7 @@ INSTRUCTION_MUHU_DOCUMENTATION: |-
 
   <b>Operation:</b>
 
-  GPR[rd] <- hi_word(unsigned_word(GPR[rs]) * unsigned_word(GPR[rt]))
+  GPR[rd] ⇽ hi_word(unsigned_word(GPR[rs]) * unsigned_word(GPR[rt]))
 
   <b>Exceptions:</b>
   None
@@ -2561,7 +2561,7 @@ INSTRUCTION_MUL_D_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  FPR[fd] <- FPR[fs] * FPR[ft]
+  FPR[fd] ⇽ FPR[fs] * FPR[ft]
 
   The value in FPR <i>ft</i> is multiplied by the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
   The operands and result are values in double precision floating point.
@@ -2571,7 +2571,7 @@ INSTRUCTION_MUL_D_DOCUMENTATION: |-
   Operands must be values in double precision floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
 
   <b>Operation:</b>
-  fmt <- double
+  fmt ⇽ double
   StoreFPR(fd, fmt, ValueFPR(fs, fmt) *<sub>fmt</sub> ValueFPR(ft, fmt))
 
   <b>Exceptions:</b>
@@ -2588,7 +2588,7 @@ INSTRUCTION_MUL_S_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  FPR[fd] <- FPR[fs] * FPR[ft]
+  FPR[fd] ⇽ FPR[fs] * FPR[ft]
 
   The value in FPR <i>ft</i> is multiplied by the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
   The operands and result are values in floating point.
@@ -2597,7 +2597,7 @@ INSTRUCTION_MUL_S_DOCUMENTATION: |-
   Operands must be values in floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
 
   <b>Operation:</b>
-  fmt <- float
+  fmt ⇽ float
   StoreFPR(fd, fmt, ValueFPR(fs, fmt) *<sub>fmt</sub> ValueFPR(ft, fmt))
 
   <b>Exceptions:</b>
@@ -2614,7 +2614,7 @@ INSTRUCTION_OR_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- GPR[rs] or GPR[rt]
+  GPR[rd] ⇽ GPR[rs] or GPR[rt]
 
   Performs a bitwise logical OR using the values inside GPR <i>rs</i> and GPR <i>rt</i>.
   The result is placed into GPR <i>rd</i>.
@@ -2623,7 +2623,7 @@ INSTRUCTION_OR_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  GPR[rd] <- GPR[rs] or GPR[rt]
+  GPR[rd] ⇽ GPR[rs] or GPR[rt]
 
   <b>Exceptions:</b>
   None
@@ -2639,7 +2639,7 @@ INSTRUCTION_ORI_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rt] <- GPR[rs] or zero_extend(immediate)
+  GPR[rt] ⇽ GPR[rs] or zero_extend(immediate)
 
   The 16-bit <i>immediate</i> is zero-extended to the left and combined with the value of GPR <i>rs</i> in a bitwise logical OR operation.
   The result is placed into GPR <i>rt</i>.
@@ -2648,7 +2648,7 @@ INSTRUCTION_ORI_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  GPR[rt] <- GPR[rs] or zero_extend(immediate)
+  GPR[rt] ⇽ GPR[rs] or zero_extend(immediate)
 
   <b>Exceptions:</b>
   None
@@ -2664,7 +2664,7 @@ INSTRUCTION_SB_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  memory[GPR[base] + offset] <- GPR[rt]
+  memory[GPR[base] + offset] ⇽ GPR[rt]
 
   The least-significant 8-bit byte of GPR <i>rt</i> is stored in memory at the location specified by the effective address.
   The 16-bit signed <i>offset</i> is added to the contents of GPR <i>base</i> to form the effective address.
@@ -2673,11 +2673,11 @@ INSTRUCTION_SB_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  v_addr <- sign_extend(offset) + GPR[base]
-  (p_addr, cca) <- AddressTranslation(v_addr, DATA, LOAD)
+  v_addr ⇽ sign_extend(offset) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
 
-  byte_sel <- v_addr<sub>1..0</sub> xor BigEndianCPU<sub>2</sub>
-  data_byte <- GPR[rt]<sub>31 - 8 * byte_sel .. 0</sub> || 0<sub>8 * bytesel</sub>
+  byte_sel ⇽ v_addr<sub>1..0</sub> xor BigEndianCPU<sub>2</sub>
+  data_byte ⇽ GPR[rt]<sub>31 - 8 * byte_sel .. 0</sub> || 0<sub>8 * bytesel</sub>
   StoreMemory (CCA, BYTE, data_byte, p_addr, v_addr, DATA)
 
   <b>Exceptions:</b>
@@ -2694,7 +2694,7 @@ INSTRUCTION_SLL_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- GPR[rt] << sa
+  GPR[rd] ⇽ GPR[rt] << sa
 
   The contents of GPR <i>rt</i> are shifted left, inserting zeros into the emptied bits. The result is placed in GPR <i>rd</i>. The bit-shift amount is specified by <i>sa</i>.
 
@@ -2702,7 +2702,7 @@ INSTRUCTION_SLL_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  GPR[rd] <- GPR[rt]<sub>31-sa..0</sub> || 0<sub>sa</sub>
+  GPR[rd] ⇽ GPR[rt]<sub>31-sa..0</sub> || 0<sub>sa</sub>
 
   <b>Exceptions:</b>
   None
@@ -2721,7 +2721,7 @@ INSTRUCTION_SLLV_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- GPR[rt] << GPR[rs]
+  GPR[rd] ⇽ GPR[rt] << GPR[rs]
 
   The contents of GPR <i>rt</i> are shifted left, inserting zeros into the emptied bits. The result is placed in GPR <i>rd</i>. The bit-shift amount is specified by the low-order 5 bits of GPR <i>rs</i>.
 
@@ -2729,8 +2729,8 @@ INSTRUCTION_SLLV_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  sa <- GPR[rs]<sub>4..0</sub>
-  GPR[rd] <- GPR[rt]<sub>31-sa..0</sub> || 0<sub>sa</sub>
+  sa ⇽ GPR[rs]<sub>4..0</sub>
+  GPR[rd] ⇽ GPR[rt]<sub>31-sa..0</sub> || 0<sub>sa</sub>
 
   <b>Exceptions:</b>
   None
@@ -2746,7 +2746,7 @@ INSTRUCTION_SLT_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- (GPR[rs] < GPR[rt])
+  GPR[rd] ⇽ (GPR[rs] < GPR[rt])
 
   Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
   If GPR <i>rs</i> is less than GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
@@ -2756,9 +2756,9 @@ INSTRUCTION_SLT_DOCUMENTATION: |-
 
   <b>Operation:</b>
   if GPR[rs] < GPR[rt] then
-      GPR[rd] <- 0<sub>31..0</sub> || 1
+      GPR[rd] ⇽ 0<sub>31..0</sub> || 1
   else
-      GPR[rd] <- 0
+      GPR[rd] ⇽ 0
   endif
 
   <b>Exceptions:</b>
@@ -2775,7 +2775,7 @@ INSTRUCTION_SLTI_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- (GPR[rs] < sign_extend(immediate))
+  GPR[rd] ⇽ (GPR[rs] < sign_extend(immediate))
 
   Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
   If GPR <i>rs</i> is less than <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
@@ -2785,9 +2785,9 @@ INSTRUCTION_SLTI_DOCUMENTATION: |-
 
   <b>Operation:</b>
   if GPR[rs] < sign_extend(immediate) then
-      GPR[rd] <- 0<sub>31..0</sub> || 1
+      GPR[rd] ⇽ 0<sub>31..0</sub> || 1
   else
-      GPR[rd] <- 0
+      GPR[rd] ⇽ 0
   endif
 
   <b>Exceptions:</b>
@@ -2804,7 +2804,7 @@ INSTRUCTION_SLTIU_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- (GPR[rs] < sign_extend(immediate))
+  GPR[rd] ⇽ (GPR[rs] < sign_extend(immediate))
 
   Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
   If GPR <i>rs</i> is less than <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
@@ -2814,9 +2814,9 @@ INSTRUCTION_SLTIU_DOCUMENTATION: |-
 
   <b>Operation:</b>
   if (0 || GPR[rs]) < (0 || sign_extend(immediate)) then
-      GPR[rd] <- 0<sub>31..0</sub> || 1
+      GPR[rd] ⇽ 0<sub>31..0</sub> || 1
   else
-      GPR[rd] <- 0
+      GPR[rd] ⇽ 0
   endif
 
   <b>Exceptions:</b>
@@ -2833,7 +2833,7 @@ INSTRUCTION_SLTU_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- (GPR[rs] < GPR[rt])
+  GPR[rd] ⇽ (GPR[rs] < GPR[rt])
 
   Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
   If GPR <i>rs</i> is less than GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
@@ -2843,9 +2843,9 @@ INSTRUCTION_SLTU_DOCUMENTATION: |-
 
   <b>Operation:</b>
   if (0 || GPR[rs]) < (0 || GPR[rt]) then
-      GPR[rd] <- 0<sub>31..0</sub> || 1
+      GPR[rd] ⇽ 0<sub>31..0</sub> || 1
   else
-      GPR[rd] <- 0
+      GPR[rd] ⇽ 0
   endif
 
   <b>Exceptions:</b>
@@ -2862,7 +2862,7 @@ INSTRUCTION_SRL_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- GPR[rt] >> sa
+  GPR[rd] ⇽ GPR[rt] >> sa
 
   The contents of GPR <i>rt</i> are shifted right, inserting zeros into the emptied bits. The result is placed in GPR <i>rd</i>. The bit-shift amount is specified by <i>sa</i>.
 
@@ -2870,7 +2870,7 @@ INSTRUCTION_SRL_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  GPR[rd] <- 0<sub>sa</sub> || GPR[rt]<sub>31..sa</sub>
+  GPR[rd] ⇽ 0<sub>sa</sub> || GPR[rt]<sub>31..sa</sub>
 
   <b>Exceptions:</b>
   None
@@ -2886,7 +2886,7 @@ INSTRUCTION_SRLV_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- GPR[rt] >> GPR[rs]
+  GPR[rd] ⇽ GPR[rt] >> GPR[rs]
 
   The contents of GPR <i>rt</i> are shifted right, inserting zeros into the emptied bits. The result is placed in GPR <i>rd</i>. The bit-shift amount is specified by the low-order 5 bits of GPR <i>rs</i>.
 
@@ -2894,8 +2894,8 @@ INSTRUCTION_SRLV_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  sa <- GPR[rs]<sub>4..0</sub>
-  GPR[rd] <- 0<sub>sa</sub> || GPR[rt]<sub>31..sa</sub>
+  sa ⇽ GPR[rs]<sub>4..0</sub>
+  GPR[rd] ⇽ 0<sub>sa</sub> || GPR[rt]<sub>31..sa</sub>
 
   <b>Exceptions:</b>
   None
@@ -2911,7 +2911,7 @@ INSTRUCTION_SUB_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- GPR[rs] - GPR[rt]
+  GPR[rd] ⇽ GPR[rs] - GPR[rt]
 
   The 32-bit word value in GPR <i>rt</i> is subtracted to the 32-bit value in GPR <i>rs</i> to produce a 32-bit result.
    - If the subtraction results in 32-bit 2's complement arithmetic overflow, the destination register is not modified and an <black>Integer Overflow</black> exception occurs.
@@ -2921,11 +2921,11 @@ INSTRUCTION_SUB_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  temp <- (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) - (GPR[rt]<sub>31</sub> || GPR[rt]<sub>31..0</sub>)
+  temp ⇽ (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) - (GPR[rt]<sub>31</sub> || GPR[rt]<sub>31..0</sub>)
   if temp<sub>32</sub> != temp<sub>31</sub> then
       SignalException(IntegerOverflow)
   else
-      GPR[rd] <- temp<sub>31..0</sub>
+      GPR[rd] ⇽ temp<sub>31..0</sub>
   endif
 
   <b>Exceptions:</b>
@@ -2945,7 +2945,7 @@ INSTRUCTION_SUB_D_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  FPR[fd] <- FPR[fs] - FPR[ft]
+  FPR[fd] ⇽ FPR[fs] - FPR[ft]
 
   The value in FPR <i>ft</i> is subtracted to the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
   The operands and result are values in double precision floating point.
@@ -2955,7 +2955,7 @@ INSTRUCTION_SUB_D_DOCUMENTATION: |-
   The operand must be a value in double precision floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
 
   <b>Operation:</b>
-  fmt <- double
+  fmt ⇽ double
   StoreFPR(fd, fmt, ValueFPR(fs, fmt) -<sub>fmt</sub> ValueFPR(ft, fmt))
 
   <b>Exceptions:</b>
@@ -2972,7 +2972,7 @@ INSTRUCTION_SUB_S_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  FPR[fd] <- FPR[fs] - FPR[ft]
+  FPR[fd] ⇽ FPR[fs] - FPR[ft]
 
   The value in FPR <i>ft</i> is subtracted to the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
   The operands and result are values in floating point.
@@ -2981,7 +2981,7 @@ INSTRUCTION_SUB_S_DOCUMENTATION: |-
   The operand must be a value in floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
 
   <b>Operation:</b>
-  fmt <- float
+  fmt ⇽ float
   StoreFPR(fd, fmt, ValueFPR(fs, fmt) -<sub>fmt</sub> ValueFPR(ft, fmt))
 
   <b>Exceptions:</b>
@@ -2998,7 +2998,7 @@ INSTRUCTION_SUBU_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- GPR[rs] - GPR[rt]
+  GPR[rd] ⇽ GPR[rs] - GPR[rt]
 
   The 32-bit word value in GPR <i>rt</i> is subtracted to the 32-bit value in GPR <i>rs</i> to produce a 32-bit result.
   The 32-bit result is placed into GPR <i>rd</i>.
@@ -3008,8 +3008,8 @@ INSTRUCTION_SUBU_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  temp <- GPR[rs] - GPR[rt]
-  GPR[rd] <- temp
+  temp ⇽ GPR[rs] - GPR[rt]
+  GPR[rd] ⇽ temp
 
   <b>Exceptions:</b>
   None
@@ -3028,7 +3028,7 @@ INSTRUCTION_SW_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  memory[GPR[base] + offset] <- GPR[rt]
+  memory[GPR[base] + offset] ⇽ GPR[rt]
 
   The word of GPR <i>rt</i> is stored in memory at the location specified by the effective address.
   The 16-bit signed <i>offset</i> is added to the contents of GPR <i>base</i> to form the effective address.
@@ -3037,10 +3037,10 @@ INSTRUCTION_SW_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  v_addr <- sign_extend(offset) + GPR[base]
-  (p_addr, cca) <- AddressTranslation(v_addr, DATA, LOAD)
+  v_addr ⇽ sign_extend(offset) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
 
-  word <- GPR[rt]
+  word ⇽ GPR[rt]
   StoreMemory (CCA, WORD, word, p_addr, v_addr, DATA)
 
   <b>Exceptions:</b>
@@ -3133,7 +3133,7 @@ INSTRUCTION_TGE_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  if GPR[rs] >= GPR[rt] then Trap
+  if GPR[rs] ≥ GPR[rt] then Trap
 
   Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers. If the first value is greater or equal to the second value, throws a <black>Trap</black> exception.
 
@@ -3141,7 +3141,7 @@ INSTRUCTION_TGE_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  if GPR[rs] >= GPR[rt] then
+  if GPR[rs] ≥ GPR[rt] then
       SignalException(Trap)
   endif
 
@@ -3159,7 +3159,7 @@ INSTRUCTION_TGEI_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  if GPR[rs] >= immediate then Trap
+  if GPR[rs] ≥ immediate then Trap
 
   Compares the contents of GPR <i>rs</i> and the immediate value as signed integers. If the first value is greater or equal to the second value, throws a <black>Trap</black> exception.
 
@@ -3167,7 +3167,7 @@ INSTRUCTION_TGEI_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  if GPR[rs] >= immediate then
+  if GPR[rs] ≥ immediate then
       SignalException(Trap)
   endif
 
@@ -3185,7 +3185,7 @@ INSTRUCTION_TGEIU_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  if GPR[rs] >= immediate then Trap
+  if GPR[rs] ≥ immediate then Trap
 
   Compares the contents of GPR <i>rs</i> and the immediate value as unsigned integers. If the first value is greater or equal to the second value, throws a <black>Trap</black> exception.
 
@@ -3193,7 +3193,7 @@ INSTRUCTION_TGEIU_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  if unsigned_word(GPR[rs]) >= unsigned_word(immediate) then
+  if unsigned_word(GPR[rs]) ≥ unsigned_word(immediate) then
       SignalException(Trap)
   endif
 
@@ -3211,7 +3211,7 @@ INSTRUCTION_TGEU_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  if GPR[rs] >= GPR[rt] then Trap
+  if GPR[rs] ≥ GPR[rt] then Trap
 
   Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers. If the first value is greater or equal to the second value, throws a <black>Trap</black> exception.
 
@@ -3219,7 +3219,7 @@ INSTRUCTION_TGEU_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  if unsigned_word(GPR[rs]) >= unsigned_word(GPR[rt]) then
+  if unsigned_word(GPR[rs]) ≥ unsigned_word(GPR[rt]) then
       SignalException(Trap)
   endif
 
@@ -3393,7 +3393,7 @@ INSTRUCTION_XOR_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rd] <- GPR[rs] xor GPR[rt]
+  GPR[rd] ⇽ GPR[rs] xor GPR[rt]
 
   Performs a bitwise logical XOR using the values inside GPR <i>rs</i> and GPR <i>rt</i>.
   The result is placed into GPR <i>rd</i>.
@@ -3402,7 +3402,7 @@ INSTRUCTION_XOR_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  GPR[rd] <- GPR[rs] xor GPR[rt]
+  GPR[rd] ⇽ GPR[rs] xor GPR[rt]
 
   <b>Exceptions:</b>
   None
@@ -3418,7 +3418,7 @@ INSTRUCTION_XORI_DOCUMENTATION: |-
 
 
   <b>Description:</b>
-  GPR[rt] <- GPR[rs] xor zero_extend(immediate)
+  GPR[rt] ⇽ GPR[rs] xor zero_extend(immediate)
 
   The 16-bit <i>immediate</i> is zero-extended to the left and combined with the value of GPR <i>rs</i> in a bitwise logical XOR operation.
   The result is placed into GPR <i>rt</i>.
@@ -3427,7 +3427,7 @@ INSTRUCTION_XORI_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  GPR[rt] <- GPR[rs] xor zero_extend(immediate)
+  GPR[rt] ⇽ GPR[rs] xor zero_extend(immediate)
 
   <b>Exceptions:</b>
   None
@@ -3442,7 +3442,7 @@ INSTRUCTION_ADDI_DOCUMENTATION: |-
   add rt, $at, rs
 
   <b>Description:</b>
-  GPR[rt] <- GPR[rs] + immediate
+  GPR[rt] ⇽ GPR[rs] + immediate
 
   The 16-bit signed <i>immediate</i> is added to the 32-bit value in GRP <i>rs</i> to produce a 32-bit arithmetic result.
    - If the addition results in 32-bit 2's complement arithmetic overflow, the destination register is not modified and an <black>Integer Overflow</black> exception occurs.
@@ -3452,11 +3452,11 @@ INSTRUCTION_ADDI_DOCUMENTATION: |-
   None
 
   <b>Operation:</b>
-  temp <- (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (immediate<sub>31</sub> || immediate<sub>31..0</sub>)
+  temp ⇽ (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (immediate<sub>31</sub> || immediate<sub>31..0</sub>)
   if temp<sub>32</sub> != temp<sub>31</sub> then
       SignalException(IntegerOverflow)
   else
-      GPR[rt] <- temp<sub>31..0</sub>
+      GPR[rt] ⇽ temp<sub>31..0</sub>
   endif
 
   <b>Exceptions:</b>
@@ -3513,7 +3513,7 @@ INSTRUCTION_LA_DOCUMENTATION: |-
   la rs, label
 
   <b>Conversion:</b>
-  address <- get_address(label)
+  address ⇽ get_address(label)
   aui $at, $zero, address<sub>31..16</sub>
   ori rs, $at, address<sub>15..0</sub>
 
@@ -3616,7 +3616,7 @@ INSTRUCTION_MOVE_DOCUMENTATION: |-
   add rd, $zero, rs
 
   <b>Description:</b>
-  GPR[rd] <- GPR[rs]
+  GPR[rd] ⇽ GPR[rs]
 
   Moves the contents of the GPR <i>rs</i> to the GPR <i>rd</i>.
 
@@ -3654,7 +3654,7 @@ INSTRUCTION_SGE_DOCUMENTATION: |-
   subu rd, $at, rd
 
   <b>Description:</b>
-  GPR[rd] <- (GPR[rs] >= GPR[rt])
+  GPR[rd] ⇽ (GPR[rs] ≥ GPR[rt])
 
   Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
   If GPR <i>rs</i> is greater than or equal GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
@@ -3676,7 +3676,7 @@ INSTRUCTION_SGEI_DOCUMENTATION: |-
   subu rd, $at, rd
 
   <b>Description:</b>
-  GPR[rd] <- (GPR[rs] >= sign_extend(immediate))
+  GPR[rd] ⇽ (GPR[rs] ≥ sign_extend(immediate))
 
   Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
   If GPR <i>rs</i> is greater than or equal <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
@@ -3698,7 +3698,7 @@ INSTRUCTION_SGEIU_DOCUMENTATION: |-
   subu rd, $at, rd
 
   <b>Description:</b>
-  GPR[rd] <- (GPR[rs] >= sign_extend(immediate))
+  GPR[rd] ⇽ (GPR[rs] ≥ sign_extend(immediate))
 
   Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
   If GPR <i>rs</i> is greater than or equal <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
@@ -3720,7 +3720,7 @@ INSTRUCTION_SGEU_DOCUMENTATION: |-
   subu rd, $at, rd
 
   <b>Description:</b>
-  GPR[rd] <- (GPR[rs] >= GPR[rt])
+  GPR[rd] ⇽ (GPR[rs] ≥ GPR[rt])
 
   Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
   If GPR <i>rs</i> is greater than or equal GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
@@ -3740,7 +3740,7 @@ INSTRUCTION_SGT_DOCUMENTATION: |-
   slt rd, rs, rt
 
   <b>Description:</b>
-  GPR[rd] <- (GPR[rs] > GPR[rt])
+  GPR[rd] ⇽ (GPR[rs] > GPR[rt])
 
   Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
   If GPR <i>rs</i> is greater than GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
@@ -3761,7 +3761,7 @@ INSTRUCTION_SGTI_DOCUMENTATION: |-
   slt rd, $at, rs
 
   <b>Description:</b>
-  GPR[rd] <- (GPR[rs] > sign_extend(immediate))
+  GPR[rd] ⇽ (GPR[rs] > sign_extend(immediate))
 
   Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
   If GPR <i>rs</i> is greater than <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
@@ -3782,7 +3782,7 @@ INSTRUCTION_SGTIU_DOCUMENTATION: |-
   sltu rd, $at, rs
 
   <b>Description:</b>
-  GPR[rd] <- (GPR[rs] > sign_extend(immediate))
+  GPR[rd] ⇽ (GPR[rs] > sign_extend(immediate))
 
   Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
   If GPR <i>rs</i> is greater than <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
@@ -3802,7 +3802,7 @@ INSTRUCTION_SGTU_DOCUMENTATION: |-
   sltu rd, rs, rt
 
   <b>Description:</b>
-  GPR[rd] <- (GPR[rs] > GPR[rt])
+  GPR[rd] ⇽ (GPR[rs] > GPR[rt])
 
   Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
   If GPR <i>rs</i> is greater than GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
@@ -3824,7 +3824,7 @@ INSTRUCTION_SLE_DOCUMENTATION: |-
   subu rd, $at, rd
 
   <b>Description:</b>
-  GPR[rd] <- (GPR[rs] <= GPR[rt])
+  GPR[rd] ⇽ (GPR[rs] ≤ GPR[rt])
 
   Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
   If GPR <i>rs</i> is less than or equal GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
@@ -3847,7 +3847,7 @@ INSTRUCTION_SLEI_DOCUMENTATION: |-
   subu rd, $at, rd
 
   <b>Description:</b>
-  GPR[rd] <- (GPR[rs] <= sign_extend(immediate))
+  GPR[rd] ⇽ (GPR[rs] ≤ sign_extend(immediate))
 
   Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
   If GPR <i>rs</i> is less than or equal <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
@@ -3870,7 +3870,7 @@ INSTRUCTION_SLEIU_DOCUMENTATION: |-
   subu rd, $at, rd
 
   <b>Description:</b>
-  GPR[rd] <- (GPR[rs] <= sign_extend(immediate))
+  GPR[rd] ⇽ (GPR[rs] ≤ sign_extend(immediate))
 
   Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
   If GPR <i>rs</i> is less than or equal <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
@@ -3892,7 +3892,7 @@ INSTRUCTION_SLEU_DOCUMENTATION: |-
   subu rd, $at, rd
 
   <b>Description:</b>
-  GPR[rd] <- (GPR[rs] <= GPR[rt])
+  GPR[rd] ⇽ (GPR[rs] ≤ GPR[rt])
 
   Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
   If GPR <i>rs</i> is less than or equal GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).

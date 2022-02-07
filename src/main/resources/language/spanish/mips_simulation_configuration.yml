@@ -30,7 +30,7 @@ SIMULATION_CONFIGURATION_ENABLE_DELAY_SLOTS_TOOLTIP: Habilita el relleno de ranu
   esta opción está habilitada, toda instrucción situada después de una instruction
   de control no compacta será ejecutada.
 SIMULATION_CONFIGURATION_ALUS: 'ALUs:'
-SIMULATION_CONFIGURATION_ALUS_TOOLTIP: El conjunto de ALUs usado por el simulador.
+SIMULATION_CONFIGURATION_ALUS_TOOLTIP: El conjunto de ALU usado por el simulador.
 SIMULATION_CONFIGURATION_ALUS_TYPE: 'Tipo:'
 SIMULATION_CONFIGURATION_ALUS_CYCLES: 'Ciclos:'
 SIMULATION_CONFIGURATION_SYSTEM_CALLS_TAB: Llamadas al sistema

@@ -17,19 +17,19 @@ SIMULATION_CONFIGURATION_CALL_EVENTS_TOOLTIP: Allows the simulation to notify me
   work when the simulation is stopped.
 SIMULATION_CONFIGURATION_ENABLE_UNDO: Allow to undo steps
 SIMULATION_CONFIGURATION_ENABLE_UNDO_TOOLTIP: Allows you to undo simulation's steps.\n\nIf
-  this option is disabled, the simulation will work faster and it will consume less
+  this option is disabled, the simulation will work faster, and it will consume less
   memory, but you will be unable to undo steps.\n\nThis option requires events to
   be activated.
 SIMULATION_CONFIGURATION_ENABLE_FORWARDING: Enable forwarding
 SIMULATION_CONFIGURATION_ENABLE_FORWARDING_TOOLTIP: Allows instructions to forward
   data on a pipelined architecture.
 SIMULATION_CONFIGURATION_SOLVE_BRANCH_ON_DECODE: Solve branches on decode
-SIMULATION_CONFIGURATION_SOLVE_BRANCH_ON_DECODE_TOOLTIP: Allows to solve branches
+SIMULATION_CONFIGURATION_SOLVE_BRANCH_ON_DECODE_TOOLTIP: Allows solving branches
   on decode. This only works on architectures with multiple steps.
 SIMULATION_CONFIGURATION_ENABLE_DELAY_SLOTS: Use delay slots
 SIMULATION_CONFIGURATION_ENABLE_DELAY_SLOTS_TOOLTIP: Enable delay slots.\n\nIf this
-  option is enabled, the instruction right after an non-compact transfer control instruction
-  will be always executed.
+  option is enabled, the instruction right after a non-compact transfer control instruction
+  will always be executed.
 SIMULATION_CONFIGURATION_ALUS: 'ALUs:'
 SIMULATION_CONFIGURATION_ALUS_TOOLTIP: The set of ALUs the simulation will use.
 SIMULATION_CONFIGURATION_ALUS_TYPE: 'Type:'
