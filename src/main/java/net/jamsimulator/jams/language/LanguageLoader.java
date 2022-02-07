@@ -36,10 +36,7 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,7 +73,7 @@ public class LanguageLoader {
 
                 usedFileSystem = FileSystems.newFileSystem(newUri, Map.of("create", "true"));
                 this.path = Path.of(newUri);
-            } catch (URISyntaxException | IOException e) {
+            } catch (URISyntaxException | IOException | ProviderNotFoundException e) {
                 throw new LanguageLoadException(e, LanguageLoadException.Type.RESOURCE_NOT_FOUND);
             }
         } else {

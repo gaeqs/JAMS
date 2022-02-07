@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.ProviderNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -291,7 +292,7 @@ public final class ThemeManager extends SelectableManager<Theme> {
             }
             loadThemesInDirectory(ResourceProvider.JAMS, folder.toPath(), true)
                     .forEach(ThemeManager::manageException);
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException | URISyntaxException | ProviderNotFoundException e) {
             e.printStackTrace();
         }
     }
