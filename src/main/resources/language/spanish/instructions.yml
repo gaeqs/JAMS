@@ -63,10 +63,12 @@ INSTRUCTION_CRC32CB: Generar CRC con el polinomio invertido 0x82F63B78 (byte)
 INSTRUCTION_CRC32CH: Generar CRC con el polinomio invertido 0x82F63B78 (media palabra)
 INSTRUCTION_CRC32CW: Generar CRC con el polinomio invertido 0x82F63B78 (palabra)
 INSTRUCTION_CVT: Convertir número de {FROM} a {TO}
+INSTRUCTION_DI: Deshabilitar interrupciones
 INSTRUCTION_DIV: División
 INSTRUCTION_DIV_D: División (coma flotante doble)
 INSTRUCTION_DIV_S: División (coma flotante)
 INSTRUCTION_DIVU: División sin signo
+INSTRUCTION_EI: Habilitar interrupciones
 INSTRUCTION_ERET: Retorno de la excepción
 INSTRUCTION_J: Salto
 INSTRUCTION_JAL: Salto y enlace
@@ -2077,6 +2079,34 @@ INSTRUCTION_CVT_DOCUMENTATION: |-
 
   <b>Excepciones:</b>
   Ninguna
+INSTRUCTION_DI_DOCUMENTATION: |-
+  <u>Deshabilitar interrupciones</u>
+
+  <b>Formato:</b>
+  di rt
+
+  | COP0   MFMC0    rt    12     0     0  |
+  |010000  01011                          |
+  |  6       5      5     5      5     6  |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ Status; Status<sub>IE</sub> ⇽ 0
+
+  El valor actual de <i>Status</i> es asignado a <i>rt</i>. El bit de Interrupciones Habilitadas (<i>IE</i>) en <i>Status</i> es puesto a cero.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rt] ⇽ Status
+  Status<sub>IE</sub> ⇽ 0
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  El efecto de esta instruccion es idéntico al de leer el registro <i>Status</i> y asignarlo a un registro general, limpiar el bit <i>IE</i> y escribir el resultado.
 INSTRUCTION_DIV_DOCUMENTATION: |-
   <u>División</u>
 
@@ -2246,6 +2276,34 @@ INSTRUCTION_DIV_S_DOCUMENTATION: |-
 
   <b>Excepciones:</b>
   Ninguna
+INSTRUCTION_EI_DOCUMENTATION: |-
+  <u>Habilitar interrupciones</u>
+
+  <b>Formato:</b>
+  ei rt
+
+  | COP0   MFMC0    rt    12     0     16 |
+  |010000  01011                          |
+  |  6       5      5     5      5     6  |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ Status; Status<sub>IE</sub> ⇽ 1
+
+  El valor actual de <i>Status</i> es asignado a <i>rt</i>. El bit de Interrupciones Habilitadas (<i>IE</i>) en <i>Status</i> es puesto a uno.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rt] ⇽ Status
+  Status<sub>IE</sub> ⇽ 1
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  El efecto de esta instruccion es idéntico al de leer el registro <i>Status</i> y asignarlo a un registro general, rellenar el bit <i>IE</i> y escribir el resultado.
 INSTRUCTION_ERET_DOCUMENTATION: |-
   <u>Retorno de la excepción</u>
 
@@ -2454,7 +2512,7 @@ INSTRUCTION_MFC0_DOCUMENTATION: |-
 
   | COP0     MF     rt    rd    0    sel |
   |010000  00000                         |
-  |  6       5      5     5     8     0  |
+  |  6       5      5     5     8     3  |
 
 
   <b>Descripción:</b>
@@ -2507,7 +2565,7 @@ INSTRUCTION_MTC0_DOCUMENTATION: |-
 
   | COP0     MT     rt    rd    0    sel |
   |010000  00100                         |
-  |  6       5      5     5     8     0  |
+  |  6       5      5     5     8     3  |
 
 
   <b>Descripción:</b>
