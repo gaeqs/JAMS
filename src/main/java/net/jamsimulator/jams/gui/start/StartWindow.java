@@ -37,10 +37,13 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormat;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormatJSON;
 import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.main.BorderlessMainScene;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.language.wrapper.LanguageLabel;
+import net.jamsimulator.jams.manager.Manager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -166,7 +169,10 @@ public class StartWindow extends AnchorPane {
             stage.setOnHidden(event -> {
                 // We are saving the configuration because it may be edited in the start window!
                 try {
-                    Jams.getMainConfiguration().save(true);
+                    Jams.getMainConfiguration().save(
+                            Manager.of(ConfigurationFormat.class).getOrNull(ConfigurationFormatJSON.NAME),
+                            true
+                    );
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

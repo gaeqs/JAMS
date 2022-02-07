@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.util.value;
 
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -34,12 +33,11 @@ import net.jamsimulator.jams.gui.util.converter.CacheBuilderValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverter;
 import net.jamsimulator.jams.gui.util.converter.ValueConverters;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
 import net.jamsimulator.jams.language.wrapper.CacheBuilderLanguageListCell;
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
 import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
 import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
-import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 import net.jamsimulator.jams.mips.syscall.defaults.SyscallExecutionRunExceptionHandler;
 import net.jamsimulator.jams.utils.representation.NumericStringComparator;
@@ -150,12 +148,7 @@ public class CacheBuilderValueEditor extends ComboBox<CacheBuilder<?>> implement
     private static class StaticListeners {
 
         @Listener(priority = Integer.MAX_VALUE)
-        private void onLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
-            sort();
-        }
-
-        @Listener(priority = Integer.MAX_VALUE)
-        private void onLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
+        public void onRefresh(LanguageRefreshEvent event) {
             sort();
         }
 

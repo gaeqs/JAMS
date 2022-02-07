@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.manager;
 
+import net.jamsimulator.jams.configuration.format.ConfigurationFormatManager;
 import net.jamsimulator.jams.file.FileTypeManager;
 import net.jamsimulator.jams.gui.action.ActionManager;
 import net.jamsimulator.jams.gui.bar.mode.BarSnapshotViewModeManager;
@@ -45,10 +46,7 @@ import net.jamsimulator.jams.plugin.PluginManager;
 import net.jamsimulator.jams.project.ProjectTypeManager;
 import net.jamsimulator.jams.utils.NumberRepresentationManager;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * The registry class stores all {@link Manager}s JAMS is currently using.
@@ -85,10 +83,10 @@ public class Registry {
      * Creates a registry.
      */
     public Registry(boolean loadDefaultManagers) {
-        managers = new HashMap<>();
-        primary = new HashMap<>();
-        primaryManagersByClass = new HashMap<>();
-        primaryManagersByManaged = new HashMap<>();
+        managers = new LinkedHashMap<>();
+        primary = new LinkedHashMap<>();
+        primaryManagersByClass = new LinkedHashMap<>();
+        primaryManagersByManaged = new LinkedHashMap<>();
         if (loadDefaultManagers) {
             addDefaultManagers();
         }
@@ -353,6 +351,7 @@ public class Registry {
 
     private void addDefaultManagers() {
         registerPrimary(PluginManager.INSTANCE);
+        registerPrimary(ConfigurationFormatManager.INSTANCE);
         registerPrimary(ActionManager.INSTANCE);
         registerPrimary(ArchitectureManager.INSTANCE);
         registerPrimary(AssemblerBuilderManager.INSTANCE);

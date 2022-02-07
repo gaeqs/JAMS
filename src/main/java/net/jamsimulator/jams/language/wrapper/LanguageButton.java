@@ -27,9 +27,8 @@ package net.jamsimulator.jams.language.wrapper;
 import javafx.scene.control.Button;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
-import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 
 public class LanguageButton extends Button {
 
@@ -47,22 +46,21 @@ public class LanguageButton extends Button {
     }
 
     private void refreshMessage() {
+        refreshMessage(Manager.ofS(Language.class).getSelected());
+    }
+
+    private void refreshMessage(Language language) {
         if (node == null) return;
-        setText(Manager.ofS(Language.class).getSelected().getOrDefault(node));
-    }
-
-    @Listener
-    public void onSelectedLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
-        refreshMessage();
-    }
-
-    @Listener
-    public void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
-        refreshMessage();
+        setText(language.getOrDefault(node));
     }
 
     @Override
     public String getTypeSelector() {
         return "Button";
+    }
+
+    @Listener
+    public void onRefresh(LanguageRefreshEvent event) {
+        refreshMessage(event.getSelectedLanguage());
     }
 }

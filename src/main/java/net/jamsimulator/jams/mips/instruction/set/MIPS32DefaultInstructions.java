@@ -97,8 +97,9 @@ class MIPS32DefaultInstructions {
             basicInstructions.add(new InstructionCmpCondnDouble(condition));
         }
 
-        for (var type : InstructionCrc32.Type.values()) {
-            basicInstructions.add(new InstructionCrc32(type));
+        for (var type : CRCType.values()) {
+            basicInstructions.add(new InstructionCrc32(type, false));
+            basicInstructions.add(new InstructionCrc32(type, true));
         }
 
         for (var to : FmtNumbers.values()) {

@@ -26,6 +26,8 @@ package net.jamsimulator.jams.plugin;
 
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.RootConfiguration;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormat;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormatJSON;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.plugin.exception.InvalidPluginHeaderException;
@@ -315,7 +317,11 @@ public final class PluginManager extends Manager<Plugin> {
                         new FileNotFoundException("Plugins must contain a plugin.json inside its jar!"));
 
             in = jar.getInputStream(entry);
-            return PluginHeader.loadJSON(new RootConfiguration(new InputStreamReader(in)), file);
+            var format = Manager.of(ConfigurationFormat.class).getOrNull(ConfigurationFormatJSON.NAME);
+            var reader = new InputStreamReader(in);
+            var header = PluginHeader.loadJSON(new RootConfiguration(reader, format), file);
+            reader.close();
+            return header;
         } catch (IOException e) {
             throw new InvalidPluginHeaderException(e);
         } finally {

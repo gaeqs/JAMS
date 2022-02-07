@@ -66,6 +66,7 @@ application {
 dependencies {
     implementation group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
     implementation group: 'org.json', name: 'json', version: '20210307'
+    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.29'
     implementation 'org.jetbrains:annotations:22.0.0'
 
     implementation 'com.github.gaeqs:RichTextFX:fcdb504a'
@@ -84,6 +85,7 @@ dependencies {
 
     jarLib group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
     jarLib group: 'org.json', name: 'json', version: '20210307'
+    jarLib group: 'org.yaml', name: 'snakeyaml', version: '1.29'
 
 
     jarLib 'com.github.gaeqs:RichTextFX:fcdb504a'
@@ -94,7 +96,7 @@ dependencies {
 
     jarLib 'com.github.gaeqs:RichTextFX:-SNAPSHOT'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
 }
 
 compileJava {

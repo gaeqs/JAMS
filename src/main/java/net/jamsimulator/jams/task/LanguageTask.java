@@ -27,6 +27,7 @@ package net.jamsimulator.jams.task;
 import javafx.concurrent.Task;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
 import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
@@ -319,13 +320,7 @@ public abstract class LanguageTask<E> extends Task<E> {
     }
 
     @Listener
-    private void onLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
-        updateTitle(titleLanguageNode);
-        updateMessage(messageLanguageNode);
-    }
-
-    @Listener
-    private void onLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
+    public void onRefresh(LanguageRefreshEvent event) {
         updateTitle(titleLanguageNode);
         updateMessage(messageLanguageNode);
     }

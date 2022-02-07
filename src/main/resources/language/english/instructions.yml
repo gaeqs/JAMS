@@ -1,0 +1,3980 @@
+INSTRUCTION_ABS_D: Absolute (double)
+INSTRUCTION_ABS_S: Absolute (single)
+INSTRUCTION_ADD: Addition
+INSTRUCTION_ADD_D: Addition (double)
+INSTRUCTION_ADDIU: Immediate addition without overflow
+INSTRUCTION_ADDIUPC: Immediate addition to PC without overflow
+INSTRUCTION_ADD_S: Addition (single)
+INSTRUCTION_ADDU: Addition without overflow
+INSTRUCTION_ALIGN: Concatenate two GRPs extracting a contiguous subset at a byte position
+INSTRUCTION_ALUIPC: Aligned add upper immediate on PC
+INSTRUCTION_AND: And
+INSTRUCTION_ANDI: Immediate and
+INSTRUCTION_AUI: Immediate addition to upper bits
+INSTRUCTION_AUIPC: Immediate addition to PC upper bits
+INSTRUCTION_BAL: Branch and link
+INSTRUCTION_BALC: Branch and link compact
+INSTRUCTION_BC: Branch compact
+INSTRUCTION_BC1EQZ: Branch if COP1 register bit 0 is zero
+INSTRUCTION_BC1NEZ: Branch if COP1 register bit 0 is not zero
+INSTRUCTION_BEQ: Branch on equal
+INSTRUCTION_BEQC: Branch on equal compact
+INSTRUCTION_BEQZALC: Branch and link on equal to zero compact
+INSTRUCTION_BEQZC: Branch on equal to zero compact
+INSTRUCTION_BGEC: Branch on greater than or equal compact
+INSTRUCTION_BGEUC: Branch on greater than or equal unsigned compact
+INSTRUCTION_BGEZ: Branch on greater than or equal to zero
+INSTRUCTION_BGEZALC: Branch and link on greater than or equal to zero compact
+INSTRUCTION_BGEZC: Branch on greater than or equal to zero compact
+INSTRUCTION_BGTZ: Branch on greater than zero
+INSTRUCTION_BGTZALC: Branch and link on greater than zero compact
+INSTRUCTION_BGTZC: Branch on greater than zero compact
+INSTRUCTION_BITSWAP: Swap bits in each byte
+INSTRUCTION_BLEZ: Branch on less than or equal to zero
+INSTRUCTION_BLEZALC: Branch and link on less than or equal to zero compact
+INSTRUCTION_BLEZC: Branch on less than or equal to zero compact
+INSTRUCTION_BLTC: Branch on less than compact
+INSTRUCTION_BLTUC: Branch on less than unsigned compact
+INSTRUCTION_BLTZ: Branch on less than zero
+INSTRUCTION_BLTZALC: Branch and link on less than zero compact
+INSTRUCTION_BLTZC: Branch on less than zero compact
+INSTRUCTION_BNE: Branch on not equal
+INSTRUCTION_BNEC: Branch on not equal compact
+INSTRUCTION_BNEZALC: Branch and link on not equal to zero compact
+INSTRUCTION_BNEZC: Branch on not equal to zero compact
+INSTRUCTION_BNVC: Branch on no overflow compact
+INSTRUCTION_BOVC: Branch on overflow compact
+INSTRUCTION_BREAK: Breakpoint
+INSTRUCTION_CEIL_L_D: Ceiling double to long
+INSTRUCTION_CEIL_L_S: Ceiling single to long
+INSTRUCTION_CEIL_W_D: Ceiling double to word
+INSTRUCTION_CEIL_W_S: Ceiling single to word
+INSTRUCTION_CLO: Count leading ones in word
+INSTRUCTION_CLZ: Count leading zeros in word
+INSTRUCTION_CMP_D: Floating point compare ({TYPE}) (double)
+INSTRUCTION_CMP_S: Floating point compare ({TYPE}) (single)
+INSTRUCTION_CRC32B: Generate CRC with reversed polynomial 0xEDB88320 (byte)
+INSTRUCTION_CRC32H: Generate CRC with reversed polynomial 0xEDB88320 (half)
+INSTRUCTION_CRC32W: Generate CRC with reversed polynomial 0xEDB88320 (word)
+INSTRUCTION_CRC32CB: Generate CRC with reversed polynomial 0x82F63B78 (byte)
+INSTRUCTION_CRC32CH: Generate CRC with reversed polynomial 0x82F63B78 (half)
+INSTRUCTION_CRC32CW: Generate CRC with reversed polynomial 0x82F63B78 (word)
+INSTRUCTION_CVT: Convert from {FROM} to {TO}
+INSTRUCTION_DIV: Division
+INSTRUCTION_DIV_D: Division (double)
+INSTRUCTION_DIV_S: Division (single)
+INSTRUCTION_DIVU: Unsigned division
+INSTRUCTION_ERET: Exception return
+INSTRUCTION_J: Jump
+INSTRUCTION_JAL: Jump and link
+INSTRUCTION_JALR: Jump and link register
+INSTRUCTION_LB: Load byte
+INSTRUCTION_LW: Load word
+INSTRUCTION_MFC0: Move to coprocessor 0
+INSTRUCTION_MFC1: Move to coprocessor 1
+INSTRUCTION_MOD: Modulo
+INSTRUCTION_MODU: Unsigned module
+INSTRUCTION_MUH: Multiplication and return high word
+INSTRUCTION_MUHU: Unsigned multiplication and return high word
+INSTRUCTION_MUL: Multiplication and return low word
+INSTRUCTION_MUL_D: Multiplication (double)
+INSTRUCTION_MUL_S: Multiplication (single)
+INSTRUCTION_MULU: Unsigned multiplication and return low word
+INSTRUCTION_OR: Or
+INSTRUCTION_ORI: Immediate or
+INSTRUCTION_SB: Save byte
+INSTRUCTION_SLL: Shift word left logical
+INSTRUCTION_SLLV: Shift word left logical variable
+INSTRUCTION_SLT: Set on less than
+INSTRUCTION_SLTI: Set on less than immediate
+INSTRUCTION_SLTIU: Set on less than immediate unsigned
+INSTRUCTION_SLTU: Set on less than unsigned
+INSTRUCTION_SRL: Shift word right logical
+INSTRUCTION_SRLV: Shift word right logical variable
+INSTRUCTION_SUB: Subtraction
+INSTRUCTION_SUB_D: Subtraction (double)
+INSTRUCTION_SUB_S: Subtraction (single)
+INSTRUCTION_SUBU: Subtraction without overflow
+INSTRUCTION_SW: Save word
+INSTRUCTION_SYSCALL: System call
+INSTRUCTION_TEQ: Trap on equal
+INSTRUCTION_TEQI: Trap on equal immediate
+INSTRUCTION_TGE: Trap on greater or equal
+INSTRUCTION_TGEI: Trap on greater or equal immediate
+INSTRUCTION_TGEIU: Trap on greater or equal immediate unsigned
+INSTRUCTION_TGEU: Trap on greater or equal unsigne
+INSTRUCTION_TLT: Trap on less than
+INSTRUCTION_TLTI: Trap on less than immediate
+INSTRUCTION_TLTIU: Trap on less than immediate unsigned
+INSTRUCTION_TLTU: Trap on less than unsigned
+INSTRUCTION_TNE: Trap on not equal
+INSTRUCTION_TNEI: Trap on not equal immediate
+INSTRUCTION_XOR: Xor
+INSTRUCTION_XORI: Immediate xor
+INSTRUCTION_ADDI: Immediate addition with overflow
+INSTRUCTION_B: Unconditional branch
+INSTRUCTION_JR: Jump register
+INSTRUCTION_LA: Load address
+INSTRUCTION_LI: Load immediate
+INSTRUCTION_LUI: Load upper immediate
+INSTRUCTION_LIF: Load immediate float
+INSTRUCTION_LID: Load immediate double
+INSTRUCTION_MOVE: Value movement
+INSTRUCTION_NOP: No operation
+INSTRUCTION_SGE: Set on greater than or equal
+INSTRUCTION_SGEI: Set on greater than or equal immediate
+INSTRUCTION_SGEIU: Set on greater than or equal immediate unsigned
+INSTRUCTION_SGEU: Set on greater than or equal unsigned
+INSTRUCTION_SGT: Set on greater than
+INSTRUCTION_SGTI: Set on greater than immediate
+INSTRUCTION_SGTIU: Set on greater than immediate unsigned
+INSTRUCTION_SGTU: Set on greater than unsigned
+INSTRUCTION_SLE: Set on lower than or equal
+INSTRUCTION_SLEI: Set on lower than or equal immediate
+INSTRUCTION_SLEIU: Set on lower than or equal immediate unsigned
+INSTRUCTION_SLEU: Set on lower than or equal unsigned
+
+INSTRUCTION_ABS_D_DOCUMENTATION: |-
+  <u>Double precision floating point absolute value</u>
+
+  <b>Format:</b>
+  abs.d fd, fs
+
+  | COP1      fmt      0      fs      fd      ABS   |
+  |010001    10001   00000                   000101 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ abs(FPR[fs])
+
+  Places the absolute value of <i>fs</i> in <i>fd</i>. The operand and result are values in double precision floating point.
+
+  <b>Restrictions:</b>
+  The fields <i>fs</i> and <i>fd</i> must be even FPRs. If the fields are not valid, the result is <black>UNPREDICTABLE</black>.
+  The operand must be a value in double precision floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ double
+  StoreFPR(fd, fmt, AbsoluteValue(ValueFPR(fs, fmt)))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_ABS_S_DOCUMENTATION: |-
+  <u>Floating point absolute value</u>
+
+  <b>Format:</b>
+  abs.s fd, fs
+
+  | COP1      fmt      0      fs      fd      ABS   |
+  |010001    10000   00000                   000101 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ abs(FPR[fs])
+
+  Places the absolute value of <i>fs</i> in <i>fd</i>. The operand and result are values in floating point.
+
+  <b>Restrictions:</b>
+  The operand must be a value in floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ float
+  StoreFPR(fd, fmt, AbsoluteValue(ValueFPR(fs, fmt)))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_ADD_DOCUMENTATION: |-
+  <u>Addition</u>
+
+  <b>Format:</b>
+  add rd, rs, rt
+
+  |SPECIAL     rs      rt     rd      0       ADD   |
+  |000000                                    100000 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ GPR[rs] + GPR[rt]
+
+  The 32-bit word value in GPR <i>rt</i> is added to the 32-bit value in GPR <i>rs</i> to produce a 32-bit result.
+   - If the addition results in 32-bit 2's complement arithmetic overflow, the destination register is not modified and an <black>Integer Overflow</black> exception occurs.
+   - If the addition does not overflow, the 32-bit result is placed intoto GPR <i>rd</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  temp ⇽ (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (GPR[rt]<sub>31</sub> || GPR[rt]<sub>31..0</sub>)
+  if temp<sub>32</sub> != temp<sub>31</sub> then
+      SignalException(IntegerOverflow)
+  else
+      GPR[rd] ⇽ temp<sub>31..0</sub>
+  endif
+
+  <b>Exceptions:</b>
+  Integer Overflow
+
+  <b>Programming Notes:</b>
+  <black>addu</black> performs the same arithmetic operation but does not trap on overflow.
+INSTRUCTION_ADD_D_DOCUMENTATION: |-
+  <u>Double precision floating point addition</u>
+
+  <b>Format:</b>
+  add.d fd, fs, ft
+
+  | COP1      fmt      0      fs      fd      ADD   |
+  |010001    10001   00000                   000000 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ FPR[fs] + FPR[ft]
+
+  The value in FPR <i>ft</i> is added to the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
+  The operands and result are values in double precision floating point.
+
+  <b>Restrictions:</b>
+  The fields <i>fs</i>, <i>ft</i> and <i>fd</i> must be even FPRs. If the fields are not valid, the result is <black>UNPREDICTABLE</black>.
+  The operand must be a value in double precision floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ double
+  StoreFPR(fd, fmt, ValueFPR(fs, fmt) +<sub>fmt</sub> ValueFPR(ft, fmt))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_ADD_S_DOCUMENTATION: |-
+  <u>Floating point addition</u>
+
+  <b>Format:</b>
+  add.s fd, fs, ft
+
+  | COP1      fmt      0      fs      fd      ADD   |
+  |010001    10000   00000                   000000 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ FPR[fs] + FPR[ft]
+
+  The value in FPR <i>ft</i> is added to the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
+  The operands and result are values in floating point.
+
+  <b>Restrictions:</b>
+  The operand must be a value in floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ float
+  StoreFPR(fd, fmt, ValueFPR(fs, fmt) +<sub>fmt</sub> ValueFPR(ft, fmt))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_ADDIU_DOCUMENTATION: |-
+  <u>Immediate unsigned addition</u>
+
+  <b>Format:</b>
+  addiu rt, rs, immediate
+
+  | ADDIU      rs     rt     immediate |
+  |001001                              |
+  |  6         5      5         16     |
+
+
+  <b>Description:</b>
+  GPR[rt] ⇽ GPR[rs] + immediate
+
+  The 16-bit signed <i>immediate</i> is added to the 32-bit value in GRP <i>rs</i> and the 32-bit arithmetic result is placed into GPR <i>rt</i>.
+  No <black>Integer Overflow</black> exception occurs under any circumstances.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  temp ⇽ GPR[rs] + sign_extend(immediate)
+  GPR[rt] ⇽ temp
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  The term <i>unsigned</i> in the instruction name is a misnomer; this operation is a 32-bit modulo arithmetic that does not trap on overflow. This instruction is appropiate for unsigned arithmetic, such as address arithmetic, or integer arithmetic environments that ignore overflow, such as the C language arithmetic.
+INSTRUCTION_ADDIUPC_DOCUMENTATION: |-
+  <u>Immediate unsigned addition to PC</u>
+
+  <b>Format:</b>
+  addiupc rs, immediate
+
+  | PCREL      rs   ADDIUPC   immediate |
+  |111011              00               |
+  |  6         5       2         19     |
+
+
+  <b>Description:</b>
+  GPR[rs] ⇽ PC + sign_extend(immediate << 2)
+
+  This instruction performs a PC-relative address calculation. The 19-bit <i>immediate</i> is shifted left by 2 bits, sign-extended and added to the address of the instruction.
+  The result is placed into GPR <i>rs</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  GPR[rs] ⇽ PC + sign_extend(immediate << 2)
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  The term <i>unsigned</i> in the instruction name is a misnomer. <i>Unsigned</i> here means <i>non-trapping</i>. It does not trap on a signed 32-bit overflow. <black>addiupc</black> corresponds to unsigned <black>addiu</black>, which does not trap on overflow.
+INSTRUCTION_ADDU_DOCUMENTATION: |-
+  <u>Unsigned addition</u>
+
+  <b>Format:</b>
+  addu rd, rs, rt
+
+  |SPECIAL     rs      rt     rd      0       ADDU  |
+  |000000                                    100001 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ GPR[rs] + GPR[rt]
+
+  The 32-bit word value in GPR <i>rt</i> is added to the 32-bit value in GPR <i>rs</i> to produce a 32-bit result.
+  The 32-bit result is placed into GPR <i>rd</i>.
+  No <black>Integer Overflow</black> exception occurs under any circumstances.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  temp ⇽ GPR[rs] + GPR[rt]
+  GPR[rd] ⇽ temp
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  The term <i>unsigned</i> in the instruction name is a misnomer; this operation is a 32-bit modulo arithmetic that does not trap on overflow. This instruction is appropiate for unsigned arithmetic, such as address arithmetic, or integer arithmetic environments that ignore overflow, such as the C language arithmetic.
+INSTRUCTION_ALIGN_DOCUMENTATION: |-
+  <u>Concatenate two GRPs extracting a contiguous subset at a byte position</u>
+
+  <b>Format:</b>
+  align rd, rs, rt, bp
+
+  |SPECIAL3    rs    rt    rd    ALIGN   bp   BSGFL  |
+  | 011111                        010         100000 |
+  |   6        5     5     5       3     2      6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ (GPR[rt] << 8 * bp) or (GPR[rs] >> 8 * (4 - bp))
+
+  The input registers GPR <i>rt</i> and GPR <i>rs</i> are concatenated, and a register width contiguous subset is extracted, which is specified by the byte pointer <i>bp</i>.
+  The <black>align</black> instruction operates on 32-bit words, and has a 2-bit byte position field <i>bp</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  tmp_rt_hi ⇽ unsigned_word(GPR[rt]) << 8 * bp
+  tmp_rs_lo ⇽ unsigned_word(GPR[rs]) >> 8 * (4 - bp)
+  GPR[rd] ⇽ tmp_rt_hi or tmp_rs_lo
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_ALUIPC_DOCUMENTATION: |-
+  <u>Aligned add upper immediate on PC</u>
+
+  <b>Format:</b>
+  aluipc rs, immediate
+
+  | PCREL     rs     ALUIPC   immediate |
+  |111011            11111              |
+  |  6        5        5         16     |
+
+
+  <b>Description:</b>
+  GPR[rs] ⇽ not 0x0FFFF and PC + sign_extend(immediate << 16)
+
+  This instruction performs a PC-relative address calculation. The 16-bit <i>immediate</i> is shifted left by 16 bits, sign-extended and added to the address of the instruction.
+  The low 16 bits of the result are cleard. The result is placed into GPR <i>rs</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  GPR[rs] ⇽ not 0x0FFFF and PC + sign_extend(immediate << 16)
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_AND_DOCUMENTATION: |-
+  <u>And</u>
+
+  <b>Format:</b>
+  and rd, rs, rt
+
+  |SPECIAL     rs      rt     rd      0       AND   |
+  |000000                                    100100 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ GPR[rs] and GPR[rt]
+
+  Performs a bitwise logical AND using the values inside GPR <i>rs</i> and GPR <i>rt</i>.
+  The result is placed into GPR <i>rd</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  GPR[rd] ⇽ GPR[rs] and GPR[rt]
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_ANDI_DOCUMENTATION: |-
+  <u>Immediate and</u>
+
+  <b>Format:</b>
+  andi rt, rs, immediate
+
+  | ANDI      rs     rt     immediate |
+  |001100                             |
+  |  6        5      5         16     |
+
+
+  <b>Description:</b>
+  GPR[rt] ⇽ GPR[rs] and zero_extend(immediate)
+
+  The 16-bit <i>immediate</i> is zero-extended to the left and combined with the value of GPR <i>rs</i> in a bitwise logical AND operation.
+  The result is placed into GPR <i>rt</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  GPR[rt] ⇽ GPR[rs] and zero_extend(immediate)
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_AUI_DOCUMENTATION: |-
+  <u>Add immediate to upper bits</u>
+
+  <b>Format:</b>
+  aui rt, rs, immediate
+
+  | AUI       rs     rt     immediate |
+  |001111                             |
+  |  6        5      5         16     |
+
+
+  <b>Description:</b>
+  GPR[rt] ⇽ GPR[rs] + sign_extend(immediate << 16)
+
+  The 16-bit <i>immediate</i> is shifted left 16 bits, sign-extended and added to the GPR <i>rs</i>.
+  The result is placed into GPR <i>rt</i>.
+  In MIPS32r6, <black>lui</black> is an assembly idiom for <black>aui</black> with <i>rs</i> = 0.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  GPR[rt] ⇽ GPR[rs] + sign_extend(immediate << 16)
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  <black>aui</black> can be used to synthesize large constants in situations where it is not convenient to load a large constant from memory.
+INSTRUCTION_AUIPC_DOCUMENTATION: |-
+  <u>Add immediate to PC upper bits</u>
+
+  <b>Format:</b>
+  auipc rs, immediate
+
+  | PCREL    rs    AUIPC    immediate |
+  |111011          11110              |
+  |  6       5       5         16     |
+
+
+  <b>Description:</b>
+  GPR[rs] ⇽ PC + (immediate << 16)
+
+  This instruction performs a PC-relative address calculation. The 16-bit <i>immediate</i> is shifted left by 16 bits and added to the address of the instruction.
+  The result is placed into GPR <i>rs</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  GPR[rs] ⇽ PC + (immediate << 16)
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BAL_DOCUMENTATION: |-
+  <u>Branch and link</u>
+
+  <b>Format:</b>
+  b offset
+
+  |REGIMM      0      BAL      offset  |
+  |000001    00000   10001             |
+  |  6         5       5        16     |
+
+
+  <b>Description:</b>
+  Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  <black>I:</black>
+  target_offset ⇽ sign_extend(offset || 00)
+  GPR[31] ⇽ PC + 4
+
+  <black>I+1:</black>
+  PC ⇽ PC + target_offset
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  <black>bal</black> without a corresponding return should NOT be used to read the PC. Doing so is likely to cause a performance loss on processors with a return address predictor.
+INSTRUCTION_BALC_DOCUMENTATION: |-
+  <u>Branch and link compact</u>
+
+  <b>Format:</b>
+  balc offset
+
+  | BALC      offset  |
+  |111010             |
+  |  6         26     |
+
+
+  <b>Description:</b>
+  Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+  An 28-bit signed offset (the 26-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  This instruction performs a compact branch. Compact branches don't have delay slots.
+
+  <b>Restrictions:</b>
+  This instruction is an unconditional, always taken, compact branch. It does not have a forbidden slot nor a delay slot.
+
+  <b>Operation:</b>
+  target_offset ⇽ sign_extend(offset || 00)
+  GPR[31] ⇽ PC + 4
+  PC ⇽ PC + 4 + target_offset
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BC_DOCUMENTATION: |-
+  <u>Branch compact</u>
+
+  <b>Format:</b>
+  bc offset
+
+  |  BC       offset  |
+  |110010             |
+  |  6         26     |
+
+
+  <b>Description:</b>
+  A 28-bit signed offset (the 26-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  This instruction performs a compact branch. Compact branches don't have delay slots.
+
+  <b>Restrictions:</b>
+  This instruction is an unconditional, always taken, compact branch. It does not have a forbidden slot nor a delay slot.
+
+  <b>Operation:</b>
+  target_offset ⇽ sign_extend(offset || 00)
+  PC ⇽ PC + 4 + target_offset
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BC1EQZ_DOCUMENTATION: |-
+  <u>Branch if COP1 register bit 0 is zero</u>
+
+  <b>Format:</b>
+  bc1eqz ft, offset
+
+  | COP1      BC1EQZ     ft     offset  |
+  |010001     01001                     |
+  |  6          5        5        16    |
+
+
+  <b>Description:</b>
+  if FPR[ft] & 1 = 0 then branch
+
+  The condition is true if and ofly if bit 0 of the FPR <i>ft</i> is zero.
+  If the condition is false, the branch is not taken and execution continues with the next instruction.
+  An 18-bit signed offset (the 26-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  temp = ValueFPR(ft, UNINTERPRETED_WORD)
+  cond = temp & 1 = 0
+  if cond then
+      <black>I:</black>
+      target_PC ⇽ PC + 4 + sign_extend(offset << 2)
+      <black>I+1:</black>
+      PC ⇽ target_PC
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BC1NEZ_DOCUMENTATION: |-
+  <u>Branch if COP1 register bit 0 is not zero</u>
+
+  <b>Format:</b>
+  bc1nez ft, offset
+
+  | COP1      BC1NEZ     ft     offset  |
+  |010001     01101                     |
+  |  6          5        5        16    |
+
+
+  <b>Description:</b>
+  if FPR[ft] & 1 != 0 then branch
+
+  The condition is true if and ofly if bit 0 of the FPR <i>ft</i> is not zero.
+  If the condition is false, the branch is not taken and execution continues with the next instruction.
+  An 18-bit signed offset (the 26-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  temp = ValueFPR(ft, UNINTERPRETED_WORD)
+  cond = temp & 1 != 0
+  if cond then
+      <black>I:</black>
+      target_PC ⇽ PC + 4 + sign_extend(offset << 2)
+      <black>I+1:</black>
+      PC ⇽ target_PC
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BEQ_DOCUMENTATION: |-
+  <u>Branch on equal</u>
+
+  <b>Format:</b>
+  beq rs, rt, offset
+
+  | BEQ       rs     rt     offset  |
+  |000100                           |
+  |  6        5      5       16     |
+
+
+  <b>Description:</b>
+  if GPR[rs] = GPR[rt] then branch
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rt</i> and GPR <i>rs</i> are equal, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  <black>I:</black>
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rs] = GPR[rt]
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+  <black>beq $zero, $zero, offset</black>, expressed as <black>b offset</black>, is the assembly idiom used to denote an unconditional branch.
+INSTRUCTION_BGEZ_DOCUMENTATION: |-
+  <u>Branch on greater than or equal to zero</u>
+
+  <b>Format:</b>
+  bgez rs, offset
+
+  |REGIMM     rs    BGEZ    offset  |
+  |000001          00001            |
+  |  6        5      5        16    |
+
+
+  <b>Description:</b>
+  if GPR[rs] ≥ 0 then branch
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rs</i> are greater than or equal to zero, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  <black>I:</black>
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rs] ≥ 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+INSTRUCTION_BLEZALC_DOCUMENTATION: |-
+  <u>Branch and link on less than or equal to zero compact</u>
+
+  <b>Format:</b>
+  blezalc rt, offset
+
+  | POP06     0    rt != 0   offset  |
+  |000110   00000                    |
+  |  6        5       5        16    |
+
+
+  <b>Description:</b>
+  Compact branch and link if GPR[rt] ≤ 0.
+
+  Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rt</i> are less than or equal to zero, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  GPR <i>31</i> must not be used by the sorce register, because such instructions don't have the same effect when re-executed. The result of executing such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the branch delay slot.
+
+  <b>Operation:</b>
+  <black>I:</black>
+  GPR[31] ⇽ PC + 4
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] ≤ 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+INSTRUCTION_BGEZALC_DOCUMENTATION: |-
+  <u>Branch and link on greater than or equal to zero compact</u>
+
+  <b>Format:</b>
+  bgezalc rt, offset
+
+  | POP06     rs      rt     offset  |
+  |000110    rs = rt != 0            |
+  |  6        5       5        16    |
+
+
+  <b>Description:</b>
+  Compact branch and link if GPR[rt] ≥ 0.
+
+  Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rt</i> are greater than or equal to zero, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+  GPR <i>31</i> must not be used by the sorce register, because such instructions don't have the same effect when re-executed. The result of executing such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the branch delay slot.
+
+  <b>Operation:</b>
+  <black>I:</black>
+  GPR[31] ⇽ PC + 4
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] ≥ 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+INSTRUCTION_BGTZALC_DOCUMENTATION: |-
+  <u>Branch and link on greater than zero compact</u>
+
+  <b>Format:</b>
+  bgtzalc rt, offset
+
+  | POP07     0    rt != 0   offset  |
+  |000111   00000                    |
+  |  6        5       5        16    |
+
+
+  <b>Description:</b>
+  Compact branch and link if GPR[rt] > 0.
+
+  Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rt</i> are greater than zero, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  GPR <i>31</i> must not be used by the sorce register, because such instructions don't have the same effect when re-executed. The result of executing such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the branch delay slot.
+
+  <b>Operation:</b>
+  <black>I:</black>
+  GPR[31] ⇽ PC + 4
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] > 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+INSTRUCTION_BLTZALC_DOCUMENTATION: |-
+  <u>Branch and link on less than zero compact</u>
+
+  <b>Format:</b>
+  bltzalc rt, offset
+
+  | POP07     rs      rt     offset  |
+  |000111    rs = rt != 0            |
+  |  6        5       5        16    |
+
+
+  <b>Description:</b>
+  Compact branch and link if GPR[rt] < 0.
+
+  Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rt</i> are lower than zero, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  GPR <i>31</i> must not be used by the sorce register, because such instructions don't have the same effect when re-executed. The result of executing such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the branch delay slot.
+
+  <b>Operation:</b>
+  <black>I:</black>
+  GPR[31] ⇽ PC + 4
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] < 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+INSTRUCTION_BEQZALC_DOCUMENTATION: |-
+  <u>Branch and link on equal to zero compact</u>
+
+  <b>Format:</b>
+  beqzalc rt, offset
+
+  | POP10     rs     rt != 0    offset  |
+  |001000       rs < rt                 |
+  |  6        5         5         16    |
+
+
+  <b>Description:</b>
+  Compact branch and link if GPR[rt] = 0.
+
+  Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rt</i> are equal to zero, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  GPR <i>31</i> must not be used by the sorce register, because such instructions don't have the same effect when re-executed. The result of executing such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the branch delay slot.
+
+  <b>Operation:</b>
+  <black>I:</black>
+  GPR[31] ⇽ PC + 4
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] = 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+INSTRUCTION_BNEZALC_DOCUMENTATION: |-
+  <u>Branch and link on not equal to zero compact</u>
+
+  <b>Format:</b>
+  bnezalc rt, offset
+
+  | POP30     rs     rt != 0    offset  |
+  |011000       rs < rt                 |
+  |  6        5         5         16    |
+
+
+  <b>Description:</b>
+  Compact branch and link if GPR[rt] != 0.
+
+  Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rt</i> are not equal to zero, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  GPR <i>31</i> must not be used by the sorce register, because such instructions don't have the same effect when re-executed. The result of executing such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the branch delay slot.
+
+  <b>Operation:</b>
+  <black>I:</black>
+  GPR[31] ⇽ PC + 4
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] != 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+INSTRUCTION_BLEZC_DOCUMENTATION: |-
+  <u>Branch on less than or equal to zero compact</u>
+
+  <b>Format:</b>
+  blezc rt, offset
+
+  | POP26     0      rt != 0    offset  |
+  |010110   00000                       |
+  |  6        5         5         16    |
+
+
+  <b>Description:</b>
+  Compact branch if GPR[rt] ≤ 0.
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rt</i> less than or equal to zero, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] ≤ 0
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BGEZC_DOCUMENTATION: |-
+  <u>Branch on greater than or equal to zero compact</u>
+
+  <b>Format:</b>
+  bgezc rt, offset
+
+  | POP26  rs != 0   rt != 0    offset  |
+  |010110       rs = rt                 |
+  |  6        5         5         16    |
+
+
+  <b>Description:</b>
+  Compact branch if GPR[rt] ≥ 0.
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rt</i> greater than or equal to zero, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] ≥ 0
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BGTZC_DOCUMENTATION: |-
+  <u>Branch on greater than zero compact</u>
+
+  <b>Format:</b>
+  bgtzc rt, offset
+
+  | POP27     0      rt != 0    offset  |
+  |010111   00000                       |
+  |  6        5         5         16    |
+
+
+  <b>Description:</b>
+  Compact branch if GPR[rt] > 0.
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rt</i> greater than zero, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] > 0
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BLTZC_DOCUMENTATION: |-
+  <u>Branch on less than zero compact</u>
+
+  <b>Format:</b>
+  bltzc rt, offset
+
+  | POP27  rs != 0   rt != 0    offset  |
+  |010111       rs = rt                 |
+  |  6        5         5         16    |
+
+
+  <b>Description:</b>
+  Compact branch if GPR[rt] < 0.
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rt</i> less than zero, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] < 0
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BGEC_DOCUMENTATION: |-
+  <u>Branch on greater than or equal compact</u>
+
+  <b>Format:</b>
+  bgec rs, rt, offset
+
+  | POP26  rs != 0   rt != 0    offset  |
+  |010110       rs != rt                |
+  |  6        5         5         16    |
+
+
+  <b>Description:</b>
+  Compact branch if GPR[rs] ≥ GPR[rt].
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rs</i> are greater than or equal to the contents of GPR <i>rt</i>, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rs] ≥ GPR[rt]
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BLTC_DOCUMENTATION: |-
+  <u>Branch on less than or equal compact</u>
+
+  <b>Format:</b>
+  bltc rs, rt, offset
+
+  | POP27  rs != 0   rt != 0    offset  |
+  |010111       rs != rt                |
+  |  6        5         5         16    |
+
+
+  <b>Description:</b>
+  Compact branch if GPR[rs] < GPR[rt].
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rs</i> are less than the contents of GPR <i>rt</i>, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] < GPR[rt]
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BGEUC_DOCUMENTATION: |-
+  <u>Branch on greater than or equal unsigned compact</u>
+
+  <b>Format:</b>
+  bgeuc rs, rt, offset
+
+  | POP06  rs != 0   rt != 0    offset  |
+  |000110       rs != rt                |
+  |  6        5         5         16    |
+
+
+  <b>Description:</b>
+  Compact branch if GPR[rs] ≥ GPR[rt].
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rs</i> are greater than or equal to the contents of GPR <i>rt</i>, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ unsigned_word(GPR[rt]) ≥ unsigned_word(GPR[rt])
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BLTUC_DOCUMENTATION: |-
+  <u>Branch on less than or equal unsigned compact</u>
+
+  <b>Format:</b>
+  bltuc rs, rt, offset
+
+  | POP07  rs != 0   rt != 0    offset  |
+  |000111       rs != rt                |
+  |  6        5         5         16    |
+
+
+  <b>Description:</b>
+  Compact branch if GPR[rs] < GPR[rt].
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rs</i> are less than the contents of GPR <i>rt</i>, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ unsigned_word(GPR[rt]) < unsigned_word(GPR[rt])
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BEQC_DOCUMENTATION: |-
+  <u>Branch on equal compact</u>
+
+  <b>Format:</b>
+  beqc rs, rt, offset
+
+  | POP10  rs != 0   rt != 0    offset  |
+  |001000       rs < rt                 |
+  |  6        5         5         16    |
+
+
+  <b>Description:</b>
+  Compact branch if GPR[rs] = GPR[rt].
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rs</i> are equal to the contents of GPR <i>rt</i>, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] = GPR[rt]
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BNEC_DOCUMENTATION: |-
+  <u>Branch on not equal compact</u>
+
+  <b>Format:</b>
+  bnec rs, rt, offset
+
+  | POP30  rs != 0   rt != 0    offset  |
+  |011000       rs < rt                 |
+  |  6        5         5         16    |
+
+
+  <b>Description:</b>
+  Compact branch if GPR[rs] != GPR[rt].
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rs</i> are not equal to the contents of GPR <i>rt</i>, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] != GPR[rt]
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BEQZC_DOCUMENTATION: |-
+  <u>Branch on equal to zero compact</u>
+
+  <b>Format:</b>
+  beqzc rs, offset
+
+  | POP66   BEQZC    offset  |
+  |110110  rs != 0           |
+  |  6        5        16    |
+
+
+  <b>Description:</b>
+  Compact branch if GPR[rs] == 0.
+
+  An 23-bit signed offset (the 21-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rs</i> are equal to zero, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] == 0
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BNEZC_DOCUMENTATION: |-
+  <u>Branch on not equal to zero compact</u>
+
+  <b>Format:</b>
+  bnezc rs, offset
+
+  | POP76   BNEZC    offset  |
+  |111110  rs != 0           |
+  |  6        5        16    |
+
+
+  <b>Description:</b>
+  Compact branch if GPR[rs] != 0.
+
+  An 23-bit signed offset (the 21-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rs</i> are not equal to zero, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rt] != 0
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BGTZ_DOCUMENTATION: |-
+  <u>Branch on greater than zero</u>
+
+  <b>Format:</b>
+  bgtz rs, offset
+
+  | BGTZ      rs     0      offset  |
+  |000111          00000            |
+  |  6        5      5        16    |
+
+
+  <b>Description:</b>
+  if GPR[rs] > 0 then branch
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rs</i> are greater than zero, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  <black>I:</black>
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rs] > 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+INSTRUCTION_BITSWAP_DOCUMENTATION: |-
+  <u>Swap bits in each byte</u>
+
+  <b>Format:</b>
+  bitswap rd, rt
+
+  |SPECIAL3    0    rt    rd    BITSWAP   BSGFL  |
+  | 011111   00000               00000    100000 |
+  |   6        5     5     5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd].byte[i] ⇽ reverse_bits(GPR[rt].byte[i]), for all bytes i
+
+  Each byte in GPR <i>rt</i> has its bytes reversed and moved to the same position in GPR <i>rd</i>.
+  This instruction operates on all 4 bytes of a 32-bit word.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+
+  function reverse_bits (in)
+      out<sub>7</sub> ⇽ in<sub>0</sub>
+      out<sub>6</sub> ⇽ in<sub>1</sub>
+      out<sub>5</sub> ⇽ in<sub>2</sub>
+      out<sub>4</sub> ⇽ in<sub>3</sub>
+      out<sub>3</sub> ⇽ in<sub>4</sub>
+      out<sub>2</sub> ⇽ in<sub>5</sub>
+      out<sub>1</sub> ⇽ in<sub>6</sub>
+      out<sub>0</sub> ⇽ in<sub>7</sub>
+      return out
+  end function
+
+  for i in 0 to 3 do
+      GPR[rd].byte[i] ⇽ reverse_bits(GPR[rt].byte[i])
+  endfor
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BLEZ_DOCUMENTATION: |-
+  <u>Branch on less than or equal to zero</u>
+
+  <b>Format:</b>
+  blez rs, offset
+
+  | BLEZ      rs     0      offset  |
+  |000110          00000            |
+  |  6        5      5        16    |
+
+
+  <b>Description:</b>
+  if GPR[rs] ≤ 0 then branch
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rs</i> are less than or equal to zero, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  <black>I:</black>
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rs] ≤ 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+INSTRUCTION_BLTZ_DOCUMENTATION: |-
+  <u>Branch on less than zero</u>
+
+  <b>Format:</b>
+  bltz rs, offset
+
+  |REGIMM     rs    BLTZ    offset  |
+  |000001          00000            |
+  |  6        5      5        16    |
+
+
+  <b>Description:</b>
+  if GPR[rs] < 0 then branch
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rs</i> are less than zero, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  <black>I:</black>
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rs] < 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+INSTRUCTION_BNE_DOCUMENTATION: |-
+  <u>Branch on not equal</u>
+
+  <b>Format:</b>
+  bne rs, rt, offset
+
+  | BNE       rs     rt     offset  |
+  |000101                           |
+  |  6        5      5       16     |
+
+
+  <b>Description:</b>
+  if GPR[rs] != GPR[rt] then branch
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rt</i> and GPR <i>rs</i> are not equal, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  <black>I:</black>
+  target_offset ⇽ sign_extend(offset || 00)
+  condition ⇽ GPR[rs] != GPR[rt]
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+INSTRUCTION_BOVC_DOCUMENTATION: |-
+  <u>Branch on overflow compact</u>
+
+  <b>Format:</b>
+  bovc rs, rt, offset
+
+  | POP10     rs        rt      offset  |
+  |001000       rs ≥ rt                 |
+  |  6        5         5         16    |
+
+
+  <b>Description:</b>
+  Compact branch if GPR[rs] + GPR[rt] overflows
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rs</i> plus the contents of GPR <i>rt</i> overflow, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  target_offset ⇽ sign_extend(offset || 00)
+  temp_d = GPR[rs] + GPR[rt]
+  condition ⇽ temp_d<sub>32</sub> != temp_d<sub>31</sub>
+
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BNVC_DOCUMENTATION: |-
+  <u>Branch on no overflow compact</u>
+
+  <b>Format:</b>
+  bnvc rs, rt, offset
+
+  | POP30     rs        rt      offset  |
+  |011000       rs ≥ rt                 |
+  |  6        5         5         16    |
+
+
+  <b>Description:</b>
+  Compact branch if GPR[rs] + GPR[rt] doesn't overflow
+
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  If the contents of GPR <i>rs</i> plus the contents of GPR <i>rt</i> don't overflow, branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  target_offset ⇽ sign_extend(offset || 00)
+  temp_d = GPR[rs] + GPR[rt]
+  condition ⇽ temp_d<sub>32</sub> = temp_d<sub>31</sub>
+
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_BREAK_DOCUMENTATION: |-
+  <u>Breakpoint</u>
+
+  <b>Format:</b>
+  break
+
+  |SPECIAL    0       BREAK  |
+  |000000                    |
+  |  6        20     001101  |
+
+
+  <b>Description:</b>
+  Breakpoint
+
+  A breakpoint exception occurs, immediately and unconditionally transfering control to the exception handler.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  SignalException(Breakpoint)
+
+  <b>Exceptions:</b>
+  Breakpoint
+INSTRUCTION_CEIL_L_D_DOCUMENTATION: |-
+  <u>Ceiling double to long</u>
+
+  <b>Format:</b>
+  ceil.l.d fd, fs
+
+  | COP1      fmt      0      fs      fd     CEIL.L |
+  |010001    10001   00000                   001010 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  The double precission floating point value of FPR <i>fs</i> is converted to a ceiled 64-bit word.
+  The result is placed in FPR <i>fd</i>.
+
+  When the source value is <black>Infinity</black>, <black>NaN</black> or is outside a 64-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
+
+  <b>Restrictions:</b>
+  The fields <i>fs</i> and <i>fd</i> must be even FPRs. If the fields are not valid, the result is <black>UNPREDICTABLE</black>.
+  The operand must be a value in double precision floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ double
+  StoreFPR(fd, L, ConvertFmt(ValueFPR(fs, fmt), fmt, L))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_CEIL_W_D_DOCUMENTATION: |-
+  <u>Ceiling double to word</u>
+
+  <b>Format:</b>
+  ceil.w.d fd, fs
+
+  | COP1      fmt      0      fs      fd     CEIL.W |
+  |010001    10001   00000                   001110 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  The double precission floating point value of FPR <i>fs</i> is converted to a ceiled 32-bit word.
+  The result is placed in FPR <i>fd</i>.
+
+  When the source value is <black>Infinity</black>, <black>NaN</black> or is outside a 32-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
+
+  <b>Restrictions:</b>
+  The field <i>fs</i> must be an even FPR. If the field is not valid, the result is <black>UNPREDICTABLE</black>.
+  The operand must be a value in double precision floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ double
+  StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_CEIL_L_S_DOCUMENTATION: |-
+  <u>Ceiling float to long</u>
+
+  <b>Format:</b>
+  ceil.l.s fd, fs
+
+  | COP1      fmt      0      fs      fd     CEIL.L |
+  |010001    10000   00000                   001010 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  The floating point value of FPR <i>fs</i> is converted to a ceiled 64-bit word.
+  The result is placed in FPR <i>fd</i>.
+
+  When the source value is <black>Infinity</black>, <black>NaN</black> or is outside a 64-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
+
+  <b>Restrictions:</b>
+  The field <i>fd</i> must be an even FPR. If the field is not valid, the result is <black>UNPREDICTABLE</black>.
+  The operand must be a value in floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ float
+  StoreFPR(fd, L, ConvertFmt(ValueFPR(fs, fmt), fmt, L))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_CEIL_W_S_DOCUMENTATION: |-
+  <u>Ceiling float to word</u>
+
+  <b>Format:</b>
+  ceil.w.s fd, fs
+
+  | COP1      fmt      0      fs      fd     CEIL.W |
+  |010001    10000   00000                   001110 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  The floating point value of FPR <i>fs</i> is converted to a ceiled 32-bit word.
+  The result is placed in FPR <i>fd</i>.
+
+  When the source value is <black>Infinity</black>, <black>NaN</black> or is outside a 32-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
+
+  <b>Restrictions:</b>
+  The operand must be a value in floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ float
+  StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_CLO_DOCUMENTATION: |-
+  <u>Count leading ones in word</u>
+
+  <b>Format:</b>
+  clo rd, rs
+
+  |SPECIAL     rs      0      rd      1       CLO   |
+  |000000            00000          00001    010001 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ count_leading_ones(GPR[rs])
+
+  Bits 31 to 0 of GPR <i>rs</i> are scanned from most significant to least significant bit. The number of leading ones is counted and the result is written to GPR <i>rd</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+
+  temp ⇽ 32
+  for i in 31 to 0
+      if GPR[rs]<sub>i</sub> = 0 then
+          temp ⇽ 31 - i
+          break
+      endif
+  endfor
+  GPR[rd] ⇽ temp
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_CLZ_DOCUMENTATION: |-
+  <u>Count leading zeros in word</u>
+
+  <b>Format:</b>
+  clz rd, rs
+
+  |SPECIAL     rs      0      rd      1       CLZ   |
+  |000000            00000          00001    010000 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ count_leading_zeros(GPR[rs])
+
+  Bits 31 to 0 of GPR <i>rs</i> are scanned from most significant to least significant bit. The number of leading zeros is counted and the result is written to GPR <i>rd</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+
+  temp ⇽ 32
+  for i in 31 to 0
+      if GPR[rs]<sub>i</sub> = 1 then
+          temp ⇽ 31 - i
+          break
+      endif
+  endfor
+  GPR[rd] ⇽ temp
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_CMP_D_DOCUMENTATION: |-
+  <u>Floating point compare ({TYPE}) (double)</u>
+
+  <b>Format:</b>
+  cmp.{MNEMONIC}.d fd, fs, ft
+
+  | COP1    CMP.c.D   ft   fs   fd   0   {MNEMONIC}\t|
+  |000001    10101                   0   {CODE}\t|
+  |  6         5      5    5    5    1     5     \t|
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ FPR[fs] compare_cond FPR[ft] where compare_cond = {TYPE}.
+
+  The value in FPR <i>fs</i> is compared to the value in FPR <i>ft</i>.
+  The FPR <i>fd</i> is filled with zeros if the result is false or ones of the result is true.
+
+  Each bit 2 to 0 in the condition repesents a check. If one of these bits is active the check linked to it will be executed.
+  The result is true when any of these checks return true.
+
+  The checks linked to the bits are the next:
+  - Bit 0: unordered.
+  - Bit 1: equal.
+  - Bit 2: less than.
+
+  If bit 4 is active the result is negated.
+  If bit 3 is active and any of the operands are <black>NaN</black>, a Floating Point Exception will be thrown.
+
+  <b>Restrictions:</b>
+  The fields <i>fs</i>, <i>ft</i> and <i>fd</i> must be even FPRs. If the fields are not valid, the result is <black>UNPREDICTABLE</black>.
+  Operands must be values in double precision floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ double
+  fsv ⇽ ValueFPR(fs, fmt)
+  ftv ⇽ ValueFPR(ft, fmt)
+
+  if is_NaN(fsv) or is_NaN(ftv) then
+      less ⇽ false
+      equal ⇽ false
+      unordered ⇽ true
+      if cond<sub>3</sub> then
+          SignalException(FloatingPointException)
+      endif
+  else
+      less ⇽ fsv <<sub>fmt</sub> ftv
+      less ⇽ fsv =<sub>fmt</sub> ftv
+      unordered ⇽ false
+  endif
+
+  condition ⇽ cond<sub>4</sub> xor ((cond<sub>2</sub> and less) or (cond<sub>1</sub> and equal) or (cond<sub>0</sub> and unordered))
+  StoreFPR(fd, fmt, extend_bit.fmt(condition))
+
+  <b>Exceptions:</b>
+  Floating Point Exception
+INSTRUCTION_CMP_S_DOCUMENTATION: |-
+  <u>Floating point compare ({TYPE}) (single)</u>
+
+  <b>Format:</b>
+  cmp.{MNEMONIC}.s fd, fs, ft
+
+  | COP1    CMP.c.S   ft   fs   fd   0   {MNEMONIC}\t|
+  |000001    10100                   0   {CODE}\t|
+  |  6         5      5    5    5    1     5     \t|
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ FPR[fs] compare_cond FPR[ft] where compare_cond = {TYPE}.
+
+  The value in FPR <i>fs</i> is compared to the value in FPR <i>ft</i>.
+  The FPR <i>fd</i> is filled with zeros if the result is false or ones of the result is true.
+
+  Each bit 2 to 0 in the condition repesents a check. If one of these bits is active the check linked to it will be executed.
+  The result is true when any of these checks return true.
+
+  The checks linked to the bits are the next:
+  - Bit 0: unordered.
+  - Bit 1: equal.
+  - Bit 2: less than.
+
+  If bit 4 is active the result is negated.
+  If bit 3 is active and any of the operands are <black>NaN</black>, a Floating Point Exception will be thrown.
+
+  <b>Restrictions:</b>
+  Operands must be values in floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ float
+  fsv ⇽ ValueFPR(fs, fmt)
+  ftv ⇽ ValueFPR(ft, fmt)
+
+  if is_NaN(fsv) or is_NaN(ftv) then
+      less ⇽ false
+      equal ⇽ false
+      unordered ⇽ true
+      if cond<sub>3</sub> then
+          SignalException(FloatingPointException)
+      endif
+  else
+      less ⇽ fsv <<sub>fmt</sub> ftv
+      less ⇽ fsv =<sub>fmt</sub> ftv
+      unordered ⇽ false
+  endif
+
+  condition ⇽ cond<sub>4</sub> xor ((cond<sub>2</sub> and less) or (cond<sub>1</sub> and equal) or (cond<sub>0</sub> and unordered))
+  StoreFPR(fd, fmt, extend_bit.fmt(condition))
+
+  <b>Exceptions:</b>
+  Floating Point Exception
+INSTRUCTION_CRC32_DOCUMENTATION: |
+  <u>Generate CRC with reversed polynomial 0xEDB88320</u>
+
+  <b>Format:</b>
+  crc32b rt, rs
+  crc32h rt, rs
+  crc32w rt, rs
+
+  |SPECIAL3    rs    rt    0    sz     CRC  |
+  | 011111                     000   001111 |
+  |   6        5     5     8    2      6    |
+
+
+  <b>Description:</b>
+  GPR[rt] ⇽ CRC32(GRP[rt], GPR[rs])
+
+  Generates a CRC value based on the reversed polynomial 0xEDB88320.
+  The generated value overwrites the input CRC value at GPR <i>rt</i>, as the original value is considered redundant once the cumulative CRC value is regenerated.
+  The value in GPR <i>rt</i> is considered the CRC, while the value in GPR <i>rs</i> is considered the message.
+
+  The <i>sz</i> field represents the size of the message:
+  - If <i>sz</i> is 0, the meesage is a byte.
+  - If <i>sz</i> is 1, the meesage is a half word.
+  - If <i>sz</i> is 2, the meesage is a word.
+  This field is assigned depending on the mnemonic of the instruction.
+
+  <b>Restrictions:</b>
+  Ninguna
+
+  <b>Operation:</b>
+  poly ⇽ 0xEDB88320
+  if(sz = 0b00) then
+      temp ⇽ CRC32(GPR[rt], GPR[rs], 1, poly)
+  else if (sz = 0b01) then
+      temp ⇽ CRC32(GPR[rt], GPR[rs], 2, poly)
+  else if (sz = 0b10) then
+      temp ⇽ CRC32(GPR[rt], GPR[rs], 4, poly)
+  else then
+      SignalException(ReservedInstruction)
+  endif
+
+  GPR[rt] ⇽ temp
+
+  <b>Exceptions:</b>
+  Reserved Instruction
+INSTRUCTION_CRC32C_DOCUMENTATION: |
+  <u>Generate CRC with reversed polynomial 0x82F63B78</u>
+
+  <b>Format:</b>
+  crc32b rt, rs
+  crc32h rt, rs
+  crc32w rt, rs
+
+  |SPECIAL3    rs    rt    0    sz     CRC  |
+  | 011111                     001   001111 |
+  |   6        5     5     8    2      6    |
+
+
+  <b>Description:</b>
+  GPR[rt] ⇽ CRC32(GRP[rt], GPR[rs])
+
+  Generates a CRC value based on the reversed polynomial 0x82F63B78.
+  The generated value overwrites the input CRC value at GPR <i>rt</i>, as the original value is considered redundant once the cumulative CRC value is regenerated.
+  The value in GPR <i>rt</i> is considered the CRC, while the value in GPR <i>rs</i> is considered the message.
+
+  The <i>sz</i> field represents the size of the message:
+  - If <i>sz</i> is 0, the meesage is a byte.
+  - If <i>sz</i> is 1, the meesage is a half word.
+  - If <i>sz</i> is 2, the meesage is a word.
+  This field is assigned depending on the mnemonic of the instruction.
+
+  <b>Restrictions:</b>
+  Ninguna
+
+  <b>Operation:</b>
+  poly ⇽ 0x82F63B78
+  if(sz = 0b00) then
+      temp ⇽ CRC32(GPR[rt], GPR[rs], 1, poly)
+  else if (sz = 0b01) then
+      temp ⇽ CRC32(GPR[rt], GPR[rs], 2, poly)
+  else if (sz = 0b10) then
+      temp ⇽ CRC32(GPR[rt], GPR[rs], 4, poly)
+  else then
+      SignalException(ReservedInstruction)
+  endif
+
+  GPR[rt] ⇽ temp
+
+  <b>Exceptions:</b>
+  Reserved Instruction
+INSTRUCTION_CVT_DOCUMENTATION: |-
+  <u>Convert from {FROM} to {TO}</u>
+
+  <b>Format:</b>
+  cvt.{TO_MNEMONIC}.{FROM_MNEMONIC} fd, fs
+
+  | COP1      fmt      0      fs      fd      CVT.{TO_MNEMONIC}  |
+  |010001    {FROM_FMT}   00000                   {TO_CVT}  |
+  |  6         5       5      5       5        6     |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  The value of FPR <i>fs</i> in the format of {FROM} is converted to a value in the format of {TO}.
+  The result is placed in FPR <i>fd</i>.
+
+  <b>Restrictions:</b>
+  Values whose format rely on two register must be placed on an even FPR. If they are not, the result is <black>UNPREDICTABLE</black>.
+  The operand must be in the value of its respective format. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  from ⇽ {FROM_MNEMONIC}
+  to ⇽ {TO_MNEMONIC}
+  StoreFPR(fd, to, ConvertFmt(ValueFPR(fs, from), from, to))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_DIV_DOCUMENTATION: |-
+  <u>Division</u>
+
+  <b>Format:</b>
+  div rd, rs, rt
+
+  |SPECIAL     rs      rt     rd     DIV      SOP32 |
+  |000000                           00010    011010 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ GPR[rs] / GPR[rt]
+
+  The 32-bit word value in GPR <i>rs</i> is divided by the 32-bit value in GPR <i>rt</i> to produce a 32-bit quotient.
+  The 32-bit quotient is placed into GPR <i>rd</i>.
+
+  <b>Restrictions:</b>
+  If the divisor in GPR <i>rt</i> is zero, the result value is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+
+  GPR[rd] ⇽ GPR[rs] / GPR[rt]
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  Because the divide and modulo instructions are defined to not trap if dividing by zero, it is safe to emit code that checks for zero-divide after the divide or modulo instruction.
+INSTRUCTION_MOD_DOCUMENTATION: |-
+  <u>Modulo</u>
+
+  <b>Format:</b>
+  mod rd, rs, rt
+
+  |SPECIAL     rs      rt     rd     MOD      SOP32 |
+  |000000                           00011    011010 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ GPR[rs] % GPR[rt]
+
+  The 32-bit word value in GPR <i>rs</i> is divided by the 32-bit value in GPR <i>rt</i> to produce a 32-bit remainder.
+  The 32-bit remainder is placed into GPR <i>rd</i>.
+
+  <b>Restrictions:</b>
+  If the divisor in GPR <i>rt</i> is zero, the result value is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+
+  GPR[rd] ⇽ GPR[rs] % GPR[rt]
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  Because the divide and modulo instructions are defined to not trap if dividing by zero, it is safe to emit code that checks for zero-divide after the divide or modulo instruction.
+INSTRUCTION_DIVU_DOCUMENTATION: |-
+  <u>Unsigned division</u>
+
+  <b>Format:</b>
+  divu rd, rs, rt
+
+  |SPECIAL     rs      rt     rd     DIVU     SOP33 |
+  |000000                           00010    011011 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ GPR[rs] / GPR[rt]
+
+  The 32-bit word value in GPR <i>rs</i> is divided by the 32-bit value in GPR <i>rt</i> to produce a 32-bit quotient.
+  The 32-bit quotient is placed into GPR <i>rd</i>.
+
+  <b>Restrictions:</b>
+  If the divisor in GPR <i>rt</i> is zero, the result value is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+
+  GPR[rd] ⇽ unsigned_word(GPR[rs]) / unsigned_word(GPR[rt])
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  Because the divide and modulo instructions are defined to not trap if dividing by zero, it is safe to emit code that checks for zero-divide after the divide or modulo instruction.
+INSTRUCTION_MODU_DOCUMENTATION: |-
+  <u>Unsigned modulo</u>
+
+  <b>Format:</b>
+  modu rd, rs, rt
+
+  |SPECIAL     rs      rt     rd     MODU     SOP33 |
+  |000000                           00011    011011 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ GPR[rs] % GPR[rt]
+
+  The 32-bit word value in GPR <i>rs</i> is divided by the 32-bit value in GPR <i>rt</i> to produce a 32-bit remainder.
+  The 32-bit remainder is placed into GPR <i>rd</i>.
+
+  <b>Restrictions:</b>
+  If the divisor in GPR <i>rt</i> is zero, the result value is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+
+  GPR[rd] ⇽ unsigned_word(GPR[rs]) % unsigned_word(GPR[rt])
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  Because the divide and modulo instructions are defined to not trap if dividing by zero, it is safe to emit code that checks for zero-divide after the divide or modulo instruction.
+INSTRUCTION_DIV_D_DOCUMENTATION: |-
+  <u>Double precision floating point division</u>
+
+  <b>Format:</b>
+  div.d fd, fs, ft
+
+  | COP1      fmt      0      fs      fd      DIV   |
+  |010001    10001   00000                   000011 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ FPR[fs] / FPR[ft]
+
+  The value in FPR <i>ft</i> is divided by the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
+  The operands and result are values in double precision floating point.
+
+  <b>Restrictions:</b>
+  The fields <i>fs</i>, <i>ft</i> and <i>fd</i> must be even FPRs. If the fields are not valid, the result is <black>UNPREDICTABLE</black>.
+  Operands must be values in double precision floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ double
+  StoreFPR(fd, fmt, ValueFPR(fs, fmt) /<sub>fmt</sub> ValueFPR(ft, fmt))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_DIV_S_DOCUMENTATION: |-
+  <u>Floating point division</u>
+
+  <b>Format:</b>
+  div.s fd, fs, ft
+
+  | COP1      fmt      0      fs      fd      DIV   |
+  |010001    10000   00000                   000011 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ FPR[fs] / FPR[ft]
+
+  The value in FPR <i>ft</i> is divided by the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
+  The operands and result are values in floating point.
+
+  <b>Restrictions:</b>
+  Operands must be values in floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ float
+  StoreFPR(fd, fmt, ValueFPR(fs, fmt) /<sub>fmt</sub> ValueFPR(ft, fmt))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_ERET_DOCUMENTATION: |-
+  <u>Exception return</u>
+
+  <b>Format:</b>
+  eret
+
+  | COP0     CO    0     ERET   |
+  |010000    1           011000 |
+  |  6       1     19      6    |
+
+
+  <b>Description:</b>
+  This instruction clears the execution and all instruction hazards and returns to the interrupted instruction by an interruption, exception or error proccesing.
+  <black>eret</black> doesn't execute the next instruction and doesn't have a delay slot.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  if Status<sub>ERL</sub> = 1 then
+      temp ⇽ ErrorEPC
+      Status<sub>ERL</sub> ⇽ 0
+  else
+      temp ⇽ EPC
+      Status<sub>EXL</sub> ⇽ 0
+  endif
+
+  PC ⇽ temp
+
+  ClearHazards()
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_J_DOCUMENTATION: |-
+  <u>Jump</u>
+
+  <b>Format:</b>
+  j target
+
+  |  J      index |
+  |000010         |
+  |  6       26   |
+
+
+  <b>Description:</b>
+  This is a PC-region branch (not PC-relative); the effective target address is the 256MB-aligned region.
+  The low 28 bits of the target addres is the <i>index</i> field shifted left 2 bits. The remaining upper bits are the corresponding bits of the addres of the instruction in the delay slot (not the branch itself).
+  Jump to the effective target address. If delay slots are enabled, this instruction also executes the instruction that follows the jump, in the branch delay slot, before executing the jump itself.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  <black>I:</black>
+  <black>I+1:</black>
+  PC ⇽ PC<sub>31..28</sub> || index || 00
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  Forming the branch target address by catenating PC and index bits rather than adding a signed offset to the PC is an advantage if all program code addresses fit into a 256MB region aligned on a 256MB boundary. It allows a branch from anywhere to anywhere in the region, an action not allowed by a signed relative offset.
+  This definition creates the following boundary case: when the jump instruction is in the last word of a 256MB region, it can branch only to the following 256MB region containing the branch delay slot.
+  The jump instruction has been deprecated in Release 6. Use <black>bc</black> instead.
+INSTRUCTION_JAL_DOCUMENTATION: |-
+  <u>Jump and link</u>
+
+  <b>Format:</b>
+  jal target
+
+  | JAL     index |
+  |000011         |
+  |  6       26   |
+
+
+  <b>Description:</b>
+  This is a PC-region branch (not PC-relative); the effective target address is the 256MB-aligned region.
+
+  Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+  The low 28 bits of the target addres is the <i>index</i> field shifted left 2 bits. The remaining upper bits are the corresponding bits of the addres of the instruction in the delay slot (not the branch itself).
+  Jump to the effective target address. If delay slots are enabled, this instruction also executes the instruction that follows the jump, in the branch delay slot, before executing the jump itself.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  <black>I:</black>
+  GPR[31] ⇽ PC + 4
+  <black>I+1:</black>
+  PC ⇽ PC<sub>31..28</sub> || index || 00
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  Forming the branch target address by catenating PC and index bits rather than adding a signed offset to the PC is an advantage if all program code addresses fit into a 256MB region aligned on a 256MB boundary. It allows a branch from anywhere to anywhere in the region, an action not allowed by a signed relative offset.
+  This definition creates the following boundary case: when the jump instruction is in the last word of a 256MB region, it can branch only to the following 256MB region containing the branch delay slot.
+  The jump and link instruction has been deprecated in Release 6. Use <black>balc</black> instead.
+INSTRUCTION_JALR_DOCUMENTATION: |-
+  <u>Jump and link register</u>
+
+  <b>Format:</b>
+  jalr rs (rd = 31 implied)
+  jalr rd, rs
+
+  |SPECIAL     rs      rt     rd      0       JALR  |
+  |000000                                    001001 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ return_addr, PC ⇽ GPR[rs]
+
+  Places the return address link in GPR <i>rd</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+
+  Jump to the effective target addres in GPR <i>rs</i>. If the target address is not 4-bytes aligned, an Address Error exception will occur when the target address is fetched.
+  If delay slots are enabled, this instruction also executes the instruction that follows the jump, in the branch delay slot, before executing the jump itself.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  Register <i>rs</i> and <i>rd</i> must not be equal, because such an instruction does not have the same effect when re-executed. The result of execution such an instruction is <black>UNPREDICTABLE</black>. This restriction permits an exception handler to resume execution by re-executing the branch when an exception occurs in the delay slot.
+
+  <b>Operation:</b>
+  <black>I:</black>
+  temp ⇽ GPR[rs]
+  GPR[31] ⇽ PC + 4
+  <black>I+1:</black>
+  PC ⇽ temp
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  This jump-and-link register instruction can select a register for the return link; other link instructions use GPR 31.
+  The default register for GPR <i>rd</i>, if omitted in the assembly language instruction, is GPR 31.
+INSTRUCTION_LB_DOCUMENTATION: |-
+  <u>Load byte</u>
+
+  <b>Format:</b>
+  lb rt offset(base)
+
+  |  LB      base     rt    offset |
+  |100000                          |
+  |  6        5       5       16   |
+
+
+  <b>Description:</b>
+  GPR[rt] ⇽ memory[GPR[base] + offset]
+
+  The contents of the 8-bit byte at the memory location by the effective address are fetched, sign-extended and placed in GPR <i>rt</i>.
+  The 16-bit signed <i>offset</i> is added to the contents of GPR <i>base</i> to form the effective address.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  v_addr ⇽ sign_extend(offset) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+  mem_byte ⇽ LoadMemory(CCA, BYTE, p_addr, v_addr, DATA)
+  GPR[rt] ⇽ sign_extend(mem_byte)
+
+  <b>Exceptions:</b>
+  Address Error
+INSTRUCTION_LW_DOCUMENTATION: |-
+  <u>Load word</u>
+
+  <b>Format:</b>
+  lw rt offset(base)
+
+  |  LW      base     rt    offset |
+  |100011                          |
+  |  6        5       5       16   |
+
+
+  <b>Description:</b>
+  GPR[rt] ⇽ memory[GPR[base] + offset]
+
+  The contents of the 32-bit word at the memory location by the effective address are fetched, sign-extended and placed in GPR <i>rt</i>.
+  The 16-bit signed <i>offset</i> is added to the contents of GPR <i>base</i> to form the effective address.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  v_addr ⇽ sign_extend(offset) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+  mem_word ⇽ LoadMemory(CCA, WORD, p_addr, v_addr, DATA)
+  GPR[rt] ⇽ sign_extend(mem_word)
+
+  <b>Exceptions:</b>
+  Address Error
+INSTRUCTION_MFC0_DOCUMENTATION: |-
+  <u>Move from coprocessor 0</u>
+
+  <b>Format:</b>
+  mfc0 rt, rd (sel = 0 implied)
+  mfc0 rt, rd, sel
+
+  | COP0     MF     rt    rd    0    sel |
+  |010000  00000                         |
+  |  6       5      5     5     8     0  |
+
+
+  <b>Description:</b>
+  GPR[rt] ⇽ CPR[0, rd, sel]
+
+  The contents of the coprocessor 0 register specified by the combination of <i>rd</i> and <i>sel</i> are loaded into the general register <i>rt</i>.
+
+  <b>Restrictions:</b>
+  Reading a reserved register or a register that is not implemented for the current core configuration returns 0.
+
+  <b>Operation:</b>
+  if IsCoprocessorRegisterImplemented(0, rd, sel) then
+      GPR[rt] ⇽ CPR[0, rd, sel]
+  else
+      GPR[rt] ⇽ 0
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_MFC1_DOCUMENTATION: |-
+  <u>Move from coprocessor 1</u>
+
+  <b>Format:</b>
+  mfc1 rt, rd
+
+  | COP1     MF     rt    fs     0 |
+  |010001  00000                   |
+  |  6       5      5     5     11 |
+
+
+  <b>Description:</b>
+  GPR[rt] ⇽ FPR[fs]
+
+  The contents of the coprocessor 1 register <i>fs</i> are loaded into the general register <i>rt</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  GPR[rt] ⇽ ValueFPR(fs, UNINTERPRETED_WORD)
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_MTC0_DOCUMENTATION: |-
+  <u>Move to coprocessor 0</u>
+
+  <b>Format:</b>
+  mtc0 rt, rd (sel = 0 implied)
+  mtc0 rt, rd, sel
+
+  | COP0     MT     rt    rd    0    sel |
+  |010000  00100                         |
+  |  6       5      5     5     8     0  |
+
+
+  <b>Description:</b>
+  CPR[0, rd, sel] ⇽ GPR[rt]
+
+  The contents of the general register <i>rt</i> are loaded into the coprocessor 0 register specified by the combination of <i>rd</i> and <i>sel</i>.
+
+  <b>Restrictions:</b>
+  Writes to a reserved register or a register that is not implemented for the current core configuration are ignored.
+
+  <b>Operation:</b>
+  if IsCoprocessorRegisterImplemented(0, rd, sel) then
+      CPR[0, rd, sel] ⇽ GPR[rt]
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_MTC1_DOCUMENTATION: |-
+  <u>Move to coprocessor 1</u>
+
+  <b>Format:</b>
+  mtc1 rt, rd
+
+  | COP1     MT     rt    fs     0 |
+  |010001  00100                   |
+  |  6       5      5     5     11 |
+
+
+  <b>Description:</b>
+  FPR[fs] ⇽ GPR[rt]
+
+  The contents of the general register <i>rt</i> are loaded into the coprocessor 1 register <i>fs</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  StoreFPR(fs, UNINTERPRETED_WORD, GPR[rt])
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_MUL_DOCUMENTATION: |-
+  <u>Multiplication and return low word</u>
+
+  <b>Format:</b>
+  mul rd, rs, rt
+
+  |SPECIAL     rs      rt     rd     MUL      SOP30 |
+  |000000                           00010    011000 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ lo_word(GPR[rs] * GPR[rt])
+
+  The 32-bit word value in GPR <i>rs</i> is multiplied by the 32-bit value in GPR <i>rt</i> to produce a 32-bit word contaning the low 32 bits of the result.
+  The 32-bit word is placed into GPR <i>rd</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+
+  GPR[rd] ⇽ lo_word(GPR[rs] * GPR[rt])
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  The low half of the integer multiplication result is identical for signed and unsigned. Neverthless, there different instructions for unsigned and signed multiplication that produce the low half of the result.
+  Implementations may choose to optimize a multiply that produces the low half followed by a multiply that produces the upper half. Programmers are recommended to use matching lower and upper half multiplications.
+INSTRUCTION_MUH_DOCUMENTATION: |-
+  <u>Multiplication and return high word</u>
+
+  <b>Format:</b>
+  muh rd, rs, rt
+
+  |SPECIAL     rs      rt     rd     MUH      SOP30 |
+  |000000                           00011    011000 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ hi_word(GPR[rs] * GPR[rt])
+
+  The 32-bit word value in GPR <i>rs</i> is multiplied by the 32-bit value in GPR <i>rt</i> to produce a 32-bit word contaning the upper 32 bits of the result.
+  The 32-bit word is placed into GPR <i>rd</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+
+  GPR[rd] ⇽ hi_word(GPR[rs] * GPR[rt])
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  The low half of the integer multiplication result is identical for signed and unsigned. Neverthless, there different instructions for unsigned and signed multiplication that produce the low half of the result.
+  Implementations may choose to optimize a multiply that produces the low half followed by a multiply that produces the upper half. Programmers are recommended to use matching lower and upper half multiplications.
+INSTRUCTION_MULU_DOCUMENTATION: |-
+  <u>Unsigned multiplication and return low word</u>
+
+  <b>Format:</b>
+  mulu rd, rs, rt
+
+  |SPECIAL     rs      rt     rd     MULU     SOP31 |
+  |000000                           00010    011001 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ lo_word(GPR[rs] * GPR[rt])
+
+  The 32-bit word value in GPR <i>rs</i> is multiplied by the 32-bit value in GPR <i>rt</i> to produce a 32-bit word contaning the low 32 bits of the result.
+  The 32-bit word is placed into GPR <i>rd</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+
+  GPR[rd] ⇽ lo_word(unsigned_word(GPR[rs]) * unsigned_word(GPR[rt]))
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  The low half of the integer multiplication result is identical for signed and unsigned. Neverthless, there different instructions for unsigned and signed multiplication that produce the low half of the result.
+  Implementations may choose to optimize a multiply that produces the low half followed by a multiply that produces the upper half. Programmers are recommended to use matching lower and upper half multiplications.
+INSTRUCTION_MUHU_DOCUMENTATION: |-
+  <u>Unsigned multiplication and return high word</u>
+
+  <b>Format:</b>
+  muhu rd, rs, rt
+
+  |SPECIAL     rs      rt     rd     MUHU     SOP31 |
+  |000000                           00011    011001 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ hi_word(GPR[rs] * GPR[rt])
+
+  The 32-bit word value in GPR <i>rs</i> is multiplied by the 32-bit value in GPR <i>rt</i> to produce a 32-bit word contaning the upper 32 bits of the result.
+  The 32-bit word is placed into GPR <i>rd</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+
+  GPR[rd] ⇽ hi_word(unsigned_word(GPR[rs]) * unsigned_word(GPR[rt]))
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  The low half of the integer multiplication result is identical for signed and unsigned. Neverthless, there different instructions for unsigned and signed multiplication that produce the low half of the result.
+  Implementations may choose to optimize a multiply that produces the low half followed by a multiply that produces the upper half. Programmers are recommended to use matching lower and upper half multiplications.
+INSTRUCTION_MUL_D_DOCUMENTATION: |-
+  <u>Double precision floating point multiplication</u>
+
+  <b>Format:</b>
+  mul.d fd, fs, ft
+
+  | COP1      fmt      0      fs      fd      MUL   |
+  |010001    10001   00000                   000010 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ FPR[fs] * FPR[ft]
+
+  The value in FPR <i>ft</i> is multiplied by the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
+  The operands and result are values in double precision floating point.
+
+  <b>Restrictions:</b>
+  The fields <i>fs</i>, <i>ft</i> and <i>fd</i> must be even FPRs. If the fields are not valid, the result is <black>UNPREDICTABLE</black>.
+  Operands must be values in double precision floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ double
+  StoreFPR(fd, fmt, ValueFPR(fs, fmt) *<sub>fmt</sub> ValueFPR(ft, fmt))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_MUL_S_DOCUMENTATION: |-
+  <u>Floating point multiplication</u>
+
+  <b>Format:</b>
+  div.s fd, fs, ft
+
+  | COP1      fmt      0      fs      fd      MUL   |
+  |010001    10000   00000                   000010 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ FPR[fs] * FPR[ft]
+
+  The value in FPR <i>ft</i> is multiplied by the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
+  The operands and result are values in floating point.
+
+  <b>Restrictions:</b>
+  Operands must be values in floating point. If they are not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ float
+  StoreFPR(fd, fmt, ValueFPR(fs, fmt) *<sub>fmt</sub> ValueFPR(ft, fmt))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_OR_DOCUMENTATION: |-
+  <u>Or</u>
+
+  <b>Format:</b>
+  or rd, rs, rt
+
+  |SPECIAL     rs      rt     rd      0        OR   |
+  |000000                                    100101 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ GPR[rs] or GPR[rt]
+
+  Performs a bitwise logical OR using the values inside GPR <i>rs</i> and GPR <i>rt</i>.
+  The result is placed into GPR <i>rd</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  GPR[rd] ⇽ GPR[rs] or GPR[rt]
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_ORI_DOCUMENTATION: |-
+  <u>Immediate or</u>
+
+  <b>Format:</b>
+  ori rt, rs, immediate
+
+  | ORI       rs     rt     immediate |
+  |001101                             |
+  |  6        5      5         16     |
+
+
+  <b>Description:</b>
+  GPR[rt] ⇽ GPR[rs] or zero_extend(immediate)
+
+  The 16-bit <i>immediate</i> is zero-extended to the left and combined with the value of GPR <i>rs</i> in a bitwise logical OR operation.
+  The result is placed into GPR <i>rt</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  GPR[rt] ⇽ GPR[rs] or zero_extend(immediate)
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SB_DOCUMENTATION: |-
+  <u>Save byte</u>
+
+  <b>Format:</b>
+  sb rt offset(base)
+
+  |  SB      base     rt    offset |
+  |101000                          |
+  |  6        5       5       16   |
+
+
+  <b>Description:</b>
+  memory[GPR[base] + offset] ⇽ GPR[rt]
+
+  The least-significant 8-bit byte of GPR <i>rt</i> is stored in memory at the location specified by the effective address.
+  The 16-bit signed <i>offset</i> is added to the contents of GPR <i>base</i> to form the effective address.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  v_addr ⇽ sign_extend(offset) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+
+  byte_sel ⇽ v_addr<sub>1..0</sub> xor BigEndianCPU<sub>2</sub>
+  data_byte ⇽ GPR[rt]<sub>31 - 8 * byte_sel .. 0</sub> || 0<sub>8 * bytesel</sub>
+  StoreMemory (CCA, BYTE, data_byte, p_addr, v_addr, DATA)
+
+  <b>Exceptions:</b>
+  Address Error
+INSTRUCTION_SLL_DOCUMENTATION: |-
+  <u>Shift word left logical</u>
+
+  <b>Format:</b>
+  sll rd, rt, sa
+
+  |SPECIAL     0      rt     rd      sa      SLL   |
+  |000000                                   000000 |
+  |  6         5      5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ GPR[rt] << sa
+
+  The contents of GPR <i>rt</i> are shifted left, inserting zeros into the emptied bits. The result is placed in GPR <i>rd</i>. The bit-shift amount is specified by <i>sa</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  GPR[rd] ⇽ GPR[rt]<sub>31-sa..0</sub> || 0<sub>sa</sub>
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  <black>sll $zero, $zero, 0</black>, expressed as <black>NOP</black>, is the assembly idiom used to denote no operation.
+INSTRUCTION_SLLV_DOCUMENTATION: |-
+  <u>Shift word left logical variable</u>
+
+  <b>Format:</b>
+  sllv rd, rt, rs
+
+  |SPECIAL     rs     rt     rd     0      SLLV  |
+  |000000                                 000100 |
+  |  6         5      5      5      5       6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ GPR[rt] << GPR[rs]
+
+  The contents of GPR <i>rt</i> are shifted left, inserting zeros into the emptied bits. The result is placed in GPR <i>rd</i>. The bit-shift amount is specified by the low-order 5 bits of GPR <i>rs</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  sa ⇽ GPR[rs]<sub>4..0</sub>
+  GPR[rd] ⇽ GPR[rt]<sub>31-sa..0</sub> || 0<sub>sa</sub>
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SLT_DOCUMENTATION: |-
+  <u>Set on less than</u>
+
+  <b>Format:</b>
+  slt rd, rt, rs
+
+  |SPECIAL     rs     rt     rd     0      SLT   |
+  |000000                                 101010 |
+  |  6         5      5      5      5       6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ (GPR[rs] < GPR[rt])
+
+  Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
+  If GPR <i>rs</i> is less than GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  if GPR[rs] < GPR[rt] then
+      GPR[rd] ⇽ 0<sub>31..0</sub> || 1
+  else
+      GPR[rd] ⇽ 0
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SLTI_DOCUMENTATION: |-
+  <u>Set on less than immediate</u>
+
+  <b>Format:</b>
+  slti rt, rs, immediate
+
+  | SLTI       rs     rt     immediate |
+  |001010                              |
+  |  6         5      5         16     |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ (GPR[rs] < sign_extend(immediate))
+
+  Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
+  If GPR <i>rs</i> is less than <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  if GPR[rs] < sign_extend(immediate) then
+      GPR[rd] ⇽ 0<sub>31..0</sub> || 1
+  else
+      GPR[rd] ⇽ 0
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SLTIU_DOCUMENTATION: |-
+  <u>Set on less than immediate unsigned</u>
+
+  <b>Format:</b>
+  sltiu rt, rs, immediate
+
+  | SLTIU      rs     rt     immediate |
+  |001011                              |
+  |  6         5      5         16     |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ (GPR[rs] < sign_extend(immediate))
+
+  Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
+  If GPR <i>rs</i> is less than <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  if (0 || GPR[rs]) < (0 || sign_extend(immediate)) then
+      GPR[rd] ⇽ 0<sub>31..0</sub> || 1
+  else
+      GPR[rd] ⇽ 0
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SLTU_DOCUMENTATION: |-
+  <u>Set on less than unsigned</u>
+
+  <b>Format:</b>
+  sltu rd, rt, rs
+
+  |SPECIAL     rs     rt     rd     0      SLTU  |
+  |000000                                 101011 |
+  |  6         5      5      5      5       6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ (GPR[rs] < GPR[rt])
+
+  Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
+  If GPR <i>rs</i> is less than GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  if (0 || GPR[rs]) < (0 || GPR[rt]) then
+      GPR[rd] ⇽ 0<sub>31..0</sub> || 1
+  else
+      GPR[rd] ⇽ 0
+  endif
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SRL_DOCUMENTATION: |-
+  <u>Shift word right logical</u>
+
+  <b>Format:</b>
+  srl rd, rt, sa
+
+  |SPECIAL    0    R    rt    rd     sa     SRL   |
+  |000000          0                       000010 |
+  |  6        4    1    5     5      5       6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ GPR[rt] >> sa
+
+  The contents of GPR <i>rt</i> are shifted right, inserting zeros into the emptied bits. The result is placed in GPR <i>rd</i>. The bit-shift amount is specified by <i>sa</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  GPR[rd] ⇽ 0<sub>sa</sub> || GPR[rt]<sub>31..sa</sub>
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SRLV_DOCUMENTATION: |-
+  <u>Shift word right logical variable</u>
+
+  <b>Format:</b>
+  srlv rd, rt, rs
+
+  |SPECIAL     rs     rt     rd     0      SRLV  |
+  |000000                                 000110 |
+  |  6         5      5      5      5       6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ GPR[rt] >> GPR[rs]
+
+  The contents of GPR <i>rt</i> are shifted right, inserting zeros into the emptied bits. The result is placed in GPR <i>rd</i>. The bit-shift amount is specified by the low-order 5 bits of GPR <i>rs</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  sa ⇽ GPR[rs]<sub>4..0</sub>
+  GPR[rd] ⇽ 0<sub>sa</sub> || GPR[rt]<sub>31..sa</sub>
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SUB_DOCUMENTATION: |-
+  <u>Subtraction</u>
+
+  <b>Format:</b>
+  sub rd, rs, rt
+
+  |SPECIAL     rs      rt     rd      0       SUB   |
+  |000000                                    100010 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ GPR[rs] - GPR[rt]
+
+  The 32-bit word value in GPR <i>rt</i> is subtracted to the 32-bit value in GPR <i>rs</i> to produce a 32-bit result.
+   - If the subtraction results in 32-bit 2's complement arithmetic overflow, the destination register is not modified and an <black>Integer Overflow</black> exception occurs.
+   - If the subtraction does not overflow, the 32-bit result is placed intoto GPR <i>rd</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  temp ⇽ (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) - (GPR[rt]<sub>31</sub> || GPR[rt]<sub>31..0</sub>)
+  if temp<sub>32</sub> != temp<sub>31</sub> then
+      SignalException(IntegerOverflow)
+  else
+      GPR[rd] ⇽ temp<sub>31..0</sub>
+  endif
+
+  <b>Exceptions:</b>
+  Integer Overflow
+
+  <b>Programming Notes:</b>
+  <black>subu</black> performs the same arithmetic operation but does not trap on overflow.
+INSTRUCTION_SUB_D_DOCUMENTATION: |-
+  <u>Double precision floating point subtraction</u>
+
+  <b>Format:</b>
+  sub.d fd, fs, ft
+
+  | COP1      fmt      0      fs      fd      SUB   |
+  |010001    10001   00000                   000001 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ FPR[fs] - FPR[ft]
+
+  The value in FPR <i>ft</i> is subtracted to the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
+  The operands and result are values in double precision floating point.
+
+  <b>Restrictions:</b>
+  The fields <i>fs</i>, <i>ft</i> and <i>fd</i> must be even FPRs. If the fields are not valid, the result is <black>UNPREDICTABLE</black>.
+  The operand must be a value in double precision floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ double
+  StoreFPR(fd, fmt, ValueFPR(fs, fmt) -<sub>fmt</sub> ValueFPR(ft, fmt))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SUB_S_DOCUMENTATION: |-
+  <u>Floating point subtraction</u>
+
+  <b>Format:</b>
+  sub.s fd, fs, ft
+
+  | COP1      fmt      0      fs      fd      SUB   |
+  |010001    10000   00000                   000001 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ FPR[fs] - FPR[ft]
+
+  The value in FPR <i>ft</i> is subtracted to the value in FPR <i>fs</i>. The result is calculated to infinite precision, rounded using the <i>Java</i> rounding mode, and placed into FPR <i>fd</i>.
+  The operands and result are values in floating point.
+
+  <b>Restrictions:</b>
+  The operand must be a value in floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ float
+  StoreFPR(fd, fmt, ValueFPR(fs, fmt) -<sub>fmt</sub> ValueFPR(ft, fmt))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SUBU_DOCUMENTATION: |-
+  <u>Unsigned subtraction</u>
+
+  <b>Format:</b>
+  subu rd, rs, rt
+
+  |SPECIAL     rs      rt     rd      0       SUBU  |
+  |000000                                    100011 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ GPR[rs] - GPR[rt]
+
+  The 32-bit word value in GPR <i>rt</i> is subtracted to the 32-bit value in GPR <i>rs</i> to produce a 32-bit result.
+  The 32-bit result is placed into GPR <i>rd</i>.
+  No <black>Integer Overflow</black> exception occurs under any circumstances.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  temp ⇽ GPR[rs] - GPR[rt]
+  GPR[rd] ⇽ temp
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  The term <i>unsigned</i> in the instruction name is a misnomer; this operation is a 32-bit modulo arithmetic that does not trap on overflow. This instruction is appropiate for unsigned arithmetic, such as address arithmetic, or integer arithmetic environments that ignore overflow, such as the C language arithmetic.
+INSTRUCTION_SW_DOCUMENTATION: |-
+  <u>Save word</u>
+
+  <b>Format:</b>
+  sw rt offset(base)
+
+  |  SW      base     rt    offset |
+  |101011                          |
+  |  6        5       5       16   |
+
+
+  <b>Description:</b>
+  memory[GPR[base] + offset] ⇽ GPR[rt]
+
+  The word of GPR <i>rt</i> is stored in memory at the location specified by the effective address.
+  The 16-bit signed <i>offset</i> is added to the contents of GPR <i>base</i> to form the effective address.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  v_addr ⇽ sign_extend(offset) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+
+  word ⇽ GPR[rt]
+  StoreMemory (CCA, WORD, word, p_addr, v_addr, DATA)
+
+  <b>Exceptions:</b>
+  Address Error
+INSTRUCTION_SYSCALL_DOCUMENTATION: |-
+  <u>System call</u>
+
+  <b>Format:</b>
+  syscall
+
+  |SPECIAL     0     SYSCALL |
+  | 00000            001100  |
+  |   6        20      6     |
+
+
+  <b>Description:</b>
+  System call
+
+  A System Call excepcion occurs, immediately and unconditionally transfering control to the exception handler.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  SignalException(SystemCall)
+
+  <b>Exceptions:</b>
+  System Call
+INSTRUCTION_TEQ_DOCUMENTATION: |-
+  <u>Trap on equal</u>
+
+  <b>Format:</b>
+  teq rs, rt
+
+  |SPECIAL     rs      rt      0         TEQ   |
+  |000000                               110100 |
+  |  6         5       5       10         6    |
+
+
+  <b>Description:</b>
+  if GPR[rs] = GPR[rt] then Trap
+
+  Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers. If both values are equal, throws a <black>Trap</black> exception.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  if GPR[rs] = GPR[rt] then
+      SignalException(Trap)
+  endif
+
+  <b>Exceptions:</b>
+  Trap
+INSTRUCTION_TEQI_DOCUMENTATION: |-
+  <u>Trap on equal immediate</u>
+
+  <b>Format:</b>
+  teqi rs, immediate
+
+  |REGIMM      rs     TEQI     immediate |
+  |000001            01100               |
+  |  6         5       5          16     |
+
+
+  <b>Description:</b>
+  if GPR[rs] = immediate then Trap
+
+  Compares the contents of GPR <i>rs</i> and the immediate value as signed integers. If both values are equal, throws a <black>Trap</black> exception.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  if GPR[rs] = immediate then
+      SignalException(Trap)
+  endif
+
+  <b>Exceptions:</b>
+  Trap
+INSTRUCTION_TGE_DOCUMENTATION: |-
+  <u>Trap on greater or equal</u>
+
+  <b>Format:</b>
+  tge rs, rt
+
+  |SPECIAL     rs      rt      0         TGE   |
+  |000000                               110000 |
+  |  6         5       5       10         6    |
+
+
+  <b>Description:</b>
+  if GPR[rs] ≥ GPR[rt] then Trap
+
+  Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers. If the first value is greater or equal to the second value, throws a <black>Trap</black> exception.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  if GPR[rs] ≥ GPR[rt] then
+      SignalException(Trap)
+  endif
+
+  <b>Exceptions:</b>
+  Trap
+INSTRUCTION_TGEI_DOCUMENTATION: |-
+  <u>Trap on greater or equal immediate</u>
+
+  <b>Format:</b>
+  tgei rs, immediate
+
+  |REGIMM      rs     TGEI     immediate |
+  |000001            01000               |
+  |  6         5       5          16     |
+
+
+  <b>Description:</b>
+  if GPR[rs] ≥ immediate then Trap
+
+  Compares the contents of GPR <i>rs</i> and the immediate value as signed integers. If the first value is greater or equal to the second value, throws a <black>Trap</black> exception.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  if GPR[rs] ≥ immediate then
+      SignalException(Trap)
+  endif
+
+  <b>Exceptions:</b>
+  Trap
+INSTRUCTION_TGEIU_DOCUMENTATION: |-
+  <u>Trap on greater or equal immediate unsigned</u>
+
+  <b>Format:</b>
+  tgeiu rs, immediate
+
+  |REGIMM     rs     TGEIU     immediate |
+  |000001            01001               |
+  |  6         5       5          16     |
+
+
+  <b>Description:</b>
+  if GPR[rs] ≥ immediate then Trap
+
+  Compares the contents of GPR <i>rs</i> and the immediate value as unsigned integers. If the first value is greater or equal to the second value, throws a <black>Trap</black> exception.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  if unsigned_word(GPR[rs]) ≥ unsigned_word(immediate) then
+      SignalException(Trap)
+  endif
+
+  <b>Exceptions:</b>
+  Trap
+INSTRUCTION_TGEU_DOCUMENTATION: |-
+  <u>Trap on greater or equal unsigned</u>
+
+  <b>Format:</b>
+  tgeu rs, rt
+
+  |SPECIAL     rs      rt      0         TGEU  |
+  |000000                               110001 |
+  |  6         5       5       10         6    |
+
+
+  <b>Description:</b>
+  if GPR[rs] ≥ GPR[rt] then Trap
+
+  Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers. If the first value is greater or equal to the second value, throws a <black>Trap</black> exception.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  if unsigned_word(GPR[rs]) ≥ unsigned_word(GPR[rt]) then
+      SignalException(Trap)
+  endif
+
+  <b>Exceptions:</b>
+  Trap
+INSTRUCTION_TLT_DOCUMENTATION: |-
+  <u>Trap on less than</u>
+
+  <b>Format:</b>
+  tlt rs, rt
+
+  |SPECIAL     rs      rt      0         TLT   |
+  |000000                               110010 |
+  |  6         5       5       10         6    |
+
+
+  <b>Description:</b>
+  if GPR[rs] < GPR[rt] then Trap
+
+  Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers. If the first value is less than the second value, throws a <black>Trap</black> exception.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  if GPR[rs] < GPR[rt] then
+      SignalException(Trap)
+  endif
+
+  <b>Exceptions:</b>
+  Trap
+INSTRUCTION_TLTI_DOCUMENTATION: |-
+  <u>Trap on lower than immediate</u>
+
+  <b>Format:</b>
+  tlti rs, immediate
+
+  |REGIMM      rs     TLTI     immediate |
+  |000001            01010               |
+  |  6         5       5          16     |
+
+
+  <b>Description:</b>
+  if GPR[rs] < immediate then Trap
+
+  Compares the contents of GPR <i>rs</i> and the immediate value as signed integers. If the first value is less than the second value, throws a <black>Trap</black> exception.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  if GPR[rs] < immediate then
+      SignalException(Trap)
+  endif
+
+  <b>Exceptions:</b>
+  Trap
+INSTRUCTION_TLTIU_DOCUMENTATION: |-
+  <u>Trap on less than immediate unsigned</u>
+
+  <b>Format:</b>
+  tltiu rs, immediate
+
+  |REGIMM     rs     TLTIU     immediate |
+  |000001            01011               |
+  |  6         5       5          16     |
+
+
+  <b>Description:</b>
+  if GPR[rs] < immediate then Trap
+
+  Compares the contents of GPR <i>rs</i> and the immediate value as unsigned integers. If the first value is less than the second value, throws a <black>Trap</black> exception.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  if unsigned_word(GPR[rs]) < unsigned_word(immediate) then
+      SignalException(Trap)
+  endif
+
+  <b>Exceptions:</b>
+  Trap
+INSTRUCTION_TLTU_DOCUMENTATION: |-
+  <u>Trap on less than unsigned</u>
+
+  <b>Format:</b>
+  tltu rs, rt
+
+  |SPECIAL     rs      rt      0         TLTU  |
+  |000000                               110011 |
+  |  6         5       5       10         6    |
+
+
+  <b>Description:</b>
+  if GPR[rs] < GPR[rt] then Trap
+
+  Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers. If the first value is less than the second value, throws a <black>Trap</black> exception.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  if unsigned_word(GPR[rs]) < unsigned_word(GPR[rt]) then
+      SignalException(Trap)
+  endif
+
+  <b>Exceptions:</b>
+  Trap
+INSTRUCTION_TNE_DOCUMENTATION: |-
+  <u>Trap on not equal</u>
+
+  <b>Format:</b>
+  tne rs, rt
+
+  |SPECIAL     rs      rt      0         TNE   |
+  |000000                               110110 |
+  |  6         5       5       10         6    |
+
+
+  <b>Description:</b>
+  if GPR[rs] != GPR[rt] then Trap
+
+  Compares the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers. If both values are not equal, throws a <black>Trap</black> exception.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  if GPR[rs] != GPR[rt] then
+      SignalException(Trap)
+  endif
+
+  <b>Exceptions:</b>
+  Trap
+INSTRUCTION_TNEI_DOCUMENTATION: |-
+  <u>Trap on not equal immediate</u>
+
+  <b>Format:</b>
+  tnei rs, immediate
+
+  |REGIMM      rs     TNEI     immediate |
+  |000001            01110               |
+  |  6         5       5          16     |
+
+
+  <b>Description:</b>
+  if GPR[rs] != immediate then Trap
+
+  Compares the contents of GPR <i>rs</i> and the immediate value as signed integers. If both values are not equal, throws a <black>Trap</black> exception.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  if GPR[rs] != immediate then
+      SignalException(Trap)
+  endif
+
+  <b>Exceptions:</b>
+  Trap
+INSTRUCTION_XOR_DOCUMENTATION: |-
+  <u>Xor</u>
+
+  <b>Format:</b>
+  xor rd, rs, rt
+
+  |SPECIAL     rs      rt     rd      0        XOR  |
+  |000000                                    100110 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  GPR[rd] ⇽ GPR[rs] xor GPR[rt]
+
+  Performs a bitwise logical XOR using the values inside GPR <i>rs</i> and GPR <i>rt</i>.
+  The result is placed into GPR <i>rd</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  GPR[rd] ⇽ GPR[rs] xor GPR[rt]
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_XORI_DOCUMENTATION: |-
+  <u>Immediate xor</u>
+
+  <b>Format:</b>
+  xori rt, rs, immediate
+
+  | XORI      rs     rt     immediate |
+  |001110                             |
+  |  6        5      5         16     |
+
+
+  <b>Description:</b>
+  GPR[rt] ⇽ GPR[rs] xor zero_extend(immediate)
+
+  The 16-bit <i>immediate</i> is zero-extended to the left and combined with the value of GPR <i>rs</i> in a bitwise logical XOR operation.
+  The result is placed into GPR <i>rt</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  GPR[rt] ⇽ GPR[rs] xor zero_extend(immediate)
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_ADDI_DOCUMENTATION: |-
+  <u>Immediate addition with overflow</u>
+
+  <b>Format:</b>
+  addi rt, rs, immediate
+
+  <b>Conversion:</b>
+  addiu $at, $zero, immediate
+  add rt, $at, rs
+
+  <b>Description:</b>
+  GPR[rt] ⇽ GPR[rs] + immediate
+
+  The 16-bit signed <i>immediate</i> is added to the 32-bit value in GRP <i>rs</i> to produce a 32-bit arithmetic result.
+   - If the addition results in 32-bit 2's complement arithmetic overflow, the destination register is not modified and an <black>Integer Overflow</black> exception occurs.
+   - If the addition does not overflow, the 32-bit result is placed into GPR <i>rt</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  temp ⇽ (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (immediate<sub>31</sub> || immediate<sub>31..0</sub>)
+  if temp<sub>32</sub> != temp<sub>31</sub> then
+      SignalException(IntegerOverflow)
+  else
+      GPR[rt] ⇽ temp<sub>31..0</sub>
+  endif
+
+  <b>Exceptions:</b>
+  Integer Overflow
+
+  <b>Programming Notes:</b>
+  <black>addiu</black> performs the same arithmetic operation but does not trap on overflow.
+INSTRUCTION_B_DOCUMENTATION: |-
+  <u>Unconditional branch</u>
+
+  <b>Format:</b>
+  b offset
+
+  <b>Conversion:</b>
+  beq $zero, $zero, offset
+
+  <b>Description:</b>
+  An 18-bit signed offset (the 16-bit <i>offset</i> field shifted left 2 bits) is added to the address of the instruction following the branch, to form a PC-relative effective target address.
+  Branch to the effective target address.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  With the 18-bit signed instruction offset, the conditional branch range is ±128KBytes. Use jump (<black>j</black>) or jump register (<black>jr</black>) to branch to addresses outside this range.
+  <black>beq $zero, $zero, offset</black>, expressed as <black>b offset</black>, is the assembly idiom used to denote an unconditional branch.
+INSTRUCTION_JR_DOCUMENTATION: |-
+  <u>Jump register</u>
+
+  <b>Format:</b>
+  jr rs
+
+  <b>Conversion:</b>
+  jr $zero, rs
+
+  <b>Description:</b>
+  Jump to the effective target addres in GPR <i>rs</i>. If the target address is not 4-bytes aligned, an Address Error exception will occur when the target address is fetched.
+  If delay slots are enabled, this instruction also executes the instruction that follows the jump, in the branch delay slot, before executing the jump itself.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_LA_DOCUMENTATION: |-
+  <u>Load address</u>
+
+  <b>Format:</b>
+  la rs, label
+
+  <b>Conversion:</b>
+  address ⇽ get_address(label)
+  aui $at, $zero, address<sub>31..16</sub>
+  ori rs, $at, address<sub>15..0</sub>
+
+  <b>Description:</b>
+  Loads the address of the <i>label</i> into GPR <i>rs</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_LI_DOCUMENTATION: |-
+  <u>Load immediate</u>
+
+  <b>Format:</b>
+  li rs, number
+
+  <b>Conversion:</b>
+  if number<sub>31..16</sub> = 0
+      addiu rs, $zero, number<sub>15..0</sub>
+  else
+      aui $at, $zero, number<sub>31..16</sub>
+      ori rs, $at, number<sub>15..0</sub>
+  endif
+
+  <b>Description:</b>
+  Loads the <i>number</i> into GPR <i>rs</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_LUI_DOCUMENTATION: |-
+  <u>Load upper immediate</u>
+
+  <b>Format:</b>
+  lui rs, number
+
+  <b>Conversion:</b>
+  aui rs, $zero, number<sub>15..0</sub>
+
+  <b>Description:</b>
+  Loads the <i>number</i> into the upper part of GPR <i>rs</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_LIF_DOCUMENTATION: |-
+  <u>Load immediate float</u>
+
+  <b>Format:</b>
+  lif fd, float
+
+  <b>Conversion:</b>
+  aui $at, $zero, float<sub>31..16</sub>
+  ori $at, $at, float<sub>15..0</sub>
+  mtc1 $at, fd
+
+  <b>Description:</b>
+  Loads the <i>float</i> into the FPR <i>fd</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_LID_DOCUMENTATION: |-
+  <u>Load immediate double</u>
+
+  <b>Format:</b>
+  lid fd, double
+
+  <b>Conversion:</b>
+  aui $at, $zero, double<sub>31..16</sub>
+  ori $at, $at, double<sub>15..0</sub>
+  mtc1 $at, fd
+
+  aui $at, $zero, double<sub>63..58</sub>
+  ori $at, $at, double<sub>57..32</sub>
+  mtc1 $at, fd+1
+
+  <b>Description:</b>
+  Loads the <i>double</i> into the FPR <i>fd</i> and FPR <i>fd+1</i>
+
+  <b>Restrictions:</b>
+  The field <i>fd</i> must be an even FPR. If the field is not valid, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_MOVE_DOCUMENTATION: |-
+  <u>Value movement</u>
+
+  <b>Format:</b>
+  move rd, rs
+
+  <b>Conversion:</b>
+  add rd, $zero, rs
+
+  <b>Description:</b>
+  GPR[rd] ⇽ GPR[rs]
+
+  Moves the contents of the GPR <i>rs</i> to the GPR <i>rd</i>.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_NOP_DOCUMENTATION: |-
+  <u>No operation</u>
+
+  <b>Format:</b>
+  nop
+
+  <b>Conversion:</b>
+  sll $zero, $zero, $zero
+
+  <b>Description:</b>
+  No operation. Does nothing.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SGE_DOCUMENTATION: |-
+  <u>Set on greater than or equal</u>
+
+  <b>Format:</b>
+  sge rd, rt, rs
+
+  <b>Conversion:</b>
+  slt rd, rt, rs
+  ori $at, $zero, 1
+  subu rd, $at, rd
+
+  <b>Description:</b>
+  GPR[rd] ⇽ (GPR[rs] ≥ GPR[rt])
+
+  Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
+  If GPR <i>rs</i> is greater than or equal GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SGEI_DOCUMENTATION: |-
+  <u>Set on greater than or equal immediate</u>
+
+  <b>Format:</b>
+  sgei rt, rs, immediate
+
+  <b>Conversion:</b>
+  slti rt, rs, immediate
+  ori $at, $zero, 1
+  subu rd, $at, rd
+
+  <b>Description:</b>
+  GPR[rd] ⇽ (GPR[rs] ≥ sign_extend(immediate))
+
+  Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
+  If GPR <i>rs</i> is greater than or equal <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SGEIU_DOCUMENTATION: |-
+  <u>Set on greater than or equal immediate unsigned</u>
+
+  <b>Format:</b>
+  sgeiu rt, rs, immediate
+
+  <b>Conversion:</b>
+  sltiu rt, rs, immediate
+  ori $at, $zero, 1
+  subu rd, $at, rd
+
+  <b>Description:</b>
+  GPR[rd] ⇽ (GPR[rs] ≥ sign_extend(immediate))
+
+  Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
+  If GPR <i>rs</i> is greater than or equal <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SGEU_DOCUMENTATION: |-
+  <u>Set on greater than or equal unsigned</u>
+
+  <b>Format:</b>
+  sgeu rd, rt, rs
+
+  <b>Conversion:</b>
+  sltu rd, rt, rs
+  ori $at, $zero, 1
+  subu rd, $at, rd
+
+  <b>Description:</b>
+  GPR[rd] ⇽ (GPR[rs] ≥ GPR[rt])
+
+  Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
+  If GPR <i>rs</i> is greater than or equal GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SGT_DOCUMENTATION: |-
+  <u>Set on greater than or equal</u>
+
+  <b>Format:</b>
+  sgt rd, rt, rs
+
+  <b>Conversion:</b>
+  slt rd, rs, rt
+
+  <b>Description:</b>
+  GPR[rd] ⇽ (GPR[rs] > GPR[rt])
+
+  Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
+  If GPR <i>rs</i> is greater than GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SGTI_DOCUMENTATION: |-
+  <u>Set on greater than immediate</u>
+
+  <b>Format:</b>
+  sgti rt, rs, immediate
+
+  <b>Conversion:</b>
+  addiu $at, $zero, immediate
+  slt rd, $at, rs
+
+  <b>Description:</b>
+  GPR[rd] ⇽ (GPR[rs] > sign_extend(immediate))
+
+  Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
+  If GPR <i>rs</i> is greater than <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SGTIU_DOCUMENTATION: |-
+  <u>Set on greater than immediate unsigned</u>
+
+  <b>Format:</b>
+  sgtiu rt, rs, immediate
+
+  <b>Conversion:</b>
+  addiu $at, $zero, immediate
+  sltu rd, $at, rs
+
+  <b>Description:</b>
+  GPR[rd] ⇽ (GPR[rs] > sign_extend(immediate))
+
+  Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
+  If GPR <i>rs</i> is greater than <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SGTU_DOCUMENTATION: |-
+  <u>Set on greater than unsigned</u>
+
+  <b>Format:</b>
+  sgtu rd, rt, rs
+
+  <b>Conversion:</b>
+  sltu rd, rs, rt
+
+  <b>Description:</b>
+  GPR[rd] ⇽ (GPR[rs] > GPR[rt])
+
+  Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
+  If GPR <i>rs</i> is greater than GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SLE_DOCUMENTATION: |-
+  <u>Set on less than or equal</u>
+
+  <b>Format:</b>
+  sle rd, rt, rs
+
+  <b>Conversion:</b>
+  slt rd, rs, rt
+  ori $at, $zero, 1
+  subu rd, $at, rd
+
+  <b>Description:</b>
+  GPR[rd] ⇽ (GPR[rs] ≤ GPR[rt])
+
+  Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
+  If GPR <i>rs</i> is less than or equal GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SLEI_DOCUMENTATION: |-
+  <u>Set on less than or equal immediate</u>
+
+  <b>Format:</b>
+  slei rt, rs, immediate
+
+  <b>Conversion:</b>
+  addiu $at, $zero, immediate
+  slt rd, $at, rs
+  ori $at, $zero, 1
+  subu rd, $at, rd
+
+  <b>Description:</b>
+  GPR[rd] ⇽ (GPR[rs] ≤ sign_extend(immediate))
+
+  Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as signed integers; record the boolean result of the comparision in GPR <i>rd</i>.
+  If GPR <i>rs</i> is less than or equal <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SLEIU_DOCUMENTATION: |-
+  <u>Set on less than or equal immediate unsigned</u>
+
+  <b>Format:</b>
+  sleiu rt, rs, immediate
+
+  <b>Conversion:</b>
+  addiu $at, $zero, immediate
+  sltu rd, $at, rs
+  ori $at, $zero, 1
+  subu rd, $at, rd
+
+  <b>Description:</b>
+  GPR[rd] ⇽ (GPR[rs] ≤ sign_extend(immediate))
+
+  Compare the contents of GPR <i>rs</i> and the 16-bit signed <i>immediate</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
+  If GPR <i>rs</i> is less than or equal <i>immediate</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_SLEU_DOCUMENTATION: |-
+  <u>Set on less than or equal unsigned</u>
+
+  <b>Format:</b>
+  sleu rd, rt, rs
+
+  <b>Conversion:</b>
+  sltu rd, rs, rt
+  ori $at, $zero, 1
+  subu rd, $at, rd
+
+  <b>Description:</b>
+  GPR[rd] ⇽ (GPR[rs] ≤ GPR[rt])
+
+  Compare the contents of GPR <i>rs</i> and GPR <i>rt</i> as unsigned integers; record the boolean result of the comparision in GPR <i>rd</i>.
+  If GPR <i>rs</i> is less than or equal GPR <i>rt</i>, the result is 1 (true); otherwise, it is 0 (false).
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Exceptions:</b>
+  None
+
+FLOAT_CONDITION_AF: Always false
+FLOAT_CONDITION_UN: Unordered
+FLOAT_CONDITION_EQ: Equal
+FLOAT_CONDITION_UEQ: Unordered or equal
+FLOAT_CONDITION_LT: Ordered less than
+FLOAT_CONDITION_ULT: Unordered or less than
+FLOAT_CONDITION_LE: Ordered less than or equal
+FLOAT_CONDITION_ULE: Unordered or less than or equal
+FLOAT_CONDITION_SAF: Signaling always false
+FLOAT_CONDITION_SUN: Signaling unordered
+FLOAT_CONDITION_SEQ: Ordered signaling equal
+FLOAT_CONDITION_SUEQ: Signaling unordered or equal
+FLOAT_CONDITION_SLT: Ordered signaling less than
+FLOAT_CONDITION_SULT: Signaling unordered or less than
+FLOAT_CONDITION_SLE: Ordered signaling less than or equal
+FLOAT_CONDITION_SULE: Signaling unordered or less than or equal
+FLOAT_CONDITION_OR: Ordered
+FLOAT_CONDITION_UNE: Not equal
+FLOAT_CONDITION_NE: Ordered not equal
+FLOAT_CONDITION_SOR: Signalling ordered
+FLOAT_CONDITION_SUNE: Signalling unordered or not equal
+FLOAT_CONDITION_SNE: Signalling ordered not equal
+
+FMT_SINGLE: single
+FMT_DOUBLE: double
+FMT_WORD: word
+FMT_LONG: long

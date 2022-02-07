@@ -29,6 +29,8 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormat;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormatJSON;
 import net.jamsimulator.jams.gui.ActionRegion;
 import net.jamsimulator.jams.gui.action.defaults.editor.EditorActionSave;
 import net.jamsimulator.jams.gui.action.defaults.editortab.EditorTabActionSplitHorizontally;
@@ -84,7 +86,10 @@ public final class ActionManager extends Manager<Action> {
             save();
 
             try {
-                Jams.getMainConfiguration().save(true);
+                Jams.getMainConfiguration().save(
+                        Manager.of(ConfigurationFormat.class).getOrNull(ConfigurationFormatJSON.NAME),
+                        true
+                );
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -297,7 +302,7 @@ public final class ActionManager extends Manager<Action> {
     /**
      * Saves all {@link Action}s in the main {@link Configuration}.
      * <p>
-     * You should invoke {@link Configuration#save(File, boolean)} after this if you want
+     * You should invoke {@link Configuration#save(File, ConfigurationFormat, boolean)} after this if you want
      * to save this configuration inside a file.
      */
     public void save() {

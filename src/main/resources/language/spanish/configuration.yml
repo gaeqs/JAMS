@@ -1,0 +1,141 @@
+CONFIG: Configuración
+CONFIG_ACTION: Acciones
+CONFIG_ACTION_SEARCH: Buscar...
+CONFIG_ACTION_BIND_TITLE: Asignar una combinación a una acción
+CONFIG_ACTION_BIND_ENTER: Presiona la combinación de teclas que quieres asignar
+CONFIG_ACTION_BIND_CONFIRM: 'Las siguientes acciones serán desasignadas de la combinación:'
+CONFIG_ACTION_BIND_CONFIRM_2: ¿Quieres continuar?
+CONFIG_ACTION_UNBIND: ¿Estás seguro de que quieres desasignar esta combinación?
+CONFIG_PLUGIN: Plugins
+CONFIG_PLUGIN_INSTALL: Instalar
+CONFIG_PLUGIN_UNINSTALL: Desinstalar
+CONFIG_PLUGIN_UNINSTALL_CONFIRM: ¿Estás seguro de que quieres desinstalar el plugin
+  {PLUGIN}?
+CONFIG_APPEARANCE: Apariencia
+CONFIG_APPEARANCE_REGION_THEME: Tema
+CONFIG_APPEARANCE_REGION_TWEAKS: Ajustes
+CONFIG_APPEARANCE_THEME: 'Tema:'
+CONFIG_APPEARANCE_THEME_TOOLTIP: Los temas cambian toda la apariencia de la aplicación.
+CONFIG_APPEARANCE_GENERAL_FONT: 'Fuente general:'
+CONFIG_APPEARANCE_GENERAL_FONT_TOOLTIP: Esta fuente es usada por todo JAMS salvo en
+  los editores de texto.
+CONFIG_APPEARANCE_CODE_FONT: 'Fuente del editor:'
+CONFIG_APPEARANCE_CODE_FONT_TOOLTIP: Esta fuente es usada por los editores de texto.
+CONFIG_APPEARANCE_HIDE_TOP_BAR: Esconder barra superior\t(Solo para Windows, necesita
+  un reinicio)
+CONFIG_APPEARANCE_HIDE_TOP_BAR_TOOLTIP: Esta opción permite integrar la barra superior
+  de la ventana principal en la barra de tareas.
+CONFIG_APPEARANCE_ANTIALIASING: Antialiasing\t(Necesita un reinicio)
+CONFIG_APPEARANCE_ANTIALIASING_TOOLTIP: Activa el antialiasing en todas las escenas.
+CONFIG_EDITOR: Editor
+CONFIG_EDITOR_REGION_MOUSE_CONTROL: Controles del ratón
+CONFIG_EDITOR_ZOOM_USING_MOUSE_WHEEL: Hacer zoom usando la rueda del ratón mientras
+  está pulsado Shortcut
+CONFIG_EDITOR_ZOOM_USING_MOUSE_WHEEL_TOOLTIP: Si esta opción está activada podrás
+  hacer zoom usando la rueda del ratón mientras pulsas la tecla Shortcut.
+CONFIG_EDITOR_RESET_ZOOM_USING_MIDDLE_BUTTON: Deshacer el zoom usando Shortcut+Botón
+  central del ratón
+CONFIG_EDITOR_RESET_ZOOM_USING_MIDDLE_BUTTON_TOOLTIP: Si esta opción está activada
+  podrás deshacer el zoom usando el botón central del ratón mientras pulsas la tecla
+  Shortcut.
+CONFIG_EDITOR_RESET_ZOOM_SENSIBILITY: 'Sensibilidad del zoom:'
+CONFIG_EDITOR_RESET_ZOOM_SENSIBILITY_TOOLTIP: Esta opción permite configurar la ampliación
+  del zoom en cada desplazamiento de la rueda.\n\nRecuerda que el valor por defecto
+  del zoom es '2' y un zoom x2 tiene un valor de '2'.
+CONFIG_EDITOR_MIPS: MIPS
+CONFIG_EDITOR_MIPS_REGION_TABS: Tabuladores
+CONFIG_EDITOR_MIPS_REGION_SPACES: Espacios
+CONFIG_EDITOR_MIPS_REGION_BLANK_LINES: Líneas vacías
+CONFIG_EDITOR_MIPS_USE_TABS: Usar el caracter tabulador
+CONFIG_EDITOR_MIPS_USE_TABS_TOOLTIP: Si esta opción está activada JAMS usará tabuladores
+  en vez de espacios en el editor de código.
+CONFIG_EDITOR_MIPS_PRESERVE_TABS: Preservar los tabuladores después de la etiqueta
+CONFIG_EDITOR_MIPS_PRESERVE_TABS_TOOLTIP: Esta opción permite preservar los tabuladores
+  extras añadidos por el usuario entre la etiqueta y la instrucción / directiva cuando
+  se formatee el código.
+CONFIG_EDITOR_MIPS_PRESERVE_TABS_BEFORE_LABELS: Preservar los tabuladores antes de
+  la etiqueta
+CONFIG_EDITOR_MIPS_PRESERVE_TABS_BEFORE_LABELS_TOOLTIP: Esta opción permite preservar
+  los tabuladores extras añadidos por el usuario antes de la etiqueta cuando se formatee
+  el código.
+CONFIG_EDITOR_MIPS_SPACE_AFTER_INSTRUCTION: 'Después de una instrucción:'
+CONFIG_EDITOR_MIPS_SPACE_AFTER_INSTRUCTION_TOOLTIP: Esta opción le indica a JAMS qué
+  añadir después de una instrucción.
+CONFIG_EDITOR_MIPS_SPACE_AFTER_INSTRUCTION_PARAMETER: 'Después del parámetro de una
+  instrucción:'
+CONFIG_EDITOR_MIPS_SPACE_AFTER_INSTRUCTION_PARAMETER_TOOLTIP: Esta opción le indica
+  a JAMS qué añadir después de un parámetro de una instrucción.
+CONFIG_EDITOR_MIPS_SPACE_AFTER_DIRECTIVE: 'Después de una directiva:'
+CONFIG_EDITOR_MIPS_SPACE_AFTER_DIRECTIVE_TOOLTIP: Esta opción le indica a JAMS qué
+  añadir después de una directiva.
+CONFIG_EDITOR_MIPS_SPACE_AFTER_DIRECTIVE_PARAMETER: 'Después del parámetro de una
+  directiva:'
+CONFIG_EDITOR_MIPS_SPACE_AFTER_DIRECTIVE_PARAMETER_TOOLTIP: Esta opción le indica
+  a JAMS qué añadir después de un parámetro de una directiva.
+CONFIG_EDITOR_MIPS_MAXIMUM_BLANK_LINES: 'Líneas en blanco máximas:'
+CONFIG_EDITOR_MIPS_MAXIMUM_BLANK_LINES_TOOLTIP: La cantidad de líneas en blanco máximas
+  que JAMS va a dejar al formatear.
+CONFIG_EXPLORER: Explorador
+CONFIG_EXPLORER_MIPS: MIPS
+CONFIG_EXPLORER_REGION_SIZE: Tamaño
+CONFIG_EXPLORER_SECTION_SEPARATOR_WIDTH: 'Ancho por nivel de herencia para secciones:'
+CONFIG_EXPLORER_SECTION_SEPARATOR_WIDTH_TOOLTIP: Esta opción permite editar el ancho
+  que una sección se moverá por cada nivel de herencia.
+CONFIG_EXPLORER_ELEMENT_SEPARATOR_WIDTH: 'Ancho por nivel de herencia para elementos:'
+CONFIG_EXPLORER_ELEMENT_SEPARATOR_WIDTH_TOOLTIP: Esta opción permite editar el ancho
+  que un elemento se moverá por cada nivel de herencia.
+CONFIG_EXPLORER_MIPS_REGION_CREATION: Creación
+CONFIG_EXPLORER_MIPS_ADD_CREATED_ASM_FILES_TO_ASSEMBLE: Añadir archivos asm a ensamblar
+  automaticamente cuando son creados
+CONFIG_EXPLORER_MIPS_ADD_CREATED_ASM_FILES_TO_ASSEMBLE_TOOLTIP: Si esta opción está
+  activada, los archivos ensambladores que se creen serán automáticamente añadidos a
+  la lista de ensamblaje.\n\nEsta opción puede ser cambiada en el menú de creación
+  del archivo.
+CONFIG_LANGUAGE: Idioma
+CONFIG_LANGUAGE_REGION_LANGUAGE: Idioma
+CONFIG_LANGUAGE_DEFAULT: 'Idioma de respaldo:'
+CONFIG_LANGUAGE_DEFAULT_TOOLTIP: Este idioma se usará cuando el idioma usado no tenga
+  el mensaje requerido.\n\nEste idioma es el inglés por defecto.
+CONFIG_LANGUAGE_SELECTED: 'Idioma principal:'
+CONFIG_LANGUAGE_SELECTED_TOOLTIP: Este es el idioma que JAMS usará en la interfaz.
+CONFIG_SIMULATION: Simulación
+CONFIG_SIMULATION_MIPS: MIPS
+CONFIG_SIMULATION_REGION_ASSEMBLY: Ensamblador
+CONFIG_SIMULATION_OPEN_LOG_ON_ASSEMBLE: Abrir la ventana de log al ensamblar.
+CONFIG_SIMULATION_REGION_MEMORY: Memoria
+CONFIG_SIMULATION_MEMORY_ROWS: 'Filas:'
+CONFIG_SIMULATION_MEMORY_ROWS_TOOLTIP: El número de filas que la memoria puede mostrar
+  al mismo tiempo.
+CONFIG_SIMULATION_MIPS_REGION_FLOW: Flujo
+CONFIG_SIMULATION_MIPS_FLOW_MAX_ITEMS: 'Entradas máximas:'
+CONFIG_SIMULATION_MIPS_FLOW_MAX_ITEMS_TOOLTIP: La cantidad de entradas que el panel
+  de flujo puede representar al mismo tiempo.
+CONFIG_SIMULATION_MIPS_REGION_INSTRUCTIONS: Visualizador de instrucciones
+CONFIG_SIMULATION_MIPS_INSTRUCTIONS_VIEWER_ELEMENTS_ORDER: 'Orden de los elementos
+  del visualizador:'
+CONFIG_SIMULATION_MIPS_INSTRUCTIONS_VIEWER_ELEMENTS_ORDER_TOOLTIP: En este panel puedes
+  cambiar el orden de los elementos dentro del visualizador de instrucciones.
+CONFIG_SIMULATION_MIPS_INSTRUCTIONS_VIEWER_ELEMENTS_ORDER_USING: 'Usando:'
+CONFIG_SIMULATION_MIPS_INSTRUCTIONS_VIEWER_ELEMENTS_ORDER_NOT_USING: 'Sin usar:'
+CONFIG_SIMULATION_MIPS_INSTRUCTIONS_SHOW_LABELS: Mostrar etiquetas.
+CONFIG_SIMULATION_MIPS_INSTRUCTIONS_SHOW_LABELS_TOOLTIP: Esta opción le permite a
+  las etiquetas aparecer en el visualizador de instrucciones.
+CONFIG_SIMULATION_MIPS_REGION_LAB: Lab
+CONFIG_SIMULATION_MIPS_LAB_FIRST_SEGMENT_ADDRESS: 'Dirección del primer visualizador:'
+CONFIG_SIMULATION_MIPS_LAB_FIRST_SEGMENT_ADDRESS_TOOLTIP: La dirección de memoria
+  usada por el primer visualizador del lab.
+CONFIG_SIMULATION_MIPS_LAB_SECOND_SEGMENT_ADDRESS: 'Dirección del segundo visualizador:'
+CONFIG_SIMULATION_MIPS_LAB_SECOND_SEGMENT_ADDRESS_TOOLTIP: La dirección de memoria
+  usada por el segundo visualizador del lab.
+CONFIG_SIMULATION_MIPS_LAB_FIRST_HEX_KERBOARD_ADDRESS: 'Primera dirección del teclado
+  hexadeximal:'
+CONFIG_SIMULATION_MIPS_LAB_FIRST_HEX_KERBOARD_ADDRESS_TOOLTIP: La dirección de memoria
+  usada por los 8 números menos significativos del teclado hexadeximal.
+CONFIG_SIMULATION_MIPS_LAB_SECOND_HEX_KERBOARD_ADDRESS: 'Segunda dirección del teclado
+  hexadeximal:'
+CONFIG_SIMULATION_MIPS_LAB_SECOND_HEX_KERBOARD_ADDRESS_TOOLTIP: La dirección de memoria
+  usada por los 8 números más significativos del teclado hexadeximal.
+CONFIG_SIMULATION_MIPS_LAB_COUNTER_ADDRESS: 'Dirección del contador:'
+CONFIG_SIMULATION_MIPS_LAB_COUNTER_ADDRESS_TOOLTIP: La dirección de memoria del contador.
+  El valor en esta dirección representa el número de ciclos que el contador va a esperar
+  antes de lanzar una interrupción.

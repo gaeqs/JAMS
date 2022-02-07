@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,23 +22,31 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.language.exception;
+package net.jamsimulator.jams.language.event;
 
-public class LanguageFailedLoadException extends Exception {
+import net.jamsimulator.jams.event.Event;
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.utils.Validate;
 
-    public LanguageFailedLoadException() {
+/**
+ * Event called when the selected or default language has changed and requires a refresh.
+ */
+public class LanguageRefreshEvent extends Event {
+
+    private final Language selectedLanguage, defaultLanguage;
+
+    public LanguageRefreshEvent(Language selectedLanguage, Language defaultLanguage) {
+        Validate.notNull(selectedLanguage, "Selected language cannot be null!");
+        Validate.notNull(defaultLanguage, "Default language cannot be null!");
+        this.selectedLanguage = selectedLanguage;
+        this.defaultLanguage = defaultLanguage;
     }
 
-    public LanguageFailedLoadException(String message) {
-        super(message);
+    public Language getSelectedLanguage() {
+        return selectedLanguage;
     }
 
-    public LanguageFailedLoadException(Throwable cause) {
-        super(cause);
+    public Language getDefaultLanguage() {
+        return defaultLanguage;
     }
-
-    public LanguageFailedLoadException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
 }
