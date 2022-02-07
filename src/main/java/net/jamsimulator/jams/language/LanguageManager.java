@@ -56,13 +56,10 @@ public final class LanguageManager extends SelectableManager<Language> {
     public static final String DEFAULT_LANGUAGE_NODE = "language.default";
     public static final String SELECTED_LANGUAGE_NODE = "language.selected";
     public static final String NAME = "language";
-    public static final File FOLDER = new File(Jams.getMainFolder(), FOLDER_NAME);
-
-    static {
-        if (!FolderUtils.checkFolder(FOLDER)) throw new RuntimeException("Couldn't create language folder!");
-    }
 
     public static final LanguageManager INSTANCE = new LanguageManager(ResourceProvider.JAMS, NAME);
+
+    public File folder;
 
     public LanguageManager(ResourceProvider provider, String name) {
         super(provider, name, Language.class, false);
@@ -150,6 +147,9 @@ public final class LanguageManager extends SelectableManager<Language> {
 
     @Override
     public void load() {
+        folder = new File(Jams.getMainFolder(), FOLDER_NAME);
+        if (!FolderUtils.checkFolder(folder)) throw new RuntimeException("Couldn't create language folder!");
+
         super.load();
         Jams.getMainConfiguration()
                 .registerListeners(this, true);
@@ -182,7 +182,7 @@ public final class LanguageManager extends SelectableManager<Language> {
             }
             loadLanguagesInDirectory(
                     ResourceProvider.JAMS,
-                    FOLDER.toPath(),
+                    folder.toPath(),
                     true
             ).forEach(LanguageManager::manageException);
         } catch (IOException | URISyntaxException e) {

@@ -74,16 +74,11 @@ public final class ThemeManager extends SelectableManager<Theme> {
     public static final String CODE_FONT_NODE = "appearance.code_font";
     public static final String NAME = "theme";
     public static final String COMMON_THEME = "Common";
-    public static final File FOLDER = new File(Jams.getMainFolder(), FOLDER_NAME);
-
-    static {
-        if (!FolderUtils.checkFolder(FOLDER)) throw new RuntimeException("Couldn't create themes folder!");
-    }
-
     public static final ThemeManager INSTANCE = new ThemeManager(ResourceProvider.JAMS, NAME);
 
     private boolean cacheFileLoaded = false;
     private File cacheFile;
+    public File folder;
 
     private String generalFont, codeFont;
 
@@ -261,7 +256,11 @@ public final class ThemeManager extends SelectableManager<Theme> {
 
     @Override
     public void load() {
+        folder = new File(Jams.getMainFolder(), FOLDER_NAME);
+        if (!FolderUtils.checkFolder(folder)) throw new RuntimeException("Couldn't create language folder!");
+
         super.load();
+
         Jams.getMainConfiguration().registerListeners(this, true);
     }
 
@@ -290,7 +289,7 @@ public final class ThemeManager extends SelectableManager<Theme> {
                 loadThemesInDirectory(ResourceProvider.JAMS, Path.of(jarResource.toURI()), true)
                         .forEach(ThemeManager::manageException);
             }
-            loadThemesInDirectory(ResourceProvider.JAMS, FOLDER.toPath(), true)
+            loadThemesInDirectory(ResourceProvider.JAMS, folder.toPath(), true)
                     .forEach(ThemeManager::manageException);
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();

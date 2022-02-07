@@ -61,7 +61,7 @@ public class Jams {
 
     private static String VERSION;
 
-    private static File mainFolder;
+    private static File mainFolder = FolderUtils.checkMainFolder();
 
     private static RootConfiguration mainConfiguration;
 
@@ -80,7 +80,6 @@ public class Jams {
 
         loadVersion();
         System.out.println("Loading JAMS version " + getVersion());
-        mainFolder = FolderUtils.checkMainFolder();
         TempUtils.loadTemporalFolder();
 
         try {
