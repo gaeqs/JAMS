@@ -89,6 +89,8 @@ class MIPS32DefaultInstructions {
         basicInstructions.add(new InstructionCeilLSingle());
         basicInstructions.add(new InstructionCeilWDouble());
         basicInstructions.add(new InstructionCeilWSingle());
+        basicInstructions.add(new InstructionClassDouble());
+        basicInstructions.add(new InstructionClassSingle());
         basicInstructions.add(new InstructionClo());
         basicInstructions.add(new InstructionClz());
 

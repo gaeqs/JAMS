@@ -49,6 +49,8 @@ INSTRUCTION_CEIL_L_D: Ceiling double to long
 INSTRUCTION_CEIL_L_S: Ceiling single to long
 INSTRUCTION_CEIL_W_D: Ceiling double to word
 INSTRUCTION_CEIL_W_S: Ceiling single to word
+INSTRUCTION_CLASS_D: Scalar double floating point class mask.
+INSTRUCTION_CLASS_S: Scalar floating point class mask.
 INSTRUCTION_CLO: Count leading ones in word
 INSTRUCTION_CLZ: Count leading zeros in word
 INSTRUCTION_CMP_D: Floating point compare ({TYPE}) (double)
@@ -1714,6 +1716,80 @@ INSTRUCTION_CEIL_W_S_DOCUMENTATION: |-
   <b>Operation:</b>
   fmt ⇽ float
   StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_CLASS_D_DOCUMENTATION: |-
+  <u>Scalar double floating point class mask</u>
+
+  <b>Format:</b>
+  class.d fd, fs
+
+  | COP1      fmt      0      fs      fd      CLASS |
+  |010001    10001   00000                   011011 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ class(FPR[fs])
+
+  Creates a class mask where each first 10 bits are assigned depending of the type of number stored on FPR <i>fs</i>.
+  
+  - Bit 0: the number is a signaling NaN. (Not used by the simulation)
+  - Bit 1: the number is a quiet NaN.
+  - Bit 2: the number is a negative infinite.
+  - Bit 3: the number is a finite normal negative number.
+  - Bit 4: the number is a finite subnormal negative number. (Excluding the negative zero)
+  - Bit 5: the number is a positive zero.
+  - Bit 6: the number is a positive infinite.
+  - Bit 7: the number is a finite normal positive number.
+  - Bit 8: the number is a finite subnormal positive number. (Excluding the positive zero)
+  - Bit 9: the number is a positive zero.
+  
+  The mask is placed in FPR <i>fd</i>.
+  
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  FPR[fd] ⇽ class(FRP[fs])
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_CLASS_S_DOCUMENTATION: |-
+  <u>Scalar floating point class mask</u>
+
+  <b>Format:</b>
+  class.s fd, fs
+
+  | COP1      fmt      0      fs      fd      CLASS |
+  |010001    10000   00000                   011011 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ class(FPR[fs])
+
+  Creates a class mask where each first 10 bits are assigned depending of the type of number stored on FPR <i>fs</i>.
+  
+  - Bit 0: the number is a signaling NaN. (Not used by the simulation)
+  - Bit 1: the number is a quiet NaN.
+  - Bit 2: the number is a negative infinite.
+  - Bit 3: the number is a finite normal negative number.
+  - Bit 4: the number is a finite subnormal negative number. (Excluding the negative zero)
+  - Bit 5: the number is a positive zero.
+  - Bit 6: the number is a positive infinite.
+  - Bit 7: the number is a finite normal positive number.
+  - Bit 8: the number is a finite subnormal positive number. (Excluding the positive zero)
+  - Bit 9: the number is a positive zero.
+  
+  The mask is placed in FPR <i>fd</i>.
+  
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  FPR[fd] ⇽ class(FRP[fs])
 
   <b>Exceptions:</b>
   None

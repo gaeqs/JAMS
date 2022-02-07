@@ -50,6 +50,8 @@ INSTRUCTION_CEIL_L_D: Función techo de coma flotante doble a doble palabra
 INSTRUCTION_CEIL_L_S: Función techo de coma flotante a doble palabra
 INSTRUCTION_CEIL_W_D: Función techo de coma flotante doble a palabra
 INSTRUCTION_CEIL_W_S: Función techo de coma flotante a palabra
+INSTRUCTION_CLASS_D: Máscara de clasificación de coma flotante doble
+INSTRUCTION_CLASS_S: Máscara de clasificación de coma flotante
 INSTRUCTION_CLO: Conteo de los primeros unos en una palabra
 INSTRUCTION_CLZ: Conteo de los primeros ceros en una palabra
 INSTRUCTION_CMP_D: Comparación en coma flotante doble ({TYPE})
@@ -1705,6 +1707,82 @@ INSTRUCTION_CEIL_W_S_DOCUMENTATION: |-
   <b>Operación:</b>
   fmt ⇽ float
   StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_CLASS_D_DOCUMENTATION: |-
+  <u>Máscara de clasificación de coma flotante doble</u>
+
+  <b>Formato:</b>
+  class.d fd, fs
+
+  | COP1      fmt      0      fs      fd      CLASS |
+  |010001    10001   00000                   011011 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ class(FPR[fs])
+
+  Crea una máscara de clasificación donde se asignan diferentes valores a los 10 primeros bits de la máscara,
+  dependiendo del tipo de número almacenado en <i>fs</i>.
+  
+  - Bit 0: el número es un NaN ruidoso. (No usado por el simulador)
+  - Bit 1: el número es un NaN silencioso.
+  - Bit 2: el número es un infinito negativo.
+  - Bit 3: el número es un número finito normal negativo.
+  - Bit 4: el número es un número finito subnormal negativo. (Sin contar el cero negativo)
+  - Bit 5: el número es un cero negativo.
+  - Bit 6: el número es un infinito positivo.
+  - Bit 7: el número es un número finito normal positivo.
+  - Bit 8: el número es un número finito subnormal positivo. (Sin contar el cero positivo)
+  - Bit 9: el número es un cero positivo.
+  
+  La máscara es asignada a <i>fd</i>.
+  
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  FPR[fd] ⇽ class(FRP[fs])
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_CLASS_S_DOCUMENTATION: |-
+  <u>Máscara de clasificación de coma flotante</u>
+
+  <b>Formato:</b>
+  class.s fd, fs
+
+  | COP1      fmt      0      fs      fd      CLASS |
+  |010001    10000   00000                   011011 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ class(FPR[fs])
+
+  Crea una máscara de clasificación donde se asignan diferentes valores a los 10 primeros bits de la máscara,
+  dependiendo del tipo de número almacenado en <i>fs</i>.
+  
+  - Bit 0: el número es un NaN ruidoso. (No usado por el simulador)
+  - Bit 1: el número es un NaN silencioso.
+  - Bit 2: el número es un infinito negativo.
+  - Bit 3: el número es un número finito normal negativo.
+  - Bit 4: el número es un número finito subnormal negativo. (Sin contar el cero negativo)
+  - Bit 5: el número es un cero negativo.
+  - Bit 6: el número es un infinito positivo.
+  - Bit 7: el número es un número finito normal positivo.
+  - Bit 8: el número es un número finito subnormal positivo. (Sin contar el cero positivo)
+  - Bit 9: el número es un cero positivo.
+  
+  La máscara es asignada a <i>fd</i>.
+  
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  FPR[fd] ⇽ class(FRP[fs])
 
   <b>Excepciones:</b>
   Ninguna

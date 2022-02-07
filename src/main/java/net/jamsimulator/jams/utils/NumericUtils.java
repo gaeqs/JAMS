@@ -370,4 +370,13 @@ public class NumericUtils {
         }
         return ~crc;
     }
+
+    public static boolean isSubnormal(float f) {
+        return f != 0.0 && (Float.floatToIntBits(f) & 0b0_11111111_0000_0000_0000_0000_0000_000) == 0;
+    }
+
+    public static boolean isSubnormal(double d) {
+        return d != 0.0 && (Double.doubleToLongBits(d) &
+                0b0_11111111111_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000L) == 0;
+    }
 }
