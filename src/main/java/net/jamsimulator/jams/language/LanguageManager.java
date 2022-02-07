@@ -95,6 +95,7 @@ public final class LanguageManager extends SelectableManager<Language> {
      * @param path     the path of the directory where the languages are. This path may be inside a plugin's .JAR.
      * @param attach   whether the languages should be attached to already loaded languages.
      * @throws IOException if there's something wrong with the given path.
+     * @return a map with all exceptions occured when loading the languages.
      * @see #refresh()
      */
     public Map<Path, LanguageLoadException> loadLanguagesInDirectory(

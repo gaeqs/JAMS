@@ -193,7 +193,7 @@ public class Language implements ManagerResource {
      * @param node the node.
      * @return the message if present.
      */
-    public Optional<String> getMessage(String node) {
+    public Optional<String> get(String node) {
         refresh();
         return Optional.ofNullable(messages.get(node));
     }
@@ -217,6 +217,7 @@ public class Language implements ManagerResource {
      * @return the message or an empty string.
      */
     public String getOrDefault(String node) {
+        refresh();
         String string = messages.get(node);
         if (string != null) return string;
         return Manager.ofD(Language.class).getDefault().getOrEmpty(node);
