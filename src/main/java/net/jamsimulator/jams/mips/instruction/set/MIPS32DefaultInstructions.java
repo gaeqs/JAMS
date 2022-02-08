@@ -122,6 +122,10 @@ class MIPS32DefaultInstructions {
         basicInstructions.add(new InstructionEi());
         basicInstructions.add(new InstructionEret());
         basicInstructions.add(new InstructionExt());
+        basicInstructions.add(new InstructionFloorLDouble());
+        basicInstructions.add(new InstructionFloorLSingle());
+        basicInstructions.add(new InstructionFloorWDouble());
+        basicInstructions.add(new InstructionFloorWSingle());
 
         basicInstructions.add(new InstructionJ());
         basicInstructions.add(new InstructionJal());

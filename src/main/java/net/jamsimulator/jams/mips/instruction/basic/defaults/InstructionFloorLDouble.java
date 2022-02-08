@@ -41,20 +41,20 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.NumericUtils;
 
-public class InstructionCeilLDouble extends BasicRFPUInstruction<InstructionCeilLDouble.Assembled> {
+public class InstructionFloorLDouble extends BasicRFPUInstruction<InstructionFloorLDouble.Assembled> {
 
-    public static final String MNEMONIC = "ceil.l.d";
+    public static final String MNEMONIC = "floor.l.d";
     public static final ALUType ALU_TYPE = ALUType.FLOAT_ADDTION;
     public static final int OPERATION_CODE = 0b010001;
     public static final int FMT = 0b10001;
-    public static final int FUNCTION_CODE = 0b001010;
+    public static final int FUNCTION_CODE = 0b001011;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
             ParameterType.EVEN_FLOAT_REGISTER,
             ParameterType.EVEN_FLOAT_REGISTER
     );
 
-    public InstructionCeilLDouble() {
+    public InstructionFloorLDouble() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE, FMT);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
@@ -107,7 +107,7 @@ public class InstructionCeilLDouble extends BasicRFPUInstruction<InstructionCeil
             int s = instruction.getSourceRegister();
             int d = instruction.getDestinationRegister();
             checkEvenRegister(s, d);
-            NumericUtils.longToInts((long) Math.ceil(doubleCOP1(s)), registerCOP1(d), registerCOP1(d + 1));
+            NumericUtils.longToInts((long) Math.floor(doubleCOP1(s)), registerCOP1(d), registerCOP1(d + 1));
         }
     }
 
@@ -128,7 +128,7 @@ public class InstructionCeilLDouble extends BasicRFPUInstruction<InstructionCeil
 
         @Override
         public void execute() {
-            longToInts((long) Math.ceil(doubleCOP1(instruction.getSourceRegister())));
+            longToInts((long) Math.floor(doubleCOP1(instruction.getSourceRegister())));
             forwardCOP1(instruction.getDestinationRegister(), lowResult);
             forwardCOP1(instruction.getDestinationRegister() + 1, highResult);
         }

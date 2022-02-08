@@ -70,6 +70,10 @@ INSTRUCTION_DIVU: Unsigned division
 INSTRUCTION_EI: Enable interrupts
 INSTRUCTION_ERET: Exception return
 INSTRUCTION_EXT: Extract bit field
+INSTRUCTION_FLOOR_L_D: Flooring double to long
+INSTRUCTION_FLOOR_L_S: Flooring single to long
+INSTRUCTION_FLOOR_W_D: Flooring double to word
+INSTRUCTION_FLOOR_W_S: Flooring single to word
 INSTRUCTION_J: Jump
 INSTRUCTION_JAL: Jump and link
 INSTRUCTION_JALR: Jump and link register
@@ -2369,6 +2373,121 @@ INSTRUCTION_EXT_DOCUMENTATION: |-
   GPR[rt] ⇽  0<sub>32..msbd+1</sub> || GPR[rs]<sub>msbd+lsb...lsb</sub>
 
   <b>Exception:</b>
+  None
+INSTRUCTION_FLOOR_L_D_DOCUMENTATION: |-
+  <u>Flooring double to long</u>
+
+  <b>Format:</b>
+  floor.l.d fd, fs
+
+  | COP1      fmt      0      fs      fd     FLOOR.L |
+  |010001    10001   00000                   001011  |
+  |  6         5       5      5       5        6     |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  The double precission floating point value of FPR <i>fs</i> is converted to a floored 64-bit word.
+  The result is placed in FPR <i>fd</i>.
+
+  When the source value is <black>Infinity</black>, <black>NaN</black> or is outside a 64-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
+
+  <b>Restrictions:</b>
+  The fields <i>fs</i> and <i>fd</i> must be even FPRs. If the fields are not valid, the result is <black>UNPREDICTABLE</black>.
+  The operand must be a value in double precision floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ double
+  StoreFPR(fd, L, ConvertFmt(ValueFPR(fs, fmt), fmt, L))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_FLOOR_W_D_DOCUMENTATION: |-
+  <u>Flooring double to word</u>
+
+  <b>Format:</b>
+  floor.w.d fd, fs
+
+  | COP1      fmt      0      fs      fd     FLOOR.W |
+  |010001    10001   00000                   001111  |
+  |  6         5       5      5       5        6     |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  The double precission floating point value of FPR <i>fs</i> is converted to a floored 32-bit word.
+  The result is placed in FPR <i>fd</i>.
+
+  When the source value is <black>Infinity</black>, <black>NaN</black> or is outside a 32-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
+
+  <b>Restrictions:</b>
+  The field <i>fs</i> must be an even FPR. If the field is not valid, the result is <black>UNPREDICTABLE</black>.
+  The operand must be a value in double precision floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ double
+  StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_FLOOR_L_S_DOCUMENTATION: |-
+  <u>Flooring float to long</u>
+
+  <b>Format:</b>
+  floor.l.s fd, fs
+
+  | COP1      fmt      0      fs      fd     FLOOR.L |
+  |010001    10000   00000                   001011  |
+  |  6         5       5      5       5        6     |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  The floating point value of FPR <i>fs</i> is converted to a floored 64-bit word.
+  The result is placed in FPR <i>fd</i>.
+
+  When the source value is <black>Infinity</black>, <black>NaN</black> or is outside a 64-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
+
+  <b>Restrictions:</b>
+  The field <i>fd</i> must be an even FPR. If the field is not valid, the result is <black>UNPREDICTABLE</black>.
+  The operand must be a value in floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ float
+  StoreFPR(fd, L, ConvertFmt(ValueFPR(fs, fmt), fmt, L))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_FLOOR_W_S_DOCUMENTATION: |-
+  <u>Flooring float to word</u>
+
+  <b>Format:</b>
+  floor.w.s fd, fs
+
+  | COP1      fmt      0      fs      fd     FLOOR.W |
+  |010001    10000   00000                   001111  |
+  |  6         5       5      5       5        6     |
+
+
+  <b>Description:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  The floating point value of FPR <i>fs</i> is converted to a floored 32-bit word.
+  The result is placed in FPR <i>fd</i>.
+
+  When the source value is <black>Infinity</black>, <black>NaN</black> or is outside a 32-bit word, the result cannot be represented correctly. These cases are handled by the JVM itself.
+
+  <b>Restrictions:</b>
+  The operand must be a value in floating point. If it is not, the result is <black>UNPREDICTABLE</black>.
+
+  <b>Operation:</b>
+  fmt ⇽ float
+  StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
+
+  <b>Exceptions:</b>
   None
 INSTRUCTION_J_DOCUMENTATION: |-
   <u>Jump</u>

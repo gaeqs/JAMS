@@ -33,28 +33,27 @@ import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledRFPUInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicRFPUInstruction;
-import net.jamsimulator.jams.mips.instruction.execution.NumericMultiCycleExecution;
+import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
-import net.jamsimulator.jams.utils.NumericUtils;
 
-public class InstructionCeilLDouble extends BasicRFPUInstruction<InstructionCeilLDouble.Assembled> {
+public class InstructionFloorWSingle extends BasicRFPUInstruction<InstructionFloorWSingle.Assembled> {
 
-    public static final String MNEMONIC = "ceil.l.d";
+    public static final String MNEMONIC = "floor.w.s";
     public static final ALUType ALU_TYPE = ALUType.FLOAT_ADDTION;
     public static final int OPERATION_CODE = 0b010001;
-    public static final int FMT = 0b10001;
-    public static final int FUNCTION_CODE = 0b001010;
+    public static final int FMT = 0b10000;
+    public static final int FUNCTION_CODE = 0b001111;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
-            ParameterType.EVEN_FLOAT_REGISTER,
-            ParameterType.EVEN_FLOAT_REGISTER
+            ParameterType.FLOAT_REGISTER,
+            ParameterType.FLOAT_REGISTER
     );
 
-    public InstructionCeilLDouble() {
+    public InstructionFloorWSingle() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE, FMT);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
@@ -104,14 +103,14 @@ public class InstructionCeilLDouble extends BasicRFPUInstruction<InstructionCeil
 
         @Override
         public void execute() {
-            int s = instruction.getSourceRegister();
-            int d = instruction.getDestinationRegister();
-            checkEvenRegister(s, d);
-            NumericUtils.longToInts((long) Math.ceil(doubleCOP1(s)), registerCOP1(d), registerCOP1(d + 1));
+            registerCOP1(instruction.getDestinationRegister())
+                    .setValue((int) Math.floor(floatCOP1(instruction.getSourceRegister())));
         }
     }
 
-    public static class MultiCycle extends NumericMultiCycleExecution<MultiCycleArchitecture, Assembled> {
+    public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
+
+        private int result;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -119,18 +118,14 @@ public class InstructionCeilLDouble extends BasicRFPUInstruction<InstructionCeil
 
         @Override
         public void decode() {
-            int s = instruction.getSourceRegister();
-            int d = instruction.getDestinationRegister();
-            checkEvenRegister(s, d);
-            requiresCOP1Double(s, false);
-            lockCOP1Double(d);
+            requiresCOP1(instruction.getSourceRegister(), false);
+            lockCOP1(instruction.getDestinationRegister());
         }
 
         @Override
         public void execute() {
-            longToInts((long) Math.ceil(doubleCOP1(instruction.getSourceRegister())));
-            forwardCOP1(instruction.getDestinationRegister(), lowResult);
-            forwardCOP1(instruction.getDestinationRegister() + 1, highResult);
+            result = (int) Math.floor(floatCOP1(instruction.getSourceRegister()));
+            forwardCOP1(instruction.getDestinationRegister(), result);
         }
 
         @Override
@@ -139,8 +134,7 @@ public class InstructionCeilLDouble extends BasicRFPUInstruction<InstructionCeil
 
         @Override
         public void writeBack() {
-            setAndUnlockCOP1(instruction.getDestinationRegister(), lowResult);
-            setAndUnlockCOP1(instruction.getDestinationRegister() + 1, highResult);
+            setAndUnlockCOP1(instruction.getDestinationRegister(), result);
         }
     }
 }
