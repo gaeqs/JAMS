@@ -74,6 +74,7 @@ INSTRUCTION_FLOOR_L_D: Flooring double to long
 INSTRUCTION_FLOOR_L_S: Flooring single to long
 INSTRUCTION_FLOOR_W_D: Flooring double to word
 INSTRUCTION_FLOOR_W_S: Flooring single to word
+INSTRUCTION_INS: Insert bit field
 INSTRUCTION_J: Jump
 INSTRUCTION_JAL: Jump and link
 INSTRUCTION_JALR: Jump and link register
@@ -2354,7 +2355,7 @@ INSTRUCTION_EXT_DOCUMENTATION: |-
   <u>Extract bit field</u>
 
   <b>Format:</b>
-  exr rt, rs, pos, size
+  ext rt, rs, pos, size
 
   |SPECIAL3    rs    rt   msbd    lsb     EXT   |
   | 011111              (size-1) (pos)   000000 |
@@ -2364,15 +2365,15 @@ INSTRUCTION_EXT_DOCUMENTATION: |-
   <b>Description:</b>
   GPR[rt] ⇽  0<sub>32..msbd+1</sub> || GPR[rs]<sub>msbd+lsb..lsb</sub>
 
-  The bit field starting at bit <i>pos</i> with size <i>size</i> is extracted from GPR <i>rs</i> and stored zero-extender and right-justified in GPR <i>rt</i>.
+  The bit field starting at bit <i>pos</i> with size <i>size</i> is extracted from GPR <i>rs</i> and stored zero-extended and right-justified in GPR <i>rt</i>.
   
-  <b>Restricciones:</b>
+  <b>Restrictions:</b>
   The operation is <black>UNPREDICTABLE</black> if the addition of <i>lsb</i> and <i>msbd</i> is greater than 31. 
 
   <b>Operation:</b>
-  GPR[rt] ⇽  0<sub>32..msbd+1</sub> || GPR[rs]<sub>msbd+lsb...lsb</sub>
+  GPR[rt] ⇽  0<sub>32..msbd+1</sub> || GPR[rs]<sub>msbd+lsb..lsb</sub>
 
-  <b>Exception:</b>
+  <b>Exceptions:</b>
   None
 INSTRUCTION_FLOOR_L_D_DOCUMENTATION: |-
   <u>Flooring double to long</u>
@@ -2486,6 +2487,31 @@ INSTRUCTION_FLOOR_W_S_DOCUMENTATION: |-
   <b>Operation:</b>
   fmt ⇽ float
   StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_INS_DOCUMENTATION: |-
+  <u>Insert bit field</u>
+
+  <b>Format:</b>
+  ins rt, rs, pos, size
+
+  |SPECIAL3    rs    rt     msb       lsb     EXT   |
+  | 011111              (size+pos-1) (pos)   000100 |
+  |   6        5     5       5         5       6    |
+
+
+  <b>Description:</b>
+  GPR[rt] ⇽  GPR[rt]<sub>31..msb+1</sub> || GPR[rs]<sub>msb-lsb..0</sub> || GPR[rt]<sub>lsb-1..0</sub>
+
+  The right-most <i>size</i> bits from GPR <i>rs</i> are merged into the value from GPR <i>rt</i> starting at bit position <i>pos</i>.
+  The result is then place back in GPR <i>rt</i>.
+  
+  <b>Restrictions:</b>
+  The operation is <black>UNPREDICTABLE</black> if the addition of <i>pos</i> and <i>size</i> is greater than 31. 
+
+  <b>Operation:</b>
+  GPR[rt] ⇽  GPR[rt]<sub>31..msb+1</sub> || GPR[rs]<sub>msb-lsb..0</sub> || GPR[rt]<sub>lsb-1..0</sub>
 
   <b>Exceptions:</b>
   None

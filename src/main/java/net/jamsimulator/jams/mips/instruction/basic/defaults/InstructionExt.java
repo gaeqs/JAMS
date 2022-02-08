@@ -80,17 +80,13 @@ public class InstructionExt extends BasicRInstruction<InstructionExt.Assembled> 
 
     public static class Assembled extends AssembledRInstruction {
 
-        public static final int ALIGN_CODE_SHIFT = 8;
-        public static final int ALIGN_CODE_MASK = 0x7;
-        public static final int SHIFT_AMOUNT_MASK = 0x3;
-
-        public Assembled(int sourceRegister, int targetRegister, int msbd, int lsb,
+        public Assembled(int sourceRegister, int targetRegister, int msb, int lsb,
                          Instruction origin, BasicInstruction<Assembled> basicOrigin) {
             super(
                     OPERATION_CODE,
                     sourceRegister,
                     targetRegister,
-                    msbd - 1,
+                    msb - 1,
                     lsb,
                     FUNCTION_CODE,
                     origin,
@@ -106,10 +102,6 @@ public class InstructionExt extends BasicRInstruction<InstructionExt.Assembled> 
         @Override
         public int getShiftAmount() {
             return super.getShiftAmount() & SHIFT_AMOUNT_MASK;
-        }
-
-        public int getAlignCode() {
-            return value >> ALIGN_CODE_SHIFT & ALIGN_CODE_MASK;
         }
 
         @Override

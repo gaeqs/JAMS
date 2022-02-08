@@ -74,6 +74,7 @@ INSTRUCTION_FLOOR_L_D: Función suelo de coma flotante doble a doble palabra
 INSTRUCTION_FLOOR_L_S: Función suelo de coma flotante a doble palabra
 INSTRUCTION_FLOOR_W_D: Función suelo de coma flotante doble a palabra
 INSTRUCTION_FLOOR_W_S: Función suelo de coma flotante a palabra
+INSTRUCTION_INS: Insertar bits
 INSTRUCTION_J: Salto
 INSTRUCTION_JAL: Salto y enlace
 INSTRUCTION_JALR: Salto y enlace a registro
@@ -2347,7 +2348,7 @@ INSTRUCTION_EXT_DOCUMENTATION: |-
   <u>Extraer bits</u>
 
   <b>Formato:</b>
-  exr rt, rs, pos, size
+  ext rt, rs, pos, size
 
   |SPECIAL3    rs    rt   msbd    lsb     EXT   |
   | 011111              (size-1) (pos)   000000 |
@@ -2364,7 +2365,7 @@ INSTRUCTION_EXT_DOCUMENTATION: |-
   La operación es <black>IMPREDECIBLE</black> si la suma de <i>lsb</i> y <i>msbd</i> es mayor que 31.
 
   <b>Operación:</b>
-  GPR[rt] ⇽  0<sub>32..msbd+1</sub> || GPR[rs]<sub>msbd+lsb...lsb</sub>
+  GPR[rt] ⇽  0<sub>32..msbd+1</sub> || GPR[rs]<sub>msbd+lsb..lsb</sub>
 
   <b>Excepciones:</b>
   Ninguna
@@ -2480,6 +2481,31 @@ INSTRUCTION_FLOOR_W_S_DOCUMENTATION: |-
   <b>Operación:</b>
   fmt ⇽ float
   StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_INS_DOCUMENTATION: |-
+  <u>Insertar bits</u>
+
+  <b>Formato:</b>
+  ins rt, rs, pos, size
+
+  |SPECIAL3    rs    rt     msb       lsb     EXT   |
+  | 011111              (size+pos-1) (pos)   000100 |
+  |   6        5     5       5         5       6    |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽  GPR[rt]<sub>31..msb+1</sub> || GPR[rs]<sub>msb-lsb..0</sub> || GPR[rt]<sub>lsb-1..0</sub>
+
+  Los primeros <i>size</i> bits de <i>rs</i> son insertados dentro del valor de <i>rt</i>, empezando en la posición <i>pos</i>.
+  The result is then place back in GPR <i>rt</i>.
+  
+  <b>Restricciones:</b>
+  La operación es <black>IMPREDECIBLE</black> si la suma de <i>lsb</i> y <i>msbd</i> es mayor que 31.
+
+  <b>Operación:</b>
+  GPR[rt] ⇽  GPR[rt]<sub>31..msb+1</sub> || GPR[rs]<sub>msb-lsb..0</sub> || GPR[rt]<sub>lsb-1..0</sub>
 
   <b>Excepciones:</b>
   Ninguna

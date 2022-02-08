@@ -40,7 +40,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-class InstructionExtTest {
+class InstructionInsTest {
 
     @BeforeAll
     static void initRegistry() {
@@ -58,10 +58,11 @@ class InstructionExtTest {
         var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
-                        li $s0, 0b1011110000101010
-                        li $s1, 0b101111
-                        ext $s0, $s0, 10, 6
-                        tne $s0, $s0
+                        li $s0, 0b1011110001101010
+                        li $s1, 0b100000001111
+                        li $s2, 0b101010101111
+                        ins $s1, $s0, 4, 6
+                        tne $s1, $s2
                         """
         );
 
@@ -69,6 +70,7 @@ class InstructionExtTest {
         simulation.waitForExecutionFinish();
         assertEquals(0, simulation.getExitCode());
     }
+
 
     @Test
     void testCompilationFail() {
@@ -78,7 +80,7 @@ class InstructionExtTest {
                             .text
                             li $s0, 0b1011110000101010
                             li $s1, 0b101111
-                            ext $s0, $s0, 10, 0
+                            ins $s0, $s0, 10, 0
                             tne $s0, $s0
                             """
             );
@@ -88,4 +90,5 @@ class InstructionExtTest {
         }
         fail("Code compiled successfully.");
     }
+
 }

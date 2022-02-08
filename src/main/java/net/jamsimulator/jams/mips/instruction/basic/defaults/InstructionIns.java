@@ -80,17 +80,13 @@ public class InstructionIns extends BasicRInstruction<InstructionIns.Assembled> 
 
     public static class Assembled extends AssembledRInstruction {
 
-        public static final int ALIGN_CODE_SHIFT = 8;
-        public static final int ALIGN_CODE_MASK = 0x7;
-        public static final int SHIFT_AMOUNT_MASK = 0x3;
-
         public Assembled(int sourceRegister, int targetRegister, int msbd, int lsb,
                          Instruction origin, BasicInstruction<Assembled> basicOrigin) {
             super(
                     OPERATION_CODE,
                     sourceRegister,
                     targetRegister,
-                    msbd - 1,
+                    msbd + lsb- 1,
                     lsb,
                     FUNCTION_CODE,
                     origin,
@@ -100,16 +96,6 @@ public class InstructionIns extends BasicRInstruction<InstructionIns.Assembled> 
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
             super(instructionCode, origin, basicOrigin);
-        }
-
-
-        @Override
-        public int getShiftAmount() {
-            return super.getShiftAmount() & SHIFT_AMOUNT_MASK;
-        }
-
-        public int getAlignCode() {
-            return value >> ALIGN_CODE_SHIFT & ALIGN_CODE_MASK;
         }
 
         @Override
@@ -132,11 +118,11 @@ public class InstructionIns extends BasicRInstruction<InstructionIns.Assembled> 
             int rs = value(instruction.getSourceRegister());
             int rt = value(instruction.getTargetRegister());
 
-            int size = instruction.getDestinationRegister() + 1;
             int pos = instruction.getShiftAmount();
+            int size = instruction.getDestinationRegister() - pos + 1;
             int mask = ((1 << size) - 1) << pos;
             register(instruction.getTargetRegister())
-                    .setValue((rs & mask) | (rt & ~mask));
+                    .setValue(((rs << pos) & mask) | (rt & ~mask));
         }
     }
 
@@ -160,10 +146,10 @@ public class InstructionIns extends BasicRInstruction<InstructionIns.Assembled> 
             int rs = value(instruction.getSourceRegister());
             int rt = value(instruction.getTargetRegister());
 
-            int size = instruction.getDestinationRegister() + 1;
             int pos = instruction.getShiftAmount();
+            int size = instruction.getDestinationRegister() - pos + 1;
             int mask = ((1 << size) - 1) << pos;
-            result = (rs & mask) | (rt & ~mask);
+            result = ((rs << pos) & mask) | (rt & ~mask);
             forward(instruction.getTargetRegister(), result);
         }
 
