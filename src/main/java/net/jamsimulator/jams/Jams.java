@@ -25,6 +25,8 @@
 package net.jamsimulator.jams;
 
 import net.jamsimulator.jams.configuration.RootConfiguration;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormat;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormatJSON;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.event.general.JAMSPostInitEvent;
 import net.jamsimulator.jams.event.general.JAMSPreInitEvent;
@@ -59,7 +61,7 @@ public class Jams {
 
     private static String VERSION;
 
-    private static File mainFolder;
+    private static File mainFolder = FolderUtils.checkMainFolder();
 
     private static RootConfiguration mainConfiguration;
 
@@ -78,7 +80,6 @@ public class Jams {
 
         loadVersion();
         System.out.println("Loading JAMS version " + getVersion());
-        mainFolder = FolderUtils.checkMainFolder();
         TempUtils.loadTemporalFolder();
 
         try {
@@ -111,8 +112,8 @@ public class Jams {
 
     private static boolean testInit = false;
 
-    public static void initForTests () {
-        if(testInit) return;
+    public static void initForTests() {
+        if (testInit) return;
 
         generalEventBroadcast = new SimpleEventBroadcast();
         taskExecutor = new TaskExecutor();
@@ -233,7 +234,10 @@ public class Jams {
         getGeneralEventBroadcast().callEvent(new JAMSShutdownEvent.Before());
         //Save main configuration.
         try {
-            getMainConfiguration().save(true);
+            getMainConfiguration().save(
+                    Manager.of(ConfigurationFormat.class).getOrNull(ConfigurationFormatJSON.NAME),
+                    true
+            );
         } catch (IOException e) {
             e.printStackTrace();
         }

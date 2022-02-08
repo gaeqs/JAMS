@@ -51,17 +51,28 @@ public class InstructionCrc32 extends BasicRInstruction<InstructionCrc32.Assembl
     public static final int OPERATION_CODE = 0b011111;
     public static final int FUNCTION_CODE = 0b001111;
 
-    private static final int POLY = 0xEDB88320;
+    public static final int CRC_C_TYPE_MASK = 0x7;
+    public static final int CRC_C_TYPE_SHIFT = 8;
+    public static final int CRC_TYPE_MASK = 0x3;
+    public static final int CRC_TYPE_SHIFT = 6;
+
+    public static int POLY = 0xEDB88320;
+    public static int C_POLY = 0x82F63B78;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
             ParameterType.REGISTER,
             ParameterType.REGISTER
     );
 
-    private final Type type;
 
-    public InstructionCrc32(Type type) {
-        super(MNEMONIC + type.getSuffix(), PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
+    private final boolean cType;
+
+    private final CRCType type;
+
+    public InstructionCrc32(CRCType type, boolean cType) {
+        super(MNEMONIC + (cType ? "c" : "") + type.getSuffix(),
+                PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
+        this.cType = cType;
         this.type = type;
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
@@ -70,14 +81,14 @@ public class InstructionCrc32 extends BasicRInstruction<InstructionCrc32.Assembl
 
     @Override
     public String getDocumentation() {
-        var sufix = MNEMONIC.toUpperCase().replace('.', '_');
+        var sufix = (MNEMONIC + (cType ? "c" : "")).toUpperCase().replace('.', '_');
         return Manager.ofS(Language.class).getSelected().getOrDefault("INSTRUCTION_" + sufix + "_DOCUMENTATION");
     }
 
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
         return new Assembled(parameters[1].getRegister(), parameters[0].getRegister(),
-                type.getId(), origin, this);
+                cType, type.getId(), origin, this);
     }
 
     @Override
@@ -85,18 +96,23 @@ public class InstructionCrc32 extends BasicRInstruction<InstructionCrc32.Assembl
         return new Assembled(instructionCode, this, this);
     }
 
+    @Override
+    public boolean match(int instructionCode) {
+        boolean cType = (instructionCode >> CRC_C_TYPE_SHIFT & CRC_C_TYPE_MASK) == 1;
+        int type = instructionCode >> CRC_TYPE_SHIFT & CRC_TYPE_MASK;
+        return this.cType == cType && this.type.getId() == type;
+    }
+
     public static class Assembled extends AssembledRInstruction {
 
-        public static final int SHIFT_AMOUNT_MASK = 0x3;
-
-        public Assembled(int sourceRegister, int targetRegister, int sz,
+        public Assembled(int sourceRegister, int targetRegister, boolean cType, int sz,
                          Instruction origin, BasicInstruction<Assembled> basicOrigin) {
             super(
                     OPERATION_CODE,
                     sourceRegister,
                     targetRegister,
                     0,
-                    sz,
+                    (cType ? 0b00100 : 0) + sz,
                     FUNCTION_CODE,
                     origin,
                     basicOrigin
@@ -108,9 +124,12 @@ public class InstructionCrc32 extends BasicRInstruction<InstructionCrc32.Assembl
         }
 
 
-        @Override
-        public int getShiftAmount() {
-            return super.getShiftAmount() & SHIFT_AMOUNT_MASK;
+        public boolean getCRCCType() {
+            return (getCode() >> CRC_C_TYPE_SHIFT & CRC_C_TYPE_MASK) == 1;
+        }
+
+        public int getCRCType() {
+            return getCode() >> CRC_TYPE_SHIFT & CRC_TYPE_MASK;
         }
 
         @Override
@@ -129,16 +148,18 @@ public class InstructionCrc32 extends BasicRInstruction<InstructionCrc32.Assembl
         public void execute() {
             var rt = register(instruction.getTargetRegister());
             var rs = value(instruction.getSourceRegister());
-            int rz = instruction.getShiftAmount();
+            int rz = instruction.getCRCType();
             if (rz == 4) {
                 error(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION);
                 return;
             }
 
+            int poly = instruction.getCRCCType() ? C_POLY : POLY;
+
             int value = switch (rz) {
-                case 0 -> NumericUtils.crc32(rt.getValue(), rs, 1, POLY);
-                case 1 -> NumericUtils.crc32(rt.getValue(), rs, 2, POLY);
-                default -> NumericUtils.crc32(rt.getValue(), rs, 4, POLY);
+                case 0 -> NumericUtils.crc32(rt.getValue(), rs, 1, poly);
+                case 1 -> NumericUtils.crc32(rt.getValue(), rs, 2, poly);
+                default -> NumericUtils.crc32(rt.getValue(), rs, 4, poly);
             };
             rt.setValue(value);
         }
@@ -147,7 +168,7 @@ public class InstructionCrc32 extends BasicRInstruction<InstructionCrc32.Assembl
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
 
         private int result;
-        
+
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
         }
@@ -161,7 +182,7 @@ public class InstructionCrc32 extends BasicRInstruction<InstructionCrc32.Assembl
 
         @Override
         public void execute() {
-            int rz = instruction.getShiftAmount();
+            int rz = instruction.getCRCType();
             if (rz == 4) {
                 error(InterruptCause.RESERVED_INSTRUCTION_EXCEPTION);
                 return;
@@ -170,12 +191,14 @@ public class InstructionCrc32 extends BasicRInstruction<InstructionCrc32.Assembl
             int rt = value(instruction.getTargetRegister());
             int rs = value(instruction.getSourceRegister());
 
+            int poly = instruction.getCRCCType() ? C_POLY : POLY;
+
             result = switch (rz) {
-                case 0 -> NumericUtils.crc32(rt, rs, 1, POLY);
-                case 1 -> NumericUtils.crc32(rt, rs, 2, POLY);
-                default -> NumericUtils.crc32(rt, rs, 4, POLY);
+                case 0 -> NumericUtils.crc32(rt, rs, 1, poly);
+                case 1 -> NumericUtils.crc32(rt, rs, 2, poly);
+                default -> NumericUtils.crc32(rt, rs, 4, poly);
             };
-            
+
             forward(instruction.getTargetRegister(), result);
         }
 
@@ -186,30 +209,6 @@ public class InstructionCrc32 extends BasicRInstruction<InstructionCrc32.Assembl
         @Override
         public void writeBack() {
             setAndUnlock(instruction.getTargetRegister(), result);
-        }
-    }
-
-
-    public enum Type {
-
-        BYTE("b", 1),
-        HALF("h", 2),
-        WORD("w", 3);
-
-        private final String suffix;
-        private final int id;
-
-        Type(String suffix, int id) {
-            this.suffix = suffix;
-            this.id = id;
-        }
-
-        public String getSuffix() {
-            return suffix;
-        }
-
-        public int getId() {
-            return id;
         }
     }
 }

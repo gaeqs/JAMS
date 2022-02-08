@@ -22,23 +22,33 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.language.exception;
+package net.jamsimulator.jams.mips.instruction.pseudo.defaults;
 
-public class LanguageFailedLoadException extends Exception {
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionEi;
+import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionSll;
+import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
+import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
+import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
+import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
-    public LanguageFailedLoadException() {
+public class PseudoInstructionEi extends PseudoInstruction {
+
+    public static final String MNEMONIC = "ei";
+
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes();
+
+    public PseudoInstructionEi() {
+        super(MNEMONIC, PARAMETER_TYPES);
     }
 
-    public LanguageFailedLoadException(String message) {
-        super(message);
+    @Override
+    public int getInstructionAmount(String[] parameters) {
+        return 1;
     }
 
-    public LanguageFailedLoadException(Throwable cause) {
-        super(cause);
+    @Override
+    public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
+        return assemble(instructions(set, InstructionEi.class), parameters(ZERO));
     }
-
-    public LanguageFailedLoadException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
 }

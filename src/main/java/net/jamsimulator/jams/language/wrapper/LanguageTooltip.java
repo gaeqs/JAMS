@@ -30,9 +30,8 @@ import javafx.scene.control.Tooltip;
 import javafx.util.Duration;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
-import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.lang.reflect.Field;
@@ -84,7 +83,12 @@ public class LanguageTooltip extends Tooltip {
 
     private void refreshMessage() {
         if (node == null) return;
-        var parsed = StringUtils.parseEscapeCharacters(Manager.ofS(Language.class).getSelected().getOrDefault(node));
+        refreshMessage(Manager.ofS(Language.class).getSelected());
+    }
+
+    private void refreshMessage(Language language) {
+        if (node == null) return;
+        var parsed = StringUtils.parseEscapeCharacters(language.getOrDefault(node));
 
         for (int i = 0; i < replacements.length - 1; i += 2) {
             parsed = parsed.replace(replacements[i], replacements[i + 1]);
@@ -93,18 +97,13 @@ public class LanguageTooltip extends Tooltip {
         setText(StringUtils.addLineJumps(parsed, 70));
     }
 
-    @Listener
-    public void onSelectedLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
-        refreshMessage();
-    }
-
-    @Listener
-    public void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
-        refreshMessage();
-    }
-
     @Override
     public String getTypeSelector() {
         return "Tooltip";
+    }
+
+    @Listener
+    public void onRefresh(LanguageRefreshEvent event) {
+        refreshMessage(event.getSelectedLanguage());
     }
 }

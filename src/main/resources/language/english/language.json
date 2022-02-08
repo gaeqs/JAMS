@@ -1,0 +1,15 @@
+{
+  "name": "English",
+  "files": [
+    "actions.yml",
+    "configuration.yml",
+    "directives.yml",
+    "editor.yml",
+    "general.yml",
+    "instructions.yml",
+    "interface.yml",
+    "mips_elements.yml",
+    "mips_simulation_configuration.yml",
+    "simulation.yml"
+  ]
+}

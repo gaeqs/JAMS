@@ -28,9 +28,8 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.layout.Region;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
-import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 import net.jamsimulator.jams.utils.StringUtils;
 
 public class LanguagePieChartData extends Region {
@@ -52,17 +51,17 @@ public class LanguagePieChartData extends Region {
 
     private void refreshMessage() {
         if (node == null) return;
-        String parsed = StringUtils.parseEscapeCharacters(Manager.ofS(Language.class).getSelected().getOrDefault(node));
+        refreshMessage(Manager.ofS(Language.class).getSelected());
+    }
+
+    private void refreshMessage(Language language) {
+        if (node == null) return;
+        String parsed = StringUtils.parseEscapeCharacters(language.getOrDefault(node));
         data.setName(StringUtils.addLineJumps(parsed, 70));
     }
 
     @Listener
-    public void onSelectedLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
-        refreshMessage();
-    }
-
-    @Listener
-    public void onDefaultLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
-        refreshMessage();
+    public void onRefresh(LanguageRefreshEvent event) {
+        refreshMessage(event.getSelectedLanguage());
     }
 }

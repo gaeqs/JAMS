@@ -1,0 +1,4240 @@
+INSTRUCTION_ABS_D: Suma (coma flotante doble)
+INSTRUCTION_ABS_S: Valor absoluto (coma flotante)
+INSTRUCTION_ADD: Suma
+INSTRUCTION_ADD_D: Suma (coma flotante doble)
+INSTRUCTION_ADDIU: Suma con inmediato sin desbordamiento
+INSTRUCTION_ADDIUPC: Suma de inmediato y PC sin desbordamiento
+INSTRUCTION_ADD_S: Suma (coma flotante)
+INSTRUCTION_ADDU: Suma sin desbordamiento
+INSTRUCTION_ALIGN: Concatenar dos registros generales, extrayendo un subconjunto contiguo a una posición de byte
+INSTRUCTION_ALUIPC: Suma alineada del inmediato con los bits superiores del PC
+INSTRUCTION_AND: And
+INSTRUCTION_ANDI: And con inmediato
+INSTRUCTION_AUI: Suma del inmediato con los bits superiores
+INSTRUCTION_AUIPC: Suma del inmediato con los bits superiores del PC
+INSTRUCTION_BAL: Ramificación y enlace
+INSTRUCTION_BALC: Ramificación compacta y enlace
+INSTRUCTION_BC: Ramificación compacta
+INSTRUCTION_BC1EQZ: Ramificación si el bit 0 del registro COP1 es cero
+INSTRUCTION_BC1NEZ: Ramificación si el bit 0 del registro COP1 no es cero
+INSTRUCTION_BEQ: Ramificación si es igual
+INSTRUCTION_BEQC: Ramificación compacta si es igual
+INSTRUCTION_BEQZALC: Ramificación compacta y enlace si es igual que cero
+INSTRUCTION_BEQZC: Ramificación compacta si es igual que cero
+INSTRUCTION_BGEC: Ramificación compacta si es mayor o igual
+INSTRUCTION_BGEUC: Ramificación compacta si es mayor o igual sin signo
+INSTRUCTION_BGEZ: Ramificación si es mayor o igual que cero
+INSTRUCTION_BGEZALC: Ramificación compacta y enlace si es mayor o igual que cero
+INSTRUCTION_BGEZC: Ramificación compacta si es mayor o igual que cero
+INSTRUCTION_BGTZ: Ramificación si es mayor que cero
+INSTRUCTION_BGTZALC: Ramificación compacta y enlace si es mayor que cero
+INSTRUCTION_BGTZC: Ramificación compacta si es mayor que cero
+INSTRUCTION_BITSWAP: Intercambiar bits en cada byte
+INSTRUCTION_BLEZ: Ramificación si es menor o igual que cero
+INSTRUCTION_BLEZALC: Ramificación compacta y enlace si es menor o igual que cero
+INSTRUCTION_BLEZC: Ramificación compacta si es menor o igual que cero
+INSTRUCTION_BLTC: Ramificación compacta si es menor
+INSTRUCTION_BLTUC: Ramificación compacta si es menor sin signo
+INSTRUCTION_BLTZ: Ramificación si es menor que cero
+INSTRUCTION_BLTZALC: Ramificación compacta y enlace si es menor que cero
+INSTRUCTION_BLTZC: Ramificación compacta si es menor que cero
+INSTRUCTION_BNE: Ramificación si no es igual
+INSTRUCTION_BNEC: Ramificación compacta si no es igual
+INSTRUCTION_BNEZALC: Ramificación compacta y enlace si no es igual que cero
+INSTRUCTION_BNEZC: Ramificación compacta si no es igual que cero
+INSTRUCTION_BNVC: Ramificación si la suma no desborda
+INSTRUCTION_BOVC: Ramificación si la suma desborda
+INSTRUCTION_BREAK: Punto de ruptura
+INSTRUCTION_CEIL_L_D: Función techo de coma flotante doble a doble palabra
+INSTRUCTION_CEIL_L_S: Función techo de coma flotante a doble palabra
+INSTRUCTION_CEIL_W_D: Función techo de coma flotante doble a palabra
+INSTRUCTION_CEIL_W_S: Función techo de coma flotante a palabra
+INSTRUCTION_CLASS_D: Máscara de clasificación de coma flotante doble
+INSTRUCTION_CLASS_S: Máscara de clasificación de coma flotante
+INSTRUCTION_CLO: Conteo de los primeros unos en una palabra
+INSTRUCTION_CLZ: Conteo de los primeros ceros en una palabra
+INSTRUCTION_CMP_D: Comparación en coma flotante doble ({TYPE})
+INSTRUCTION_CMP_S: Comparación en coma flotante ({TYPE})
+INSTRUCTION_CRC32B: Generar CRC con el polinomio invertido 0xEDB88320 (byte)
+INSTRUCTION_CRC32H: Generar CRC con el polinomio invertido 0xEDB88320 (media palabra)
+INSTRUCTION_CRC32W: Generar CRC con el polinomio invertido 0xEDB88320 (palabra)
+INSTRUCTION_CRC32CB: Generar CRC con el polinomio invertido 0x82F63B78 (byte)
+INSTRUCTION_CRC32CH: Generar CRC con el polinomio invertido 0x82F63B78 (media palabra)
+INSTRUCTION_CRC32CW: Generar CRC con el polinomio invertido 0x82F63B78 (palabra)
+INSTRUCTION_CVT: Convertir número de {FROM} a {TO}
+INSTRUCTION_DI: Deshabilitar interrupciones
+INSTRUCTION_DIV: División
+INSTRUCTION_DIV_D: División (coma flotante doble)
+INSTRUCTION_DIV_S: División (coma flotante)
+INSTRUCTION_DIVU: División sin signo
+INSTRUCTION_EI: Habilitar interrupciones
+INSTRUCTION_ERET: Retorno de la excepción
+INSTRUCTION_EXT: Extraer bits
+INSTRUCTION_FLOOR_L_D: Función suelo de coma flotante doble a doble palabra
+INSTRUCTION_FLOOR_L_S: Función suelo de coma flotante a doble palabra
+INSTRUCTION_FLOOR_W_D: Función suelo de coma flotante doble a palabra
+INSTRUCTION_FLOOR_W_S: Función suelo de coma flotante a palabra
+INSTRUCTION_J: Salto
+INSTRUCTION_JAL: Salto y enlace
+INSTRUCTION_JALR: Salto y enlace a registro
+INSTRUCTION_LB: Cargar byte
+INSTRUCTION_LW: Cargar palabra
+INSTRUCTION_MFC0: Mover desde el coprocesador 0
+INSTRUCTION_MFC1: Mover desde el coprocesador 1
+INSTRUCTION_MOD: Módulo
+INSTRUCTION_MODU: Módulo sin signo
+INSTRUCTION_MTC0: Mover al coprocesador 0
+INSTRUCTION_MTC1: Mover al coprocesador 1
+INSTRUCTION_MUH: Multiplicación devolviendo la parte más significante
+INSTRUCTION_MUHU: Multiplicación sin signo devolviendo la parte más significante
+INSTRUCTION_MUL: Multiplicación devolviendo la parte menos significante
+INSTRUCTION_MUL_D: Multiplicación (coma flotante doble)
+INSTRUCTION_MUL_S: Multiplicación (coma flotante)
+INSTRUCTION_MULU: Multiplicación sin signo devolviendo la parte menos significante
+INSTRUCTION_OR: Or
+INSTRUCTION_ORI: Or con inmediato
+INSTRUCTION_SB: Guardar byte
+INSTRUCTION_SLL: Desplazar a la izquierda de manera lógica
+INSTRUCTION_SLLV: Desplazar a la izquierda de manera lógica dependiendo de una variable
+INSTRUCTION_SLT: Asignar si menor que valor
+INSTRUCTION_SLTI: Asignar si menor que inmediato
+INSTRUCTION_SLTIU: Asignar si menor que inmediato sin signo
+INSTRUCTION_SLTU: Asignar si menor que sin signo
+INSTRUCTION_SRL: Desplazar a la derecha de manera lógica
+INSTRUCTION_SRLV: Desplazar a la derecha de manera lógica dependiendo de una variable
+INSTRUCTION_SUB: Resta
+INSTRUCTION_SUB_D: Resta (coma flotante doble)
+INSTRUCTION_SUB_S: Resta (coma flotante)
+INSTRUCTION_SUBU: Resta sin desbordamiento
+INSTRUCTION_SW: Guardar palabra
+INSTRUCTION_SYSCALL: Llamada al sistema
+INSTRUCTION_TEQ: Interrupción si es igual
+INSTRUCTION_TEQI: Interrupción si es igual que inmediato
+INSTRUCTION_TGE: Interrupción si es mayor o igual
+INSTRUCTION_TGEI: Interrupción si es mayor o igual que inmediato
+INSTRUCTION_TGEIU: Interrupción si es mayor o igual que inmediato sin signo
+INSTRUCTION_TGEU: Interrupción si es mayor o igual sin signo
+INSTRUCTION_TLT: Interrupción si es menor
+INSTRUCTION_TLTI: Interrupción si es menor que inmediato
+INSTRUCTION_TLTIU: Interrupción si es menor que inmediato sin signo
+INSTRUCTION_TLTU: Interrupción si es menor sin signo
+INSTRUCTION_TNE: Interrupción si no es igual
+INSTRUCTION_TNEI: Interrupción si no es igual que inmediato
+INSTRUCTION_XOR: Xor
+INSTRUCTION_XORI: Xor con inmediato
+INSTRUCTION_ADDI: Suma con inmediato con desbordamiento
+INSTRUCTION_B: Ramificación incondicional
+INSTRUCTION_JR: Saltar al valor del registro
+INSTRUCTION_LA: Cargar dirección
+INSTRUCTION_LI: Cargar inmediato
+INSTRUCTION_LUI: Cargar inmediato en los bits más significantes
+INSTRUCTION_LIF: Cargar float inmediato
+INSTRUCTION_LID: Cargar double inmediato
+INSTRUCTION_MOVE: Mover valor
+INSTRUCTION_NOP: Operación nula
+INSTRUCTION_SGE: Asignar si menor o igual que valor
+INSTRUCTION_SGEI: Asignar si mayor o igual que inmediato
+INSTRUCTION_SGEIU: Asignar si mayor o igual que inmediato sin signo
+INSTRUCTION_SGEU: Asignar si mayor o igual que sin signo
+INSTRUCTION_SGT: Asignar si mayor que valor
+INSTRUCTION_SGTI: Asignar si mayor que inmediato
+INSTRUCTION_SGTIU: Asignar si mayor que inmediato sin signo
+INSTRUCTION_SGTU: Asignar si mayor que sin signo
+INSTRUCTION_SLE: Asignar si menor o igual que valor
+INSTRUCTION_SLEI: Asignar si menor o igual que inmediato
+INSTRUCTION_SLEIU: Asignar si menor o igual que inmediato sin signo
+INSTRUCTION_SLEU: Asignar si menor o igual que sin signo
+INSTRUCTION_ABS_D_DOCUMENTATION: |-
+  <u>Valor absoluto en coma flotante de precisión doble</u>
+
+  <b>Formato:</b>
+  abs.d fd, fs
+
+  | COP1      fmt      0      fs      fd      ABS   |
+  |010001    10001   00000                   000101 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ abs(FRP[fs])
+
+  Asigna el valor absoluto de <i>fs</i> a <i>fd</i>. Tanto el operando como el resultado son valores en coma flotante de precisión doble.
+
+  <b>Restricciones:</b>
+  Los registros <i>fs</i> y <i>fd</i> deben ser FPR pares. Si los registros no son válidos, el resultado es <black>IMPREDECIBLE</black>.
+  El operando debe ser un valor en coma flotante de precisión doble. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ double
+  StoreFPR(fd, fmt, AbsoluteValue(ValueFPR(fs, fmt)))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_ABS_S_DOCUMENTATION: |-
+  <u>Valor absoluto en coma flotante</u>
+
+  <b>Formato:</b>
+  abs.s fd, fs
+
+  | COP1      fmt      0      fs      fd      ABS   |
+  |010001    10000   00000                   000101 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ abs(FRP[fs])
+
+  Asigna el valor absoluto de <i>fs</i> a <i>fd</i>. Tanto el operando como el resultado son valores en coma flotante.
+
+  <b>Restricciones:</b>
+  El operando debe ser un valor en coma flotante. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ float
+  StoreFPR(fd, fmt, AbsoluteValue(ValueFPR(fs, fmt)))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_ADD_DOCUMENTATION: |-
+  <u>Suma</u>
+
+  <b>Formato:</b>
+  add rd, rs, rt
+
+  |SPECIAL     rs      rt     rd      0       ADD   |
+  |000000                                    100000 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ GPR[rs] + GPR[rt]
+
+  La palabra de 32 bits del registro <i>rt</i> es sumada a la palabra de 32 bits del registro <i>rs</i> para producir un resultado de 32 bits.
+   - Si la suma resulta en un desbordamiento aritmético en complemento a 2 de 32 bits, el registro destino no es modificado y la excepción <black>Integer Overflow</black> es lanzada.
+   - Si la suma no produce un desbordamiento, el resultado es insertado en el registro <i>rd</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  temp ⇽ (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (GPR[rt]<sub>31</sub> || GPR[rt]<sub>31..0</sub>)
+  if temp<sub>32</sub> != temp<sub>31</sub> then
+      SignalException(IntegerOverflow)
+  else
+      GPR[rd] ⇽ temp<sub>31..0</sub>
+  endif
+
+  <b>Excepciones:</b>
+  Integer Overflow
+
+  <b>Notas del programador:</b>
+  <black>addu</black> ejecuta la misma operación aritmética pero no lanza una excepción al desbordar.
+INSTRUCTION_ADD_D_DOCUMENTATION: |-
+  <u>Suma en coma flotante de precisión doble</u>
+
+  <b>Formato:</b>
+  add.d fd, fs, ft
+
+  | COP1      fmt      0      fs      fd      ADD   |
+  |010001    10001   00000                   000000 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ FRP[fs] + FPR[ft]
+
+  El valor en el registro <i>ft</i> es añadido al valor en el registro <i>fs</i>. El resultado es calculado en precisión infinita, usando el redondeo proporcionado por <i>Java</i>, y asignado al registro <i>fd</i>.
+  El operando y el resultado son valores en coma flotante de precisión doble.
+
+  <b>Restricciones:</b>
+  Los registros <i>fs</i>, <i>ft</i> y <i>fd</i> deben ser FPR pares. Si los registros no son válidos, el resultado es <black>IMPREDECIBLE</black>.
+  El operando debe ser un valor en coma flotante de precisión doble. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ double
+  StoreFPR(fd, fmt, ValueFPR(fs, fmt) +<sub>fmt</sub> ValueFPR(ft, fmt))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_ADD_S_DOCUMENTATION: |-
+  <u>Suma en coma flotante</u>
+
+  <b>Formato:</b>
+  add.s fd, fs, ft
+
+  | COP1      fmt      0      fs      fd      ADD   |
+  |010001    10000   00000                   000000 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ FRP[fs] + FPR[ft]
+
+  El valor en el registro <i>ft</i> es añadido al valor en el registro <i>fs</i>. El resultado es calculado en precisión infinita, usando el redondeo proporcionado por <i>Java</i>, y asignado al registro <i>fd</i>.
+  El operando y el resultado son valores en coma flotante.
+
+  <b>Restricciones:</b>
+  El operando debe ser un valor en coma flotante. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ float
+  StoreFPR(fd, fmt, ValueFPR(fs, fmt) +<sub>fmt</sub> ValueFPR(ft, fmt))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_ADDIU_DOCUMENTATION: |-
+  <u>Suma con inmediato sin signo</u>
+
+  <b>Formato:</b>
+  addiu rt, rs, inmediato
+
+  | ADDIU      rs     rt     inmediato |
+  |001001                              |
+  |  6         5      5         16     |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ GPR[rs] + inmediato
+
+  El valor con signo de 16 bits <i>inmediato</i> es sumado al valor de 32 bits del registro <i>rs</i> y el resultado de 32 bits es asignado al registro <i>rt</i>.
+  Ninguna excepción de desbordamiento ocurre en ninguna de las circunstancias.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  temp ⇽ GPR[rs] + sign_extend(inmediato)
+  GPR[rt] ⇽ temp
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  El término <i>sin signo</i> en esta instrucción es parcialmente incorrecto; esta instrucción ejecuta una operación aritmética de 32 bits que no lanza una excepción al desbordar. Esta instrucción es apropiada para aritmética sin signo, o entornos aritméticos que ignoran el desbordamiento, como puede ser la aritmética del lenguaje C.
+INSTRUCTION_ADDIUPC_DOCUMENTATION: |-
+  <u>Suma de inmediato y PC sin singo</u>
+
+  <b>Formato:</b>
+  addiupc rs, inmediato
+
+  | PCREL      rs   ADDIUPC   inmediato |
+  |111011              00               |
+  |  6         5       2         19     |
+
+
+  <b>Descripción:</b>
+  GPR[rs] ⇽ PC + sign_extend(inmediato << 2)
+
+  Esta instrucción ejecuta el cálculo de una dirección relativa al PC. El <i>inmediato</i> de 19 bits es desplazado a la izquierda 2 bits, extendido con signo y sumado con la dirección de la instrucción.
+  El resultado es asignado al registro <i>rs</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rs] ⇽ PC + sign_extend(inmediato << 2)
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  El término <i>sin signo</i> es parcialmente incorrecto. <i>Sin signo</i> aquí significa <i>ignorando desbordamientos</i>. Esta instrucción no lanza una excepción cuando la suma produce un desbordamiento. <black>addiupc</black> corresponde a la instrucción <black>addiu</black>, la cual no lanza excepciones al desbordar.
+INSTRUCTION_ADDU_DOCUMENTATION: |-
+  <u>Suma sin signo</u>
+
+  <b>Formato:</b>
+  addu rd, rs, rt
+
+  |SPECIAL     rs      rt     rd      0       ADDU  |
+  |000000                                    100001 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ GPR[rs] + GPR[rt]
+
+  La palabra de 32 bits del registro <i>rt</i> es sumada a la palabra de 32 bits del registro <i>rs</i> para producir un resultado de 32 bits.
+  El resultado es asignado al registro <i>rd</i>.
+  Ninguna excepción de desbordamiento ocurre en ninguna de las circunstancias.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  temp ⇽ GPR[rs] + GPR[rt]
+  GPR[rd] ⇽ temp
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  El término <i>sin signo</i> en esta instrucción es parcialmente incorrecto; esta instrucción ejecuta una operación aritmética de 32 bits que no lanza una excepción al desbordar. Esta instrucción es apropiada para aritmética sin signo, o entornos aritméticos que ignoran el desbordamiento, como puede ser la aritmética del lenguaje C.
+INSTRUCTION_ALIGN_DOCUMENTATION: |-
+  <u>Concatenar dos registros generales, extrayendo un subconjunto contiguo a una posición de byte</u>
+
+  <b>Formato:</b>
+  align rd, rs, rt, bp
+
+  |SPECIAL3    rs    rt    rd    ALIGN   bp   BSGFL  |
+  | 011111                        010         100000 |
+  |   6        5     5     5       3     2      6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ (GPR[rt] << 8 * bp) or (GPR[rs] >> 8 * (4 - bp))
+
+  El registro <i>rt</i> y el registro <i>rs</i> son concatenados, y un subconjunto del tamaño de un registro es extraido, el cual está especificado por el puntero a byte <i>bp</i>.
+  La instrucción <black>align</black> opera con palabras de 32 bits, y tiene una celda de 2 bits <i>bp</i> representando el puntero a byte.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  tmp_rt_hi ⇽ unsigned_word(GPR[rt]) << 8 * bp
+  tmp_rs_lo ⇽ unsigned_word(GPR[rs]) >> 8 * (4 - bp)
+  GPR[rd] ⇽ tmp_rt_hi or tmp_rs_lo
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_ALUIPC_DOCUMENTATION: |-
+  <u>Suma alineada del inmediato con los bits superiores del PC</u>
+
+  <b>Formato:</b>
+  aluipc rs, inmediato
+
+  | PCREL     rs     ALUIPC   inmediato |
+  |111011            11111              |
+  |  6        5        5         16     |
+
+
+  <b>Descrpción:</b>
+  GPR[rs] ⇽ not 0x0FFFF and PC + sign_extend(inmediato << 16)
+
+  Esta instrucción ejecuta el cálculo de una dirección relativa al PC. El <i>inmediato</i> de 16 bits es desplazado a la izquierda 16 bits, extendido con signo y sumado con la dirección de la instrucción.
+  Los 16 bits menos significantes son pustos a 0. El resultado es asignado al registro <i>rs</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rs] ⇽ not 0x0FFFF and PC + sign_extend(inmediato << 16)
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_AND_DOCUMENTATION: |-
+  <u>And</u>
+
+  <b>Formato:</b>
+  and rd, rs, rt
+
+  |SPECIAL     rs      rt     rd      0       AND   |
+  |000000                                    100100 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ GPR[rs] and GPR[rt]
+
+  Realiza la operación lógica AND usando los valores dentro de los registros <i>rs</i> y <i>rt</i>.
+  El resultado es asignado al registro <i>rd</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rd] ⇽ GPR[rs] and GPR[rt]
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_ANDI_DOCUMENTATION: |-
+  <u>And con inmediato</u>
+
+  <b>Formato:</b>
+  andi rt, rs, inmediato
+
+  | ANDI      rs     rt     inmediato |
+  |001100                             |
+  |  6        5      5         16     |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ GPR[rs] and zero_extend(inmediato)
+
+  El <i>inmediato</i> de 16 bits es extendido a la izquierda con ceros y combinado con el valor del registro <i>rs</i> usando la operación lógica AND.
+  El resultado es asignado al registro <i>rt</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rt] ⇽ GPR[rs] and zero_extend(immediate)
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_AUI_DOCUMENTATION: |-
+  <u>Suma del inmediato con los bits superiores</u>
+
+  <b>Formato:</b>
+  aui rt, rs, inmediato
+
+  | AUI       rs     rt     inmediato |
+  |001111                             |
+  |  6        5      5         16     |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ GPR[rs] + sign_extend(inmediato << 16)
+
+
+  El <i>inmediato</i> de 16 bits es desplazado a la izquierda unos 16 bits, extendido con signo y sumado al registro <i>rs</i>
+  El resultado es insertado en el registro <i>rt</i>
+  En MIPS32r6, <black>lui</black> es un alias de <black>aui</black> con <i>rs</i> = 0.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rt] ⇽ GPR[rs] + sign_extend(inmediato << 16)
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  <black>aui</black> puede ser usado para sintetizar grandes constantes en situaciones donde no es conveniente cargar una constante de memoria.
+INSTRUCTION_AUIPC_DOCUMENTATION: |-
+  <u>Suma del inmediato con los bits superiores del PC</u>
+
+  <b>Formato:</b>
+  auipc rs, inmediato
+
+  | PCREL    rs    AUIPC    inmediato |
+  |111011          11110              |
+  |  6       5       5         16     |
+
+
+  <b>Descripción:</b>
+  GPR[rs] ⇽ PC + (inmediato << 16)
+
+
+  Esta instrucción ejecuta el cálculo de una dirección relativa al PC. El <i>inmediato</i> de 16 bits es desplazado a la izquierda 16 bits y sumado con la dirección de la instrucción.
+  El resultado es asignado al registro <i>rs</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rs] ⇽ PC + (inmediato << 16)
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BAL_DOCUMENTATION: |-
+  <u>Ramificación y enlace</u>
+
+  <b>Formato:</b>
+  b desplazamiento
+
+  |REGIMM      0      BAL    desplazamiento  |
+  |000001    00000   10001                   |
+  |  6         5       5           16        |
+
+
+  <b>Descripción:</b>
+  Inserta la dirección de retorno en el registro <i>31</i>. Esta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  <black>I:</black>
+  desp ⇽ sign_extend(desplazamiento || 00)
+  GPR[31] ⇽ PC + 4
+
+  <black>I+1:</black>
+  PC ⇽ PC + desp
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  <black>bal</black> sin un retorno correspondiente no debe ser usado para leer el PC. Hacerlo puede causar una pérdida de rendimiento en procesadores con un predictor de dirección de retorno.
+INSTRUCTION_BALC_DOCUMENTATION: |-
+  <u>Ramificación compacta y enlace</u>
+
+  <b>Formato:</b>
+  balc desplazamiento
+
+  | BALC     desplazamiento  |
+  |111010                    |
+  |  6             26        |
+
+
+  <b>Descripción:</b>
+  Inserta la dirección de retorno en el registro <i>31</i>. Esta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+  Un desplazamiento de 28 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Esta instrución ejecuta una ramificación compacta. Las ramificaciones compactas no tienen huecos de retardo.
+
+  <b>Restricciones:</b>
+  Esta instrucción es una ramificación incondicional que siempre es tomada. No tiene ni huecos prohibidos ni huecos de retardo.
+
+  <b>Operación:</b>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  GPR[31] ⇽ PC + 4
+  PC ⇽ PC + 4 + target_offset
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BC_DOCUMENTATION: |-
+  <u>Ramificación compacta</u>
+
+  <b>Formato:</b>
+  balc desplazamiento
+
+  |  BC      desplazamiento  |
+  |110010                    |
+  |  6             26        |
+
+
+  <b>Descripción:</b>
+  Un desplazamiento de 28 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Esta instrución ejecuta una ramificación compacta. Las ramificaciones compactas no tienen huecos de retardo.
+
+  <b>Restricciones:</b>
+  Esta instrucción es una ramificación incondicional que siempre es tomada. No tiene ni huecos prohibidos ni huecos de retardo.
+
+  <b>Operación:</b>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  PC ⇽ PC + 4 + target_offset
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BC1EQZ_DOCUMENTATION: |-
+  <u>Ramificación si el bit 0 del registro COP1 es cero</u>
+
+  <b>Formato:</b>
+  bc1eqz ft, desplazamiento
+
+  | COP1      BC1EQZ     ft   desplazamiento  |
+  |010001     01001                           |
+  |  6          5        5          16        |
+
+
+  <b>Descripción:</b>
+  Ramificación si FPR[ft] & 1 = 0
+
+  La condición es verdadera si y solo si el bit 0 del registro <i>ft</i> es cero.
+  Si la condición es falsa, la ramificación no es tomada y la ejecución continua con la siguiente instrucción.
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  temp = ValueFPR(ft, UNINTERPRETED_WORD)
+  cond = temp & 1 = 0
+  if cond then
+      <black>I:</black>
+      target_PC ⇽ PC + 4 + sign_extend(desplazamiento << 2)
+      <black>I+1:</black>
+      PC ⇽ target_PC
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BC1NEZ_DOCUMENTATION: |-
+  <u>Ramificación si el bit 0 del registro COP1 no es cero</u>
+
+  <b>Formato:</b>
+  bc1nez ft, desplazamiento
+
+  | COP1      BC1NEZ     ft   desplazamiento  |
+  |010001     01101                           |
+  |  6          5        5          16        |
+
+
+  <b>Descripción:</b>
+  Ramificación si FPR[ft] & 1 != 0
+
+  La condición es verdadera si y solo si el bit 0 del registro <i>ft</i> no es cero.
+  Si la condición es falsa, la ramificación no es tomada y la ejecución continua con la siguiente instrucción.
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  temp = ValueFPR(ft, UNINTERPRETED_WORD)
+  cond = temp & 1 != 0
+  if cond then
+      <black>I:</black>
+      target_PC ⇽ PC + 4 + sign_extend(desplazamiento << 2)
+      <black>I+1:</black>
+      PC ⇽ target_PC
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BEQ_DOCUMENTATION: |-
+  <u>Ramificación si es igual</u>
+
+  <b>Formato:</b>
+  beq rs, rt, desplazamiento
+
+  | BEQ       rs     rt     desplazamiento  |
+  |000100                                   |
+  |  6        5      5            16        |
+
+
+  <b>Descripción:</b>
+  Ramificación si GPR[rs] = GPR[rt]
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido de los registros <i>rt</i> y <i>rs</i> son iguales, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  <black>I:</black>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rs] = GPR[rt]
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+  <black>beq $zero, $zero, desplazamiento</black>, expresado como <black>b desplazamiento</black>, es el equivalente en ensablador para denotar un salto incondicional.
+INSTRUCTION_BGEZ_DOCUMENTATION: |-
+  <u>Ramificación si es mayor o igual que cero</u>
+
+  <b>Formato:</b>
+  bgez rs, offset
+
+  |REGIMM     rs    BGEZ    desplazamiento  |
+  |000001          00001                    |
+  |  6        5      5            16        |
+
+
+  <b>Descripción:</b>
+  Ramificación compacta si GPR[rs] ≥ 0.
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rs</i> es mayor o igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  <black>I:</black>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rs] ≥ 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+INSTRUCTION_BLEZALC_DOCUMENTATION: |-
+  <u>Ramificación compacta y enlace si es menor o igual que cero</u>
+
+  <b>Formato:</b>
+  blezalc rt, desplazamiento
+
+  | POP06     0    rt != 0   desplazamiento  |
+  |000110   00000                            |
+  |  6        5       5            16        |
+
+
+  <b>Descripción:</b>
+  Enlace y ramificación compacta si GPR[rt] ≤ 0.
+  Inserta la dirección de retorno en el registro <i>31</i>. Esta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rt</i> es menor o igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+  El registro <i>31</i> no debe ser usado por el registro <i>rs</i>, ya que las instrucciones no tendrán el mismo efecto al volver a ser ejecutatas. El resultado de ejecutar dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al gestor de excepciones returnar la ejecución volviendo a ejecutar la ramificación cuando una excepción es lanzada en el hueco de retardo.
+
+  <b>Operación:</b>
+  <black>I:</black>
+  GPR[31] ⇽ PC + 4
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rt] ≤ 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+INSTRUCTION_BGEZALC_DOCUMENTATION: |-
+  <u>Ramificación compacta y enlace si es mayor o igual que cero</u>
+
+  <b>Formato:</b>
+  bgezalc rt, desplazamiento
+
+  | POP06     rs      rt     desplazamiento  |
+  |000110    rs = rt != 0                    |
+  |  6        5       5            16        |
+
+
+  <b>Descripción:</b>
+  Enlace y ramificación compacta si GPR[rt] ≥ 0.
+  Inserta la dirección de retorno en el registro <i>31</i>. Esta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rt</i> es mayor o igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+  El registro <i>31</i> no debe ser usado por el registro <i>rs</i>, ya que las instrucciones no tendrán el mismo efecto al volver a ser ejecutatas. El resultado de ejecutar dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al gestor de excepciones returnar la ejecución volviendo a ejecutar la ramificación cuando una excepción es lanzada en el hueco de retardo.
+
+  <b>Operación:</b>
+  <black>I:</black>
+  GPR[31] ⇽ PC + 4
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rt] ≥ 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+INSTRUCTION_BGTZALC_DOCUMENTATION: |-
+  <u>Ramificación compacta y enlace si es mayor que cero</u>
+
+  <b>Formato:</b>
+  bgtzalc rt, desplazamiento
+
+  | POP07     0    rt != 0   desplazamiento  |
+  |000111   00000                            |
+  |  6        5       5            16        |
+
+
+  <b>Descripción:</b>
+  Enlace y ramificación compacta si GPR[rt] > 0.
+  Inserta la dirección de retorno en el registro <i>31</i>. Esta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rt</i> es mayor que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+  El registro <i>31</i> no debe ser usado por el registro <i>rs</i>, ya que las instrucciones no tendrán el mismo efecto al volver a ser ejecutatas. El resultado de ejecutar dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al gestor de excepciones returnar la ejecución volviendo a ejecutar la ramificación cuando una excepción es lanzada en el hueco de retardo.
+
+  <b>Operación:</b>
+  <black>I:</black>
+  GPR[31] ⇽ PC + 4
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rt] > 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+INSTRUCTION_BLTZALC_DOCUMENTATION: |-
+  <u>Ramificación compacta y enlace si es menor que cero</u>
+
+  <b>Formato:</b>
+  bltzalc rt, desplazamiento
+
+  | POP07     rs      rt     desplazamiento  |
+  |000111    rs = rt != 0                    |
+  |  6        5       5            16        |
+
+
+  <b>Descripción:</b>
+  Enlace y ramificación compacta si GPR[rt] < 0.
+  Inserta la dirección de retorno en el registro <i>31</i>. Esta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rt</i> es menor que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+  El registro <i>31</i> no debe ser usado por el registro <i>rs</i>, ya que las instrucciones no tendrán el mismo efecto al volver a ser ejecutatas. El resultado de ejecutar dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al gestor de excepciones returnar la ejecución volviendo a ejecutar la ramificación cuando una excepción es lanzada en el hueco de retardo.
+
+  <b>Operación:</b>
+  <black>I:</black>
+  GPR[31] ⇽ PC + 4
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rt] < 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+INSTRUCTION_BEQZALC_DOCUMENTATION: |-
+  <u>Ramificación compacta y enlace si es igual que cero</u>
+
+  <b>Formato:</b>
+  beqzalc rt, desplazamiento
+
+  | POP10     rs     rt != 0   desplazamiento  |
+  |001000       rs < rt                        |
+  |  6        5         5            16        |
+
+
+  <b>Descripción:</b>
+  Enlace y ramificación compacta si GPR[rt] = 0.
+  Inserta la dirección de retorno en el registro <i>31</i>. Esta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rt</i> es igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+  El registro <i>31</i> no debe ser usado por el registro <i>rs</i>, ya que las instrucciones no tendrán el mismo efecto al volver a ser ejecutatas. El resultado de ejecutar dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al gestor de excepciones returnar la ejecución volviendo a ejecutar la ramificación cuando una excepción es lanzada en el hueco de retardo.
+
+  <b>Operación:</b>
+  <black>I:</black>
+  GPR[31] ⇽ PC + 4
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rt] = 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+INSTRUCTION_BNEZALC_DOCUMENTATION: |-
+  <u>Ramificación compacta y enlace si no es igual que cero</u>
+
+
+  <b>Formato:</b>
+  bnezalc rt, desplazamiento
+
+  | POP30     rs     rt != 0   desplazamiento  |
+  |011000       rs < rt                        |
+  |  6        5         5            16        |
+
+
+  <b>Descripción:</b>
+  Enlace y ramificación compacta si GPR[rt] != 0.
+  Inserta la dirección de retorno en el registro <i>31</i>. Esta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rt</i> no es igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+  El registro <i>31</i> no debe ser usado por el registro <i>rs</i>, ya que las instrucciones no tendrán el mismo efecto al volver a ser ejecutatas. El resultado de ejecutar dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al gestor de excepciones returnar la ejecución volviendo a ejecutar la ramificación cuando una excepción es lanzada en el hueco de retardo.
+
+  <b>Operación:</b>
+  <black>I:</black>
+  GPR[31] ⇽ PC + 4
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rt] != 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+INSTRUCTION_BLEZC_DOCUMENTATION: |-
+  <u>Ramificación compacta si es menor o igual que cero</u>
+
+  <b>Formato:</b>
+  blezc rt, offset
+
+  | POP26     0      rt != 0    desplazamiento  |
+  |010110   00000                               |
+  |  6        5         5             16        |
+
+
+  <b>Descripción:</b>
+  Enlace compacto si GPR[rt] ≤ 0.
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rt</i> es menor o igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rt] ≤ 0
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BGEZC_DOCUMENTATION: |-
+  <u>Ramificación compacta si es mayor o igual que cero</u>
+
+  <b>Formato:</b>
+  bgezc rt, offset
+
+  | POP26  rs != 0   rt != 0    desplazamiento  |
+  |010110       rs = rt                         |
+  |  6        5         5             16        |
+
+
+  <b>Descripción:</b>
+  Ramificación compacta si GPR[rt] ≥ 0.
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rt</i> es mayor o igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rt] ≥ 0
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BGTZC_DOCUMENTATION: |-
+  <u>Ramificación compacta si es mayor que cero</u>
+
+  <b>Formato:</b>
+  bgtzc rt, offset
+
+  | POP27     0      rt != 0    desplazamiento  |
+  |010111   00000                               |
+  |  6        5         5             16        |
+
+
+  <b>Descripción:</b>
+  Ramificación compacta si GPR[rt] > 0.
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rt</i> es mayor que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rt] > 0
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BLTZC_DOCUMENTATION: |-
+  <u>Ramificación compacta si es menor que cero</u>
+
+  <b>Formato:</b>
+  bltzc rt, offset
+
+  | POP27  rs != 0   rt != 0    desplazamiento  |
+  |010111       rs = rt                         |
+  |  6        5         5             16        |
+
+
+  <b>Descripción:</b>
+  Ramificación compacta si GPR[rt] < 0.
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rt</i> es menor que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rt] < 0
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BGEC_DOCUMENTATION: |-
+  <u>Ramificación compacta si es mayor o igual</u>
+
+  <b>Formato:</b>
+  bgec rs, rt, offset
+
+  | POP26  rs != 0   rt != 0    desplazamiento  |
+  |010110       rs != rt                        |
+  |  6        5         5             16        |
+
+
+  <b>Descripción:</b>
+  Ramificación compacta si GPR[rs] ≥ GPR[rt].
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rs</i> es mayor o igual que el contenido del registro <i>rt</i>, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rs] ≥ GPR[rt]
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BLTC_DOCUMENTATION: |-
+  <u>Ramificación compacta si es menor</u>
+
+  <b>Formato:</b>
+  bltc rs, rt, offset
+
+  | POP27  rs != 0   rt != 0    desplazamiento  |
+  |010111       rs != rt                        |
+  |  6        5         5             16        |
+
+
+  <b>Descripción:</b>
+  Ramificación compacta si GPR[rs] < GPR[rt].
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rs</i> es menor que el contenido del registro <i>rt</i>, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rt] < GPR[rt]
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BGEUC_DOCUMENTATION: |-
+  <u>Ramificación compacta si es mayor o igual sin signo</u>
+
+  <b>Formato:</b>
+  bgeuc rs, rt, offset
+
+  | POP06  rs != 0   rt != 0    desplazamiento  |
+  |000110       rs != rt                        |
+  |  6        5         5             16        |
+
+
+  <b>Descripción:</b>
+  Ramificación compacta si GPR[rs] ≥ GPR[rt].
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rs</i> es mayor o igual que el contenido del registro <i>rt</i>, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ unsigned_word(GPR[rt]) ≥ unsigned_word(GPR[rt])
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BLTUC_DOCUMENTATION: |-
+  <u>Ramificación compacta si es menor sin signo</u>
+
+  <b>Formato:</b>
+  bltuc rs, rt, offset
+
+  | POP07  rs != 0   rt != 0    desplazamiento  |
+  |000111       rs != rt                        |
+  |  6        5         5             16        |
+
+
+  <b>Descripción:</b>
+  Ramificación compacta si GPR[rs] < GPR[rt].
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rs</i> es menor que el contenido del registro <i>rt</i>, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ unsigned_word(GPR[rt]) < unsigned_word(GPR[rt])
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BEQC_DOCUMENTATION: |-
+  <u>Ramificación compacta si es igual</u>
+
+  <b>Formato:</b>
+  beqc rs, rt, offset
+
+  | POP10  rs != 0   rt != 0    desplazamiento  |
+  |001000       rs < rt                         |
+  |  6        5         5             16        |
+
+
+  <b>Descripción:</b>
+  Ramificación compacta si GPR[rs] = GPR[rt].
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rs</i> es igual que el contenido del registro <i>rt</i>, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rt] = GPR[rt]
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BNEC_DOCUMENTATION: |-
+  <u>Ramificación compacta si no es igual</u>
+
+  <b>Formato:</b>
+  bnec rs, rt, offset
+
+  | POP30  rs != 0   rt != 0    desplazamiento  |
+  |011000       rs < rt                         |
+  |  6        5         5             16        |
+
+
+  <b>Descripción:</b>
+  Ramificación compacta si GPR[rs] != GPR[rt].
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rs</i> no es igual que el contenido del registro <i>rt</i>, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rt] != GPR[rt]
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BEQZC_DOCUMENTATION: |-
+  <u>Ramificación compacta si es igual a cero</u>
+
+  <b>Formato:</b>
+  beqzc rs, offset
+
+  | POP66   BEQZC    desplazamiento  |
+  |110110  rs != 0                   |
+  |  6        5            16        |
+
+
+  <b>Descripción:</b>
+  Ramificación compacta si GPR[rs] == 0.
+
+  Un desplazamiento de 23 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rs</i> es igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rt] == 0
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BNEZC_DOCUMENTATION: |-
+  <u>Ramificación compacta si no es igual a cero</u>
+
+  <b>Formato:</b>
+  bnezc rs, offset
+
+  | POP76   BEQZC    desplazamiento  |
+  |111110  rs != 0                   |
+  |  6        5            16        |
+
+
+  <b>Descripción:</b>
+  Ramificación compacta si GPR[rs] != 0.
+
+  Un desplazamiento de 23 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rs</i> no es igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rt] != 0
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BGTZ_DOCUMENTATION: |-
+  <u>Ramificación si es mayor que cero</u>
+
+  <b>Formato:</b>
+  bgtz rs, offset
+
+  | BGTZ      rs     0      desplazamiento  |
+  |000111          00000                    |
+  |  6        5      5            16        |
+
+
+  <b>Descripción:</b>
+  Ramificación compacta si GPR[rs] > 0.
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rs</i> es mayor que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  <black>I:</black>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rs] > 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+INSTRUCTION_BITSWAP_DOCUMENTATION: |-
+  <u>Intercambiar bits en cada byte</u>
+
+  <b>Formato:</b>
+  bitswap rd, rt
+
+  |SPECIAL3    0    rt    rd    BITSWAP   BSGFL  |
+  | 011111   00000               00000    100000 |
+  |   6        5     5     5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd].byte[i] ⇽ reverse_bits(GPR[rt].byte[i]), para todos los bytes i
+
+  Se intercambian los bits de cada byte del registro <i>rt</i> y se guarda el resultado en la misma posición del byte en el registro <i>rd</i>.
+  Esta instrucción es opera en los 4 bytes de una palabra de 32 bits.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  Bit
+  function reverse_bits (in)
+      out<sub>7</sub> ⇽ in<sub>0</sub>
+      out<sub>6</sub> ⇽ in<sub>1</sub>
+      out<sub>5</sub> ⇽ in<sub>2</sub>
+      out<sub>4</sub> ⇽ in<sub>3</sub>
+      out<sub>3</sub> ⇽ in<sub>4</sub>
+      out<sub>2</sub> ⇽ in<sub>5</sub>
+      out<sub>1</sub> ⇽ in<sub>6</sub>
+      out<sub>0</sub> ⇽ in<sub>7</sub>
+      return out
+  end function
+
+  for i in 0 to 3 do
+      GPR[rd].byte[i] ⇽ reverse_bits(GPR[rt].byte[i])
+  endfor
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BLEZ_DOCUMENTATION: |-
+  <u>Ramificación si es menor o igual que cero</u>
+
+  <b>Formato:</b>
+  bgtz rs, offset
+
+  | BLEZ      rs     0      desplazamiento  |
+  |000110          00000                    |
+  |  6        5      5            16        |
+
+
+  <b>Descripción:</b>
+  Ramificación compacta si GPR[rs] ≤ 0.
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rs</i> es menor o igual que cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  <black>I:</black>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rs] ≤ 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+INSTRUCTION_BLTZ_DOCUMENTATION: |-
+  <u>Ramificación si es menor que cero</u>
+
+  <b>Formato:</b>
+  bltz rs, offset
+
+  |REGIMM     rs    BLTZ    desplazamiento  |
+  |000001          00000                    |
+  |  6        5      5            16        |
+
+
+  <b>Descripción:</b>
+  Ramificación compacta si GPR[rs] < 0.
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rs</i> es menor cero, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  <black>I:</black>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rs] < 0
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+INSTRUCTION_BNE_DOCUMENTATION: |-
+  <u>Ramificación si no es igual</u>
+
+  <b>Formato:</b>
+  bne rs, rt, desplazamiento
+
+  | BNE       rs     rt     desplazamiento  |
+  |000101                                   |
+  |  6        5      5            16        |
+
+
+  <b>Descripción:</b>
+  Ramificación si GPR[rs] != GPR[rt]
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido de los registros <i>rt</i> y <i>rs</i> no son iguales, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  <black>I:</black>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  condition ⇽ GPR[rs] != GPR[rt]
+  <black>I+1:</black>
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+INSTRUCTION_BOVC_DOCUMENTATION: |-
+  <u>Ramificación si la suma desborda</u>
+
+  <b>Formato:</b>
+  bovc rs, rt, offset
+
+  | POP10     rs        rt      desplazamiento  |
+  |001000       rs ≥ rt                         |
+  |  6        5         5             16        |
+
+
+  <b>Descripción:</b>
+  Ramificación compacta si GPR[rs] + GPR[rt] desborda
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rt</i> mas el contenido del registro <i>rs</i> desborda, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  temp_d = GPR[rs] + GPR[rt]
+  condition ⇽ temp_d<sub>32</sub> != temp_d<sub>31</sub>
+
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BNVC_DOCUMENTATION: |-
+  <u>Ramificación si la suma no desborda</u>
+
+  <b>Formato:</b>
+  bnvc rs, rt, offset
+
+  | POP30     rs        rt      desplazamiento  |
+  |011000       rs ≥ rt                         |
+  |  6        5         5             16        |
+
+
+  <b>Descripción:</b>
+  Ramificación compacta si GPR[rs] + GPR[rt] no desborda
+
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  Si el contenido del registro <i>rt</i> mas el contenido del registro <i>rs</i> no desborda, la instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  target_offset ⇽ sign_extend(desplazamiento || 00)
+  temp_d = GPR[rs] + GPR[rt]
+  condition ⇽ temp_d<sub>32</sub> = temp_d<sub>31</sub>
+
+  if condition then
+      PC ⇽ PC + target_offset
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_BREAK_DOCUMENTATION: |-
+  <u>Punto de ruptura</u>
+
+  <b>Formato:</b>
+  break
+
+  |SPECIAL    0       BREAK  |
+  |000000                    |
+  |  6        20     001101  |
+
+
+  <b>Descripción:</b>
+  Punto de ruptura
+
+  Una excepción Breakpoint es lanzada, transfiriendo el control al manejador de excepciones de manera inmediata e incondicional.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  SignalException(Breakpoint)
+
+  <b>Excepciones:</b>
+  Breakpoint
+INSTRUCTION_CEIL_L_D_DOCUMENTATION: |-
+  <u>Función techo de coma flotante doble a doble palabra</u>
+
+  <b>Formato:</b>
+  ceil.l.d fd, fs
+
+  | COP1      fmt      0      fs      fd     CEIL.L |
+  |010001    10001   00000                   001010 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  El valor en coma flotante de precisión doble guardado en <i>fs</i> es transformado en una palabra de 64 bits, redondeando hacia arriba.
+  El resultado es asignado a <i>fd</i>.
+
+  Cuando el valor en <i>fs</i> es <black>Infinito</black>, <black>NaN</black> o está fuera del rango de una palabra de 64 bits, el resultado no puede ser representado correctamente. Estos casos son tratados por la máquina virtual de Java.
+
+  <b>Restricciones:</b>
+  Los registros <i>fs</i> y <i>fd</i> deben ser FPR pares. Si los registros no son válidos, el resultado es <black>IMPREDECIBLE</black>.
+  El operando debe ser un valor en coma flotante de precisión doble. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ double
+  StoreFPR(fd, L, ConvertFmt(ValueFPR(fs, fmt), fmt, L))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_CEIL_W_D_DOCUMENTATION: |-
+  <u>CFunción techo de coma flotante doble a palabra</u>
+
+  <b>Formato:</b>
+  ceil.w.d fd, fs
+
+  | COP1      fmt      0      fs      fd     CEIL.W |
+  |010001    10001   00000                   001110 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  El valor en coma flotante de precisión doble guardado en <i>fs</i> es transformado en una palabra de 32 bits, redondeando hacia arriba.
+  El resultado es asignado a <i>fd</i>.
+
+  Cuando el valor en <i>fs</i> es <black>Infinito</black>, <black>NaN</black> o está fuera del rango de una palabra de 32 bits, el resultado no puede ser representado correctamente. Estos casos son tratados por la máquina virtual de Java.
+
+  <b>Restricciones:</b>
+  El registro <i>fs</i> debe ser un FPR par. El registro no es válido, el resultado es <black>IMPREDECIBLE</black>.
+  El operando debe ser un valor en coma flotante de precisión doble. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ double
+  StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_CEIL_L_S_DOCUMENTATION: |-
+  <u>Función techo de coma flotante a doble palabra</u>
+
+  <b>Formato:</b>
+  ceil.l.s fd, fs
+
+  | COP1      fmt      0      fs      fd     CEIL.L |
+  |010001    10000   00000                   001010 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  El valor en coma flotante guardado en <i>fs</i> es transformado en una palabra de 64 bits, redondeando hacia arriba.
+  El resultado es asignado a <i>fd</i>.
+
+  Cuando el valor en <i>fs</i> es <black>Infinito</black>, <black>NaN</black> o está fuera del rango de una palabra de 64 bits, el resultado no puede ser representado correctamente. Estos casos son tratados por la máquina virtual de Java.
+
+  <b>Restricciones:</b>
+  El registro <i>fd</i> debe ser un FPR par. El registro no es válido, el resultado es <black>IMPREDECIBLE</black>.
+  El operando debe ser un valor en coma flotante. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ float
+  StoreFPR(fd, L, ConvertFmt(ValueFPR(fs, fmt), fmt, L))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_CEIL_W_S_DOCUMENTATION: |-
+  <u>Función techo de coma flotante a palabra</u>
+
+  <b>Formato:</b>
+  ceil.w.s fd, fs
+
+  | COP1      fmt      0      fs      fd     CEIL.W |
+  |010001    10000   00000                   001110 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  El valor en coma flotante guardado en <i>fs</i> es transformado en una palabra de 32, redondeando hacia arriba.
+  El resultado es asignado a <i>fd</i>.
+
+  Cuando el valor en <i>fs</i> es <black>Infinito</black>, <black>NaN</black> o está fuera del rango de una palabra de 32 bits, el resultado no puede ser representado correctamente. Estos casos son tratados por la máquina virtual de Java.
+
+  <b>Restricciones:</b>
+  El operando debe ser un valor en coma flotante. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ float
+  StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_CLASS_D_DOCUMENTATION: |-
+  <u>Máscara de clasificación de coma flotante doble</u>
+
+  <b>Formato:</b>
+  class.d fd, fs
+
+  | COP1      fmt      0      fs      fd      CLASS |
+  |010001    10001   00000                   011011 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ class(FPR[fs])
+
+  Crea una máscara de clasificación donde se asignan diferentes valores a los 10 primeros bits de la máscara,
+  dependiendo del tipo de número almacenado en <i>fs</i>.
+  
+  - Bit 0: el número es un NaN ruidoso. (No usado por el simulador)
+  - Bit 1: el número es un NaN silencioso.
+  - Bit 2: el número es un infinito negativo.
+  - Bit 3: el número es un número finito normal negativo.
+  - Bit 4: el número es un número finito subnormal negativo. (Sin contar el cero negativo)
+  - Bit 5: el número es un cero negativo.
+  - Bit 6: el número es un infinito positivo.
+  - Bit 7: el número es un número finito normal positivo.
+  - Bit 8: el número es un número finito subnormal positivo. (Sin contar el cero positivo)
+  - Bit 9: el número es un cero positivo.
+  
+  La máscara es asignada a <i>fd</i>.
+  
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  FPR[fd] ⇽ class(FRP[fs])
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_CLASS_S_DOCUMENTATION: |-
+  <u>Máscara de clasificación de coma flotante</u>
+
+  <b>Formato:</b>
+  class.s fd, fs
+
+  | COP1      fmt      0      fs      fd      CLASS |
+  |010001    10000   00000                   011011 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ class(FPR[fs])
+
+  Crea una máscara de clasificación donde se asignan diferentes valores a los 10 primeros bits de la máscara,
+  dependiendo del tipo de número almacenado en <i>fs</i>.
+  
+  - Bit 0: el número es un NaN ruidoso. (No usado por el simulador)
+  - Bit 1: el número es un NaN silencioso.
+  - Bit 2: el número es un infinito negativo.
+  - Bit 3: el número es un número finito normal negativo.
+  - Bit 4: el número es un número finito subnormal negativo. (Sin contar el cero negativo)
+  - Bit 5: el número es un cero negativo.
+  - Bit 6: el número es un infinito positivo.
+  - Bit 7: el número es un número finito normal positivo.
+  - Bit 8: el número es un número finito subnormal positivo. (Sin contar el cero positivo)
+  - Bit 9: el número es un cero positivo.
+  
+  La máscara es asignada a <i>fd</i>.
+  
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  FPR[fd] ⇽ class(FRP[fs])
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_CLO_DOCUMENTATION: |-
+  <u>Conteo de los primeros unos en una palabra</u>
+
+  <b>Formato:</b>
+  clo rd, rs
+
+  |SPECIAL     rs      0      rd      1       CLO   |
+  |000000            00000          00001    010001 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ count_leading_ones(GPR[rs])
+
+  Los bits guardados en el registro <i>rs</i> son escaneados desde el más significante al menos significante. El conteo de los primeros unos en la palabra es guardado en el registro <i>rd</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+
+  temp ⇽ 32
+  for i in 31 to 0
+      if GPR[rs]<sub>i</sub> = 0 then
+          temp ⇽ 31 - i
+          break
+      endif
+  endfor
+  GPR[rd] ⇽ temp
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_CLZ_DOCUMENTATION: |-
+  <u>Conteo de los primeros ceros en una palabra</u>
+
+  <b>Formato:</b>
+  clz rd, rs
+
+  |SPECIAL     rs      0      rd      1       CLZ   |
+  |000000            00000          00001    010000 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ count_leading_zeros(GPR[rs])
+
+  Los bits guardados en el registro <i>rs</i> son escaneados desde el más significante al menos significante. El conteo de los primeros ceros en la palabra es guardado en el registro <i>rd</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+
+  temp ⇽ 32
+  for i in 31 to 0
+      if GPR[rs]<sub>i</sub> = 1 then
+          temp ⇽ 31 - i
+          break
+      endif
+  endfor
+  GPR[rd] ⇽ temp
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_CMP_D_DOCUMENTATION: |-
+  <u>Comparación en coma flotante doble ({TYPE})</u>
+
+  <b>Formato:</b>
+  cmp.{MNEMONIC}.d fd, fs, ft
+
+  | COP1    CMP.c.D   ft   fs   fd   0   {MNEMONIC}\t|
+  |000001    10101                   0   {CODE}\t|
+  |  6         5      5    5    5    1     5     \t|
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ FPR[fs] compare_cond FPR[ft] donde compare_cond = {TYPE}.
+
+  El valor guardado en el registro <i>fs</i> es comparado con el valor en el registro <i>it</i>.
+  El registro <i>fd</i> es rellenado con unos o con zeros, dependiendo de si el resultado es verdadero o falso.
+
+  Los bits del 2 al 0 en la condición representan cada uno una condición. Si uno de estos bits está activado la condición correspondiente será evaluada.
+  El resultado es verdadero cuando alguna de estas condiciones de verdadero.
+
+  Las condiciones vinculadas a cada bit son las siguientes:
+  - Bit 0: desordenado.
+  - Bit 1: igualdad.
+  - Bit 2: menor que.
+
+  Si el bit 4 está activado el resultado es negado.
+  Si el bit 3 está activado y alguno de los operandos es <black>NaN</black>, una excepción Floating Point Exception será lanzada.
+
+  <b>Restricciones:</b>
+  Los registros <i>fs</i>, <i>ft</i> y <i>fd</i> deben ser FPR pares. Si los registros no son válidos, el resultado es <black>IMPREDECIBLE</black>.
+  Los operandos deben ser valores en coma flotante de precisión doble. Si no los son, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ double
+  fsv ⇽ ValueFPR(fs, fmt)
+  ftv ⇽ ValueFPR(ft, fmt)
+
+  if is_NaN(fsv) or is_NaN(ftv) then
+      less ⇽ false
+      equal ⇽ false
+      unordered ⇽ true
+      if cond<sub>3</sub> then
+          SignalException(FloatingPointException)
+      endif
+  else
+      less ⇽ fsv <<sub>fmt</sub> ftv
+      less ⇽ fsv =<sub>fmt</sub> ftv
+      unordered ⇽ false
+  endif
+
+  condition ⇽ cond<sub>4</sub> xor ((cond<sub>2</sub> and less) or (cond<sub>1</sub> and equal) or (cond<sub>0</sub> and unordered))
+  StoreFPR(fd, fmt, extend_bit.fmt(condition))
+
+  <b>Excepciones:</b>
+  Floating Point Exception
+INSTRUCTION_CMP_S_DOCUMENTATION: |-
+  <u>Comparación en coma flotante ({TYPE})</u>
+
+  <b>Formato:</b>
+  cmp.{MNEMONIC}.s fd, fs, ft
+
+  | COP1    CMP.c.S   ft   fs   fd   0   {MNEMONIC}\t|
+  |000001    10100                   0   {CODE}\t|
+  |  6         5      5    5    5    1     5     \t|
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ FPR[fs] compare_cond FPR[ft] donde compare_cond = {TYPE}.
+
+  El valor guardado en el registro <i>fs</i> es comparado con el valor en el registro <i>it</i>.
+  El registro <i>fd</i> es rellenado con unos o con zeros, dependiendo de si el resultado es verdadero o falso.
+
+  Los bits del 2 al 0 en la condición representan cada uno una condición. Si uno de estos bits está activado la condición correspondiente será evaluada.
+  El resultado es verdadero cuando alguna de estas condiciones de verdadero.
+
+  Las condiciones vinculadas a cada bit son las siguientes:
+  - Bit 0: desordenado.
+  - Bit 1: igualdad.
+  - Bit 2: menor que.
+
+  Si el bit 4 está activado el resultado es negado.
+  Si el bit 3 está activado y alguno de los operandos es <black>NaN</black>, una excepción Floating Point Exception será lanzada.
+
+  <b>Restricciones:</b>
+  Los operandos deben ser valores en coma flotante de precisión doble. Si no los son, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ float
+  fsv ⇽ ValueFPR(fs, fmt)
+  ftv ⇽ ValueFPR(ft, fmt)
+
+  if is_NaN(fsv) or is_NaN(ftv) then
+      less ⇽ false
+      equal ⇽ false
+      unordered ⇽ true
+      if cond<sub>3</sub> then
+          SignalException(FloatingPointException)
+      endif
+  else
+      less ⇽ fsv <<sub>fmt</sub> ftv
+      less ⇽ fsv =<sub>fmt</sub> ftv
+      unordered ⇽ false
+  endif
+
+  condition ⇽ cond<sub>4</sub> xor ((cond<sub>2</sub> and less) or (cond<sub>1</sub> and equal) or (cond<sub>0</sub> and unordered))
+  StoreFPR(fd, fmt, extend_bit.fmt(condition))
+
+  <b>Excepciones:</b>
+  Floating Point Exception
+INSTRUCTION_CRC32_DOCUMENTATION: |
+  <u>Generar CRC con el polinomio invertido 0xEDB88320</u>
+
+  <b>Formato:</b>
+  crc32b rt, rs
+  crc32h rt, rs
+  crc32w rt, rs
+
+  |SPECIAL3    rs    rt    0    sz     CRC  |
+  | 011111                     000   001111 |
+  |   6        5     5     8    2      6    |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ CRC32(GRP[rt], GPR[rs])
+
+  Genera un valor CRC basado en el polinomio inverso 0xEDB88320.
+  El valor generado sobreescribe el valor guardado en el registro <i>rt</i>, ya que el valor anterior es considerado redundante una vez que el valor CRC acumulativo es regenerado.
+  El valor del registro <i>rt</i> es considerado el CRC, mientras que el valor del registro <i>rs</i> es considerado el mensaje.
+
+  El campo <i>sz</i> representa el tamaño del mensaje:
+  - Si <i>sz</i> es 0, el mensaje es un byte.
+  - Si <i>sz</i> es 1, el mensaje es una media palabra.
+  - Si <i>sz</i> es 2, el mensaje es una palabra.
+  Este campo es asignado dependiendo del nombre de la instrucción.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  poly ⇽ 0xEDB88320
+  if(sz = 0b00) then
+      temp ⇽ CRC32(GPR[rt], GPR[rs], 1, poly)
+  else if (sz = 0b01) then
+      temp ⇽ CRC32(GPR[rt], GPR[rs], 2, poly)
+  else if (sz = 0b10) then
+      temp ⇽ CRC32(GPR[rt], GPR[rs], 4, poly)
+  else then
+      SignalException(ReservedInstruction)
+  endif
+
+  GPR[rt] ⇽ temp
+
+  <b>Excepciones:</b>
+  Reserved Instruction
+INSTRUCTION_CRC32C_DOCUMENTATION: |
+  <u>Generar CRC con el polinomio invertido 0x82F63B78</u>
+
+  <b>Formato:</b>
+  crc32b rt, rs
+  crc32h rt, rs
+  crc32w rt, rs
+
+  |SPECIAL3    rs    rt    0    sz     CRC  |
+  | 011111                     001   001111 |
+  |   6        5     5     8    2      6    |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ CRC32(GRP[rt], GPR[rs])
+
+  Genera un valor CRC basado en el polinomio inverso 0x82F63B78.
+  El valor generado sobreescribe el valor guardado en el registro <i>rt</i>, ya que el valor anterior es considerado redundante una vez que el valor CRC acumulativo es regenerado.
+  El valor del registro <i>rt</i> es considerado el CRC, mientras que el valor del registro <i>rs</i> es considerado el mensaje.
+
+  El campo <i>sz</i> representa el tamaño del mensaje:
+  - Si <i>sz</i> es 0, el mensaje es un byte.
+  - Si <i>sz</i> es 1, el mensaje es una media palabra.
+  - Si <i>sz</i> es 2, el mensaje es una palabra.
+  Este campo es asignado dependiendo del nombre de la instrucción.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  poly ⇽ 0x82F63B78
+  if(sz = 0b00) then
+      temp ⇽ CRC32(GPR[rt], GPR[rs], 1, poly)
+  else if (sz = 0b01) then
+      temp ⇽ CRC32(GPR[rt], GPR[rs], 2, poly)
+  else if (sz = 0b10) then
+      temp ⇽ CRC32(GPR[rt], GPR[rs], 4, poly)
+  else then
+      SignalException(ReservedInstruction)
+  endif
+
+  GPR[rt] ⇽ temp
+
+  <b>Excepciones:</b>
+  Reserved Instruction
+INSTRUCTION_CVT_DOCUMENTATION: |-
+  <u>Convertir número de {FROM} a {TO}</u>
+
+  <b>Formato:</b>
+  cvt.{TO_MNEMONIC}.{FROM_MNEMONIC} fd, fs
+
+  | COP1      fmt      0      fs      fd      CVT.{TO_MNEMONIC}  |
+  |010001    {FROM_FMT}   00000                   {TO_CVT}  |
+  |  6         5       5      5       5        6     |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  El valor en el registro <i>fs</i> en el formato {FROM} es convertido a un valor en el formato {TO}.
+  El resultado es asignado al registro <i>fd</i>.
+
+  <b>Restricciones:</b>
+  Aquellos valores cuyo formato depende de dos registros deben ser colocados en un registro par. Si esto no se cumple, el resultado es <black>IMPREDECIBLE</black>.
+  El operando debe estár en su formado correspondiente. Si esto no se cumple, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  from ⇽ {FROM_MNEMONIC}
+  to ⇽ {TO_MNEMONIC}
+  StoreFPR(fd, to, ConvertFmt(ValueFPR(fs, from), from, to))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_DI_DOCUMENTATION: |-
+  <u>Deshabilitar interrupciones</u>
+
+  <b>Formato:</b>
+  di rt
+
+  | COP0   MFMC0    rt    12     0     0  |
+  |010000  01011                          |
+  |  6       5      5     5      5     6  |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ Status; Status<sub>IE</sub> ⇽ 0
+
+  El valor actual de <i>Status</i> es asignado a <i>rt</i>. El bit de Interrupciones Habilitadas (<i>IE</i>) en <i>Status</i> es puesto a cero.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rt] ⇽ Status
+  Status<sub>IE</sub> ⇽ 0
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  El efecto de esta instruccion es idéntico al de leer el registro <i>Status</i> y asignarlo a un registro general, limpiar el bit <i>IE</i> y escribir el resultado.
+INSTRUCTION_DIV_DOCUMENTATION: |-
+  <u>División</u>
+
+  <b>Formato:</b>
+  div rd, rs, rt
+
+  |SPECIAL     rs      rt     rd     DIV      SOP32 |
+  |000000                           00010    011010 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ GPR[rs] / GPR[rt]
+
+  El valor del registro <i>rs</i> es dividido entre el valor del registro <i>rt</i> para producir un cociente de 32 bits.
+  El cociente es asignado al registro <i>rd</i>.
+
+  <b>Restricciones:</b>
+  Si el divisor en el registro <i>rt</i> es cero, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+
+  GPR[rd] ⇽ GPR[rs] / GPR[rt]
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  Ya que las instrucciones de división y módulo están definidas para no producir excepciones al dividir entre zero, el seguro crear código que comprueba divisiones entre zero después de la instrucción de módulo o división.
+INSTRUCTION_MOD_DOCUMENTATION: |-
+  <u>Módulo</u>
+
+  <b>Formato:</b>
+  mod rd, rs, rt
+
+  |SPECIAL     rs      rt     rd     MOD      SOP32 |
+  |000000                           00011    011010 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ GPR[rs] % GPR[rt]
+
+  El valor del registro <i>rs</i> es dividido entre el valor del registro <i>rt</i> para producir un resto de 32 bits.
+  El resto es asignado al registro <i>rd</i>.
+
+  <b>Restricciones:</b>
+  Si el divisor en el registro <i>rt</i> es cero, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+
+  GPR[rd] ⇽ GPR[rs] % GPR[rt]
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  Ya que las instrucciones de división y módulo están definidas para no producir excepciones al dividir entre zero, el seguro crear código que comprueba divisiones entre zero después de la instrucción de módulo o división.
+INSTRUCTION_DIVU_DOCUMENTATION: |-
+  <u>División sin signo</u>
+
+  <b>Formato:</b>
+  divu rd, rs, rt
+
+  |SPECIAL     rs      rt     rd     DIVU     SOP33 |
+  |000000                           00010    011011 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ GPR[rs] / GPR[rt]
+
+  El valor del registro <i>rs</i> es dividido entre el valor del registro <i>rt</i> para producir un cociente de 32 bits.
+  El cociente es asignado al registro <i>rd</i>.
+
+  <b>Restricciones:</b>
+  Si el divisor en el registro <i>rt</i> es cero, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+
+  GPR[rd] ⇽ unsigned_word(GPR[rs]) / unsigned_word(GPR[rt])
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  Ya que las instrucciones de división y módulo están definidas para no producir excepciones al dividir entre zero, el seguro crear código que comprueba divisiones entre zero después de la instrucción de módulo o división.
+INSTRUCTION_MODU_DOCUMENTATION: |-
+  <u>Módulo sin signo</u>
+
+  <b>Formato:</b>
+  modu rd, rs, rt
+
+  |SPECIAL     rs      rt     rd     MODU     SOP33 |
+  |000000                           00011    011011 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ GPR[rs] % GPR[rt]
+
+  El valor del registro <i>rs</i> es dividido entre el valor del registro <i>rt</i> para producir un resto de 32 bits.
+  El resto es asignado al registro <i>rd</i>.
+
+  <b>Restricciones:</b>
+  Si el divisor en el registro <i>rt</i> es cero, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+
+  GPR[rd] ⇽ unsigned_word(GPR[rs]) % unsigned_word(GPR[rt])
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  Ya que las instrucciones de división y módulo están definidas para no producir excepciones al dividir entre zero, el seguro crear código que comprueba divisiones entre zero después de la instrucción de módulo o división.
+INSTRUCTION_DIV_D_DOCUMENTATION: |-
+  <u>División en coma flotante de precisión doble</u>
+
+  <b>Formato:</b>
+  div.d fd, fs, ft
+
+  | COP1      fmt      0      fs      fd      DIV   |
+  |010001    10001   00000                   000011 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ FRP[fs] / FPR[ft]
+
+  El valor en el registro <i>ft</i> es dividido entre el valor en el registro <i>fs</i>. El resultado es calculado en precisión infinita, usando el redondeo proporcionado por <i>Java</i>, y asignado al registro <i>fd</i>.
+  El operando y el resultado son valores en coma flotante de precisión doble.
+
+  <b>Restricciones:</b>
+  Los registros <i>fs</i>, <i>ft</i> y <i>fd</i> deben ser FPR pares. Si los registros no son válidos, el resultado es <black>IMPREDECIBLE</black>.
+  Los operandos deben ser valores en coma flotante de precisión doble. Si no los son, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ double
+  StoreFPR(fd, fmt, ValueFPR(fs, fmt) /<sub>fmt</sub> ValueFPR(ft, fmt))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_DIV_S_DOCUMENTATION: |-
+  <u>Multiplicación en coma flotante</u>
+
+  <b>Formato:</b>
+  div.s fd, fs, ft
+
+  | COP1      fmt      0      fs      fd      MUL   |
+  |010001    10000   00000                   000010 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ FRP[fs] * FPR[ft]
+
+  El valor en el registro <i>ft</i> es multiplicado por el valor en el registro <i>fs</i>. El resultado es calculado en precisión infinita, usando el redondeo proporcionado por <i>Java</i>, y asignado al registro <i>fd</i>.
+  El operando y el resultado son valores en coma flotante.
+
+  <b>Restricciones:</b>
+  Los operandos deben ser valores en coma flotante. Si no los son, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ float
+  StoreFPR(fd, fmt, ValueFPR(fs, fmt) *<sub>fmt</sub> ValueFPR(ft, fmt))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_EI_DOCUMENTATION: |-
+  <u>Habilitar interrupciones</u>
+
+  <b>Formato:</b>
+  ei rt
+
+  | COP0   MFMC0    rt    12     0     16 |
+  |010000  01011                          |
+  |  6       5      5     5      5     6  |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ Status; Status<sub>IE</sub> ⇽ 1
+
+  El valor actual de <i>Status</i> es asignado a <i>rt</i>. El bit de Interrupciones Habilitadas (<i>IE</i>) en <i>Status</i> es puesto a uno.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rt] ⇽ Status
+  Status<sub>IE</sub> ⇽ 1
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  El efecto de esta instruccion es idéntico al de leer el registro <i>Status</i> y asignarlo a un registro general, rellenar el bit <i>IE</i> y escribir el resultado.
+INSTRUCTION_ERET_DOCUMENTATION: |-
+  <u>Retorno de la excepción</u>
+
+  <b>Formato:</b>
+  eret
+
+  | COP0     CO    0     ERET   |
+  |010000    1           011000 |
+  |  6       1     19      6    |
+
+
+  <b>Descipción:</b>
+  Esta instrucción borra la ejecución y todos los riesgos de instrucciones y retorna a la instrucción interrumpida por una interrupción, excepción o error de procesamiento.
+  <black>eret</black> no ejecuta la siguiente ejecución y no tiene ningún hueco de retardo.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+
+  if Status<sub>ERL</sub> = 1 then
+      temp ⇽ ErrorEPC
+      Status<sub>ERL</sub> ⇽ 0
+  else
+      temp ⇽ EPC
+      Status<sub>EXL</sub> ⇽ 0
+  endif
+
+  PC ⇽ temp
+
+  ClearHazards()
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_EXT_DOCUMENTATION: |-
+  <u>Extraer bits</u>
+
+  <b>Formato:</b>
+  exr rt, rs, pos, size
+
+  |SPECIAL3    rs    rt   msbd    lsb     EXT   |
+  | 011111              (size-1) (pos)   000000 |
+  |   6        5     5     5       5       6    |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽  0<sub>32..msbd+1</sub> || GPR[rs]<sub>msbd+lsb..lsb</sub>
+
+  La celda de bits en la posición <i>pos</i> de tamaño <i>size</i> es extraída de <i>rs</i> y extendida a la izquierda con ceros.
+  El resultado es asignado a <i>rt</i>.
+
+  <b>Restricciones:</b>
+  La operación es <black>IMPREDECIBLE</black> si la suma de <i>lsb</i> y <i>msbd</i> es mayor que 31.
+
+  <b>Operación:</b>
+  GPR[rt] ⇽  0<sub>32..msbd+1</sub> || GPR[rs]<sub>msbd+lsb...lsb</sub>
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_FLOOR_L_D_DOCUMENTATION: |-
+  <u>Función suelo de coma flotante doble a doble palabra</u>
+
+  <b>Formato:</b>
+  floor.l.d fd, fs
+
+  | COP1      fmt      0      fs      fd     FLOOR.L |
+  |010001    10001   00000                   001011  |
+  |  6         5       5      5       5        6     |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  El valor en coma flotante de precisión doble guardado en <i>fs</i> es transformado en una palabra de 64 bits, redondeando hacia abajo.
+  El resultado es asignado a <i>fd</i>.
+
+  Cuando el valor en <i>fs</i> es <black>Infinito</black>, <black>NaN</black> o está fuera del rango de una palabra de 64 bits, el resultado no puede ser representado correctamente. Estos casos son tratados por la máquina virtual de Java.
+
+  <b>Restricciones:</b>
+  Los registros <i>fs</i> y <i>fd</i> deben ser FPR pares. Si los registros no son válidos, el resultado es <black>IMPREDECIBLE</black>.
+  El operando debe ser un valor en coma flotante de precisión doble. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ double
+  StoreFPR(fd, L, ConvertFmt(ValueFPR(fs, fmt), fmt, L))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_FLOOR_W_D_DOCUMENTATION: |-
+  <u>CFunción suelo de coma flotante doble a palabra</u>
+
+  <b>Formato:</b>
+  floor.w.d fd, fs
+
+  | COP1      fmt      0      fs      fd     FLOOR.W |
+  |010001    10001   00000                   001111  |
+  |  6         5       5      5       5        6     |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  El valor en coma flotante de precisión doble guardado en <i>fs</i> es transformado en una palabra de 32 bits, redondeando hacia abajo.
+  El resultado es asignado a <i>fd</i>.
+
+  Cuando el valor en <i>fs</i> es <black>Infinito</black>, <black>NaN</black> o está fuera del rango de una palabra de 32 bits, el resultado no puede ser representado correctamente. Estos casos son tratados por la máquina virtual de Java.
+
+  <b>Restricciones:</b>
+  El registro <i>fs</i> debe ser un FPR par. El registro no es válido, el resultado es <black>IMPREDECIBLE</black>.
+  El operando debe ser un valor en coma flotante de precisión doble. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ double
+  StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_FLOOR_L_S_DOCUMENTATION: |-
+  <u>Función suelo de coma flotante a doble palabra</u>
+
+  <b>Formato:</b>
+  floor.l.s fd, fs
+
+  | COP1      fmt      0      fs      fd     FLOOR.L |
+  |010001    10000   00000                   001011  |
+  |  6         5       5      5       5        6     |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  El valor en coma flotante guardado en <i>fs</i> es transformado en una palabra de 64 bits, redondeando hacia abajo.
+  El resultado es asignado a <i>fd</i>.
+
+  Cuando el valor en <i>fs</i> es <black>Infinito</black>, <black>NaN</black> o está fuera del rango de una palabra de 64 bits, el resultado no puede ser representado correctamente. Estos casos son tratados por la máquina virtual de Java.
+
+  <b>Restricciones:</b>
+  El registro <i>fd</i> debe ser un FPR par. El registro no es válido, el resultado es <black>IMPREDECIBLE</black>.
+  El operando debe ser un valor en coma flotante. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ float
+  StoreFPR(fd, L, ConvertFmt(ValueFPR(fs, fmt), fmt, L))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_FLOOR_W_S_DOCUMENTATION: |-
+  <u>Función suelo de coma flotante a palabra</u>
+
+  <b>Formato:</b>
+  floor.w.s fd, fs
+
+  | COP1      fmt      0      fs      fd     FLOOR.W |
+  |010001    10000   00000                   001111  |
+  |  6         5       5      5       5        6     |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  El valor en coma flotante guardado en <i>fs</i> es transformado en una palabra de 32, redondeando hacia abajo.
+  El resultado es asignado a <i>fd</i>.
+
+  Cuando el valor en <i>fs</i> es <black>Infinito</black>, <black>NaN</black> o está fuera del rango de una palabra de 32 bits, el resultado no puede ser representado correctamente. Estos casos son tratados por la máquina virtual de Java.
+
+  <b>Restricciones:</b>
+  El operando debe ser un valor en coma flotante. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ float
+  StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_J_DOCUMENTATION: |-
+  <u>Salto</u>
+
+  <b>Formato:</b>
+  j target
+
+  |  J      index |
+  |000010         |
+  |  6       26   |
+
+
+  <b>Descripción:</b>
+  Esta es una ramificación relativa a la región del PC (no al PC en sí); el rango es una región alineada de 256 MB.
+  Los 28 bits menos significativos de la dirección efectiva están compuestos por la celda <i>index</i> desplazada dos posiciones a la izquierda. Los bits restantes corresponden a los bits de la dirección de la instruccion en el hueco de retardo (o la instrucción que le sigue si los huecos de retardo están deshabilitados).
+  La instruccción salta a la dirección efectiva. Si los huecos de retardo están habilitados, esta instrucción también ejecuta la instrucción que le sigue antes de realizar el salto.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+
+  <black>I:</black>
+  <black>I+1:</black>
+  PC ⇽ PC<sub>31..28</sub> || index || 00
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  El formar la dirección efectiva concatenando el PC y los bits de la celda <i>index</i> en vez de añadir in desplazamiento al PC es una ventaja si todo el código del programa entra en una región de 256 MB alineada en un entorno de 256 MB. Permite realizar una ramificación de y a cualquier instrucción de la región, acto que no es posible con un desplazamiento.
+  Esta definición crea el siguiente caso límite: cuando la instrucción de salto está en la última palabra de la región de 256, esta solo puede realizar un salto a los 256 MB de la región que contiene el hueco de retardo.
+  La instrucción de salto ha sido marcada como obsoleta en la Release 6. Use <black>bc</black> en su lugar.
+INSTRUCTION_JAL_DOCUMENTATION: |-
+  <u>Salto y enlace</u>
+
+  <b>Formato:</b>
+  jal target
+
+  | JAL     index |
+  |000011         |
+  |  6       26   |
+
+
+  <b>Descripción:</b>
+  Esta es una ramificación relativa a la región del PC (no al PC en sí); el rango es una región alineada de 256 MB.
+
+  Inserta la dirección de retorno en el registro <i>31</i>. Esta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+  Los 28 bits menos significativos de la dirección efectiva están compuestos por la celda <i>index</i> desplazada dos posiciones a la izquierda. Los bits restantes corresponden a los bits de la dirección de la instruccion en el hueco de retardo (o la instrucción que le sigue si los huecos de retardo están deshabilitados).
+  La instruccción salta a la dirección efectiva. Si los huecos de retardo están habilitados, esta instrucción también ejecuta la instrucción que le sigue antes de realizar el salto.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+
+  <black>I:</black>
+  GPR[31] ⇽ PC + 4
+  <black>I+1:</black>
+  PC ⇽ PC<sub>31..28</sub> || index || 00
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  El formar la dirección efectiva concatenando el PC y los bits de la celda <i>index</i> en vez de añadir in desplazamiento al PC es una ventaja si todo el código del programa entra en una región de 256 MB alineada en un entorno de 256 MB. Permite realizar una ramificación de y a cualquier instrucción de la región, acto que no es posible con un desplazamiento.
+  Esta definición crea el siguiente caso límite: cuando la instrucción de salto está en la última palabra de la región de 256, esta solo puede realizar un salto a los 256 MB de la región que contiene el hueco de retardo.
+  La instrucción de salto y enlace ha sido marcada como obsoleta en la Release 6. Use <black>balc</black> en su lugar.
+INSTRUCTION_JALR_DOCUMENTATION: |-
+  <u>Salto y enlace a registro</u>
+
+  <b>Formato:</b>
+  jalr rs (rd = 31 implícito)
+  jalr rd, rs
+
+  |SPECIAL     rs      rt     rd      0       JALR  |
+  |000000                                    001001 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ return_addr, PC ⇽ GPR[rs]
+
+  Inserta la dirección de retorno en el registro <i>rd</i>. Esta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+
+  Salta a la dirección efectiva guardada en el registro <i>rs</i>. Si la dirección efectiva no está alineada a 4 bytes, una excepción Address Error es lanzada cuando los datos de la instrucción son recogidos.
+  Si los huecos de retardo están habilitados, esta instrucción también ejecuta la instrucción que le sigue antes de realizar el salto.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  Los registros <i>rs</i> y <i>rd</i> no deben ser los mismos, ya que una instrucción como esta no tendría el mismo efecto cuando se volviera a ejecutar. El resultado de la ejecución de dicha instrucción es <black>IMPREDECIBLE</black>. Esta restricción permite al manejador de excepciones retomar la ejecución volviendo a ejecutar la ramificación cuando una excepción ocurre en el hueco de retardo.
+
+  <b>Operación:</b>
+  <black>I:</black>
+  temp ⇽ GPR[rs]
+  GPR[31] ⇽ PC + 4
+  <black>I+1:</black>
+  PC ⇽ temp
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  Esta instrucción de salto y enlace a registro permite seleccionar el registro donde se guarda la dirección de retorno; otras instrucciones de enlace usan el registro 31.
+  El registro por defecto para <i>rd</i>, si se omite en la instrucción en ensamblador, es el 31.
+INSTRUCTION_LB_DOCUMENTATION: |-
+  <u>Cargar byte</u>
+
+  <b>Formato:</b>
+  lb rt desplazamiento(base)
+
+  |  LB      base     rt    desplazamiento |
+  |100000                                  |
+  |  6        5       5           16       |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ memory[GPR[base] + desplazamiento]
+
+  El contenido de la palabra de 8 bits guardada en la dirección de memoria efectiva es cargado, extendido con signo e insertado en el registro <i>rt</i>.
+  El contenido de la celda <i>desplazamiento</i> es sumado al contenido del registro <i>base</i> para formar la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  v_addr ⇽ sign_extend(desplazamiento) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+  mem_byte ⇽ LoadMemory(CCA, BYTE, p_addr, v_addr, DATA)
+  GPR[rt] ⇽ sign_extend(mem_byte)
+
+  <b>Excepciones:</b>
+  Address Error
+INSTRUCTION_LW_DOCUMENTATION: |-
+  <u>Cargar palabra</u>
+
+  <b>Formato:</b>
+  lw rt desplazamiento(base)
+
+  |  LB      base     rt    desplazamiento |
+  |100000                                  |
+  |  6        5       5           16       |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ memory[GPR[base] + desplazamiento]
+
+  El contenido de la palabra de 32 bits guardada en la dirección de memoria efectiva es cargado, extendido con signo e insertado en el registro <i>rt</i>.
+  El contenido de la celda <i>desplazamiento</i> es sumado al contenido del registro <i>base</i> para formar la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  v_addr ⇽ sign_extend(desplazamiento) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+  mem_byte ⇽ LoadMemory(CCA, WORD, p_addr, v_addr, DATA)
+  GPR[rt] ⇽ sign_extend(mem_byte)
+
+  <b>Excepciones:</b>
+  Address Error
+INSTRUCTION_MFC0_DOCUMENTATION: |-
+  <u>Mover desde el coprocesador 0</u>
+
+  <b>Formato:</b>
+  mfc0 rt, rd (sel = 0 implícito)
+  mfc0 rt, rd, sel
+
+  | COP0     MF     rt    rd    0    sel |
+  |010000  00000                         |
+  |  6       5      5     5     8     3  |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ CPR[0, rd, sel]
+
+  El contenido del registro del coprocesador 0 espeficiado por la combinación de <i>rd</i> y <i>sel</i> es cargado en el registro de propósito general <i>rt</i>.
+
+  <b>Restricciones:</b>
+  Leer un registro reservado o un registro que no está implementado en la configuración actual devuelve 0.
+
+  <b>Operación:</b>
+  if IsCoprocessorRegisterImplemented(0, rd, sel) then
+      GPR[rt] ⇽ CPR[0, rd, sel]
+  else
+      GPR[rt] ⇽ 0
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_MFC1_DOCUMENTATION: |-
+  <u>Mover desde el coprocesador 1</u>
+
+  <b>Formato:</b>
+  mfc1 rt, rd
+
+  | COP1     MF     rt    fs     0 |
+  |010001  00000                   |
+  |  6       5      5     5     11 |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ FPR[fs]
+
+  El contenido del registro del coprocesador 1 <i>fs</i> es cargado en el registro de propósito general <i>rt</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rt] ⇽ ValueFPR(fs, UNINTERPRETED_WORD)
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_MTC0_DOCUMENTATION: |-
+  <u>Mover al coprocesador 0</u>
+
+  <b>Formato:</b>
+  mtc0 rt, rd (sel = 0 implícito)
+  mtc0 rt, rd, sel
+
+  | COP0     MT     rt    rd    0    sel |
+  |010000  00100                         |
+  |  6       5      5     5     8     3  |
+
+
+  <b>Descripción:</b>
+  CPR[0, rd, sel] ⇽ GPR[rt]
+
+  El contenido del registro de propósito general <i>rt</i> es cargado en el registro del coprocesador 0 espeficiado por la combinación de <i>rd</i> y <i>sel</i>.
+
+  <b>Restricciones:</b>
+  Las escrituras a un registro reservado o a un registro que no está implementado en la configuración actual son ignoradas.
+
+  <b>Operación:</b>
+  if IsCoprocessorRegisterImplemented(0, rd, sel) then
+      CPR[0, rd, sel] ⇽ GPR[rt]
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_MTC1_DOCUMENTATION: |-
+  <u>Mover al coprocesador 1</u>
+
+  <b>Formato:</b>
+  mtc1 rt, rd
+
+  | COP1     MT     rt    fs     0 |
+  |010001  00100                   |
+  |  6       5      5     5     11 |
+
+
+  <b>Descripción:</b>
+  FPR[fs] ⇽ GPR[rt]
+
+  El contenido del registro de propósito general <i>rt</i> es cargado en el registro del coprocesador 1 <i>fs</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  StoreFPR(fs, UNINTERPRETED_WORD, GPR[rt])
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_MUL_DOCUMENTATION: |-
+  <u>Multiplicación devolviendo la parte menos significante</u>
+
+  <b>Formato:</b>
+  mul rd, rs, rt
+
+  |SPECIAL     rs      rt     rd     MUL      SOP30 |
+  |000000                           00010    011000 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ lo_word(GPR[rs] * GPR[rt])
+
+  El valor del registro <i>rs</i> es multiplicado por el valor del registro <i>rt</i> para producir una palabra de 32 bits que contiene los 32 bits menos significantes del resultado.
+  Dicha palabra es asignada al registro <i>rd</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+
+  GPR[rd] ⇽ lo_word(GPR[rs] * GPR[rt])
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+
+  La parte menos significante de la multiplicación de enteros es idéntica en números con o sin signo. Sin embargo, existen diferentes instrucciones para la multiplicación de enteros con y sin signo que producen la parte menos significado del resultado.
+  Las implementaciones pueden optimizar los casos donde una multiplicación que produce la parte menos significante le siga una multiplicación que produce la parte más significante. Es recomendado que los programadores usen los pares de instrucciones correspondientes.
+INSTRUCTION_MUH_DOCUMENTATION: |-
+  <u>Multiplicación devolviendo la parte más significante</u>
+
+  <b>Formato:</b>
+  muh rd, rs, rt
+
+  |SPECIAL     rs      rt     rd     MUH      SOP30 |
+  |000000                           00011    011000 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ hi_word(GPR[rs] * GPR[rt])
+
+  El valor del registro <i>rs</i> es multiplicado por el valor del registro <i>rt</i> para producir una palabra de 32 bits que contiene los 32 bits más significantes del resultado.
+  Dicha palabra es asignada al registro <i>rd</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+
+  GPR[rd] ⇽ hi_word(GPR[rs] * GPR[rt])
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+
+  La parte menos significante de la multiplicación de enteros es idéntica en números con o sin signo. Sin embargo, existen diferentes instrucciones para la multiplicación de enteros con y sin signo que producen la parte menos significado del resultado.
+  Las implementaciones pueden optimizar los casos donde una multiplicación que produce la parte menos significante le siga una multiplicación que produce la parte más significante. Es recomendado que los programadores usen los pares de instrucciones correspondientes.
+INSTRUCTION_MULU_DOCUMENTATION: |-
+  <u>Multiplicación sin signo devolviendo la parte menos significante</u>
+
+  <b>Formato:</b>
+  mulu rd, rs, rt
+
+  |SPECIAL     rs      rt     rd     MULU     SOP31 |
+  |000000                           00010    011001 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ lo_word(GPR[rs] * GPR[rt])
+
+  El valor del registro <i>rs</i> es multiplicado por el valor del registro <i>rt</i> para producir una palabra de 32 bits que contiene los 32 bits menos significantes del resultado.
+  Dicha palabra es asignada al registro <i>rd</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+
+  GPR[rd] ⇽ lo_word(unsigned_word(GPR[rs]) * unsigned_word(GPR[rt]))
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+
+  La parte menos significante de la multiplicación de enteros es idéntica en números con o sin signo. Sin embargo, existen diferentes instrucciones para la multiplicación de enteros con y sin signo que producen la parte menos significado del resultado.
+  Las implementaciones pueden optimizar los casos donde una multiplicación que produce la parte menos significante le siga una multiplicación que produce la parte más significante. Es recomendado que los programadores usen los pares de instrucciones correspondientes.
+INSTRUCTION_MUHU_DOCUMENTATION: |-
+  <u>Multiplicación sin signo devolviendo la parte más significante</u>
+
+  <b>Formato:</b>
+  muhu rd, rs, rt
+
+  |SPECIAL     rs      rt     rd     MUHU     SOP31 |
+  |000000                           00011    011001 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ hi_word(GPR[rs] * GPR[rt])
+
+  El valor del registro <i>rs</i> es multiplicado por el valor del registro <i>rt</i> para producir una palabra de 32 bits que contiene los 32 bits más significantes del resultado.
+  Dicha palabra es asignada al registro <i>rd</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+
+  GPR[rd] ⇽ hi_word(unsigned_word(GPR[rs]) * unsigned_word(GPR[rt]))
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+
+  La parte menos significante de la multiplicación de enteros es idéntica en números con o sin signo. Sin embargo, existen diferentes instrucciones para la multiplicación de enteros con y sin signo que producen la parte menos significado del resultado.
+  Las implementaciones pueden optimizar los casos donde una multiplicación que produce la parte menos significante le siga una multiplicación que produce la parte más significante. Es recomendado que los programadores usen los pares de instrucciones correspondientes.
+INSTRUCTION_MUL_D_DOCUMENTATION: |-
+  <u>Multiplicación en coma flotante de precisión doble</u>
+
+  <b>Formato:</b>
+  mul.d fd, fs, ft
+
+  | COP1      fmt      0      fs      fd      MUL   |
+  |010001    10001   00000                   000010 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ FRP[fs] * FPR[ft]
+
+  El valor en el registro <i>ft</i> es multiplicado por el valor en el registro <i>fs</i>. El resultado es calculado en precisión infinita, usando el redondeo proporcionado por <i>Java</i>, y asignado al registro <i>fd</i>.
+  El operando y el resultado son valores en coma flotante de precisión doble.
+
+  <b>Restricciones:</b>
+  Los registros <i>fs</i>, <i>ft</i> y <i>fd</i> deben ser FPR pares. Si los registros no son válidos, el resultado es <black>IMPREDECIBLE</black>.
+  Los operandos deben ser valores en coma flotante de precisión doble. Si no los son, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ double
+  StoreFPR(fd, fmt, ValueFPR(fs, fmt) *<sub>fmt</sub> ValueFPR(ft, fmt))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_OR_DOCUMENTATION: |-
+  <u>Or</u>
+
+  <b>Formato:</b>
+  or rd, rs, rt
+
+  |SPECIAL     rs      rt     rd      0        OR   |
+  |000000                                    100101 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ GPR[rs] or GPR[rt]
+
+  Realiza la operación lógica OR usando los valores dentro de los registros <i>rs</i> y <i>rt</i>.
+  El resultado es asignado al registro <i>rd</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rd] ⇽ GPR[rs] or GPR[rt]
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_ORI_DOCUMENTATION: |-
+  <u>Or con inmediato</u>
+
+  <b>Formato:</b>
+  ori rt, rs, inmediato
+
+  | ORI       rs     rt     inmediato |
+  |001101                             |
+  |  6        5      5         16     |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ GPR[rs] or zero_extend(inmediato)
+
+  El <i>inmediato</i> de 16 bits es extendido a la izquierda con ceros y combinado con el valor del registro <i>rs</i> usando la operación lógica OR.
+  El resultado es asignado al registro <i>rt</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rt] ⇽ GPR[rs] or zero_extend(immediate)
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SB_DOCUMENTATION: |-
+  <u>Guardar byte</u>
+
+  <b>Formato:</b>
+  sb rt desplazamiento(base)
+
+  |  SB      base     rt    desplazamiento |
+  |101000                                  |
+  |  6        5       5           16       |
+
+
+  <b>Descripción:</b>
+  memory[GPR[base] + desplazamiento] ⇽ GPR[rt]
+
+  Los 8 bits menos significantes del registro <i>rt</i> son guardados en la dirección de memoria efectiva.
+  El contenido de la celda <i>desplazamiento</i> es sumado al contenido del registro <i>base</i> para formar la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  v_addr ⇽ sign_extend(desplazamiento) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+
+  byte_sel ⇽ v_addr<sub>1..0</sub> xor BigEndianCPU<sub>2</sub>
+  data_byte ⇽ GPR[rt]<sub>31 - 8 * byte_sel .. 0</sub> || 0<sub>8 * bytesel</sub>
+  StoreMemory (CCA, BYTE, data_byte, p_addr, v_addr, DATA)
+
+  <b>Excepciones:</b>
+  Address Error
+INSTRUCTION_SLL_DOCUMENTATION: |-
+  <u>Desplazar a la izquierda de manera lógica</u>
+
+  <b>Formato:</b>
+  sll rd, rt, sa
+
+  |SPECIAL     0      rt     rd      sa      SLL   |
+  |000000                                   000000 |
+  |  6         5      5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ GPR[rt] << sa
+
+  El contenido del registro <i>rt</i> es desplazado a la izquierda, rellenando con ceros los bits vacíos. El resultado es asignado al registro <i>rd</i>. El número de bits desplazado viene especificado por <i>sa</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rd] ⇽ GPR[rt]<sub>31-sa..0</sub> || 0<sub>sa</sub>
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Programming Notes:</b>
+  <black>sll $zero, $zero, 0</black>, expresado como <black>NOP</black>, es el alias usado para expresar una operación nula.
+INSTRUCTION_SLLV_DOCUMENTATION: |-
+  <u>Desplazar a la izquierda de manera lógica dependiendo de una variable</u>
+
+  <b>Formato:</b>
+  sllv rd, rt, rs
+
+  |SPECIAL     rs     rt     rd     0      SLLV  |
+  |000000                                 000100 |
+  |  6         5      5      5      5       6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ GPR[rt] << GPR[rs]
+
+  El contenido del registro <i>rt</i> es desplazado a la izquierda, rellenando con ceros los bits vacíos. El resultado es asignado al registro <i>rd</i>. El número de bits desplazado viene especificado por los 5 bits menos significantes del registro <i>sa</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  sa ⇽ GPR[rs]<sub>4..0</sub>
+  GPR[rd] ⇽ GPR[rt]<sub>31-sa..0</sub> || 0<sub>sa</sub>
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SLT_DOCUMENTATION: |-
+  <u>Asignar si menor que valor</u>
+
+  <b>Formato:</b>
+  slt rd, rt, rs
+
+  |SPECIAL     rs     rt     rd     0      SLT   |
+  |000000                                 101010 |
+  |  6         5      5      5      5       6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ (GPR[rs] < GPR[rt])
+
+  Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros con signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+  Si el contenido de <i>rs</i> es menor que el contenido de <i>rt</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  if GPR[rs] < GPR[rt] then
+      GPR[rd] ⇽ 0<sub>31..0</sub> || 1
+  else
+      GPR[rd] ⇽ 0
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SLTI_DOCUMENTATION: |-
+  <u>Asignar si menor que inmediato</u>
+
+  <b>Formato:</b>
+  slti rt, rs, inmediato
+
+  | SLTI       rs     rt     inmediato |
+  |001010                              |
+  |  6         5      5         16     |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ (GPR[rs] < sign_extend(inmediato))
+
+  Compara el contenido del registro <i>rs</i> y la celda <i>inmediato</i> como enteros con signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+  Si el contenido de <i>rs</i> es menor que el contenido de <i>inmediato</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  if GPR[rs] < sign_extend(immediate) then
+      GPR[rd] ⇽ 0<sub>31..0</sub> || 1
+  else
+      GPR[rd] ⇽ 0
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SLTIU_DOCUMENTATION: |-
+  <u>Asignar si menor que inmediato sin signo</u>
+
+  <b>Formato:</b>
+  sltiu rt, rs, inmediato
+
+  | SLTIU      rs     rt     inmediato |
+  |001011                              |
+  |  6         5      5         16     |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ (GPR[rs] < sign_extend(inmediato))
+
+  Compara el contenido del registro <i>rs</i> y la celda <i>inmediato</i> como enteros sin signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+  Si el contenido de <i>rs</i> es menor que el contenido de <i>inmediato</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  if (0 || GPR[rs]) < (0 || sign_extend(inmediato)) then
+      GPR[rd] ⇽ 0<sub>31..0</sub> || 1
+  else
+      GPR[rd] ⇽ 0
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SLTU_DOCUMENTATION: |-
+  <u>Asignar si menor que valor sin signo</u>
+
+  <b>Formato:</b>
+  sltu rd, rt, rs
+
+  |SPECIAL     rs     rt     rd     0      SLTU  |
+  |000000                                 101011 |
+  |  6         5      5      5      5       6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ (GPR[rs] < GPR[rt])
+
+  Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros sin signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+  Si el contenido de <i>rs</i> es menor que el contenido de <i>rt</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  if (0 || GPR[rs]) < (0 || GPR[rt]) then
+      GPR[rd] ⇽ 0<sub>31..0</sub> || 1
+  else
+      GPR[rd] ⇽ 0
+  endif
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SRL_DOCUMENTATION: |-
+  <u>Desplazar a la derecha de manera lógica</u>
+
+  <b>Formato:</b>
+  srl rd, rt, sa
+
+  |SPECIAL    0    R    rt    rd     sa     SLL   |
+  |000000          0                       000000 |
+  |  6        4    1    5     5      5       6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ GPR[rt] << sa
+
+  El contenido del registro <i>rt</i> es desplazado a la derecha, rellenando con ceros los bits vacíos. El resultado es asignado al registro <i>rd</i>. El número de bits desplazado viene especificado por <i>sa</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rd] ⇽ 0<sub>sa</sub> || GPR[rt]<sub>31..sa</sub>
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SRLV_DOCUMENTATION: |-
+  <u>Desplazar a la derecha de manera lógica dependiendo de una variable</u>
+
+  <b>Formato:</b>
+  srlv rd, rt, rs
+
+  |SPECIAL     rs     rt     rd     0      SRLV  |
+  |000000                                 000110 |
+  |  6         5      5      5      5       6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ GPR[rt] >> GPR[rs]
+
+  El contenido del registro <i>rt</i> es desplazado a la derecha, rellenando con ceros los bits vacíos. El resultado es asignado al registro <i>rd</i>. El número de bits desplazado viene especificado por los 5 bits menos significantes del registro <i>sa</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  sa ⇽ GPR[rs]<sub>4..0</sub>
+  GPR[rd] ⇽ 0<sub>sa</sub> || GPR[rt]<sub>31..sa</sub>
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SUB_DOCUMENTATION: |-
+  <u>Resta</u>
+
+  <b>Formato:</b>
+  sub rd, rs, rt
+
+  |SPECIAL     rs      rt     rd      0       SUB   |
+  |000000                                    100010 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ GPR[rs] - GPR[rt]
+
+  La palabra de 32 bits del registro <i>rt</i> es restada a la palabra de 32 bits del registro <i>rs</i> para producir un resultado de 32 bits.
+   - Si la resta resulta en un desbordamiento aritmético en complemento a 2 de 32 bits, el registro destino no es modificado y la excepción <black>Integer Overflow</black> es lanzada.
+   - Si la resta no produce un desbordamiento, el resultado es insertado en el registro GPR <i>rd</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  temp ⇽ (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) - (GPR[rt]<sub>31</sub> || GPR[rt]<sub>31..0</sub>)
+  if temp<sub>32</sub> != temp<sub>31</sub> then
+      SignalException(IntegerOverflow)
+  else
+      GPR[rd] ⇽ temp<sub>31..0</sub>
+  endif
+
+  <b>Excepciones:</b>
+  Integer Overflow
+
+  <b>Notas del programador:</b>
+  <black>subu</black> ejecuta la misma operación aritmética pero no lanza una excepción al desbordar.
+INSTRUCTION_SUB_D_DOCUMENTATION: |-
+  <u>Resta en coma flotante de precisión doble</u>
+
+  <b>Formato:</b>
+  sub.d fd, fs, ft
+
+  | COP1      fmt      0      fs      fd      SUB   |
+  |010001    10001   00000                   000001 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ FRP[fs] - FPR[ft]
+
+  El valor en el registro <i>ft</i> es restado al valor en el registro <i>fs</i>. El resultado es calculado en precisión infinita, usando el redondeo proporcionado por <i>Java</i>, y asignado al registro <i>fd</i>.
+  El operando y el resultado son valores en coma flotante de precisión doble.
+
+  <b>Restricciones:</b>
+  Los registros <i>fs</i>, <i>ft</i> y <i>fd</i> deben ser FPR pares. Si los registros no son válidos, el resultado es <black>IMPREDECIBLE</black>.
+  El operando debe ser un valor en coma flotante de precisión doble. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ double
+  StoreFPR(fd, fmt, ValueFPR(fs, fmt) -<sub>fmt</sub> ValueFPR(ft, fmt))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SUB_S_DOCUMENTATION: |-
+  <u>Resta en coma flotante</u>
+
+  <b>Formato:</b>
+  sub.s fd, fs, ft
+
+  | COP1      fmt      0      fs      fd      SUB   |
+  |010001    10000   00000                   000001 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ FRP[fs] - FPR[ft]
+
+  El valor en el registro <i>ft</i> es restado al valor en el registro <i>fs</i>. El resultado es calculado en precisión infinita, usando el redondeo proporcionado por <i>Java</i>, y asignado al registro <i>fd</i>.
+  El operando y el resultado son valores en coma flotante.
+
+  <b>Restricciones:</b>
+  El operando debe ser un valor en coma flotante. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ float
+  StoreFPR(fd, fmt, ValueFPR(fs, fmt) -<sub>fmt</sub> ValueFPR(ft, fmt))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SUBU_DOCUMENTATION: |-
+  <u>Resta sin signo</u>
+
+  <b>Formato:</b>
+  subu rd, rs, rt
+
+  |SPECIAL     rs      rt     rd      0       SUBU  |
+  |000000                                    100011 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ GPR[rs] - GPR[rt]
+
+  La palabra de 32 bits del registro <i>rt</i> es restada a la palabra de 32 bits del registro <i>rs</i> para producir un resultado de 32 bits.
+  El resultado es asignado al registro <i>rd</i>.
+  Ninguna excepción de desbordamiento ocurre en ninguna de las circunstancias.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  temp ⇽ GPR[rs] - GPR[rt]
+  GPR[rd] ⇽ temp
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  El término <i>sin signo</i> en esta instrucción es parcialmente incorrecto; esta instrucción ejecuta una operación aritmética de 32 bits que no lanza una excepción al desbordar. Esta instrucción es apropiada para aritmética sin signo, o entornos aritméticos que ignoran el desbordamiento, como puede ser la aritmética del lenguaje C.
+INSTRUCTION_SW_DOCUMENTATION: |-
+  <u>Guardar palabra</u>
+
+  <b>Formato:</b>
+  sw rt desplazamiento(base)
+
+  |  SW      base     rt    desplazamiento |
+  |101011                                  |
+  |  6        5       5           16       |
+
+
+  <b>Descripción:</b>
+  memory[GPR[base] + desplazamiento] ⇽ GPR[rt]
+
+  La palabra del registro <i>rt</i> es guardada en la dirección de memoria efectiva.
+  El contenido de la celda <i>desplazamiento</i> es sumado al contenido del registro <i>base</i> para formar la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  v_addr ⇽ sign_extend(desplazamiento) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+
+  word ⇽ GPR[rt]
+  StoreMemory (CCA, WORD, word, p_addr, v_addr, DATA)
+
+  <b>Excepciones:</b>
+  Address Error
+INSTRUCTION_SYSCALL_DOCUMENTATION: |-
+  <u>Llamada al sistema</u>
+
+  <b>Formato:</b>
+  syscall
+
+  |SPECIAL     0     SYSCALL |
+  | 00000            001100  |
+  |   6        20      6     |
+
+
+  <b>Descripción:</b>
+  <b>Descripción:</b>
+  Llamada al sistema
+
+  Una excepción System Call es lanzada, transfiriendo el control al manejador de excepciones de manera inmediata e incondicional.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  SignalException(SystemCall)
+
+  <b>Excepciones:</b>
+  System Call
+INSTRUCTION_TEQ_DOCUMENTATION: |-
+  <u>Interrupción si es igual</u>
+
+  <b>Formato:</b>
+  teq rs, rt
+
+  |SPECIAL     rs      rt      0         TEQ   |
+  |000000                               110100 |
+  |  6         5       5       10         6    |
+
+
+  <b>Descripción:</b>
+  if GPR[rs] = GPR[rt] then Trap
+
+  Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros con signo. Si ambos valores son iguales, lanza una excepción <black>Trap</black>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  if GPR[rs] = GPR[rt] then
+      SignalException(Trap)
+  endif
+
+  <b>Excepciones:</b>
+  Trap
+INSTRUCTION_TEQI_DOCUMENTATION: |-
+  <u>Interrupción si es igual a inmediato</u>
+
+  <b>Formato:</b>
+  teqi rs, inmediato
+
+  |REGIMM      rs     TEQI     inmediato |
+  |000001            01100               |
+  |  6         5       5          16     |
+
+
+  <b>Descripción:</b>
+  if GPR[rs] = immediate then Trap
+
+  Compara el contenido del registro <i>rs</i> e <i>inmediato</i> como enteros con signo. Si ambos valores son iguales, lanza una excepción <black>Trap</black>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  if GPR[rs] = immediate then
+      SignalException(Trap)
+  endif
+
+  <b>Excepciones:</b>
+  Trap
+INSTRUCTION_TGE_DOCUMENTATION: |-
+  <u>Interrupción si es mayor o igual</u>
+
+  <b>Formato:</b>
+  tge rs, rt
+
+  |SPECIAL     rs      rt      0         TGE   |
+  |000000                               110000 |
+  |  6         5       5       10         6    |
+
+
+  <b>Descripción:</b>
+  if GPR[rs] ≥ GPR[rt] then Trap
+
+  Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros con signo.
+  Si el primer valor es mayor o igual que el segundo valor, lanza una excepción <black>Trap</black>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  if GPR[rs] ≥ GPR[rt] then
+      SignalException(Trap)
+  endif
+
+  <b>Excepciones:</b>
+  Trap
+INSTRUCTION_TGEI_DOCUMENTATION: |-
+  <u>Interrupción si es mayor o igual que inmediato</u>
+
+  <b>Formato:</b>
+  tgei rs, inmediato
+
+  |REGIMM      rs     TGEI     inmediato |
+  |000001            01000               |
+  |  6         5       5          16     |
+
+
+  <b>Descripción:</b>
+  if GPR[rs] ≥ inmediato then Trap
+
+  Compara el contenido del registro <i>rs</i> e <i>inmediato</i> como enteros con signo.
+  Si el primer valor es mayor o igual que el segundo valor, lanza una excepción <black>Trap</black>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  if GPR[rs] ≥ inmediato then
+      SignalException(Trap)
+  endif
+
+  <b>Excepciones:</b>
+  Trap
+INSTRUCTION_TGEIU_DOCUMENTATION: |-
+  <u>Interrupción si es mayor o igual que inmediato sin signo</u>
+
+  <b>Formato:</b>
+  tgeiu rs, inmediato
+
+  |REGIMM     rs     TGEIU     inmediato |
+  |000001            01001               |
+  |  6         5       5          16     |
+
+
+  <b>Descripción:</b>
+  if GPR[rs] ≥ inmediato then Trap
+
+  Compara el contenido del registro <i>rs</i> e <i>inmediato</i> como enteros sin signo.
+  Si el primer valor es mayor o igual que el segundo valor, lanza una excepción <black>Trap</black>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  if unsigned_word(GPR[rs]) ≥ unsigned_word(inmediato) then
+      SignalException(Trap)
+  endif
+
+  <b>Excepciones:</b>
+  Trap
+INSTRUCTION_TGEU_DOCUMENTATION: |-
+  <u>Interrupción si es mayor o igual sin signo</u>
+
+  <b>Formato:</b>
+  tgeu rs, rt
+
+  |SPECIAL     rs      rt      0         TGEU  |
+  |000000                               110001 |
+  |  6         5       5       10         6    |
+
+
+  <b>Descripción:</b>
+  if GPR[rs] ≥ GPR[rt] then Trap
+
+  Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros sin signo.
+  Si el primer valor es mayor o igual que el segundo valor, lanza una excepción <black>Trap</black>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  if unsigned_word(GPR[rs]) ≥ unsigned_word(GPR[rt]) then
+      SignalException(Trap)
+  endif
+
+  <b>Excepciones:</b>
+  Trap
+INSTRUCTION_TLT_DOCUMENTATION: |-
+  <u>Interrupción si es menor</u>
+
+  <b>Formato:</b>
+  tlt rs, rt
+
+  |SPECIAL     rs      rt      0         TLT   |
+  |000000                               110010 |
+  |  6         5       5       10         6    |
+
+
+  <b>Descripción:</b>
+  if GPR[rs] < GPR[rt] then Trap
+
+  Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros con signo.
+  Si el primer valor es menor que el segundo valor, lanza una excepción <black>Trap</black>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  if GPR[rs] < GPR[rt] then
+      SignalException(Trap)
+  endif
+
+  <b>Excepciones:</b>
+  Trap
+INSTRUCTION_TLTI_DOCUMENTATION: |-
+  <u>Interrupción si es menor que inmediato</u>
+
+  <b>Formato:</b>
+  tlti rs, inmediato
+
+  |REGIMM      rs     TLTI     inmediato |
+  |000001            01010               |
+  |  6         5       5          16     |
+
+
+  <b>Descripción:</b>
+  if GPR[rs] < inmediato then Trap
+
+  Compara el contenido del registro <i>rs</i> e <i>inmediato</i> como enteros con signo.
+  Si el primer valor es menor que el segundo valor, lanza una excepción <black>Trap</black>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  if GPR[rs] < inmediato then
+      SignalException(Trap)
+  endif
+
+  <b>Excepciones:</b>
+  Trap
+INSTRUCTION_TLTIU_DOCUMENTATION: |-
+  <u>Interrupción si es menor que inmediato sin signo</u>
+
+  <b>Formato:</b>
+  tltiu rs, inmediato
+
+  |REGIMM     rs     TLTIU     inmediato |
+  |000001            01011               |
+  |  6         5       5          16     |
+
+
+  <b>Descripción:</b>
+  if GPR[rs] < inmediato then Trap
+
+  Compara el contenido del registro <i>rs</i> e <i>inmediato</i> como enteros sin signo.
+  Si el primer valor es menor que el segundo valor, lanza una excepción <black>Trap</black>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  if unsigned_word(GPR[rs]) < unsigned_word(inmediato) then
+      SignalException(Trap)
+  endif
+
+  <b>Excepciones:</b>
+  Trap
+INSTRUCTION_TLTU_DOCUMENTATION: |-
+  <u>Interrupción si es menor sin signo</u>
+
+  <b>Formato:</b>
+  tltu rs, rt
+
+  |SPECIAL     rs      rt      0         TLTU  |
+  |000000                               110011 |
+  |  6         5       5       10         6    |
+
+
+  <b>Descripción:</b>
+  if GPR[rs] < GPR[rt] then Trap
+
+  Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros sin signo.
+  Si el primer valor es menor que el segundo valor, lanza una excepción <black>Trap</black>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  if unsigned_word(GPR[rs]) < unsigned_word(GPR[rt]) then
+      SignalException(Trap)
+  endif
+
+  <b>Excepciones:</b>
+  Trap
+INSTRUCTION_TNE_DOCUMENTATION: |-
+  <u>Interrupción si no es igual</u>
+
+  <b>Formato:</b>
+  tne rs, rt
+
+  |SPECIAL     rs      rt      0         TNE   |
+  |000000                               110110 |
+  |  6         5       5       10         6    |
+
+
+  <b>Descripción:</b>
+  if GPR[rs] != GPR[rt] then Trap
+
+  Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros con signo. Si ambos valores no son iguales, lanza una excepción <black>Trap</black>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  if GPR[rs] != GPR[rt] then
+      SignalException(Trap)
+  endif
+
+  <b>Excepciones:</b>
+  Trap
+INSTRUCTION_TNEI_DOCUMENTATION: |-
+  <u>Interrupción si no es igual a inmediato</u>
+
+  <b>Formato:</b>
+  tnei rs, inmediato
+
+  |REGIMM      rs     TNEI     immediate |
+  |000001            01110               |
+  |  6         5       5          16     |
+
+
+  <b>Descripción:</b>
+  if GPR[rs] != immediate then Trap
+
+  Compara el contenido del registro <i>rs</i> e <i>inmediato</i> como enteros con signo. Si ambos valores no son iguales, lanza una excepción <black>Trap</black>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  if GPR[rs] != immediate then
+      SignalException(Trap)
+  endif
+
+  <b>Excepciones:</b>
+  Trap
+INSTRUCTION_XOR_DOCUMENTATION: |-
+  <u>Xor</u>
+
+  <b>Formato:</b>
+  xor rd, rs, rt
+
+  |SPECIAL     rs      rt     rd      0       XOR   |
+  |000000                                    100110 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ GPR[rs] xor GPR[rt]
+
+  Realiza la operación lógica XOR usando los valores dentro de los registros <i>rs</i> y <i>rt</i>.
+  El resultado es asignado al registro <i>rd</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rd] ⇽ GPR[rs] xor GPR[rt]
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_XORI_DOCUMENTATION: |-
+  <u>Xor con inmediato</u>
+
+  <b>Formato:</b>
+  xori rt, rs, inmediato
+
+  | XORI      rs     rt     inmediato |
+  |001110                             |
+  |  6        5      5         16     |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ GPR[rs] or zero_extend(inmediato)
+
+  El <i>inmediato</i> de 16 bits es extendido a la izquierda con ceros y combinado con el valor del registro <i>rs</i> usando la operación lógica XOR.
+  El resultado es asignado al registro <i>rt</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rt] ⇽ GPR[rs] xor zero_extend(immediate)
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_ADDI_DOCUMENTATION: |-
+  <u>Suma con inmediato con desbordamiento</u>
+
+  <b>Formato:</b>
+  addi rt, rs, inmediato
+
+  <b>Conversión:</b>
+  addiu $at, $zero, inmediato
+  add rt, $at, rs
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ GPR[rs] + inmediato
+  La palabra de 32 bits del <i>inmediato</i> es sumada a la palabra de 32 bits del registro <i>rs</i> para producir un resultado de 32 bits.
+   - Si la suma resulta en un desbordamiento aritmético en complemento a 2 de 32 bits, el registro destino no es modificado y la excepción <black>Integer Overflow</black> es lanzada.
+   - Si la suma no produce un desbordamiento, el resultado es insertado en el registro <i>rt</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  temp ⇽ (GPR[rs]<sub>31</sub> || GPR[rs]<sub>31..0</sub>) + (inmediato<sub>31</sub> || inmediato<sub>31..0</sub>)
+  if temp<sub>32</sub> != temp<sub>31</sub> then
+      SignalException(IntegerOverflow)
+  else
+      GPR[rt] ⇽ temp<sub>31..0</sub>
+  endif
+
+  <b>Excepciones:</b>
+  Integer Overflow
+
+  <b>Notas del programador:</b>
+  <black>addiu</black> ejecuta la misma operación aritmética pero no lanza una excepción al desbordar.
+INSTRUCTION_B_DOCUMENTATION: |-
+  <u>Ramificación incondicional</u>
+
+  <b>Formato:</b>
+  b desplazamiento
+
+  <b>Conversión:</b>
+  beq $zero, $zero, desplazamiento
+
+  <b>Descripción:</b>
+  Un desplazamiento de 18 bits (la celda <i>desplazamiento</i> desplazada 2 bits a la izquierda) es sumado a la dirección de la siguiente instrucción para formar una dirección efectiva.
+  La instrucción ejecuta la ramificación a la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  Con el desplazamiento de 18 bits, el rango de la ramificación es de  ±128KBytes. Usa el salto (<black>j</black>) o el salto a registro (<black>jr</black>) para ramificar a direcciones fuera de este rango.
+  <black>beq $zero, $zero, desplazamiento</black>, expresado como <black>b desplazamiento</black>, es el equivalente en ensablador para denotar un salto incondicional.
+INSTRUCTION_JR_DOCUMENTATION: |-
+  <u>Salto a registro</u>
+
+  <b>Formato:</b>
+  jr rs
+
+  <b>Conversión:</b>
+  jr $zero, rs
+
+  <b>Descripción:</b>
+  Salta a la dirección efectiva guardada en el registro <i>rs</i>. Si la dirección efectiva no está alineada a 4 bytes, una excepción Address Error es lanzada cuando los datos de la instrucción son recogidos.
+  Si los huecos de retardo están habilitados, esta instrucción también ejecuta la instrucción que le sigue antes de realizar el salto.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_LA_DOCUMENTATION: |-
+  <u>Cargar dirección</u>
+
+  <b>Formato:</b>
+  la rs, etiqueta
+
+  <b>Conversión:</b>
+  address ⇽ get_address(etiqueta)
+  aui $at, $zero, address<sub>31..16</sub>
+  ori rs, $at, address<sub>15..0</sub>
+
+  <b>Descripción:</b>
+  Carga la dirección de la <i>etiqueta</i> en el registro <i>rs</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_LI_DOCUMENTATION: |-
+  <u>Cargar inmediato</u>
+
+  <b>Formato:</b>
+  li rs, número
+
+  <b>Conversión:</b>
+  if número<sub>31..16</sub> = 0
+      addiu rs, $zero, número<sub>15..0</sub>
+  else
+      aui $at, $zero, número<sub>31..16</sub>
+      ori rs, $at, número<sub>15..0</sub>
+  endif
+
+  <b>Descripción:</b>
+  Carga el <i>número</i> en el registro <i>rs</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_LUI_DOCUMENTATION: |-
+  <u>Cargar inmediato en los bits más significantes</u>
+
+  <b>Formato:</b>
+  lui rs, número
+
+  <b>Conversión:</b>
+  aui rs, $zero, número<sub>15..0</sub>
+
+  <b>Descripción:</b>
+  Carga el <i>número</i> en los 16 bits más significantes del registro <i>rs</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_LIF_DOCUMENTATION: |-
+  <u>Cargar inmediato en coma flotante</u>
+
+  <b>Formato:</b>
+  lif fd, float
+
+  <b>Conversión:</b>
+  aui $at, $zero, float<sub>31..16</sub>
+  ori $at, $at, float<sub>15..0</sub>
+  mtc1 $at, fd
+
+  <b>Descripción:</b>
+  Carga el <i>float</i> en el registro de coma flotante <i>fd</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_LID_DOCUMENTATION: |-
+  <u>Cargar double inmediato</u>
+
+  <b>Formato:</b>
+  lid fd, double
+
+  <b>Conversión:</b>
+  aui $at, $zero, double<sub>31..16</sub>
+  ori $at, $at, double<sub>15..0</sub>
+  mtc1 $at, fd
+
+  aui $at, $zero, double<sub>63..58</sub>
+  ori $at, $at, double<sub>57..32</sub>
+  mtc1 $at, fd+1
+
+  <b>Descripción:</b>
+  Carga el <i>double</i> en los registros de coma flotante <i>fd</i> y <i>fd+1</i>.
+
+  <b>Restrictions:</b>
+  El registro <i>fd</i> deben ser un FPR par. Si el registro no es válido, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Exceptions:</b>
+  None
+INSTRUCTION_MOVE_DOCUMENTATION: |-
+  <u>Mover valor</u>
+
+  <b>Formato:</b>
+  move rd, rs
+
+  <b>Conversión:</b>
+  add rd, $zero, rs
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ GPR[rs]
+
+  Mueve el contenido del registro <i>rs</i> al registro <i>rd</i>.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_NOP_DOCUMENTATION: |-
+  <u>Operación nula</u>
+
+  <b>Formato:</b>
+  nop
+
+  <b>Conversión:</b>
+  sll $zero, $zero, $zero
+
+  <b>Descripción:</b>
+  Operación nula. No hace nada.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SGE_DOCUMENTATION: |-
+  <u>Asignar si mayor o igual que valor</u>
+
+  <b>Formato:</b>
+  sge rd, rt, rs
+
+  <b>Conversión:</b>
+  slt rd, rt, rs
+  ori $at, $zero, 1
+  subu rd, $at, rd
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ (GPR[rs] ≥ GPR[rt])
+
+  Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros con signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+  Si el contenido de <i>rs</i> es mayor o igual que el contenido de <i>rt</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SGEI_DOCUMENTATION: |-
+  <u>Asignar si mayor o igual que inmediato</u>
+
+  <b>Formato:</b>
+  sgei rt, rs, immediate
+
+  <b>Conversión:</b>
+  slti rt, rs, immediate
+  ori $at, $zero, 1
+  subu rd, $at, rd
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ (GPR[rs] ≥ sign_extend(immediate))
+
+  Compara el contenido del registro <i>rs</i> y la celda <i>inmediato</i> como enteros con signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+  Si el contenido de <i>rs</i> es mayor o igual que el contenido de <i>inmediato</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SGEIU_DOCUMENTATION: |-
+  <u>Asignar si mayor o igual que inmediato sin signo</u>
+
+  <b>Formato:</b>
+  sgeiu rt, rs, immediate
+
+  <b>Conversión:</b>
+  sltiu rt, rs, immediate
+  ori $at, $zero, 1
+  subu rd, $at, rd
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ (GPR[rs] ≥ sign_extend(immediate))
+
+  Compara el contenido del registro <i>rs</i> y la celda <i>inmediato</i> como enteros sin signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+  Si el contenido de <i>rs</i> es mayor o igual que el contenido de <i>inmediato</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SGEU_DOCUMENTATION: |-
+  <u>Asignar si mayor o igual que valor sin signo</u>
+
+  <b>Formato:</b>
+  sgeu rd, rt, rs
+
+  <b>Conversión:</b>
+  sltu rd, rt, rs
+  ori $at, $zero, 1
+  subu rd, $at, rd
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ (GPR[rs] ≥ GPR[rt])
+
+  Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros sin signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+  Si el contenido de <i>rs</i> es mayor o igual que el contenido de <i>rt</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SGT_DOCUMENTATION: |-
+  <u>Asignar si mayor que valor</u>
+
+  <b>Formato:</b>
+  sgt rd, rt, rs
+
+  <b>Conversión:</b>
+  slt rd, rs, rt
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ (GPR[rs] > GPR[rt])
+
+  Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros con signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+  Si el contenido de <i>rs</i> es mayor que el contenido de <i>rt</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SGTI_DOCUMENTATION: |-
+  <u>Asignar si mayor que inmediato</u>
+
+  <b>Formato:</b>
+  sgti rt, rs, immediate
+
+  <b>Conversión:</b>
+  addiu $at, $zero, immediate
+  slt rd, $at, rs
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ (GPR[rs] > sign_extend(immediate))
+
+  Compara el contenido del registro <i>rs</i> y la celda <i>inmediato</i> como enteros con signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+  Si el contenido de <i>rs</i> es mayor que el contenido de <i>inmediato</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SGTIU_DOCUMENTATION: |-
+  <u>Asignar si mayor que inmediato sin signo</u>
+
+  <b>Formato:</b>
+  sgtiu rt, rs, immediate
+
+  <b>Conversión:</b>
+  addiu $at, $zero, immediate
+  sltu rd, $at, rs
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ (GPR[rs] > sign_extend(immediate))
+
+  Compara el contenido del registro <i>rs</i> y la celda <i>inmediato</i> como enteros sin signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+  Si el contenido de <i>rs</i> es mayor que el contenido de <i>inmediato</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SGTU_DOCUMENTATION: |-
+  <u>Asignar si mayor que valor sin signo</u>
+
+  <b>Formato:</b>
+  sgtu rd, rt, rs
+
+  <b>Conversión:</b>
+  sltu rd, rs, rt
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ (GPR[rs] > GPR[rt])
+
+  Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros sin signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+  Si el contenido de <i>rs</i> es mayor que el contenido de <i>rt</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SLE_DOCUMENTATION: |-
+  <u>Asignar si menor o igual que valor</u>
+
+  <b>Formato:</b>
+  sle rd, rt, rs
+
+  <b>Conversión:</b>
+  slt rd, rs, rt
+  ori $at, $zero, 1
+  subu rd, $at, rd
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ (GPR[rs] ≤ GPR[rt])
+
+  Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros con signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+  Si el contenido de <i>rs</i> es menor o igual que el contenido de <i>rt</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SLEI_DOCUMENTATION: |-
+  <u>Asignar si menor o igual que inmediato</u>
+
+  <b>Formato:</b>
+  slei rt, rs, immediate
+
+  <b>Conversión:</b>
+  addiu $at, $zero, immediate
+  slt rd, $at, rs
+  ori $at, $zero, 1
+  subu rd, $at, rd
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ (GPR[rs] ≤ sign_extend(immediate))
+
+  Compara el contenido del registro <i>rs</i> y la celda <i>inmediato</i> como enteros con signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+  Si el contenido de <i>rs</i> es mayor o igual que el contenido de <i>inmediato</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SLEIU_DOCUMENTATION: |-
+  <u>Asignar si menor o igual que inmediato sin signo</u>
+
+  <b>Formato:</b>
+  sleiu rt, rs, immediate
+
+  <b>Conversión:</b>
+  addiu $at, $zero, immediate
+  sltu rd, $at, rs
+  ori $at, $zero, 1
+  subu rd, $at, rd
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ (GPR[rs] ≤ sign_extend(immediate))
+
+  Compara el contenido del registro <i>rs</i> y la celda <i>inmediato</i> como enteros sin signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+  Si el contenido de <i>rs</i> es menor o igual que el contenido de <i>inmediato</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_SLEU_DOCUMENTATION: |-
+  <u>Asignar si menor o igual que valor sin signo</u>
+
+  <b>Formato:</b>
+  sleu rd, rt, rs
+
+  <b>Conversión:</b>
+  sltu rd, rs, rt
+  ori $at, $zero, 1
+  subu rd, $at, rd
+
+  <b>Descripción:</b>
+  GPR[rd] ⇽ (GPR[rs] ≤ GPR[rt])
+
+  Compara el contenido de los registros <i>rs</i> y <i>rt</i> como enteros sin signo; guarda el resultado booleano de la comparación en el registro <i>rd</i>.
+  Si el contenido de <i>rs</i> es menor o igual que el contenido de <i>rt</i>, el resultado es 1 (true); si no, el resultado es 0 (false).
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Excepciones:</b>
+  Ninguna
+
+FLOAT_CONDITION_AF: Siempre falso
+FLOAT_CONDITION_UN: Sin orden
+FLOAT_CONDITION_EQ: Igual
+FLOAT_CONDITION_UEQ: Sin orden o igual
+FLOAT_CONDITION_LT: Menor que ordenado
+FLOAT_CONDITION_ULT: Desordenado o menor que
+FLOAT_CONDITION_LE: Menor o igual ordenado
+FLOAT_CONDITION_ULE: Desordenado o menor o igual que
+FLOAT_CONDITION_SAF: Siempre falso con señal
+FLOAT_CONDITION_SUN: Desordenado con señal
+FLOAT_CONDITION_SEQ: Igual ordenado con señal
+FLOAT_CONDITION_SUEQ: Desordenado o igual con señal
+FLOAT_CONDITION_SLT: Menor que ordenado con señal
+FLOAT_CONDITION_SULT: Desordenado o menor que con señal
+FLOAT_CONDITION_SLE: Menor o igual ordenado con señal
+FLOAT_CONDITION_SULE: Desordenado o menor que o igual con señal
+FLOAT_CONDITION_OR: Ordenado
+FLOAT_CONDITION_UNE: No igual
+FLOAT_CONDITION_NE: No igual ordenado
+FLOAT_CONDITION_SOR: Ordenado con señal
+FLOAT_CONDITION_SUNE: Desordenado o no igual con señal
+FLOAT_CONDITION_SNE: No igual ordenado con señal
+
+FMT_SINGLE: coma flotante
+FMT_DOUBLE: coma flotante doble
+FMT_WORD: palabra
+FMT_LONG: doble palabra

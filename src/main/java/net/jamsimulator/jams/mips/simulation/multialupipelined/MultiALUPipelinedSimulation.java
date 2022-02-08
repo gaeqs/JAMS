@@ -266,7 +266,8 @@ public class MultiALUPipelinedSimulation
     }
 
     private void checkExit() {
-        if (pipeline.isEmpty()) {
+        if (pipeline.isEmpty() && !finished) {
+            finished = true;
             if (getLog() != null && !exitRequested) {
                 getLog().println();
                 getLog().printWarningLn("Execution finished. Dropped off bottom.");

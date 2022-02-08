@@ -30,6 +30,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import net.jamsimulator.jams.configuration.RootConfiguration;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormat;
+import net.jamsimulator.jams.configuration.format.ConfigurationFormatJSON;
 import net.jamsimulator.jams.gui.configuration.RegionDisplay;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.gui.util.PathAndNameEditor;
@@ -142,14 +144,15 @@ public class MIPSEmptyProjectTemplate extends ProjectTemplate<MIPSProject> {
         var metadataFile = new File(metadataFolder, ProjectData.METADATA_DATA_NAME);
 
         try {
-            var config = new RootConfiguration(metadataFile);
+            var format = Manager.of(ConfigurationFormat.class).getOrNull(ConfigurationFormatJSON.NAME);
+            var config = new RootConfiguration(metadataFile, format);
             config.convertAndSet(MIPSProjectData.NODE_ASSEMBLER, assemblerBuilderProperty.getValue(), AssemblerBuilder.class);
             config.convertAndSet(MIPSProjectData.NODE_REGISTERS, registersBuilderProperty.getValue(), RegistersBuilder.class);
             config.convertAndSet(MIPSProjectData.NODE_DIRECTIVES, directiveSetProperty.getValue(), DirectiveSet.class);
             config.convertAndSet(MIPSProjectData.NODE_INSTRUCTIONS, instructionSetProperty.getValue(), InstructionSet.class);
             config.set(MIPSProjectData.NODE_SELECTED_CONFIGURATION, "Default");
             new MIPSSimulationConfiguration("Default").save(config, MIPSProjectData.NODE_CONFIGURATIONS);
-            config.save(true);
+            config.save(format, true);
             return new MIPSProject(folder);
         } catch (Exception e) {
             throw new MIPSTemplateBuildException(e);

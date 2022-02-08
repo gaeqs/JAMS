@@ -35,4 +35,5 @@ import net.jamsimulator.jams.utils.Labeled;
  */
 public interface ResourceProvider extends Labeled {
     ResourceProvider JAMS = () -> "JAMS";
+    ResourceProvider TEST = () -> "TEST";
 }

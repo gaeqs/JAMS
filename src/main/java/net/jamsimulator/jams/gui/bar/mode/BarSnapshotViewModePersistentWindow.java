@@ -35,10 +35,9 @@ import net.jamsimulator.jams.gui.image.icon.Icons;
 import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.ResourceProvider;
-import net.jamsimulator.jams.manager.event.ManagerDefaultElementChangeEvent;
-import net.jamsimulator.jams.manager.event.ManagerSelectedElementChangeEvent;
 
 import java.util.Optional;
 
@@ -111,13 +110,8 @@ public class BarSnapshotViewModePersistentWindow implements BarSnapshotViewMode 
         }
 
         @Listener
-        private void onLanguageChange(ManagerSelectedElementChangeEvent.After<Language> event) {
-            setTitle(event.getNewElement().getOrDefault(snapshot.getLanguageNode().orElse(null)));
-        }
-
-        @Listener
-        private void onLanguageChange(ManagerDefaultElementChangeEvent.After<Language> event) {
-            setTitle(Manager.ofS(Language.class).getSelected().getOrDefault(snapshot.getLanguageNode().orElse(null)));
+        public void onRefresh(LanguageRefreshEvent event) {
+            setTitle(event.getSelectedLanguage().getOrDefault(snapshot.getLanguageNode().orElse(null)));
         }
     }
 }
