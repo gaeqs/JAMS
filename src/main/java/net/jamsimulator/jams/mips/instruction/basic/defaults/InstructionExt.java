@@ -46,7 +46,6 @@ public class InstructionExt extends BasicRInstruction<InstructionExt.Assembled> 
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b011111;
     public static final int FUNCTION_CODE = 0b000000;
-    public static final int ALIGN_CODE = 0b010;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
             ParameterType.REGISTER,

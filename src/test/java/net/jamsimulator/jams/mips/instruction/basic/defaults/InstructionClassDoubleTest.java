@@ -25,10 +25,15 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.mips.architecture.Architecture;
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.utils.TestUtils;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -39,9 +44,15 @@ class InstructionClassDoubleTest {
         Jams.initForTests();
     }
 
-    @Test
-    void testNaN() throws InterruptedException {
-        var simulation = TestUtils.generateSimulation(SingleCycleArchitecture.INSTANCE,
+    @ParameterizedTest
+    @ValueSource(strings = {
+            SingleCycleArchitecture.NAME,
+            MultiCycleArchitecture.NAME,
+            MultiALUPipelinedArchitecture.NAME
+    })
+    void testNaN(String architecture) throws InterruptedException {
+        var arch = Manager.of(Architecture.class).get(architecture).orElseThrow();
+        var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
                         lid $f0, NaN
@@ -57,9 +68,15 @@ class InstructionClassDoubleTest {
     }
 
 
-    @Test
-    void testNegativeInfinity() throws InterruptedException {
-        var simulation = TestUtils.generateSimulation(SingleCycleArchitecture.INSTANCE,
+    @ParameterizedTest
+    @ValueSource(strings = {
+            SingleCycleArchitecture.NAME,
+            MultiCycleArchitecture.NAME,
+            MultiALUPipelinedArchitecture.NAME
+    })
+    void testNegativeInfinity(String architecture) throws InterruptedException {
+        var arch = Manager.of(Architecture.class).get(architecture).orElseThrow();
+        var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
                         lid $f0, -Infinity
@@ -75,9 +92,15 @@ class InstructionClassDoubleTest {
     }
 
 
-    @Test
-    void testNegativeNormal() throws InterruptedException {
-        var simulation = TestUtils.generateSimulation(SingleCycleArchitecture.INSTANCE,
+    @ParameterizedTest
+    @ValueSource(strings = {
+            SingleCycleArchitecture.NAME,
+            MultiCycleArchitecture.NAME,
+            MultiALUPipelinedArchitecture.NAME
+    })
+    void testNegativeNormal(String architecture) throws InterruptedException {
+        var arch = Manager.of(Architecture.class).get(architecture).orElseThrow();
+        var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
                         lid $f0, -5.3448
@@ -93,9 +116,15 @@ class InstructionClassDoubleTest {
     }
 
 
-    @Test
-    void testNegativeSubnormal() throws InterruptedException {
-        var simulation = TestUtils.generateSimulation(SingleCycleArchitecture.INSTANCE,
+    @ParameterizedTest
+    @ValueSource(strings = {
+            SingleCycleArchitecture.NAME,
+            MultiCycleArchitecture.NAME,
+            MultiALUPipelinedArchitecture.NAME
+    })
+    void testNegativeSubnormal(String architecture) throws InterruptedException {
+        var arch = Manager.of(Architecture.class).get(architecture).orElseThrow();
+        var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
                         lid $f0, -2.22507385850720088902458687609E-308
@@ -110,9 +139,15 @@ class InstructionClassDoubleTest {
         assertEquals(0, simulation.getExitCode());
     }
 
-    @Test
-    void testNegativeZero() throws InterruptedException {
-        var simulation = TestUtils.generateSimulation(SingleCycleArchitecture.INSTANCE,
+    @ParameterizedTest
+    @ValueSource(strings = {
+            SingleCycleArchitecture.NAME,
+            MultiCycleArchitecture.NAME,
+            MultiALUPipelinedArchitecture.NAME
+    })
+    void testNegativeZero(String architecture) throws InterruptedException {
+        var arch = Manager.of(Architecture.class).get(architecture).orElseThrow();
+        var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
                         lid $f0, -0.0
@@ -127,9 +162,15 @@ class InstructionClassDoubleTest {
         assertEquals(0, simulation.getExitCode());
     }
 
-    @Test
-    void testPositiveInfinity() throws InterruptedException {
-        var simulation = TestUtils.generateSimulation(SingleCycleArchitecture.INSTANCE,
+    @ParameterizedTest
+    @ValueSource(strings = {
+            SingleCycleArchitecture.NAME,
+            MultiCycleArchitecture.NAME,
+            MultiALUPipelinedArchitecture.NAME
+    })
+    void testPositiveInfinity(String architecture) throws InterruptedException {
+        var arch = Manager.of(Architecture.class).get(architecture).orElseThrow();
+        var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
                         lid $f0, Infinity
@@ -145,9 +186,15 @@ class InstructionClassDoubleTest {
     }
 
 
-    @Test
-    void testPositiveNormal() throws InterruptedException {
-        var simulation = TestUtils.generateSimulation(SingleCycleArchitecture.INSTANCE,
+    @ParameterizedTest
+    @ValueSource(strings = {
+            SingleCycleArchitecture.NAME,
+            MultiCycleArchitecture.NAME,
+            MultiALUPipelinedArchitecture.NAME
+    })
+    void testPositiveNormal(String architecture) throws InterruptedException {
+        var arch = Manager.of(Architecture.class).get(architecture).orElseThrow();
+        var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
                         lid $f0, 865.65
@@ -163,9 +210,15 @@ class InstructionClassDoubleTest {
     }
 
 
-    @Test
-    void testPositiveSubnormal() throws InterruptedException {
-        var simulation = TestUtils.generateSimulation(SingleCycleArchitecture.INSTANCE,
+    @ParameterizedTest
+    @ValueSource(strings = {
+            SingleCycleArchitecture.NAME,
+            MultiCycleArchitecture.NAME,
+            MultiALUPipelinedArchitecture.NAME
+    })
+    void testPositiveSubnormal(String architecture) throws InterruptedException {
+        var arch = Manager.of(Architecture.class).get(architecture).orElseThrow();
+        var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
                         lid $f0, 2.22507385850720088902458687609E-308
@@ -180,9 +233,15 @@ class InstructionClassDoubleTest {
         assertEquals(0, simulation.getExitCode());
     }
 
-    @Test
-    void testPositiveZero() throws InterruptedException {
-        var simulation = TestUtils.generateSimulation(SingleCycleArchitecture.INSTANCE,
+    @ParameterizedTest
+    @ValueSource(strings = {
+            SingleCycleArchitecture.NAME,
+            MultiCycleArchitecture.NAME,
+            MultiALUPipelinedArchitecture.NAME
+    })
+    void testPositiveZero(String architecture) throws InterruptedException {
+        var arch = Manager.of(Architecture.class).get(architecture).orElseThrow();
+        var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
                         lid $f0, 0.0
@@ -196,7 +255,6 @@ class InstructionClassDoubleTest {
         simulation.waitForExecutionFinish();
         assertEquals(0, simulation.getExitCode());
     }
-
 
 
 }

@@ -140,7 +140,7 @@ public class InstructionDi extends BasicIFPUInstruction<InstructionDi.Assembled>
             result = valueCOP0(12);
             status = result & -2;
             forward(instruction.getTargetRegister(), result);
-            forward(12, status);
+            forwardCOP0(12, status);
         }
 
         @Override
@@ -150,7 +150,7 @@ public class InstructionDi extends BasicIFPUInstruction<InstructionDi.Assembled>
         @Override
         public void writeBack() {
             setAndUnlock(instruction.getTargetRegister(), result);
-            setAndUnlock(12, status);
+            setAndUnlockCOP0(12, status);
         }
     }
 }

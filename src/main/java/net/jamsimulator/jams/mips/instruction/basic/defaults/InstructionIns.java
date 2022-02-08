@@ -29,34 +29,33 @@ import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.alu.ALUType;
-import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
-import net.jamsimulator.jams.mips.instruction.basic.BasicIFPUInstruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledRInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.BasicRInstruction;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.instruction.execution.SingleCycleExecution;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
-import net.jamsimulator.jams.mips.register.COP0Register;
-import net.jamsimulator.jams.mips.register.COP0RegistersBits;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
-public class InstructionEi extends BasicIFPUInstruction<InstructionEi.Assembled> {
+public class InstructionIns extends BasicRInstruction<InstructionIns.Assembled> {
 
-    public static final String MNEMONIC = "ei";
+    public static final String MNEMONIC = "ins";
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
-    public static final int OPERATION_CODE = 0b010000;
-    public static final int SUBCODE = 0b01011;
+    public static final int OPERATION_CODE = 0b011111;
+    public static final int FUNCTION_CODE = 0b000100;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
-            ParameterType.REGISTER
+            ParameterType.REGISTER,
+            ParameterType.REGISTER,
+            ParameterType.UNSIGNED_5_BIT,
+            ParameterType.UNSIGNED_5_BIT_SUB_ONE
     );
 
-    public static final int IMMEDIATE_VALUE = 0b01100_00000_100000;
-
-    public InstructionEi() {
-        super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, SUBCODE);
+    public InstructionIns() {
+        super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE, FUNCTION_CODE);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
         addExecutionBuilder(MultiALUPipelinedArchitecture.INSTANCE, MultiCycle::new);
@@ -65,16 +64,13 @@ public class InstructionEi extends BasicIFPUInstruction<InstructionEi.Assembled>
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
         return new Assembled(
+                parameters[1].getRegister(),
+                parameters[0].getRegister(),
+                parameters[3].getImmediate(),
+                parameters[2].getImmediate(),
                 origin,
-                this,
-                parameters[0].getRegister()
+                this
         );
-    }
-
-    @Override
-    public boolean match(int instructionCode) {
-        int immediate = instructionCode & AssembledI16Instruction.IMMEDIATE_MASK;
-        return super.match(instructionCode) && immediate == IMMEDIATE_VALUE;
     }
 
     @Override
@@ -82,14 +78,21 @@ public class InstructionEi extends BasicIFPUInstruction<InstructionEi.Assembled>
         return new Assembled(instructionCode, this, this);
     }
 
-    public static class Assembled extends AssembledI16Instruction {
+    public static class Assembled extends AssembledRInstruction {
 
-        public Assembled(Instruction origin, BasicInstruction<Assembled> basicOrigin, int targetRegister) {
+        public static final int ALIGN_CODE_SHIFT = 8;
+        public static final int ALIGN_CODE_MASK = 0x7;
+        public static final int SHIFT_AMOUNT_MASK = 0x3;
+
+        public Assembled(int sourceRegister, int targetRegister, int msbd, int lsb,
+                         Instruction origin, BasicInstruction<Assembled> basicOrigin) {
             super(
                     OPERATION_CODE,
-                    SUBCODE,
+                    sourceRegister,
                     targetRegister,
-                    IMMEDIATE_VALUE,
+                    msbd - 1,
+                    lsb,
+                    FUNCTION_CODE,
                     origin,
                     basicOrigin
             );
@@ -99,9 +102,22 @@ public class InstructionEi extends BasicIFPUInstruction<InstructionEi.Assembled>
             super(instructionCode, origin, basicOrigin);
         }
 
+
+        @Override
+        public int getShiftAmount() {
+            return super.getShiftAmount() & SHIFT_AMOUNT_MASK;
+        }
+
+        public int getAlignCode() {
+            return value >> ALIGN_CODE_SHIFT & ALIGN_CODE_MASK;
+        }
+
         @Override
         public String parametersToString(String registersStart) {
-            return registersStart + getTargetRegister();
+            return registersStart + getDestinationRegister()
+                    + ", " + registersStart + getSourceRegister()
+                    + ", " + registersStart + getTargetRegister()
+                    + ", 0x" + Integer.toHexString(getShiftAmount());
         }
     }
 
@@ -113,16 +129,20 @@ public class InstructionEi extends BasicIFPUInstruction<InstructionEi.Assembled>
 
         @Override
         public void execute() {
-            var status = (COP0Register) registerCOP0(12);
-            register(instruction.getTargetRegister()).setValue(status.getValue());
-            status.modifyBits(1, COP0RegistersBits.STATUS_IE, 1);
+            int rs = value(instruction.getSourceRegister());
+            int rt = value(instruction.getTargetRegister());
+
+            int size = instruction.getDestinationRegister() + 1;
+            int pos = instruction.getShiftAmount();
+            int mask = ((1 << size) - 1) << pos;
+            register(instruction.getTargetRegister())
+                    .setValue((rs & mask) | (rt & ~mask));
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
 
         private int result;
-        private int status;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, true);
@@ -130,17 +150,21 @@ public class InstructionEi extends BasicIFPUInstruction<InstructionEi.Assembled>
 
         @Override
         public void decode() {
-            requiresCOP0(12, false);
-            lockCOP0(12);
+            requires(instruction.getSourceRegister(), false);
+            requires(instruction.getTargetRegister(), false);
             lock(instruction.getTargetRegister());
         }
 
         @Override
         public void execute() {
-            result = valueCOP0(12);
-            status = result | 1;
+            int rs = value(instruction.getSourceRegister());
+            int rt = value(instruction.getTargetRegister());
+
+            int size = instruction.getDestinationRegister() + 1;
+            int pos = instruction.getShiftAmount();
+            int mask = ((1 << size) - 1) << pos;
+            result = (rs & mask) | (rt & ~mask);
             forward(instruction.getTargetRegister(), result);
-            forwardCOP0(12, status);
         }
 
         @Override
@@ -150,7 +174,6 @@ public class InstructionEi extends BasicIFPUInstruction<InstructionEi.Assembled>
         @Override
         public void writeBack() {
             setAndUnlock(instruction.getTargetRegister(), result);
-            setAndUnlockCOP0(12, status);
         }
     }
 }

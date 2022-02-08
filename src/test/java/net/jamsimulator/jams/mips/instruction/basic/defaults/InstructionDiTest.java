@@ -25,10 +25,15 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.mips.architecture.Architecture;
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.utils.TestUtils;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -41,9 +46,15 @@ class InstructionDiTest {
         Jams.initForTests();
     }
 
-    @Test
-    void test() throws InterruptedException {
-        var simulation = TestUtils.generateSimulation(SingleCycleArchitecture.INSTANCE,
+    @ParameterizedTest
+    @ValueSource(strings = {
+            SingleCycleArchitecture.NAME,
+            MultiCycleArchitecture.NAME,
+            MultiALUPipelinedArchitecture.NAME
+    })
+    void test(String architecture) throws InterruptedException {
+        var arch = Manager.of(Architecture.class).get(architecture).orElseThrow();
+        var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
                         mfc0 $t0, $12, 0
