@@ -69,6 +69,7 @@ INSTRUCTION_DIV_S: Division (single)
 INSTRUCTION_DIVU: Unsigned division
 INSTRUCTION_EI: Enable interrupts
 INSTRUCTION_ERET: Exception return
+INSTRUCTION_EXT: Extract bit field
 INSTRUCTION_J: Jump
 INSTRUCTION_JAL: Jump and link
 INSTRUCTION_JALR: Jump and link register
@@ -2344,6 +2345,30 @@ INSTRUCTION_ERET_DOCUMENTATION: |-
   ClearHazards()
 
   <b>Exceptions:</b>
+  None
+INSTRUCTION_EXT_DOCUMENTATION: |-
+  <u>Extract bit field</u>
+
+  <b>Format:</b>
+  exr rt, rs, pos, size
+
+  |SPECIAL3    rs    rt   msbd    lsb     EXT   |
+  | 011111              (size-1) (pos)   000000 |
+  |   6        5     5     5       5       6    |
+
+
+  <b>Description:</b>
+  GPR[rt] ⇽  0<sub>32..msbd+1</sub> || GPR[rs]<sub>msbd+lsb..lsb</sub>
+
+  The bit field starting at bit <i>pos</i> with size <i>size</i> is extracted from GPR <i>rs</i> and stored zero-extender and right-justified in GPR <i>rt</i>.
+  
+  <b>Restricciones:</b>
+  The operation is <black>UNPREDICTABLE</black> if the addition of <i>lsb</i> and <i>msbd</i> is greater than 31. 
+
+  <b>Operation:</b>
+  GPR[rt] ⇽  0<sub>32..msbd+1</sub> || GPR[rs]<sub>msbd+lsb...lsb</sub>
+
+  <b>Exception:</b>
   None
 INSTRUCTION_J_DOCUMENTATION: |-
   <u>Jump</u>

@@ -6,8 +6,7 @@ INSTRUCTION_ADDIU: Suma con inmediato sin desbordamiento
 INSTRUCTION_ADDIUPC: Suma de inmediato y PC sin desbordamiento
 INSTRUCTION_ADD_S: Suma (coma flotante)
 INSTRUCTION_ADDU: Suma sin desbordamiento
-INSTRUCTION_ALIGN: Concatenar dos registros generales, extrayendo un subconjunto contiguo
-  a una posición de byte
+INSTRUCTION_ALIGN: Concatenar dos registros generales, extrayendo un subconjunto contiguo a una posición de byte
 INSTRUCTION_ALUIPC: Suma alineada del inmediato con los bits superiores del PC
 INSTRUCTION_AND: And
 INSTRUCTION_ANDI: And con inmediato
@@ -70,6 +69,7 @@ INSTRUCTION_DIV_S: División (coma flotante)
 INSTRUCTION_DIVU: División sin signo
 INSTRUCTION_EI: Habilitar interrupciones
 INSTRUCTION_ERET: Retorno de la excepción
+INSTRUCTION_EXT: Extraer bits
 INSTRUCTION_J: Salto
 INSTRUCTION_JAL: Salto y enlace
 INSTRUCTION_JALR: Salto y enlace a registro
@@ -2336,6 +2336,31 @@ INSTRUCTION_ERET_DOCUMENTATION: |-
   PC ⇽ temp
 
   ClearHazards()
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_EXT_DOCUMENTATION: |-
+  <u>Extraer bits</u>
+
+  <b>Formato:</b>
+  exr rt, rs, pos, size
+
+  |SPECIAL3    rs    rt   msbd    lsb     EXT   |
+  | 011111              (size-1) (pos)   000000 |
+  |   6        5     5     5       5       6    |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽  0<sub>32..msbd+1</sub> || GPR[rs]<sub>msbd+lsb..lsb</sub>
+
+  La celda de bits en la posición <i>pos</i> de tamaño <i>size</i> es extraída de <i>rs</i> y extendida a la izquierda con ceros.
+  El resultado es asignado a <i>rt</i>.
+
+  <b>Restricciones:</b>
+  La operación es <black>IMPREDECIBLE</black> si la suma de <i>lsb</i> y <i>msbd</i> es mayor que 31.
+
+  <b>Operación:</b>
+  GPR[rt] ⇽  0<sub>32..msbd+1</sub> || GPR[rs]<sub>msbd+lsb...lsb</sub>
 
   <b>Excepciones:</b>
   Ninguna
