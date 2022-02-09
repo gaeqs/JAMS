@@ -82,6 +82,7 @@ INSTRUCTION_JIALC: Jump indexed and link compact
 INSTRUCTION_JIC: Jump indexed compact
 INSTRUCTION_LB: Load byte
 INSTRUCTION_LBU: Load byte unsigned
+INSTRUCTION_LDC1: Load doubleword to float register
 INSTRUCTION_LW: Load word
 INSTRUCTION_MFC0: Move to coprocessor 0
 INSTRUCTION_MFC1: Move to coprocessor 1
@@ -2736,6 +2737,38 @@ INSTRUCTION_LBU_DOCUMENTATION: |-
   (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
   mem_byte ⇽ LoadMemory(CCA, BYTE, p_addr, v_addr, DATA)
   GPR[rt] ⇽ zero_extend(mem_byte)
+
+  <b>Exceptions:</b>
+  Address Error
+INSTRUCTION_LDC1_DOCUMENTATION: |-
+  <u>Load doubleword to float register</u>
+
+  <b>Format:</b>
+  ldc1 ft offset(base)
+
+  | LDC1     base     ft    offset |
+  |110101                          |
+  |  6        5       5       16   |
+
+
+  <b>Descripción:</b>
+  FPR[rt] ⇽ memory[GPR[base] + offset]
+
+  The contents of the 64-bit word at the memory location by the effective address are fetched and placed in FPR <i>ft</i>.
+  The 16-bit signed <i>offset</i> is added to the contents of GPR <i>base</i> to form the effective address.
+
+  <b>Description:</b>
+  None
+
+  <b>Operation:</b>
+  v_addr ⇽ sign_extend(desplazamiento) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+  paddr ⇽ paddr xor ((BigEndianCPU xor ReverseEndian) || 02)
+  memlsw ⇽ LoadMemory(cca, WORD, pAddr, vAddr, DATA)
+  paddr ⇽ paddr xor 0b100
+  memmsw ⇽ LoadMemory(cca, WORD, pAddr, vAddr+4, DATA)
+  memdoubleword ⇽ memmsw || memlsw
+  StoreFPR(ft, UNINTERPRETED_DOUBLEWORD, memdoubleword
 
   <b>Exceptions:</b>
   Address Error

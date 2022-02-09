@@ -82,6 +82,7 @@ INSTRUCTION_JIALC: Salto compacto indexado y enlace
 INSTRUCTION_JIC: Salto compacto indexado
 INSTRUCTION_LB: Cargar byte
 INSTRUCTION_LBU: Cargar byte sin signo
+INSTRUCTION_LDC1: Cargar coma flotante doble en el coprocesador 1
 INSTRUCTION_LW: Cargar palabra
 INSTRUCTION_MFC0: Mover desde el coprocesador 0
 INSTRUCTION_MFC1: Mover desde el coprocesador 1
@@ -1875,7 +1876,7 @@ INSTRUCTION_CMP_D_DOCUMENTATION: |-
   FPR[fd] ⇽ FPR[fs] compare_cond FPR[ft] donde compare_cond = {TYPE}.
 
   El valor guardado en el registro <i>fs</i> es comparado con el valor en el registro <i>it</i>.
-  El registro <i>fd</i> es rellenado con unos o con zeros, dependiendo de si el resultado es verdadero o falso.
+  El registro <i>fd</i> es rellenado con unos o con ceros, dependiendo de si el resultado es verdadero o falso.
 
   Los bits del 2 al 0 en la condición representan cada uno una condición. Si uno de estos bits está activado la condición correspondiente será evaluada.
   El resultado es verdadero cuando alguna de estas condiciones de verdadero.
@@ -1930,7 +1931,7 @@ INSTRUCTION_CMP_S_DOCUMENTATION: |-
   FPR[fd] ⇽ FPR[fs] compare_cond FPR[ft] donde compare_cond = {TYPE}.
 
   El valor guardado en el registro <i>fs</i> es comparado con el valor en el registro <i>it</i>.
-  El registro <i>fd</i> es rellenado con unos o con zeros, dependiendo de si el resultado es verdadero o falso.
+  El registro <i>fd</i> es rellenado con unos o con ceros, dependiendo de si el resultado es verdadero o falso.
 
   Los bits del 2 al 0 en la condición representan cada uno una condición. Si uno de estos bits está activado la condición correspondiente será evaluada.
   El resultado es verdadero cuando alguna de estas condiciones de verdadero.
@@ -2734,6 +2735,38 @@ INSTRUCTION_LBU_DOCUMENTATION: |-
   (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
   mem_byte ⇽ LoadMemory(CCA, BYTE, p_addr, v_addr, DATA)
   GPR[rt] ⇽ zero_extend(mem_byte)
+
+  <b>Excepciones:</b>
+  Address Error
+INSTRUCTION_LDC1_DOCUMENTATION: |-
+  <u>Cargar coma flotante doble en el coprocesador 1</u>
+
+  <b>Formato:</b>
+  ldc1 ft desplazamiento(base)
+
+  | LDC1     base     ft    desplazamiento |
+  |110101                                  |
+  |  6        5       5           16       |
+
+
+  <b>Descripción:</b>
+  FPR[rt] ⇽ memory[GPR[base] + desplazamiento]
+
+  El contenido de la palabra de 64 bits guardada en la dirección de memoria efectiva es cargado e insertado en el registro <i>ft</i> del coprocesador 1.
+  El contenido de la celda <i>desplazamiento</i> es sumado al contenido del registro <i>base</i> para formar la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  v_addr ⇽ sign_extend(desplazamiento) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+  paddr ⇽ paddr xor ((BigEndianCPU xor ReverseEndian) || 02)
+  memlsw ⇽ LoadMemory(cca, WORD, pAddr, vAddr, DATA)
+  paddr ⇽ paddr xor 0b100
+  memmsw ⇽ LoadMemory(cca, WORD, pAddr, vAddr+4, DATA)
+  memdoubleword ⇽ memmsw || memlsw
+  StoreFPR(ft, UNINTERPRETED_DOUBLEWORD, memdoubleword
 
   <b>Excepciones:</b>
   Address Error

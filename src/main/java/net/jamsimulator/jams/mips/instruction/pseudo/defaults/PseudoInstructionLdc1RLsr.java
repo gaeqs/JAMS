@@ -25,46 +25,40 @@
 package net.jamsimulator.jams.mips.instruction.pseudo.defaults;
 
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
+import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAddu;
 import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionAui;
-import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionMtc1;
-import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionOri;
+import net.jamsimulator.jams.mips.instruction.basic.defaults.InstructionLdc1;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
-public class PseudoInstructionLidRD extends PseudoInstruction {
+public class PseudoInstructionLdc1RLsr extends PseudoInstruction {
 
-    public static final String MNEMONIC = "lid";
+    public static final String MNEMONIC = InstructionLdc1.MNEMONIC;
 
-    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.EVEN_FLOAT_REGISTER, ParameterType.DOUBLE);
+    public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.EVEN_FLOAT_REGISTER, ParameterType.LABEL_SIGNED_32_BIT_SHIFT_REGISTER_SHIFT);
 
-    public PseudoInstructionLidRD() {
+    public PseudoInstructionLdc1RLsr() {
         super(MNEMONIC, PARAMETER_TYPES);
     }
 
     @Override
     public int getInstructionAmount(String[] parameters) {
-        return 6;
+        return 3;
     }
 
     @Override
     public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
-        var instructions = instructions(set,
-                InstructionAui.class, InstructionOri.class, InstructionMtc1.class,
-                InstructionAui.class, InstructionOri.class, InstructionMtc1.class);
+        var instructions = instructions(set, InstructionAui.class, InstructionAddu.class, InstructionLdc1.class);
 
-        long load = (long) parameters[1].getUndefined();
-        int low = (int) load;
-        int high = (int) (load >> 32);
+        int saveAddress = shiftedAddress(parameters[1]);
 
-        var aui1 = parameters(AT, ZERO, immediate(upper(low)));
-        var ori1 = parameters(AT, AT, immediate(lower(low)));
-        var mtc11 = parameters(AT, parameters[0]);
-        var aui2 = parameters(AT, ZERO, immediate(upper(high)));
-        var ori2 = parameters(AT, AT, immediate(lower(high)));
-        var mtc12 = parameters(AT, register(parameters[0].getRegister() + 1));
-        return assemble(instructions, aui1, ori1, mtc11, aui2, ori2, mtc12);
+        var aui = parameters(AT, ZERO, immediate(upper(saveAddress)));
+        var addu = parameters(AT, AT, register(parameters[1].getRegister()));
+        var lb = parameters(parameters[0], registerImmediate(1, lower(saveAddress)));
+
+        return assemble(instructions, aui, addu, lb);
     }
 }

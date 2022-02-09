@@ -54,7 +54,7 @@ public class DirectiveDouble extends Directive {
         data.align(3);
         int start = data.getCurrent();
         for (String parameter : parameters) {
-            long l = Double.doubleToLongBits(Long.parseLong(parameter));
+            long l = Double.doubleToLongBits(Double.parseDouble(parameter));
 
             int low = (int) l;
             int high = (int) (l >> 32);

@@ -41,18 +41,18 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
-public class InstructionLb extends BasicInstruction<InstructionLb.Assembled> implements MemoryInstruction {
+public class InstructionLdc1 extends BasicInstruction<InstructionLdc1.Assembled> implements MemoryInstruction {
 
-    public static final String MNEMONIC = "lb";
+    public static final String MNEMONIC = "ldc1";
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
-    public static final int OPERATION_CODE = 0b100000;
+    public static final int OPERATION_CODE = 0b110101;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
-            ParameterType.REGISTER,
+            ParameterType.EVEN_FLOAT_REGISTER,
             ParameterType.SIGNED_16_BIT_REGISTER_SHIFT
     );
 
-    public InstructionLb() {
+    public InstructionLdc1() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
@@ -61,13 +61,8 @@ public class InstructionLb extends BasicInstruction<InstructionLb.Assembled> imp
 
     @Override
     public AssembledInstruction assembleBasic(ParameterParseResult[] parameters, Instruction origin) {
-        return new Assembled(
-                parameters[1].getRegister(),
-                parameters[0].getRegister(),
-                parameters[1].getImmediate(),
-                origin,
-                this
-        );
+        return new Assembled(parameters[1].getRegister(), parameters[0].getRegister(),
+                parameters[1].getImmediate(), origin, this);
     }
 
     @Override
@@ -107,15 +102,20 @@ public class InstructionLb extends BasicInstruction<InstructionLb.Assembled> imp
 
         @Override
         public void execute() {
+            int t = instruction.getTargetRegister();
+            checkEvenRegister(t);
+
             int address = value(instruction.getSourceRegister()) + instruction.getImmediateAsSigned();
-            int word = simulation.getMemory().getByte(address);
-            register(instruction.getTargetRegister()).setValue(word);
+            int low = simulation.getMemory().getWord(address);
+            int high = simulation.getMemory().getWord(address + 4);
+            registerCOP1(t).setValue(low);
+            registerCOP1(t + 1).setValue(high);
         }
     }
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
 
-        private int result;
+        private int resultLow, resultHigh;
 
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, true, true);
@@ -123,8 +123,10 @@ public class InstructionLb extends BasicInstruction<InstructionLb.Assembled> imp
 
         @Override
         public void decode() {
+            int t = instruction.getTargetRegister();
+            checkEvenRegister(t);
             requires(instruction.getSourceRegister(), false);
-            lock(instruction.getTargetRegister());
+            lockCOP1Double(t);
         }
 
         @Override
@@ -133,14 +135,17 @@ public class InstructionLb extends BasicInstruction<InstructionLb.Assembled> imp
 
         @Override
         public void memory() {
-            var address = value(instruction.getSourceRegister()) + instruction.getImmediateAsSigned();
-            result = simulation.getMemory().getByte(address);
-            forward(instruction.getTargetRegister(), result);
+            int address = value(instruction.getSourceRegister()) + instruction.getImmediateAsSigned();
+            resultLow = simulation.getMemory().getWord(address);
+            resultHigh = simulation.getMemory().getWord(address + 4);
+            forwardCOP1(instruction.getTargetRegister(), resultLow);
+            forwardCOP1(instruction.getTargetRegister() + 1, resultHigh);
         }
 
         @Override
         public void writeBack() {
-            setAndUnlock(instruction.getTargetRegister(), result);
+            setAndUnlockCOP1(instruction.getTargetRegister(), resultLow);
+            setAndUnlockCOP1(instruction.getTargetRegister() + 1, resultHigh);
         }
     }
 }
