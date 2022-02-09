@@ -81,6 +81,7 @@ INSTRUCTION_JALR: Jump and link register
 INSTRUCTION_JIALC: Jump indexed and link compact
 INSTRUCTION_JIC: Jump indexed compact
 INSTRUCTION_LB: Load byte
+INSTRUCTION_LBU: Load byte unsigned
 INSTRUCTION_LW: Load word
 INSTRUCTION_MFC0: Move to coprocessor 0
 INSTRUCTION_MFC1: Move to coprocessor 1
@@ -2707,6 +2708,34 @@ INSTRUCTION_LB_DOCUMENTATION: |-
   (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
   mem_byte ⇽ LoadMemory(CCA, BYTE, p_addr, v_addr, DATA)
   GPR[rt] ⇽ sign_extend(mem_byte)
+
+  <b>Exceptions:</b>
+  Address Error
+INSTRUCTION_LBU_DOCUMENTATION: |-
+  <u>Load byte unsigned</u>
+
+  <b>Format:</b>
+  lbu rt offset(base)
+
+  | LBU      base     rt    offset |
+  |100100                          |
+  |  6        5       5       16   |
+
+
+  <b>Description:</b>
+  GPR[rt] ⇽ memory[GPR[base] + offset]
+
+  The contents of the 8-bit byte at the memory location by the effective address are fetched, zero-extended and placed in GPR <i>rt</i>.
+  The 16-bit signed <i>offset</i> is added to the contents of GPR <i>base</i> to form the effective address.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  v_addr ⇽ sign_extend(offset) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+  mem_byte ⇽ LoadMemory(CCA, BYTE, p_addr, v_addr, DATA)
+  GPR[rt] ⇽ zero_extend(mem_byte)
 
   <b>Exceptions:</b>
   Address Error

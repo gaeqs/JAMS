@@ -81,6 +81,7 @@ INSTRUCTION_JALR: Salto y enlace a registro
 INSTRUCTION_JIALC: Salto compacto indexado y enlace
 INSTRUCTION_JIC: Salto compacto indexado
 INSTRUCTION_LB: Cargar byte
+INSTRUCTION_LBU: Cargar byte sin signo
 INSTRUCTION_LW: Cargar palabra
 INSTRUCTION_MFC0: Mover desde el coprocesador 0
 INSTRUCTION_MFC1: Mover desde el coprocesador 1
@@ -2705,6 +2706,34 @@ INSTRUCTION_LB_DOCUMENTATION: |-
   (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
   mem_byte ⇽ LoadMemory(CCA, BYTE, p_addr, v_addr, DATA)
   GPR[rt] ⇽ sign_extend(mem_byte)
+
+  <b>Excepciones:</b>
+  Address Error
+INSTRUCTION_LBU_DOCUMENTATION: |-
+  <u>Cargar byte sin signo</u>
+
+  <b>Formato:</b>
+  lbu rt desplazamiento(base)
+
+  | LBU      base     rt    desplazamiento |
+  |100100                                  |
+  |  6        5       5           16       |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ memory[GPR[base] + desplazamiento]
+
+  El contenido de la palabra de 8 bits guardada en la dirección de memoria efectiva es cargado, extendido sin signo e insertado en el registro <i>rt</i>.
+  El contenido de la celda <i>desplazamiento</i> es sumado al contenido del registro <i>base</i> para formar la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  v_addr ⇽ sign_extend(desplazamiento) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+  mem_byte ⇽ LoadMemory(CCA, BYTE, p_addr, v_addr, DATA)
+  GPR[rt] ⇽ zero_extend(mem_byte)
 
   <b>Excepciones:</b>
   Address Error
