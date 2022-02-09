@@ -71,7 +71,7 @@ public class InstructionBnezc extends BasicInstruction<InstructionBnezc.Assemble
 
     @Override
     public boolean match(int instructionCode) {
-        int rs = instructionCode >> AssembledI21Instruction.DESTINATION_REGISTER_MASK & AssembledI21Instruction.DESTINATION_REGISTER_MASK;
+        int rs = instructionCode >> AssembledI21Instruction.DESTINATION_REGISTER_SHIFT & AssembledI21Instruction.DESTINATION_REGISTER_MASK;
         return super.match(instructionCode) && rs != 0;
     }
 

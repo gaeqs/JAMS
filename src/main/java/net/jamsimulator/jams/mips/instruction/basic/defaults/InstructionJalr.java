@@ -130,7 +130,7 @@ public class InstructionJalr extends BasicRInstruction<InstructionJalr.Assembled
 
         @Override
         public void execute() {
-            jump(instruction.getSourceRegister());
+            jump(value(instruction.getSourceRegister()));
         }
 
         @Override

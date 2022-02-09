@@ -78,6 +78,7 @@ INSTRUCTION_INS: Insert bit field
 INSTRUCTION_J: Jump
 INSTRUCTION_JAL: Jump and link
 INSTRUCTION_JALR: Jump and link register
+INSTRUCTION_JIALC: Jump indexed and link compact
 INSTRUCTION_LB: Load byte
 INSTRUCTION_LW: Load word
 INSTRUCTION_MFC0: Move to coprocessor 0
@@ -2528,7 +2529,7 @@ INSTRUCTION_J_DOCUMENTATION: |-
 
   <b>Description:</b>
   This is a PC-region branch (not PC-relative); the effective target address is the 256MB-aligned region.
-  The low 28 bits of the target addres is the <i>index</i> field shifted left 2 bits. The remaining upper bits are the corresponding bits of the addres of the instruction in the delay slot (not the branch itself).
+  The low 28 bits of the target address is the <i>index</i> field shifted left 2 bits. The remaining upper bits are the corresponding bits of the address of the instruction in the delay slot (not the branch itself).
   Jump to the effective target address. If delay slots are enabled, this instruction also executes the instruction that follows the jump, in the branch delay slot, before executing the jump itself.
 
   <b>Restrictions:</b>
@@ -2562,7 +2563,7 @@ INSTRUCTION_JAL_DOCUMENTATION: |-
   This is a PC-region branch (not PC-relative); the effective target address is the 256MB-aligned region.
 
   Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
-  The low 28 bits of the target addres is the <i>index</i> field shifted left 2 bits. The remaining upper bits are the corresponding bits of the addres of the instruction in the delay slot (not the branch itself).
+  The low 28 bits of the target address is the <i>index</i> field shifted left 2 bits. The remaining upper bits are the corresponding bits of the address of the instruction in the delay slot (not the branch itself).
   Jump to the effective target address. If delay slots are enabled, this instruction also executes the instruction that follows the jump, in the branch delay slot, before executing the jump itself.
 
   <b>Restrictions:</b>
@@ -2599,7 +2600,7 @@ INSTRUCTION_JALR_DOCUMENTATION: |-
 
   Places the return address link in GPR <i>rd</i>. The return link is the address of the instruction where the execution continues after a procedure call.
 
-  Jump to the effective target addres in GPR <i>rs</i>. If the target address is not 4-bytes aligned, an Address Error exception will occur when the target address is fetched.
+  Jump to the effective target address in GPR <i>rs</i>. If the target address is not 4-bytes aligned, an Address Error exception will occur when the target address is fetched.
   If delay slots are enabled, this instruction also executes the instruction that follows the jump, in the branch delay slot, before executing the jump itself.
 
   <b>Restrictions:</b>
@@ -2621,6 +2622,37 @@ INSTRUCTION_JALR_DOCUMENTATION: |-
   <b>Programming Notes:</b>
   This jump-and-link register instruction can select a register for the return link; other link instructions use GPR 31.
   The default register for GPR <i>rd</i>, if omitted in the assembly language instruction, is GPR 31.
+INSTRUCTION_JIALC_DOCUMENTATION: |-
+  <u>Jump indexed and link compact</u>
+
+  <b>Format:</b>
+  jialc rt, offset
+
+  | POP76    JIALC     rt     offset  |
+  |111110    00000                    |
+  |  6         5       5        16    |
+
+
+  <b>Description:</b>
+  GPR[31] ⇽ return_addr; PC ⇽ GPR[rt] + sig_extend(offset)
+
+  Places the return address link in GPR <i>31</i>. The return link is the address of the instruction where the execution continues after a procedure call.
+  Jump to the address formed by the by sign extending the <i>offset</i> and adding it to the contents of GPR <i>rt</i>.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  temp ⇽ GPR[rt] + sign_extend(offset)
+  GPR[31] ⇽ PC + 4
+  PC ⇽ temp
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  Unlike other jump instructions, this instruction does <b>not</b> shift the offset before adding it the register.
 INSTRUCTION_LB_DOCUMENTATION: |-
   <u>Load byte</u>
 
@@ -3849,7 +3881,7 @@ INSTRUCTION_JR_DOCUMENTATION: |-
   jr $zero, rs
 
   <b>Description:</b>
-  Jump to the effective target addres in GPR <i>rs</i>. If the target address is not 4-bytes aligned, an Address Error exception will occur when the target address is fetched.
+  Jump to the effective target address in GPR <i>rs</i>. If the target address is not 4-bytes aligned, an Address Error exception will occur when the target address is fetched.
   If delay slots are enabled, this instruction also executes the instruction that follows the jump, in the branch delay slot, before executing the jump itself.
 
   <b>Restrictions:</b>

@@ -49,6 +49,6 @@ public class PseudoInstructionJrR extends PseudoInstruction {
 
     @Override
     public AssembledInstruction[] assemble(InstructionSet set, int address, ParameterParseResult[] parameters) {
-        return assemble(instructions(set, InstructionJalr.class), parameters(ZERO, parameters[0]));
+        return assemble(instructions(set, InstructionJalr.class), parameters(RA, parameters[0]));
     }
 }

@@ -29,7 +29,7 @@ import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.alu.ALUType;
-import net.jamsimulator.jams.mips.instruction.assembled.AssembledI21Instruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
@@ -71,7 +71,7 @@ public class InstructionJialc extends BasicInstruction<InstructionJialc.Assemble
 
     @Override
     public boolean match(int instructionCode) {
-        int rs = instructionCode >> AssembledI21Instruction.DESTINATION_REGISTER_MASK & AssembledI21Instruction.DESTINATION_REGISTER_MASK;
+        int rs = instructionCode >> AssembledI16Instruction.SOURCE_REGISTER_SHIFT & AssembledI16Instruction.SOURCE_REGISTER_MASK;
         return super.match(instructionCode) && rs == 0;
     }
 
@@ -80,10 +80,10 @@ public class InstructionJialc extends BasicInstruction<InstructionJialc.Assemble
         return true;
     }
 
-    public static class Assembled extends AssembledI21Instruction {
+    public static class Assembled extends AssembledI16Instruction {
 
-        public Assembled(int sourceRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(OPERATION_CODE, sourceRegister, offset, origin, basicOrigin);
+        public Assembled(int targetRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(OPERATION_CODE, 0, targetRegister, offset, origin, basicOrigin);
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -92,7 +92,7 @@ public class InstructionJialc extends BasicInstruction<InstructionJialc.Assemble
 
         @Override
         public String parametersToString(String registersStart) {
-            return registersStart + getDestinationRegister()
+            return registersStart + getTargetRegister()
                     + ", 0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 4);
         }
     }
@@ -106,7 +106,7 @@ public class InstructionJialc extends BasicInstruction<InstructionJialc.Assemble
         @Override
         public void execute() {
             register(31).setValue(getAddress() + 4);
-            pc().setValue(value(instruction.getDestinationRegister()) + getInstruction().getImmediateAsSigned());
+            pc().setValue(value(instruction.getTargetRegister()) + getInstruction().getImmediateAsSigned());
         }
     }
 
@@ -118,14 +118,14 @@ public class InstructionJialc extends BasicInstruction<InstructionJialc.Assemble
 
         @Override
         public void decode() {
-            requires(instruction.getDestinationRegister(), false);
+            requires(instruction.getTargetRegister(), false);
             lock(31);
             lock(pc());
         }
 
         @Override
         public void execute() {
-            jump(value(instruction.getDestinationRegister()) + getInstruction().getImmediateAsSigned());
+            jump(value(instruction.getTargetRegister()) + getInstruction().getImmediateAsSigned());
         }
 
         @Override
@@ -146,32 +146,33 @@ public class InstructionJialc extends BasicInstruction<InstructionJialc.Assemble
 
         @Override
         public void decode() {
-            requires(instruction.getDestinationRegister(), false);
+            requires(instruction.getTargetRegister(), false);
             lock(31);
             lock(pc());
 
             if (solveBranchOnDecode()) {
-                jump(value(instruction.getDestinationRegister()) + getInstruction().getImmediateAsSigned());
+                jump(value(instruction.getTargetRegister()) + getInstruction().getImmediateAsSigned());
             }
         }
 
         @Override
         public void execute() {
-            if(solveBranchOnDecode()) {
-                setAndUnlock(31, getAddress() + 4);
+            if (solveBranchOnDecode()) {
+                forward(31, getAddress() + 4);
             }
         }
 
         @Override
         public void memory() {
             if (!solveBranchOnDecode()) {
-                jump(value(instruction.getDestinationRegister()) + getInstruction().getImmediateAsSigned());
-                setAndUnlock(31, getAddress() + 4);
+                jump(value(instruction.getTargetRegister()) + getInstruction().getImmediateAsSigned());
+                forward(31, getAddress() + 4);
             }
         }
 
         @Override
         public void writeBack() {
+            setAndUnlock(31, getAddress() + 4);
         }
     }
 }

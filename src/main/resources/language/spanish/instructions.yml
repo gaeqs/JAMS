@@ -78,6 +78,7 @@ INSTRUCTION_INS: Insertar bits
 INSTRUCTION_J: Salto
 INSTRUCTION_JAL: Salto y enlace
 INSTRUCTION_JALR: Salto y enlace a registro
+INSTRUCTION_JIALC: Salto compacto indexado y enlace
 INSTRUCTION_LB: Cargar byte
 INSTRUCTION_LW: Cargar palabra
 INSTRUCTION_MFC0: Mover desde el coprocesador 0
@@ -2617,6 +2618,38 @@ INSTRUCTION_JALR_DOCUMENTATION: |-
   <b>Notas del programador:</b>
   Esta instrucción de salto y enlace a registro permite seleccionar el registro donde se guarda la dirección de retorno; otras instrucciones de enlace usan el registro 31.
   El registro por defecto para <i>rd</i>, si se omite en la instrucción en ensamblador, es el 31.
+INSTRUCTION_JIALC_DOCUMENTATION: |-
+  <u>Salto compacto indexado y enlace</u>
+
+  <b>Formato:</b>
+  jialc rt, offset
+
+  | POP76    JIALC     rt     desplazamiento  |
+  |111110    00000                            |
+  |  6         5       5            16        |
+
+
+  <b>Descripción:</b>
+  GPR[31] ⇽ return_addr; PC ⇽ GPR[rt] + sig_extend(desplazamiento)
+
+  Inserta la dirección de retorno en el registro <i>31</i>. Esta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+  Salta a la dirección efectiva formada por la suma del valor en el registro <i>rs</i> y el <i>desplazamiento</i>.
+  Esta instrución ejecuta un salto compacto. Los saltos compactos no tienen huecos de retardo.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  temp ⇽ GPR[rt] + sign_extend(desplazamiento)
+  GPR[31] ⇽ PC + 4
+  PC ⇽ temp
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  jialc <b>no</b> desplaza dos bits el desplazamiento antes de sumarlo al registro, como sí hacen otras funciones de salto.
 INSTRUCTION_LB_DOCUMENTATION: |-
   <u>Cargar byte</u>
 
