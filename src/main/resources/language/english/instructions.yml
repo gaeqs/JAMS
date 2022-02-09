@@ -79,6 +79,7 @@ INSTRUCTION_J: Jump
 INSTRUCTION_JAL: Jump and link
 INSTRUCTION_JALR: Jump and link register
 INSTRUCTION_JIALC: Jump indexed and link compact
+INSTRUCTION_JIC: Jump indexed compact
 INSTRUCTION_LB: Load byte
 INSTRUCTION_LW: Load word
 INSTRUCTION_MFC0: Move to coprocessor 0
@@ -2647,6 +2648,34 @@ INSTRUCTION_JIALC_DOCUMENTATION: |-
   temp ⇽ GPR[rt] + sign_extend(offset)
   GPR[31] ⇽ PC + 4
   PC ⇽ temp
+
+  <b>Exceptions:</b>
+  None
+
+  <b>Programming Notes:</b>
+  Unlike other jump instructions, this instruction does <b>not</b> shift the offset before adding it the register.
+INSTRUCTION_JIC_DOCUMENTATION: |-
+  <u>Jump indexed compact</u>
+
+  <b>Format:</b>
+  jialc rt, offset
+
+  | POP66     JIC      rt     offset  |
+  |110110    00000                    |
+  |  6         5       5        16    |
+
+
+  <b>Description:</b>
+  PC ⇽ GPR[rt] + sig_extend(offset)
+
+  Jump to the address formed by the by sign extending the <i>offset</i> and adding it to the contents of GPR <i>rt</i>.
+
+  <b>Restrictions:</b>
+  <i>Control Transfer Instructions (CTIs)</i> <black>should not</black> be placed in branch delay slots or Release 6 forbidden slots. CTIs include all branches and jumps, <black>nal</black>,  <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> and <black>pause</black>.
+  If a CTI is executed in the delay slot of a branch or jump, Release 6 implementations are required to signal a <black>Reserved Instruction</black> exception.
+
+  <b>Operation:</b>
+  PC ⇽ GPR[rt] + sign_extend(offset)
 
   <b>Exceptions:</b>
   None

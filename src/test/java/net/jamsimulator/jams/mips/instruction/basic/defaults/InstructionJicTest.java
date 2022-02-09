@@ -37,7 +37,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class InstructionJialcTest {
+class InstructionJicTest {
 
     @BeforeAll
     static void initRegistry() {
@@ -56,19 +56,12 @@ class InstructionJialcTest {
                 """
                         	.text
                         	la $t0, sub
-                        	li $s0, 0
-                        	jialc $t0, 4
-                        	tnei $s0, 20
-                        	li $v0, 17
-                        	li $a0, 0
-                        	syscall
+                        	jic $t0, 4
                         sub:
                         	break
-                        	teqi $ra, 0
-                        	li $s0, 20
-                        	jr $31
+                        	tnei $ra, 0
                         	li $v0, 17
-                        	li $a0, 1000
+                        	li $a0, 0
                         	syscall
                         """
         );

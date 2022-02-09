@@ -29,7 +29,7 @@ import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.alu.ALUType;
-import net.jamsimulator.jams.mips.instruction.assembled.AssembledI21Instruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledI16Instruction;
 import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.instruction.basic.ControlTransferInstruction;
@@ -41,18 +41,18 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.utils.StringUtils;
 
-public class InstructionBeqzc extends BasicInstruction<InstructionBeqzc.Assembled> implements ControlTransferInstruction {
+public class InstructionJic extends BasicInstruction<InstructionJic.Assembled> implements ControlTransferInstruction {
 
-    public static final String MNEMONIC = "beqzc";
+    public static final String MNEMONIC = "jic";
     public static final ALUType ALU_TYPE = ALUType.INTEGER;
     public static final int OPERATION_CODE = 0b110110;
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(
             ParameterType.REGISTER,
-            ParameterType.SIGNED_32_BIT
+            ParameterType.SIGNED_16_BIT
     );
 
-    public InstructionBeqzc() {
+    public InstructionJic() {
         super(MNEMONIC, PARAMETER_TYPES, ALU_TYPE, OPERATION_CODE);
         addExecutionBuilder(SingleCycleArchitecture.INSTANCE, SingleCycle::new);
         addExecutionBuilder(MultiCycleArchitecture.INSTANCE, MultiCycle::new);
@@ -71,8 +71,8 @@ public class InstructionBeqzc extends BasicInstruction<InstructionBeqzc.Assemble
 
     @Override
     public boolean match(int instructionCode) {
-        int rs = instructionCode >> AssembledI21Instruction.DESTINATION_REGISTER_SHIFT & AssembledI21Instruction.DESTINATION_REGISTER_MASK;
-        return super.match(instructionCode) && rs != 0;
+        int rs = instructionCode >> AssembledI16Instruction.SOURCE_REGISTER_SHIFT & AssembledI16Instruction.SOURCE_REGISTER_MASK;
+        return super.match(instructionCode) && rs == 0;
     }
 
     @Override
@@ -80,10 +80,10 @@ public class InstructionBeqzc extends BasicInstruction<InstructionBeqzc.Assemble
         return true;
     }
 
-    public static class Assembled extends AssembledI21Instruction {
+    public static class Assembled extends AssembledI16Instruction {
 
-        public Assembled(int sourceRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(OPERATION_CODE, sourceRegister, offset, origin, basicOrigin);
+        public Assembled(int targetRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(OPERATION_CODE, 0, targetRegister, offset, origin, basicOrigin);
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
@@ -92,7 +92,7 @@ public class InstructionBeqzc extends BasicInstruction<InstructionBeqzc.Assemble
 
         @Override
         public String parametersToString(String registersStart) {
-            return registersStart + getDestinationRegister()
+            return registersStart + getTargetRegister()
                     + ", 0x" + StringUtils.addZeros(Integer.toHexString(getImmediate()), 4);
         }
     }
@@ -105,10 +105,7 @@ public class InstructionBeqzc extends BasicInstruction<InstructionBeqzc.Assemble
 
         @Override
         public void execute() {
-            if (value(instruction.getDestinationRegister()) != 0) return;
-            var pc = pc();
-            pc.setValue(pc.getValue() + (instruction.getImmediateAsSigned() << 2));
-
+            pc().setValue(value(instruction.getTargetRegister()) + getInstruction().getImmediateAsSigned());
         }
     }
 
@@ -120,17 +117,13 @@ public class InstructionBeqzc extends BasicInstruction<InstructionBeqzc.Assemble
 
         @Override
         public void decode() {
-            requires(instruction.getDestinationRegister(), false);
+            requires(instruction.getTargetRegister(), false);
             lock(pc());
         }
 
         @Override
         public void execute() {
-            if (value(instruction.getDestinationRegister()) == 0) {
-                jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
-            } else {
-                unlock(pc());
-            }
+            jump(value(instruction.getTargetRegister()) + getInstruction().getImmediateAsSigned());
         }
 
         @Override
@@ -150,13 +143,11 @@ public class InstructionBeqzc extends BasicInstruction<InstructionBeqzc.Assemble
 
         @Override
         public void decode() {
-            requires(instruction.getDestinationRegister(), false);
+            requires(instruction.getTargetRegister(), false);
             lock(pc());
 
             if (solveBranchOnDecode()) {
-                if (value(instruction.getDestinationRegister()) == 0) {
-                    jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
-                } else unlock(pc());
+                jump(value(instruction.getTargetRegister()) + getInstruction().getImmediateAsSigned());
             }
         }
 
@@ -167,9 +158,7 @@ public class InstructionBeqzc extends BasicInstruction<InstructionBeqzc.Assemble
         @Override
         public void memory() {
             if (!solveBranchOnDecode()) {
-                if (value(instruction.getDestinationRegister()) == 0) {
-                    jump(getAddress() + 4 + (instruction.getImmediateAsSigned() << 2));
-                } else unlock(pc());
+                jump(value(instruction.getTargetRegister()) + getInstruction().getImmediateAsSigned());
             }
         }
 
