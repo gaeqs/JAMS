@@ -42,6 +42,7 @@ import net.jamsimulator.jams.mips.instruction.basic.BasicInstruction;
 import net.jamsimulator.jams.mips.label.Label;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryHalfwordSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
@@ -317,6 +318,11 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
 
     @Listener
     private void onMemoryChange(MemoryByteSetEvent.After event) {
+        checkMemoryChange(event.getAddress());
+    }
+
+    @Listener
+    private void onMemoryChange(MemoryHalfwordSetEvent.After event) {
         checkMemoryChange(event.getAddress());
     }
 

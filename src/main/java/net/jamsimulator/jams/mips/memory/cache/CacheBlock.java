@@ -88,6 +88,27 @@ public class CacheBlock {
         return old;
     }
 
+
+    public short getHalfword(int address, boolean bigEndian) {
+        byte b0 = data[address++];
+        byte b1 = data[address];
+        return bigEndian ? MemoryCell.merge(b1, b0) : MemoryCell.merge(b0, b1);
+    }
+
+    public short setHalfword(int address, short word, boolean bigEndian) {
+        short old = getHalfword(address, bigEndian);
+        byte[] array = MemoryCell.split(word);
+        if (bigEndian) {
+            data[address++] = array[1];
+            data[address] = array[0];
+        } else {
+            data[address++] = array[0];
+            data[address] = array[1];
+        }
+        return old;
+    }
+
+
     public int getWord(int address, boolean bigEndian) {
         byte b0 = data[address++];
         byte b1 = data[address++];

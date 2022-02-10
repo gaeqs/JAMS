@@ -34,6 +34,7 @@ import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryHalfwordSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 
 
@@ -91,6 +92,14 @@ public class LabSegments extends HBox {
         private void onMemorySetWord(MemoryWordSetEvent.After event) {
             if (event.getAddress() >> 2 == address >> 2) {
                 byte value = (byte) (event.getValue() >> 8 * (address & 0x3));
+                refresh(value);
+            }
+        }
+
+        @Listener
+        private void onMemorySetHalfword(MemoryHalfwordSetEvent.After event) {
+            if (event.getAddress() >> 1 == address >> 1) {
+                byte value = (byte) (event.getValue() >> 8 * (address & 0x1));
                 refresh(value);
             }
         }

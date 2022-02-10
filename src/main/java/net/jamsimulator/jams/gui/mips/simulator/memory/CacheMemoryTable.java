@@ -33,6 +33,7 @@ import net.jamsimulator.jams.language.wrapper.LanguageTableColumn;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.cache.event.CacheResetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryHalfwordSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.*;
@@ -253,6 +254,21 @@ public class CacheMemoryTable extends TableView<CacheMemoryEntry> implements Mem
     @Listener
     private void onMemoryChange(MemoryWordSetEvent.After event) {
         int offset = event.getAddress() % 16;
+        int address = event.getAddress() >> 4 << 4;
+        CacheMemoryEntry entry = entries.get(address);
+        if (entry == null) return;
+
+        var block = cache.getCacheBlock(this.block).orElse(null);
+        if (block == null) return;
+
+        entry.setBlock(block);
+
+        entry.update(event.getAddress(), offset);
+    }
+
+    @Listener
+    private void onMemoryChange(MemoryHalfwordSetEvent.After event) {
+        int offset = (event.getAddress() % 16) >> 2 << 2;
         int address = event.getAddress() >> 4 << 4;
         CacheMemoryEntry entry = entries.get(address);
         if (entry == null) return;

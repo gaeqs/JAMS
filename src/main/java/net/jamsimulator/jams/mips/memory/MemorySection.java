@@ -162,6 +162,41 @@ public class MemorySection {
     }
 
     /**
+     * Returns a halfword from the memory section stored in the given address.
+     * The address must be absolute address from the memory.
+     *
+     * @param address   the address.
+     * @param bigEndian whether the memory is big endian.
+     * @return the byte.
+     */
+    public short getHalfword(int address, boolean bigEndian) {
+        if (!isInside(address))
+            throw new IndexOutOfBoundsException("Address " + address + " out of bounds.");
+        address -= firstAddress;
+        int cellIndex = address / cellSize;
+        MemoryCell cell = cells[cellIndex];
+        return cell == null ? 0 : cell.getHalfword(address - cellIndex * cellSize, bigEndian);
+    }
+
+    /**
+     * Stores a halfword into the given address.
+     * The address must be absolute address from the memory.
+     *
+     * @param address   the address.
+     * @param h         the halfword.
+     * @param bigEndian whether the memory is big endian.
+     * @return the old byte
+     */
+    public short setHalfword(int address, short h, boolean bigEndian) {
+        if (!isInside(address))
+            throw new IndexOutOfBoundsException("Address " + address + " out of bounds.");
+        address -= firstAddress;
+        int cellIndex = address / cellSize;
+        MemoryCell cell = getOrCreateCell(cellIndex);
+        return cell.setHalfword(address - cellIndex * cellSize, h, bigEndian);
+    }
+
+    /**
      * Returns a word from the memory section stored in the given address.
      * The address must be absolute address from the memory. The use of an unaligned
      * address may cause undefined behaviour.

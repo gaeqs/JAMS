@@ -52,6 +52,13 @@ public class MemoryCell {
         this.data = data;
     }
 
+    public static short merge(byte b0, byte b1) {
+        short i = (short) (b1 & 0xFF);
+        i <<= 8;
+        i += (short) (b0 & 0xFF);
+        return i;
+    }
+
     public static int merge(byte b0, byte b1, byte b2, byte b3) {
         int i = Byte.toUnsignedInt(b3);
         i <<= 8;
@@ -94,6 +101,40 @@ public class MemoryCell {
     public byte setByte(int address, byte b) {
         byte old = data[address];
         data[address] = b;
+        return old;
+    }
+
+    /**
+     * Returns the halfword stored into the given relative address.
+     *
+     * @param address   the relative address.
+     * @param bigEndian whether the memory is big endian.
+     * @return the halfword.
+     */
+    public short getHalfword(int address, boolean bigEndian) {
+        byte b0 = data[address++];
+        byte b1 = data[address];
+        return bigEndian ? merge(b1, b0) : merge(b0, b1);
+    }
+
+    /**
+     * Stores the given halfword into the given relative address.
+     *
+     * @param address   the relative address.
+     * @param word      the halfword.
+     * @param bigEndian whether the memory is big endian.
+     * @return the old halfword.
+     */
+    public short setHalfword(int address, short word, boolean bigEndian) {
+        short old = getHalfword(address, bigEndian);
+        byte[] array = split(word);
+        if (bigEndian) {
+            data[address++] = array[1];
+            data[address] = array[0];
+        } else {
+            data[address++] = array[0];
+            data[address] = array[1];
+        }
         return old;
     }
 

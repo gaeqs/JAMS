@@ -31,10 +31,7 @@ import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 import net.jamsimulator.jams.mips.memory.cache.event.CacheOperationEvent;
-import net.jamsimulator.jams.mips.memory.event.MemoryAllocateMemoryEvent;
-import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
-import net.jamsimulator.jams.mips.memory.event.MemoryEndiannessChange;
-import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
+import net.jamsimulator.jams.mips.memory.event.*;
 import net.jamsimulator.jams.mips.register.COP0RegistersBits;
 import net.jamsimulator.jams.mips.register.Register;
 import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
@@ -290,6 +287,12 @@ public class MultiALUPipelinedSimulation
         private void onMemoryChange(MemoryByteSetEvent.After event) {
             if (currentStepChanges == null) return;
             currentStepChanges.addChange(new SimulationChangeMemoryByte(event.getMemory(), event.getAddress(), event.getOldValue()));
+        }
+
+        @Listener
+        private void onMemoryChange(MemoryHalfwordSetEvent.After event) {
+            if (currentStepChanges == null) return;
+            currentStepChanges.addChange(new SimulationChangeMemoryHalfword(event.getMemory(), event.getAddress(), event.getOldValue()));
         }
 
         @Listener

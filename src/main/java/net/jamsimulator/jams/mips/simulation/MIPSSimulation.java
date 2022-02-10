@@ -43,6 +43,7 @@ import net.jamsimulator.jams.mips.interrupt.MIPSInterruptException;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.cache.Cache;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryHalfwordSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.register.COP0Register;
 import net.jamsimulator.jams.mips.register.COP0RegistersBits;
@@ -931,6 +932,25 @@ public abstract class MIPSSimulation<Arch extends Architecture> extends SimpleEv
         if (address >= memory.getFirstTextAddress() && address <= instructionStackBottom) {
             instructionCache[(address - memory.getFirstTextAddress()) >> 2] = null;
         }
+        var memorySection = event.getMemorySection().orElse(null);
+        if (memorySection != null && memorySection.getName().equals("Text") && instructionStackBottom < event.getAddress()) {
+            instructionStackBottom = address;
+
+            InstructionExecution<Arch, ?>[] array =
+                    new InstructionExecution[((instructionStackBottom - memory.getFirstTextAddress()) >> 2) + 1];
+            System.arraycopy(instructionCache, 0, array, 0, instructionCache.length);
+            instructionCache = array;
+        }
+    }
+
+    @Listener
+    private void onMemoryChange(MemoryHalfwordSetEvent.After event) {
+        int address = event.getAddress() >> 2 << 2;
+
+        if (address >= memory.getFirstTextAddress() && address <= instructionStackBottom) {
+            instructionCache[(address - memory.getFirstTextAddress()) >> 2] = null;
+        }
+
         var memorySection = event.getMemorySection().orElse(null);
         if (memorySection != null && memorySection.getName().equals("Text") && instructionStackBottom < event.getAddress()) {
             instructionStackBottom = address;

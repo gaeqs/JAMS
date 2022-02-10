@@ -38,6 +38,7 @@ import net.jamsimulator.jams.gui.util.value.RangedIntegerValueEditor;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryHalfwordSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationCycleEvent;
@@ -144,6 +145,22 @@ public class LabCounter extends VBox {
             });
         }
     }
+
+    @Listener
+    private void onHalfWordSet(MemoryHalfwordSetEvent.After event) {
+        int halfwordAddress = address >> 1 << 1;
+        if (halfwordAddress == event.getAddress()) {
+            int offset = address - halfwordAddress;
+            int value = (event.getValue() >> offset * 8) & 0xFF;
+            counter = reset = (byte) value;
+            Platform.runLater(() -> {
+                numberEditor.setCurrentValue(value);
+                progressBar.setProgress(1.0);
+                counterDisplay.setText(String.valueOf(Byte.toUnsignedInt(counter)));
+            });
+        }
+    }
+
 
     @Listener(priority = Integer.MIN_VALUE)
     private void onSimulationCycle(SimulationCycleEvent.Before event) {

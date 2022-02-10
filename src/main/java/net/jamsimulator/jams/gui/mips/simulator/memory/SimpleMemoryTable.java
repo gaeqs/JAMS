@@ -33,6 +33,7 @@ import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTableColumn;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryHalfwordSetEvent;
 import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationCachesResetEvent;
@@ -230,6 +231,15 @@ public class SimpleMemoryTable extends TableView<SimpleMemoryEntry> implements M
         SimpleMemoryEntry entry = entries.get(address);
         if (entry == null) return;
         entry.update(event.getAddress(), offset);
+    }
+
+    @Listener
+    private void onMemoryChange(MemoryHalfwordSetEvent.After event) {
+        int offset = (event.getAddress() & 0xF) >> 2 << 2;
+        int address = event.getAddress() >> 4 << 4;
+        SimpleMemoryEntry entry = entries.get(address);
+        if (entry == null) return;
+        entry.update(event.getAddress() >> 2 << 2, offset);
     }
 
     @Listener

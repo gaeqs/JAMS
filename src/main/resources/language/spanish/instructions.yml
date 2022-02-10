@@ -83,6 +83,7 @@ INSTRUCTION_JIC: Salto compacto indexado
 INSTRUCTION_LB: Cargar byte
 INSTRUCTION_LBU: Cargar byte sin signo
 INSTRUCTION_LDC1: Cargar coma flotante doble en el coprocesador 1
+INSTRUCTION_LH: Cargar media palabra
 INSTRUCTION_LW: Cargar palabra
 INSTRUCTION_MFC0: Mover desde el coprocesador 0
 INSTRUCTION_MFC1: Mover desde el coprocesador 1
@@ -2770,14 +2771,42 @@ INSTRUCTION_LDC1_DOCUMENTATION: |-
 
   <b>Excepciones:</b>
   Address Error
+INSTRUCTION_LH_DOCUMENTATION: |-
+  <u>Cargar media palabra</u>
+
+  <b>Formato:</b>
+  lh rt desplazamiento(base)
+
+  |  LH      base     rt    desplazamiento |
+  |100001                                  |
+  |  6        5       5           16       |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ memory[GPR[base] + desplazamiento]
+
+  El contenido de la palabra de 16 bits guardada en la dirección de memoria efectiva es cargado, extendido con signo e insertado en el registro <i>rt</i>.
+  El contenido de la celda <i>desplazamiento</i> es sumado al contenido del registro <i>base</i> para formar la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  v_addr ⇽ sign_extend(offset) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+  mem_word ⇽ LoadMemory(CCA, HALFWORD, p_addr, v_addr, DATA)
+  GPR[rt] ⇽ sign_extend(mem_word)
+
+  <b>Excepciones:</b>
+  Address Error
 INSTRUCTION_LW_DOCUMENTATION: |-
   <u>Cargar palabra</u>
 
   <b>Formato:</b>
   lw rt desplazamiento(base)
 
-  |  LB      base     rt    desplazamiento |
-  |100000                                  |
+  |  LW      base     rt    desplazamiento |
+  |100011                                  |
   |  6        5       5           16       |
 
 

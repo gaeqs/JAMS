@@ -83,6 +83,7 @@ INSTRUCTION_JIC: Jump indexed compact
 INSTRUCTION_LB: Load byte
 INSTRUCTION_LBU: Load byte unsigned
 INSTRUCTION_LDC1: Load doubleword to float register
+INSTRUCTION_LH: Load halfword
 INSTRUCTION_LW: Load word
 INSTRUCTION_MFC0: Move to coprocessor 0
 INSTRUCTION_MFC1: Move to coprocessor 1
@@ -2796,6 +2797,34 @@ INSTRUCTION_LW_DOCUMENTATION: |-
   v_addr ⇽ sign_extend(offset) + GPR[base]
   (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
   mem_word ⇽ LoadMemory(CCA, WORD, p_addr, v_addr, DATA)
+  GPR[rt] ⇽ sign_extend(mem_word)
+
+  <b>Exceptions:</b>
+  Address Error
+INSTRUCTION_LH_DOCUMENTATION: |-
+  <u>Load halfword</u>
+
+  <b>Format:</b>
+  lh rt offset(base)
+
+  |  LH      base     rt    offset |
+  |100001                          |
+  |  6        5       5       16   |
+
+
+  <b>Description:</b>
+  GPR[rt] ⇽ memory[GPR[base] + offset]
+
+  The contents of the 16-bit word at the memory location by the effective address are fetched, sign-extended and placed in GPR <i>rt</i>.
+  The 16-bit signed <i>offset</i> is added to the contents of GPR <i>base</i> to form the effective address.
+
+  <b>Restrictions:</b>
+  None
+
+  <b>Operation:</b>
+  v_addr ⇽ sign_extend(offset) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+  mem_word ⇽ LoadMemory(CCA, HALFWORD, p_addr, v_addr, DATA)
   GPR[rt] ⇽ sign_extend(mem_word)
 
   <b>Exceptions:</b>
