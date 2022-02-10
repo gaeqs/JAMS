@@ -6,8 +6,7 @@ INSTRUCTION_ADDIU: Suma con inmediato sin desbordamiento
 INSTRUCTION_ADDIUPC: Suma de inmediato y PC sin desbordamiento
 INSTRUCTION_ADD_S: Suma (coma flotante)
 INSTRUCTION_ADDU: Suma sin desbordamiento
-INSTRUCTION_ALIGN: Concatenar dos registros generales, extrayendo un subconjunto contiguo
-  a una posición de byte
+INSTRUCTION_ALIGN: Concatenar dos registros generales, extrayendo un subconjunto contiguo a una posición de byte
 INSTRUCTION_ALUIPC: Suma alineada del inmediato con los bits superiores del PC
 INSTRUCTION_AND: And
 INSTRUCTION_ANDI: And con inmediato
@@ -50,6 +49,8 @@ INSTRUCTION_CEIL_L_D: Función techo de coma flotante doble a doble palabra
 INSTRUCTION_CEIL_L_S: Función techo de coma flotante a doble palabra
 INSTRUCTION_CEIL_W_D: Función techo de coma flotante doble a palabra
 INSTRUCTION_CEIL_W_S: Función techo de coma flotante a palabra
+INSTRUCTION_CLASS_D: Máscara de clasificación de coma flotante doble
+INSTRUCTION_CLASS_S: Máscara de clasificación de coma flotante
 INSTRUCTION_CLO: Conteo de los primeros unos en una palabra
 INSTRUCTION_CLZ: Conteo de los primeros ceros en una palabra
 INSTRUCTION_CMP_D: Comparación en coma flotante doble ({TYPE})
@@ -61,15 +62,29 @@ INSTRUCTION_CRC32CB: Generar CRC con el polinomio invertido 0x82F63B78 (byte)
 INSTRUCTION_CRC32CH: Generar CRC con el polinomio invertido 0x82F63B78 (media palabra)
 INSTRUCTION_CRC32CW: Generar CRC con el polinomio invertido 0x82F63B78 (palabra)
 INSTRUCTION_CVT: Convertir número de {FROM} a {TO}
+INSTRUCTION_DI: Deshabilitar interrupciones
 INSTRUCTION_DIV: División
 INSTRUCTION_DIV_D: División (coma flotante doble)
 INSTRUCTION_DIV_S: División (coma flotante)
 INSTRUCTION_DIVU: División sin signo
+INSTRUCTION_EI: Habilitar interrupciones
 INSTRUCTION_ERET: Retorno de la excepción
+INSTRUCTION_EXT: Extraer bits
+INSTRUCTION_FLOOR_L_D: Función suelo de coma flotante doble a doble palabra
+INSTRUCTION_FLOOR_L_S: Función suelo de coma flotante a doble palabra
+INSTRUCTION_FLOOR_W_D: Función suelo de coma flotante doble a palabra
+INSTRUCTION_FLOOR_W_S: Función suelo de coma flotante a palabra
+INSTRUCTION_INS: Insertar bits
 INSTRUCTION_J: Salto
 INSTRUCTION_JAL: Salto y enlace
 INSTRUCTION_JALR: Salto y enlace a registro
+INSTRUCTION_JIALC: Salto compacto indexado y enlace
+INSTRUCTION_JIC: Salto compacto indexado
 INSTRUCTION_LB: Cargar byte
+INSTRUCTION_LBU: Cargar byte sin signo
+INSTRUCTION_LDC1: Cargar coma flotante doble en el coprocesador 1
+INSTRUCTION_LH: Cargar media palabra
+INSTRUCTION_LHU: Cargar media palabra sin signo
 INSTRUCTION_LW: Cargar palabra
 INSTRUCTION_MFC0: Mover desde el coprocesador 0
 INSTRUCTION_MFC1: Mover desde el coprocesador 1
@@ -1708,6 +1723,82 @@ INSTRUCTION_CEIL_W_S_DOCUMENTATION: |-
 
   <b>Excepciones:</b>
   Ninguna
+INSTRUCTION_CLASS_D_DOCUMENTATION: |-
+  <u>Máscara de clasificación de coma flotante doble</u>
+
+  <b>Formato:</b>
+  class.d fd, fs
+
+  | COP1      fmt      0      fs      fd      CLASS |
+  |010001    10001   00000                   011011 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ class(FPR[fs])
+
+  Crea una máscara de clasificación donde se asignan diferentes valores a los 10 primeros bits de la máscara,
+  dependiendo del tipo de número almacenado en <i>fs</i>.
+  
+  - Bit 0: el número es un NaN ruidoso. (No usado por el simulador)
+  - Bit 1: el número es un NaN silencioso.
+  - Bit 2: el número es un infinito negativo.
+  - Bit 3: el número es un número finito normal negativo.
+  - Bit 4: el número es un número finito subnormal negativo. (Sin contar el cero negativo)
+  - Bit 5: el número es un cero negativo.
+  - Bit 6: el número es un infinito positivo.
+  - Bit 7: el número es un número finito normal positivo.
+  - Bit 8: el número es un número finito subnormal positivo. (Sin contar el cero positivo)
+  - Bit 9: el número es un cero positivo.
+  
+  La máscara es asignada a <i>fd</i>.
+  
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  FPR[fd] ⇽ class(FRP[fs])
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_CLASS_S_DOCUMENTATION: |-
+  <u>Máscara de clasificación de coma flotante</u>
+
+  <b>Formato:</b>
+  class.s fd, fs
+
+  | COP1      fmt      0      fs      fd      CLASS |
+  |010001    10000   00000                   011011 |
+  |  6         5       5      5       5        6    |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ class(FPR[fs])
+
+  Crea una máscara de clasificación donde se asignan diferentes valores a los 10 primeros bits de la máscara,
+  dependiendo del tipo de número almacenado en <i>fs</i>.
+  
+  - Bit 0: el número es un NaN ruidoso. (No usado por el simulador)
+  - Bit 1: el número es un NaN silencioso.
+  - Bit 2: el número es un infinito negativo.
+  - Bit 3: el número es un número finito normal negativo.
+  - Bit 4: el número es un número finito subnormal negativo. (Sin contar el cero negativo)
+  - Bit 5: el número es un cero negativo.
+  - Bit 6: el número es un infinito positivo.
+  - Bit 7: el número es un número finito normal positivo.
+  - Bit 8: el número es un número finito subnormal positivo. (Sin contar el cero positivo)
+  - Bit 9: el número es un cero positivo.
+  
+  La máscara es asignada a <i>fd</i>.
+  
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  FPR[fd] ⇽ class(FRP[fs])
+
+  <b>Excepciones:</b>
+  Ninguna
 INSTRUCTION_CLO_DOCUMENTATION: |-
   <u>Conteo de los primeros unos en una palabra</u>
 
@@ -1787,7 +1878,7 @@ INSTRUCTION_CMP_D_DOCUMENTATION: |-
   FPR[fd] ⇽ FPR[fs] compare_cond FPR[ft] donde compare_cond = {TYPE}.
 
   El valor guardado en el registro <i>fs</i> es comparado con el valor en el registro <i>it</i>.
-  El registro <i>fd</i> es rellenado con unos o con zeros, dependiendo de si el resultado es verdadero o falso.
+  El registro <i>fd</i> es rellenado con unos o con ceros, dependiendo de si el resultado es verdadero o falso.
 
   Los bits del 2 al 0 en la condición representan cada uno una condición. Si uno de estos bits está activado la condición correspondiente será evaluada.
   El resultado es verdadero cuando alguna de estas condiciones de verdadero.
@@ -1842,7 +1933,7 @@ INSTRUCTION_CMP_S_DOCUMENTATION: |-
   FPR[fd] ⇽ FPR[fs] compare_cond FPR[ft] donde compare_cond = {TYPE}.
 
   El valor guardado en el registro <i>fs</i> es comparado con el valor en el registro <i>it</i>.
-  El registro <i>fd</i> es rellenado con unos o con zeros, dependiendo de si el resultado es verdadero o falso.
+  El registro <i>fd</i> es rellenado con unos o con ceros, dependiendo de si el resultado es verdadero o falso.
 
   Los bits del 2 al 0 en la condición representan cada uno una condición. Si uno de estos bits está activado la condición correspondiente será evaluada.
   El resultado es verdadero cuando alguna de estas condiciones de verdadero.
@@ -1999,6 +2090,34 @@ INSTRUCTION_CVT_DOCUMENTATION: |-
 
   <b>Excepciones:</b>
   Ninguna
+INSTRUCTION_DI_DOCUMENTATION: |-
+  <u>Deshabilitar interrupciones</u>
+
+  <b>Formato:</b>
+  di rt
+
+  | COP0   MFMC0    rt    12     0     0  |
+  |010000  01011                          |
+  |  6       5      5     5      5     6  |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ Status; Status<sub>IE</sub> ⇽ 0
+
+  El valor actual de <i>Status</i> es asignado a <i>rt</i>. El bit de Interrupciones Habilitadas (<i>IE</i>) en <i>Status</i> es puesto a cero.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rt] ⇽ Status
+  Status<sub>IE</sub> ⇽ 0
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  El efecto de esta instruccion es idéntico al de leer el registro <i>Status</i> y asignarlo a un registro general, limpiar el bit <i>IE</i> y escribir el resultado.
 INSTRUCTION_DIV_DOCUMENTATION: |-
   <u>División</u>
 
@@ -2168,6 +2287,34 @@ INSTRUCTION_DIV_S_DOCUMENTATION: |-
 
   <b>Excepciones:</b>
   Ninguna
+INSTRUCTION_EI_DOCUMENTATION: |-
+  <u>Habilitar interrupciones</u>
+
+  <b>Formato:</b>
+  ei rt
+
+  | COP0   MFMC0    rt    12     0     16 |
+  |010000  01011                          |
+  |  6       5      5     5      5     6  |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ Status; Status<sub>IE</sub> ⇽ 1
+
+  El valor actual de <i>Status</i> es asignado a <i>rt</i>. El bit de Interrupciones Habilitadas (<i>IE</i>) en <i>Status</i> es puesto a uno.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  GPR[rt] ⇽ Status
+  Status<sub>IE</sub> ⇽ 1
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  El efecto de esta instruccion es idéntico al de leer el registro <i>Status</i> y asignarlo a un registro general, rellenar el bit <i>IE</i> y escribir el resultado.
 INSTRUCTION_ERET_DOCUMENTATION: |-
   <u>Retorno de la excepción</u>
 
@@ -2200,6 +2347,171 @@ INSTRUCTION_ERET_DOCUMENTATION: |-
   PC ⇽ temp
 
   ClearHazards()
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_EXT_DOCUMENTATION: |-
+  <u>Extraer bits</u>
+
+  <b>Formato:</b>
+  ext rt, rs, pos, size
+
+  |SPECIAL3    rs    rt   msbd    lsb     EXT   |
+  | 011111              (size-1) (pos)   000000 |
+  |   6        5     5     5       5       6    |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽  0<sub>32..msbd+1</sub> || GPR[rs]<sub>msbd+lsb..lsb</sub>
+
+  La celda de bits en la posición <i>pos</i> de tamaño <i>size</i> es extraída de <i>rs</i> y extendida a la izquierda con ceros.
+  El resultado es asignado a <i>rt</i>.
+
+  <b>Restricciones:</b>
+  La operación es <black>IMPREDECIBLE</black> si la suma de <i>lsb</i> y <i>msbd</i> es mayor que 31.
+
+  <b>Operación:</b>
+  GPR[rt] ⇽  0<sub>32..msbd+1</sub> || GPR[rs]<sub>msbd+lsb..lsb</sub>
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_FLOOR_L_D_DOCUMENTATION: |-
+  <u>Función suelo de coma flotante doble a doble palabra</u>
+
+  <b>Formato:</b>
+  floor.l.d fd, fs
+
+  | COP1      fmt      0      fs      fd     FLOOR.L |
+  |010001    10001   00000                   001011  |
+  |  6         5       5      5       5        6     |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  El valor en coma flotante de precisión doble guardado en <i>fs</i> es transformado en una palabra de 64 bits, redondeando hacia abajo.
+  El resultado es asignado a <i>fd</i>.
+
+  Cuando el valor en <i>fs</i> es <black>Infinito</black>, <black>NaN</black> o está fuera del rango de una palabra de 64 bits, el resultado no puede ser representado correctamente. Estos casos son tratados por la máquina virtual de Java.
+
+  <b>Restricciones:</b>
+  Los registros <i>fs</i> y <i>fd</i> deben ser FPR pares. Si los registros no son válidos, el resultado es <black>IMPREDECIBLE</black>.
+  El operando debe ser un valor en coma flotante de precisión doble. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ double
+  StoreFPR(fd, L, ConvertFmt(ValueFPR(fs, fmt), fmt, L))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_FLOOR_W_D_DOCUMENTATION: |-
+  <u>CFunción suelo de coma flotante doble a palabra</u>
+
+  <b>Formato:</b>
+  floor.w.d fd, fs
+
+  | COP1      fmt      0      fs      fd     FLOOR.W |
+  |010001    10001   00000                   001111  |
+  |  6         5       5      5       5        6     |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  El valor en coma flotante de precisión doble guardado en <i>fs</i> es transformado en una palabra de 32 bits, redondeando hacia abajo.
+  El resultado es asignado a <i>fd</i>.
+
+  Cuando el valor en <i>fs</i> es <black>Infinito</black>, <black>NaN</black> o está fuera del rango de una palabra de 32 bits, el resultado no puede ser representado correctamente. Estos casos son tratados por la máquina virtual de Java.
+
+  <b>Restricciones:</b>
+  El registro <i>fs</i> debe ser un FPR par. El registro no es válido, el resultado es <black>IMPREDECIBLE</black>.
+  El operando debe ser un valor en coma flotante de precisión doble. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ double
+  StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_FLOOR_L_S_DOCUMENTATION: |-
+  <u>Función suelo de coma flotante a doble palabra</u>
+
+  <b>Formato:</b>
+  floor.l.s fd, fs
+
+  | COP1      fmt      0      fs      fd     FLOOR.L |
+  |010001    10000   00000                   001011  |
+  |  6         5       5      5       5        6     |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  El valor en coma flotante guardado en <i>fs</i> es transformado en una palabra de 64 bits, redondeando hacia abajo.
+  El resultado es asignado a <i>fd</i>.
+
+  Cuando el valor en <i>fs</i> es <black>Infinito</black>, <black>NaN</black> o está fuera del rango de una palabra de 64 bits, el resultado no puede ser representado correctamente. Estos casos son tratados por la máquina virtual de Java.
+
+  <b>Restricciones:</b>
+  El registro <i>fd</i> debe ser un FPR par. El registro no es válido, el resultado es <black>IMPREDECIBLE</black>.
+  El operando debe ser un valor en coma flotante. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ float
+  StoreFPR(fd, L, ConvertFmt(ValueFPR(fs, fmt), fmt, L))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_FLOOR_W_S_DOCUMENTATION: |-
+  <u>Función suelo de coma flotante a palabra</u>
+
+  <b>Formato:</b>
+  floor.w.s fd, fs
+
+  | COP1      fmt      0      fs      fd     FLOOR.W |
+  |010001    10000   00000                   001111  |
+  |  6         5       5      5       5        6     |
+
+
+  <b>Descripción:</b>
+  FPR[fd] ⇽ convert_and_round(FPR[fs])
+
+  El valor en coma flotante guardado en <i>fs</i> es transformado en una palabra de 32, redondeando hacia abajo.
+  El resultado es asignado a <i>fd</i>.
+
+  Cuando el valor en <i>fs</i> es <black>Infinito</black>, <black>NaN</black> o está fuera del rango de una palabra de 32 bits, el resultado no puede ser representado correctamente. Estos casos son tratados por la máquina virtual de Java.
+
+  <b>Restricciones:</b>
+  El operando debe ser un valor en coma flotante. Si no lo es, el resultado es <black>IMPREDECIBLE</black>.
+
+  <b>Operación:</b>
+  fmt ⇽ float
+  StoreFPR(fd, W, ConvertFmt(ValueFPR(fs, fmt), fmt, W))
+
+  <b>Excepciones:</b>
+  Ninguna
+INSTRUCTION_INS_DOCUMENTATION: |-
+  <u>Insertar bits</u>
+
+  <b>Formato:</b>
+  ins rt, rs, pos, size
+
+  |SPECIAL3    rs    rt     msb       lsb     EXT   |
+  | 011111              (size+pos-1) (pos)   000100 |
+  |   6        5     5       5         5       6    |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽  GPR[rt]<sub>31..msb+1</sub> || GPR[rs]<sub>msb-lsb..0</sub> || GPR[rt]<sub>lsb-1..0</sub>
+
+  Los primeros <i>size</i> bits de <i>rs</i> son insertados dentro del valor de <i>rt</i>, empezando en la posición <i>pos</i>.
+  The result is then place back in GPR <i>rt</i>.
+  
+  <b>Restricciones:</b>
+  La operación es <black>IMPREDECIBLE</black> si la suma de <i>lsb</i> y <i>msbd</i> es mayor que 31.
+
+  <b>Operación:</b>
+  GPR[rt] ⇽  GPR[rt]<sub>31..msb+1</sub> || GPR[rs]<sub>msb-lsb..0</sub> || GPR[rt]<sub>lsb-1..0</sub>
 
   <b>Excepciones:</b>
   Ninguna
@@ -2311,6 +2623,67 @@ INSTRUCTION_JALR_DOCUMENTATION: |-
   <b>Notas del programador:</b>
   Esta instrucción de salto y enlace a registro permite seleccionar el registro donde se guarda la dirección de retorno; otras instrucciones de enlace usan el registro 31.
   El registro por defecto para <i>rd</i>, si se omite en la instrucción en ensamblador, es el 31.
+INSTRUCTION_JIALC_DOCUMENTATION: |-
+  <u>Salto compacto indexado y enlace</u>
+
+  <b>Formato:</b>
+  jialc rt, offset
+
+  | POP76    JIALC     rt     desplazamiento  |
+  |111110    00000                            |
+  |  6         5       5            16        |
+
+
+  <b>Descripción:</b>
+  GPR[31] ⇽ return_addr; PC ⇽ GPR[rt] + sig_extend(desplazamiento)
+
+  Inserta la dirección de retorno en el registro <i>31</i>. Esta es la dirección de la instrucción donde la ejecución debe continuar después de una llamada a un procedimiento.
+  Salta a la dirección efectiva formada por la suma del valor en el registro <i>rs</i> y el <i>desplazamiento</i>.
+  Esta instrución ejecuta un salto compacto. Los saltos compactos no tienen huecos de retardo.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  temp ⇽ GPR[rt] + sign_extend(desplazamiento)
+  GPR[31] ⇽ PC + 4
+  PC ⇽ temp
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  jialc <b>no</b> desplaza dos bits el desplazamiento antes de sumarlo al registro, como sí hacen otras funciones de salto.
+INSTRUCTION_JIC_DOCUMENTATION: |-
+  <u>Salto compacto indexado</u>
+
+  <b>Formato:</b>
+  jic rt, offset
+
+  | POP66     JIC      rt     desplazamiento  |
+  |110110    00000                            |
+  |  6         5       5            16        |
+
+
+  <b>Descripción:</b>
+  PC ⇽ GPR[rt] + sig_extend(desplazamiento)
+
+  Salta a la dirección efectiva formada por la suma del valor en el registro <i>rs</i> y el <i>desplazamiento</i>.
+  Esta instrución ejecuta un salto compacto. Los saltos compactos no tienen huecos de retardo.
+
+  <b>Restricciones:</b>
+  Las <i>Instrucciones de control de tranferencia (CTI)</i> <black>no deben</black> ser colocadas en los huecos de retardo o en los huecos prohibidos de la Release 6. Las CTI incluyen todas las ramificaciones, saltos, <black>nal</black>, <black>eret</black>, <black>eretnc</black>, <black>deret</black>, <black>wait</black> y <black>pause</black>.
+  Si una CTI es ejecutada en el hueco de retardo de una ramificación o salto, las implementaciones de la Release 6 necesitan lanzar una excepción <black>Reserved Instruction</black>
+
+  <b>Operación:</b>
+  PC ⇽ GPR[rt] + sign_extend(desplazamiento)
+
+  <b>Excepciones:</b>
+  Ninguna
+
+  <b>Notas del programador:</b>
+  jic <b>no</b> desplaza dos bits el desplazamiento antes de sumarlo al registro, como sí hacen otras funciones de salto.
 INSTRUCTION_LB_DOCUMENTATION: |-
   <u>Cargar byte</u>
 
@@ -2339,14 +2712,130 @@ INSTRUCTION_LB_DOCUMENTATION: |-
 
   <b>Excepciones:</b>
   Address Error
+INSTRUCTION_LBU_DOCUMENTATION: |-
+  <u>Cargar byte sin signo</u>
+
+  <b>Formato:</b>
+  lbu rt desplazamiento(base)
+
+  | LBU      base     rt    desplazamiento |
+  |100100                                  |
+  |  6        5       5           16       |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ memory[GPR[base] + desplazamiento]
+
+  El contenido de la palabra de 8 bits guardada en la dirección de memoria efectiva es cargado, extendido sin signo e insertado en el registro <i>rt</i>.
+  El contenido de la celda <i>desplazamiento</i> es sumado al contenido del registro <i>base</i> para formar la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  v_addr ⇽ sign_extend(desplazamiento) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+  mem_byte ⇽ LoadMemory(CCA, BYTE, p_addr, v_addr, DATA)
+  GPR[rt] ⇽ zero_extend(mem_byte)
+
+  <b>Excepciones:</b>
+  Address Error
+INSTRUCTION_LDC1_DOCUMENTATION: |-
+  <u>Cargar coma flotante doble en el coprocesador 1</u>
+
+  <b>Formato:</b>
+  ldc1 ft desplazamiento(base)
+
+  | LDC1     base     ft    desplazamiento |
+  |110101                                  |
+  |  6        5       5           16       |
+
+
+  <b>Descripción:</b>
+  FPR[rt] ⇽ memory[GPR[base] + desplazamiento]
+
+  El contenido de la palabra de 64 bits guardada en la dirección de memoria efectiva es cargado e insertado en el registro <i>ft</i> del coprocesador 1.
+  El contenido de la celda <i>desplazamiento</i> es sumado al contenido del registro <i>base</i> para formar la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  v_addr ⇽ sign_extend(desplazamiento) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+  paddr ⇽ paddr xor ((BigEndianCPU xor ReverseEndian) || 02)
+  memlsw ⇽ LoadMemory(cca, WORD, pAddr, vAddr, DATA)
+  paddr ⇽ paddr xor 0b100
+  memmsw ⇽ LoadMemory(cca, WORD, pAddr, vAddr+4, DATA)
+  memdoubleword ⇽ memmsw || memlsw
+  StoreFPR(ft, UNINTERPRETED_DOUBLEWORD, memdoubleword
+
+  <b>Excepciones:</b>
+  Address Error
+INSTRUCTION_LH_DOCUMENTATION: |-
+  <u>Cargar media palabra</u>
+
+  <b>Formato:</b>
+  lh rt desplazamiento(base)
+
+  |  LH      base     rt    desplazamiento |
+  |100001                                  |
+  |  6        5       5           16       |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ memory[GPR[base] + desplazamiento]
+
+  El contenido de la palabra de 16 bits guardada en la dirección de memoria efectiva es cargado, extendido con signo e insertado en el registro <i>rt</i>.
+  El contenido de la celda <i>desplazamiento</i> es sumado al contenido del registro <i>base</i> para formar la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  v_addr ⇽ sign_extend(offset) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+  mem_word ⇽ LoadMemory(CCA, HALFWORD, p_addr, v_addr, DATA)
+  GPR[rt] ⇽ sign_extend(mem_word)
+
+  <b>Excepciones:</b>
+  Address Error
+INSTRUCTION_LHU_DOCUMENTATION: |-
+  <u>Cargar media palabra sin signo</u>
+
+  <b>Formato:</b>
+  lhu rt desplazamiento(base)
+
+  | LHU      base     rt    desplazamiento |
+  |100101                                  |
+  |  6        5       5           16       |
+
+
+  <b>Descripción:</b>
+  GPR[rt] ⇽ memory[GPR[base] + desplazamiento]
+
+  El contenido de la palabra de 16 bits guardada en la dirección de memoria efectiva es cargado, extendido sin signo e insertado en el registro <i>rt</i>.
+  El contenido de la celda <i>desplazamiento</i> es sumado al contenido del registro <i>base</i> para formar la dirección efectiva.
+
+  <b>Restricciones:</b>
+  Ninguna
+
+  <b>Operación:</b>
+  v_addr ⇽ sign_extend(offset) + GPR[base]
+  (p_addr, cca) ⇽ AddressTranslation(v_addr, DATA, LOAD)
+  mem_word ⇽ LoadMemory(CCA, HALFWORD, p_addr, v_addr, DATA)
+  GPR[rt] ⇽ zero_extend(mem_word)
+
+  <b>Excepciones:</b>
+  Address Error
 INSTRUCTION_LW_DOCUMENTATION: |-
   <u>Cargar palabra</u>
 
   <b>Formato:</b>
   lw rt desplazamiento(base)
 
-  |  LB      base     rt    desplazamiento |
-  |100000                                  |
+  |  LW      base     rt    desplazamiento |
+  |100011                                  |
   |  6        5       5           16       |
 
 
@@ -2376,7 +2865,7 @@ INSTRUCTION_MFC0_DOCUMENTATION: |-
 
   | COP0     MF     rt    rd    0    sel |
   |010000  00000                         |
-  |  6       5      5     5     8     0  |
+  |  6       5      5     5     8     3  |
 
 
   <b>Descripción:</b>
@@ -2429,7 +2918,7 @@ INSTRUCTION_MTC0_DOCUMENTATION: |-
 
   | COP0     MT     rt    rd    0    sel |
   |010000  00100                         |
-  |  6       5      5     5     8     0  |
+  |  6       5      5     5     8     3  |
 
 
   <b>Descripción:</b>

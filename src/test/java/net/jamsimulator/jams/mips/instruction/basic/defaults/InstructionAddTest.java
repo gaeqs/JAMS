@@ -25,11 +25,16 @@
 package net.jamsimulator.jams.mips.instruction.basic.defaults;
 
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.mips.architecture.Architecture;
+import net.jamsimulator.jams.mips.architecture.MultiALUPipelinedArchitecture;
+import net.jamsimulator.jams.mips.architecture.MultiCycleArchitecture;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.interrupt.InterruptCause;
 import net.jamsimulator.jams.utils.TestUtils;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -40,9 +45,15 @@ class InstructionAddTest {
         Jams.initForTests();
     }
 
-    @Test
-    void testSimpleAdition() throws InterruptedException {
-        var simulation = TestUtils.generateSimulation(SingleCycleArchitecture.INSTANCE,
+    @ParameterizedTest
+    @ValueSource(strings = {
+            SingleCycleArchitecture.NAME,
+            MultiCycleArchitecture.NAME,
+            MultiALUPipelinedArchitecture.NAME
+    })
+    void testSimpleAdition(String architecture) throws InterruptedException {
+        var arch = Manager.of(Architecture.class).get(architecture).orElseThrow();
+        var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
                         li $s0, 20
@@ -59,9 +70,15 @@ class InstructionAddTest {
         assertEquals(0, simulation.getExitCode());
     }
 
-    @Test
-    void testOverflow() throws InterruptedException {
-        var simulation = TestUtils.generateSimulation(SingleCycleArchitecture.INSTANCE,
+    @ParameterizedTest
+    @ValueSource(strings = {
+            SingleCycleArchitecture.NAME,
+            MultiCycleArchitecture.NAME,
+            MultiALUPipelinedArchitecture.NAME
+    })
+    void testOverflow(String architecture) throws InterruptedException {
+        var arch = Manager.of(Architecture.class).get(architecture).orElseThrow();
+        var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
                         li $s0, 0x7FFFFFFF

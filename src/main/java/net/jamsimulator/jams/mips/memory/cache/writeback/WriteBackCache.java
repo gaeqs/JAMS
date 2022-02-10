@@ -34,10 +34,7 @@ import net.jamsimulator.jams.mips.memory.cache.CacheBlock;
 import net.jamsimulator.jams.mips.memory.cache.CacheBuilder;
 import net.jamsimulator.jams.mips.memory.cache.CacheStats;
 import net.jamsimulator.jams.mips.memory.cache.event.CacheResetEvent;
-import net.jamsimulator.jams.mips.memory.event.MemoryByteGetEvent;
-import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
-import net.jamsimulator.jams.mips.memory.event.MemoryWordGetEvent;
-import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
+import net.jamsimulator.jams.mips.memory.event.*;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.Validate;
 
@@ -175,13 +172,202 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
     }
 
     @Override
+    public byte getByte(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
+        if (bypassCaches || !isDirectionAffectedByCache(address))
+            return parent.getByte(address, callEvents, true, modifyCaches);
+        boolean events = callEvents && areEventCallsEnabled();
+
+        CacheBlock block = getBlock(address, modifyCaches, events);
+
+        if (block == null) {
+            return parent.getByte(address, callEvents, false, modifyCaches);
+        }
+
+        if (!events) {
+            if (modifyCaches)
+                block.setModificationTime(cacheTime++);
+            return block.getByte(address & byteMask);
+        }
+
+        //Invokes the before event.
+        var before = callEvent(new MemoryByteGetEvent.Before(this, address));
+
+        //Refresh data.
+        address = before.getAddress();
+
+        //Gets the section and the byte.
+        if (modifyCaches)
+            block.setModificationTime(cacheTime++);
+        byte b = block.getByte(address & byteMask);
+
+        //Invokes the after event.
+        return callEvent(new MemoryByteGetEvent.After(this, null, address, b)).getValue();
+    }
+
+    @Override
     public void setByte(int address, byte b) {
         setByte(address, b, true, false, true);
     }
 
     @Override
+    public void setByte(int address, byte b, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
+        if (bypassCaches || !isDirectionAffectedByCache(address)) {
+            parent.setByte(address, b, callEvents, true, modifyCaches);
+            return;
+        }
+
+        CacheBlock block = getBlock(address, modifyCaches, areEventCallsEnabled());
+
+        boolean events = callEvents && areEventCallsEnabled();
+        if (block != null) {
+            if (!events) {
+                block.setModificationTime(cacheTime++);
+                block.setByte(address & byteMask, b);
+                block.setDirty(true);
+                return;
+            }
+
+            //Invokes the before event.
+            var before = callEvent(new MemoryByteSetEvent.Before(this, address, b));
+            if (before.isCancelled()) return;
+
+            //Refresh data.
+            address = before.getAddress();
+            b = before.getValue();
+
+            //Gets the section and sets the word.
+            block.setModificationTime(cacheTime++);
+            byte old = block.setByte(address & byteMask, b);
+            block.setDirty(true);
+
+            //Invokes the after event.
+            callEvent(new MemoryByteSetEvent.After(this, null, address, b, old));
+        } else {
+            parent.setByte(address, b, callEvents, false, modifyCaches);
+        }
+    }
+
+    @Override
+    public short getHalfword(int address) {
+        return getHalfword(address, true, false, true);
+    }
+
+    @Override
+    public short getHalfword(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
+        if ((address & 0x1) != 0) throw new MIPSAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
+        if (bypassCaches || !isDirectionAffectedByCache(address))
+            return parent.getHalfword(address, callEvents, true, modifyCaches);
+        boolean events = callEvents && areEventCallsEnabled();
+
+        CacheBlock block = getBlock(address, modifyCaches, events);
+
+        if (block == null) {
+            return parent.getHalfword(address, callEvents, false, modifyCaches);
+        }
+
+        if (!events) {
+            if (modifyCaches)
+                block.setModificationTime(cacheTime++);
+            return block.getHalfword(address & byteMask, isBigEndian());
+        }
+
+        //Invokes the before event.
+        var before = callEvent(new MemoryHalfwordGetEvent.Before(this, address));
+
+        //Refresh data.
+        address = before.getAddress();
+
+        //Gets the section and the word.
+        if (modifyCaches)
+            block.setModificationTime(cacheTime++);
+        short word = block.getHalfword(address & byteMask, isBigEndian());
+
+        //Invokes the after event.
+        return callEvent(new MemoryHalfwordGetEvent.After(this, null, address, word)).getValue();
+    }
+
+    @Override
+    public void setHalfword(int address, short word) {
+        setHalfword(address, word, true, false, true);
+    }
+
+    @Override
+    public void setHalfword(int address, short word, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
+        if ((address & 0x1) != 0) throw new MIPSAddressException(InterruptCause.ADDRESS_STORE_EXCEPTION, address);
+
+        if (bypassCaches || !isDirectionAffectedByCache(address)) {
+            parent.setHalfword(address, word, callEvents, true, modifyCaches);
+            return;
+        }
+
+        CacheBlock block = getBlock(address, modifyCaches, areEventCallsEnabled());
+
+        boolean events = callEvents && areEventCallsEnabled();
+        if (block != null) {
+            if (!events) {
+                block.setModificationTime(cacheTime++);
+                block.setHalfword(address & byteMask, word, isBigEndian());
+                block.setDirty(true);
+                return;
+            }
+
+            //Invokes the before event.
+            var before = callEvent(new MemoryHalfwordSetEvent.Before(this, address, word));
+            if (before.isCancelled()) return;
+
+            //Refresh data.
+            address = before.getAddress();
+            word = before.getValue();
+
+            //Gets the section and sets the word.
+            block.setModificationTime(cacheTime++);
+            short old = block.setHalfword(address & byteMask, word, isBigEndian());
+            block.setDirty(true);
+
+            //Invokes the after event.
+            callEvent(new MemoryHalfwordSetEvent.After(this, null, address, word, old));
+        } else {
+            parent.setHalfword(address, word, callEvents, false, modifyCaches);
+        }
+    }
+
+    @Override
     public int getWord(int address) {
         return getWord(address, true, false, true);
+    }
+
+    @Override
+    public int getWord(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
+        if ((address & 0x3) != 0) throw new MIPSAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
+        if (bypassCaches || !isDirectionAffectedByCache(address))
+            return parent.getWord(address, callEvents, true, modifyCaches);
+        boolean events = callEvents && areEventCallsEnabled();
+
+        CacheBlock block = getBlock(address, modifyCaches, events);
+
+        if (block == null) {
+            return parent.getWord(address, callEvents, false, modifyCaches);
+        }
+
+        if (!events) {
+            if (modifyCaches)
+                block.setModificationTime(cacheTime++);
+            return block.getWord(address & byteMask, isBigEndian());
+        }
+
+        //Invokes the before event.
+        var before = callEvent(new MemoryWordGetEvent.Before(this, address));
+
+        //Refresh data.
+        address = before.getAddress();
+
+        //Gets the section and the word.
+        if (modifyCaches)
+            block.setModificationTime(cacheTime++);
+        int word = block.getWord(address & byteMask, isBigEndian());
+
+        //Invokes the after event.
+        return callEvent(new MemoryWordGetEvent.After(this, null, address, word)).getValue();
     }
 
     @Override
@@ -227,111 +413,6 @@ public abstract class WriteBackCache extends SimpleEventBroadcast implements Cac
         } else {
             parent.setWord(address, word, callEvents, false, modifyCaches);
         }
-    }
-
-    @Override
-    public void setByte(int address, byte b, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
-        if (bypassCaches || !isDirectionAffectedByCache(address)) {
-            parent.setByte(address, b, callEvents, true, modifyCaches);
-            return;
-        }
-
-        CacheBlock block = getBlock(address, modifyCaches, areEventCallsEnabled());
-
-        boolean events = callEvents && areEventCallsEnabled();
-        if (block != null) {
-            if (!events) {
-                block.setModificationTime(cacheTime++);
-                block.setByte(address & byteMask, b);
-                block.setDirty(true);
-                return;
-            }
-
-            //Invokes the before event.
-            var before = callEvent(new MemoryByteSetEvent.Before(this, address, b));
-            if (before.isCancelled()) return;
-
-            //Refresh data.
-            address = before.getAddress();
-            b = before.getValue();
-
-            //Gets the section and sets the word.
-            block.setModificationTime(cacheTime++);
-            byte old = block.setByte(address & byteMask, b);
-            block.setDirty(true);
-
-            //Invokes the after event.
-            callEvent(new MemoryByteSetEvent.After(this, null, address, b, old));
-        } else {
-            parent.setByte(address, b, callEvents, false, modifyCaches);
-        }
-    }
-
-    @Override
-    public int getWord(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
-        if ((address & 0x3) != 0) throw new MIPSAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
-        if (bypassCaches || !isDirectionAffectedByCache(address))
-            return parent.getWord(address, callEvents, true, modifyCaches);
-        boolean events = callEvents && areEventCallsEnabled();
-
-        CacheBlock block = getBlock(address, modifyCaches, events);
-
-        if (block == null) {
-            return parent.getWord(address, callEvents, false, modifyCaches);
-        }
-
-        if (!events) {
-            if (modifyCaches)
-                block.setModificationTime(cacheTime++);
-            return block.getWord(address & byteMask, isBigEndian());
-        }
-
-        //Invokes the before event.
-        var before = callEvent(new MemoryWordGetEvent.Before(this, address));
-
-        //Refresh data.
-        address = before.getAddress();
-
-        //Gets the section and the word.
-        if (modifyCaches)
-            block.setModificationTime(cacheTime++);
-        int word = block.getWord(address & byteMask, isBigEndian());
-
-        //Invokes the after event.
-        return callEvent(new MemoryWordGetEvent.After(this, null, address, word)).getValue();
-    }
-
-    @Override
-    public byte getByte(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
-        if (bypassCaches || !isDirectionAffectedByCache(address))
-            return parent.getByte(address, callEvents, true, modifyCaches);
-        boolean events = callEvents && areEventCallsEnabled();
-
-        CacheBlock block = getBlock(address, modifyCaches, events);
-
-        if (block == null) {
-            return parent.getByte(address, callEvents, false, modifyCaches);
-        }
-
-        if (!events) {
-            if (modifyCaches)
-                block.setModificationTime(cacheTime++);
-            return block.getByte(address & byteMask);
-        }
-
-        //Invokes the before event.
-        var before = callEvent(new MemoryByteGetEvent.Before(this, address));
-
-        //Refresh data.
-        address = before.getAddress();
-
-        //Gets the section and the byte.
-        if (modifyCaches)
-            block.setModificationTime(cacheTime++);
-        byte b = block.getByte(address & byteMask);
-
-        //Invokes the after event.
-        return callEvent(new MemoryByteGetEvent.After(this, null, address, b)).getValue();
     }
 
     @Override

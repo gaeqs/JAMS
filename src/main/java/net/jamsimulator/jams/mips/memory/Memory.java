@@ -60,6 +60,20 @@ public interface Memory extends EventBroadcast {
     byte getByte(int address);
 
     /**
+     * THIS METHOD SHOULDN'T BE USED BY INSTRUCTIONS!
+     * <p>
+     * Returns the byte stored in the given address.
+     *
+     * @param address      the address.
+     * @param callEvents   whether this method should call events. Events won't be called if {@link #areEventCallsEnabled()} is false.
+     * @param bypassCaches whether this method should bypass all caches.
+     * @param modifyCaches whether this method should mofify caches.
+     * @return the byte.
+     * @throws IndexOutOfBoundsException if no section contains the address.
+     */
+    byte getByte(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches);
+
+    /**
      * Stores the given byte into the given address.
      *
      * @param address the address.
@@ -67,6 +81,69 @@ public interface Memory extends EventBroadcast {
      * @throws IndexOutOfBoundsException if no section contains the address.
      */
     void setByte(int address, byte b);
+
+    /**
+     * THIS METHOD SHOULDN'T BE USED BY INSTRUCTIONS!
+     * <p>
+     * Stores the given byte into the given address.
+     *
+     * @param address      the address.
+     * @param b            the byte.
+     * @param callEvents   whether this method should call events. Events won't be called if {@link #areEventCallsEnabled()} is false.
+     * @param bypassCaches whether this method should bypass all caches.
+     * @param modifyCaches whether this method should mofify caches if they fail.
+     * @throws IllegalArgumentException  if the address is not aligned to words.
+     * @throws IndexOutOfBoundsException if no section contains the address.
+     */
+    void setByte(int address, byte b, boolean callEvents, boolean bypassCaches, boolean modifyCaches);
+
+    /**
+     * Returns the halfword stored in the given address.
+     *
+     * @param address the address.
+     * @return the halfword.
+     * @throws IndexOutOfBoundsException if no section contains the address.
+     */
+    short getHalfword(int address);
+
+    /**
+     * THIS METHOD SHOULDN'T BE USED BY INSTRUCTIONS!
+     * <p>
+     * Returns the halfword stored in the given address.
+     *
+     * @param address      the address.
+     * @param callEvents   whether this method should call events. Events won't be called if {@link #areEventCallsEnabled()} is false.
+     * @param bypassCaches whether this method should bypass all caches.
+     * @param modifyCaches whether this method should mofify caches.
+     * @return the halfword.
+     * @throws IndexOutOfBoundsException if no section contains the address.
+     */
+    short getHalfword(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches);
+
+    /**
+     * Stores the given halfword into the given address.
+     *
+     * @param address the address.
+     * @param h       the halfword.
+     * @throws IndexOutOfBoundsException if no section contains the address.
+     */
+    void setHalfword(int address, short h);
+
+    /**
+     * THIS METHOD SHOULDN'T BE USED BY INSTRUCTIONS!
+     * <p>
+     * Stores the given halfword into the given address.
+     *
+     * @param address      the address.
+     * @param h            the halfword.
+     * @param callEvents   whether this method should call events. Events won't be called if {@link #areEventCallsEnabled()} is false.
+     * @param bypassCaches whether this method should bypass all caches.
+     * @param modifyCaches whether this method should mofify caches if they fail.
+     * @throws IllegalArgumentException  if the address is not aligned to words.
+     * @throws IndexOutOfBoundsException if no section contains the address.
+     */
+    void setHalfword(int address, short h, boolean callEvents, boolean bypassCaches, boolean modifyCaches);
+
 
     /**
      * Returns the word stored in the given address.
@@ -77,6 +154,21 @@ public interface Memory extends EventBroadcast {
      * @throws IndexOutOfBoundsException if no section contains the address.
      */
     int getWord(int address);
+
+    /**
+     * THIS METHOD SHOULDN'T BE USED BY INSTRUCTIONS!
+     * <p>
+     * Returns the word stored in the given address.
+     *
+     * @param address      the address.
+     * @param callEvents   whether this method should call events. Events won't be called if {@link #areEventCallsEnabled()} is false.
+     * @param bypassCaches whether this method should bypass all caches.
+     * @param modifyCaches whether this method should mofify caches.
+     * @return the word.
+     * @throws IllegalArgumentException  if the address is not aligned to words.
+     * @throws IndexOutOfBoundsException if no section contains the address.
+     */
+    int getWord(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches);
 
     /**
      * Stores the given word into the given address.
@@ -102,51 +194,6 @@ public interface Memory extends EventBroadcast {
      * @throws IndexOutOfBoundsException if no section contains the address.
      */
     void setWord(int address, int word, boolean callEvents, boolean bypassCaches, boolean modifyCaches);
-
-    /**
-     * THIS METHOD SHOULDN'T BE USED BY INSTRUCTIONS!
-     * <p>
-     * Stores the given byte into the given address.
-     *
-     * @param address      the address.
-     * @param b            the byte.
-     * @param callEvents   whether this method should call events. Events won't be called if {@link #areEventCallsEnabled()} is false.
-     * @param bypassCaches whether this method should bypass all caches.
-     * @param modifyCaches whether this method should mofify caches if they fail.
-     * @throws IllegalArgumentException  if the address is not aligned to words.
-     * @throws IndexOutOfBoundsException if no section contains the address.
-     */
-    void setByte(int address, byte b, boolean callEvents, boolean bypassCaches, boolean modifyCaches);
-
-
-    /**
-     * THIS METHOD SHOULDN'T BE USED BY INSTRUCTIONS!
-     * <p>
-     * Returns the word stored in the given address.
-     *
-     * @param address      the address.
-     * @param callEvents   whether this method should call events. Events won't be called if {@link #areEventCallsEnabled()} is false.
-     * @param bypassCaches whether this method should bypass all caches.
-     * @param modifyCaches whether this method should mofify caches.
-     * @return the word.
-     * @throws IllegalArgumentException  if the address is not aligned to words.
-     * @throws IndexOutOfBoundsException if no section contains the address.
-     */
-    int getWord(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches);
-
-    /**
-     * THIS METHOD SHOULDN'T BE USED BY INSTRUCTIONS!
-     * <p>
-     * Returns the byte stored in the given address.
-     *
-     * @param address      the address.
-     * @param callEvents   whether this method should call events. Events won't be called if {@link #areEventCallsEnabled()} is false.
-     * @param bypassCaches whether this method should bypass all caches.
-     * @param modifyCaches whether this method should mofify caches.
-     * @return the byte.
-     * @throws IndexOutOfBoundsException if no section contains the address.
-     */
-    byte getByte(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches);
 
     /**
      * Returns the first text address assemblers should use.

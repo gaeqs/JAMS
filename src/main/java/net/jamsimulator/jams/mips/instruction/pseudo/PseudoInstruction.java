@@ -54,6 +54,10 @@ public abstract class PseudoInstruction implements Instruction {
      * The $at register as a {@link ParameterParseResult}.
      */
     protected static final ParameterParseResult AT = ParameterParseResult.builder().register(1).build();
+    /**
+     * The $ra ($31) register as a {@link ParameterParseResult}.
+     */
+    protected static final ParameterParseResult RA = ParameterParseResult.builder().register(31).build();
     protected final String mnemonic;
     protected final ParameterType[] parameters;
 

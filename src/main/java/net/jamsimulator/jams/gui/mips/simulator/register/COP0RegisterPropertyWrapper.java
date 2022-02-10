@@ -42,7 +42,7 @@ public class COP0RegisterPropertyWrapper {
     private final COP0Register register;
     private final boolean useDecimals;
     private boolean updating;
-    private SimpleIntegerProperty identifierProperty;
+    private SimpleStringProperty identifierProperty;
     private SimpleIntegerProperty selectionProperty;
     private SimpleStringProperty nameProperty;
     private SimpleStringProperty valueProperty;
@@ -57,10 +57,10 @@ public class COP0RegisterPropertyWrapper {
         return register;
     }
 
-    public ReadOnlyIntegerProperty identifierProperty() {
+    public SimpleStringProperty identifierProperty() {
         if (identifierProperty == null) {
-            identifierProperty = new SimpleIntegerProperty(this, "identifier");
-            identifierProperty.setValue(register.getIdentifier());
+            identifierProperty = new SimpleStringProperty(this, "identifier");
+            identifierProperty.setValue(String.valueOf(register.getIdentifier()));
         }
         return identifierProperty;
     }
@@ -131,14 +131,21 @@ public class COP0RegisterPropertyWrapper {
     }
 
     public void updateRegister() {
-        updateRegister(register.getValue());
+        updateRegister(register.getValue(), register.isLocked());
     }
 
-    public void updateRegister(int newValue) {
+    public void updateRegister(int newValue, boolean locked) {
         synchronized (lock) {
             updating = true;
+            if (identifierProperty == null) identifierProperty();
             if (valueProperty == null) valueProperty();
             if (hexProperty == null) hexProperty();
+
+            if (locked) {
+                identifierProperty.setValue(register.getIdentifier() + " \uD83D\uDD12");
+            } else {
+                identifierProperty.setValue(String.valueOf(register.getIdentifier()));
+            }
 
             if (useDecimals) {
                 valueProperty.setValue(String.valueOf(Float.intBitsToFloat(newValue)));

@@ -64,7 +64,7 @@ public class PseudoInstructionLidRD extends PseudoInstruction {
         var mtc11 = parameters(AT, parameters[0]);
         var aui2 = parameters(AT, ZERO, immediate(upper(high)));
         var ori2 = parameters(AT, AT, immediate(lower(high)));
-        var mtc12 = parameters(AT, register(parameters[1].getRegister() + 1));
+        var mtc12 = parameters(AT, register(parameters[0].getRegister() + 1));
         return assemble(instructions, aui1, ori1, mtc11, aui2, ori2, mtc12);
     }
 }

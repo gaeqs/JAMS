@@ -107,7 +107,7 @@ public class InstructionCeilLDouble extends BasicRFPUInstruction<InstructionCeil
             int s = instruction.getSourceRegister();
             int d = instruction.getDestinationRegister();
             checkEvenRegister(s, d);
-            NumericUtils.doubleToInts(Math.ceil(doubleCOP1(s)), registerCOP1(d), registerCOP1(d + 1));
+            NumericUtils.longToInts((long) Math.ceil(doubleCOP1(s)), registerCOP1(d), registerCOP1(d + 1));
         }
     }
 
@@ -128,7 +128,7 @@ public class InstructionCeilLDouble extends BasicRFPUInstruction<InstructionCeil
 
         @Override
         public void execute() {
-            doubleToInts(Math.ceil(doubleCOP1(instruction.getSourceRegister())));
+            longToInts((long) Math.ceil(doubleCOP1(instruction.getSourceRegister())));
             forwardCOP1(instruction.getDestinationRegister(), lowResult);
             forwardCOP1(instruction.getDestinationRegister() + 1, highResult);
         }

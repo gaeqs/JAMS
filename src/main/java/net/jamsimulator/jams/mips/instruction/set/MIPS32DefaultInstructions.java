@@ -89,6 +89,8 @@ class MIPS32DefaultInstructions {
         basicInstructions.add(new InstructionCeilLSingle());
         basicInstructions.add(new InstructionCeilWDouble());
         basicInstructions.add(new InstructionCeilWSingle());
+        basicInstructions.add(new InstructionClassDouble());
+        basicInstructions.add(new InstructionClassSingle());
         basicInstructions.add(new InstructionClo());
         basicInstructions.add(new InstructionClz());
 
@@ -109,6 +111,7 @@ class MIPS32DefaultInstructions {
             }
         }
 
+        basicInstructions.add(new InstructionDi());
         basicInstructions.add(new InstructionDiv());
         basicInstructions.add(new InstructionMod());
         basicInstructions.add(new InstructionDivu());
@@ -116,13 +119,26 @@ class MIPS32DefaultInstructions {
         basicInstructions.add(new InstructionDivSingle());
         basicInstructions.add(new InstructionDivDouble());
 
+        basicInstructions.add(new InstructionEi());
         basicInstructions.add(new InstructionEret());
+        basicInstructions.add(new InstructionExt());
+        basicInstructions.add(new InstructionFloorLDouble());
+        basicInstructions.add(new InstructionFloorLSingle());
+        basicInstructions.add(new InstructionFloorWDouble());
+        basicInstructions.add(new InstructionFloorWSingle());
+        basicInstructions.add(new InstructionIns());
 
         basicInstructions.add(new InstructionJ());
         basicInstructions.add(new InstructionJal());
         basicInstructions.add(new InstructionJalr());
+        basicInstructions.add(new InstructionJialc());
+        basicInstructions.add(new InstructionJic());
 
         basicInstructions.add(new InstructionLb());
+        basicInstructions.add(new InstructionLbu());
+        basicInstructions.add(new InstructionLdc1());
+        basicInstructions.add(new InstructionLh());
+        basicInstructions.add(new InstructionLhu());
         basicInstructions.add(new InstructionLw());
 
         basicInstructions.add(new InstructionMfc0());
@@ -215,8 +231,10 @@ class MIPS32DefaultInstructions {
         pseudoInstructions.add(new PseudoInstructionBranchRL21(InstructionBeqzc.MNEMONIC));
         pseudoInstructions.add(new PseudoInstructionBranchRL21(InstructionBnezc.MNEMONIC));
 
+        pseudoInstructions.add(new PseudoInstructionDi());
         pseudoInstructions.add(new PseudoInstructionDivRRI16());
         pseudoInstructions.add(new PseudoInstructionDivRRI32());
+        pseudoInstructions.add(new PseudoInstructionEi());
 
         pseudoInstructions.add(new PseudoInstructionJalL());
         pseudoInstructions.add(new PseudoInstructionJL());
@@ -233,6 +251,26 @@ class MIPS32DefaultInstructions {
         pseudoInstructions.add(new PseudoInstructionLbRLr());
         pseudoInstructions.add(new PseudoInstructionLbRLs());
         pseudoInstructions.add(new PseudoInstructionLbRLsr());
+
+        pseudoInstructions.add(new PseudoInstructionLbuRL());
+        pseudoInstructions.add(new PseudoInstructionLbuRLr());
+        pseudoInstructions.add(new PseudoInstructionLbuRLs());
+        pseudoInstructions.add(new PseudoInstructionLbuRLsr());
+
+        pseudoInstructions.add(new PseudoInstructionLdc1RL());
+        pseudoInstructions.add(new PseudoInstructionLdc1RLr());
+        pseudoInstructions.add(new PseudoInstructionLdc1RLs());
+        pseudoInstructions.add(new PseudoInstructionLdc1RLsr());
+
+        pseudoInstructions.add(new PseudoInstructionLhRL());
+        pseudoInstructions.add(new PseudoInstructionLhRLr());
+        pseudoInstructions.add(new PseudoInstructionLhRLs());
+        pseudoInstructions.add(new PseudoInstructionLhRLsr());
+
+        pseudoInstructions.add(new PseudoInstructionLhuRL());
+        pseudoInstructions.add(new PseudoInstructionLhuRLr());
+        pseudoInstructions.add(new PseudoInstructionLhuRLs());
+        pseudoInstructions.add(new PseudoInstructionLhuRLsr());
 
         pseudoInstructions.add(new PseudoInstructionLwRL());
         pseudoInstructions.add(new PseudoInstructionLwRLr());

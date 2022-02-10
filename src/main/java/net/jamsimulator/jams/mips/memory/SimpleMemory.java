@@ -186,13 +186,127 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
     }
 
     @Override
+    public byte getByte(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
+        if (!eventCallsEnabled || !callEvents) {
+            return getSectionOrThrowException(address).getByte(address);
+        }
+        //Invokes the before event.
+        MemoryByteGetEvent.Before before = callEvent(new MemoryByteGetEvent.Before(this, address));
+
+        //Refresh data.
+        address = before.getAddress();
+
+        //Gets the section and the byte.
+        MemorySection section = getSectionOrThrowException(address);
+        byte b = section.getByte(address);
+
+        //Invokes the after event.
+        return callEvent(new MemoryByteGetEvent.After(this, section, address, b)).getValue();
+    }
+
+    @Override
     public void setByte(int address, byte b) {
         setByte(address, b, true, false, true);
     }
 
     @Override
+    public void setByte(int address, byte b, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
+        if (!eventCallsEnabled || !callEvents) {
+            getSectionOrThrowException(address).setByte(address, b);
+            return;
+        }
+        //Invokes the before event.
+        MemoryByteSetEvent.Before before = callEvent(new MemoryByteSetEvent.Before(this, address, b));
+        if (before.isCancelled()) return;
+
+        //Refresh data.
+        address = before.getAddress();
+        b = before.getValue();
+
+        //Gets the section and sets the byte.
+        MemorySection section = getSectionOrThrowException(address);
+        byte old = section.setByte(address, b);
+
+        //Invokes the after event.
+        callEvent(new MemoryByteSetEvent.After(this, section, address, b, old));
+    }
+
+    @Override
+    public short getHalfword(int address) {
+        return getHalfword(address, true, false, true);
+    }
+
+    @Override
+    public short getHalfword(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
+        if ((address & 0x1) != 0) throw new MIPSAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
+        if (!eventCallsEnabled || !callEvents) {
+            return getSectionOrThrowException(address).getHalfword(address, bigEndian);
+        }
+        //Invokes the before event.
+        MemoryHalfwordGetEvent.Before before = callEvent(new MemoryHalfwordGetEvent.Before(this, address));
+
+        //Refresh data.
+        address = before.getAddress();
+
+        //Gets the section and the byte.
+        MemorySection section = getSectionOrThrowException(address);
+        short b = section.getHalfword(address, bigEndian);
+
+        //Invokes the after event.
+        return callEvent(new MemoryHalfwordGetEvent.After(this, section, address, b)).getValue();
+    }
+
+    @Override
+    public void setHalfword(int address, short h) {
+        setHalfword(address, h, true, false, true);
+    }
+
+    @Override
+    public void setHalfword(int address, short h, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
+        if ((address & 0x1) != 0) throw new MIPSAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
+        if (!eventCallsEnabled || !callEvents) {
+            getSectionOrThrowException(address).setHalfword(address, h, bigEndian);
+            return;
+        }
+        //Invokes the before event.
+        MemoryHalfwordSetEvent.Before before = callEvent(new MemoryHalfwordSetEvent.Before(this, address, h));
+        if (before.isCancelled()) return;
+
+        //Refresh data.
+        address = before.getAddress();
+        h = before.getValue();
+
+        //Gets the section and sets the byte.
+        MemorySection section = getSectionOrThrowException(address);
+        short old = section.setHalfword(address, h, bigEndian);
+
+        //Invokes the after event.
+        callEvent(new MemoryHalfwordSetEvent.After(this, section, address, h, old));
+    }
+
+    @Override
     public int getWord(int address) {
         return getWord(address, true, false, true);
+    }
+
+    @Override
+    public int getWord(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
+        if ((address & 0x3) != 0) throw new MIPSAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
+        if (!eventCallsEnabled || !callEvents) {
+            return getSectionOrThrowException(address).getWord(address, bigEndian);
+        }
+        //Invokes the before event.
+        MemoryWordGetEvent.Before before = callEvent(new MemoryWordGetEvent.Before(this, address));
+
+        //Refresh data.
+        address = before.getAddress();
+
+        //Gets the section and the word.
+        MemorySection section = getSectionOrThrowException(address);
+        int word = section.getWord(address, bigEndian);
+
+        //Invokes the after event.
+        return callEvent(new MemoryWordGetEvent.After(this, section, address, word)).getValue();
     }
 
     @Override
@@ -221,67 +335,6 @@ public class SimpleMemory extends SimpleEventBroadcast implements Memory {
 
         //Invokes the after event.
         callEvent(new MemoryWordSetEvent.After(this, section, address, word, old));
-    }
-
-    @Override
-    public void setByte(int address, byte b, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
-        if (!eventCallsEnabled || !callEvents) {
-            getSectionOrThrowException(address).setByte(address, b);
-            return;
-        }
-        //Invokes the before event.
-        MemoryByteSetEvent.Before before = callEvent(new MemoryByteSetEvent.Before(this, address, b));
-        if (before.isCancelled()) return;
-
-        //Refresh data.
-        address = before.getAddress();
-        b = before.getValue();
-
-        //Gets the section and sets the byte.
-        MemorySection section = getSectionOrThrowException(address);
-        byte old = section.setByte(address, b);
-
-        //Invokes the after event.
-        callEvent(new MemoryByteSetEvent.After(this, section, address, b, old));
-    }
-
-    @Override
-    public int getWord(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
-        if ((address & 0x3) != 0) throw new MIPSAddressException(InterruptCause.ADDRESS_LOAD_EXCEPTION, address);
-        if (!eventCallsEnabled || !callEvents) {
-            return getSectionOrThrowException(address).getWord(address, bigEndian);
-        }
-        //Invokes the before event.
-        MemoryWordGetEvent.Before before = callEvent(new MemoryWordGetEvent.Before(this, address));
-
-        //Refresh data.
-        address = before.getAddress();
-
-        //Gets the section and the word.
-        MemorySection section = getSectionOrThrowException(address);
-        int word = section.getWord(address, bigEndian);
-
-        //Invokes the after event.
-        return callEvent(new MemoryWordGetEvent.After(this, section, address, word)).getValue();
-    }
-
-    @Override
-    public byte getByte(int address, boolean callEvents, boolean bypassCaches, boolean modifyCaches) {
-        if (!eventCallsEnabled || !callEvents) {
-            return getSectionOrThrowException(address).getByte(address);
-        }
-        //Invokes the before event.
-        MemoryByteGetEvent.Before before = callEvent(new MemoryByteGetEvent.Before(this, address));
-
-        //Refresh data.
-        address = before.getAddress();
-
-        //Gets the section and the byte.
-        MemorySection section = getSectionOrThrowException(address);
-        byte b = section.getByte(address);
-
-        //Invokes the after event.
-        return callEvent(new MemoryByteGetEvent.After(this, section, address, b)).getValue();
     }
 
     @Override

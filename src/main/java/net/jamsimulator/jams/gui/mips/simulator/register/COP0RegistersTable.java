@@ -38,6 +38,7 @@ import net.jamsimulator.jams.mips.register.event.RegisterChangeValueEvent;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStartEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationUndoStepEvent;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -54,7 +55,7 @@ public class COP0RegistersTable extends TableView<COP0RegisterPropertyWrapper> i
         setEditable(true);
         setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn<COP0RegisterPropertyWrapper, Number> identifierColumn = new LanguageTableColumn<>(Messages.REGISTERS_ID);
+        TableColumn<COP0RegisterPropertyWrapper, String> identifierColumn = new LanguageTableColumn<>(Messages.REGISTERS_ID);
         TableColumn<COP0RegisterPropertyWrapper, Number> selectionColumn = new LanguageTableColumn<>(Messages.REGISTERS_SELECTION);
         TableColumn<COP0RegisterPropertyWrapper, String> nameColumn = new LanguageTableColumn<>(Messages.REGISTERS_NAME);
         TableColumn<COP0RegisterPropertyWrapper, String> valueColumn = new LanguageTableColumn<>(Messages.REGISTERS_VALUE);
@@ -115,7 +116,7 @@ public class COP0RegistersTable extends TableView<COP0RegisterPropertyWrapper> i
     @Listener
     private void onSimulationStart(SimulationStartEvent event) {
         if (event.getSimulation() instanceof MIPSSimulation<?> simulation) {
-            simulation.unregisterListeners(this);
+            simulation.getRegisters().unregisterListeners(this);
         }
     }
 
@@ -128,10 +129,15 @@ public class COP0RegistersTable extends TableView<COP0RegisterPropertyWrapper> i
     }
 
     @Listener
+    private void onSimulationUndo(SimulationUndoStepEvent event) {
+        registers.values().forEach(COP0RegisterPropertyWrapper::updateRegister);
+    }
+
+    @Listener
     private void onRegisterValueChange(RegisterChangeValueEvent.After event) {
         COP0RegisterPropertyWrapper wrapper = registers.get(event.getRegister());
         if (wrapper == null) return;
         int value = event.getNewValue();
-        wrapper.updateRegister(value);
+        wrapper.updateRegister(value, event.getRegister().isLocked());
     }
 }

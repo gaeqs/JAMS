@@ -82,8 +82,9 @@ public class InstructionLb extends BasicInstruction<InstructionLb.Assembled> imp
 
     public static class Assembled extends AssembledI16Instruction {
 
-        public Assembled(int baseRegister, int targetRegister, int offset, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
-            super(InstructionLb.OPERATION_CODE, baseRegister, targetRegister, offset, origin, basicOrigin);
+        public Assembled(int baseRegister, int targetRegister, int offset,
+                         Instruction origin, BasicInstruction<Assembled> basicOrigin) {
+            super(OPERATION_CODE, baseRegister, targetRegister, offset, origin, basicOrigin);
         }
 
         public Assembled(int instructionCode, Instruction origin, BasicInstruction<Assembled> basicOrigin) {
