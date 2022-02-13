@@ -319,6 +319,9 @@ public interface EditorIndex extends EventBroadcast, Labeled {
      */
     void inspectElementsWithReferences(Collection<EditorElementReference<?>> references);
 
+
+    String reformat();
+
     /**
      * Locks this index.
      * <p>

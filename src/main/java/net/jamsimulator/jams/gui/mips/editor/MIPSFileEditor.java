@@ -33,9 +33,7 @@ import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 import net.jamsimulator.jams.gui.mips.editor.indexing.MIPSEditorIndex;
-import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.mips.MIPSProject;
-import net.jamsimulator.jams.task.LanguageTask;
 import org.fxmisc.richtext.event.MouseOverTextEvent;
 
 import java.time.Duration;
@@ -69,33 +67,8 @@ public class MIPSFileEditor extends CodeFileEditor {
 
     @Override
     public void reformat() {
-//        enableRefreshEvent(false);
-//        String reformattedCode = new MIPSCodeFormatter(elements).format();
-//        String text = getText();
-//        if (reformattedCode.equals(text)) return;
-//        int oLine = getCurrentParagraph();
-//        int oColumn = getCaretColumn();
-//
-//        replaceText(0, text.length(), reformattedCode);
-//
-//        List<CodeFileLine> lines = getLines();
-//
-//        int newSize = lines.size();
-//        int line = Math.min(oLine, newSize - 1);
-//        int column = Math.min(oColumn, lines.get(line).getText().length());
-//        moveTo(line, column);
-//
-//
-//        double height = totalHeightEstimateProperty().getValue() == null ? 0 : totalHeightEstimateProperty().getValue();
-//
-//        double toPixel = height * line / newSize - getLayoutBounds().getHeight() / 2;
-//        toPixel = Math.max(0, Math.min(height, toPixel));
-//
-//        scrollPane.scrollYBy(toPixel);
-//        index(reformattedCode);
-//        tab.setSaveMark(true);
-//        tab.layoutDisplay();
-//        enableRefreshEvent(true);
+        pendingChanges.markForReformat();
+        setEditable(false);
     }
 
     public boolean replaceAllText(String text) {

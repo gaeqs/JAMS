@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing;
 
+import javafx.application.Platform;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 
 /**
@@ -51,9 +52,28 @@ public class IndexingThread extends Thread {
     public void run() {
         if (editor.getIndex() == null || !waitForInitialization()) return;
         while (running) {
-            if (!waitForElements()) return;
-            editor.getIndex().withLock(true, i -> editor.getPendingChanges().flushAll(i::change));
+            try {
+                if (!waitForElements()) return;
+                editor.getIndex().withLock(true, i -> {
+                    editor.getPendingChanges().flushAll(i::change);
+
+                    if (editor.getPendingChanges().isMarkedForReformat(true)) {
+                        var text = editor.getIndex().reformat();
+                        flushReformattedCode(text);
+                    }
+                });
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
+    }
+
+    private void flushReformattedCode(String text) {
+        Platform.runLater(() -> editor.getIndex().withLock(false, i -> {
+            editor.clear();
+            editor.appendText(text);
+            editor.setEditable(!editor.getPendingChanges().isMarkedForReformat(false));
+        }));
     }
 
 

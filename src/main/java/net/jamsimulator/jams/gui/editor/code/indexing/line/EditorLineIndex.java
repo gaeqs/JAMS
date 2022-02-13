@@ -27,6 +27,7 @@ package net.jamsimulator.jams.gui.editor.code.indexing.line;
 import net.jamsimulator.jams.collection.Bag;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
+import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.hint.EditorHintBar;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorLineChange;

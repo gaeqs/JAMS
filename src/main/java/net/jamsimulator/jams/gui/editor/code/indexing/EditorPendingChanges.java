@@ -42,62 +42,81 @@ import java.util.function.Consumer;
 public class EditorPendingChanges {
 
     private final ConcurrentLinkedQueue<EditorLineChange> changes = new ConcurrentLinkedQueue<>();
-    private final Lock emptyCheckLock = new ReentrantLock();
-    private final Condition notEmptyCondition = emptyCheckLock.newCondition();
+    private final Lock lock = new ReentrantLock();
+    private final Condition notEmptyCondition = lock.newCondition();
+
+    private boolean reformat;
 
     public EditorPendingChanges add(EditorLineChange change) {
-        emptyCheckLock.lock();
+        lock.lock();
         changes.add(change);
         notEmptyCondition.signalAll();
-        emptyCheckLock.unlock();
+        lock.unlock();
         return this;
     }
 
     public EditorPendingChanges add(PlainTextChange change, CodeArea area) {
-        emptyCheckLock.lock();
+        lock.lock();
         EditorLineChange.of(change, area, changes);
         if (!changes.isEmpty()) {
             notEmptyCondition.signalAll();
         }
-        emptyCheckLock.unlock();
+        lock.unlock();
         return this;
     }
 
     public EditorPendingChanges addAll(Collection<? extends EditorLineChange> changes) {
-        emptyCheckLock.lock();
+        lock.lock();
         this.changes.addAll(changes);
         if (!changes.isEmpty()) {
             notEmptyCondition.signalAll();
         }
-        emptyCheckLock.unlock();
+        lock.unlock();
         return this;
     }
 
     public EditorPendingChanges addAll(Collection<? extends PlainTextChange> changes, CodeArea area) {
-        emptyCheckLock.lock();
+        lock.lock();
         changes.forEach(change -> EditorLineChange.of(change, area, this.changes));
         if (!changes.isEmpty()) {
             notEmptyCondition.signalAll();
         }
-        emptyCheckLock.unlock();
+        lock.unlock();
         return this;
     }
 
     public boolean isEmpty() {
         try {
-            emptyCheckLock.lock();
+            lock.lock();
             return changes.isEmpty();
         } finally {
-            emptyCheckLock.unlock();
+            lock.unlock();
         }
     }
 
     public void waitForElements() throws InterruptedException {
-        emptyCheckLock.lock();
-        if (changes.isEmpty()) {
+        lock.lock();
+        if (changes.isEmpty() && !reformat) {
             notEmptyCondition.await();
         }
-        emptyCheckLock.unlock();
+        lock.unlock();
+    }
+
+    public void markForReformat() {
+        lock.lock();
+        reformat = true;
+        notEmptyCondition.signalAll();
+        lock.unlock();
+    }
+
+    public boolean isMarkedForReformat(boolean clear) {
+        lock.lock();
+        boolean b = reformat;
+        if (clear) {
+            reformat = false;
+        }
+        lock.unlock();
+        return b;
     }
 
     public void flushAll(Consumer<? super EditorLineChange> consumer) {

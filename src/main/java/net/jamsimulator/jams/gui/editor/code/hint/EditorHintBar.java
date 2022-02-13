@@ -85,9 +85,7 @@ public class EditorHintBar extends Region {
     }
 
     public void clear() {
-        queue.clear();
-        linesHints.forEach(it -> getChildren().remove(it.rectangle));
-        linesHints.clear();
+        queue.add(new QueuedHint(-1, QueueAction.CLEAR, InspectionLevel.NONE));
     }
 
     public void dispose() {
@@ -136,6 +134,12 @@ public class EditorHintBar extends Region {
         linesHints.stream().filter(it -> it.line > line).forEach(it -> it.move(-1, heightPerLine, scaleFix));
     }
 
+    private void queueClear() {
+        queue.clear();
+        linesHints.forEach(it -> getChildren().remove(it.rectangle));
+        linesHints.clear();
+    }
+
     private double getScaleFix() {
         double scaleFix = 1;
         try {
@@ -159,13 +163,14 @@ public class EditorHintBar extends Region {
                     }
                     case ADD -> queueAddLine(hint.line());
                     case REMOVE -> queueRemoveLine(hint.line());
+                    case CLEAR -> queueClear();
                 }
             }
         }
     }
 
     private enum QueueAction {
-        EDIT, ADD, REMOVE
+        EDIT, ADD, REMOVE, CLEAR
     }
 
     private static record QueuedHint(int line, QueueAction action, InspectionLevel level) {
