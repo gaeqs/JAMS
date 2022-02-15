@@ -161,6 +161,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         indexingThread.start();
 
         subscription = plainTextChanges()
+                .conditionOn(editableProperty())
                 .reduceSuccessions(it -> {
                     var list = new LinkedList<EditorLineChange>();
                     EditorLineChange.of(it, this, list);
@@ -169,7 +170,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
                     EditorLineChange.of(it, this, list);
                     return list;
                 }, Duration.ofMillis(100))
-                .subscribe(list -> pendingChanges.addAll(list));
+                .subscribe(this::accept);
 
         styleTimer = new StyleAnimation();
         styleTimer.start();
@@ -517,6 +518,10 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
                 }
             }
         });
+    }
+
+    private void accept(LinkedList<EditorLineChange> list) {
+        pendingChanges.addAll(list);
     }
 
     private class StyleAnimation extends AnimationTimer {
