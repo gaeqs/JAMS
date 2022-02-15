@@ -127,7 +127,7 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
                     } else if (element instanceof MIPSEditorInstructionParameter parameter) {
                         if (i == 1) builder.append(afterInstruction);
                         else if (i > 1) builder.append(afterInstructionParameter);
-                        builder.append(parameter.getIdentifier());
+                        builder.append(parameter.getIdentifier().replaceAll("\\s+",""));
                     }
                     i++;
                 }

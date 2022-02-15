@@ -319,7 +319,12 @@ public interface EditorIndex extends EventBroadcast, Labeled {
      */
     void inspectElementsWithReferences(Collection<EditorElementReference<?>> references);
 
-
+    /**
+     * Reformats the elements inside this index.
+     * This method must returns the reformatted text that this index represents.
+     *
+     * @return the reformatted text.
+     */
     String reformat();
 
     /**

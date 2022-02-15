@@ -70,8 +70,7 @@ public class IndexingThread extends Thread {
 
     private void flushReformattedCode(String text) {
         Platform.runLater(() -> editor.getIndex().withLock(false, i -> {
-            editor.clear();
-            editor.appendText(text);
+            editor.replaceText(text);
             editor.setEditable(!editor.getPendingChanges().isMarkedForReformat(false));
         }));
     }
