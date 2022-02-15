@@ -66,17 +66,6 @@ public class MIPSFileEditor extends CodeFileEditor {
     }
 
     @Override
-    public void reformat() {
-        pendingChanges.markForReformat();
-        setEditable(false);
-    }
-
-    public boolean replaceAllText(String text) {
-        replace(0, getText().length(), text, Collections.emptySet());
-        return true;
-    }
-
-    @Override
     protected EditorIndex generateIndex() {
         return new MIPSEditorIndex(getProject(), tab.getFile().getName());
     }

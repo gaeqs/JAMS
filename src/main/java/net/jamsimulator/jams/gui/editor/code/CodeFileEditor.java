@@ -343,6 +343,8 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
      * This method should be overridden by these children's classes.
      */
     public void reformat() {
+        pendingChanges.markForReformat();
+        setEditable(false);
     }
 
     @Override
