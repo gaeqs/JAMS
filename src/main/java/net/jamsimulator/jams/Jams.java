@@ -64,6 +64,7 @@ public class Jams {
     private static File mainFolder = FolderUtils.checkMainFolder();
 
     private static RootConfiguration mainConfiguration;
+    private static RootConfiguration mainConfigurationMetadata;
 
     private static RecentProjects recentProjects;
     private static TaskExecutor taskExecutor;
@@ -100,6 +101,7 @@ public class Jams {
 
         generalEventBroadcast.callEvent(new JAMSPreInitEvent());
         mainConfiguration = ConfigurationUtils.loadMainConfiguration();
+        mainConfigurationMetadata = ConfigurationUtils.loadMainConfigurationMetadata();
         REGISTRY.loadJAMSManagers();
         recentProjects = new RecentProjects();
         generalEventBroadcast.callEvent(new JAMSPostInitEvent());
@@ -182,6 +184,17 @@ public class Jams {
      */
     public static RootConfiguration getMainConfiguration() {
         return mainConfiguration;
+    }
+
+    /**
+     * Returns the metadata of JAMS's main configuration.
+     * <p>
+     * This configuration gives information about the nodes inside the main configuration.
+     *
+     * @return the metadata.
+     */
+    public static RootConfiguration getMainConfigurationMetadata() {
+        return mainConfigurationMetadata;
     }
 
     /**

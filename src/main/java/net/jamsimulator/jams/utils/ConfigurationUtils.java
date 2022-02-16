@@ -31,13 +31,13 @@ import net.jamsimulator.jams.configuration.format.ConfigurationFormatJSON;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Objects;
 
 public class ConfigurationUtils {
 
     public static final String CONFIGURATION_FOLDER = "configuration";
     public static final String MAIN_CONFIGURATION = "config.jconfig";
     public static final String DEFAULT_MAIN_CONFIGURATION_PATH = "/configuration/main_config.jconfig";
+    public static final String MAIN_CONFIGURATION_META_PATH = "/configuration/main_config_meta.jconfig";
 
     private static File configurationFolder = null;
 
@@ -52,20 +52,41 @@ public class ConfigurationUtils {
         if (file.isDirectory()) throw new RuntimeException("Couldn't create main configuration file! There's " +
                 "a directory with the same name!");
 
-        try {
-            // We can't use managers yet!
-            var format = ConfigurationFormatJSON.INSTANCE;
+        // We can't use managers yet!
+        var format = ConfigurationFormatJSON.INSTANCE;
 
-            RootConfiguration config = new RootConfiguration(file, format);
-            RootConfiguration def = new RootConfiguration(
-                    new InputStreamReader(
-                            Objects.requireNonNull(Jams.class.getResourceAsStream(DEFAULT_MAIN_CONFIGURATION_PATH))),
-                    format);
-            config.addNotPresentValues(def);
-            config.save(format, true);
-            return config;
+        RootConfiguration config;
+        try {
+            config = new RootConfiguration(file, format);
         } catch (IOException ex) {
             throw new RuntimeException("Couldn't load main configuration file!", ex);
+        }
+
+        try (var resource = Jams.class.getResourceAsStream(DEFAULT_MAIN_CONFIGURATION_PATH)) {
+            if (resource != null) {
+                var reader = new InputStreamReader(resource);
+                var defaultConfiguration = new RootConfiguration(reader, format);
+                config.addNotPresentValues(defaultConfiguration);
+                config.save(format, true);
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException("Couldn't load default main configuration file!", ex);
+        }
+
+        return config;
+    }
+
+    public static RootConfiguration loadMainConfigurationMetadata() {
+        // We can't use managers yet!
+        var format = ConfigurationFormatJSON.INSTANCE;
+        try (var resource = Jams.class.getResourceAsStream(MAIN_CONFIGURATION_META_PATH)) {
+            if (resource != null) {
+                var reader = new InputStreamReader(resource);
+                return new RootConfiguration(reader, format);
+            }
+            throw new RuntimeException("Couldn't load main configuration metadata file!");
+        } catch (IOException ex) {
+            throw new RuntimeException("Couldn't load main configuration metadata file!", ex);
         }
     }
 

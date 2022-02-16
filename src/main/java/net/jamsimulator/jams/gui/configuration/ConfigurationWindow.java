@@ -56,9 +56,7 @@ import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
 import net.jamsimulator.jams.manager.Manager;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
-import java.util.Objects;
 
 public class ConfigurationWindow extends SplitPane {
 
@@ -71,8 +69,6 @@ public class ConfigurationWindow extends SplitPane {
 
     private static ConfigurationWindow INSTANCE;
     private final RootConfiguration configuration;
-    private final Configuration meta;
-    private final ConfigurationWindowExplorer explorer;
     private final ScrollPane explorerScrollPane;
     private final SectionTreeDisplay sectionTreeDisplay;
     private final AnchorPane sectionDisplay;
@@ -81,17 +77,16 @@ public class ConfigurationWindow extends SplitPane {
     private Stage stage;
     private Scene scene;
 
-    public ConfigurationWindow(RootConfiguration configuration, Configuration meta) {
+    public ConfigurationWindow(RootConfiguration configuration) {
         this.stage = null;
         this.configuration = configuration;
-        this.meta = meta;
 
         getStyleClass().add(STYLE_CLASS);
 
         explorerScrollPane = new PixelScrollPane();
         explorerScrollPane.setFitToHeight(true);
         explorerScrollPane.setFitToWidth(true);
-        explorer = new ConfigurationWindowExplorer(this, explorerScrollPane);
+        ConfigurationWindowExplorer explorer = new ConfigurationWindowExplorer(this, explorerScrollPane);
         explorer.hideMainSectionRepresentation();
         explorerScrollPane.setContent(explorer);
 
@@ -121,25 +116,13 @@ public class ConfigurationWindow extends SplitPane {
 
     public static ConfigurationWindow getInstance() {
         if (INSTANCE == null) {
-            try {
-                var format = Manager.of(ConfigurationFormat.class).getOrNull(ConfigurationFormatJSON.NAME);
-                Configuration types = new RootConfiguration(new InputStreamReader(
-                        Objects.requireNonNull(Jams.class.getResourceAsStream(
-                                "/configuration/main_config_meta.jconfig"))), format);
-                INSTANCE = new ConfigurationWindow(Jams.getMainConfiguration(), types);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            INSTANCE = new ConfigurationWindow(Jams.getMainConfiguration());
         }
         return INSTANCE;
     }
 
     public Configuration getConfiguration() {
         return configuration;
-    }
-
-    public Configuration getMeta() {
-        return meta;
     }
 
     public Stage getStage() {
