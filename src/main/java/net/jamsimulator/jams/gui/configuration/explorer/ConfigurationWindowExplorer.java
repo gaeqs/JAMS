@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.gui.configuration.explorer;
 
 import javafx.scene.control.ScrollPane;
+import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.configuration.ConfigurationWindow;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
@@ -56,7 +57,7 @@ public class ConfigurationWindowExplorer extends Explorer {
     protected void generateMainSection() {
         mainSection = new ConfigurationWindowSection(this, null,
                 "Configuration", Messages.CONFIG,
-                0, configurationWindow.getConfiguration(), configurationWindow.getMeta(), new HashMap<>());
+                0, configurationWindow.getConfiguration(), Jams.getMainConfigurationMetadata(), new HashMap<>());
         getChildren().add(mainSection);
         mainSection.expand();
     }
