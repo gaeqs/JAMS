@@ -137,8 +137,12 @@ public class Jams {
         }
 
         fileSystemWrapper = new ProtectedFileSystem(fileSystem);
+        REGISTRY.loadPluginManager();
+
+        fileSystemWrapper = new ProtectedFileSystem(fileSystem);
         generalEventBroadcast.callEvent(new JAMSPreInitEvent());
         mainConfiguration = ConfigurationUtils.loadMainConfiguration();
+        mainConfigurationMetadata = ConfigurationUtils.loadMainConfigurationMetadata();
         REGISTRY.loadJAMSManagers();
         recentProjects = new RecentProjects();
         generalEventBroadcast.callEvent(new JAMSPostInitEvent());

@@ -230,7 +230,7 @@ public class Language implements ManagerResource {
             return;
         }
 
-        var map = new HashMap<>(messages);
+        var map = new HashMap<>(baseMessages);
         attachments.forEach(attachment -> map.putAll(attachment.attachment()));
         messages = Collections.unmodifiableMap(map);
         dirty = false;

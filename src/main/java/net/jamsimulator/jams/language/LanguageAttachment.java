@@ -28,6 +28,7 @@ import net.jamsimulator.jams.manager.ResourceProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Represents a set of messages attached to a language.
@@ -40,11 +41,35 @@ import java.util.Map;
 public record LanguageAttachment(
         ResourceProvider resourceProvider,
         Map<String, String> attachment,
-        int priority
+        int priority,
+        int id
 ) implements Comparable<LanguageAttachment> {
+
+    private static final AtomicInteger ID_GENERATOR = new AtomicInteger();
 
     /**
      * Creates the theme attachment.
+     *
+     * @param resourceProvider the provider of the attachment.
+     * @param attachment       the data.
+     *                         This map will be copied. Further modifications to the given map won't affect the attachment.
+     * @param priority         the priority of the attachment. Messages in the attachment with the bigger priority will be used.
+     * @param id               the id of the attachment.
+     */
+    public LanguageAttachment(
+            ResourceProvider resourceProvider,
+            Map<String, String> attachment,
+            int priority,
+            int id
+    ) {
+        this.resourceProvider = resourceProvider;
+        this.attachment = Map.copyOf(attachment);
+        this.priority = priority;
+        this.id = id;
+    }
+
+    /**
+     * Creates the theme attachment. Its ID is generated automatically.
      *
      * @param resourceProvider the provider of the attachment.
      * @param attachment       the data.
@@ -56,13 +81,13 @@ public record LanguageAttachment(
             Map<String, String> attachment,
             int priority
     ) {
-        this.resourceProvider = resourceProvider;
-        this.attachment = Map.copyOf(attachment);
-        this.priority = priority;
+        this(resourceProvider, attachment, priority, ID_GENERATOR.getAndIncrement());
     }
+
 
     @Override
     public int compareTo(@NotNull LanguageAttachment o) {
-        return priority - o.priority;
+        int p = priority - o.priority;
+        return p == 0 ? id - o.id : p;
     }
 }
