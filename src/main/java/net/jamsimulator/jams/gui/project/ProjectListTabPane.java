@@ -136,7 +136,6 @@ public class ProjectListTabPane extends TabPane implements EventBroadcast {
         if (before.isCancelled()) return false;
 
         ProjectTab tab = new ProjectTab(project);
-        project.assignProjectTab(tab);
         getTabs().add(tab);
 
         callEvent(new ProjectOpenEvent.After(project, tab));

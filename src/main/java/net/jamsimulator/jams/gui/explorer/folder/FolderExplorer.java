@@ -25,11 +25,11 @@
 package net.jamsimulator.jams.gui.explorer.folder;
 
 import javafx.scene.control.ScrollPane;
+import net.jamsimulator.jams.event.file.FolderEventBroadcast;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -42,6 +42,7 @@ import java.util.function.Predicate;
 public class FolderExplorer extends Explorer {
 
     private final File mainFolder;
+    private final FolderEventBroadcast folderEventBroadcast;
     private Consumer<ExplorerFile> fileOpenAction;
     private BiConsumer<File, File> fileMoveAction;
 
@@ -50,11 +51,17 @@ public class FolderExplorer extends Explorer {
      *
      * @param mainFolder the main folder of the explorer.
      */
-    public FolderExplorer(File mainFolder, ScrollPane scrollPane, Predicate<File> fileFilter) {
+    public FolderExplorer(
+            File mainFolder,
+            FolderEventBroadcast folderEventBroadcast,
+            ScrollPane scrollPane,
+            Predicate<File> fileFilter
+    ) {
         super(scrollPane, true, false);
         Validate.notNull(mainFolder, "Folder cannot be null!");
         Validate.isTrue(mainFolder.isDirectory(), "Folder must be a directory!");
         this.mainFolder = mainFolder;
+        this.folderEventBroadcast = folderEventBroadcast;
 
         filter = element -> !(element instanceof ExplorerFile) || fileFilter.test(((ExplorerFile) element).getFile());
 
@@ -75,6 +82,15 @@ public class FolderExplorer extends Explorer {
      */
     public File getMainFolder() {
         return mainFolder;
+    }
+
+    /**
+     * Returns the {@link FolderEventBroadcast} this explorer uses to listen to folder updates.
+     *
+     * @return the {@link FolderEventBroadcast}.
+     */
+    public FolderEventBroadcast getFolderEventBroadcast() {
+        return folderEventBroadcast;
     }
 
     /**
@@ -131,18 +147,6 @@ public class FolderExplorer extends Explorer {
      */
     public void setFileMoveAction(BiConsumer<File, File> fileMoveAction) {
         this.fileMoveAction = fileMoveAction;
-    }
-
-    /**
-     * Kills all {@link java.nio.file.WatchService}s of all folders inside this explorer.
-     * This should be used when the explorer won't be used anymore.
-     */
-    public void killWatchers() {
-        try {
-            ((ExplorerFolder) mainSection).killWatchService();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
