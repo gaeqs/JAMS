@@ -36,8 +36,9 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.project.event.ProjectOpenEvent;
 import net.jamsimulator.jams.gui.start.StartWindow;
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.project.ProjectTypeManager;
+import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.project.Project;
+import net.jamsimulator.jams.project.ProjectTypeManager;
 import net.jamsimulator.jams.utils.FileUtils;
 import org.json.JSONArray;
 
@@ -140,6 +141,13 @@ public class ProjectListTabPane extends TabPane implements EventBroadcast {
 
         callEvent(new ProjectOpenEvent.After(project, tab));
         return true;
+    }
+
+    public boolean closeProjectsProvidedBy(ResourceProvider provider) {
+        return getTabs().removeIf(t -> {
+            if (!(t instanceof ProjectTab tab)) return false;
+            return tab.getProject().getType().getResourceProvider().equals(provider);
+        });
     }
 
     /**

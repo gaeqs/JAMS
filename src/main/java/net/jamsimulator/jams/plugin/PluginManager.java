@@ -59,9 +59,10 @@ import java.util.jar.JarFile;
  */
 public final class PluginManager extends Manager<Plugin> {
 
-    public static final File PLUGIN_FOLDER = new File(Jams.getMainFolder(), "plugins");
     public static final String NAME = "plugin";
     public static final PluginManager INSTANCE = new PluginManager(ResourceProvider.JAMS, NAME);
+
+    private File pluginFolder;
 
     // Plugin manager should be private. There must be ONLY one plugin manager!
     private PluginManager(ResourceProvider provider, String name) {
@@ -133,9 +134,10 @@ public final class PluginManager extends Manager<Plugin> {
 
     @Override
     protected void loadDefaultElements() {
-        if (!FolderUtils.checkFolder(PLUGIN_FOLDER)) throw new RuntimeException("Couldn't create plugins folder!");
+        pluginFolder = new File(Jams.getMainFolder(), "plugins");
+        if (!FolderUtils.checkFolder(pluginFolder)) throw new RuntimeException("Couldn't create plugins folder!");
         var headers = new HashSet<PluginHeader>();
-        var files = PLUGIN_FOLDER.listFiles();
+        var files = pluginFolder.listFiles();
         if (files == null) return;
         var jars = Arrays.stream(files)
                 .filter(File::isFile)
@@ -249,10 +251,10 @@ public final class PluginManager extends Manager<Plugin> {
             if (stream().anyMatch(plugin -> plugin.getHeader().name().equals(header.name())))
                 return false;
 
-            var to = new File(PLUGIN_FOLDER, header.name() + "-" + header.version() + ".jar");
+            var to = new File(pluginFolder, header.name() + "-" + header.version() + ".jar");
             int i = 1;
             while (to.exists()) {
-                to = new File(PLUGIN_FOLDER, header.name() + "-" + header.version() + " (" + i++ + ").jar");
+                to = new File(pluginFolder, header.name() + "-" + header.version() + " (" + i++ + ").jar");
             }
 
             Files.copy(file.toPath(), to.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
