@@ -90,6 +90,8 @@ public class ProjectTab extends Tab implements EventBroadcast {
         folderEventBroadcastThread.setDaemon(true);
         folderEventBroadcastThread.start();
 
+        project.assignProjectTab(this);
+
         try {
             folderEventBroadcast.registerPathRecursively(project.getFolder().toPath()
             );
@@ -190,6 +192,15 @@ public class ProjectTab extends Tab implements EventBroadcast {
      */
     public ProjectBottomBar getBottomBar() {
         return bottomBar;
+    }
+
+    /**
+     * Returns the {@link FolderEventBroadcast} of this project tab.
+     *
+     * @return the {@link FolderEventBroadcast}.
+     */
+    public FolderEventBroadcast getFolderEventBroadcast() {
+        return folderEventBroadcast;
     }
 
     /**

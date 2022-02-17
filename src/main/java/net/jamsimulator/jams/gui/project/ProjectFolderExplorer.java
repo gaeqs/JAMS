@@ -65,8 +65,12 @@ public class ProjectFolderExplorer extends FolderExplorer {
      * @param scrollPane the {@link ScrollPane} handling this explorer.
      */
     public ProjectFolderExplorer(Project project, Collection<? extends FileCollection> filesToAssemble, ScrollPane scrollPane) {
-        super(project.getFolder(), scrollPane,
-                file -> !file.toPath().startsWith(project.getData().getMetadataFolder().toPath()));
+        super(
+                project.getFolder(),
+                project.getProjectTab().map(ProjectTab::getFolderEventBroadcast).orElse(null),
+                scrollPane,
+                file -> !file.toPath().startsWith(project.getData().getMetadataFolder().toPath())
+        );
         this.project = project;
         this.filesToAssemble = new HashSet<>(filesToAssemble);
 
@@ -105,7 +109,6 @@ public class ProjectFolderExplorer extends FolderExplorer {
      * Disposes this project. This method must be called when this explorer is no longer needed.
      */
     public void dispose() {
-        killWatchers();
     }
 
     private void markFileToAssemble(File file) {

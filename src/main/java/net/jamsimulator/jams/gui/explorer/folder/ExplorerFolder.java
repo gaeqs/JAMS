@@ -29,6 +29,8 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import net.jamsimulator.jams.event.Listener;
+import net.jamsimulator.jams.event.file.FileEvent;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
@@ -37,13 +39,13 @@ import net.jamsimulator.jams.gui.explorer.ExplorerSectionRepresentation;
 import net.jamsimulator.jams.utils.FileUtils;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.WatchService;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import static java.nio.file.StandardWatchEventKinds.*;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 
 /**
  * Represents a {@link File folder} inside an {@link Explorer}.
@@ -51,8 +53,6 @@ import static java.nio.file.StandardWatchEventKinds.*;
 public class ExplorerFolder extends ExplorerSection {
 
     private final File folder;
-    protected WatchService service;
-    protected boolean serviceRunning;
 
     /**
      * Creates the explorer folder.
@@ -67,8 +67,11 @@ public class ExplorerFolder extends ExplorerSection {
         representation.getStyleClass().add("explorer-folder");
         this.folder = folder;
         loadChildren();
-        loadWatcher();
         refreshAllElements();
+
+        if (explorer instanceof FolderExplorer fe) {
+            fe.getFolderEventBroadcast().registerListeners(this, true);
+        }
     }
 
     /**
@@ -123,24 +126,6 @@ public class ExplorerFolder extends ExplorerSection {
     }
 
     /**
-     * Kills the {@link WatchService} of this folder. This prevents this folder
-     * from receiving alerts from changes inside the folder.
-     * <p>
-     * This method should be used when the folder is no longer used.
-     *
-     * @throws IOException any exception thrown by {@link WatchService#close()}.
-     */
-    public void killWatchService() throws IOException {
-        serviceRunning = false;
-        service.close();
-
-        for (ExplorerElement element : elements) {
-            if (element instanceof ExplorerFolder)
-                ((ExplorerFolder) element).killWatchService();
-        }
-    }
-
-    /**
      * Adds the given file into this folderº explorer.
      * <p>
      * This method is used by the {@link WatchService}.
@@ -168,18 +153,13 @@ public class ExplorerFolder extends ExplorerSection {
     public void removeFile(File file) {
         //Tries to remove a folder. If the folder doesn't exist, tries to remove a file.
         ExplorerFolder folder = (ExplorerFolder) elements.stream().filter(target ->
-                target instanceof ExplorerFolder && ((ExplorerFolder) target).folder.equals(file))
+                        target instanceof ExplorerFolder && ((ExplorerFolder) target).folder.equals(file))
                 .findFirst().orElse(null);
         if (folder != null) {
-            if (!removeElement(folder)) return;
-            try {
-                folder.killWatchService();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            removeElement(folder);
         } else {
             elements.stream().filter(target ->
-                    target instanceof ExplorerFile && ((ExplorerFile) target).getFile().equals(file))
+                            target instanceof ExplorerFile && ((ExplorerFile) target).getFile().equals(file))
                     .findFirst().ifPresent(this::removeElement);
         }
     }
@@ -262,51 +242,18 @@ public class ExplorerFolder extends ExplorerSection {
         representation.refreshStatusIcon();
     }
 
-    private void loadWatcher() {
-        //Loads the watch service.
-        try {
-            service = FileSystems.getDefault().newWatchService();
-            folder.toPath().register(service, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+    @Listener
+    private void folderChange(FileEvent event) {
+        var kind = event.getWatchEvent().kind();
+        var file = event.getPath().toFile();
+        var parent = file.getParentFile();
+        if (!folder.equals(parent)) return;
 
-            serviceRunning = true;
-
-            new Thread(() -> {
-                //While the folder is not killed, run the service.
-                while (serviceRunning) {
-                    try {
-                        serviceRunning = processKey(service.take());
-                    } catch (ClosedWatchServiceException ignore) {
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }).start();
-
-
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
+        if (kind == ENTRY_DELETE) {
+            Platform.runLater(() -> removeFile(event.getPath().toFile()));
+        } else if (kind == ENTRY_CREATE) {
+            Platform.runLater(() -> addFile(event.getPath().toFile()));
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private boolean processKey(WatchKey key) {
-        for (WatchEvent<?> event : key.pollEvents()) {
-            WatchEvent.Kind<?> kind = event.kind();
-            if (kind == OVERFLOW) continue;
-
-            WatchEvent<Path> watchEvent = (WatchEvent<Path>) event;
-
-            Path dir = (Path) key.watchable();
-            Path path = dir.resolve(watchEvent.context());
-            File file = path.toFile();
-
-            if (kind == ENTRY_DELETE) {
-                Platform.runLater(() -> removeFile(file));
-            } else if (kind == ENTRY_CREATE) {
-                Platform.runLater(() -> addFile(file));
-            }
-        }
-        return key.reset();
     }
 
     @Override
