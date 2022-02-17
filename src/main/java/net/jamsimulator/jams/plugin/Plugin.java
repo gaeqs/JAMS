@@ -26,6 +26,7 @@ package net.jamsimulator.jams.plugin;
 
 import javafx.application.Platform;
 import net.jamsimulator.jams.Jams;
+import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.manager.ManagerResource;
@@ -160,6 +161,7 @@ public class Plugin implements ResourceProvider, ManagerResource {
             enabledSoftDepenedencies.clear();
             Jams.getGeneralEventBroadcast().unregisterListeners(this);
             Jams.REGISTRY.removeProvidedBy(this);
+            JamsApplication.getProjectsTabPane().closeProjectsProvidedBy(this);
         }
     }
 

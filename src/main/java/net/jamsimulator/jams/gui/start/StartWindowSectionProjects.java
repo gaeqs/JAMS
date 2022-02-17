@@ -39,6 +39,9 @@ import net.jamsimulator.jams.gui.util.PixelScrollPane;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageButton;
 import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
+import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
+import net.jamsimulator.jams.project.ProjectType;
 import net.jamsimulator.jams.project.ProjectTypeManager;
 import net.jamsimulator.jams.project.ProjectSnapshot;
 import net.jamsimulator.jams.project.event.RecentProjectAddEvent;
@@ -94,6 +97,8 @@ public class StartWindowSectionProjects extends AnchorPane implements StartWindo
 
         AnchorUtils.setAnchor(hbox, 0, -1, 0, 0);
         getChildren().add(hbox);
+
+        Manager.of(ProjectType.class).registerListeners(this, true);
     }
 
     private void loadRecentProjects() {
@@ -123,6 +128,15 @@ public class StartWindowSectionProjects extends AnchorPane implements StartWindo
         refeshProjects();
     }
 
+    @Listener
+    private void onTypeRegistered(ManagerElementRegisterEvent.After<ProjectType<?>> event) {
+        refeshProjects();
+    }
+
+    @Listener
+    private void onTypeUnregistered(ManagerElementUnregisterEvent.After<ProjectType<?>> event) {
+        refeshProjects();
+    }
 
     private class RecentProject extends HBox {
 
