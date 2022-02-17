@@ -34,7 +34,7 @@ def projectGroup = 'net.jamsimulator'
 def projectId = "JAMS"
 def projectMainClass = "net.jamsimulator.jams.Jams"
 
-def javafxVersion = '16'
+def javafxVersion = '17.0.2'
 def javafxDependencies = ['javafx-base', 'javafx-controls', 'javafx-media', 'javafx-graphics', 'javafx-fxml', 'javafx-swing']
 def bundleLibs = false
 def winConsole = false
@@ -65,14 +65,14 @@ application {
 
 dependencies {
     implementation group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
-    implementation group: 'org.json', name: 'json', version: '20210307'
+    implementation group: 'org.json', name: 'json', version: '20211205'
     implementation group: 'org.yaml', name: 'snakeyaml', version: '1.29'
     implementation 'org.jetbrains:annotations:22.0.0'
 
     implementation 'com.github.gaeqs:RichTextFX:fcdb504a'
-    implementation group: 'org.reactfx', name: 'reactfx', version: '2.0-M5'
+    implementation group: 'org.reactfx', name: 'reactfx', version: '2.0-M4u1'
     implementation group: 'org.fxmisc.undo', name: 'undofx', version: '2.1.1'
-    implementation group: 'org.fxmisc.flowless', name: 'flowless', version: '0.6.7'
+    implementation group: 'org.fxmisc.flowless', name: 'flowless', version: '0.6.8'
     implementation group: 'org.fxmisc.wellbehaved', name: 'wellbehavedfx', version: '0.3.3'
 
     implementation 'com.github.gaeqs:RichTextFX:-SNAPSHOT'
@@ -84,14 +84,14 @@ dependencies {
     }
 
     jarLib group: 'com.github.goxr3plus', name: 'FX-BorderlessScene', version: '4.4.0'
-    jarLib group: 'org.json', name: 'json', version: '20210307'
+    jarLib group: 'org.json', name: 'json', version: '20211205'
     jarLib group: 'org.yaml', name: 'snakeyaml', version: '1.29'
 
 
     jarLib 'com.github.gaeqs:RichTextFX:fcdb504a'
-    jarLib group: 'org.reactfx', name: 'reactfx', version: '2.0-M5'
+    jarLib group: 'org.reactfx', name: 'reactfx', version: '2.0-M4u1'
     jarLib group: 'org.fxmisc.undo', name: 'undofx', version: '2.1.1'
-    jarLib group: 'org.fxmisc.flowless', name: 'flowless', version: '0.6.7'
+    jarLib group: 'org.fxmisc.flowless', name: 'flowless', version: '0.6.8'
     jarLib group: 'org.fxmisc.wellbehaved', name: 'wellbehavedfx', version: '0.3.3'
 
     jarLib 'com.github.gaeqs:RichTextFX:-SNAPSHOT'
