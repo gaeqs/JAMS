@@ -26,36 +26,18 @@ package net.jamsimulator.jams.gui.configuration;
 
 import javafx.application.Platform;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.configuration.RootConfiguration;
-import net.jamsimulator.jams.configuration.format.ConfigurationFormat;
-import net.jamsimulator.jams.configuration.format.ConfigurationFormatJSON;
-import net.jamsimulator.jams.event.Listener;
-import net.jamsimulator.jams.gui.JamsApplication;
-import net.jamsimulator.jams.gui.action.event.ActionBindEvent;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowExplorer;
 import net.jamsimulator.jams.gui.configuration.explorer.ConfigurationWindowSection;
 import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNode;
-import net.jamsimulator.jams.gui.image.icon.Icons;
-import net.jamsimulator.jams.gui.theme.ThemedScene;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
-import net.jamsimulator.jams.language.Language;
-import net.jamsimulator.jams.language.Messages;
-import net.jamsimulator.jams.language.event.LanguageRefreshEvent;
-import net.jamsimulator.jams.manager.Manager;
 
-import java.io.IOException;
 import java.util.List;
 
 public class ConfigurationWindow extends SplitPane {
@@ -64,36 +46,27 @@ public class ConfigurationWindow extends SplitPane {
     public static final String DISPLAY_STYLE_CLASS = "display";
     public static final String DISPLAY_CONTENTS_STYLE_CLASS = "contents";
 
-    private static final int WIDTH = 900;
-    private static final int HEIGHT = 600;
-
-    private static ConfigurationWindow INSTANCE;
     private final RootConfiguration configuration;
-    private final ScrollPane explorerScrollPane;
+    private final Configuration configurationMeta;
+
+
     private final SectionTreeDisplay sectionTreeDisplay;
     private final AnchorPane sectionDisplay;
     private final ScrollPane basicSectionContentsScroll;
     private final VBox basicSectionContents;
-    private Stage stage;
-    private Scene scene;
 
-    public ConfigurationWindow(RootConfiguration configuration) {
-        this.stage = null;
+    public ConfigurationWindow(RootConfiguration configuration, Configuration configurationMeta) {
         this.configuration = configuration;
+        this.configurationMeta = configurationMeta;
 
         getStyleClass().add(STYLE_CLASS);
 
-        explorerScrollPane = new PixelScrollPane();
+        var explorerScrollPane = new PixelScrollPane();
+        var explorer = new ConfigurationWindowExplorer(this, explorerScrollPane);
+
         explorerScrollPane.setFitToHeight(true);
         explorerScrollPane.setFitToWidth(true);
-        ConfigurationWindowExplorer explorer = new ConfigurationWindowExplorer(this, explorerScrollPane);
-        explorer.hideMainSectionRepresentation();
         explorerScrollPane.setContent(explorer);
-
-        explorerScrollPane.getContent().addEventHandler(ScrollEvent.SCROLL, scrollEvent -> {
-            double deltaY = scrollEvent.getDeltaY() * 0.003;
-            explorerScrollPane.setVvalue(explorerScrollPane.getVvalue() - deltaY);
-        });
 
         sectionTreeDisplay = new SectionTreeDisplay();
 
@@ -111,29 +84,18 @@ public class ConfigurationWindow extends SplitPane {
         AnchorUtils.setAnchor(sectionTreeDisplay, 0, -1, 0, 0);
         sectionDisplay.getChildren().add(sectionTreeDisplay);
 
-        init();
-    }
-
-    public static ConfigurationWindow getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new ConfigurationWindow(Jams.getMainConfiguration());
-        }
-        return INSTANCE;
+        getItems().add(explorerScrollPane);
+        getItems().add(sectionDisplay);
+        SplitPane.setResizableWithParent(explorerScrollPane, false);
+        Platform.runLater(() -> setDividerPosition(0, 0.2));
     }
 
     public Configuration getConfiguration() {
         return configuration;
     }
 
-    public Stage getStage() {
-        return stage;
-    }
-
-    private void init() {
-        getItems().add(explorerScrollPane);
-        getItems().add(sectionDisplay);
-        SplitPane.setResizableWithParent(explorerScrollPane, false);
-        Platform.runLater(() -> setDividerPosition(0, 0.2));
+    public Configuration getConfigurationMeta() {
+        return configurationMeta;
     }
 
     public void display(ConfigurationWindowSection section) {
@@ -170,72 +132,5 @@ public class ConfigurationWindow extends SplitPane {
 
         AnchorUtils.setAnchor(basicSectionContentsScroll, 35, 0, 0, 0);
         sectionDisplay.getChildren().add(basicSectionContentsScroll);
-    }
-
-    public void open() {
-        if (stage == null) {
-            stage = new Stage();
-            scene = new ThemedScene(this);
-            stage.initOwner(JamsApplication.getStage());
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(scene);
-
-            stage.setWidth(WIDTH);
-            stage.setHeight(HEIGHT);
-            stage.setMinWidth(WIDTH >> 1);
-            stage.setMinHeight(HEIGHT >> 1);
-
-            Stage main = JamsApplication.getStage();
-
-            stage.setX(main.getX() + main.getWidth() / 2 - (WIDTH >> 1));
-            stage.setY(main.getY() + main.getHeight() / 2 - (HEIGHT >> 1));
-
-            stage.setTitle(Manager.ofS(Language.class).getSelected().getOrDefault(Messages.CONFIG));
-            Icons.LOGO.getImage().ifPresent(stage.getIcons()::add);
-
-
-            stage.setOnCloseRequest(event -> {
-                try {
-                    configuration.save(
-                            Manager.of(ConfigurationFormat.class).getOrNull(ConfigurationFormatJSON.NAME),
-                            true
-                    );
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-
-            scene.setOnKeyPressed(event -> {
-                if (event.getCode() == KeyCode.ESCAPE) {
-                    stage.close();
-                }
-            });
-
-            JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);
-            Manager.of(Language.class).registerListeners(this, true);
-        }
-
-        stage.show();
-    }
-
-    @Listener
-    public void onRefresh(LanguageRefreshEvent event) {
-        stage.setTitle(event.getSelectedLanguage().getOrDefault(Messages.CONFIG));
-    }
-
-    @Listener
-    private void onActionBind(ActionBindEvent.After event) {
-        if (scene != null) {
-            JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);
-        }
-
-    }
-
-    @Listener
-    private void onActionUnbind(ActionBindEvent.After event) {
-        if (scene != null) {
-            JamsApplication.getActionManager().addAcceleratorsToScene(scene, true);
-        }
-
     }
 }

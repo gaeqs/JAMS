@@ -34,10 +34,10 @@ import net.jamsimulator.jams.gui.image.quality.QualityImageView;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.language.wrapper.LanguageTooltip;
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.plugin.PluginManager;
 import net.jamsimulator.jams.manager.event.ManagerElementRegisterEvent;
 import net.jamsimulator.jams.manager.event.ManagerElementUnregisterEvent;
 import net.jamsimulator.jams.plugin.Plugin;
+import net.jamsimulator.jams.plugin.PluginManager;
 
 public class PluginExplorerList extends VBox {
 
@@ -52,10 +52,9 @@ public class PluginExplorerList extends VBox {
 
         getStyleClass().add(STYLE_CLASS);
         setAlignment(Pos.TOP_CENTER);
-
-        Manager.of(Plugin.class).forEach(plugin -> getChildren().add(new PluginExplorerEntry(plugin, this)));
         loadInstallButton();
 
+        Manager.of(Plugin.class).forEach(plugin -> getChildren().add(new PluginExplorerEntry(plugin, this)));
         Manager.of(Plugin.class).registerListeners(this, true);
     }
 
@@ -92,6 +91,9 @@ public class PluginExplorerList extends VBox {
 
     @Listener
     private void onPluginRegister(ManagerElementRegisterEvent.After<Plugin> event) {
+        if (getChildren().stream().anyMatch(
+                it -> it instanceof PluginExplorerEntry e && e.getPlugin().equals(event.getElement())))
+            return;
         getChildren().add(getChildren().size() - 1, new PluginExplorerEntry(event.getElement(), this));
     }
 
@@ -99,6 +101,6 @@ public class PluginExplorerList extends VBox {
     private void onPluginUnregister(ManagerElementUnregisterEvent.After<Plugin> event) {
         getChildren().removeIf(target -> target instanceof PluginExplorerEntry
                 && ((PluginExplorerEntry) target).getPlugin() == event.getElement());
-        if (selected.getPlugin() == event.getElement()) select(null);
+        if (selected != null && selected.getPlugin() == event.getElement()) select(null);
     }
 }

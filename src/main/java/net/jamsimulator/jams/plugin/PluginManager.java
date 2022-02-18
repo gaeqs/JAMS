@@ -86,11 +86,15 @@ public final class PluginManager extends Manager<Plugin> {
     public boolean add(Plugin plugin) {
         // The method fails if the plugin is already enabled (if the plugin is already added in a PluginManager).
         if (plugin.isEnabled()) return false;
-        if (!super.add(plugin)) return false;
+        if (super.contains(plugin)) return false;
 
         try {
             System.out.println("Enabling plugin " + plugin.getName() + ".");
             plugin.setEnabled(true);
+            if (!super.add(plugin)) {
+                plugin.setEnabled(false);
+                return false;
+            }
         } catch (Exception ex) {
             System.err.println(plugin.getName() + "'s onEnable() throwed an exception!");
             ex.printStackTrace();
@@ -120,10 +124,11 @@ public final class PluginManager extends Manager<Plugin> {
         if (o instanceof Plugin plugin) {
             if (parallelStream().anyMatch(other -> other.getDependencies().contains(plugin)
                     || other.getEnabledSoftDepenedencies().contains(plugin))) return false;
-            if (!super.remove(o)) return false;
+            if (!super.contains(o)) return false;
             try {
                 System.out.println("Disabling plugin " + plugin.getName() + ".");
                 plugin.setEnabled(false);
+                if (!super.remove(o)) return false;
             } catch (Exception ex) {
                 System.err.println(plugin.getName() + "'s onDisable() throwed an exception!");
                 ex.printStackTrace();

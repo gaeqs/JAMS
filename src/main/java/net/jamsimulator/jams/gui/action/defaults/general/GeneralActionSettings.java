@@ -30,7 +30,7 @@ import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
-import net.jamsimulator.jams.gui.configuration.ConfigurationWindow;
+import net.jamsimulator.jams.gui.configuration.ConfigurationWindowScene;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.image.icon.Icons;
@@ -55,7 +55,7 @@ public class GeneralActionSettings extends ContextAction {
 
     @Override
     public void run(Object node) {
-        ConfigurationWindow.getInstance().open();
+        ConfigurationWindowScene.open();
     }
 
     @Override

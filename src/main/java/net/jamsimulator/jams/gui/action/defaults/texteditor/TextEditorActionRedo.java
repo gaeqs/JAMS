@@ -24,28 +24,19 @@
 
 package net.jamsimulator.jams.gui.action.defaults.texteditor;
 
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
-import net.jamsimulator.jams.gui.editor.FileEditor;
-import net.jamsimulator.jams.gui.editor.holder.FileEditorHolder;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
-import net.jamsimulator.jams.gui.mips.project.MIPSStructurePane;
-import net.jamsimulator.jams.gui.project.ProjectTab;
 import net.jamsimulator.jams.gui.util.CodeFileEditorUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
-import org.fxmisc.richtext.ClipboardActions;
 import org.fxmisc.richtext.UndoActions;
-
-import java.util.Optional;
 
 public class TextEditorActionRedo extends ContextAction {
 
