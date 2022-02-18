@@ -37,7 +37,7 @@ def projectMainClass = "net.jamsimulator.jams.Jams"
 def javafxVersion = '17.0.2'
 def javafxDependencies = ['javafx-base', 'javafx-controls', 'javafx-media', 'javafx-graphics', 'javafx-fxml', 'javafx-swing']
 def bundleLibs = false
-def winConsole = true
+def winConsole = false
 
 group projectGroup
 version '0.4-BETA-SNAPSHOT'
