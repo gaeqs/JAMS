@@ -27,9 +27,7 @@ package net.jamsimulator.jams.gui.configuration.explorer;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.utils.Validate;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class ConfigurationMetadata {
 
@@ -37,10 +35,12 @@ public class ConfigurationMetadata {
     public static final String LANGUAGE_NODE_KEY = "language_node";
     public static final String REGION_KEY = "region";
     public static final String REGIONS_KEY = "regions";
+    public static final String REQUIRES_PLUGINS = "requires_plugins";
 
     private final String type;
     private final String languageNode;
     private final String region;
+    private final List<String> requiresPlugins;
     private final Map<String, Integer> regions;
 
     public ConfigurationMetadata(Configuration configuration) {
@@ -48,6 +48,9 @@ public class ConfigurationMetadata {
         this.type = configuration.getString(TYPE_KEY).orElse(null);
         this.languageNode = configuration.getString(LANGUAGE_NODE_KEY).orElse(null);
         this.region = configuration.getString(REGION_KEY).orElse(null);
+        this.requiresPlugins = (List<String>) configuration.get(REQUIRES_PLUGINS)
+                .filter(it -> it instanceof List)
+                .orElse(Collections.emptyList());
 
         this.regions = new HashMap<>();
 
@@ -73,6 +76,10 @@ public class ConfigurationMetadata {
 
     public String getRegion() {
         return region;
+    }
+
+    public List<String> getRequiresPlugins() {
+        return requiresPlugins;
     }
 
     public Map<String, Integer> getRegions() {
