@@ -37,7 +37,7 @@ def projectMainClass = "net.jamsimulator.jams.Jams"
 def javafxVersion = '17.0.2'
 def javafxDependencies = ['javafx-base', 'javafx-controls', 'javafx-media', 'javafx-graphics', 'javafx-fxml', 'javafx-swing']
 def bundleLibs = false
-def winConsole = false
+def winConsole = true
 
 group projectGroup
 version '0.4-BETA-SNAPSHOT'
@@ -166,6 +166,17 @@ task bundle {
 
 runtime {
     options.addAll(['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages'])
+    modules = [
+            'java.desktop',
+            'java.xml',
+            'jdk.unsupported',
+            'jdk.unsupported.desktop',
+            'java.datatransfer',
+            'java.scripting',
+            'jdk.jfr',
+            'java.logging',
+            'jdk.zipfs'
+    ]
     version = normalizeAppVersion(version as String)
     launcher {
         jvmArgs = ['-Dlogback.configurationFile=./logback.xml']
