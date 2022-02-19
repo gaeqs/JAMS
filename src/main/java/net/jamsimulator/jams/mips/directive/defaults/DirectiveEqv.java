@@ -43,9 +43,13 @@ public class DirectiveEqv extends Directive {
         if (parameters.length < 2)
             throw new AssemblerException(lineNumber, "." + NAME + " must have at least two parameter.");
 
-        String replace = line.substring(("." + NAME + " " + parameters[0]).length()).trim();
-        file.addEquivalent(parameters[0] + labelSufix, replace);
+        var builder = new StringBuilder();
+        for (int i = 1; i < parameters.length; i++) {
+            if (i > 1) builder.append(' ');
+            builder.append(parameters[i]);
+        }
 
+        file.addEquivalent(parameters[0] + labelSufix, builder.toString());
         return -1;
     }
 
