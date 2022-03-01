@@ -98,10 +98,8 @@ public final class ActionManager extends Manager<Action> {
 
     @Override
     protected void onElementRemoval(Action action) {
-
         binds.forEach((combination, regions) -> {
-            var current = regions.get(action.getRegionTag());
-            if (current.equals(action)) {
+            if (action.equals(regions.get(action.getRegionTag()))) {
                 unbind(combination, action.getRegionTag());
             }
         });

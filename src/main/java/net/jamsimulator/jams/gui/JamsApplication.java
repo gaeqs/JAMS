@@ -208,6 +208,8 @@ public class JamsApplication extends Application {
         // Load projects
         getProjectsTabPane().openSavedProjects();
 
+        loaded = true;
+
         if (getProjectsTabPane().getProjects().isEmpty()) {
             StartWindow.INSTANCE.open();
             if (!getProjectsTabPane().getProjects().isEmpty()) {
@@ -216,7 +218,5 @@ public class JamsApplication extends Application {
         } else {
             stage.show();
         }
-
-        loaded = true;
     }
 }

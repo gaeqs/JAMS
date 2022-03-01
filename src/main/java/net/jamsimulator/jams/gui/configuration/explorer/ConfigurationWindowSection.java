@@ -27,14 +27,16 @@ package net.jamsimulator.jams.gui.configuration.explorer;
 import javafx.scene.Node;
 import net.jamsimulator.jams.configuration.Configuration;
 import net.jamsimulator.jams.gui.configuration.explorer.node.ConfigurationWindowNode;
-import net.jamsimulator.jams.gui.configuration.explorer.section.ConfigurationWindowSpecialSectionBuilder;
 import net.jamsimulator.jams.gui.configuration.explorer.section.ConfigurationWindowSpecialSectionBuilders;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.gui.explorer.LanguageExplorerSection;
+import net.jamsimulator.jams.manager.Manager;
+import net.jamsimulator.jams.plugin.Plugin;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ConfigurationWindowSection extends LanguageExplorerSection {
 
@@ -104,16 +106,17 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
     }
 
     protected void manageChildrenAddition(String name, Object value) {
+        var plugins = Manager.of(Plugin.class).stream().map(Plugin::getName).collect(Collectors.toSet());
         if (value instanceof Configuration) {
             if (!name.equals("invisible")) {
-                manageSectionAddition(name, (Configuration) value);
+                manageSectionAddition(name, (Configuration) value, plugins);
             }
         } else {
-            manageBasicObjectAddition(name, value);
+            manageBasicObjectAddition(name, value, plugins);
         }
     }
 
-    protected void manageSectionAddition(String name, Configuration value) {
+    protected void manageSectionAddition(String name, Configuration value, Set<String> plugins) {
         Optional<Configuration> metaConfig = this.meta == null ? Optional.empty() : this.meta.get(name);
         String languageNode = null;
         String special = null;
@@ -126,11 +129,12 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
                 languageNode = meta.getLanguageNode();
                 special = meta.getType();
                 regions = meta.getRegions();
+                if(!plugins.containsAll(meta.getRequiresPlugins())) return;
             }
         }
 
         if (special != null) {
-            Optional<ConfigurationWindowSpecialSectionBuilder> builder = ConfigurationWindowSpecialSectionBuilders.getByName(special);
+            var builder = ConfigurationWindowSpecialSectionBuilders.getByName(special);
 
             if (builder.isPresent()) {
                 ExplorerElement element = builder.get().create(getExplorer(), this, name, languageNode,
@@ -146,7 +150,7 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
         filteredElements.add(element);
     }
 
-    protected void manageBasicObjectAddition(String name, Object value) {
+    protected void manageBasicObjectAddition(String name, Object value, Set<String> plugins) {
         Optional<Configuration> metaOptional = meta == null ? Optional.empty() : meta.get(name);
         String languageNode = null;
         String region = null;
@@ -157,6 +161,7 @@ public class ConfigurationWindowSection extends LanguageExplorerSection {
             languageNode = meta.getLanguageNode();
             region = meta.getRegion();
             type = meta.getType();
+            if(!plugins.containsAll(meta.getRequiresPlugins())) return;
         }
 
         var node = new ConfigurationWindowNode(configuration, name, languageNode, region, type);

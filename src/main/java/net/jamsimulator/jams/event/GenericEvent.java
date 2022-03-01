@@ -60,7 +60,7 @@ import java.lang.reflect.WildcardType;
  */
 public class GenericEvent<E> extends Event {
 
-    public Class<?> type;
+    private final Class<?> type;
 
     /**
      * Creates an event.
@@ -92,7 +92,7 @@ public class GenericEvent<E> extends Event {
                     && validUpperBounds(wildcard.getUpperBounds(), type);
         }
 
-        if(first instanceof ParameterizedType parameterized) {
+        if (first instanceof ParameterizedType parameterized) {
             return type.equals(parameterized.getRawType());
         }
 
