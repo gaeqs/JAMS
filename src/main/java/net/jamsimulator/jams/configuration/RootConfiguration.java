@@ -58,12 +58,12 @@ public class RootConfiguration extends Configuration implements EventBroadcast {
     /**
      * Creates a root configuration using a file that contains a JSON string.
      *
-     * @param file the file to parse.
+     * @param file   the file to parse.
      * @param format the format of the file.
      * @throws IOException when the file cannot be readed.
      */
     public RootConfiguration(File file, ConfigurationFormat format) throws IOException {
-        super(null, format.deserialize(FileUtils.readAll(file)), null);
+        super(null, format.deserialize(FileUtils.readAllSafe(file).orElse("")), null);
         this.root = this;
         this.file = file;
         this.broadcast = new SimpleEventBroadcast();
@@ -72,7 +72,7 @@ public class RootConfiguration extends Configuration implements EventBroadcast {
     /**
      * Creates a root configuration using a string.
      *
-     * @param data the data.
+     * @param data   the data.
      * @param format the format of the data.
      */
     public RootConfiguration(String data, ConfigurationFormat format) {

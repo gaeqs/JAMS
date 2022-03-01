@@ -26,6 +26,7 @@ package net.jamsimulator.jams.utils;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 
 public class FileUtils {
@@ -67,6 +68,15 @@ public class FileUtils {
         reader.close();
 
         return builder.toString();
+    }
+
+    public static Optional<String> readAllSafe(File file) {
+        if (file == null || !file.exists() || !file.isFile()) return Optional.empty();
+        try {
+            return Optional.of(readAll(file));
+        } catch (IOException e) {
+            return Optional.empty();
+        }
     }
 
     public static String readAll(InputStream stream) throws IOException {

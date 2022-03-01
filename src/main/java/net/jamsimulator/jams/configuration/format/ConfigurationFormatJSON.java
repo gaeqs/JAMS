@@ -27,6 +27,8 @@ package net.jamsimulator.jams.configuration.format;
 import net.jamsimulator.jams.manager.ResourceProvider;
 import org.json.JSONObject;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ConfigurationFormatJSON extends ConfigurationFormat {
@@ -40,6 +42,7 @@ public class ConfigurationFormatJSON extends ConfigurationFormat {
 
     @Override
     public Map<String, Object> deserialize(String string) {
+        if (string.isBlank()) return new HashMap<>();
         return new JSONObject(string).toMap();
     }
 

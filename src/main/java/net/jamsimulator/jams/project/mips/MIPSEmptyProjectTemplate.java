@@ -144,6 +144,14 @@ public class MIPSEmptyProjectTemplate extends ProjectTemplate<MIPSProject> {
         var metadataFile = new File(metadataFolder, ProjectData.METADATA_DATA_NAME);
 
         try {
+            if (!metadataFile.exists()) {
+                if (!metadataFile.createNewFile()) {
+                    throw new MIPSTemplateBuildException("Couldn't create metadata file");
+                }
+            } else if (!metadataFile.isFile()) {
+                throw new MIPSTemplateBuildException("Metadata path already exists and it's not a file!");
+            }
+
             var format = Manager.of(ConfigurationFormat.class).getOrNull(ConfigurationFormatJSON.NAME);
             var config = new RootConfiguration(metadataFile, format);
             config.convertAndSet(MIPSProjectData.NODE_ASSEMBLER, assemblerBuilderProperty.getValue(), AssemblerBuilder.class);
