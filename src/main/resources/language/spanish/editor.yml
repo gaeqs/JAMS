@@ -1,3 +1,10 @@
+BAR_EXPLORER_NAME: Explorador
+BAR_FILES_TO_ASSEMBLE_NAME: Archivos a ensamblar
+BAR_LOG_NAME: Informe
+BAR_SEARCH_RESULTS: '{RESULTS} resultados'
+EDITOR_INDEXING: Indexando...
+TASK_ASSEMBLING: Ensamblando...
+
 EDITOR_ERROR_DUPLICATE_LABEL: La etiqueta '{LABEL}' está duplicada en la línea {LINE}.
 EDITOR_ERROR_DUPLICATE_GLOBAL_LABEL: La etiqueta global '{LABEL}' está duplicada en
   la línea {LINE} del archivo '{FILE}'.
