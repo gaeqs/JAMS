@@ -15,7 +15,7 @@ SIMULATION_CONFIGURATION_CALL_EVENTS_TOOLTIP: Allows the simulation to notify me
   registers and instructions' changes.\n\nIf this option is disabled, the simulation
   will work faster, but some debugger and plug-ins' options won't work. Events will
   work when the simulation is stopped.
-SIMULATION_CONFIGURATION_ENABLE_UNDO: Allow to undo steps
+SIMULATION_CONFIGURATION_ENABLE_UNDO: Allow undoing steps
 SIMULATION_CONFIGURATION_ENABLE_UNDO_TOOLTIP: Allows you to undo simulation's steps.\n\nIf
   this option is disabled, the simulation will work faster, and it will consume less
   memory, but you will be unable to undo steps.\n\nThis option requires events to
