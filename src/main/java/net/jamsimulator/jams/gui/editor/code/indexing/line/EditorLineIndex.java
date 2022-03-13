@@ -27,7 +27,6 @@ package net.jamsimulator.jams.gui.editor.code.indexing.line;
 import net.jamsimulator.jams.collection.Bag;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
-import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.hint.EditorHintBar;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorLineChange;
@@ -220,7 +219,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
                     var line = generateNewLine(start, lines.size(), builder.toString(), scope);
                     if (line.isMacroEnd() || line.isMacroStart()) {
                         line.changeScope(ElementScope.FILE);
-                        scope = line.isMacroStart()
+                        scope = line.isMacroStart() && line.getDefinedMacroIdentifier().isPresent()
                                 ? new ElementScope(ElementScope.Type.MACRO, line.getDefinedMacroIdentifier().get())
                                 : ElementScope.FILE;
                     }

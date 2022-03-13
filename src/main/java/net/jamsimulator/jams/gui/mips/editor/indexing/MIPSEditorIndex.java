@@ -33,6 +33,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.line.EditorLineIndex;
 import net.jamsimulator.jams.gui.mips.editor.MIPSSpaces;
 import net.jamsimulator.jams.gui.mips.editor.indexing.element.*;
 import net.jamsimulator.jams.gui.mips.editor.indexing.inspection.MIPSInspectorManager;
+import net.jamsimulator.jams.mips.directive.defaults.DirectiveMacro;
 import net.jamsimulator.jams.project.Project;
 
 public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
@@ -104,9 +105,11 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
 
             if (line.directive != null) {
                 int i = 0;
+                boolean macro = false;
                 for (var element : line.directive.getElements()) {
                     if (element instanceof MIPSEditorDirectiveMnemonic mnemonic) {
                         builder.append(mnemonic.getText());
+                        macro = mnemonic.getIdentifier().equals(DirectiveMacro.NAME);
                     } else if (element instanceof MIPSEditorDirectiveMacroParameter parameter) {
                         if (i == 1) builder.append(afterDirective);
                         else if (i == 2) builder.append(afterDirectiveParameter).append("(");
@@ -119,6 +122,9 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
                         builder.append(parameter.getIdentifier());
                     }
                     i++;
+                }
+                if(macro && line.directive.size() == 2) {
+                    builder.append(afterDirectiveParameter).append("()");
                 }
             }
 
