@@ -33,7 +33,7 @@ public class LabPane extends VBox {
 
     public LabPane(MIPSSimulation<?> simulation) {
         getStyleClass().add(STYLE_CLASS);
-        getChildren().add(new LabSegments(simulation.getMemory()));
+        getChildren().add(new LabSegments(simulation, simulation.getMemory()));
         getChildren().add(new LabHexadecimalKeyboard(simulation));
         getChildren().add(new LabSoftwareInterruptGenerator(simulation));
         getChildren().add(new LabHardwareInterruptGenerator(simulation));

@@ -33,9 +33,9 @@ import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.memory.Memory;
-import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
-import net.jamsimulator.jams.mips.memory.event.MemoryHalfwordSetEvent;
-import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
+import net.jamsimulator.jams.mips.simulation.Simulation;
+import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
+import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
 
 
 public class LabSegments extends HBox {
@@ -46,11 +46,14 @@ public class LabSegments extends HBox {
     public static final String CONFIG_NODE_1 = "simulation.mips.lab_segment_1_address";
     public static final String CONFIG_NODE_2 = "simulation.mips.lab_segment_2_address";
 
-    public LabSegments(Memory memory) {
+    public LabSegments(Simulation<?> simulation, Memory memory) {
         setPadding(new Insets(10));
         setAlignment(Pos.CENTER);
         setSpacing(10);
-        getChildren().addAll(new Segment(memory, CONFIG_NODE_2), new Segment(memory, CONFIG_NODE_1));
+        getChildren().addAll(
+                new Segment(simulation, memory, CONFIG_NODE_2),
+                new Segment(simulation, memory, CONFIG_NODE_1)
+        );
     }
 
 
@@ -58,10 +61,12 @@ public class LabSegments extends HBox {
 
         private final Rectangle[] rectangles = new Rectangle[8];
         private final String node;
+        private final Memory memory;
         private int address;
 
-        public Segment(Memory memory, String node) {
+        public Segment(Simulation<?> simulation, Memory memory, String node) {
             this.node = node;
+            this.memory = memory;
             this.address = Jams.getMainConfiguration().getNumber(node).orElse(0).intValue();
             rectangles[0] = new Rectangle(10, 0, 40, 10);
             rectangles[1] = new Rectangle(50, 10, 10, 40);
@@ -73,35 +78,24 @@ public class LabSegments extends HBox {
             rectangles[7] = new Rectangle(70, 100, 10, 10);
             getChildren().addAll(rectangles);
 
-            memory.registerListeners(this, true);
+            simulation.registerListeners(this, true);
             Jams.getMainConfiguration().registerListeners(this, true);
 
             for (Rectangle rectangle : rectangles) {
                 rectangle.getStyleClass().add(SEGMENT_STYLE);
             }
+
+            refresh();
         }
 
         @Listener
-        private void onMemorySetByte(MemoryByteSetEvent.After event) {
-            if (event.getAddress() == address) {
-                refresh(event.getValue());
-            }
+        private void onSimulationStop(SimulationStopEvent event) {
+            refresh();
         }
 
         @Listener
-        private void onMemorySetWord(MemoryWordSetEvent.After event) {
-            if (event.getAddress() >> 2 == address >> 2) {
-                byte value = (byte) (event.getValue() >> 8 * (address & 0x3));
-                refresh(value);
-            }
-        }
-
-        @Listener
-        private void onMemorySetHalfword(MemoryHalfwordSetEvent.After event) {
-            if (event.getAddress() >> 1 == address >> 1) {
-                byte value = (byte) (event.getValue() >> 8 * (address & 0x1));
-                refresh(value);
-            }
+        private void onSimulationReset(SimulationResetEvent event) {
+            refresh();
         }
 
         @Listener
@@ -110,6 +104,10 @@ public class LabSegments extends HBox {
                 var number = (Number) event.getNewValueAs().orElse(0);
                 address = number.intValue();
             }
+        }
+
+        private void refresh() {
+            refresh(memory.getByte(address, false, true, false));
         }
 
         private void refresh(byte b) {
