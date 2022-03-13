@@ -42,10 +42,12 @@ public class BorderlessMainScene extends ThemedBorderlessScene {
 
     public BorderlessMainScene(Stage stage, Parent root) {
         super(stage, root);
+        JamsApplication.getActionManager().addAcceleratorsToScene(this, true);
     }
 
     public BorderlessMainScene(Stage stage, Parent root, double width, double height) {
         super(stage, root, width, height);
+        JamsApplication.getActionManager().addAcceleratorsToScene(this, true);
     }
 
     @Listener
