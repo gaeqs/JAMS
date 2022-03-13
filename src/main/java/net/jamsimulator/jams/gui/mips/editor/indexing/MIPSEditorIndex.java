@@ -31,10 +31,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElemen
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroCallParameter;
 import net.jamsimulator.jams.gui.editor.code.indexing.line.EditorLineIndex;
 import net.jamsimulator.jams.gui.mips.editor.MIPSSpaces;
-import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirectiveMnemonic;
-import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirectiveParameter;
-import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstructionMnemonic;
-import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstructionParameter;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.*;
 import net.jamsimulator.jams.gui.mips.editor.indexing.inspection.MIPSInspectorManager;
 import net.jamsimulator.jams.project.Project;
 
@@ -110,6 +107,12 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
                 for (var element : line.directive.getElements()) {
                     if (element instanceof MIPSEditorDirectiveMnemonic mnemonic) {
                         builder.append(mnemonic.getText());
+                    } else if (element instanceof MIPSEditorDirectiveMacroParameter parameter) {
+                        if (i == 1) builder.append(afterDirective);
+                        else if (i == 2) builder.append(afterDirectiveParameter).append("(");
+                        else if (i > 1) builder.append(afterDirectiveParameter);
+                        builder.append(parameter.getIdentifier());
+                        if (i == line.directive.getElements().size() - 1) builder.append(")");
                     } else if (element instanceof MIPSEditorDirectiveParameter parameter) {
                         if (i == 1) builder.append(afterDirective);
                         else if (i > 1) builder.append(afterDirectiveParameter);
