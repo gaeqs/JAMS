@@ -33,6 +33,9 @@ import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.configuration.event.ConfigurationNodeChangeEvent;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.mips.memory.Memory;
+import net.jamsimulator.jams.mips.memory.event.MemoryByteSetEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryHalfwordSetEvent;
+import net.jamsimulator.jams.mips.memory.event.MemoryWordSetEvent;
 import net.jamsimulator.jams.mips.simulation.Simulation;
 import net.jamsimulator.jams.mips.simulation.event.SimulationResetEvent;
 import net.jamsimulator.jams.mips.simulation.event.SimulationStopEvent;
@@ -78,6 +81,7 @@ public class LabSegments extends HBox {
             rectangles[7] = new Rectangle(70, 100, 10, 10);
             getChildren().addAll(rectangles);
 
+            memory.getBottomMemory().registerListeners(this, true);
             simulation.registerListeners(this, true);
             Jams.getMainConfiguration().registerListeners(this, true);
 
@@ -86,6 +90,29 @@ public class LabSegments extends HBox {
             }
 
             refresh();
+        }
+
+        @Listener
+        private void onMemorySetByte(MemoryByteSetEvent.After event) {
+            if (event.getAddress() == address) {
+                refresh(event.getValue());
+            }
+        }
+
+        @Listener
+        private void onMemorySetWord(MemoryWordSetEvent.After event) {
+            if (event.getAddress() >> 2 == address >> 2) {
+                byte value = (byte) (event.getValue() >> 8 * (address & 0x3));
+                refresh(value);
+            }
+        }
+
+        @Listener
+        private void onMemorySetHalfword(MemoryHalfwordSetEvent.After event) {
+            if (event.getAddress() >> 1 == address >> 1) {
+                byte value = (byte) (event.getValue() >> 8 * (address & 0x1));
+                refresh(value);
+            }
         }
 
         @Listener

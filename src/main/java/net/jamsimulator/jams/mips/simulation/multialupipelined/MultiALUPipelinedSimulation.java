@@ -251,8 +251,11 @@ public class MultiALUPipelinedSimulation
         manageInterrupts();
         addCycleCount();
 
+        boolean check = isKernelMode()
+                ? Integer.compareUnsigned(registers.getProgramCounter().getValue(), kernelStackBottom) > 0
+                : Integer.compareUnsigned(registers.getProgramCounter().getValue(), instructionStackBottom) > 0;
 
-        if (pipeline.getFetch() == null) {
+        if (check && pipeline.getFetch() == null) {
             checkExit();
         }
         if (undoEnabled && currentStepChanges != null) {

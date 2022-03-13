@@ -56,7 +56,7 @@ public class DirectiveByte extends Directive {
                     throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a char.");
                 }
                 parameters[i] = String.valueOf((int) c.charAt(0));
-            } else if (!NumericUtils.isByte(parameter)) {
+            } else if (!NumericUtils.isInteger(parameter)) {
                 throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a signed byte.");
             }
         }
@@ -66,7 +66,7 @@ public class DirectiveByte extends Directive {
         int start = data.getCurrent();
 
         for (String finalParameter : parameters) {
-            file.getAssembler().getMemory().setByte(data.getCurrent(), Byte.parseByte(finalParameter));
+            file.getAssembler().getMemory().setByte(data.getCurrent(), (byte) NumericUtils.decodeInteger(finalParameter));
             data.addCurrent(1);
         }
         return start;
