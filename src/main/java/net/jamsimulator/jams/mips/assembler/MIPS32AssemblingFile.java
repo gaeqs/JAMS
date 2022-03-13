@@ -47,7 +47,7 @@ public class MIPS32AssemblingFile {
     private final Map<String, String> equivalents;
 
     private final Map<String, Label> labels;
-    private final Set<String> convertToGlobalLabel;
+    private final Set<String> globalIdentifiers;
 
     private final Queue<String> labelsToAdd;
 
@@ -71,7 +71,7 @@ public class MIPS32AssemblingFile {
         this.equivalents = new HashMap<>();
 
         this.labels = new HashMap<>();
-        this.convertToGlobalLabel = new HashSet<>();
+        this.globalIdentifiers = new HashSet<>();
         this.labelsToAdd = new LinkedList<>();
 
         this.macros = new HashMap<>();
@@ -108,16 +108,6 @@ public class MIPS32AssemblingFile {
     }
 
     /**
-     * Returns the macro defined in this file that matches the given name.
-     *
-     * @param name the name.
-     * @return the macro if present.
-     */
-    public Optional<Macro> getMacro(String name) {
-        return Optional.ofNullable(macros.getOrDefault(name, null));
-    }
-
-    /**
      * Adds an equivalent. Equivalents are replaced on the code to its value.
      *
      * @param key   the key to replace.
@@ -128,23 +118,26 @@ public class MIPS32AssemblingFile {
     }
 
     /**
-     * Sets the given label as a global label.
+     * Sets the given identifier as global. This will make labels and macros with this name global.
      *
      * @param executingLine the line executing this command.
-     * @param label         the label.
+     * @param identifier    the label.
      */
-    public void setAsGlobalLabel(int executingLine, String label) {
-        convertToGlobalLabel.add(label);
-        var instance = labels.remove(label);
-        if (instance != null) {
-            var global = assembler.addGlobalLabel(
+    public void setAsGlobalIdentifier(int executingLine, String identifier) {
+        globalIdentifiers.add(identifier);
+        var label = labels.remove(identifier);
+        if (label != null) {
+            assembler.addGlobalLabel(
                     executingLine,
-                    instance.getKey(),
-                    instance.getAddress(),
-                    instance.getOriginFile(),
-                    instance.getOriginLine()
+                    label.getKey(),
+                    label.getAddress(),
+                    label.getOriginFile(),
+                    label.getOriginLine()
             );
-            labels.put(global.getKey(), global);
+        }
+        var macro = macros.remove(identifier);
+        if (macro != null) {
+            assembler.addGlobalMacro(executingLine, macro.getName(), macro);
         }
     }
 
@@ -158,25 +151,48 @@ public class MIPS32AssemblingFile {
     }
 
     /**
-     * Returns the address that matches the given local label, if present.
+     * Returns the local label that matches the given identifier, if present.
      *
-     * @param label the label.
-     * @return the address, if present.
+     * @param label the identifier.
+     * @return the label, if present.
      */
     public Optional<Label> getLocalLabel(String label) {
         return labels.containsKey(label) ? Optional.of(labels.get(label)) : Optional.empty();
     }
 
     /**
-     * Executes the method {@link #getLocalLabel(String)}. If the address is not found,
-     * the address is searched on the global labels.
+     * Returns the local macro that matches the given identifier, if present.
      *
-     * @param label the label.
-     * @return the address, if present.
+     * @param macro the identifier.
+     * @return the macro, if present.
+     */
+    public Optional<Macro> getLocalMacro(String macro) {
+        return macros.containsKey(macro) ? Optional.of(macros.get(macro)) : Optional.empty();
+    }
+
+    /**
+     * Executes the method {@link #getLocalLabel(String)}.
+     * If the label is not found, the label is searched on the global labels.
+     *
+     * @param label the label identifier.
+     * @return the label, if present.
      */
     public Optional<Label> getLabel(String label) {
         var optional = getLocalLabel(label);
         if (optional.isEmpty()) optional = assembler.getGlobalLabel(label);
+        return optional;
+    }
+
+    /**
+     * Executes the method {@link #getLocalMacro(String)}.
+     * If the macro is not found, the macro is searched on the global macros.
+     *
+     * @param macro the macro identifier.
+     * @return the macro, if present.
+     */
+    public Optional<Macro> getMacro(String macro) {
+        var optional = getLocalMacro(macro);
+        if (optional.isEmpty()) optional = assembler.getGlobalMacro(macro);
         return optional;
     }
 
@@ -230,12 +246,24 @@ public class MIPS32AssemblingFile {
         currentMacro = macro;
     }
 
-    public void finishMacro() {
+    public void finishMacro(int index) {
         if (currentMacro == null) {
             throw new AssemblerException("No macro defined!");
         }
+        var name = currentMacro.getName();
 
-        macros.put(currentMacro.getName(), currentMacro);
+        if (assembler.getGlobalMacro(name).isPresent()) {
+            throw new AssemblerException(index, "Macro " + name + " is already defined as a global macro.");
+        }
+        if (macros.containsKey(name)) {
+            throw new AssemblerException(index, "Macro " + name + " is already defined.");
+        }
+
+        if (globalIdentifiers.contains(currentMacro.getName())) {
+            assembler.addGlobalMacro(index, name, currentMacro);
+        } else {
+            macros.put(name, currentMacro);
+        }
         currentMacro = null;
     }
 
@@ -243,7 +271,7 @@ public class MIPS32AssemblingFile {
         String original = line;
         line = sanityLine(line);
 
-        if (checkMacro(line)) return;
+        if (checkMacro(index, line)) return;
 
         MIPS32AssemblerData data = assembler.getAssemblerData();
         int labelIndex = LabelUtils.getLabelFinishIndex(line);
@@ -304,7 +332,7 @@ public class MIPS32AssemblingFile {
             throw new AssemblerException(index, "Label " + label + " contains illegal characters.");
         }
 
-        if (convertToGlobalLabel.contains(label)) {
+        if (globalIdentifiers.contains(label)) {
             assembler.addGlobalLabel(index, label, address, name, index);
         } else {
             if (assembler.getGlobalLabel(label).isPresent()) {
@@ -325,11 +353,11 @@ public class MIPS32AssemblingFile {
         return line;
     }
 
-    private boolean checkMacro(String line) {
+    private boolean checkMacro(int index, String line) {
         if (currentMacro == null) return false;
 
         if (line.equals(".endmacro")) {
-            finishMacro();
+            finishMacro(index);
         } else {
             if (!line.isEmpty()) {
                 currentMacro.addLine(line);
@@ -340,8 +368,8 @@ public class MIPS32AssemblingFile {
     }
 
     private void executeMacro(String name, String parameters, int lineNumber) {
-        var macro = macros.get(name);
-        if (macro == null)
+        var macro = getMacro(name);
+        if (macro.isEmpty())
             throw new AssemblerException("Cannot find macro " + name + "! Macros should be declared before using them!");
 
         if (!parameters.endsWith(")"))
@@ -350,7 +378,7 @@ public class MIPS32AssemblingFile {
         var parsedParameters =
                 StringUtils.multiSplitIgnoreInsideString(parameters.substring(1, parameters.length() - 1), false, " ", ",", "\t");
 
-        macro.executeMacro(parsedParameters.toArray(new String[0]), this, lineNumber, callsToMacros);
+        macro.get().executeMacro(parsedParameters.toArray(new String[0]), this, lineNumber, callsToMacros);
         callsToMacros++;
     }
 }

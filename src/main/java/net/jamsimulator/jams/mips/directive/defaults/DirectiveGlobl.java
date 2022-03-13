@@ -51,7 +51,7 @@ public class DirectiveGlobl extends Directive {
         }
 
         for (String parameter : parameters) {
-            file.setAsGlobalLabel(lineNumber, parameter + labelSufix);
+            file.setAsGlobalIdentifier(lineNumber, parameter + labelSufix);
         }
 
         return -1;

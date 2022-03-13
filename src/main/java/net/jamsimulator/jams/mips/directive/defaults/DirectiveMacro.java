@@ -54,8 +54,12 @@ public class DirectiveMacro extends Directive {
         String name = parameters[0];
         if (name.contains("(") || name.contains(")"))
             throw new AssemblerException(lineNumber, "Macro name cannot contain parenthesis!");
-        if (file.getMacro(name).isPresent()) {
-            throw new AssemblerException(lineNumber, "Macro " + name + " already exists!");
+        if (file.getLocalMacro(name).isPresent()) {
+            throw new AssemblerException(lineNumber, "Macro " + name + " is already defined in the same file!");
+        }
+        if (file.getAssembler().getGlobalMacro(name).isPresent()) {
+            throw new AssemblerException(lineNumber, "Macro " + name
+                    + " is already defined in another file as a global macro!");
         }
 
         List<String> macroParameters = new ArrayList<>();

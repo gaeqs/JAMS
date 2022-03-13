@@ -53,6 +53,7 @@ public class MIPS32Assembler implements Assembler {
     private final Memory memory;
 
     private final Map<String, Label> globalLabels;
+    private final Map<String, Macro> globalMacros;
     private final Map<Integer, String> originalInstructions;
 
     private final Log log;
@@ -70,6 +71,7 @@ public class MIPS32Assembler implements Assembler {
         this.memory = memory;
 
         this.globalLabels = new HashMap<>();
+        this.globalMacros = new HashMap<>();
         this.originalInstructions = new HashMap<>();
 
         this.log = log;
@@ -106,9 +108,8 @@ public class MIPS32Assembler implements Assembler {
      * @param address       the address of the label to register.
      * @param originFile    the origin file of the label to register.
      * @param originLine    the origin line of the label to register.
-     * @return the registered label.
      */
-    public Label addGlobalLabel(int executingLine, String key, int address, String originFile, int originLine) {
+    public void addGlobalLabel(int executingLine, String key, int address, String originFile, int originLine) {
         if (globalLabels.containsKey(key)) {
             throw new AssemblerException(executingLine, "The global label " + key + " is already defined.");
         }
@@ -119,7 +120,24 @@ public class MIPS32Assembler implements Assembler {
         }
         var label = new Label(key, address, originFile, originLine, true);
         globalLabels.put(key, label);
-        return label;
+    }
+
+    /**
+     * Adds the given macro as a global macro.
+     *
+     * @param executingLine the line executing this command.
+     * @param key           the key of the macro to register.
+     * @param macro         the macro.
+     */
+    public void addGlobalMacro(int executingLine, String key, Macro macro) {
+        if (globalMacros.containsKey(key)) {
+            throw new AssemblerException(executingLine, "The global macro " + key + " is already defined");
+        }
+        if (files.stream().anyMatch(target -> target.getLocalMacro(key).isPresent())) {
+            throw new AssemblerException(executingLine, "The macro " + key +
+                    " cannot be converted to a global macro because there are two or more files with the same macro.");
+        }
+        globalMacros.put(key, macro);
     }
 
     /**
@@ -130,6 +148,10 @@ public class MIPS32Assembler implements Assembler {
      */
     public Optional<Label> getGlobalLabel(String key) {
         return globalLabels.containsKey(key) ? Optional.of(globalLabels.get(key)) : Optional.empty();
+    }
+
+    public Optional<Macro> getGlobalMacro(String key) {
+        return globalMacros.containsKey(key) ? Optional.of(globalMacros.get(key)) : Optional.empty();
     }
 
     /**
@@ -200,11 +222,12 @@ public class MIPS32Assembler implements Assembler {
     public void assemble() {
         if (assembled) throw new AssemblerException("The code is already assembled!");
 
+        if (log != null) log.printInfoLn("Scanning...");
         files.forEach(MIPS32AssemblingFile::scan);
-        files.forEach(file -> {
-            file.assembleInstructions();
-            file.executeLabelRequiredDirectives();
-        });
+        if (log != null) log.printInfoLn("Assembling instructions...");
+        files.forEach(MIPS32AssemblingFile::assembleInstructions);
+        if (log != null) log.printInfoLn("Executing label-required directives...");
+        files.forEach(MIPS32AssemblingFile::executeLabelRequiredDirectives);
 
         //Reserves static memory.
         memory.allocateMemory(assemblerData.getCurrentData() - assemblerData.getFirstData());

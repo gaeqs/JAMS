@@ -61,7 +61,7 @@ public class DirectiveExtern extends Directive {
 
         var label = parameters[0] + labelSufix;
         file.checkLabel(lineNumber, label, start);
-        file.setAsGlobalLabel(lineNumber, label);
+        file.setAsGlobalIdentifier(lineNumber, label);
 
         data.setSelected(old);
         return start;
