@@ -443,9 +443,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
                         if (documentationPopup != null) documentationPopup.hide();
                     }
                 } else {
-                    shouldOpenAutocompletionAfterEdit =
-                            event.getCode().isLetterKey() || event.getCode().isDigitKey();
-
+                    shouldOpenAutocompletionAfterEdit = !event.getText().isBlank();
                     if (documentationPopup != null) documentationPopup.hide();
                 }
             }
