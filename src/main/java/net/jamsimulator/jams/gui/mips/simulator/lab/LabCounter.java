@@ -78,6 +78,16 @@ public class LabCounter extends VBox {
         Jams.getMainConfiguration().registerListeners(this, true);
     }
 
+    public void setCounterValue(byte value) {
+        if(value == reset) return;
+        counter = reset = value;
+        Platform.runLater(() -> {
+            numberEditor.setCurrentValue(Byte.toUnsignedInt(value));
+            progressBar.setProgress(1.0);
+            counterDisplay.setText(String.valueOf(Byte.toUnsignedInt(counter)));
+        });
+    }
+
     private void loadEditor() {
         var hbox = new HBox();
         hbox.setAlignment(Pos.CENTER);
@@ -96,11 +106,11 @@ public class LabCounter extends VBox {
         button.prefWidthProperty().bind(hbox.widthProperty().multiply(0.35));
         getChildren().add(hbox);
 
-        button.setOnAction(event -> simulation.runSynchronized(() -> {
-            counter = reset = numberEditor.getCurrentValue().byteValue();
-            progressBar.setProgress(1.0);
-            simulation.getMemory().setByte(address, counter);
-        }));
+        numberEditor.addListener(value ->
+                simulation.runSynchronized(() -> setCounterValue(value.byteValue())));
+
+        button.setOnAction(event ->
+                simulation.runSynchronized(() -> setCounterValue(numberEditor.getCurrentValue().byteValue())));
     }
 
     private void loadProgressBar() {
@@ -125,24 +135,14 @@ public class LabCounter extends VBox {
         if (wordAddress == event.getAddress()) {
             int offset = address - wordAddress;
             int value = (event.getValue() >> offset * 8) & 0xFF;
-            counter = reset = (byte) value;
-            Platform.runLater(() -> {
-                numberEditor.setCurrentValue(value);
-                progressBar.setProgress(1.0);
-                counterDisplay.setText(String.valueOf(Byte.toUnsignedInt(counter)));
-            });
+            setCounterValue((byte) value);
         }
     }
 
     @Listener
     private void onByteSet(MemoryByteSetEvent.After event) {
         if (address == event.getAddress()) {
-            counter = reset = event.getValue();
-            Platform.runLater(() -> {
-                numberEditor.setCurrentValue(Byte.toUnsignedInt(counter));
-                progressBar.setProgress(1.0);
-                counterDisplay.setText(String.valueOf(Byte.toUnsignedInt(counter)));
-            });
+            setCounterValue(event.getValue());
         }
     }
 
@@ -152,12 +152,7 @@ public class LabCounter extends VBox {
         if (halfwordAddress == event.getAddress()) {
             int offset = address - halfwordAddress;
             int value = (event.getValue() >> offset * 8) & 0xFF;
-            counter = reset = (byte) value;
-            Platform.runLater(() -> {
-                numberEditor.setCurrentValue(value);
-                progressBar.setProgress(1.0);
-                counterDisplay.setText(String.valueOf(Byte.toUnsignedInt(counter)));
-            });
+            setCounterValue((byte) value);
         }
     }
 
