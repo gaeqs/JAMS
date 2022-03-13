@@ -28,7 +28,7 @@ import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroCallMnemonic;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroParameter;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroCallParameter;
 import net.jamsimulator.jams.gui.editor.code.indexing.line.EditorLineIndex;
 import net.jamsimulator.jams.gui.mips.editor.MIPSSpaces;
 import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirectiveMnemonic;
@@ -127,7 +127,7 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
                     } else if (element instanceof MIPSEditorInstructionParameter parameter) {
                         if (i == 1) builder.append(afterInstruction);
                         else if (i > 1) builder.append(afterInstructionParameter);
-                        builder.append(parameter.getIdentifier().replaceAll("\\s+",""));
+                        builder.append(parameter.getIdentifier().replaceAll("\\s+", ""));
                     }
                     i++;
                 }
@@ -138,7 +138,7 @@ public class MIPSEditorIndex extends EditorLineIndex<MIPSEditorLine> {
                 for (var element : line.macroCall.getElements()) {
                     if (element instanceof EditorElementMacroCallMnemonic mnemonic) {
                         builder.append(mnemonic.getText()).append(" (");
-                    } else if (element instanceof EditorElementMacroParameter parameter) {
+                    } else if (element instanceof EditorElementMacroCallParameter parameter) {
                         if (i > 1) builder.append(", ");
                         builder.append(parameter.getIdentifier());
                     }
