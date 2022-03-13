@@ -27,7 +27,6 @@ package net.jamsimulator.jams.gui.editor.code.indexing.line;
 import net.jamsimulator.jams.collection.Bag;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
-import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.hint.EditorHintBar;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorLineChange;
@@ -220,7 +219,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
                     var line = generateNewLine(start, lines.size(), builder.toString(), scope);
                     if (line.isMacroEnd() || line.isMacroStart()) {
                         line.changeScope(ElementScope.FILE);
-                        scope = line.isMacroStart()
+                        scope = line.isMacroStart() && line.getDefinedMacroIdentifier().isPresent()
                                 ? new ElementScope(ElementScope.Type.MACRO, line.getDefinedMacroIdentifier().get())
                                 : ElementScope.FILE;
                     }
@@ -437,11 +436,12 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         int difference = line.getLength() - old.getLength();
         lines.listIterator(number + 1).forEachRemaining(it -> it.move(difference));
         removeCachedElements(old);
+
+        var refresh = getLinesToRefreshOnScopeChange(number, old, line);
+
         addCachedElements(line);
         line.elementStream().forEach(element -> element.inspect(inspectors));
         line.recalculateInspectionLevel();
-
-        var refresh = getLinesToRefreshOnScopeChange(number, old, line);
 
         // First let's refresh the references of all changed lines.
         refresh.forEach(l -> {
@@ -467,7 +467,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         getHintBar().ifPresent(it -> it.removeLine(number));
         removeCachedElements(line);
 
-        var refresh = getLinesToRefreshOnScopeChange(number, line, null);
+        var refresh = getLinesToRefreshOnScopeChange(number - 1, line, null);
 
         // First let's refresh the references of all changed lines.
         refresh.forEach(l -> {
@@ -494,11 +494,12 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         lines.listIterator(number + 1).forEachRemaining(it ->
                 it.movePositionAndNumber(1, line.getLength() + 1));
         getHintBar().ifPresent(it -> it.addLine(number));
+
+        var refresh = getLinesToRefreshOnScopeChange(number, null, line);
+
         addCachedElements(line);
         line.elementStream().forEach(element -> element.inspect(inspectors));
         line.recalculateInspectionLevel();
-
-        var refresh = getLinesToRefreshOnScopeChange(number, null, line);
 
         // First let's refresh the references of all changed lines.
         refresh.forEach(l -> {
@@ -520,13 +521,14 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
      */
     protected Set<Line> getLinesToRefreshOnScopeChange(int number, Line removed, Line added) {
         if (number >= lines.size() - 1) return new HashSet<>();
-
         ElementScope scope = null;
-        if (added != null && (added.isMacroStart() || added.isMacroEnd())) {
-            scope = added.isMacroStart()
-                    ? new ElementScope(ElementScope.Type.MACRO, added.getDefinedMacroIdentifier().orElse(""))
-                    : ElementScope.FILE;
 
+        if (added != null && (added.isMacroStart() || added.isMacroEnd())) {
+            if (added.isMacroStart()) {
+                scope = new ElementScope(ElementScope.Type.MACRO, added.getDefinedMacroIdentifier().orElse(""));
+            } else {
+                scope = ElementScope.FILE;
+            }
         } else if (removed != null && (removed.isMacroStart() || removed.isMacroEnd())) {
             scope = number == 0 ? ElementScope.FILE : lines.get(number - 1).getReferencingScope();
         }
@@ -534,8 +536,12 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         if (scope == null) return new HashSet<>();
 
         var list = new HashSet<Line>();
+        if(added != null) {
+            added.changeScope(scope);
+            // List add not needed.
+        }
         for (var line : lines.subList(number + 1, lines.size())) {
-            if (line.isMacroStart() || line.isMacroEnd()) break;
+            if ((line.isMacroStart() || line.isMacroEnd())) break;
             line.changeScope(scope);
             list.add(line);
         }

@@ -23,13 +23,13 @@ DIRECTIVE_ASCIIZ_DOCUMENTATION: |-
   <b>Description:</b>
   Inserts into the memory the given ASCII strings, adding at the end of each string a null (\0) character.
 DIRECTIVE_BYTE_DOCUMENTATION: |-
-  <u>Insert doubles</u>
+  <u>Insert bytes</u>
 
   <b>Format:</b>
-  .byte {double}
+  .byte {byte | 'character'} 
 
   <b>Description:</b>
-  Inserts into the memory the given doubles.
+  Inserts into the memory the given bytes.
 DIRECTIVE_DATA_DOCUMENTATION: |-
   <u>Change to data section</u>
 

@@ -108,7 +108,7 @@ public class InstructionLb extends BasicInstruction<InstructionLb.Assembled> imp
         @Override
         public void execute() {
             int address = value(instruction.getSourceRegister()) + instruction.getImmediateAsSigned();
-            int word = simulation.getMemory().getByte(address);
+            int word = Byte.toUnsignedInt(simulation.getMemory().getByte(address));
             register(instruction.getTargetRegister()).setValue(word);
         }
     }
@@ -134,7 +134,7 @@ public class InstructionLb extends BasicInstruction<InstructionLb.Assembled> imp
         @Override
         public void memory() {
             var address = value(instruction.getSourceRegister()) + instruction.getImmediateAsSigned();
-            result = simulation.getMemory().getByte(address);
+            result = Byte.toUnsignedInt(simulation.getMemory().getByte(address));
             forward(instruction.getTargetRegister(), result);
         }
 

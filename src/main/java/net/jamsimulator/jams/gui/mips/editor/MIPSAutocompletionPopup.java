@@ -156,7 +156,6 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 
     protected String refreshDirective(String start) {
         if (!(getDisplay().getProject() instanceof MIPSProject project)) return start;
-
         var space = Jams.getMainConfiguration()
                 .getEnum(MIPSSpaces.class, "editor.mips.space_after_directive")
                 .orElse(MIPSSpaces.SPACE).getValue();
@@ -308,8 +307,8 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
             var offset = getDisplay().getCaretPosition() - element.getStart();
             var startWithPercentage = element.getIdentifier().startsWith("%");
             var id = startWithPercentage
-                    ? element.getIdentifier().toLowerCase().substring(0, offset)
-                    : "%" + element.getIdentifier().toLowerCase().substring(0, offset);
+                    ? element.getText().toLowerCase().substring(0, offset)
+                    : "%" + element.getText().toLowerCase().substring(0, offset);
 
             addElements(macro.get().getParameters().stream().filter(it -> it.toLowerCase().startsWith(id)),
                     it -> it, it -> it, 0, ICON_MACRO_PARAMETER);
