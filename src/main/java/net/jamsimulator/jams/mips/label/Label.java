@@ -32,13 +32,13 @@ import java.util.function.Consumer;
 public class Label {
 
     private final String key;
-    private final int address;
     private final String originFile;
     private final int originLine;
 
-    private final boolean global;
     private final Set<LabelReference> references;
 
+    private boolean global;
+    private int address;
 
     public Label(String key, int address, String originFile, int originLine, boolean global) {
         Validate.notNull(key, "Key cannot be null!");
@@ -72,6 +72,10 @@ public class Label {
         return address;
     }
 
+    public void setAddress(int address) {
+        this.address = address;
+    }
+
     public String getOriginFile() {
         return originFile;
     }
@@ -82,6 +86,10 @@ public class Label {
 
     public boolean isGlobal() {
         return global;
+    }
+
+    public void setGlobal(boolean global) {
+        this.global = global;
     }
 
     public Set<LabelReference> getReferences() {
@@ -98,10 +106,6 @@ public class Label {
 
     public void forEachReference(Consumer<LabelReference> consumer) {
         references.forEach(consumer);
-    }
-
-    public Label copyAsGlobal() {
-        return new Label(key, address, originFile, originLine, true, references);
     }
 
     @Override

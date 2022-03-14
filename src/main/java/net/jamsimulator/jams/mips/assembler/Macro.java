@@ -25,6 +25,7 @@
 package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
+import net.jamsimulator.jams.mips.assembler.old.MIPS32AssemblingFile;
 import org.reactfx.util.TriConsumer;
 
 import java.util.ArrayList;
@@ -39,14 +40,28 @@ public class Macro {
     private final String[] parameters;
     private final List<String> lines;
 
-    public Macro(String name, String[] parameters) {
+    private final String originFile;
+    private final int originLine;
+
+    public Macro(String name, String[] parameters, String originFile, int originLine) {
         this.name = name;
         this.parameters = parameters;
         this.lines = new ArrayList<>();
+
+        this.originFile = originFile;
+        this.originLine = originLine;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getOriginFile() {
+        return originFile;
+    }
+
+    public int getOriginLine() {
+        return originLine;
     }
 
     public void addLine(String line) {

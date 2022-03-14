@@ -26,7 +26,7 @@ package net.jamsimulator.jams.mips.assembler.builder;
 
 import net.jamsimulator.jams.gui.util.log.Log;
 import net.jamsimulator.jams.manager.ResourceProvider;
-import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
+import net.jamsimulator.jams.mips.assembler.old.MIPS32Assembler;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.memory.Memory;

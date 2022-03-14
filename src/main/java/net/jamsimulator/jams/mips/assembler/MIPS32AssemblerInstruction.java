@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,36 @@
 
 package net.jamsimulator.jams.mips.assembler;
 
-public enum SelectedMemorySegment {
+import net.jamsimulator.jams.utils.StringUtils;
 
-    TEXT, DATA, KERNEL_TEXT, KERNEL_DATA, EXTERN
+class MIPS32AssemblerInstruction {
 
+    private final MIPS32AssemblerLine line;
+    private final String mnemonic;
+    private final String rawParameters;
+    private final String[] parameters;
+
+    MIPS32AssemblerInstruction(MIPS32AssemblerLine line, String mnemonic, String rawParameters) {
+        this.line = line;
+        this.mnemonic = mnemonic;
+        this.rawParameters = rawParameters;
+        this.parameters = StringUtils.multiSplitIgnoreInsideString(rawParameters, false, " ", ",", "\t")
+                .toArray(new String[0]);
+    }
+
+    public MIPS32AssemblerLine getLine() {
+        return line;
+    }
+
+    public String getMnemonic() {
+        return mnemonic;
+    }
+
+    public String getRawParameters() {
+        return rawParameters;
+    }
+
+    public String[] getParameters() {
+        return parameters;
+    }
 }

@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,30 +22,39 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.directive.defaults;
+package net.jamsimulator.jams.mips.assembler;
 
-import net.jamsimulator.jams.mips.assembler.old.MIPS32AssemblingFile;
-import net.jamsimulator.jams.mips.directive.Directive;
-import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
+import net.jamsimulator.jams.utils.StringUtils;
 
-public class DirectiveEndmacro extends Directive {
+class MIPS32AssemblerMacro {
 
-    public static final String NAME = "endmacro";
-    private static final DirectiveParameterType[] PARAMETERS = {};
+    private final MIPS32AssemblerLine line;
+    private final String mnemonic;
+    private final String rawParameters;
+    private final String[] parameters;
 
-    public DirectiveEndmacro() {
-        super(NAME, PARAMETERS, false, false);
+    MIPS32AssemblerMacro(MIPS32AssemblerLine line, String mnemonic, String rawParameters) {
+        this.line = line;
+        this.mnemonic = mnemonic;
+        this.rawParameters = rawParameters;
+        this.parameters = StringUtils.multiSplitIgnoreInsideString(rawParameters, false, " ", ",", "\t")
+                .toArray(new String[0]);
     }
 
-    @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
-        // This directive is implemented in the assembler itself!
-        return -1;
+    public MIPS32AssemblerLine getLine() {
+        return line;
     }
 
-    @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
+    public String getMnemonic() {
+        return mnemonic;
+    }
 
+    public String getRawParameters() {
+        return rawParameters;
+    }
+
+    public String[] getParameters() {
+        return parameters;
     }
 
 }
