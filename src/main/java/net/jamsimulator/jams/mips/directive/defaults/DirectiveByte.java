@@ -25,12 +25,14 @@
 package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
-import net.jamsimulator.jams.mips.assembler.old.MIPS32AssemblingFile;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.NumericUtils;
 import net.jamsimulator.jams.utils.StringUtils;
+
+import java.util.OptionalInt;
 
 public class DirectiveByte extends Directive {
 
@@ -42,9 +44,10 @@ public class DirectiveByte extends Directive {
     }
 
     @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
-        if (parameters.length < 1)
-            throw new AssemblerException(lineNumber, "." + NAME + " must have at least one parameter.");
+    public OptionalInt onAddressAssignation(MIPS32AssemblerLine line, String[] parameters, String rawParameters) {
+        if (parameters.length < 1) {
+            throw new AssemblerException(line.getIndex(), "." + NAME + " must have at least one parameter.");
+        }
 
         String parameter;
         for (int i = 0; i < parameters.length; i++) {
@@ -53,28 +56,23 @@ public class DirectiveByte extends Directive {
             if (parameter.startsWith("'") && parameter.endsWith("'")) {
                 var c = StringUtils.parseEscapeCharacters(parameter.substring(1, parameter.length() - 1));
                 if (c.length() != 1) {
-                    throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a char.");
+                    throw new AssemblerException(line.getIndex(), "." + NAME + " parameter '" + parameter + "' is not a char.");
                 }
                 parameters[i] = String.valueOf((int) c.charAt(0));
             } else if (!NumericUtils.isInteger(parameter)) {
-                throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a signed byte.");
+                throw new AssemblerException(line.getIndex(), "." + NAME + " parameter '" + parameter + "' is not a signed byte.");
             }
         }
 
-        MIPS32AssemblerData data = file.getAssembler().getAssemblerData();
+        MIPS32AssemblerData data = line.getAssembler().getAssemblerData();
         data.align(0);
         int start = data.getCurrent();
 
         for (String finalParameter : parameters) {
-            file.getAssembler().getMemory().setByte(data.getCurrent(), (byte) NumericUtils.decodeInteger(finalParameter));
+            line.getAssembler().getMemory().setByte(data.getCurrent(), (byte) NumericUtils.decodeInteger(finalParameter));
             data.addCurrent(1);
         }
-        return start;
-    }
-
-    @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-
+        return OptionalInt.of(start);
     }
 
 }

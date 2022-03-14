@@ -24,7 +24,11 @@
 
 package net.jamsimulator.jams.mips.assembler;
 
+import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.utils.StringUtils;
+
+import java.util.Map;
+import java.util.OptionalInt;
 
 class MIPS32AssemblerDirective {
 
@@ -33,12 +37,20 @@ class MIPS32AssemblerDirective {
     private final String rawParameters;
     private final String[] parameters;
 
+    private final Directive directive;
+
     MIPS32AssemblerDirective(MIPS32AssemblerLine line, String mnemonic, String rawParameters) {
         this.line = line;
         this.mnemonic = mnemonic;
         this.rawParameters = rawParameters;
         this.parameters = StringUtils.multiSplitIgnoreInsideString(rawParameters, false, " ", ",", "\t")
                 .toArray(new String[0]);
+
+        var set = line.getAssembler().getDirectiveSet();
+        directive = set.getDirective(mnemonic).orElse(null);
+        if (directive == null) {
+            line.getAssembler().printWarning("Directive " + mnemonic + " not found!");
+        }
     }
 
     public MIPS32AssemblerLine getLine() {
@@ -55,5 +67,21 @@ class MIPS32AssemblerDirective {
 
     public String[] getParameters() {
         return parameters;
+    }
+
+    public Directive getDirective() {
+        return directive;
+    }
+
+    public void runDiscovery(Map<String, String> equivalents) {
+        directive.onDiscovery(line, parameters, rawParameters, equivalents);
+    }
+
+    public void runExpansion () {
+        directive.onExpansion(line, parameters, rawParameters);
+    }
+
+    public OptionalInt runAddressAssignation () {
+        return directive.onAddressAssignation(line, parameters, rawParameters);
     }
 }

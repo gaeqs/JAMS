@@ -24,11 +24,13 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.mips.assembler.old.MIPS32AssemblingFile;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.NumericUtils;
+
+import java.util.OptionalInt;
 
 public class DirectiveAlign extends Directive {
 
@@ -40,19 +42,14 @@ public class DirectiveAlign extends Directive {
     }
 
     @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
+    public OptionalInt onAddressAssignation(MIPS32AssemblerLine line, String[] parameters, String rawParameters) {
         if (parameters.length != 1 || !NumericUtils.isInteger(parameters[0]))
-            throw new AssemblerException(lineNumber, "." + NAME + " must have a numeric parameter.");
+            throw new AssemblerException(line.getIndex(), "." + NAME + " must have a numeric parameter.");
         int exp = NumericUtils.decodeInteger(parameters[0]);
         if (exp < 0 || exp > 3)
-            throw new AssemblerException(lineNumber, "." + NAME + " parameter must be inside the range [0, 3].");
-        file.getAssembler().getAssemblerData().setNextForcedAlignment(exp);
-        return -1;
+            throw new AssemblerException(line.getIndex(), "." + NAME + " parameter must be inside the range [0, 3].");
+        line.getAssembler().getAssemblerData().setNextForcedAlignment(exp);
+        return OptionalInt.empty();
     }
-
-    @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-
-    }
-
+    
 }

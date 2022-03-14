@@ -25,11 +25,13 @@
 package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
-import net.jamsimulator.jams.mips.assembler.old.MIPS32AssemblingFile;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.NumericUtils;
+
+import java.util.OptionalInt;
 
 public class DirectiveFloat extends Directive {
 
@@ -41,28 +43,25 @@ public class DirectiveFloat extends Directive {
     }
 
     @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
-        if (parameters.length < 1)
-            throw new AssemblerException(lineNumber, "." + NAME + " must have at least one parameter.");
+    public OptionalInt onAddressAssignation(MIPS32AssemblerLine line, String[] parameters, String rawParameters) {
+        if (parameters.length < 1) {
+            throw new AssemblerException(line.getIndex(), "." + NAME + " must have at least one parameter.");
+        }
 
         for (String parameter : parameters) {
             if (!NumericUtils.isFloat(parameter))
-                throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a float.");
+                throw new AssemblerException(line.getIndex(), "." + NAME + " parameter '" + parameter + "' is not a float.");
         }
 
-        MIPS32AssemblerData data = file.getAssembler().getAssemblerData();
+        MIPS32AssemblerData data = line.getAssembler().getAssemblerData();
         data.align(2);
         int start = data.getCurrent();
         for (String parameter : parameters) {
-            file.getAssembler().getMemory().setWord(data.getCurrent(), Float.floatToIntBits(Float.parseFloat(parameter)));
+            line.getAssembler().getMemory().setWord(data.getCurrent(), Float.floatToIntBits(Float.parseFloat(parameter)));
             data.addCurrent(4);
         }
-        return start;
+        return OptionalInt.of(start);
     }
 
-    @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-
-    }
 
 }

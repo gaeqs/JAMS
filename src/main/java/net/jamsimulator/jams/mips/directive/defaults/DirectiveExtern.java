@@ -25,12 +25,15 @@
 package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
 import net.jamsimulator.jams.mips.assembler.old.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.old.SelectedMemorySegment;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.NumericUtils;
+
+import java.util.OptionalInt;
 
 public class DirectiveExtern extends Directive {
 
@@ -42,9 +45,9 @@ public class DirectiveExtern extends Directive {
     }
 
     @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
+    public OptionalInt onAddressAssignation(MIPS32AssemblerLine line, String[] parameters, String rawParameters) {
         if (parameters.length != 2)
-            throw new AssemblerException(lineNumber, "." + NAME + " must have two parameter.");
+            throw new AssemblerException(line.getIndex(), "." + NAME + " must have two parameter.");
 
         if (!NumericUtils.isInteger(parameters[1]))
             throw new AssemblerException(parameters[1] + " is not a number.");
@@ -52,19 +55,24 @@ public class DirectiveExtern extends Directive {
         if (i < 0)
             throw new AssemblerException(i + " cannot be negative.");
 
-        MIPS32AssemblerData data = file.getAssembler().getAssemblerData();
+        MIPS32AssemblerData data = line.getAssembler().getAssemblerData();
         SelectedMemorySegment old = data.getSelected();
         data.setSelected(SelectedMemorySegment.EXTERN);
         data.align(0);
         int start = data.getCurrent();
         data.addCurrent(i);
 
-        var label = parameters[0] + labelSufix;
-        file.checkLabel(lineNumber, label, start);
-        file.setAsGlobalIdentifier(lineNumber, label);
+        var label = parameters[0] + line.getMacroSuffix();
+        line.checkLabel(lineNumber, label, start);
+        line.setAsGlobalIdentifier(lineNumber, label);
 
         data.setSelected(old);
-        return start;
+        return OptionalInt.of(start);
+    }
+
+    @Override
+    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
+
     }
 
     @Override

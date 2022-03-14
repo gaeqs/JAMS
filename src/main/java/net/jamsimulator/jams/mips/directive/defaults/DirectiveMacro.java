@@ -24,14 +24,14 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.mips.assembler.old.MIPS32AssemblingFile;
-import net.jamsimulator.jams.mips.assembler.Macro;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DirectiveMacro extends Directive {
 
@@ -47,18 +47,18 @@ public class DirectiveMacro extends Directive {
     }
 
     @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
+    public void onDiscovery(MIPS32AssemblerLine line, String[] parameters, String rawParameters, Map<String, String> equivalents) {
         if (parameters.length < 1)
-            throw new AssemblerException(lineNumber, "." + NAME + " must have at least one parameter.");
+            throw new AssemblerException(line.getIndex(), "." + NAME + " must have at least one parameter.");
 
         String name = parameters[0];
         if (name.contains("(") || name.contains(")"))
-            throw new AssemblerException(lineNumber, "Macro name cannot contain parenthesis!");
-        if (file.getLocalMacro(name).isPresent()) {
-            throw new AssemblerException(lineNumber, "Macro " + name + " is already defined in the same file!");
+            throw new AssemblerException(line.getIndex(), "Macro name cannot contain parenthesis!");
+        if (line.getFile().getLocalMacro(name).isPresent()) {
+            throw new AssemblerException(line.getIndex(), "Macro " + name + " is already defined in the same file!");
         }
-        if (file.getAssembler().getGlobalMacro(name).isPresent()) {
-            throw new AssemblerException(lineNumber, "Macro " + name
+        if (line.getAssembler().getGlobalMacro(name).isPresent()) {
+            throw new AssemblerException(line.getIndex(), "Macro " + name
                     + " is already defined in another file as a global macro!");
         }
 
@@ -70,42 +70,40 @@ public class DirectiveMacro extends Directive {
             switch (value) {
                 case "(" -> {
                     if (i == 1) continue;
-                    panic(lineNumber, value, i);
+                    panic(line.getIndex(), value, i);
                 }
                 case "()" -> {
                     if (i == 1 && parameters.length - 1 == 1) continue;
-                    panic(lineNumber, value, i);
+                    panic(line.getIndex(), value, i);
                 }
                 case ")" -> {
                     if (i == parameters.length - 1) continue;
-                    panic(lineNumber, value, i);
+                    panic(line.getIndex(), value, i);
                 }
             }
 
             if (value.startsWith("(")) {
-                if (i != 1) panic(lineNumber, value, i);
+                if (i != 1) panic(line.getIndex(), value, i);
                 value = value.substring(1);
             }
 
             if (value.endsWith(")")) {
-                if (i != parameters.length - 1) panic(lineNumber, value, i);
+                if (i != parameters.length - 1) panic(line.getIndex(), value, i);
                 value = value.substring(0, value.length() - 1);
             }
 
-            if (!value.startsWith("%")) panic(lineNumber, value, i);
-            if (value.length() == 1) panic(lineNumber, value, 1);
+            if (!value.startsWith("%")) panic(line.getIndex(), value, i);
+            if (value.length() == 1) panic(line.getIndex(), value, 1);
 
             macroParameters.add(value);
         }
 
-        file.startMacro(new Macro(name, macroParameters.toArray(new String[0])));
-
-        return -1;
-    }
-
-    @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-
+        line.getFile().startMacroDefinition(
+                line.getIndex(),
+                line.getFile().getName(),
+                name,
+                macroParameters.toArray(new String[0])
+        );
     }
 
 }

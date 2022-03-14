@@ -50,6 +50,7 @@ public class MIPS32Assembler implements Assembler {
 
     private final MIPS32AssemblerData assemblerData;
 
+    private int macrosCalled = 0;
     private boolean assembled = false;
 
     public MIPS32Assembler(
@@ -98,6 +99,18 @@ public class MIPS32Assembler implements Assembler {
     @Override
     public Map<Integer, String> getOriginals() {
         return originalInstructions;
+    }
+
+    public MIPS32AssemblerData getAssemblerData() {
+        return assemblerData;
+    }
+
+    public int getMacrosCalled() {
+        return macrosCalled;
+    }
+
+    public void addMacroCall() {
+        macrosCalled++;
     }
 
     @Override

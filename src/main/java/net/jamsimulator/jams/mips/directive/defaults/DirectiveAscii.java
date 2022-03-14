@@ -24,12 +24,13 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
-import net.jamsimulator.jams.mips.assembler.old.MIPS32AssemblingFile;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.StringUtils;
+
+import java.util.OptionalInt;
 
 public class DirectiveAscii extends Directive {
 
@@ -41,31 +42,26 @@ public class DirectiveAscii extends Directive {
     }
 
     @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
-        if (parameters.length < 1)
-            throw new AssemblerException(lineNumber, "." + NAME + " must have at least one string parameter.");
+    public OptionalInt onAddressAssignation(MIPS32AssemblerLine line, String[] parameters, String rawParameters) {
+        if (parameters.length < 1) {
+            throw new AssemblerException(line.getIndex(), "." + NAME + " must have at least one string parameter.");
+        }
 
-        MIPS32AssemblerData data = file.getAssembler().getAssemblerData();
+        var data = line.getAssembler().getAssemblerData();
         data.align(0);
-        int start = data.getCurrent();
 
+        int start = data.getCurrent();
         for (String s : parameters) {
             if (!s.startsWith("\"") && !s.endsWith("\""))
-                throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + s + "' is not a string.");
+                throw new AssemblerException(line.getIndex(), "." + NAME + " parameter '" + s + "' is not a string.");
             s = StringUtils.parseEscapeCharacters(s.substring(1, s.length() - 1));
 
             for (char c : s.toCharArray()) {
-                file.getAssembler().getMemory().setByte(data.getCurrent(), (byte) c);
+                line.getAssembler().getMemory().setByte(data.getCurrent(), (byte) c);
                 data.addCurrent(1);
             }
         }
-
-        return start;
-    }
-
-    @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-
+        return OptionalInt.of(start);
     }
 
 }

@@ -26,12 +26,14 @@ package net.jamsimulator.jams.mips.directive;
 
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.mips.assembler.old.MIPS32AssemblingFile;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
+import java.util.OptionalInt;
 
 /**
  * Represents a directive. Directive are the direct equivalent to the preprocessor code in C.
@@ -147,28 +149,18 @@ public abstract class Directive {
         return type != null && type.matches(value);
     }
 
-    /**
-     * Executes the directive in the given assembler.
-     *
-     * @param lineNumber the line number the directive is at.
-     * @param line       the line of the directive.
-     * @param parameters the parameters of the directive.
-     * @param labelSufix when inside a macro, the label sufix that labels should use.
-     * @param file       the file where this directive is at.
-     * @return the start address of the directive.
-     */
-    public abstract int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file);
+    public void onDiscovery(MIPS32AssemblerLine line, String[] parameters, String rawParameters, Map<String, String> equivalents) {
+    }
 
-    /**
-     * This method is executed after all labels, instructions and directives had been decoded.
-     *
-     * @param parameters the parameters of the directive.
-     * @param file       the file where the directive is located at.
-     * @param lineNumber the line number the directive is at.
-     * @param address    the start of the memory address dedicated to this directive in the method {@link #execute(int, String, String[], String, MIPS32AssemblingFile)}.
-     * @param labelSufix when inside a macro, the label sufix that labels should use.
-     */
-    public abstract void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix);
+    public void onExpansion(MIPS32AssemblerLine line, String[] parameters, String rawParameters) {
+    }
+
+    public OptionalInt onAddressAssignation(MIPS32AssemblerLine line, String[] parameters, String rawParameters) {
+        return OptionalInt.empty();
+    }
+
+    public void onValueAssignation(MIPS32AssemblerLine line, String[] parameters, int address, String rawParameters) {
+    }
 
     @Override
     public boolean equals(Object o) {

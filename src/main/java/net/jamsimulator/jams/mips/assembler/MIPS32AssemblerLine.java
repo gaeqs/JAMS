@@ -29,23 +29,25 @@ import net.jamsimulator.jams.mips.label.Label;
 import net.jamsimulator.jams.utils.LabelUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
-import java.util.Map;
-
 public class MIPS32AssemblerLine {
 
     private final MIPS32AssemblerFile file;
     private final String raw;
     private final int index;
+    private final String macroSuffix;
 
     private Label label;
     private MIPS32AssemblerInstruction instruction;
     private MIPS32AssemblerDirective directive;
-    private MIPS32AssemblerMacro macro;
+    private MIPS32AssemblerMacroCall macroCall;
 
-    public MIPS32AssemblerLine(MIPS32AssemblerFile file, String raw, int index) {
+    private int address = 0;
+
+    public MIPS32AssemblerLine(MIPS32AssemblerFile file, String raw, int index, String macroSuffix) {
         this.file = file;
         this.raw = raw;
         this.index = index;
+        this.macroSuffix = macroSuffix;
     }
 
     public MIPS32AssemblerFile getFile() {
@@ -64,6 +66,14 @@ public class MIPS32AssemblerLine {
         return index;
     }
 
+    public boolean isLineFromMacroCall() {
+        return !macroSuffix.isEmpty();
+    }
+
+    public String getMacroSuffix() {
+        return macroSuffix;
+    }
+
     public Label getLabel() {
         return label;
     }
@@ -76,13 +86,16 @@ public class MIPS32AssemblerLine {
         return directive;
     }
 
-    public MIPS32AssemblerMacro getMacro() {
-        return macro;
+    public MIPS32AssemblerMacroCall getMacroCall() {
+        return macroCall;
     }
 
-    public void discover(Map<String, String> equivalents) {
-        var line = sanityLine(raw, equivalents);
+    public void setAddress(int address) {
+        this.address = address;
+    }
 
+    public void discover() {
+        var line = raw;
         int labelIndex = LabelUtils.getLabelFinishIndex(line);
         if (labelIndex != -1) {
             var rawLabel = line.substring(0, labelIndex).trim();
@@ -102,20 +115,15 @@ public class MIPS32AssemblerLine {
         // DIRECTIVE
         if (mnemonic.charAt(0) == '.') {
             directive = new MIPS32AssemblerDirective(this, mnemonic.substring(1), parameters);
+            if (directive.getDirective() == null) {
+                directive = null;
+            }
         } else {
-            if (parameters.startsWith("(")) {
-                macro = new MIPS32AssemblerMacro(this, mnemonic, parameters.substring(1, parameters.length() - 1));
+            if (parameters.startsWith("(") && parameters.endsWith("(")) {
+                macroCall = new MIPS32AssemblerMacroCall(this, mnemonic, parameters.substring(1, parameters.length() - 1));
             } else {
                 instruction = new MIPS32AssemblerInstruction(this, mnemonic, parameters);
             }
         }
-    }
-
-    private String sanityLine(String line, Map<String, String> equivalents) {
-        line = StringUtils.removeComments(line).trim();
-        for (Map.Entry<String, String> entry : equivalents.entrySet()) {
-            line = line.replace(entry.getKey(), entry.getValue());
-        }
-        return line.trim();
     }
 }

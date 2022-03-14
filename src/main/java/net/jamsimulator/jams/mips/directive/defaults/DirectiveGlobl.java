@@ -24,11 +24,14 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
 import net.jamsimulator.jams.mips.assembler.old.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.LabelUtils;
+
+import java.util.Map;
 
 public class DirectiveGlobl extends Directive {
 
@@ -41,9 +44,10 @@ public class DirectiveGlobl extends Directive {
     }
 
     @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
-        if (parameters.length < 1)
-            throw new AssemblerException(lineNumber, "." + NAME + " must have at least one parameter.");
+    public void onDiscovery(MIPS32AssemblerLine line, String[] parameters, String rawParameters, Map<String, String> equivalents) {
+        if (parameters.length < 1) {
+            throw new AssemblerException(line.getIndex(), "." + NAME + " must have at least one parameter.");
+        }
 
         for (String parameter : parameters) {
             if (!LabelUtils.isLabelLegal(parameter))
@@ -53,13 +57,6 @@ public class DirectiveGlobl extends Directive {
         for (String parameter : parameters) {
             file.setAsGlobalIdentifier(lineNumber, parameter + labelSufix);
         }
-
-        return -1;
-    }
-
-    @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-
     }
 
 }

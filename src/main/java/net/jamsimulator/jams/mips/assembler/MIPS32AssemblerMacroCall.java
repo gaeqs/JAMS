@@ -26,14 +26,14 @@ package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.utils.StringUtils;
 
-class MIPS32AssemblerMacro {
+class MIPS32AssemblerMacroCall {
 
     private final MIPS32AssemblerLine line;
     private final String mnemonic;
     private final String rawParameters;
     private final String[] parameters;
 
-    MIPS32AssemblerMacro(MIPS32AssemblerLine line, String mnemonic, String rawParameters) {
+    MIPS32AssemblerMacroCall(MIPS32AssemblerLine line, String mnemonic, String rawParameters) {
         this.line = line;
         this.mnemonic = mnemonic;
         this.rawParameters = rawParameters;

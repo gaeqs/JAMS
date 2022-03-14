@@ -24,21 +24,47 @@
 
 package net.jamsimulator.jams.mips.assembler;
 
-import net.jamsimulator.jams.utils.StringUtils;
+import javafx.util.Pair;
+import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
+import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
+import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.utils.InstructionUtils;
+
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 class MIPS32AssemblerInstruction {
 
     private final MIPS32AssemblerLine line;
     private final String mnemonic;
     private final String rawParameters;
-    private final String[] parameters;
+
+    private final Instruction instruction;
+    private final List<String> parameters;
+
 
     MIPS32AssemblerInstruction(MIPS32AssemblerLine line, String mnemonic, String rawParameters) {
         this.line = line;
         this.mnemonic = mnemonic;
         this.rawParameters = rawParameters;
-        this.parameters = StringUtils.multiSplitIgnoreInsideString(rawParameters, false, " ", ",", "\t")
-                .toArray(new String[0]);
+
+        var set = line.getAssembler().getInstructionSet();
+        var instructions = set.getInstructionByMnemonic(mnemonic);
+        var pair = scanInstruction(
+                line.getAssembler().getRegisters(),
+                instructions,
+                rawParameters
+        );
+
+        instruction = pair.getKey();
+        parameters = pair.getValue();
+
+        if (instruction == null) {
+            throw new AssemblerException(line.getIndex(),
+                    "Instruction " + mnemonic + " with the given parameters not found.\n" + rawParameters);
+        }
     }
 
     public MIPS32AssemblerLine getLine() {
@@ -53,7 +79,29 @@ class MIPS32AssemblerInstruction {
         return rawParameters;
     }
 
-    public String[] getParameters() {
+    public Instruction getInstruction() {
+        return instruction;
+    }
+
+    public List<String> getParameters() {
         return parameters;
+    }
+
+    public int getInstructionSize() {
+        return instruction instanceof PseudoInstruction
+                ? ((PseudoInstruction) instruction).getInstructionAmount(parameters) << 2
+                : 4;
+    }
+
+    private static Pair<Instruction, List<String>> scanInstruction(
+            Registers registers,
+            Set<Instruction> instructions,
+            String rawParameters
+    ) {
+        var parametersReference = new AtomicReference<List<String>>();
+        var instruction = InstructionUtils
+                .getBestInstruction(instructions, parametersReference, registers, rawParameters).orElse(null);
+        var parameters = parametersReference.get();
+        return new Pair<>(instruction, parameters);
     }
 }
