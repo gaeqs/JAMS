@@ -24,14 +24,14 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
-import net.jamsimulator.jams.mips.assembler.old.MIPS32AssemblingFile;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.mips.label.LabelReference;
-import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.utils.NumericUtils;
+
+import java.util.OptionalInt;
 
 public class DirectiveWord extends Directive {
 
@@ -43,32 +43,29 @@ public class DirectiveWord extends Directive {
     }
 
     @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
+    public OptionalInt onAddressAssignation(MIPS32AssemblerLine line, String[] parameters, String rawParameters) {
         if (parameters.length < 1)
-            throw new AssemblerException(lineNumber, "." + NAME + " must have at least one parameter.");
+            throw new AssemblerException(line.getIndex(), "." + NAME + " must have at least one parameter.");
 
-        MIPS32AssemblerData data = file.getAssembler().getAssemblerData();
+        var data = line.getAssembler().getAssemblerData();
         data.align(2);
         int start = data.getCurrent();
         data.addCurrent(4 * parameters.length);
-        return start;
+        return OptionalInt.of(start);
     }
 
     @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-        Memory memory = file.getAssembler().getMemory();
+    public void onValueAssignation(MIPS32AssemblerLine line, String[] parameters, int address, String rawParameters) {
+        var memory = line.getAssembler().getMemory();
         for (String parameter : parameters) {
             var optional = NumericUtils.decodeIntegerSafe(parameter);
             if (optional.isEmpty()) {
-                var label = file.getLabel(parameter);
+                var label = line.getScope().findLabel(parameter);
                 if (label.isEmpty()) {
-                    label = file.getLabel(parameter + labelSufix);
-                }
-                if (label.isEmpty()) {
-                    throw new AssemblerException(lineNumber, "Label " + parameter + " not found.");
+                    throw new AssemblerException(line.getIndex(), "Label " + parameter + " not found.");
                 }
 
-                label.get().addReference(new LabelReference(address, file.getName(), lineNumber));
+                label.get().addReference(new LabelReference(address, line.getFile().getName(), line.getIndex()));
                 memory.setWord(address, label.get().getAddress());
             } else {
                 memory.setWord(address, optional.get());

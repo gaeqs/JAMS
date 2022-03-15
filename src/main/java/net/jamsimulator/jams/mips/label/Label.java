@@ -36,11 +36,9 @@ public class Label {
     private final int originLine;
 
     private final Set<LabelReference> references;
-
-    private boolean global;
     private int address;
 
-    public Label(String key, int address, String originFile, int originLine, boolean global) {
+    public Label(String key, int address, String originFile, int originLine) {
         Validate.notNull(key, "Key cannot be null!");
         Validate.notNull(originFile, "Origin file cannot be null!");
 
@@ -49,10 +47,9 @@ public class Label {
         this.originFile = originFile;
         this.originLine = originLine;
         this.references = new HashSet<>();
-        this.global = global;
     }
 
-    public Label(String key, int address, String originFile, int originLine, boolean global, Collection<LabelReference> references) {
+    public Label(String key, int address, String originFile, int originLine, Collection<LabelReference> references) {
         Validate.notNull(key, "Key cannot be null!");
         Validate.notNull(originFile, "Origin file cannot be null!");
 
@@ -60,7 +57,6 @@ public class Label {
         this.address = address;
         this.originFile = originFile;
         this.originLine = originLine;
-        this.global = global;
         this.references = new HashSet<>(references);
     }
 
@@ -82,14 +78,6 @@ public class Label {
 
     public int getOriginLine() {
         return originLine;
-    }
-
-    public boolean isGlobal() {
-        return global;
-    }
-
-    public void setGlobal(boolean global) {
-        this.global = global;
     }
 
     public Set<LabelReference> getReferences() {

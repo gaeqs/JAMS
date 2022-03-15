@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
-import net.jamsimulator.jams.mips.assembler.old.SelectedMemorySegment;
 import net.jamsimulator.jams.mips.memory.Memory;
 
 /**

@@ -25,12 +25,12 @@
 package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
-import net.jamsimulator.jams.mips.assembler.old.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.LabelUtils;
 
+import java.util.List;
 import java.util.Map;
 
 public class DirectiveGlobl extends Directive {
@@ -49,14 +49,16 @@ public class DirectiveGlobl extends Directive {
             throw new AssemblerException(line.getIndex(), "." + NAME + " must have at least one parameter.");
         }
 
+        if (line.getScope() != line.getFile().getScope()) {
+            throw new AssemblerException(line.getIndex(), "Cannot use ." + NAME + " on a macro scope!");
+        }
+
         for (String parameter : parameters) {
             if (!LabelUtils.isLabelLegal(parameter))
                 throw new AssemblerException("Illegal label " + parameter + ".");
         }
 
-        for (String parameter : parameters) {
-            file.setAsGlobalIdentifier(lineNumber, parameter + labelSufix);
-        }
+        line.getFile().addGlobalIdentifiers(List.of(parameters));
     }
 
 }

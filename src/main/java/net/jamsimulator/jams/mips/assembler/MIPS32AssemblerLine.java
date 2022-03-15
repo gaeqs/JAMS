@@ -29,25 +29,28 @@ import net.jamsimulator.jams.mips.label.Label;
 import net.jamsimulator.jams.utils.LabelUtils;
 import net.jamsimulator.jams.utils.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MIPS32AssemblerLine {
 
     private final MIPS32AssemblerFile file;
+    private final MIPS32AssemblerScope scope;
     private final String raw;
     private final int index;
-    private final String macroSuffix;
 
-    private Label label;
     private MIPS32AssemblerInstruction instruction;
     private MIPS32AssemblerDirective directive;
     private MIPS32AssemblerMacroCall macroCall;
+    private List<Label> labels = new ArrayList<>(2);
 
     private int address = 0;
 
-    public MIPS32AssemblerLine(MIPS32AssemblerFile file, String raw, int index, String macroSuffix) {
+    public MIPS32AssemblerLine(MIPS32AssemblerFile file, MIPS32AssemblerScope scope, String raw, int index) {
         this.file = file;
+        this.scope = scope;
         this.raw = raw;
         this.index = index;
-        this.macroSuffix = macroSuffix;
     }
 
     public MIPS32AssemblerFile getFile() {
@@ -58,6 +61,10 @@ public class MIPS32AssemblerLine {
         return file.getAssembler();
     }
 
+    public MIPS32AssemblerScope getScope() {
+        return scope;
+    }
+
     public String getRaw() {
         return raw;
     }
@@ -66,16 +73,8 @@ public class MIPS32AssemblerLine {
         return index;
     }
 
-    public boolean isLineFromMacroCall() {
-        return !macroSuffix.isEmpty();
-    }
-
-    public String getMacroSuffix() {
-        return macroSuffix;
-    }
-
-    public Label getLabel() {
-        return label;
+    public List<Label> getLabels() {
+        return labels;
     }
 
     public MIPS32AssemblerInstruction getInstruction() {
@@ -88,6 +87,10 @@ public class MIPS32AssemblerLine {
 
     public MIPS32AssemblerMacroCall getMacroCall() {
         return macroCall;
+    }
+
+    public int getAddress() {
+        return address;
     }
 
     public void setAddress(int address) {
@@ -103,7 +106,7 @@ public class MIPS32AssemblerLine {
                 throw new AssemblerException(index, "The label " + rawLabel + " is illegal.");
             }
             line = line.substring(labelIndex + 1).trim();
-            label = new Label(rawLabel, 0, file.getName(), index, false);
+            labels.add(new Label(rawLabel, 0, file.getName(), index));
         }
 
         if (line.isEmpty()) return;
@@ -119,7 +122,7 @@ public class MIPS32AssemblerLine {
                 directive = null;
             }
         } else {
-            if (parameters.startsWith("(") && parameters.endsWith("(")) {
+            if (parameters.startsWith("(") && parameters.endsWith(")")) {
                 macroCall = new MIPS32AssemblerMacroCall(this, mnemonic, parameters.substring(1, parameters.length() - 1));
             } else {
                 instruction = new MIPS32AssemblerInstruction(this, mnemonic, parameters);

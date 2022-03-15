@@ -77,11 +77,15 @@ class MIPS32AssemblerDirective {
         directive.onDiscovery(line, parameters, rawParameters, equivalents);
     }
 
-    public void runExpansion () {
+    public void runExpansion() {
         directive.onExpansion(line, parameters, rawParameters);
     }
 
-    public OptionalInt runAddressAssignation () {
+    public OptionalInt runAddressAssignation() {
         return directive.onAddressAssignation(line, parameters, rawParameters);
+    }
+
+    public void runValueAssignation() {
+        directive.onValueAssignation(line, parameters, line.getAddress(), rawParameters);
     }
 }

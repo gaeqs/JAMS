@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.assembler.old;
+package net.jamsimulator.jams.mips.assembler;
 
 public enum SelectedMemorySegment {
 

@@ -25,12 +25,15 @@
 package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.gui.util.log.Log;
+import net.jamsimulator.jams.mips.architecture.Architecture;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
 import net.jamsimulator.jams.mips.label.Label;
 import net.jamsimulator.jams.mips.memory.Memory;
 import net.jamsimulator.jams.mips.register.Registers;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
+import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 import net.jamsimulator.jams.utils.RawFileData;
 
 import java.util.*;
@@ -44,13 +47,11 @@ public class MIPS32Assembler implements Assembler {
     private final Log log;
 
     private final List<MIPS32AssemblerFile> files = new ArrayList<>();
-    private final Map<String, Label> globalLabels = new HashMap<>();
-    private final Map<String, Macro> globalMacros = new HashMap<>();
     private final Map<Integer, String> originalInstructions = new HashMap<>();
+    private final MIPS32AssemblerScope globalScope = new MIPS32AssemblerScope("global", null);
 
     private final MIPS32AssemblerData assemblerData;
 
-    private int macrosCalled = 0;
     private boolean assembled = false;
 
     public MIPS32Assembler(
@@ -101,16 +102,23 @@ public class MIPS32Assembler implements Assembler {
         return originalInstructions;
     }
 
+    @Override
+    public Set<Label> getAllLabels() {
+        return new HashSet<>(globalScope.getScopeLabels().values());
+    }
+
+    @Override
+    public int getStackBottom() {
+        return assemblerData.getCurrentText() - 4;
+    }
+
+    @Override
+    public int getKernelStackBottom() {
+        return assemblerData.getCurrentKText() - 4;
+    }
+
     public MIPS32AssemblerData getAssemblerData() {
         return assemblerData;
-    }
-
-    public int getMacrosCalled() {
-        return macrosCalled;
-    }
-
-    public void addMacroCall() {
-        macrosCalled++;
     }
 
     @Override
@@ -118,58 +126,15 @@ public class MIPS32Assembler implements Assembler {
         return assembled;
     }
 
-    public Optional<Label> getGlobalLabel(String identifier) {
-        return Optional.ofNullable(globalLabels.get(identifier));
+    @Override
+    public <Arch extends Architecture> MIPSSimulation<Arch> createSimulation(Arch architecture, MIPSSimulationData data) {
+        if (!assembled) throw new IllegalStateException("The program is still not assembled!");
+        MIPSSimulation<?> simulation = architecture.createSimulation(data);
+        return (MIPSSimulation<Arch>) simulation;
     }
 
-    public Optional<Macro> getGlobalMacro(String identifier) {
-        return Optional.ofNullable(globalMacros.get(identifier));
-    }
-
-    public void addGlobalLabel(int line, Label label) {
-        var definedLabel = globalLabels.get(label.getKey());
-        if (definedLabel != null) {
-            throw new AssemblerException(line, "The global label "
-                    + label.getKey() + " is already defined at "
-                    + definedLabel.getOriginFile() + ":" + definedLabel.getOriginLine() + ".");
-        }
-
-        definedLabel = files.stream()
-                .map(it -> it.getLocalLabel(label.getKey()).orElse(null))
-                .filter(Objects::nonNull)
-                .findAny()
-                .orElse(null);
-
-        if (definedLabel != null) {
-            throw new AssemblerException(line, "Cannot define global label "
-                    + label.getKey() + ". A local label with the same name is already defined at "
-                    + definedLabel.getOriginFile() + ":" + definedLabel.getOriginLine() + ".");
-        }
-
-        globalLabels.put(label.getKey(), label);
-    }
-
-    public void addGlobalMacro(int line, Macro macro) {
-        var definedMacro = globalMacros.get(macro.getName());
-        if (definedMacro != null) {
-            throw new AssemblerException(line, "The global label "
-                    + macro.getName() + " is already defined at "
-                    + definedMacro.getOriginFile() + ":" + definedMacro.getOriginLine() + ".");
-        }
-
-        definedMacro = files.stream()
-                .map(it -> it.getLocalMacro(macro.getName()).orElse(null))
-                .filter(Objects::nonNull)
-                .findAny()
-                .orElse(null);
-
-        if (definedMacro != null) {
-            throw new AssemblerException(line, "Cannot define global label "
-                    + macro.getName() + ". A local label with the same name is already defined at "
-                    + definedMacro.getOriginFile() + ":" + definedMacro.getOriginLine() + ".");
-        }
-
-        globalMacros.put(macro.getName(), macro);
+    public MIPS32AssemblerScope getGlobalScope() {
+        return globalScope;
     }
 
     // region log utils
@@ -194,9 +159,15 @@ public class MIPS32Assembler implements Assembler {
 
     @Override
     public void assemble() {
-        if (!assembled) throw new AssemblerException("Project is already assembled");
-
-
+        if (assembled) throw new AssemblerException("Project is already assembled");
+        printInfo("Discovering...");
+        files.forEach(MIPS32AssemblerFile::discoverElements);
+        printInfo("Expanding macros...");
+        files.forEach(MIPS32AssemblerFile::expandMacros);
+        printInfo("Assigning addresses...");
+        files.forEach(MIPS32AssemblerFile::assignAddresses);
+        printInfo("Assigning values...");
+        files.forEach(MIPS32AssemblerFile::assignValues);
         assembled = true;
     }
 }

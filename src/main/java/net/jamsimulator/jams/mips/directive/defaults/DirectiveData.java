@@ -26,7 +26,7 @@ package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
-import net.jamsimulator.jams.mips.assembler.old.SelectedMemorySegment;
+import net.jamsimulator.jams.mips.assembler.SelectedMemorySegment;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;

@@ -27,7 +27,10 @@ package net.jamsimulator.jams.mips.assembler;
 import javafx.util.Pair;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.instruction.Instruction;
+import net.jamsimulator.jams.mips.instruction.assembled.AssembledInstruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
+import net.jamsimulator.jams.mips.label.LabelReference;
+import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.utils.InstructionUtils;
 
@@ -91,6 +94,51 @@ class MIPS32AssemblerInstruction {
         return instruction instanceof PseudoInstruction
                 ? ((PseudoInstruction) instruction).getInstructionAmount(parameters) << 2
                 : 4;
+    }
+
+    public void assemble(MIPS32AssemblerLine line) {
+        ParameterParseResult[] parameters = assembleParameters(line);
+
+        try {
+            var assembler = line.getAssembler();
+            var assembledInstructions = instruction.assemble(assembler.getInstructionSet(),
+                    line.getAddress(), parameters);
+
+            //Add instructions to memory
+            int relativeAddress = line.getAddress();
+            for (AssembledInstruction assembledInstruction : assembledInstructions) {
+                assembler.getMemory().setWord(relativeAddress, assembledInstruction.getCode(),
+                        false, true, true);
+                relativeAddress += 4;
+            }
+        } catch (AssemblerException ex) {
+            throw new AssemblerException(line.getIndex(), "Error while assembling instruction.", ex);
+        }
+    }
+
+    private ParameterParseResult[] assembleParameters(MIPS32AssemblerLine line) {
+        var assembledParameters = new ParameterParseResult[parameters.size()];
+
+        int index = 0;
+        ParameterParseResult result;
+        for (var parameter : instruction.getParameters()) {
+            result = parameter.parse(parameters.get(index), line.getAssembler().getRegisters());
+
+            if (result.hasLabel()) {
+                var label = line.getScope().findLabel(result.getLabel());
+                if (label.isEmpty()) {
+                    throw new AssemblerException(line.getIndex(), "Cannot find label " + result.getLabel() + "!");
+                }
+                label.get().addReference(new LabelReference(
+                        line.getAddress(),
+                        line.getFile().getName(),
+                        line.getIndex()
+                ));
+                result.setLabelValue(label.get().getAddress());
+            }
+            assembledParameters[index++] = result;
+        }
+        return assembledParameters;
     }
 
     private static Pair<Instruction, List<String>> scanInstruction(

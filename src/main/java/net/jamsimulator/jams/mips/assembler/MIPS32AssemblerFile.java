@@ -39,6 +39,8 @@ public class MIPS32AssemblerFile {
     private final String rawData;
 
     private final List<MIPS32AssemblerLine> lines = new ArrayList<>();
+    private final List<String> globalIdentifiers = new ArrayList<>();
+    private final MIPS32AssemblerScope scope;
 
     private Macro definingMacro = null;
 
@@ -46,6 +48,8 @@ public class MIPS32AssemblerFile {
         this.assembler = assembler;
         this.name = name;
         this.rawData = rawData;
+
+        this.scope = new MIPS32AssemblerScope(name, assembler.getGlobalScope());
     }
 
     public MIPS32Assembler getAssembler() {
@@ -56,10 +60,8 @@ public class MIPS32AssemblerFile {
         return name;
     }
 
-    public Optional<Label> getLocalLabel(String identifier) {
-    }
-
-    public Optional<Macro> getLocalMacro(String identifier) {
+    public MIPS32AssemblerScope getScope() {
+        return scope;
     }
 
     public void startMacroDefinition(int line, String file, String name, String[] parameters) {
@@ -69,30 +71,121 @@ public class MIPS32AssemblerFile {
         definingMacro = new Macro(name, parameters, file, line);
     }
 
-    public void stopMacroDefinition(int line) {
-        if (definingMacro != null) {
+    public void stopMacroDefinition(int line, MIPS32AssemblerScope scope) {
+        if (definingMacro == null) {
             throw new AssemblerException(line, "There's no macro being defined!");
         }
+        scope.addMacro(line, definingMacro);
+        definingMacro = null;
     }
 
     public boolean isMacroBeingDefined() {
         return definingMacro != null;
     }
 
+    public void addGlobalIdentifier(String identifier) {
+        globalIdentifiers.add(identifier);
+    }
+
+    public void addGlobalIdentifiers(Collection<String> identifiers) {
+        globalIdentifiers.addAll(identifiers);
+    }
+
     public void discoverElements() {
+        discoverElements(scope, StringUtils.multiSplit(rawData, "\n", "\r"), lines.size());
+        for (String identifier : globalIdentifiers) {
+            var macro = scope.getScopeMacros().remove(identifier);
+            if (macro != null) {
+                assembler.getGlobalScope().addMacro(macro.getOriginLine(), macro);
+            }
+            var label = scope.getScopeLabels().remove(identifier);
+            if (label != null) {
+                assembler.getGlobalScope().addLabel(label.getOriginLine(), label);
+            }
+        }
+    }
+
+    public void discoverElements(MIPS32AssemblerScope scope, List<String> rawLines, int startIndex) {
         var equivalents = new HashMap<String, String>();
-        for (String raw : StringUtils.multiSplit(rawData, "\n", "\r")) {
+        for (String raw : rawLines) {
             raw = sanityLine(raw, equivalents);
             if (isMacroBeingDefined() && !hasEndMacroDirective(raw)) {
                 definingMacro.addLine(raw);
             } else {
-                if (isMacroBeingDefined()) stopMacroDefinition(lines.size());
-                var line = new MIPS32AssemblerLine(this, raw, lines.size(), "");
+                if (isMacroBeingDefined()) stopMacroDefinition(lines.size(), scope);
+                var line = new MIPS32AssemblerLine(this, scope, raw, lines.size());
                 line.discover();
                 if (line.getDirective() != null) {
                     line.getDirective().runDiscovery(equivalents);
                 }
-                lines.add(line);
+                lines.add(startIndex++, line);
+
+                // Add labels
+                line.getLabels().forEach(l -> scope.addLabel(line.getIndex(), l));
+            }
+        }
+
+        if (definingMacro != null) {
+            throw new AssemblerException(rawLines.size() + startIndex, "The .endmacro directive is missing!");
+        }
+    }
+
+    public void expandMacros() {
+        for (int i = 0; i < lines.size(); i++) {
+            var line = lines.get(i);
+            var scope = line.getScope();
+            if (line.getMacroCall() != null) {
+                var call = line.getMacroCall();
+                var macro = scope.findMacro(call.getMnemonic());
+                if (macro.isEmpty()) {
+                    throw new AssemblerException(i, "Cannot find macro " + call.getMnemonic() +
+                            " in scope " + scope.getName() + "!");
+                }
+
+                var childScope = new MIPS32AssemblerScope(macro.get().getName(), scope);
+                var lines = macro.get().getParsedLines(call.getParameters(), i);
+                discoverElements(childScope, lines, i + 1);
+            }
+            if (line.getDirective() != null) {
+                line.getDirective().runExpansion();
+            }
+        }
+    }
+
+    public void assignAddresses() {
+        var queue = new LinkedList<Label>();
+        for (var line : lines) {
+            OptionalInt address = OptionalInt.empty();
+            queue.addAll(line.getLabels());
+            if (line.getDirective() != null) {
+                address = line.getDirective().runAddressAssignation();
+            }
+            if (line.getInstruction() != null) {
+                var data = assembler.getAssemblerData();
+                data.align(2);
+                address = OptionalInt.of(data.getCurrent());
+                data.addCurrent(line.getInstruction().getInstructionSize());
+            }
+
+            if (address.isPresent()) {
+                int addr = address.getAsInt();
+                line.setAddress(addr);
+                assembler.getOriginals().put(addr, line.getRaw());
+
+                while (!queue.isEmpty()) {
+                    queue.pop().setAddress(addr);
+                }
+            }
+        }
+    }
+
+    public void assignValues() {
+        for (var line : lines) {
+            if (line.getDirective() != null) {
+                line.getDirective().runValueAssignation();
+            }
+            if (line.getInstruction() != null) {
+                line.getInstruction().assemble(line);
             }
         }
     }
@@ -116,18 +209,6 @@ public class MIPS32AssemblerFile {
             line = line.replace(entry.getKey(), entry.getValue());
         }
         return line.trim();
-    }
-
-    public void expandMacros() {
-        for (int i = 0; i < lines.size(); i++) {
-            var line = lines.get(i);
-            if (line.getMacroCall() != null) {
-
-            }
-            if (line.getDirective() != null) {
-                line.getDirective().runExpansion();
-            }
-        }
     }
 
 }

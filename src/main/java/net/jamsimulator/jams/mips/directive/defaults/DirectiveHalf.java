@@ -25,11 +25,13 @@
 package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
-import net.jamsimulator.jams.mips.assembler.old.MIPS32AssemblingFile;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.NumericUtils;
+
+import java.util.OptionalInt;
 
 public class DirectiveHalf extends Directive {
 
@@ -41,28 +43,23 @@ public class DirectiveHalf extends Directive {
     }
 
     @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
+    public OptionalInt onAddressAssignation(MIPS32AssemblerLine line, String[] parameters, String rawParameters) {
         if (parameters.length < 1)
-            throw new AssemblerException(lineNumber, "." + NAME + " must have at least one parameter.");
+            throw new AssemblerException(line.getIndex(), "." + NAME + " must have at least one parameter.");
 
         for (String parameter : parameters) {
             if (!NumericUtils.isShort(parameter))
-                throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a half.");
+                throw new AssemblerException(line.getIndex(), "." + NAME + " parameter '" + parameter + "' is not a half.");
         }
 
-        MIPS32AssemblerData data = file.getAssembler().getAssemblerData();
+        MIPS32AssemblerData data = line.getAssembler().getAssemblerData();
         data.align(1);
         int start = data.getCurrent();
         for (String parameter : parameters) {
-            file.getAssembler().getMemory().setWord(data.getCurrent(), Short.toUnsignedInt(Short.parseShort(parameter)));
+            line.getAssembler().getMemory().setWord(data.getCurrent(), Short.toUnsignedInt(Short.parseShort(parameter)));
             data.addCurrent(2);
         }
-        return start;
-    }
-
-    @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-
+        return OptionalInt.of(start);
     }
 
 }

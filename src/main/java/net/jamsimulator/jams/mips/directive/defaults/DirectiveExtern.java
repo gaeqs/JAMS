@@ -26,11 +26,11 @@ package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
-import net.jamsimulator.jams.mips.assembler.old.MIPS32AssemblingFile;
-import net.jamsimulator.jams.mips.assembler.old.SelectedMemorySegment;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
+import net.jamsimulator.jams.mips.assembler.SelectedMemorySegment;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
+import net.jamsimulator.jams.mips.label.Label;
 import net.jamsimulator.jams.utils.NumericUtils;
 
 import java.util.OptionalInt;
@@ -62,22 +62,17 @@ public class DirectiveExtern extends Directive {
         int start = data.getCurrent();
         data.addCurrent(i);
 
-        var label = parameters[0] + line.getMacroSuffix();
-        line.checkLabel(lineNumber, label, start);
-        line.setAsGlobalIdentifier(lineNumber, label);
+        var label = parameters[0];
+
+        if (line.getScope() != line.getFile().getScope()) {
+            throw new AssemblerException(line.getIndex(), "Cannot use ." + NAME + " on a macro scope!");
+        }
+
+        line.getAssembler().getGlobalScope().addLabel(line.getIndex(),
+                new Label(label, start, line.getFile().getName(), line.getIndex()));
 
         data.setSelected(old);
         return OptionalInt.of(start);
-    }
-
-    @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
-
-    }
-
-    @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-
     }
 
 }

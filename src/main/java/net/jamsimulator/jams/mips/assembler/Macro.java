@@ -25,11 +25,11 @@
 package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
-import net.jamsimulator.jams.mips.assembler.old.MIPS32AssemblingFile;
-import org.reactfx.util.TriConsumer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Represents a macro in an assembly code.
@@ -68,37 +68,28 @@ public class Macro {
         lines.add(line);
     }
 
-    public void executeMacro(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int macroCall) {
-        if (parameters.length != this.parameters.length)
-            throw new AssemblerException("Macro " + name + " expected " + this.parameters.length +
-                    " parameters but found " + parameters.length + ".");
-
-        var sufix = "_M" + macroCall;
-
-        for (String line : lines) {
-            file.scanLine(lineNumber, parseLine(line, parameters), sufix);
-        }
-    }
-
     /**
-     * Executes the macro in an external assembler. This allows to create macros in external assemblers easily.
+     * Executes the macro in an external assembler. This allows creating macros in external assemblers easily.
      *
      * @param parameters the parameters to replace.
      * @param lineNumber the line executing this macro.
-     * @param macroCall  the call id of this execution.
      * @param scanner    the consumer used to scan.
      */
-    public void executeMacro(String[] parameters, int lineNumber, int macroCall,
-                             TriConsumer<Integer, String, String> scanner) {
+    public void executeMacro(String[] parameters, int lineNumber, Consumer<String> scanner) {
         if (parameters.length != this.parameters.length)
-            throw new AssemblerException("Macro " + name + " expected " + this.parameters.length +
+            throw new AssemblerException(lineNumber, "Macro " + name + " expected " + this.parameters.length +
                     " parameters but found " + parameters.length + ".");
 
-        var sufix = "_M" + macroCall;
-
         for (String line : lines) {
-            scanner.accept(lineNumber, parseLine(line, parameters), sufix);
+            scanner.accept(parseLine(line, parameters));
         }
+    }
+
+    public List<String> getParsedLines(String[] parameters, int lineNumber) {
+        if (parameters.length != this.parameters.length)
+            throw new AssemblerException(lineNumber, "Macro " + name + " expected " + this.parameters.length +
+                    " parameters but found " + parameters.length + ".");
+        return lines.stream().map(it -> parseLine(it, parameters)).collect(Collectors.toList());
     }
 
     private String parseLine(String line, String[] parameters) {
