@@ -50,6 +50,22 @@ public class TestUtils {
     private static final InstructionSet INSTRUCTION_SET = new MIPS32r6InstructionSet(ResourceProvider.JAMS);
     private static final DirectiveSet DIRECTIVE_SET = new MIPS32DirectiveSet(ResourceProvider.JAMS);
 
+    public static void assemble(String text) {
+        var registers = new MIPS32Registers();
+        var memory = new MIPS32Memory();
+        var rawFiles = new RawFileData("test", text);
+
+        var assembler = new MIPS32Assembler(
+                Set.of(rawFiles),
+                INSTRUCTION_SET,
+                DIRECTIVE_SET,
+                registers,
+                memory,
+                new PrintStreamLog(System.out)
+        );
+        assembler.assemble();
+    }
+
     public static MIPSSimulation<?> generateSimulation(Architecture architecture, String text) {
         var registers = new MIPS32Registers();
         var memory = new MIPS32Memory();
@@ -66,6 +82,14 @@ public class TestUtils {
 
         assembler.assemble();
 
+        var startAddress = assembler.getStartAddres();
+        if (startAddress.isPresent()) {
+            assembler.getRegisters().getProgramCounter().setValue(startAddress.getAsInt());
+        } else {
+            System.out.println("Global label 'main' not found. " +
+                    "Execution will start at the start of the text section.");
+        }
+
         var data = new MIPSSimulationData(
                 CONFIG,
                 new File(""),
@@ -77,10 +101,9 @@ public class TestUtils {
                 assembler.getStackBottom(),
                 assembler.getKernelStackBottom()
         );
-        System.out.println(Integer.toHexString(assembler.getStackBottom()));
 
         data.memory().saveState();
-        data.memory().restoreSavedState();
+        data.registers().saveState();
         return assembler.createSimulation(architecture, data);
     }
 

@@ -48,7 +48,7 @@ public class MIPS32Assembler implements Assembler {
 
     private final List<MIPS32AssemblerFile> files = new ArrayList<>();
     private final Map<Integer, String> originalInstructions = new HashMap<>();
-    private final MIPS32AssemblerScope globalScope = new MIPS32AssemblerScope("global", null);
+    private final MIPS32AssemblerScope globalScope = new MIPS32AssemblerScope("global", null, null);
 
     private final MIPS32AssemblerData assemblerData;
 
@@ -115,6 +115,13 @@ public class MIPS32Assembler implements Assembler {
     @Override
     public int getKernelStackBottom() {
         return assemblerData.getCurrentKText() - 4;
+    }
+
+    @Override
+    public OptionalInt getStartAddres() {
+        Label label = globalScope.getScopeLabels().get("main");
+        if (label == null) return OptionalInt.empty();
+        return OptionalInt.of(label.getAddress());
     }
 
     public MIPS32AssemblerData getAssemblerData() {

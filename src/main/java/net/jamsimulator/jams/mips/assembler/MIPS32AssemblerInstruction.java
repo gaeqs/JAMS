@@ -125,7 +125,7 @@ class MIPS32AssemblerInstruction {
             result = parameter.parse(parameters.get(index), line.getAssembler().getRegisters());
 
             if (result.hasLabel()) {
-                var label = line.getScope().findLabel(result.getLabel());
+                var label = line.getScope().resolveLabel(line.getAddress(), result.getLabel());
                 if (label.isEmpty()) {
                     throw new AssemblerException(line.getIndex(), "Cannot find label " + result.getLabel() + "!");
                 }

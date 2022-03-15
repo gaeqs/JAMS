@@ -26,6 +26,7 @@ package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveEndmacro;
+import net.jamsimulator.jams.mips.directive.defaults.DirectiveMacro;
 import net.jamsimulator.jams.mips.label.Label;
 import net.jamsimulator.jams.utils.LabelUtils;
 import net.jamsimulator.jams.utils.StringUtils;
@@ -43,13 +44,13 @@ public class MIPS32AssemblerFile {
     private final MIPS32AssemblerScope scope;
 
     private Macro definingMacro = null;
+    private int macroCount = 0;
 
     public MIPS32AssemblerFile(MIPS32Assembler assembler, String name, String rawData) {
         this.assembler = assembler;
         this.name = name;
         this.rawData = rawData;
-
-        this.scope = new MIPS32AssemblerScope(name, assembler.getGlobalScope());
+        this.scope = new MIPS32AssemblerScope(name, null, assembler.getGlobalScope());
     }
 
     public MIPS32Assembler getAssembler() {
@@ -69,6 +70,7 @@ public class MIPS32AssemblerFile {
             throw new AssemblerException(line, "There's a macro already being defined!");
         }
         definingMacro = new Macro(name, parameters, file, line);
+        macroCount = 1;
     }
 
     public void stopMacroDefinition(int line, MIPS32AssemblerScope scope) {
@@ -77,6 +79,7 @@ public class MIPS32AssemblerFile {
         }
         scope.addMacro(line, definingMacro);
         definingMacro = null;
+        macroCount = 0;
     }
 
     public boolean isMacroBeingDefined() {
@@ -109,7 +112,7 @@ public class MIPS32AssemblerFile {
         var equivalents = new HashMap<String, String>();
         for (String raw : rawLines) {
             raw = sanityLine(raw, equivalents);
-            if (isMacroBeingDefined() && !hasEndMacroDirective(raw)) {
+            if (isMacroBeingDefined() && updateMacroCount(raw)) {
                 definingMacro.addLine(raw);
             } else {
                 if (isMacroBeingDefined()) stopMacroDefinition(lines.size(), scope);
@@ -142,7 +145,7 @@ public class MIPS32AssemblerFile {
                             " in scope " + scope.getName() + "!");
                 }
 
-                var childScope = new MIPS32AssemblerScope(macro.get().getName(), scope);
+                var childScope = new MIPS32AssemblerScope(macro.get().getName(), macro.get(), scope);
                 var lines = macro.get().getParsedLines(call.getParameters(), i);
                 discoverElements(childScope, lines, i + 1);
             }
@@ -177,6 +180,11 @@ public class MIPS32AssemblerFile {
                 }
             }
         }
+        if (!queue.isEmpty()) {
+            String list = queue.stream().map(Label::getKey).toList().toString();
+            throw new AssemblerException("Cannot assign addresses to the following labels: "
+                    + list.substring(1, list.length() - 1));
+        }
     }
 
     public void assignValues() {
@@ -190,17 +198,22 @@ public class MIPS32AssemblerFile {
         }
     }
 
-    private static boolean hasEndMacroDirective(String line) {
+    private boolean updateMacroCount(String line) {
         int labelIndex = LabelUtils.getLabelFinishIndex(line);
         if (labelIndex != -1) {
             line = line.substring(labelIndex + 1).trim();
         }
         int index = StringUtils.indexOf(line, ' ', ',', '\t');
+        String mnemonic;
         if (index == -1) {
-            return line.toLowerCase(Locale.ROOT).equals("." + DirectiveEndmacro.NAME);
+            mnemonic = line.toLowerCase(Locale.ROOT);
         } else {
-            return line.substring(index).toLowerCase(Locale.ROOT).equals("." + DirectiveEndmacro.NAME);
+            mnemonic = line.substring(0, index).toLowerCase(Locale.ROOT);
         }
+
+        if (mnemonic.equals("." + DirectiveEndmacro.NAME)) macroCount--;
+        else if (mnemonic.equals("." + DirectiveMacro.NAME)) macroCount++;
+        return macroCount > 0;
     }
 
     private static String sanityLine(String line, Map<String, String> equivalents) {

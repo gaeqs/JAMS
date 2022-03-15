@@ -60,7 +60,7 @@ public class DirectiveWord extends Directive {
         for (String parameter : parameters) {
             var optional = NumericUtils.decodeIntegerSafe(parameter);
             if (optional.isEmpty()) {
-                var label = line.getScope().findLabel(parameter);
+                var label = line.getScope().resolveLabel(line.getAddress(), parameter);
                 if (label.isEmpty()) {
                     throw new AssemblerException(line.getIndex(), "Label " + parameter + " not found.");
                 }

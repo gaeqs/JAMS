@@ -68,6 +68,10 @@ public class Macro {
         lines.add(line);
     }
 
+    public List<String> getLines() {
+        return lines;
+    }
+
     /**
      * Executes the macro in an external assembler. This allows creating macros in external assemblers easily.
      *

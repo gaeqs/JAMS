@@ -34,6 +34,7 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.Set;
 
 /**
@@ -131,5 +132,12 @@ public interface Assembler {
      * @return the position.
      */
     int getKernelStackBottom();
+
+    /**
+     * Returns the position where the execution should start.
+     *
+     * @return the position where the execution should start.
+     */
+    OptionalInt getStartAddres();
 
 }

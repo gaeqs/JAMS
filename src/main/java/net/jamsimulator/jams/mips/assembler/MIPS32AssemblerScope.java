@@ -37,16 +37,34 @@ public class MIPS32AssemblerScope {
     private final MIPS32AssemblerScope parent;
     private final Map<String, Label> labels;
     private final Map<String, Macro> macros;
+    private final Macro originMacro;
 
-    public MIPS32AssemblerScope(String name, MIPS32AssemblerScope parent) {
+    public MIPS32AssemblerScope(String name, Macro originMacro, MIPS32AssemblerScope parent) {
         this.name = name;
         this.parent = parent;
         this.labels = new HashMap<>();
         this.macros = new HashMap<>();
+        this.originMacro = originMacro;
+
+        if (originMacro != null) {
+            MIPS32AssemblerScope current = parent;
+            while (current != null) {
+                if (current.originMacro == originMacro) {
+                    throw new AssemblerException(originMacro.getOriginLine(),
+                            "Cyclic dependency found in macro '" + name + "' located at "
+                            + originMacro.getOriginFile() + ":" + originMacro.getOriginLine() + ".");
+                }
+                current = current.parent;
+            }
+        }
     }
 
     public String getName() {
         return name;
+    }
+
+    public Optional<Macro> getOriginMacro() {
+        return Optional.ofNullable(originMacro);
     }
 
     public Optional<MIPS32AssemblerScope> getParent() {
@@ -89,5 +107,37 @@ public class MIPS32AssemblerScope {
                     + macro.getName() + " is already defined in the scope " + name + ".");
         }
         macros.put(macro.getName(), macro);
+    }
+
+    public Optional<Label> nextLabelTo(int address) {
+        Label label = null;
+        for (Label current : labels.values()) {
+            if (Integer.compareUnsigned(current.getAddress(), address) > 0) {
+                if (label == null || Integer.compareUnsigned(label.getAddress(), current.getAddress()) > 0) {
+                    label = current;
+                }
+            }
+        }
+        return Optional.ofNullable(label);
+    }
+
+    public Optional<Label> previousLabelTo(int address) {
+        Label label = null;
+        for (Label current : labels.values()) {
+            if (Integer.compareUnsigned(current.getAddress(), address) < 0) {
+                if (label == null || Integer.compareUnsigned(label.getAddress(), current.getAddress()) < 0) {
+                    label = current;
+                }
+            }
+        }
+        return Optional.ofNullable(label);
+    }
+
+    public Optional<Label> resolveLabel(int address, String identifier) {
+        return switch (identifier) {
+            case "+" -> nextLabelTo(address);
+            case "-" -> previousLabelTo(address);
+            default -> findLabel(identifier);
+        };
     }
 }
