@@ -27,7 +27,7 @@ package net.jamsimulator.jams.utils;
 import net.jamsimulator.jams.gui.util.log.PrintStreamLog;
 import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.architecture.Architecture;
-import net.jamsimulator.jams.mips.assembler.old.MIPS32Assembler;
+import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.directive.set.MIPS32DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
@@ -77,6 +77,7 @@ public class TestUtils {
                 assembler.getStackBottom(),
                 assembler.getKernelStackBottom()
         );
+        System.out.println(Integer.toHexString(assembler.getStackBottom()));
 
         data.memory().saveState();
         data.memory().restoreSavedState();

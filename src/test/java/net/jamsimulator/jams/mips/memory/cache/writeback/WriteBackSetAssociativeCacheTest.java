@@ -27,7 +27,7 @@ package net.jamsimulator.jams.mips.memory.cache.writeback;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
-import net.jamsimulator.jams.mips.assembler.old.MIPS32Assembler;
+import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
 import net.jamsimulator.jams.mips.directive.set.DirectiveSet;
 import net.jamsimulator.jams.mips.directive.set.MIPS32DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.InstructionSet;
