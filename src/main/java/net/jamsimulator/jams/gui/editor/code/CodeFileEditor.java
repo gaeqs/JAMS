@@ -308,10 +308,13 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         var textPrevious = getParagraph(line - 1).getText();
         var textCurrent = getParagraph(line).getText();
 
-        int end = start + textCurrent.length();
         int startPrevious = start - textPrevious.length() - 1;
 
-        replaceText(startPrevious, end, textCurrent + "\n" + textPrevious);
+        if (!textCurrent.equals(textPrevious)) {
+            int end = start + textCurrent.length();
+            replaceText(startPrevious, end, textCurrent + "\n" + textPrevious);
+        }
+
         moveTo(startPrevious + column);
     }
 
@@ -325,10 +328,12 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         var textNext = getParagraph(line + 1).getText();
         var textCurrent = getParagraph(line).getText();
 
-        int end = start + textCurrent.length();
-        int endNext = end + 1 + textNext.length();
+        if (!textNext.equals(textCurrent)) {
+            int end = start + textCurrent.length();
+            int endNext = end + 1 + textNext.length();
+            replaceText(start, endNext, textNext + "\n" + textCurrent);
+        }
 
-        replaceText(start, endNext, textNext + "\n" + textCurrent);
         moveTo(start + textNext.length() + 1 + column);
     }
 
