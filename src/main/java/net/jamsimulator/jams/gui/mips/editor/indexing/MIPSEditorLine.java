@@ -102,7 +102,9 @@ public class MIPSEditorLine extends EditorIndexedLine {
         //LABEL
         int labelIndex = LabelUtils.getLabelFinishIndex(parsing);
         if (labelIndex != -1) {
-            label = new EditorElementLabelImpl(index, scope, this, pStart, parsing.substring(0, labelIndex + 1));
+            var labelText = parsing.substring(0, labelIndex + 1).trim();
+            var labelOffset = labelText.isEmpty() ? 0 : parsing.indexOf(labelText.charAt(0));
+            label = new EditorElementLabelImpl(index, scope, this, pStart + labelOffset, labelText);
             elements.add(label);
             pStart = pStart + labelIndex + 1;
             parsing = parsing.substring(labelIndex + 1);
