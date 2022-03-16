@@ -28,6 +28,8 @@ import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacro;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroParameter;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveEqv;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveGlobl;
@@ -55,6 +57,16 @@ public class MIPSEditorDirective extends EditorIndexedParentElementImpl {
     @Override
     public String getIdentifier() {
         return text.substring(1);
+    }
+
+    @Override
+    public void changeScope(ElementScope scope) {
+        super.changeScope(scope);
+        if (size() > 1 && getElement(1) instanceof EditorElementMacro macro) {
+            var macroScope = macro.getMacroScope();
+            elements.stream().filter(it -> it instanceof EditorElementMacroParameter)
+                    .forEach(it -> it.changeScope(macroScope));
+        }
     }
 
     public Optional<Directive> getDirective() {
@@ -125,6 +137,7 @@ public class MIPSEditorDirective extends EditorIndexedParentElementImpl {
                     }
                 }
 
+                var scope = ((MIPSEditorDirectiveMacroName) getElement(1)).getMacroScope();
                 return new MIPSEditorDirectiveMacroParameter(this.index, scope, this, start, parameter);
             }
         }

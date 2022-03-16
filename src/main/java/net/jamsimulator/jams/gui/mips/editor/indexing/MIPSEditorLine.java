@@ -26,10 +26,7 @@ package net.jamsimulator.jams.gui.mips.editor.indexing;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementComment;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabelImpl;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroCall;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.*;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
 import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirective;
 import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstruction;
@@ -85,10 +82,9 @@ public class MIPSEditorLine extends EditorIndexedLine {
     }
 
     @Override
-    public Optional<String> getDefinedMacroIdentifier() {
-        return isMacroStart() && directive.size() > 1
-                ? Optional.of(directive.getElement(1).getIdentifier())
-                : Optional.empty();
+    public Optional<ElementScope> getDefinedMacroScope() {
+        if (!isMacroStart() || directive.size() < 2) return Optional.empty();
+        return Optional.ofNullable(((EditorElementMacro) directive.getElement(1)).getMacroScope());
     }
 
     protected void parseLine() {

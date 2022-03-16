@@ -24,6 +24,9 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing.element;
 
+import java.util.Objects;
+import java.util.UUID;
+
 /**
  * Represents the scope of an element.
  * <p>
@@ -33,75 +36,51 @@ package net.jamsimulator.jams.gui.editor.code.indexing.element;
  * <p>
  * An element with a MACRO scope can only be reference from inside its macro.
  */
-public record ElementScope(Type type, String macroIdentifier) {
+public record ElementScope(String macroIdentifier, ElementScope parent, UUID scopeId) {
 
-    /**
-     * An element with this scope can be reached from all places inside the project.
-     */
-    public static final ElementScope GLOBAL = new ElementScope(Type.GLOBAL);
+    public static final ElementScope INTERNAL = new ElementScope();
+    public static final ElementScope GLOBAL = new ElementScope();
 
-    /**
-     * An element with this scope can only be reached from inside its macro.
-     */
-    public static final ElementScope FILE = new ElementScope(Type.FILE);
+    public ElementScope() {
+        this("", null, UUID.randomUUID());
+    }
 
-    /**
-     * Internal type. This scope can reach ALL elements, including macros.
-     * Other scopes can't reach this scope.
-     */
-    public static final ElementScope INTERNAL = new ElementScope(Type.INTERNAL);
+    public ElementScope(String macroIdentifier, ElementScope parent) {
+        this(macroIdentifier, parent, UUID.randomUUID());
+    }
 
-    /**
-     * Creates a new scope.
-     *
-     * @param type the {@link Type scope type}.
-     */
-    private ElementScope(Type type) {
-        this(type, null);
+    public ElementScope(ElementScope parent) {
+        this("", parent, UUID.randomUUID());
     }
 
     /**
      * Checks if this scope can be reached from the given scope.
      * <p>
-     * WARINING! Scopes doesn't record the file identifier, so this method won't
-     * check if the scopes are in the same file.
      *
      * @param scope the scope that wants to reach.
      * @return whether this scope can be reached.
      */
     public boolean canBeReachedFrom(ElementScope scope) {
-        if (scope.type.ordinal() > type.ordinal()) return true;
-        if (scope.type.ordinal() == type.ordinal()) {
-            if (type != Type.MACRO) return true;
-            return scope.macroIdentifier.equals(macroIdentifier);
+        if (scope.equals(INTERNAL)) return true;
+        var current = scope;
+        while (current != null) {
+            if (equals(current)) return true;
+            current = current.parent;
         }
         return false;
     }
 
-    /**
-     * The scope type.
-     */
-    public enum Type {
-        /**
-         * An element with this scope can be reached from all places inside the project.
-         */
-        GLOBAL,
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ElementScope that = (ElementScope) o;
+        return scopeId.equals(that.scopeId);
+    }
 
-        /**
-         * An element with this scope can be reached from all places inside the same file.
-         */
-        FILE,
-
-        /**
-         * An element with this scope can only be reached from inside its macro.
-         */
-        MACRO,
-
-        /**
-         * Internal type. This scope can reach ALL elements, including macros.
-         * Other scopes can't reach this scope.
-         */
-        INTERNAL
+    @Override
+    public int hashCode() {
+        return Objects.hash(scopeId);
     }
 
 }

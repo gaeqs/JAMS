@@ -148,7 +148,7 @@ public abstract class EditorIndexedLine extends EditorIndexedParentElementImpl {
     public abstract boolean isMacroEnd();
 
     /**
-     * @return returns the macro identifier defined by this line.
+     * @return returns the macro scope defined by this line.
      */
-    public abstract Optional<String> getDefinedMacroIdentifier();
+    public abstract Optional<ElementScope> getDefinedMacroScope();
 }

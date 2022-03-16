@@ -425,7 +425,11 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
                 .getTaskExecutor().execute(new LanguageTask<>(Messages.EDITOR_INDEXING) {
                     @Override
                     protected Void call() {
-                        index.withLock(true, i -> i.indexAll(getText()));
+                        try {
+                            index.withLock(true, i -> i.indexAll(getText()));
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
                         return null;
                     }
                 });

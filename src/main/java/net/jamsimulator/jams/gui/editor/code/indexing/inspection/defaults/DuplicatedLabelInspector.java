@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing.inspection.defaults;
 
-import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
@@ -57,10 +56,10 @@ public class DuplicatedLabelInspector extends Inspector<EditorElementLabel> {
 
         // Do we have more than one label? Then there's a duplicated label.
         if (elements.size() > 1) {
-            if (scope.type() == ElementScope.Type.MACRO) {
-                if (elements.stream().noneMatch(it -> it.getReferencingScope().type() == ElementScope.Type.MACRO)) {
+            if (!scope.macroIdentifier().isEmpty()) {
+                if (elements.stream().allMatch(it -> it.getReferencingScope().macroIdentifier().isEmpty())) {
                     var other = elements.stream()
-                            .filter(it -> it != element && it.getReferencingScope().type() == ElementScope.Type.MACRO)
+                            .filter(it -> it != element && !it.getReferencingScope().macroIdentifier().isEmpty())
                             .findAny().orElse(null);
                     // Return the inspection.
                     return Set.of(duplicateLabel(element, other));
@@ -88,7 +87,7 @@ public class DuplicatedLabelInspector extends Inspector<EditorElementLabel> {
 
             // If the elements is empty or the element only contains our element, then there's no duplicated labels.
             if (!elements.isEmpty() && (elements.size() != 1 || !elements.contains(element))) {
-                if (scope.type() == ElementScope.Type.MACRO) {
+                if (!scope.macroIdentifier().isEmpty()) {
                     // Macro label shadows file label!
                     var other = elements.stream().filter(it -> it != element).findAny().orElse(null);
                     // Return the inspection.
@@ -127,7 +126,6 @@ public class DuplicatedLabelInspector extends Inspector<EditorElementLabel> {
         return new Inspection(this, InspectionLevel.WARNING,
                 Messages.EDITOR_WARNING_SHADOWED_GLOBAL_LABEL, replacements);
     }
-
 
 
     private Inspection duplicateLabel(EditorElementLabel label, EditorElementLabel other) {

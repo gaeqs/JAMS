@@ -97,7 +97,7 @@ public class EditorIndexedElementImpl implements EditorIndexedElement {
 
     @Override
     public ElementScope getReferencedScope() {
-        if (scope.type() == ElementScope.Type.FILE && this instanceof EditorReferencedElement) {
+        if (ElementScope.GLOBAL.equals(scope.parent()) && this instanceof EditorReferencedElement) {
             return index.isIdentifierGlobal(getIdentifier()) ? ElementScope.GLOBAL : scope;
         }
         return scope;
@@ -128,7 +128,7 @@ public class EditorIndexedElementImpl implements EditorIndexedElement {
 
     @Override
     public boolean isMacroParameter() {
-        if (scope.type() != ElementScope.Type.MACRO || !getIdentifier().startsWith("%")) return false;
+        if (scope.macroIdentifier().isEmpty() || !getIdentifier().startsWith("%")) return false;
         var reference = new EditorElementReference<>(EditorElementMacro.class, scope.macroIdentifier());
         var macro = index.getReferencedElement(reference, scope);
         return macro.isPresent() && macro.get().getParameters().contains(getIdentifier());

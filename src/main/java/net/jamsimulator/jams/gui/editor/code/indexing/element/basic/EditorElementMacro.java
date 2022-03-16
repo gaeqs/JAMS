@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
 
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 
@@ -41,6 +42,8 @@ public interface EditorElementMacro extends EditorReferencedElement {
     int parametersAmount();
 
     List<String> getParameters();
+
+    ElementScope getMacroScope();
 
     @Override
     default EditorElementReference<?> getReference() {
