@@ -221,7 +221,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
                     if (line.isMacroStart() && line.getDefinedMacroScope().isPresent()) {
                         scope = line.getDefinedMacroScope().get();
                     } else if (line.isMacroEnd()) {
-                        scope = scope.parent() == null ? fileScope : scope;
+                        scope = scope.parent() == ElementScope.GLOBAL ? fileScope : scope.parent();
                         line.changeScope(scope);
                     }
                     lines.add(line);
@@ -236,7 +236,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
             if (end >= start) {
                 var line = generateNewLine(start, lines.size(), builder.toString(), scope);
                 if (line.isMacroEnd()) {
-                    line.changeScope(scope.parent() == null ? fileScope : scope);
+                    line.changeScope(scope.parent() == ElementScope.GLOBAL ? fileScope : scope);
                 }
                 lines.add(line);
             }
@@ -432,7 +432,10 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
      */
     protected void editLine(int number, String text) {
         var old = lines.get(number);
-        var line = generateNewLine(old.getStart(), number, text, old.getReferencingScope());
+        var previous = number == 0 ? null : lines.get(number - 1);
+        var scope = previous == null ? fileScope :
+                previous.getDefinedMacroScope().orElse(previous.getReferencingScope());
+        var line = generateNewLine(old.getStart(), number, text, scope);
         lines.set(number, line);
         old.invalidate();
 
@@ -491,7 +494,8 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     protected void addLine(int number, String text) {
         var previous = number == 0 ? null : lines.get(number - 1);
         int start = previous == null ? 0 : previous.getEnd() + 1;
-        var scope = previous == null ? fileScope : previous.getReferencingScope();
+        var scope = previous == null ? fileScope :
+                previous.getDefinedMacroScope().orElse(previous.getReferencingScope());
         var line = generateNewLine(start, number, text, scope);
         lines.add(number, line);
         lines.listIterator(number + 1).forEachRemaining(it ->
@@ -531,7 +535,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
                 scope = added.getDefinedMacroScope().orElse(added.getReferencingScope());
             } else {
                 scope = added.getReferencedScope().parent();
-                if (scope == null) scope = fileScope;
+                if (scope == ElementScope.GLOBAL) scope = fileScope;
                 added.changeScope(scope);
             }
         } else if (removed != null && (removed.isMacroStart() || removed.isMacroEnd())) {
@@ -547,17 +551,16 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
         var list = new HashSet<Line>();
         for (var line : lines.subList(number + 1, lines.size())) {
-            if (scope.equals(line.getReferencingScope())) break;
-
             if (line.isMacroStart()) {
                 line.changeScope(scope);
                 scope = line.getDefinedMacroScope().get();
             } else if (line.isMacroEnd()) {
-                scope = scope.parent();
+                scope = scope.parent() == ElementScope.GLOBAL ? fileScope : scope.parent();
                 line.changeScope(scope);
             } else {
                 line.changeScope(scope);
             }
+            if (scope.equals(line.getReferencingScope())) break;
             list.add(line);
         }
         return list;

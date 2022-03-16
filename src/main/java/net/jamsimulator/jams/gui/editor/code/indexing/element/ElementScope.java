@@ -70,6 +70,11 @@ public record ElementScope(String macroIdentifier, ElementScope parent, UUID sco
         return false;
     }
 
+    public String getFullIdentifier() {
+        if (parent == null) return macroIdentifier;
+        return parent.getFullIdentifier() + " > " + macroIdentifier;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -83,4 +88,8 @@ public record ElementScope(String macroIdentifier, ElementScope parent, UUID sco
         return Objects.hash(scopeId);
     }
 
+    @Override
+    public String toString() {
+        return getFullIdentifier();
+    }
 }
