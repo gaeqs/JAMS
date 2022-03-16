@@ -431,16 +431,12 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
     @Override
     public void inspectElementsWithRelativeReferences(Collection<EditorReferencedElement> elements) {
-        System.out.println("UPDATING " + elements.stream().map(EditorIndexedElement::getIdentifier).collect(Collectors.toSet()));
         var updatedLines = new HashSet<EditorIndexedLine>();
         for (var element : elements) {
             var scope = element.getReferencedScope();
             if (scope == ElementScope.GLOBAL) continue;
-            System.out.println("SCOPE: " + scope);
             var relative = getRelativeReferencingElements(element.getClass(), scope);
-            System.out.println("RELATIVES: " + relative);
             if (!relative.isEmpty()) {
-                System.out.println(relative);
                 relative.forEach(it -> it.inspect(inspectors));
                 updatedLines.addAll(relative.stream()
                         .map(it -> it.getParentOfType(EditorIndexedLine.class).orElse(null))
