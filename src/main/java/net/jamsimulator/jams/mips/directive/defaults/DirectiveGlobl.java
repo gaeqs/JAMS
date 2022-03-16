@@ -53,11 +53,6 @@ public class DirectiveGlobl extends Directive {
             throw new AssemblerException(line.getIndex(), "Cannot use ." + NAME + " on a macro scope!");
         }
 
-        for (String parameter : parameters) {
-            if (!LabelUtils.isLabelLegal(parameter))
-                throw new AssemblerException("Illegal label " + parameter + ".");
-        }
-
         line.getFile().addGlobalIdentifiers(List.of(parameters));
     }
 

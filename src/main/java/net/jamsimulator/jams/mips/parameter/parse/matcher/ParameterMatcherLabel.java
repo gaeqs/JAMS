@@ -41,11 +41,11 @@ public class ParameterMatcherLabel implements ParameterMatcher {
 
     @Override
     public boolean match(String value, Registers registerSet) {
-        return LabelUtils.isLabelLegal(value);
+        return LabelUtils.isLabelReferenceLegal(value);
     }
 
     @Override
     public boolean match(String value, RegistersBuilder builder) {
-        return LabelUtils.isLabelLegal(value);
+        return LabelUtils.isLabelReferenceLegal(value);
     }
 }

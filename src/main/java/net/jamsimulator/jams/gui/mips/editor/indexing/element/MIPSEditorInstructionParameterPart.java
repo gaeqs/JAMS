@@ -32,6 +32,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacro;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementRelativeReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
 import net.jamsimulator.jams.mips.parameter.ParameterPartType;
 import net.jamsimulator.jams.project.mips.MIPSProject;
@@ -58,7 +59,13 @@ public class MIPSEditorInstructionParameterPart extends EditorIndexedElementImpl
         }
 
         if (type == Type.LABEL) {
-            references = Set.of(new EditorElementReference<>(EditorElementLabel.class, getIdentifier()));
+            var type = EditorElementRelativeReference.Type.getByIdentifier(getIdentifier());
+            //noinspection OptionalIsPresent
+            if (type.isPresent()) {
+                references = Set.of(new EditorElementRelativeReference<>(EditorElementLabel.class, type.get(), this));
+            } else {
+                references = Set.of(new EditorElementReference<>(EditorElementLabel.class, getIdentifier()));
+            }
         } else {
             references = Set.of();
         }

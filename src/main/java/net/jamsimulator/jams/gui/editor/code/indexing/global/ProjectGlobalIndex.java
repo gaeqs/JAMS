@@ -31,6 +31,7 @@ import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementRelativeReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexFinishEditEvent;
@@ -112,6 +113,7 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
      */
     public synchronized <R extends EditorReferencedElement>
     Optional<R> searchReferencedElement(EditorElementReference<R> reference) {
+        if (reference instanceof EditorElementRelativeReference<R>) return Optional.empty();
         for (EditorIndex index : indices.values()) {
             index.lock(false);
             try {
@@ -134,6 +136,7 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
      */
     public synchronized <R extends EditorReferencedElement>
     Set<R> searchReferencedElements(EditorElementReference<R> reference) {
+        if (reference instanceof EditorElementRelativeReference<R>) return Collections.emptySet();
         return indices.values().stream()
                 .flatMap(index -> index.withLockF(false,
                         i -> i.getReferencedElements(reference, ElementScope.GLOBAL).stream()))

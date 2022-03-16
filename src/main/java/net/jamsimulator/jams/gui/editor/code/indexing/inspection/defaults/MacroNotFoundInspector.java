@@ -57,7 +57,7 @@ public class MacroNotFoundInspector extends Inspector<EditorElementMacroCallMnem
                 macro = global.get().searchReferencedElement(reference);
                 if (macro.isPresent()) continue;
             }
-            set.add(macroNotFound(reference.identifier()));
+            set.add(macroNotFound(reference.getIdentifier()));
         }
         return set;
     }

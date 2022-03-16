@@ -46,7 +46,7 @@ public class MIPSIllegalLabelInspector extends Inspector<EditorElementLabel> {
 
     @Override
     public Set<Inspection> inspectImpl(EditorElementLabel element) {
-        return LabelUtils.isLabelLegal(element.getIdentifier()) ? Collections.emptySet() : Set.of(illegalLabel(element));
+        return LabelUtils.isLabelDeclarationLegal(element.getIdentifier()) ? Collections.emptySet() : Set.of(illegalLabel(element));
     }
 
 

@@ -48,22 +48,24 @@ public class MIPSInstructionLabelNotFoundInspector extends Inspector<MIPSEditorI
         var set = new HashSet<Inspection>();
         for (var reference : element.getReferences()) {
             // Search on the file:
-            var macro = element.getIndex().getReferencedElement(reference, element.getReferencingScope());
-            if (macro.isPresent()) continue;
-
+            var label = element.getIndex()
+                    .getReferencedElement(reference, element.getReferencingScope());
+            if (label.isPresent()) {
+                continue;
+            }
             // Search on global context:
             var global = element.getIndex().getGlobalIndex();
             if (global.isPresent()) {
-                macro = global.get().searchReferencedElement(reference);
-                if (macro.isPresent()) continue;
+                label = global.get().searchReferencedElement(reference);
+                if (label.isPresent()) continue;
             }
-            set.add(macroNotFound(reference.identifier()));
+            set.add(labelNotFound(reference.getIdentifier()));
         }
         return set;
     }
 
 
-    private Inspection macroNotFound(String identifier) {
+    private Inspection labelNotFound(String identifier) {
         var replacements = Map.of("{LABEL}", identifier);
 
         return new Inspection(this, InspectionLevel.ERROR,

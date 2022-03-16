@@ -102,7 +102,7 @@ public class MIPS32AssemblerLine {
         int labelIndex = LabelUtils.getLabelFinishIndex(line);
         if (labelIndex != -1) {
             var rawLabel = line.substring(0, labelIndex).trim();
-            if (!LabelUtils.isLabelLegal(rawLabel)) {
+            if (!LabelUtils.isLabelDeclarationLegal(rawLabel)) {
                 throw new AssemblerException(index, "The label " + rawLabel + " is illegal.");
             }
             line = line.substring(labelIndex + 1).trim();

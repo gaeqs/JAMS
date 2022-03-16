@@ -47,7 +47,7 @@ public class DirectiveLab extends Directive {
         if (parameters.length != 1)
             throw new AssemblerException(line.getIndex(), "." + NAME + " must have one parameter.");
 
-        if (!LabelUtils.isLabelLegal(parameters[0]))
+        if (!LabelUtils.isLabelDeclarationLegal(parameters[0]))
             throw new AssemblerException("Label " + parameters[0] + " is not legal.");
 
         var label = new Label(parameters[0], 0, line.getFile().getName(), line.getIndex());
