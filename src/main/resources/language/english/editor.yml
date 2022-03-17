@@ -24,6 +24,11 @@ EDITOR_WARNING_SHADOWED_LABEL: Label '{LABEL}' at line {LINE} is shadowed by thi
 EDITOR_WARNING_SHADOWED_GLOBAL_LABEL: Global label '{LABEL}' at line {LINE} on file
   '{FILE}' is shadowed by this label declaration. You won't be able to access the
   global label from here.
+EDITOR_WARNING_SHADOWED_MACRO: Macro '{MACRO}' at line {LINE} is shadowed by this
+  label declaration. You won't be able to access the external macro from here.
+EDITOR_WARNING_SHADOWED_GLOBAL_MACRO: Global macro '{MACRO}' at line {LINE} on file
+  '{FILE}' is shadowed by this label declaration. You won't be able to access the
+  global macro from here.
 EDITOR_MIPS_WARNING_EQV_USE: Avoid using .eqv. The editor can't manage the use of
   .eqv directives.
 EDITOR_MIPS_WARNING_DIRECTIVE_NOT_FOUND: Couldn't find directive '{DIRECTIVE}'. This

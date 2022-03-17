@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing.inspection.defaults;
 
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacro;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
@@ -47,23 +48,27 @@ public class DuplicatedMacroInspector extends Inspector<EditorElementMacro> {
 
     @Override
     public Set<Inspection> inspectImpl(EditorElementMacro element) {
-        // Let's start getting the reference of this macro.
+        var scope = element.getReferencedScope();
+        // Let's start getting the reference of this label.
         var reference = (EditorElementReference<? extends EditorElementMacro>) element.getReference();
 
-        // Now we search all macros with the same reference. (Same identifier / name)
-        var elements = element.getIndex().getReferencedElements(reference, element.getReferencingScope());
-
-        // Do we have more than one macro? Then there's a duplicated macro.
-        if (elements.size() > 1) {
-            // Let's get one of those duplicated macros for information purpose.
-            var other = elements.stream().filter(it -> it != element).findAny().orElse(null);
-
-            // Return the inspection.
-            return Set.of(duplicateMacro(element, other));
+        // Now we search all labels with the same reference. (Same identifier / name)
+        var elements = element.getIndex()
+                .getReferencedElements(reference, element.getReferencingScope());
+        // Do we have more than one label? Then there's a duplicated label.
+        for (var duplicated : elements) {
+            if (duplicated == element) continue;
+            var duplicatedScope = duplicated.getReferencedScope();
+            if (duplicatedScope.equals(scope)) {
+                return Set.of(duplicateMacro(element, duplicated));
+            }
+            if (duplicatedScope.canBeReachedFrom(scope)) {
+                return Set.of(shadowedMacro(element, duplicated));
+            }
         }
 
-        // We have only one macro in our index! Let's check if there's an index in the global index
-        // that declares a global macro with the same reference.
+        // We have only one label in our index! Let's check if there's an index in the global index
+        // that declares a global label with the same reference.
         var optional = element.getIndex().getGlobalIndex();
 
         // First we have to check if this index is registered in the global index of our project.
@@ -71,12 +76,15 @@ public class DuplicatedMacroInspector extends Inspector<EditorElementMacro> {
             var global = optional.get();
             elements = global.searchReferencedElements(reference);
 
-            // If the elements is empty or the element only contains our element, then there's no duplicated labels.
-            if (!elements.isEmpty() && (elements.size() != 1 || !elements.contains(element))) {
-                var other = elements.stream().filter(it -> it != element).findAny().orElse(null);
-
-                // Return the inspection.
-                return Set.of(duplicateGlobalMacro(element, other));
+            for (var duplicated : elements) {
+                if (duplicated == element) continue;
+                var duplicatedScope = ElementScope.GLOBAL;
+                if (duplicatedScope.equals(scope)) {
+                    return Set.of(duplicateGlobalMacro(element, duplicated));
+                }
+                if (duplicatedScope.canBeReachedFrom(scope)) {
+                    return Set.of(shadowedGlobalMacro(element, duplicated));
+                }
             }
         }
 
@@ -106,4 +114,28 @@ public class DuplicatedMacroInspector extends Inspector<EditorElementMacro> {
         return new Inspection(this, InspectionLevel.ERROR,
                 Messages.EDITOR_ERROR_DUPLICATE_GLOBAL_MACRO, replacements);
     }
+
+    private Inspection shadowedMacro(EditorElementMacro label, EditorElementMacro other) {
+        var replacements = Map.of(
+                "{MACRO}", label.getIdentifier(),
+                "{LINE}", other == null ? "-" : other.getParentOfType(EditorIndexedLine.class)
+                        .map(it -> it.getNumber() + 1).map(Object::toString).orElse("-")
+        );
+
+        return new Inspection(this, InspectionLevel.WARNING,
+                Messages.EDITOR_WARNING_SHADOWED_MACRO, replacements);
+    }
+
+    private Inspection shadowedGlobalMacro(EditorElementMacro label, EditorElementMacro other) {
+        var replacements = Map.of(
+                "{MACRO}", label.getIdentifier(),
+                "{FILE}", other == null ? "-" : other.getIndex().getName(),
+                "{LINE}", other == null ? "-" : other.getParentOfType(EditorIndexedLine.class)
+                        .map(it -> it.getNumber() + 1).map(Object::toString).orElse("-")
+        );
+
+        return new Inspection(this, InspectionLevel.WARNING,
+                Messages.EDITOR_WARNING_SHADOWED_GLOBAL_MACRO, replacements);
+    }
+
 }

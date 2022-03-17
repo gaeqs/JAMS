@@ -25,6 +25,11 @@ EDITOR_WARNING_SHADOWED_LABEL: La etiqueta '{LABEL}' en la línea {LINE} está s
 EDITOR_WARNING_SHADOWED_GLOBAL_LABEL: La etiqueta global '{LABEL}' de la línea {LINE}
   en el archivo '{FILE}' está siendo ocultada por esta declaración. No podrás acceder
   a la etiqueta global externa desde aquí.
+EDITOR_WARNING_SHADOWED_MACRO: La macro '{MACRO}' en la línea {LINE} está siendo
+  ocultada por esta declaración. No podrás acceder a la macro externa desde aquí.
+EDITOR_WARNING_SHADOWED_GLOBAL_MACRO: La macro global '{MACRO}' de la línea {LINE}
+  en el archivo '{FILE}' está siendo ocultada por esta declaración. No podrás acceder
+  a la macro global externa desde aquí.
 EDITOR_MIPS_WARNING_EQV_USE: Evita usar la directiva '.eqv'. El editor no puede manejar
   el uso de equivalentes correctamente.
 EDITOR_MIPS_WARNING_DIRECTIVE_NOT_FOUND: No se ha podido encontrar la directiva '{DIRECTIVE}'.
