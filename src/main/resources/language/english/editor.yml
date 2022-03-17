@@ -20,10 +20,10 @@ EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND: Couldn't find instruction '{INSTRUCTION
   with the given parameters.
 EDITOR_MIPS_ERROR_LABEL_NOT_FOUND: Couldn't find label '{LABEL}'.
 EDITOR_WARNING_SHADOWED_LABEL: Label '{LABEL}' at line {LINE} is shadowed by this
-  label declaration. You won't be able to access the external label inside this macro.
+  label declaration. You won't be able to access the external label from here.
 EDITOR_WARNING_SHADOWED_GLOBAL_LABEL: Global label '{LABEL}' at line {LINE} on file
   '{FILE}' is shadowed by this label declaration. You won't be able to access the
-  global label inside this macro.
+  global label from here.
 EDITOR_MIPS_WARNING_EQV_USE: Avoid using .eqv. The editor can't manage the use of
   .eqv directives.
 EDITOR_MIPS_WARNING_DIRECTIVE_NOT_FOUND: Couldn't find directive '{DIRECTIVE}'. This
