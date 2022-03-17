@@ -64,7 +64,8 @@ public class MIPSHoverInfo extends VirtualizedScrollPane<StyleClassedTextArea> {
         //{TYPE} {TEXT} ({NAME})
         // TODO getContent().append(element.getTranslatedName() + " ", List.of("bold"));
         getContent().append(element.getIdentifier(), Collections.emptyList());
-        getContent().append("\n" + element.getReferencingScope().getFullIdentifier(), Collections.emptyList());
+        getContent().append("\n" + element.getReferencingScope().getFullIdentifier() +
+                " ("+ element.getReferencingScope().scopeId() +")", Collections.emptyList());
 
         //If the element is an instruction show the name too.
         if (element instanceof MIPSEditorInstruction i &&

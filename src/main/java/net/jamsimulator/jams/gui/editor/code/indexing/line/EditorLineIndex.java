@@ -610,9 +610,9 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
                 scope = scope.parent() == ElementScope.GLOBAL ? fileScope : scope.parent();
                 line.changeScope(scope);
             } else {
+                if (scope.equals(line.getReferencingScope())) break;
                 line.changeScope(scope);
             }
-            if (scope.equals(line.getReferencingScope())) break;
             list.add(line);
         }
         return list;
