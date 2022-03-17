@@ -69,7 +69,7 @@ public class MIPS32AssemblerFile {
         if (definingMacro != null) {
             throw new AssemblerException(line, "There's a macro already being defined!");
         }
-        definingMacro = new Macro(name, parameters, file, line);
+        definingMacro = new Macro(name + "-" + parameters.length, name, parameters, file, line);
         macroCount = 1;
     }
 
@@ -97,10 +97,12 @@ public class MIPS32AssemblerFile {
     public void discoverElements() {
         discoverElements(scope, StringUtils.multiSplit(rawData, "\n", "\r"), lines.size());
         for (String identifier : globalIdentifiers) {
-            var macro = scope.getScopeMacros().remove(identifier);
-            if (macro != null) {
-                assembler.getGlobalScope().addMacro(macro.getOriginLine(), macro);
-            }
+            var macros = scope.getScopeMacros().values().stream()
+                    .filter(it -> it.getOriginalName().equals(identifier)).toList();
+
+            macros.forEach(it -> scope.getScopeMacros().remove(it.getName()));
+            macros.forEach(it -> assembler.getGlobalScope().addMacro(it.getOriginLine(), it));
+
             var label = scope.getScopeLabels().remove(identifier);
             if (label != null) {
                 assembler.getGlobalScope().addLabel(label.getOriginLine(), label);

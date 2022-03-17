@@ -70,6 +70,27 @@ public record ElementScope(String macroIdentifier, ElementScope parent, UUID sco
         return false;
     }
 
+    /**
+     * Returns the difference between this scope's level and the given scope's level.
+     * <p>
+     * This method returns {@link Integer#MAX_VALUE} if the given scope is not a child
+     * of this scope or this scope itself.
+     *
+     * @param scope the given scope.
+     * @return the difference.
+     */
+    public int getScopeLayersDifference(ElementScope scope) {
+        if (scope.equals(INTERNAL)) return Integer.MAX_VALUE;
+        var current = scope;
+        int count = 0;
+        while (current != null) {
+            if (equals(current)) return count;
+            current = current.parent;
+            count++;
+        }
+        return Integer.MAX_VALUE;
+    }
+
     public String getFullIdentifier() {
         if (parent == null) return macroIdentifier;
         return parent.getFullIdentifier() + " > " + macroIdentifier;

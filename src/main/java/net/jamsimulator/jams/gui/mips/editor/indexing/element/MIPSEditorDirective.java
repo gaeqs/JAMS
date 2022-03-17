@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.mips.editor.indexing.element;
 
+import javafx.util.Pair;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElementImpl;
@@ -38,10 +39,7 @@ import net.jamsimulator.jams.mips.directive.defaults.DirectiveMacro;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.StringUtils;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MIPSEditorDirective extends EditorIndexedParentElementImpl {
@@ -104,12 +102,49 @@ public class MIPSEditorDirective extends EditorIndexedParentElementImpl {
     }
 
     protected void parseParameters(List<Map.Entry<Integer, String>> parameters) {
-        int i = 0;
-        for (var entry : parameters) {
-            var parameter = parseParameter(i++, start + entry.getKey(),
-                    parameters.size(), entry.getValue());
-            if (parameter != null) {
-                elements.add(parameter);
+        if (parameters.isEmpty()) return;
+        if (directive instanceof DirectiveMacro) {
+            // Special case
+
+            var mnemonic = parameters.remove(0);
+
+            var sanitized = new ArrayList<Pair<Integer, String>>(parameters.size());
+            int i = 0;
+            for (var entry : parameters) {
+                var parameter = sanityMacroParameter(
+                        i++, entry.getKey(),
+                        parameters.size(), entry.getValue());
+                if (parameter != null) {
+                    sanitized.add(parameter);
+                }
+            }
+
+            var mnemonicElement = new MIPSEditorDirectiveMacroName(
+                    index,
+                    scope,
+                    this,
+                    start + mnemonic.getKey(),
+                    mnemonic.getValue(),
+                    sanitized.size()
+            );
+            elements.add(mnemonicElement);
+
+            var macroScope = mnemonicElement.getMacroScope();
+            for (var parameter : sanitized) {
+                elements.add(new MIPSEditorDirectiveMacroParameter(
+                        index,
+                        macroScope,
+                        this,
+                        start + parameter.getKey(),
+                        parameter.getValue()
+                ));
+            }
+        } else {
+            for (var entry : parameters) {
+                var parameter = parseParameter(start + entry.getKey(), entry.getValue());
+                if (parameter != null) {
+                    elements.add(parameter);
+                }
             }
         }
     }
@@ -118,29 +153,7 @@ public class MIPSEditorDirective extends EditorIndexedParentElementImpl {
         return new MIPSEditorDirectiveMnemonic(index, scope, this, start, mnemonic);
     }
 
-    protected MIPSEditorDirectiveParameter parseParameter(int index, int start, int size, String parameter) {
-        if (directive instanceof DirectiveMacro) {
-            if (index == 0) {
-                return new MIPSEditorDirectiveMacroName(this.index, scope, this, start, parameter);
-            } else {
-                if (index == 1) {
-                    if (parameter.equals("(") || parameter.equals("()")) return null;
-                    if (parameter.startsWith("(")) {
-                        parameter = parameter.substring(1);
-                        start++;
-                    }
-                }
-                if (index == size - 1) {
-                    if (parameter.equals(")")) return null;
-                    if (parameter.endsWith(")")) {
-                        parameter = parameter.substring(0, parameter.length() - 1);
-                    }
-                }
-
-                var scope = ((MIPSEditorDirectiveMacroName) getElement(1)).getMacroScope();
-                return new MIPSEditorDirectiveMacroParameter(this.index, scope, this, start, parameter);
-            }
-        }
+    protected MIPSEditorDirectiveParameter parseParameter(int start, String parameter) {
         if (directive instanceof DirectiveLab) {
             return new MIPSEditorDirectiveLabParameter(this.index, scope, this, start, parameter);
         }
@@ -148,5 +161,24 @@ public class MIPSEditorDirective extends EditorIndexedParentElementImpl {
             return new MIPSEditorDirectiveGlobalMarker(this.index, scope, this, start, parameter);
         }
         return new MIPSEditorDirectiveParameter(this.index, scope, this, start, parameter);
+    }
+
+    protected Pair<Integer, String> sanityMacroParameter(int index, int start, int size, String parameter) {
+        if (index == 0) {
+            if (parameter.equals("(") || parameter.equals("()")) {
+                return null;
+            }
+            if (parameter.startsWith("(")) {
+                parameter = parameter.substring(1);
+                start++;
+            }
+        }
+        if (index == size - 1) {
+            if (parameter.equals(")")) return null;
+            if (parameter.endsWith(")")) {
+                parameter = parameter.substring(0, parameter.length() - 1);
+            }
+        }
+        return new Pair<>(start, parameter);
     }
 }

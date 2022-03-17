@@ -94,7 +94,8 @@ public class DuplicatedMacroInspector extends Inspector<EditorElementMacro> {
 
     private Inspection duplicateMacro(EditorElementMacro macro, EditorElementMacro other) {
         var replacements = Map.of(
-                "{MACRO}", macro.getIdentifier(),
+                "{MACRO}", macro.getText(),
+                "{PARAMETERS}", String.valueOf(macro.getParameterAmount()),
                 "{LINE}", other == null ? "-" : other.getParentOfType(EditorIndexedLine.class)
                         .map(it -> it.getNumber() + 1).map(Object::toString).orElse("-")
         );
@@ -105,7 +106,8 @@ public class DuplicatedMacroInspector extends Inspector<EditorElementMacro> {
 
     private Inspection duplicateGlobalMacro(EditorElementMacro macro, EditorElementMacro other) {
         var replacements = Map.of(
-                "{MACRO}", macro.getIdentifier(),
+                "{MACRO}", macro.getText(),
+                "{PARAMETERS}", String.valueOf(macro.getParameterAmount()),
                 "{FILE}", other == null ? "-" : other.getIndex().getName(),
                 "{LINE}", other == null ? "-" : other.getParentOfType(EditorIndexedLine.class)
                         .map(it -> it.getNumber() + 1).map(Object::toString).orElse("-")
@@ -115,9 +117,10 @@ public class DuplicatedMacroInspector extends Inspector<EditorElementMacro> {
                 Messages.EDITOR_ERROR_DUPLICATE_GLOBAL_MACRO, replacements);
     }
 
-    private Inspection shadowedMacro(EditorElementMacro label, EditorElementMacro other) {
+    private Inspection shadowedMacro(EditorElementMacro macro, EditorElementMacro other) {
         var replacements = Map.of(
-                "{MACRO}", label.getIdentifier(),
+                "{MACRO}", macro.getText(),
+                "{PARAMETERS}", String.valueOf(macro.getParameterAmount()),
                 "{LINE}", other == null ? "-" : other.getParentOfType(EditorIndexedLine.class)
                         .map(it -> it.getNumber() + 1).map(Object::toString).orElse("-")
         );
@@ -126,9 +129,10 @@ public class DuplicatedMacroInspector extends Inspector<EditorElementMacro> {
                 Messages.EDITOR_WARNING_SHADOWED_MACRO, replacements);
     }
 
-    private Inspection shadowedGlobalMacro(EditorElementMacro label, EditorElementMacro other) {
+    private Inspection shadowedGlobalMacro(EditorElementMacro macro, EditorElementMacro other) {
         var replacements = Map.of(
-                "{MACRO}", label.getIdentifier(),
+                "{MACRO}", macro.getText(),
+                "{PARAMETERS}", String.valueOf(macro.getParameterAmount()),
                 "{FILE}", other == null ? "-" : other.getIndex().getName(),
                 "{LINE}", other == null ? "-" : other.getParentOfType(EditorIndexedLine.class)
                         .map(it -> it.getNumber() + 1).map(Object::toString).orElse("-")

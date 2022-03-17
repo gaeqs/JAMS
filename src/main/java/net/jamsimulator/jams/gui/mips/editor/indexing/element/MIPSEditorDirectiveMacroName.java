@@ -37,17 +37,37 @@ import java.util.List;
 
 public class MIPSEditorDirectiveMacroName extends MIPSEditorDirectiveParameter implements EditorElementMacro {
 
+    private final String identifier;
+    private final int parameterAmount;
     private List<String> parameters = null;
     private ElementScope macroScope;
 
-    public MIPSEditorDirectiveMacroName(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent, int start, String text) {
+    public MIPSEditorDirectiveMacroName(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
+                                        int start, String text, int parameters) {
         super(index, scope, parent, start, text);
         macroScope = new ElementScope(text, scope);
+        identifier = text + "-" + parameters;
+        parameterAmount = parameters;
+    }
+
+    @Override
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    @Override
+    public ElementScope getReferencedScope() {
+        if (ElementScope.GLOBAL.equals(scope.parent())) {
+            return index.isIdentifierGlobal(text) ? ElementScope.GLOBAL : scope;
+        }
+        return scope;
     }
 
     @Override
     public Collection<String> getStyles() {
-        return EditorElementMacro.NAME_STYLE;
+        return getReferencedScope().equals(ElementScope.GLOBAL)
+                ? EditorElementMacro.NAME_GLOBAL_STYLE
+                : EditorElementMacro.NAME_STYLE;
     }
 
     @Override
@@ -57,9 +77,8 @@ public class MIPSEditorDirectiveMacroName extends MIPSEditorDirectiveParameter i
     }
 
     @Override
-    public int parametersAmount() {
-        if (parent == null) return 0;
-        return (int) parent.elementStream().filter(it -> it instanceof EditorElementMacroParameter).count();
+    public int getParameterAmount() {
+        return parameterAmount;
     }
 
     @Override

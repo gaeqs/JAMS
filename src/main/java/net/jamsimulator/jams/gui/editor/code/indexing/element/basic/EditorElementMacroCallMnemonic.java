@@ -41,19 +41,37 @@ import java.util.Set;
 public class EditorElementMacroCallMnemonic extends EditorIndexedElementImpl
         implements EditorIndexStyleableElement, EditorReferencingElement<EditorElementMacro> {
 
-    public static final Set<String> STYLE = Set.of("macro-call");
-
+    private final String referenceIdentifier;
     private final Set<EditorElementReference<EditorElementMacro>> references;
 
     public EditorElementMacroCallMnemonic(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
-                                          int start, String text) {
+                                          int start, String text, int parameters) {
         super(index, scope, parent, start, text);
-        references = Set.of(new EditorElementReference<>(EditorElementMacro.class, getIdentifier()));
+        referenceIdentifier = getIdentifier() + "-" + parameters;
+        references = Set.of(new EditorElementReference<>(EditorElementMacro.class, referenceIdentifier));
     }
 
     @Override
     public Collection<String> getStyles() {
-        return STYLE;
+        var reference = new EditorElementReference<>(EditorElementMacro.class, referenceIdentifier);
+        var local = index.getReferencedElement(reference, scope);
+
+        if (local.isPresent()) {
+            return local.get().getReferencedScope().equals(ElementScope.GLOBAL)
+                    ? EditorElementMacro.NAME_GLOBAL_STYLE
+                    : EditorElementMacro.NAME_STYLE;
+        }
+
+        var global = index.getGlobalIndex();
+        if (global.isPresent()) {
+
+            var value = global.get().searchReferencedElement(reference);
+            if (value.isPresent()) {
+                return EditorElementMacro.NAME_GLOBAL_STYLE;
+            }
+        }
+
+        return EditorElementMacro.NAME_STYLE;
     }
 
     @Override

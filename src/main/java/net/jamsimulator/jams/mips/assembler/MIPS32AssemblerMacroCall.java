@@ -35,10 +35,10 @@ class MIPS32AssemblerMacroCall {
 
     MIPS32AssemblerMacroCall(MIPS32AssemblerLine line, String mnemonic, String rawParameters) {
         this.line = line;
-        this.mnemonic = mnemonic;
         this.rawParameters = rawParameters;
         this.parameters = StringUtils.multiSplitIgnoreInsideString(rawParameters, false, " ", ",", "\t")
                 .toArray(new String[0]);
+        this.mnemonic = mnemonic + "-" + parameters.length;
     }
 
     public MIPS32AssemblerLine getLine() {

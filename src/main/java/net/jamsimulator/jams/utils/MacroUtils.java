@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,33 +22,24 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.indexing.element.basic;
+package net.jamsimulator.jams.utils;
 
-import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
+import javafx.util.Pair;
 
-import java.util.List;
-import java.util.Set;
+import java.util.OptionalInt;
 
-/**
- * Represents a macro.
- */
-public interface EditorElementMacro extends EditorReferencedElement {
+public class MacroUtils {
 
-    Set<String> NAME_STYLE = Set.of("macro-call");
-    Set<String> NAME_GLOBAL_STYLE = Set.of("global-macro-call");
-    Set<String> PARAMETER_STYLE = Set.of("macro-call-parameter");
+    public static Pair<String, OptionalInt> splitNameAndParameters(String identifier) {
+        var index = identifier.lastIndexOf('-');
+        if (index == -1) return new Pair<>(identifier, OptionalInt.empty());
 
-    int getParameterAmount();
+        var number = identifier.substring(index + 1);
+        var parameters = NumericUtils.decodeIntegerSafe(number);
+        if (parameters.isEmpty()) return new Pair<>(identifier, OptionalInt.empty());
 
-    List<String> getParameters();
-
-    ElementScope getMacroScope();
-
-    @Override
-    default EditorElementReference<?> getReference() {
-        return new EditorElementReference<>(EditorElementMacro.class, getIdentifier());
+        var name = identifier.substring(0, index);
+        return new Pair<>(name, OptionalInt.of(parameters.get()));
     }
 
 }

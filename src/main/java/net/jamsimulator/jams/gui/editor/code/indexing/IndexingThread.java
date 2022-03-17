@@ -35,9 +35,10 @@ public class IndexingThread extends Thread {
     private final CodeFileEditor editor;
     private volatile boolean running;
 
-    public IndexingThread(CodeFileEditor editor) {
+    public IndexingThread(CodeFileEditor editor, String fileName) {
         this.editor = editor;
         this.running = true;
+        setName(fileName +" 's indexing thread");
     }
 
     /**

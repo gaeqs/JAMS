@@ -46,8 +46,6 @@ public class EditorElementMacroCall extends EditorIndexedParentElementImpl {
     }
 
     private void parseText(int splitIndex) {
-        parseName(text.substring(0, splitIndex).trim());
-
         var rawParameters = text.substring(splitIndex + 1);
         var parts = StringUtils.multiSplitIgnoreInsideStringWithIndex(rawParameters, false, " ", ",", "\t");
         var stringParameters = parts.entrySet().stream()
@@ -80,15 +78,16 @@ public class EditorElementMacroCall extends EditorIndexedParentElementImpl {
                     value
             ));
         }
+        parseName(text.substring(0, splitIndex).trim(), elements.size());
     }
 
-    private void parseName(String name) {
+    private void parseName(String name, int parameters) {
         var trimmed = name.trim();
         if (trimmed.isEmpty()) {
-            elements.add(new EditorElementMacroCallMnemonic(index, scope, this, start, name));
+            elements.add(new EditorElementMacroCallMnemonic(index, scope, this, start, name, parameters));
             return;
         }
         var offset = name.indexOf(trimmed.charAt(0));
-        elements.add(new EditorElementMacroCallMnemonic(index, scope, this, start + offset, trimmed));
+        elements.add(new EditorElementMacroCallMnemonic(index, scope, this, start + offset, trimmed, parameters));
     }
 }

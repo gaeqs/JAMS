@@ -79,13 +79,17 @@ public class MIPSEditorInstructionParameterPart extends EditorIndexedElementImpl
                 return EditorElementMacro.PARAMETER_STYLE;
             }
 
-            if (index.isIdentifierGlobal(getIdentifier())) {
-                return Set.of(Type.GLOBAL_LABEL_STYLE);
+            var reference = new EditorElementReference<>(EditorElementLabel.class, getIdentifier());
+            var local = index.getReferencedElement(reference, scope);
+
+            if (local.isPresent()) {
+                return local.get().getReferencedScope().equals(ElementScope.GLOBAL)
+                        ? Set.of(Type.GLOBAL_LABEL_STYLE)
+                        : Set.of(type.getCssClass());
             }
 
             var global = index.getGlobalIndex();
             if (global.isPresent()) {
-                var reference = new EditorElementReference<>(EditorElementLabel.class, getIdentifier());
                 var value = global.get().searchReferencedElement(reference);
                 if (value.isPresent()) {
                     return Set.of(Type.GLOBAL_LABEL_STYLE);

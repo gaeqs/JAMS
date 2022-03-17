@@ -52,6 +52,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.StandardWatchEventKinds;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -68,7 +69,7 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
     public ProjectGlobalIndex(Project project) {
         Validate.notNull(project, "Project cannot be null!");
         this.project = project;
-        this.indices = new HashMap<>();
+        this.indices = new ConcurrentHashMap<>();
         this.order = new LinkedList<>();
 
         project.getProjectTab().ifPresent(tab -> tab.registerListeners(this, true));
@@ -111,7 +112,7 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
      * @param <R>       the type of the referenced element.
      * @return the referenced element.
      */
-    public synchronized <R extends EditorReferencedElement>
+    public <R extends EditorReferencedElement>
     Optional<R> searchReferencedElement(EditorElementReference<R> reference) {
         if (reference instanceof EditorElementRelativeReference<R>) return Optional.empty();
         for (EditorIndex index : indices.values()) {
@@ -134,7 +135,7 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
      * @param <R>       the type of the referenced element.
      * @return the referenced elements.
      */
-    public synchronized <R extends EditorReferencedElement>
+    public <R extends EditorReferencedElement>
     Set<R> searchReferencedElements(EditorElementReference<R> reference) {
         if (reference instanceof EditorElementRelativeReference<R>) return Collections.emptySet();
         return indices.values().stream()
@@ -167,7 +168,7 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
      * @param <R>       the type of the referenced element.
      * @return the referencing elements.
      */
-    public synchronized <R extends EditorReferencedElement>
+    public <R extends EditorReferencedElement>
     Set<EditorReferencingElement<?>> searchReferencingElements(EditorElementReference<R> reference) {
         var set = new HashSet<EditorReferencingElement<?>>();
         indices.values().forEach(index ->
@@ -182,7 +183,7 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
      * @param references     the references.
      * @param ignoredIndices the indices to ignore.
      */
-    public synchronized void inspectElementsWithReferences(
+    public void inspectElementsWithReferences(
             Set<EditorElementReference<?>> references, Set<EditorIndex> ignoredIndices) {
         indices.values().stream().filter(it -> !ignoredIndices.contains(it)).forEach(it ->
                 it.withLock(true, index -> index.inspectElementsWithReferences(references)));
@@ -306,7 +307,7 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
      * @param file the file.
      * @throws IOException when something bad happens with the file.
      */
-    public synchronized void loadFiles(File file) throws IOException {
+    public void loadFiles(File file) throws IOException {
         Validate.notNull(file, "File cannot be null!");
         if (!file.isFile()) return;
         new JSONArray(Files.readString(file.toPath())).toList().stream()
@@ -328,7 +329,7 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
         indexFiles(newIndices);
     }
 
-    public synchronized void refreshAll(EditorIndex ignored) {
+    public void refreshAll(EditorIndex ignored) {
         for (EditorIndex index : indices.values()) {
             if (index != ignored && index.isInitialized()) {
                 index.requestRefresh();
@@ -341,24 +342,22 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
             refreshAll(null);
             return;
         }
-        project.getTaskExecutor().execute(new LanguageTask<Void>(Messages.EDITOR_INDEXING) {
-            @Override
-            protected Void call() {
-                indices.forEach((file, index) -> {
-                    index.withLock(true, i -> {
-                        try {
-                            i.indexAll(Files.readString(file.toPath()));
-                        } catch (Exception e) {
-                            System.err.println("Errror while indexing file " + file + "!");
-                            e.printStackTrace();
-                        }
-                    });
-                    index.registerListeners(this, true);
+
+        project.getTaskExecutor().execute(LanguageTask.of(Messages.EDITOR_INDEXING, () -> {
+            indices.forEach((file, index) -> {
+                index.withLock(true, i -> {
+                    try {
+                        i.indexAll(Files.readString(file.toPath()));
+                    } catch (Exception e) {
+                        System.err.println("Errror while indexing file " + file + "!");
+                        e.printStackTrace();
+                    }
                 });
-                refreshAll(null);
-                return null;
-            }
-        });
+                index.registerListeners(this, true);
+            });
+            refreshAll(null);
+            return null;
+        }));
     }
 
     protected abstract EditorIndex generateIndexForFile(File file);

@@ -156,7 +156,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
             }
         });
 
-        indexingThread = new IndexingThread(this);
+        indexingThread = new IndexingThread(this, tab.getFile().getAbsolutePath());
         indexingThread.setDaemon(true);
         indexingThread.start();
 
@@ -427,17 +427,14 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         }
         var index = generateIndex();
         tab.getWorkingPane().getProjectTab().getProject()
-                .getTaskExecutor().execute(new LanguageTask<>(Messages.EDITOR_INDEXING) {
-                    @Override
-                    protected Void call() {
-                        try {
-                            index.withLock(true, i -> i.indexAll(getText()));
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                        return null;
+                .getTaskExecutor().execute(LanguageTask.of(Messages.EDITOR_INDEXING, () -> {
+                    try {
+                        index.withLock(true, i -> i.indexAll(getText()));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
-                });
+                    return null;
+                }));
         return index;
     }
 

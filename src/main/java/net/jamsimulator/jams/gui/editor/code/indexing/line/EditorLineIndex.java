@@ -304,7 +304,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
                 .filter(it -> reference.isChild(it.getKey()))
                 .flatMap(it -> it.getValue().stream())
                 .filter(it -> it.getReferencedScope().canBeReachedFrom(scope))
-                .findAny()
+                .min(Comparator.comparing(it -> it.getReferencedScope().getScopeLayersDifference(scope)))
                 .map(it -> (T) it);
     }
 

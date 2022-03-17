@@ -37,14 +37,16 @@ import java.util.stream.Collectors;
 public class Macro {
 
     private final String name;
+    private final String originalName;
     private final String[] parameters;
     private final List<String> lines;
 
     private final String originFile;
     private final int originLine;
 
-    public Macro(String name, String[] parameters, String originFile, int originLine) {
+    public Macro(String name, String originalName, String[] parameters, String originFile, int originLine) {
         this.name = name;
+        this.originalName = originalName;
         this.parameters = parameters;
         this.lines = new ArrayList<>();
 
@@ -54,6 +56,10 @@ public class Macro {
 
     public String getName() {
         return name;
+    }
+
+    public String getOriginalName() {
+        return originalName;
     }
 
     public String getOriginFile() {
