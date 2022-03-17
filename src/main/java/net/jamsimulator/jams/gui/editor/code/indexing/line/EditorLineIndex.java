@@ -757,19 +757,23 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
         // Let's start updating our file:
         inspectElementsWithReferences(referenced);
+        // Don't forget the relative references!
         inspectElementsWithRelativeReferences(elements);
 
-        // Don't forget the relative elements!
+        // Let's update now the elements marked as global.
+        var marks = lines.stream().flatMap(this::getMarkersInLine).collect(Collectors.toSet());
+        var localReferences = referencedElements.keySet()
+                .stream()
+                .filter(it -> marks.contains(it.getIdentifier()))
+                .collect(Collectors.toSet());
+        inspectElementsWithReferences(localReferences);
 
         // Now let's update the global elements and the marked references:
         getGlobalIndex().ifPresent(global -> {
-            var marks = lines.stream().flatMap(this::getMarkersInLine).collect(Collectors.toSet());
-
             var toUpdate = Stream.concat(
                             referenced.stream().filter(it -> isIdentifierGlobal(it.getIdentifier())),
-                            referencedElements.keySet().stream().filter(it -> marks.contains(it.getIdentifier())))
+                            localReferences.stream())
                     .collect(Collectors.toSet());
-
             global.inspectElementsWithReferences(toUpdate, Set.of(this));
         });
     }

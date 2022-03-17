@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing.inspection.defaults;
 
+import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
@@ -47,32 +48,22 @@ public class DuplicatedLabelInspector extends Inspector<EditorElementLabel> {
 
     @Override
     public Set<Inspection> inspectImpl(EditorElementLabel element) {
-        var scope = element.getReferencingScope();
+        var scope = element.getReferencedScope();
         // Let's start getting the reference of this label.
         var reference = (EditorElementReference<? extends EditorElementLabel>) element.getReference();
 
         // Now we search all labels with the same reference. (Same identifier / name)
-        var elements = element.getIndex().getReferencedElements(reference, element.getReferencingScope());
-
+        var elements = element.getIndex()
+                .getReferencedElements(reference, element.getReferencingScope());
         // Do we have more than one label? Then there's a duplicated label.
-        if (elements.size() > 1) {
-            if (!scope.macroIdentifier().isEmpty()) {
-                if (elements.stream().allMatch(it -> it.getReferencingScope().macroIdentifier().isEmpty())) {
-                    var other = elements.stream()
-                            .filter(it -> it != element && !it.getReferencingScope().macroIdentifier().isEmpty())
-                            .findAny().orElse(null);
-                    // Return the inspection.
-                    return Set.of(duplicateLabel(element, other));
-                } else {
-                    // Macro label shadows file label!
-                    var other = elements.stream().filter(it -> it != element).findAny().orElse(null);
-                    // Return the inspection.
-                    return Set.of(shadowedLabel(element, other));
-                }
-            } else {
-                var other = elements.stream().filter(it -> it != element).findAny().orElse(null);
-                // Return the inspection.
-                return Set.of(duplicateLabel(element, other));
+        for (var duplicated : elements) {
+            if (duplicated == element) continue;
+            var duplicatedScope = duplicated.getReferencedScope();
+            if (duplicatedScope.equals(scope)) {
+                return Set.of(duplicateLabel(element, duplicated));
+            }
+            if (duplicatedScope.canBeReachedFrom(scope)) {
+                return Set.of(shadowedLabel(element, duplicated));
             }
         }
 
@@ -85,17 +76,14 @@ public class DuplicatedLabelInspector extends Inspector<EditorElementLabel> {
             var global = optional.get();
             elements = global.searchReferencedElements(reference);
 
-            // If the elements is empty or the element only contains our element, then there's no duplicated labels.
-            if (!elements.isEmpty() && (elements.size() != 1 || !elements.contains(element))) {
-                if (!scope.macroIdentifier().isEmpty()) {
-                    // Macro label shadows file label!
-                    var other = elements.stream().filter(it -> it != element).findAny().orElse(null);
-                    // Return the inspection.
-                    return Set.of(shadowedGlobalLabel(element, other));
-                } else {
-                    var other = elements.stream().filter(it -> it != element).findAny().orElse(null);
-                    // Return the inspection.
-                    return Set.of(duplicateGlobalLabel(element, other));
+            for (var duplicated : elements) {
+                if (duplicated == element) continue;
+                var duplicatedScope = ElementScope.GLOBAL;
+                if (duplicatedScope.equals(scope)) {
+                    return Set.of(duplicateGlobalLabel(element, duplicated));
+                }
+                if (duplicatedScope.canBeReachedFrom(scope)) {
+                    return Set.of(shadowedGlobalLabel(element, duplicated));
                 }
             }
         }
