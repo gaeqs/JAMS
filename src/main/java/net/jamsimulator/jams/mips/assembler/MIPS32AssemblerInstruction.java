@@ -38,7 +38,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-class MIPS32AssemblerInstruction {
+/**
+ * This class represents an instruction in an assembler.
+ */
+public class MIPS32AssemblerInstruction {
 
     private final MIPS32AssemblerLine line;
     private final String mnemonic;

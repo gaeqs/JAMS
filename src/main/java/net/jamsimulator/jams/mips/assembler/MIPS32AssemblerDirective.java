@@ -30,7 +30,10 @@ import net.jamsimulator.jams.utils.StringUtils;
 import java.util.Map;
 import java.util.OptionalInt;
 
-class MIPS32AssemblerDirective {
+/**
+ * This class represents a directive in an assembler.
+ */
+public class MIPS32AssemblerDirective {
 
     private final MIPS32AssemblerLine line;
     private final String mnemonic;
@@ -86,6 +89,6 @@ class MIPS32AssemblerDirective {
     }
 
     public void runValueAssignation() {
-        directive.onValueAssignation(line, parameters, line.getAddress(), rawParameters);
+        directive.onValueAssignation(line, parameters, rawParameters);
     }
 }

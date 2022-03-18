@@ -55,8 +55,9 @@ public class DirectiveWord extends Directive {
     }
 
     @Override
-    public void onValueAssignation(MIPS32AssemblerLine line, String[] parameters, int address, String rawParameters) {
+    public void onValueAssignation(MIPS32AssemblerLine line, String[] parameters, String rawParameters) {
         var memory = line.getAssembler().getMemory();
+        var address = line.getAddress();
         for (String parameter : parameters) {
             var optional = NumericUtils.decodeIntegerSafe(parameter);
             if (optional.isEmpty()) {

@@ -94,7 +94,6 @@ public class DirectiveMacro extends Directive {
 
         line.getFile().startMacroDefinition(
                 line.getIndex(),
-                line.getFile().getName(),
                 name,
                 macroParameters.toArray(new String[0])
         );

@@ -149,17 +149,49 @@ public abstract class Directive {
         return type != null && type.matches(value);
     }
 
+    /**
+     * This method is executed when this label is found in the discovery step of an assembler.
+     *
+     * @param line          the line where this directive is located.
+     * @param parameters    the parameters of this directive.
+     * @param rawParameters the parameters in its raw format.
+     * @param equivalents   the equivalents used by the step. This map is mutable.
+     */
     public void onDiscovery(MIPS32AssemblerLine line, String[] parameters, String rawParameters, Map<String, String> equivalents) {
     }
 
+    /**
+     * This method is executed when this label is reached in the expansion step of an assembler.
+     *
+     * @param line          the line where this directive is located.
+     * @param parameters    the parameters of this directive.
+     * @param rawParameters the parameters in its raw format.
+     */
     public void onExpansion(MIPS32AssemblerLine line, String[] parameters, String rawParameters) {
     }
 
+    /**
+     * This method is executed when this label is reached in the address assignation step of an assembler.
+     * <p>
+     * This method can assign an address to the line. This is used by directives that require memory.
+     *
+     * @param line          the line where this directive is located.
+     * @param parameters    the parameters of this directive.
+     * @param rawParameters the parameters in its raw format.
+     * @return the address of the start of the memory reserved by this directive, or empty if no memory has been reserved.
+     */
     public OptionalInt onAddressAssignation(MIPS32AssemblerLine line, String[] parameters, String rawParameters) {
         return OptionalInt.empty();
     }
 
-    public void onValueAssignation(MIPS32AssemblerLine line, String[] parameters, int address, String rawParameters) {
+    /**
+     * This method is executed when this label is reached in the value assignation step of an assembler.
+     *
+     * @param line          the line where this directive is located.
+     * @param parameters    the parameters of this directive.
+     * @param rawParameters the parameters in its raw format.
+     */
+    public void onValueAssignation(MIPS32AssemblerLine line, String[] parameters, String rawParameters) {
     }
 
     @Override

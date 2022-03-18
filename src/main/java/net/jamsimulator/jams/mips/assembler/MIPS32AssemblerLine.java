@@ -32,6 +32,9 @@ import net.jamsimulator.jams.utils.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents a line in an assembler.
+ */
 public class MIPS32AssemblerLine {
 
     private final MIPS32AssemblerFile file;

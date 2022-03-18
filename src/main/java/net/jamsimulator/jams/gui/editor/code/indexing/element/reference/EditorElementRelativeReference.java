@@ -32,25 +32,54 @@ import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+/**
+ * Represents a relative reference to an element.
+ * <p>
+ * This reference uses its relative position instead of an identifier to resolve the referenced element.
+ *
+ * @param <R> the type of the referenced element.
+ */
 public class EditorElementRelativeReference<R extends EditorReferencedElement> extends EditorElementReference<R> {
 
     private final Type type;
     private final EditorIndexedElement element;
 
+    /**
+     * Creates a new relative reference.
+     *
+     * @param referencedType the type of the referenced element.
+     * @param type           the type of the relative reference.
+     * @param element        the element creating this referenced.
+     */
     public EditorElementRelativeReference(Class<R> referencedType, Type type, EditorIndexedElement element) {
         super(referencedType, type.identifier);
         this.type = type;
         this.element = element;
     }
 
+    /**
+     * Returns the {@link Type type} of the relative reference.
+     *
+     * @return the {@link Type type}.
+     */
     public Type getType() {
         return type;
     }
 
+    /**
+     * Returns the {@link EditorIndexedElement element} that is holding this reference.
+     *
+     * @return the {@link  EditorIndexedElement element}.
+     */
     public EditorIndexedElement getElement() {
         return element;
     }
 
+    /**
+     * Returns the predicate used to filter elements based to this reference position.
+     *
+     * @return the predicate.
+     */
     public Predicate<EditorReferencedElement> getFilterPredicate() {
         return element -> getType().getFilterPredicate().test(element, this);
     }

@@ -26,11 +26,20 @@ package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.label.Label;
+import net.jamsimulator.jams.utils.Validate;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Represents a scope in an assembler.
+ * <p>
+ * Scopes store the {@link Label label}s and {@link Macro macro}s in the scope.
+ * <p>
+ * Scopes search labels and macros on itself.
+ * If the label or macro couldn't been found, it is seached in the parent scope.
+ */
 public class MIPS32AssemblerScope {
 
     private final String name;
@@ -39,7 +48,16 @@ public class MIPS32AssemblerScope {
     private final Map<String, Macro> macros;
     private final Macro originMacro;
 
+    /**
+     * Creates a new scope.
+     *
+     * @param name        the name of the scope.
+     * @param originMacro the macro that creates this scope. It can be null.
+     * @param parent      the parent scope. It can be null.
+     * @throws AssemblerException when this scope creates a cyclic macro dependency.
+     */
     public MIPS32AssemblerScope(String name, Macro originMacro, MIPS32AssemblerScope parent) {
+        Validate.notNull(name, "Name cannot be null!");
         this.name = name;
         this.parent = parent;
         this.labels = new HashMap<>();
@@ -52,45 +70,102 @@ public class MIPS32AssemblerScope {
                 if (current.originMacro == originMacro) {
                     throw new AssemblerException(originMacro.getOriginLine(),
                             "Cyclic dependency found in macro '" + name + "' located at "
-                            + originMacro.getOriginFile() + ":" + originMacro.getOriginLine() + ".");
+                                    + originMacro.getOriginFile() + ":" + originMacro.getOriginLine() + ".");
                 }
                 current = current.parent;
             }
         }
     }
 
+    /**
+     * Returns the name of this scope.
+     *
+     * @return the name.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the {@link Macro macro} that generated this scope, if present.
+     *
+     * @return the {@link Macro macro}.
+     */
     public Optional<Macro> getOriginMacro() {
         return Optional.ofNullable(originMacro);
     }
 
+    /**
+     * Returns the parent of this scope.
+     *
+     * @return the parent.
+     */
     public Optional<MIPS32AssemblerScope> getParent() {
         return Optional.ofNullable(parent);
     }
 
+    /**
+     * Returns the {@link Label label}s in this scope.
+     * <p>
+     * This {@link Map} is modifiable.
+     * The key is the name of the {@link Label label}.
+     *
+     * @return the {@link Label label}s.
+     */
     public Map<String, Label> getScopeLabels() {
         return labels;
     }
 
+    /**
+     * Returns the {@link Macro macro}s in this scope.
+     * <p>
+     * This {@link Map} is modifiable.
+     * The key is the name of the {@link Macro macro}.
+     *
+     * @return the {@link Macro macro}s.
+     */
     public Map<String, Macro> getScopeMacros() {
         return macros;
     }
 
+    /**
+     * Finds a {@link Label label} that matches the given identifier.
+     * <p>
+     * If this scope doesn't contain the {@link Label label}, it is searched in the parent scope.
+     * <p>
+     * This method doesn't resolve special idenfiers. Use {@link #resolveLabel(int, String)} if you
+     * want to resolve special identifiers.
+     *
+     * @param identifier the identifier.
+     * @return the {@link Label label}, if present.
+     */
     public Optional<Label> findLabel(String identifier) {
         var label = labels.get(identifier);
         if (label != null) return Optional.of(label);
         return parent != null ? parent.findLabel(identifier) : Optional.empty();
     }
 
+    /**
+     * Finds a {@link Macro macro} that matches the given identifier.
+     * <p>
+     * If this scope doesn't contain the {@link Macro macro}, it is searched in the parent scope.
+     *
+     * @param identifier the identifier.
+     * @return the {@link Macro macro}, if present.
+     */
     public Optional<Macro> findMacro(String identifier) {
         var macro = macros.get(identifier);
         if (macro != null) return Optional.of(macro);
         return parent != null ? parent.findMacro(identifier) : Optional.empty();
     }
 
+    /**
+     * Adds a {@link Label label} to this scope.
+     *
+     * @param line  the line where this method is executed.
+     * @param label the {@link Label label}.
+     * @throws AssemblerException when a {@link Label label} with the same identifier is already defined in this scope.
+     */
     public void addLabel(int line, Label label) {
         var definedLabel = labels.get(label.getKey());
         if (definedLabel != null) {
@@ -100,6 +175,13 @@ public class MIPS32AssemblerScope {
         labels.put(label.getKey(), label);
     }
 
+    /**
+     * Adds a {@link Macro macro} to this scope.
+     *
+     * @param line  the line where this method is executed.
+     * @param macro the {@link Macro macro}.
+     * @throws AssemblerException when a {@link Macro macro} with the same identifier is already defined in this scope.
+     */
     public void addMacro(int line, Macro macro) {
         var definedMacro = macros.get(macro.getName());
         if (definedMacro != null) {
@@ -109,6 +191,14 @@ public class MIPS32AssemblerScope {
         macros.put(macro.getName(), macro);
     }
 
+    /**
+     * Returns the first {@link Label label} present after the given address.
+     * <p>
+     * This method is invoked to resolve the relative {@link Label label} '+'.
+     *
+     * @param address the address.
+     * @return the {@link Label label}, if present.
+     */
     public Optional<Label> nextLabelTo(int address) {
         Label label = null;
         for (Label current : labels.values()) {
@@ -121,6 +211,14 @@ public class MIPS32AssemblerScope {
         return Optional.ofNullable(label);
     }
 
+    /**
+     * Returns the first {@link Label label} present before the given address.
+     * <p>
+     * This method is invoked to resolve the relative {@link Label label} '+'.
+     *
+     * @param address the address.
+     * @return the {@link Label label}, if present.
+     */
     public Optional<Label> previousLabelTo(int address) {
         Label label = null;
         for (Label current : labels.values()) {
@@ -133,6 +231,15 @@ public class MIPS32AssemblerScope {
         return Optional.ofNullable(label);
     }
 
+    /**
+     * Returns the {@link Label label} that resolves the given identifier.
+     * <p>
+     * Unlike {@link #findLabel(String)}, this method resolves special idenfiers, such as '-' and '+'.
+     *
+     * @param address    the address of the line trying to resolve the idenfier. Used to resolver relative identifiers.
+     * @param identifier the identifier to resolve.
+     * @return the {@link Label label} if present.
+     */
     public Optional<Label> resolveLabel(int address, String identifier) {
         return switch (identifier) {
             case "+" -> nextLabelTo(address);
