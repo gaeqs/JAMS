@@ -69,8 +69,10 @@ public class LabelTableLabel extends ExplorerSection {
 
         addElement(addressElement);
         addElement(lineElement);
-        addElement(new LabelTableReferences(explorer, this, label, hierarchyLevel + 1));
 
+        if(!label.getReferences().isEmpty()) {
+            addElement(new LabelTableReferences(explorer, this, label, hierarchyLevel + 1));
+        }
     }
 
     public Label getLabel() {

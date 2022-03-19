@@ -193,11 +193,6 @@ public class MIPS32Assembler implements Assembler {
     }
 
     @Override
-    public AssemblerScope getGlobalScope() {
-        return globalScope;
-    }
-
-    @Override
     public int getStackBottom() {
         return assemblerData.getCurrentText() - 4;
     }
@@ -214,10 +209,6 @@ public class MIPS32Assembler implements Assembler {
         return OptionalInt.of(label.getAddress());
     }
 
-    public MIPS32AssemblerData getAssemblerData() {
-        return assemblerData;
-    }
-
     @Override
     public boolean isAssembled() {
         return assembled;
@@ -229,30 +220,6 @@ public class MIPS32Assembler implements Assembler {
         MIPSSimulation<?> simulation = architecture.createSimulation(data);
         return (MIPSSimulation<Arch>) simulation;
     }
-
-    public MIPS32AssemblerScope getGlobalScope() {
-        return globalScope;
-    }
-
-    // region log utils
-
-    public void printInfo(Object info) {
-        if (log != null) log.printInfoLn(info);
-    }
-
-    public void printDone(Object done) {
-        if (log != null) log.printDoneLn(done);
-    }
-
-    public void printWarning(Object warning) {
-        if (log != null) log.printWarningLn(warning);
-    }
-
-    public void printError(Object error) {
-        if (log != null) log.printErrorLn(error);
-    }
-
-    // endregion
 
     @Override
     public void assemble() {

@@ -41,13 +41,13 @@ import java.util.*;
 public class AssemblerScope {
 
     private final String name;
-    private final MIPS32AssemblerScope parent;
+    private final AssemblerScope parent;
     private final Map<String, Label> labels;
     private final Map<String, Macro> macros;
     private final Macro originMacro;
 
     private final Set<AssemblerScope> children;
-    
+
     /**
      * Creates a new scope.
      *
@@ -56,7 +56,7 @@ public class AssemblerScope {
      * @param parent      the parent scope. It can be null.
      * @throws AssemblerException when this scope creates a cyclic macro dependency.
      */
-    public AssemblerScope(String name, Macro originMacro, MIPS32AssemblerScope parent) {
+    public AssemblerScope(String name, Macro originMacro, AssemblerScope parent) {
         Validate.notNull(name, "Name cannot be null!");
         this.name = name;
         this.parent = parent;
@@ -72,10 +72,14 @@ public class AssemblerScope {
                 if (current.originMacro == originMacro) {
                     throw new AssemblerException(originMacro.getOriginLine(),
                             "Cyclic dependency found in macro '" + name + "' located at "
-                            + originMacro.getOriginFile() + ":" + originMacro.getOriginLine() + ".");
+                                    + originMacro.getOriginFile() + ":" + originMacro.getOriginLine() + ".");
                 }
                 current = current.parent;
             }
+        }
+
+        if (parent != null) {
+            parent.children.add(this);
         }
     }
 
