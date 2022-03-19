@@ -370,11 +370,14 @@ public abstract class MIPSAssembledCodeViewer extends CodeArea {
             int currentCopy = current;
 
             if (showLabels) {
-                var optional = labels.stream().filter(e -> e.getAddress() == currentCopy).map(Label::getKey).findAny();
-                if (optional.isPresent()) {
-                    assembledLines.add(new MIPSAssembledLine(assembledLines.size()));
-                    addAndStyle(optional.get() + ":\n", LABEL, stringBuilder, styleBuilder);
-                }
+                labels.stream()
+                        .filter(e -> e.getAddress() == currentCopy)
+                        .map(Label::getKey)
+                        .forEach(label -> {
+                                    assembledLines.add(new MIPSAssembledLine(assembledLines.size()));
+                                    addAndStyle(label + ":\n", LABEL, stringBuilder, styleBuilder);
+                                }
+                        );
             }
 
             var code = memory.getWord(current, false, true, true);

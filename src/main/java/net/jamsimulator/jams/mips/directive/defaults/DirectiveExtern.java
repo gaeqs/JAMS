@@ -26,8 +26,8 @@ package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
-import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.assembler.SelectedMemorySegment;
+import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.mips.label.Label;
@@ -68,8 +68,8 @@ public class DirectiveExtern extends Directive {
             throw new AssemblerException(line.getIndex(), "Cannot use ." + NAME + " on a macro scope!");
         }
 
-        line.getAssembler().getGlobalScope().addLabel(line.getIndex(),
-                new Label(label, start, line.getFile().getName(), line.getIndex()));
+        var global = line.getAssembler().getGlobalScope();
+        global.addLabel(line.getIndex(), new Label(label, global, start, line.getFile().getName(), line.getIndex()));
 
         data.setSelected(old);
         return OptionalInt.of(start);

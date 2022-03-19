@@ -50,7 +50,7 @@ public class DirectiveLab extends Directive {
         if (!LabelUtils.isLabelDeclarationLegal(parameters[0]))
             throw new AssemblerException("Label " + parameters[0] + " is not legal.");
 
-        var label = new Label(parameters[0], 0, line.getFile().getName(), line.getIndex());
+        var label = new Label(parameters[0], line.getScope(), 0, line.getFile().getName(), line.getIndex());
         line.getLabels().add(label);
     }
 

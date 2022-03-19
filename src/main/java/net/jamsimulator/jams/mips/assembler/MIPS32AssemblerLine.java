@@ -109,7 +109,7 @@ public class MIPS32AssemblerLine {
                 throw new AssemblerException(index, "The label " + rawLabel + " is illegal.");
             }
             line = line.substring(labelIndex + 1).trim();
-            labels.add(new Label(rawLabel, 0, file.getName(), index));
+            labels.add(new Label(rawLabel, scope, 0, file.getName(), index));
         }
 
         if (line.isEmpty()) return;
