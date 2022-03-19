@@ -128,16 +128,6 @@ public class MIPSProject extends BasicProject {
             log.printDoneLn("Assembly successful in " + (System.nanoTime() - nanos) / 1000000 + " millis.");
         }
 
-        var startAddress = assembler.getStartAddres();
-        if (startAddress.isPresent()) {
-            assembler.getRegisters().getProgramCounter().setValue(startAddress.getAsInt());
-        } else {
-            if (log != null) {
-                log.printWarningLn("Global label 'main' not found. " +
-                        "Execution will start at the start of the text section.");
-            }
-        }
-
         var simulationData = new MIPSSimulationData(
                 configuration,
                 data.getFilesFolder(),

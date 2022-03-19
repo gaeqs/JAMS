@@ -221,6 +221,17 @@ public class MIPS32Assembler implements Assembler {
         files.forEach(MIPS32AssemblerFile::assignAddresses);
         printInfo("Assigning values...");
         files.forEach(MIPS32AssemblerFile::assignValues);
+        printInfo("Adding final touches...");
+
+        var startAddress = getStartAddres();
+        if (startAddress.isPresent()) {
+            registers.getProgramCounter().setValue(startAddress.getAsInt());
+        } else {
+            printWarning("Global label 'main' not found. Execution will start at the start of the text section.");
+        }
+
+        memory.allocateMemory(memory.getFirstDataAddress() - assemblerData.getCurrentData());
+
         assembled = true;
     }
 
