@@ -24,6 +24,9 @@
 
 package net.jamsimulator.jams.mips.assembler;
 
+/**
+ * This enum represents the different segments of a MIPS32 memory.
+ */
 public enum SelectedMemorySegment {
 
     TEXT, DATA, KERNEL_TEXT, KERNEL_DATA, EXTERN

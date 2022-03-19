@@ -39,7 +39,7 @@ public class DirectiveLab extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.LABEL};
 
     public DirectiveLab() {
-        super(NAME, PARAMETERS, false, false);
+        super(NAME, PARAMETERS, false, false, false);
     }
 
     @Override

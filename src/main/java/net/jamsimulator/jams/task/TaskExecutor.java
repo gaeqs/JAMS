@@ -24,10 +24,14 @@
 
 package net.jamsimulator.jams.task;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.event.general.JAMSShutdownEvent;
+import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
+import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.LinkedList;
@@ -63,6 +67,7 @@ import java.util.concurrent.FutureTask;
 public class TaskExecutor {
 
     private final ExecutorService executor;
+    private final ExecutorService indexingExecutor;
     private final LinkedList<Task<?>> tasks;
 
     /**
@@ -70,6 +75,7 @@ public class TaskExecutor {
      */
     public TaskExecutor() {
         this.executor = Executors.newCachedThreadPool();
+        this.indexingExecutor = Executors.newSingleThreadExecutor();
         tasks = new LinkedList<>();
         Jams.getGeneralEventBroadcast().registerListeners(this, true);
     }
@@ -157,7 +163,6 @@ public class TaskExecutor {
 
     /**
      * Executes the given runnable in this executor.
-     * You must provide a name to the task
      *
      * @param task the task to execute.
      * @see ExecutorService#submit(Runnable)
@@ -170,13 +175,69 @@ public class TaskExecutor {
     }
 
     /**
+     * Executes the given runnable as an indexing task.
+     *
+     * @param task the task to execute.
+     * @see ExecutorService#submit(Runnable)
+     */
+    public synchronized <T> void executeOnIndexingThread(Task<T> task) {
+        Validate.notNull(task, "Task cannot be null!");
+        tasks.removeIf(FutureTask::isDone);
+        indexingExecutor.submit(task);
+        tasks.add(task);
+    }
+
+    public synchronized void executeIndexing(EditorIndex index, String text) {
+        tasks.removeIf(FutureTask::isDone);
+        var task = LanguageTask.of(Messages.EDITOR_INDEXING, () -> {
+            try {
+                index.withLock(true, i -> i.indexAll(text));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return null;
+        });
+        indexingExecutor.submit(task);
+        tasks.add(task);
+    }
+
+    public synchronized void executeIndexing(CodeFileEditor editor) {
+        tasks.removeIf(FutureTask::isDone);
+        var task = LanguageTask.of(Messages.EDITOR_INDEXING, () -> {
+            var index = editor.getIndex();
+            var pendingChanges = editor.getPendingChanges();
+            index.waitForInitialization();
+            try {
+                index.withLock(true, i -> {
+                    pendingChanges.flushAll(i::change);
+
+                    if (pendingChanges.isMarkedForReformat(true)) {
+                        var text = index.reformat();
+
+                        Platform.runLater(() -> index.withLock(false, in -> {
+                            editor.replaceText(text);
+                            editor.setEditable(!pendingChanges.isMarkedForReformat(false));
+                        }));
+                    }
+                });
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return null;
+        });
+        indexingExecutor.submit(task);
+        tasks.add(task);
+    }
+
+
+    /**
      * Returns whether this executor is shut down.
      *
      * @return whether this executor is shut down.
      * @see ExecutorService#isShutdown()
      */
     public boolean isShutdown() {
-        return executor.isShutdown();
+        return executor.isShutdown() && indexingExecutor.isShutdown();
     }
 
     /**
@@ -186,7 +247,7 @@ public class TaskExecutor {
      * @see ExecutorService#isTerminated()
      */
     public boolean isTerminated() {
-        return executor.isTerminated();
+        return executor.isTerminated() && indexingExecutor.isTerminated();
     }
 
     /**
@@ -197,6 +258,7 @@ public class TaskExecutor {
      */
     public void shutdown() {
         executor.shutdown();
+        indexingExecutor.shutdown();
     }
 
     /**
@@ -206,11 +268,12 @@ public class TaskExecutor {
      */
     public void shutdownNow() {
         executor.shutdownNow();
+        indexingExecutor.shutdownNow();
     }
 
     @Listener
     private void onShutdown(JAMSShutdownEvent.Before event) {
-        executor.shutdownNow();
+        shutdownNow();
     }
 
 }

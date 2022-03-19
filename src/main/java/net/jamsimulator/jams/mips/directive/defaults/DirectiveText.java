@@ -41,7 +41,7 @@ public class DirectiveText extends Directive {
 
 
     public DirectiveText() {
-        super(NAME, PARAMETERS, false, true);
+        super(NAME, PARAMETERS, false, true, true);
     }
 
     @Override

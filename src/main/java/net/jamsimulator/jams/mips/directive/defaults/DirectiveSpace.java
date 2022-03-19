@@ -39,7 +39,7 @@ public class DirectiveSpace extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.POSITIVE_INT};
 
     public DirectiveSpace() {
-        super(NAME, PARAMETERS, false, false);
+        super(NAME, PARAMETERS, false, false, true);
     }
 
     @Override

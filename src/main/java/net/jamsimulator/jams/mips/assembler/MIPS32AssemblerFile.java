@@ -30,9 +30,13 @@ import net.jamsimulator.jams.mips.directive.defaults.DirectiveMacro;
 import net.jamsimulator.jams.mips.label.Label;
 import net.jamsimulator.jams.utils.LabelUtils;
 import net.jamsimulator.jams.utils.StringUtils;
+import net.jamsimulator.jams.utils.Validate;
 
 import java.util.*;
 
+/**
+ * This class represents a file in an assembler.
+ */
 public class MIPS32AssemblerFile {
 
     private final MIPS32Assembler assembler;
@@ -41,39 +45,79 @@ public class MIPS32AssemblerFile {
 
     private final List<MIPS32AssemblerLine> lines = new ArrayList<>();
     private final List<String> globalIdentifiers = new ArrayList<>();
-    private final AssemblerScope scope;
+    private final MIPS32AssemblerScope scope;
 
     private Macro definingMacro = null;
     private int macroCount = 0;
 
+    /**
+     * Creates a new assembler file.
+     *
+     * @param assembler the assembler of this file.
+     * @param name      the name of the file.
+     * @param rawData   the raw data of the file.
+     */
     public MIPS32AssemblerFile(MIPS32Assembler assembler, String name, String rawData) {
+        Validate.notNull(assembler, "Assembler cannot be null!");
+        Validate.notNull(name, "Name cannot be null!");
+        Validate.notNull(rawData, "Raw data cannot be null!");
         this.assembler = assembler;
         this.name = name;
         this.rawData = rawData;
-        this.scope = new AssemblerScope(name, null, assembler.getGlobalScope());
+        this.scope = new MIPS32AssemblerScope(name, null, assembler.getGlobalScope());
     }
 
+    /**
+     * Returns the {@link MIPS32Assembler assembler} of this file.
+     *
+     * @return the {@link MIPS32Assembler assembler}.
+     */
     public MIPS32Assembler getAssembler() {
         return assembler;
     }
 
+    /**
+     * Returns the name of this file.
+     *
+     * @return the name.
+     */
     public String getName() {
         return name;
     }
 
-    public AssemblerScope getScope() {
+    /**
+     * Returns the {@link MIPS32AssemblerScope scope} of this file.
+     *
+     * @return the {@link MIPS32AssemblerScope scope}.
+     */
+    public MIPS32AssemblerScope getScope() {
         return scope;
     }
 
-    public void startMacroDefinition(int line, String file, String name, String[] parameters) {
+    /**
+     * Starts a {@link Macro macro} definition.
+     *
+     * @param line       the line starting the {@link Macro macro} definition.
+     * @param name       the name of the {@link Macro macro}.
+     * @param parameters the parameters of the {@link Macro macro}.
+     * @throws AssemblerException when a {@link Macro macro} is already being defined.
+     */
+    public void startMacroDefinition(int line, String name, String[] parameters) {
         if (definingMacro != null) {
             throw new AssemblerException(line, "There's a macro already being defined!");
         }
-        definingMacro = new Macro(name + "-" + parameters.length, name, parameters, file, line);
+        definingMacro = new Macro(name + "-" + parameters.length, name, parameters, name, line);
         macroCount = 1;
     }
 
-    public void stopMacroDefinition(int line, AssemblerScope scope) {
+    /**
+     * Stops a {@link Macro macro} definition.
+     *
+     * @param line  the line finishing the {@link Macro macro} definition.
+     * @param scope the {@link MIPS32AssemblerScope scope} of the macro.
+     * @throws AssemblerException when a {@link Macro macro} is not being defined.
+     */
+    public void stopMacroDefinition(int line, MIPS32AssemblerScope scope) {
         if (definingMacro == null) {
             throw new AssemblerException(line, "There's no macro being defined!");
         }
@@ -82,18 +126,34 @@ public class MIPS32AssemblerFile {
         macroCount = 0;
     }
 
+    /**
+     * Returns whether a {@link Macro macro} is being defined.
+     *
+     * @return whether a {@link Macro macro} is being defined.
+     */
     public boolean isMacroBeingDefined() {
         return definingMacro != null;
     }
 
-    public void addGlobalIdentifier(String identifier) {
-        globalIdentifiers.add(identifier);
-    }
-
+    /**
+     * Indicates that the given identifiers should be treated as global identifiers.
+     * <p>
+     * This method only have effect on the discovery step.
+     *
+     * @param identifiers the identifiers.
+     */
     public void addGlobalIdentifiers(Collection<String> identifiers) {
         globalIdentifiers.addAll(identifiers);
     }
 
+    /**
+     * STEP 1 OF THE ASSEMBLER
+     * <p>
+     * Parsers the raw text of the file, discovering all the MIPS elements.
+     * <p>
+     * At the end, it adds the global {@link Label label}s and {@link Macro macro}s
+     * into the global {@link MIPS32AssemblerScope scope}.
+     */
     public void discoverElements() {
         discoverElements(scope, StringUtils.multiSplit(rawData, "\n", "\r"), lines.size());
         for (String identifier : globalIdentifiers) {
@@ -110,7 +170,15 @@ public class MIPS32AssemblerFile {
         }
     }
 
-    public void discoverElements(AssemblerScope scope, List<String> rawLines, int startIndex) {
+    /**
+     * Discovers all the elements inside the given raw lines.
+     * The lines are added to the lines list at the given start index.
+     *
+     * @param scope      the {@link MIPS32AssemblerScope scope} of the discovery process.
+     * @param rawLines   the raw lines.
+     * @param startIndex the starting index.
+     */
+    public void discoverElements(MIPS32AssemblerScope scope, List<String> rawLines, int startIndex) {
         var equivalents = new HashMap<String, String>();
         for (String raw : rawLines) {
             raw = sanityLine(raw, equivalents);
@@ -135,6 +203,11 @@ public class MIPS32AssemblerFile {
         }
     }
 
+    /**
+     * STEP 2 OF THE ASSEMBLER
+     * <p>
+     * Expands the macros calls and discovers the generated lines.
+     */
     public void expandMacros() {
         for (int i = 0; i < lines.size(); i++) {
             var line = lines.get(i);
@@ -147,7 +220,7 @@ public class MIPS32AssemblerFile {
                             " in scope " + scope.getName() + "!");
                 }
 
-                var childScope = new AssemblerScope(macro.get().getName(), macro.get(), scope);
+                var childScope = new MIPS32AssemblerScope(macro.get().getName(), macro.get(), scope);
                 var lines = macro.get().getParsedLines(call.getParameters(), i);
                 discoverElements(childScope, lines, i + 1);
             }
@@ -157,6 +230,11 @@ public class MIPS32AssemblerFile {
         }
     }
 
+    /**
+     * STEP 3 OF THE ASSEMBLER
+     * <p>
+     * Assigns an address to all addresable lines.
+     */
     public void assignAddresses() {
         var queue = new LinkedList<Label>();
         for (var line : lines) {
@@ -184,11 +262,16 @@ public class MIPS32AssemblerFile {
         }
         if (!queue.isEmpty()) {
             String list = queue.stream().map(Label::getKey).toList().toString();
-            throw new AssemblerException("Cannot assign addresses to the following labels: "
+            throw new AssemblerException("Cannot assign an address to the following labels: "
                     + list.substring(1, list.length() - 1));
         }
     }
 
+    /**
+     * STEP 4 OF THE ASSEMBLER
+     * <p>
+     * Calculates the values of the instructions and compatible directives.
+     */
     public void assignValues() {
         for (var line : lines) {
             if (line.getDirective() != null) {

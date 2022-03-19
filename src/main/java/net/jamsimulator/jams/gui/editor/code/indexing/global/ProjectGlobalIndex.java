@@ -343,7 +343,7 @@ public abstract class ProjectGlobalIndex extends SimpleEventBroadcast implements
             return;
         }
 
-        project.getTaskExecutor().execute(LanguageTask.of(Messages.EDITOR_INDEXING, () -> {
+        project.getTaskExecutor().executeOnIndexingThread(LanguageTask.of(Messages.EDITOR_INDEXING, () -> {
             indices.forEach((file, index) -> {
                 index.withLock(true, i -> {
                     try {

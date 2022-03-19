@@ -39,7 +39,7 @@ public class DirectiveMacro extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.ANY, DirectiveParameterType.ANY};
 
     public DirectiveMacro() {
-        super(NAME, PARAMETERS, true, false);
+        super(NAME, PARAMETERS, true, false, false);
     }
 
     private static void panic(int line, String value, int i) {
@@ -94,7 +94,6 @@ public class DirectiveMacro extends Directive {
 
         line.getFile().startMacroDefinition(
                 line.getIndex(),
-                line.getFile().getName(),
                 name,
                 macroParameters.toArray(new String[0])
         );

@@ -26,6 +26,9 @@ package net.jamsimulator.jams.mips.assembler;
 
 import net.jamsimulator.jams.utils.StringUtils;
 
+/**
+ * This class represents a macro call in an assembler.
+ */
 class MIPS32AssemblerMacroCall {
 
     private final MIPS32AssemblerLine line;

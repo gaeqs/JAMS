@@ -41,7 +41,7 @@ public class DirectiveExtern extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.LABEL, DirectiveParameterType.POSITIVE_INT};
 
     public DirectiveExtern() {
-        super(NAME, PARAMETERS, false, false);
+        super(NAME, PARAMETERS, false, false, false);
     }
 
     @Override

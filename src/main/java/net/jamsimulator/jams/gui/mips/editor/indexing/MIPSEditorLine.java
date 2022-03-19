@@ -30,6 +30,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.*;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
 import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirective;
 import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstruction;
+import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveEndmacro;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveMacro;
 import net.jamsimulator.jams.utils.LabelUtils;
@@ -79,6 +80,13 @@ public class MIPSEditorLine extends EditorIndexedLine {
     @Override
     public boolean isMacroEnd() {
         return directive != null && directive.getDirective().orElse(null) instanceof DirectiveEndmacro;
+    }
+
+    @Override
+    public boolean canBeReferencedByALabel() {
+        return instruction != null
+                || directive != null
+                && directive.getDirective().map(Directive::providesAddress).orElse(false);
     }
 
     @Override

@@ -39,7 +39,7 @@ public class DirectiveHalf extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.SHORT};
 
     public DirectiveHalf() {
-        super(NAME, PARAMETERS, true, false);
+        super(NAME, PARAMETERS, true, false, true);
     }
 
     @Override

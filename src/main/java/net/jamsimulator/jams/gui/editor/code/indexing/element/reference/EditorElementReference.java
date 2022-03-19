@@ -28,7 +28,6 @@ import java.util.Objects;
 
 /**
  * Represents a reference to an element.
- *
  */
 public class EditorElementReference<R extends EditorReferencedElement> {
     private final Class<R> referencedType;
@@ -59,10 +58,20 @@ public class EditorElementReference<R extends EditorReferencedElement> {
                 && identifier.equals(potentialChild.identifier);
     }
 
+    /**
+     * Returns the type of the element this reference is pointing.
+     *
+     * @return the type of the element.
+     */
     public Class<R> getReferencedType() {
         return referencedType;
     }
 
+    /**
+     * Returns the identifier of the element this reference is pointing.
+     *
+     * @return the identifier.
+     */
     public String getIdentifier() {
         return identifier;
     }
