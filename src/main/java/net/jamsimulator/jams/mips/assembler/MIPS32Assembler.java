@@ -40,7 +40,7 @@ import net.jamsimulator.jams.utils.Validate;
 import java.util.*;
 
 /**
- * <h1>Gael Rial Costas's MIPS32 assembler.</h1>
+ * Gael Rial Costas's MIPS32 assembler.
  * <p>
  * This assembler assembles the given code in four steps.
  * <ul>
