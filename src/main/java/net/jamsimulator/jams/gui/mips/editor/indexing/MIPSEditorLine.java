@@ -85,6 +85,7 @@ public class MIPSEditorLine extends EditorIndexedLine {
     @Override
     public boolean canBeReferencedByALabel() {
         return instruction != null
+                || macroCall != null
                 || directive != null
                 && directive.getDirective().map(Directive::providesAddress).orElse(false);
     }
