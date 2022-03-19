@@ -37,7 +37,7 @@ public class DirectiveErr extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {};
 
     public DirectiveErr() {
-        super(NAME, PARAMETERS, false, false);
+        super(NAME, PARAMETERS, false, false, false);
     }
 
     @Override

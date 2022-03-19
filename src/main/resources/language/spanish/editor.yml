@@ -8,6 +8,7 @@ TASK_ASSEMBLING: Ensamblando...
 EDITOR_ERROR_DUPLICATE_LABEL: La etiqueta '{LABEL}' está duplicada en la línea {LINE}.
 EDITOR_ERROR_DUPLICATE_GLOBAL_LABEL: La etiqueta global '{LABEL}' está duplicada en
   la línea {LINE} del archivo '{FILE}'.
+EDITOR_ERROR_LABEL_ADDRESS_NOT_FOUND: Esta etiqueta no tiene una dirección asignada.
 EDITOR_ERROR_DUPLICATE_MACRO: La macro '{MACRO}' con {PARAMETERS} parámetros está duplicada en la línea {LINE}.
 EDITOR_ERROR_DUPLICATE_GLOBAL_MACRO: La macro global '{MACRO}' con {PARAMETERS} parámetros está duplicada en la
   línea {LINE} del archivo '{FILE}'.

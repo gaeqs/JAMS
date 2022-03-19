@@ -262,7 +262,7 @@ public class MIPS32AssemblerFile {
         }
         if (!queue.isEmpty()) {
             String list = queue.stream().map(Label::getKey).toList().toString();
-            throw new AssemblerException("Cannot assign addresses to the following labels: "
+            throw new AssemblerException("Cannot assign an address to the following labels: "
                     + list.substring(1, list.length() - 1));
         }
     }

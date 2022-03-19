@@ -33,6 +33,6 @@ public class DirectiveEndmacro extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {};
 
     public DirectiveEndmacro() {
-        super(NAME, PARAMETERS, false, false);
+        super(NAME, PARAMETERS, false, false, false);
     }
 }

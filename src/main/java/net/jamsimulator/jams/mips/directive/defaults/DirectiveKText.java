@@ -40,7 +40,7 @@ public class DirectiveKText extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.INT};
 
     public DirectiveKText() {
-        super(NAME, PARAMETERS, false, true);
+        super(NAME, PARAMETERS, false, true, true);
     }
 
 

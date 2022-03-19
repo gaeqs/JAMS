@@ -44,6 +44,7 @@ public class MIPSInspectorManager extends Manager<Inspector> {
         add(new DuplicatedMacroInspector(ResourceProvider.JAMS));
         add(new MacroNotFoundInspector(ResourceProvider.JAMS));
         add(new IllegalMacroParameterInspector(ResourceProvider.JAMS));
+        add(new LabelAddressNotFoundInspector(ResourceProvider.JAMS));
         add(new MIPSIllegalLabelInspector(ResourceProvider.JAMS));
         add(new MIPSInstructionNotFoundInspector(ResourceProvider.JAMS));
         add(new MIPSInstructionLabelNotFoundInspector(ResourceProvider.JAMS));

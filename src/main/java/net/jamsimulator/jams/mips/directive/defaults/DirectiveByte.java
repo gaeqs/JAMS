@@ -40,7 +40,7 @@ public class DirectiveByte extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.BYTE_OR_CHAR};
 
     public DirectiveByte() {
-        super(NAME, PARAMETERS, true, false);
+        super(NAME, PARAMETERS, true, false, true);
     }
 
     @Override

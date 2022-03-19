@@ -39,7 +39,7 @@ public class DirectiveDWord extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.DOUBLE};
 
     public DirectiveDWord() {
-        super(NAME, PARAMETERS, true, false);
+        super(NAME, PARAMETERS, true, false, true);
     }
 
     @Override

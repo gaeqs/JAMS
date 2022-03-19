@@ -38,7 +38,7 @@ public class DirectiveAlign extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.NUMBER_2_BITS};
 
     public DirectiveAlign() {
-        super(NAME, PARAMETERS, false, false);
+        super(NAME, PARAMETERS, false, false, false);
     }
 
     @Override

@@ -39,7 +39,7 @@ public class DirectiveDouble extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.DOUBLE};
 
     public DirectiveDouble() {
-        super(NAME, PARAMETERS, true, false);
+        super(NAME, PARAMETERS, true, false, true);
     }
 
     @Override

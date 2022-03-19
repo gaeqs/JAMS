@@ -52,7 +52,7 @@ class MIPS32AssemblerTest {
                     """);
         } catch (AssemblerException ex) {
             ex.printStackTrace();
-            if (ex.getMessage().startsWith("Cannot assign addresses to the following labels")) {
+            if (ex.getMessage().startsWith("Cannot assign an address to the following labels")) {
                 return;
             }
             fail("Assembly failed, but the thrown exception was not the one expected.");
@@ -69,7 +69,7 @@ class MIPS32AssemblerTest {
                     """);
         } catch (AssemblerException ex) {
             ex.printStackTrace();
-            if (ex.getMessage().startsWith("Cannot assign addresses to the following labels")) {
+            if (ex.getMessage().startsWith("Cannot assign an address to the following labels")) {
                 return;
             }
             fail("Assembly failed, but the thrown exception was not the one expected.");

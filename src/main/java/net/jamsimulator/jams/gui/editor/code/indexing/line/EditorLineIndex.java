@@ -33,6 +33,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.EditorLineChange;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.*;
 import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexFinishEditEvent;
@@ -510,6 +511,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         refresh.add(old);
         refresh.add(line);
         checkInspectionsInReferences(refresh);
+        checkLabelReferencesBackwards(number, line.getReferencingScope());
     }
 
     /**
@@ -535,6 +537,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
         refresh.add(line);
         checkInspectionsInReferences(refresh);
+        checkLabelReferencesBackwards(number, line.getReferencingScope());
     }
 
     /**
@@ -568,6 +571,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
         refresh.add(line);
         checkInspectionsInReferences(refresh);
+        checkLabelReferencesBackwards(number, line.getReferencingScope());
     }
 
     /**
@@ -776,6 +780,23 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
                     .collect(Collectors.toSet());
             global.inspectElementsWithReferences(toUpdate, Set.of(this));
         });
+    }
+
+    /**
+     * Inspects the labels whose address may depend on the start line.
+     *
+     * @param from  the start line.
+     * @param scope the element scope of the start line.
+     */
+    protected void checkLabelReferencesBackwards(int from, ElementScope scope) {
+        for (int i = from - 1; i >= 0; i--) {
+            var line = lines.get(i);
+            if (line.canBeReferencedByALabel() || !line.getReferencingScope().equals(scope)) break;
+            line.elementStream()
+                    .filter(it -> it instanceof EditorElementLabel)
+                    .forEach(it -> it.inspect(inspectors));
+            line.recalculateInspectionLevel();
+        }
     }
 
     /**

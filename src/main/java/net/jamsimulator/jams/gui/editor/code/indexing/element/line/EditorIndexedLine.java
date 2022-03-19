@@ -148,6 +148,13 @@ public abstract class EditorIndexedLine extends EditorIndexedParentElementImpl {
     public abstract boolean isMacroEnd();
 
     /**
+     * Returns whether this line should be referenced by a label.
+     *
+     * @return whether this line should be reference by a label.
+     */
+    public abstract boolean canBeReferencedByALabel();
+
+    /**
      * @return returns the macro scope defined by this line.
      */
     public abstract Optional<ElementScope> getDefinedMacroScope();

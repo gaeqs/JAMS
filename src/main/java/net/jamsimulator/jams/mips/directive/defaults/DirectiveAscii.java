@@ -38,7 +38,7 @@ public class DirectiveAscii extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.STRING};
 
     public DirectiveAscii() {
-        super(NAME, PARAMETERS, true, false);
+        super(NAME, PARAMETERS, true, false, true);
     }
 
     @Override

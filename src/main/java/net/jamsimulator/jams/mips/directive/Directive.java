@@ -44,15 +44,26 @@ public abstract class Directive {
     private final String name;
 
     private final DirectiveParameterType[] parameters;
-    private final boolean repeatLastParameter, optionalParameters;
+    private final boolean repeatLastParameter, optionalParameters, providesAddress;
 
-    public Directive(String name, DirectiveParameterType[] parameters, boolean repeatLastParameter, boolean optionalParameters) {
+    /**
+     * Creates a new directive.
+     *
+     * @param name                the name of the directive (without the starting dot).
+     * @param parameters          the parameters' types of te directive.
+     * @param repeatLastParameter whether the last parameter can be repeated.
+     * @param optionalParameters  whether the parameters of this directive are optional.
+     * @param providesAddress     whether this directive provides an address to the assembler.
+     */
+    public Directive(String name, DirectiveParameterType[] parameters,
+                     boolean repeatLastParameter, boolean optionalParameters, boolean providesAddress) {
         Validate.notNull(name, "Name cannot be null!");
         Validate.hasNoNulls(parameters, "The parameters array cannot contain null elements!");
         this.name = name;
         this.parameters = parameters;
         this.repeatLastParameter = repeatLastParameter;
         this.optionalParameters = optionalParameters;
+        this.providesAddress = providesAddress;
     }
 
     /**
@@ -129,12 +140,21 @@ public abstract class Directive {
     }
 
     /**
-     * Returns when the parameters of this directive are optional.
+     * Returns whether the parameters of this directive are optional.
      *
-     * @return when the parameters of this directive are optional.
+     * @return whether the parameters of this directive are optional.
      */
     public boolean areParametersOptional() {
         return optionalParameters;
+    }
+
+    /**
+     * Returns whether this directive provides an address to the assembler.
+     *
+     * @return whether this directive provides an address to the assembler.
+     */
+    public boolean providesAddress() {
+        return providesAddress;
     }
 
     /**

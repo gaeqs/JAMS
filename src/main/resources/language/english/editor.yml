@@ -8,6 +8,7 @@ TASK_ASSEMBLING: Assembling...
 EDITOR_ERROR_DUPLICATE_LABEL: Duplicated label '{LABEL}' at line {LINE}.
 EDITOR_ERROR_DUPLICATE_GLOBAL_LABEL: Duplicated global label '{LABEL}' at line {LINE}
   on file '{FILE}'.
+EDITOR_ERROR_LABEL_ADDRESS_NOT_FOUND: This label has no address assigned.
 EDITOR_ERROR_DUPLICATE_MACRO: Duplicated macro '{MACRO}' with {PARAMETERS} parameters at line {LINE}.
 EDITOR_ERROR_DUPLICATE_GLOBAL_MACRO: Duplicated global macro '{MACRO}' with {PARAMETERS} parameters at line {LINE}
   on file '{FILE}'.

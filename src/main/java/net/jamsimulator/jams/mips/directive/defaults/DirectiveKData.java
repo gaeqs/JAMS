@@ -40,7 +40,7 @@ public class DirectiveKData extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.INT};
 
     public DirectiveKData() {
-        super(NAME, PARAMETERS, false, true);
+        super(NAME, PARAMETERS, false, true, true);
     }
 
     @Override

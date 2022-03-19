@@ -37,7 +37,7 @@ public class DirectiveEqv extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.ANY};
 
     public DirectiveEqv() {
-        super(NAME, PARAMETERS, false, false);
+        super(NAME, PARAMETERS, false, false, false);
     }
 
     @Override

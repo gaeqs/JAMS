@@ -38,7 +38,7 @@ public class DirectiveAsciiz extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.STRING};
 
     public DirectiveAsciiz() {
-        super(NAME, PARAMETERS, true, false);
+        super(NAME, PARAMETERS, true, false, true);
     }
 
     @Override

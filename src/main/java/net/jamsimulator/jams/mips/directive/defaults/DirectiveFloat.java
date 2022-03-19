@@ -39,7 +39,7 @@ public class DirectiveFloat extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.FLOAT};
 
     public DirectiveFloat() {
-        super(NAME, PARAMETERS, true, false);
+        super(NAME, PARAMETERS, true, false, true);
     }
 
     @Override
