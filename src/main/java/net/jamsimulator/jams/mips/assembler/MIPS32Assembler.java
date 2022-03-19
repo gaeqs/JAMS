@@ -48,7 +48,7 @@ public class MIPS32Assembler implements Assembler {
 
     private final List<MIPS32AssemblerFile> files = new ArrayList<>();
     private final Map<Integer, String> originalInstructions = new HashMap<>();
-    private final MIPS32AssemblerScope globalScope = new MIPS32AssemblerScope("global", null, null);
+    private final AssemblerScope globalScope = new AssemblerScope("global", null, null);
 
     private final MIPS32AssemblerData assemblerData;
 
@@ -104,7 +104,22 @@ public class MIPS32Assembler implements Assembler {
 
     @Override
     public Set<Label> getAllLabels() {
-        return new HashSet<>(globalScope.getScopeLabels().values());
+        var labels = new HashSet<Label>();
+        var list = new LinkedList<AssemblerScope>();
+        list.add(globalScope);
+
+        while (!list.isEmpty()) {
+            var current = list.pop();
+            labels.addAll(current.getScopeLabels().values());
+            list.addAll(current.getChildren());
+        }
+
+        return labels;
+    }
+
+    @Override
+    public AssemblerScope getGlobalScope() {
+        return globalScope;
     }
 
     @Override
@@ -119,7 +134,7 @@ public class MIPS32Assembler implements Assembler {
 
     @Override
     public OptionalInt getStartAddres() {
-        Label label = globalScope.getScopeLabels().get("main");
+        var label = globalScope.getScopeLabels().get("main");
         if (label == null) return OptionalInt.empty();
         return OptionalInt.of(label.getAddress());
     }
@@ -138,10 +153,6 @@ public class MIPS32Assembler implements Assembler {
         if (!assembled) throw new IllegalStateException("The program is still not assembled!");
         MIPSSimulation<?> simulation = architecture.createSimulation(data);
         return (MIPSSimulation<Arch>) simulation;
-    }
-
-    public MIPS32AssemblerScope getGlobalScope() {
-        return globalScope;
     }
 
     // region log utils

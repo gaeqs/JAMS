@@ -120,6 +120,13 @@ public interface Assembler {
     Set<Label> getAllLabels();
 
     /**
+     * Returns the {@link AssemblerScope global scope} of this assembler.
+     *
+     * @return the {@link AssemblerScope global scope}.
+     */
+    AssemblerScope getGlobalScope();
+
+    /**
      * Returns the position of the stack bottom.
      *
      * @return the position.

@@ -58,8 +58,8 @@ public class LabelTableLabel extends ExplorerSection {
 
         var address = "0x" + StringUtils.addZeros(Integer.toHexString(label.getAddress()), 8);
 
-        var addressElement = new LanguageExplorerBasicElement(this, "address", 2, Messages.LABELS_ADDRESS);
-        var lineElement = new LanguageExplorerBasicElement(this, "line", 2, Messages.LABELS_LINE);
+        var addressElement = new LanguageExplorerBasicElement(this, "address", hierarchyLevel, Messages.LABELS_ADDRESS);
+        var lineElement = new LanguageExplorerBasicElement(this, "line", hierarchyLevel, Messages.LABELS_LINE);
 
         addressElement.setReplacements(new String[]{"{ADDRESS}", address});
         lineElement.setReplacements(new String[]{"{LINE}", String.valueOf(label.getOriginLine())});
@@ -69,7 +69,7 @@ public class LabelTableLabel extends ExplorerSection {
 
         addElement(addressElement);
         addElement(lineElement);
-        addElement(new LabelTableReferences(explorer, this, label, 2));
+        addElement(new LabelTableReferences(explorer, this, label, hierarchyLevel + 1));
 
     }
 

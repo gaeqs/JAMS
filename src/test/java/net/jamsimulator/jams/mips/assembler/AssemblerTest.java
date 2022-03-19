@@ -91,7 +91,7 @@ class AssemblerTest {
                 configuration,
                 new File(""),
                 null,
-                new MIPSSimulationSource(assembler.getOriginals(), assembler.getAllLabels()),
+                new MIPSSimulationSource(assembler.getOriginals(), assembler.getAllLabels(), assembler.getGlobalScope()),
                 assembler.getInstructionSet(),
                 assembler.getRegisters().copy(),
                 assembler.getMemory().copy(),

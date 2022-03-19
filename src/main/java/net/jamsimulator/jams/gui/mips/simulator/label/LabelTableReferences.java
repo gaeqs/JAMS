@@ -49,6 +49,7 @@ public class LabelTableReferences extends LanguageExplorerSection {
 
         representation.hideIcon(true);
 
-        label.getReferences().forEach(reference -> addElement(new LabelTableReference(this, reference, 2)));
+        label.getReferences().forEach(reference ->
+                addElement(new LabelTableReference(this, reference, hierarchyLevel)));
     }
 }

@@ -35,7 +35,7 @@ import java.util.List;
 public class MIPS32AssemblerLine {
 
     private final MIPS32AssemblerFile file;
-    private final MIPS32AssemblerScope scope;
+    private final AssemblerScope scope;
     private final String raw;
     private final int index;
 
@@ -46,7 +46,7 @@ public class MIPS32AssemblerLine {
 
     private int address = 0;
 
-    public MIPS32AssemblerLine(MIPS32AssemblerFile file, MIPS32AssemblerScope scope, String raw, int index) {
+    public MIPS32AssemblerLine(MIPS32AssemblerFile file, AssemblerScope scope, String raw, int index) {
         this.file = file;
         this.scope = scope;
         this.raw = raw;
@@ -61,7 +61,7 @@ public class MIPS32AssemblerLine {
         return file.getAssembler();
     }
 
-    public MIPS32AssemblerScope getScope() {
+    public AssemblerScope getScope() {
         return scope;
     }
 

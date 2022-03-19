@@ -40,12 +40,10 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulationSource;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 
 import java.io.File;
-import java.util.Map;
 import java.util.Set;
 
 public class TestUtils {
 
-    private static final MIPSSimulationSource SOURCE = new MIPSSimulationSource(Map.of(), Set.of());
     private static final MIPSSimulationConfiguration CONFIG = new MIPSSimulationConfiguration("test");
     private static final InstructionSet INSTRUCTION_SET = new MIPS32r6InstructionSet(ResourceProvider.JAMS);
     private static final DirectiveSet DIRECTIVE_SET = new MIPS32DirectiveSet(ResourceProvider.JAMS);
@@ -94,7 +92,7 @@ public class TestUtils {
                 CONFIG,
                 new File(""),
                 assembler.getLog(),
-                SOURCE,
+                new MIPSSimulationSource(assembler.getOriginals(), assembler.getAllLabels(), assembler.getGlobalScope()),
                 assembler.getInstructionSet(),
                 assembler.getRegisters(),
                 assembler.getMemory(),

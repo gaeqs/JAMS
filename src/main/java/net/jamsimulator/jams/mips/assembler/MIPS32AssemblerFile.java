@@ -41,7 +41,7 @@ public class MIPS32AssemblerFile {
 
     private final List<MIPS32AssemblerLine> lines = new ArrayList<>();
     private final List<String> globalIdentifiers = new ArrayList<>();
-    private final MIPS32AssemblerScope scope;
+    private final AssemblerScope scope;
 
     private Macro definingMacro = null;
     private int macroCount = 0;
@@ -50,7 +50,7 @@ public class MIPS32AssemblerFile {
         this.assembler = assembler;
         this.name = name;
         this.rawData = rawData;
-        this.scope = new MIPS32AssemblerScope(name, null, assembler.getGlobalScope());
+        this.scope = new AssemblerScope(name, null, assembler.getGlobalScope());
     }
 
     public MIPS32Assembler getAssembler() {
@@ -61,7 +61,7 @@ public class MIPS32AssemblerFile {
         return name;
     }
 
-    public MIPS32AssemblerScope getScope() {
+    public AssemblerScope getScope() {
         return scope;
     }
 
@@ -73,7 +73,7 @@ public class MIPS32AssemblerFile {
         macroCount = 1;
     }
 
-    public void stopMacroDefinition(int line, MIPS32AssemblerScope scope) {
+    public void stopMacroDefinition(int line, AssemblerScope scope) {
         if (definingMacro == null) {
             throw new AssemblerException(line, "There's no macro being defined!");
         }
@@ -110,7 +110,7 @@ public class MIPS32AssemblerFile {
         }
     }
 
-    public void discoverElements(MIPS32AssemblerScope scope, List<String> rawLines, int startIndex) {
+    public void discoverElements(AssemblerScope scope, List<String> rawLines, int startIndex) {
         var equivalents = new HashMap<String, String>();
         for (String raw : rawLines) {
             raw = sanityLine(raw, equivalents);
@@ -147,7 +147,7 @@ public class MIPS32AssemblerFile {
                             " in scope " + scope.getName() + "!");
                 }
 
-                var childScope = new MIPS32AssemblerScope(macro.get().getName(), macro.get(), scope);
+                var childScope = new AssemblerScope(macro.get().getName(), macro.get(), scope);
                 var lines = macro.get().getParsedLines(call.getParameters(), i);
                 discoverElements(childScope, lines, i + 1);
             }

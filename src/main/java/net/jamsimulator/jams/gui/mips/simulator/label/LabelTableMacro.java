@@ -22,22 +22,27 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.mips.simulation;
+package net.jamsimulator.jams.gui.mips.simulator.label;
 
-import net.jamsimulator.jams.mips.assembler.AssemblerScope;
-import net.jamsimulator.jams.mips.label.Label;
+import net.jamsimulator.jams.gui.explorer.Explorer;
+import net.jamsimulator.jams.gui.explorer.ExplorerElement;
+import net.jamsimulator.jams.gui.explorer.ExplorerSection;
+import net.jamsimulator.jams.gui.image.icon.Icons;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.Comparator;
 
-public record MIPSSimulationSource(Map<Integer, String> instructions,
-                                   Set<Label> labels,
-                                   AssemblerScope globalScope) {
+public class LabelTableMacro extends ExplorerSection {
 
-    public MIPSSimulationSource(Map<Integer, String> instructions, Set<Label> labels, AssemblerScope globalScope) {
-        this.instructions = Map.copyOf(instructions);
-        this.labels = Set.copyOf(labels);
-        this.globalScope = globalScope;
+    /**
+     * Creates the explorer section.
+     *
+     * @param explorer the {@link Explorer} of this section.
+     * @param parent   the {@link ExplorerSection} containing this section. This may be null.
+     * @param file     the represented file.
+     *                 * @param hierarchyLevel the .hierarchy level, used by the spacing.
+     */
+    public LabelTableMacro(Explorer explorer, ExplorerSection parent, String file, int hierarchyLevel) {
+        super(explorer, parent, file, hierarchyLevel, Comparator.comparing(ExplorerElement::getVisibleName));
+        representation.getIcon().setIcon(Icons.AUTOCOMPLETION_MACRO);
     }
-
 }

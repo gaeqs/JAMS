@@ -27,35 +27,41 @@ package net.jamsimulator.jams.mips.assembler;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.label.Label;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
-public class MIPS32AssemblerScope {
+public class AssemblerScope {
 
     private final String name;
-    private final MIPS32AssemblerScope parent;
+    private final AssemblerScope parent;
     private final Map<String, Label> labels;
     private final Map<String, Macro> macros;
     private final Macro originMacro;
 
-    public MIPS32AssemblerScope(String name, Macro originMacro, MIPS32AssemblerScope parent) {
+    private final Set<AssemblerScope> children;
+
+    public AssemblerScope(String name, Macro originMacro, AssemblerScope parent) {
         this.name = name;
         this.parent = parent;
         this.labels = new HashMap<>();
         this.macros = new HashMap<>();
         this.originMacro = originMacro;
 
+        this.children = new HashSet<>();
+
         if (originMacro != null) {
-            MIPS32AssemblerScope current = parent;
+            AssemblerScope current = parent;
             while (current != null) {
                 if (current.originMacro == originMacro) {
                     throw new AssemblerException(originMacro.getOriginLine(),
                             "Cyclic dependency found in macro '" + name + "' located at "
-                            + originMacro.getOriginFile() + ":" + originMacro.getOriginLine() + ".");
+                                    + originMacro.getOriginFile() + ":" + originMacro.getOriginLine() + ".");
                 }
                 current = current.parent;
             }
+        }
+
+        if (parent != null) {
+            parent.children.add(this);
         }
     }
 
@@ -67,8 +73,12 @@ public class MIPS32AssemblerScope {
         return Optional.ofNullable(originMacro);
     }
 
-    public Optional<MIPS32AssemblerScope> getParent() {
+    public Optional<AssemblerScope> getParent() {
         return Optional.ofNullable(parent);
+    }
+
+    public Set<AssemblerScope> getChildren() {
+        return Collections.unmodifiableSet(children);
     }
 
     public Map<String, Label> getScopeLabels() {
