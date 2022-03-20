@@ -125,7 +125,7 @@ public class SyscallExecutionReadDouble implements SyscallExecution {
         public Builder(ResourceProvider provider) {
             super(provider, NAME, new LinkedList<>());
             properties.add(lineJump = new SimpleBooleanProperty(null, "LINE_JUMP", false));
-            properties.add(register = new SimpleIntegerProperty(null, "REGISTER", 0));
+            properties.add(register = new SimpleIntegerProperty(null, "REGISTER", 2));
         }
 
         @Override
