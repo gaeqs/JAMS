@@ -34,6 +34,7 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class SyscallExecutionRandomFloat implements SyscallExecution {
@@ -63,12 +64,12 @@ public class SyscallExecutionRandomFloat implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var simulation = execution.getSimulation();
         var index = execution.value(generatorRegister);
 
         var value = simulation.getNumberGenerators().getGenerator(index).nextFloat();
-        execution.setAndUnlockCOP1(valueRegister, Float.floatToIntBits(value));
+        return Map.of(valueRegister, Float.floatToIntBits(value));
     }
 
     @Override

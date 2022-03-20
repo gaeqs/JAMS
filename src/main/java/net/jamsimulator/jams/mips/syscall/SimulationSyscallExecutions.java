@@ -70,10 +70,10 @@ public class SimulationSyscallExecutions {
         syscall.getLockedRegisters().forEach(execution::lock);
     }
 
-    public void executeSyscallMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeSyscallMultiCycle(MultiCycleExecution<?, ?> execution) {
         var value = execution.value(2);
         var syscall = executions.getOrDefault(value, defaultExecution);
-        syscall.executeMultiCycle(execution);
+        return syscall.executeMultiCycle(execution);
     }
 
 }

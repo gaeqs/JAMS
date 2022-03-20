@@ -28,7 +28,6 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.gui.util.log.Log;
 import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.instruction.execution.MultiCycleExecution;
@@ -40,6 +39,7 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class SyscallExecutionPrintString implements SyscallExecution {
@@ -67,8 +67,9 @@ public class SyscallExecutionPrintString implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         print(execution.getSimulation().getMemory(), execution.getSimulation().getLog(), execution.value(register));
+        return Collections.emptyMap();
     }
 
     @Override

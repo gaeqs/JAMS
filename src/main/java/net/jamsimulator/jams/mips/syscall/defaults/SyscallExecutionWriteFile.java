@@ -36,6 +36,7 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -93,7 +94,7 @@ public class SyscallExecutionWriteFile implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var simulation = execution.getSimulation();
         var id = execution.value(idRegister);
         var address = execution.value(addressRegister);
@@ -101,8 +102,7 @@ public class SyscallExecutionWriteFile implements SyscallExecution {
 
         Optional<SimulationFile> optional = simulation.getFiles().get(id);
         if (optional.isEmpty()) {
-            execution.setAndUnlock(resultRegister, -1);
-            return;
+            return Map.of(resultRegister, -1);
         }
 
         SimulationFile file = optional.get();
@@ -116,9 +116,9 @@ public class SyscallExecutionWriteFile implements SyscallExecution {
 
         try {
             file.write(bytes);
-            execution.setAndUnlock(resultRegister, bytes.length);
+            return Map.of(resultRegister, bytes.length);
         } catch (RuntimeException ex) {
-            execution.setAndUnlock(resultRegister, -1);
+            return Map.of(resultRegister, -1);
         }
     }
 

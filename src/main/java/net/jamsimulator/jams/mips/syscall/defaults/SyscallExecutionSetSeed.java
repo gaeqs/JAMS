@@ -35,6 +35,7 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class SyscallExecutionSetSeed implements SyscallExecution {
@@ -63,11 +64,12 @@ public class SyscallExecutionSetSeed implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         int index = execution.value(generatorRegister);
         int seed = execution.value(seedRegister);
 
         execution.getSimulation().getNumberGenerators().getGenerator(index).setSeed(seed);
+        return Collections.emptyMap();
     }
 
     @Override

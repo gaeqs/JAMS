@@ -38,6 +38,7 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class SyscallExecutionReadString implements SyscallExecution {
@@ -87,15 +88,15 @@ public class SyscallExecutionReadString implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var simulation = execution.getSimulation();
         var maxChars = execution.value(maxCharsRegister);
-        if (maxChars < 1) return;
+        if (maxChars < 1) return Collections.emptyMap();
 
         var address = execution.value(addressRegister);
 
         String value = simulation.popInputOrLock();
-        if (simulation.checkThreadInterrupted()) return;
+        if (simulation.checkThreadInterrupted()) return Collections.emptyMap();
 
         Memory memory = simulation.getMemory();
 
@@ -110,6 +111,7 @@ public class SyscallExecutionReadString implements SyscallExecution {
 
         simulation.getLog().printDone(value);
         if (lineJump) simulation.getLog().println();
+        return Collections.emptyMap();
     }
 
     @Override

@@ -38,6 +38,7 @@ import net.jamsimulator.jams.utils.NumericUtils;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class SyscallExecutionReadInteger implements SyscallExecution {
@@ -78,24 +79,24 @@ public class SyscallExecutionReadInteger implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var simulation = execution.getSimulation();
 
+        int result = -1;
         boolean done = false;
         while (!done) {
             String value = simulation.popInputOrLock();
-            if (simulation.checkThreadInterrupted()) return;
+            if (simulation.checkThreadInterrupted()) return Collections.emptyMap();
 
             try {
-                int input = NumericUtils.decodeInteger(value);
-                execution.setAndUnlock(register, input);
-
+                result = NumericUtils.decodeInteger(value);
                 simulation.getLog().printDone(value);
                 if (lineJump) simulation.getLog().println();
                 done = true;
             } catch (NumberFormatException ignore) {
             }
         }
+        return Map.of(register, result);
     }
 
     @Override

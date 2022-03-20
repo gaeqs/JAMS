@@ -37,6 +37,7 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class SyscallExecutionReadCharacter implements SyscallExecution {
@@ -69,15 +70,14 @@ public class SyscallExecutionReadCharacter implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var simulation = execution.getSimulation();
         char value = simulation.popCharOrLock();
-        if (simulation.checkThreadInterrupted()) return;
-
-        execution.setAndUnlock(register, ((int) value) & 0xFF);
+        if (simulation.checkThreadInterrupted()) return Collections.emptyMap();
 
         simulation.getLog().printDone(value);
         if (lineJump) simulation.getLog().println();
+        return Map.of(register, ((int) value) & 0xFF);
     }
 
     @Override

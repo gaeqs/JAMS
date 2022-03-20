@@ -33,6 +33,7 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class SyscallExecutionExit implements SyscallExecution {
@@ -65,7 +66,7 @@ public class SyscallExecutionExit implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var simulation = execution.getSimulation();
         simulation.requestExit(0, execution.getInstructionId());
         if (simulation.getLog() != null) {
@@ -74,6 +75,7 @@ public class SyscallExecutionExit implements SyscallExecution {
             simulation.getLog().println();
         }
         simulation.callEvent(new SimulationFinishedEvent(simulation));
+        return Collections.emptyMap();
     }
 
     public static class Builder extends SyscallExecutionBuilder<SyscallExecutionExit> {

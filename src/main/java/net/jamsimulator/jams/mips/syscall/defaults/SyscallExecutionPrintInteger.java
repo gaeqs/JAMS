@@ -37,6 +37,7 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class SyscallExecutionPrintInteger implements SyscallExecution {
@@ -67,12 +68,13 @@ public class SyscallExecutionPrintInteger implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var value = execution.value(register);
         var console = execution.getSimulation().getLog();
         String toPrint = printHex ? Integer.toHexString(value) : String.valueOf(value);
         console.print(toPrint);
         if (lineJump) console.println();
+        return Collections.emptyMap();
     }
 
     @Override
