@@ -49,6 +49,9 @@ public class LabelTable extends Explorer {
         globalScope.getChildren().stream()
                 .filter(it -> !it.getScopeLabels().isEmpty())
                 .forEach(this::addFile);
+
+        globalScope.getScopeLabels().forEach((name, label) ->
+                mainSection.addElement(new LabelTableLabel(this, mainSection, label, 1)));
     }
 
     public MIPSSimulationPane getSimulationPane() {
@@ -57,8 +60,9 @@ public class LabelTable extends Explorer {
 
     @Override
     protected void generateMainSection() {
+        Comparator<ExplorerElement> comparator = Comparator.comparing(it -> (it instanceof LabelTableFile) ? 0 : 1);
         mainSection = new ExplorerSection(this, null,
-                "main", 0, Comparator.comparing(ExplorerElement::getVisibleName));
+                "main", 0, comparator.thenComparing(ExplorerElement::getVisibleName));
         hideMainSectionRepresentation();
         getChildren().add(mainSection);
     }
