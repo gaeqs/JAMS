@@ -2,30 +2,39 @@ BAR_EXPLORER_NAME: Explorador
 BAR_FILES_TO_ASSEMBLE_NAME: Archivos a ensamblar
 BAR_LOG_NAME: Informe
 BAR_SEARCH_RESULTS: '{RESULTS} resultados'
-EDITOR_INDEXING: Indexando...
+EDITOR_INDEXING: Indexando archivo {FILE}...
 TASK_ASSEMBLING: Ensamblando...
 
 EDITOR_ERROR_DUPLICATE_LABEL: La etiqueta '{LABEL}' está duplicada en la línea {LINE}.
 EDITOR_ERROR_DUPLICATE_GLOBAL_LABEL: La etiqueta global '{LABEL}' está duplicada en
   la línea {LINE} del archivo '{FILE}'.
-EDITOR_ERROR_DUPLICATE_MACRO: La macro '{MACRO}' está duplicada en la línea {LINE}.
-EDITOR_ERROR_DUPLICATE_GLOBAL_MACRO: La macro global '{MACRO}' está duplicada en la
+EDITOR_ERROR_LABEL_ADDRESS_NOT_FOUND: Esta etiqueta no tiene una dirección asignada.
+EDITOR_ERROR_DUPLICATE_MACRO: La macro '{MACRO}' con {PARAMETERS} parámetros está duplicada en la línea {LINE}.
+EDITOR_ERROR_DUPLICATE_GLOBAL_MACRO: La macro global '{MACRO}' con {PARAMETERS} parámetros está duplicada en la
   línea {LINE} del archivo '{FILE}'.
-EDITOR_ERROR_MACRO_NOT_FOUND: No se ha podido encontrar la macro '{MACRO}'.
-EDITOR_ERROR_INVALID_MACRO_PARAMETERS_AMOUNT: 'Número de argumentos inválido para
-  la macro ''{MACRO}''. (Se esperaban: {EXPECTED}. Se han encontrado: {FOUND})'
-EDITOR_ERROR_ILLEGAL_MACRO_PARAMETER: Los parámetros de las macros deben empezar por
-  '%'.
+EDITOR_ERROR_MACRO_NOT_FOUND: No se ha podido encontrar la macro '{MACRO}' con {PARAMETERS} parámetros.
+EDITOR_ERROR_ILLEGAL_MACRO_PARAMETER: Los parámetros de las macros deben empezar por '%'.
+EDITOR_ERROR_BAD_MACRO_FORMAT: Esta macro tiene un formato de parámetros incorrecto. 
+  Los parámetros deben empezar y terminar con paréntesis.
+EDITOR_ERROR_BAD_MACRO_CALL_FORMAT: Esta llamada a macro tiene un formato de parámetros incorrecto. 
+  Los parámetros deben empezar y terminar con paréntesis.
+
 EDITOR_MIPS_ERROR_ILLEGAL_LABEL: La etiquieta '{LABEL}' tiene un nombre no válido.
 EDITOR_MIPS_ERROR_INSTRUCTION_NOT_FOUND: No se ha podido encontrar la instrucción
   '{INSTRUCTION}' con los parámetros dados.
 EDITOR_MIPS_ERROR_LABEL_NOT_FOUND: No se ha podido encontrar la etiqueta '{LABEL}'.
+
 EDITOR_WARNING_SHADOWED_LABEL: La etiqueta '{LABEL}' en la línea {LINE} está siendo
-  ocultada por esta declaración. No podrás acceder a la etiqueta externa dentro de
-  esta macro.
+  ocultada por esta declaración. No podrás acceder a la etiqueta externa desde aquí.
 EDITOR_WARNING_SHADOWED_GLOBAL_LABEL: La etiqueta global '{LABEL}' de la línea {LINE}
   en el archivo '{FILE}' está siendo ocultada por esta declaración. No podrás acceder
-  a la etiqueta global externa dentro de esta macro.
+  a la etiqueta global externa desde aquí.
+EDITOR_WARNING_SHADOWED_MACRO: La macro '{MACRO}' con {PARAMETERS} parámetros en la línea {LINE} está siendo
+  ocultada por esta declaración. No podrás acceder a la macro externa desde aquí.
+EDITOR_WARNING_SHADOWED_GLOBAL_MACRO: La macro global '{MACRO}' con {PARAMETERS} parámetros de la línea {LINE}
+  en el archivo '{FILE}' está siendo ocultada por esta declaración. No podrás acceder
+  a la macro global externa desde aquí.
+
 EDITOR_MIPS_WARNING_EQV_USE: Evita usar la directiva '.eqv'. El editor no puede manejar
   el uso de equivalentes correctamente.
 EDITOR_MIPS_WARNING_DIRECTIVE_NOT_FOUND: No se ha podido encontrar la directiva '{DIRECTIVE}'.

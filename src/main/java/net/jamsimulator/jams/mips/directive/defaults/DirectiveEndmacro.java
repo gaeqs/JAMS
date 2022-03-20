@@ -24,7 +24,6 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 
@@ -34,18 +33,6 @@ public class DirectiveEndmacro extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {};
 
     public DirectiveEndmacro() {
-        super(NAME, PARAMETERS, false, false);
+        super(NAME, PARAMETERS, false, false, false);
     }
-
-    @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
-        // This directive is implemented in the assembler itself!
-        return -1;
-    }
-
-    @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-
-    }
-
 }

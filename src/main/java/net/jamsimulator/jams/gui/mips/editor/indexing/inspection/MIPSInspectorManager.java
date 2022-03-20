@@ -40,11 +40,13 @@ public class MIPSInspectorManager extends Manager<Inspector> {
 
     @Override
     protected void loadDefaultElements() {
+        add(new BadMacroFormatInspector(ResourceProvider.JAMS));
+        add(new BadMacroCallFormatInspector(ResourceProvider.JAMS));
         add(new DuplicatedLabelInspector(ResourceProvider.JAMS));
         add(new DuplicatedMacroInspector(ResourceProvider.JAMS));
         add(new MacroNotFoundInspector(ResourceProvider.JAMS));
-        add(new InvalidMacroParametersAmountInspector(ResourceProvider.JAMS));
         add(new IllegalMacroParameterInspector(ResourceProvider.JAMS));
+        add(new LabelAddressNotFoundInspector(ResourceProvider.JAMS));
         add(new MIPSIllegalLabelInspector(ResourceProvider.JAMS));
         add(new MIPSInstructionNotFoundInspector(ResourceProvider.JAMS));
         add(new MIPSInstructionLabelNotFoundInspector(ResourceProvider.JAMS));

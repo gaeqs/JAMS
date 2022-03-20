@@ -24,15 +24,16 @@
 
 package net.jamsimulator.jams.mips.directive;
 
-import net.jamsimulator.jams.gui.mips.editor.indexing.MIPSEditorIndex;
 import net.jamsimulator.jams.language.Language;
 import net.jamsimulator.jams.manager.Manager;
-import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
+import java.util.OptionalInt;
 
 /**
  * Represents a directive. Directive are the direct equivalent to the preprocessor code in C.
@@ -43,15 +44,26 @@ public abstract class Directive {
     private final String name;
 
     private final DirectiveParameterType[] parameters;
-    private final boolean repeatLastParameter, optionalParameters;
+    private final boolean repeatLastParameter, optionalParameters, providesAddress;
 
-    public Directive(String name, DirectiveParameterType[] parameters, boolean repeatLastParameter, boolean optionalParameters) {
+    /**
+     * Creates a new directive.
+     *
+     * @param name                the name of the directive (without the starting dot).
+     * @param parameters          the parameters' types of te directive.
+     * @param repeatLastParameter whether the last parameter can be repeated.
+     * @param optionalParameters  whether the parameters of this directive are optional.
+     * @param providesAddress     whether this directive provides an address to the assembler.
+     */
+    public Directive(String name, DirectiveParameterType[] parameters,
+                     boolean repeatLastParameter, boolean optionalParameters, boolean providesAddress) {
         Validate.notNull(name, "Name cannot be null!");
         Validate.hasNoNulls(parameters, "The parameters array cannot contain null elements!");
         this.name = name;
         this.parameters = parameters;
         this.repeatLastParameter = repeatLastParameter;
         this.optionalParameters = optionalParameters;
+        this.providesAddress = providesAddress;
     }
 
     /**
@@ -128,12 +140,21 @@ public abstract class Directive {
     }
 
     /**
-     * Returns when the parameters of this directive are optional.
+     * Returns whether the parameters of this directive are optional.
      *
-     * @return when the parameters of this directive are optional.
+     * @return whether the parameters of this directive are optional.
      */
     public boolean areParametersOptional() {
         return optionalParameters;
+    }
+
+    /**
+     * Returns whether this directive provides an address to the assembler.
+     *
+     * @return whether this directive provides an address to the assembler.
+     */
+    public boolean providesAddress() {
+        return providesAddress;
     }
 
     /**
@@ -149,27 +170,49 @@ public abstract class Directive {
     }
 
     /**
-     * Executes the directive in the given assembler.
+     * This method is executed when this label is found in the discovery step of an assembler.
      *
-     * @param lineNumber the line number the directive is at.
-     * @param line       the line of the directive.
-     * @param parameters the parameters of the directive.
-     * @param labelSufix when inside a macro, the label sufix that labels should use.
-     * @param file       the file where this directive is at.
-     * @return the start address of the directive.
+     * @param line          the line where this directive is located.
+     * @param parameters    the parameters of this directive.
+     * @param rawParameters the parameters in its raw format.
+     * @param equivalents   the equivalents used by the step. This map is mutable.
      */
-    public abstract int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file);
+    public void onDiscovery(MIPS32AssemblerLine line, String[] parameters, String rawParameters, Map<String, String> equivalents) {
+    }
 
     /**
-     * This method is executed after all labels, instructions and directives had been decoded.
+     * This method is executed when this label is reached in the expansion step of an assembler.
      *
-     * @param parameters the parameters of the directive.
-     * @param file       the file where the directive is located at.
-     * @param lineNumber the line number the directive is at.
-     * @param address    the start of the memory address dedicated to this directive in the method {@link #execute(int, String, String[], String, MIPS32AssemblingFile)}.
-     * @param labelSufix when inside a macro, the label sufix that labels should use.
+     * @param line          the line where this directive is located.
+     * @param parameters    the parameters of this directive.
+     * @param rawParameters the parameters in its raw format.
      */
-    public abstract void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix);
+    public void onExpansion(MIPS32AssemblerLine line, String[] parameters, String rawParameters) {
+    }
+
+    /**
+     * This method is executed when this label is reached in the address assignation step of an assembler.
+     * <p>
+     * This method can assign an address to the line. This is used by directives that require memory.
+     *
+     * @param line          the line where this directive is located.
+     * @param parameters    the parameters of this directive.
+     * @param rawParameters the parameters in its raw format.
+     * @return the address of the start of the memory reserved by this directive, or empty if no memory has been reserved.
+     */
+    public OptionalInt onAddressAssignation(MIPS32AssemblerLine line, String[] parameters, String rawParameters) {
+        return OptionalInt.empty();
+    }
+
+    /**
+     * This method is executed when this label is reached in the value assignation step of an assembler.
+     *
+     * @param line          the line where this directive is located.
+     * @param parameters    the parameters of this directive.
+     * @param rawParameters the parameters in its raw format.
+     */
+    public void onValueAssignation(MIPS32AssemblerLine line, String[] parameters, String rawParameters) {
+    }
 
     @Override
     public boolean equals(Object o) {

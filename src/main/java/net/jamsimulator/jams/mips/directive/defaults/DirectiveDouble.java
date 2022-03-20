@@ -25,11 +25,13 @@
 package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
-import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.NumericUtils;
+
+import java.util.OptionalInt;
 
 public class DirectiveDouble extends Directive {
 
@@ -37,20 +39,22 @@ public class DirectiveDouble extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.DOUBLE};
 
     public DirectiveDouble() {
-        super(NAME, PARAMETERS, true, false);
+        super(NAME, PARAMETERS, true, false, true);
     }
 
     @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
-        if (parameters.length < 1)
-            throw new AssemblerException(lineNumber, "." + NAME + " must have at least one parameter.");
-
-        for (String parameter : parameters) {
-            if (!NumericUtils.isDouble(parameter))
-                throw new AssemblerException(lineNumber, "." + NAME + " parameter '" + parameter + "' is not a double.");
+    public OptionalInt onAddressAssignation(MIPS32AssemblerLine line, String[] parameters, String rawParameters) {
+        if (parameters.length < 1) {
+            throw new AssemblerException(line.getIndex(), "." + NAME + " must have at least one parameter.");
         }
 
-        MIPS32AssemblerData data = file.getAssembler().getAssemblerData();
+        for (String parameter : parameters) {
+            if (!NumericUtils.isDouble(parameter)) {
+                throw new AssemblerException(line.getIndex(), "." + NAME + " parameter '" + parameter + "' is not a double.");
+            }
+        }
+
+        MIPS32AssemblerData data = line.getAssembler().getAssemblerData();
         data.align(3);
         int start = data.getCurrent();
         for (String parameter : parameters) {
@@ -59,16 +63,11 @@ public class DirectiveDouble extends Directive {
             int low = (int) l;
             int high = (int) (l >> 32);
 
-            file.getAssembler().getMemory().setWord(data.getCurrent(), low);
-            file.getAssembler().getMemory().setWord(data.getCurrent() + 4, high);
+            line.getAssembler().getMemory().setWord(data.getCurrent(), low);
+            line.getAssembler().getMemory().setWord(data.getCurrent() + 4, high);
             data.addCurrent(8);
         }
-        return start;
-    }
-
-    @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-
+        return OptionalInt.of(start);
     }
 
 }

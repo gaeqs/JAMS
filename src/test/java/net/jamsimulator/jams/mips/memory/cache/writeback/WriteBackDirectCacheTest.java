@@ -25,7 +25,6 @@
 package net.jamsimulator.jams.mips.memory.cache.writeback;
 
 import net.jamsimulator.jams.Jams;
-import net.jamsimulator.jams.gui.util.log.Console;
 import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
 import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
@@ -43,7 +42,6 @@ import net.jamsimulator.jams.mips.register.Registers;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulationSource;
-import net.jamsimulator.jams.mips.syscall.SimulationSyscallExecutions;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 import net.jamsimulator.jams.utils.RawFileData;
 import org.junit.jupiter.api.BeforeAll;
@@ -98,7 +96,7 @@ class WriteBackDirectCacheTest {
 				configuration,
 				new File(""),
 				null,
-				new MIPSSimulationSource(assembler.getOriginals(), assembler.getAllLabels()),
+				new MIPSSimulationSource(assembler.getOriginals(), assembler.getAllLabels(), assembler.getGlobalScope()),
 				assembler.getInstructionSet(),
 				assembler.getRegisters().copy(),
 				assembler.getMemory().copy(),

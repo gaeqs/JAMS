@@ -30,6 +30,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.inspection.InspectionLevel
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
+import net.jamsimulator.jams.utils.MacroUtils;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -57,14 +58,18 @@ public class MacroNotFoundInspector extends Inspector<EditorElementMacroCallMnem
                 macro = global.get().searchReferencedElement(reference);
                 if (macro.isPresent()) continue;
             }
-            set.add(macroNotFound(reference.identifier()));
+            set.add(macroNotFound(reference.getIdentifier()));
         }
         return set;
     }
 
 
     private Inspection macroNotFound(String identifier) {
-        var replacements = Map.of("{MACRO}", identifier);
+        var pair = MacroUtils.splitNameAndParameters(identifier);
+        var name = pair.getKey();
+        var parameters = pair.getValue().stream().mapToObj(String::valueOf).findAny().orElse("-");
+
+        var replacements = Map.of("{MACRO}", name, "{PARAMETERS}", parameters);
 
         return new Inspection(this, InspectionLevel.ERROR,
                 Messages.EDITOR_ERROR_MACRO_NOT_FOUND, replacements);

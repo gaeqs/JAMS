@@ -24,11 +24,14 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.LabelUtils;
+
+import java.util.List;
+import java.util.Map;
 
 public class DirectiveGlobl extends Directive {
 
@@ -37,29 +40,20 @@ public class DirectiveGlobl extends Directive {
 
 
     public DirectiveGlobl() {
-        super(NAME, PARAMETERS, true, false);
+        super(NAME, PARAMETERS, true, false, false);
     }
 
     @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
-        if (parameters.length < 1)
-            throw new AssemblerException(lineNumber, "." + NAME + " must have at least one parameter.");
-
-        for (String parameter : parameters) {
-            if (!LabelUtils.isLabelLegal(parameter))
-                throw new AssemblerException("Illegal label " + parameter + ".");
+    public void onDiscovery(MIPS32AssemblerLine line, String[] parameters, String rawParameters, Map<String, String> equivalents) {
+        if (parameters.length < 1) {
+            throw new AssemblerException(line.getIndex(), "." + NAME + " must have at least one parameter.");
         }
 
-        for (String parameter : parameters) {
-            file.setAsGlobalLabel(lineNumber, parameter + labelSufix);
+        if (line.getScope() != line.getFile().getScope()) {
+            throw new AssemblerException(line.getIndex(), "Cannot use ." + NAME + " on a macro scope!");
         }
 
-        return -1;
-    }
-
-    @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-
+        line.getFile().addGlobalIdentifiers(List.of(parameters));
     }
 
 }

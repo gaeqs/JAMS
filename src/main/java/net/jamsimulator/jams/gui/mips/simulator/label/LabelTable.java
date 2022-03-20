@@ -29,9 +29,9 @@ import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.ExplorerSection;
 import net.jamsimulator.jams.gui.mips.project.MIPSSimulationPane;
+import net.jamsimulator.jams.mips.assembler.AssemblerScope;
 
 import java.util.Comparator;
-import java.util.HashMap;
 
 public class LabelTable extends Explorer {
 
@@ -44,17 +44,11 @@ public class LabelTable extends Explorer {
         getStyleClass().add(STYLE_CLASS);
         this.simulationPane = simulationPane;
 
-        var labels = simulationPane.getSimulation().getSource().labels();
-        var files = new HashMap<String, LabelTableFile>();
-        labels.forEach(label -> {
-            var section = files.computeIfAbsent(label.getOriginFile(),
-                    key -> {
-                        var target = new LabelTableFile(this, mainSection, key, 0);
-                        mainSection.addElement(target);
-                        return target;
-                    });
-            section.addElement(new LabelTableLabel(this, section, label, 1));
-        });
+        var globalScope = simulationPane.getSimulation().getSource().globalScope();
+
+        globalScope.getChildren().stream()
+                .filter(it -> !it.getScopeLabels().isEmpty())
+                .forEach(this::addFile);
     }
 
     public MIPSSimulationPane getSimulationPane() {
@@ -67,5 +61,26 @@ public class LabelTable extends Explorer {
                 "main", 0, Comparator.comparing(ExplorerElement::getVisibleName));
         hideMainSectionRepresentation();
         getChildren().add(mainSection);
+    }
+
+
+    private void addFile(AssemblerScope scope) {
+        var section = new LabelTableFile(this, mainSection, scope.getName(), 1);
+        mainSection.addElement(section);
+
+        scope.getChildren().forEach(it -> addMacro(it, section, 1));
+
+        scope.getScopeLabels().forEach((name, label) ->
+                section.addElement(new LabelTableLabel(this, section, label, 1)));
+    }
+
+    private void addMacro(AssemblerScope scope, ExplorerSection parent, int level) {
+        var section = new LabelTableMacro(this, parent, scope.getName(), level);
+        parent.addElement(section);
+
+        scope.getChildren().forEach(it -> addMacro(it, section, level + 1));
+
+        scope.getScopeLabels().forEach((name, label) ->
+                section.addElement(new LabelTableLabel(this, section, label, level + 1)));
     }
 }

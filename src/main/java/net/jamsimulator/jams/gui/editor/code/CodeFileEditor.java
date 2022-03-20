@@ -47,7 +47,6 @@ import net.jamsimulator.jams.gui.editor.code.hint.EditorHintBar;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorLineChange;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorPendingChanges;
-import net.jamsimulator.jams.gui.editor.code.indexing.IndexingThread;
 import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexRequestRefreshEvent;
 import net.jamsimulator.jams.gui.editor.code.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.editor.code.popup.DocumentationPopup;
@@ -57,10 +56,8 @@ import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.GUIReflectionUtils;
 import net.jamsimulator.jams.gui.util.ZoomUtils;
-import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.project.GlobalIndexHolder;
 import net.jamsimulator.jams.project.Project;
-import net.jamsimulator.jams.task.LanguageTask;
 import net.jamsimulator.jams.utils.FileUtils;
 import org.fxmisc.flowless.ScaledVirtualized;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -116,7 +113,6 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     protected ChangeListener<?> popupHideListener =
             (obs, old, val) -> popupHideHandler.handle(null);
 
-    protected final IndexingThread indexingThread;
     protected final Subscription subscription;
     protected final AnimationTimer styleTimer;
 
@@ -155,10 +151,6 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
                 }
             }
         });
-
-        indexingThread = new IndexingThread(this);
-        indexingThread.setDaemon(true);
-        indexingThread.start();
 
         subscription = plainTextChanges()
                 .conditionOn(editableProperty())
@@ -308,10 +300,13 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         var textPrevious = getParagraph(line - 1).getText();
         var textCurrent = getParagraph(line).getText();
 
-        int end = start + textCurrent.length();
         int startPrevious = start - textPrevious.length() - 1;
 
-        replaceText(startPrevious, end, textCurrent + "\n" + textPrevious);
+        if (!textCurrent.equals(textPrevious)) {
+            int end = start + textCurrent.length();
+            replaceText(startPrevious, end, textCurrent + "\n" + textPrevious);
+        }
+
         moveTo(startPrevious + column);
     }
 
@@ -325,10 +320,12 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         var textNext = getParagraph(line + 1).getText();
         var textCurrent = getParagraph(line).getText();
 
-        int end = start + textCurrent.length();
-        int endNext = end + 1 + textNext.length();
+        if (!textNext.equals(textCurrent)) {
+            int end = start + textCurrent.length();
+            int endNext = end + 1 + textNext.length();
+            replaceText(start, endNext, textNext + "\n" + textCurrent);
+        }
 
-        replaceText(start, endNext, textNext + "\n" + textCurrent);
         moveTo(start + textNext.length() + 1 + column);
     }
 
@@ -362,7 +359,6 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         JamsApplication.getStage().widthProperty().removeListener((ChangeListener<? super Number>) popupHideListener);
         JamsApplication.getStage().heightProperty().removeListener((ChangeListener<? super Number>) popupHideListener);
         subscription.unsubscribe();
-        indexingThread.kill();
         styleTimer.stop();
         hintBar.dispose();
     }
@@ -421,14 +417,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
             }
         }
         var index = generateIndex();
-        tab.getWorkingPane().getProjectTab().getProject()
-                .getTaskExecutor().execute(new LanguageTask<>(Messages.EDITOR_INDEXING) {
-                    @Override
-                    protected Void call() {
-                        index.withLock(true, i -> i.indexAll(getText()));
-                        return null;
-                    }
-                });
+        tab.getWorkingPane().getProjectTab().getProject().getTaskExecutor().executeIndexing(index, getText());
         return index;
     }
 
@@ -522,6 +511,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
 
     private void accept(LinkedList<EditorLineChange> list) {
         pendingChanges.addAll(list);
+        getProject().getTaskExecutor().executeIndexing(this);
     }
 
     private class StyleAnimation extends AnimationTimer {

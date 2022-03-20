@@ -25,11 +25,13 @@
 package net.jamsimulator.jams.mips.directive.defaults;
 
 import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerData;
-import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 import net.jamsimulator.jams.utils.NumericUtils;
+
+import java.util.OptionalInt;
 
 public class DirectiveSpace extends Directive {
 
@@ -37,29 +39,24 @@ public class DirectiveSpace extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.POSITIVE_INT};
 
     public DirectiveSpace() {
-        super(NAME, PARAMETERS, false, false);
+        super(NAME, PARAMETERS, false, false, true);
     }
 
     @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
+    public OptionalInt onAddressAssignation(MIPS32AssemblerLine line, String[] parameters, String rawParameters) {
         if (parameters.length != 1)
-            throw new AssemblerException(lineNumber, "." + NAME + " must have one parameter.");
+            throw new AssemblerException(line.getIndex(), "." + NAME + " must have one parameter.");
 
         if (!NumericUtils.isInteger(parameters[0]))
             throw new AssemblerException(parameters[0] + " is not a number.");
         int i = NumericUtils.decodeInteger(parameters[0]);
         if (i < 0) throw new AssemblerException(i + " cannot be negative.");
 
-        MIPS32AssemblerData data = file.getAssembler().getAssemblerData();
+        MIPS32AssemblerData data = line.getAssembler().getAssemblerData();
         data.align(0);
         int start = data.getCurrent();
         data.addCurrent(i);
-        return start;
-    }
-
-    @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-
+        return OptionalInt.of(start);
     }
 
 }

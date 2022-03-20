@@ -32,6 +32,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacro;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementRelativeReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
 import net.jamsimulator.jams.mips.parameter.ParameterPartType;
 import net.jamsimulator.jams.project.mips.MIPSProject;
@@ -58,7 +59,13 @@ public class MIPSEditorInstructionParameterPart extends EditorIndexedElementImpl
         }
 
         if (type == Type.LABEL) {
-            references = Set.of(new EditorElementReference<>(EditorElementLabel.class, getIdentifier()));
+            var type = EditorElementRelativeReference.Type.getByIdentifier(getIdentifier());
+            //noinspection OptionalIsPresent
+            if (type.isPresent()) {
+                references = Set.of(new EditorElementRelativeReference<>(EditorElementLabel.class, type.get(), this));
+            } else {
+                references = Set.of(new EditorElementReference<>(EditorElementLabel.class, getIdentifier()));
+            }
         } else {
             references = Set.of();
         }
@@ -72,13 +79,17 @@ public class MIPSEditorInstructionParameterPart extends EditorIndexedElementImpl
                 return EditorElementMacro.PARAMETER_STYLE;
             }
 
-            if (index.isIdentifierGlobal(getIdentifier())) {
-                return Set.of(Type.GLOBAL_LABEL_STYLE);
+            var reference = new EditorElementReference<>(EditorElementLabel.class, getIdentifier());
+            var local = index.getReferencedElement(reference, scope);
+
+            if (local.isPresent()) {
+                return local.get().getReferencedScope().equals(ElementScope.GLOBAL)
+                        ? Set.of(Type.GLOBAL_LABEL_STYLE)
+                        : Set.of(type.getCssClass());
             }
 
             var global = index.getGlobalIndex();
             if (global.isPresent()) {
-                var reference = new EditorElementReference<>(EditorElementLabel.class, getIdentifier());
                 var value = global.get().searchReferencedElement(reference);
                 if (value.isPresent()) {
                     return Set.of(Type.GLOBAL_LABEL_STYLE);

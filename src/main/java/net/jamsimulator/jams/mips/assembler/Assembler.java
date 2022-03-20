@@ -34,6 +34,7 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulationData;
 
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.Set;
 
 /**
@@ -119,6 +120,13 @@ public interface Assembler {
     Set<Label> getAllLabels();
 
     /**
+     * Returns the {@link AssemblerScope global scope} of this assembler.
+     *
+     * @return the {@link AssemblerScope global scope}.
+     */
+    AssemblerScope getGlobalScope();
+
+    /**
      * Returns the position of the stack bottom.
      *
      * @return the position.
@@ -131,5 +139,12 @@ public interface Assembler {
      * @return the position.
      */
     int getKernelStackBottom();
+
+    /**
+     * Returns the position where the execution should start.
+     *
+     * @return the position where the execution should start.
+     */
+    OptionalInt getStartAddres();
 
 }

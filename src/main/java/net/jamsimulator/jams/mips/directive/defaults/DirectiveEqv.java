@@ -24,10 +24,12 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
+
+import java.util.Map;
 
 public class DirectiveEqv extends Directive {
 
@@ -35,27 +37,15 @@ public class DirectiveEqv extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.ANY};
 
     public DirectiveEqv() {
-        super(NAME, PARAMETERS, false, false);
+        super(NAME, PARAMETERS, false, false, false);
     }
 
     @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
-        if (parameters.length < 2)
-            throw new AssemblerException(lineNumber, "." + NAME + " must have at least two parameter.");
-
-        var builder = new StringBuilder();
-        for (int i = 1; i < parameters.length; i++) {
-            if (i > 1) builder.append(' ');
-            builder.append(parameters[i]);
+    public void onDiscovery(MIPS32AssemblerLine line, String[] parameters, String rawParameters, Map<String, String> equivalents) {
+        if (parameters.length < 2) {
+            throw new AssemblerException(line.getIndex(), "." + NAME + " must have at least two parameter.");
         }
-
-        file.addEquivalent(parameters[0] + labelSufix, builder.toString());
-        return -1;
-    }
-
-    @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-
+        equivalents.put(parameters[0], rawParameters.substring(rawParameters.indexOf(parameters[1])));
     }
 
 }

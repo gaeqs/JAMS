@@ -32,15 +32,29 @@ public class LabelUtils {
     private static final List<String> illegalCharacters = Arrays.asList("\\", ";", "\"", "#", "'");
 
     /**
-     * Returns whether this label is valid.
+     * Returns whether this label declaration is valid.
+     * The given string must not contain the final character ':'.
+     * <p>
+     * Declarations have more restrictions than references: definitions
+     * cannot equal reserved label names, such as "+" or "-".
+     *
+     * @param label the string.
+     * @return whether the label represented by the given string is valid.
+     */
+    public static boolean isLabelDeclarationLegal(String label) {
+        if (label.equals("+") || label.equals("-")) return false;
+        return isLabelReferenceLegal(label);
+    }
+
+    /**
+     * Returns whether this label reference is valid.
      * The given string must not contain the final character ':'.
      *
      * @param label the string.
      * @return whether the label represented by the given string is valid.
      */
-    public static boolean isLabelLegal(String label) {
+    public static boolean isLabelReferenceLegal(String label) {
         if (label.isEmpty()) return false;
-
         //Special case: ':' is not allowed, but "::" is.
         int colon = -2;
 
@@ -59,7 +73,7 @@ public class LabelUtils {
      * Returns the final position of the label inside the given line.
      * If no labels are found, this method returns -1.
      * <p>
-     * The returned label may be illegal. Use {@link #isLabelLegal(String)} to check if the returned label is legal.
+     * The returned label may be illegal. Use {@link #isLabelDeclarationLegal(String)} to check if the returned label is legal.
      *
      * @param line the line containing the label.
      * @return the last position of the label, inclusive, or -1 if not found. (The last position will be the ':' character.)

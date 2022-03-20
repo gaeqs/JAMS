@@ -24,11 +24,14 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
+import net.jamsimulator.jams.mips.label.Label;
 import net.jamsimulator.jams.utils.LabelUtils;
+
+import java.util.Map;
 
 public class DirectiveLab extends Directive {
 
@@ -36,24 +39,19 @@ public class DirectiveLab extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {DirectiveParameterType.LABEL};
 
     public DirectiveLab() {
-        super(NAME, PARAMETERS, false, false);
+        super(NAME, PARAMETERS, false, false, false);
     }
 
     @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
+    public void onDiscovery(MIPS32AssemblerLine line, String[] parameters, String rawParameters, Map<String, String> equivalents) {
         if (parameters.length != 1)
-            throw new AssemblerException(lineNumber, "." + NAME + " must have one parameter.");
+            throw new AssemblerException(line.getIndex(), "." + NAME + " must have one parameter.");
 
-        if (!LabelUtils.isLabelLegal(parameters[0]))
-            throw new AssemblerException("Label " + parameters[0] + labelSufix + " is not legal.");
+        if (!LabelUtils.isLabelDeclarationLegal(parameters[0]))
+            throw new AssemblerException("Label " + parameters[0] + " is not legal.");
 
-        file.addLabelToQueue(parameters[0] + labelSufix);
-        return -1;
-    }
-
-    @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-
+        var label = new Label(parameters[0], line.getScope(), 0, line.getFile().getName(), line.getIndex());
+        line.getLabels().add(label);
     }
 
 }

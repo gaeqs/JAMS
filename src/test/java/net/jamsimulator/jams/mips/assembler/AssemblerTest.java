@@ -27,6 +27,7 @@ package net.jamsimulator.jams.mips.assembler;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.manager.ResourceProvider;
 import net.jamsimulator.jams.mips.architecture.SingleCycleArchitecture;
+import net.jamsimulator.jams.mips.assembler.MIPS32Assembler;
 import net.jamsimulator.jams.mips.directive.set.MIPS32DirectiveSet;
 import net.jamsimulator.jams.mips.instruction.set.MIPS32r6InstructionSet;
 import net.jamsimulator.jams.mips.memory.MIPS32Memory;
@@ -90,7 +91,7 @@ class AssemblerTest {
                 configuration,
                 new File(""),
                 null,
-                new MIPSSimulationSource(assembler.getOriginals(), assembler.getAllLabels()),
+                new MIPSSimulationSource(assembler.getOriginals(), assembler.getAllLabels(), assembler.getGlobalScope()),
                 assembler.getInstructionSet(),
                 assembler.getRegisters().copy(),
                 assembler.getMemory().copy(),

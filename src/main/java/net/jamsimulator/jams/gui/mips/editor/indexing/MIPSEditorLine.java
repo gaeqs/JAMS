@@ -26,13 +26,11 @@ package net.jamsimulator.jams.gui.mips.editor.indexing;
 
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementComment;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabelImpl;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroCall;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.*;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
 import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirective;
 import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstruction;
+import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveEndmacro;
 import net.jamsimulator.jams.mips.directive.defaults.DirectiveMacro;
 import net.jamsimulator.jams.utils.LabelUtils;
@@ -85,10 +83,17 @@ public class MIPSEditorLine extends EditorIndexedLine {
     }
 
     @Override
-    public Optional<String> getDefinedMacroIdentifier() {
-        return isMacroStart() && directive.size() > 1
-                ? Optional.of(directive.getElement(1).getIdentifier())
-                : Optional.empty();
+    public boolean canBeReferencedByALabel() {
+        return instruction != null
+                || macroCall != null
+                || directive != null
+                && directive.getDirective().map(Directive::providesAddress).orElse(false);
+    }
+
+    @Override
+    public Optional<ElementScope> getDefinedMacroScope() {
+        if (!isMacroStart() || directive.size() < 2) return Optional.empty();
+        return Optional.ofNullable(((EditorElementMacro) directive.getElement(1)).getMacroScope());
     }
 
     protected void parseLine() {
@@ -106,7 +111,9 @@ public class MIPSEditorLine extends EditorIndexedLine {
         //LABEL
         int labelIndex = LabelUtils.getLabelFinishIndex(parsing);
         if (labelIndex != -1) {
-            label = new EditorElementLabelImpl(index, scope, this, pStart, parsing.substring(0, labelIndex + 1));
+            var labelText = parsing.substring(0, labelIndex + 1).trim();
+            var labelOffset = labelText.isEmpty() ? 0 : parsing.indexOf(labelText.charAt(0));
+            label = new EditorElementLabelImpl(index, scope, this, pStart + labelOffset, labelText);
             elements.add(label);
             pStart = pStart + labelIndex + 1;
             parsing = parsing.substring(labelIndex + 1);

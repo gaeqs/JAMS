@@ -31,12 +31,11 @@ import net.jamsimulator.jams.gui.editor.code.hint.EditorHintBar;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorLineChange;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.line.EditorIndexedLine;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorGlobalMarkerElement;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencedElement;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.*;
 import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexFinishEditEvent;
 import net.jamsimulator.jams.gui.editor.code.indexing.global.ProjectGlobalIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
@@ -77,8 +76,10 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     protected volatile ProjectGlobalIndex globalIndex;
     protected volatile EditorHintBar hintBar;
 
+    protected final ElementScope fileScope = new ElementScope(ElementScope.GLOBAL);
     protected final List<Line> lines = new ArrayList<>();
     protected final Map<EditorElementReference<?>, Set<EditorReferencingElement<?>>> referencingElements = new HashMap<>();
+    protected final Map<EditorElementReference<?>, Set<EditorReferencingElement<?>>> relativeReferencingElements = new HashMap<>();
     protected final Map<EditorElementReference<?>, Set<EditorReferencedElement>> referencedElements = new HashMap<>();
     protected final Bag<String> globalIdentifiers = new Bag<>();
 
@@ -194,34 +195,35 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
         var oldGlobalReferences = globalIdentifiers == null
                 ? Stream.<EditorElementReference<?>>empty() :
-                referencedElements.keySet().stream().filter(it -> globalIdentifiers.contains(it.identifier()));
+                referencedElements.keySet().stream().filter(it -> globalIdentifiers.contains(it.getIdentifier()));
 
         try {
             getHintBar().ifPresent(EditorHintBar::clear);
             lines.clear();
             referencedElements.clear();
             referencingElements.clear();
+            relativeReferencingElements.clear();
             globalIdentifiers.clear();
             if (text.isEmpty()) {
-                lines.add(generateNewLine(0, 0, "", ElementScope.FILE));
+                lines.add(generateNewLine(0, 0, "", fileScope));
                 return;
             }
 
             int start = 0;
             int end = 0;
             var builder = new StringBuilder();
-            var scope = ElementScope.FILE;
+            var scope = fileScope;
 
             char c;
             while (text.length() > end) {
                 c = text.charAt(end);
                 if (c == '\n' || c == '\r') {
                     var line = generateNewLine(start, lines.size(), builder.toString(), scope);
-                    if (line.isMacroEnd() || line.isMacroStart()) {
-                        line.changeScope(ElementScope.FILE);
-                        scope = line.isMacroStart() && line.getDefinedMacroIdentifier().isPresent()
-                                ? new ElementScope(ElementScope.Type.MACRO, line.getDefinedMacroIdentifier().get())
-                                : ElementScope.FILE;
+                    if (line.isMacroStart() && line.getDefinedMacroScope().isPresent()) {
+                        scope = line.getDefinedMacroScope().get();
+                    } else if (line.isMacroEnd()) {
+                        scope = scope.parent() == ElementScope.GLOBAL ? fileScope : scope.parent();
+                        line.changeScope(scope);
                     }
                     lines.add(line);
                     builder = new StringBuilder();
@@ -233,8 +235,10 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
             }
 
             if (end >= start) {
-                var line = generateNewLine(start, lines.size(), builder.toString(), ElementScope.FILE);
-                if (line.isMacroEnd() || line.isMacroStart()) line.changeScope(ElementScope.FILE);
+                var line = generateNewLine(start, lines.size(), builder.toString(), scope);
+                if (line.isMacroEnd()) {
+                    line.changeScope(scope.parent() == ElementScope.GLOBAL ? fileScope : scope);
+                }
                 lines.add(line);
             }
             lines.forEach(this::addCachedElements);
@@ -252,7 +256,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
         if (globalIndex != null) {
             var newGlobalReferences = referencedElements.keySet().stream().filter(it ->
-                    globalIdentifiers.contains(it.identifier()));
+                    globalIdentifiers.contains(it.getIdentifier()));
             var globalUpdates =
                     Stream.concat(oldGlobalReferences, newGlobalReferences).collect(Collectors.toSet());
             globalIndex.inspectElementsWithReferences(globalUpdates, Set.of(this));
@@ -271,7 +275,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     public Set<EditorElementReference<?>> getAllGlobalReferencedReferences() {
         checkThread(false);
         return referencedElements.keySet().stream()
-                .filter(it -> globalIdentifiers.contains(it.identifier()))
+                .filter(it -> globalIdentifiers.contains(it.getIdentifier()))
                 .collect(Collectors.toSet());
     }
 
@@ -286,11 +290,22 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     Optional<T> getReferencedElement(EditorElementReference<T> reference, ElementScope scope) {
         Validate.notNull(reference, "Reference cannot be null!");
         checkThread(false);
+
+        if (reference instanceof EditorElementRelativeReference<T> relative) {
+            return referencedElements.entrySet().stream()
+                    .filter(it -> reference.getReferencedType().isAssignableFrom(it.getKey().getReferencedType()))
+                    .flatMap(it -> it.getValue().stream())
+                    .filter(it -> it.getReferencedScope().equals(scope))
+                    .filter(relative.getFilterPredicate())
+                    .min(relative.getType().getComparator())
+                    .map(it -> (T) it);
+        }
+
         return referencedElements.entrySet().stream()
                 .filter(it -> reference.isChild(it.getKey()))
                 .flatMap(it -> it.getValue().stream())
                 .filter(it -> it.getReferencedScope().canBeReachedFrom(scope))
-                .findAny()
+                .min(Comparator.comparing(it -> it.getReferencedScope().getScopeLayersDifference(scope)))
                 .map(it -> (T) it);
     }
 
@@ -300,6 +315,19 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         Validate.notNull(reference, "Reference cannot be null!");
         Validate.notNull(scope, "Scope cannot be null!");
         checkThread(false);
+
+        if (reference instanceof EditorElementRelativeReference<T> relative) {
+            return referencedElements.entrySet().stream()
+                    .filter(it -> reference.getReferencedType().isAssignableFrom(it.getKey().getReferencedType()))
+                    .flatMap(it -> it.getValue().stream())
+                    .filter(it -> it.getReferencedScope().equals(scope))
+                    .filter(relative.getFilterPredicate())
+                    .min(relative.getType().getComparator())
+                    .map(it -> (T) it)
+                    .stream()
+                    .collect(Collectors.toSet());
+        }
+
         return referencedElements.entrySet().stream()
                 .filter(it -> reference.isChild(it.getKey()))
                 .flatMap(it -> it.getValue().stream())
@@ -315,7 +343,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         Validate.notNull(scope, "Scope cannot be null!");
         checkThread(false);
         return referencedElements.entrySet().stream()
-                .filter(it -> type.isAssignableFrom(it.getKey().referencedType()))
+                .filter(it -> type.isAssignableFrom(it.getKey().getReferencedType()))
                 .flatMap(it -> it.getValue().stream())
                 .filter(it -> it.getReferencedScope().canBeReachedFrom(scope))
                 .map(it -> (T) it)
@@ -331,6 +359,16 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         return referencingElements.entrySet().stream()
                 .filter(it -> it.getKey().isChild(reference))
                 .flatMap(it -> it.getValue().stream())
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<EditorReferencingElement<?>> getRelativeReferencingElements(
+            Class<? extends EditorReferencedElement> type, ElementScope scope) {
+        return referencingElements.entrySet().stream()
+                .filter(it -> it.getKey().getReferencedType().isAssignableFrom(type))
+                .flatMap(it -> it.getValue().stream())
+                .filter(it -> it.getReferencedScope().equals(scope))
                 .collect(Collectors.toSet());
     }
 
@@ -393,6 +431,24 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     }
 
     @Override
+    public void inspectElementsWithRelativeReferences(Collection<EditorReferencedElement> elements) {
+        var updatedLines = new HashSet<EditorIndexedLine>();
+        for (var element : elements) {
+            var scope = element.getReferencedScope();
+            if (scope == ElementScope.GLOBAL) continue;
+            var relative = getRelativeReferencingElements(element.getClass(), scope);
+            if (!relative.isEmpty()) {
+                relative.forEach(it -> it.inspect(inspectors));
+                updatedLines.addAll(relative.stream()
+                        .map(it -> it.getParentOfType(EditorIndexedLine.class).orElse(null))
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toSet()));
+            }
+        }
+        updatedLines.forEach(EditorIndexedLine::recalculateInspectionLevel);
+    }
+
+    @Override
     public void lock(boolean editMode) {
         // We want to add the edit mode count before locking.
         // This prevents multiple refreshes when several threads edit this index.
@@ -429,7 +485,10 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
      */
     protected void editLine(int number, String text) {
         var old = lines.get(number);
-        var line = generateNewLine(old.getStart(), number, text, old.getReferencingScope());
+        var previous = number == 0 ? null : lines.get(number - 1);
+        var scope = previous == null ? fileScope :
+                previous.getDefinedMacroScope().orElse(previous.getReferencingScope());
+        var line = generateNewLine(old.getStart(), number, text, scope);
         lines.set(number, line);
         old.invalidate();
 
@@ -452,6 +511,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         refresh.add(old);
         refresh.add(line);
         checkInspectionsInReferences(refresh);
+        checkLabelReferencesBackwards(number, line.getReferencingScope());
     }
 
     /**
@@ -477,6 +537,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
         refresh.add(line);
         checkInspectionsInReferences(refresh);
+        checkLabelReferencesBackwards(number, line.getReferencingScope());
     }
 
     /**
@@ -488,7 +549,8 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     protected void addLine(int number, String text) {
         var previous = number == 0 ? null : lines.get(number - 1);
         int start = previous == null ? 0 : previous.getEnd() + 1;
-        var scope = previous == null ? ElementScope.FILE : previous.getReferencingScope();
+        var scope = previous == null ? fileScope :
+                previous.getDefinedMacroScope().orElse(previous.getReferencingScope());
         var line = generateNewLine(start, number, text, scope);
         lines.add(number, line);
         lines.listIterator(number + 1).forEachRemaining(it ->
@@ -509,6 +571,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
         refresh.add(line);
         checkInspectionsInReferences(refresh);
+        checkLabelReferencesBackwards(number, line.getReferencingScope());
     }
 
     /**
@@ -525,24 +588,35 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
         if (added != null && (added.isMacroStart() || added.isMacroEnd())) {
             if (added.isMacroStart()) {
-                scope = new ElementScope(ElementScope.Type.MACRO, added.getDefinedMacroIdentifier().orElse(""));
+                scope = added.getDefinedMacroScope().orElse(added.getReferencingScope());
             } else {
-                scope = ElementScope.FILE;
+                scope = added.getReferencedScope().parent();
+                if (scope == ElementScope.GLOBAL) scope = fileScope;
+                added.changeScope(scope);
             }
         } else if (removed != null && (removed.isMacroStart() || removed.isMacroEnd())) {
-            scope = number == 0 ? ElementScope.FILE : lines.get(number - 1).getReferencingScope();
+            if (number == 0) {
+                scope = fileScope;
+            } else {
+                var previous = lines.get(number - 1);
+                scope = previous.getDefinedMacroScope().orElse(previous.getReferencingScope());
+            }
         }
 
         if (scope == null) return new HashSet<>();
 
         var list = new HashSet<Line>();
-        if(added != null) {
-            added.changeScope(scope);
-            // List add not needed.
-        }
         for (var line : lines.subList(number + 1, lines.size())) {
-            if ((line.isMacroStart() || line.isMacroEnd())) break;
-            line.changeScope(scope);
+            if (line.isMacroStart()) {
+                line.changeScope(scope);
+                scope = line.getDefinedMacroScope().get();
+            } else if (line.isMacroEnd()) {
+                scope = scope.parent() == ElementScope.GLOBAL ? fileScope : scope.parent();
+                line.changeScope(scope);
+            } else {
+                if (scope.equals(line.getReferencingScope())) break;
+                line.changeScope(scope);
+            }
             list.add(line);
         }
         return list;
@@ -571,6 +645,13 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
                     set.remove(referencing);
                     if (set.isEmpty()) {
                         referencingElements.remove(reference);
+                    }
+                }
+                var relativeSet = relativeReferencingElements.get(reference);
+                if (relativeSet != null) {
+                    relativeSet.remove(referencing);
+                    if (relativeSet.isEmpty()) {
+                        relativeReferencingElements.remove(reference);
                     }
                 }
             });
@@ -613,8 +694,14 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
                         + ") has a null reference set!");
                 return;
             }
-            references.forEach(reference -> referencingElements.computeIfAbsent(reference, it -> new HashSet<>())
-                    .add(referencing));
+            references.forEach(reference -> {
+                referencingElements.computeIfAbsent(reference, it -> new HashSet<>())
+                        .add(referencing);
+                if (reference instanceof EditorElementRelativeReference<?>) {
+                    relativeReferencingElements.computeIfAbsent(reference, it -> new HashSet<>())
+                            .add(referencing);
+                }
+            });
         }
         if (element instanceof EditorReferencedElement referenced) {
             var reference = referenced.getReference();
@@ -653,8 +740,14 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
      */
     protected void checkInspectionsInReferences(Collection<Line> lines) {
         // Let's start getting the references of the referenced elements.
-        var referenced = lines.stream()
-                .flatMap(this::getReferencedReferencesInLine)
+        var elements = lines.stream()
+                .flatMap(EditorIndexedParentElementImpl::elementStream)
+                .filter(it -> it instanceof EditorReferencedElement)
+                .map(it -> (EditorReferencedElement) it)
+                .collect(Collectors.toSet());
+
+        Collection<EditorElementReference<?>> referenced = elements.stream()
+                .map(it -> (EditorElementReference<?>) ((EditorReferencedElement) it).getReference())
                 .collect(Collectors.toSet());
 
         // Now we have all references that have been updated and needs refreshing.
@@ -668,30 +761,42 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
 
         // Let's start updating our file:
         inspectElementsWithReferences(referenced);
+        // Don't forget the relative references!
+        inspectElementsWithRelativeReferences(elements);
+
+        // Let's update now the elements marked as global.
+        var marks = lines.stream().flatMap(this::getMarkersInLine).collect(Collectors.toSet());
+        var localReferences = referencedElements.keySet()
+                .stream()
+                .filter(it -> marks.contains(it.getIdentifier()))
+                .collect(Collectors.toSet());
+        inspectElementsWithReferences(localReferences);
 
         // Now let's update the global elements and the marked references:
         getGlobalIndex().ifPresent(global -> {
-            var marks = lines.stream().flatMap(this::getMarkersInLine).collect(Collectors.toSet());
-
             var toUpdate = Stream.concat(
-                            referenced.stream().filter(it -> isIdentifierGlobal(it.identifier())),
-                            referencedElements.keySet().stream().filter(it -> marks.contains(it.identifier())))
+                            referenced.stream().filter(it -> isIdentifierGlobal(it.getIdentifier())),
+                            localReferences.stream())
                     .collect(Collectors.toSet());
-
             global.inspectElementsWithReferences(toUpdate, Set.of(this));
         });
     }
 
     /**
-     * Returns the references declared by all {@link EditorReferencedElement}s inside the given line.
+     * Inspects the labels whose address may depend on the start line.
      *
-     * @param line the line.
-     * @return the references.
+     * @param from  the start line.
+     * @param scope the element scope of the start line.
      */
-    protected Stream<EditorElementReference<?>> getReferencedReferencesInLine(EditorIndexedLine line) {
-        return line.elementStream()
-                .filter(it -> it instanceof EditorReferencedElement)
-                .map(it -> ((EditorReferencedElement) it).getReference());
+    protected void checkLabelReferencesBackwards(int from, ElementScope scope) {
+        for (int i = from - 1; i >= 0; i--) {
+            var line = lines.get(i);
+            if (line.canBeReferencedByALabel() || !line.getReferencingScope().equals(scope)) break;
+            line.elementStream()
+                    .filter(it -> it instanceof EditorElementLabel)
+                    .forEach(it -> it.inspect(inspectors));
+            line.recalculateInspectionLevel();
+        }
     }
 
     /**

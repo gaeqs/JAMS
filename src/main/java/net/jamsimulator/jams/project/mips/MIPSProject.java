@@ -132,7 +132,7 @@ public class MIPSProject extends BasicProject {
                 configuration,
                 data.getFilesFolder(),
                 new Console(),
-                new MIPSSimulationSource(assembler.getOriginals(), assembler.getAllLabels()),
+                new MIPSSimulationSource(assembler.getOriginals(), assembler.getAllLabels(), assembler.getGlobalScope()),
                 assembler.getInstructionSet(),
                 assembler.getRegisters(),
                 assembler.getMemory(),
@@ -141,7 +141,7 @@ public class MIPSProject extends BasicProject {
         );
 
         simulationData.memory().saveState();
-        simulationData.memory().restoreSavedState();
+        simulationData.registers().saveState();
 
         return assembler.createSimulation(configuration.getNodeValue(MIPSSimulationConfigurationPresets.ARCHITECTURE), simulationData);
     }

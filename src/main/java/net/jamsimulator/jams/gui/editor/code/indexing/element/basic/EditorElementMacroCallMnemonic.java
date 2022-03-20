@@ -33,6 +33,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorEl
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -41,19 +42,43 @@ import java.util.Set;
 public class EditorElementMacroCallMnemonic extends EditorIndexedElementImpl
         implements EditorIndexStyleableElement, EditorReferencingElement<EditorElementMacro> {
 
-    public static final Set<String> STYLE = Set.of("macro-call");
-
+    private final String referenceIdentifier;
+    private final List<String> rawParameters;
     private final Set<EditorElementReference<EditorElementMacro>> references;
 
     public EditorElementMacroCallMnemonic(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
-                                          int start, String text) {
+                                          int start, String text, int parameters, List<String> rawParameters) {
         super(index, scope, parent, start, text);
-        references = Set.of(new EditorElementReference<>(EditorElementMacro.class, getIdentifier()));
+        this.rawParameters = rawParameters;
+        referenceIdentifier = getIdentifier() + "-" + parameters;
+        references = Set.of(new EditorElementReference<>(EditorElementMacro.class, referenceIdentifier));
+    }
+
+    public List<String> getRawParameters() {
+        return rawParameters;
     }
 
     @Override
     public Collection<String> getStyles() {
-        return STYLE;
+        var reference = new EditorElementReference<>(EditorElementMacro.class, referenceIdentifier);
+        var local = index.getReferencedElement(reference, scope);
+
+        if (local.isPresent()) {
+            return local.get().getReferencedScope().equals(ElementScope.GLOBAL)
+                    ? EditorElementMacro.NAME_GLOBAL_STYLE
+                    : EditorElementMacro.NAME_STYLE;
+        }
+
+        var global = index.getGlobalIndex();
+        if (global.isPresent()) {
+
+            var value = global.get().searchReferencedElement(reference);
+            if (value.isPresent()) {
+                return EditorElementMacro.NAME_GLOBAL_STYLE;
+            }
+        }
+
+        return EditorElementMacro.NAME_STYLE;
     }
 
     @Override

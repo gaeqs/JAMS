@@ -28,7 +28,6 @@ import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import net.jamsimulator.jams.Jams;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacro;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
@@ -298,7 +297,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
 
     protected void addMacroParameters() {
         var scope = element.getReferencingScope();
-        if (scope.type() == ElementScope.Type.MACRO) {
+        if (!scope.macroIdentifier().isEmpty()) {
             // Add macros!
             var reference = new EditorElementReference<>(EditorElementMacro.class, scope.macroIdentifier());
             var macro = index.getReferencedElement(reference, scope);
@@ -310,7 +309,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
                     ? element.getText().toLowerCase().substring(0, offset)
                     : "%" + element.getText().toLowerCase().substring(0, offset);
 
-            addElements(macro.get().getParameters().stream().filter(it -> it.toLowerCase().startsWith(id)),
+            addElements(macro.get().getParameterNames().stream().filter(it -> it.toLowerCase().startsWith(id)),
                     it -> it, it -> it, 0, ICON_MACRO_PARAMETER);
 
         }

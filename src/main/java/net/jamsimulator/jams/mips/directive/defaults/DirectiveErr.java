@@ -24,10 +24,12 @@
 
 package net.jamsimulator.jams.mips.directive.defaults;
 
-import net.jamsimulator.jams.mips.assembler.MIPS32AssemblingFile;
+import net.jamsimulator.jams.mips.assembler.MIPS32AssemblerLine;
 import net.jamsimulator.jams.mips.assembler.exception.AssemblerException;
 import net.jamsimulator.jams.mips.directive.Directive;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
+
+import java.util.Map;
 
 public class DirectiveErr extends Directive {
 
@@ -35,17 +37,12 @@ public class DirectiveErr extends Directive {
     private static final DirectiveParameterType[] PARAMETERS = {};
 
     public DirectiveErr() {
-        super(NAME, PARAMETERS, false, false);
+        super(NAME, PARAMETERS, false, false, false);
     }
 
     @Override
-    public int execute(int lineNumber, String line, String[] parameters, String labelSufix, MIPS32AssemblingFile file) {
-        throw new AssemblerException("Error directive found at line " + lineNumber);
-    }
-
-    @Override
-    public void postExecute(String[] parameters, MIPS32AssemblingFile file, int lineNumber, int address, String labelSufix) {
-        throw new AssemblerException("Error directive found at line " + lineNumber);
+    public void onDiscovery(MIPS32AssemblerLine line, String[] parameters, String rawParameters, Map<String, String> equivalents) {
+        throw new AssemblerException(line.getIndex(), "Error directive found.");
     }
 
 }

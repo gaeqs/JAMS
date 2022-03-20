@@ -35,7 +35,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 /**
- * Helper class that stores the changes pending to be indexed by a {@link IndexingThread}.
+ * Helper class that stores the changes pending to be indexed.
  * <p>
  * This class is thread-safe.
  */

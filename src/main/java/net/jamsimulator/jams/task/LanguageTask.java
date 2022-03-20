@@ -91,6 +91,8 @@ public abstract class LanguageTask<E> extends Task<E> {
         return new LanguageTask<>(titleLanguageNode, messageLanguageNode) {
             @Override
             protected Object call() {
+                var title = Manager.ofS(Language.class).getSelected().getOrDefault(titleLanguageNode);
+                Thread.currentThread().setName("Task " + title);
                 if (runnable != null) {
                     runnable.run();
                 }
@@ -139,6 +141,8 @@ public abstract class LanguageTask<E> extends Task<E> {
         return new LanguageTask<>(titleLanguageNode, messageLanguageNode) {
             @Override
             protected E call() throws Exception {
+                var title = Manager.ofS(Language.class).getSelected().getOrDefault(titleLanguageNode);
+                Thread.currentThread().setName("Task " + title);
                 return callable.call();
             }
         };
@@ -188,6 +192,8 @@ public abstract class LanguageTask<E> extends Task<E> {
         return new LanguageTask<>(titleLanguageNode, messageLanguageNode) {
             @Override
             protected E call() {
+                var title = Manager.ofS(Language.class).getSelected().getOrDefault(titleLanguageNode);
+                Thread.currentThread().setName("Task " + title);
                 if (consumer != null) {
                     consumer.accept(this);
                 }
@@ -240,6 +246,8 @@ public abstract class LanguageTask<E> extends Task<E> {
         return new LanguageTask<>(titleLanguageNode, messageLanguageNode) {
             @Override
             protected E call() {
+                var title = Manager.ofS(Language.class).getSelected().getOrDefault(titleLanguageNode);
+                Thread.currentThread().setName("Task " + title);
                 return function.apply(this);
             }
         };
@@ -251,7 +259,7 @@ public abstract class LanguageTask<E> extends Task<E> {
     /**
      * Creates the language task.
      */
-    public LanguageTask() {
+    private LanguageTask() {
         this(null, null);
     }
 
@@ -260,7 +268,7 @@ public abstract class LanguageTask<E> extends Task<E> {
      *
      * @param titleLanguageNode the default title as a language node.
      */
-    public LanguageTask(String titleLanguageNode) {
+    private LanguageTask(String titleLanguageNode) {
         this(titleLanguageNode, null);
     }
 
@@ -270,7 +278,7 @@ public abstract class LanguageTask<E> extends Task<E> {
      * @param titleLanguageNode   the default title as a language node.
      * @param messageLanguageNode the default message as a language node.
      */
-    public LanguageTask(String titleLanguageNode, String messageLanguageNode) {
+    private LanguageTask(String titleLanguageNode, String messageLanguageNode) {
         updateTitle(titleLanguageNode);
         updateMessage(messageLanguageNode);
         Manager.of(Language.class).registerListeners(this, true);

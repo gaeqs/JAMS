@@ -40,15 +40,29 @@ import net.jamsimulator.jams.mips.simulation.MIPSSimulationSource;
 import net.jamsimulator.jams.project.mips.configuration.MIPSSimulationConfiguration;
 
 import java.io.File;
-import java.util.Map;
 import java.util.Set;
 
 public class TestUtils {
 
-    private static final MIPSSimulationSource SOURCE = new MIPSSimulationSource(Map.of(), Set.of());
     private static final MIPSSimulationConfiguration CONFIG = new MIPSSimulationConfiguration("test");
     private static final InstructionSet INSTRUCTION_SET = new MIPS32r6InstructionSet(ResourceProvider.JAMS);
     private static final DirectiveSet DIRECTIVE_SET = new MIPS32DirectiveSet(ResourceProvider.JAMS);
+
+    public static void assemble(String text) {
+        var registers = new MIPS32Registers();
+        var memory = new MIPS32Memory();
+        var rawFiles = new RawFileData("test", text);
+
+        var assembler = new MIPS32Assembler(
+                Set.of(rawFiles),
+                INSTRUCTION_SET,
+                DIRECTIVE_SET,
+                registers,
+                memory,
+                new PrintStreamLog(System.out)
+        );
+        assembler.assemble();
+    }
 
     public static MIPSSimulation<?> generateSimulation(Architecture architecture, String text) {
         var registers = new MIPS32Registers();
@@ -66,11 +80,19 @@ public class TestUtils {
 
         assembler.assemble();
 
+        var startAddress = assembler.getStartAddres();
+        if (startAddress.isPresent()) {
+            assembler.getRegisters().getProgramCounter().setValue(startAddress.getAsInt());
+        } else {
+            System.out.println("Global label 'main' not found. " +
+                    "Execution will start at the start of the text section.");
+        }
+
         var data = new MIPSSimulationData(
                 CONFIG,
                 new File(""),
                 assembler.getLog(),
-                SOURCE,
+                new MIPSSimulationSource(assembler.getOriginals(), assembler.getAllLabels(), assembler.getGlobalScope()),
                 assembler.getInstructionSet(),
                 assembler.getRegisters(),
                 assembler.getMemory(),
@@ -79,7 +101,7 @@ public class TestUtils {
         );
 
         data.memory().saveState();
-        data.memory().restoreSavedState();
+        data.registers().saveState();
         return assembler.createSimulation(architecture, data);
     }
 

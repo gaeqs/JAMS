@@ -50,7 +50,6 @@ class MIPS32DefaultDirectives {
         directives.add(new DirectiveFloat());
         directives.add(new DirectiveGlobl());
         directives.add(new DirectiveHalf());
-        directives.add(new DirectiveInclude());
         directives.add(new DirectiveKData());
         directives.add(new DirectiveKText());
         directives.add(new DirectiveLab());

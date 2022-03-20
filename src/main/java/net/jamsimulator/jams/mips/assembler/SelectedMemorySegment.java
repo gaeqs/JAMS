@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,9 @@
 
 package net.jamsimulator.jams.mips.assembler;
 
+/**
+ * This enum represents the different segments of a MIPS32 memory.
+ */
 public enum SelectedMemorySegment {
 
     TEXT, DATA, KERNEL_TEXT, KERNEL_DATA, EXTERN

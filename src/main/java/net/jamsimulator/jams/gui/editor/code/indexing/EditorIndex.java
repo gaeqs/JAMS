@@ -268,6 +268,20 @@ public interface EditorIndex extends EventBroadcast, Labeled {
     Set<EditorReferencingElement<?>> getReferecingElements(EditorElementReference<T> reference);
 
     /**
+     * Returns all {@link EditorReferencingElement} with a
+     * {@link net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementRelativeReference
+     * relative reference} in the same scope.
+     * <p>
+     * This method requires locking, but not edit mode.
+     *
+     * @param type  the type of the referenced element.
+     * @param scope the scope where to search.
+     * @return the {@link EditorReferencingElement}s.
+     */
+    Set<EditorReferencingElement<?>> getRelativeReferencingElements(
+            Class<? extends EditorReferencedElement> type, ElementScope scope);
+
+    /**
      * Returns a {@link Stream} with all {@link EditorIndexedElement}s inside this index.
      * <p>
      * This method requires locking, but not edit mode.
@@ -318,6 +332,15 @@ public interface EditorIndex extends EventBroadcast, Labeled {
      * @param references the references.
      */
     void inspectElementsWithReferences(Collection<EditorElementReference<?>> references);
+
+    /**
+     * Inspects the elements with a relative reference close to an element of the given collection{@link Collection}.
+     * <p>
+     * This method inspect only {@link EditorReferencingElement}s.
+     *
+     * @param elements the elements.
+     */
+    void inspectElementsWithRelativeReferences(Collection<EditorReferencedElement> elements);
 
     /**
      * Reformats the elements inside this index.

@@ -37,36 +37,80 @@ import java.util.List;
 
 public class MIPSEditorDirectiveMacroName extends MIPSEditorDirectiveParameter implements EditorElementMacro {
 
-    private List<String> parameters = null;
+    private final String identifier;
+    private final int parameterAmount;
+    private final List<String> rawParameters;
 
-    public MIPSEditorDirectiveMacroName(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent, int start, String text) {
+    private List<EditorElementMacroParameter> parameters = null;
+    private ElementScope macroScope;
+
+    public MIPSEditorDirectiveMacroName(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
+                                        int start, String text, int parameters, List<String> rawParameters) {
         super(index, scope, parent, start, text);
+        macroScope = new ElementScope(text, scope);
+        identifier = text + "-" + parameters;
+        parameterAmount = parameters;
+        this.rawParameters = rawParameters;
+    }
+
+    @Override
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    @Override
+    public ElementScope getReferencedScope() {
+        if (ElementScope.GLOBAL.equals(scope.parent())) {
+            return index.isIdentifierGlobal(text) ? ElementScope.GLOBAL : scope;
+        }
+        return scope;
     }
 
     @Override
     public Collection<String> getStyles() {
-        return EditorElementMacro.NAME_STYLE;
+        return getReferencedScope().equals(ElementScope.GLOBAL)
+                ? EditorElementMacro.NAME_GLOBAL_STYLE
+                : EditorElementMacro.NAME_STYLE;
     }
 
     @Override
-    public int parametersAmount() {
-        if (parent == null) return 0;
-        return (int) parent.elementStream().filter(it -> it instanceof EditorElementMacroParameter).count();
+    public void changeScope(ElementScope scope) {
+        super.changeScope(scope);
+        macroScope = new ElementScope(text, scope);
     }
 
     @Override
-    public List<String> getParameters() {
+    public int getParameterAmount() {
+        return parameterAmount;
+    }
+
+    @Override
+    public ElementScope getMacroScope() {
+        return macroScope;
+    }
+
+    @Override
+    public List<EditorElementMacroParameter> getParameters() {
         if (parameters == null) {
             if (parent == null) {
                 parameters = Collections.emptyList();
             } else {
-
                 parameters = parent.elementStream()
                         .filter(it -> it instanceof EditorElementMacroParameter)
-                        .map(EditorIndexedElement::getIdentifier)
+                        .map(it -> (EditorElementMacroParameter) it)
                         .toList();
             }
         }
         return parameters;
+    }
+
+    @Override
+    public List<String> getParameterNames() {
+        return getParameters().stream().map(EditorIndexedElement::getIdentifier).toList();
+    }
+
+    @Override
+    public List<String> getRawParameters() {
+        return rawParameters;
     }
 }

@@ -24,16 +24,25 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing.element.reference;
 
+import java.util.Objects;
+
 /**
  * Represents a reference to an element.
- *
- * @param <R>            the referenced element's type.
- * @param referencedType the referenced element's class.
- * @param identifier     the identifier of the referenced element.
  */
-public record EditorElementReference<R extends EditorReferencedElement>(
-        Class<R> referencedType, String identifier
-) {
+public class EditorElementReference<R extends EditorReferencedElement> {
+    private final Class<R> referencedType;
+    private final String identifier;
+
+    /**
+     * @param referencedType the referenced element's class.
+     * @param identifier     the identifier of the referenced element.
+     */
+    public EditorElementReference(
+            Class<R> referencedType, String identifier
+    ) {
+        this.referencedType = referencedType;
+        this.identifier = identifier;
+    }
 
     /**
      * Represents if this reference can hold the given reference.
@@ -48,5 +57,45 @@ public record EditorElementReference<R extends EditorReferencedElement>(
         return referencedType.isAssignableFrom(potentialChild.referencedType)
                 && identifier.equals(potentialChild.identifier);
     }
+
+    /**
+     * Returns the type of the element this reference is pointing.
+     *
+     * @return the type of the element.
+     */
+    public Class<R> getReferencedType() {
+        return referencedType;
+    }
+
+    /**
+     * Returns the identifier of the element this reference is pointing.
+     *
+     * @return the identifier.
+     */
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (EditorElementReference) obj;
+        return Objects.equals(this.referencedType, that.referencedType) &&
+                Objects.equals(this.identifier, that.identifier);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(referencedType, identifier);
+    }
+
+    @Override
+    public String toString() {
+        return "EditorElementReference[" +
+                "referencedType=" + referencedType + ", " +
+                "identifier=" + identifier + ']';
+    }
+
 
 }

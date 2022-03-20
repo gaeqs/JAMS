@@ -278,6 +278,10 @@
     -fx-fill: -theme-text-macro;
 }
 
+.code-area .global-macro-call {
+    -fx-fill: -theme-text-global-macro;
+}
+
 .code-area .macro-call-parameter {
     -fx-fill: -theme-text-macro-parameter;
 }

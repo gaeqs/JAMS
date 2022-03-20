@@ -31,6 +31,6 @@ public class DirectiveParameterMatcherLabel implements DirectiveParameterMatcher
 
     @Override
     public boolean matches(String value) {
-        return LabelUtils.isLabelLegal(value);
+        return LabelUtils.isLabelReferenceLegal(value);
     }
 }

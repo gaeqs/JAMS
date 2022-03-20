@@ -24,16 +24,20 @@
 
 package net.jamsimulator.jams.mips.simulation;
 
+import net.jamsimulator.jams.mips.assembler.AssemblerScope;
 import net.jamsimulator.jams.mips.label.Label;
 
 import java.util.Map;
 import java.util.Set;
 
-public record MIPSSimulationSource(Map<Integer, String> instructions, Set<Label> labels) {
+public record MIPSSimulationSource(Map<Integer, String> instructions,
+                                   Set<Label> labels,
+                                   AssemblerScope globalScope) {
 
-    public MIPSSimulationSource(Map<Integer, String> instructions, Set<Label> labels) {
+    public MIPSSimulationSource(Map<Integer, String> instructions, Set<Label> labels, AssemblerScope globalScope) {
         this.instructions = Map.copyOf(instructions);
         this.labels = Set.copyOf(labels);
+        this.globalScope = globalScope;
     }
 
 }

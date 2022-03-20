@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.mips.label;
 
+import net.jamsimulator.jams.mips.assembler.AssemblerScope;
 import net.jamsimulator.jams.utils.Validate;
 
 import java.util.*;
@@ -32,35 +33,38 @@ import java.util.function.Consumer;
 public class Label {
 
     private final String key;
-    private final int address;
+    private final AssemblerScope scope;
+
     private final String originFile;
     private final int originLine;
 
-    private final boolean global;
     private final Set<LabelReference> references;
+    private int address;
 
-
-    public Label(String key, int address, String originFile, int originLine, boolean global) {
+    public Label(String key, AssemblerScope scope, int address, String originFile, int originLine) {
         Validate.notNull(key, "Key cannot be null!");
+        Validate.notNull(scope, "Scope cannot be null!");
         Validate.notNull(originFile, "Origin file cannot be null!");
 
         this.key = key;
+        this.scope = scope;
         this.address = address;
         this.originFile = originFile;
         this.originLine = originLine;
         this.references = new HashSet<>();
-        this.global = global;
     }
 
-    public Label(String key, int address, String originFile, int originLine, boolean global, Collection<LabelReference> references) {
+    public Label(String key, AssemblerScope scope, int address, String originFile,
+                 int originLine, Collection<LabelReference> references) {
         Validate.notNull(key, "Key cannot be null!");
+        Validate.notNull(scope, "Scope cannot be null!");
         Validate.notNull(originFile, "Origin file cannot be null!");
 
         this.key = key;
+        this.scope = scope;
         this.address = address;
         this.originFile = originFile;
         this.originLine = originLine;
-        this.global = global;
         this.references = new HashSet<>(references);
     }
 
@@ -68,8 +72,16 @@ public class Label {
         return key;
     }
 
+    public AssemblerScope getScope() {
+        return scope;
+    }
+
     public int getAddress() {
         return address;
+    }
+
+    public void setAddress(int address) {
+        this.address = address;
     }
 
     public String getOriginFile() {
@@ -78,10 +90,6 @@ public class Label {
 
     public int getOriginLine() {
         return originLine;
-    }
-
-    public boolean isGlobal() {
-        return global;
     }
 
     public Set<LabelReference> getReferences() {
@@ -100,8 +108,8 @@ public class Label {
         references.forEach(consumer);
     }
 
-    public Label copyAsGlobal() {
-        return new Label(key, address, originFile, originLine, true, references);
+    public Label withScope(AssemblerScope scope) {
+        return new Label(key, scope, address, originFile, originLine, references);
     }
 
     @Override
@@ -109,11 +117,20 @@ public class Label {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Label label = (Label) o;
-        return key.equals(label.key) && originFile.equals(label.originFile);
+        return key.equals(label.key) && scope.equals(label.scope);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(key, originFile);
+        return Objects.hash(key, scope);
+    }
+
+    @Override
+    public String toString() {
+        return "Label{" +
+                "key='" + key + '\'' +
+                ", originFile='" + originFile + '\'' +
+                ", address=" + address +
+                '}';
     }
 }
