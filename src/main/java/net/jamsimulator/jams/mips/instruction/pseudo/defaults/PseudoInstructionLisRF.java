@@ -34,13 +34,13 @@ import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
-public class PseudoInstructionLifRF extends PseudoInstruction {
+public class PseudoInstructionLisRF extends PseudoInstruction {
 
-    public static final String MNEMONIC = "lif";
+    public static final String MNEMONIC = "li.s";
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.FLOAT_REGISTER, ParameterType.FLOAT);
 
-    public PseudoInstructionLifRF() {
+    public PseudoInstructionLisRF() {
         super(MNEMONIC, PARAMETER_TYPES);
     }
 

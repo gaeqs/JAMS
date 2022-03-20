@@ -133,8 +133,8 @@ INSTRUCTION_JR: Jump register
 INSTRUCTION_LA: Load address
 INSTRUCTION_LI: Load immediate
 INSTRUCTION_LUI: Load upper immediate
-INSTRUCTION_LIF: Load immediate float
-INSTRUCTION_LID: Load immediate double
+INSTRUCTION_LI_S: Load immediate float
+INSTRUCTION_LI_D: Load immediate double
 INSTRUCTION_MOVE: Value movement
 INSTRUCTION_NOP: No operation
 INSTRUCTION_SGE: Set on greater than or equal
@@ -4097,11 +4097,11 @@ INSTRUCTION_LUI_DOCUMENTATION: |-
 
   <b>Exceptions:</b>
   None
-INSTRUCTION_LIF_DOCUMENTATION: |-
+INSTRUCTION_LI_S_DOCUMENTATION: |-
   <u>Load immediate float</u>
 
   <b>Format:</b>
-  lif fd, float
+  li.s fd, float
 
   <b>Conversion:</b>
   aui $at, $zero, float<sub>31..16</sub>
@@ -4116,11 +4116,11 @@ INSTRUCTION_LIF_DOCUMENTATION: |-
 
   <b>Exceptions:</b>
   None
-INSTRUCTION_LID_DOCUMENTATION: |-
+INSTRUCTION_LI_D_DOCUMENTATION: |-
   <u>Load immediate double</u>
 
   <b>Format:</b>
-  lid fd, double
+  li.d fd, double
 
   <b>Conversion:</b>
   aui $at, $zero, double<sub>31..16</sub>
