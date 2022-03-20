@@ -108,7 +108,7 @@ public abstract class Inspector<T extends EditorIndexedElement> implements Manag
                 var macro = element.getIndex().getReferencedElement(reference, scope);
 
                 if (macro.isPresent()) {
-                    if (macro.get().getParameters().contains(element.getIdentifier())) {
+                    if (macro.get().getParameterNames().contains(element.getIdentifier())) {
                         // If the element is a macro parameter, do nothing.
                         return Collections.emptySet();
                     }

@@ -42,7 +42,11 @@ public interface EditorElementMacro extends EditorReferencedElement {
 
     int getParameterAmount();
 
-    List<String> getParameters();
+    List<EditorElementMacroParameter> getParameters();
+
+    List<String> getParameterNames();
+
+    List<String> getRawParameters();
 
     ElementScope getMacroScope();
 

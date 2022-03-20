@@ -34,10 +34,10 @@ import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 import net.jamsimulator.jams.gui.mips.editor.indexing.MIPSEditorIndex;
 import net.jamsimulator.jams.project.mips.MIPSProject;
+import net.jamsimulator.jams.utils.LabelUtils;
 import org.fxmisc.richtext.event.MouseOverTextEvent;
 
 import java.time.Duration;
-import java.util.Collections;
 import java.util.Optional;
 
 public class MIPSFileEditor extends CodeFileEditor {
@@ -52,6 +52,7 @@ public class MIPSFileEditor extends CodeFileEditor {
         documentationPopup = new MIPSDocumentationPopup(this, (MIPSAutocompletionPopup) autocompletionPopup);
 
         applyAutoIndent();
+        applyIndentRemoval();
         initializePopupListeners();
         applyLabelTabRemover();
     }
@@ -74,19 +75,13 @@ public class MIPSFileEditor extends CodeFileEditor {
         addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 int caretPosition = getCaretPosition();
-                int currentLine = getCaretSelectionBind().getParagraphIndex();
+                int currentLine = getCurrentParagraph();
                 if (currentLine < 1) return;
 
                 String previous = getParagraph(currentLine - 1).getText();
-
-                try {
-                    getIndex().lock(false);
-                    var line = getIndex().getLine(currentLine - 1);
-                    if (line.getLabel().isPresent()) {
-                        previous = previous.substring(line.getLabel().get().getLength());
-                    }
-                } finally {
-                    getIndex().unlock(false);
+                int labelIndex = LabelUtils.getLabelFinishIndex(previous);
+                if (labelIndex != -1) {
+                    previous = previous.substring(labelIndex + 1);
                 }
 
                 StringBuilder builder = new StringBuilder();
@@ -96,6 +91,29 @@ public class MIPSFileEditor extends CodeFileEditor {
                 }
 
                 Platform.runLater(() -> insertText(caretPosition, builder.toString()));
+            }
+        });
+    }
+
+    private void applyIndentRemoval() {
+        addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.BACK_SPACE) {
+                int caretPosition = getCaretColumn();
+                int currentLine = getCurrentParagraph();
+                if(!event.isShiftDown() && currentLine > 0) {
+                    String previous = getParagraph(currentLine - 1).getText();
+                    String current = getParagraph(currentLine).substring(0, caretPosition);
+                    if (current.isBlank()) {
+                        replaceText(currentLine - 1, previous.length(),
+                                currentLine, current.length(), "");
+                    }
+                } else {
+                    String current = getParagraph(currentLine).substring(0, caretPosition);
+                    if (current.isBlank()) {
+                        replaceText(currentLine, 0, currentLine, current.length(), "");
+                    }
+                }
+                event.consume();
             }
         });
     }

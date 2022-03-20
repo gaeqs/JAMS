@@ -31,6 +31,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -49,7 +50,7 @@ public class EditorElementMacroCall extends EditorIndexedParentElementImpl {
         var rawParameters = text.substring(splitIndex + 1);
         var parts = StringUtils.multiSplitIgnoreInsideStringWithIndex(rawParameters, false, " ", ",", "\t");
         var stringParameters = parts.entrySet().stream()
-                .sorted(Comparator.comparingInt(Map.Entry::getKey)).collect(Collectors.toList());
+                .sorted(Comparator.comparingInt(Map.Entry::getKey)).toList();
 
         int parameterIndex = -1;
         for (var entry : stringParameters) {
@@ -78,16 +79,17 @@ public class EditorElementMacroCall extends EditorIndexedParentElementImpl {
                     value
             ));
         }
-        parseName(text.substring(0, splitIndex).trim(), elements.size());
+        parseName(text.substring(0, splitIndex).trim(), elements.size(),
+                stringParameters.stream().map(Map.Entry::getValue).toList());
     }
 
-    private void parseName(String name, int parameters) {
+    private void parseName(String name, int parameters, List<String> rawParameters) {
         var trimmed = name.trim();
         if (trimmed.isEmpty()) {
-            elements.add(new EditorElementMacroCallMnemonic(index, scope, this, start, name, parameters));
+            elements.add(new EditorElementMacroCallMnemonic(index, scope, this, start, name, parameters, rawParameters));
             return;
         }
         var offset = name.indexOf(trimmed.charAt(0));
-        elements.add(new EditorElementMacroCallMnemonic(index, scope, this, start + offset, trimmed, parameters));
+        elements.add(new EditorElementMacroCallMnemonic(index, scope, this, start + offset, trimmed, parameters, rawParameters));
     }
 }

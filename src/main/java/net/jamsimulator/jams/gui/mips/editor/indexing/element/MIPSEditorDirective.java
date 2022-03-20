@@ -125,7 +125,8 @@ public class MIPSEditorDirective extends EditorIndexedParentElementImpl {
                     this,
                     start + mnemonic.getKey(),
                     mnemonic.getValue(),
-                    sanitized.size()
+                    sanitized.size(),
+                    parameters.stream().map(Map.Entry::getValue).toList()
             );
             elements.add(mnemonicElement);
 

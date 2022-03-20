@@ -39,15 +39,18 @@ public class MIPSEditorDirectiveMacroName extends MIPSEditorDirectiveParameter i
 
     private final String identifier;
     private final int parameterAmount;
-    private List<String> parameters = null;
+    private final List<String> rawParameters;
+
+    private List<EditorElementMacroParameter> parameters = null;
     private ElementScope macroScope;
 
     public MIPSEditorDirectiveMacroName(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
-                                        int start, String text, int parameters) {
+                                        int start, String text, int parameters, List<String> rawParameters) {
         super(index, scope, parent, start, text);
         macroScope = new ElementScope(text, scope);
         identifier = text + "-" + parameters;
         parameterAmount = parameters;
+        this.rawParameters = rawParameters;
     }
 
     @Override
@@ -87,18 +90,27 @@ public class MIPSEditorDirectiveMacroName extends MIPSEditorDirectiveParameter i
     }
 
     @Override
-    public List<String> getParameters() {
+    public List<EditorElementMacroParameter> getParameters() {
         if (parameters == null) {
             if (parent == null) {
                 parameters = Collections.emptyList();
             } else {
-
                 parameters = parent.elementStream()
                         .filter(it -> it instanceof EditorElementMacroParameter)
-                        .map(EditorIndexedElement::getIdentifier)
+                        .map(it -> (EditorElementMacroParameter) it)
                         .toList();
             }
         }
         return parameters;
+    }
+
+    @Override
+    public List<String> getParameterNames() {
+        return getParameters().stream().map(EditorIndexedElement::getIdentifier).toList();
+    }
+
+    @Override
+    public List<String> getRawParameters() {
+        return rawParameters;
     }
 }

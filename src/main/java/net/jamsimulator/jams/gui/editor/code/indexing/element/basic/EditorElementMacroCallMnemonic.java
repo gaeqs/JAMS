@@ -33,6 +33,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorEl
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -42,13 +43,19 @@ public class EditorElementMacroCallMnemonic extends EditorIndexedElementImpl
         implements EditorIndexStyleableElement, EditorReferencingElement<EditorElementMacro> {
 
     private final String referenceIdentifier;
+    private final List<String> rawParameters;
     private final Set<EditorElementReference<EditorElementMacro>> references;
 
     public EditorElementMacroCallMnemonic(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
-                                          int start, String text, int parameters) {
+                                          int start, String text, int parameters, List<String> rawParameters) {
         super(index, scope, parent, start, text);
+        this.rawParameters = rawParameters;
         referenceIdentifier = getIdentifier() + "-" + parameters;
         references = Set.of(new EditorElementReference<>(EditorElementMacro.class, referenceIdentifier));
+    }
+
+    public List<String> getRawParameters() {
+        return rawParameters;
     }
 
     @Override

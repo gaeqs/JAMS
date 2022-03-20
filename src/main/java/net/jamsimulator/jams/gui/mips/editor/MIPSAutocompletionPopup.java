@@ -309,7 +309,7 @@ public class MIPSAutocompletionPopup extends AutocompletionPopup {
                     ? element.getText().toLowerCase().substring(0, offset)
                     : "%" + element.getText().toLowerCase().substring(0, offset);
 
-            addElements(macro.get().getParameters().stream().filter(it -> it.toLowerCase().startsWith(id)),
+            addElements(macro.get().getParameterNames().stream().filter(it -> it.toLowerCase().startsWith(id)),
                     it -> it, it -> it, 0, ICON_MACRO_PARAMETER);
 
         }

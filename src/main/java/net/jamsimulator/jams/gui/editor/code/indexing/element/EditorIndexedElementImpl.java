@@ -131,7 +131,7 @@ public class EditorIndexedElementImpl implements EditorIndexedElement {
         if (scope.macroIdentifier().isEmpty() || !getIdentifier().startsWith("%")) return false;
         var reference = new EditorElementReference<>(EditorElementMacro.class, scope.macroIdentifier());
         var macro = index.getReferencedElement(reference, scope);
-        return macro.isPresent() && macro.get().getParameters().contains(getIdentifier());
+        return macro.isPresent() && macro.get().getParameterNames().contains(getIdentifier());
     }
 
     @Override
