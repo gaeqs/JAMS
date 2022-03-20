@@ -33,12 +33,13 @@ import java.util.function.Consumer;
 public class Label {
 
     private final String key;
-    private final AssemblerScope scope;
 
     private final String originFile;
     private final int originLine;
 
     private final Set<LabelReference> references;
+
+    private AssemblerScope scope;
     private int address;
 
     public Label(String key, AssemblerScope scope, int address, String originFile, int originLine) {
@@ -76,6 +77,10 @@ public class Label {
         return scope;
     }
 
+    public void setScope(AssemblerScope scope) {
+        this.scope = scope;
+    }
+
     public int getAddress() {
         return address;
     }
@@ -106,10 +111,6 @@ public class Label {
 
     public void forEachReference(Consumer<LabelReference> consumer) {
         references.forEach(consumer);
-    }
-
-    public Label withScope(AssemblerScope scope) {
-        return new Label(key, scope, address, originFile, originLine, references);
     }
 
     @Override

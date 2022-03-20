@@ -165,7 +165,8 @@ public class MIPS32AssemblerFile {
 
             var label = scope.getScopeLabels().remove(identifier);
             if (label != null) {
-                assembler.getGlobalScope().addLabel(label.getOriginLine(), label.withScope(assembler.getGlobalScope()));
+                label.setScope(assembler.getGlobalScope());
+                assembler.getGlobalScope().addLabel(label.getOriginLine(), label);
             }
         }
     }
