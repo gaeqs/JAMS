@@ -36,7 +36,7 @@ import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 
 public class PseudoInstructionLidRD extends PseudoInstruction {
 
-    public static final String MNEMONIC = "lid";
+    public static final String MNEMONIC = "li.d";
 
     public static final InstructionParameterTypes PARAMETER_TYPES = new InstructionParameterTypes(ParameterType.EVEN_FLOAT_REGISTER, ParameterType.DOUBLE);
 

@@ -135,8 +135,8 @@ INSTRUCTION_JR: Saltar al valor del registro
 INSTRUCTION_LA: Cargar dirección
 INSTRUCTION_LI: Cargar inmediato
 INSTRUCTION_LUI: Cargar inmediato en los bits más significantes
-INSTRUCTION_LIF: Cargar float inmediato
-INSTRUCTION_LID: Cargar double inmediato
+INSTRUCTION_LI_S: Cargar inmediato en coma flotante
+INSTRUCTION_LI_D: Cargar inmediato en coma flotante doble
 INSTRUCTION_MOVE: Mover valor
 INSTRUCTION_NOP: Operación nula
 INSTRUCTION_SGE: Asignar si menor o igual que valor
@@ -4081,11 +4081,11 @@ INSTRUCTION_LUI_DOCUMENTATION: |-
 
   <b>Excepciones:</b>
   Ninguna
-INSTRUCTION_LIF_DOCUMENTATION: |-
+INSTRUCTION_LI_S_DOCUMENTATION: |-
   <u>Cargar inmediato en coma flotante</u>
 
   <b>Formato:</b>
-  lif fd, float
+  li.s fd, float
 
   <b>Conversión:</b>
   aui $at, $zero, float<sub>31..16</sub>
@@ -4100,11 +4100,11 @@ INSTRUCTION_LIF_DOCUMENTATION: |-
 
   <b>Excepciones:</b>
   Ninguna
-INSTRUCTION_LID_DOCUMENTATION: |-
-  <u>Cargar double inmediato</u>
+INSTRUCTION_LI_D_DOCUMENTATION: |-
+  <u>Cargar inmediato en coma flotante doble</u>
 
   <b>Formato:</b>
-  lid fd, double
+  li.d fd, double
 
   <b>Conversión:</b>
   aui $at, $zero, double<sub>31..16</sub>
