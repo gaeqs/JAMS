@@ -33,6 +33,7 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 public class SyscallExecutionRunExceptionHandler implements SyscallExecution {
@@ -45,7 +46,7 @@ public class SyscallExecutionRunExceptionHandler implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         throw new MIPSInterruptException(InterruptCause.SYSCALL_EXCEPTION);
     }
 

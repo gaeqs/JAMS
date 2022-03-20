@@ -38,6 +38,7 @@ import net.jamsimulator.jams.utils.NumericUtils;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class SyscallExecutionPrintDouble implements SyscallExecution {
@@ -84,7 +85,7 @@ public class SyscallExecutionPrintDouble implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         if (register % 2 != 0) {
             throw new IllegalStateException("Register " + register + " has not an even identifier!");
         }
@@ -105,6 +106,7 @@ public class SyscallExecutionPrintDouble implements SyscallExecution {
 
         console.print(toPrint);
         if (lineJump) console.println();
+        return Collections.emptyMap();
     }
 
     @Override

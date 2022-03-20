@@ -36,6 +36,7 @@ import net.jamsimulator.jams.utils.NumericUtils;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class SyscallExecutionSystemTime implements SyscallExecution {
@@ -64,10 +65,9 @@ public class SyscallExecutionSystemTime implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         int[] values = NumericUtils.longToInts(System.currentTimeMillis());
-        execution.setAndUnlock(lowOrderRegister, values[0]);
-        execution.setAndUnlock(highOrderRegister, values[1]);
+        return Map.of(lowOrderRegister, values[0], highOrderRegister, values[1]);
     }
 
     @Override

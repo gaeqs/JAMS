@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class SyscallExecutionOpenFile implements SyscallExecution {
@@ -114,7 +115,7 @@ public class SyscallExecutionOpenFile implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var nameAddress = execution.value(nameRegister);
         var flag = execution.value(flagRegister);
         var mode = execution.value(modeRegister);
@@ -122,8 +123,7 @@ public class SyscallExecutionOpenFile implements SyscallExecution {
 
         var name = getString(execution.getSimulation(), nameAddress);
         if (name.isEmpty()) {
-            execution.setAndUnlock(resultRegister, -1);
-            return;
+            return Map.of(resultRegister, -1);
         }
 
         File file;
@@ -150,15 +150,14 @@ public class SyscallExecutionOpenFile implements SyscallExecution {
                 append = true;
             }
             default -> {
-                execution.setAndUnlock(resultRegister, -1);
-                return;
+                return Map.of(resultRegister, -1);
             }
         }
 
         try {
-            execution.setAndUnlock(resultRegister, execution.getSimulation().getFiles().open(file, write, append));
+            return Map.of(resultRegister, execution.getSimulation().getFiles().open(file, write, append));
         } catch (IOException ex) {
-            execution.setAndUnlock(resultRegister, -1);
+            return Map.of(resultRegister, -1);
         }
     }
 

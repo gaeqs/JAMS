@@ -36,6 +36,7 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class SyscallExecutionCloseFile implements SyscallExecution {
@@ -64,7 +65,7 @@ public class SyscallExecutionCloseFile implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var id = execution.value(idRegister);
 
         try {
@@ -72,6 +73,7 @@ public class SyscallExecutionCloseFile implements SyscallExecution {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+        return Collections.emptyMap();
     }
 
 

@@ -35,6 +35,7 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 import net.jamsimulator.jams.utils.NumericUtils;
 
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class SyscallExecutionRandomDouble implements SyscallExecution {
@@ -72,14 +73,14 @@ public class SyscallExecutionRandomDouble implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+        execution.checkEvenRegister(valueRegister);
         var simulation = execution.getSimulation();
         var index = execution.value(generatorRegister);
 
         var value = simulation.getNumberGenerators().getGenerator(index).nextDouble();
         var ints = NumericUtils.doubleToInts(value);
-        execution.setAndUnlockCOP1(valueRegister, ints[0]);
-        execution.setAndUnlockCOP1(valueRegister + 1, ints[1]);
+        return Map.of(valueRegister, ints[0], valueRegister + 1, ints[1]);
     }
 
     @Override

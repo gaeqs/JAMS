@@ -36,6 +36,7 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class SyscallExecutionSleep implements SyscallExecution {
@@ -64,7 +65,7 @@ public class SyscallExecutionSleep implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var simulation = execution.getSimulation();
         var amount = execution.value(register);
         simulation.callEvent(new SimulationLockEvent(simulation));
@@ -73,6 +74,7 @@ public class SyscallExecutionSleep implements SyscallExecution {
         } catch (InterruptedException e) {
             simulation.interruptThread();
         }
+        return Collections.emptyMap();
     }
 
     @Override

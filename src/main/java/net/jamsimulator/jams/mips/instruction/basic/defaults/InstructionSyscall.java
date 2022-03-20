@@ -41,6 +41,8 @@ import net.jamsimulator.jams.mips.parameter.InstructionParameterTypes;
 import net.jamsimulator.jams.mips.parameter.parse.ParameterParseResult;
 import net.jamsimulator.jams.mips.simulation.MIPSSimulation;
 
+import java.util.Map;
+
 // The syscall instruciton implements ControlTransferInstruction and MemoryInstruction to avoid external hazards.
 public class InstructionSyscall extends BasicRInstruction<InstructionSyscall.Assembled>
         implements ControlTransferInstruction, MemoryInstruction {
@@ -112,6 +114,8 @@ public class InstructionSyscall extends BasicRInstruction<InstructionSyscall.Ass
 
     public static class MultiCycle extends MultiCycleExecution<MultiCycleArchitecture, Assembled> {
 
+        private Map<Integer, Integer> values;
+
         public MultiCycle(MIPSSimulation<? extends MultiCycleArchitecture> simulation, Assembled instruction, int address) {
             super(simulation, instruction, address, false, false);
         }
@@ -124,7 +128,8 @@ public class InstructionSyscall extends BasicRInstruction<InstructionSyscall.Ass
 
         @Override
         public void execute() {
-            simulation.getSyscallExecutions().executeSyscallMultiCycle(this);
+            values = simulation.getSyscallExecutions().executeSyscallMultiCycle(this);
+            values.forEach(this::forward);
         }
 
         @Override
@@ -134,6 +139,7 @@ public class InstructionSyscall extends BasicRInstruction<InstructionSyscall.Ass
 
         @Override
         public void writeBack() {
+            values.forEach(this::setAndUnlock);
         }
     }
 }

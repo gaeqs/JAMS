@@ -34,6 +34,7 @@ import net.jamsimulator.jams.mips.syscall.SyscallExecution;
 import net.jamsimulator.jams.mips.syscall.SyscallExecutionBuilder;
 
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class SyscallExecutionAllocateMemory implements SyscallExecution {
@@ -63,10 +64,10 @@ public class SyscallExecutionAllocateMemory implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeMultiCycle(MultiCycleExecution<?, ?> execution) {
         var amount = execution.value(amountRegister);
         var address = execution.getSimulation().getMemory().allocateMemory(amount);
-        execution.setAndUnlock(addressRegister, address);
+        return Map.of(addressRegister, address);
     }
 
     @Override

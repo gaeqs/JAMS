@@ -38,6 +38,7 @@ import net.jamsimulator.jams.utils.NumericUtils;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class SyscallExecutionReadDouble implements SyscallExecution {
@@ -84,27 +85,27 @@ public class SyscallExecutionReadDouble implements SyscallExecution {
     }
 
     @Override
-    public void executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+    public Map<Integer, Integer> executeMultiCycle(MultiCycleExecution<?, ?> execution) {
+        execution.checkEvenRegister(register);
         var simulation = execution.getSimulation();
         boolean done = false;
+        int[] ints = new int[2];
         while (!done) {
             String value = simulation.popInputOrLock();
-            if (simulation.checkThreadInterrupted()) return;
+            if (simulation.checkThreadInterrupted()) return Collections.emptyMap();
 
             try {
                 double input = Double.parseDouble(value);
 
-                int[] ints = NumericUtils.doubleToInts(input);
-
-                execution.setAndUnlockCOP1(register, ints[0]);
-                execution.setAndUnlockCOP1(register + 1, ints[1]);
-
+                NumericUtils.doubleToInts(input, ints);
                 simulation.getLog().printDone(value);
                 if (lineJump) simulation.getLog().println();
                 done = true;
             } catch (NumberFormatException ignore) {
             }
         }
+
+        return Map.of(register, ints[0], register + 1, ints[1]);
     }
 
     @Override
@@ -125,7 +126,7 @@ public class SyscallExecutionReadDouble implements SyscallExecution {
         public Builder(ResourceProvider provider) {
             super(provider, NAME, new LinkedList<>());
             properties.add(lineJump = new SimpleBooleanProperty(null, "LINE_JUMP", false));
-            properties.add(register = new SimpleIntegerProperty(null, "REGISTER", 0));
+            properties.add(register = new SimpleIntegerProperty(null, "REGISTER", 2));
         }
 
         @Override
