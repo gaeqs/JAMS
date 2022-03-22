@@ -33,6 +33,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -60,6 +61,8 @@ public class Console extends HBox implements Log, EventBroadcast {
 
     protected final SimpleStringProperty lastLineProperty;
     protected final SimpleObjectProperty<LocalDateTime> lastLineTimeProperty;
+
+    protected ToggleButton followButton;
 
     protected final LinkedList<String> inputs;
     protected VBox buttons;
@@ -203,6 +206,19 @@ public class Console extends HBox implements Log, EventBroadcast {
     }
 
     @Override
+    public boolean isFollowingText() {
+        return followButton.isSelected();
+    }
+
+    @Override
+    public void followText(boolean followText) {
+        Platform.runLater(() -> {
+            followButton.setSelected(followText);
+            if (followText) display.scrollYBy(Double.MAX_VALUE);
+        });
+    }
+
+    @Override
     public StringProperty lastLineProperty() {
         return lastLineProperty;
     }
@@ -223,6 +239,7 @@ public class Console extends HBox implements Log, EventBroadcast {
                     display.setStyle(from, display.getLength(), Collections.singleton(pair.style));
                 }
             }
+            if (followButton.isSelected()) display.scrollYBy(Double.MAX_VALUE);
         });
     }
 
@@ -277,15 +294,24 @@ public class Console extends HBox implements Log, EventBroadcast {
 
     private void loadButtons() {
         buttons = new VBox();
-        Button clear = new Button("C");
+        var clear = new Button("C");
         clear.setOnAction(event -> clear());
         clear.getStyleClass().add("button-bold");
 
-        Button clearInputs = new Button("Ci");
+        var clearInputs = new Button("Ci");
         clearInputs.setOnAction(event -> inputsDisplay.getChildren().clear());
         clearInputs.getStyleClass().add("button-bold");
 
-        buttons.getChildren().addAll(clear, clearInputs);
+        followButton = new ToggleButton("▼");
+        followButton.setSelected(true);
+        followButton.setOnAction(event -> followText(!isFollowingText()));
+        followButton.getStyleClass().add("button-bold");
+
+        followButton.setOnAction(event -> {
+            if (followButton.isSelected()) display.scrollYBy(Double.MAX_VALUE);
+        });
+
+        buttons.getChildren().addAll(clear, clearInputs, followButton);
         getChildren().add(buttons);
     }
 

@@ -28,7 +28,6 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 public interface Log {
 
@@ -55,6 +54,10 @@ public interface Log {
     void println();
 
     void clear();
+
+    boolean isFollowingText();
+
+    void followText(boolean followText);
 
     StringProperty lastLineProperty();
 
