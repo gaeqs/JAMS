@@ -128,6 +128,15 @@ public class PrintStreamLog implements Log {
     }
 
     @Override
+    public boolean isFollowingText() {
+        return true;
+    }
+
+    @Override
+    public void followText(boolean followText) {
+    }
+
+    @Override
     public StringProperty lastLineProperty() {
         return lastLineProperty;
     }

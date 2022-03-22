@@ -29,7 +29,9 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -48,22 +50,36 @@ public class SimpleLog extends HBox implements Log {
     protected final SimpleStringProperty lastLineProperty;
     protected final SimpleObjectProperty<LocalDateTime> lastLineTimeProperty;
 
+    protected ToggleButton followButton;
+
     public SimpleLog() {
         super();
 
-        VBox buttons = new VBox();
-        Button clear = new Button("C");
+        var buttons = new VBox();
+        buttons.setAlignment(Pos.TOP_CENTER);
+
+        var clear = new Button("C");
         clear.setOnAction(event -> clear());
         clear.getStyleClass().add("button-bold");
         buttons.getChildren().add(clear);
+
+        followButton = new ToggleButton("▼");
+        followButton.setSelected(true);
+        followButton.getStyleClass().add("button-bold");
+        buttons.getChildren().add(followButton);
+
         getChildren().add(buttons);
 
         display = new CodeArea();
-        VirtualizedScrollPane<ScaledVirtualized<CodeArea>> scroll = new VirtualizedScrollPane<>(new ScaledVirtualized<>(display));
+        var scroll = new VirtualizedScrollPane<>(new ScaledVirtualized<>(display));
         display.setEditable(false);
         applyZoomListener(scroll);
         display.getStyleClass().add("display");
         getChildren().add(scroll);
+
+        followButton.setOnAction(event -> {
+            if (followButton.isSelected()) display.scrollYBy(Double.MAX_VALUE);
+        });
 
         display.prefWidthProperty().bind(widthProperty().subtract(buttons.widthProperty()));
 
@@ -143,6 +159,19 @@ public class SimpleLog extends HBox implements Log {
     }
 
     @Override
+    public boolean isFollowingText() {
+        return followButton.isSelected();
+    }
+
+    @Override
+    public void followText(boolean followText) {
+        Platform.runLater(() -> {
+            followButton.setSelected(followText);
+            if (followText) display.scrollYBy(Double.MAX_VALUE);
+        });
+    }
+
+    @Override
     public StringProperty lastLineProperty() {
         return lastLineProperty;
     }
@@ -157,6 +186,7 @@ public class SimpleLog extends HBox implements Log {
             int from = display.getLength();
             display.appendText(object == null ? "null" : object.toString());
             display.setStyle(from, display.getLength(), Collections.singleton(style));
+            if (followButton.isSelected()) display.scrollYBy(Double.MAX_VALUE);
         });
     }
 
@@ -165,6 +195,7 @@ public class SimpleLog extends HBox implements Log {
             int from = display.getLength();
             display.appendText((object == null ? "null" : object.toString()) + '\n');
             display.setStyle(from, display.getLength(), Collections.singleton(style));
+            if (followButton.isSelected()) display.scrollYBy(Double.MAX_VALUE);
         });
     }
 
