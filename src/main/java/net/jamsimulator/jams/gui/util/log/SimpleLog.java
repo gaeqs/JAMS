@@ -29,6 +29,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseButton;
@@ -55,6 +56,8 @@ public class SimpleLog extends HBox implements Log {
         super();
 
         var buttons = new VBox();
+        buttons.setAlignment(Pos.TOP_CENTER);
+
         var clear = new Button("C");
         clear.setOnAction(event -> clear());
         clear.getStyleClass().add("button-bold");

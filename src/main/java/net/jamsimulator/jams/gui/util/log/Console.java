@@ -30,6 +30,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -294,6 +295,8 @@ public class Console extends HBox implements Log, EventBroadcast {
 
     private void loadButtons() {
         buttons = new VBox();
+        buttons.setAlignment(Pos.TOP_CENTER);
+
         var clear = new Button("C");
         clear.setOnAction(event -> clear());
         clear.getStyleClass().add("button-bold");
