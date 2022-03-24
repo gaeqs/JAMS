@@ -24,10 +24,7 @@
 
 package net.jamsimulator.jams.utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -124,6 +121,42 @@ public class StringUtils {
         return map;
     }
 
+    public static List<String> splitCamelCase(String string) {
+        List<String> list = new ArrayList<>();
+        int length = string.length(), from = 0;
+
+        for (int i = 1; i < length; i++) {
+            if (Character.isUpperCase(string.charAt(1))) {
+                list.add(string.substring(from, i).toLowerCase(Locale.ROOT));
+                from = i;
+            }
+        }
+
+        list.add(string.substring(from).toLowerCase(Locale.ROOT));
+        return list;
+    }
+
+    public static Map<Integer, String> splitCamelCaseWithIndex(String string, boolean addEmpty) {
+        var map = new HashMap<Integer, String>();
+        int length = string.length(), from = 0;
+
+        for (int i = 1; i < length; i++) {
+            if (Character.isUpperCase(string.charAt(i))) {
+                var splitted = string.substring(from, i);
+                if (!splitted.isEmpty() || addEmpty) {
+                    map.put(from, splitted.toLowerCase(Locale.ROOT));
+                    from = i;
+                }
+            }
+        }
+
+        var splitted = string.substring(from);
+        if (!splitted.isEmpty() || addEmpty) {
+            map.put(from, splitted.toLowerCase(Locale.ROOT));
+        }
+        return map;
+    }
+
     public static int indexOf(String string, char... chars) {
         char[] array = string.toCharArray();
         for (int i = 0; i < array.length; i++) {
@@ -204,7 +237,7 @@ public class StringUtils {
         StringBuilder builder = new StringBuilder();
         int max = Math.max(0, to - s.length());
 
-        builder.append("0".repeat(Math.max(0, max)));
+        builder.append("0".repeat(max));
 
         return builder + s;
     }
