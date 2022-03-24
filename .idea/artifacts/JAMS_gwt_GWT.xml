@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact name="JAMS.gwt:GWT">
-    <output-path>$PROJECT_DIR$/out/artifacts/JAMS_gwt_GWT</output-path>
-    <root id="root">
-      <element id="gwt-compiler-output" facet="JAMS.gwt/gwt/GWT" />
-    </root>
-  </artifact>
-</component>
