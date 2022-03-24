@@ -30,7 +30,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -43,12 +42,12 @@ import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
 import net.jamsimulator.jams.gui.editor.FileEditor;
+import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionPopup;
 import net.jamsimulator.jams.gui.editor.code.hint.EditorHintBar;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorLineChange;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorPendingChanges;
 import net.jamsimulator.jams.gui.editor.code.indexing.event.IndexRequestRefreshEvent;
-import net.jamsimulator.jams.gui.editor.code.popup.AutocompletionPopup;
 import net.jamsimulator.jams.gui.editor.code.popup.DocumentationPopup;
 import net.jamsimulator.jams.gui.editor.code.top.CodeFileEditorReplace;
 import net.jamsimulator.jams.gui.editor.code.top.CodeFileEditorSearch;
@@ -426,15 +425,15 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
         //AUTOCOMPLETION MOVEMENT
         addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (autocompletionPopup != null) {
-                if (autocompletionPopup.managePressEvent(event)) {
-                    event.consume();
-                    if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT) {
-                        if (documentationPopup != null) documentationPopup.hide();
-                    }
-                } else {
-                    shouldOpenAutocompletionAfterEdit = !event.getText().isBlank();
-                    if (documentationPopup != null) documentationPopup.hide();
-                }
+                //if (autocompletionPopup.managePressEvent(event)) {
+                //    event.consume();
+                //    if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT) {
+                //        if (documentationPopup != null) documentationPopup.hide();
+                //    }
+                //} else {
+                //    shouldOpenAutocompletionAfterEdit = !event.getText().isBlank();
+                //    if (documentationPopup != null) documentationPopup.hide();
+                //}
             }
         });
 
@@ -503,7 +502,9 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
             if (shouldOpenAutocompletionAfterEdit) {
                 shouldOpenAutocompletionAfterEdit = false;
                 if (autocompletionPopup != null) {
-                    autocompletionPopup.execute(0, false);
+                    if (autocompletionPopup.populate(0, false)) {
+                        autocompletionPopup.showPopup();
+                    }
                 }
             }
         });

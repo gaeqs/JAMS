@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,20 +22,37 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.editor.code.popup.event;
+package net.jamsimulator.jams.gui.editor.code.autocompletion;
 
-import net.jamsimulator.jams.event.Event;
-import net.jamsimulator.jams.gui.editor.code.popup.AutocompletionPopupElement;
+import net.jamsimulator.jams.gui.image.icon.IconData;
+import net.jamsimulator.jams.utils.Validate;
+import org.jetbrains.annotations.Nullable;
 
-public class AutocompletionPopupSelectElementEvent extends Event {
+import java.util.Objects;
 
-    private final AutocompletionPopupElement selectedElement;
+public record AutocompletionCandidate<T>(
+        T element,
+        String key,
+        String replacement,
+        @Nullable IconData icon
+) {
 
-    public AutocompletionPopupSelectElementEvent(AutocompletionPopupElement selectedElement) {
-        this.selectedElement = selectedElement;
+    public AutocompletionCandidate {
+        Validate.notNull(element, "Element cannot be null!");
+        Validate.notNull(key, "Key cannot be null!");
+        Validate.notNull(replacement, "Replacement cannot be null!");
     }
 
-    public AutocompletionPopupElement getSelectedElement() {
-        return selectedElement;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AutocompletionCandidate<?> that = (AutocompletionCandidate<?>) o;
+        return element.equals(that.element) && key.equals(that.key);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(element, key);
     }
 }

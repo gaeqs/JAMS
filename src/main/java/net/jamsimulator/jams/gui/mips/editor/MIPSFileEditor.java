@@ -30,6 +30,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Popup;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionPopup;
+import net.jamsimulator.jams.gui.editor.code.autocompletion.view.AutocompletionPopupBasicView;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 import net.jamsimulator.jams.gui.mips.editor.indexing.MIPSEditorIndex;
@@ -48,8 +50,12 @@ public class MIPSFileEditor extends CodeFileEditor {
         super(tab);
 
         popup = new Popup();
-        autocompletionPopup = new MIPSAutocompletionPopup(this);
-        documentationPopup = new MIPSDocumentationPopup(this, (MIPSAutocompletionPopup) autocompletionPopup);
+        autocompletionPopup = new AutocompletionPopup(
+                this,
+                new MIPSAutocompletionPopupController((MIPSProject) tab.getWorkingPane().getProjectTab().getProject()),
+                new AutocompletionPopupBasicView()
+        );//new MIPSAutocompletionPopup(this);
+        //documentationPopup = new MIPSDocumentationPopup(this, (MIPSAutocompletionPopup) autocompletionPopup);
 
         applyAutoIndent();
         applyIndentRemoval();
@@ -100,7 +106,7 @@ public class MIPSFileEditor extends CodeFileEditor {
             if (event.getCode() == KeyCode.BACK_SPACE) {
                 int caretPosition = getCaretColumn();
                 int currentLine = getCurrentParagraph();
-                if(!event.isShiftDown() && currentLine > 0) {
+                if (!event.isShiftDown() && currentLine > 0) {
                     String previous = getParagraph(currentLine - 1).getText();
                     String current = getParagraph(currentLine).substring(0, caretPosition);
                     if (current.isBlank()) {
