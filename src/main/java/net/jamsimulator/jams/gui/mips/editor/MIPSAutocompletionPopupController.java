@@ -28,7 +28,10 @@ import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionCandid
 import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionPopupController;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 import net.jamsimulator.jams.gui.image.icon.Icons;
+import net.jamsimulator.jams.mips.parameter.ParameterType;
 import net.jamsimulator.jams.project.mips.MIPSProject;
+
+import java.util.List;
 
 public class MIPSAutocompletionPopupController extends AutocompletionPopupController {
 
@@ -51,8 +54,20 @@ public class MIPSAutocompletionPopupController extends AutocompletionPopupContro
                     instruction,
                     instruction.getMnemonic(),
                     instruction.getMnemonic(),
+                    List.of(
+                            parseParameters(instruction.getParameters()),
+                            instruction.getName()
+                    ),
                     Icons.AUTOCOMPLETION_INSTRUCTION
             ));
         }
+    }
+
+    private String parseParameters(ParameterType[] types) {
+        StringBuilder builder = new StringBuilder();
+        for (ParameterType type : types) {
+            builder.append(type.getExample()).append(" ");
+        }
+        return builder.length() == 0 ? " " : builder.substring(0, builder.length() - 1);
     }
 }

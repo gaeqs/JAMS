@@ -112,7 +112,6 @@ public class AutocompletionPopup extends Popup implements EventBroadcast {
 
     public void showPopup() {
         var bounds = editor.getCaretBounds().orElse(null);
-        System.out.println(bounds);
         if (bounds == null) return;
         show(editor, bounds.getMinX(), bounds.getMaxY());
     }

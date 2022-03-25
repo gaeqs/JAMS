@@ -30,6 +30,7 @@ import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionOption
 import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionPopup;
 import net.jamsimulator.jams.gui.util.PixelScrollPane;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AutocompletionPopupBasicView extends PixelScrollPane implements AutocompletionPopupView {
@@ -37,6 +38,7 @@ public class AutocompletionPopupBasicView extends PixelScrollPane implements Aut
     protected final VBox content = new VBox();
 
     public AutocompletionPopupBasicView() {
+        content.getStyleClass().add("autocompletion-popup");
         setContent(content);
         setFitToHeight(true);
         setFitToWidth(true);
@@ -46,8 +48,34 @@ public class AutocompletionPopupBasicView extends PixelScrollPane implements Aut
     public void showContents(AutocompletionPopup popup, List<AutocompletionOption<?>> options) {
         double zoom = popup.getEditor().getZoom().getZoom().getY();
 
+        var lengths = new ArrayList<Integer>();
+
+        boolean next = true;
+        int index = 0;
+        while (next) {
+            next = false;
+            int max = 0;
+            for (var option : options) {
+                if (option.candidate().displayStrings().size() > index) {
+                    max = Math.max(max, option.candidate().displayStrings().get(index).length());
+                    next = true;
+                }
+            }
+            if (next) {
+                lengths.add(max);
+                index++;
+            }
+        }
+
+        lengths.set(lengths.size() - 1, 0);
+
+        int maxKey = options.stream().mapToInt(it -> it.candidate().key().length())
+                .max()
+                .orElse(0);
+
         content.getChildren().clear();
-        options.forEach(it -> content.getChildren().add(new AutocompletionPopupBasicViewElement(it.candidate(), zoom)));
+        options.forEach(it -> content.getChildren()
+                .add(new AutocompletionPopupBasicViewElement(it, maxKey, lengths, zoom)));
         setMaxHeight(200 * zoom);
         setMinWidth(300 * zoom);
     }

@@ -28,12 +28,14 @@ import net.jamsimulator.jams.gui.image.icon.IconData;
 import net.jamsimulator.jams.utils.Validate;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 
 public record AutocompletionCandidate<T>(
         T element,
         String key,
         String replacement,
+        List<String> displayStrings,
         @Nullable IconData icon
 ) {
 
@@ -41,6 +43,7 @@ public record AutocompletionCandidate<T>(
         Validate.notNull(element, "Element cannot be null!");
         Validate.notNull(key, "Key cannot be null!");
         Validate.notNull(replacement, "Replacement cannot be null!");
+        Validate.notNull(displayStrings, "Display strings cannot be null!");
     }
 
     @Override

@@ -117,12 +117,31 @@
     -fx-background-color: -theme-background;
     -fx-border-color: -theme-background-darker-2;
     -fx-border-width: 1px;
+    -fx-spacing: 2px;
+}
+
+.autocompletion-popup-element {
+    -fx-spacing: 2px;
 }
 
 .autocompletion-popup-element .label {
     -fx-padding: 0px 5px 0px 5px;
     -fx-font-family: "{FONT_CODE}";
-    -fx-font-size: 13.5;
+}
+
+.autocompletion-popup-element-key-slice {
+    -fx-padding: 0;
+    -fx-label-padding: 0 -5px 0 -5px;
+    -fx-font-family: "{FONT_CODE}";
+    -fx-border-width: 0;
+}
+
+.autocompletion-popup-element-key-slice-match {
+    -fx-padding: 0;
+    -fx-label-padding: 0 -5px 0 -5px;
+    -fx-font-family: "{FONT_CODE}";
+    -fx-text-fill: -theme-text-match;
+    -fx-border-width: 0;
 }
 
 .autocompletion-popup-element-selected {
