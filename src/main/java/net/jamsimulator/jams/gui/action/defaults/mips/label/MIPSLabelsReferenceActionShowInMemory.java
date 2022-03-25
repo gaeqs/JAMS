@@ -54,13 +54,14 @@ public class MIPSLabelsReferenceActionShowInMemory extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
-        if (!(node instanceof LabelTableReference reference)) return;
+    public boolean run(Object node) {
+        if (!(node instanceof LabelTableReference reference)) return false;
         var explorer = (LabelTable) reference.getExplorer();
 
         explorer.getSimulationPane().getBarMap().searchButton("memory").ifPresent(BarButton::show);
         var memoryPane = explorer.getSimulationPane().getMemoryPane();
         memoryPane.selectAddress(reference.getReference().address());
+        return true;
     }
 
     @Override

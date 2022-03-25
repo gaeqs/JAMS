@@ -53,21 +53,21 @@ public class FolderActionRemoveAllFilesFromAssembler extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
-        if (!(node instanceof ExplorerElement)) return;
+    public boolean run(Object node) {
+        if (!(node instanceof ExplorerElement)) return false;
         var explorer = ((ExplorerElement) node).getExplorer();
-        if (!(explorer instanceof FolderExplorer)) return;
-        if (explorer.getSelectedElements().size() == 0) return;
+        if (!(explorer instanceof FolderExplorer)) return false;
+        if (explorer.getSelectedElements().size() == 0) return false;
 
         var tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
-        if (tab == null) return;
+        if (tab == null) return false;
         var project = tab.getProject();
         var data = project.getData();
-        if (!(data instanceof GlobalIndexHolder)) return;
+        if (!(data instanceof GlobalIndexHolder)) return false;
         var files = ((GlobalIndexHolder) data).getGlobalIndex();
 
         var element = explorer.getSelectedElements().get(0);
-        if (!(element instanceof ExplorerFolder)) return;
+        if (!(element instanceof ExplorerFolder)) return false;
         var folder = ((ExplorerFolder) element).getFolder();
 
         try {
@@ -75,6 +75,7 @@ public class FolderActionRemoveAllFilesFromAssembler extends ContextAction {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+        return true;
     }
 
     @Override

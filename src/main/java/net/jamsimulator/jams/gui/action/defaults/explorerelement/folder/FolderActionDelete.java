@@ -52,10 +52,10 @@ public class FolderActionDelete extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
-        if (!(node instanceof ExplorerElement)) return;
+    public boolean run(Object node) {
+        if (!(node instanceof ExplorerElement)) return false;
         Explorer explorer = ((ExplorerElement) node).getExplorer();
-        if (!(explorer instanceof FolderExplorer)) return;
+        if (!(explorer instanceof FolderExplorer)) return false;
 
         for (ExplorerElement element : explorer.getSelectedElements()) {
             if (element instanceof ExplorerFile) {
@@ -69,6 +69,7 @@ public class FolderActionDelete extends ContextAction {
             }
         }
         ((ExplorerElement) node).getParentSection().ifPresent(explorer::selectElementAlone);
+        return true;
     }
 
     @Override

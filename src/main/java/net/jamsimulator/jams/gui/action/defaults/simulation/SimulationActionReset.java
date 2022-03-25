@@ -50,17 +50,18 @@ public class SimulationActionReset extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
+    public boolean run(Object node) {
         var optionalProject = JamsApplication.getProjectsTabPane().getFocusedProject();
-        if (optionalProject.isEmpty()) return;
+        if (optionalProject.isEmpty()) return false;
         var projectTab = optionalProject.get();
         var tab = projectTab.getProjectTabPane().getSelectionModel().getSelectedItem();
-        if (tab == null || !(tab.getContent() instanceof SimulationHolder<?> holder)) return;
+        if (tab == null || !(tab.getContent() instanceof SimulationHolder<?> holder)) return false;
         try {
             holder.getSimulation().reset();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        return true;
     }
 
 

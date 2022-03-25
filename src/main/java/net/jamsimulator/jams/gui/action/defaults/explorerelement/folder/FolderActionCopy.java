@@ -56,10 +56,10 @@ public class FolderActionCopy extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
-        if (!(node instanceof ExplorerElement)) return;
+    public boolean run(Object node) {
+        if (!(node instanceof ExplorerElement)) return false;
         Explorer explorer = ((ExplorerElement) node).getExplorer();
-        if (!(explorer instanceof FolderExplorer)) return;
+        if (!(explorer instanceof FolderExplorer)) return false;
         Set<File> files = new HashSet<>();
         File file;
         for (ExplorerElement element : explorer.getSelectedElements()) {
@@ -73,6 +73,7 @@ public class FolderActionCopy extends ContextAction {
             files.add(file);
         }
         ClipboardUtils.copy(files);
+        return true;
     }
 
     @Override

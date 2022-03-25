@@ -26,6 +26,7 @@ package net.jamsimulator.jams.gui.util;
 
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
+import net.jamsimulator.jams.utils.Validate;
 
 /**
  * Represents a {@link ScrollPane} that scrolls the same amount of pixels each time,
@@ -89,4 +90,29 @@ public class PixelScrollPane extends ScrollPane {
     public void setIncrement(double increment) {
         skin.setIncrement(increment);
     }
+
+    /**
+     * This method ensures the given node is visible in this scroll pane.
+     * <p>
+     * This method only works when the node is a direct child of this PixelScrollPane's content.
+     *
+     * @param node the node.
+     */
+    public void ensureVisible(Node node) {
+        Validate.notNull(node, "Node cannot be null!");
+        if (getContent() == null) return;
+        var bounds = getContent().getBoundsInLocal();
+        if (bounds == null) return;
+
+        var childBounds = node.getBoundsInParent();
+        if (childBounds == null) return;
+
+        // scrolling values range from 0 to 1
+        setVvalue(childBounds.getMaxY() / bounds.getHeight());
+        setHvalue(childBounds.getMaxX() / bounds.getWidth());
+
+        // just for usability
+        node.requestFocus();
+    }
+
 }

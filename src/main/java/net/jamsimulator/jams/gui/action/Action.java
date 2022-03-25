@@ -110,8 +110,9 @@ public abstract class Action implements ManagerResource {
      * Executes this action.
      *
      * @param node the current focused node.
+     * @return
      */
-    public abstract void run(Object node);
+    public abstract boolean run(Object node);
 
     @Override
     public boolean equals(Object o) {

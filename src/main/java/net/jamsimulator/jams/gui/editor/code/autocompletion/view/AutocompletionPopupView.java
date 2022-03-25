@@ -29,11 +29,18 @@ import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionOption
 import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionPopup;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AutocompletionPopupView {
 
     void showContents(AutocompletionPopup popup, List<AutocompletionOption<?>> options);
 
     Node asNode();
+
+    Optional<String> getSelected();
+
+    void moveUp();
+
+    void moveDown();
 
 }

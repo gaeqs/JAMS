@@ -32,5 +32,6 @@ public class TextEditorActionRegions {
     public static final ContextRegion UNDO_REDO = new ContextRegion("undo-redo", null, 1);
     public static final ContextRegion CLIPBOARD = new ContextRegion("clipboard", null, 2);
     public static final ContextRegion TEXT_MODIFICATION = new ContextRegion("text-modification", null, 3);
+    public static final ContextRegion AUTOCOMPLETION = new ContextRegion("autocompletion", null, 4);
 
 }

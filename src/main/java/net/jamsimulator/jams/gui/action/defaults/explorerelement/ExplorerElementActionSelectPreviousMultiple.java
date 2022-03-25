@@ -46,14 +46,14 @@ public class ExplorerElementActionSelectPreviousMultiple extends Action {
     }
 
     @Override
-    public void run(Object node) {
-        if (!(node instanceof ExplorerElement element)) return;
+    public boolean run(Object node) {
+        if (!(node instanceof ExplorerElement element)) return false;
 
         Explorer explorer = element.getExplorer();
         explorer.startKeyboardSelection();
 
         ExplorerElement target = element.getPrevious().orElse(null);
-        if (target == null) return;
+        if (target == null) return false;
 
         explorer.startKeyboardSelection();
 
@@ -66,5 +66,6 @@ public class ExplorerElementActionSelectPreviousMultiple extends Action {
 
         explorer.updateScrollPosition(target);
 
+        return true;
     }
 }

@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.gui.editor.code.autocompletion;
 
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Popup;
 import net.jamsimulator.jams.event.Event;
 import net.jamsimulator.jams.event.EventBroadcast;
@@ -57,6 +59,14 @@ public class AutocompletionPopup extends Popup implements EventBroadcast {
         setAutoFix(true);
         setAutoHide(true);
         getContent().add(view.asNode());
+
+        var oldDispatcher = getEventDispatcher();
+        setEventDispatcher((event, tail) -> {
+            if (event instanceof MouseEvent && ((MouseEvent) event).getButton() != MouseButton.PRIMARY) {
+                return oldDispatcher.dispatchEvent(event, tail);
+            }
+            return editor.getEventDispatcher().dispatchEvent(event, tail);
+        });
     }
 
     public CodeFileEditor getEditor() {
@@ -114,6 +124,14 @@ public class AutocompletionPopup extends Popup implements EventBroadcast {
         var bounds = editor.getCaretBounds().orElse(null);
         if (bounds == null) return;
         show(editor, bounds.getMinX(), bounds.getMaxY());
+    }
+
+    public void moveUp() {
+        view.moveUp();
+    }
+
+    public void moveDown() {
+        view.moveDown();
     }
 
     //region BROADCAST

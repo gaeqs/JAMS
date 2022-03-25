@@ -39,6 +39,11 @@ import java.util.Optional;
 
 public class AutocompletionPopupBasicViewElement extends HBox {
 
+    public static final String STYLE_CLASS = "autocompletion-popup-element";
+    public static final String SELECTED_STYLE_CLASS = "autocompletion-popup-element-selected";
+    public static final String SLICE_STYLE_CLASS = "autocompletion-popup-element-key-slice";
+    public static final String SLICE_MATCH_STYLE_CLASS = "autocompletion-popup-element-key-slice-match";
+
     private static final double DEFAULT_FONT_SIZE = 13.5;
 
     private final AutocompletionOption<?> option;
@@ -47,7 +52,7 @@ public class AutocompletionPopupBasicViewElement extends HBox {
     private final LinkedList<Label> displayLabels = new LinkedList<>();
 
     public AutocompletionPopupBasicViewElement(AutocompletionOption<?> option, int maxKeyLength, List<Integer> maxNameLength, double zoom) {
-        getStyleClass().add("autocompletion-popup-element");
+        getStyleClass().add(STYLE_CLASS);
         this.option = option;
 
         var labelStyle = "-fx-font-size: " + (DEFAULT_FONT_SIZE * zoom) + ";";
@@ -68,6 +73,18 @@ public class AutocompletionPopupBasicViewElement extends HBox {
         loadImage().ifPresent(this.getChildren()::add);
         getChildren().add(keyRegion);
         displayLabels.forEach(getChildren()::add);
+    }
+
+    public AutocompletionOption<?> getOption() {
+        return option;
+    }
+
+    public void setSelected(boolean selected) {
+        if (selected) {
+            getStyleClass().add(SELECTED_STYLE_CLASS);
+        } else {
+            getStyleClass().removeAll(SELECTED_STYLE_CLASS);
+        }
     }
 
     private Optional<ImageView> loadImage() {
@@ -97,9 +114,9 @@ public class AutocompletionPopupBasicViewElement extends HBox {
         for (var slice : list) {
             if (slice.getKey().isEmpty()) continue;
             var label = new Label(slice.getKey());
-            label.getStyleClass().add("autocompletion-popup-element-key-slice");
+            label.getStyleClass().add(SLICE_STYLE_CLASS);
             if (slice.getValue()) {
-                label.getStyleClass().add("autocompletion-popup-element-key-slice-match");
+                label.getStyleClass().add(SLICE_MATCH_STYLE_CLASS);
             }
             label.setStyle(labelStyle);
             keyRegion.getChildren().add(label);

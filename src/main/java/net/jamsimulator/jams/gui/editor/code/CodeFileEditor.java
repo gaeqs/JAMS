@@ -30,6 +30,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -38,6 +39,7 @@ import javafx.stage.Popup;
 import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.Action;
+import net.jamsimulator.jams.gui.action.ActionManager;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.action.context.ContextActionMenuBuilder;
@@ -54,7 +56,9 @@ import net.jamsimulator.jams.gui.editor.code.top.CodeFileEditorSearch;
 import net.jamsimulator.jams.gui.editor.holder.FileEditorTab;
 import net.jamsimulator.jams.gui.util.AnchorUtils;
 import net.jamsimulator.jams.gui.util.GUIReflectionUtils;
+import net.jamsimulator.jams.gui.util.KeyCombinationBuilder;
 import net.jamsimulator.jams.gui.util.ZoomUtils;
+import net.jamsimulator.jams.manager.Manager;
 import net.jamsimulator.jams.project.GlobalIndexHolder;
 import net.jamsimulator.jams.project.Project;
 import net.jamsimulator.jams.utils.FileUtils;
@@ -424,16 +428,21 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     protected void initializeAutocompletionPopupListeners() {
         //AUTOCOMPLETION MOVEMENT
         addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            try {
+                if (Manager.get(ActionManager.class).executeAction(
+                        new KeyCombinationBuilder(event).build(), this)) {
+                    event.consume();
+                }
+            } catch (IllegalArgumentException ignore) {
+                return;
+            }
             if (autocompletionPopup != null) {
-                //if (autocompletionPopup.managePressEvent(event)) {
-                //    event.consume();
-                //    if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT) {
-                //        if (documentationPopup != null) documentationPopup.hide();
-                //    }
-                //} else {
-                //    shouldOpenAutocompletionAfterEdit = !event.getText().isBlank();
-                //    if (documentationPopup != null) documentationPopup.hide();
-                //}
+                if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT) {
+                    if (documentationPopup != null) documentationPopup.hide();
+                }
+            } else {
+                shouldOpenAutocompletionAfterEdit = !event.getText().isBlank();
+                if (documentationPopup != null) documentationPopup.hide();
             }
         });
 

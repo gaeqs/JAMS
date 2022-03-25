@@ -54,8 +54,9 @@ public class GeneralActionSettings extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
+    public boolean run(Object node) {
         ConfigurationWindowScene.open();
+        return true;
     }
 
     @Override

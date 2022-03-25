@@ -49,15 +49,16 @@ public class EditorTabActionSplitVertically extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
+    public boolean run(Object node) {
         FileEditorTab tab = null;
         if (node instanceof FileEditorTab)
             tab = (FileEditorTab) node;
         else if (node instanceof FileEditor)
             tab = ((FileEditor) node).getTab();
-        if (tab == null) return;
+        if (tab == null) return false;
 
         tab.openInNewHolder(FileOpenPosition.BOTTOM);
+        return true;
     }
 
     @Override

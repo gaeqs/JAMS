@@ -45,7 +45,7 @@ public class TextEditorActionNextFile extends Action {
     }
 
     @Override
-    public void run(Object node) {
+    public boolean run(Object node) {
         if (node instanceof FileEditor) {
             FileEditorTabList list = ((FileEditor) node).getTab().getList();
             list.selectNext();
@@ -54,6 +54,8 @@ public class TextEditorActionNextFile extends Action {
                     ((Node) target.getDisplay()).requestFocus();
                 }
             });
+            return true;
         }
+        return false;
     }
 }

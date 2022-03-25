@@ -53,8 +53,8 @@ public class MIPSLabelsLabelActionShowInInstructionViewer extends ContextAction 
     }
 
     @Override
-    public void run(Object node) {
-        if (!(node instanceof LabelTableLabel label)) return;
+    public boolean run(Object node) {
+        if (!(node instanceof LabelTableLabel label)) return false;
         var explorer = (LabelTable) label.getExplorer();
 
         var instructionGroup = explorer.getSimulationPane().getInstructionTableGroup();
@@ -67,6 +67,7 @@ public class MIPSLabelsLabelActionShowInInstructionViewer extends ContextAction 
                 instructionGroup.selectKernel();
             }
         }
+        return true;
     }
 
     @Override

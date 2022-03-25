@@ -32,7 +32,6 @@ import net.jamsimulator.jams.gui.JamsApplication;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
-import net.jamsimulator.jams.gui.editor.holder.FileEditorHolderHolder;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.explorer.ExplorerElement;
 import net.jamsimulator.jams.gui.explorer.folder.ExplorerFile;
@@ -55,28 +54,29 @@ public class FolderActionAddFileToAssembler extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
-        if (!(node instanceof ExplorerElement)) return;
+    public boolean run(Object node) {
+        if (!(node instanceof ExplorerElement)) return false;
         var explorer = ((ExplorerElement) node).getExplorer();
-        if (!(explorer instanceof FolderExplorer)) return;
+        if (!(explorer instanceof FolderExplorer)) return false;
 
         var elements = explorer.getSelectedElements();
-        if (elements.isEmpty()) return;
+        if (elements.isEmpty()) return false;
 
         if (!elements.stream().allMatch(target -> target instanceof ExplorerFile
                 && Manager.get(FileTypeManager.class).getByFile(((ExplorerFile) target).getFile())
-                .map(FileType::getName).orElse("").equals(AssemblyFileType.NAME))) return;
+                .map(FileType::getName).orElse("").equals(AssemblyFileType.NAME))) return false;
 
         var tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
-        if (tab == null) return;
+        if (tab == null) return false;
         var project = tab.getProject();
         var data = project.getData();
-        if (!(data instanceof GlobalIndexHolder)) return;
+        if (!(data instanceof GlobalIndexHolder)) return false;
         var files = ((GlobalIndexHolder) data).getGlobalIndex();
 
         for (ExplorerElement element : elements) {
             files.addFile(((ExplorerFile) element).getFile());
         }
+        return true;
     }
 
     @Override

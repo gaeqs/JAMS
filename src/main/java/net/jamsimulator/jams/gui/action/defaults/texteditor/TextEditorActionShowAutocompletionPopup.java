@@ -45,15 +45,17 @@ public class TextEditorActionShowAutocompletionPopup extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
+    public boolean run(Object node) {
         if (node instanceof CodeFileEditor editor) {
             var popup = editor.getAutocompletionPopup();
             if (popup != null) {
                 if (popup.populate(0, false)) {
                     popup.showPopup();
                 }
+                return true;
             }
         }
+        return false;
     }
 
     @Override

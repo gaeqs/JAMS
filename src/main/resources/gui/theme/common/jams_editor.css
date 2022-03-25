@@ -124,6 +124,10 @@
     -fx-spacing: 2px;
 }
 
+.autocompletion-popup-element-selected {
+    -fx-background-color: -theme-element-selected;
+}
+
 .autocompletion-popup-element .label {
     -fx-padding: 0px 5px 0px 5px;
     -fx-font-family: "{FONT_CODE}";
@@ -142,10 +146,6 @@
     -fx-font-family: "{FONT_CODE}";
     -fx-text-fill: -theme-text-match;
     -fx-border-width: 0;
-}
-
-.autocompletion-popup-element-selected {
-    -fx-background-color: -theme-element-selected;
 }
 
 /* MIPS DOCUMENTATION */

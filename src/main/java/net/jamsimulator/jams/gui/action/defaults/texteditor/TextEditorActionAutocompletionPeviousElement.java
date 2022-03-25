@@ -29,8 +29,6 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import net.jamsimulator.jams.gui.action.RegionTags;
 import net.jamsimulator.jams.gui.action.context.ContextAction;
-import net.jamsimulator.jams.gui.action.context.MainMenuRegion;
-import net.jamsimulator.jams.gui.editor.FileEditor;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.explorer.Explorer;
 import net.jamsimulator.jams.gui.main.MainMenuBar;
@@ -38,20 +36,22 @@ import net.jamsimulator.jams.gui.util.CodeFileEditorUtils;
 import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.ResourceProvider;
 
-public class TextEditorActionRefreshFromDisk extends ContextAction {
+public class TextEditorActionAutocompletionPeviousElement extends ContextAction {
 
-    public static final String NAME = "TEXT_EDITOR_REFRESH_FROM_DISK";
-    public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.R, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN);
+    public static final String NAME = "TEXT_EDITOR_AUTOCOMPLETION_PREVIOUS_ELEMENT";
+    public static final KeyCombination DEFAULT_COMBINATION = new KeyCodeCombination(KeyCode.UP);
 
-    public TextEditorActionRefreshFromDisk(ResourceProvider provider) {
-        super(provider, NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_REFRESH_FROM_DISK, DEFAULT_COMBINATION,
-                TextEditorActionRegions.CONTEXT, MainMenuRegion.EDIT, null);
+    public TextEditorActionAutocompletionPeviousElement(ResourceProvider provider) {
+        super(provider, NAME, RegionTags.TEXT_EDITOR, Messages.ACTION_TEXT_EDITOR_AUTOCOMPLETION_PREVIOUS_ELEMENT,
+                DEFAULT_COMBINATION, TextEditorActionRegions.AUTOCOMPLETION, null, null);
     }
 
     @Override
     public boolean run(Object node) {
-        if (node instanceof FileEditor) {
-            ((FileEditor) node).reload();
+        if (node instanceof CodeFileEditor editor) {
+            if(editor.getAutocompletionPopup() == null || !editor.getAutocompletionPopup().isShowing())
+                return false;
+            editor.getAutocompletionPopup().moveUp();
             return true;
         }
         return false;
@@ -59,7 +59,7 @@ public class TextEditorActionRefreshFromDisk extends ContextAction {
 
     @Override
     public void runFromMenu() {
-        CodeFileEditorUtils.getFocusedCodeFileEditor().ifPresent(CodeFileEditor::reload);
+        CodeFileEditorUtils.getFocusedCodeFileEditor().ifPresent(it -> it.getAutocompletionPopup().moveUp());
     }
 
     @Override
@@ -69,11 +69,13 @@ public class TextEditorActionRefreshFromDisk extends ContextAction {
 
     @Override
     public boolean supportsTextEditorState(CodeFileEditor editor) {
-        return true;
+        return editor.getAutocompletionPopup() != null && editor.getAutocompletionPopup().isShowing();
     }
 
     @Override
     public boolean supportsMainMenuState(MainMenuBar bar) {
-        return CodeFileEditorUtils.getFocusedCodeFileEditor().isPresent();
+        return CodeFileEditorUtils.getFocusedCodeFileEditor()
+                .map(it -> it.getAutocompletionPopup() != null && it.getAutocompletionPopup().isShowing())
+                .orElse(false);
     }
 }

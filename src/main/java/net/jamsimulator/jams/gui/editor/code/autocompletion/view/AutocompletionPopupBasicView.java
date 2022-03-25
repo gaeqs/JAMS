@@ -32,10 +32,14 @@ import net.jamsimulator.jams.gui.util.PixelScrollPane;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class AutocompletionPopupBasicView extends PixelScrollPane implements AutocompletionPopupView {
 
     protected final VBox content = new VBox();
+    private final List<AutocompletionPopupBasicViewElement> elements = new ArrayList<>();
+
+    private int selectedElement;
 
     public AutocompletionPopupBasicView() {
         content.getStyleClass().add("autocompletion-popup");
@@ -46,6 +50,8 @@ public class AutocompletionPopupBasicView extends PixelScrollPane implements Aut
 
     @Override
     public void showContents(AutocompletionPopup popup, List<AutocompletionOption<?>> options) {
+        elements.clear();
+
         double zoom = popup.getEditor().getZoom().getZoom().getY();
 
         var lengths = new ArrayList<Integer>();
@@ -73,15 +79,56 @@ public class AutocompletionPopupBasicView extends PixelScrollPane implements Aut
                 .max()
                 .orElse(0);
 
+        options.forEach(it -> elements.add(new AutocompletionPopupBasicViewElement(it, maxKey, lengths, zoom)));
         content.getChildren().clear();
-        options.forEach(it -> content.getChildren()
-                .add(new AutocompletionPopupBasicViewElement(it, maxKey, lengths, zoom)));
+        content.getChildren().addAll(elements);
+
         setMaxHeight(200 * zoom);
         setMinWidth(300 * zoom);
+
+        selectedElement = 0;
+        if(!elements.isEmpty()) {
+            elements.get(0).setSelected(true);
+        }
     }
 
     @Override
     public Node asNode() {
         return this;
+    }
+
+    @Override
+    public Optional<String> getSelected() {
+        return elements.isEmpty()
+                ? Optional.empty()
+                : Optional.of(elements.get(selectedElement).getOption().candidate().key());
+    }
+
+    @Override
+    public void moveUp() {
+        if (elements.isEmpty()) return;
+        elements.get(selectedElement).setSelected(false);
+
+        selectedElement--;
+        if (selectedElement < 0) {
+            selectedElement = elements.size() - 1;
+        }
+
+        elements.get(selectedElement).setSelected(true);
+        ensureVisible(elements.get(selectedElement));
+    }
+
+    @Override
+    public void moveDown() {
+        if (elements.isEmpty()) return;
+        elements.get(selectedElement).setSelected(false);
+
+        selectedElement++;
+        if (selectedElement >= elements.size()) {
+            selectedElement = 0;
+        }
+
+        elements.get(selectedElement).setSelected(true);
+        ensureVisible(elements.get(selectedElement));
     }
 }

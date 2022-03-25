@@ -46,11 +46,13 @@ public class TextEditorActionShowDocumentationPopup extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
+    public boolean run(Object node) {
         if (node instanceof CodeFileEditor) {
             DocumentationPopup popup = ((CodeFileEditor) node).getDocumentationPopup();
             popup.execute(0);
+            return true;
         }
+        return false;
     }
 
     @Override

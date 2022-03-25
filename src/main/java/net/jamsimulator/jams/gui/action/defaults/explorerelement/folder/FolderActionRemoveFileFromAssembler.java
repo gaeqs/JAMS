@@ -50,27 +50,28 @@ public class FolderActionRemoveFileFromAssembler extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
-        if (!(node instanceof ExplorerElement)) return;
+    public boolean run(Object node) {
+        if (!(node instanceof ExplorerElement)) return false;
         var explorer = ((ExplorerElement) node).getExplorer();
-        if (!(explorer instanceof FolderExplorer)) return;
+        if (!(explorer instanceof FolderExplorer)) return false;
 
         var elements = explorer.getSelectedElements();
-        if (elements.isEmpty()) return;
+        if (elements.isEmpty()) return false;
 
         var tab = JamsApplication.getProjectsTabPane().getFocusedProject().orElse(null);
-        if (tab == null) return;
+        if (tab == null) return false;
         var project = tab.getProject();
         var data = project.getData();
-        if (!(data instanceof GlobalIndexHolder)) return;
+        if (!(data instanceof GlobalIndexHolder)) return false;
         var files = ((GlobalIndexHolder) data).getGlobalIndex();
 
         if (!elements.stream().allMatch(target -> target instanceof ExplorerFile
-                && files.containsFile(((ExplorerFile) target).getFile()))) return;
+                && files.containsFile(((ExplorerFile) target).getFile()))) return false;
 
         for (ExplorerElement element : elements) {
             files.removeFile(((ExplorerFile) element).getFile());
         }
+        return true;
     }
 
     @Override

@@ -45,13 +45,13 @@ public class ExplorerElementActionExpandOrSelectNext extends Action {
     }
 
     @Override
-    public void run(Object node) {
-        if (!(node instanceof ExplorerElement element)) return;
+    public boolean run(Object node) {
+        if (!(node instanceof ExplorerElement element)) return false;
 
         if (element instanceof ExplorerSection) {
             if (!((ExplorerSection) element).isExpanded() && !((ExplorerSection) element).isEmpty()) {
                 ((ExplorerSection) element).expand();
-                return;
+                return false;
             }
         }
 
@@ -62,5 +62,6 @@ public class ExplorerElementActionExpandOrSelectNext extends Action {
             explorer.updateScrollPosition(target);
         });
 
+        return true;
     }
 }

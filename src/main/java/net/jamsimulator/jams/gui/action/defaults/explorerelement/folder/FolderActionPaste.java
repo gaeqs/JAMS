@@ -54,11 +54,11 @@ public class FolderActionPaste extends ContextAction {
     }
 
     @Override
-    public void run(Object node) {
-        if (!(node instanceof ExplorerElement)) return;
+    public boolean run(Object node) {
+        if (!(node instanceof ExplorerElement)) return false;
         Explorer explorer = ((ExplorerElement) node).getExplorer();
-        if (!(explorer instanceof FolderExplorer)) return;
-        if (explorer.getSelectedElements().size() != 1) return;
+        if (!(explorer instanceof FolderExplorer)) return false;
+        if (explorer.getSelectedElements().size() != 1) return false;
 
         ExplorerElement element = explorer.getSelectedElements().get(0);
 
@@ -73,6 +73,7 @@ public class FolderActionPaste extends ContextAction {
         }
 
         ClipboardUtils.paste(folder);
+        return true;
     }
 
     @Override

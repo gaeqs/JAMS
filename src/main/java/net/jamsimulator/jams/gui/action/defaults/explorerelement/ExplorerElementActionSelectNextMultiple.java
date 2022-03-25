@@ -46,14 +46,14 @@ public class ExplorerElementActionSelectNextMultiple extends Action {
     }
 
     @Override
-    public void run(Object node) {
-        if (!(node instanceof ExplorerElement element)) return;
+    public boolean run(Object node) {
+        if (!(node instanceof ExplorerElement element)) return false;
 
         Explorer explorer = element.getExplorer();
         explorer.startKeyboardSelection();
 
         ExplorerElement target = element.getNext().orElse(null);
-        if (target == null) return;
+        if (target == null) return false;
 
         explorer.startKeyboardSelection();
 
@@ -65,5 +65,6 @@ public class ExplorerElementActionSelectNextMultiple extends Action {
         if (target instanceof Node) ((Node) target).requestFocus();
 
         explorer.updateScrollPosition(target);
+        return true;
     }
 }
