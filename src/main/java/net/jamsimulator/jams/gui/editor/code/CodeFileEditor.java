@@ -439,6 +439,14 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
             if (autocompletionPopup != null) {
                 if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT) {
                     if (documentationPopup != null) documentationPopup.hide();
+                    if (autocompletionPopup.isShowing()) {
+                        if (autocompletionPopup.populate(
+                                event.getCode() == KeyCode.LEFT ? -1 : 1, false)) {
+                            autocompletionPopup.showPopup();
+                        } else {
+                            autocompletionPopup.hide();
+                        }
+                    }
                 }
             } else {
                 shouldOpenAutocompletionAfterEdit = !event.getText().isBlank();
