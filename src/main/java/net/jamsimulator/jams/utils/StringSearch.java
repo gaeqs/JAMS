@@ -62,7 +62,7 @@ public class StringSearch {
             start = matchIndex + length;
         }
 
-        return new Result(true, ranges, priority);
+        return new Result(true, ranges, value.length() + priority << 10);
     }
 
     public record Result(boolean found, List<Pair<Integer, Integer>> ranges, int priority) {

@@ -49,7 +49,7 @@ public class TextEditorActionAutocompletionShow extends ContextAction {
         if (node instanceof CodeFileEditor editor) {
             var popup = editor.getAutocompletionPopup();
             if (popup != null) {
-                if (popup.populate(0, false)) {
+                if (popup.populate(0, true)) {
                     popup.showPopup();
                 }
                 return true;

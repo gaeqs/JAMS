@@ -24,6 +24,7 @@
 
 package net.jamsimulator.jams.gui.mips.editor;
 
+import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -82,7 +83,6 @@ public class MIPSFileEditor extends CodeFileEditor {
                 int caretPosition = getCaretPosition();
                 int currentLine = getCurrentParagraph();
                 int currentColumn = getCaretColumn();
-                if (currentLine < 1) return;
 
                 String previous = getParagraph(currentLine).getText().substring(0, currentColumn);
                 int labelIndex = LabelUtils.getLabelFinishIndex(previous);
@@ -96,8 +96,7 @@ public class MIPSFileEditor extends CodeFileEditor {
                     builder.append(c);
                 }
 
-                insertText(caretPosition, "\n" + builder);
-                event.consume();
+                Platform.runLater(() -> insertText(caretPosition + 1, builder.toString()));
             }
         });
     }

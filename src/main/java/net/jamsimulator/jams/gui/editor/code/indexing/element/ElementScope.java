@@ -24,6 +24,8 @@
 
 package net.jamsimulator.jams.gui.editor.code.indexing.element;
 
+import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacro;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -36,21 +38,25 @@ import java.util.UUID;
  * <p>
  * An element with a MACRO scope can only be reference from inside its macro.
  */
-public record ElementScope(String macroIdentifier, ElementScope parent, UUID scopeId) {
+public record ElementScope(EditorElementMacro macro, ElementScope parent, UUID scopeId) {
 
     public static final ElementScope INTERNAL = new ElementScope();
     public static final ElementScope GLOBAL = new ElementScope();
 
     public ElementScope() {
-        this("", null, UUID.randomUUID());
+        this(null, null, UUID.randomUUID());
     }
 
-    public ElementScope(String macroIdentifier, ElementScope parent) {
-        this(macroIdentifier, parent, UUID.randomUUID());
+    public ElementScope(EditorElementMacro macro, ElementScope parent) {
+        this(macro, parent, UUID.randomUUID());
     }
 
     public ElementScope(ElementScope parent) {
-        this("", parent, UUID.randomUUID());
+        this(null, parent, UUID.randomUUID());
+    }
+
+    public String macroIdentifier() {
+        return macro == null ? "" : macro.getIdentifier();
     }
 
     /**
@@ -92,8 +98,8 @@ public record ElementScope(String macroIdentifier, ElementScope parent, UUID sco
     }
 
     public String getFullIdentifier() {
-        if (parent == null) return macroIdentifier;
-        return parent.getFullIdentifier() + " > " + macroIdentifier;
+        if (parent == null) return macroIdentifier();
+        return parent.getFullIdentifier() + " > " + macroIdentifier();
     }
 
     @Override

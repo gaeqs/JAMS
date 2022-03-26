@@ -116,7 +116,7 @@ public class AutocompletionPopupBasicView extends ListView<AutocompletionOption<
 
     @Override
     public Optional<String> getSelected() {
-        return Optional.ofNullable(getSelectionModel().getSelectedItem().candidate().key());
+        return Optional.ofNullable(getSelectionModel().getSelectedItem().candidate().replacement());
     }
 
     @Override

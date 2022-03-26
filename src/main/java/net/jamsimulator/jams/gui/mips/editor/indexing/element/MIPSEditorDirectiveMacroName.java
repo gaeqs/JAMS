@@ -47,7 +47,7 @@ public class MIPSEditorDirectiveMacroName extends MIPSEditorDirectiveParameter i
     public MIPSEditorDirectiveMacroName(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                         int start, String text, int parameters, List<String> rawParameters) {
         super(index, scope, parent, start, text);
-        macroScope = new ElementScope(text, scope);
+        macroScope = new ElementScope(this, scope);
         identifier = text + "-" + parameters;
         parameterAmount = parameters;
         this.rawParameters = rawParameters;
@@ -76,7 +76,7 @@ public class MIPSEditorDirectiveMacroName extends MIPSEditorDirectiveParameter i
     @Override
     public void changeScope(ElementScope scope) {
         super.changeScope(scope);
-        macroScope = new ElementScope(text, scope);
+        macroScope = new ElementScope(this, scope);
     }
 
     @Override

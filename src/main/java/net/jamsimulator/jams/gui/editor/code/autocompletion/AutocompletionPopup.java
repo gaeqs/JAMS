@@ -34,13 +34,8 @@ import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.autocompletion.view.AutocompletionPopupView;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 import net.jamsimulator.jams.utils.Validate;
-import org.fxmisc.richtext.model.PlainTextChange;
-import org.fxmisc.undo.impl.ChangeQueue;
-import org.fxmisc.undo.impl.UndoManagerImpl;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AutocompletionPopup extends Popup implements EventBroadcast {
 
@@ -110,7 +105,7 @@ public class AutocompletionPopup extends Popup implements EventBroadcast {
                 .withLockF(false, i -> i.getElementAt(caretPosition - 1).orElse(null));
         if (context == null) return false;
 
-        controller.refreshCandidates(context);
+        controller.refreshCandidates(context, caretPosition);
 
         int elementEnd = caretPosition - context.getStart();
 
@@ -122,7 +117,7 @@ public class AutocompletionPopup extends Popup implements EventBroadcast {
         var list = controller.searchOptions(context, key);
         if (list.isEmpty()) return false;
         if (list.size() == 1 && autocompleteIfOne) {
-            // TODO autocomplete
+            autocomplete(list.get(0).candidate().replacement());
             return false;
         }
 
@@ -146,13 +141,15 @@ public class AutocompletionPopup extends Popup implements EventBroadcast {
 
     public boolean autocomplete() {
         if (!isShowing()) return false;
-
         var selected = view.getSelected();
         if (selected.isEmpty()) return false;
+        return autocomplete(selected.get());
+    }
 
-        if (!selected.get().equals(key)) {
+    protected boolean autocomplete(String replacement) {
+        if (!replacement.equals(key)) {
             editor.getUndoManager().preventMerge();
-            editor.replaceText(context.getStart(), context.getEnd(), selected.get());
+            editor.replaceText(context.getStart(), context.getEnd(), replacement);
         }
 
         hide();

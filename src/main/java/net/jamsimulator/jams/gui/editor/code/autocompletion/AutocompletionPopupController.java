@@ -57,6 +57,6 @@ public abstract class AutocompletionPopupController {
     public abstract boolean isCandidateValidForContext(EditorIndexedElement context,
                                                        AutocompletionCandidate<?> candidate);
 
-    public abstract void refreshCandidates(EditorIndexedElement context);
+    public abstract void refreshCandidates(EditorIndexedElement context, int caretStart);
 
 }
