@@ -345,6 +345,7 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
     public void reformat() {
         pendingChanges.markForReformat();
         setEditable(false);
+        tab.getWorkingPane().getProjectTab().getProject().getTaskExecutor().executeIndexing(this);
     }
 
     @Override
@@ -436,16 +437,26 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
             } catch (IllegalArgumentException ignore) {
                 return;
             }
-            if (autocompletionPopup != null) {
-                if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT) {
-                    if (documentationPopup != null) documentationPopup.hide();
-                    if (autocompletionPopup.isShowing()) {
-                        if (autocompletionPopup.populate(
-                                event.getCode() == KeyCode.LEFT ? -1 : 1, false)) {
-                            autocompletionPopup.showPopup();
-                        } else {
-                            autocompletionPopup.hide();
-                        }
+            var c = event.getCode();
+            if (autocompletionPopup != null && autocompletionPopup.isShowing()) {
+                boolean populate = false;
+                int offset = 0;
+                String extra = "";
+                if (c == KeyCode.LEFT || c == KeyCode.RIGHT) {
+                    populate = true;
+                    offset = c == KeyCode.LEFT ? -1 : 1;
+                } else if (c == KeyCode.BACK_SPACE) {
+                    populate = true;
+                    offset = -1;
+                } else if (!c.isArrowKey() && !c.isKeypadKey()
+                        && !c.isFunctionKey() && !c.isMediaKey() && !c.isModifierKey() && !c.isNavigationKey()) {
+                    shouldOpenAutocompletionAfterEdit = true;
+                }
+                if (populate) {
+                    if (autocompletionPopup.populate(offset, false)) {
+                        autocompletionPopup.showPopup();
+                    } else {
+                        autocompletionPopup.hide();
                     }
                 }
             } else {
@@ -521,6 +532,8 @@ public abstract class CodeFileEditor extends CodeArea implements FileEditor {
                 if (autocompletionPopup != null) {
                     if (autocompletionPopup.populate(0, false)) {
                         autocompletionPopup.showPopup();
+                    } else {
+                        autocompletionPopup.hide();
                     }
                 }
             }

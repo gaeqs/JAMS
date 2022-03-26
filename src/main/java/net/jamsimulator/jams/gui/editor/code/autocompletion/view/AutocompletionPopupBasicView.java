@@ -24,38 +24,59 @@
 
 package net.jamsimulator.jams.gui.editor.code.autocompletion.view;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ObservableNumberValue;
 import javafx.scene.Node;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.ListView;
 import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionOption;
 import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionPopup;
-import net.jamsimulator.jams.gui.util.PixelScrollPane;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class AutocompletionPopupBasicView extends PixelScrollPane implements AutocompletionPopupView {
+public class AutocompletionPopupBasicView extends ListView<AutocompletionOption<?>> implements AutocompletionPopupView {
 
-    protected final VBox content = new VBox();
-    private final List<AutocompletionPopupBasicViewElement> elements = new ArrayList<>();
+    private final List<Integer> maxLengths = new ArrayList<>();
 
-    private int selectedElement;
+    private int maxKeyLength;
+    private double zoom;
+
+    private ObservableNumberValue cellsWidthProperty = new SimpleDoubleProperty(200);
 
     public AutocompletionPopupBasicView() {
-        content.getStyleClass().add("autocompletion-popup");
-        setContent(content);
-        setFitToHeight(true);
-        setFitToWidth(true);
+        getStyleClass().add("autocompletion-popup");
+        setCellFactory(it -> {
+            var cell = new AutocompletionPopupBasicViewElement(this);
+            cellsWidthProperty = Bindings.max(cellsWidthProperty,
+                    Bindings.when(cell.emptyProperty())
+                            .then(0)
+                            .otherwise(cell.getContainer().widthProperty().add(20)));
+            prefWidthProperty().bind(cellsWidthProperty);
+            return cell;
+        });
+    }
+
+    public List<Integer> getMaxLengths() {
+        return maxLengths;
+    }
+
+    public int getMaxKeyLength() {
+        return maxKeyLength;
+    }
+
+    public double getZoom() {
+        return zoom;
     }
 
     @Override
     public void showContents(AutocompletionPopup popup, List<AutocompletionOption<?>> options) {
-        elements.clear();
+        getItems().clear();
 
-        double zoom = popup.getEditor().getZoom().getZoom().getY();
+        zoom = popup.getEditor().getZoom().getZoom().getY();
 
-        var lengths = new ArrayList<Integer>();
-
+        maxLengths.clear();
         boolean next = true;
         int index = 0;
         while (next) {
@@ -68,28 +89,24 @@ public class AutocompletionPopupBasicView extends PixelScrollPane implements Aut
                 }
             }
             if (next) {
-                lengths.add(max);
+                maxLengths.add(max);
                 index++;
             }
         }
 
-        lengths.set(lengths.size() - 1, 0);
+        if (!maxLengths.isEmpty()) maxLengths.set(maxLengths.size() - 1, 0);
 
-        int maxKey = options.stream().mapToInt(it -> it.candidate().key().length())
+        maxKeyLength = options.stream().mapToInt(it -> it.candidate().key().length())
                 .max()
                 .orElse(0);
 
-        options.forEach(it -> elements.add(new AutocompletionPopupBasicViewElement(it, maxKey, lengths, zoom)));
-        content.getChildren().clear();
-        content.getChildren().addAll(elements);
+        getItems().clear();
+        getItems().addAll(options);
 
         setMaxHeight(200 * zoom);
-        setMinWidth(300 * zoom);
+        //setMaxWidth(500 * zoom);
 
-        selectedElement = 0;
-        if(!elements.isEmpty()) {
-            elements.get(0).setSelected(true);
-        }
+        getSelectionModel().select(0);
     }
 
     @Override
@@ -99,36 +116,32 @@ public class AutocompletionPopupBasicView extends PixelScrollPane implements Aut
 
     @Override
     public Optional<String> getSelected() {
-        return elements.isEmpty()
-                ? Optional.empty()
-                : Optional.of(elements.get(selectedElement).getOption().candidate().key());
+        return Optional.ofNullable(getSelectionModel().getSelectedItem().candidate().key());
     }
 
     @Override
     public void moveUp() {
-        if (elements.isEmpty()) return;
-        elements.get(selectedElement).setSelected(false);
+        if (getItems().isEmpty()) return;
 
-        selectedElement--;
+        int selectedElement = getSelectionModel().getSelectedIndex() - 1;
         if (selectedElement < 0) {
-            selectedElement = elements.size() - 1;
+            selectedElement = getItems().size() - 1;
         }
 
-        elements.get(selectedElement).setSelected(true);
-        ensureVisible(elements.get(selectedElement));
+        getSelectionModel().select(selectedElement);
+        scrollTo(selectedElement);
     }
 
     @Override
     public void moveDown() {
-        if (elements.isEmpty()) return;
-        elements.get(selectedElement).setSelected(false);
+        if (getItems().isEmpty()) return;
 
-        selectedElement++;
-        if (selectedElement >= elements.size()) {
+        int selectedElement = getSelectionModel().getSelectedIndex() + 1;
+        if (selectedElement >= getItems().size()) {
             selectedElement = 0;
         }
 
-        elements.get(selectedElement).setSelected(true);
-        ensureVisible(elements.get(selectedElement));
+        getSelectionModel().select(selectedElement);
+        scrollTo(selectedElement);
     }
 }

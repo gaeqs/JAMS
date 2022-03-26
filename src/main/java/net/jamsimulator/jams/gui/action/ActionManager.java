@@ -318,9 +318,11 @@ public final class ActionManager extends Manager<Action> {
         add(new GeneralActionAbout(ResourceProvider.JAMS));
 
         //TEXT EDITOR
+        add(new TextEditorActionAutocompletionShow(ResourceProvider.JAMS));
         add(new TextEditorActionAutocompletionPeviousElement(ResourceProvider.JAMS));
         add(new TextEditorActionAutocompletionNextElement(ResourceProvider.JAMS));
         add(new TextEditorActionAutocompletionExit(ResourceProvider.JAMS));
+        add(new TextEditorActionAutocomplete(ResourceProvider.JAMS));
 
         add(new GeneralActionAssemble(ResourceProvider.JAMS));
         add(new TextEditorActionCopy(ResourceProvider.JAMS));
@@ -336,7 +338,6 @@ public final class ActionManager extends Manager<Action> {
         add(new TextEditorActionReplace(ResourceProvider.JAMS));
         add(new EditorActionSave(ResourceProvider.JAMS));
         add(new TextEditorActionSelectAll(ResourceProvider.JAMS));
-        add(new TextEditorActionShowAutocompletionPopup(ResourceProvider.JAMS));
         add(new TextEditorActionShowDocumentationPopup(ResourceProvider.JAMS));
         add(new TextEditorActionUndo(ResourceProvider.JAMS));
         add(new TextEditorActionDeleteLine(ResourceProvider.JAMS));

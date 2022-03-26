@@ -116,16 +116,20 @@
 .autocompletion-popup {
     -fx-background-color: -theme-background;
     -fx-border-color: -theme-background-darker-2;
-    -fx-border-width: 1px;
-    -fx-spacing: 2px;
+    -fx-max-width: 700px;
 }
 
 .autocompletion-popup-element {
-    -fx-spacing: 2px;
+    -fx-padding: 0;
 }
 
 .autocompletion-popup-element-selected {
     -fx-background-color: -theme-element-selected;
+}
+
+.autocompletion-popup-element-container {
+    -fx-padding: 2px 0 0 0;
+    -fx-spacing: 5px;
 }
 
 .autocompletion-popup-element .label {

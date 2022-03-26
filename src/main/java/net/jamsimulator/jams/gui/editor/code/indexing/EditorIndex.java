@@ -344,7 +344,7 @@ public interface EditorIndex extends EventBroadcast, Labeled {
 
     /**
      * Reformats the elements inside this index.
-     * This method must returns the reformatted text that this index represents.
+     * This method must return the reformatted text that this index represents.
      *
      * @return the reformatted text.
      */

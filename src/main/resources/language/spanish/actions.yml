@@ -8,7 +8,6 @@ ACTION_REGION_EDITOR: Editor
 ACTION_EDITOR_SAVE: Guardar archivo
 ACTION_REGION_TEXT_EDITOR: Editor de texto
 ACTION_TEXT_EDITOR_REFORMAT: Reestructurar código
-ACTION_TEXT_EDITOR_SHOW_AUTOCOMPLETION_POPUP: Mostrar autocompletador
 ACTION_TEXT_EDITOR_SHOW_DOCUMENTATION_POPUP: Mostrar documentación
 ACTION_TEXT_EDITOR_PREVIOUS_FILE: Ir al anterior archivo
 ACTION_TEXT_EDITOR_NEXT_FILE: Ir al siguiente archivo
@@ -28,9 +27,11 @@ ACTION_TEXT_EDITOR_DELETE_LINE: Eliminar línea
 ACTION_REGION_EXPLORER_ELEMENT: Elementos del explorador
 ACTION_EXPLORER_ELEMENT_CONTRACT_OR_SELECT_PARENT: Contraer carpeta / seleccionar padre
 
+ACTION_TEXT_EDITOR_AUTOCOMPLETION_SHOW: Mostrar autocompletador
 ACTION_TEXT_EDITOR_AUTOCOMPLETION_NEXT_ELEMENT: Siguiente elemento del autocompletador
 ACTION_TEXT_EDITOR_AUTOCOMPLETION_PREVIOUS_ELEMENT: Anterior elemento del autocompletador
 ACTION_TEXT_EDITOR_AUTOCOMPLETION_EXIT: Cerrar autocompletador
+ACTION_TEXT_EDITOR_AUTOCOMPLETE: Autocompletar
 
 ACTION_EXPLORER_ELEMENT_EXPAND_OR_NEXT: Expandir carpeta / seleccionar siguente elemento
 ACTION_EXPLORER_ELEMENT_SELECT_NEXT: Seleccionar siguiente elemento

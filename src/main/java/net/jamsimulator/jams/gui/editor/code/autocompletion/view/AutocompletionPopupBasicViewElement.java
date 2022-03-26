@@ -24,7 +24,9 @@
 
 package net.jamsimulator.jams.gui.editor.code.autocompletion.view;
 
+import javafx.scene.Group;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.util.Pair;
@@ -34,73 +36,97 @@ import net.jamsimulator.jams.utils.StringSearch;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 
-public class AutocompletionPopupBasicViewElement extends HBox {
+public class AutocompletionPopupBasicViewElement extends ListCell<AutocompletionOption<?>> {
 
     public static final String STYLE_CLASS = "autocompletion-popup-element";
+    public static final String CONTAINER_STYLE_CLASS = "autocompletion-popup-element-container";
     public static final String SELECTED_STYLE_CLASS = "autocompletion-popup-element-selected";
     public static final String SLICE_STYLE_CLASS = "autocompletion-popup-element-key-slice";
     public static final String SLICE_MATCH_STYLE_CLASS = "autocompletion-popup-element-key-slice-match";
 
     private static final double DEFAULT_FONT_SIZE = 13.5;
 
-    private final AutocompletionOption<?> option;
+    private final AutocompletionPopupBasicView view;
 
+    private final HBox container = new HBox();
     private final HBox keyRegion = new HBox();
     private final LinkedList<Label> displayLabels = new LinkedList<>();
 
-    public AutocompletionPopupBasicViewElement(AutocompletionOption<?> option, int maxKeyLength, List<Integer> maxNameLength, double zoom) {
+    private AutocompletionOption<?> last;
+
+    public AutocompletionPopupBasicViewElement(AutocompletionPopupBasicView view) {
         getStyleClass().add(STYLE_CLASS);
-        this.option = option;
+        container.getStyleClass().add(CONTAINER_STYLE_CLASS);
 
-        var labelStyle = "-fx-font-size: " + (DEFAULT_FONT_SIZE * zoom) + ";";
-
-        int index = 0;
-        for (var string : option.candidate().displayStrings()) {
-            var label = new Label(StringUtils.addSpaces(string, maxNameLength.get(index++), true));
-            label.setStyle(labelStyle);
-            displayLabels.add(label);
-        }
-
-        populateKeyHbox(
-                StringUtils.addSpaces(option.candidate().key(), maxKeyLength, true),
-                option.searchResult(),
-                labelStyle
-        );
-
-        loadImage().ifPresent(this.getChildren()::add);
-        getChildren().add(keyRegion);
-        displayLabels.forEach(getChildren()::add);
+        this.view = view;
     }
 
-    public AutocompletionOption<?> getOption() {
-        return option;
+    public HBox getContainer() {
+        return container;
     }
 
-    public void setSelected(boolean selected) {
-        if (selected) {
+    @Override
+    public void updateSelected(boolean selected) {
+        super.updateSelected(selected);
+        if (isSelected()) {
             getStyleClass().add(SELECTED_STYLE_CLASS);
         } else {
             getStyleClass().removeAll(SELECTED_STYLE_CLASS);
         }
     }
 
-    private Optional<ImageView> loadImage() {
+    @Override
+    protected void updateItem(AutocompletionOption<?> option, boolean empty) {
+        super.updateItem(option, empty);
+        if (option != null && !empty) {
+            setGraphic(new Group(container));
+            if (last == option) return;
+
+            container.getChildren().clear();
+            displayLabels.clear();
+
+            double size = DEFAULT_FONT_SIZE * view.getZoom();
+            var labelStyle = "-fx-font-size: " + (size) + ";";
+
+            int index = 0;
+            for (var string : option.candidate().displayStrings()) {
+                var label = new Label(StringUtils.addSpaces(string, view.getMaxLengths().get(index++), true));
+                label.setStyle(labelStyle);
+                displayLabels.add(label);
+            }
+
+            populateKeyHbox(
+                    StringUtils.addSpaces(option.candidate().key(), view.getMaxKeyLength(), true),
+                    option.searchResult(),
+                    labelStyle
+            );
+
+            loadImage(option, size).ifPresent(container.getChildren()::add);
+            container.getChildren().add(keyRegion);
+            displayLabels.forEach(container.getChildren()::add);
+
+            last = option;
+        } else {
+            setGraphic(null);
+        }
+    }
+
+
+    private Optional<ImageView> loadImage(AutocompletionOption<?> option, double size) {
         var icon = option.candidate().icon();
         if (icon == null) return Optional.empty();
         return icon.getImage().map(it -> {
             var view = new NearestImageView(it);
-            view.setPreserveRatio(true);
-            if (!displayLabels.isEmpty()) {
-                view.fitHeightProperty().bind(displayLabels.getFirst().heightProperty());
-            }
+            view.setFitWidth(size * 1.2);
+            view.setFitHeight(size * 1.2);
             return view;
         });
     }
 
     private void populateKeyHbox(String key, StringSearch.Result result, String labelStyle) {
+        keyRegion.getChildren().clear();
         var list = new LinkedList<Pair<String, Boolean>>();
 
         int index = 0;

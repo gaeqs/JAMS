@@ -32,9 +32,15 @@ import net.jamsimulator.jams.event.EventBroadcast;
 import net.jamsimulator.jams.event.SimpleEventBroadcast;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
 import net.jamsimulator.jams.gui.editor.code.autocompletion.view.AutocompletionPopupView;
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 import net.jamsimulator.jams.utils.Validate;
+import org.fxmisc.richtext.model.PlainTextChange;
+import org.fxmisc.undo.impl.ChangeQueue;
+import org.fxmisc.undo.impl.UndoManagerImpl;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AutocompletionPopup extends Popup implements EventBroadcast {
 
@@ -43,6 +49,9 @@ public class AutocompletionPopup extends Popup implements EventBroadcast {
 
     private AutocompletionPopupController controller;
     private AutocompletionPopupView view;
+
+    private EditorIndexedElement context;
+    private String key;
 
     public AutocompletionPopup(
             CodeFileEditor editor,
@@ -97,14 +106,15 @@ public class AutocompletionPopup extends Popup implements EventBroadcast {
         int caretPosition = editor.getCaretPosition() + caretOffset;
         if (caretPosition <= 0) return false;
 
-        var context = editor.getIndex()
+        context = editor.getIndex()
                 .withLockF(false, i -> i.getElementAt(caretPosition - 1).orElse(null));
         if (context == null) return false;
 
         controller.refreshCandidates(context);
 
         int elementEnd = caretPosition - context.getStart();
-        var key = context.getText();
+
+        key = context.getText();
         if (elementEnd > 0 && elementEnd < key.length()) {
             key = key.substring(0, elementEnd);
         }
@@ -132,6 +142,21 @@ public class AutocompletionPopup extends Popup implements EventBroadcast {
 
     public void moveDown() {
         view.moveDown();
+    }
+
+    public boolean autocomplete() {
+        if (!isShowing()) return false;
+
+        var selected = view.getSelected();
+        if (selected.isEmpty()) return false;
+
+        if (!selected.get().equals(key)) {
+            editor.getUndoManager().preventMerge();
+            editor.replaceText(context.getStart(), context.getEnd(), selected.get());
+        }
+
+        hide();
+        return true;
     }
 
     //region BROADCAST
