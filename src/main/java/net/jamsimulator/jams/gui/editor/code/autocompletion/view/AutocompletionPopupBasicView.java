@@ -29,6 +29,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableNumberValue;
 import javafx.scene.Node;
 import javafx.scene.control.ListView;
+import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionElementselectEvent;
 import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionOption;
 import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionPopup;
 
@@ -107,6 +108,10 @@ public class AutocompletionPopupBasicView extends ListView<AutocompletionOption<
         //setMaxWidth(500 * zoom);
 
         getSelectionModel().select(0);
+
+        if (!getItems().isEmpty()) {
+            popup.callEvent(new AutocompletionElementselectEvent(popup, getItems().get(0).candidate().element()));
+        }
     }
 
     @Override
@@ -116,11 +121,16 @@ public class AutocompletionPopupBasicView extends ListView<AutocompletionOption<
 
     @Override
     public Optional<String> getSelected() {
-        return Optional.ofNullable(getSelectionModel().getSelectedItem().candidate().replacement());
+        return Optional.ofNullable(getSelectionModel().getSelectedItem()).map(it -> it.candidate().replacement());
     }
 
     @Override
-    public void moveUp() {
+    public Optional<Object> getSelectedElement() {
+        return Optional.ofNullable(getSelectionModel().getSelectedItem()).map(it -> it.candidate().element());
+    }
+
+    @Override
+    public void moveUp(AutocompletionPopup popup) {
         if (getItems().isEmpty()) return;
 
         int selectedElement = getSelectionModel().getSelectedIndex() - 1;
@@ -130,10 +140,11 @@ public class AutocompletionPopupBasicView extends ListView<AutocompletionOption<
 
         getSelectionModel().select(selectedElement);
         scrollTo(selectedElement);
+        popup.callEvent(new AutocompletionElementselectEvent(popup, getItems().get(selectedElement).candidate().element()));
     }
 
     @Override
-    public void moveDown() {
+    public void moveDown(AutocompletionPopup popup) {
         if (getItems().isEmpty()) return;
 
         int selectedElement = getSelectionModel().getSelectedIndex() + 1;
@@ -143,5 +154,6 @@ public class AutocompletionPopupBasicView extends ListView<AutocompletionOption<
 
         getSelectionModel().select(selectedElement);
         scrollTo(selectedElement);
+        popup.callEvent(new AutocompletionElementselectEvent(popup, getItems().get(selectedElement).candidate().element()));
     }
 }

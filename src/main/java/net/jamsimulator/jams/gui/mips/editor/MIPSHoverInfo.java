@@ -24,10 +24,11 @@
 
 package net.jamsimulator.jams.gui.mips.editor;
 
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleableElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.InspectionLevel;
-import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstruction;
 import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.manager.Manager;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.StyleClassedTextArea;
@@ -48,31 +49,29 @@ public class MIPSHoverInfo extends VirtualizedScrollPane<StyleClassedTextArea> {
     public MIPSHoverInfo(EditorIndexedElement element) {
         super(new StyleClassedTextArea());
 
-        addGeneralInfo(element);
-        addWarnings(element);
-        addErrors(element);
+        element.getIndex().withLock(false, i -> {
+            addHeader(element);
+            addErrors(element);
+            addWarnings(element);
+            addFooter(element);
+        });
 
         getContent().setWrapText(true);
         getContent().setEditable(false);
-        getContent().getStyleClass().add("documentation");
+
+        getContent().getStyleClass().addAll("documentation", "code-area", "hover-popup");
 
         setPrefWidth(400);
-        setPrefHeight(200);
+        setMaxHeight(600);
+
+        getContent().totalHeightEstimateProperty().addListener((observable, oldValue, newValue) -> System.out.println(newValue));
+        getContent().totalHeightEstimateProperty().addListener((obs, old, val) -> setPrefHeight(val + 10));
     }
 
-    private void addGeneralInfo(EditorIndexedElement element) {
-        //{TYPE} {TEXT} ({NAME})
-        // TODO getContent().append(element.getTranslatedName() + " ", List.of("bold"));
-        getContent().append(element.getIdentifier(), Collections.emptyList());
-        getContent().append("\n" + element.getReferencingScope().getFullIdentifier() +
-                " ("+ element.getReferencingScope().scopeId() +")", Collections.emptyList());
-
-        //If the element is an instruction show the name too.
-        if (element instanceof MIPSEditorInstruction i &&
-                i.getInstruction().isPresent()) {
-            getContent().append(" (" + i.getInstruction().get().getName() + ")\n", Collections.emptyList());
-        } else getContent().append("\n", Collections.emptyList());
-
+    private void addHeader(EditorIndexedElement element) {
+        getContent().appendText(element.getTranslatedTypeName() + " ");
+        getContent().append(element.getIdentifier(), element instanceof EditorIndexStyleableElement s
+                ? s.getStyles() : Collections.emptyList());
     }
 
     private void addWarnings(EditorIndexedElement element) {
@@ -80,8 +79,8 @@ public class MIPSHoverInfo extends VirtualizedScrollPane<StyleClassedTextArea> {
         var warnings = inspections.stream()
                 .filter(it -> it.level().ordinal() < InspectionLevel.ERROR.ordinal()).toList();
         if (!warnings.isEmpty()) {
-            getContent().append("\n" + Manager.ofS(Language.class).getSelected()
-                    .getOrDefault("MIPS_ELEMENT_WARNINGS"), List.of("bold"));
+            getContent().append("\n\n" + Manager.ofS(Language.class).getSelected()
+                    .getOrDefault(Messages.MIPS_ELEMENT_WARNINGS), List.of("warning"));
             warnings.forEach(inspection -> getContent().append("\n- " + inspection.buildMessage(),
                     Collections.emptyList()));
         }
@@ -92,11 +91,17 @@ public class MIPSHoverInfo extends VirtualizedScrollPane<StyleClassedTextArea> {
         var warnings = inspections.stream()
                 .filter(it -> it.level().ordinal() >= InspectionLevel.ERROR.ordinal()).toList();
         if (!warnings.isEmpty()) {
-            getContent().append("\n" + Manager.ofS(Language.class).getSelected()
-                    .getOrDefault("MIPS_ELEMENT_ERRORS"), List.of("bold"));
+            getContent().append("\n\n" + Manager.ofS(Language.class).getSelected()
+                    .getOrDefault(Messages.MIPS_ELEMENT_ERRORS), List.of("error"));
             warnings.forEach(inspection -> getContent().append("\n- " + inspection.buildMessage(),
                     Collections.emptyList()));
         }
+    }
+
+    private void addFooter(EditorIndexedElement element) {
+        var scope = element.getReferencedScope();
+        getContent().appendText("\n\n");
+        getContent().append(scope.getFullName(), Collections.emptyList());
     }
 
 

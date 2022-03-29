@@ -24,124 +24,126 @@
 
 package net.jamsimulator.jams.gui.mips.editor;
 
+import net.jamsimulator.jams.event.Listener;
 import net.jamsimulator.jams.gui.editor.code.CodeFileEditor;
+import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionElementselectEvent;
+import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionPopup;
 import net.jamsimulator.jams.gui.editor.code.popup.DocumentationPopup;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirective;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorDirectiveMnemonic;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstruction;
+import net.jamsimulator.jams.gui.mips.editor.indexing.element.MIPSEditorInstructionMnemonic;
+import net.jamsimulator.jams.gui.util.StringStyler;
+import net.jamsimulator.jams.mips.directive.Directive;
+import net.jamsimulator.jams.mips.instruction.Instruction;
 
 public class MIPSDocumentationPopup extends DocumentationPopup {
+
+    private final AutocompletionPopup autocompletionPopup;
+
     /**
      * Creates the documentation popup.
      *
      * @param display the code display where this popup is displayed.
      */
-    public MIPSDocumentationPopup(CodeFileEditor display) {
+    public MIPSDocumentationPopup(CodeFileEditor display, AutocompletionPopup autocompletionPopup) {
         super(display);
+        this.autocompletionPopup = autocompletionPopup;
+        autocompletionPopup.registerListeners(this, true);
+        content.focusedProperty().addListener((obs, old, val) -> {
+            if (val) {
+                autocompletionPopup.requestFocus();
+            }
+        });
+
+        scroll.focusedProperty().addListener((obs, old, val) -> {
+            if (val) {
+                autocompletionPopup.requestFocus();
+            }
+        });
     }
 
-    //private final MIPSAutocompletionPopup autocompletionPopup;
+    @Listener
+    private void onSelect(AutocompletionElementselectEvent event) {
+        var element = event.getElement();
+        if (element instanceof Instruction) {
+            topMessage.setMaxHeight(0);
+            StringStyler.style(((Instruction) element).getDocumentation(), content);
+        } else if (element instanceof Directive) {
+            StringStyler.style(((Directive) element).getDocumentation(), content);
+        }
+    }
 
-   ///**
-   // * Creates the documentation popup.
-   // *
-   // * @param display the code display where this popup is displayed.
-   // */
-   //public MIPSDocumentationPopup(CodeFileEditor display, MIPSAutocompletionPopup autocompletionPopup) {
-   //    super(display);
-   //    this.autocompletionPopup = autocompletionPopup;
-   //    autocompletionPopup.registerListeners(this, true);
-   //    content.focusedProperty().addListener((obs, old, val) -> {
-   //        if (val) {
-   //            autocompletionPopup.requestFocus();
-   //        }
-   //    });
+    @Override
+    public void execute(int caretOffset) {
+        if (refreshData(caretOffset)) {
+            super.execute(caretOffset);
+        }
+    }
 
-   //    scroll.focusedProperty().addListener((obs, old, val) -> {
-   //        if (val) {
-   //            autocompletionPopup.requestFocus();
-   //        }
-   //    });
-   //}
+    public boolean refreshData(int caretOffset) {
+        if (autocompletionPopup.isShowing()) {
+            var optional = autocompletionPopup.getView().getSelectedElement();
+            if (optional.isEmpty()) return false;
+            if (optional.get() instanceof Instruction i) {
+                topMessage.setMaxHeight(0);
+                StringStyler.style(i.getDocumentation(), content);
+                return true;
+            } else if (optional.get() instanceof Directive d) {
+                topMessage.setMaxHeight(0);
+                StringStyler.style(d.getDocumentation(), content);
+                return true;
+            }
+        } else if (display instanceof MIPSFileEditor) {
+            var index = display.getIndex();
+            var optional = index.withLockF(false,
+                    i -> i.getElementAt(display.getCaretPosition() + caretOffset - 1));
 
-   //@Listener
-   //private void onSelect(AutocompletionPopupSelectElementEvent event) {
-   //    var element = event.getSelectedElement().getElement();
-   //    if (element instanceof Instruction) {
-   //        topMessage.setMaxHeight(0);
-   //        StringStyler.style(((Instruction) element).getDocumentation(), content);
-   //    } else if (element instanceof Directive) {
-   //        StringStyler.style(((Directive) element).getDocumentation(), content);
-   //    }
-   //}
+            if (optional.isEmpty()) return false;
 
-   //@Override
-   //public void execute(int caretOffset) {
-   //    if (refreshData(caretOffset)) {
-   //        super.execute(caretOffset);
-   //    }
-   //}
+            var element = optional.get();
+            if (element instanceof MIPSEditorInstructionMnemonic) {
+                var parent = element.getParentOfType(MIPSEditorInstruction.class).orElse(null);
+                if (parent == null) return false;
 
-   //public boolean refreshData(int caretOffset) {
-   //    if (autocompletionPopup.isShowing()) {
-   //        var optional = autocompletionPopup.getSelected();
-   //        if (optional.isEmpty()) return false;
-   //        if (optional.get().getElement() instanceof Instruction) {
-   //            topMessage.setMaxHeight(0);
-   //            StringStyler.style(((Instruction) optional.get().getElement()).getDocumentation(), content);
-   //            return true;
-   //        } else if (optional.get().getElement() instanceof Directive) {
-   //            topMessage.setMaxHeight(0);
-   //            StringStyler.style(((Directive) optional.get().getElement()).getDocumentation(), content);
-   //            return true;
-   //        }
-   //    } else if (display instanceof MIPSFileEditor) {
-   //        var index = display.getIndex();
-   //        var optional = index.withLockF(false,
-   //                        i -> i.getElementAt(display.getCaretPosition() + caretOffset - 1));
-
-   //        if (optional.isEmpty()) return false;
-
-   //        var element = optional.get();
-   //        if (element instanceof MIPSEditorInstructionMnemonic) {
-   //            var parent = element.getParentOfType(MIPSEditorInstruction.class).orElse(null);
-   //            if(parent == null) return false;
-
-   //            topMessage.clear();
+                topMessage.clear();
 
 
-   //            element.getMetadata().inspections().forEach(inspection -> {
-   //                topMessage.append(inspection.buildMessage() + "\n", "");
-   //            });
+                element.getMetadata().inspections().forEach(inspection -> {
+                    topMessage.append(inspection.buildMessage() + "\n", "");
+                });
 
-   //            topMessage.setMaxHeight(topMessage.getLength() > 0 ? 50 : 0);
+                topMessage.setMaxHeight(topMessage.getLength() > 0 ? 50 : 0);
 
-   //            var instruction = parent.getInstruction();
-   //            if (instruction.isEmpty()) {
-   //                content.clear();
-   //                return topMessage.getMaxHeight() > 0;
-   //            }
+                var instruction = parent.getInstruction();
+                if (instruction.isEmpty()) {
+                    content.clear();
+                    return topMessage.getMaxHeight() > 0;
+                }
 
-   //            StringStyler.style(instruction.get().getDocumentation(), content);
-   //            return true;
-   //        } else if (element instanceof MIPSEditorDirectiveMnemonic) {
-   //            var parent = element.getParentOfType(MIPSEditorDirective.class).orElse(null);
-   //            if(parent == null) return false;
+                StringStyler.style(instruction.get().getDocumentation(), content);
+                return true;
+            } else if (element instanceof MIPSEditorDirectiveMnemonic) {
+                var parent = element.getParentOfType(MIPSEditorDirective.class).orElse(null);
+                if (parent == null) return false;
 
-   //            topMessage.clear();
+                topMessage.clear();
 
-   //            element.getMetadata().inspections().forEach(inspection ->
-   //                    topMessage.append(inspection.buildMessage() + "\n", ""));
+                element.getMetadata().inspections().forEach(inspection ->
+                        topMessage.append(inspection.buildMessage() + "\n", ""));
 
-   //            topMessage.setMaxHeight(topMessage.getLength() > 0 ? 50 : 0);
+                topMessage.setMaxHeight(topMessage.getLength() > 0 ? 50 : 0);
 
-   //            var directive = parent.getDirective();
-   //            if (directive.isEmpty()) {
-   //                content.clear();
-   //                return topMessage.getMaxHeight() > 0;
-   //            }
+                var directive = parent.getDirective();
+                if (directive.isEmpty()) {
+                    content.clear();
+                    return topMessage.getMaxHeight() > 0;
+                }
 
-   //            StringStyler.style(directive.get().getDocumentation(), content);
-   //            return true;
-   //        }
-   //    }
-   //    return false;
-   //}
+                StringStyler.style(directive.get().getDocumentation(), content);
+                return true;
+            }
+        }
+        return false;
+    }
 }

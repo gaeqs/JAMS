@@ -42,6 +42,7 @@ public class AutocompletionPopupBasicViewElement extends ListCell<Autocompletion
 
     public static final String STYLE_CLASS = "autocompletion-popup-element";
     public static final String CONTAINER_STYLE_CLASS = "autocompletion-popup-element-container";
+    public static final String KEY_CONTAINER_STYLE_CLASS = "autocompletion-popup-element-key-container";
     public static final String SELECTED_STYLE_CLASS = "autocompletion-popup-element-selected";
     public static final String SLICE_STYLE_CLASS = "autocompletion-popup-element-key-slice";
     public static final String SLICE_MATCH_STYLE_CLASS = "autocompletion-popup-element-key-slice-match";
@@ -59,6 +60,7 @@ public class AutocompletionPopupBasicViewElement extends ListCell<Autocompletion
     public AutocompletionPopupBasicViewElement(AutocompletionPopupBasicView view) {
         getStyleClass().add(STYLE_CLASS);
         container.getStyleClass().add(CONTAINER_STYLE_CLASS);
+        keyRegion.getStyleClass().add(KEY_CONTAINER_STYLE_CLASS);
 
         this.view = view;
     }

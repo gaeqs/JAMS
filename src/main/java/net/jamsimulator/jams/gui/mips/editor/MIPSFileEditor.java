@@ -50,12 +50,16 @@ public class MIPSFileEditor extends CodeFileEditor {
         super(tab);
 
         popup = new Popup();
+        popup.setAutoFix(true);
+        popup.setAutoHide(true);
+        popup.setEventDispatcher(getEventDispatcher());
+
         autocompletionPopup = new AutocompletionPopup(
                 this,
                 new MIPSAutocompletionPopupController((MIPSProject) tab.getWorkingPane().getProjectTab().getProject()),
                 new AutocompletionPopupBasicView()
-        );//new MIPSAutocompletionPopup(this);
-        //documentationPopup = new MIPSDocumentationPopup(this, (MIPSAutocompletionPopup) autocompletionPopup);
+        );
+        documentationPopup = new MIPSDocumentationPopup(this, autocompletionPopup);
 
         applyAutoIndent();
         applyIndentRemoval();
@@ -148,6 +152,10 @@ public class MIPSFileEditor extends CodeFileEditor {
                     || y > popup.getY() + popup.getHeight() + treshold) {
                 popup.hide();
             }
+        });
+
+        addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            popup.hide();
         });
     }
 

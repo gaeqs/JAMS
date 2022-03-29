@@ -28,6 +28,7 @@ import javafx.scene.Node;
 import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionOption;
 import net.jamsimulator.jams.gui.editor.code.autocompletion.AutocompletionPopup;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,8 +40,10 @@ public interface AutocompletionPopupView {
 
     Optional<String> getSelected();
 
-    void moveUp();
+    Optional<Object> getSelectedElement();
 
-    void moveDown();
+    void moveUp(AutocompletionPopup popup);
+
+    void moveDown(AutocompletionPopup popup);
 
 }

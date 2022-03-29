@@ -43,6 +43,7 @@ public class EditorIndexedElementImpl implements EditorIndexedElement {
 
     protected final EditorIndex index;
     protected final String text;
+    protected final String typeLanguageNode;
 
     protected ElementScope scope;
     protected int start;
@@ -51,7 +52,7 @@ public class EditorIndexedElementImpl implements EditorIndexedElement {
     protected Metadata metadata;
 
     public EditorIndexedElementImpl(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
-                                    int start, String text) {
+                                    int start, String text, String typeLanguageNode) {
         Validate.notNull(index, "Index cannot be null!");
         Validate.notNull(text, "Text cannot be null!");
         Validate.isTrue(start >= 0, "Start cannot be negative!");
@@ -63,6 +64,7 @@ public class EditorIndexedElementImpl implements EditorIndexedElement {
         this.text = text;
         this.valid = true;
         this.metadata = Metadata.EMPTY;
+        this.typeLanguageNode = typeLanguageNode;
     }
 
     @Override
@@ -179,5 +181,10 @@ public class EditorIndexedElementImpl implements EditorIndexedElement {
                 .collect(Collectors.toSet());
         metadata = new Metadata(set);
         return metadata;
+    }
+
+    @Override
+    public String getTypeLanguageNode() {
+        return typeLanguageNode;
     }
 }

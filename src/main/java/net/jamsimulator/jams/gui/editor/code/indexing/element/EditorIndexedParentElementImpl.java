@@ -36,8 +36,8 @@ public class EditorIndexedParentElementImpl extends EditorIndexedElementImpl imp
     protected final List<EditorIndexedElement> elements;
 
     public EditorIndexedParentElementImpl(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
-                                          int start, String text) {
-        super(index, scope, parent, start, text);
+                                          int start, String text, String typeLanguageNode) {
+        super(index, scope, parent, start, text, typeLanguageNode);
         this.elements = new ArrayList<>();
     }
 

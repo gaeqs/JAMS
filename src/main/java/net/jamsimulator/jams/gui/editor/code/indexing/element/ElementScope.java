@@ -38,21 +38,21 @@ import java.util.UUID;
  * <p>
  * An element with a MACRO scope can only be reference from inside its macro.
  */
-public record ElementScope(EditorElementMacro macro, ElementScope parent, UUID scopeId) {
+public record ElementScope(EditorElementMacro macro, ElementScope parent, String name, UUID scopeId) {
 
-    public static final ElementScope INTERNAL = new ElementScope();
-    public static final ElementScope GLOBAL = new ElementScope();
+    public static final ElementScope INTERNAL = new ElementScope("Internal");
+    public static final ElementScope GLOBAL = new ElementScope("Global");
 
-    public ElementScope() {
-        this(null, null, UUID.randomUUID());
+    public ElementScope(String name) {
+        this(null, null, name, UUID.randomUUID());
     }
 
-    public ElementScope(EditorElementMacro macro, ElementScope parent) {
-        this(macro, parent, UUID.randomUUID());
+    public ElementScope(EditorElementMacro macro, ElementScope parent, String name) {
+        this(macro, parent, name, UUID.randomUUID());
     }
 
-    public ElementScope(ElementScope parent) {
-        this(null, parent, UUID.randomUUID());
+    public ElementScope(ElementScope parent, String name) {
+        this(null, parent, name, UUID.randomUUID());
     }
 
     public String macroIdentifier() {
@@ -97,9 +97,27 @@ public record ElementScope(EditorElementMacro macro, ElementScope parent, UUID s
         return Integer.MAX_VALUE;
     }
 
-    public String getFullIdentifier() {
-        if (parent == null) return macroIdentifier();
-        return parent.getFullIdentifier() + " > " + macroIdentifier();
+    /**
+     * Returns the human name of this scope.
+     * <p>
+     * This name doesn't affect any behavior.
+     *
+     * @return the human name.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Returns the full human name of this scope.
+     * <p>
+     * The full name is the concatenaiton of the parent's name with this scope's name.
+     *
+     * @return the full name.
+     */
+    public String getFullName() {
+        if (parent == null) return getName();
+        return parent.getFullName() + " > " + getName();
     }
 
     @Override
@@ -117,6 +135,6 @@ public record ElementScope(EditorElementMacro macro, ElementScope parent, UUID s
 
     @Override
     public String toString() {
-        return getFullIdentifier();
+        return getFullName();
     }
 }

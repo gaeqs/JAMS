@@ -28,6 +28,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
+import net.jamsimulator.jams.language.Messages;
 
 import java.util.Collection;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class EditorElementLabelImpl extends EditorIndexedElementImpl implements 
 
     public EditorElementLabelImpl(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                   int start, String text) {
-        super(index, scope, parent, start, text);
+        super(index, scope, parent, start, text, Messages.ELEMENT_LABEL);
         identifier = text.substring(0, text.length() - 1).trim();
     }
 
@@ -56,5 +57,10 @@ public class EditorElementLabelImpl extends EditorIndexedElementImpl implements 
     @Override
     public Collection<String> getStyles() {
         return getReferencedScope().equals(ElementScope.GLOBAL) ? GLOBAL_STYLE : STYLE;
+    }
+
+    @Override
+    public String getTypeLanguageNode() {
+        return getReferencedScope().equals(ElementScope.GLOBAL) ? Messages.ELEMENT_GLOBAL_LABEL : Messages.ELEMENT_LABEL;
     }
 }

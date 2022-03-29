@@ -28,6 +28,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorGlobalMarkerElement;
+import net.jamsimulator.jams.language.Messages;
 
 import java.util.Set;
 
@@ -42,5 +43,10 @@ public class MIPSEditorDirectiveGlobalMarker extends MIPSEditorDirectiveParamete
     @Override
     public Set<String> getGlobalIdentifiers() {
         return Set.of(text);
+    }
+
+    @Override
+    public String getTypeLanguageNode() {
+        return Messages.MIPS_ELEMENT_GLOBAL_MARKER;
     }
 }

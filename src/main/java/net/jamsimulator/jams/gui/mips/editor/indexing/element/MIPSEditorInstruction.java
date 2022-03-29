@@ -28,6 +28,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
+import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.mips.instruction.Instruction;
 import net.jamsimulator.jams.mips.instruction.pseudo.PseudoInstruction;
 import net.jamsimulator.jams.project.mips.MIPSProject;
@@ -43,7 +44,7 @@ public class MIPSEditorInstruction extends EditorIndexedParentElementImpl {
 
     public MIPSEditorInstruction(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                  int start, String text) {
-        super(index, scope, parent, start, text);
+        super(index, scope, parent, start, text, Messages.MIPS_ELEMENT_INSTRUCTION);
         parseText();
     }
 

@@ -29,6 +29,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleab
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
+import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.mips.directive.parameter.DirectiveParameterType;
 
 import java.util.Collection;
@@ -43,7 +44,7 @@ public class MIPSEditorDirectiveParameter extends EditorIndexedElementImpl imple
 
     public MIPSEditorDirectiveParameter(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                         int start, String text) {
-        super(index, scope, parent, start, text);
+        super(index, scope, parent, start, text, Messages.MIPS_ELEMENT_DIRECTIVE);
         string = text.startsWith("\"") && text.endsWith("\"");
     }
 

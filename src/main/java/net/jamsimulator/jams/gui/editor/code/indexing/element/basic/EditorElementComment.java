@@ -29,6 +29,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexStyleab
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
+import net.jamsimulator.jams.language.Messages;
 
 import java.util.Collection;
 import java.util.Set;
@@ -42,7 +43,7 @@ public class EditorElementComment extends EditorIndexedElementImpl implements Ed
 
     public EditorElementComment(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                 int start, String text) {
-        super(index, scope, parent, start, text);
+        super(index, scope, parent, start, text, Messages.ELEMENT_COMMENT);
     }
 
     @Override

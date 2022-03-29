@@ -1,7 +1,7 @@
 /*
  *  MIT License
  *
- *  Copyright (c) 2021 Gael Rial Costas
+ *  Copyright (c) 2022 Gael Rial Costas
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,28 @@
  *  SOFTWARE.
  */
 
-package net.jamsimulator.jams.gui.mips.editor.indexing.element;
+package net.jamsimulator.jams.gui.editor.code.autocompletion;
 
-import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacro;
-import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementMacroParameter;
-import net.jamsimulator.jams.language.Messages;
+import net.jamsimulator.jams.event.Event;
 
-import java.util.Collection;
+/**
+ * Event triggered when an autocompletion element is selected.
+ */
+public class AutocompletionElementselectEvent extends Event {
 
-public class MIPSEditorDirectiveMacroParameter extends MIPSEditorDirectiveParameter
-        implements EditorElementMacroParameter {
+    private final AutocompletionPopup popup;
+    private final Object element;
 
-    public MIPSEditorDirectiveMacroParameter(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent, int start, String text) {
-        super(index, scope, parent, start, text);
+    public AutocompletionElementselectEvent(AutocompletionPopup popup, Object element) {
+        this.popup = popup;
+        this.element = element;
     }
 
-    @Override
-    public Collection<String> getStyles() {
-        return EditorElementMacro.PARAMETER_STYLE;
+    public AutocompletionPopup getPopup() {
+        return popup;
     }
 
-    @Override
-    public String getTypeLanguageNode() {
-        return Messages.ELEMENT_MACRO_PARAMETER;
+    public Object getElement() {
+        return element;
     }
 }

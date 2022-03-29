@@ -76,7 +76,7 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
     protected volatile ProjectGlobalIndex globalIndex;
     protected volatile EditorHintBar hintBar;
 
-    protected final ElementScope fileScope = new ElementScope(ElementScope.GLOBAL);
+    protected final ElementScope fileScope;
     protected final List<Line> lines = new ArrayList<>();
     protected final Map<EditorElementReference<?>, Set<EditorReferencingElement<?>>> referencingElements = new HashMap<>();
     protected final Map<EditorElementReference<?>, Set<EditorReferencingElement<?>>> relativeReferencingElements = new HashMap<>();
@@ -98,6 +98,9 @@ public abstract class EditorLineIndex<Line extends EditorIndexedLine> extends Si
         Validate.notNull(project, "Project cannot be null!");
         Validate.notNull(name, "Name cannot be null!");
         Validate.notNull(inspectors, "Inspectors cannot be null!");
+
+        this.fileScope = new ElementScope(ElementScope.GLOBAL, name);
+
         this.project = project;
         this.name = name;
         this.inspectors = inspectors;

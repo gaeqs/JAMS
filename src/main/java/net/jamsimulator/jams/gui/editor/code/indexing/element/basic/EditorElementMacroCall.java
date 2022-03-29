@@ -28,6 +28,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElementImpl;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
+import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.utils.StringUtils;
 
 import java.util.Comparator;
@@ -42,7 +43,7 @@ public class EditorElementMacroCall extends EditorIndexedParentElementImpl {
 
     public EditorElementMacroCall(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                   int start, String text, int splitIndex) {
-        super(index, scope, parent, start, text);
+        super(index, scope, parent, start, text, Messages.ELEMENT_MACRO_CALL);
         parseText(splitIndex);
     }
 

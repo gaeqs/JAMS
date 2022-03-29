@@ -31,6 +31,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParen
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
+import net.jamsimulator.jams.language.Messages;
 
 import java.util.Collection;
 import java.util.List;
@@ -48,7 +49,7 @@ public class EditorElementMacroCallMnemonic extends EditorIndexedElementImpl
 
     public EditorElementMacroCallMnemonic(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                           int start, String text, int parameters, List<String> rawParameters) {
-        super(index, scope, parent, start, text);
+        super(index, scope, parent, start, text, Messages.ELEMENT_MACRO_CALL);
         this.rawParameters = rawParameters;
         referenceIdentifier = getIdentifier() + "-" + parameters;
         references = Set.of(new EditorElementReference<>(EditorElementMacro.class, referenceIdentifier));

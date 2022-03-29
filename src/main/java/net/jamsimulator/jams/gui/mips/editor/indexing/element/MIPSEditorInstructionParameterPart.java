@@ -34,6 +34,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElemen
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorElementRelativeReference;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.reference.EditorReferencingElement;
+import net.jamsimulator.jams.language.Messages;
 import net.jamsimulator.jams.mips.parameter.ParameterPartType;
 import net.jamsimulator.jams.project.mips.MIPSProject;
 import net.jamsimulator.jams.utils.NumericUtils;
@@ -50,7 +51,7 @@ public class MIPSEditorInstructionParameterPart extends EditorIndexedElementImpl
 
     public MIPSEditorInstructionParameterPart(EditorIndex index, ElementScope scope, EditorIndexedParentElement parent,
                                               int start, String text, ParameterPartType partType) {
-        super(index, scope, parent, start, text);
+        super(index, scope, parent, start, text, Messages.MIPS_ELEMENT_INSTRUCTION);
 
         if (partType == null) {
             type = Type.getByString(text, index.getProject() instanceof MIPSProject p ? p : null);
@@ -103,6 +104,11 @@ public class MIPSEditorInstructionParameterPart extends EditorIndexedElementImpl
     @Override
     public Set<EditorElementReference<EditorElementLabel>> getReferences() {
         return references;
+    }
+
+    @Override
+    public String getTypeLanguageNode() {
+        return "MIPS_ELEMENT_INSTRUCTION_PARAMETER_" + type.getLanguageNodeSufix();
     }
 
     public enum Type {

@@ -27,6 +27,8 @@ package net.jamsimulator.jams.gui.editor.code.indexing.element;
 import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.metadata.Metadata;
 import net.jamsimulator.jams.gui.editor.code.indexing.inspection.Inspector;
+import net.jamsimulator.jams.language.Language;
+import net.jamsimulator.jams.manager.Manager;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -207,4 +209,20 @@ public interface EditorIndexedElement extends Comparable<EditorIndexedElement> {
      * @return the new metadata.
      */
     Metadata inspect(Collection<? extends Inspector<?>> inspectors);
+
+    /**
+     * Returns the language node with the name of this element's type name.
+     *
+     * @return the language node.
+     */
+    String getTypeLanguageNode();
+
+    /**
+     * Returns this element's type name in the current language.
+     *
+     * @return the type name.
+     */
+    default String getTranslatedTypeName() {
+        return Manager.ofS(Language.class).getSelected().getOrDefault(getTypeLanguageNode());
+    }
 }

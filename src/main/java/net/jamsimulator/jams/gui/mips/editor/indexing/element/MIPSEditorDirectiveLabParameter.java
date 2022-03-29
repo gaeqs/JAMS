@@ -28,6 +28,7 @@ import net.jamsimulator.jams.gui.editor.code.indexing.EditorIndex;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedParentElement;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.ElementScope;
 import net.jamsimulator.jams.gui.editor.code.indexing.element.basic.EditorElementLabel;
+import net.jamsimulator.jams.language.Messages;
 
 import java.util.Collection;
 import java.util.Set;
@@ -44,5 +45,10 @@ public class MIPSEditorDirectiveLabParameter extends MIPSEditorDirectiveParamete
     @Override
     public Collection<String> getStyles() {
         return STYLE;
+    }
+
+    @Override
+    public String getTypeLanguageNode() {
+        return Messages.ELEMENT_LABEL;
     }
 }

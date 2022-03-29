@@ -132,11 +132,11 @@ public class AutocompletionPopup extends Popup implements EventBroadcast {
     }
 
     public void moveUp() {
-        view.moveUp();
+        view.moveUp(this);
     }
 
     public void moveDown() {
-        view.moveDown();
+        view.moveDown(this);
     }
 
     public boolean autocomplete() {

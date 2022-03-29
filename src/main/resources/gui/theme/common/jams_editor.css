@@ -130,6 +130,10 @@
 .autocompletion-popup-element-container {
     -fx-padding: 2px 0 0 0;
     -fx-spacing: 5px;
+}.
+
+ autocompletion-popup-element-key-container {
+    -fx-spacing: 0px;
 }
 
 .autocompletion-popup-element .label {
@@ -206,6 +210,12 @@
 
 .hint-bar-info {
     -fx-fill: -theme-done;
+}
+
+/* HOVER POPUP */
+.hover-popup {
+    -fx-border-color: -theme-background-darker;
+    -fx-border-width: 5px;
 }
 
 /* SEARCH */
