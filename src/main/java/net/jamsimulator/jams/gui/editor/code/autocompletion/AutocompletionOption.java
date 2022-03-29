@@ -24,8 +24,17 @@
 
 package net.jamsimulator.jams.gui.editor.code.autocompletion;
 
+import net.jamsimulator.jams.gui.editor.code.indexing.element.EditorIndexedElement;
 import net.jamsimulator.jams.utils.StringSearch;
 
+/**
+ * Represents a valid candidated returned by the method
+ * {@link AutocompletionPopupController#searchOptions(EditorIndexedElement, String)}.
+ *
+ * @param candidate    the candidate of this option.
+ * @param searchResult the result data of this option.
+ * @param <T>          the type of the candidate.
+ */
 public record AutocompletionOption<T>(
         AutocompletionCandidate<T> candidate,
         StringSearch.Result searchResult

@@ -31,6 +31,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represents an element that may be represented in a {@link AutocompletionPopup}.
+ *
+ * @param element the represented element.
+ * @param key
+ * @param replacement
+ * @param displayStrings
+ * @param icon
+ * @param <T>
+ */
 public record AutocompletionCandidate<T>(
         T element,
         String key,

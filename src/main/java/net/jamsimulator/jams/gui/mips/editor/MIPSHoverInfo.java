@@ -64,7 +64,6 @@ public class MIPSHoverInfo extends VirtualizedScrollPane<StyleClassedTextArea> {
         setPrefWidth(400);
         setMaxHeight(600);
 
-        getContent().totalHeightEstimateProperty().addListener((observable, oldValue, newValue) -> System.out.println(newValue));
         getContent().totalHeightEstimateProperty().addListener((obs, old, val) -> setPrefHeight(val + 10));
     }
 

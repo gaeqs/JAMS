@@ -43,6 +43,16 @@ public abstract class AutocompletionPopupController {
 
     protected Set<AutocompletionCandidate<?>> candidates = new HashSet<>();
 
+    /**
+     * Returns for candidates that match the given search.
+     * <p>
+     * This method invokes {@link #isCandidateValidForContext(EditorIndexedElement, AutocompletionCandidate)}
+     * and it should be invoked before {@link #refreshCandidates(EditorIndexedElement, int)}.
+     *
+     * @param context the search context.
+     * @param search  the match to search.
+     * @return the found candidates.
+     */
     public List<AutocompletionOption<?>> searchOptions(EditorIndexedElement context, String search) {
         var validCandidates = candidates.stream()
                 .filter(it -> isCandidateValidForContext(context, it))
