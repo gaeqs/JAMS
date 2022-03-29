@@ -8,6 +8,5 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 17
-      - uses: gradle/gradle-build-action@v2
-        with:
-          arguments: build --scanK
+      - name: Building...
+        run: gradle build --scan
