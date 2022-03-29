@@ -34,6 +34,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a controller for an {@link AutocompletionPopup}.
+ * <p>
+ * A controller provides candidates for the {@link AutocompletionPopup}.
+ */
 public abstract class AutocompletionPopupController {
 
     protected Set<AutocompletionCandidate<?>> candidates = new HashSet<>();
@@ -54,9 +59,24 @@ public abstract class AutocompletionPopupController {
     }
 
 
+    /**
+     * Returns whether the given {@link AutocompletionCandidate} is valid for the current context.
+     * <p>
+     * No valid candidates won't be shown in the autocompletion popup.
+     *
+     * @param context   the context.
+     * @param candidate the {@link AutocompletionCandidate candidate}.
+     * @return whether the given {@link AutocompletionCandidate} is valid for the current contetx.
+     */
     public abstract boolean isCandidateValidForContext(EditorIndexedElement context,
                                                        AutocompletionCandidate<?> candidate);
 
+    /**
+     * Refresh the candidates.
+     *
+     * @param context    the current context of the {@link AutocompletionPopup}.
+     * @param caretStart the start position of the caret in the editor.
+     */
     public abstract void refreshCandidates(EditorIndexedElement context, int caretStart);
 
 }
