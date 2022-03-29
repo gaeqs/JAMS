@@ -1,5 +1,5 @@
 name: Pull Request Test
-on: [pull_request]
+on: [push]
 jobs:
   buld:
     runs-on: ubuntu-latest
@@ -10,4 +10,4 @@ jobs:
           java-version: 17
       - uses: gradle/gradle-build-action@v2
         with:
-          arguments: build --scan
+          arguments: build --scanK
