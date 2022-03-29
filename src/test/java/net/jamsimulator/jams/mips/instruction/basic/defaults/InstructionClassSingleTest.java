@@ -55,7 +55,7 @@ class InstructionClassSingleTest {
         var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
-                        lif $f0, NaN
+                        li.f $f0, NaN
                         class.s $f0, $f0
                         mfc1 $s0, $f0
                         tnei $s0, 0b10
@@ -79,7 +79,7 @@ class InstructionClassSingleTest {
         var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
-                        lif $f0, -Infinity
+                        li.f $f0, -Infinity
                         class.s $f0, $f0
                         mfc1 $s0, $f0
                         tnei $s0, 0b100
@@ -103,7 +103,7 @@ class InstructionClassSingleTest {
         var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
-                        lif $f0, -5.3448
+                        li.f $f0, -5.3448
                         class.s $f0, $f0
                         mfc1 $s0, $f0
                         tnei $s0, 0b1000
@@ -151,7 +151,7 @@ class InstructionClassSingleTest {
         var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
-                        lif $f0, -0.0
+                        li.f $f0, -0.0
                         class.s $f0, $f0
                         mfc1 $s0, $f0
                         tnei $s0, 0b100000
@@ -174,7 +174,7 @@ class InstructionClassSingleTest {
         var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
-                        lif $f0, Infinity
+                        li.f $f0, Infinity
                         class.s $f0, $f0
                         mfc1 $s0, $f0
                         tnei $s0, 0b1000000
@@ -198,7 +198,7 @@ class InstructionClassSingleTest {
         var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
-                        lif $f0, 865.65
+                        li.f $f0, 865.65
                         class.s $f0, $f0
                         mfc1 $s0, $f0
                         tnei $s0, 0b10000000
@@ -246,7 +246,7 @@ class InstructionClassSingleTest {
         var simulation = TestUtils.generateSimulation(arch,
                 """
                         .text
-                        lif $f0, 0.0
+                        li.f $f0, 0.0
                         class.s $f0, $f0
                         mfc1 $s0, $f0
                         tnei $s0, 0b1000000000

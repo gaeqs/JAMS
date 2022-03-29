@@ -63,7 +63,7 @@ class InstructionLdc1Test {
                             	.text
                             	
                             	ldc1 $f0, d
-                            	lid $f2, %f
+                            	li.d $f2, %f
                             	
                             	cmp.eq.d $f4, $f0, $f2
                             	mfc1 $s0, $f4
