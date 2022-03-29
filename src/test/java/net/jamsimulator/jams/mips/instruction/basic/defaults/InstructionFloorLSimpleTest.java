@@ -56,7 +56,7 @@ class InstructionFloorLSimpleTest {
                 """
                         .text
                         li $s0, 5
-                        li.f $f0, 5.5
+                        li.s $f0, 5.5
                         floor.l.s $f0, $f0
                         mfc1 $s1, $f0
                         tne $s0, $s1
@@ -80,7 +80,7 @@ class InstructionFloorLSimpleTest {
                 """
                         .text
                         li $s0, -6
-                        li.f $f0, -5.5
+                        li.s $f0, -5.5
                         floor.l.s $f0, $f0
                         mfc1 $s1, $f0
                         tne $s0, $s1
